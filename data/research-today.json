@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-02T09:28:10.892Z",
- "lastClose": "2026-10-30",
+ "generatedAt": "2026-11-02T23:26:39.049Z",
+ "lastClose": "2026-11-02",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Daily-researcher rules (RQ-*) recording forward from 26 Oct 2026. Nothing here is a buy by itself: a rule needs a frozen 5-year verdict that meets the TRY SMALL standard (data/research-lab.json firstRun) or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
@@ -16,7 +16,7 @@
      "halal": "unknown",
      "signal": "2026-10-26",
      "buy": "2026-10-27",
-     "sinceBuy": -0.0034,
+     "sinceBuy": 0.0227,
      "exitAfter": "63 sessions"
     }
    ]
@@ -33,7 +33,7 @@
      "halal": "unknown",
      "signal": "2026-10-26",
      "buy": "2026-10-27",
-     "sinceBuy": -0.0034,
+     "sinceBuy": 0.0227,
      "exitAfter": "126 sessions"
     }
    ]
@@ -50,17 +50,18 @@
    "name": "Cash tender offer target, any positive spread up to 15%, held to the deal close (max 120 sessions)",
    "hold": 120,
    "tier": "TOO FEW CASES",
-   "newSignals": [
+   "newSignals": [],
+   "late": [],
+   "open": [
     {
      "sym": "PCRX",
-     "close": 36.39,
      "halal": "ok",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02; cash offer 36.5 USD a share (spread 0.3% at the filing-day close, plus a CVR); sell when the deal pays out, at a close under 32.751 (deal break), or after 120 sessions"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0001,
+     "exitAfter": "120 sessions"
     }
-   ],
-   "late": [],
-   "open": []
+   ]
   },
   "RQ-ISC-21": {
    "name": "Information shock: a jump of 4+ sigma (and 4%+) above the average stock on an 8-K news day, hold 1 month",
@@ -68,144 +69,32 @@
    "tier": "REJECTED",
    "newSignals": [
     {
-     "sym": "BBIO",
-     "close": 74.95,
+     "sym": "PRG",
+     "close": 38.19,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 7.7% on 2026-10-30, 4.0 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 21 sessions (the stock beat the average stock by 9.8% on 2026-11-02, 4.3 sigma, with an 8-K)"
     },
     {
-     "sym": "GDYN",
-     "close": 13.36,
-     "halal": "ok",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 42.5% on 2026-10-30, 18.3 sigma, with an 8-K)"
-    },
-    {
-     "sym": "MHK",
-     "close": 139.41,
+     "sym": "SHW",
+     "close": 352.37,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 9.0% on 2026-10-30, 4.0 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 21 sessions (the stock beat the average stock by 5.9% on 2026-11-02, 4.4 sigma, with an 8-K)"
     },
     {
-     "sym": "CVCO",
-     "close": 619,
+     "sym": "IDXX",
+     "close": 671.64,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 14.8% on 2026-10-30, 8.4 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 21 sessions (the stock beat the average stock by 21.8% on 2026-11-02, 12.7 sigma, with an 8-K)"
     },
     {
-     "sym": "COLM",
-     "close": 67.54,
+     "sym": "USLM",
+     "close": 118.99,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 7.8% on 2026-10-30, 4.8 sigma, with an 8-K)"
-    },
-    {
-     "sym": "REGN",
-     "close": 927.89,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 15.1% on 2026-10-30, 9.0 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CDNA",
-     "close": 87.41,
-     "halal": "fail",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 23.9% on 2026-10-30, 8.3 sigma, with an 8-K)"
-    },
-    {
-     "sym": "OSPN",
-     "close": 25.66,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 29.1% on 2026-10-30, 13.9 sigma, with an 8-K)"
-    },
-    {
-     "sym": "OLN",
-     "close": 17.6,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 11.4% on 2026-10-30, 5.5 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CNO",
-     "close": 57.67,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 6.3% on 2026-10-30, 5.6 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CUBE",
-     "close": 42.74,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 5.8% on 2026-10-30, 5.3 sigma, with an 8-K)"
-    },
-    {
-     "sym": "HGV",
-     "close": 38.44,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 9.4% on 2026-10-30, 5.1 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CPRI",
-     "close": 18.68,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 18.0% on 2026-10-30, 6.7 sigma, with an 8-K)"
-    },
-    {
-     "sym": "FMC",
-     "close": 6.2,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 32.3% on 2026-10-30, 5.9 sigma, with an 8-K)"
-    },
-    {
-     "sym": "ATR",
-     "close": 137.2,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 6.7% on 2026-10-30, 6.2 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CVLG",
-     "close": 30.92,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 9.0% on 2026-10-30, 5.1 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CVEO",
-     "close": 35.97,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 19.5% on 2026-10-30, 10.2 sigma, with an 8-K)"
-    },
-    {
-     "sym": "VLTO",
-     "close": 111.1,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 8.5% on 2026-10-30, 7.1 sigma, with an 8-K)"
-    },
-    {
-     "sym": "BTSG",
-     "close": 66.89,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 12.8% on 2026-10-30, 5.4 sigma, with an 8-K)"
-    },
-    {
-     "sym": "FDXF",
-     "close": 126.04,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 16.6% on 2026-10-30, 7.9 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 21 sessions (the stock beat the average stock by 6.6% on 2026-11-02, 4.6 sigma, with an 8-K)"
     }
    ],
    "late": [],
@@ -215,7 +104,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": -0.0379,
+     "sinceBuy": -0.0081,
      "exitAfter": "21 sessions"
     },
     {
@@ -223,7 +112,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0049,
+     "sinceBuy": 0.031,
      "exitAfter": "21 sessions"
     },
     {
@@ -231,7 +120,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0497,
+     "sinceBuy": 0.0333,
      "exitAfter": "21 sessions"
     },
     {
@@ -239,7 +128,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0559,
+     "sinceBuy": 0.1245,
      "exitAfter": "21 sessions"
     },
     {
@@ -247,7 +136,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0152,
+     "sinceBuy": 0.0595,
      "exitAfter": "21 sessions"
     },
     {
@@ -255,7 +144,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0164,
+     "sinceBuy": 0.031,
      "exitAfter": "21 sessions"
     },
     {
@@ -263,7 +152,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0066,
+     "sinceBuy": 0.0095,
      "exitAfter": "21 sessions"
     },
     {
@@ -271,7 +160,7 @@
      "halal": "ok",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0289,
+     "sinceBuy": 0.0713,
      "exitAfter": "21 sessions"
     },
     {
@@ -279,7 +168,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0121,
+     "sinceBuy": 0.0024,
      "exitAfter": "21 sessions"
     },
     {
@@ -287,7 +176,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0015,
+     "sinceBuy": -0.0012,
      "exitAfter": "21 sessions"
     },
     {
@@ -295,7 +184,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0107,
+     "sinceBuy": 0.0039,
      "exitAfter": "21 sessions"
     },
     {
@@ -303,7 +192,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0229,
+     "sinceBuy": -0.0577,
      "exitAfter": "21 sessions"
     },
     {
@@ -311,7 +200,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0824,
+     "sinceBuy": 0.1979,
      "exitAfter": "21 sessions"
     },
     {
@@ -319,7 +208,7 @@
      "halal": "ok",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0153,
+     "sinceBuy": -0.001,
      "exitAfter": "21 sessions"
     },
     {
@@ -327,7 +216,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0654,
+     "sinceBuy": 0.1231,
      "exitAfter": "21 sessions"
     },
     {
@@ -335,7 +224,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0255,
+     "sinceBuy": 0.0173,
      "exitAfter": "21 sessions"
     },
     {
@@ -343,7 +232,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0566,
+     "sinceBuy": 0.0497,
      "exitAfter": "21 sessions"
     },
     {
@@ -351,7 +240,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0344,
+     "sinceBuy": -0.0475,
      "exitAfter": "21 sessions"
     },
     {
@@ -359,7 +248,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0128,
+     "sinceBuy": -0.0016,
      "exitAfter": "21 sessions"
     },
     {
@@ -367,7 +256,7 @@
      "halal": "fail",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0152,
+     "sinceBuy": 0.0471,
      "exitAfter": "21 sessions"
     },
     {
@@ -375,7 +264,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0048,
+     "sinceBuy": 0.0048,
      "exitAfter": "21 sessions"
     },
     {
@@ -383,7 +272,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0899,
+     "sinceBuy": 0.1366,
      "exitAfter": "21 sessions"
     },
     {
@@ -391,7 +280,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0079,
+     "sinceBuy": 0.0489,
      "exitAfter": "21 sessions"
     },
     {
@@ -399,7 +288,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0017,
+     "sinceBuy": 0.038,
      "exitAfter": "21 sessions"
     },
     {
@@ -407,7 +296,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0424,
+     "sinceBuy": -0.0419,
      "exitAfter": "21 sessions"
     },
     {
@@ -415,7 +304,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0049,
+     "sinceBuy": 0.044,
      "exitAfter": "21 sessions"
     },
     {
@@ -423,7 +312,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0234,
+     "sinceBuy": -0.0222,
      "exitAfter": "21 sessions"
     },
     {
@@ -431,7 +320,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0187,
+     "sinceBuy": 0.0546,
      "exitAfter": "21 sessions"
     },
     {
@@ -439,7 +328,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0,
+     "sinceBuy": 0.0217,
      "exitAfter": "21 sessions"
     },
     {
@@ -447,7 +336,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0092,
+     "sinceBuy": 0.0463,
      "exitAfter": "21 sessions"
     },
     {
@@ -455,7 +344,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0384,
+     "sinceBuy": 0.1124,
      "exitAfter": "21 sessions"
     },
     {
@@ -463,7 +352,7 @@
      "halal": "fail",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0174,
+     "sinceBuy": 0.061,
      "exitAfter": "21 sessions"
     },
     {
@@ -471,7 +360,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0273,
+     "sinceBuy": 0.0726,
      "exitAfter": "21 sessions"
     },
     {
@@ -479,7 +368,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0004,
+     "sinceBuy": -0.0104,
      "exitAfter": "21 sessions"
     },
     {
@@ -487,7 +376,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0567,
+     "sinceBuy": 0.0703,
      "exitAfter": "21 sessions"
     },
     {
@@ -495,7 +384,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.008,
+     "sinceBuy": 0.0092,
      "exitAfter": "21 sessions"
     },
     {
@@ -503,7 +392,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.019,
+     "sinceBuy": 0.0017,
      "exitAfter": "21 sessions"
     },
     {
@@ -511,7 +400,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0332,
+     "sinceBuy": 0.0795,
      "exitAfter": "21 sessions"
     },
     {
@@ -519,7 +408,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0817,
+     "sinceBuy": -0.1019,
      "exitAfter": "21 sessions"
     },
     {
@@ -527,7 +416,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0006,
+     "sinceBuy": 0.0152,
      "exitAfter": "21 sessions"
     },
     {
@@ -535,7 +424,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0199,
+     "sinceBuy": -0.0157,
      "exitAfter": "21 sessions"
     },
     {
@@ -543,7 +432,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0029,
+     "sinceBuy": -0.0156,
      "exitAfter": "21 sessions"
     },
     {
@@ -551,7 +440,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0341,
+     "sinceBuy": -0.0204,
      "exitAfter": "21 sessions"
     },
     {
@@ -559,7 +448,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0133,
+     "sinceBuy": 0.0566,
      "exitAfter": "21 sessions"
     },
     {
@@ -567,7 +456,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0366,
+     "sinceBuy": 0.0764,
      "exitAfter": "21 sessions"
     },
     {
@@ -575,7 +464,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.007,
+     "sinceBuy": 0.0634,
      "exitAfter": "21 sessions"
     },
     {
@@ -583,7 +472,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.001,
+     "sinceBuy": -0.0041,
      "exitAfter": "21 sessions"
     },
     {
@@ -591,7 +480,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0174,
+     "sinceBuy": 0.015,
      "exitAfter": "21 sessions"
     },
     {
@@ -599,7 +488,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0053,
+     "sinceBuy": 0.0599,
      "exitAfter": "21 sessions"
     },
     {
@@ -607,7 +496,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0107,
+     "sinceBuy": 0.0528,
      "exitAfter": "21 sessions"
     },
     {
@@ -615,7 +504,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0229,
+     "sinceBuy": 0.0733,
      "exitAfter": "21 sessions"
     },
     {
@@ -623,7 +512,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0523,
+     "sinceBuy": 0.0824,
      "exitAfter": "21 sessions"
     },
     {
@@ -631,7 +520,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0536,
+     "sinceBuy": 0.0557,
      "exitAfter": "21 sessions"
     },
     {
@@ -639,7 +528,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0021,
+     "sinceBuy": 0.0131,
      "exitAfter": "21 sessions"
     },
     {
@@ -647,7 +536,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0077,
+     "sinceBuy": -0.0189,
      "exitAfter": "21 sessions"
     },
     {
@@ -655,7 +544,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0178,
+     "sinceBuy": 0.0444,
      "exitAfter": "21 sessions"
     },
     {
@@ -663,7 +552,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0366,
+     "sinceBuy": -0.056,
      "exitAfter": "21 sessions"
     },
     {
@@ -671,7 +560,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0324,
+     "sinceBuy": 0.1392,
      "exitAfter": "21 sessions"
     },
     {
@@ -679,7 +568,167 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0202,
+     "sinceBuy": -0.0177,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "BBIO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0005,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "GDYN",
+     "halal": "ok",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0332,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "MHK",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0335,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CVCO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0283,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "COLM",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0538,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "REGN",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0367,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CDNA",
+     "halal": "fail",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0182,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "OSPN",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0107,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "OLN",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0371,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CNO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0121,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CUBE",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0373,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "HGV",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0647,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CPRI",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0589,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "FMC",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0638,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "ATR",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0501,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CVLG",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0759,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CVEO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0348,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "VLTO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0261,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "BTSG",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0184,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "FDXF",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0384,
      "exitAfter": "21 sessions"
     }
    ]
@@ -690,144 +739,32 @@
    "tier": "REJECTED",
    "newSignals": [
     {
-     "sym": "BBIO",
-     "close": 74.95,
+     "sym": "PRG",
+     "close": 38.19,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 7.7% on 2026-10-30, 4.0 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 63 sessions (the stock beat the average stock by 9.8% on 2026-11-02, 4.3 sigma, with an 8-K)"
     },
     {
-     "sym": "GDYN",
-     "close": 13.36,
-     "halal": "ok",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 42.5% on 2026-10-30, 18.3 sigma, with an 8-K)"
-    },
-    {
-     "sym": "MHK",
-     "close": 139.41,
+     "sym": "SHW",
+     "close": 352.37,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 9.0% on 2026-10-30, 4.0 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 63 sessions (the stock beat the average stock by 5.9% on 2026-11-02, 4.4 sigma, with an 8-K)"
     },
     {
-     "sym": "CVCO",
-     "close": 619,
+     "sym": "IDXX",
+     "close": 671.64,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 14.8% on 2026-10-30, 8.4 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 63 sessions (the stock beat the average stock by 21.8% on 2026-11-02, 12.7 sigma, with an 8-K)"
     },
     {
-     "sym": "COLM",
-     "close": 67.54,
+     "sym": "USLM",
+     "close": 118.99,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 7.8% on 2026-10-30, 4.8 sigma, with an 8-K)"
-    },
-    {
-     "sym": "REGN",
-     "close": 927.89,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 15.1% on 2026-10-30, 9.0 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CDNA",
-     "close": 87.41,
-     "halal": "fail",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 23.9% on 2026-10-30, 8.3 sigma, with an 8-K)"
-    },
-    {
-     "sym": "OSPN",
-     "close": 25.66,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 29.1% on 2026-10-30, 13.9 sigma, with an 8-K)"
-    },
-    {
-     "sym": "OLN",
-     "close": 17.6,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 11.4% on 2026-10-30, 5.5 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CNO",
-     "close": 57.67,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 6.3% on 2026-10-30, 5.6 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CUBE",
-     "close": 42.74,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 5.8% on 2026-10-30, 5.3 sigma, with an 8-K)"
-    },
-    {
-     "sym": "HGV",
-     "close": 38.44,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 9.4% on 2026-10-30, 5.1 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CPRI",
-     "close": 18.68,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 18.0% on 2026-10-30, 6.7 sigma, with an 8-K)"
-    },
-    {
-     "sym": "FMC",
-     "close": 6.2,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 32.3% on 2026-10-30, 5.9 sigma, with an 8-K)"
-    },
-    {
-     "sym": "ATR",
-     "close": 137.2,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 6.7% on 2026-10-30, 6.2 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CVLG",
-     "close": 30.92,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 9.0% on 2026-10-30, 5.1 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CVEO",
-     "close": 35.97,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 19.5% on 2026-10-30, 10.2 sigma, with an 8-K)"
-    },
-    {
-     "sym": "VLTO",
-     "close": 111.1,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 8.5% on 2026-10-30, 7.1 sigma, with an 8-K)"
-    },
-    {
-     "sym": "BTSG",
-     "close": 66.89,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 12.8% on 2026-10-30, 5.4 sigma, with an 8-K)"
-    },
-    {
-     "sym": "FDXF",
-     "close": 126.04,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (the stock beat the average stock by 16.6% on 2026-10-30, 7.9 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 63 sessions (the stock beat the average stock by 6.6% on 2026-11-02, 4.6 sigma, with an 8-K)"
     }
    ],
    "late": [],
@@ -837,7 +774,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": -0.0379,
+     "sinceBuy": -0.0081,
      "exitAfter": "63 sessions"
     },
     {
@@ -845,7 +782,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0049,
+     "sinceBuy": 0.031,
      "exitAfter": "63 sessions"
     },
     {
@@ -853,7 +790,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0497,
+     "sinceBuy": 0.0333,
      "exitAfter": "63 sessions"
     },
     {
@@ -861,7 +798,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0559,
+     "sinceBuy": 0.1245,
      "exitAfter": "63 sessions"
     },
     {
@@ -869,7 +806,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0152,
+     "sinceBuy": 0.0595,
      "exitAfter": "63 sessions"
     },
     {
@@ -877,7 +814,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0164,
+     "sinceBuy": 0.031,
      "exitAfter": "63 sessions"
     },
     {
@@ -885,7 +822,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0066,
+     "sinceBuy": 0.0095,
      "exitAfter": "63 sessions"
     },
     {
@@ -893,7 +830,7 @@
      "halal": "ok",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0289,
+     "sinceBuy": 0.0713,
      "exitAfter": "63 sessions"
     },
     {
@@ -901,7 +838,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0121,
+     "sinceBuy": 0.0024,
      "exitAfter": "63 sessions"
     },
     {
@@ -909,7 +846,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0015,
+     "sinceBuy": -0.0012,
      "exitAfter": "63 sessions"
     },
     {
@@ -917,7 +854,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0107,
+     "sinceBuy": 0.0039,
      "exitAfter": "63 sessions"
     },
     {
@@ -925,7 +862,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0229,
+     "sinceBuy": -0.0577,
      "exitAfter": "63 sessions"
     },
     {
@@ -933,7 +870,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0824,
+     "sinceBuy": 0.1979,
      "exitAfter": "63 sessions"
     },
     {
@@ -941,7 +878,7 @@
      "halal": "ok",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0153,
+     "sinceBuy": -0.001,
      "exitAfter": "63 sessions"
     },
     {
@@ -949,7 +886,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0654,
+     "sinceBuy": 0.1231,
      "exitAfter": "63 sessions"
     },
     {
@@ -957,7 +894,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0255,
+     "sinceBuy": 0.0173,
      "exitAfter": "63 sessions"
     },
     {
@@ -965,7 +902,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0566,
+     "sinceBuy": 0.0497,
      "exitAfter": "63 sessions"
     },
     {
@@ -973,7 +910,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0344,
+     "sinceBuy": -0.0475,
      "exitAfter": "63 sessions"
     },
     {
@@ -981,7 +918,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0128,
+     "sinceBuy": -0.0016,
      "exitAfter": "63 sessions"
     },
     {
@@ -989,7 +926,7 @@
      "halal": "fail",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0152,
+     "sinceBuy": 0.0471,
      "exitAfter": "63 sessions"
     },
     {
@@ -997,7 +934,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0048,
+     "sinceBuy": 0.0048,
      "exitAfter": "63 sessions"
     },
     {
@@ -1005,7 +942,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0899,
+     "sinceBuy": 0.1366,
      "exitAfter": "63 sessions"
     },
     {
@@ -1013,7 +950,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0079,
+     "sinceBuy": 0.0489,
      "exitAfter": "63 sessions"
     },
     {
@@ -1021,7 +958,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0017,
+     "sinceBuy": 0.038,
      "exitAfter": "63 sessions"
     },
     {
@@ -1029,7 +966,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0424,
+     "sinceBuy": -0.0419,
      "exitAfter": "63 sessions"
     },
     {
@@ -1037,7 +974,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0049,
+     "sinceBuy": 0.044,
      "exitAfter": "63 sessions"
     },
     {
@@ -1045,7 +982,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0234,
+     "sinceBuy": -0.0222,
      "exitAfter": "63 sessions"
     },
     {
@@ -1053,7 +990,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0187,
+     "sinceBuy": 0.0546,
      "exitAfter": "63 sessions"
     },
     {
@@ -1061,7 +998,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0,
+     "sinceBuy": 0.0217,
      "exitAfter": "63 sessions"
     },
     {
@@ -1069,7 +1006,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0092,
+     "sinceBuy": 0.0463,
      "exitAfter": "63 sessions"
     },
     {
@@ -1077,7 +1014,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0384,
+     "sinceBuy": 0.1124,
      "exitAfter": "63 sessions"
     },
     {
@@ -1085,7 +1022,7 @@
      "halal": "fail",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0174,
+     "sinceBuy": 0.061,
      "exitAfter": "63 sessions"
     },
     {
@@ -1093,7 +1030,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0273,
+     "sinceBuy": 0.0726,
      "exitAfter": "63 sessions"
     },
     {
@@ -1101,7 +1038,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0004,
+     "sinceBuy": -0.0104,
      "exitAfter": "63 sessions"
     },
     {
@@ -1109,7 +1046,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0567,
+     "sinceBuy": 0.0703,
      "exitAfter": "63 sessions"
     },
     {
@@ -1117,7 +1054,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.008,
+     "sinceBuy": 0.0092,
      "exitAfter": "63 sessions"
     },
     {
@@ -1125,7 +1062,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.019,
+     "sinceBuy": 0.0017,
      "exitAfter": "63 sessions"
     },
     {
@@ -1133,7 +1070,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0332,
+     "sinceBuy": 0.0795,
      "exitAfter": "63 sessions"
     },
     {
@@ -1141,7 +1078,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0817,
+     "sinceBuy": -0.1019,
      "exitAfter": "63 sessions"
     },
     {
@@ -1149,7 +1086,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0006,
+     "sinceBuy": 0.0152,
      "exitAfter": "63 sessions"
     },
     {
@@ -1157,7 +1094,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0199,
+     "sinceBuy": -0.0157,
      "exitAfter": "63 sessions"
     },
     {
@@ -1165,7 +1102,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0029,
+     "sinceBuy": -0.0156,
      "exitAfter": "63 sessions"
     },
     {
@@ -1173,7 +1110,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0341,
+     "sinceBuy": -0.0204,
      "exitAfter": "63 sessions"
     },
     {
@@ -1181,7 +1118,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0133,
+     "sinceBuy": 0.0566,
      "exitAfter": "63 sessions"
     },
     {
@@ -1189,7 +1126,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0366,
+     "sinceBuy": 0.0764,
      "exitAfter": "63 sessions"
     },
     {
@@ -1197,7 +1134,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.007,
+     "sinceBuy": 0.0634,
      "exitAfter": "63 sessions"
     },
     {
@@ -1205,7 +1142,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.001,
+     "sinceBuy": -0.0041,
      "exitAfter": "63 sessions"
     },
     {
@@ -1213,7 +1150,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0174,
+     "sinceBuy": 0.015,
      "exitAfter": "63 sessions"
     },
     {
@@ -1221,7 +1158,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0053,
+     "sinceBuy": 0.0599,
      "exitAfter": "63 sessions"
     },
     {
@@ -1229,7 +1166,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0107,
+     "sinceBuy": 0.0528,
      "exitAfter": "63 sessions"
     },
     {
@@ -1237,7 +1174,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0229,
+     "sinceBuy": 0.0733,
      "exitAfter": "63 sessions"
     },
     {
@@ -1245,7 +1182,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0523,
+     "sinceBuy": 0.0824,
      "exitAfter": "63 sessions"
     },
     {
@@ -1253,7 +1190,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0536,
+     "sinceBuy": 0.0557,
      "exitAfter": "63 sessions"
     },
     {
@@ -1261,7 +1198,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0021,
+     "sinceBuy": 0.0131,
      "exitAfter": "63 sessions"
     },
     {
@@ -1269,7 +1206,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0077,
+     "sinceBuy": -0.0189,
      "exitAfter": "63 sessions"
     },
     {
@@ -1277,7 +1214,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0178,
+     "sinceBuy": 0.0444,
      "exitAfter": "63 sessions"
     },
     {
@@ -1285,7 +1222,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0366,
+     "sinceBuy": -0.056,
      "exitAfter": "63 sessions"
     },
     {
@@ -1293,7 +1230,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0324,
+     "sinceBuy": 0.1392,
      "exitAfter": "63 sessions"
     },
     {
@@ -1301,7 +1238,167 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0202,
+     "sinceBuy": -0.0177,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "BBIO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0005,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "GDYN",
+     "halal": "ok",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0332,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "MHK",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0335,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "CVCO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0283,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "COLM",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0538,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "REGN",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0367,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "CDNA",
+     "halal": "fail",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0182,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "OSPN",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0107,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "OLN",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0371,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "CNO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0121,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "CUBE",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0373,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "HGV",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0647,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "CPRI",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0589,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "FMC",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0638,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "ATR",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0501,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "CVLG",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0759,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "CVEO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0348,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "VLTO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0261,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "BTSG",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0184,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "FDXF",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0384,
      "exitAfter": "63 sessions"
     }
    ]
@@ -1312,130 +1409,18 @@
    "tier": "REJECTED",
    "newSignals": [
     {
-     "sym": "BBIO",
-     "close": 74.95,
+     "sym": "IDXX",
+     "close": 671.64,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 7.7% on 2026-10-30, 4.0 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 21 sessions (the stock beat the average stock by 21.8% on 2026-11-02, 12.7 sigma, with an 8-K)"
     },
     {
-     "sym": "GDYN",
-     "close": 13.36,
-     "halal": "ok",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 42.5% on 2026-10-30, 18.3 sigma, with an 8-K)"
-    },
-    {
-     "sym": "MHK",
-     "close": 139.41,
+     "sym": "USLM",
+     "close": 118.99,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 9.0% on 2026-10-30, 4.0 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CVCO",
-     "close": 619,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 14.8% on 2026-10-30, 8.4 sigma, with an 8-K)"
-    },
-    {
-     "sym": "COLM",
-     "close": 67.54,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 7.8% on 2026-10-30, 4.8 sigma, with an 8-K)"
-    },
-    {
-     "sym": "REGN",
-     "close": 927.89,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 15.1% on 2026-10-30, 9.0 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CDNA",
-     "close": 87.41,
-     "halal": "fail",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 23.9% on 2026-10-30, 8.3 sigma, with an 8-K)"
-    },
-    {
-     "sym": "OLN",
-     "close": 17.6,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 11.4% on 2026-10-30, 5.5 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CNO",
-     "close": 57.67,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 6.3% on 2026-10-30, 5.6 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CUBE",
-     "close": 42.74,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 5.8% on 2026-10-30, 5.3 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CPRI",
-     "close": 18.68,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 18.0% on 2026-10-30, 6.7 sigma, with an 8-K)"
-    },
-    {
-     "sym": "FMC",
-     "close": 6.2,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 32.3% on 2026-10-30, 5.9 sigma, with an 8-K)"
-    },
-    {
-     "sym": "ATR",
-     "close": 137.2,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 6.7% on 2026-10-30, 6.2 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CVLG",
-     "close": 30.92,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 9.0% on 2026-10-30, 5.1 sigma, with an 8-K)"
-    },
-    {
-     "sym": "CVEO",
-     "close": 35.97,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 19.5% on 2026-10-30, 10.2 sigma, with an 8-K)"
-    },
-    {
-     "sym": "VLTO",
-     "close": 111.1,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 8.5% on 2026-10-30, 7.1 sigma, with an 8-K)"
-    },
-    {
-     "sym": "BTSG",
-     "close": 66.89,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 12.8% on 2026-10-30, 5.4 sigma, with an 8-K)"
-    },
-    {
-     "sym": "FDXF",
-     "close": 126.04,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 16.6% on 2026-10-30, 7.9 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 21 sessions (the stock beat the average stock by 6.6% on 2026-11-02, 4.6 sigma, with an 8-K)"
     }
    ],
    "late": [],
@@ -1445,7 +1430,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": -0.0379,
+     "sinceBuy": -0.0081,
      "exitAfter": "21 sessions"
     },
     {
@@ -1453,7 +1438,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0049,
+     "sinceBuy": 0.031,
      "exitAfter": "21 sessions"
     },
     {
@@ -1461,7 +1446,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0497,
+     "sinceBuy": 0.0333,
      "exitAfter": "21 sessions"
     },
     {
@@ -1469,7 +1454,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0559,
+     "sinceBuy": 0.1245,
      "exitAfter": "21 sessions"
     },
     {
@@ -1477,7 +1462,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0152,
+     "sinceBuy": 0.0595,
      "exitAfter": "21 sessions"
     },
     {
@@ -1485,7 +1470,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0164,
+     "sinceBuy": 0.031,
      "exitAfter": "21 sessions"
     },
     {
@@ -1493,7 +1478,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0066,
+     "sinceBuy": 0.0095,
      "exitAfter": "21 sessions"
     },
     {
@@ -1501,7 +1486,7 @@
      "halal": "ok",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0289,
+     "sinceBuy": 0.0713,
      "exitAfter": "21 sessions"
     },
     {
@@ -1509,7 +1494,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0121,
+     "sinceBuy": 0.0024,
      "exitAfter": "21 sessions"
     },
     {
@@ -1517,7 +1502,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0015,
+     "sinceBuy": -0.0012,
      "exitAfter": "21 sessions"
     },
     {
@@ -1525,7 +1510,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0107,
+     "sinceBuy": 0.0039,
      "exitAfter": "21 sessions"
     },
     {
@@ -1533,7 +1518,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0229,
+     "sinceBuy": -0.0577,
      "exitAfter": "21 sessions"
     },
     {
@@ -1541,7 +1526,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0824,
+     "sinceBuy": 0.1979,
      "exitAfter": "21 sessions"
     },
     {
@@ -1549,7 +1534,7 @@
      "halal": "ok",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0153,
+     "sinceBuy": -0.001,
      "exitAfter": "21 sessions"
     },
     {
@@ -1557,7 +1542,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0654,
+     "sinceBuy": 0.1231,
      "exitAfter": "21 sessions"
     },
     {
@@ -1565,7 +1550,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0255,
+     "sinceBuy": 0.0173,
      "exitAfter": "21 sessions"
     },
     {
@@ -1573,7 +1558,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0566,
+     "sinceBuy": 0.0497,
      "exitAfter": "21 sessions"
     },
     {
@@ -1581,7 +1566,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0344,
+     "sinceBuy": -0.0475,
      "exitAfter": "21 sessions"
     },
     {
@@ -1589,7 +1574,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0128,
+     "sinceBuy": -0.0016,
      "exitAfter": "21 sessions"
     },
     {
@@ -1597,7 +1582,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0048,
+     "sinceBuy": 0.0048,
      "exitAfter": "21 sessions"
     },
     {
@@ -1605,7 +1590,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0899,
+     "sinceBuy": 0.1366,
      "exitAfter": "21 sessions"
     },
     {
@@ -1613,7 +1598,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0079,
+     "sinceBuy": 0.0489,
      "exitAfter": "21 sessions"
     },
     {
@@ -1621,7 +1606,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0424,
+     "sinceBuy": -0.0419,
      "exitAfter": "21 sessions"
     },
     {
@@ -1629,7 +1614,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0049,
+     "sinceBuy": 0.044,
      "exitAfter": "21 sessions"
     },
     {
@@ -1637,7 +1622,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0187,
+     "sinceBuy": 0.0546,
      "exitAfter": "21 sessions"
     },
     {
@@ -1645,7 +1630,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0,
+     "sinceBuy": 0.0217,
      "exitAfter": "21 sessions"
     },
     {
@@ -1653,7 +1638,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0092,
+     "sinceBuy": 0.0463,
      "exitAfter": "21 sessions"
     },
     {
@@ -1661,7 +1646,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0384,
+     "sinceBuy": 0.1124,
      "exitAfter": "21 sessions"
     },
     {
@@ -1669,7 +1654,7 @@
      "halal": "fail",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0174,
+     "sinceBuy": 0.061,
      "exitAfter": "21 sessions"
     },
     {
@@ -1677,7 +1662,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0273,
+     "sinceBuy": 0.0726,
      "exitAfter": "21 sessions"
     },
     {
@@ -1685,7 +1670,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0004,
+     "sinceBuy": -0.0104,
      "exitAfter": "21 sessions"
     },
     {
@@ -1693,7 +1678,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0567,
+     "sinceBuy": 0.0703,
      "exitAfter": "21 sessions"
     },
     {
@@ -1701,7 +1686,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.008,
+     "sinceBuy": 0.0092,
      "exitAfter": "21 sessions"
     },
     {
@@ -1709,7 +1694,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.019,
+     "sinceBuy": 0.0017,
      "exitAfter": "21 sessions"
     },
     {
@@ -1717,7 +1702,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0332,
+     "sinceBuy": 0.0795,
      "exitAfter": "21 sessions"
     },
     {
@@ -1725,7 +1710,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0817,
+     "sinceBuy": -0.1019,
      "exitAfter": "21 sessions"
     },
     {
@@ -1733,7 +1718,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0006,
+     "sinceBuy": 0.0152,
      "exitAfter": "21 sessions"
     },
     {
@@ -1741,7 +1726,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0199,
+     "sinceBuy": -0.0157,
      "exitAfter": "21 sessions"
     },
     {
@@ -1749,7 +1734,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0029,
+     "sinceBuy": -0.0156,
      "exitAfter": "21 sessions"
     },
     {
@@ -1757,7 +1742,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0341,
+     "sinceBuy": -0.0204,
      "exitAfter": "21 sessions"
     },
     {
@@ -1765,7 +1750,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0133,
+     "sinceBuy": 0.0566,
      "exitAfter": "21 sessions"
     },
     {
@@ -1773,7 +1758,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0366,
+     "sinceBuy": 0.0764,
      "exitAfter": "21 sessions"
     },
     {
@@ -1781,7 +1766,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.007,
+     "sinceBuy": 0.0634,
      "exitAfter": "21 sessions"
     },
     {
@@ -1789,7 +1774,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0174,
+     "sinceBuy": 0.015,
      "exitAfter": "21 sessions"
     },
     {
@@ -1797,7 +1782,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0053,
+     "sinceBuy": 0.0599,
      "exitAfter": "21 sessions"
     },
     {
@@ -1805,7 +1790,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0107,
+     "sinceBuy": 0.0528,
      "exitAfter": "21 sessions"
     },
     {
@@ -1813,7 +1798,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0229,
+     "sinceBuy": 0.0733,
      "exitAfter": "21 sessions"
     },
     {
@@ -1821,7 +1806,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0523,
+     "sinceBuy": 0.0824,
      "exitAfter": "21 sessions"
     },
     {
@@ -1829,7 +1814,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0536,
+     "sinceBuy": 0.0557,
      "exitAfter": "21 sessions"
     },
     {
@@ -1837,7 +1822,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0021,
+     "sinceBuy": 0.0131,
      "exitAfter": "21 sessions"
     },
     {
@@ -1845,7 +1830,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0077,
+     "sinceBuy": -0.0189,
      "exitAfter": "21 sessions"
     },
     {
@@ -1853,7 +1838,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0178,
+     "sinceBuy": 0.0444,
      "exitAfter": "21 sessions"
     },
     {
@@ -1861,7 +1846,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0366,
+     "sinceBuy": -0.056,
      "exitAfter": "21 sessions"
     },
     {
@@ -1869,7 +1854,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0324,
+     "sinceBuy": 0.1392,
      "exitAfter": "21 sessions"
     },
     {
@@ -1877,7 +1862,151 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0202,
+     "sinceBuy": -0.0177,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "BBIO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0005,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "GDYN",
+     "halal": "ok",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0332,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "MHK",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0335,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CVCO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0283,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "COLM",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0538,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "REGN",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0367,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CDNA",
+     "halal": "fail",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0182,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "OLN",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0371,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CNO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0121,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CUBE",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0373,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CPRI",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0589,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "FMC",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0638,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "ATR",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0501,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CVLG",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0759,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "CVEO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0348,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "VLTO",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0261,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "BTSG",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0184,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "FDXF",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0384,
      "exitAfter": "21 sessions"
     }
    ]
@@ -1888,18 +2017,18 @@
    "tier": "REJECTED",
    "newSignals": [
     {
-     "sym": "OSPN",
-     "close": 25.66,
+     "sym": "PRG",
+     "close": 38.19,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 29.1% on 2026-10-30, 13.9 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 21 sessions (the stock beat the average stock by 9.8% on 2026-11-02, 4.3 sigma, with an 8-K)"
     },
     {
-     "sym": "HGV",
-     "close": 38.44,
+     "sym": "SHW",
+     "close": 352.37,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-02, hold 21 sessions (the stock beat the average stock by 9.4% on 2026-10-30, 5.1 sigma, with an 8-K)"
+     "d": "2026-11-02",
+     "plan": "buy at the open of 2026-11-03, hold 21 sessions (the stock beat the average stock by 5.9% on 2026-11-02, 4.4 sigma, with an 8-K)"
     }
    ],
    "late": [],
@@ -1909,7 +2038,7 @@
      "halal": "fail",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": 0.0152,
+     "sinceBuy": 0.0471,
      "exitAfter": "21 sessions"
     },
     {
@@ -1917,7 +2046,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0017,
+     "sinceBuy": 0.038,
      "exitAfter": "21 sessions"
     },
     {
@@ -1925,7 +2054,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-29",
-     "sinceBuy": -0.0234,
+     "sinceBuy": -0.0222,
      "exitAfter": "21 sessions"
     },
     {
@@ -1933,7 +2062,23 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.001,
+     "sinceBuy": -0.0041,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "OSPN",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0107,
+     "exitAfter": "21 sessions"
+    },
+    {
+     "sym": "HGV",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0647,
      "exitAfter": "21 sessions"
     }
    ]
@@ -1942,102 +2087,15 @@
    "name": "Order backlog (RPO) growth in the top 20%, hold 3 months",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": [
-    {
-     "sym": "RBC",
-     "close": 462.21,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8206,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (backlog +38% on a year before)"
-    }
-   ],
-   "late": [
-    {
-     "sym": "PWR",
-     "close": 635.18,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +99% on a year before)"
-    },
-    {
-     "sym": "EME",
-     "close": 689.32,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +47% on a year before)"
-    },
-    {
-     "sym": "HII",
-     "close": 316.21,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +55% on a year before)"
-    },
-    {
-     "sym": "MTZ",
-     "close": 177.82,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +63% on a year before)"
-    },
-    {
-     "sym": "GOOGL",
-     "close": 283.82,
-     "halal": "ok",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +260% on a year before)"
-    },
-    {
-     "sym": "APG",
-     "close": 45.02,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +35% on a year before)"
-    },
-    {
-     "sym": "BFLY",
-     "close": 7.51,
-     "halal": "fail",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +100% on a year before)"
-    },
-    {
-     "sym": "RXO",
-     "close": 27.65,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +219% on a year before)"
-    },
-    {
-     "sym": "STRL",
-     "close": 373.66,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +57% on a year before)"
-    },
-    {
-     "sym": "STGW",
-     "close": 9.95,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +603% on a year before)"
-    },
-    {
-     "sym": "TEX",
-     "close": 56.55,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 63 sessions (backlog +9443% on a year before)"
-    }
-   ],
+   "newSignals": [],
+   "late": [],
    "open": [
     {
      "sym": "XYL",
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0154,
+     "sinceBuy": 0.0688,
      "exitAfter": "63 sessions"
     },
     {
@@ -2045,7 +2103,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.032,
+     "sinceBuy": 0.0648,
      "exitAfter": "63 sessions"
     },
     {
@@ -2053,7 +2111,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0093,
+     "sinceBuy": 0.0144,
      "exitAfter": "63 sessions"
     },
     {
@@ -2061,7 +2119,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0432,
+     "sinceBuy": 0.0271,
      "exitAfter": "63 sessions"
     },
     {
@@ -2069,7 +2127,103 @@
      "halal": "ok",
      "signal": "2026-10-28",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0064,
+     "sinceBuy": -0.0346,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "PWR",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0073,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "EME",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0091,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "HII",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0103,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "MTZ",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0266,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "GOOGL",
+     "halal": "ok",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0123,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "APG",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.008,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "BFLY",
+     "halal": "fail",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0568,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "RXO",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0047,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "STRL",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0597,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "STGW",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0218,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "TEX",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0139,
+     "exitAfter": "63 sessions"
+    },
+    {
+     "sym": "RBC",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0058,
      "exitAfter": "63 sessions"
     }
    ]
@@ -2078,102 +2232,15 @@
    "name": "Order backlog (RPO) growth in the top 20%, hold 6 months",
    "hold": 126,
    "tier": "REJECTED",
-   "newSignals": [
-    {
-     "sym": "RBC",
-     "close": 462.21,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8206,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (backlog +38% on a year before)"
-    }
-   ],
-   "late": [
-    {
-     "sym": "PWR",
-     "close": 635.18,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +99% on a year before)"
-    },
-    {
-     "sym": "EME",
-     "close": 689.32,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +47% on a year before)"
-    },
-    {
-     "sym": "HII",
-     "close": 316.21,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +55% on a year before)"
-    },
-    {
-     "sym": "MTZ",
-     "close": 177.82,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +63% on a year before)"
-    },
-    {
-     "sym": "GOOGL",
-     "close": 283.82,
-     "halal": "ok",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +260% on a year before)"
-    },
-    {
-     "sym": "APG",
-     "close": 45.02,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +35% on a year before)"
-    },
-    {
-     "sym": "BFLY",
-     "close": 7.51,
-     "halal": "fail",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +100% on a year before)"
-    },
-    {
-     "sym": "RXO",
-     "close": 27.65,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +219% on a year before)"
-    },
-    {
-     "sym": "STRL",
-     "close": 373.66,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +57% on a year before)"
-    },
-    {
-     "sym": "STGW",
-     "close": 9.95,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +603% on a year before)"
-    },
-    {
-     "sym": "TEX",
-     "close": 56.55,
-     "halal": "unknown",
-     "d": "2026-10-29",
-     "plan": "LATE (found after the rule's entry): buy at the next open after 2026-10-30, hold 126 sessions (backlog +9443% on a year before)"
-    }
-   ],
+   "newSignals": [],
+   "late": [],
    "open": [
     {
      "sym": "XYL",
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.0154,
+     "sinceBuy": 0.0688,
      "exitAfter": "126 sessions"
     },
     {
@@ -2181,7 +2248,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": 0.032,
+     "sinceBuy": 0.0648,
      "exitAfter": "126 sessions"
     },
     {
@@ -2189,7 +2256,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0093,
+     "sinceBuy": 0.0144,
      "exitAfter": "126 sessions"
     },
     {
@@ -2197,7 +2264,7 @@
      "halal": "unknown",
      "signal": "2026-10-28",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0432,
+     "sinceBuy": 0.0271,
      "exitAfter": "126 sessions"
     },
     {
@@ -2205,7 +2272,103 @@
      "halal": "ok",
      "signal": "2026-10-28",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0064,
+     "sinceBuy": -0.0346,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "PWR",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0073,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "EME",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0091,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "HII",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0103,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "MTZ",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0266,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "GOOGL",
+     "halal": "ok",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0123,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "APG",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.008,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "BFLY",
+     "halal": "fail",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0568,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "RXO",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0047,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "STRL",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0597,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "STGW",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0218,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "TEX",
+     "halal": "unknown",
+     "signal": "2026-10-29",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0139,
+     "exitAfter": "126 sessions"
+    },
+    {
+     "sym": "RBC",
+     "halal": "unknown",
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0058,
      "exitAfter": "126 sessions"
     }
    ]
@@ -2214,15 +2377,7 @@
    "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 1 month",
    "hold": 21,
    "tier": "REJECTED",
-   "newSignals": [
-    {
-     "sym": "DV",
-     "close": 13.56,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-03, hold 21 sessions (earnings 7 days earlier than usual)"
-    }
-   ],
+   "newSignals": [],
    "late": [],
    "open": []
   },
@@ -2230,15 +2385,7 @@
    "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 3 months",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": [
-    {
-     "sym": "DV",
-     "close": 13.56,
-     "halal": "unknown",
-     "d": "2026-10-30",
-     "plan": "buy at the open of 2026-11-03, hold 63 sessions (earnings 7 days earlier than usual)"
-    }
-   ],
+   "newSignals": [],
    "late": [],
    "open": []
   },
@@ -2246,371 +2393,371 @@
    "name": "Tax expense surprise (tax up vs a year before, per assets) in the top 20%, hold 3 months",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": [
+   "newSignals": [],
+   "late": [],
+   "open": [
     {
      "sym": "FHI",
-     "close": 58.48,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8468,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.32% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0566,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "CRI",
-     "close": 31.54,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8568,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.35% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0128,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "IRMD",
-     "close": 76.68,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8697,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.38% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0238,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "LYB",
-     "close": 68.64,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.921,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.63% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0116,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "MUSA",
-     "close": 534.95,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.839,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.30% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0302,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "AUPH",
-     "close": 16.65,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9634,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 1.25% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0318,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "WHD",
-     "close": 65.7,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.857,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.35% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0395,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "RDDT",
-     "close": 91.73,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8245,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.27% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0134,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "NVT",
-     "close": 125.98,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8953,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.48% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0393,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "GDYN",
-     "close": 13.36,
      "halal": "ok",
-     "d": "2026-10-30",
-     "pct": 0.9055,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.53% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0332,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "PWP",
-     "close": 14.73,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9687,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 1.36% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0041,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "RKT",
-     "close": 12.8,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9481,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.92% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0552,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "OABI",
-     "close": 5.11,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8531,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.33% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0039,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "BTSG",
-     "close": 66.89,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8241,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.27% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0184,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "SNDK",
-     "close": 1150.89,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.998,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 9.46% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0716,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "FMC",
-     "close": 6.2,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9965,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 6.28% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0638,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "RGEN",
-     "close": 176.94,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8481,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.32% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.029,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "APH",
-     "close": 79.3,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9712,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 1.43% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0122,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "ALGM",
-     "close": 30.53,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9522,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 1.00% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0262,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "MCRI",
-     "close": 110.54,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.876,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.40% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0243,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "RMD",
-     "close": 229.94,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8228,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.27% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0072,
+     "exitAfter": "63 sessions"
     },
     {
      "sym": "TER",
-     "close": 274.37,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.948,
-     "plan": "buy at the open of 2026-11-02, hold 63 sessions (quarterly tax expense up 0.92% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0611,
+     "exitAfter": "63 sessions"
     }
-   ],
-   "late": [],
-   "open": []
+   ]
   },
   "RQ-TAX-126": {
    "name": "Tax expense surprise in the top 20%, hold 6 months",
    "hold": 126,
    "tier": "NOT PROVEN",
-   "newSignals": [
+   "newSignals": [],
+   "late": [],
+   "open": [
     {
      "sym": "FHI",
-     "close": 58.48,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8468,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.32% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0566,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "CRI",
-     "close": 31.54,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8568,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.35% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0128,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "IRMD",
-     "close": 76.68,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8697,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.38% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0238,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "LYB",
-     "close": 68.64,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.921,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.63% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0116,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "MUSA",
-     "close": 534.95,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.839,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.30% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0302,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "AUPH",
-     "close": 16.65,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9634,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 1.25% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0318,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "WHD",
-     "close": 65.7,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.857,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.35% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0395,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "RDDT",
-     "close": 91.73,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8245,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.27% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0134,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "NVT",
-     "close": 125.98,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8953,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.48% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0393,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "GDYN",
-     "close": 13.36,
      "halal": "ok",
-     "d": "2026-10-30",
-     "pct": 0.9055,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.53% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0332,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "PWP",
-     "close": 14.73,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9687,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 1.36% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0041,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "RKT",
-     "close": 12.8,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9481,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.92% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0552,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "OABI",
-     "close": 5.11,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8531,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.33% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0039,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "BTSG",
-     "close": 66.89,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8241,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.27% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0184,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "SNDK",
-     "close": 1150.89,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.998,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 9.46% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0716,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "FMC",
-     "close": 6.2,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9965,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 6.28% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0638,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "RGEN",
-     "close": 176.94,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8481,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.32% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.029,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "APH",
-     "close": 79.3,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9712,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 1.43% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0122,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "ALGM",
-     "close": 30.53,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.9522,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 1.00% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0262,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "MCRI",
-     "close": 110.54,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.876,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.40% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0243,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "RMD",
-     "close": 229.94,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.8228,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.27% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": 0.0072,
+     "exitAfter": "126 sessions"
     },
     {
      "sym": "TER",
-     "close": 274.37,
      "halal": "unknown",
-     "d": "2026-10-30",
-     "pct": 0.948,
-     "plan": "buy at the open of 2026-11-02, hold 126 sessions (quarterly tax expense up 0.92% of assets on a year before)"
+     "signal": "2026-10-30",
+     "buy": "2026-11-02",
+     "sinceBuy": -0.0611,
+     "exitAfter": "126 sessions"
     }
-   ],
-   "late": [],
-   "open": []
+   ]
   },
   "RQ-RDI-126": {
    "name": "R&D increase (R&D up 5%+ on a year before, per assets up 5%+, R&D 5%+ of assets), hold 6 months",

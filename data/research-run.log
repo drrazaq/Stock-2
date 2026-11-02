@@ -1,47 +1,41 @@
-[0s] research lab; frozen already: 18/20
+[0s] research lab; frozen already: 20/20
 [0s] library: 0 RQ entries pre-registered now
-[7s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30
-[7s] splits since 2026-10-19: 107 listed, 0 repaired
-[7s] sessions 1269 (2021-10-12 to 2026-10-30), stocks 8490
-[9s] point-in-time ticker <-> CIK evidence: 23 quarter files, 10424 tickers
-[9s] universe: 4472 companies (liquid at a month start in the window); liquid stock-months mapped 149648/151299
-[9s] 10-K collection: 250/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 500/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 750/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 1000/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 1250/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 1500/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 1750/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 2000/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 2250/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 2500/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 2750/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 3000/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 3250/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 3500/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 3750/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 4000/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[9s] 10-K collection: 4250/4472 companies, 0 SEC requests, 0.00 GB, 0 failures
-[11s] data: {"companies":4472,"subsOk":4472,"docsNeeded":22474,"docsDone":22474,"similarities":18470,"liqMonths":151299,"liqMapped":149648,"evidenceFiles":23,"secRequests":0,"secFailures":0,"gb":0,"failSample":[],"complete":true,"ratios":{"subs":1,"docs":1,"map":0.9891},"why":null}
-[11s] events (liquid, mapped): non-changers 2855, big changers 1501; extreme filings without a priced ticker 276
-[11s] signals with a complete hold: RQ-LAZY-63 1299/1542, RQ-LAZY-126 1299/1525, RQ-LAZY-CHG63 575/913
-[1998s] tender data: {"idxNeed":1326,"idxRead":1266,"idxFail":61,"filNeed":273,"filRead":273,"filMiss":0,"subjNoCik":0,"subjUnmapped":17,"subjIlliquid":124,"subjPriced":131,"subjOffer":122,"insane":1,"cvr":44,"events":121,"spreadCounts":{"RQ-TENDER-3-15":12,"RQ-TENDER-ALL":82},"complete":true,"ratios":{"idx":0.9548,"read":1,"priced":0.9313},"why":null}
-[1999s] 8-K lists cached 4472/4472; to read now 0
-[2001s] info-shock data: {"companies":4472,"subsOk":4472,"eightKs":206032,"liqMonths":151299,"liqMapped":149648,"newsSessions":185806,"noSym":4206,"notLiquid":59279,"noSigma":198,"shocks":6887,"shocksE":5920,"shocksNE":967,"lottery":2668,"complete":true,"ratios":{"subs":1,"map":0.9891},"why":null}
-[2002s] backlog (RPO) data: {"companies":4472,"looked":4472,"withRpo":1020,"rows":19025,"events":9954,"liqMonths":151299,"liqMapped":149648,"noSym":47,"notLiquid":963,"ranked":9954,"top":1604,"bottom":1346,"complete":true,"ratios":{"looked":1,"map":0.9891},"why":null}
-[2003s] earnings timing data: {"companies":4472,"subsOk":4472,"liqMonths":151299,"liqMapped":149648,"announcements":63671,"events":47558,"adv":1966,"del":4819,"noSym":106,"notLiquid":3236,"multi":{"adv":726,"del":152},"complete":true,"ratios":{"subs":1,"map":0.9891},"why":null}
-[2011s] tax surprise data: {"companies":4472,"looked":4472,"withTax":3566,"quarters":119961,"events":41395,"liqMonths":151299,"liqMapped":149648,"noSym":218,"notLiquid":4186,"ranked":41395,"top":5849,"bottom":6007,"q4":289,"complete":true,"ratios":{"looked":1,"map":0.9891},"why":null}
-[2081s] company facts (rdi): 1000 read
-[2136s] company facts (rdi): 2000 read
-[2182s] company facts (rdi): 3000 read
-[2216s] company facts (rdi): 4000 read
-[2230s] R&D increase data: {"companies":4472,"looked":4472,"withRd":1648,"fallbackTag":51,"quarters":50422,"events":17581,"qualifying":4688,"liqMonths":151299,"liqMapped":149648,"noSym":40,"notLiquid":1979,"signals":2669,"q4":51,"complete":true,"ratios":{"looked":1,"map":0.9891},"why":null}
-[2230s] - RQ-RDI-126: REJECTED | older 919 (191d, 5bl) avg -3.8% stress -4.2% edge -2.4% own -10.9% no2 -4.4% tBlock -0.18 win +43.0% | newer 598 (167d, 6bl) avg +16.6% stress +16.2% edge +8.9% own +8.4% no2 +15.7% tBlock 1.8 win +56.2% | {"rdDoubled":{"n":139,"avgNet":-0.0443,"edge":-0.0219},"rest":{"n":1378,"avgNet":0.0514,"edge":0.031}} | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.18 under 2.5 in the older h
-[2230s] - RQ-RDI-252: REJECTED | older 683 (172d, 3bl) avg -3.4% stress -3.8% edge -3.7% own -16.1% no2 -4.3% tBlock -0.16 win +42.0% | newer 352 (113d, 3bl) avg +29.5% stress +29.1% edge +18.8% own +12.3% no2 +28.0% tBlock 0.66 win +54.8% | {"rdDoubled":{"n":112,"avgNet":-0.0378,"edge":-0.0228},"rest":{"n":923,"avgNet":0.0919,"edge":0.0445}} | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.16 under 2.5 in the older h
-[2261s] info-shock paper: 0 fresh 8-K list reads
-[2292s] backlog paper: 0 companyconcept reads, 96 paper events
-[2324s] earnings timing paper: 0 fresh 8-K list reads, 181 companies
-[2354s] tax surprise paper: 0 companyconcept reads, 132 paper events
-[2386s] R&D increase paper: 0 companyconcept reads, 0 paper events
-[2386s] paper lane: 0 new signals; 320 in all; paper 10-K similarities 11
-RESEARCH LAB 2021-10-12 to 2026-10-30 | bar 4.09 | data complete | tender data complete | backlog data complete | earnings timing data complete | tax surprise data complete | R&D increase data complete | frozen 20/20
+[8s] cache to 2026-10-19; fresh sessions: 2026-10-20, 2026-10-21, 2026-10-22, 2026-10-23, 2026-10-26, 2026-10-27, 2026-10-28, 2026-10-29, 2026-10-30, 2026-11-02
+[9s] splits since 2026-10-19: 110 listed, 0 repaired
+[9s] sessions 1270 (2021-10-12 to 2026-11-02), stocks 8490
+[10s] point-in-time ticker <-> CIK evidence: 23 quarter files, 10424 tickers
+[11s] universe: 4483 companies (liquid at a month start in the window); liquid stock-months mapped 152345/154001
+[11s] 10-K collection: 250/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 500/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 750/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 1000/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 1250/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 1500/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 1750/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 2000/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 2250/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 2500/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 2750/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 3000/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 3250/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 3500/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[11s] 10-K collection: 3750/4483 companies, 0 SEC requests, 0.00 GB, 0 failures
+[14s] 10-K collection: 4000/4483 companies, 29 SEC requests, 0.10 GB, 0 failures
+[14s] 10-K collection: 4250/4483 companies, 29 SEC requests, 0.10 GB, 0 failures
+[18s] data: {"companies":4483,"subsOk":4483,"docsNeeded":22511,"docsDone":22511,"similarities":18500,"liqMonths":154001,"liqMapped":152345,"evidenceFiles":23,"secRequests":48,"secFailures":0,"gb":0.17,"failSample":[],"complete":true,"ratios":{"subs":1,"docs":1,"map":0.9892},"why":null}
+[19s] events (liquid, mapped): non-changers 2853, big changers 1501; extreme filings without a priced ticker 278
+[19s] signals with a complete hold: RQ-LAZY-63 1299/1541, RQ-LAZY-126 1299/1523, RQ-LAZY-CHG63 575/913
+[1955s] tender data: {"idxNeed":1327,"idxRead":1266,"idxFail":61,"filNeed":273,"filRead":273,"filMiss":0,"subjNoCik":0,"subjUnmapped":17,"subjIlliquid":124,"subjPriced":131,"subjOffer":122,"insane":1,"cvr":44,"events":121,"spreadCounts":{"RQ-TENDER-3-15":12,"RQ-TENDER-ALL":82},"complete":true,"ratios":{"idx":0.954,"read":1,"priced":0.9313},"why":null}
+[1955s] 8-K lists cached 4472/4483; to read now 11
+[1960s] info-shock data: {"companies":4483,"subsOk":4483,"eightKs":206426,"liqMonths":154001,"liqMapped":152345,"newsSessions":186164,"noSym":4206,"notLiquid":59631,"noSigma":198,"shocks":6887,"shocksE":5920,"shocksNE":967,"lottery":2668,"complete":true,"ratios":{"subs":1,"map":0.9892},"why":null}
+[1976s] backlog (RPO) data: {"companies":4483,"looked":4483,"withRpo":1020,"rows":19025,"events":9954,"liqMonths":154001,"liqMapped":152345,"noSym":47,"notLiquid":963,"ranked":9954,"top":1604,"bottom":1346,"complete":true,"ratios":{"looked":1,"map":0.9892},"why":null}
+[1977s] earnings timing data: {"companies":4483,"subsOk":4483,"liqMonths":154001,"liqMapped":152345,"announcements":63801,"events":47659,"adv":1966,"del":4819,"noSym":106,"notLiquid":3259,"multi":{"adv":726,"del":152},"complete":true,"ratios":{"subs":1,"map":0.9892},"why":null}
+[2014s] tax surprise data: {"companies":4483,"looked":4483,"withTax":3573,"quarters":120292,"events":41490,"liqMonths":154001,"liqMapped":152345,"noSym":218,"notLiquid":4201,"ranked":41490,"top":5858,"bottom":6015,"q4":299,"complete":true,"ratios":{"looked":1,"map":0.9892},"why":null}
+[2036s] R&D increase data: {"companies":4483,"looked":4483,"withRd":1650,"fallbackTag":51,"quarters":50478,"events":17606,"qualifying":4689,"liqMonths":154001,"liqMapped":152345,"noSym":40,"notLiquid":1980,"signals":2669,"q4":51,"complete":true,"ratios":{"looked":1,"map":0.9892},"why":null}
+[2075s] info-shock paper: 33 fresh 8-K list reads
+[2106s] backlog paper: 0 companyconcept reads, 96 paper events
+[2137s] earnings timing paper: 0 fresh 8-K list reads, 181 companies
+[2169s] tax surprise paper: 0 companyconcept reads, 132 paper events
+[2200s] R&D increase paper: 0 companyconcept reads, 0 paper events
+[2200s] paper lane: 12 new signals; 332 in all; paper 10-K similarities 11
+RESEARCH LAB 2021-10-12 to 2026-11-02 | bar 4.09 | data complete | tender data complete | backlog data complete | earnings timing data complete | tax surprise data complete | R&D increase data complete | frozen 20/20
