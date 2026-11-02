@@ -32,7 +32,7 @@ test('running on time: no alert, start time recorded; running late (GitHub delay
   let o = guardDecide(at('2026-10-29T13:30:00Z'), [{ status: 'in_progress', created_at: '2026-10-29T13:20:00Z', run_started_at: '2026-10-29T13:20:30Z', jobEvidence:'MEASURED', jobStartedAt:'2026-10-29T13:20:30Z' }], {});
   assert.deepEqual(o.alerts, []); assert.equal(o.state.started, 9 * 60 + 20);
   o = guardDecide(at('2026-10-26T15:15:00Z'), [{ status: 'in_progress', created_at: '2026-10-26T15:10:00Z', run_started_at: '2026-10-26T15:10:11Z', jobEvidence:'MEASURED', jobStartedAt:'2026-10-26T15:10:11Z' }], {});
-  assert.match(o.alerts[0], /WATCHER STARTED LATE: .* 11:10 New York.*GitHub started it late/);
+  assert.match(o.alerts[0], /WATCHER STARTED LATE: .* 11:10 New York.*Run creation is not job start; opening coverage remains unverified/);
   o = guardDecide(at('2026-10-26T15:20:00Z'), [{ status: 'in_progress', created_at: '2026-10-26T15:10:00Z', run_started_at: '2026-10-26T15:10:11Z', jobEvidence:'MEASURED', jobStartedAt:'2026-10-26T15:10:11Z' }], o.state); assert.deepEqual(o.alerts, []);
 });
 test('queued but not started by 9:25: one WAITING alert and no extra dispatch (concurrency would only queue it)', () => {

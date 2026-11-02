@@ -1,0 +1,15 @@
+{
+  "unchangedDevelopment": "e0dd68a8ab8943b6f76b2cd5de0ddb83f685adfd",
+  "candidateSameSource": true,
+  "test": "tests/market03-discover-price-day.test.mjs",
+  "pass": 10,
+  "fail": 1,
+  "case": "current price day / complete monthly samples",
+  "expected": 12,
+  "actual": 10,
+  "confirmedOnUnchangedCheckout": true,
+  "cause": "After2026-11-02T21:00Z latest completed day becomesNov2; month10 targetJan1 known closure walks to unknownDec31 and returns CALENDAR_UNKNOWN. Before close latestOct30 targets unknown-yearDec29 and uses existing labelled weekday walk.",
+  "assertionPreserved": true,
+  "includedInProductionWatcherPatch": false,
+  "ownerHandoff": "PR1 comment6588712155"
+}

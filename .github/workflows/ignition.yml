@@ -16,6 +16,7 @@ jobs:
     timeout-minutes: 320
     env:
       NODE_OPTIONS: --max-old-space-size=8192
+      IG_SCHEDULE: ${{ github.event.schedule }}
       IG_SEGMENT: open
       IG_RUN_MIN: 300
     steps:
@@ -104,6 +105,7 @@ jobs:
     timeout-minutes: 180
     env:
       NODE_OPTIONS: --max-old-space-size=8192
+      IG_SCHEDULE: ${{ github.event.schedule }}
       IG_SEGMENT: close
       IG_RESUME: 1
       IG_RUN_MIN: 150

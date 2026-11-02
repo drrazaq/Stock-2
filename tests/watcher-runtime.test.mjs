@@ -93,15 +93,15 @@ test('stale cycles preserve last success, guard reads real persisted telemetry a
 });
 test('real guard persists request intent and refuses to report HTTP 403 as a restart',async()=>{
  const f=await fixture();try{
-  f.state.running=false;const output=await f.guard();const s=f.read('data/watcher-guard.json');
+  f.state.running=false;const output=await f.guard({GUARD_TEST_NOW:'2026-10-29T18:00:00Z'});const s=f.read('data/watcher-guard.json');
   assert.equal(f.state.pendingObserved,true);assert.equal(s.attempts[0].status,'REJECTED');assert.deepEqual(s.dispatched,[]);
   assert.doesNotMatch(output,/started the watcher|started it itself/);assert.equal(s.notifications.length,0);
  }finally{await f.close();}
 });
 test('an accepted dispatch cannot claim causality for an independently running job',async()=>{
  const f=await fixture();try{
-  f.state.running=false;f.state.dispatchStatus=204;await f.guard();assert.equal(f.read('data/watcher-guard.json').dispatched.length,1);
-  f.state.running=true;await f.guard();
+  f.state.running=false;f.state.dispatchStatus=204;await f.guard({GUARD_TEST_NOW:'2026-10-29T18:00:00Z'});assert.equal(f.read('data/watcher-guard.json').dispatched.length,1);
+  f.state.running=true;await f.guard({GUARD_TEST_NOW:'2026-10-29T18:02:00Z'});
   const record=JSON.parse(fs.readFileSync(path.join(f.dir,'data/watcher-starts.jsonl'),'utf8').trim().split('\n').at(-1));
   assert.equal(record.guardRequestAccepted,true);assert.equal(record.byGuard,null);assert.equal(record.restartCausality,'UNVERIFIED');
  }finally{await f.close();}

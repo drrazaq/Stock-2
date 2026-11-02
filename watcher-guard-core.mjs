@@ -20,24 +20,33 @@ export const marketDay = (n, holidays = HOLIDAYS) => !marketSession(n.d).closed 
 // Only the actual `watch` job establishes job start; it still does not prove
 // fresh quotes, minute-loop activity or complete market-session coverage.
 export function watcherJobEvidence(run, jobs, nowMs = Date.now()) {
-  const unknown = {...run, jobEvidence:'UNKNOWN', jobStartedAt:null, jobCompletedAt:null};
-  if (!Array.isArray(jobs)) return unknown;
-  const matching = jobs.filter(j=>['watch','close'].includes(j?.name));
-  if (!matching.length || new Set(matching.map(j=>j.name)).size!==matching.length) return unknown;
-  const job=matching.find(j=>j.status==='in_progress') || matching.find(j=>['queued','waiting','pending'].includes(j.status)) || matching.at(-1);
-  const started=Date.parse(job.started_at), completed=Date.parse(job.completed_at);
-  const active=['in_progress','completed'].includes(job.status);
-  const measured=active && Number.isFinite(started) && started<=nowMs;
-  return {...unknown, jobEvidence:measured?'MEASURED':'UNKNOWN', jobStatus:job.status,
-    jobStartedAt:measured?job.started_at:null,
-    jobCompletedAt:measured&&Number.isFinite(completed)&&completed>=started&&completed<=nowMs?job.completed_at:null};
+  const unknown={...run,jobEvidence:'UNKNOWN',jobStartedAt:null,jobCompletedAt:null};
+  if(!Array.isArray(jobs))return unknown;
+  const all=jobs.filter(j=>['watch','close'].includes(j?.name));
+  if(!all.length||new Set(all.map(j=>j.name)).size!==all.length)return unknown;
+  const isNoop=j=>j.steps?.some(x=>x.name==='Check watcher admission'&&x.conclusion==='success')&&j.steps?.some(x=>x.name==='Observe configured session'&&x.conclusion==='skipped');
+  const matching=all.filter(j=>!isNoop(j));
+  if(!matching.length)return {...unknown,jobEvidence:'NON_OBSERVING',jobStatus:'completed',observationState:'SKIPPED_ADMISSION'};
+  const job=matching.find(j=>j.status==='in_progress')||matching.find(j=>['queued','waiting','pending'].includes(j.status))||matching.at(-1);
+  const steps=job.steps,admission=steps?.find(x=>x.name==='Check watcher admission'),observe=steps?.find(x=>x.name==='Observe configured session'||x.name==='Run set -o pipefail');
+  const noOp=admission?.conclusion==='success'&&observe?.conclusion==='skipped';
+  if(noOp)return {...unknown,jobEvidence:'NON_OBSERVING',jobStatus:job.status,observationState:'SKIPPED_ADMISSION'};
+  const valid=t=>Number.isFinite(Date.parse(t))&&Date.parse(t)<=nowMs;
+  const starts=matching.filter(j=>['in_progress','completed'].includes(j.status)&&valid(j.started_at)).map(j=>j.started_at).sort((a,b)=>Date.parse(a)-Date.parse(b));
+  const measured=starts.length>0;
+  const completed=measured&&valid(job.completed_at)&&Date.parse(job.completed_at)>=Date.parse(job.started_at);
+  return {...unknown,jobEvidence:measured?'MEASURED':'UNKNOWN',jobStatus:job.status,
+    jobStartedAt:measured?starts[0]:null,jobCompletedAt:completed?job.completed_at:null,
+    observationStartedAt:valid(observe?.started_at)&&observe?.conclusion!=='skipped'?observe.started_at:null,
+    observationCompletedAt:valid(observe?.completed_at)&&observe?.conclusion!=='skipped'?observe.completed_at:null,
+    observationState:observe?.status||'UNKNOWN'};
 }
 
 // runs: GitHub workflow runs of ignition.yml [{ id, status, conclusion, created_at, run_started_at, updated_at }]
 // state: { d, started, dispatched: [min...], alerted: {kind: true} }   returns { state, dispatch, alerts: [text] }
-export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) {
+export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS, config = {}) {
   const n = nyParts(nowMs), alerts = []; let dispatch = false;
-  const session=marketSession(n.d),windowEnd=session.closed?0:session.close+5,startUntil=session.closed?0:session.close-30;
+  const session=marketSession(n.d),configuredEnd=Math.min(config.endMinute??900,session.close||900),windowEnd=session.closed?0:configuredEnd+5,startUntil=session.closed?0:Math.min(840,configuredEnd-30);
   const state = state0 && state0.d === n.d ? { ...state0, dispatched: [...(state0.dispatched || [])], alerted: { ...(state0.alerted || {}) } } : { d: n.d, started: null, dispatched: [], alerted: {} };
   // Old `dispatched` entries were recorded before HTTP acknowledgment. Retain
   // them as unknown attempts for rate limiting, never as accepted requests.
@@ -46,36 +55,28 @@ export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) 
   state.version=2;
   if (state.startedSource !== 'github_job') state.started = null;
   if (!marketDay(n, holidays) || n.min < WINDOW.from || n.min > windowEnd) return { state, dispatch, alerts, why: 'outside the check window' };
-  const today = runs.filter(r => Number.isFinite(Date.parse(r?.created_at)) && nyParts(Date.parse(r.created_at)).d === n.d);
-  const waiting = r => ['queued','waiting','requested','pending'].includes(r.status) ||
-    (r.status==='in_progress' && ['queued','waiting','pending'].includes(r.jobStatus));
-  const running = today.filter(r => r.status === 'in_progress' && !waiting(r)), queued = today.filter(waiting);
-  // a run that finished within 10 minutes was an early exit (outside its window), not a watch
-  const watchedAlready = today.some(r => r.status === 'completed' && r.jobEvidence==='MEASURED' && Date.parse(r.jobCompletedAt) - Date.parse(r.jobStartedAt) > 10 * 60000);
-  if (running.length) {
-    const starts=running.filter(r=>r.jobEvidence==='MEASURED').map(r=>Date.parse(r.jobStartedAt)).filter(t=>Number.isFinite(t)&&t<=nowMs);
-    if(!starts.length) {
-      if(n.min>=WINDOW.wantBy && !state.alerted.unverified) {state.alerted.unverified=true;alerts.push('WATCHER JOB UNVERIFIED: GitHub reports an active workflow, but the watch job start is unavailable. Queue creation is not a watcher start; market coverage is unknown.');}
-      return {state,dispatch,alerts,why:'workflow active; job start unverified'};
-    }
-    const sm = nyParts(Math.min(...starts)).min;
-    if (state.started === null) state.started = sm;
-    state.startedSource='github_job';
-    if (sm > WINDOW.wantBy + 10 && !state.alerted.late) { state.alerted.late = true; alerts.push('WATCHER STARTED LATE: the watch job started at ' + fmt(sm) + ' New York (it should run by 9:25). This run cannot establish opening coverage; job activity is not proof of fresh market data' + (state.dispatched.length ? '; the guard requested a start.' : '; GitHub started it late.')); }
-    return { state, dispatch, alerts, why: 'watch job running since ' + fmt(sm) + '; market coverage unverified' };
+  const today=runs.filter(r=>[r?.created_at,r?.jobStartedAt].some(t=>Number.isFinite(Date.parse(t))&&nyParts(Date.parse(t)).d===n.d));
+  const relevant=today.filter(r=>r.jobEvidence!=='NON_OBSERVING');
+  const waiting=r=>['queued','waiting','requested','pending'].includes(r.status)||(['queued','waiting','pending'].includes(r.jobStatus));
+  const queued=relevant.filter(waiting),running=relevant.filter(r=>r.status==='in_progress'&&!waiting(r));
+  const measured=relevant.filter(r=>r.jobEvidence==='MEASURED'&&Number.isFinite(Date.parse(r.jobStartedAt))&&Date.parse(r.jobStartedAt)<=nowMs);
+  const earliest=measured.slice().sort((a,b)=>Date.parse(a.jobStartedAt)-Date.parse(b.jobStartedAt))[0];
+  if(earliest){const sm=nyParts(Date.parse(earliest.jobStartedAt)).min;if(state.started===null||sm<state.started){state.started=sm;state.startedRunId=earliest.id??null;}state.startedSource='github_job';}
+  const completed=measured.filter(r=>r.status==='completed'&&Number.isFinite(Date.parse(r.jobCompletedAt)));
+  const watched=completed.filter(r=>Date.parse(r.jobCompletedAt)-Date.parse(r.jobStartedAt)>10*60000);
+  const early=watched.filter(r=>nyParts(Date.parse(r.observationCompletedAt||r.jobCompletedAt)).min<configuredEnd);
+  // Inspect ended runs before the active/queued branches: a later duplicate must not hide the first stop.
+  if(early.length&&!state.alerted.stopped){state.alerted.stopped=true;state.earlyStops=early.map(r=>({runId:r.id??null,endedAt:r.observationCompletedAt||r.jobCompletedAt}));alerts.push('WATCHER STOPPED EARLY: a verified earlier watch job ended before the configured '+fmt(configuredEnd)+' New York boundary. A later active/queued run does not erase this earlier stop. Observation gaps require retained heartbeat evidence; job duration alone does not establish coverage. No automatic restart; preserve both run archives.');}
+  if(earliest&&config.historyComplete!==false&&!relevant.some(r=>!waiting(r)&&r.jobEvidence!=='MEASURED')&&state.started>WINDOW.wantBy+10&&!state.alerted.late){state.alerted.late=true;alerts.push('WATCHER STARTED LATE: the earliest verified watch job in the inspected day records started at '+fmt(state.started)+' New York (it should run by 9:25). Run creation is not job start; opening coverage remains unverified.');}
+  if(running.length){
+    if(!running.some(r=>r.jobEvidence==='MEASURED')){if(n.min>=WINDOW.wantBy&&!state.alerted.unverified){state.alerted.unverified=true;alerts.push('WATCHER JOB UNVERIFIED: active workflow without a verified watch-job start; coverage unknown.');}return {state,dispatch,alerts,why:'workflow active; job start unverified'};}
+    state.activeJobs=running.filter(r=>r.jobEvidence==='MEASURED').map(r=>({runId:r.id??null,startedAt:r.jobStartedAt}));state.activeRunIds=state.activeJobs.map(r=>r.runId);
+    return {state,dispatch,alerts,why:'active watch job(s) '+state.activeJobs.map(r=>String(r.runId??'unidentified')+' since '+fmt(nyParts(Date.parse(r.startedAt)).min)).join(', ')+'; earliest verified day job '+String(state.startedRunId??'unidentified')+' at '+fmt(state.started)+'; market coverage unverified'};
   }
-  const closedOnTime=today.some(r=>r.status==='completed'&&r.jobCompletedAt&&nyParts(Date.parse(r.jobCompletedAt)).min>=session.close);
-  if(closedOnTime&&n.min>=session.close)return {state,dispatch,alerts,why:'job ended at scheduled close; inspect heartbeat coverage'};
-  if (watchedAlready && !queued.length) { if (!state.alerted.stopped) { state.alerted.stopped = true; alerts.push('WATCHER STOPPED EARLY: today\'s watch job ended before the scheduled close. Job duration alone does not establish market coverage. No automatic restart; preserve session evidence for recovery review.'); }
-    return { state, dispatch, alerts, why: 'watched today, then stopped' }; }
-  if (!queued.length && today.some(r=>r.status==='completed' && (r.jobEvidence!=='MEASURED' || !r.jobCompletedAt))) {
-    if(!state.alerted.unverified) {state.alerted.unverified=true;alerts.push('WATCHER JOB UNVERIFIED: a workflow completed without valid watch-job timing. Coverage is unknown; no duplicate start requested.');}
-    return {state,dispatch,alerts,why:'completed workflow; job duration unverified'};
-  }
-  if (queued.length) {
-    if (n.min >= WINDOW.wantBy && !state.alerted.queued) { state.alerted.queued = true; alerts.push('WATCHER WAITING: GitHub has the live watcher queued but has not started it (' + fmt(n.min) + ' New York). Nothing is watched until it starts.'); }
-    return { state, dispatch, alerts, why: 'queued' };
-  }
+  if(queued.length){if(n.min>=WINDOW.wantBy&&!state.alerted.queued){state.alerted.queued=true;alerts.push('WATCHER WAITING: GitHub has another watcher queued at '+fmt(n.min)+' New York. A queue is not observation evidence.');}return {state,dispatch,alerts,why:'queued; prior session evidence retained'};}
+  if(config.historyComplete===false){if(!state.alerted.historyUnknown){state.alerted.historyUnknown=true;alerts.push('WATCHER HISTORY UNKNOWN: bounded GitHub history/job lookup incomplete; no start inferred or duplicate requested.');}return {state,dispatch,alerts,why:'history incomplete'};}
+  if(watched.length)return {state,dispatch,alerts,why:early.length?'watched today, then stopped':'job ended at configured boundary; inspect heartbeat coverage'};
+  if(relevant.some(r=>r.status==='completed'&&(r.jobEvidence!=='MEASURED'||!r.jobCompletedAt))){if(!state.alerted.unverified){state.alerted.unverified=true;alerts.push('WATCHER JOB UNVERIFIED: completed workflow without valid watch-job timing; coverage unknown.');}return {state,dispatch,alerts,why:'completed workflow; job duration unverified'};}
   const last = state.attempts.length ? state.attempts[state.attempts.length - 1].min : null;
   if (n.min > startUntil) return { state, dispatch, alerts, why: 'not running, too late to start' };
   if (state.attempts.length < 3 && (last === null || n.min - last >= 15)) {

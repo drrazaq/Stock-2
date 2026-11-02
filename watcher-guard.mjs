@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import { guardDecide, nyParts, fmt, watcherJobEvidence } from './watcher-guard-core.mjs';
 import { dispatchGuard } from './guard-dispatch.mjs';
 import { sendTelegramMessage } from './telegram-delivery.mjs';
+import {readGuardHistory} from './watcher-guard-history.mjs';
 import {marketSession} from './market-session.mjs';
 import {heartbeatHealth} from './watcher-heartbeat.mjs';
 const env=process.env,local=u=>u&&/^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u)?u:null;
@@ -16,22 +17,10 @@ if (!REPO || !TOKEN) { console.log('watcher guard: no GITHUB_TOKEN / GITHUB_REPO
 if(env.GITHUB_ACTIONS&&env.GITHUB_REF_NAME!=='main'&&!local(env.GH_BASE)){console.log('branch guard: live I/O disabled');process.exit(0);}
 const n = nyParts(now()); const session=marketSession(n.d); if (session.closed || n.min < 545 || n.min > session.close+5) process.exit(0);   // nothing to do outside 9:05-15:00 New York: no GitHub call
 const H = { headers: { Authorization: 'Bearer ' + TOKEN, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } };
-const r = await fetch(API + '/runs?per_page=10', {...H,signal:AbortSignal.timeout(10000)}).catch(e => ({ ok: false, status: e.message }));
-if (!r.ok) { console.log('watcher guard: run list failed (' + r.status + ')'); process.exit(0); }
-const rawRuns = (await r.json()).workflow_runs || [], runs = [];
-for (const run of rawRuns) {
-  // Read the current attempt's jobs. Never substitute queue/run creation time
-  // when the jobs endpoint fails or the watch job has not actually started.
-  let jobs=null;
-  if (/^\d+$/.test(String(run.id)) && Number.isFinite(Date.parse(run.created_at)) && nyParts(Date.parse(run.created_at)).d===n.d) {
-    try {
-      const jr=await fetch(API_BASE+'/repos/'+REPO+'/actions/runs/'+run.id+'/jobs?filter=latest&per_page=100',{...H,signal:AbortSignal.timeout(10000)});
-      if(jr.ok) jobs=(await jr.json()).jobs;
-    }catch{}
-  }
-  runs.push(watcherJobEvidence(run,jobs,now()));
-}
-const S0 = readJson('data/watcher-guard.json', {}), out = guardDecide(now(), runs, S0);
+const history=await readGuardHistory({base:API_BASE+'/repos/'+REPO,headers:H.headers,day:n.d,nowMs:now()});
+const rawRuns=history.rawRuns,runs=history.runs;
+const S0=readJson('data/watcher-guard.json',{}),out=guardDecide(now(),runs,S0,undefined,{historyComplete:history.complete});
+out.state.history={complete:history.complete,errorCode:history.errorCode,reads:history.reads};
 const beats=[];
 for(const run of rawRuns.filter(r=>r.status==='in_progress'&&/^\d+$/.test(String(r.id)))) {
  for(const segment of ['open','close','legacy']) {

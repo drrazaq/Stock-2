@@ -1,3 +1,4 @@
+import {watcherAdmission} from './watcher-schedule.mjs';
 import {alertDeliveryCounts} from './radar-v3-core.mjs';
 import {publishWatcherReservation} from './watcher-message-publish.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
@@ -59,7 +60,12 @@ let loops = 0, PROC_START = null;   // test hook: IG_FAKE_MIN starts a fake cloc
 const clock = () => env.IG_FAKE_MIN ? +env.IG_FAKE_MIN + (env.IG_FAKE_STEP ? loops * +env.IG_FAKE_STEP : Math.floor((Date.now() - START) / 60000)) : nyMin();
 PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
 const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
-const SESSION=marketSession(day),SEGMENT_END=Math.min(SESSION.close||960,env.IG_SEGMENT==='open'?840:960);
+const SESSION=marketSession(day),WINDOW_CAP=env.IG_WINDOW_END===undefined?960:Number(env.IG_WINDOW_END);
+if(!Number.isInteger(WINDOW_CAP)||WINDOW_CAP<570||WINDOW_CAP>960)throw Error('invalid watcher end bound');
+const SEGMENT_END=Math.min(SESSION.close||960,env.IG_SEGMENT==='open'?840:960,WINDOW_CAP);
+const ADMISSION=watcherAdmission({eventName:FAST&&env.IG_FAKE_MIN&&env.GITHUB_EVENT_NAME!=='schedule'?undefined:env.GITHUB_EVENT_NAME,schedule:env.IG_SCHEDULE,day,minute:clock(),endMinute:SEGMENT_END,earliestMinute:FAST&&env.IG_FAKE_MIN?0:550});
+console.log('watcher admission: '+ADMISSION.reason+' '+JSON.stringify(ADMISSION));
+if(!ADMISSION.run)process.exit(0);
 if (SESSION.closed) { console.log('ignition watcher: closed or unsupported calendar day'); process.exit(0); }
 if (env.GITHUB_ACTIONS && env.GITHUB_REF_NAME!=='main' && !FAST) {console.log('branch watcher: live I/O disabled; use fixture integration tests');process.exit(0);}
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late

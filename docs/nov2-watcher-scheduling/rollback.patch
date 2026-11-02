@@ -1,0 +1,583 @@
+--- a/.github/workflows/ignition.yml
++++ b/.github/workflows/ignition.yml
+@@ -1,11 +1,12 @@
+ name: Ignition watcher
+ on:
+   schedule:
+-    # Season identity is checked explicitly; the opposite cron never observes.
+-    # Both scheduled and existing guard starts target09:10; early dispatches are refused.
+-    # The process observation budget begins after the09:25 wait. No new recovery dispatch.
+-    - cron: '10 13 * * 1-5'
+-    - cron: '10 14 * * 1-5'
++    # 8:45 New York in summer. GitHub starts these 35-45 minutes late (first watched minute was 9:38-9:49 every day 16-27 Oct, 11:10 on
++    # 26 Oct), so the old 9:05 start missed the open and the 9:25 pre-market record. If early, the script waits for 9:25 (it accepts
++    # starts from 8:40). The second start covers winter time (from 2 Nov); in summer it queues behind the first (concurrency) and exits.
++    # Trade-off: on a day GitHub starts on time (8:45), the 345-minute run limit ends the watch at about 14:30 instead of 15:00.
++    - cron: '45 12 * * 1-5'
++    - cron: '45 13 * * 1-5'
+   workflow_dispatch:
+ permissions:
+   contents: write
+@@ -13,10 +14,9 @@
+ jobs:
+   watch:
+     runs-on: ubuntu-latest
+-    timeout-minutes: 360
++    timeout-minutes: 355
+     env:
+       NODE_OPTIONS: --max-old-space-size=8192
+-      IG_SCHEDULE: ${{ github.event.schedule }}
+     steps:
+       - uses: actions/checkout@v4
+         with:
+@@ -24,19 +24,13 @@
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+-      - name: Check watcher admission
+-        id: admission
+-        run: node watcher-schedule.mjs
+-      - if: steps.admission.outputs.run == 'true'
+-        uses: actions/cache/restore@v4
++      - uses: actions/cache/restore@v4
+         with:
+           path: fm-cache
+           key: fm-cache-none
+           restore-keys: fm-cache-
+       # Checks the whole market every minute for stocks starting to run. Alerts only rules that passed the minute test.
+-      - name: Observe configured session
+-        if: steps.admission.outputs.run == 'true'
+-        shell: bash
++      - shell: bash
+         run: |
+           set -o pipefail
+           node ignition-watch.mjs 2>&1 | tee run.log
+@@ -49,10 +43,10 @@
+           TG_CHAT: ${{ secrets.TG_CHAT }}
+           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+       # Durable per-stock ledger of today's 15%+ movers (the missed-runner autopsy reads it; no data calls).
+-      - if: always() && steps.admission.outputs.run == 'true'
++      - if: always()
+         continue-on-error: true
+         run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
+-      - if: always() && steps.admission.outputs.run == 'true'
++      - if: always()
+         run: |
+           set -euo pipefail
+           git config user.name "scanner"
+@@ -61,7 +55,7 @@
+           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
+           ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+           [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }
+-      - if: failure() && steps.admission.outputs.run == 'true'
++      - if: failure()
+         env:
+           TG_TOKEN: ${{ secrets.TG_TOKEN }}
+           TG_CHAT: ${{ secrets.TG_CHAT }}
+@@ -69,7 +63,7 @@
+           WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
+           curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
+ 
+-      - if: always() && steps.admission.outputs.run == 'true'
++      - if: always()
+         uses: actions/upload-artifact@v4
+         with:
+           name: watcher-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+--- a/ignition-watch.mjs
++++ b/ignition-watch.mjs
+@@ -1,4 +1,3 @@
+-import {watcherAdmission} from './watcher-schedule.mjs';
+ import {publishWatcherReservation} from './watcher-message-publish.mjs';
+ import {createWatcherMessages} from './watcher-messages.mjs';
+ import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
+@@ -48,15 +47,11 @@
+ PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
+ const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
+ const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+-const ADMISSION=watcherAdmission({eventName:env.GITHUB_EVENT_NAME,schedule:env.IG_SCHEDULE,day,minute:clock(),earliestMinute:FAST&&env.IG_FAKE_MIN?0:550});
+-console.log('watcher admission: '+ADMISSION.reason+' '+JSON.stringify(ADMISSION));
+-if(!ADMISSION.run)process.exit(0);
+ const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
+ if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExclusive:901})){MESSAGE_STATE.maintain();const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(dir+'/'+INCIDENT_RUN_ID+'-delivery-recovery.json',JSON.stringify({day,runId:INCIDENT_RUN_ID,messageDelivery:MESSAGE_STATE.report()}),{flag:'wx'});console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
+ if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
+ if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
+ if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
+-const RUN_START = Date.now(); // Observation budget excludes the bounded pre-open wait.
+ // ---- each stock's normal daily volume (average over the days it traded, 15+ of the last 20 needed), float, time listed
+ const avgVol = new Map(), firstSeen = new Map(), avgRange5 = new Map(); let sessions = 0;   // avgRange5: average high-low range of the last 5 sessions (the 'ADR' idea, logged only)
+ try { const S = JSON.parse(zlib.gunzipSync(fs.readFileSync(CDIR + '/fm.json.gz')).toString()), D = Object.keys(S.days).sort(); sessions = D.length;
+@@ -286,7 +281,7 @@
+ const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
+ process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
+ saveObservationProgress();
+-while (Date.now() - RUN_START < MAXMS) {
++while (Date.now() - START < MAXMS) {
+   MESSAGE_STATE.maintain();
+   const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
+   const rows = await snap(); loops++; const tStart = triggers.length;
+--- a/watcher-guard-core.mjs
++++ b/watcher-guard-core.mjs
+@@ -6,82 +6,42 @@
+ // New York time comes from Intl (America/New_York), so daylight saving is automatic (summer UTC-4, winter UTC-5 from 1 Nov 2026).
+ // Market holidays: the NYSE full-day closures below (update every December); half days still run.
+ export const HOLIDAYS = ['2026-11-26', '2026-12-25', '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31', '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24'];
+-import {marketSession} from './market-session.mjs';
+-export const WINDOW = { from: 550, to: 955, startUntil: 930, wantBy: 565 };
++export const WINDOW = { from: 550, to: 895, startUntil: 840, wantBy: 565 };   // check 9:10-14:55 New York, start it until 14:00; it should run by 9:25
+ export const fmt = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+ export function nyParts(ms) {
+   const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' })
+     .formatToParts(new Date(ms)).forEach(x => p[x.type] = x.value);
+   return { d: p.year + '-' + p.month + '-' + p.day, min: +p.hour * 60 + +p.minute, wd: p.weekday };
+ }
+-export const marketDay = (n, holidays = HOLIDAYS) => !marketSession(n.d).closed && !holidays.includes(n.d);
+-
+-// Run-level run_started_at can equal queue creation (October 28 incident).
+-// Only the actual `watch` job establishes job start; it still does not prove
+-// fresh quotes, minute-loop activity or complete market-session coverage.
+-export function watcherJobEvidence(run, jobs, nowMs = Date.now()) {
+-  const unknown={...run,jobEvidence:'UNKNOWN',jobStartedAt:null,jobCompletedAt:null};
+-  if(!Array.isArray(jobs))return unknown;
+-  const all=jobs.filter(j=>['watch','close'].includes(j?.name));
+-  if(!all.length||new Set(all.map(j=>j.name)).size!==all.length)return unknown;
+-  const isNoop=j=>j.steps?.some(x=>x.name==='Check watcher admission'&&x.conclusion==='success')&&j.steps?.some(x=>x.name==='Observe configured session'&&x.conclusion==='skipped');
+-  const matching=all.filter(j=>!isNoop(j));
+-  if(!matching.length)return {...unknown,jobEvidence:'NON_OBSERVING',jobStatus:'completed',observationState:'SKIPPED_ADMISSION'};
+-  const job=matching.find(j=>j.status==='in_progress')||matching.find(j=>['queued','waiting','pending'].includes(j.status))||matching.at(-1);
+-  const steps=job.steps,admission=steps?.find(x=>x.name==='Check watcher admission'),observe=steps?.find(x=>x.name==='Observe configured session'||x.name==='Run set -o pipefail');
+-  const noOp=admission?.conclusion==='success'&&observe?.conclusion==='skipped';
+-  if(noOp)return {...unknown,jobEvidence:'NON_OBSERVING',jobStatus:job.status,observationState:'SKIPPED_ADMISSION'};
+-  const valid=t=>Number.isFinite(Date.parse(t))&&Date.parse(t)<=nowMs;
+-  const starts=matching.filter(j=>['in_progress','completed'].includes(j.status)&&valid(j.started_at)).map(j=>j.started_at).sort((a,b)=>Date.parse(a)-Date.parse(b));
+-  const measured=starts.length>0;
+-  const completed=measured&&valid(job.completed_at)&&Date.parse(job.completed_at)>=Date.parse(job.started_at);
+-  return {...unknown,jobEvidence:measured?'MEASURED':'UNKNOWN',jobStatus:job.status,
+-    jobStartedAt:measured?starts[0]:null,jobCompletedAt:completed?job.completed_at:null,
+-    observationStartedAt:valid(observe?.started_at)&&observe?.conclusion!=='skipped'?observe.started_at:null,
+-    observationCompletedAt:valid(observe?.completed_at)&&observe?.conclusion!=='skipped'?observe.completed_at:null,
+-    observationState:observe?.status||'UNKNOWN'};
+-}
++export const marketDay = (n, holidays = HOLIDAYS) => !['Sat', 'Sun'].includes(n.wd) && !holidays.includes(n.d);
+ 
+ // runs: GitHub workflow runs of ignition.yml [{ id, status, conclusion, created_at, run_started_at, updated_at }]
+ // state: { d, started, dispatched: [min...], alerted: {kind: true} }   returns { state, dispatch, alerts: [text] }
+-export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS, config = {}) {
++export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) {
+   const n = nyParts(nowMs), alerts = []; let dispatch = false;
+-  const session=marketSession(n.d),configuredEnd=Math.min(config.endMinute??900,session.close||900),windowEnd=session.closed?0:configuredEnd+5,startUntil=session.closed?0:Math.min(840,configuredEnd-30);
+   const state = state0 && state0.d === n.d ? { ...state0, dispatched: [...(state0.dispatched || [])], alerted: { ...(state0.alerted || {}) } } : { d: n.d, started: null, dispatched: [], alerted: {} };
+-  // Old `dispatched` entries were recorded before HTTP acknowledgment. Retain
+-  // them as unknown attempts for rate limiting, never as accepted requests.
+-  state.attempts = state.version===2 ? (state.attempts||[]).map(x=>({...x})) : state.dispatched.map(min=>({min,status:'UNCONFIRMED_LEGACY'}));
+-  if(state.version!==2) state.dispatched=[];
+-  state.version=2;
+-  if (state.startedSource !== 'github_job') state.started = null;
+-  if (!marketDay(n, holidays) || n.min < WINDOW.from || n.min > windowEnd) return { state, dispatch, alerts, why: 'outside the check window' };
+-  const today=runs.filter(r=>[r?.created_at,r?.jobStartedAt].some(t=>Number.isFinite(Date.parse(t))&&nyParts(Date.parse(t)).d===n.d));
+-  const relevant=today.filter(r=>r.jobEvidence!=='NON_OBSERVING');
+-  const waiting=r=>['queued','waiting','requested','pending'].includes(r.status)||(['queued','waiting','pending'].includes(r.jobStatus));
+-  const queued=relevant.filter(waiting),running=relevant.filter(r=>r.status==='in_progress'&&!waiting(r));
+-  const measured=relevant.filter(r=>r.jobEvidence==='MEASURED'&&Number.isFinite(Date.parse(r.jobStartedAt))&&Date.parse(r.jobStartedAt)<=nowMs);
+-  const earliest=measured.slice().sort((a,b)=>Date.parse(a.jobStartedAt)-Date.parse(b.jobStartedAt))[0];
+-  if(earliest){const sm=nyParts(Date.parse(earliest.jobStartedAt)).min;if(state.started===null||sm<state.started){state.started=sm;state.startedRunId=earliest.id??null;}state.startedSource='github_job';}
+-  const completed=measured.filter(r=>r.status==='completed'&&Number.isFinite(Date.parse(r.jobCompletedAt)));
+-  const watched=completed.filter(r=>Date.parse(r.jobCompletedAt)-Date.parse(r.jobStartedAt)>10*60000);
+-  const early=watched.filter(r=>nyParts(Date.parse(r.observationCompletedAt||r.jobCompletedAt)).min<configuredEnd);
+-  // Inspect ended runs before the active/queued branches: a later duplicate must not hide the first stop.
+-  if(early.length&&!state.alerted.stopped){state.alerted.stopped=true;state.earlyStops=early.map(r=>({runId:r.id??null,endedAt:r.observationCompletedAt||r.jobCompletedAt}));alerts.push('WATCHER STOPPED EARLY: a verified earlier watch job ended before the configured '+fmt(configuredEnd)+' New York boundary. A later active/queued run does not erase this earlier stop. Observation gaps require retained heartbeat evidence; job duration alone does not establish coverage. No automatic restart; preserve both run archives.');}
+-  if(earliest&&config.historyComplete!==false&&!relevant.some(r=>!waiting(r)&&r.jobEvidence!=='MEASURED')&&state.started>WINDOW.wantBy+10&&!state.alerted.late){state.alerted.late=true;alerts.push('WATCHER STARTED LATE: the earliest verified watch job in the inspected day records started at '+fmt(state.started)+' New York (it should run by 9:25). Run creation is not job start; opening coverage remains unverified.');}
+-  if(running.length){
+-    if(!running.some(r=>r.jobEvidence==='MEASURED')){if(n.min>=WINDOW.wantBy&&!state.alerted.unverified){state.alerted.unverified=true;alerts.push('WATCHER JOB UNVERIFIED: active workflow without a verified watch-job start; coverage unknown.');}return {state,dispatch,alerts,why:'workflow active; job start unverified'};}
+-    state.activeJobs=running.filter(r=>r.jobEvidence==='MEASURED').map(r=>({runId:r.id??null,startedAt:r.jobStartedAt}));state.activeRunIds=state.activeJobs.map(r=>r.runId);
+-    return {state,dispatch,alerts,why:'active watch job(s) '+state.activeJobs.map(r=>String(r.runId??'unidentified')+' since '+fmt(nyParts(Date.parse(r.startedAt)).min)).join(', ')+'; earliest verified day job '+String(state.startedRunId??'unidentified')+' at '+fmt(state.started)+'; market coverage unverified'};
++  if (!marketDay(n, holidays) || n.min < WINDOW.from || n.min > WINDOW.to) return { state, dispatch, alerts, why: 'outside the check window' };
++  const today = runs.filter(r => nyParts(Date.parse(r.created_at)).d === n.d);
++  const running = today.filter(r => r.status === 'in_progress'), queued = today.filter(r => ['queued', 'waiting', 'requested', 'pending'].includes(r.status));
++  // a run that finished within 10 minutes was an early exit (outside its window), not a watch
++  const watchedAlready = today.some(r => r.status === 'completed' && Date.parse(r.updated_at) - Date.parse(r.run_started_at || r.created_at) > 10 * 60000);
++  if (running.length) {
++    const st = Math.min(...running.map(r => Date.parse(r.run_started_at || r.created_at))), sm = nyParts(st).min;
++    if (state.started === null) state.started = sm;
++    if (sm > WINDOW.wantBy + 10 && !state.alerted.late) { state.alerted.late = true; alerts.push('WATCHER STARTED LATE: the live watcher started at ' + fmt(sm) + ' New York (it should run by 9:25). The open was not watched' + (state.dispatched.length ? '; it was started by the guard.' : '; GitHub started it late.')); }
++    return { state, dispatch, alerts, why: 'running since ' + fmt(sm) };
+   }
+-  if(queued.length){if(n.min>=WINDOW.wantBy&&!state.alerted.queued){state.alerted.queued=true;alerts.push('WATCHER WAITING: GitHub has another watcher queued at '+fmt(n.min)+' New York. A queue is not observation evidence.');}return {state,dispatch,alerts,why:'queued; prior session evidence retained'};}
+-  if(config.historyComplete===false){if(!state.alerted.historyUnknown){state.alerted.historyUnknown=true;alerts.push('WATCHER HISTORY UNKNOWN: bounded GitHub history/job lookup incomplete; no start inferred or duplicate requested.');}return {state,dispatch,alerts,why:'history incomplete'};}
+-  if(watched.length)return {state,dispatch,alerts,why:early.length?'watched today, then stopped':'job ended at configured boundary; inspect heartbeat coverage'};
+-  if(relevant.some(r=>r.status==='completed'&&(r.jobEvidence!=='MEASURED'||!r.jobCompletedAt))){if(!state.alerted.unverified){state.alerted.unverified=true;alerts.push('WATCHER JOB UNVERIFIED: completed workflow without valid watch-job timing; coverage unknown.');}return {state,dispatch,alerts,why:'completed workflow; job duration unverified'};}
+-  const last = state.attempts.length ? state.attempts[state.attempts.length - 1].min : null;
+-  if (n.min > startUntil) return { state, dispatch, alerts, why: 'not running, too late to start' };
+-  if (state.attempts.length < 3 && (last === null || n.min - last >= 15)) {
+-    dispatch = true; state.attempts.push({min:n.min,status:'PENDING'});
+-    alerts.push('WATCHER NOT STARTED by ' + fmt(n.min) + ' New York: requesting a start (attempt ' + state.attempts.length + ' of 3); execution is not confirmed.');
+-  } else if (state.attempts.length >= 3 && !state.alerted.gaveUp) { state.alerted.gaveUp = true; alerts.push('WATCHER DOWN: 3 start attempts without confirmed execution (last ' + fmt(last) + ' New York). No live watch confirmed. Send this to Claude.'); }
++  if (watchedAlready) { if (!state.alerted.stopped) { state.alerted.stopped = true; alerts.push('WATCHER STOPPED EARLY: today\'s live watcher ended before 14:55 New York (crash or time limit). Not restarted automatically (a second run would overwrite the day\'s record). Send this to Claude.'); }
++    return { state, dispatch, alerts, why: 'watched today, then stopped' }; }
++  if (queued.length) {
++    if (n.min >= WINDOW.wantBy && !state.alerted.queued) { state.alerted.queued = true; alerts.push('WATCHER WAITING: GitHub has the live watcher queued but has not started it (' + fmt(n.min) + ' New York). Nothing is watched until it starts.'); }
++    return { state, dispatch, alerts, why: 'queued' };
++  }
++  const last = state.dispatched.length ? state.dispatched[state.dispatched.length - 1] : null;
++  if (n.min > WINDOW.startUntil) return { state, dispatch, alerts, why: 'not running, too late to start' };
++  if (state.dispatched.length < 3 && (last === null || n.min - last >= 15)) {
++    dispatch = true; state.dispatched.push(n.min);
++    alerts.push('WATCHER NOT STARTED by ' + fmt(n.min) + ' New York: GitHub had not started it, so Stock-2 started it itself (attempt ' + state.dispatched.length + ' of 3).');
++  } else if (state.dispatched.length >= 3 && !state.alerted.gaveUp) { state.alerted.gaveUp = true; alerts.push('WATCHER DOWN: 3 start attempts failed (last ' + fmt(last) + ' New York). No live watch today unless it starts. Send this to Claude.'); }
+   return { state, dispatch, alerts, why: 'not running' };
+ }
+--- a/watcher-guard.mjs
++++ b/watcher-guard.mjs
+@@ -1,20 +1,21 @@
+-// Guard observations use actual jobs, not workflow creation. No market/provider calls.
++// WATCHER GUARD runner (decision in watcher-guard-core.mjs). Called every 5 minutes by the bot job (bot.yml). Reads GitHub's run list
++// for ignition.yml with the job's own token, starts the watcher when it is missing, writes data/watcher-guard.json and appends each
++// day's measured start to data/watcher-starts.jsonl. Read-only on the market; never places an order.
+ import fs from 'node:fs';
+-import {guardDecide,nyParts,fmt} from './watcher-guard-core.mjs';
+-import {readGuardHistory} from './watcher-guard-history.mjs';
+-const env=process.env,local=u=>u&&/^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u)?u:null;
+-const base=local(env.GH_BASE)||'https://api.github.com',REPO=env.GITHUB_REPOSITORY,TOKEN=env.GITHUB_TOKEN,TG=local(env.TG_BASE)||'https://api.telegram.org';
+-const now=()=>local(env.GH_BASE)&&env.GUARD_TEST_NOW?Date.parse(env.GUARD_TEST_NOW):Date.now();
+-const read=(f,d)=>{try{return JSON.parse(fs.readFileSync(f,'utf8'));}catch{return d;}};
+-if(!REPO||!TOKEN){console.log('watcher guard: no GitHub binding');process.exit(0);}
+-if(env.GITHUB_ACTIONS&&env.GITHUB_REF_NAME!=='main'&&!local(env.GH_BASE)){console.log('branch guard: live I/O disabled');process.exit(0);}
+-const n=nyParts(now());if(n.min<545||n.min>905)process.exit(0);
+-const headers={Authorization:'Bearer '+TOKEN,Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'};
+-const history=await readGuardHistory({base:base+'/repos/'+REPO,headers,day:n.d,nowMs:now()});
+-const old=read('data/watcher-guard.json',{}),out=guardDecide(now(),history.runs,old,undefined,{historyComplete:history.complete});
+-out.state.history={complete:history.complete,errorCode:history.errorCode,reads:history.reads};
+-const persist=()=>{fs.mkdirSync('data',{recursive:true});fs.writeFileSync('data/watcher-guard.json.tmp',JSON.stringify(out.state));fs.renameSync('data/watcher-guard.json.tmp','data/watcher-guard.json');};
+-if(out.dispatch){persist();const attempt=out.state.attempts.at(-1);try{const r=await fetch(base+'/repos/'+REPO+'/actions/workflows/ignition.yml/dispatches',{method:'POST',headers,signal:AbortSignal.timeout(10000),body:JSON.stringify({ref:'main'})});attempt.status=r.ok?'ACCEPTED':'REJECTED';if(r.ok)out.state.dispatched.push(attempt.min);else out.alerts.push('WATCHER START REQUEST REJECTED: HTTP '+r.status+'; execution unconfirmed.');}catch{attempt.status='UNKNOWN';out.alerts.push('WATCHER START REQUEST UNKNOWN: transport outcome unavailable; execution unconfirmed.');}}
+-for(const text of out.alerts){console.log('[guard] '+text);if(env.TG_TOKEN&&env.TG_CHAT)try{const r=await fetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{method:'POST',signal:AbortSignal.timeout(10000),headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:env.TG_CHAT,text})});if(!r.ok)console.log('guard notification delivery unconfirmed');}catch{console.log('guard notification delivery unconfirmed');}}
+-if(out.state.started!==null&&(old.d!==out.state.d||old.started===null||old.started===undefined||old.startedSource!=='github_job'||old.started!==out.state.started))fs.appendFileSync('data/watcher-starts.jsonl',JSON.stringify({d:out.state.d,started:fmt(out.state.started),runId:out.state.startedRunId,source:'github_job',marketCoverage:'UNVERIFIED',byGuard:null,guardRequestAccepted:out.state.dispatched.length>0,restartCausality:'UNVERIFIED'})+'\n');
+-persist();console.log('watcher guard '+fmt(n.min)+' New York: '+out.why);
++import { guardDecide, nyParts, fmt } from './watcher-guard-core.mjs';
++const env = process.env, REPO = env.GITHUB_REPOSITORY, TOKEN = env.GITHUB_TOKEN, API = 'https://api.github.com/repos/' + REPO + '/actions/workflows/ignition.yml';
++const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org';
++const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
++if (!REPO || !TOKEN) { console.log('watcher guard: no GITHUB_TOKEN / GITHUB_REPOSITORY (only runs inside GitHub Actions)'); process.exit(0); }
++const n = nyParts(Date.now()); if (n.min < 545 || n.min > 900) process.exit(0);   // nothing to do outside 9:05-15:00 New York: no GitHub call
++const H = { headers: { Authorization: 'Bearer ' + TOKEN, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } };
++const r = await fetch(API + '/runs?per_page=10', H).catch(e => ({ ok: false, status: e.message }));
++if (!r.ok) { console.log('watcher guard: run list failed (' + r.status + ')'); process.exit(0); }
++const runs = (await r.json()).workflow_runs || [], S0 = readJson('data/watcher-guard.json', {}), out = guardDecide(Date.now(), runs, S0);
++if (out.dispatch) { const d = await fetch(API + '/dispatches', { method: 'POST', ...H, body: JSON.stringify({ ref: 'main' }) }).catch(e => ({ ok: false, status: e.message }));
++  if (!d.ok) out.alerts.push('WATCHER GUARD could not start the watcher (GitHub answered ' + d.status + '). The bot job may lack the actions: write permission. Send this to Claude.'); }
++for (const a of out.alerts) if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: a }) }).catch(() => {}); else console.log('[guard] ' + a);
++if (out.state.started !== null && (S0.d !== out.state.d || S0.started === null || S0.started === undefined))   // first sighting of today's run: one line a day
++  fs.appendFileSync('data/watcher-starts.jsonl', JSON.stringify({ d: out.state.d, started: fmt(out.state.started), byGuard: out.state.dispatched.length > 0, dispatched: out.state.dispatched.map(fmt) }) + '\n');
++fs.writeFileSync('data/watcher-guard.json', JSON.stringify(out.state));
++console.log('watcher guard ' + fmt(n.min) + ' New York: ' + out.why + (out.dispatch ? ' -> started the watcher' : ''));
+--- a/watcher-schedule.mjs
++++ /dev/null
+@@ -1,34 +0,0 @@
+-// Shared, inactive scheduling contract. No provider/client imports or credentials.
+-import fs from 'node:fs';
+-import path from 'node:path';
+-import {fileURLToPath} from 'node:url';
+-import {marketSession} from './market-session.mjs';
+-export function watcherClock(ms=Date.now()) {
+- const p={};new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23',timeZoneName:'shortOffset'}).formatToParts(new Date(ms)).forEach(x=>p[x.type]=x.value);
+- const o=String(p.timeZoneName).match(/^GMT([+-])(\d{1,2})(?::(\d{2}))?$/);
+- return {day:p.year+'-'+p.month+'-'+p.day,minute:+p.hour*60+ +p.minute,offset:o?(o[1]==='-'?-1:1)*(+o[2]*60+ +(o[3]||0)):null};
+-}
+-export function watcherDayBounds(day) {
+- const midnight=d=>{let t=Date.parse(d+'T00:00:00Z');for(let i=0;i<3;i++)t=Date.parse(d+'T00:00:00Z')-watcherClock(t).offset*60000;return t;};
+- const next=new Date(Date.parse(day+'T12:00:00Z')+864e5).toISOString().slice(0,10);
+- return {from:new Date(midnight(day)).toISOString(),to:new Date(midnight(next)-1000).toISOString()};
+-}
+-export function watcherAdmission({nowMs=Date.now(),eventName,schedule,day,minute,earliestMinute=550,endMinute=900}={}) {
+- const c=watcherClock(nowMs),d=day||c.day,m=minute??c.minute,session=marketSession(d);
+- const context={eventName:eventName||'local',schedule:schedule||null,utcOffsetMinutes:c.offset};
+- const no=reason=>({run:false,reason,day:d,minute:m,endMinute,...context});
+- if(session.closed)return no('CLOSED_OR_UNKNOWN_SESSION');
+- if(eventName==='schedule') {
+-  const crons={'45 12 * * 1-5':-240,'45 13 * * 1-5':-300,'10 13 * * 1-5':-240,'10 14 * * 1-5':-300};
+-  if(!(schedule in crons))return no('UNSUPPORTED_CRON');
+-  if(crons[schedule]!==c.offset)return no('OPPOSITE_DST_CRON');
+- } else if(eventName&&!['workflow_dispatch'].includes(eventName))return no('UNSUPPORTED_EVENT');
+- if(!Number.isInteger(m)||m<earliestMinute)return no('TOO_EARLY_FOR_BOUNDED_JOB');
+- if(m>endMinute)return no('CONFIGURED_WINDOW_ENDED');
+- return {run:true,reason:m<565?'PREOPEN_WAIT':m>565?'LATE_PARTIAL_START':'READY',day:d,minute:m,endMinute,...context};
+-}
+-if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)) {
+- const x=watcherAdmission({eventName:process.env.GITHUB_EVENT_NAME,schedule:process.env.IG_SCHEDULE});
+- if(process.env.GITHUB_OUTPUT)fs.appendFileSync(process.env.GITHUB_OUTPUT,'run='+x.run+'\nreason='+x.reason+'\n');
+- console.log('watcher admission: '+JSON.stringify(x));
+-}
+--- a/watcher-guard-history.mjs
++++ /dev/null
+@@ -1,16 +0,0 @@
+-// Bounded GitHub control-plane reads; no dispatch/provider/Telegram operation.
+-import {watcherDayBounds} from './watcher-schedule.mjs';
+-import {watcherJobEvidence,nyParts} from './watcher-guard-core.mjs';
+-export async function readGuardHistory({base,headers,day,nowMs=Date.now(),fetchImpl=fetch,maxReads=24,maxPages=2,deadlineMs=30000}) {
+- const began=performance.now();let reads=0,errorCode=null;const rawRuns=[],runs=[];
+- const get=async url=>{const left=deadlineMs-(performance.now()-began);if(reads>=maxReads||left<=0)throw Error('CONTROL_PLANE_BUDGET');reads++;const r=await fetchImpl(url,{headers,signal:AbortSignal.timeout(Math.max(1,Math.min(10000,Math.floor(left))))});if(!r.ok)throw Error('GITHUB_HISTORY_UNAVAILABLE');return r.json();};
+- const pages=async (url,key)=>{const rows=[];for(let page=1;page<=maxPages;page++){const j=await get(url+(url.includes('?')?'&':'?')+'per_page=100&page='+page);const a=j?.[key];if(!Array.isArray(a))throw Error('GITHUB_HISTORY_UNAVAILABLE');rows.push(...a);const total=Number.isInteger(j.total_count)&&j.total_count>=0?j.total_count:null;if(total!==null&&rows.length>=total)return rows;if(a.length<100){if(total!==null&&rows.length<total)throw Error('GITHUB_HISTORY_INCOMPLETE');return rows;}}throw Error('GITHUB_HISTORY_INCOMPLETE');};
+- try {const {from,to}=watcherDayBounds(day);rawRuns.push(...await pages(base+'/actions/workflows/ignition.yml/runs?created='+encodeURIComponent(from+'..'+to),'workflow_runs'));}
+- catch(e){errorCode=['CONTROL_PLANE_BUDGET','GITHUB_HISTORY_INCOMPLETE'].includes(e.message)?e.message:'GITHUB_HISTORY_UNAVAILABLE';}
+- for(const run of rawRuns){if(!/^\d+$/.test(String(run?.id))||!Number.isFinite(Date.parse(run?.created_at))||!['queued','waiting','requested','pending','in_progress','completed'].includes(run?.status)){errorCode='GITHUB_HISTORY_UNAVAILABLE';continue;}if(nyParts(Date.parse(run.created_at)).d!==day){errorCode='GITHUB_HISTORY_INCOMPLETE';continue;}let jobs=null;
+-  try{jobs=await pages(base+'/actions/runs/'+run.id+'/jobs?filter=latest','jobs');}
+-  catch(e){errorCode=['CONTROL_PLANE_BUDGET','GITHUB_HISTORY_INCOMPLETE'].includes(e.message)?e.message:'GITHUB_HISTORY_UNAVAILABLE';}
+-  runs.push(watcherJobEvidence(run,jobs,nowMs));
+- }
+- return {rawRuns,runs,complete:errorCode===null,errorCode,reads};
+-}
+--- a/test/watcher-guard.test.mjs
++++ b/test/watcher-guard.test.mjs
+@@ -3,7 +3,7 @@
+ // Run: node --test test/watcher-guard.test.mjs
+ import test from 'node:test';
+ import assert from 'node:assert/strict';
+-import { guardDecide, nyParts, marketDay, watcherJobEvidence } from '../watcher-guard-core.mjs';
++import { guardDecide, nyParts, marketDay } from '../watcher-guard-core.mjs';
+ import { nyOffset } from '../ignition-core.mjs';
+ 
+ const at = (iso) => Date.parse(iso);
+@@ -16,9 +16,9 @@
+ test('market days: weekends and NYSE holidays are skipped', () => {
+   assert.equal(marketDay(nyParts(at('2026-10-31T14:00:00Z'))), false); assert.equal(marketDay(nyParts(at('2026-11-26T15:00:00Z'))), false); assert.equal(marketDay(nyParts(at('2026-10-29T14:00:00Z'))), true);
+ });
+-test('nothing is done outside session check window; no start after 15:30', () => {
++test('nothing is done outside 9:10-14:55 New York; no start after 14:00', () => {
+   let o = guardDecide(at('2026-10-29T13:00:00Z'), [], {}); assert.equal(o.dispatch, false); assert.deepEqual(o.alerts, []);
+-  o = guardDecide(at('2026-10-29T19:35:00Z'), [], {}); assert.equal(o.dispatch, false);
++  o = guardDecide(at('2026-10-29T18:05:00Z'), [], {}); assert.equal(o.dispatch, false);
+ });
+ test('not running at 9:12 New York: starts it once, then waits 15 minutes before a second attempt, at most 3, then one DOWN alert', () => {
+   let o = guardDecide(at('2026-10-29T13:12:00Z'), [], {}); assert.equal(o.dispatch, true); assert.match(o.alerts[0], /WATCHER NOT STARTED by 09:12.*attempt 1 of 3/);
+@@ -29,11 +29,11 @@
+   o = guardDecide(at('2026-10-29T14:10:00Z'), [], o.state); assert.deepEqual(o.alerts, []);
+ });
+ test('running on time: no alert, start time recorded; running late (GitHub delay like 11:10 on 26 Oct): one LATE alert', () => {
+-  let o = guardDecide(at('2026-10-29T13:30:00Z'), [{ status: 'in_progress', created_at: '2026-10-29T13:20:00Z', run_started_at: '2026-10-29T13:20:30Z', jobEvidence:'MEASURED', jobStartedAt:'2026-10-29T13:20:30Z' }], {});
++  let o = guardDecide(at('2026-10-29T13:30:00Z'), [{ status: 'in_progress', created_at: '2026-10-29T13:20:00Z', run_started_at: '2026-10-29T13:20:30Z' }], {});
+   assert.deepEqual(o.alerts, []); assert.equal(o.state.started, 9 * 60 + 20);
+-  o = guardDecide(at('2026-10-26T15:15:00Z'), [{ status: 'in_progress', created_at: '2026-10-26T15:10:00Z', run_started_at: '2026-10-26T15:10:11Z', jobEvidence:'MEASURED', jobStartedAt:'2026-10-26T15:10:11Z' }], {});
+-  assert.match(o.alerts[0], /WATCHER STARTED LATE: .* 11:10 New York.*Run creation is not job start; opening coverage remains unverified/);
+-  o = guardDecide(at('2026-10-26T15:20:00Z'), [{ status: 'in_progress', created_at: '2026-10-26T15:10:00Z', run_started_at: '2026-10-26T15:10:11Z', jobEvidence:'MEASURED', jobStartedAt:'2026-10-26T15:10:11Z' }], o.state); assert.deepEqual(o.alerts, []);
++  o = guardDecide(at('2026-10-26T15:15:00Z'), [{ status: 'in_progress', created_at: '2026-10-26T15:10:00Z', run_started_at: '2026-10-26T15:10:11Z' }], {});
++  assert.match(o.alerts[0], /WATCHER STARTED LATE: .* 11:10 New York.*GitHub started it late/);
++  o = guardDecide(at('2026-10-26T15:20:00Z'), [{ status: 'in_progress', created_at: '2026-10-26T15:10:00Z', run_started_at: '2026-10-26T15:10:11Z' }], o.state); assert.deepEqual(o.alerts, []);
+ });
+ test('queued but not started by 9:25: one WAITING alert and no extra dispatch (concurrency would only queue it)', () => {
+   const q = [{ status: 'queued', created_at: '2026-10-29T13:20:00Z' }];
+@@ -41,48 +41,12 @@
+   o = guardDecide(at('2026-10-29T13:31:00Z'), q, o.state); assert.deepEqual(o.alerts, []);
+ });
+ test('a run that watched and then ended before 11:00 is reported once, not restarted; a quick early exit (winter 7:45 run) does not count', () => {
+-  const crashed = [{ status: 'completed', created_at: '2026-10-29T13:20:00Z', run_started_at: '2026-10-29T13:20:00Z', updated_at: '2026-10-29T14:00:00Z', jobEvidence:'MEASURED', jobStartedAt:'2026-10-29T13:20:00Z', jobCompletedAt:'2026-10-29T14:00:00Z' }];
++  const crashed = [{ status: 'completed', created_at: '2026-10-29T13:20:00Z', run_started_at: '2026-10-29T13:20:00Z', updated_at: '2026-10-29T14:00:00Z' }];
+   let o = guardDecide(at('2026-10-29T14:05:00Z'), crashed, {}); assert.equal(o.dispatch, false); assert.match(o.alerts[0], /STOPPED EARLY/);
+-  const earlyExit = [{ status: 'completed', created_at: '2026-11-02T13:20:00Z', run_started_at: '2026-11-02T13:20:00Z', updated_at: '2026-11-02T13:21:00Z', jobEvidence:'MEASURED', jobStartedAt:'2026-11-02T13:20:00Z', jobCompletedAt:'2026-11-02T13:21:00Z' }];
++  const earlyExit = [{ status: 'completed', created_at: '2026-11-02T13:20:00Z', run_started_at: '2026-11-02T13:20:00Z', updated_at: '2026-11-02T13:21:00Z' }];
+   o = guardDecide(at('2026-11-02T14:12:00Z'), earlyExit, {}); assert.equal(o.dispatch, true);
+ });
+ test('yesterday\'s runs do not count for today', () => {
+   const o = guardDecide(at('2026-10-29T13:12:00Z'), [{ status: 'in_progress', created_at: '2026-10-28T13:20:00Z', run_started_at: '2026-10-28T13:20:00Z' }], { d: '2026-10-28', started: 560, dispatched: [], alerted: {} });
+   assert.equal(o.dispatch, true); assert.equal(o.state.d, '2026-10-29');
+ });
+-
+-test('synthetic queued run uses job start rather than queue creation',()=>{
+- const run={id:123,status:'in_progress',created_at:'2026-10-28T14:31:45Z',run_started_at:'2026-10-28T14:31:45Z'};
+- const now=at('2026-10-28T18:50:00Z');
+- const enriched=watcherJobEvidence(run,[{name:'watch',status:'in_progress',started_at:'2026-10-28T18:49:07Z'}],now);
+- const o=guardDecide(now,[enriched],{});
+- assert.equal(o.state.started,14*60+49);assert.equal(o.state.startedSource,'github_job');
+- assert.match(o.alerts[0],/14:49/);assert.doesNotMatch(o.alerts[0],/10:31/);
+-});
+-test('unknown or future job timing stays unknown and does not claim a start',()=>{
+- const run={status:'in_progress',created_at:'2026-10-29T13:10:00Z',run_started_at:'2026-10-29T13:10:00Z'},now=at('2026-10-29T14:00:00Z');
+- for(const jobs of [null,[],[{name:'watch',status:'in_progress',started_at:'2026-10-29T15:00:00Z'}]]){
+-  const o=guardDecide(now,[watcherJobEvidence(run,jobs,now)],{});
+-  assert.equal(o.state.started,null);assert.equal(o.dispatch,false);assert.match(o.alerts[0],/UNVERIFIED/);
+- }
+-});
+-test('an active workflow with its watch job still queued is waiting, not running',()=>{
+- const now=at('2026-10-29T14:00:00Z'),r=watcherJobEvidence({status:'in_progress',created_at:'2026-10-29T13:10:00Z'},[{name:'watch',status:'queued',started_at:'2026-10-29T13:10:00Z'}],now);
+- const o=guardDecide(now,[r],{});assert.equal(o.state.started,null);assert.equal(o.dispatch,false);assert.match(o.alerts[0],/WAITING/);
+-});
+-test('long queue followed by a short job is not mistaken for a long watch',()=>{
+- const now=at('2026-10-29T14:00:00Z'),r=watcherJobEvidence({status:'completed',created_at:'2026-10-29T12:00:00Z',run_started_at:'2026-10-29T12:00:00Z',updated_at:'2026-10-29T13:59:00Z'},[{name:'watch',status:'completed',started_at:'2026-10-29T13:58:00Z',completed_at:'2026-10-29T13:59:00Z'}],now);
+- assert.equal(guardDecide(now,[r],{}).dispatch,true);
+- assert.equal(guardDecide(now,[watcherJobEvidence({...r,jobEvidence:undefined},null,now)],{}).dispatch,false);
+-});
+-
+-test('October 28 retained timestamps identify 14:59 job start, not 10:31 queue creation',()=>{
+- const r=watcherJobEvidence({id:40706824310,status:'in_progress',created_at:'2026-10-28T14:31:45Z',run_started_at:'2026-10-28T14:31:45Z'},[{name:'watch',status:'in_progress',started_at:'2026-10-28T18:59:07Z'}],at('2026-10-28T19:00:00Z'));
+- assert.equal(r.jobStartedAt,'2026-10-28T18:59:07Z');
+- assert.equal(nyParts(Date.parse(r.jobStartedAt)).min,899);
+- // Job timing still does not claim scan coverage.
+-});
+-test('legacy run-derived start is cleared when actual job evidence is unavailable',()=>{
+- const now=at('2026-10-29T14:00:00Z'),r=watcherJobEvidence({status:'in_progress',created_at:'2026-10-29T13:10:00Z'},null,now);
+- const o=guardDecide(now,[r],{d:'2026-10-29',started:550,dispatched:[],alerted:{}});assert.equal(o.state.started,null);
+-});
+--- a/test/watcher-nov2-clock.test.mjs
++++ /dev/null
+@@ -1,34 +0,0 @@
+-import test from 'node:test';
+-import assert from 'node:assert/strict';
+-import fs from 'node:fs';
+-import path from 'node:path';
+-import {nov2Fixture} from './watcher-nov2-fixture.mjs';
+-async function scenario(fn){const f=await nov2Fixture();try{return await fn(f);}finally{f.close();}}
+-for(const [day,start,cron] of [['2026-10-30','2026-10-30T18:39:00Z','45 13 * * 1-5'],['2026-11-02','2026-11-02T19:39:00Z','45 12 * * 1-5']])test('actual workflow refuses opposite-DST queued start without source I/O '+day,()=>scenario(async f=>{
+- const r=await f.workflow({start,event:'schedule',schedule:'OPPOSITE_CRON'});assert.equal(r.code,0,r.output);assert.equal(r.skipped,true,r.output);assert.equal(f.state.providerRequests,0);assert.equal(f.state.messages.length,0);assert.match(r.output,/OPPOSITE_DST_CRON/);
+-}));
+-for(const [day,start,cron] of [['2026-10-30','2026-10-30T13:10:00Z','45 12 * * 1-5'],['2026-11-02','2026-11-02T14:10:00Z','45 13 * * 1-5']])test('actual workflow preserves configured virtual schedule and observation budget after early wait '+day,()=>scenario(async f=>{
+- const r=await f.workflow({start,event:'schedule',schedule:'CURRENT_CRON'});assert.equal(r.code,0,r.output);assert.equal(r.skipped,false);const j=f.read('data/ignition-runs/'+day+'/101-1.json');const minutes=new Set(j.heartbeat.map(x=>x.m));assert.equal(Math.max(...minutes),f.expectedLastMinute);assert.ok(minutes.has(570));assert.ok(minutes.has(f.expectedLastMinute));assert.ok(r.trace.waits.some(x=>x.ms===20000));assert.ok(r.trace.ended-Date.parse(start)>345*60000,'pre-open wait must not consume the345min observation limit');assert.ok(f.state.providerRequests>300);assert.ok(r.trace.ended<=Date.parse(start)+360*60000,'declared360min job envelope');
+-}));
+-test('correct-season setup too early for the single-job envelope is explicitly refused; existing09:10 guard path remains available',()=>scenario(async f=>{
+- const r=await f.workflow({start:'2026-11-02T13:53:00Z',event:'workflow_dispatch'});assert.equal(r.code,0);assert.equal(r.skipped,true);assert.match(r.output,/TOO_EARLY_FOR_BOUNDED_JOB/);assert.equal(f.state.providerRequests,0);
+-}));
+-test('correct-season late start remains labelled partial, archives both attempts and preserves richer canonical/delivery state',()=>scenario(async f=>{
+- f.write('data/my-positions.json',{ZZQ:{entry:12,stop:11}});
+- let r=await f.workflow({start:'2026-11-02T14:10:00Z',id:'101',IG_RUN_MIN:'313'});assert.equal(r.code,0,r.output);const first=f.read('data/ignition-runs/2026-11-02/101-1.json');assert.ok(Math.max(...first.heartbeat.map(x=>x.m))<900);
+- const canonical=fs.readFileSync(path.join(f.dir,'data/ignition-live.json')),sent=f.state.messages.filter(x=>/STOP HIT NOW/.test(x)).length;assert.equal(sent,1);
+- r=await f.workflow({start:'2026-11-02T19:39:00Z',id:'202',event:'workflow_dispatch'});assert.equal(r.code,0,r.output);const second=f.read('data/ignition-runs/2026-11-02/202-1.json');assert.equal(second.processStart,'14:39');assert.equal(Math.max(...second.heartbeat.map(x=>x.m)),f.expectedLastMinute);assert.ok(second.heartbeat.length<first.heartbeat.length);assert.deepEqual(fs.readFileSync(path.join(f.dir,'data/ignition-live.json')),canonical);assert.equal(f.state.messages.filter(x=>/STOP HIT NOW/.test(x)).length,sent);
+- f.state.runs=[{id:101,status:'completed',created_at:'2026-11-02T14:10:00Z',updated_at:'2026-11-02T19:38:10Z'},{id:202,status:'in_progress',created_at:'2026-11-02T14:38:21Z',run_started_at:'2026-11-02T14:38:21Z'}];
+- f.state.jobs={101:[{name:'watch',status:'completed',started_at:'2026-11-02T14:10:00Z',completed_at:'2026-11-02T19:38:10Z'}],202:[{name:'watch',status:'in_progress',started_at:'2026-11-02T19:39:17Z'}]};
+- const guard=await f.run('watcher-guard.mjs',{start:'2026-11-02T19:50:00Z'});assert.equal(guard.code,0,guard.output);assert.match(guard.output+'\n'+f.state.messages.join('\n'),/STOPPED EARLY/);assert.doesNotMatch(guard.output,/WATCHER STARTED LATE/);assert.equal(f.read('data/watcher-guard.json').started,550);assert.equal(f.state.dispatches,0);
+-}));
+-test('slow sources leave explicit missing slots and do not extend beyond configured end',()=>scenario(async f=>{
+- f.state.slowMs=80000;const r=await f.workflow({start:'2026-11-02T14:10:00Z'});assert.equal(r.code,0,r.output);const j=f.read('data/ignition-runs/2026-11-02/101-1.json'),m=new Set(j.heartbeat.map(x=>x.m));assert.ok(m.size<331);assert.ok(Math.max(...m)<=900);
+-}));
+-
+-test('setup/cache delays preserve original chronological clocks and label the resulting late start',()=>scenario(async f=>{
+- const start='2026-11-02T14:10:00Z',r=await f.workflow({start,event:'schedule',schedule:'CURRENT_CRON',setupMinutes:5,cacheMinutes:20});assert.equal(r.code,0,r.output);assert.match(r.output,/LATE_PARTIAL_START/);const j=f.read('data/ignition-runs/2026-11-02/101-1.json');assert.equal(j.processStart,'09:35');assert.equal(j.heartbeat[0].m,575);assert.equal(Math.max(...j.heartbeat.map(x=>x.m)),f.expectedLastMinute);assert.ok(r.trace.ended-Date.parse(start)<360*60000);assert.equal(j.heartbeat.some(x=>x.m===570),false);
+-}));
+-test('setup/cache delays beyond the configured window never manufacture observations',()=>scenario(async f=>{
+- const r=await f.workflow({start:'2026-11-02T19:50:00Z',event:'schedule',schedule:'CURRENT_CRON',cacheMinutes:20});assert.equal(r.code,0,r.output);assert.equal(r.skipped,true);assert.match(r.output,/CONFIGURED_WINDOW_ENDED/);assert.equal(f.state.providerRequests,0);assert.equal(fs.existsSync(path.join(f.dir,'data/ignition-runs/2026-11-02/101-1.json')),false);
+-}));
+--- a/test/watcher-nov2-guard.test.mjs
++++ /dev/null
+@@ -1,67 +0,0 @@
+-import test from 'node:test';
+-import assert from 'node:assert/strict';
+-import path from 'node:path';
+-import {pathToFileURL} from 'node:url';
+-import {nov2Fixture,defaultRoot} from './watcher-nov2-fixture.mjs';
+-const root=process.env.NOV2_TREE||defaultRoot;
+-const {guardDecide,watcherJobEvidence}=await import(pathToFileURL(path.join(root,'watcher-guard-core.mjs')));
+-const {watcherAdmission,watcherDayBounds}=await import(pathToFileURL(path.join(root,'watcher-schedule.mjs')));
+-const {readGuardHistory}=await import(pathToFileURL(path.join(root,'watcher-guard-history.mjs')));
+-const at=Date.parse('2026-11-02T19:50:00Z');
+-function runs(second='in_progress'){
+- const first=watcherJobEvidence({id:101,status:'completed',created_at:'2026-11-02T13:53:37Z'},[{name:'watch',status:'completed',started_at:'2026-11-02T13:53:40Z',completed_at:'2026-11-02T19:39:14Z',steps:[{name:'Run set -o pipefail',status:'completed',started_at:'2026-11-02T13:53:53Z',completed_at:'2026-11-02T19:38:57Z'}]}],at);
+- const late=watcherJobEvidence({id:202,status:'in_progress',created_at:'2026-11-02T14:38:21Z',run_started_at:'2026-11-02T14:38:21Z'},[{name:'watch',status:second,started_at:second==='queued'?null:'2026-11-02T19:39:17Z'}],at);return [first,late];
+-}
+-for(const second of ['in_progress','queued'])test('first verified job and early stop survive later '+second+' duplicate',()=>{
+- const r=runs(second),o=guardDecide(at,r,{});assert.equal(o.state.started,533);assert.equal(o.state.startedRunId,101);assert.match(o.alerts.join('\n'),/STOPPED EARLY/);assert.doesNotMatch(o.alerts.join('\n'),/WATCHER STARTED LATE|open was not watched/);assert.equal(o.dispatch,false);
+- const again=guardDecide(at,r,o.state);assert.doesNotMatch(again.alerts.join('\n'),/STOPPED EARLY/);assert.equal(again.state.started,533);
+-});
+-test('verified no-op with long queue time is not observation and does not consume the start',()=>{
+- const noOp=watcherJobEvidence({id:3,status:'completed',created_at:'2026-11-02T12:45:00Z'},[{name:'watch',status:'completed',started_at:'2026-11-02T13:53:40Z',completed_at:'2026-11-02T13:54:00Z',steps:[{name:'Check watcher admission',conclusion:'success',status:'completed'},{name:'Observe configured session',conclusion:'skipped',status:'completed'}]}],at);
+- assert.equal(noOp.jobEvidence,'NON_OBSERVING');const x=guardDecide(Date.parse('2026-11-02T14:12:00Z'),[noOp],{});assert.equal(x.dispatch,true);assert.equal(x.state.started,null);
+-});
+-test('unavailable job evidence never becomes a creation-time start',()=>{
+- const r=watcherJobEvidence({id:202,status:'in_progress',created_at:'2026-11-02T14:38:21Z'},null,at),o=guardDecide(at,[r],{});assert.equal(o.state.started,null);assert.equal(o.dispatch,false);assert.match(o.alerts.join(),/UNVERIFIED/);
+-});
+-test('configured boundary15:00 is independent of16:00 exchange close',()=>{
+- const o=guardDecide(Date.parse('2026-11-02T20:04:00Z'),runs(),{});assert.match(o.alerts.join(),/configured 15:00/);assert.doesNotMatch(o.alerts.join(),/configured 16:00/);
+-});
+-test('day query bounds follow New York across23/25-hour DST days',()=>{
+- assert.deepEqual(watcherDayBounds('2026-11-02'),{from:'2026-11-02T05:00:00.000Z',to:'2026-11-03T04:59:59.000Z'});
+- const a=watcherDayBounds('2026-11-01'),b=watcherDayBounds('2026-03-08');assert.equal(Date.parse(a.to)+1000-Date.parse(a.from),25*3600000);assert.equal(Date.parse(b.to)+1000-Date.parse(b.from),23*3600000);
+-});
+-test('manual/guard admission is bounded; late legitimate collection stays explicitly partial',()=>{
+- assert.equal(watcherAdmission({nowMs:Date.parse('2026-11-02T14:10:00Z'),eventName:'workflow_dispatch'}).reason,'PREOPEN_WAIT');
+- assert.equal(watcherAdmission({nowMs:Date.parse('2026-11-02T19:39:00Z'),eventName:'schedule',schedule:'45 13 * * 1-5'}).reason,'LATE_PARTIAL_START');
+- assert.equal(watcherAdmission({nowMs:Date.parse('2026-11-02T20:02:00Z'),eventName:'workflow_dispatch'}).reason,'CONFIGURED_WINDOW_ENDED');
+- assert.equal(watcherAdmission({nowMs:Date.parse('2026-11-02T14:10:00Z'),eventName:'schedule',schedule:'unknown'}).run,false);
+-});
+-test('complete daily pagination is independent of lifetime runs and uses actual jobs',async()=>{
+- const listed=Array.from({length:101},(_,i)=>({id:i+1,status:'completed',created_at:'2026-11-02T14:00:00Z'}));let calls=0;
+- const h=await readGuardHistory({base:'https://synthetic.invalid/repos/x/y',headers:{},day:'2026-11-02',nowMs:at,maxReads:200,fetchImpl:async url=>{calls++;const u=new URL(url);assert.ok(u.searchParams.get('page'));assert.equal(u.searchParams.get('per_page'),'100');if(u.pathname.endsWith('/runs')){assert.match(u.searchParams.get('created'),/2026-11-02T05:00/);const page=+u.searchParams.get('page');return {ok:true,json:async()=>({total_count:101,workflow_runs:listed.slice((page-1)*100,page*100)})};}return {ok:true,json:async()=>({total_count:1,jobs:[{name:'watch',status:'completed',started_at:'2026-11-02T14:00:00Z',completed_at:'2026-11-02T14:01:00Z'}]})};}});
+- assert.equal(h.complete,true);assert.equal(h.runs.length,101);assert.equal(calls,103);
+-});
+-test('history request cap and failed jobs are UNKNOWN, never proof of an earlier observation or permission to dispatch',async()=>{
+- for(const fail of [false,true]){let calls=0;const h=await readGuardHistory({base:'https://synthetic.invalid/repos/x/y',headers:{},day:'2026-11-02',nowMs:at,maxReads:2,fetchImpl:async url=>{calls++;if(url.includes('/workflows/'))return {ok:true,json:async()=>({workflow_runs:[1,2,3].map(id=>({id,status:'completed',created_at:'2026-11-02T14:00:00Z'}))})};return {ok:!fail,json:async()=>({jobs:[]})};}});assert.equal(h.complete,false);assert.ok(calls<=2);const o=guardDecide(at,h.runs,{},undefined,{historyComplete:h.complete});assert.equal(o.dispatch,false);assert.match(o.alerts.join(),/UNKNOWN|UNVERIFIED/);}
+-});
+-test('actual guard handles metadata failure without declaring a start or dispatching',async()=>{
+- const f=await nov2Fixture();try{f.state.failHistory=true;const x=await f.run('watcher-guard.mjs',{start:'2026-11-02T14:20:00Z'});assert.equal(x.code,0,x.output);assert.match(x.output+'\n'+f.state.messages.join('\n'),/HISTORY UNKNOWN/);assert.equal(f.state.dispatches,0);assert.equal(f.read('data/watcher-guard.json').started,null);}finally{f.close();}
+-});
+-
+-test('a later completed duplicate reaching15:00 cannot erase the earlier stop',()=>{
+- const r=runs();Object.assign(r[1],{status:'completed',jobStatus:'completed',jobCompletedAt:'2026-11-02T20:01:38Z'});const o=guardDecide(Date.parse('2026-11-02T20:04:00Z'),r,{});assert.match(o.alerts.join(),/STOPPED EARLY/);assert.equal(o.state.startedRunId,101);assert.equal(o.dispatch,false);
+-});
+-test('partial history does not mislabel a later job as the original late start',()=>{
+- const r=runs();r[0]=watcherJobEvidence({...r[0]},null,at);const o=guardDecide(at,r,{},undefined,{historyComplete:false});assert.doesNotMatch(o.alerts.join(),/WATCHER STARTED LATE/);assert.equal(o.dispatch,false);
+-});
+-
+-test('short attempts retain the existing bounded startup retry rule without claiming observation coverage',()=>{
+- const r=watcherJobEvidence({id:7,status:'completed',created_at:'2026-11-02T14:25:00Z'},[{name:'watch',status:'completed',started_at:'2026-11-02T14:25:00Z',completed_at:'2026-11-02T14:26:00Z',steps:[{name:'Observe configured session',status:'completed',started_at:'2026-11-02T14:25:01Z',completed_at:'2026-11-02T14:25:50Z'}]}],at);const o=guardDecide(Date.parse('2026-11-02T15:40:00Z'),[r],{});assert.equal(o.dispatch,true);assert.doesNotMatch(o.alerts.join(),/STOPPED EARLY|coverage complete/);
+-});
+-test('earliest actual watcher job remains recorded when a later job in the same run is active',()=>{
+- const r=watcherJobEvidence({id:8,status:'in_progress',created_at:'2026-11-02T14:10:00Z'},[{name:'watch',status:'completed',started_at:'2026-11-02T14:10:00Z',completed_at:'2026-11-02T19:00:00Z'},{name:'close',status:'in_progress',started_at:'2026-11-02T19:25:00Z'}],at);assert.equal(r.jobStartedAt,'2026-11-02T14:10:00Z');assert.equal(guardDecide(at,[r],{}).state.started,550);
+-});
+-
+-test('malformed run identity/status never establishes an empty history or permits dispatch',async()=>{
+- for(const row of [{created_at:'2026-11-02T14:00:00Z',status:'in_progress'},{id:5,created_at:'2026-11-02T14:00:00Z',status:'unexpected'},{id:5,status:'completed',created_at:'malformed'}]){const h=await readGuardHistory({base:'https://synthetic.invalid/repos/x/y',headers:{},day:'2026-11-02',nowMs:at,fetchImpl:async()=>({ok:true,json:async()=>({workflow_runs:[row]})})});assert.equal(h.complete,false);assert.equal(guardDecide(at,h.runs,{},undefined,{historyComplete:h.complete}).dispatch,false);}
+-});
+--- a/test/watcher-nov2-fixture.mjs
++++ /dev/null
+@@ -1,57 +0,0 @@
+-// Synthetic clock and loopback services. Official URLs are intercepted before any network call.
+-import fs from 'node:fs';
+-import os from 'node:os';
+-import path from 'node:path';
+-import http from 'node:http';
+-import {spawn,spawnSync} from 'node:child_process';
+-import {once} from 'node:events';
+-export const defaultRoot=path.resolve(new URL('..',import.meta.url).pathname);
+-export async function nov2Fixture(root=process.env.NOV2_TREE||defaultRoot) {
+- const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-nov2-'));
+- fs.mkdirSync(path.join(dir,'data'));spawnSync('git',['init','-q'],{cwd:dir});spawnSync('git',['-c','user.name=Synthetic','-c','user.email=synthetic@example.invalid','commit','--allow-empty','-qm','synthetic'],{cwd:dir});
+- const copied=new Set();
+- function copy(file){if(copied.has(file))return;copied.add(file);const source=path.join(root,file),target=path.join(dir,file),body=fs.readFileSync(source,'utf8');fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,body);for(const m of body.matchAll(/^import(?:\s+.+?\s+from)?\s*['"](\.[^'"]+\.mjs)['"]/gm))copy(path.normalize(path.join(path.dirname(file),m[1])));}
+- for(const f of ['ignition-watch.mjs','watcher-guard.mjs','opportunity-radar.mjs'])copy(f);
+- for(const f of ['index.html','market-session.mjs'])if(fs.existsSync(path.join(root,f)))fs.copyFileSync(path.join(root,f),path.join(dir,f));
+- const state={providerRequests:0,requests:[],messages:[],runs:[],jobs:{},dispatches:0,slowMs:0,failHistory:false};
+- const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{
+-  const u=new URL(req.url,'http://local'),at=Number(req.headers['x-synthetic-now']),now=Number.isFinite(at)?at:Date.now();state.requests.push({path:u.pathname,at:now});res.setHeader('content-type','application/json');let out={};
+-  if(u.pathname.includes('/actions/workflows/ignition.yml/runs')){if(state.failHistory){res.statusCode=503;out={};}else out={total_count:state.runs.length,workflow_runs:state.runs};}
+-  else if(/\/actions\/runs\/\d+\/jobs$/.test(u.pathname)){const id=u.pathname.split('/').at(-2);out={total_count:(state.jobs[id]||[]).length,jobs:state.jobs[id]||[]};}
+-  else if(u.pathname.endsWith('/dispatches')){state.dispatches++;res.statusCode=204;res.end();return;}
+-  else if(u.pathname.includes('/sendMessage')){state.messages.push(JSON.parse(body).text);out={ok:true,result:{message_id:state.messages.length}};}
+-  else if(u.pathname.includes('/snapshot/locale/')){state.providerRequests++;res.setHeader('x-synthetic-delay',String(state.slowMs));out={tickers:[{ticker:'ZZQ',lastTrade:{p:10,t:now*1e6},prevDay:{c:10,v:1e6},min:{av:1e6,t:now},day:{o:10,c:10,v:1e6}}]};}
+-  else if(u.pathname.includes('/v2/stocks/snapshots')){state.providerRequests++;out={ZZQ:{latestTrade:{p:10,t:new Date(now).toISOString()},latestQuote:{bp:9.99,ap:10.01,t:new Date(now).toISOString()},prevDailyBar:{c:10,v:1e6},dailyBar:{o:10,c:10,v:1e6,t:new Date(now).toISOString()},minuteBar:{c:10,v:100,t:new Date(now).toISOString()}}};}
+-  else if(u.pathname.includes('/cgi-bin/browse-edgar')){state.providerRequests++;res.setHeader('content-type','application/atom+xml');res.end('<feed xmlns="http://www.w3.org/2005/Atom"></feed>');return;}
+-  else if(u.pathname.includes('/company_tickers.json')){state.providerRequests++;out={};}
+-  else if(u.pathname.includes('/screener/')){state.providerRequests++;out={gainers:[]};}
+-  else if(u.pathname.includes('/v2/aggs/')){state.providerRequests++;out={results:[]};}
+-  else {state.providerRequests++;out={};}
+-  res.end(JSON.stringify(out));
+- });});
+- await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
+- const preload=path.join(dir,'synthetic-clock.mjs');
+- fs.writeFileSync(preload,`import fs from 'node:fs';const D=Date,realSetTimeout=setTimeout;let at=Date.parse(process.env.SYNTHETIC_START);const began=at,waits=[];globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[at]));}static now(){return at;}};globalThis.setTimeout=(fn,ms,...a)=>{const stack=new Error().stack||'';if(stack.includes('ignition-watch.mjs')&&(stack.includes('at sleep')||ms===20000)){waits.push({at,ms});at+=ms;return realSetTimeout(fn,0,...a);}return realSetTimeout(fn,ms,...a);};const originalFetch=fetch;globalThis.fetch=async(u,o={})=>{const url=new URL(String(u)),allowed=['api.massive.com','data.alpaca.markets','www.sec.gov','data.sec.gov','api.telegram.org','api.github.com','finnhub.io'];if(!allowed.includes(url.hostname))throw Error('SYNTHETIC_EXTERNAL_REQUEST_BLOCKED');const r=await originalFetch(${JSON.stringify(base)}+url.pathname+url.search,{...o,headers:{...Object.fromEntries(new Headers(o.headers).entries()),'x-synthetic-now':String(at)}});at+=Number(r.headers.get('x-synthetic-delay')||0);return r;};process.on('exit',()=>fs.writeFileSync(process.env.SYNTHETIC_TRACE,JSON.stringify({began,ended:at,waits})));`);
+- async function run(script,{start='2026-11-02T14:10:00Z',id='101',event='workflow_dispatch',schedule='',...extra}={}){
+-  const trace=path.join(dir,'trace-'+id+'.json');
+-  const child=spawn(process.execPath,['--import',preload,path.join(dir,script)],{cwd:dir,env:{PATH:process.env.PATH,NODE_OPTIONS:'',SYNTHETIC_START:start,SYNTHETIC_TRACE:trace,GITHUB_EVENT_NAME:event,IG_SCHEDULE:schedule,GITHUB_RUN_ID:id,GITHUB_RUN_ATTEMPT:'1',GITHUB_SHA:'synthetic-source',GITHUB_REPOSITORY:'synthetic/repository',GITHUB_TOKEN:'synthetic-token',GITHUB_REF_NAME:'main',MASSIVE_KEY:'synthetic-key',ALPACA_KEY:'synthetic-key',ALPACA_SECRET:'synthetic-key',IG_NO_RADAR:'1',IG_WINDOW_END:'900',TG_TOKEN:'synthetic-token',TG_CHAT:'42',...extra},stdio:['ignore','pipe','pipe']});
+-  let output='';child.stdout.on('data',x=>output+=x);child.stderr.on('data',x=>output+=x);const timer=setTimeout(()=>child.kill('SIGKILL'),30000);let code;try{[code]=await once(child,'close');}finally{clearTimeout(timer);}return {code,output,trace:fs.existsSync(trace)?JSON.parse(fs.readFileSync(trace)):null};
+- }
+- async function workflow(options={}){
+-  const jobStart=options.start||'2026-11-02T14:10:00Z';const cacheMinutes=options.cacheMinutes||0;options={...options,start:new Date(Date.parse(jobStart)+(options.setupMinutes||0)*60000).toISOString()};
+-  const yaml=fs.readFileSync(path.join(root,'.github/workflows/ignition.yml'),'utf8');
+-  if(['CURRENT_CRON','OPPOSITE_CRON'].includes(options.schedule)){const pair=[...yaml.matchAll(/cron: '([^']+)'/g)].map(x=>x[1]);const offset=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',timeZoneName:'shortOffset'}).formatToParts(Date.parse(options.start)).find(x=>x.type==='timeZoneName').value;const i=offset==='GMT-4'?0:1;options={...options,schedule:pair[options.schedule==='CURRENT_CRON'?i:1-i]};}
+-  const output=path.join(dir,'admission-'+(options.id||'101')+'.txt');
+-  if(yaml.includes('run: node watcher-schedule.mjs')){copy('watcher-schedule.mjs');const gate=await run('watcher-schedule.mjs',{...options,GITHUB_OUTPUT:output});if(gate.code!==0||!fs.readFileSync(output,'utf8').includes('run=true'))return {...gate,skipped:true};}
+-  if(yaml.includes('name: Ignore opposite DST schedule')) {
+-   const at=Date.parse(options.start||'2026-11-02T14:10:00Z'),parts=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',timeZoneName:'shortOffset'}).formatToParts(at),offset=parts.find(x=>x.type==='timeZoneName').value==='GMT-4'?'-0400':'-0500';
+-   const bin=path.join(dir,'clock-bin');fs.mkdirSync(bin,{recursive:true});fs.writeFileSync(path.join(bin,'date'),'#!/bin/sh\necho '+offset+'\n',{mode:0o755});
+-   const block=yaml.slice(yaml.indexOf('name: Ignore opposite DST schedule')).match(/run: \|\n((?:          .*\n)+)/)?.[1];if(!block)throw Error('actual season step unavailable');
+-   const result=spawnSync('bash',['-c',block.split('\n').map(l=>l.replace(/^          /,'')).join('\n')],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,GITHUB_EVENT_NAME:options.event||'workflow_dispatch',SCHEDULE:options.schedule||'',GITHUB_OUTPUT:output},encoding:'utf8'});
+-   if(result.status!==0)throw Error(result.stderr);if(!fs.readFileSync(output,'utf8').includes('run=true'))return {code:0,output:result.stdout+'OPPOSITE_DST_CRON',skipped:true};
+-  }
+-  const result=await run('ignition-watch.mjs',{...options,start:new Date(Date.parse(options.start)+cacheMinutes*60000).toISOString()});return {...result,skipped:/watcher admission: (?:OPPOSITE_DST_CRON|TOO_EARLY_FOR_BOUNDED_JOB|CONFIGURED_WINDOW_ENDED)/.test(result.output)};
+- }
+- const expectedLastMinute=fs.readFileSync(path.join(root,'ignition-watch.mjs'),'utf8').includes('m===SEGMENT_END && SEGMENT_END<SESSION.close')?899:900;
+- return {dir,root,state,run,workflow,expectedLastMinute,read:file=>JSON.parse(fs.readFileSync(path.join(dir,file),'utf8')),write:(file,data)=>{const p=path.join(dir,file);fs.mkdirSync(path.dirname(p),{recursive:true});fs.writeFileSync(p,JSON.stringify(data));},close:()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});}};
+-}
