@@ -1,0 +1,61 @@
+{
+ "kind": "PRIVACY_STAGE2_SANITIZED_PRESERVATION",
+ "author": "Claude",
+ "date": "2026-11-02",
+ "authorization": "preservation only; not a cutover authorization",
+ "original": {
+  "commit": "d2d77cb153c954cf2778f9835ebe2e25e29edb99",
+  "parent": "51ad0b1971a967413357802b98f545e9aba9c7f9",
+  "patchSha256": "14bc8e711f62fda52e7010076089bac37cafcf4edd4acdc78c3b1618469c3a02",
+  "published": false,
+  "location": "local branches of one ephemeral session environment only"
+ },
+ "sanitized": {
+  "file": "stage2-sanitized.patch",
+  "sha256": "e6f40ec81f1796a7e201aae840844e6a07323598bc6ac444a83cb74c317f5cd0",
+  "filesInPatch": 80,
+  "dataFilesInPatch": 0,
+  "linesChangedVsOriginal": 13,
+  "changedLinesAllAdded": true,
+  "appliesToParent": true,
+  "privateDataTest": "28/28 (original 28/28)"
+ },
+ "verifier": {
+  "file": "verify-sanitized.mjs",
+  "sha256": "beea808c9459563daa098a219356741c7e268b04bd629b40a9f05120bf16b42a",
+  "result": {
+   "tickersChecked": 594,
+   "tickerHits": 0,
+   "privateValuesChecked": 123,
+   "privateValueHits": 0,
+   "credentialHits": 0,
+   "nonNoreplyEmails": 0,
+   "node20": "pass",
+   "node22": "pass"
+  }
+ },
+ "replaced": {
+  "currentHoldingTickers": 4,
+  "pastHoldingTickers": 1,
+  "ownerPriceValues": 1,
+  "mappingPublished": false
+ },
+ "allowlist": [
+  "AAA",
+  "API",
+  "BAR",
+  "COST",
+  "LB",
+  "RES",
+  "SPY"
+ ],
+ "notDone": [
+  "cutover",
+  "private-files.txt change on main",
+  "workflow change",
+  "visibility change",
+  "history rewrite",
+  "push of the original branch",
+  "use of the private repository"
+ ]
+}

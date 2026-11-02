@@ -1,0 +1,2476 @@
+From d2d77cb153c954cf2778f9835ebe2e25e29edb99 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 28 Oct 2026 09:54:42 +0000
+Subject: [PATCH] Privacy migration stage 2 (owner request 28 Oct): cutover
+ machinery built, tested and switched off; derived owner data split out
+
+Not pushed: waiting for the owner's OK to change the 66 production workflows (every new step is a no-op before the cutover).
+Tests: 1,133 pass. Details: docs/private-data-migration-2026-10-28.md.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_017cC8uWFU58B3u4ZSirToHT
+---
+ .github/private-cutover.sh                    |  32 ++
+ .github/private-data.sh                       | 103 ++++---
+ .github/private-files.txt                     |   5 +
+ .github/save-data.sh                          |   5 +-
+ .github/scrub-public.mjs                      |  38 +++
+ .github/workflows/Smart-money.yml             |   4 +
+ .github/workflows/Tiprank.yml                 |   4 +
+ .github/workflows/account-replay.yml          |   4 +
+ .github/workflows/agent-a-lab.yml             |   4 +
+ .github/workflows/angles-lab.yml              |   4 +
+ .github/workflows/anomaly-lab.yml             |   4 +
+ .github/workflows/bot.yml                     |  11 +-
+ .github/workflows/calendar.yml                |   4 +
+ .github/workflows/catalyst-lab.yml            |   4 +
+ .github/workflows/chain-decoder.yml           |   4 +
+ .github/workflows/confluence-lab.yml          |   4 +
+ .github/workflows/deals.yml                   |   4 +
+ .github/workflows/decoded-lab.yml             |   4 +
+ .github/workflows/discover.yml                |   4 +
+ .github/workflows/discovery2.yml              |   4 +
+ .../workflows/event-orb-retest-research.yml   |   4 +
+ .github/workflows/expert-lab.yml              |   4 +
+ .github/workflows/fastmover-intraday.yml      |   4 +
+ .github/workflows/follow-lane.yml             |   4 +
+ .github/workflows/hold-lab.yml                |  11 +-
+ .github/workflows/ignition.yml                |   5 +
+ .github/workflows/intraday-radar.yml          |   4 +
+ .github/workflows/leaders-study.yml           |   4 +
+ .github/workflows/macro-lab.yml               |   4 +
+ .github/workflows/main.yml                    |  11 +
+ .github/workflows/ml-lab.yml                  |   4 +
+ .github/workflows/movers.yml                  |   4 +
+ .github/workflows/news.yml                    |   9 +
+ .github/workflows/opportunity-radar.yml       |   4 +
+ .github/workflows/options-lab.yml             |   4 +
+ .github/workflows/options-survey.yml          |   4 +
+ .github/workflows/premarket.yml               |   4 +
+ .github/workflows/private-data-check.yml      |  70 ++++-
+ .github/workflows/research-lab.yml            |   4 +
+ .github/workflows/squad1-lab.yml              |   4 +
+ .github/workflows/squad10-lab.yml             |   4 +
+ .github/workflows/squad11-lab.yml             |   4 +
+ .github/workflows/squad12-lab.yml             |   4 +
+ .github/workflows/squad13-lab.yml             |   4 +
+ .github/workflows/squad14-lab.yml             |   4 +
+ .github/workflows/squad15-lab.yml             |   4 +
+ .github/workflows/squad15b-lab.yml            |   4 +
+ .github/workflows/squad16-lab.yml             |   4 +
+ .github/workflows/squad17-lab.yml             |   4 +
+ .github/workflows/squad18-lab.yml             |   4 +
+ .github/workflows/squad19-lab.yml             |  32 ++
+ .github/workflows/squad2-lab.yml              |  16 +
+ .github/workflows/squad20-lab.yml             |   4 +
+ .github/workflows/squad21-lab.yml             |   4 +
+ .github/workflows/squad22-lab.yml             |   4 +
+ .github/workflows/squad23-lab.yml             |   4 +
+ .github/workflows/squad24-lab.yml             |   4 +
+ .github/workflows/squad25-lab.yml             |   4 +
+ .github/workflows/squad26-watch.yml           |   4 +
+ .github/workflows/squad27-lab.yml             |   4 +
+ .github/workflows/squad28-lab.yml             |   4 +
+ .github/workflows/squad29-lab.yml             |  11 +-
+ .github/workflows/squad3-lab.yml              |   4 +
+ .github/workflows/squad4-lab.yml              |   4 +
+ .github/workflows/squad5-lab.yml              |   4 +
+ .github/workflows/squad6-lab.yml              |   4 +
+ .github/workflows/squad7-lab.yml              |   4 +
+ .github/workflows/squad8-lab.yml              |   4 +
+ .github/workflows/squad9-lab.yml              |   4 +
+ .github/workflows/tipster-lab.yml             |   4 +
+ .github/workflows/value-lab.yml               |   4 +
+ .github/workflows/winners-autopsy.yml         |   4 +
+ CLAUDE.md                                     |   4 +-
+ docs/private-data-migration-2026-10-28.md     | 279 ++++++++++-------
+ hold-lab.mjs                                  |   8 +-
+ ignition-watch.mjs                            |   3 +-
+ premarket-check.mjs                           |   2 +-
+ scan.mjs                                      |  19 +-
+ squad29-lab.mjs                               |  12 +-
+ test/private-data.test.mjs                    | 282 +++++++++++++++---
+ 80 files changed, 979 insertions(+), 221 deletions(-)
+ create mode 100644 .github/private-cutover.sh
+ create mode 100644 .github/scrub-public.mjs
+
+diff --git a/.github/private-cutover.sh b/.github/private-cutover.sh
+new file mode 100644
+index 0000000..3d136bc
+--- /dev/null
++++ b/.github/private-cutover.sh
+@@ -0,0 +1,32 @@
++#!/usr/bin/env bash
++# The privacy cutover and its rollback, as LOCAL git changes in this checkout (private data migration, 28 Oct 2026). Run only by
++# private-data-check.yml (action cutover / rollback, typed confirmation), which first stops the bot, the scan and the watcher, then commits
++# and pushes what this script staged, then restarts the bot. Tests: test/private-data.test.mjs.
++#   cutover   (the caller first runs .github/scrub-public.mjs and then 'private-data.sh check', so the private repository holds every
++#             file, including the parts moved out of public files) write .github/private-data-mode = private, add every private file to
++#             .gitignore, stop tracking them (git rm --cached: the files stay on disk; history is unchanged).
++#   rollback  'private-data.sh restore' (private copies -> data/), remove the mode file and the .gitignore block, track the files again.
++#             WARNING: this publishes the owner's files in the public repository again.
++set -eu
++ROOT=${PRIVATE_DATA_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
++cd "$ROOT"
++FILES=$(grep -vE '^\s*(#|$)' .github/private-files.txt)
++BEGIN='# >>> owner private files (privacy cutover; see docs/private-data-migration-2026-10-28.md)'
++END='# <<< owner private files'
++drop_block() { [ -f .gitignore ] || return 0; awk -v b="$BEGIN" -v e="$END" '$0==b{s=1;next} $0==e{s=0;next} !s' .gitignore > .gitignore.tmp && mv .gitignore.tmp .gitignore; [ -s .gitignore ] || { git rm -q --cached .gitignore 2>/dev/null || true; rm -f .gitignore; }; }
++case "${1:-}" in
++  cutover)
++    [ -f .github/private-data-mode ] && { echo "cutover: already done"; exit 0; }
++    echo private > .github/private-data-mode
++    drop_block; { echo "$BEGIN"; for f in $FILES; do echo "data/$f"; done; echo "$END"; } >> .gitignore
++    n=0; for f in $FILES; do git ls-files --error-unmatch "data/$f" >/dev/null 2>&1 && { git rm -q --cached "data/$f"; n=$((n+1)); }; done
++    git add .gitignore .github/private-data-mode data/signals.json data/squad29-lab.json data/squad29-flags-today.json data/hold-lab.json 2>/dev/null || true
++    echo "cutover staged: $n private files no longer tracked (still on disk), mode file and .gitignore added" ;;
++  rollback)
++    bash .github/private-data.sh restore
++    rm -f .github/private-data-mode; git rm -q --cached .github/private-data-mode 2>/dev/null || true; drop_block
++    n=0; for f in $FILES; do [ -f "data/$f" ] && { git add -f "data/$f"; n=$((n+1)); }; done
++    [ -f .gitignore ] && git add .gitignore; true
++    echo "rollback staged: $n private files tracked again, mode file removed" ;;
++  *) echo "usage: private-cutover.sh cutover|rollback"; exit 2 ;;
++esac
+diff --git a/.github/private-data.sh b/.github/private-data.sh
+index f24e517..9d114b7 100755
+--- a/.github/private-data.sh
++++ b/.github/private-data.sh
+@@ -1,65 +1,90 @@
+ #!/usr/bin/env bash
+ # Connection between this PUBLIC repository and the owner's PRIVATE data repository (privacy migration, owner approved 28 Oct 2026).
+ # The file list is .github/private-files.txt (paths under data/ in both repositories).
+-#   check   one-shot test the owner runs first (private-data-check.yml): read, write, copy every private file, read it back and compare
+-#           checksums, report the token's expiry date. Writes CONNECTION-CHECK.md in the private repository; mirror waits for it.
+-#   mirror  STAGE 1 (now): after a save, copy the private files from this repository to the private one. Production still reads this
+-#           repository; a failure here changes nothing and is only logged.
+-#   pull    STAGE 2 (after the owner approves the switch): private copies replace data/<file>. Fails loudly (exit 1) if the private
+-#           repository cannot be read or has no positions file, so a job never runs on missing holdings.
+-#   push    STAGE 2: write changed private files back; conflicts follow .github/save-data.sh (positions and trades keep the newest copy).
+-# Credential: the secret PRIVATE_DATA_TOKEN (fine-grained, ONLY the private repository, Contents read/write). It is passed to git through
+-# environment config (never in a URL, a file or a log line); GitHub also masks it in logs. With no token every mode does nothing.
+-# Never prints file contents: only names, counts and checksums. Tests: test/private-data.test.mjs (local throw-away repositories).
++# MODE OF THE SYSTEM: .github/private-data-mode containing 'private' = CUTOVER DONE (the private repository is the only copy; the files
++# are untracked and ignored here). No such file = BEFORE CUTOVER (this repository is the source; the private one is a mirror).
++#   check    owner-run test (private-data-check.yml): read, write, copy, read back identical, token expiry, repository is private.
++#   verify   READ ONLY health check (daily): before cutover, are both copies identical? after cutover, does the private copy have the
++#            holdings, and is NO private file tracked in this public repository? Token expiry warning 14 days ahead. Exit 1 = problem.
++#   mirror   before cutover: copy this repository's private files to the private one after a save (never fails a job).
++#   pull     after cutover: private copies -> data/ (exit 1 if unreadable or no holdings: no job runs without them). Before: nothing.
++#   push     after cutover: changed private files -> private repository (conflicts: .github/save-data.sh, every private file keeps the
++#            newer saved copy on a conflicting hunk, .jsonl logs keep both sides' lines). Before: nothing.
++#   show F   after cutover: print the NEWEST private copy of data/F to stdout (for the live watcher and the nightly merge).
++#   restore  rollback helper: private copies -> data/ (for a rollback commit; see docs/private-data-migration-2026-10-28.md).
++# Credential: PRIVATE_DATA_TOKEN (fine-grained, ONLY the private repository). Passed to git through environment config (never in a URL, a
++# file or a log line); GitHub masks it in logs. Prints names, counts and checksums, never contents (except 'show', to its caller's pipe).
++# Tests: test/private-data.test.mjs (local throw-away repositories; PRIVATE_DATA_URL / PRIVATE_DATA_ROOT point at them).
+ set -u
+-ROOT=$(cd "$(dirname "$0")/.." && pwd)
++ROOT=${PRIVATE_DATA_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}
+ MODE=${1:-}
+ REPO=${PRIVATE_DATA_REPO:-drrazaq/stock-2-private-data}
+ URL=${PRIVATE_DATA_URL:-https://github.com/$REPO.git}
+ DIR=${PRIVATE_DATA_DIR:-${RUNNER_TEMP:-/tmp}/private-data}
+ TOKEN=${PRIVATE_DATA_TOKEN:-}
+ FILES=$(grep -vE '^\s*(#|$)' "$ROOT/.github/private-files.txt")
+-say() { echo "private data: $*"; }
++say() { echo "private data: $*" >&2; }
++cutover() { grep -qx 'private' "$ROOT/.github/private-data-mode" 2>/dev/null; }
++if ! cutover; then case "$MODE" in pull|push|show) exit 0 ;; esac; else [ "$MODE" = mirror ] && exit 0; fi
+ if [ -z "$TOKEN" ] && [ -z "${PRIVATE_DATA_URL:-}" ]; then
+-  say "not connected (no PRIVATE_DATA_TOKEN secret), nothing done"; [ "$MODE" = check ] || [ "$MODE" = pull ] && exit 1; exit 0
++  say "not connected (no PRIVATE_DATA_TOKEN secret), nothing done"; case "$MODE" in mirror) exit 0 ;; *) exit 1 ;; esac
+ fi
+ if [ -n "$TOKEN" ]; then   # git reads this header from the environment; nothing is written to disk
+   export GIT_CONFIG_COUNT=1 GIT_CONFIG_KEY_0="http.https://github.com/.extraheader" GIT_CONFIG_VALUE_0="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$TOKEN" | base64 | tr -d '\n')"
+ fi
+ export GIT_TERMINAL_PROMPT=0 GIT_AUTHOR_NAME=scanner GIT_AUTHOR_EMAIL=scanner@users.noreply.github.com GIT_COMMITTER_NAME=scanner GIT_COMMITTER_EMAIL=scanner@users.noreply.github.com
+ set -o pipefail
+-gitp() { git -C "$DIR" -c user.name=scanner -c user.email=scanner@users.noreply.github.com -c commit.gpgsign=false "$@"; }
++gitp() { git -C "$DIR" -c commit.gpgsign=false "$@"; }
+ open() {
+-  if [ -d "$DIR/.git" ]; then gitp pull -q --rebase -X theirs 2>/dev/null || { gitp rebase --abort 2>/dev/null; return 1; }
+-  else rm -rf "$DIR"; git clone -q "$URL" "$DIR" 2>/dev/null || return 1; fi
++  if [ -d "$DIR/.git" ]; then gitp pull -q --rebase -X theirs >/dev/null 2>&1 || { gitp rebase --abort >/dev/null 2>&1; return 1; }
++  else rm -rf "$DIR"; git clone -q "$URL" "$DIR" >/dev/null 2>&1 || return 1; fi
+ }
+ sum() { (cd "$1" && for f in $FILES; do [ -f "data/$f" ] && sha256sum "data/$f"; done) | sha256sum | cut -c1-16; }
+ copy_in() { mkdir -p "$DIR/data"; for f in $FILES; do [ -f "$ROOT/data/$f" ] && cp "$ROOT/data/$f" "$DIR/data/$f"; done; true; }
++copy_out() { k=0; for f in $FILES; do [ -f "$DIR/data/$f" ] && cp "$DIR/data/$f" "$ROOT/data/$f" && k=$((k+1)); done; true; }
+ commit_push() {
+-  gitp add -A data CONNECTION-CHECK.md 2>/dev/null; gitp diff --cached --quiet && { say "no change"; return 0; }
+-  gitp commit -qm "$1" || return 1
+-  for i in 1 2 3 4 5; do if gitp pull -q --rebase -X theirs 2>/dev/null && gitp push -q 2>/dev/null; then say "saved ($1)"; return 0; fi
+-    gitp rebase --abort 2>/dev/null; sleep "${SAVE_SLEEP:-5}"; done
++  gitp add -A data CONNECTION-CHECK.md >/dev/null 2>&1; gitp diff --cached --quiet && { say "no change"; return 0; }
++  gitp commit -qm "$1" >/dev/null || return 1
++  for i in 1 2 3 4 5; do if gitp pull -q --rebase -X theirs >/dev/null 2>&1 && gitp push -q >/dev/null 2>&1; then say "saved ($1)"; return 0; fi
++    gitp rebase --abort >/dev/null 2>&1; sleep "${SAVE_SLEEP:-5}"; done
+   say "Error: could not save to the private repository"; return 1
+ }
++api() {   # token expiry and 'repository is private' (github.com only; local tests skip it)
++  [ -n "$TOKEN" ] && [ -z "${PRIVATE_DATA_URL:-}" ] || return 0
++  H=$(curl -s -D - -o "$DIR.api" -H "Authorization: Bearer $TOKEN" "https://api.github.com/repos/$REPO" 2>/dev/null)
++  EXP=$(printf '%s' "$H" | tr -d '\r' | grep -i '^github-authentication-token-expiration:' | cut -d' ' -f2-)
++  say "token expires: ${EXP:-never or unknown}"
++  if [ -n "$EXP" ]; then left=$(( ( $(date -d "$EXP" +%s) - $(date +%s) ) / 86400 )); [ "$left" -lt 14 ] && say "WARNING: TOKEN EXPIRES IN $left DAYS: renew it (docs/private-data-migration-2026-10-28.md, token renewal)"; fi
++  grep -q '"private": *true' "$DIR.api" 2>/dev/null && say "repository is PRIVATE: OK" || { say "Error: the repository is not private (or not readable with this token)"; rm -f "$DIR.api"; return 1; }
++  rm -f "$DIR.api"
++}
+ case "$MODE" in
+   check)
+     open || { say "Error: cannot READ the private repository $REPO (token missing, expired, or not given access to it)"; exit 1; }
+-    say "read OK"
+-    if [ -n "$TOKEN" ] && [ -z "${PRIVATE_DATA_URL:-}" ]; then   # the API check (expiry, private) needs github.com; local tests skip it
+-      H=$(curl -s -D - -o "$DIR.api" -H "Authorization: Bearer $TOKEN" "https://api.github.com/repos/$REPO" 2>/dev/null)
+-      EXP=$(printf '%s' "$H" | tr -d '\r' | grep -i '^github-authentication-token-expiration:' | cut -d' ' -f2-)
+-      say "token expires: ${EXP:-never or unknown}"
+-      grep -q '"private": *true' "$DIR.api" 2>/dev/null && say "repository is PRIVATE: OK" || { say "Error: the repository is not private (or not readable with this token)"; rm -f "$DIR.api"; exit 1; }
+-      rm -f "$DIR.api"
+-    fi
+-    copy_in; printf '# Connection check\n\nLast successful check from the public Stock-2 repository: %s\n' "$(date -u +%FT%RZ)" > "$DIR/CONNECTION-CHECK.md"
+-    commit_push "connection check + copy of the private files $(date -u +%FT%RZ)" || { say "Error: cannot WRITE to the private repository"; exit 1; }
++    say "read OK"; api || exit 1
++    cutover || copy_in
++    printf '# Connection check\n\nLast successful check from the public Stock-2 repository: %s\n' "$(date -u +%FT%RZ)" > "$DIR/CONNECTION-CHECK.md"
++    commit_push "connection check $(date -u +%FT%RZ)" || { say "Error: cannot WRITE to the private repository"; exit 1; }
+     say "write OK"
+-    V="$DIR-verify"; rm -rf "$V"; git clone -q "$URL" "$V" 2>/dev/null || { say "Error: read-back failed"; exit 1; }
++    V="$DIR-verify"; rm -rf "$V"; git clone -q "$URL" "$V" >/dev/null 2>&1 || { say "Error: read-back failed"; exit 1; }
++    if cutover; then [ -f "$V/data/my-positions.json" ] || { say "Error: no holdings file in the private repository"; exit 1; }; say "read back OK"; rm -rf "$V"; say "CHECK PASSED"; exit 0; fi
+     n=0; same=0; for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; n=$((n+1)); cmp -s "$ROOT/data/$f" "$V/data/$f" && same=$((same+1)) || say "DIFFERENT after copy: $f"; done
+     rm -rf "$V"; say "$same of $n private files copied and read back identical (checksum $(sum "$ROOT"))"
+     [ "$same" = "$n" ] || exit 1; say "CHECK PASSED" ;;
++  verify)
++    open || { say "Error: cannot READ the private repository $REPO (token missing, expired, or not given access to it)"; exit 1; }
++    bad=0; api || bad=1
++    age=$(( ( $(date +%s) - $(gitp log -1 --format=%ct 2>/dev/null || echo 0) ) / 3600 )); say "last private save: $age hours ago"
++    if cutover; then
++      [ -f "$DIR/data/my-positions.json" ] || { say "Error: no holdings file in the private repository"; bad=1; }
++      t=0; for f in $FILES; do git -C "$ROOT" ls-files --error-unmatch "data/$f" >/dev/null 2>&1 && { say "Error: $f is TRACKED in the public repository again"; t=$((t+1)); }; done
++      [ "$t" = 0 ] && say "no private file is tracked in the public repository: OK" || bad=1
++      say "$(ls "$DIR/data" 2>/dev/null | wc -l) files in the private repository"
++    else
++      n=0; same=0; for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; n=$((n+1)); cmp -s "$ROOT/data/$f" "$DIR/data/$f" && same=$((same+1)) || say "not yet mirrored: $f"; done
++      say "$same of $n private files identical in both repositories"; [ "$same" = "$n" ] || bad=1
++    fi
++    [ "$bad" = 0 ] && say "VERIFY PASSED" || { say "VERIFY FOUND A PROBLEM"; exit 1; } ;;
+   mirror)
+     [ -f "$DIR/.mirrored" ] && [ "$(cat "$DIR/.mirrored")" = "$(sum "$ROOT")" ] && exit 0   # unchanged since the last copy: no network
+     [ -n "$(find "$DIR.wait" -mmin -10 2>/dev/null)" ] && exit 0   # not ready 10 minutes ago: try again later, not every 30 s
+@@ -70,9 +95,19 @@ case "$MODE" in
+   pull)
+     open || { say "Error: cannot read the private repository; stopping so nothing runs without your holdings"; exit 1; }
+     [ -f "$DIR/data/my-positions.json" ] || { say "Error: the private repository has no data/my-positions.json; stopping"; exit 1; }
+-    k=0; for f in $FILES; do [ -f "$DIR/data/$f" ] && cp "$DIR/data/$f" "$ROOT/data/$f" && k=$((k+1)); done; say "pulled $k files" ;;
++    copy_out; say "pulled $k files"
++    [ -n "${GITHUB_ENV:-}" ] && echo "PRIVATE_DATA_MODE=private" >> "$GITHUB_ENV"; true ;;
+   push)
+     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }
+-    copy_in; ( cd "$DIR" && SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "bot $(date -u +%FT%RZ)" ) | sed 's/^/private data: /' ;;
+-  *) echo "usage: private-data.sh check|mirror|pull|push"; exit 2 ;;
++    copy_in; OWN=" "; for f in $FILES; do OWN="$OWN data/$f "; done
++    ( cd "$DIR" && SAVE_OWNER_FILES="$OWN" SAVE_UNION_JSONL=1 SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "save $(date -u +%FT%RZ)" ) 2>&1 | sed 's/^/private data: /' >&2 ;;
++  show)
++    F=${2:-}; case " $FILES " in *[[:space:]]"$F"[[:space:]]*) ;; *) say "Error: $F is not a private file"; exit 1 ;; esac
++    open || { say "Error: cannot read the private repository"; exit 1; }
++    [ -f "$DIR/data/$F" ] || exit 1; cat "$DIR/data/$F" ;;
++  restore)
++    open || { say "Error: cannot read the private repository"; exit 1; }
++    [ -f "$DIR/data/my-positions.json" ] || { say "Error: no holdings file in the private repository; nothing restored"; exit 1; }
++    copy_out; say "restored $k files into data/ (rollback)" ;;
++  *) echo "usage: private-data.sh check|verify|mirror|pull|push|show FILE|restore" >&2; exit 2 ;;
+ esac
+diff --git a/.github/private-files.txt b/.github/private-files.txt
+index 2b1f4c2..dc660ab 100644
+--- a/.github/private-files.txt
++++ b/.github/private-files.txt
+@@ -15,3 +15,8 @@ market-calls.jsonl
+ watch-extra.json
+ basket-state.json
+ leaderdip-ledger.jsonl
++# derived from the owner's holdings (privacy audit 28 Oct): split out of public files
++pos-verdict.json
++squad29-holdings.json
++hold-lab-owner.json
++news-log.jsonl
+diff --git a/.github/save-data.sh b/.github/save-data.sh
+index 9b8bc79..a2510fc 100644
+--- a/.github/save-data.sh
++++ b/.github/save-data.sh
+@@ -5,7 +5,7 @@
+ # hunk by hunk: the owner's files (positions, trades, bot state) keep origin's copy; every other file keeps the job's copy, exactly
+ # as -X theirs did. Hunks that do not conflict are kept from both sides, as before.
+ # Usage: bash .github/save-data.sh "commit message"   (test/save-data.test.mjs drives it on throw-away repositories)
+-OWNER_FILES=" data/my-positions.json data/my-trades.jsonl data/tg-state.json "
++OWNER_FILES=${SAVE_OWNER_FILES:-" data/my-positions.json data/my-trades.jsonl data/tg-state.json "}   # override: the private-data push (every private file)
+ T=$(mktemp -d)
+ has() { git cat-file -e ":$1:$2" 2>/dev/null; }
+ # one stopped rebase step: during a rebase stage 2 is origin (upstream), stage 3 is this job's commit
+@@ -15,7 +15,8 @@ resolve_step() {
+     case "$OWNER_FILES" in *" $f "*) side=ours ;; *) side=theirs ;; esac
+     if has 2 "$f" && has 3 "$f"; then
+       git show ":2:$f" > "$T/o"; git show ":3:$f" > "$T/t"; if has 1 "$f"; then git show ":1:$f" > "$T/b"; else : > "$T/b"; fi
+-      git merge-file -q "--$side" "$T/o" "$T/b" "$T/t"; cp "$T/o" "$f"; git add -- "$f"
++      how="--$side"; [ "${SAVE_UNION_JSONL:-}" = 1 ] && case "$f" in *.jsonl) how=--union ;; esac   # private push: append-only logs keep both sides' lines
++      git merge-file -q "$how" "$T/o" "$T/b" "$T/t"; cp "$T/o" "$f"; git add -- "$f"
+     elif { [ $side = ours ] && has 2 "$f"; } || { [ $side = theirs ] && has 3 "$f"; }; then
+       git checkout "--$side" -- "$f"; git add -- "$f"
+     else
+diff --git a/.github/scrub-public.mjs b/.github/scrub-public.mjs
+new file mode 100644
+index 0000000..088bd09
+--- /dev/null
++++ b/.github/scrub-public.mjs
+@@ -0,0 +1,38 @@
++// Privacy cutover helper (private data migration, 28 Oct 2026). Run ONCE in the cutover commit, before the private files stop being
++// tracked: moves the owner-revealing parts of public files into their private files (listed in .github/private-files.txt) and leaves
++// the public files without them. From then on the scripts write those parts to the private files themselves (scan.mjs withPV / PV_FILE,
++// squad29-lab.mjs PRIV_HOLD, hold-lab.mjs OWNER_OUT), so this never needs to run again. Idempotent. Prints counts only.
++//   signals.json        posVerdict            -> pos-verdict.json
++//   squad29-lab.json    holdings              -> squad29-holdings.json (flags-today: holdings too; every flag loses its 'held' mark)
++//   hold-lab.json       owner, diagnostics.owner -> hold-lab-owner.json
++// Usage: node .github/scrub-public.mjs [dataDir]     Test: test/private-data.test.mjs
++import fs from 'node:fs';
++import path from 'node:path';
++
++const D = process.argv[2] || 'data', P = (f) => path.join(D, f);
++const J = (f) => { try { return JSON.parse(fs.readFileSync(P(f), 'utf8')); } catch (e) { return null; } };
++const W = (f, o) => fs.writeFileSync(P(f), JSON.stringify(o));
++const out = [];
++
++const sg = J('signals.json');
++if (sg && sg.posVerdict) { if (!J('pos-verdict.json')) W('pos-verdict.json', { generatedAt: sg.generatedAt, session: sg.session, posVerdict: sg.posVerdict }); delete sg.posVerdict; W('signals.json', sg); out.push('signals.json: posVerdict moved'); }
++
++const note = { note: 'the holdings check is private (data/squad29-holdings.json)' };
++const lab = J('squad29-lab.json'), today = J('squad29-flags-today.json');
++const hold = (lab && lab.holdings && lab.holdings.positions) ? lab.holdings : (today && today.holdings && today.holdings.positions) ? today.holdings : null;
++if (hold && !J('squad29-holdings.json')) W('squad29-holdings.json', hold);
++for (const [f, o] of [['squad29-lab.json', lab], ['squad29-flags-today.json', today]]) {
++  if (!o) continue; let n = 0;
++  if (o.holdings && o.holdings.positions) { o.holdings = { checkedAt: o.holdings.checkedAt, ...note }; n++; }
++  for (const r of o.flags || []) if (r && r.held) { r.held = null; n++; }
++  if (n) { W(f, o); out.push(f + ': ' + n + ' owner marks removed'); }
++}
++
++const hl = J('hold-lab.json');
++if (hl && (Array.isArray(hl.owner) || (hl.diagnostics && Array.isArray(hl.diagnostics.owner)))) {
++  if (!J('hold-lab-owner.json')) W('hold-lab-owner.json', { generatedAt: hl.generatedAt, owner: Array.isArray(hl.owner) ? hl.owner : [], buys: (hl.diagnostics && hl.diagnostics.owner) || [] });
++  const n = Array.isArray(hl.owner) ? hl.owner.length : 0;
++  hl.owner = { private: 'data/hold-lab-owner.json', n }; if (hl.diagnostics && Array.isArray(hl.diagnostics.owner)) hl.diagnostics.owner = hl.diagnostics.owner.length;
++  W('hold-lab.json', hl); out.push('hold-lab.json: owner section moved');
++}
++console.log('scrub: ' + (out.join('; ') || 'nothing to move'));
+diff --git a/.github/workflows/Smart-money.yml b/.github/workflows/Smart-money.yml
+index d6e99e9..848c49a 100644
+--- a/.github/workflows/Smart-money.yml
++++ b/.github/workflows/Smart-money.yml
+@@ -15,6 +15,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/Tiprank.yml b/.github/workflows/Tiprank.yml
+index 423a79d..b5effd2 100644
+--- a/.github/workflows/Tiprank.yml
++++ b/.github/workflows/Tiprank.yml
+@@ -16,6 +16,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/account-replay.yml b/.github/workflows/account-replay.yml
+index 3bc8dca..414a710 100644
+--- a/.github/workflows/account-replay.yml
++++ b/.github/workflows/account-replay.yml
+@@ -23,6 +23,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/agent-a-lab.yml b/.github/workflows/agent-a-lab.yml
+index 29b5e54..616879a 100644
+--- a/.github/workflows/agent-a-lab.yml
++++ b/.github/workflows/agent-a-lab.yml
+@@ -21,6 +21,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/angles-lab.yml b/.github/workflows/angles-lab.yml
+index b44c7b4..5fb2893 100644
+--- a/.github/workflows/angles-lab.yml
++++ b/.github/workflows/angles-lab.yml
+@@ -27,6 +27,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/anomaly-lab.yml b/.github/workflows/anomaly-lab.yml
+index 4b7b22a..ffffeb9 100644
+--- a/.github/workflows/anomaly-lab.yml
++++ b/.github/workflows/anomaly-lab.yml
+@@ -29,6 +29,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/bot.yml b/.github/workflows/bot.yml
+index a0e8952..27012c2 100644
+--- a/.github/workflows/bot.yml
++++ b/.github/workflows/bot.yml
+@@ -18,6 +18,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -35,9 +39,14 @@ jobs:
+           # privacy migration stage 1 (28 Oct): keep a copy of the owner's private files in the private repository. Does nothing
+           # without the PRIVATE_DATA_TOKEN secret or before the connection check passed; never stops the bot.
+           mirror() { bash .github/private-data.sh mirror >> run.log 2>&1 || true; }
++          # after the cutover: read the owner's files from the private repository before each round, save them back after it (both do
++          # nothing before the cutover). 10 failed reads in a row stop the run, so the failure message below reaches the owner.
++          push_private() { bash .github/private-data.sh push >> run.log 2>&1 || echo "Error: could not save the owner's private files" | tee -a run.log; }
++          pfail=0
+           end=$(( $(date +%s) + 330*60 )); last_full=0; : > run.log
+           while [ "$(date +%s)" -lt "$end" ]; do
+             git pull -q --rebase -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
++            if ! bash .github/private-data.sh pull >> run.log 2>&1; then pfail=$((pfail + 1)); [ "$pfail" -ge 10 ] && { echo "Error: the private data repository was not readable 10 times in a row" | tee -a run.log; exit 1; }; sleep 30; continue; fi; pfail=0
+             now=$(date +%s)
+             if [ $((now - last_full)) -ge 300 ]; then
+               # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages
+@@ -48,7 +57,7 @@ jobs:
+               # in between: wait up to 25 seconds for a message and answer it at once
+               BOT_ONLY=1 TG_WAIT=25 node scan.mjs >> run.log 2>&1 || { echo "reply failed" >> run.log; sleep 5; }
+             fi
+-            save; mirror
++            save; push_private; mirror
+             tail -c 200000 run.log > run.tmp && mv run.tmp run.log
+           done
+         env:
+diff --git a/.github/workflows/calendar.yml b/.github/workflows/calendar.yml
+index 1fd6a4a..1cb2f05 100644
+--- a/.github/workflows/calendar.yml
++++ b/.github/workflows/calendar.yml
+@@ -15,6 +15,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/catalyst-lab.yml b/.github/workflows/catalyst-lab.yml
+index edb8278..d8ba340 100644
+--- a/.github/workflows/catalyst-lab.yml
++++ b/.github/workflows/catalyst-lab.yml
+@@ -18,6 +18,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/chain-decoder.yml b/.github/workflows/chain-decoder.yml
+index 459a4bf..1d4626c 100644
+--- a/.github/workflows/chain-decoder.yml
++++ b/.github/workflows/chain-decoder.yml
+@@ -18,6 +18,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/confluence-lab.yml b/.github/workflows/confluence-lab.yml
+index e4662c6..0e2acc0 100644
+--- a/.github/workflows/confluence-lab.yml
++++ b/.github/workflows/confluence-lab.yml
+@@ -30,6 +30,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/deals.yml b/.github/workflows/deals.yml
+index 939ca6e..ab0905f 100644
+--- a/.github/workflows/deals.yml
++++ b/.github/workflows/deals.yml
+@@ -14,6 +14,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/decoded-lab.yml b/.github/workflows/decoded-lab.yml
+index 743dd9b..ed4d047 100644
+--- a/.github/workflows/decoded-lab.yml
++++ b/.github/workflows/decoded-lab.yml
+@@ -26,6 +26,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/discover.yml b/.github/workflows/discover.yml
+index e70dc9b..cc40f38 100644
+--- a/.github/workflows/discover.yml
++++ b/.github/workflows/discover.yml
+@@ -16,6 +16,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/discovery2.yml b/.github/workflows/discovery2.yml
+index 6a5d522..cc732e7 100644
+--- a/.github/workflows/discovery2.yml
++++ b/.github/workflows/discovery2.yml
+@@ -21,6 +21,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/event-orb-retest-research.yml b/.github/workflows/event-orb-retest-research.yml
+index 6828fd0..a40998c 100644
+--- a/.github/workflows/event-orb-retest-research.yml
++++ b/.github/workflows/event-orb-retest-research.yml
+@@ -39,6 +39,10 @@ jobs:
+       EVR_SEC_MINUTES: '20'
+     steps:
+       - uses: actions/checkout@v4
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: '22'
+diff --git a/.github/workflows/expert-lab.yml b/.github/workflows/expert-lab.yml
+index 2358877..9056aad 100644
+--- a/.github/workflows/expert-lab.yml
++++ b/.github/workflows/expert-lab.yml
+@@ -26,6 +26,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/fastmover-intraday.yml b/.github/workflows/fastmover-intraday.yml
+index cf7d51b..4af5b58 100644
+--- a/.github/workflows/fastmover-intraday.yml
++++ b/.github/workflows/fastmover-intraday.yml
+@@ -17,6 +17,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/follow-lane.yml b/.github/workflows/follow-lane.yml
+index cd852ac..11c6918 100644
+--- a/.github/workflows/follow-lane.yml
++++ b/.github/workflows/follow-lane.yml
+@@ -26,6 +26,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/hold-lab.yml b/.github/workflows/hold-lab.yml
+index 8b75a37..cb3866b 100644
+--- a/.github/workflows/hold-lab.yml
++++ b/.github/workflows/hold-lab.yml
+@@ -24,6 +24,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -47,7 +51,7 @@ jobs:
+           git config user.name "scanner"
+           git config user.email "scanner@users.noreply.github.com"
+           tail -n 400 run.log | cut -c1-2000 > data/hold-lab-run.log 2>/dev/null || true
+-          FILES="data/hold-lab.json data/hold-lab-run.log"
++          FILES="data/hold-lab.json data/hold-lab-run.log data/hold-lab-owner.json"
+           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+@@ -58,6 +62,11 @@ jobs:
+           git diff --cached --quiet || git commit -m "hold lab $(date -u +%F)"
+           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+           [ "$ok" = 1 ] || { echo "Error: could not save the hold lab result"; exit 1; }
++      - if: success() || failure()
++        name: Save the owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh push
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+       - if: success() || failure()
+         uses: actions/upload-artifact@v4
+         with:
+diff --git a/.github/workflows/ignition.yml b/.github/workflows/ignition.yml
+index 9e677f4..2a6eea7 100644
+--- a/.github/workflows/ignition.yml
++++ b/.github/workflows/ignition.yml
+@@ -21,6 +21,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -42,6 +46,7 @@ jobs:
+           TG_TOKEN: ${{ secrets.TG_TOKEN }}
+           TG_CHAT: ${{ secrets.TG_CHAT }}
+           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}   # after the privacy cutover: live stop watch re-reads the holdings there
+       # Durable per-stock ledger of today's 15%+ movers (the missed-runner autopsy reads it; no data calls).
+       - if: always()
+         continue-on-error: true
+diff --git a/.github/workflows/intraday-radar.yml b/.github/workflows/intraday-radar.yml
+index 945a8e4..38a3ff6 100644
+--- a/.github/workflows/intraday-radar.yml
++++ b/.github/workflows/intraday-radar.yml
+@@ -16,6 +16,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/leaders-study.yml b/.github/workflows/leaders-study.yml
+index 36da34f..bae1e6a 100644
+--- a/.github/workflows/leaders-study.yml
++++ b/.github/workflows/leaders-study.yml
+@@ -21,6 +21,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/macro-lab.yml b/.github/workflows/macro-lab.yml
+index 9f3c8f5..6df51ec 100644
+--- a/.github/workflows/macro-lab.yml
++++ b/.github/workflows/macro-lab.yml
+@@ -27,6 +27,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/main.yml b/.github/workflows/main.yml
+index c7e3a28..8e9ad8e 100644
+--- a/.github/workflows/main.yml
++++ b/.github/workflows/main.yml
+@@ -17,6 +17,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -43,6 +47,7 @@ jobs:
+           TG_CHAT: ${{ secrets.TG_CHAT }}
+           RATE: ${{ vars.RATE || '8' }}
+           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}   # after the privacy cutover: the newest holdings come from the private repository
+       - run: |
+           git config user.name "scanner"
+           git config user.email "scanner@users.noreply.github.com"
+@@ -50,6 +55,12 @@ jobs:
+           # file keeps this run's copy as before; see .github/save-data.sh and test/save-data.test.mjs
+           set -o pipefail
+           bash .github/save-data.sh "scan $(date -u +%FT%RZ)" 2>&1 | tee -a run.log
++      - name: Save the owner's private files (privacy migration; does nothing before the cutover)
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
++        run: |
++          set -o pipefail
++          bash .github/private-data.sh push 2>&1 | tee -a run.log
+       # privacy migration stage 1 (28 Oct): copy the owner's private files to the private repository (mirror only; production still
+       # reads this repository). Does nothing without PRIVATE_DATA_TOKEN or before the connection check; never fails the scan.
+       - continue-on-error: true
+diff --git a/.github/workflows/ml-lab.yml b/.github/workflows/ml-lab.yml
+index 5ffec2a..2952202 100644
+--- a/.github/workflows/ml-lab.yml
++++ b/.github/workflows/ml-lab.yml
+@@ -30,6 +30,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/movers.yml b/.github/workflows/movers.yml
+index 3e66605..4f78eef 100644
+--- a/.github/workflows/movers.yml
++++ b/.github/workflows/movers.yml
+@@ -16,6 +16,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/news.yml b/.github/workflows/news.yml
+index 73e02b7..4a1142b 100644
+--- a/.github/workflows/news.yml
++++ b/.github/workflows/news.yml
+@@ -15,6 +15,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -32,6 +36,11 @@ jobs:
+           for f in data/news-seen.json data/news-meta.json data/news-log.jsonl data/macro-state.json data/macro-log.jsonl; do [ -f "$f" ] && git add "$f"; done; true
+           git diff --cached --quiet || git commit -m "news $(date -u +%FT%RZ)"
+           for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
++      - if: success() || failure()
++        name: Save the owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh push
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+       - if: failure()
+         env:
+           TG_TOKEN: ${{ secrets.TG_TOKEN }}
+diff --git a/.github/workflows/opportunity-radar.yml b/.github/workflows/opportunity-radar.yml
+index a1f4bb8..80fb6da 100644
+--- a/.github/workflows/opportunity-radar.yml
++++ b/.github/workflows/opportunity-radar.yml
+@@ -17,6 +17,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/options-lab.yml b/.github/workflows/options-lab.yml
+index d39b4c7..d02320e 100644
+--- a/.github/workflows/options-lab.yml
++++ b/.github/workflows/options-lab.yml
+@@ -20,6 +20,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/options-survey.yml b/.github/workflows/options-survey.yml
+index 9456b51..da1210b 100644
+--- a/.github/workflows/options-survey.yml
++++ b/.github/workflows/options-survey.yml
+@@ -18,6 +18,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/premarket.yml b/.github/workflows/premarket.yml
+index 6f8d4bc..6576d93 100644
+--- a/.github/workflows/premarket.yml
++++ b/.github/workflows/premarket.yml
+@@ -17,6 +17,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/private-data-check.yml b/.github/workflows/private-data-check.yml
+index 3b2299b..8940a37 100644
+--- a/.github/workflows/private-data-check.yml
++++ b/.github/workflows/private-data-check.yml
+@@ -1,37 +1,81 @@
+ name: Private data connection check
+-# Privacy migration, owner approved 28 Oct 2026. Run this ONCE after adding the secret PRIVATE_DATA_TOKEN (Actions tab -> this workflow ->
+-# Run workflow). It reads and writes the private repository drrazaq/stock-2-private-data, copies the owner's private files there, reads
+-# them back and compares checksums, and reports the token's expiry date. It prints file NAMES and counts only, never contents or the
+-# token. Production keeps reading THIS repository; after a pass the bot and the nightly scan also keep a copy there (mirror).
+-# Nothing is deleted here. Script and tests: .github/private-data.sh, test/private-data.test.mjs.
++# Privacy migration (owner request 28 Oct 2026). Script: .github/private-data.sh; plan, checklist and rollback:
++# docs/private-data-migration-2026-10-28.md. Prints file NAMES and counts only, never contents or the token.
++#   check     (default when run by hand) read, write, copy, read back identical, token expiry. Nothing in production changes.
++#   verify    READ ONLY (also every day on the schedule): both copies identical before the cutover; after it, holdings present and no
++#             private file tracked here. Telegram only on a problem or when the token expires within 14 days.
++#   cutover   ONLY WITH THE OWNER'S APPROVAL and confirm = CUTOVER: stops the bot, scan and watcher runs, moves the owner marks out of
++#             public files, copies everything to the private repository and checks it, then stops tracking the private files here
++#             (they stay in git history), commits, verifies and restarts the bot. Any failure before the commit changes nothing.
++#   rollback  confirm = ROLLBACK: the reverse (private copies back into this PUBLIC repository; publishes them again).
+ on:
+   workflow_dispatch:
++    inputs:
++      action:
++        description: 'check, verify, cutover or rollback'
++        required: false
++        default: 'check'
++      confirm:
++        description: 'cutover needs CUTOVER, rollback needs ROLLBACK'
++        required: false
++        default: ''
++  schedule:
++    - cron: '17 4 * * *'   # daily read-only verify (7:17 Kuwait)
+   push:
+     branches: [main]
+     paths: [run-private-data-check-now.txt]
+ permissions:
+-  contents: read
++  contents: write
++  actions: write   # cutover / rollback stop and restart the bot, scan and watcher runs
+ concurrency: private-data-check
+ jobs:
+-  check:
++  run:
+     runs-on: ubuntu-latest
+-    timeout-minutes: 10
++    timeout-minutes: 20
++    env:
++      ACTION: ${{ github.event_name == 'schedule' && 'verify' || github.event.inputs.action || 'check' }}
++      CONFIRM: ${{ github.event.inputs.confirm }}
++      PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
++      GH_TOKEN: ${{ github.token }}
+     steps:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
+       - id: c
+-        env:
+-          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
++        shell: bash
+         run: |
+           set -o pipefail
+-          bash .github/private-data.sh check 2>&1 | tee check.log
++          git config user.name "scanner"; git config user.email "scanner@users.noreply.github.com"
++          case "$ACTION" in
++            check|verify) bash .github/private-data.sh "$ACTION" 2>&1 | tee check.log ;;
++            cutover|rollback)
++              want=$(echo "$ACTION" | tr a-z A-Z); [ "$CONFIRM" = "$want" ] || { echo "private data: Error: $ACTION needs confirm = $want; nothing done" | tee check.log; exit 1; }
++              # 1. stop every run that writes or reads the owner's files live, so nothing saves during the switch
++              for w in bot.yml main.yml ignition.yml news.yml; do for id in $(gh run list -R "$GITHUB_REPOSITORY" -w "$w" --json databaseId,status -q '.[] | select(.status != "completed") | .databaseId'); do gh run cancel -R "$GITHUB_REPOSITORY" "$id" || true; done; done
++              sleep 20; git pull -q --rebase
++              if [ "$ACTION" = cutover ]; then
++                node .github/scrub-public.mjs data 2>&1 | tee check.log
++                bash .github/private-data.sh check 2>&1 | tee -a check.log              # every file copied and read back identical, or stop here
++                bash .github/private-cutover.sh cutover 2>&1 | tee -a check.log
++              else
++                bash .github/private-cutover.sh rollback 2>&1 | tee check.log
++              fi
++              git commit -qm "privacy $ACTION (owner approved; private-data-check.yml)"
++              ok=0; for i in 1 2 3 4 5; do if git pull -q --rebase && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
++              [ "$ok" = 1 ] || { echo "private data: Error: could not push the $ACTION commit" | tee -a check.log; exit 1; }
++              [ "$ACTION" = cutover ] && bash .github/private-data.sh verify 2>&1 | tee -a check.log
++              gh workflow run bot.yml -R "$GITHUB_REPOSITORY" --ref main || true
++              echo "private data: $ACTION DONE" | tee -a check.log ;;
++            *) echo "private data: Error: unknown action $ACTION" | tee check.log; exit 1 ;;
++          esac
+       - if: always()
+         env:
+           TG_TOKEN: ${{ secrets.TG_TOKEN }}
+           TG_CHAT: ${{ secrets.TG_CHAT }}
+           OK: ${{ steps.c.outcome }}
+         run: |
+-          L=$(grep -E "of .* private files|expires|Error" check.log 2>/dev/null | head -3 | cut -c1-200 | tr '\n' ' ')
+-          if [ "$OK" = success ]; then T="PRIVATE DATA CONNECTION: PASSED. $L Nothing switched yet: production still reads the public repository."; else T="PRIVATE DATA CONNECTION: FAILED. $L Nothing changed. Send this message to Claude."; fi
++          L=$(grep -E "of .* private files|expires|WARNING|Error|DONE|tracked" check.log 2>/dev/null | head -4 | sed 's/^private data: //' | cut -c1-200 | tr '\n' ' ')
++          if [ "$ACTION" = verify ] && [ "$OK" = success ] && ! grep -q WARNING check.log; then exit 0; fi   # daily verify: quiet when all is well
++          A=$(echo "$ACTION" | tr a-z A-Z)
++          if [ "$OK" = success ]; then T="PRIVATE DATA $A: PASSED. $L"; else T="PRIVATE DATA $A: FAILED. $L Send this message to Claude."; fi
+           curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=$T" "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
+diff --git a/.github/workflows/research-lab.yml b/.github/workflows/research-lab.yml
+index d0d9915..81872ec 100644
+--- a/.github/workflows/research-lab.yml
++++ b/.github/workflows/research-lab.yml
+@@ -30,6 +30,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad1-lab.yml b/.github/workflows/squad1-lab.yml
+index f7fd87c..4119f7a 100644
+--- a/.github/workflows/squad1-lab.yml
++++ b/.github/workflows/squad1-lab.yml
+@@ -31,6 +31,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad10-lab.yml b/.github/workflows/squad10-lab.yml
+index 1ca210e..a048dfb 100644
+--- a/.github/workflows/squad10-lab.yml
++++ b/.github/workflows/squad10-lab.yml
+@@ -28,6 +28,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad11-lab.yml b/.github/workflows/squad11-lab.yml
+index 3514cfd..7028d0c 100644
+--- a/.github/workflows/squad11-lab.yml
++++ b/.github/workflows/squad11-lab.yml
+@@ -28,6 +28,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad12-lab.yml b/.github/workflows/squad12-lab.yml
+index 2376728..12d6a69 100644
+--- a/.github/workflows/squad12-lab.yml
++++ b/.github/workflows/squad12-lab.yml
+@@ -29,6 +29,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad13-lab.yml b/.github/workflows/squad13-lab.yml
+index 5e59c07..637c37d 100644
+--- a/.github/workflows/squad13-lab.yml
++++ b/.github/workflows/squad13-lab.yml
+@@ -28,6 +28,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad14-lab.yml b/.github/workflows/squad14-lab.yml
+index 1095e65..9db7385 100644
+--- a/.github/workflows/squad14-lab.yml
++++ b/.github/workflows/squad14-lab.yml
+@@ -28,6 +28,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad15-lab.yml b/.github/workflows/squad15-lab.yml
+index 4923863..afbfa07 100644
+--- a/.github/workflows/squad15-lab.yml
++++ b/.github/workflows/squad15-lab.yml
+@@ -26,6 +26,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad15b-lab.yml b/.github/workflows/squad15b-lab.yml
+index 22aed69..0da6d73 100644
+--- a/.github/workflows/squad15b-lab.yml
++++ b/.github/workflows/squad15b-lab.yml
+@@ -24,6 +24,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad16-lab.yml b/.github/workflows/squad16-lab.yml
+index 860c676..68eb26e 100644
+--- a/.github/workflows/squad16-lab.yml
++++ b/.github/workflows/squad16-lab.yml
+@@ -29,6 +29,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad17-lab.yml b/.github/workflows/squad17-lab.yml
+index fac15d4..532eace 100644
+--- a/.github/workflows/squad17-lab.yml
++++ b/.github/workflows/squad17-lab.yml
+@@ -28,6 +28,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad18-lab.yml b/.github/workflows/squad18-lab.yml
+index 5721922..8eeba3e 100644
+--- a/.github/workflows/squad18-lab.yml
++++ b/.github/workflows/squad18-lab.yml
+@@ -28,6 +28,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad19-lab.yml b/.github/workflows/squad19-lab.yml
+index 91f6795..9dce540 100644
+--- a/.github/workflows/squad19-lab.yml
++++ b/.github/workflows/squad19-lab.yml
+@@ -24,6 +24,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           fetch-depth: 2
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - id: r
+         shell: bash
+         run: |
+@@ -40,6 +44,10 @@ jobs:
+       NODE_OPTIONS: --max-old-space-size=12288
+     steps:
+       - uses: actions/checkout@v4
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -78,6 +86,10 @@ jobs:
+       NODE_OPTIONS: --max-old-space-size=12288
+     steps:
+       - uses: actions/checkout@v4
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -110,6 +122,10 @@ jobs:
+       NODE_OPTIONS: --max-old-space-size=14336
+     steps:
+       - uses: actions/checkout@v4
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -146,6 +162,10 @@ jobs:
+       NODE_OPTIONS: --max-old-space-size=12288
+     steps:
+       - uses: actions/checkout@v4
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -196,6 +216,10 @@ jobs:
+       NODE_OPTIONS: --max-old-space-size=14336
+     steps:
+       - uses: actions/checkout@v4
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -247,6 +271,10 @@ jobs:
+       NODE_OPTIONS: --max-old-space-size=12288
+     steps:
+       - uses: actions/checkout@v4
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -286,6 +314,10 @@ jobs:
+       NODE_OPTIONS: --max-old-space-size=8192
+     steps:
+       - uses: actions/checkout@v4
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad2-lab.yml b/.github/workflows/squad2-lab.yml
+index f2ff4f3..4a39a71 100644
+--- a/.github/workflows/squad2-lab.yml
++++ b/.github/workflows/squad2-lab.yml
+@@ -30,6 +30,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -65,6 +69,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -109,6 +117,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -160,6 +172,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad20-lab.yml b/.github/workflows/squad20-lab.yml
+index 40f9467..af10937 100644
+--- a/.github/workflows/squad20-lab.yml
++++ b/.github/workflows/squad20-lab.yml
+@@ -28,6 +28,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad21-lab.yml b/.github/workflows/squad21-lab.yml
+index 9fe75c7..312e83b 100644
+--- a/.github/workflows/squad21-lab.yml
++++ b/.github/workflows/squad21-lab.yml
+@@ -31,6 +31,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad22-lab.yml b/.github/workflows/squad22-lab.yml
+index e20d9ba..41597c0 100644
+--- a/.github/workflows/squad22-lab.yml
++++ b/.github/workflows/squad22-lab.yml
+@@ -31,6 +31,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad23-lab.yml b/.github/workflows/squad23-lab.yml
+index 18156d7..0f036bf 100644
+--- a/.github/workflows/squad23-lab.yml
++++ b/.github/workflows/squad23-lab.yml
+@@ -27,6 +27,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad24-lab.yml b/.github/workflows/squad24-lab.yml
+index 2128799..4892d53 100644
+--- a/.github/workflows/squad24-lab.yml
++++ b/.github/workflows/squad24-lab.yml
+@@ -30,6 +30,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad25-lab.yml b/.github/workflows/squad25-lab.yml
+index 25ee685..0e8306a 100644
+--- a/.github/workflows/squad25-lab.yml
++++ b/.github/workflows/squad25-lab.yml
+@@ -31,6 +31,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad26-watch.yml b/.github/workflows/squad26-watch.yml
+index fb541e2..fb419bf 100644
+--- a/.github/workflows/squad26-watch.yml
++++ b/.github/workflows/squad26-watch.yml
+@@ -33,6 +33,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad27-lab.yml b/.github/workflows/squad27-lab.yml
+index 83fdf9c..d089adf 100644
+--- a/.github/workflows/squad27-lab.yml
++++ b/.github/workflows/squad27-lab.yml
+@@ -22,6 +22,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad28-lab.yml b/.github/workflows/squad28-lab.yml
+index fa2b6f6..364ec6e 100644
+--- a/.github/workflows/squad28-lab.yml
++++ b/.github/workflows/squad28-lab.yml
+@@ -30,6 +30,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad29-lab.yml b/.github/workflows/squad29-lab.yml
+index 5c4a1b9..f8f1a71 100644
+--- a/.github/workflows/squad29-lab.yml
++++ b/.github/workflows/squad29-lab.yml
+@@ -34,6 +34,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+@@ -82,7 +86,7 @@ jobs:
+           git config user.name "scanner"
+           git config user.email "scanner@users.noreply.github.com"
+           tail -n 300 run.log | cut -c1-2000 > data/squad29-run.log 2>/dev/null || true
+-          FILES="data/squad29-lab.json data/squad29-flags-today.json data/squad29-diag.json data/squad29-run.log"
++          FILES="data/squad29-lab.json data/squad29-flags-today.json data/squad29-diag.json data/squad29-run.log data/squad29-holdings.json"
+           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
+           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
+           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
+@@ -93,6 +97,11 @@ jobs:
+           git diff --cached --quiet || git commit -m "squad 29 lab $(date -u +%F)"
+           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+           [ "$ok" = 1 ] || { echo "Error: could not save the squad 29 lab result"; exit 1; }
++      - if: success() || failure()
++        name: Save the owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh push
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+       - if: success() || failure()
+         uses: actions/upload-artifact@v4
+         with:
+diff --git a/.github/workflows/squad3-lab.yml b/.github/workflows/squad3-lab.yml
+index 7e5bae6..7d0d339 100644
+--- a/.github/workflows/squad3-lab.yml
++++ b/.github/workflows/squad3-lab.yml
+@@ -24,6 +24,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad4-lab.yml b/.github/workflows/squad4-lab.yml
+index c691ed3..2f147a3 100644
+--- a/.github/workflows/squad4-lab.yml
++++ b/.github/workflows/squad4-lab.yml
+@@ -29,6 +29,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad5-lab.yml b/.github/workflows/squad5-lab.yml
+index ab8b4ec..f1ee468 100644
+--- a/.github/workflows/squad5-lab.yml
++++ b/.github/workflows/squad5-lab.yml
+@@ -29,6 +29,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad6-lab.yml b/.github/workflows/squad6-lab.yml
+index da8bcb9..cb59ebd 100644
+--- a/.github/workflows/squad6-lab.yml
++++ b/.github/workflows/squad6-lab.yml
+@@ -28,6 +28,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad7-lab.yml b/.github/workflows/squad7-lab.yml
+index 086970d..53b5b36 100644
+--- a/.github/workflows/squad7-lab.yml
++++ b/.github/workflows/squad7-lab.yml
+@@ -26,6 +26,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad8-lab.yml b/.github/workflows/squad8-lab.yml
+index 08d2777..4a2b022 100644
+--- a/.github/workflows/squad8-lab.yml
++++ b/.github/workflows/squad8-lab.yml
+@@ -27,6 +27,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/squad9-lab.yml b/.github/workflows/squad9-lab.yml
+index af335ad..1b9e315 100644
+--- a/.github/workflows/squad9-lab.yml
++++ b/.github/workflows/squad9-lab.yml
+@@ -26,6 +26,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/tipster-lab.yml b/.github/workflows/tipster-lab.yml
+index 544e011..caff5bb 100644
+--- a/.github/workflows/tipster-lab.yml
++++ b/.github/workflows/tipster-lab.yml
+@@ -29,6 +29,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/value-lab.yml b/.github/workflows/value-lab.yml
+index 1e34b39..cc7f7f4 100644
+--- a/.github/workflows/value-lab.yml
++++ b/.github/workflows/value-lab.yml
+@@ -24,6 +24,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/.github/workflows/winners-autopsy.yml b/.github/workflows/winners-autopsy.yml
+index 85e421d..6cf52dd 100644
+--- a/.github/workflows/winners-autopsy.yml
++++ b/.github/workflows/winners-autopsy.yml
+@@ -26,6 +26,10 @@ jobs:
+       - uses: actions/checkout@v4
+         with:
+           ref: main
++      - name: Owner's private files (privacy migration; does nothing before the cutover)
++        run: bash .github/private-data.sh pull
++        env:
++          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+       - uses: actions/setup-node@v4
+         with:
+           node-version: 20
+diff --git a/CLAUDE.md b/CLAUDE.md
+index e564fb9..2eb3e67 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -57,7 +57,7 @@ For the owner, and for any Claude working in this repo. Claude Code reads this f
+ - **Phase 1 measurement** (owner approved 28 Oct): `shadow-stream.mjs` records every candidate with each soft gate removed, bid/ask, +1/+30 min prices (`data/shadow/DAY.jsonl.gz`); `shadow-outcomes.mjs` adds 1/5/10-session outcomes and writes `data/shadow-report.json` (scoring pre-registered in `shadow-eval.mjs`); early alerts carry a catalyst check (`classifyCatalyst`). Plan and approvals: `docs/phase1-plan-2026-10-28.md`.
+ - **Ranking shadow experiment** (owner approved 28 Oct; live ranking stays first come): frozen models A/B/C/D + controls R/R0 in `rank-models.mjs`, counted from 29 Oct, verdict after 20 sessions, then a separate confirmation period. D reads the SEC live filing feed (`edgar-feed.mjs`). Report: `docs/ranking-experiment-2026-10-28.md`; privacy plan: `docs/privacy-plan-2026-10-28.md`.
+ - **ACTIONS layout and policy** (bot repair, 28 Oct): fixed sections in priority order (CRITICAL, TODAY'S ACTIONS, NOT ACTIONABLE TODAY, APPROVED LANES, SHORT-TERM, HOLDINGS, RECORDS, SYSTEM HEALTH, `longterm` pointer). Focus mode pauses ENGINE buys only; the owner's lanes stay actions. A stock without the owner's ZAD 'yes' is never a BUY in any lane. Buttons never record on the first tap. Kuwait times come from `kwt()` (New York calendar). Details: `docs/telegram-bot-repair-2026-10-28.md`.
+-- **Private data migration** (owner request 28 Oct): the owner's files (list: `.github/private-files.txt`) move to the private repository `drrazaq/stock-2-private-data` through `.github/private-data.sh` (check / mirror / pull / push). Stage 1 = mirror only; production still reads this repository. The website publishes `index.html` only (`pages.yml`). Plan, stages and history: `docs/private-data-migration-2026-10-28.md`.
++- **Private data migration** (owner request 28 Oct): the owner's files (list: `.github/private-files.txt`) move to the private repository `drrazaq/stock-2-private-data` through `.github/private-data.sh` (check / verify / mirror / pull / push / show / restore). Every workflow pulls after checkout and the 5 writers push, all no-ops until `.github/private-data-mode` exists (the cutover: `private-data-check.yml` action cutover, owner approval only). Derived owner data goes to private files too (`pos-verdict.json`, `squad29-holdings.json`, `hold-lab-owner.json`). The website publishes `index.html` only (`pages.yml`). Plan, stages and history: `docs/private-data-migration-2026-10-28.md`.
+ - **Watcher guard** (`watcher-guard.mjs`, every 5 min in `bot.yml`): starts the live watcher if GitHub has not by 9:10 New York; alerts WATCHER LATE / WAITING / STOPPED EARLY / DOWN; real starts in `data/watcher-starts.jsonl`.
+ - **OPPORTUNITY RADAR** (V3.0, owner approved 28 Oct): a research message at 11:15 New York (sent by `ignition-watch.mjs` via `opportunity-radar.mjs midday`) and one after the close (`opportunity-radar.yml`). Panels: A live research leads, B short setups (PAPER), C approved signals (zero allowed), D runners missed. Every A/B line says NOT AN APPROVED BUY; hard blocks (under $1, NOT HALAL, SEC danger, one-day-jump AVOID) are never leads. Rules and the pre-registered scorecard are in `radar-v3-core.mjs`; ledger `data/radar-v3-ledger.jsonl`. It ignores `quiet` / `opportunitiesOnly` / `focus`; `radar off` stops it. Audit: `docs/v3-opportunity-audit-2026-10-28.md`.
+ - **Owner commands** (plain words work too):
+@@ -152,7 +152,7 @@ For the owner, and for any Claude working in this repo. Claude Code reads this f
+ 
+ ## 8. Secrets: names only, values live ONLY in GitHub → Settings → Secrets
+ 
+-`TG_TOKEN`, `TG_CHAT`, `ALPACA_KEY`, `ALPACA_SECRET`, `SEC_UA`, `FINNHUB_KEY`, `FMP_KEY`, `MASSIVE_KEY`, `TWELVE_KEY`, `ALPHAVANTAGE_KEY`, `TIPRANKS_KEY`, `YT_KEY`, `ZOYA_KEY`, `HALALTERMINAL_KEY`, `HALALSCREENER_KEY`, `OPENFIGI_KEY`, `ETORO_KEY`, `ETORO_USER_KEY`, `PRIVATE_KEY`, `PRIVATE_DATA_TOKEN` (fine-grained, only `drrazaq/stock-2-private-data`, Contents read/write).
++`TG_TOKEN`, `TG_CHAT`, `ALPACA_KEY`, `ALPACA_SECRET`, `SEC_UA`, `FINNHUB_KEY`, `FMP_KEY`, `MASSIVE_KEY`, `TWELVE_KEY`, `ALPHAVANTAGE_KEY`, `TIPRANKS_KEY`, `YT_KEY`, `ZOYA_KEY`, `HALALTERMINAL_KEY`, `HALALSCREENER_KEY`, `OPENFIGI_KEY`, `ETORO_KEY`, `ETORO_USER_KEY`, `PRIVATE_KEY`, `PRIVATE_DATA_TOKEN` (fine-grained, only `drrazaq/stock-2-private-data`, Contents read/write; expires 29 Nov 2026), optional `PRIVATE_DATA_READ` (same, read-only).
+ 
+ Never print, paste or commit a key.
+ 
+diff --git a/docs/private-data-migration-2026-10-28.md b/docs/private-data-migration-2026-10-28.md
+index 3067b53..b5d571c 100644
+--- a/docs/private-data-migration-2026-10-28.md
++++ b/docs/private-data-migration-2026-10-28.md
+@@ -1,116 +1,187 @@
+ # Private data migration (owner request, 28 Oct 2026)
+ 
+-Moves the owner's private files from the public repository `drrazaq/Stock-2` to the private repository `drrazaq/stock-2-private-data`. Every stage can be undone. Nothing is deleted until the owner approves it.
++Moves the owner's private files from the public repository `drrazaq/Stock-2` to the private repository `drrazaq/stock-2-private-data`. Every stage can be undone. **The cutover happens only on the owner's approval.**
+ 
+ ## Stage status
+ 
+ | Stage | What | Status |
+ |---|---|---|
+-| 0 | The website publishes only `index.html` | **DONE.** The owner switched the Pages source; `pages.yml` deployed at 09:09 UTC. Checked live: `/Stock-2/` gives 200; `/data/my-positions.json`, `/data/settings.json` and `/scan.mjs` give 404. |
+-| 1 | Connection plus copy (mirror) | **Built, waiting for the owner's token.** `private-data-check.yml` tests read, write and read-back. After it passes, the bot and the nightly scan keep a copy in the private repository. Production still reads the public files. |
+-| 2 | Switch production to read the private repository | Not started. Needs the owner's OK after stage 1 has run cleanly for a few days. |
+-| 3 | Remove the files from the public repository (current version) | Not started. Done in the same commit as stage 2. |
++| 0 | The website publishes only `index.html` | **DONE.** Checked live 28 Oct: `/data/...` and the scripts return 404. |
++| 1 | Connection plus copy (mirror) | **DONE.** The owner's check passed at 09:37 UTC: 14 of 14 files read back identical; token valid until 2026-11-29 21:00 UTC; repository confirmed private. |
++| 2 | Cutover machinery, built and tested, **switched off** | **DONE (this change).** Each step does nothing until the file `.github/private-data-mode` exists. |
++| 3 | Cutover | **Waiting for the owner's approval.** One click: `private-data-check.yml`, action `cutover`, confirm `CUTOVER`. Run on a weekend. |
+ | 4 | Purge history | Optional; see "Historical exposure". |
+ 
+-## 1. Private files (`.github/private-files.txt`)
+-
+-| File | What it reveals |
+-|---|---|
+-| `my-positions.json` | Holdings, entry prices, stops, dates |
+-| `my-trades.jsonl` | Real trade history (buys, sells, results) |
+-| `settings.json` | Owner decisions (focus, lanes, stop plans) |
+-| `halal.json` | The owner's ZAD marks |
+-| `alpaca-paper.json` | Practice account (paper) |
+-| `private.enc` | Share counts and money (already encrypted) |
+-| `sell-notices.jsonl`, `actions-sells.json` | SELL advice on the holdings |
+-| `scan-report.txt` | Holdings with stops and targets |
+-| `tips.jsonl`, `opinions.jsonl`, `market-calls.jsonl` | Tips the owner forwarded, with source names |
+-| `watch-extra.json` | The owner's own watch list |
+-| `basket-state.json` | Basket last shown to the owner |
+-| `leaderdip-ledger.jsonl` | LEADER DIP trades (created when the first one happens) |
+-
+-These stay public, with reasons:
+-
+-- `calendar.enc` is encrypted.
+-- `tg-state.json` holds only the message counter.
+-- `journal.jsonl` and `tier2-ledger.jsonl` are the system's own signals, not the owner's trades.
+-- **`signals.json` needs work in stage 2.** Its `posVerdict` field names held stocks with their sell reason. Stage 2 moves that field to a private file. The website reads only the public fields.
+-- **Owner details:** the name and profession were removed from `CLAUDE.md` on 28 Oct, and no current file contains them. Old versions are in history (see section 7).
+-
+-## 2. Who reads and writes these files
+-
+-**67 of the 76 workflows** read at least one private file. Mapped from each workflow's scripts and their imports.
+-
+-- **Writers** (need read/write):
+-  - `bot.yml` (Telegram commands `bought`, `sold`, `halal`, `stop`, buttons, settings);
+-  - `main.yml` (nightly scan; also writes `scan-report.txt`, `sell-notices.jsonl`, `alpaca-paper.json`).
+-- **Readers of the holdings or settings:**
+-  - `ignition.yml` (live stop alerts), `premarket.yml`, `news.yml`, `calendar.yml`;
+-  - `Smart-money.yml`, `Tiprank.yml`, `deals.yml`, `discover.yml`, `movers.yml`;
+-  - `intraday-radar.yml`, `opportunity-radar.yml`, `fastmover-intraday.yml`, `hold-lab.yml`;
+-  - `leaders-study.yml`, `agent-a-lab.yml`, `options-lab.yml`, `squad29-lab.yml`.
+-- **Readers of `halal.json` only:** about 48 research labs (`squad*-lab`, `angles`, `anomaly`, `macro` and others). They use it to label signals.
+-- **Telegram commands** that change these files (all in `scan.mjs`):
+-  - `bought`, `sold`, `added`, `halal`, `stop`, `stop placed`;
+-  - `focus`, `quiet`, `alerts`, `radar`, `basket`, `watch`;
+-  - `tip`, `size`, `budget`;
+-  - the confirm buttons.
+-- **Website:** `index.html` reads only `signals.json` and `discovery.json`. It reads no private file.
+-- **Logs:** Actions logs of a public repository are public. The scripts print counts, not holdings. The only full-message print happens when the Telegram secrets are missing, which never happens in production.
+-
+-## 3. Connection design (least privilege)
+-
+-- **One fine-grained personal access token**, limited to **only** `stock-2-private-data`.
+-  - **Contents: Read and write.** Metadata: read-only (GitHub adds it automatically).
+-  - **Nothing else**: no other repository, no account permissions, no Actions or Secrets permissions.
+-- Stored as the Actions secret **`PRIVATE_DATA_TOKEN`** in `drrazaq/Stock-2`. Workflows get it only in the steps that need it.
+-- **How it stays hidden:**
+-  - `.github/private-data.sh` passes it to git through environment settings. It is never in a URL, a file, a commit or a log line, and GitHub also masks it in logs. A test checks this.
+-  - Workflows started from forks or pull requests never receive secrets.
+-  - Telegram messages report pass/fail, file counts and the token's expiry date, never the token.
+-- The private copy is cloned into the runner's temporary folder, outside the public checkout. A public `git add data` can never pick it up.
+-
+-## 4. Read-only or read/write?
+-
+-- **Read/write is needed** for the bot and the nightly scan, because `bought`, `sold`, `halal` and the settings commands save changes.
+-- **Read-only is enough** for the other 65 workflows. For stage 2, the safer setup adds a **second token**, `PRIVATE_DATA_READ` (Contents: Read-only, same single repository), for those readers. Then the many lab workflows cannot change the owner's files even if a lab script has a bug. For stage 1 only the read/write token is needed.
+-- **Expiry:** fine-grained tokens expire, at most one year with a custom date. The check reports the expiry date. Stage 2 adds a SYSTEM HEALTH warning 14 days before it.
+-
+-## 5. Tests done before anything is switched (`test/private-data.test.mjs`, 9 tests, local throwaway repositories)
+-
+-- No token: nothing happens.
+-- Mirror waits for the connection check, then retries at most every 10 minutes.
+-- The check copies every private file, and the read-back is identical. No file content is printed.
+-- The token never appears in the output, in `.git/config` or in any commit.
+-- `pull` stops with an error if the private repository is unreachable or has no positions file, so no job runs without the holdings.
+-- `push` saves a `halal` change. When two jobs collide, the bot's newer positions win, the same rule as `.github/save-data.sh`.
+-- The website workflow publishes `index.html` only.
+-
+-## 6. Website
+-
+-The Pages source is now "GitHub Actions". `pages.yml` copies only `index.html` and **fails the run if any other file is in the site folder**. Commits that change data do not redeploy the site. Checked live (28 Oct): data files and scripts return 404.
+-
+-## 7. Historical exposure: what can and cannot be removed
+-
+-- **Git history.** Every past version of the private files is in the public history: the bot commits them every few minutes.
+-  - **What we can do:** rewrite history with `git filter-repo` to drop those paths, then force-push.
+-  - **What that costs:** every commit ID changes; all 76 workflows must be paused during the rewrite; any open clone breaks.
+-  - **What it cannot fix:** GitHub keeps old commits reachable by their ID until GitHub Support runs a cleanup (the owner must file a request). Copies already taken (clones, archive sites, data crawlers) cannot be recalled. The repository had 0 forks on 28 Oct.
+-- **Website deployments.** Only the current deployment is served, so the old ones no longer show. Search engines or web.archive.org may hold snapshots; removal requests go to them.
+-- **Actions logs** are public, kept 90 days by default, and can be deleted per run. They contain counts, not holdings.
+-- **Recommendation:** finish stages 2 and 3 first, so no new private data is published. Decide on history afterwards; that is the owner's choice.
+-
+-## 8. Preserving data
+-
+-- Stage 1 only copies; the public files stay as they are.
+-- Stage 2 starts from a private copy the mirror has kept current for days. Before the switch, the check must report "N of N identical".
+-
+-## 9. Unchanged
+-
+-- Trading rules, the halal gate, holdings, the frozen ranking experiment (A/B/C/D/R/R0) and live alert selection.
+-- Only `bot.yml` and `main.yml` gained one mirror step, which does nothing without the token.
++## 1. Why the check copied 14 files, not 15
++
++The list had 15 names. `leaderdip-ledger.jsonl` does not exist yet: it is created at the first LEADER DIP trade. The check copies only the files that exist. The mirror and, after the cutover, the bot save it as soon as it appears.
++
++The privacy audit then found **4 more files** to add (the list now has 19; see section 2). None of them existed in the public repository at the time of the check, so they were not in the 14.
++
++## 2. The private files (`.github/private-files.txt`, 19)
++
++| File | What | Writer |
++|---|---|---|
++| `my-positions.json` | Holdings, entries, stops | bot, nightly scan |
++| `my-trades.jsonl` | Real trade history | bot (`sold`) |
++| `settings.json` | Owner decisions and bot settings | bot (`focus`, `quiet`, `alerts`, …) |
++| `halal.json` | ZAD marks | bot (`halal`) |
++| `alpaca-paper.json` | Practice account | nightly scan |
++| `private.enc` | Share counts and money (encrypted) | bot |
++| `sell-notices.jsonl`, `actions-sells.json`, `scan-report.txt` | SELL advice and the report on the holdings | nightly scan |
++| `tips.jsonl`, `opinions.jsonl`, `market-calls.jsonl` | Tips the owner forwarded | bot |
++| `watch-extra.json` | The owner's watch list | bot |
++| `basket-state.json` | Basket last shown | nightly scan |
++| `leaderdip-ledger.jsonl` | LEADER DIP trades | nightly scan (created at the first trade) |
++| **`pos-verdict.json`** (new) | The sell/hold verdict on each holding, formerly inside the public `signals.json` | nightly scan |
++| **`squad29-holdings.json`** (new) | SEC danger-filing check of the holdings, formerly inside the public `squad29-*.json` | squad 29 lab |
++| **`hold-lab-owner.json`** (new) | The owner's buys with dates and prices, formerly inside the public `hold-lab.json` | hold lab |
++| **`news-log.jsonl`** | News threats on the holdings, and the owner's news decisions | news watch |
++
++**Bot state:** `tg-state.json` stays public on purpose. It holds only the Telegram message counter and "already sent" flags: no holdings, names, prices or decisions. The bot's real state, its settings, is in `settings.json`, which moves.
++
++**How the audit found them:**
++- every public data file was searched for the owner's own entry, stop and exit prices (25 distinct values). Only `hold-lab.json` matched; the other hits were coincidental closes;
++- every public file was searched for "held", "owner", "yours" and `posVerdict` fields.
++
++The scripts now write those parts into the new private files. Every reader gets the same data as before; tests prove it.
++
++## 3. Who reads and writes them
++
++- **66 workflows** read at least one private file.
++- **Every one now has a pull step right after its checkout:**
++  - before the cutover it does nothing;
++  - after the cutover it copies the private files in, or **stops the job** if the private repository cannot be read or has no holdings file.
++- **5 workflows write private files** and also save them back with a push step: `bot.yml`, `main.yml`, `news.yml`, `hold-lab.yml`, `squad29-lab.yml`.
++  - The bot reads before every round (every ~30 s) and saves after it.
++  - 10 failed reads in a row stop the bot run, so the RUN FAILED message reaches the owner.
++- **Two live readers** fetch the newest holdings during the day: the live watcher's stop watch (every 10 minutes) and the nightly position merge. After the cutover they read the private repository (`private-data.sh show`).
++- **The 61 read-only workflows** use the secret `PRIVATE_DATA_READ` when it exists (optional, read-only token), otherwise `PRIVATE_DATA_TOKEN`.
++
++## 4. Credentials
++
++- **`PRIVATE_DATA_TOKEN`**: fine-grained token, only `stock-2-private-data`, Contents read/write. Needed by the 5 writers and by the check.
++- **`PRIVATE_DATA_READ`** (optional, recommended): the same with Contents **read-only**. With it, the 61 lab and reader workflows cannot change the owner's files even if a lab has a bug.
++- **How the token stays hidden:**
++  - it is passed to git through environment settings, never in a URL, a file, a commit, a log line or Telegram (tested);
++  - GitHub masks secrets in logs;
++  - fork pull requests never receive secrets.
++
++## 5. Tests (`test/private-data.test.mjs`, 28 tests; full suite 1,133 pass)
++
++**Before the cutover nothing in production changes:**
++- pull, push and show do nothing, even with the private repository reachable;
++- mirror waits for the check, then copies each change once;
++- verify is read-only.
++
++**Telegram commands, end to end** (the real `scan.mjs` with a local Telegram stub):
++- `bought WST 100.50 9`, `halal ZQC yes`, `sold WST 110 9` and `halal ZQC no` all reach the private repository;
++- the share count reaches it encrypted;
++- the halal file keeps its 1-space indent;
++- a stale local copy does not matter, because each round reads first.
++
++**Nightly scan save:**
++- the bot's newer stop is kept, as is the scan's change to another stock;
++- both sides' log lines are kept;
++- the practice account is saved.
++
++**Concurrency:** two jobs saving at the same moment both succeed, and neither change is lost.
++
++**Failures:**
++- an unreachable private repository stops the job before anything runs, with `data/` untouched;
++- no holdings file stops the job;
++- a failed save gives a non-zero exit and an error line;
++- a missing token after the cutover stops the job.
++
++**Mirror after the cutover** never runs, so a stale public copy cannot overwrite the private one.
++
++**Cutover:**
++- private files stop being tracked;
++- a later `git add data` cannot publish them;
++- verify passes, and flags a file that gets tracked again.
++
++**Rollback** restores every file exactly, tracks them again, and removes the mode file and the ignore block without losing other `.gitignore` lines.
++
++**Derived files:**
++- `signals.json` readers get the same `posVerdict`;
++- the SEC danger-filing SELL reason gives the same verdict from the private file;
++- the scrub moves the owner marks and leaves frozen verdicts untouched.
++
++**Publishing:**
++- the website publishes `index.html` only;
++- no workflow uploads a private file or the data folder as an artifact (artifacts are run logs).
++
++**Mutation check:** breaking the save step makes 4 tests fail, and breaking the mode guard makes 9 fail. The tests are not vacuous.
++
++## 6. Website and artifacts
++
++- **Pages source** is "GitHub Actions". `pages.yml` copies `index.html` only, and fails the run if anything else is in the site folder.
++- **Artifacts** are the lab run logs (`run.log` and similar). They contain counts, not holdings, and a test guards that no private file or folder is uploaded.
++- **Logs:**
++  - The bot's `run.log` stays on the runner.
++  - The squad 29 log line no longer names held stocks.
++
++## 7. Token renewal (the current token expires 2026-11-29 21:00 UTC)
++
++From the cutover on, every job stops when the token expires, so renew it before then. The daily verify (7:17 Kuwait) sends **"TOKEN EXPIRES IN N DAYS"** from 14 days ahead.
++
++Zero-downtime steps (about 22 Nov):
++
++1. GitHub → photo → Settings → Developer settings → Personal access tokens → **Fine-grained tokens** → **Generate new token**. Use the same settings as before (only `stock-2-private-data`; Contents: Read and write). Choose the longest expiry you are comfortable with.
++2. `drrazaq/Stock-2` → Settings → Secrets and variables → Actions → `PRIVATE_DATA_TOKEN` → **Update** → paste the new value.
++3. Actions → **Private data connection check** → Run workflow → action `verify`. Telegram reports PASSED with the new expiry date.
++4. **The next day,** delete the old token in Fine-grained tokens. Runs that started before step 2 still use it, for up to 6 hours.
++
++The same steps apply to `PRIVATE_DATA_READ`.
++
++## 8. Final cutover checklist
++
++| # | Check | Status |
++|---|---|---|
++| 1 | Connection check passed (read, write, read-back identical, repository private) | ✅ 28 Oct 09:37 UTC |
++| 2 | Every private file listed, including the 4 derived ones | ✅ 19 files |
++| 3 | `bought` / `sold` / `halal` reach the private repository (end-to-end test) | ✅ tested locally |
++| 4 | Nightly scan save keeps the bot's newer changes (test) | ✅ |
++| 5 | Concurrency, failure and rollback tests | ✅ |
++| 6 | Pages publishes `index.html` only; no artifact carries a private file | ✅ |
++| 7 | Mirror live in production for 2+ days: daily verify reports "N of N identical" | ⏳ starts with the first bot run on the new workflow (today about 12:15 UTC) |
++| 8 | Optional read-only token `PRIVATE_DATA_READ` added | ⏳ owner |
++| 9 | Token renewed or renewal planned before 29 Nov | ⏳ owner |
++| 10 | Owner approval, then a weekend run of the cutover (action `cutover`, confirm `CUTOVER`) | ⏳ owner |
++
++**What the cutover run does,** stopping before anything changes if a step fails:
++1. Stops the bot, scan, watcher and news runs.
++2. Moves the owner marks out of the 4 public files.
++3. Copies everything to the private repository and checks that it reads back identical.
++4. Stops tracking the 19 files (they remain in history) and adds them to `.gitignore`.
++5. Commits, verifies and restarts the bot.
++6. Reports on Telegram.
++
++## 9. Risks
++
++1. **Token expiry or a GitHub problem stops every job** after the cutover. This is by design: no job runs without the holdings. Mitigated by the 14-day warning and RUN FAILED messages.
++2. **A reader not detected** (a script reading a private file by a path the scan missed) would see no file after the cutover. 66 workflows were found from the scripts and their imports, and a test fails if a new one appears without a pull step.
++3. **Runs in flight at the cutover:** the cutover cancels the bot, scan, watcher and news runs. Run it on a weekend so the live watcher and the scan are not needed.
++4. **After the cutover, the owner edits these files only through the bot** (or in the private repository), not in the public one.
++5. **History remains public** (section 10).
++6. **Rollback re-publishes** the owner's files in the public repository.
++7. **Cost:** none. Actions stay in the public repository (free), and the private repository is a few hundred KB. Each job gains about 2–5 seconds.
++
++## 10. Historical exposure: what can and cannot be removed
++
++- **Git history.** Every past version of these files is in the public history (the bot commits every few minutes).
++  - **What can be done:** `git filter-repo` removes those paths from all history, followed by a force-push. All commit IDs change, every workflow must be paused, and clones break.
++  - **What it cannot fix:** GitHub keeps old commits reachable by ID until GitHub Support runs a cleanup on request, and copies already taken cannot be recalled. The repository had 0 forks on 28 Oct.
++- **Website deployments:** only the current one is served, and it is `index.html` only. Archive sites may hold old snapshots; removal requests go to them.
++- **Actions logs:** public for 90 days; they contain counts, not holdings. They can be deleted per run.
++- **Recommendation:** first the cutover (no new exposure), then decide on history.
++
++## 11. Unchanged
++
++- Trading rules, halal gate and marks, holdings, the frozen ranking experiment (A/B/C/D/R/R0) and live alert selection.
++- The squad 29 and hold-lab frozen verdicts (only the owner part of their output moved).
+ 
+ ## Rollback
+ 
+-- Stage 1: delete the secret `PRIVATE_DATA_TOKEN` and everything stops (no-op). The commit that added stage 1 can be reverted safely.
+-- Stage 0: Settings → Pages → Source → "Deploy from a branch". This would publish the whole repository again, so it is not advised.
++- **Before the cutover:** delete the secret `PRIVATE_DATA_TOKEN`; every step goes back to a no-op.
++- **After the cutover:** Actions → Private data connection check → action `rollback`, confirm `ROLLBACK`. It puts every private file back into the public repository, removes the mode file and restarts the bot. **It publishes them again.**
+diff --git a/hold-lab.mjs b/hold-lab.mjs
+index fe51757..b01e1a5 100644
+--- a/hold-lab.mjs
++++ b/hold-lab.mjs
+@@ -13,7 +13,7 @@ import zlib from 'node:zlib';
+ import { freezeEach, latestBlock } from './first-run.mjs';
+ import { TIER2_T } from './value-core.mjs';
+ import { getEven, avgDown, regimeLabels, sampleOf, recoveryStats, dcaVsDip, judgeHold, halfStat, series, r4, COST, YEAR, DEAD_UNDER, GONE_AFTER } from './hold-core.mjs';
+-const env = process.env, OUT = env.OUT || 'data/hold-lab.json', DIAG = !!env.DIAG;
++const env = process.env, OUT = env.OUT || 'data/hold-lab.json', OWNER_OUT = env.OWNER_OUT || 'data/hold-lab-owner.json', DIAG = !!env.DIAG;
+ const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
+ const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', NQ = local(env.NASDAQ_BASE) || 'https://api.nasdaq.com';
+ const mean = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, median = (a) => { if (!a.length) return null; const s = [...a].sort((x, y) => x - y), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+@@ -109,7 +109,7 @@ for (const [sym, p] of Object.entries(J('data/my-positions.json', {}))) if (p &&
+ 
+ const DIAGS = { cache: { from: D[0], to: D[T - 1], sessions: T, stocks: NS, xRowDays: xDays, vanished: [...Array(NS).keys()].filter(vanishedI).length, dead: [...Array(NS).keys()].filter(deadI).length },
+   regime: { sources: SRC, cover: r4(regCover), crashSessionsInWindow: crashDays.length, crashFirst: crashDays[0] || null, crashLast: crashDays[crashDays.length - 1] || null }, sets: Object.fromEntries(Object.entries(SETS).map(([k, v]) => [k, { entries: v.length, days: new Set(v.map(z => z.t)).size }])),
+-  fscore: fsCover, fcfPicks: fcfPicks.length, owner: owner.map(o => o.sym + ' ' + o.since) };
++  fscore: fsCover, fcfPicks: fcfPicks.length, owner: owner.length };   // PRIVACY (28 Oct): only the count here; the names are in OWNER_OUT
+ if (DIAG) { console.log('HOLD LAB DIAGNOSTICS (coverage only, nothing computed or written)'); console.log(JSON.stringify(DIAGS, null, 1)); process.exit(0); }
+ 
+ // ================= stock sets: H-GETEVEN (4 versions) and H-AVGDOWN =================
+@@ -234,9 +234,11 @@ const keep = Object.keys(TRADES).filter(k => /GE10-252$|^H-AVGDOWN\//.test(k));
+ const out = { generatedAt: new Date().toISOString(), preRegistered: 'data/strategy-library.json HOLD-GETEVEN, HOLD-AVGDOWN, HOLD-REGIME, HOLD-DIPFUND (23 Oct 2026, before any run)', window: [D[0], D[T - 1]], bar: BAR, leagueBar: LEAGUE.bar || null, complete, diagnostics: DIAGS, funds: FUNDINFO,
+   standard: 'both halves (signal before / from ' + SPLIT + '): > 0 after 0.8% and 1.2% cost, better than the average liquid stock held over the same sessions (funds: the S&P 500), better than the named yardstick on the same buys, > 0 without the 2 best, block t >= ' + TIER2_T + ' (63-session blocks; holds overlap so t is optimistic) -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN; plus return per year of capital tied up above the S&P 500 over the same days in both halves',
+   deadRule: 'a stock with no price in the last ' + (GONE_AFTER + 1) + ' sessions of the data has vanished; last close under ' + DEAD_UNDER + ' USD = DEAD (remaining value lost); else paid out at its last close',
+-  firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], results: RES }), sinceInception, owner: OWN,
++  firstRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], results: RES }), sinceInception, owner: { private: OWNER_OUT, n: OWN.length },
+   trades: Object.fromEntries(keep.map(k => [k, TRADES[k].map(pack)])), tradesFormat: '[symbol, buy day, sell day, exit kind, net after 0.8% per money invested, units]' };
+ fs.writeFileSync(OUT, JSON.stringify(out));
++// PRIVACY (28 Oct, private data migration): the owner's own buys are written to a private file, never into the public data/hold-lab.json
++fs.writeFileSync(OWNER_OUT, JSON.stringify({ generatedAt: out.generatedAt, owner: OWN, buys: owner.map(o => o.sym + ' ' + o.since) }));
+ console.log('HOLD LAB ' + D[0] + ' to ' + D[T - 1] + ' | proof bar ' + BAR + (complete ? '' : ' | INCOMPLETE: nothing frozen'));
+ for (const [k, r] of Object.entries(RES)) { if (!r.results) { console.log('- ' + k + ': ' + r.verdict + (r.window ? ' | window DIP vs DCA ' + pc(r.window.dipVsDca) + ', since first ' + pc(r.sinceFirst.dipVsDca) : r.pooled ? ' | pooled crash avg ' + pc(r.pooled.crashAvg) + ' other ' + pc(r.pooled.otherAvg) : '')); continue; }
+   const f = (h) => { const a = r.results[h], q = r.recovery[h]; return a.n ? a.n + ' rec ' + pc(q.recovered) + ' med ' + q.medianDaysToRecover + 'd under ' + pc(q.underwaterAtMax) + ' dead ' + pc(q.dead) + ' avg ' + pc(a.avg) + ' edge ' + pc(a.edge) + ' own ' + pc(a.vsOwn) + ' /yr ' + pc(q.perYear) + ' SPY/yr ' + pc(q.spyPerYear) + ' tB ' + a.tBlock : '0'; };
+diff --git a/ignition-watch.mjs b/ignition-watch.mjs
+index 6602097..997a26d 100644
+--- a/ignition-watch.mjs
++++ b/ignition-watch.mjs
+@@ -238,7 +238,8 @@ while (Date.now() - START < MAXMS) {
+   const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
+   const rows = await snap(); loops++; const tStart = triggers.length;
+   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
+-  try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
++  try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { const PRIV = (() => { try { return fs.readFileSync('.github/private-data-mode', 'utf8').trim() === 'private'; } catch (e) { return false; } })(), newest = (f) => PRIV ? execSync('bash .github/private-data.sh show ' + f, { maxBuffer: 64 << 20, timeout: 60000, stdio: ['ignore', 'pipe', 'ignore'] }) : execSync('git show origin/main:data/' + f, { maxBuffer: 64 << 20, timeout: 60000 });   // after the privacy cutover: the private repository
++      if (!PRIV) execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(newest('my-positions.json').toString()); try { EA.setLevel(alertLevel(JSON.parse(newest('settings.json').toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
+     const pxNow = {}, tNow = Date.now(); for (const r of rows) if (HELD.pos[r.sym] && r.price > 0 && isFreshPriceAge(r.t > 0 ? (tNow - r.t) / 60000 : null)) pxNow[r.sym] = r.price;
+     for (const h of stopHits(HELD.pos, pxNow, STOP_SENT)) await tg(h.text); } catch (e) { console.log('stop watch: ' + e.message); } const nowMs = Date.now(); let liveN = 0, evald = 0; const ages = [], vages = [], cf = curveAt(m); let sumV = 0, sumA = 0;
+   for (const r of rows) { if (!(r.prevC > 0) || !(r.price > 0)) continue; evald++; const chg = r.price / r.prevC - 1, rd = r.t > 0 ? (nowMs - r.t) / 60000 : null, live = isFreshPriceAge(rd);
+diff --git a/premarket-check.mjs b/premarket-check.mjs
+index 7fb3ff4..21c9a1a 100644
+--- a/premarket-check.mjs
++++ b/premarket-check.mjs
+@@ -13,7 +13,7 @@ const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } cat
+ const money = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 100 ? x.toFixed(2) : x >= 1 ? x.toFixed(2) : x.toFixed(4));
+ const pcs = (x) => x === null || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
+ const AS = J('data/actions-sells.json', { sells: [] }), asell = Object.fromEntries((Date.now() - Date.parse(AS.at || 0) < 4 * 864e5 ? AS.sells : []).map(x => [x.sym, x.why]));
+-const P = J('data/my-positions.json', {}), SG = J('data/signals.json', {}), pv = SG.posVerdict || {}, syms = Object.keys(P).filter(s => P[s] && P[s].entry);
++const P = J('data/my-positions.json', {}), SG = J('data/signals.json', {}), pv = SG.posVerdict || J('data/pos-verdict.json', {}).posVerdict || {}, syms = Object.keys(P).filter(s => P[s] && P[s].entry);
+ if (!syms.length) { console.log('premarket: no positions'); process.exit(0); }
+ const ny = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
+ let snaps = {}, note = '';
+diff --git a/scan.mjs b/scan.mjs
+index 0a6e4da..286fabd 100644
+--- a/scan.mjs
++++ b/scan.mjs
+@@ -30,7 +30,8 @@ function evReact(p) { const d = p.slice(0, 10), wd = new Date(d + 'T12:00:00Z').
+ // recent events on a stock that the Sunday study proved to be followed by losses (information for holders)
+ // DANGER FILINGS (Squad 29, 27 Oct 2026): late-filing notices (NT 10-K/10-Q, F4) and delisting notices (8-K 3.01, F6) passed the
+ // pre-registered SELL-WARNING bar (60-session lag vs the average stock in both halves, block t <= -2.5). F6 merger closings (8-K also 2.01/5.01) are skipped.
+-function dangerFlag(sym) { try { const A = (readJson0('data/squad29-lab.json') || {}).holdings, T = readJson0('data/squad29-flags-today.json') || {};
++function dangerFlag(sym) { try { const A = readJson0('data/squad29-holdings.json') || (readJson0('data/squad29-lab.json') || {}).holdings,   // holdings check: private file since 28 Oct
++    T = readJson0('data/squad29-flags-today.json') || {};
+   const fl = [...((A && A.flags) || []), ...(T.flags || [])].filter(x => x && x.sym === sym && x.verdict === 'SELL-WARNING');
+   for (const x of fl) { const age = (Date.now() - Date.parse(x.accepted || x.filed)) / 864e5; if (!(age >= 0)) continue;
+     if (x.flag === 'F4' && age <= 90) return 'late-filing notice (' + x.form + ', ' + x.filed + '): such stocks lagged the average stock by about 12-16% over the next 60 sessions in 5 years of tests (SEC: ' + x.url + ')';
+@@ -709,7 +710,10 @@ if (!m) { console.error('index.html has no logic block. Upload the latest index.
+ const tmp = path.join(os.tmpdir(), 'logic-' + Date.now() + '.cjs'); fs.writeFileSync(tmp, m[1]);
+ const L = createRequire(import.meta.url)(tmp);
+ 
+-const readJson0 = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
++// PRIVACY (28 Oct, private data migration): the sell/hold verdict on the owner's holdings is written to data/pos-verdict.json (a private
++// file), not into the public data/signals.json. Every read of signals.json gets it back here, so all readers see the same object as before.
++const PV_FILE = 'data/pos-verdict.json', withPV = (f, j) => { if (f !== 'data/signals.json' || !j || typeof j !== 'object' || j.posVerdict) return j; let v = {}; try { v = JSON.parse(fs.readFileSync(PV_FILE, 'utf8')).posVerdict || {}; } catch (e) {} j.posVerdict = v; return j; };
++const readJson0 = (f) => { try { return withPV(f, JSON.parse(fs.readFileSync(f, 'utf8'))); } catch { return null; } };
+ // SETTINGS WRITES (review S-4, 22 Oct): every write was readJson(settings, {}) -> one key -> write, so a file that failed to parse was
+ // replaced by {} and the decision, focus, quiet, tier2 and fee were lost silently. readSettings() gives {} only when the file is missing
+ // and null when it exists but does not parse; updateSettings() then ABORTS (returns null) and writes nothing. Written one key a line, so
+@@ -817,7 +821,7 @@ const QONLY = new Set([...QEXTRA, ...FMOVERS, ...LEADU, ...QWIDE]), LEADHELD = (
+ for (const x of LEADHELD) if (!MAIN.includes(x)) QONLY.add(x);
+ 
+ const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+-const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
++const readJson = (f, d) => { try { return withPV(f, JSON.parse(fs.readFileSync(f, 'utf8'))); } catch { return d; } };
+ const money = (x) => x.toFixed(2);
+ fs.mkdirSync('data', { recursive: true });
+ 
+@@ -3562,9 +3566,13 @@ function nightlyStopRaise(P, c, ind, i) {
+ // apply only the fields this job changed; a position sold meanwhile stays sold, a new one stays, a stop the owner changed stays his.
+ // FIX (review S-1, 22 Oct): the bot runs on another runner, so its trades reach this job only through git; the local file is this job's
+ // own hours-old checkout. The base is now the NEWEST copy on origin/main (git fetch + git show), the local file only when git fails.
++// .github/private-data-mode = 'private' after the privacy cutover (the owner's files then live only in the private repository)
++const privateMode = () => { try { return fs.readFileSync('.github/private-data-mode', 'utf8').trim() === 'private'; } catch (e) { return false; } };
+ function latestPositions() {
+   try { const o = { stdio: ['ignore', 'pipe', 'pipe'], timeout: 60000 };
+-    execSync('git fetch -q origin main', o); const j = JSON.parse(execSync('git show origin/main:' + POS_FILE, { ...o, maxBuffer: 64 << 20 }).toString());
++    // after the privacy cutover (28 Oct plan) the newest copy is in the private repository: .github/private-data.sh show prints it
++    const j = JSON.parse((privateMode() ? execSync('bash .github/private-data.sh show my-positions.json', { ...o, maxBuffer: 64 << 20 })
++      : (execSync('git fetch -q origin main', o), execSync('git show origin/main:' + POS_FILE, { ...o, maxBuffer: 64 << 20 }))).toString());
+     if (j && typeof j === 'object' && !Array.isArray(j)) return j; } catch (e) { console.log('positions merge: origin copy not readable (' + String(e.message).split('\n')[0].slice(0, 120) + '), using the local file'); }
+   return readJson(POS_FILE, {});
+ }
+@@ -3913,7 +3921,8 @@ async function daily() {
+   fs.writeFileSync('data/models.json', JSON.stringify(models, null, 1));
+   { const n = await zoyaCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym), ...Object.keys(myPos)]); if (env.ZOYA_KEY) console.log('Zoya halal checks:', n, zoyaLive() ? '(live)' : '(sandbox)'); }
+   { const n = await halalExtCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym)]); if (n) console.log('other halal checks:', n); }
+-  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.length, tested: Object.keys(loaded).length, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
++  fs.writeFileSync(PV_FILE, JSON.stringify({ generatedAt: new Date(now).toISOString(), session, posVerdict }));   // private file (see withPV)
++  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.length, tested: Object.keys(loaded).length, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
+   fs.writeFileSync('data/alert-state.json', JSON.stringify({ day: '', sent: {} }));
+   { const n = ledgerAppend(); if (n) console.log('research ledger: ' + n + ' new result' + (n > 1 ? 's' : '') + ' logged'); }
+   try { switchPaper(loaded); } catch (e) { console.log('switch paper: ' + e.message); }
+diff --git a/squad29-lab.mjs b/squad29-lab.mjs
+index 8874cd6..a60bf2f 100644
+--- a/squad29-lab.mjs
++++ b/squad29-lab.mjs
+@@ -249,18 +249,22 @@ const recent = FLAGS.filter(e => e.ny && e.ny.d >= todayFrom && (e.sym || e.held
+ const heldFlags = FLAGS.filter(e => e.held && e.fd >= holdFrom).sort((a, b) => String(b.acc).localeCompare(String(a.acc))).map(flagRow);
+ const unknownText = CAND.filter(e => e.held && e.fd >= holdFrom && (e.fam === 'F2' || e.fam === 'F3' || e.fam === 'F5') && !((e.adsh + '|' + e.fam) in DOCS)).length;
+ const HOLDINGS = { checkedAt: nowIso, source: POS + ' (read only)', positions: HELD.map(s => ({ sym: s, cik: HELDCIK.get(s) || null, filingsRead: !!(HELDCIK.get(s) && SUBS.has(HELDCIK.get(s))) })), days: HOLD_DAYS, flags: heldFlags, textNotRead: unknownText };
++// PRIVACY (28 Oct, private data migration): which stocks the owner holds is private. The holdings check goes to PRIV_HOLD (a private file);
++// the public files keep every flag without the 'held' mark. scan.mjs dangerFlag reads PRIV_HOLD.
++const PRIV_HOLD = 'data/squad29-holdings.json', pubRow = (r) => ({ ...r, held: null }), HOLD_PUBLIC = { checkedAt: nowIso, note: 'the holdings check is private (data/squad29-holdings.json)' };
++W(PRIV_HOLD, HOLDINGS);
+ const verdicts = Object.fromEntries(FAM_KEYS.map(f => [f, { id: FAMILIES[f].id, name: FAMILIES[f].name, verdict: verdictOf(f), action: verdictOf(f) === 'SELL-WARNING' ? 'SELL WARNING for a held stock; BLOCK a new buy' : 'information only' }]));
+ W(TODAY, { generatedAt: nowIso, note: 'RECORD ONLY (squad 29): official SEC red-flag filings accepted in the last ' + TODAY_SESS + ' sessions on any stock with a ticker. verdict = the frozen squad 29 test of that flag family (SELL-WARNING or INFO). Not wired into SELL / HOLD text yet; no Telegram; never an order.',
+-  sessions: [todayFrom, lastSess], dataOk: STATUS.dataOk, families: verdicts, flags: recent, holdings: HOLDINGS });
+-log('flags in the last ' + TODAY_SESS + ' sessions: ' + recent.length + '; held stocks with a flag in ' + HOLD_DAYS + ' days: ' + (heldFlags.map(f => f.sym + ' ' + f.flag + ' ' + f.filed).join(', ') || 'none'));
++  sessions: [todayFrom, lastSess], dataOk: STATUS.dataOk, families: verdicts, flags: recent.map(pubRow), holdings: HOLD_PUBLIC });
++log('flags in the last ' + TODAY_SESS + ' sessions: ' + recent.length + '; held stocks with a flag in ' + HOLD_DAYS + ' days: ' + heldFlags.length + ' (names in the private file)');
+ 
+ // ================= 8. OUTPUT =================
+ const F6CAVEAT = 'Added 27 Oct 2026 after the frozen run (verdicts unchanged): about 30% of F6 (8-K 3.01) events stopped trading within days and were counted -100% as pre-registered, but most are MERGER CLOSINGS (3.01 filed with 2.01 / 3.03 / 5.01: holders were cashed out, not wiped out). In the 400-event sample at 20 sessions, events that kept trading still lagged the average stock by -5.3% (median -4.5%), so a real warning remains, but the frozen -33% / -41% sizes are inflated. flags-today marks likelyMergerClose; the lead should not send a SELL warning for those.';
+ if (MODE === 'lab' || !fs.existsSync(OUT)) {
+   W(OUT, { generatedAt: nowIso, about: 'Squad 29: do official red-flag SEC filings predict that a stock does worse afterwards? Each family judged ONCE (firstRun); SELL-WARNING families warn holders and block new buys; INFO families are information only. Long only; never an order.',
+     preRegistered: 'squad29-core.mjs header (27 Oct 2026, before any result) + data/strategy-library.json SQ29-F1..F6', window: [D[0], D[T - 1]], split: SPLIT, horizons: HS, bar: BAR, data: STATUS, eventCounts: COUNTS,
+-    families: verdicts, firstRun, caveat: F6CAVEAT, latest: latestBlock({ at: nowIso, mode: MODE, eventCounts: COUNTS }), holdings: HOLDINGS });
+-} else { const prev = J(OUT, {}); prev.caveat = F6CAVEAT; prev.holdings = HOLDINGS; prev.families = verdicts; prev.latest = latestBlock({ at: nowIso, mode: MODE, eventCounts: COUNTS, data: STATUS }); W(OUT, prev); }
++    families: verdicts, firstRun, caveat: F6CAVEAT, latest: latestBlock({ at: nowIso, mode: MODE, eventCounts: COUNTS }), holdings: HOLD_PUBLIC });
++} else { const prev = J(OUT, {}); prev.caveat = F6CAVEAT; prev.holdings = HOLD_PUBLIC; prev.families = verdicts; prev.latest = latestBlock({ at: nowIso, mode: MODE, eventCounts: COUNTS, data: STATUS }); W(OUT, prev); }
+ if (MODE === 'lab') try { const LB = J(LIB, null); let ch = false;
+   for (const f of FAM_KEYS) { const id = FAMILIES[f].id, e = LB && LB.strategies.find(x => x.id === id), r = firstRun[id]; if (!e || !r || e.tested) continue;
+     const h = (H, half) => r.results[H] && r.results[H][half] ? pc(r.results[H][half].excess) + ' (t ' + r.results[H][half].blockT + ', n ' + r.results[H][half].n + ')' : 'n/a';
+diff --git a/test/private-data.test.mjs b/test/private-data.test.mjs
+index dbcf01a..45971fa 100644
+--- a/test/private-data.test.mjs
++++ b/test/private-data.test.mjs
+@@ -1,95 +1,279 @@
+-// Seam: .github/private-data.sh, the connection between this public repository and the owner's private data repository (privacy
+-// migration, owner approved 28 Oct 2026). Driven on throw-away local repositories (PRIVATE_DATA_URL points at a local bare repository).
+-// Invariants: no token -> nothing happens; mirror waits for the owner's connection check; check copies every private file and proves the
+-// read-back is identical; no file content and no token ever appears in the output or on disk; pull fails loudly without holdings (so no
+-// job runs on an empty positions file); push keeps the bot's newer positions on a conflict (save-data.sh rule); the website publishes
+-// only index.html.
++// Seam: .github/private-data.sh (+ .github/save-data.sh, .github/scrub-public.mjs), the connection between this public repository and the
++// owner's private data repository (privacy migration, owner request 28 Oct 2026). Driven on throw-away local repositories
++// (PRIVATE_DATA_URL points at a local bare repository; the Telegram API is a local stub).
++// Invariants: before the cutover nothing in production changes (pull / push / show do nothing); mirror waits for the owner's check and
++// never runs after the cutover (it would overwrite the private copy with a stale public one); no file content and no token reaches the
++// output or the disk; after the cutover a job never runs without the holdings; bought / sold / halal changes reach the private repository;
++// the nightly save keeps the bot's newer changes and both sides' log lines; parallel saves lose nothing; rollback restores every file;
++// the website and the run-log artifacts never publish a private file.
+ // Run: node --test test/private-data.test.mjs
+ import test from 'node:test';
+ import assert from 'node:assert/strict';
+ import fs from 'node:fs';
+ import os from 'node:os';
+ import path from 'node:path';
+-import { execSync, spawnSync } from 'node:child_process';
++import http from 'node:http';
++import { execSync, spawnSync, spawn } from 'node:child_process';
+ import { fileURLToPath } from 'node:url';
++import { loadScan } from './load-scan.mjs';
+ 
+ const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+ const ENV0 = { PATH: process.env.PATH, HOME: process.env.HOME, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', SAVE_SLEEP: '0' };
+ const tmp = (p) => fs.mkdtempSync(path.join(os.tmpdir(), p));
+ const sh = (cmd, cwd) => execSync(cmd, { cwd, env: ENV0, stdio: ['ignore', 'pipe', 'pipe'] }).toString();
+ const W = (dir, f, s) => { fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true }); fs.writeFileSync(path.join(dir, f), s); };
++const R = (dir, f) => fs.readFileSync(path.join(dir, f), 'utf8');
+ const FILES = fs.readFileSync(path.join(REPO, '.github/private-files.txt'), 'utf8').split('\n').filter(l => l.trim() && !l.startsWith('#'));
+ const SECRET = 'HOLDING-SENTINEL-7781';
++const SCRIPTS = ['.github/private-data.sh', '.github/private-files.txt', '.github/save-data.sh'];
+ 
+-// a fake "public" checkout (the script + file list + save-data.sh + private files) and a fake private repository with a README
+-function world() {
++// a fake "public" checkout (a git repository with the scripts and the private files tracked, as today) and a private repository with a README
++function world({ files = true } = {}) {
+   const pub = tmp('pub-'), bare = tmp('priv-'), seed = tmp('seed-'), dir = path.join(tmp('run-'), 'private-data');
+-  for (const f of ['.github/private-data.sh', '.github/private-files.txt', '.github/save-data.sh']) W(pub, f, fs.readFileSync(path.join(REPO, f)));
+-  W(pub, 'data/my-positions.json', '{"AAA":{"entry":10,"note":"' + SECRET + '"}}\n'); W(pub, 'data/halal.json', '{\n "AAA": {"s":"ok"}\n}\n');
+-  W(pub, 'data/settings.json', '{"focus":true}\n'); W(pub, 'data/my-trades.jsonl', '{"sym":"BBB"}\n'); W(pub, 'data/signals.json', '{"public":1}\n');
++  for (const f of SCRIPTS) W(pub, f, fs.readFileSync(path.join(REPO, f)));
++  if (files) { W(pub, 'data/my-positions.json', '{\n "AAA": {"entry":10,"note":"' + SECRET + '"}\n}\n'); W(pub, 'data/halal.json', '{\n "AAA": {"s":"ok"}\n}\n');
++    W(pub, 'data/settings.json', '{"focus":true}\n'); W(pub, 'data/my-trades.jsonl', '{"sym":"BBB"}\n'); }
++  W(pub, 'data/signals.json', '{"public":1}\n');
++  sh('git init -q -b main && git add -A && git -c commit.gpgsign=false commit -qm public', pub);
+   sh('git init -q --bare -b main ' + bare, seed);
+   sh('git init -q -b main && echo "# private" > README.md && git add -A && git -c commit.gpgsign=false commit -qm init && git remote add origin ' + bare + ' && git push -q origin main', seed);
+   return { pub, bare, dir };
+ }
+-const run = (w, mode, extra = {}) => spawnSync('bash', ['.github/private-data.sh', mode], { cwd: w.pub, encoding: 'utf8', env: { ...ENV0, PRIVATE_DATA_URL: w.bare, PRIVATE_DATA_DIR: w.dir, ...extra } });
++const cutover = (w) => W(w.pub, '.github/private-data-mode', 'private\n');
++const run = (w, mode, extra = {}, arg) => spawnSync('bash', ['.github/private-data.sh', mode, ...(arg ? [arg] : [])], { cwd: w.pub, encoding: 'utf8', env: { ...ENV0, PRIVATE_DATA_URL: w.bare, PRIVATE_DATA_DIR: w.dir, ...extra } });
++const runAsync = (w, mode, dir) => new Promise(res => { const p = spawn('bash', ['.github/private-data.sh', mode], { cwd: w.pub, env: { ...ENV0, PRIVATE_DATA_URL: w.bare, PRIVATE_DATA_DIR: dir } }); let o = ''; p.stdout.on('data', d => o += d); p.stderr.on('data', d => o += d); p.on('close', code => res({ code, o })); });
+ const show = (w, f) => { try { return sh('git --git-dir=' + w.bare + ' show main:' + f, os.tmpdir()); } catch { return null; } };
++const commits = (w) => +sh('git --git-dir=' + w.bare + ' rev-list --count main', os.tmpdir());
+ const out = (r) => r.stdout + r.stderr;
+ 
+-test('no token and no address: every mode does nothing; check and pull report failure, mirror does not', () => {
+-  const w = world();
+-  for (const m of ['mirror', 'check', 'pull']) { const r = spawnSync('bash', ['.github/private-data.sh', m], { cwd: w.pub, encoding: 'utf8', env: { ...ENV0, PRIVATE_DATA_DIR: w.dir } });
+-    assert.match(out(r), /not connected \(no PRIVATE_DATA_TOKEN secret\), nothing done/); assert.equal(r.status, m === 'mirror' ? 0 : 1, m); }
+-  assert.equal(show(w, 'data/my-positions.json'), null);
+-});
+-test('mirror waits for the owner\'s connection check: nothing is copied before it', () => {
+-  const w = world(); const r = run(w, 'mirror');
++// ---- before the cutover (today) ----
++test('no token: mirror does nothing quietly; check and verify fail loudly; pull / push / show do nothing before the cutover', () => {
++  const w = world(); const env = { ...ENV0, PRIVATE_DATA_DIR: w.dir };
++  const r = (m) => spawnSync('bash', ['.github/private-data.sh', m], { cwd: w.pub, encoding: 'utf8', env });
++  assert.equal(r('mirror').status, 0); assert.match(out(r('mirror')), /not connected/);
++  for (const m of ['check', 'verify']) { const x = r(m); assert.equal(x.status, 1, m); assert.match(out(x), /not connected \(no PRIVATE_DATA_TOKEN secret\)/); }
++  for (const m of ['pull', 'push', 'show']) { const x = r(m); assert.equal(x.status, 0, m); assert.equal(out(x), '', m + ' is silent before the cutover'); }
++  cutover(w); assert.equal(r('pull').status, 1, 'after the cutover a missing token stops the job');
++});
++test('before the cutover pull / push / show change nothing even when the private repository is reachable (production untouched)', () => {
++  const w = world(); run(w, 'check'); W(w.pub, 'data/halal.json', '{}\n'); const n = commits(w);
++  for (const m of ['pull', 'push']) assert.equal(run(w, m).status, 0);
++  assert.equal(R(w.pub, 'data/halal.json'), '{}\n'); assert.equal(commits(w), n); assert.equal(run(w, 'show', {}, 'my-positions.json').stdout, '');
++});
++test('mirror waits for the owner\'s connection check, retries at most every 10 minutes, then copies', () => {
++  const w = world(); let r = run(w, 'mirror');
+   assert.equal(r.status, 0); assert.match(out(r), /mirror waits for the connection check/); assert.equal(show(w, 'data/my-positions.json'), null);
+   assert.equal(out(run(w, 'mirror')), '', 'a second try within 10 minutes makes no network call and no noise');
+-  fs.rmSync(w.dir + '.wait'); run(w, 'check'); fs.rmSync(path.join(w.dir, '.mirrored'), { force: true }); W(w.pub, 'data/settings.json', '{"focus":false}\n');
++  fs.rmSync(w.dir + '.wait'); run(w, 'check'); W(w.pub, 'data/settings.json', '{"focus":false}\n');
+   assert.equal(run(w, 'mirror').status, 0); assert.equal(show(w, 'data/settings.json'), '{"focus":false}\n');
+ });
+-test('check: reads, writes, copies every private file that exists, reads it back identical; prints names and counts, never contents', () => {
++test('check: reads, writes, copies every private file that exists, reads it back identical; names and counts only, never contents', () => {
+   const w = world(); const r = run(w, 'check');
+   assert.equal(r.status, 0, out(r)); assert.match(out(r), /read OK[\s\S]*write OK[\s\S]*4 of 4 private files copied and read back identical[\s\S]*CHECK PASSED/);
+   assert.doesNotMatch(out(r), new RegExp(SECRET));
+-  for (const f of ['my-positions.json', 'halal.json', 'settings.json', 'my-trades.jsonl']) assert.equal(show(w, 'data/' + f), fs.readFileSync(path.join(w.pub, 'data', f), 'utf8'), f);
+-  assert.equal(show(w, 'data/signals.json'), null, 'public files are not copied');
+-  assert.match(show(w, 'CONNECTION-CHECK.md'), /Last successful check/); assert.match(show(w, 'README.md'), /private/);
+-  assert.ok(fs.readFileSync(path.join(w.pub, 'data/my-positions.json'), 'utf8').includes(SECRET), 'the public copy is not touched by check');
++  for (const f of ['my-positions.json', 'halal.json', 'settings.json', 'my-trades.jsonl']) assert.equal(show(w, 'data/' + f), R(w.pub, 'data/' + f), f);
++  assert.equal(show(w, 'data/signals.json'), null, 'public files are not copied'); assert.match(show(w, 'README.md'), /private/);
+ });
+-test('mirror after the check: a change is copied once; an unchanged state makes no commit', () => {
++test('mirror: a change is copied once; an unchanged state makes no commit and no network call', () => {
+   const w = world(); run(w, 'check');
+-  W(w.pub, 'data/my-positions.json', '{"AAA":{"entry":11}}\n'); let r = run(w, 'mirror');
+-  assert.equal(r.status, 0, out(r)); assert.equal(show(w, 'data/my-positions.json'), '{"AAA":{"entry":11}}\n');
+-  const n = sh('git --git-dir=' + w.bare + ' rev-list --count main', os.tmpdir()); r = run(w, 'mirror');
+-  assert.equal(sh('git --git-dir=' + w.bare + ' rev-list --count main', os.tmpdir()), n);
++  W(w.pub, 'data/my-positions.json', '{"AAA":{"entry":11}}\n'); assert.equal(run(w, 'mirror').status, 0); assert.equal(show(w, 'data/my-positions.json'), '{"AAA":{"entry":11}}\n');
++  const n = commits(w); const r = run(w, 'mirror'); assert.equal(out(r), ''); assert.equal(commits(w), n);
++});
++test('verify (read only): before the cutover it says whether both copies are identical and changes nothing', () => {
++  const w = world(); run(w, 'check'); const n = commits(w);
++  let r = run(w, 'verify'); assert.equal(r.status, 0, out(r)); assert.match(out(r), /4 of 4 private files identical in both repositories[\s\S]*VERIFY PASSED/);
++  W(w.pub, 'data/halal.json', '{\n "AAA": {"s":"ok"},\n "ZZZ": {"s":"ok"}\n}\n'); r = run(w, 'verify');
++  assert.equal(r.status, 1); assert.match(out(r), /not yet mirrored: halal.json[\s\S]*3 of 4/); assert.equal(commits(w), n, 'verify never writes');
+ });
+ test('the token never reaches the output or the disk (it travels in the environment only)', () => {
+   const w = world(); const TOK = 'github_pat_TESTTOKEN_123456';
+   const r = run(w, 'check', { PRIVATE_DATA_TOKEN: TOK }); assert.equal(r.status, 0, out(r));
+   assert.doesNotMatch(out(r), /TESTTOKEN/); assert.doesNotMatch(out(r), new RegExp(Buffer.from('x-access-token:' + TOK).toString('base64').slice(0, 20)));
+-  assert.doesNotMatch(fs.readFileSync(path.join(w.dir, '.git/config'), 'utf8'), /TESTTOKEN|AUTHORIZATION/i);
++  assert.doesNotMatch(R(w.dir, '.git/config'), /TESTTOKEN|AUTHORIZATION/i);
+   assert.doesNotMatch(sh('git --git-dir=' + w.bare + ' log -p --all', os.tmpdir()), /TESTTOKEN/);
+ });
+-test('pull: private copies replace the public ones; with no positions file in the private repository it stops (exit 1)', () => {
+-  const w = world(); let r = run(w, 'pull'); assert.equal(r.status, 1); assert.match(out(r), /has no data\/my-positions.json; stopping/);
+-  run(w, 'check'); W(w.pub, 'data/halal.json', '{}\n');   // a stale public copy
+-  r = run(w, 'pull'); assert.equal(r.status, 0, out(r)); assert.match(fs.readFileSync(path.join(w.pub, 'data/halal.json'), 'utf8'), /"AAA"/);
+-  const bad = { ...w, bare: w.bare + '-missing' }; r = run(bad, 'pull', { PRIVATE_DATA_DIR: w.dir + '-x' }); assert.equal(r.status, 1); assert.match(out(r), /cannot read the private repository/);
+-});
+-test('push: a bought/sold/halal change is saved; on a conflict the bot\'s newer positions are kept (save-data.sh rule)', () => {
+-  const w = world(); run(w, 'check'); run(w, 'pull');
+-  const other = tmp('other-'); sh('git clone -q ' + w.bare + ' ' + other, os.tmpdir());
+-  W(other, 'data/my-positions.json', '{"AAA":{"entry":10,"stop":9.5}}\n'); sh('git add -A && git -c commit.gpgsign=false commit -qm bot && git push -q', other);
+-  W(w.pub, 'data/my-positions.json', '{"AAA":{"entry":10,"stop":8}}\n'); W(w.pub, 'data/halal.json', '{\n "AAA": {"s":"ok"},\n "CCC": {"s":"fail"}\n}\n');
++
++// ---- after the cutover ----
++test('pull: private copies replace data/ and the mode is exported; no holdings or an unreachable repository stops the job (exit 1)', () => {
++  const w = world(); run(w, 'check'); cutover(w); W(w.pub, 'data/halal.json', '{}\n');
++  const envf = path.join(tmp('env-'), 'env'); let r = run(w, 'pull', { GITHUB_ENV: envf });
++  assert.equal(r.status, 0, out(r)); assert.match(R(w.pub, 'data/halal.json'), /"AAA"/); assert.match(R(envf, ''), /^PRIVATE_DATA_MODE=private$/m);
++  const bad = { ...w, bare: w.bare + '-missing', dir: w.dir + '-x' }; W(bad.pub, 'data/halal.json', '{}\n');
++  r = run(bad, 'pull'); assert.equal(r.status, 1); assert.match(out(r), /cannot read the private repository; stopping/); assert.equal(R(w.pub, 'data/halal.json'), '{}\n', 'nothing copied');
++  const w2 = world(); cutover(w2); r = run(w2, 'pull'); assert.equal(r.status, 1); assert.match(out(r), /has no data\/my-positions.json; stopping/);
++});
++test('mirror never runs after the cutover (it would overwrite the private copy with a stale public one)', () => {
++  const w = world(); run(w, 'check'); cutover(w); W(w.pub, 'data/my-positions.json', '{"STALE":1}\n'); const n = commits(w);
++  assert.equal(run(w, 'mirror').status, 0); assert.equal(commits(w), n); assert.match(show(w, 'data/my-positions.json'), new RegExp(SECRET));
++});
++test('show: the newest private copy, after another job saved; refuses a file that is not private', () => {
++  const w = world(); run(w, 'check'); cutover(w); run(w, 'pull');
++  const other = tmp('other-'); sh('git clone -q ' + w.bare + ' ' + other, os.tmpdir()); W(other, 'data/my-positions.json', '{"NEW":{"entry":5}}\n'); sh('git add -A && git -c commit.gpgsign=false commit -qm bot && git push -q', other);
++  const r = run(w, 'show', {}, 'my-positions.json'); assert.equal(r.status, 0); assert.equal(r.stdout, '{"NEW":{"entry":5}}\n');
++  assert.equal(run(w, 'show', {}, 'signals.json').status, 1);
++});
++test('nightly save after the cutover: the bot\'s newer sale and stop are kept, the scan\'s other changes too, both sides\' log lines kept', () => {
++  const w = world(); W(w.pub, 'data/sell-notices.jsonl', '{"d":"1"}\n'); W(w.pub, 'data/my-positions.json', '{\n "AAA": {"stop": 8},\n "x1": 1,\n "x2": 2,\n "x3": 3,\n "BBB": {"stop": 15}\n}\n');
++  run(w, 'check'); cutover(w); run(w, 'pull');            // the nightly job starts
++  const other = tmp('other-'); sh('git clone -q ' + w.bare + ' ' + other, os.tmpdir());   // meanwhile the bot saves: owner moved AAA's stop, a log line
++  W(other, 'data/my-positions.json', R(other, 'data/my-positions.json').replace('"stop": 8', '"stop": 7.5')); W(other, 'data/sell-notices.jsonl', '{"d":"1"}\n{"d":"bot"}\n');
++  sh('git add -A && git -c commit.gpgsign=false commit -qm bot && git push -q', other);
++  W(w.pub, 'data/my-positions.json', R(w.pub, 'data/my-positions.json').replace('"stop": 8', '"stop": 9').replace('"stop": 15', '"stop": 16'));   // the scan raised both
++  W(w.pub, 'data/sell-notices.jsonl', '{"d":"1"}\n{"d":"scan"}\n'); W(w.pub, 'data/alpaca-paper.json', '{"equity":1}\n');
+   const r = run(w, 'push'); assert.equal(r.status, 0, out(r));
+-  assert.match(show(w, 'data/my-positions.json'), /"stop":9\.5/); assert.match(show(w, 'data/halal.json'), /"CCC"/);
++  const pos = show(w, 'data/my-positions.json'); assert.match(pos, /"stop": 7\.5/); assert.match(pos, /"stop": 16/); assert.doesNotMatch(pos, /"stop": 9\b/);
++  assert.match(show(w, 'data/sell-notices.jsonl'), /"bot"[\s\S]*"scan"|"scan"[\s\S]*"bot"/); assert.equal(show(w, 'data/alpaca-paper.json'), '{"equity":1}\n');
+ });
++test('two jobs saving at the same moment: both succeed and neither change is lost', async () => {
++  const w = world(); W(w.pub, 'data/watch-extra.json', '[]\n'); run(w, 'check'); cutover(w);
++  const pubB = tmp('pubB-'); fs.cpSync(w.pub, pubB, { recursive: true }); const wB = { ...w, pub: pubB, dir: w.dir + '-B' };
++  run(w, 'pull'); run(wB, 'pull');
++  W(w.pub, 'data/halal.json', '{\n "AAA": {"s":"ok"},\n "CCC": {"s":"fail"}\n}\n'); W(wB.pub, 'data/watch-extra.json', '["XYZ"]\n');
++  const [a, b] = await Promise.all([runAsync(w, 'push', w.dir), runAsync(wB, 'push', wB.dir)]);
++  assert.equal(a.code, 0, a.o); assert.equal(b.code, 0, b.o);
++  assert.match(show(w, 'data/halal.json'), /"CCC"/); assert.equal(show(w, 'data/watch-extra.json'), '["XYZ"]\n');
++});
++test('a failed save (private repository gone) exits non-zero with an error line; data/ is left as it was', () => {
++  const w = world(); run(w, 'check'); cutover(w); run(w, 'pull'); W(w.pub, 'data/halal.json', '{"kept":1}\n');
++  fs.rmSync(w.bare, { recursive: true, force: true });
++  const r = run(w, 'push'); assert.notEqual(r.status, 0); assert.match(out(r), /could not save/); assert.equal(R(w.pub, 'data/halal.json'), '{"kept":1}\n');
++});
++test('verify after the cutover: holdings present and NO private file tracked in the public repository; a re-added file is an error', () => {
++  const w = world(); run(w, 'check'); cutover(w);
++  for (const f of FILES) { try { sh('git rm -q --cached data/' + f, w.pub); } catch (e) {} }
++  let r = run(w, 'verify'); assert.equal(r.status, 0, out(r)); assert.match(out(r), /no private file is tracked in the public repository: OK[\s\S]*VERIFY PASSED/);
++  sh('git add -f data/halal.json', w.pub); r = run(w, 'verify'); assert.equal(r.status, 1); assert.match(out(r), /halal.json is TRACKED in the public repository again/);
++});
++test('rollback: restore puts every private file back into data/ exactly; without the mode file everything is as before the cutover', () => {
++  const w = world(); run(w, 'check'); cutover(w); run(w, 'pull'); W(w.pub, 'data/halal.json', '{"after":"cutover"}\n'); run(w, 'push');
++  for (const f of FILES) fs.rmSync(path.join(w.pub, 'data', f), { force: true });
++  const r = run(w, 'restore'); assert.equal(r.status, 0, out(r)); assert.match(out(r), /restored 4 files/);
++  assert.equal(R(w.pub, 'data/halal.json'), '{"after":"cutover"}\n'); assert.match(R(w.pub, 'data/my-positions.json'), new RegExp(SECRET));
++  fs.rmSync(path.join(w.pub, '.github/private-data-mode')); assert.equal(out(run(w, 'pull')), '');
++});
++
++// ---- the Telegram commands end to end (real scan.mjs, local Telegram stub) ----
++test('bought / sold / halal from Telegram reach the private repository after the cutover (pull -> command -> push)', async () => {
++  let queue = [], uid = 900;
++  const server = http.createServer((req, res) => { let b = ''; req.on('data', c => b += c); req.on('end', () => { let o = { ok: true, result: true };
++    if (/getUpdates/.test(req.url)) { o = { ok: true, result: queue.map(t => ({ update_id: ++uid, message: { message_id: uid, chat: { id: 42 }, text: t } })) }; queue = []; }
++    res.writeHead(200, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); }); });
++  await new Promise(r => server.listen(0, '127.0.0.1', r)); const BASE = 'http://127.0.0.1:' + server.address().port;
++  try {
++    const ok = { s: 'ok', d: new Date().toISOString().slice(0, 10) };
++    const S = await loadScan({ env: { TG_TOKEN: 'T', TG_CHAT: '42', TG_BASE: BASE, TD_BASE: BASE, FH_BASE: BASE, SEC_BASE: BASE, PRIVATE_KEY: 'k' }, files: { 'data/my-positions.json': {}, 'data/halal.json': { WST: ok } } });
++    for (const f of SCRIPTS) W(S.dir, f, fs.readFileSync(path.join(REPO, f)));
++    const w = { pub: S.dir, bare: tmp('priv-'), dir: path.join(tmp('run-'), 'private-data') }, seed = tmp('seed-');
++    sh('git init -q --bare -b main ' + w.bare, seed); sh('git init -q -b main && echo x > README.md && git add -A && git -c commit.gpgsign=false commit -qm init && git remote add origin ' + w.bare + ' && git push -q origin main', seed);
++    assert.equal(run(w, 'check').status, 0); cutover(w);
++    const step = async (...msgs) => { assert.equal(run(w, 'pull').status, 0); queue = msgs; await S.fn('tgCommands')(null); const r = run(w, 'push'); assert.equal(r.status, 0, out(r)); };
++    await step('bought WST 100.50 9', 'halal ZQC yes');
++    assert.equal(JSON.parse(show(w, 'data/my-positions.json')).WST.entry, 100.5); assert.equal(JSON.parse(show(w, 'data/halal.json')).ZQC.s, 'ok');
++    assert.ok(show(w, 'data/private.enc'), 'share count (encrypted) saved too'); assert.match(show(w, 'data/halal.json'), /^\{\n "/, 'halal file keeps its 1-space indent');
++    fs.writeFileSync(path.join(S.dir, 'data/my-positions.json'), '{}');   // a stale local copy must not matter: the next step pulls first
++    await step('sold WST 110 9', 'halal ZQC no');
++    assert.equal(JSON.parse(show(w, 'data/my-positions.json')).WST, undefined); assert.match(show(w, 'data/my-trades.jsonl'), /"sym":"WST"/); assert.equal(JSON.parse(show(w, 'data/halal.json')).ZQC.s, 'fail');
++  } finally { server.close(); }
++});
++
++// ---- the derived files (privacy audit 28 Oct) ----
++test('the sell verdict on holdings is read back from its own file: every reader of signals.json sees the same posVerdict as before', async () => {
++  const S = await loadScan({ files: { 'data/signals.json': { session: '2026-10-27', stocks: [] }, 'data/pos-verdict.json': { posVerdict: { ZQA: 'closed above its 5 day average.' } } } });
++  const rj = S.fn('readJson'), rj0 = S.fn('readJson0');
++  assert.equal(rj('data/signals.json', null).posVerdict.ZQA, 'closed above its 5 day average.'); assert.equal(rj0('data/signals.json').posVerdict.ZQA, 'closed above its 5 day average.');
++  S.write('data/signals.json', { posVerdict: { OLD: 'x' } }); assert.deepEqual(rj('data/signals.json', null).posVerdict, { OLD: 'x' }, 'an older signals.json that still carries it wins');
++  assert.equal(rj('data/other.json', null), null);
++});
++test('the SEC danger-filing SELL reason reads the holdings check from its private file (same verdict as before)', async () => {
++  const flag = { sym: 'AAA', verdict: 'SELL-WARNING', flag: 'F4', form: 'NT 10-Q', filed: new Date().toISOString().slice(0, 10), accepted: new Date().toISOString(), url: 'u' };
++  const A = await loadScan({ files: { 'data/squad29-holdings.json': { flags: [flag] } } }), B = await loadScan({ files: { 'data/squad29-lab.json': { holdings: { flags: [flag] } } } });
++  assert.match(A.fn('dangerFlag')('AAA'), /late-filing notice/); assert.equal(A.fn('dangerFlag')('AAA'), B.fn('dangerFlag')('AAA'));
++});
++test('cutover scrub: owner marks leave the public files and land in their private files; a second run changes nothing', () => {
++  const d = tmp('scrub-');
++  W(d, 'signals.json', JSON.stringify({ generatedAt: 'g', session: 's', posVerdict: { ZQA: 'x' }, stocks: [] }));
++  W(d, 'squad29-lab.json', JSON.stringify({ firstRun: {}, holdings: { checkedAt: 'c', positions: [{ sym: 'ZQD' }], flags: [] } }));
++  W(d, 'squad29-flags-today.json', JSON.stringify({ flags: [{ sym: 'ZQB', held: 'ZQB' }, { sym: 'ZZZ', held: null }], holdings: { checkedAt: 'c', positions: [{ sym: 'ZQD' }] } }));
++  W(d, 'hold-lab.json', JSON.stringify({ firstRun: { a: 1 }, diagnostics: { owner: ['ZQE 2026-10-05'] }, owner: [{ sym: 'ZQE', entry: 111.11 }] }));
++  const r1 = sh('node ' + path.join(REPO, '.github/scrub-public.mjs') + ' ' + d, REPO); assert.match(r1, /posVerdict moved.*owner section moved/);
++  const pub = ['signals.json', 'squad29-lab.json', 'squad29-flags-today.json', 'hold-lab.json'].map(f => R(d, f)).join('\n');
++  assert.doesNotMatch(pub, /ZQA|ZQD|"held":"ZQB"|ZQE|111\.11/); assert.match(R(d, 'hold-lab.json'), /"firstRun":\{"a":1\}/, 'frozen verdicts untouched');
++  assert.match(R(d, 'pos-verdict.json'), /ZQA/); assert.match(R(d, 'squad29-holdings.json'), /ZQD/); assert.match(R(d, 'hold-lab-owner.json'), /111\.11/);
++  assert.match(sh('node ' + path.join(REPO, '.github/scrub-public.mjs') + ' ' + d, REPO), /nothing to move/);
++  for (const f of ['pos-verdict.json', 'squad29-holdings.json', 'hold-lab-owner.json']) assert.ok(FILES.includes(f), f + ' is on the private list');
++});
++
++// ---- what can be published ----
+ test('the website workflow publishes index.html only (nothing from data/)', () => {
+-  const y = fs.readFileSync(path.join(REPO, '.github/workflows/pages.yml'), 'utf8');
++  const y = R(REPO, '.github/workflows/pages.yml');
+   assert.match(y, /cp index\.html _site\//); assert.doesNotMatch(y, /cp[^\n]*data\//); assert.match(y, /grep -vE '\^_site\/index\\\.html\$'/);
+ });
+-test('every private file in the list exists today or is a ledger created later; the list holds no public research files', () => {
+-  for (const f of FILES) assert.ok(fs.existsSync(path.join(REPO, 'data', f)) || /ledger/.test(f), f);
+-  assert.ok(!FILES.includes('signals.json') && !FILES.includes('strategy-library.json'));
++test('no workflow uploads a private file, the data folder or a whole checkout as an artifact', () => {
++  for (const f of fs.readdirSync(path.join(REPO, '.github/workflows'))) {
++    const y = R(REPO, '.github/workflows/' + f); let i = -1;
++    while ((i = y.indexOf('upload-artifact', i + 1)) >= 0) {
++      const block = y.slice(i, i + 600).split('\n').slice(1).filter((l, k, a) => !a.slice(0, k).some(x => /^\s*- /.test(x)) && !/^\s*- /.test(l)).join('\n');
++      for (const p of FILES) assert.doesNotMatch(block, new RegExp(p.replace('.', '\\.')), f);
++      assert.doesNotMatch(block, /path:\s*(\.|data\/?|\*)\s*$/m, f + ': uploads a folder');
++    } }
++});
++test('the private list holds the owner files and the derived files, and no public research file', () => {
++  for (const f of ['my-positions.json', 'my-trades.jsonl', 'settings.json', 'halal.json', 'alpaca-paper.json', 'private.enc', 'pos-verdict.json', 'squad29-holdings.json', 'hold-lab-owner.json', 'news-log.jsonl']) assert.ok(FILES.includes(f), f);
++  assert.ok(!FILES.includes('signals.json') && !FILES.includes('strategy-library.json') && !FILES.includes('hold-lab.json'));
++});
++
++// ---- cutover and rollback (.github/private-cutover.sh, run by private-data-check.yml) ----
++function cutWorld() { const w = world(); for (const f of ['.github/private-cutover.sh', '.github/scrub-public.mjs']) W(w.pub, f, fs.readFileSync(path.join(REPO, f)));
++  sh('git add -A && git -c commit.gpgsign=false commit -qm scripts', w.pub); return w; }
++const cut = (w, a, extra = {}) => spawnSync('bash', ['.github/private-cutover.sh', a], { cwd: w.pub, encoding: 'utf8', env: { ...ENV0, PRIVATE_DATA_URL: w.bare, PRIVATE_DATA_DIR: w.dir, ...extra } });
++test('cutover: private files stop being tracked (still on disk), are ignored from then on, and verify passes; a second run is a no-op', () => {
++  const w = cutWorld(); assert.equal(run(w, 'check').status, 0);
++  let r = cut(w, 'cutover'); assert.equal(r.status, 0, out(r)); assert.match(out(r), /cutover staged: 4 private files no longer tracked/);
++  sh('git -c commit.gpgsign=false commit -qm cutover', w.pub);
++  assert.equal(sh('git ls-files data', w.pub).trim(), 'data/signals.json', 'only public files tracked'); assert.ok(fs.existsSync(path.join(w.pub, 'data/my-positions.json')), 'still on disk for this run');
++  W(w.pub, 'data/halal.json', '{"changed":1}\n'); W(w.pub, 'data/leaderdip-ledger.jsonl', '{"new":1}\n'); sh('git add data', w.pub);
++  assert.equal(sh('git diff --cached --name-only', w.pub).trim(), '', 'a later "git add data" can never publish a private file');
++  r = run(w, 'verify'); assert.equal(r.status, 0, out(r)); assert.match(out(r), /no private file is tracked in the public repository: OK/);
++  assert.match(out(cut(w, 'cutover')), /already done/);
++});
++test('rollback after a cutover: every private file back, tracked again, mode file and ignore block gone; nothing else in .gitignore lost', () => {
++  const w = cutWorld(); W(w.pub, '.gitignore', 'node_modules/\n'); sh('git add .gitignore && git -c commit.gpgsign=false commit -qm gi', w.pub);
++  run(w, 'check'); cut(w, 'cutover'); sh('git -c commit.gpgsign=false commit -qm cutover', w.pub);
++  run(w, 'pull'); W(w.pub, 'data/halal.json', '{"after":1}\n'); assert.equal(run(w, 'push').status, 0);
++  for (const f of FILES) fs.rmSync(path.join(w.pub, 'data', f), { force: true });
++  const r = cut(w, 'rollback'); assert.equal(r.status, 0, out(r)); sh('git -c commit.gpgsign=false commit -qm rollback', w.pub);
++  assert.equal(R(w.pub, 'data/halal.json'), '{"after":1}\n'); assert.match(sh('git ls-files data', w.pub), /my-positions\.json[\s\S]*my-trades\.jsonl/);
++  assert.equal(R(w.pub, '.gitignore'), 'node_modules/\n'); assert.ok(!fs.existsSync(path.join(w.pub, '.github/private-data-mode')));
++  assert.equal(out(run(w, 'pull')), '', 'back to before the cutover: pull does nothing');
++});
++
++// ---- workflow wiring ----
++const WF = path.join(REPO, '.github/workflows'), wfText = (f) => R(WF, f);
++const depsOf = (f, seen = new Set()) => { const p = path.join(REPO, f); if (seen.has(f) || !fs.existsSync(p)) return seen; seen.add(f); for (const m of R(REPO, f).matchAll(/from '\.\/([\w.-]+\.mjs)'|import\('\.\/([\w.-]+\.mjs)'\)/g)) depsOf(m[1] || m[2], seen); return seen; };
++const readsPrivate = (y) => { const files = new Set(); for (const m of y.matchAll(/node\s+(?:--[\w=-]+\s+)*([\w.-]+\.mjs)/g)) for (const d of depsOf(m[1])) { const s = R(REPO, d); for (const p of FILES) if (s.includes(p)) files.add(p); } return files; };
++test('every workflow that runs a script reading a private file pulls the private copies right after each checkout', () => {
++  let n = 0;
++  for (const f of fs.readdirSync(WF)) { const y = wfText(f); if (!readsPrivate(y).size) continue; n++;
++    const lines = y.split('\n'), checkouts = lines.filter(l => /^\s*- uses: actions\/checkout@/.test(l)).length, pulls = (y.match(/run: bash \.github\/private-data\.sh pull/g) || []).length;
++    assert.ok(pulls >= Math.min(1, checkouts) && pulls <= checkouts && pulls > 0, f + ': ' + pulls + ' pulls for ' + checkouts + ' checkouts'); }
++  assert.ok(n >= 60, n + ' workflows');
++});
++test('every workflow whose scripts WRITE a private file saves it back (push); the others get the read-only token first', () => {
++  const writes = (y) => { for (const m of y.matchAll(/node\s+(?:--[\w=-]+\s+)*([\w.-]+\.mjs)/g)) for (const d of depsOf(m[1])) { const s = R(REPO, d);
++    for (const p of FILES) if (new RegExp('(writeFileSync|appendFileSync|\\bW)\\([^)]*(' + p.replace('.', '\\.') + '|POS_FILE|PRIV_FILE|EXTRA_FILE|BASKET_STATE|PV_FILE|PRIV_HOLD|OWNER_OUT)').test(s) && !/agent-a-lab/.test(d)) return true; } return false; };
++  for (const f of fs.readdirSync(WF)) { const y = wfText(f); if (!readsPrivate(y).size) continue;
++    if (writes(y)) assert.match(y, /private-data\.sh push/, f + ' writes a private file but never saves it to the private repository');
++    else assert.match(y, /PRIVATE_DATA_TOKEN: \$\{\{ secrets\.PRIVATE_DATA_READ \|\| secrets\.PRIVATE_DATA_TOKEN \}\}/, f + ': readers use the read-only token when it exists'); }
++});
++test('the bot reads before and saves after every round; the scan saves after its save; the live watcher and the scan can read the newest copy', () => {
++  const bot = wfText('bot.yml'); assert.match(bot, /git pull -q --rebase[^\n]*\n\s+if ! bash \.github\/private-data\.sh pull/); assert.match(bot, /save; push_private; mirror/);
++  const main = wfText('main.yml'); assert.ok(main.indexOf('save-data.sh') < main.indexOf('private-data.sh push'), 'scan: push after its save');
++  assert.match(main, /node scan\.mjs[\s\S]*?PRIVATE_DATA_TOKEN: \$\{\{ secrets\.PRIVATE_DATA_TOKEN \}\}[\s\S]*?- run: \|/);
++  assert.match(wfText('ignition.yml'), /node ignition-watch\.mjs[\s\S]*?PRIVATE_DATA_TOKEN:/);
++  assert.match(R(REPO, 'ignition-watch.mjs'), /private-data\.sh show ' \+ f/); assert.match(R(REPO, 'scan.mjs'), /private-data\.sh show my-positions\.json/);
++});
++test('cutover and rollback run only by hand with a typed confirmation; the schedule only verifies', () => {
++  const y = wfText('private-data-check.yml');
++  assert.match(y, /github\.event_name == 'schedule' && 'verify'/); assert.match(y, /\[ "\$CONFIRM" = "\$want" \] \|\| \{[^}]*nothing done/);
++  assert.ok(y.indexOf('private-data.sh check') < y.indexOf('private-cutover.sh cutover'), 'the copy is checked before anything changes');
+ });
+-- 
+2.43.0
+
