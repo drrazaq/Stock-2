@@ -11,6 +11,7 @@ const HEX=/^[a-f0-9]{40}$/,SHA=/^[a-f0-9]{64}$/;
 const gitEnv={PATH:'/usr/bin:/bin',GIT_NO_LAZY_FETCH:'1',GIT_TERMINAL_PROMPT:'0',GIT_OPTIONAL_LOCKS:'0',GIT_CONFIG_NOSYSTEM:'1',GIT_CONFIG_GLOBAL:'/dev/null',GIT_PAGER:'cat'};
 class Refusal extends Error{constructor(){super('BLOCKED');}}
 const block=()=>{throw new Refusal();};
+const entryPresent=p=>{try{fs.lstatSync(p);return true;}catch(e){if(e.code==='ENOENT')return false;block();}};
 const validPath=p=>typeof p==='string'&&p.length<512&&!p.includes('\\')&&!p.includes('\0')&&!p.startsWith('/')&&p.split('/').every(s=>s&&s!=='.'&&s!=='..');
 function git(root,args){try{return execFileSync('/usr/bin/git',['-c','core.fsmonitor=false','-c','core.hooksPath=/dev/null','-c','protocol.allow=never','-c','credential.helper=',...args],{cwd:root,env:gitEnv,encoding:'utf8',stdio:['ignore','pipe','pipe'],maxBuffer:LIMITS.gitBytes,timeout:LIMITS.gitMs});}catch{block();}}
 const sameStat=(a,b)=>a.dev===b.dev&&a.ino===b.ino&&a.size===b.size&&a.mtimeNs===b.mtimeNs&&a.ctimeNs===b.ctimeNs;
@@ -53,11 +54,11 @@ export class ReceiptSession{
   this.#root=checkRoot(root);if(!Array.isArray(protectedPaths)||protectedPaths.length>128||!protectedPaths.includes('data/tg-state.json')||protectedPaths.some(p=>!validPath(p)||!p.startsWith('data/')))block();
   this.#protected=[...new Set(protectedPaths)].sort();this.#required=requiredPaths;if(requiredPaths.some(p=>!this.#protected.includes(p))||!sourcePins||typeof sourcePins!=='object'||this.#protected.length+Object.keys(sourcePins).length>128)block();this.#pins=sourcePins;this.#identity=identity;
   if(!identity||!/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(identity.repository)||!/^\d+$/.test(identity.runId)||!Number.isSafeInteger(identity.attempt)||identity.attempt<1||!HEX.test(identity.workflowCommit))block();
-  if(fs.existsSync(path.join(root,'.github/private-data-mode')))block();
+  if(entryPresent(path.join(root,'.github/private-data-mode')))block();
   if(git(root,['rev-parse','--show-object-format']).trim()!=='sha1')block();this.#start=git(root,['rev-parse','HEAD']).trim();this.#initialTree=tree(root,this.#start);const s=this.#snapshot();this.#initialOffset=s.offset;
  }
  #budget(){return{bytes:0,end:performance.now()+LIMITS.finalMs};}
- #snapshot(){if(fs.existsSync(path.join(this.#root,'.github/private-data-mode')))block();const budget=this.#budget(),code=sourceContext(this.#root,this.#pins,budget),values=new Map();let offset;
+ #snapshot(){if(entryPresent(path.join(this.#root,'.github/private-data-mode')))block();const budget=this.#budget(),code=sourceContext(this.#root,this.#pins,budget),values=new Map();let offset;
   for(const p of this.#protected){let exists=true;try{fs.lstatSync(path.join(this.#root,p));}catch(e){if(e.code==='ENOENT')exists=false;else block();}if(!exists){if(this.#required.includes(p)||this.#initialTree?.has(p)||this.#everPresent.has(p))block();values.set(p,null);continue;}const v=readAnchored(this.#root,p,budget);this.#everPresent.add(p);values.set(p,v);if(p==='data/tg-state.json'){let j;try{j=JSON.parse(v.offsetBytes);}catch{block();}if(!j||typeof j!=='object'||Array.isArray(j)||!Number.isSafeInteger(j.offset)||j.offset<0)block();offset=j.offset;}}
   if(offset===undefined)block();return{code,values,offset};
  }
@@ -79,8 +80,8 @@ export class ReceiptSession{
    const finalLocal=this.#snapshot();for(const[p,v]of this.#last.values)if((v?.oid??null)!==(finalLocal.values.get(p)?.oid??null))block();
    const remote=await client.main();if(!HEX.test(remote))block();await client.ancestor(head,remote);const remoteEntries=await client.entries(remote,[...this.#protected,...Object.keys(this.#pins)]);
    for(const[p,v]of finalLocal.values)if((v?.oid??null)!==(remoteEntries.get(p)?.oid??null))block();for(const[p,v]of finalLocal.code)if(v.oid!==remoteEntries.get(p)?.oid)block();
-   const closing=this.#snapshot();if(git(this.#root,['rev-parse','HEAD']).trim()!==head)block();for(const[p,v]of finalLocal.values){const a=closing.values.get(p);if((v?.oid??null)!==(a?.oid??null)||v&&a&&!sameStat(v.stat,a.stat))block();}for(const[p,v]of finalLocal.code)if(!sameStat(v.stat,closing.code.get(p).stat))block();
-   if(JSON.stringify(allDataFiles(this.#root))!==JSON.stringify(disk))block();for(const[p,v]of diskWitness){const a=readAnchored(this.#root,p,budget);if(a.oid!==v.oid||!sameStat(v.stat,a.stat))block();}indexMatches(this.#root,head,[...data.keys(),...Object.keys(this.#pins)]);if(await client.main()!==remote||git(this.#root,['rev-parse','HEAD']).trim()!==head||performance.now()>budget.end)block();
+   if(await client.main()!==remote)block();const closing=this.#snapshot();if(git(this.#root,['rev-parse','HEAD']).trim()!==head)block();for(const[p,v]of finalLocal.values){const a=closing.values.get(p);if((v?.oid??null)!==(a?.oid??null)||v&&a&&!sameStat(v.stat,a.stat))block();}for(const[p,v]of finalLocal.code)if(!sameStat(v.stat,closing.code.get(p).stat))block();
+   if(JSON.stringify(allDataFiles(this.#root))!==JSON.stringify(disk))block();for(const[p,v]of diskWitness){const a=readAnchored(this.#root,p,budget);if(a.oid!==v.oid||!sameStat(v.stat,a.stat))block();}indexMatches(this.#root,head,[...data.keys(),...Object.keys(this.#pins)]);if(git(this.#root,['rev-parse','HEAD']).trim()!==head||performance.now()>budget.end)block();
    return{status:'PASS',receipt:Object.freeze({schema:'MENTOR_PERSISTENCE_RECEIPT_V1',scope:'OBSERVED_CYCLES_PERSISTED_NOT_CONTROL_PLANE_OR_ACCOUNTING_APPROVAL',repository:this.#identity.repository,runId:this.#identity.runId,attempt:this.#identity.attempt,workflowCommit:this.#identity.workflowCommit,startCommit:this.#start,savedCommit:head,observedMain:remote,checkedAt:new Date().toISOString()})};
   }catch(e){return{status:e instanceof Refusal?'BLOCKED':'ERROR'};}
  }

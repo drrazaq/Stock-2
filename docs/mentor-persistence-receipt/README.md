@@ -12,6 +12,10 @@ The callable `ReceiptSession` observer starts **before the first child invocatio
 
 The observer performs read-only access to existing local state and Git objects; it does not decrypt, modify financial records or change Telegram offsets. Only its separate, private output directory is written. Actual save callbacks retain their existing behavior; the observer does not repair failed transactions. Genuinely absent optional ledgers are not manufactured, but this is **not** an exemption from the separate accounting-history checks. Privacy-mode drift, previously present missing state, malformed/missing offsets, symlinks, unreadable files and uncertain ancestry refuse proof.
 
+## Final race re-review
+
+Additional review of initial checkpointfff977c8 reproduced two false PASS cases: a local data/source mutation during the final remote-ref request, and a dangling privacy-mode marker. Final remote freshness now precedes the last local source/state/index/HEAD revalidation, with no subsequent asynchronous provider call. Marker detection uses lstat so dangling entries remain unknown. Both regressions fail on the initial candidate and pass after the narrow correction; the complete receipt suite now passes33/33. These fixes concern only the inactive observer, never production privacy policy. [Evidence](final-review-findings.json).
+
 ## Exact inactive implementation
 
 | Component | Implemented contract |
@@ -20,7 +24,7 @@ The observer performs read-only access to existing local state and Git objects; 
 | `package/github-read-client.mjs` | Real GitHub REST read client, tested with mocked transport and a loopback GitHub-shaped service backed by disposable Git remotes. Fixed repository routes, GET only, no retries/redirects/fallback. |
 | `package/runner.mjs` | Real repository execution remains **INACTIVE/BLOCKED before credential access**. Fixture mode requires a synthetic marker, local Git remote and loopback API. Credentials cannot activate it. |
 | `package/run-receipt.sh` | Four exact source pins, strict stdout/exit pairing, 60-second hard deadline plus 2-second kill margin, 256-MiB Node heap, bounded private spool, cleanup. A future host must pin the wrapper and pin file externally too. |
-| `tests/mentor-persistence-receipt.test.mjs` | 31 independent synthetic tests, actual child → pre-save witness → Git commit/push → bounded read client → immutable receipt, including separate-process competition and the real 60-second wrapper deadline. |
+| `tests/mentor-persistence-receipt.test.mjs` | 33 independent synthetic tests, actual child → pre-save witness → Git commit/push → bounded read client → immutable receipt, including separate-process competition and the real 60-second wrapper deadline. |
 
 Bounds: 4,096 witnessed cycles/commits, 1,024 commits per final ancestry interval, 128 protected/source paths, 8,192 data files, 128 MiB/file, 1 GiB per data pass, 8 MiB per Git output and 5 seconds/Git operation. Finalization has a cooperative 45-second bound; the shipped one-shot wrapper has a hard 60-second limit. The future long-running original host must supply its own bounded finalization supervisor; running that wrapper as a later process would lose the witness. Git lazy fetching is disabled and the protocol is forbidden. Blob-filtered metadata tests remove protected blobs and prove no implicit network acquisition.
 

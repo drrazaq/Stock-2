@@ -1,0 +1,26 @@
+{
+  "scope": "inactive receipt only",
+  "initialCheckpoint": "fff977c81655834d66e17bf05f594d87f328bc8b",
+  "fixtures": "synthetic only; no actual credentials/state",
+  "findings": [
+    {
+      "id": "FINAL_REMOTE_REQUEST_RACE",
+      "before": "PASS for mutation during final remote request",
+      "expected": "BLOCKED",
+      "after": "BLOCKED for protected data, other data and pinned source",
+      "fix": "last remote read before final local source/state/index/HEAD checks"
+    },
+    {
+      "id": "DANGLING_PRIVACY_MARKER",
+      "before": "PASS when existsSync treats dangling marker as absent",
+      "expected": "BLOCKED before requests",
+      "after": "BLOCKED with zero API requests",
+      "fix": "lstat entry detection; no private-mode policy change"
+    }
+  ],
+  "fullReceiptTests": {
+    "pass": 33,
+    "fail": 0
+  },
+  "noProductionOrWorkflowChange": true
+}

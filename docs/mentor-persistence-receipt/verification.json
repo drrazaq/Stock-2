@@ -3,7 +3,7 @@
   "localNode": "v24.19.0",
   "uid": "1000",
   "receipt": {
-    "passed": 31,
+    "passed": 33,
     "failed": 0,
     "realDeadlineMs": 60000,
     "realDeadlineTest": true,
@@ -1622,5 +1622,18 @@
     "not control-plane exclusion",
     "no original production host hook or retention installed"
   ],
-  "initialFailedEvidence": "receipt test privacy-mode revalidation first failed (20/21); revalidation repaired, final31/31. Inverse harness --reverse rejected; corrected to -R with whole-tree identity proof."
+  "initialFailedEvidence": "receipt test privacy-mode revalidation first failed (20/21); revalidation repaired, final31/31. Inverse harness --reverse rejected; corrected to -R with whole-tree identity proof.",
+  "finalReview": {
+    "initialCheckpoint": "fff977c81655834d66e17bf05f594d87f328bc8b",
+    "newIndependentFailuresBefore": 2,
+    "sameRegressionsAfter": {
+      "pass": 2,
+      "fail": 0
+    },
+    "completeSuiteAfter": {
+      "pass": 33,
+      "fail": 0
+    },
+    "evidence": "final-review-findings.json"
+  }
 }
