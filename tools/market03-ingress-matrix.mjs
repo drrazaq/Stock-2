@@ -50,6 +50,8 @@ export const CONTRACTS={
  'ignition-watch.mjs|ALPACA_DATA':C('Y','P','Y','Y','NA','N','P','Codex market-ingress-calendar','actual alpacaAll caller test'),
  'ignition-watch.mjs|MASSIVE':C('N','N','P','P','N','N','P','open','15-minute delayed plan; contract not reviewed in this package (Codex watcher scope)'),
  'leaders-study.mjs|MASSIVE':C('P','P','P','N','P','N','P','open (Codex-owned shared cache)','grouped bars split-adjusted as of each fetch + heuristic split repair; share classes excluded (/^[A-Z]{1,5}$/); ticker reuse not detected'),
+ 'discover.mjs|MASSIVE':C('P','Y','Y','Y','Y','N','Y','claude/market03-discover','grouped prices: current day = latest completed session; outcome per request (FAILED/RATE_LIMITED/REFUSED/MALFORMED/EMPTY/INCOMPLETE/OBSERVED); closed days never requested inside the calendar; no silent older-day fallback; samples record fallbacks and calendar basis; plain tickers only'),
+ 'discover.mjs|POLYGON':C('P','Y','Y','Y','Y','N','Y','claude/market03-discover','fallback host of the same grouped request'),
  'scan.mjs|TWELVE_DATA':C('N','N','N','N','N','N','N','open (scan.mjs owned by main session)','proposal in docs/market03-catalyst03/SCAN-PROPOSAL.md'),
  'scan.mjs|ALPACA_DATA':C('N','N','P','P','N','N','N','open (scan.mjs owned by main session)','proposal'),
  'scan.mjs|FINNHUB':C('N','N','N','N','NA','N','N','open (scan.mjs owned by main session)','proposal'),

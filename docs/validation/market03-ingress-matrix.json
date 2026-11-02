@@ -4,7 +4,7 @@
   "pairs": 442,
   "providerPairs": 305,
   "decisionPathPairs": 97,
-  "reviewedDecisionPairs": 29,
+  "reviewedDecisionPairs": 31,
   "fullyCoveredDecisionPairs": 3,
   "unreviewedDecisionPairs": [
    "calendar.mjs|MASSIVE",
@@ -15,8 +15,6 @@
    "deals.mjs|MASSIVE",
    "deals.mjs|POLYGON",
    "deals.mjs|FINNHUB",
-   "discover.mjs|MASSIVE",
-   "discover.mjs|POLYGON",
    "discover.mjs|CLINICALTRIALS",
    "discover.mjs|SEC",
    "discover.mjs|FMP",
@@ -71,7 +69,7 @@
   "unclassified": [],
   "frozenResearchPairs": 187,
   "decisionIngress": 87,
-  "reviewedIngress": 27,
+  "reviewedIngress": 29,
   "fullyCoveredIngress": [
    "comeback-lab.mjs|MASSIVE",
    "discovery2.mjs|SEC",
@@ -516,7 +514,17 @@
    "kind": "PROVIDER",
    "provider": "MASSIVE",
    "role": "LIVE_DELIVERY_PATH",
-   "contract": "NOT_REVIEWED"
+   "contract": {
+    "identity": "P",
+    "units": "Y",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "Y",
+    "revision": "N",
+    "status": "Y",
+    "by": "claude/market03-discover",
+    "note": "grouped prices: current day = latest completed session; outcome per request (FAILED/RATE_LIMITED/REFUSED/MALFORMED/EMPTY/INCOMPLETE/OBSERVED); closed days never requested inside the calendar; no silent older-day fallback; samples record fallbacks and calendar basis; plain tickers only"
+   }
   },
   {
    "file": "discover.mjs",
@@ -524,7 +532,17 @@
    "kind": "PROVIDER",
    "provider": "POLYGON",
    "role": "LIVE_DELIVERY_PATH",
-   "contract": "NOT_REVIEWED"
+   "contract": {
+    "identity": "P",
+    "units": "Y",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "Y",
+    "revision": "N",
+    "status": "Y",
+    "by": "claude/market03-discover",
+    "note": "fallback host of the same grouped request"
+   }
   },
   {
    "file": "discover.mjs",
