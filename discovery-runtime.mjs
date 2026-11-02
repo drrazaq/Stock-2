@@ -3,8 +3,15 @@
 import {createHash} from 'node:crypto';
 import {LANES,assembleMultiAngle} from './multi-angle-discovery.mjs';
 import {isFreshPriceAge} from './ignition-gates.mjs';
+import {marketSymbol} from './market-symbol.mjs';
+import {SOURCE_STATUS,closeLagSessions,isDay} from './source-contract.mjs';
 const clock=x=>typeof x==='string'&&/T.*(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
-const symbol=x=>typeof x==='string'&&/^[A-Z][A-Z0-9.\-]{0,9}$/.test(x);
+const symbol=x=>typeof x==='string'&&marketSymbol(x)===x;
+// Provider statuses this package adds; absent ones are LEGACY_UNSTATED (labelled, never read as observed).
+const ADDED_PRODUCERS=new Set(['ALPHA_VANTAGE','FMP','PRICE_CACHE','LAB_TODAY_FILES','SPY_BARS']);
+const PRODUCER_STATUSES=new Set(['OBSERVED','UNKNOWN','NOT_FETCHED','PARTIAL_OR_UNKNOWN','CONFLICT',...SOURCE_STATUS]);
+// Daily-close producers: a close older than the previous completed session is stale (sessions, not calendar hours).
+const CLOSE_LAG_LIMIT=1;
 const observationIdentity=(source,row,sym)=>[source.path,sym,row.sourceId||row.id||row.url||row.rule||'',row.p||row.d||row.filed||row.signalDay||'',row.h||row.f||row.chain||''];
 const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
@@ -56,7 +63,10 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
     }
     if(!parsedObjects&&preRejected){sources.push({...source,status:'MALFORMED',rows:0,inputRows,rejected:preRejected,malformedLines,truncated:inputTruncated,rejectionReasons});continue;}
     rows.sort((a,b)=>b.t-a.t);
-   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt!==undefined?doc.generatedAt:doc.updated;rows=rowsOf(source.lane,doc);if(Array.isArray(doc.quarantinedSourceIds))revokedReportedIds=doc.quarantinedSourceIds.filter(x=>typeof x==='string').slice(0,1000);if(['SEC_EVENT','EARNINGS_SURPRISE','INSIDER_CLUSTER','INDUSTRY_RIPPLE','SUPPLY_SHIFT','TECHNICAL_BUILDUP'].includes(source.lane)){producerStatus={};for(const name of source.lane==='SEC_EVENT'?['SEC','OPENFDA']:source.lane==='INSIDER_CLUSTER'?['SEC_FORM4']:source.lane==='INDUSTRY_RIPPLE'?['CHAIN_ANALYSIS']:source.lane==='SUPPLY_SHIFT'?['SEC_INDEX','SEC_TICKERS']:source.lane==='TECHNICAL_BUILDUP'?['SEC_INDEX']:['FINNHUB_CALENDAR']){const v=doc.sourceStatus?.[name];producerStatus[name]={status:object(v)&&['OBSERVED','UNKNOWN','NOT_FETCHED','PARTIAL_OR_UNKNOWN','CONFLICT'].includes(v.status)?v.status:'UNKNOWN'};}}if((source.lane==='INSIDER_CLUSTER'&&doc.sourceStatus?.SEC_FORM4?.status==='UNKNOWN')||(source.lane==='INDUSTRY_RIPPLE'&&doc.sourceStatus?.CHAIN_ANALYSIS?.status==='UNKNOWN')||(source.lane==='SUPPLY_SHIFT'&&['SEC_INDEX','SEC_TICKERS'].some(k=>doc.sourceStatus?.[k]?.status==='UNKNOWN'))||(source.lane==='TECHNICAL_BUILDUP'&&doc.sourceStatus?.SEC_INDEX?.status==='UNKNOWN')){preRejected+=rows.length;rows=[];}}
+   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt!==undefined?doc.generatedAt:doc.updated;rows=rowsOf(source.lane,doc);if(Array.isArray(doc.quarantinedSourceIds))revokedReportedIds=doc.quarantinedSourceIds.filter(x=>typeof x==='string').slice(0,1000);if(['SEC_EVENT','EARNINGS_SURPRISE','INSIDER_CLUSTER','INDUSTRY_RIPPLE','SUPPLY_SHIFT','TECHNICAL_BUILDUP','MARKET_DISLOCATION'].includes(source.lane)){producerStatus={};for(const name of source.lane==='SEC_EVENT'?['SEC','OPENFDA']:source.lane==='INSIDER_CLUSTER'?['SEC_FORM4']:source.lane==='INDUSTRY_RIPPLE'?['CHAIN_ANALYSIS']:source.lane==='SUPPLY_SHIFT'?['SEC_INDEX','SEC_TICKERS']:source.lane==='TECHNICAL_BUILDUP'?['SEC_INDEX','PRICE_CACHE']:source.lane==='MARKET_DISLOCATION'?['LAB_TODAY_FILES','SPY_BARS']:['FINNHUB_CALENDAR','ALPHA_VANTAGE','FMP']){const v=doc.sourceStatus?.[name];producerStatus[name]={status:object(v)&&PRODUCER_STATUSES.has(v.status)?v.status:v===undefined&&ADDED_PRODUCERS.has(name)?'LEGACY_UNSTATED':'UNKNOWN'};}}if((source.lane==='INSIDER_CLUSTER'&&doc.sourceStatus?.SEC_FORM4?.status==='UNKNOWN')||(source.lane==='INDUSTRY_RIPPLE'&&doc.sourceStatus?.CHAIN_ANALYSIS?.status==='UNKNOWN')||(source.lane==='SUPPLY_SHIFT'&&['SEC_INDEX','SEC_TICKERS'].some(k=>doc.sourceStatus?.[k]?.status==='UNKNOWN'))||(source.lane==='TECHNICAL_BUILDUP'&&doc.sourceStatus?.SEC_INDEX?.status==='UNKNOWN')
+    ||(source.lane==='TECHNICAL_BUILDUP'&&doc.sourceStatus?.PRICE_CACHE!==undefined&&producerStatus.PRICE_CACHE.status!=='OBSERVED')
+    ||(source.lane==='MARKET_DISLOCATION'&&doc.sourceStatus?.LAB_TODAY_FILES!==undefined&&!['OBSERVED','EMPTY'].includes(producerStatus.LAB_TODAY_FILES.status))
+    ||(source.lane==='EARNINGS_SURPRISE'&&doc.sourceStatus?.FINNHUB_CALENDAR?.status==='UNKNOWN')){preRejected+=rows.length;rows=[];}}
    if(!Array.isArray(rows))throw Error('invalid rows');
    if(source.lane!=='NEWS_CATALYST'&&!clock(generated)){sources.push({...source,status:'MISSING_OUTPUT_TIMESTAMP',rows:rows.length});continue;}
    if(generated&&(Date.parse(generated)>at||at-Date.parse(generated)>source.hours*3600000)){sources.push({...source,status:Date.parse(generated)>at?'FUTURE':'STALE',rows:rows.length});continue;}
@@ -74,6 +84,10 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
     if(source.lane==='SEC_EVENT'&&rawPublic!==undefined&&!clock(rawPublic)){rejected++;continue;}
     if(row.sourceDataDay!==undefined){const d=row.sourceDataDay,ms=typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)?Date.parse(d+'T00:00:00Z'):NaN;if(!Number.isFinite(ms)||new Date(ms).toISOString().slice(0,10)!==d||ms>at||at-ms>source.hours*3600000){rejected++;continue;}}
     if(row.derivedAvailableAt!==undefined&&!clock(row.derivedAvailableAt)){rejected++;continue;}
+    // Earnings rows carrying their report day: a report older than the lane window is not a fresh catalyst, whatever the
+    // file's generatedAt says (day precision: one extra day of tolerance for the unknown time of day).
+    if(source.lane==='EARNINGS_SURPRISE'&&row.publicationDay!==undefined){const d=row.publicationDay,ms=isDay(d)?Date.parse(d+'T00:00:00Z'):NaN;if(!Number.isFinite(ms)||ms>at||at-ms>(source.hours+24)*3600000){rejected++;continue;}}
+    if(row.lastCloseDay!==undefined){const lag=closeLagSessions(row.lastCloseDay,at);if(lag===null||lag<0||lag>CLOSE_LAG_LIMIT){rejected++;continue;}}
     const primary=clock(rawPublic),asOf=primary?rawPublic:row.derivedAvailableAt??generated;
     if(source.lane==='SEC_EVENT'&&row.firstObservedAt!=null&&(!clock(row.firstObservedAt)||Date.parse(row.firstObservedAt)>at||primary&&Date.parse(row.firstObservedAt)<Date.parse(rawPublic))){rejected++;continue;}
     if(!clock(asOf)||Date.parse(asOf)>at||at-Date.parse(asOf)>source.hours*3600000){rejected++;continue;}
@@ -84,7 +98,9 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
      caveat:primary?'Source report; materiality/direction not established by lane presence':'Original public event time unavailable; generatedAt is derived output availability only',
      sourcePath:source.path,sourceCapturedAt:source.lane==='NEWS_CATALYST'?row.at:source.lane==='SEC_EVENT'?(clock(row.firstObservedAt)?row.firstObservedAt:null):(source.lane==='SUPPLY_SHIFT'&&clock(row.firstObservedAt)?row.firstObservedAt:row.derivedAvailableAt??generated),
      ...(source.lane!=='SEC_EVENT'?{reportedSourceId:row.sourceId||row.id||null,sourceRevisionId:row.sourceRevisionId||null,sourceIdentityBasis:row.sourceIdentityBasis||'UNVERIFIED',sourceDataDay:row.sourceDataDay||null,reportedPublicationDay:row.publicationDay||null,sourceClockBasis:row.sourceClockBasis||'UNKNOWN',priceBasis:row.priceBasis||'UNKNOWN'}:{}),
-     ...(source.lane==='SEC_EVENT'?{reportedSourceId:row.sourceId||null,sourceNamespace:row.sourceNamespace||'UNKNOWN',outputAvailableAt:generated}:{} )});accepted++;
+     ...(source.lane==='SEC_EVENT'?{reportedSourceId:row.sourceId||null,sourceNamespace:row.sourceNamespace||'UNKNOWN',outputAvailableAt:generated}:{} ),
+     ...(source.lane==='EARNINGS_SURPRISE'&&row.timing!==undefined?{earnings:{provider:row.src||null,timing:row.timing,reactionSession:row.reactionSession??null,reactionStatus:row.reactionStatus||'UNKNOWN',reactionCandidates:Array.isArray(row.reactionCandidates)?row.reactionCandidates.slice(0,2):null,corroboratedBy:Array.isArray(row.corroboratedBy)?row.corroboratedBy.slice(0,4):[],epsUnit:row.epsUnit||'UNKNOWN'}}:{}),
+     ...(row.lastCloseDay!==undefined?{lastCloseDay:row.lastCloseDay,closeLagSessions:closeLagSessions(row.lastCloseDay,at)}:{})});accepted++;
    }
    sources.push({...source,status:'READ',revokedSourceIds,revokedReportedIds,rows:rows.length,accepted,rejected,truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(producerStatus?{producerStatus}:{}),...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
   }catch{sources.push({...source,status:'MALFORMED',rows:0});}
@@ -98,7 +114,7 @@ export function updateDiscovery(state,{observations,rows,cutoff,sources=[]}) {
  for(const source of sources){const r=state.sourceReliability[source.lane]||={cycles:0,statusCounts:{},acceptedAttempts:0,rejectedAttempts:0,truncatedAttempts:0};r.cycles++;r.statusCounts[source.status]=(r.statusCounts[source.status]||0)+1;r.acceptedAttempts+=source.accepted||0;r.rejectedAttempts+=source.rejected||0;r.truncatedAttempts+=source.truncated||0;
   for(const o of Object.values(state.observations))if(o.lane===source.lane&&(source.revokedSourceIds?.includes(o.sourceId)||source.revokedReportedIds?.includes(String(o.reportedSourceId)))){o.sourceConflict=true;o.sourceConflictReason='SOURCE_REVISION_CONFLICT';}
   if(source.upstream){r.upstreamStatusCounts||={};r.upstreamStatusCounts[source.upstream.status]=(r.upstreamStatusCounts[source.upstream.status]||0)+1;r.lastUpstream={...source.upstream};}
-  if(source.producerStatus){r.producerStatusCounts||={};for(const name of ['SEC','OPENFDA','FINNHUB_CALENDAR','SEC_FORM4','CHAIN_ANALYSIS','SEC_INDEX','SEC_TICKERS']){const v=source.producerStatus[name];if(!v)continue;const counts=r.producerStatusCounts[name]||={};counts[v.status]=(counts[v.status]||0)+1;}r.lastProducerStatus=structuredClone(source.producerStatus);}
+  if(source.producerStatus){r.producerStatusCounts||={};for(const name of ['SEC','OPENFDA','FINNHUB_CALENDAR','SEC_FORM4','CHAIN_ANALYSIS','SEC_INDEX','SEC_TICKERS','ALPHA_VANTAGE','FMP','PRICE_CACHE','LAB_TODAY_FILES','SPY_BARS']){const v=source.producerStatus[name];if(!v)continue;const counts=r.producerStatusCounts[name]||={};counts[v.status]=(counts[v.status]||0)+1;}r.lastProducerStatus=structuredClone(source.producerStatus);}
   if(source.origin){r.originCounts||={};r.originCounts[source.origin]=(r.originCounts[source.origin]||0)+1;}
  }
  const suppress=(o,reason)=>{const key=hash([o?.symbol,o?.lane,o?.sourceId,reason]);if(!state.suppressed[key]&&Object.keys(state.suppressed).length<5000)state.suppressed[key]={symbol:o?.symbol||null,lane:o?.lane||null,sourceId:o?.sourceId||null,reason,firstObservedAt:cutoff};};
