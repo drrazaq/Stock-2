@@ -1,12 +1,12 @@
-# Mentor release: FINAL plan (single version, revision 4)
+# Mentor release: FINAL plan (single version, revision 5)
 
-**Status: final amendment, awaiting Codex's focused confirmation. Nothing in this document has been executed. Prepared 2 Nov 2026 by Claude (release-preparation owner).**
+**Status: revision 5 (two narrow corrections), awaiting Codex's focused confirmation. Nothing in this document has been executed. Prepared 2 Nov 2026 by Claude (release-preparation owner).**
 
 This one plan replaces Claude's `bd415ecb` procedure and the control proposal in `docs/mentor-checkpoint-boundary-decision.md` (`11f1ac9a`). It keeps that decision's committed-checkpoint boundary and all preservation rules.
 
 **The patch, the inverse and the eight-file scope are unchanged.** No new infrastructure is added.
 
-§12 lists what changed from revision 3 (`5dd412b6`). It incorporates Codex's revision-3 review and emergency-rollback arrangement ([comment 6575439115](https://github.com/drrazaq/Stock-2/pull/3#issuecomment-6575439115)).
+§12 lists what changed from revision 3 (`5dd412b6`), which incorporated Codex's emergency-rollback arrangement ([comment 6575439115](https://github.com/drrazaq/Stock-2/pull/3#issuecomment-6575439115)). §13 lists the two narrow corrections in revision 5, from Codex's revision-4 review ([comment 6576115715](https://github.com/drrazaq/Stock-2/pull/3#issuecomment-6576115715)); nothing else changed.
 
 ## 1. Roles: one production writer at any moment
 
@@ -105,7 +105,9 @@ The projection for Tue 3 Nov is E ≈ 07:47 UTC (10:47 Kuwait). This is not an e
 
 **Writers** are runs of `bot.yml`, `main.yml`, `discover.yml` and `movers.yml`.
 
-**One designated exception, D-Q:** at entry, the operator records the ID of **at most one** pre-existing queued bot run with **zero jobs**. If there are two or more, there is no entry.
+**Designated writers, recorded at entry:**
+- **J:** the one bot job running at entry, whose end E is computed in §6a.
+- **D-Q:** at most one pre-existing queued bot run with **zero jobs**. If there are two or more, there is no entry.
 
 **Writer check (WC).** It is run, by whoever is the current operator, at:
 - entry;
@@ -114,11 +116,21 @@ The projection for Tue 3 Nov is E ≈ 07:47 UTC (10:47 Kuwait). This is not an e
 - immediately before every R push or retry;
 - immediately after the R push.
 
-**WC passes only if all of these hold on fresh, complete listings:**
-1. No writer run is in progress or waiting, other than D-Q.
-2. D-Q (if recorded) is still queued or pending, **with zero jobs**, and `bot.yml` reads disabled (after Disable).
-3. No new run of any writer has appeared since the previous WC.
-4. No status is unknown or unreadable.
+**WC is phase-specific. Every phase needs fresh, complete listings, and fails closed on any unknown or unreadable status.**
+
+**Entry and drain phase** (entry, then from Disable until J ends):
+1. The only writer executing is **J**.
+2. D-Q (if recorded) is still queued or pending with **zero jobs**; after Disable, `bot.yml` reads disabled.
+3. No other writer run is in progress or waiting, and no new run of any writer has appeared since the previous WC.
+
+**Pre-push phase** (immediately before the D push, and before every R push or retry):
+1. **J is terminal:** it ended naturally with conclusion SUCCESS and the save evidence of step 4 (§8).
+2. **No writer is executing.**
+3. D-Q (if recorded) is still queued or pending with zero jobs, and `bot.yml` reads disabled.
+4. No new run of any writer has appeared.
+5. **No main-ref write is UNKNOWN** (§6d).
+
+**Post-push phase** (immediately after the D push and after the R push): the checkout-SHA rules below.
 
 **If WC fails before a push:**
 - Before D → ABORT A.
@@ -135,14 +147,36 @@ The projection for Tue 3 Nov is E ≈ 07:47 UTC (10:47 Kuwait). This is not an e
 - **Only `bot.yml` and `main.yml` run `scan.mjs`.** Their bytes match the approved caller pins on `f4e4d951`.
 - **Eligible E:** 04:55–09:20 UTC on Tuesday. The scanner schedule makes overlap unlikely, but WC, not the schedule, is the control.
 
+### 6d. Write ledger: every main-ref update must be positively resolved
+
+**Before each push, the writer records the update in this chat and on PR #3:**
+> PUSHING <candidate SHA> onto <expected parent SHA> (D | R | retry)
+
+If that record cannot be posted, there is no push.
+
+**Each recorded update has exactly one disposition:**
+
+| Disposition | Positive evidence required |
+|---|---|
+| **APPLIED** | A fresh read of `main` contains the exact candidate SHA. |
+| **NOT APPLIED** | Either the push client received an explicit rejection (for example, non-fast-forward or a permission error), or a fresh read shows `main` at a commit that is **not** the expected parent and does **not** contain the candidate. In the second case the update can never apply, because every write in this procedure is non-force with an expected HEAD and nobody moves `main` backwards. |
+| **UNKNOWN** | Anything else, including a timeout, a lost response, an unchanged `main` still at the expected parent, silence, a "SUSPENDED" message, or the passage of time. |
+
+**While any update is UNKNOWN:**
+- **no further push or retry** by anyone;
+- **no write takeover** (§9b);
+- **no "VERIFIED V0 / V1 / V2"** or Enable invitation, even if `main` currently looks V0 or V2, because the pending update could still change it.
+
+The bot stays disabled. The writer reports, read-only, exactly which evidence is missing, and re-reads `main` until the update is APPLIED or NOT APPLIED. Reading `main` is necessary, but the absence of the candidate alone is never enough to retry. This applies equally to Claude's updates and to Codex's own R.
+
 ## 7. Entry conditions (all checked before the owner is asked to Disable)
 
 If any fails: **no Disable request, nothing changed.**
 
 1. **Owner approval** of §11.
 2. **Transfer rule acknowledged by both operators, before entry:**
-   - Claude posts "ACK TRANSFER RULE r4" in this chat and on PR #3.
-   - The owner sends Codex's task a readiness message. Codex replies with "READY — ACK TRANSFER RULE r4" for read-only verification and rollback-only takeover.
+   - Claude posts "ACK TRANSFER RULE r5" in this chat and on PR #3.
+   - The owner sends Codex's task a readiness message. Codex replies with "READY — ACK TRANSFER RULE r5" for read-only verification and rollback-only takeover.
    - No reply means no entry.
 3. **Claude ready:**
    - one continuous turn, with in-session timers;
@@ -150,7 +184,7 @@ If any fails: **no Disable request, nothing changed.**
    - "OPERATOR READY" written. No "OPERATOR READY", no click.
 4. **States:** both workflows `active`.
 5. **Running job J:** exactly one; E computed and within 04:55–09:20 UTC. Disable is requested only inside E − 15 … E − 8; if under 8 minutes remain, **no attempt today**.
-6. **WC passes;** D-Q is recorded (or none).
+6. **Entry-phase WC passes;** J and D-Q (or none) are recorded.
 7. **Code:** patch, manifest and inverse hashes; the before-state; **every manifest pin**.
 8. **Baseline M0:** only cases 1 and 3b fail, or none.
 9. **R prepared and checked** in a scratch tree.
@@ -165,7 +199,7 @@ If any fails: **no Disable request, nothing changed.**
 | 2 | +1 min | Claude | Read `bot.yml` = `disabled_manually`, `main.yml` = `active`. Still `active` after 3 minutes means nothing changed: stop (no code mutated). |
 | 3 | to E + 10 | Claude | Watch J and D-Q. D-Q gains a job, a new run appears, or J has not ended by E + 10 → ABORT A (no cancellation). |
 | 4 | after J ends | Claude | J must be SUCCESS. Its raw log must contain the echoed `echo "Error: could not save the data folder` line and must **not** contain an output line matching `^[0-9T:.Z-]+ Error: could not save the data folder`. Otherwise → ABORT A. |
-| 5 | by E + 20 | Claude | Fetch M; M0 → M data-only. Build D on M: exactly eight paths, after-hashes, all pins. **Transfer-marker check, then WC.** Push non-force with expected HEAD M; one retry after a full rebuild and revalidation. Second rejection or E + 20 passed → ABORT A. |
+| 5 | by E + 20 | Claude | Fetch M; M0 → M data-only. Build D on M: exactly eight paths, after-hashes, all pins. **Transfer-marker check, then pre-push WC** (J terminal, nothing executing, no UNKNOWN write). Record the update (§6d), then push non-force with expected HEAD M. A retry is allowed only after a **NOT APPLIED** disposition, followed by a full rebuild and revalidation (one retry). A second rejection, any UNKNOWN, or E + 20 passed → ABORT A, as soon as no update is UNKNOWN. |
 | 6 | right after the push | Claude | WC with checkout SHAs (§6c). |
 | 7 | to E + 30 | Claude | Hosted CI on D (§4). Pass → V1 → step 8. Fail or no result → ABORT B. |
 | 8 | target E + 45 | **Owner** | On "VERIFIED V1 – CLICK ENABLE NOW": **Enable workflow**, reply "done". |
@@ -175,11 +209,11 @@ If any fails: **no Disable request, nothing changed.**
 
 ### 9a. Aborts by the operator
 
-- **ABORT A (D not pushed):** verify V0 → "VERIFIED V0 – CLICK ENABLE NOW" → the owner enables.
+- **ABORT A (D not applied):** verify that no update is UNKNOWN (§6d), then verify V0 → "VERIFIED V0 – CLICK ENABLE NOW" → the owner enables.
 - **ABORT B (D pushed):**
-  1. Transfer-marker check, then WC (drain if needed).
+  1. Transfer-marker check, then pre-push WC (drain if needed; no UNKNOWN write).
   2. Build R on fresh `main`: exactly the inverse, eight paths only, data tree unchanged.
-  3. Push non-force with expected HEAD; at most one retry, only for data-only advancement, after full revalidation. If the response is lost, inspect `main` first: an already restored state is a no-op.
+  3. Record the update (§6d), then push non-force with expected HEAD. At most one retry, only after a NOT APPLIED disposition caused by data-only advancement, after full revalidation. **A lost response is UNKNOWN:** no retry and no VERIFIED until it is positively resolved.
   4. Verify V2 → "VERIFIED V2 – CLICK ENABLE NOW" → the owner enables.
 
 ### 9b. Explicit rollback transfer to Codex (rollback only, per incident)
@@ -188,7 +222,7 @@ If any fails: **no Disable request, nothing changed.**
 
 **Transfer record (owner-owned):**
 1. The owner sends the **same transfer text** in **this Claude chat** and in **Codex's task**:
-   > ROLLBACK TRANSFER r4 — instance 2026-11-03 mentor release; M0 = <sha>; D = <sha or "none">; new sole operator: Codex (rollback only); inverse 15ed5256…; Claude write and retry authority revoked until I send HANDBACK.
+   > ROLLBACK TRANSFER r5 — instance 2026-11-03 mentor release; M0 = <sha>; D = <sha or "none">; new sole operator: Codex (rollback only); inverse 15ed5256…; Claude write and retry authority revoked until I send HANDBACK.
 
    The owner's own chat messages are the authenticated record. The M0 and D SHAs come from Claude's last status lines, or Codex reads them from `main`.
 2. **Codex posts the same text on PR #3 as the fail-safe marker.**
@@ -204,18 +238,17 @@ If any fails: **no Disable request, nothing changed.**
 - **If Claude returns after the transfer, it does not push**, even to finish an interrupted step. It stays read-only until the owner sends **HANDBACK** in Claude's chat.
 
 **How outstanding writes are resolved before Codex writes (Codex, read-only first):**
-1. Read the current owner transfer record, and any "CLAUDE SUSPENDED" line.
-2. Read `main` and its recent history. Any Claude push that was in flight has either **landed** (visible, and it becomes the parent) or been **rejected** by the expected-HEAD guard (no effect). There is no third outcome.
-3. Wait **5 minutes** after the marker with no new non-data commit on `main`, then re-read.
-4. If `main` is **already V0 or V2** → no write; report VERIFIED.
-5. If ownership is ambiguous (for example, Claude posts after the marker without "SUSPENDED"), or a non-data commit appears during the wait → Codex stays **read-only** and reports UNVERIFIED.
+1. Read the current owner transfer record, any "CLAUDE SUSPENDED" line, and **every "PUSHING …" record** (§6d) posted in the window.
+2. Give each recorded update a disposition by the §6d rules. **Any UNKNOWN update blocks the takeover:** Codex stays read-only and reports UNVERIFIED with the exact missing evidence. Silence, waiting, an unchanged `main` or a SUSPENDED message never resolves it.
+3. Only when every update is APPLIED or NOT APPLIED: if `main` is already V0 or V2 → no write; report VERIFIED.
+4. If ownership is ambiguous (for example, Claude posts after the marker without "SUSPENDED") → Codex stays read-only and reports UNVERIFIED.
 
 **Codex rollback steps** (its own published steps 1–5):
 1. Announce "ROLLBACK TAKEOVER READY". Verify D's scope and eight after-hashes, all pins, protected regions and the inverse hash.
-2. Obtain the owner-confirmed state (bot disabled). Run WC, including the D-Q rule; drain naturally; re-run WC immediately before the push.
-3. Prepare R on fresh M with only the inverse: eight paths restored or removed, other code unchanged, data tree unchanged. One normal commit, parent M, pushed non-force with expected HEAD M.
-4. On rejection: refetch, then re-check ownership, WC, pins, ancestry and changes. At most one retry, and only for data-only advancement. A lost response means inspect `main` first.
-5. Verify V2 and report "VERIFIED V2". The owner alone enables.
+2. Obtain the owner-confirmed state (bot disabled). Run WC, including the J and D-Q rules; drain naturally; re-run the pre-push WC immediately before the push.
+3. Prepare R on fresh M with only the inverse: eight paths restored or removed, other code unchanged, data tree unchanged. Record the update (§6d), then push one normal commit, parent M, non-force with expected HEAD M.
+4. On a NOT APPLIED disposition: refetch, then re-check ownership, WC, pins, ancestry and changes. At most one retry, and only for data-only advancement. **A lost response is UNKNOWN:** no retry and no VERIFIED until it is positively resolved (§6d).
+5. Verify V2, with no UNKNOWN update, and report "VERIFIED V2". The owner alone enables.
 
 **After the incident:** authority returns to Claude **only** by the owner's HANDBACK sent in both chats, and Codex posting "HANDBACK" on PR #3.
 
@@ -247,7 +280,7 @@ If any fails: **no Disable request, nothing changed.**
 
 > **I approve the following for the mentor release only.**
 >
-> 1. **Release:** the unchanged mentor patch `1841837e…` (PR #3 `25a85000`, eight files), released by **Claude (this session) as the sole operator**, using procedure revision 4 (`docs/mentor-release-handoff/PROCEDURE.md`), on Tue 3 Nov 2026. The exact time comes from the running bot job (projected Disable request about 10:32–10:39 Kuwait), and it happens only if every entry condition holds.
+> 1. **Release:** the unchanged mentor patch `1841837e…` (PR #3 `25a85000`, eight files), released by **Claude (this session) as the sole operator**, using procedure revision 5 (`docs/mentor-release-handoff/PROCEDURE.md`), on Tue 3 Nov 2026. The exact time comes from the running bot job (projected Disable request about 10:32–10:39 Kuwait), and it happens only if every entry condition holds.
 > 2. **Revised boundary:** instead of the unavailable original-run save/offset proof, I accept the **committed `main` at release time** as the starting point, fully preserved. I accept that the earlier bot runs' intended-save and offset proof cannot be recovered, and that nothing will be backfilled, replayed or reset.
 > 3. **Baseline:** I accept the two TRY SMALL failures (cases 1 and 3b) as pre-existing. Any other baseline failure stops the release.
 > 4. **Writers and clicks:**
@@ -260,7 +293,8 @@ If any fails: **no Disable request, nothing changed.**
 >    - Claude's write and retry authority is suspended from my transfer until my HANDBACK.
 >    - No release, forward fix, data or offset change, workflow action or message by Codex.
 >    - If exclusivity or access cannot be verified, nothing is written.
-> 6. **Residual:** all durations are targets. If no operator can complete a verified state, the bot stays off, and a long outage can let Telegram commands expire.
+> 6. **Uncertain writes:** while any update to `main` is UNKNOWN (§6d), nobody retries, takes over or reports VERIFIED, and the bot stays off until it is positively resolved.
+> 7. **Residual:** all durations are targets. If no operator can complete a verified state, the bot stays off, and a long outage can let Telegram commands expire.
 >
 > No cancellation, dispatch, data change, workflow edit, secret or permission change, or trade is part of this. The Nov 2 ACTIONS correction is **not** included.
 
@@ -278,9 +312,22 @@ LEADER DIP remains NOT PROVEN. The mentor is read-only. Acceptance stays 24/40.
    - An owner-owned transfer record (the same text in both chats).
    - A PR marker as fail-safe stop only.
    - Claude's write and retry authority suspended until HANDBACK.
-   - Outstanding writes resolved by landed-or-rejected inspection plus a 5-minute settle.
+   - Outstanding writes resolved by landed-or-rejected inspection plus a 5-minute settle (**superseded in revision 5 by §6d; see §13**).
    - Codex's rollback-only steps 1–5.
    - **Both operators acknowledge the rule before entry** (§7.2).
 5. **§10:** the residual is kept, including Telegram expiry; Codex's capability is evidence only.
 6. **§11:** one consolidated approval covering release, revised boundary, historical uncertainty, baseline, conditional rollback authority and residual.
 7. **Unchanged:** the patch `1841837e…`, the manifest `13b120e5…`, the inverse `15ed5256…`, the eight-file scope, and the test rule.
+
+## 13. Revision 5: the two narrow corrections from Codex's revision-4 review
+
+Nothing else changed.
+
+1. **Uncertain main-ref writes (new §6d; applied in §8 step 5, §9a and §9b):**
+   - Every update is recorded first ("PUSHING <candidate> onto <expected parent>").
+   - It is resolved only by positive evidence: APPLIED, or NOT APPLIED by an explicit rejection or by `main` having moved off the expected parent without the candidate.
+   - Anything else is UNKNOWN. The "landed or rejected, no third outcome" claim and the 5-minute settle are removed.
+   - Any UNKNOWN blocks retries, takeover and every VERIFIED / Enable signal, for Claude's updates and Codex's alike.
+2. **Designated bot job J (§6c, §7.6):** at entry and during the drain, J (and the jobless D-Q) are explicitly allowed. The pre-push WC requires J terminal with SUCCESS and save evidence, no executing writer, and no UNKNOWN write.
+3. **Labels only:** the rule references change from r4 to r5 (ACK TRANSFER RULE r5, ROLLBACK TRANSFER r5).
+
