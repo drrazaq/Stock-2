@@ -1,5 +1,8 @@
 import {telegramFetch as sharedTelegramFetch,splitTelegramText} from './telegram-delivery.mjs';
 const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
+import {readJsonSource,providerSymbol,strictNumber,parseSourceTime,latestCompletedSession,closeLagSessions,adjustmentBasis,nextSession,isDay as isDayShared} from './source-contract.mjs';
+// Review B2-1 (Codex, 2 Nov): an impossible day is a malformed row, never a crash, whichever shared-helper version is in use.
+const isDay = (d) => { try { return isDayShared(d); } catch { return false; } };
 // SMART MONEY AND ANALYSTS. Once each market morning (Kuwait ~2:20 pm):
 //   1. INSIDER BUYING (Finnhub, free): company executives buying their own stock on the open market in the last 14 days:
 //      two or more buyers of 10,000 USD+ each (50,000 USD+ together), or 250,000 USD+ in total.
@@ -39,6 +42,18 @@ async function fh(path) {                       // free plan: 60 calls a minute
   }
   return null;
 }
+// Live ingress (MARKET-03 batch 2, 2 Nov 2026): every Finnhub answer keeps its outcome, so a failed call is never read as
+// "no insider buying" or "no analyst change". Same pacing and 429 retries as fh(); bounded body and a hard deadline.
+async function fhLive(path) {
+  let last = { status: 'NOT_FETCHED' };
+  for (let a = 0; a < 3; a++) {
+    const wait = 1050 - (Date.now() - fhLast); if (wait > 0 && !FAST) await sleep(wait); fhLast = Date.now();
+    last = await readJsonSource(fetch, FH + path + (path.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(env.FINNHUB_KEY), { timeoutMs: 15000 });
+    if (last.status === 'RATE_LIMITED') { await sleep(FAST ? 5 : 30000); continue; }
+    if (last.status === 'NETWORK_ERROR' || last.status === 'TIMEOUT') { await sleep(FAST ? 5 : 2000); continue; }
+    return last; }
+  return last;
+}
 let mvHost = 0;
 async function mv(path) {
   if (!env.MASSIVE_KEY) return null;
@@ -53,8 +68,18 @@ async function mv(path) {
 // ---- universe: liquid companies (price 5 USD+, 10M USD+ a day), strongest-traded first, plus your holdings and candidates
 const co = read('data/companies.json', null), CS = co && co.syms && co.syms.length > 3000 ? new Set(co.syms) : null;
 const last = new Map();
-for (let k = 1; k < 8 && !last.size; k++) { const d = new Date(Date.now() - k * 86400000); if ([0, 6].includes(d.getUTCDay())) continue;
-  const j = await mv('/v2/aggs/grouped/locale/us/market/stocks/' + iso(+d) + '?adjusted=true'); for (const r of (j && j.results) || []) if (/^[A-Z]{1,5}$/.test(r.T)) last.set(r.T, r); }
+// Prices: the newest completed session on the exchange calendar (holidays skipped), at most 5 sessions back. The day used, its
+// lag and the adjustment basis are recorded; a malformed bar is dropped, never a NaN price.
+const priceStatus = { status: 'NOT_FETCHED', day: null, lagSessions: null, basis: adjustmentBasis({ provider: 'MASSIVE', adjusted: true }), triedDays: [], rejectedBars: 0 };
+{ const nowMs = Date.now(); let d = latestCompletedSession(nowMs);
+  for (let k = 0; k < 5 && d && !last.size; k++) { priceStatus.triedDays.push(d);
+    const j = await mv('/v2/aggs/grouped/locale/us/market/stocks/' + d + '?adjusted=true');
+    if (j && typeof j === 'object' && !Array.isArray(j) && j.status !== 'ERROR' && Array.isArray(j.results)) for (const r of j.results) { const c = strictNumber(r && r.c, { min: 1e-9 }), v = strictNumber(r && r.v, { min: 0 });
+      if (!r || !/^[A-Z]{1,5}$/.test(r.T) || c.status !== 'OK' || v.status !== 'OK') { priceStatus.rejectedBars++; continue; } last.set(r.T, { ...r, c: c.value, v: v.value }); }
+    if (last.size) { priceStatus.day = d; break; }
+    let p = d; for (let i = 0; i < 10; i++) { p = new Date(Date.parse(p + 'T12:00:00Z') - 864e5).toISOString().slice(0, 10); if (nextSession(p, { inclusive: true }) === p) break; } d = p; }
+  priceStatus.lagSessions = priceStatus.day ? closeLagSessions(priceStatus.day, nowMs) : null;
+  priceStatus.status = !env.MASSIVE_KEY ? 'NOT_FETCHED' : !priceStatus.day ? 'UNAVAILABLE' : priceStatus.lagSessions > 1 ? 'STALE' : 'OBSERVED'; }
 const liquid = [...last.values()].filter(r => r.c >= 5 && r.c * r.v >= 1e7 && (!CS || CS.has(r.T))).sort((a, b) => b.c * b.v - a.c * a.v).map(r => r.T);
 const extra = [...Object.keys(read('data/my-positions.json', {})), ...((read('data/discovery.json', {}).candidates || []).map(c => c.sym)), ...((read('data/radar-universe.json', {}).syms || []).map(x => x.sym))];
 const MAXN = +(env.SM_MAX || 450);
@@ -64,18 +89,48 @@ console.log('smart money universe:', UNI.length, 'stocks');
 
 // ---- 1 + 2: insider buying and analyst trends
 const today = iso(Date.now()), since14 = iso(Date.now() - 14 * 86400000), insiders = [], analysts = [], snap = [];
+const counts = () => ({ calls: 0, observed: 0, empty: 0, failed: 0, identityMismatch: 0, malformedRows: 0, duplicateRows: 0, failures: {} });
+const insS = counts(), recS = { ...counts(), notConsecutive: 0, unordered: 0, futureRows: 0, missingCountRows: 0 };
+// Review B2-3/B2-4 (Codex, 2 Nov): a recommendation row counts only if its period is a real day in a month that has started (no future
+// observation can create a current turn) and all five counts are finite whole numbers >= 0. Missing and invalid counts are
+// kept apart from zero and from each other.
+const REC_FIELDS = ['strongBuy', 'buy', 'hold', 'sell', 'strongSell'], monthStart = today.slice(0, 7) + '-01';
+const recRow = (x) => { if (!x || typeof x !== 'object' || !isDay(String(x.period || ''))) return { bad: 'MALFORMED' }; if (x.period > monthStart) return { bad: 'FUTURE' };
+  const v = {}; for (const f of REC_FIELDS) { const n = strictNumber(x[f], { min: 0 }); if (n.status === 'MISSING') return { bad: 'MISSING_COUNT' }; if (n.status !== 'OK' || !Number.isInteger(n.value)) return { bad: 'MALFORMED' }; v[f] = n.value; }
+  return { row: { ...x, ...v } }; };
+const fail = (S, st) => { S.failed++; S.failures[st] = (S.failures[st] || 0) + 1; };
+const person = (n) => String(n).trim().replace(/\s+/g, ' ').toUpperCase();          // one person, however the name is spaced or cased
+const monthBefore = (p) => { const [y, m] = p.split('-').map(Number), t = new Date(Date.UTC(y, m - 2, 1)); return t.toISOString().slice(0, 7); };
 for (const sym of UNI) {
-  const ins = await fh('/stock/insider-transactions?symbol=' + sym + '&from=' + since14);
-  const buys = ((ins && ins.data) || []).filter(t => t.transactionCode === 'P' && t.change > 0 && t.transactionPrice > 0 && (t.transactionDate || t.filingDate) >= since14);
+  insS.calls++; const insR = await fhLive('/stock/insider-transactions?symbol=' + sym + '&from=' + since14), ins = insR.status === 'OK' ? insR.body : null;
+  let buys = [];
+  if (insR.status !== 'OK') fail(insS, insR.status);
+  else if (!ins || typeof ins !== 'object' || Array.isArray(ins) || !Array.isArray(ins.data)) fail(insS, 'MALFORMED');
+  else if (ins.symbol !== undefined && providerSymbol(ins.symbol, { provider: 'FINNHUB', requested: sym }).status !== 'OK') insS.identityMismatch++;
+  else { if (ins.data.length) insS.observed++; else insS.empty++; const seen = new Set();
+    for (const t of ins.data) { if (!t || typeof t !== 'object') { insS.malformedRows++; continue; }
+      if (t.transactionCode !== 'P') continue;
+      const ch = strictNumber(t.change), pr = strictNumber(t.transactionPrice), d = String(t.transactionDate || t.filingDate || '');
+      if (ch.status !== 'OK' || pr.status !== 'OK' || typeof t.name !== 'string' || !t.name.trim() || !isDay(d) || d > today) { insS.malformedRows++; continue; }
+      if (!(ch.value > 0 && pr.value > 0) || d < since14) continue;
+      const key = [person(t.name), d, ch.value, pr.value].join('|'); if (seen.has(key)) { insS.duplicateRows++; continue; } seen.add(key);   // a repeated (amended) row counts once
+      buys.push({ ...t, name: t.name.trim(), change: ch.value, transactionPrice: pr.value, who: person(t.name), d }); } }
   // count a buyer only if they put in 10,000 USD or more (small employee-plan purchases are not a signal)
-  const per = {}; for (const b of buys) per[b.name] = (per[b.name] || 0) + b.change * b.transactionPrice;
-  const real = buys.filter(b => per[b.name] >= 10000);
-  if (real.length) { const who = new Set(real.map(b => b.name)), usd = real.reduce((a, b) => a + b.change * b.transactionPrice, 0);
-    if ((who.size >= 2 && usd >= 50000) || usd >= 250000) insiders.push({ sym, n: who.size, usd, names: [...who].slice(0, 3), last: real.map(b => b.transactionDate || b.filingDate).sort().pop() }); }
+  const per = {}; for (const b of buys) per[b.who] = (per[b.who] || 0) + b.change * b.transactionPrice;
+  const real = buys.filter(b => per[b.who] >= 10000);
+  if (real.length) { const who = new Set(real.map(b => b.who)), usd = real.reduce((a, b) => a + b.change * b.transactionPrice, 0);
+    if ((who.size >= 2 && usd >= 50000) || usd >= 250000) insiders.push({ sym, n: who.size, usd, names: [...new Set(real.map(b => b.name))].slice(0, 3), last: real.map(b => b.d).sort().pop() }); }
   // analysts: real rating changes only (not new analysts starting coverage), stocks 5 USD+
-  const rec = await fh('/stock/recommendation?symbol=' + sym);
+  recS.calls++; const recR = await fhLive('/stock/recommendation?symbol=' + sym); let rec = null;
+  if (recR.status !== 'OK') fail(recS, recR.status);
+  else if (!Array.isArray(recR.body)) fail(recS, 'MALFORMED');
+  else { const rows = []; for (const x of recR.body) { const v = recRow(x); if (v.row) rows.push(v.row); else if (v.bad === 'FUTURE') recS.futureRows++; else if (v.bad === 'MISSING_COUNT') recS.missingCountRows++; else recS.malformedRows++; }
+    if (rows.some(x => x.symbol !== undefined && providerSymbol(x.symbol, { provider: 'FINNHUB', requested: sym }).status !== 'OK')) recS.identityMismatch++;
+    else { const sorted = [...rows].sort((p, q) => q.period < p.period ? -1 : q.period > p.period ? 1 : 0); if (sorted.some((x, i) => x !== rows[i])) recS.unordered++;
+      rec = sorted; if (rec.length) recS.observed++; else recS.empty++; } }
   if (Array.isArray(rec) && rec.length) { const a = rec[0]; snap.push({ s: sym, p: a.period, sb: a.strongBuy || 0, b: a.buy || 0, h: a.hold || 0, se: a.sell || 0, ss: a.strongSell || 0 }); }
-  if (Array.isArray(rec) && rec.length >= 2) { const [a, b] = rec, pos = (x) => (x.strongBuy || 0) + (x.buy || 0), tot = (x) => pos(x) + (x.hold || 0) + (x.sell || 0) + (x.strongSell || 0);
+  if (Array.isArray(rec) && rec.length >= 2 && monthBefore(rec[0].period) !== rec[1].period.slice(0, 7)) recS.notConsecutive++;
+  else if (Array.isArray(rec) && rec.length >= 2) { const [a, b] = rec, pos = (x) => (x.strongBuy || 0) + (x.buy || 0), tot = (x) => pos(x) + (x.hold || 0) + (x.sell || 0) + (x.strongSell || 0);
     if ((px(sym) || 0) >= 5 && tot(a) >= 5 && tot(b) >= 5 && tot(a) - tot(b) <= 2 && pos(a) - pos(b) >= 2 && pos(a) / tot(a) >= 0.6) analysts.push({ sym, now: pos(a), was: pos(b), of: tot(a), period: a.period }); }
 }
 insiders.sort((p, q) => q.usd - p.usd); analysts.sort((p, q) => (q.now - q.was) - (p.now - p.was));
@@ -87,20 +142,29 @@ if (snap.length) { const F = 'data/analyst-archive-' + today.slice(0, 7) + '.jso
 
 // ---- 3: FMP upgrades (only if the FMP plan allows this endpoint; otherwise skipped quietly)
 let upgrades = [], fmpNote = '';
+const fmpS = { status: 'NOT_FETCHED', received: 0, malformedRows: 0, futureRows: 0, classRows: 0 };
 if (env.FMP_KEY) {
-  try { const r = await fetch(FMP + '/stable/grades-latest-news?page=0&limit=100&apikey=' + encodeURIComponent(env.FMP_KEY));
-    if (r.ok) { const j = await r.json(); const arr = Array.isArray(j) ? j : [];
-      upgrades = arr.filter(x => x && /^[A-Z]{1,5}$/.test(x.symbol || '') && /upgrade/i.test(x.action || x.newsTitle || '') && String(x.publishedDate || '').slice(0, 10) >= iso(Date.now() - 3 * 86400000))
-        .map(x => ({ sym: x.symbol, firm: x.gradingCompany || x.newsPublisher || '', to: x.newGrade || '', from: x.previousGrade || '' }));
-      upgrades = upgrades.filter((u, i) => upgrades.findIndex(v => v.sym === u.sym) === i && px(u.sym)); }
-    else fmpNote = 'FMP upgrades not available on this plan (HTTP ' + r.status + ').'; } catch (e) { fmpNote = 'FMP upgrades unreachable.'; }
+  const res = await readJsonSource(fetch, FMP + '/stable/grades-latest-news?page=0&limit=100&apikey=' + encodeURIComponent(env.FMP_KEY), { timeoutMs: 15000 });
+  if (res.status !== 'OK') { fmpS.status = res.status; fmpNote = res.status === 'REFUSED' ? 'FMP upgrades not available on this plan (HTTP ' + res.httpStatus + ').' : 'FMP upgrades unreachable (' + res.status + ').'; }
+  else if (!Array.isArray(res.body)) { fmpS.status = 'MALFORMED'; fmpNote = 'FMP upgrades answer was malformed.'; }
+  else { const arr = res.body; fmpS.received = arr.length; const from3 = iso(Date.now() - 3 * 86400000), sel = [];
+    for (const x of arr) { if (!x || typeof x !== 'object') { fmpS.malformedRows++; continue; }
+      const id = providerSymbol(x.symbol, { provider: 'FMP' }), d = String(x.publishedDate || '').slice(0, 10);
+      if (id.status !== 'OK' || !isDay(d)) { fmpS.malformedRows++; continue; } if (!/^[A-Z]{1,5}$/.test(id.symbol)) { fmpS.classRows++; continue; }
+      if (d > today) { fmpS.futureRows++; continue; }
+      if (/upgrade/i.test(x.action || x.newsTitle || '') && d >= from3) sel.push({ sym: id.symbol, firm: x.gradingCompany || x.newsPublisher || '', to: x.newGrade || '', from: x.previousGrade || '', d }); }
+    upgrades = sel.filter((u, i) => sel.findIndex(v => v.sym === u.sym) === i && px(u.sym));
+    fmpS.status = fmpS.malformedRows ? 'PARTIAL' : arr.length ? 'OBSERVED' : 'EMPTY'; }
 }
+const live = (S) => S.calls === 0 ? 'NOT_FETCHED' : S.failed + S.identityMismatch === S.calls ? 'UNAVAILABLE' : S.failed || S.identityMismatch || S.malformedRows || S.futureRows || S.missingCountRows ? 'PARTIAL' : S.observed ? 'OBSERVED' : 'EMPTY';
+const sourceStatus = { GROUPED_PRICES: priceStatus, FINNHUB_INSIDER: { status: live(insS), ...insS }, FINNHUB_RECOMMENDATION: { status: live(recS), ...recS }, FMP_UPGRADES: fmpS };
 
 // ---- hand the names to the nightly scan, and log each as a tip of its source (scored against the S&P 500)
 const picks = [...new Set([...insiders.slice(0, 15).map(x => x.sym), ...analysts.slice(0, 10).map(x => x.sym), ...upgrades.slice(0, 10).map(x => x.sym)])];
-fs.writeFileSync('data/smart-money.json', JSON.stringify({ generatedAt: new Date().toISOString(), insiders, analysts, upgrades, picks }, null, 1));
+fs.writeFileSync('data/smart-money.json', JSON.stringify({ generatedAt: new Date().toISOString(), insiders, analysts, upgrades, picks, sourceStatus, priceDay: priceStatus.day,
+  contract: 'smart-money ingress v2 (2 Nov 2026): failed calls are counted, not read as no activity; the price day, its lag and basis are recorded; tips are not logged on a stale or missing price day' }, null, 1));
 { const TIPS = 'data/tips.jsonl', old = fs.existsSync(TIPS) ? fs.readFileSync(TIPS, 'utf8') : '', lines = [];
-  const add = (sym, src) => { const p0 = px(sym); if (!p0 || old.includes('"sym":"' + sym + '","src":"' + src + '","d":"' + today)) return; lines.push(JSON.stringify({ sym, src, d: today, p0, below: null, ts: Date.now() })); };
+  const add = (sym, src) => { const p0 = priceStatus.status === 'OBSERVED' ? px(sym) : null; if (!p0 || old.includes('"sym":"' + sym + '","src":"' + src + '","d":"' + today)) return; lines.push(JSON.stringify({ sym, src, d: today, p0, below: null, ts: Date.now() })); };
   insiders.slice(0, 15).forEach(x => add(x.sym, 'Insider buying')); analysts.slice(0, 10).forEach(x => add(x.sym, 'Analysts turning positive')); upgrades.slice(0, 10).forEach(x => add(x.sym, 'Analyst upgrades'));
   if (lines.length) fs.appendFileSync(TIPS, lines.join('\n') + '\n'); }
 

@@ -14,6 +14,10 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import crypto from 'node:crypto';
+import {readJsonSource,providerSymbol,strictNumber,isDay as isDayShared} from './source-contract.mjs';
+// Review B2-1 (Codex, 2 Nov): an impossible day is a malformed row, never a crash, whichever shared-helper version is in use.
+const isDay = (d) => { try { return isDayShared(d); } catch { return false; } };
+import {marketSession} from './market-session.mjs';
 const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch', local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const MCP = (local(env.TR_BASE) || 'https://mcp.tipranks.com') + '/mcp/?apikey=' + encodeURIComponent(env.TIPRANKS_KEY || ''), PX = local(env.PX_BASE) || 'https://api.massive.com';
 const AVB = local(env.AV_BASE) || 'https://www.alphavantage.co', BLS = local(env.BLS_BASE) || 'https://www.bls.gov', FED = local(env.FED_BASE) || 'https://www.federalreserve.gov';
@@ -130,13 +134,56 @@ if (MODE === 'fetch') {
     out.econ = out.official.sort((a, b) => a.t < b.t ? -1 : 1); delete out.official; }
   for (const e of out.econ) fillAct(e); for (const e of out.hist) fillAct(e);
   // ---- 2. Massive: market holidays, and ex-dividend dates of the stocks you hold
-  if (env.MASSIVE_KEY) try {
-    const get = async (p) => { const r = await fetch(PX + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY)); return r.ok ? r.json() : null; };
-    const h = await get('/v1/marketstatus/upcoming'); if (Array.isArray(h)) out.holidays = h.filter(x => /nyse|nasdaq/i.test(x.exchange || '')).map(x => ({ d: x.date, name: x.name, status: x.status, open: x.open || null, close: x.close || null })).filter((x, i, a) => a.findIndex(y => y.d === x.d) === i).slice(0, 12);
-    const held = Object.keys(readJson('data/my-positions.json', {})).filter(s => /^[A-Z.]{1,6}$/.test(s)).slice(0, 30);
-    for (const s of held) { const j = await get('/v3/reference/dividends?ticker=' + encodeURIComponent(s) + '&ex_dividend_date.gte=' + iso(Date.now() - 864e5) + '&limit=3&order=asc&sort=ex_dividend_date'); const r = j && j.results; if (r && r.length) out.div[s] = r.map(x => ({ ex: x.ex_dividend_date, pay: x.pay_date, amt: x.cash_amount })); await sleep(150); }
-    status.massive = 'ok: ' + out.holidays.length + ' holidays, dividends for ' + Object.keys(out.div).length + ' of ' + held.length + ' held stocks';
-  } catch (e) { status.massive = 'failed: ' + String(e.message || e).slice(0, 120); }
+  // Ingress contract (MARKET-03 batch 3, 2 Nov 2026). A failed or malformed answer keeps the previous list but is reported as
+  // such (never "ok"); past holidays are dropped; each date is checked against the exchange calendar (market-session.mjs) and a
+  // disagreement, or NYSE and Nasdaq disagreeing on a date, is kept and labelled CONFLICT. Dividends must name the held ticker,
+  // carry a valid ex-date and a finite amount; a non-USD amount is labelled with its currency. The public status holds counts
+  // only, never the held symbols.
+  const M = { holidays: { status: 'NOT_FETCHED', received: 0, kept: 0, malformedRows: 0, pastRows: 0, conflicts: 0, calendarDisagreements: 0 },
+    dividends: { status: 'NOT_FETCHED', held: 0, observed: 0, none: 0, failed: 0, identityMismatch: 0, identityMissing: 0, malformedRows: 0, nonUsd: 0 } };
+  out.holidays = (out.holidays || []).filter(x => x && typeof x.d === 'string' && x.d >= iso(Date.now()));
+  if (env.MASSIVE_KEY) {
+    const get = (p) => readJsonSource(fetch, PX + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY), { timeoutMs: 20000 });
+    const hr = await get('/v1/marketstatus/upcoming'), today = iso(Date.now());
+    if (hr.status !== 'OK') M.holidays.status = hr.status === 'REFUSED' || hr.status === 'RATE_LIMITED' ? hr.status : 'UNAVAILABLE';
+    else if (!Array.isArray(hr.body)) M.holidays.status = 'MALFORMED';
+    else { const byDay = new Map(); M.holidays.received = hr.body.length;
+      for (const x of hr.body) { if (!x || typeof x !== 'object' || !/nyse|nasdaq/i.test(x.exchange || '')) continue;
+        if (!isDay(x.date) || !['closed', 'early-close'].includes(x.status)) { M.holidays.malformedRows++; continue; }
+        if (x.date < today) { M.holidays.pastRows++; continue; }
+        const row = { d: x.date, name: typeof x.name === 'string' ? x.name.slice(0, 80) : '', status: x.status, open: x.open || null, close: x.close || null, exchanges: [String(x.exchange).toUpperCase()] };
+        const prev = byDay.get(x.date); if (!prev) { byDay.set(x.date, row); continue; }
+        if (!prev.exchanges.includes(row.exchanges[0])) prev.exchanges.push(row.exchanges[0]);
+        if (prev.status !== row.status && !prev.conflict) { prev.conflict = 'EXCHANGES_DISAGREE'; M.holidays.conflicts++; } }
+      const rows = [...byDay.values()].sort((p, q) => p.d < q.d ? -1 : 1).slice(0, 12);
+      for (const h of rows) { const ms = marketSession(h.d); if (!ms.known) { h.calendar = 'UNKNOWN'; continue; }
+        const agrees = h.status === 'closed' ? ms.closed : !ms.closed && ms.close < 960; h.calendar = agrees ? 'AGREES' : 'DISAGREES';
+        if (!agrees) { M.holidays.calendarDisagreements++; h.conflict = h.conflict || 'EXCHANGE_CALENDAR_DISAGREES'; } }
+      out.holidays = rows; M.holidays.kept = rows.length;
+      M.holidays.status = M.holidays.conflicts || M.holidays.calendarDisagreements ? 'CONFLICT' : M.holidays.malformedRows ? 'PARTIAL' : rows.length ? 'OBSERVED' : 'EMPTY'; }
+    const held = Object.keys(readJson('data/my-positions.json', {})).filter(s => /^[A-Z.]{1,6}$/.test(s)).slice(0, 30); M.dividends.held = held.length;
+    for (const s of held) { const dr = await get('/v3/reference/dividends?ticker=' + encodeURIComponent(s) + '&ex_dividend_date.gte=' + iso(Date.now() - 864e5) + '&limit=3&order=asc&sort=ex_dividend_date');
+      if (dr.status !== 'OK') { M.dividends.failed++; await sleep(150); continue; }   // as before: nothing shown, but the failure is counted
+      const r = dr.body && Array.isArray(dr.body.results) ? dr.body.results : null;
+      if (!r) { M.dividends.failed++; M.dividends.malformedRows++; await sleep(150); continue; }
+      if (r.some(x => x && x.ticker !== undefined && x.ticker !== null && x.ticker !== '' && providerSymbol(x.ticker, { provider: 'MASSIVE', requested: s }).status !== 'OK')) { M.dividends.identityMismatch++; await sleep(150); continue; }
+      // Review B2-2 (Codex, 2 Nov): a row that does not name its ticker is not this holding's dividend. It is kept, encrypted, as
+      // unattributed evidence of the lookup, never shown as the held stock's ex-dividend date.
+      const unnamed = r.filter(x => x && (x.ticker === undefined || x.ticker === null || x.ticker === ''));
+      if (unnamed.length) { M.dividends.identityMissing++; (out.divUnattributed ||= []).push({ requested: s, rows: unnamed.slice(0, 3).map(x => ({ ex: isDay(x.ex_dividend_date) ? x.ex_dividend_date : null, amt: strictNumber(x.cash_amount, { min: 0 }).value, currency: typeof x.currency === 'string' ? x.currency.trim().toUpperCase() : 'UNSTATED' })) }); }
+      const named = r.filter(x => !unnamed.includes(x)); if (!named.length) { await sleep(150); continue; }
+      const rows = []; for (const x of named) { const amt = strictNumber(x && x.cash_amount, { min: 0 });
+        if (!x || !isDay(x.ex_dividend_date) || amt.status === 'INVALID' || amt.status === 'OUT_OF_RANGE') { M.dividends.malformedRows++; continue; }
+        const cur = typeof x.currency === 'string' && x.currency.trim() ? x.currency.trim().toUpperCase() : null; if (cur && cur !== 'USD') M.dividends.nonUsd++;
+        rows.push({ ex: x.ex_dividend_date, pay: isDay(x.pay_date) ? x.pay_date : null, amt: amt.status === 'OK' ? amt.value : null, currency: cur || 'UNSTATED' }); }
+      if (rows.length) { out.div[s] = rows; M.dividends.observed++; } else M.dividends.none++;
+      await sleep(150); }
+    M.dividends.status = !held.length ? 'EMPTY' : M.dividends.failed + M.dividends.identityMismatch + M.dividends.identityMissing >= held.length && !M.dividends.observed ? 'UNAVAILABLE' : M.dividends.failed || M.dividends.identityMismatch || M.dividends.identityMissing || M.dividends.malformedRows ? 'PARTIAL' : 'OBSERVED'; }
+  // Privacy (review note, 2 Nov): dividend counts derive from the holdings (how many, how many pay), so they are kept only in the
+  // encrypted calendar file; the public status carries the outcome word. Holiday counts come from public market data.
+  out.privateStatus = { dividends: M.dividends };
+  status.massiveContract = { holidays: M.holidays, dividends: { status: M.dividends.status } };
+  status.massive = !env.MASSIVE_KEY ? 'not tried (no MASSIVE_KEY)' : 'holidays ' + M.holidays.status + ' (' + M.holidays.kept + ' kept' + (M.holidays.conflicts + M.holidays.calendarDisagreements ? ', ' + (M.holidays.conflicts + M.holidays.calendarDisagreements) + ' conflicting' : '') + '); dividends ' + M.dividends.status;
   out.study = old.study || null;
   calWrite(out); status.econUpcoming = out.econ.filter(e => e.t >= new Date().toISOString().slice(0, 10)).length; status.econUpcomingOfficial = out.econ.filter(e => e.src && e.t >= new Date().toISOString().slice(0, 10)).length;
   fs.writeFileSync(STATUS, JSON.stringify(status, null, 1)); console.log('calendar: ' + JSON.stringify(status));
