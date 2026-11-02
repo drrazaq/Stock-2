@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-27T13:05:38.530Z",
+ "updated": "2026-11-02T05:43:28.129Z",
  "what": "Squad 27: odd-lot issuer tender arbitrage (SQ27-ODDLOT). Rule = squad27-core.mjs header. Information / paper lane only; not read by scan.mjs.",
  "status": "complete",
  "firstRun": {
@@ -1403,7 +1403,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-27T13:05:38.530Z",
+  "at": "2026-11-02T05:43:28.129Z",
   "results": {
    "SQ27-ODDLOT": {
     "verdict": "TOO FEW (information only)",
@@ -1631,10 +1631,10 @@
       }
      },
      "skips": {
-      "no gap": 63,
+      "no gap": 64,
       "terminated before entry": 1,
       "outcome unknown": 2,
-      "open": 2
+      "open": 1
      },
      "halalOk": {
       "n": 0
@@ -1645,8 +1645,8 @@
      "listedOffers": 135,
      "oddLotOffers": 87,
      "oddLotShare": 0.6444,
-     "completionRateListed": 0.9685,
-     "completionRateOddLot": 0.9639,
+     "completionRateListed": 0.9688,
+     "completionRateOddLot": 0.9643,
      "outcomeUnknownOddLot": 2,
      "typeCounts": {
       "fixed": 47,
@@ -1681,9 +1681,9 @@
       "scToI": 374,
       "listedCashShares": 24,
       "oddLot": 19,
-      "oddLotCompleted": 18,
+      "oddLotCompleted": 19,
       "oddLotTerminated": 0,
-      "oddLotUnknown": 1,
+      "oddLotUnknown": 0,
       "gapAtE2": 4
      },
      "2022": {
@@ -1723,12 +1723,12 @@
       "gapAtE2": 1
      },
      "2026": {
-      "scToI": 478,
+      "scToI": 498,
       "listedCashShares": 9,
       "oddLot": 6,
       "oddLotCompleted": 4,
       "oddLotTerminated": 0,
-      "oddLotUnknown": 0,
+      "oddLotUnknown": 1,
       "gapAtE2": 2
      }
     },
@@ -1743,27 +1743,22 @@
     "data": {
      "quartersNeed": 32,
      "quartersRead": 32,
-     "origNeed": 3713,
-     "origRead": 3713,
-     "amendNeed": 426,
-     "amendRead": 422,
-     "pxNeed": 83,
-     "pxOk": 83,
+     "origNeed": 3733,
+     "origRead": 3733,
+     "amendNeed": 428,
+     "amendRead": 428,
+     "pxNeed": 84,
+     "pxOk": 84,
      "complete": true,
      "why": "complete",
-     "secRequests": 704,
-     "secFailures": 5,
+     "secRequests": 65,
+     "secFailures": 1,
      "httpCodes": {
-      "200": 636,
-      "403": 8,
-      "429": 60
+      "200": 57,
+      "403": 8
      },
      "failSample": [
-      "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261027.idx",
-      "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521190669/0001193125-21-190669-index.htm",
-      "gave up https://www.sec.gov/Archives/edgar/data/1372612/000138713121006398/0001387131-21-006398-index.htm",
-      "gave up https://www.sec.gov/Archives/edgar/data/1421182/000119312521188902/d179340dsctoia.htm",
-      "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521192723/0001193125-21-192723-index.htm"
+      "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261102.idx"
      ]
     }
    },
@@ -1977,9 +1972,9 @@
       }
      },
      "skips": {
-      "no gap": 66,
+      "no gap": 67,
       "outcome unknown": 2,
-      "open": 2
+      "open": 1
      },
      "halalOk": {
       "n": 0
@@ -1990,8 +1985,8 @@
      "listedOffers": 135,
      "oddLotOffers": 87,
      "oddLotShare": 0.6444,
-     "completionRateListed": 0.9685,
-     "completionRateOddLot": 0.9639,
+     "completionRateListed": 0.9688,
+     "completionRateOddLot": 0.9643,
      "outcomeUnknownOddLot": 2,
      "typeCounts": {
       "fixed": 47,
@@ -2026,9 +2021,9 @@
       "scToI": 374,
       "listedCashShares": 24,
       "oddLot": 19,
-      "oddLotCompleted": 18,
+      "oddLotCompleted": 19,
       "oddLotTerminated": 0,
-      "oddLotUnknown": 1,
+      "oddLotUnknown": 0,
       "gapAtE2": 4
      },
      "2022": {
@@ -2068,12 +2063,12 @@
       "gapAtE2": 1
      },
      "2026": {
-      "scToI": 478,
+      "scToI": 498,
       "listedCashShares": 9,
       "oddLot": 6,
       "oddLotCompleted": 4,
       "oddLotTerminated": 0,
-      "oddLotUnknown": 0,
+      "oddLotUnknown": 1,
       "gapAtE2": 2
      }
     },
@@ -2088,34 +2083,29 @@
     "data": {
      "quartersNeed": 32,
      "quartersRead": 32,
-     "origNeed": 3713,
-     "origRead": 3713,
-     "amendNeed": 426,
-     "amendRead": 422,
-     "pxNeed": 83,
-     "pxOk": 83,
+     "origNeed": 3733,
+     "origRead": 3733,
+     "amendNeed": 428,
+     "amendRead": 428,
+     "pxNeed": 84,
+     "pxOk": 84,
      "complete": true,
      "why": "complete",
-     "secRequests": 704,
-     "secFailures": 5,
+     "secRequests": 65,
+     "secFailures": 1,
      "httpCodes": {
-      "200": 636,
-      "403": 8,
-      "429": 60
+      "200": 57,
+      "403": 8
      },
      "failSample": [
-      "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261027.idx",
-      "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521190669/0001193125-21-190669-index.htm",
-      "gave up https://www.sec.gov/Archives/edgar/data/1372612/000138713121006398/0001387131-21-006398-index.htm",
-      "gave up https://www.sec.gov/Archives/edgar/data/1421182/000119312521188902/d179340dsctoia.htm",
-      "gave up https://www.sec.gov/Archives/edgar/data/1510295/000119312521192723/0001193125-21-192723-index.htm"
+      "gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261102.idx"
      ]
     }
    }
   }
  },
  "board": {
-  "count": 2,
+  "count": 1,
   "file": "data/squad27-board.json"
  }
 }
