@@ -6,8 +6,8 @@ import ast, collections, difflib, hashlib, json, re, subprocess, sys, tempfile, 
 ROOT=Path(sys.argv[1] if len(sys.argv)>1 else '.').resolve()
 AUDIT='5bcf4d2933c1d77b10b7c12489e2cfbb624387d9'
 BASE='f6a9b1668d0591cf24a734034949b96b241fe35b'
-LOCAL='e17d4181e00482eb88b412cc83499d2874ad1dde'
-PUBLIC='e17d4181e00482eb88b412cc83499d2874ad1dde'
+LOCAL='9b78b51d02228419e5ec6a01410ce447df32e027'
+PUBLIC='9b78b51d02228419e5ec6a01410ce447df32e027'
 OUT=ROOT/'docs/validation/history03-source-anchor-reconciliation.json'
 def show(commit,path):
  return subprocess.check_output(['git','show',commit+':'+path],cwd=ROOT,env={**os.environ,'GIT_NO_LAZY_FETCH':'1','GIT_TERMINAL_PROMPT':'0'})

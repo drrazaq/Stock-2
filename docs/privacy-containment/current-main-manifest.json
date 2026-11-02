@@ -1,0 +1,1012 @@
+{
+  "kind": "PRIVACY_CURRENT_MAIN_PREPARATION_V1",
+  "source": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+  "readiness": "NOT_READY_FOR_CUTOVER",
+  "sourceOnly": true,
+  "noPrivateContentsIncluded": true,
+  "previousDeclaredPrivateBasenames": [
+    "my-positions.json",
+    "my-trades.jsonl",
+    "settings.json",
+    "halal.json",
+    "alpaca-paper.json",
+    "private.enc",
+    "sell-notices.jsonl",
+    "actions-sells.json",
+    "scan-report.txt",
+    "tips.jsonl",
+    "opinions.jsonl",
+    "market-calls.jsonl",
+    "watch-extra.json",
+    "basket-state.json",
+    "leaderdip-ledger.jsonl"
+  ],
+  "proposedClassificationReview": [
+    "news-log.jsonl",
+    "news-meta.json",
+    "news-seen.json",
+    "news-delivery.json",
+    "signals.json",
+    "tg-state.json",
+    "tg-failures.jsonl"
+  ],
+  "relatedOutputsRequireReview": [
+    "discovery.json",
+    "macro-state.json",
+    "macro-log.jsonl",
+    "calendar-status.json"
+  ],
+  "criticalSourcePins": {
+    ".github/workflows/bot.yml": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40",
+    ".github/workflows/main.yml": "8856c2b72c11b450da752b111260615d39e342e8e03bf87b2f0724a3a2581c5e",
+    ".github/workflows/news.yml": "3fc8304ddc07c694129115ff6b2a665619327e576fb252ec03f9309176c2d78b",
+    ".github/private-data.sh": "dd82ffa949f0f84e81cd1d8ceb7f4babde88817df6e435eca4dcb235824b793d",
+    ".github/private-files.txt": "f78988302329fe6e69c77783fc5b905b0a4629ea6be1b99069d6ed0ff9b897a5",
+    ".github/save-data.sh": "8a399645f8e6a777f5a76a81f2bcf8a5b4e8c5f6934601d2eefcd9103dfcd8e2",
+    ".github/workflows/pages.yml": "7c77d23b30dac5e951be66640b920237af4b1693c86ee274b517e03cbe8641d2",
+    "scan.mjs": "76ffcd5675a00a881432d5cb0dad69d6d5235cd66932ef07eb4530ddca9c1a99",
+    "news-watch.mjs": "b2fdfd2776cd55389be6a1cc398c70393d7d3f5d841a8c69c3876eb494b3cfd7",
+    "index.html": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348"
+  },
+  "readerWriterCandidates": [
+    {
+      "path": ".github/private-data.sh",
+      "sha256": "dd82ffa949f0f84e81cd1d8ceb7f4babde88817df6e435eca4dcb235824b793d",
+      "referencedBasenames": [
+        "my-positions.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": ".github/save-data.sh",
+      "sha256": "8a399645f8e6a777f5a76a81f2bcf8a5b4e8c5f6934601d2eefcd9103dfcd8e2",
+      "referencedBasenames": [
+        "my-positions.json",
+        "my-trades.jsonl",
+        "tg-state.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": ".github/workflows/confluence-lab.yml",
+      "sha256": "9f36509ccdf9729478f8338b878a9cd8d7aa3195062bd6002d2f4689ccd747cd",
+      "referencedBasenames": [
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": ".github/workflows/news.yml",
+      "sha256": "3fc8304ddc07c694129115ff6b2a665619327e576fb252ec03f9309176c2d78b",
+      "referencedBasenames": [
+        "macro-log.jsonl",
+        "macro-state.json",
+        "news-log.jsonl",
+        "news-meta.json",
+        "news-seen.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": ".github/workflows/pages.yml",
+      "sha256": "7c77d23b30dac5e951be66640b920237af4b1693c86ee274b517e03cbe8641d2",
+      "referencedBasenames": [
+        "halal.json",
+        "my-positions.json",
+        "settings.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": ".github/workflows/squad29-lab.yml",
+      "sha256": "4bb4aa9546b3767b38612df4f1ed8781d184fa4223cf2e938549d7d3f60c6d31",
+      "referencedBasenames": [
+        "my-positions.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "account-replay-core.mjs",
+      "sha256": "99fcc18b0fbbd51b1c8ea29f8747c34ab43c46f1d3c8465c4f07075e29903141",
+      "referencedBasenames": [
+        "halal.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "account-replay-lab.mjs",
+      "sha256": "1902ee1d8044341838c2741a8022fc8f8b2668b948c1d62fa2f100a4cbe5c6f4",
+      "referencedBasenames": [
+        "halal.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "agent-a-lab.mjs",
+      "sha256": "ecf41017f8ba6e2ceabd607502b19c2179efeaad0361a128a9172ac3c3a7c75d",
+      "referencedBasenames": [
+        "halal.json",
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "angles-lab.mjs",
+      "sha256": "2a6d3fe6349efc73df8df99587523496917ea1b2c01b44d8195d01b6462f9282",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "anomaly-lab.mjs",
+      "sha256": "297222b237f8d059d53f50696b1b46f6512949fb417af43a2de54016a649226a",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "autolab.mjs",
+      "sha256": "66f140e8094e1651c1c2f79925bd87ce18476c6b4dd496fbd655d5d6d35ea7fd",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "calendar.mjs",
+      "sha256": "6bc0b508f72b3a64e660ea1df0efa6cf7490c690d09cdf1652b545c7b248bbeb",
+      "referencedBasenames": [
+        "my-positions.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "catalyst-lab.mjs",
+      "sha256": "bff90fab371c07ce4d430cfdca91b380820061ab2e3a85c07388d259c4b6e4aa",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "chain-decoder.mjs",
+      "sha256": "ad92235a3a2bdaf1f7fae74d6ab43b3d6e2e0400ee4cea7a0b94f2d1815b9a74",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "confluence-lab.mjs",
+      "sha256": "1e946d295aa993f720280bf863de568e263b72a8361d2a605f664d73d913e19f",
+      "referencedBasenames": [
+        "halal.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "confluence-signals.mjs",
+      "sha256": "cab58fcb2bfeccdd10bca89f5d9261fe13ed63fe3fc4071b95e53cff11a0848a",
+      "referencedBasenames": [
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "deals.mjs",
+      "sha256": "ef0b9ba8b53221bb2981c3ece3631517b78cf5b250f4eb68d3d9b3e8ea7c252f",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "decoded-lab.mjs",
+      "sha256": "d4570c59c9395936a79b4f303e70eadecabaaaf016f957244fcf20b1e49f3213",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "discover.mjs",
+      "sha256": "8b3093b7346884ce4f85caf009ec6dcae3ba5900804e05d73e36a88d44660880",
+      "referencedBasenames": [
+        "discovery.json",
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "discovery2.mjs",
+      "sha256": "ab5068d5d638fea15afc9aa97aaaad308be35c8fd11240b869ec27727de125d4",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "earnings-study.mjs",
+      "sha256": "a85c0b6d9e233d0c76a88aca9cc573e69724e3092f682455eef823785a261dbd",
+      "referencedBasenames": [
+        "settings.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "event-orb-retest-events.mjs",
+      "sha256": "059bbe250665785d7ecea975a993c8729db27fbe4f2a80a8685df2763b209215",
+      "referencedBasenames": [
+        "halal.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "events-study.mjs",
+      "sha256": "54f07685471b159a011da9f5361f9ac2222879065aca13b3f9333cab857b1282",
+      "referencedBasenames": [
+        "settings.json",
+        "signals.json",
+        "watch-extra.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "exits.mjs",
+      "sha256": "4be9ab71ec4351ba7a2fc851e6a645057ca673f99e157da1cf8f6fa60d56c6ee",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "expert-lab.mjs",
+      "sha256": "d2a859c704e665ad366ede02ae6974b6e80a7e408ea541f8cfabf3bd77c33296",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "fastmover-lab.mjs",
+      "sha256": "6340d0f765473c24e61100f7a80cfa4550b73f9f6f5a017018b5bee6dfed6d0d",
+      "referencedBasenames": [
+        "halal.json",
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "follow-lane.mjs",
+      "sha256": "39b612829136df537629bea59228e88c1835038468195f1697158507921dbe96",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "health.mjs",
+      "sha256": "1b46a3186707d0c2c90afb599bdc79db3fc8df4cf24ad933dd38609cc43e09bc",
+      "referencedBasenames": [
+        "discovery.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "hold-lab.mjs",
+      "sha256": "65796aa8444ef82f4592dbe448636137417e88f5ba1598206cd3a80ce4dfe4b4",
+      "referencedBasenames": [
+        "my-positions.json",
+        "my-trades.jsonl"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "horizons.mjs",
+      "sha256": "3ce9b92249e195288e59b85982b1f5332723ad6067c1caaf89a73de681a4a107",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "hunting-lab.mjs",
+      "sha256": "95875d33364e7291514ddce2b3085026b7b2c4d2705198ee0a900dadcbacd8d3",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "ignition-watch.mjs",
+      "sha256": "15dd3c13ca75dae65e128ce69b1cd7e248de9b7acae45aa2cf6b554c1247f604",
+      "referencedBasenames": [
+        "halal.json",
+        "my-positions.json",
+        "settings.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "index.html",
+      "sha256": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
+      "referencedBasenames": [
+        "discovery.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "intraday-radar.mjs",
+      "sha256": "a98313e5e1075dae9043b937449f1828a7b4c6193d03475905cd1ad7d1dfa84b",
+      "referencedBasenames": [
+        "discovery.json",
+        "halal.json",
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "leaders-study.mjs",
+      "sha256": "08648eda958d48250fe0f085df50aec350742ead95ee2c01c7541ac0bc4d8241",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "league.mjs",
+      "sha256": "8d5f5b4315e045c55b98abf822a904c977cf943b47a4a746572d9947760a18b8",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "macro-core.mjs",
+      "sha256": "730d33793bb8997961be72828906d92def7d1379516ada56b58580d9ac0af16f",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "macro-lab.mjs",
+      "sha256": "0bd66f4ee7b3740f4f132514fd718ca61545238526d3464ef8e2cd82b54d081f",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "ml-lab.mjs",
+      "sha256": "1146dd47ed8423b25065a0b96499196db6adbba0163fdfc34f24fcf2a32112d9",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "movers.mjs",
+      "sha256": "8c38ef2c30f3f2f323258b68fb07ff8e53c500fd3e28ab3aaf5484ea259eb376",
+      "referencedBasenames": [
+        "discovery.json",
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "news-watch.mjs",
+      "sha256": "b2fdfd2776cd55389be6a1cc398c70393d7d3f5d841a8c69c3876eb494b3cfd7",
+      "referencedBasenames": [
+        "macro-log.jsonl",
+        "macro-state.json",
+        "my-positions.json",
+        "news-log.jsonl",
+        "news-meta.json",
+        "news-seen.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "octopus.mjs",
+      "sha256": "b1cc9fb9a0ee0c7dde404cd2783a11861fecced7125ee745d045987e2428c8c0",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "opp-mode.mjs",
+      "sha256": "021138df2fc90a5d8b400ec5df0ac4a82092dd1b5236878392a9f2eeb9949974",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "opportunity-radar.mjs",
+      "sha256": "83d159ee90f4bc3ac7dda916d360c0b85341b6a7a2c742865369f540cb16aa56",
+      "referencedBasenames": [
+        "halal.json",
+        "settings.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "options-survey.mjs",
+      "sha256": "3db9e4b07c23f1625e9c2d60288a91355cd1fa2c13a1e3bf363688aaa7b00d2c",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "premarket-check.mjs",
+      "sha256": "bf263f5877e01824f18e024dc0971d15768974e66f749668ac2de2d05946cc88",
+      "referencedBasenames": [
+        "actions-sells.json",
+        "my-positions.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "quality.mjs",
+      "sha256": "91c466d9e1ff4340d270f921f42c4d9c2458eaf6815f67a7351eea4914c88dfe",
+      "referencedBasenames": [
+        "halal.json",
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "rebalance.mjs",
+      "sha256": "33de11ba171df2f2a0fb795fe4ed73aecb85ccf04b3f0c9efaaa3ee4f1bacf0d",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "rebuy.mjs",
+      "sha256": "d4b28eeacb5b170483047c6dd289e41ccf9d9cffbadcf4481aa08045c1bd7e2e",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "research-lab.mjs",
+      "sha256": "396eda788fe5ef54e86fd7409c74b757a00bb7f7a24b839b3cb0cd24c39b6f7a",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "scan.mjs",
+      "sha256": "76ffcd5675a00a881432d5cb0dad69d6d5235cd66932ef07eb4530ddca9c1a99",
+      "referencedBasenames": [
+        "actions-sells.json",
+        "alpaca-paper.json",
+        "basket-state.json",
+        "discovery.json",
+        "halal.json",
+        "leaderdip-ledger.jsonl",
+        "macro-log.jsonl",
+        "market-calls.jsonl",
+        "my-positions.json",
+        "my-trades.jsonl",
+        "news-log.jsonl",
+        "opinions.jsonl",
+        "private.enc",
+        "scan-report.txt",
+        "sell-notices.jsonl",
+        "settings.json",
+        "signals.json",
+        "tg-failures.jsonl",
+        "tg-state.json",
+        "tips.jsonl",
+        "watch-extra.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "score-study.mjs",
+      "sha256": "81c50ead4bc8c3216f957c13ccaee32506b9c73c1fffec0376754dd20d594cd4",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "smart-money.mjs",
+      "sha256": "a3ae9b69ce3dbe5b73a3a46e64c7308a5ec0a7b7f9ebb99985ffa50924fd515c",
+      "referencedBasenames": [
+        "discovery.json",
+        "my-positions.json",
+        "settings.json",
+        "tips.jsonl"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad1-lab.mjs",
+      "sha256": "db63185949c644d26653f20cf070d4caf15a8e469e4633637fa60abe1e2029f2",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad10-core.mjs",
+      "sha256": "fc6e2de082d058c4e3baee211a7aa1952105894366772486c8192c33aaf6f5cb",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad10-lab.mjs",
+      "sha256": "7ed800480db884612521fb4fb1deead8311dd764afbeee530ba095d0ff28b4c0",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad11-lab.mjs",
+      "sha256": "6851886bfb72e9bb680f4c69a4f20b38f1e2f6b9fb3cd51d394213b7cb8b3b52",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad12-lab.mjs",
+      "sha256": "fbf7d9b12bf4994dcdc5ec85e3398f21593c9f69c6a8e202c1b260e98ccaae6b",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad13-lab.mjs",
+      "sha256": "a8d65c9ad6d4435d6f9f9470329ef4af04c30f2de2c15b218a001d955facbce4",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad14-lab.mjs",
+      "sha256": "edc36342d5393c107e085f70cbcf1cb3c8b073d26dc688a3cb4ba590fd0c3447",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad15-lab.mjs",
+      "sha256": "d0e674bfab40d7c393c9422752e1cc587f9de6d2a2bd8bad1c57a38b27d02687",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad15b-core.mjs",
+      "sha256": "1a86eef3a828473421ac04829e4d08dc7ce1df754b981545c893368143b67c90",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad15b-lab.mjs",
+      "sha256": "ef11f3e326b1911ca972bd21da1fdb99b83aef255b515846e990d923fca7a0a2",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad16-lab.mjs",
+      "sha256": "fd57fa2a502435ea6be6a86b63e573791bfac95a486b6b055b25c2c34b03a98a",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad17-lab.mjs",
+      "sha256": "a5b96a53e02e7dfd2345c87b39df18956ed1f2eb4490dee7d25e0cffbc016365",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad18-lab.mjs",
+      "sha256": "5e5034f33e9af1444c800b08b754d73ec6aac8d9b9cef29136c0bc7ac23bf08a",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad19-lab.mjs",
+      "sha256": "1d80fc36799eb681cb1573be44438004de71d3dfb5127df320db5b292b614e70",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad2-lab.mjs",
+      "sha256": "6445e16fa3a0b35ac2e95448a250bd62025b76a398ef8d6467595f3dd35d46f1",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad20-core.mjs",
+      "sha256": "2b554ccd4bdc61887cb4d099f043159ef803e34d4e84f4e08788c49163321c17",
+      "referencedBasenames": [
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad20-lab.mjs",
+      "sha256": "47718a3593b8a17836e63cddc3bd871250bb7db594c0343b8ab30c03abcd3a9c",
+      "referencedBasenames": [
+        "halal.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad21-lab.mjs",
+      "sha256": "7b7c1fe5f1360a9003e0e2d1991d1fef2bfdc2b71d7d34898410645adc6d4248",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad22-lab.mjs",
+      "sha256": "466486bd2a79641e244630a785c17132f843e926ff8d66102f6341005cc8852b",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad23-lab.mjs",
+      "sha256": "15ae7b658f5fb7ee62b3674977f5282fca44e857efbd7487e69a8a961dde55e2",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad24-lab.mjs",
+      "sha256": "636ebaee5e6018539a9b87671e853d7c71a5d4679fb730dfb910d5d1405d7276",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad25-lab.mjs",
+      "sha256": "1aab7f90365c30d83877e00492b37e1fb7d1d075691ee11c5591e0724aeda0da",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad26-watch.mjs",
+      "sha256": "b63880357db8a86e246e709ee715207a289ae513df25a20722880ac3787fef43",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad27-core.mjs",
+      "sha256": "962b4f85c1b5e9bb4bdec04098962669b475d5defd5fe4c03d6a01afd0dc4512",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad27-lab.mjs",
+      "sha256": "56129650ecdce266d37efc58b14b6b3f90cfeeb81f2131fc29c0743a773dacbb",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad28-lab.mjs",
+      "sha256": "32aed99b50b05fb3caf9054178c57b6e27d325013dd85336ca7c1cd420c2f0a0",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad29-core.mjs",
+      "sha256": "ca2d3b75ec2ff143a29302e47f3a874a66fe539eaa2c826f8f3f67baec98ae06",
+      "referencedBasenames": [
+        "my-positions.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad29-lab.mjs",
+      "sha256": "7c280ce60167e86be9bcbece427cf5cc3e5afbb1b83d56a86a4080bc7feecdd1",
+      "referencedBasenames": [
+        "my-positions.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad3-lab.mjs",
+      "sha256": "f0c778b705c24388035dbdbb2c990257a42934fcd37367dc793d8b15a4b80b28",
+      "referencedBasenames": [
+        "halal.json",
+        "signals.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad4-lab.mjs",
+      "sha256": "13fe81eb641c46d9644d1f5f27d4ed14b752c05a42086c570cfb79f94709b2d9",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad5-core.mjs",
+      "sha256": "17014859f3dd6b4cc44afa072716bd4b3bb733f5c4d9bd1aa44704b6ff87f012",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad5-lab.mjs",
+      "sha256": "1485361d043aab33a6b8459ae8fb98ae4af23090521018a18b888164826a759f",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad6-lab.mjs",
+      "sha256": "a287e77f90801071f7a8bdd2e5a50a06c25f7cb8dab3f2105ad0ec1bcaff915c",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad7-lab.mjs",
+      "sha256": "7c8c834080361286c637f9cc2ce77a84574bff45fe413a07f12f98832bd86233",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad8-lab.mjs",
+      "sha256": "b1c7bb61554f5b654969a2f1ab8d85e8d6ed13ae610af09445c3b4a3b9adc150",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "squad9-lab.mjs",
+      "sha256": "7111d2b077fcec96350b80cb2e09d11cbbed49b588b2f87150e3aa2cecc528c3",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "stops.mjs",
+      "sha256": "cce56aa486f9a85975a422b902d54a18f5bfa3be7025be1b3b1bfc2e6c972d9b",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "tip-score.mjs",
+      "sha256": "44430a313b8e7b4e284c8b39f14609fa336fcc03ece73b5a9c9765a438ceb42f",
+      "referencedBasenames": [
+        "market-calls.jsonl",
+        "opinions.jsonl",
+        "tips.jsonl"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "tip-sources.mjs",
+      "sha256": "dd4d6667f6a662f7b9b5f728af81edab425cb2277c815b1a95b4a94c72038ebb",
+      "referencedBasenames": [
+        "tips.jsonl"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "tipranks.mjs",
+      "sha256": "b4d47cb1564f1b32bb7665f879af16cd494b08520adc9c0fa4a302411003474f",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "tipster-lab.mjs",
+      "sha256": "b25296407a6b25dd8251826dabb1508503143f11f75e3fcbdb2ae85b6ee06e1e",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "value-lab.mjs",
+      "sha256": "406463ecda2861376443ea2ea0d9227e92662f2dc5eca6cab97ba32a04a4dcbd",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "winners-autopsy-lab.mjs",
+      "sha256": "263e96d08c566965224b5b9e17d8891d9a8ac1504f90fa55a8506c992b7be4f3",
+      "referencedBasenames": [
+        "halal.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    },
+    {
+      "path": "winners-study.mjs",
+      "sha256": "9f6cc596c47593b0b23193e85e938e68428b02be079e29222a190b88e4043c61",
+      "referencedBasenames": [
+        "settings.json"
+      ],
+      "status": "STATIC_MENTION_OR_ALIAS_REQUIRES_CALLER_CLASSIFICATION"
+    }
+  ],
+  "broadPublicStagingSites": [
+    {
+      "path": ".github/save-data.sh",
+      "sha256": "8a399645f8e6a777f5a76a81f2bcf8a5b4e8c5f6934601d2eefcd9103dfcd8e2",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/Smart-money.yml",
+      "sha256": "ada0536bcf0c8042e39fe96d7829f4544a46ba6863f3f423ec0f8df39e073286",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/bot.yml",
+      "sha256": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/deals.yml",
+      "sha256": "494f76668ed85b11567c855ef2fc7c94001bc3d116962fd64f7f9b7656f4b210",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/discover.yml",
+      "sha256": "b2baaf249758cb5c9fad8be4abea395f0758d4e1585465c2157d27702547e09f",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/fastmover-intraday.yml",
+      "sha256": "b445f030180b48ba73e4b0b1e2d77a92351c36bd4f463136f626e5cdf38e2f0d",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/ignition.yml",
+      "sha256": "b5ebab71b7f6d33ceb4d41e965fe8247db81e610e6016b35272095fa87b43909",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/intraday-radar.yml",
+      "sha256": "3b5a04b4bfb2e76a68e8295ae163b9c827cf94824357a07089dcd98977e3d1d4",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/movers.yml",
+      "sha256": "c9068dce8140707476104a6e5b547d805c23ba33d9ff2fd2f1f09ef9810ac480",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/opportunity-radar.yml",
+      "sha256": "3f60714b046df3204c68abe64abecda8fb1e21b3193116bf9685dc367a1e8a77",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/options-survey.yml",
+      "sha256": "3a759bc7ee5ff1d1e5db46c5ae35800ba4150c9a0528bcdc3493b4160cc327da",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/scorecard-1023.yml",
+      "sha256": "0de0ae03fb53c54fc29b6400757272e8fdab535cd560b80666baa530d8becd93",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/squad24-audit.yml",
+      "sha256": "38650606f015c680eba49b4d39e3cbcabfc46f286ef5157ad1d9e606c7057d64",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/squad26-labels.yml",
+      "sha256": "e176a65402ee0dd2470da59376d216b3e045f0b549648024313fb4244eb33395",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    },
+    {
+      "path": ".github/workflows/verify-lab.yml",
+      "sha256": "de4cfb5cfd773bd6ea54b2db4a8bcccdb369b0993bb7056ac4b18c216784b9c5",
+      "status": "PUBLIC_STAGING_SITE_REQUIRES_GUARD_AND_PRIVATE_SAVE_ORDER"
+    }
+  ],
+  "inventoryLimit": "Static literal/alias candidates, including comments; not proof of all dynamic runtime routes. Every listed writer must be dispositioned before activation. No existing state was copied.",
+  "website": {
+    "publishedAsset": "index.html only",
+    "dataTransport": "raw public repository JSON",
+    "currentSources": [
+      "data/signals.json",
+      "data/discovery.json",
+      "data/zad-list.json"
+    ],
+    "privateReadFallbackAllowed": false,
+    "requiredImplementation": "Owner-independent public projection and browser contract tests; never put server credentials in the client"
+  },
+  "inactiveGuard": {
+    "path": "docs/privacy-containment/package/publication-guard.mjs",
+    "sha256": "18527530a953cad55d5ae59d4fc11d9c34b8f38b6403f3a2f93532afdea3829a",
+    "productionCallerImports": 0,
+    "scope": "staged mutations only, existing public tree/history unchanged",
+    "liveBackendImplemented": false
+  },
+  "blockedDependencies": [
+    "Accessible sanitized Claude stage-2 preservation package",
+    "Authenticated private-save/receipt/conflict/recovery integration",
+    "Explicit public field/universe classification and website projection",
+    "All writer hooks and actual workflow ordering tests",
+    "Exact cutover/visibility/history decisions not authorized"
+  ],
+  "restrictions": [
+    "No production changes",
+    "No cutover or migration",
+    "No deletion/history rewrite",
+    "No repository visibility or secret/permission change"
+  ]
+}

@@ -1,0 +1,71 @@
+{
+  "kind": "NOV2_BOUNDARY_AND_ENGINEERING_V1",
+  "source": "9b78b51d02228419e5ec6a01410ce447df32e027",
+  "preserved": "e6c99995b38602b187cee839c5275c0700f7c1e0",
+  "localRuntime": "Node24.19.0",
+  "sourceHashes": {
+    "scan.mjs": "18a5765c1a72391630aaa4d519bee32c2c5992c1cee1629981ffbd0bc27e0eab",
+    "test/history03-rendering.test.mjs": "07605fed3f128f50316f83f3037b338fd5ccbcf72c862cd5eeb682c7cf81ff8f",
+    "test/logic-loader-isolation.test.mjs": "d1033a791bfd61461fd0a3592d32555b53f13acba949aa33ddf6adc2509aad42",
+    "test/try-small-audit.test.mjs": "f2de43c389a232b2362ffc7fa2618d0b9273f9711d4124f2938e872df99fe5bd",
+    "docs/history-03/reconciliation/render-synthetic.mjs": "fc58e1d8fc6e7941b07ae3ffa2720058cbd2fa7fd95e2f4c693db7f9fdcc3d52",
+    "docs/privacy-containment/package/publication-guard.mjs": "18527530a953cad55d5ae59d4fc11d9c34b8f38b6403f3a2f93532afdea3829a"
+  },
+  "scanDependentFiles": 66,
+  "scanCases": {
+    "pass": 578,
+    "todo": 6,
+    "fail": 0
+  },
+  "coreTests": 22,
+  "nonRootPublicationTests": 7,
+  "privacyGuardOnMainTests": 11,
+  "renderer": {
+    "surfaces": 12,
+    "exceptions": 0,
+    "externalMarketRequests": 0,
+    "realMessages": 0,
+    "admittedCases": 0
+  },
+  "batch2": {
+    "head": "5418fff47cac6f193be8304d403a027d571a07ce",
+    "patchSha256": "9cc0e02f3fb61a46306b81b7cb3d77e1108d0c6319cec576ed783e567feda0cd",
+    "verdict": "CHANGES_REQUIRED",
+    "exactTests": 16,
+    "selectedTests": 13,
+    "desiredBehaviorFailures": 4,
+    "codeIntegrated": false
+  },
+  "mentor": {
+    "approvedHead": "25a85000b076c4da649634606467e71b577bc75c",
+    "patchSha256": "1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7",
+    "deployed": false,
+    "activeRun": 41384810187,
+    "activeJob": 125091176540,
+    "nextAssessmentUTC": "2026-11-02T09:46:00Z",
+    "nextAssessmentKuwait": "2026-11-02T12:46:00+03:00",
+    "saveOffsetReceipt": "NOT_ESTABLISHED",
+    "queuedCommandsProcessed": "NOT_ESTABLISHED"
+  },
+  "acceptance": {
+    "complete": 24,
+    "total": 40,
+    "newClosures": 0
+  },
+  "productionChanged": false,
+  "privateContentsPublished": false,
+  "privacyReadiness": "NOT_READY_FOR_CUTOVER",
+  "hostedSourceCI": {
+    "sha": "9b78b51d02228419e5ec6a01410ce447df32e027",
+    "allSuccess": true,
+    "checks": [
+      "fixture-close",
+      "host-monitor-stress",
+      "fixture-open",
+      "source-preservation",
+      "test",
+      "safety",
+      "delivery-fixtures"
+    ]
+  }
+}

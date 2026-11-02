@@ -1,0 +1,38 @@
+# Privacy containment preparation — inactive, not ready for cutover
+
+This package is grounded in current production main **`f6a9b1668d0591cf24a734034949b96b241fe35b`**, not the stale stage-2 branch. [Source pins and candidate inventory](current-main-manifest.json) contain source metadata only. No holdings, news selections, financial records, private repository identifier or account/payment information is copied here.
+
+**Completed offline component:** [publication guard](package/publication-guard.mjs). It reads the real Git index without committing, changing the index, following data symlinks or reading data bodies. Default CLI refuses every unreviewed `data/` mutation. Explicit private names, already tracked changes/deletions, new unreviewed names, symlinks and data removal are covered. Output is fixed status/reason with a matching exit; no paths, contents, provider text or input values are emitted. External Git diff/textconv/fsmonitor helpers and lazy fetching are disabled.
+
+Eleven real disposable-Git tests PASS, including actual CLI PASS/BLOCKED/ERROR controls, symlink handling, modifications/deletions of tracked private paths, immutable existing history and no file/index writes. The same component/test files pass **11/11 over a disposable current-main checkout**, without unmerged development dependencies. It has **zero production caller imports and no workflow installation**. Adding credentials does not activate it or make a public path safe.
+
+`PASS:STAGING_CLEAN` means only that this proposed index has no refused new mutation. **It does not mean existing public files/history are private, or that the cutover is ready.** The default guard must not be installed alone: blocking public saves after a command was already answered, without a durable private save, could lose state. Private-save ordering, reader integration and public-data classification remain implementation requirements, not merely external evidence.
+
+## Current reader/writer boundary
+
+| Surface | Current-main finding / required preparation |
+|---|---|
+| Public saves | `.github/save-data.sh`, bot's inline save and 13 other statically recognizable broad staging sites are pinned in the manifest (15 total). News has an additional explicit staging list. Every bypass, rebase retry and final push needs a checked private/public partition; a helper-only or `.gitignore` edit does not cover these paths. |
+| Private saves | Current `.github/private-data.sh` is stage-1 mirror-after-public-save. This is not containment. Reviewed cutover code must authenticate the private load, save/ACK before any dependent public publication, retain original evidence on conflicts, and refuse missing/unavailable state instead of using empty holdings. No recovery/financial-record reconciliation is authorized. |
+| News writer/state | `news-watch.mjs`, the explicit news workflow list, selected news/meta/seen state, decision rows and failure logs need a private boundary. Development's reservation/delivery publisher is another separate dependency: preserve durable-before-send and uncertain delivery without blindly replaying. Merely removing a holding flag does not remove selection leakage. |
+| Bot/scanner readers | `scan.mjs` news readers, gate inputs and decision readers need an authorized private input. Indirect generic JSON readers and private-file list expansion must be checked as well. No data-source failure may masquerade as an empty successful check. Preserve current positions, journals, sale IDs, pending intents, receipts, offsets, settings and provenance. |
+| Development research readers | `discovery-runtime.mjs`, `research-collector.mjs`, news revision/audit outputs and derived discovery snapshots need information-flow tests. Do not republish an owner-selected symbol set or convert a private input failure into admission. Frozen scoring/admission rules stay unchanged. |
+| Website | Current Pages workflow publishes **only `index.html`**; the page fetches public repository `signals.json`, `discovery.json` and `zad-list.json`. Moving a JSON file privately without changing that contract breaks the page. A tested owner-independent public projection and browser reader behavior are still missing. Never embed server/private credentials in the site. No collection expansion is authorized to supply a replacement feed. |
+| Logs/artifacts/status | Queries, selected symbols, message parts and holding-related counts need classification. Error reporting and quarantine paths must not print or upload private contents. Public reporting should expose only the agreed fixed operational status. Source-code hashes in this manifest are not private-state receipts. |
+
+The inventory lists **98 static mention/alias candidates** and **15 broad staging sites**, with ten critical main-file pins. This is a bounded source analysis, including possible comment matches, not proof that every dynamic route is integrated. Each candidate must be dispositioned before cutover. No acceptance credit is taken from raw inventory counts.
+
+## Failure, recovery and rollback contract
+
+- Missing binding, private read/authentication/schema failure, stale source or absent acknowledged save must block dependent operation; never fallback to plaintext public publication, empty records or an old cached portfolio.
+- Private publication requires a bounded conflict-safe protocol preserving unrelated remote changes and original evidence. Keep ambiguous outcomes pending and idempotent; do not resolve financial conflicts or advance a command offset by guessing. Protected receipts must stay private and bind the exact source/state/run; public output is completion status only.
+- Test actual writers/readers with synthetic financial/news canaries, partial writes, refusal, retry, restart, concurrent publication, lost ACK and website fetch failures. The inactive staging guard's tests are not substitutes for those missing integration tests.
+- Rollback is code/configuration only, after a safe recording boundary. It must preserve the latest private state, command offsets, pending intents and all evidence. Never restore an old portfolio or republish private files to make the old code work. If safe resumption is uncertain, abort and report; no silent replay or indefinite service pause.
+
+## Existing history and coordination
+
+Existing public bytes remain exposed. A current-tree removal, visibility change or history rewrite would not retract existing clones/forks/caches/Actions artifacts. None is authorized here. A restricted, verified evidence preservation plan must precede any separately approved removal; do not publish the original records or their contents as a “backup.”
+
+Claude's **sanitized stage-2 preservation** is a dependency. An accessible branch/commit/path was requested; no copy was assumed recovered, read from a scratchpad, applied or merged. Reconcile its code-only artifacts against these current-main pins and retain its sanitized provenance before reusing any hunk. The old branch is not a deployment base.
+
+**Remaining implementation:** authenticated private-save/receipt/recovery integration; every writer hook and reader boundary; explicit public-field/universe classification; website projection/reader tests; immutable final patch/manifest and rollback verification. **External input:** accessible sanitized preservation artifact and proof of applicable existing binding permissions. **Owner decisions:** exact cutover scope and any service boundary, binding/permission change, current-tree removal or historical remediation. No such decision is silently adopted. The approved mentor patch remains a separate exact release; this unfinished migration is not bundled into it.

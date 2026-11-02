@@ -1,3 +1,5 @@
+> **2 November continuation:** source snapshot9b78b51d, same100 records/151 locations; [12 synthetic actual-command renderings and additional repairs](../november02-engineering-checkpoint.md), [tagged output](../validation/history03-synthetic-render-20261102.json). Original catalogue/ERRATA/policies preserved. Older paragraphs below are checkpoint evidence, not a claim that current mentor deployment or privacy cutover occurred.
+
 # HISTORY-03 source-anchor reconciliation
 
 Source checkpoint: `e17d4181e00482eb88b412cc83499d2874ad1dde`, preserving `2e466c58` and its four completed correction batches. Original audit/harness: `5bcf4d2933c1d77b10b7c12489e2cfbb624387d9`. No original catalogue, frozen result or ERRATA-01 byte was rewritten.
