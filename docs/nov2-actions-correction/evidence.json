@@ -1,0 +1,86 @@
+{
+  "schema": "nov2-actions-correction-evidence-v1",
+  "generatedAt": "2026-11-02T09:58:11.011713+00:00",
+  "reviewScope": "synthetic offline code/caller evidence only; original owner message unavailable",
+  "independentReviewerSource": "a4691c559bb5d939cd35916009204216feea16d3",
+  "localNode": "24.19.0",
+  "targetHostedNode": "20",
+  "patchSha256": "5fc6c316847bfc3b298035954d0eabdb833af1ef47a34689995631d8ff71ccc1",
+  "manifestSha256": "11b8382e9fa340a5f873dc7484bba49ec34e90d50cd3281f15ed9745af7a68fa",
+  "rollbackSha256": "0ca25baca1eb8957bb3bcd123292741fa9c8e1ede140db3c00beaa554326ef1d",
+  "targetedDevelopment": {
+    "tests": 99,
+    "pass": 93,
+    "todo": 6,
+    "fail": 0,
+    "note": "earlier 11-case version of new file; final expanded file independently rerun 13/13"
+  },
+  "focusedFinal": {
+    "tests": 13,
+    "developmentPass": 13,
+    "exactProductionPackagePass": 13,
+    "productionBeforeCorrection": {
+      "pass": 2,
+      "fail": 11
+    },
+    "services": "local HTTP only, synthetic credentials; actual actionsText, holdingsText, planner/gate and Telegram command caller"
+  },
+  "preRepairDevelopment": {
+    "tests": 11,
+    "fail": 7,
+    "pass": 4
+  },
+  "completeDevelopment": {
+    "testFiles": 265,
+    "initialPass": 264,
+    "imposedTimeoutFiles": 1,
+    "directRerun": {
+      "file": "test/native-sec-colocated-host.test.mjs",
+      "tests": 12,
+      "pass": 12,
+      "exit": 0,
+      "durationMs": 117498.994662
+    },
+    "classification": "The suite harness imposed a 90-second per-file ceiling, below the direct run duration. No source or test assertions changed to make it pass. This is not a registered runtime limit."
+  },
+  "productionExactPackage": {
+    "testFiles": 135,
+    "pass": 135,
+    "exit": 0,
+    "historicalFixtureException": "Only test/try-small-audit.test.mjs uses existing frozen 26 October clock; ordinary-date baseline failures must be reported separately."
+  },
+  "python": {
+    "repositoryBehavior": 7,
+    "verifierEvidence": 2,
+    "fail": 0
+  },
+  "static": {
+    "nodeCheck": true,
+    "gitDiffCheck": true
+  },
+  "applyRollback": {
+    "files": 8,
+    "allAfterHashesVerified": true,
+    "allBeforeStatesRestored": true,
+    "financialDataOrOffsetsRestored": false
+  },
+  "baselineTestCompanions": "Initial six production test files failed due old label assertions or controls missing the live record formerly bypassed with focus off. Minimal companions retain assertions and supply the already-required record. Not baseline defects or removed coverage.",
+  "privateEvidence": "No original message, holdings identifiers or owner financial figures included; encrypted state not read. No exact cash/journal membership reconciliation claimed.",
+  "acceptance": {
+    "accepted": 24,
+    "total": 40,
+    "closed": 0,
+    "admittedProspective": 0,
+    "advanced": [
+      "HISTORY-03",
+      "REPO-03",
+      "EXEC-03"
+    ]
+  },
+  "productionOrdinaryDateFixture": {
+    "file": "test/try-small-audit.test.mjs",
+    "pass": 14,
+    "fail": 2,
+    "baselineDisposition": "Same accepted original cases 1 and 3b fail on pinned production baseline and exact mentor; no fixture/strategy edit included."
+  }
+}

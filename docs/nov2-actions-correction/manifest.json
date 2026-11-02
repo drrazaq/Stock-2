@@ -1,0 +1,92 @@
+{
+  "schema": "stock2-nov2-actions-correction-v1",
+  "status": "PREPARATION_ONLY_NOT_APPROVED_FOR_PRODUCTION",
+  "productionBaseline": "a8bc23eaf732ef4dd8cdf3f946b16ff3499fc5f5",
+  "compatibleMainObserved": "278840f5f33a91b109fb329d4ac8ba205ea8296b",
+  "mainDifference": "Only six data files changed between baseline and observed main; no patch or dependency path changed. Recheck before any future approval/execution.",
+  "requiredPredecessor": {
+    "mentorHead": "25a85000b076c4da649634606467e71b577bc75c",
+    "patchSha256": "1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7",
+    "scanAfterSha256": "a864175379c0ecd3b8102d363925c6191b450d286b06cd473283d1fc3f746cc0"
+  },
+  "patch": {
+    "path": "production-after-mentor.patch",
+    "sha256": "5fc6c316847bfc3b298035954d0eabdb833af1ef47a34689995631d8ff71ccc1"
+  },
+  "files": [
+    {
+      "path": "scan.mjs",
+      "beforeSha256": "a864175379c0ecd3b8102d363925c6191b450d286b06cd473283d1fc3f746cc0",
+      "afterSha256": "49274c5dd6d2bcc800fa5649c99dee9a4f1ff3e34622cd09bc07dc938782142d"
+    },
+    {
+      "path": "test/actions-reconciliation.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "368a455d21e04912998872b4f80fcaabe25dd9d097e013986c50e5275e145a55"
+    },
+    {
+      "path": "test/bot-actions.test.mjs",
+      "beforeSha256": "2e234bda6758f5225377589641dff117dcc8150815da50f4d9b522dbe2a87690",
+      "afterSha256": "f34c8c714160d9fb33c7de0756fbb08706e16993ac6e803d0d56dfce33b0795a"
+    },
+    {
+      "path": "test/buy-gates.test.mjs",
+      "beforeSha256": "38e3339be5aee0ad47f43fa223f0d097d9e7996d3483610d3dbbbe0f01819a9f",
+      "afterSha256": "af4e7d4d40183809c57e32036242064f8e87d5fdfc9d13d4140f7d0d3d0a799d"
+    },
+    {
+      "path": "test/buy-more.test.mjs",
+      "beforeSha256": "37833789cf8496b9c6e7151d3c7b8a58ce89cc261d4832479d679e075d53893b",
+      "afterSha256": "db662d2ed866d2dd2adf1a6fc8c5408b79478645ffe948ac4de7170efa284424"
+    },
+    {
+      "path": "test/focus-per-kind.test.mjs",
+      "beforeSha256": "eb9d15859fe3636cad7655888b5b68f41f81f390f70fbe521d1cd6fcbb55ba19",
+      "afterSha256": "332d528bab9fd30b709c788a8566dc89b852b9bd6c48836b49cdeecd3f84ca77"
+    },
+    {
+      "path": "test/follow-actions.test.mjs",
+      "beforeSha256": "01b5f8d36b3be600303fdae24b0da155bfe0968cde6da8fb5d1fa0c0fda65a74",
+      "afterSha256": "0b1a060778e0fb307a66408871757162a7e136dc55780d8421d7e90154173d6e"
+    },
+    {
+      "path": "test/gate-verdict.test.mjs",
+      "beforeSha256": "d8487c3ef313d056c2cbb8b095d8e4ddb72153d67fac65230243bc82b037444b",
+      "afterSha256": "631324dab43e1968c62b3537072d558aad6b6f2b70718fd3ddc24b7be003a7ae"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "index.html",
+      "sha256": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348"
+    },
+    {
+      "path": "market-session.mjs",
+      "sha256": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21"
+    },
+    {
+      "path": "mentor-plan.mjs",
+      "sha256": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1"
+    },
+    {
+      "path": "test/load-scan.mjs",
+      "sha256": "ca8a48be321215b5d02f9bc09edecf5f562f18dbbe1b3812424f5f97d4b91605"
+    }
+  ],
+  "prohibitedChanges": [
+    "data/",
+    "financial records",
+    "Telegram offsets",
+    "workflows",
+    "frozen research",
+    "strategy thresholds",
+    "execution timing rules",
+    "secrets/bindings"
+  ],
+  "expectedAcceptance": {
+    "accepted": 24,
+    "total": 40,
+    "newClosures": 0,
+    "admittedProspective": 0
+  }
+}
