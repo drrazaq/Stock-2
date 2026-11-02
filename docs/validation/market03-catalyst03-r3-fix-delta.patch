@@ -1,0 +1,157 @@
+diff --git a/comeback-lab.mjs b/comeback-lab.mjs
+index 72c9999..b5a41b8 100644
+--- a/comeback-lab.mjs
++++ b/comeback-lab.mjs
+@@ -5,7 +5,7 @@
+ // Run: node comeback-lab.mjs   (GitHub Actions: .github/workflows/comeback.yml, weekday evenings after the labs' paper lanes + Sunday)
+ import fs from 'node:fs';
+ import { readJsonSource, parseSourceTime, strictNumber, latestCompletedSession, adjustmentBasis } from './source-contract.mjs';
+-import { withComebackProvenance } from './comeback-provenance.mjs';
++import { withComebackProvenance, spyEnvelope } from './comeback-provenance.mjs';
+ import { LABS, verdictFile, paperFile, todayPath, effectiveRuns, scanSets, buildBoard, labFile, todayOut, boardText, preRegister, PAPER_FROM } from './comeback-core.mjs';
+ 
+ const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, PX = local(env.MASSIVE_BASE) || 'https://api.massive.com';
+@@ -28,12 +28,10 @@ if (env.MASSIVE_KEY || local(env.MASSIVE_BASE)) {
+   const from = '2026-10-01', res = await readJsonSource(fetch, PX + '/v2/aggs/ticker/SPY/range/1/day/' + from + '/' + iso(Date.now()) + '?adjusted=true&sort=asc&limit=50000&apiKey=' + encodeURIComponent(env.MASSIVE_KEY || ''), { timeoutMs: 60000 });
+   spyStatus.transport = res.status; const j = res.body, done = latestCompletedSession(Date.now()), at = new Date().toISOString();
+   if (res.status !== 'OK') { spyStatus.response = res.status === 'REFUSED' || res.status === 'RATE_LIMITED' ? res.status : 'UNAVAILABLE'; log('SPY: Massive ' + res.status + (res.httpStatus ? ' (HTTP ' + res.httpStatus + ')' : '') + '; the cached bars are used'); }
+-  // Review R2 (Codex, 1 Nov): a 200 answer counts only if it is the official aggregates envelope for SPY: status OK or DELAYED,
+-  // ticker SPY, and results an array (Massive omits results when there are none: then resultsCount/queryCount must say 0).
+-  else if (!j || typeof j !== 'object' || Array.isArray(j) || !['OK', 'DELAYED'].includes(j.status) || j.ticker !== 'SPY' || j.adjusted === false
+-    || (j.results === undefined ? !(j.resultsCount === 0 || j.queryCount === 0) : !Array.isArray(j.results))
+-    || (Array.isArray(j.results) && Number.isInteger(j.resultsCount) && j.resultsCount !== j.results.length)) { spyStatus.response = 'MALFORMED'; log('SPY: malformed or non-SPY Massive answer; the cached bars are used'); }
+-  else if (!Array.isArray(j.results) || !j.results.length) { spyStatus.response = 'EMPTY'; log('SPY: Massive answered with no bars; the cached bars are used'); }
++  // Review R2 (Codex, 1-2 Nov): a 200 answer counts only if it is a valid SPY aggregates envelope; see spyEnvelope() in
++  // comeback-provenance.mjs. Contradictory, fractional or non-numeric counts are MALFORMED, never EMPTY or OBSERVED.
++  else if ((spyStatus.envelope = spyEnvelope(j)).kind === 'MALFORMED') { spyStatus.response = 'MALFORMED'; log('SPY: malformed or non-SPY Massive answer (' + spyStatus.envelope.reason + '); the cached bars are used'); }
++  else if (spyStatus.envelope.kind === 'EMPTY') { spyStatus.response = 'EMPTY'; log('SPY: Massive answered with no bars (' + spyStatus.envelope.reason + '); the cached bars are used'); }
+   else { for (const b of j.results || []) { const t = b && parseSourceTime(b.t, { kind: 'epoch_ms', at: Date.now() }), o = strictNumber(b && b.o, { min: 1e-9 }), c = strictNumber(b && b.c, { min: 1e-9 });
+       if (!t || t.status !== 'OK' || o.status !== 'OK' || c.status !== 'OK') { spyStatus.rejectedBars++; continue; }
+       const d = t.nyDay; if (!done || d > done) continue;                                         // the session has not closed yet
+diff --git a/comeback-provenance.mjs b/comeback-provenance.mjs
+index 630e0a5..983fc16 100644
+--- a/comeback-provenance.mjs
++++ b/comeback-provenance.mjs
+@@ -19,3 +19,30 @@ export function withComebackProvenance(todayDoc,todays,{nowMs=Date.now(),spyStat
+  todayDoc.sourceStatus={LAB_TODAY_FILES:{status:used.length?'OBSERVED':'EMPTY',labs:used.length,withheldLabs:used.filter(x=>x.status!=='OBSERVED').length,detail:labState},...(spyStatus?{SPY_BARS:spyStatus}:{})};
+  return todayDoc;
+ }
++
++// SPY aggregates envelope (review R2 residual, Codex 2 Nov): one pure classification of a Massive /v2/aggs answer.
++// Each documented field is validated on its own and only justified relationships are enforced:
++//  - status OK or DELAYED, ticker SPY; adjusted, when present, exactly true;
++//  - queryCount and resultsCount, when present, are non-negative safe integers (a present string, fraction, negative, null or NaN
++//    is MALFORMED: never a missing optional field, never zero);
++//  - results, when present, is an array and a present resultsCount equals its length (queryCount is NOT tied to the array:
++//    queried base aggregates and returned aggregates can differ);
++//  - results absent: EMPTY needs positive zero evidence that nothing contradicts: resultsCount 0, or (resultsCount absent)
++//    queryCount 0. A positive returned count without results is MALFORMED.
++// Returns { kind: 'MALFORMED' | 'EMPTY' | 'ROWS', reason }.
++const COUNT=x=>typeof x==='number'&&Number.isSafeInteger(x)&&x>=0;
++export function spyEnvelope(j){
++ if(!j||typeof j!=='object'||Array.isArray(j))return {kind:'MALFORMED',reason:'NOT_AN_OBJECT'};
++ if(!['OK','DELAYED'].includes(j.status))return {kind:'MALFORMED',reason:'STATUS'};
++ if(j.ticker!=='SPY')return {kind:'MALFORMED',reason:'TICKER'};
++ if('adjusted' in j&&j.adjusted!==true)return {kind:'MALFORMED',reason:'ADJUSTED'};
++ for(const f of ['queryCount','resultsCount'])if(f in j&&!COUNT(j[f]))return {kind:'MALFORMED',reason:'INVALID_'+f.toUpperCase()};
++ const hasRC='resultsCount' in j,hasQC='queryCount' in j;
++ if(!('results' in j)||j.results===undefined){
++  if(hasRC)return j.resultsCount===0?{kind:'EMPTY',reason:'RESULTS_COUNT_ZERO'}:{kind:'MALFORMED',reason:'COUNT_WITHOUT_RESULTS'};
++  return hasQC&&j.queryCount===0?{kind:'EMPTY',reason:'QUERY_COUNT_ZERO'}:{kind:'MALFORMED',reason:'NO_RESULTS_NO_ZERO_EVIDENCE'};
++ }
++ if(!Array.isArray(j.results))return {kind:'MALFORMED',reason:'RESULTS_NOT_ARRAY'};
++ if(hasRC&&j.resultsCount!==j.results.length)return {kind:'MALFORMED',reason:'RESULTS_COUNT_MISMATCH'};
++ return j.results.length?{kind:'ROWS',reason:'RESULTS'}:{kind:'EMPTY',reason:'EMPTY_RESULTS_ARRAY'};
++}
+diff --git a/tests/market03-r2-spy-counts.test.mjs b/tests/market03-r2-spy-counts.test.mjs
+new file mode 100644
+index 0000000..a0d20c1
+--- /dev/null
++++ b/tests/market03-r2-spy-counts.test.mjs
+@@ -0,0 +1,62 @@
++// Review R2 residual (Codex, 2 Nov): SPY aggregates counts and structure (Claude, revision r3). A pure table for spyEnvelope() plus the
++// ACTUAL comeback-lab.mjs against a loopback stub: valid zero, valid populated, malformed, partial and source-failure states stay
++// distinct, and a retained R3 conflict survives a malformed-count answer. Synthetic only; no network, credentials or messages.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import {spawn} from 'node:child_process';
++import {spyEnvelope} from '../comeback-provenance.mjs';
++import {latestCompletedSession} from '../source-contract.mjs';
++const root=path.resolve(import.meta.dirname,'..'),day=latestCompletedSession(Date.now()),bar={t:Date.parse(day+'T04:00:00Z'),o:500,c:501};
++const base={status:'OK',ticker:'SPY'};
++
++test('spyEnvelope: every documented field validated; only justified count relationships enforced', () => {
++ const M=(j,reason)=>{const r=spyEnvelope(j);assert.equal(r.kind,'MALFORMED',JSON.stringify(j));if(reason)assert.equal(r.reason,reason,JSON.stringify(j));};
++ // structure
++ for(const j of [null,[],'x',{},{...base,status:'ERROR'},{status:'OK',ticker:'QQQ',results:[bar]},{...base,adjusted:false,results:[bar]},{...base,adjusted:'true',results:[bar]},{...base,results:{0:bar}}])M(j);
++ // counts present but invalid: never a missing optional field, never zero
++ for(const v of [0.5,-1,'invalid','1',null,true,1e300,Number.MAX_SAFE_INTEGER+2]){M({...base,resultsCount:v,results:[bar]},'INVALID_RESULTSCOUNT');M({...base,queryCount:v,results:[bar]},'INVALID_QUERYCOUNT');}
++ // contradictions
++ M({...base,queryCount:0,resultsCount:1},'COUNT_WITHOUT_RESULTS');
++ M({...base,resultsCount:3},'COUNT_WITHOUT_RESULTS');
++ M({...base},'NO_RESULTS_NO_ZERO_EVIDENCE');M({...base,queryCount:2},'NO_RESULTS_NO_ZERO_EVIDENCE');
++ M({...base,resultsCount:2,results:[bar]},'RESULTS_COUNT_MISMATCH');M({...base,resultsCount:0,results:[bar]},'RESULTS_COUNT_MISMATCH');
++ // valid zero
++ for(const j of [{...base,resultsCount:0},{...base,queryCount:0},{...base,queryCount:0,resultsCount:0},{...base,queryCount:4,resultsCount:0},{...base,results:[]},{...base,resultsCount:0,results:[]},{...base,status:'DELAYED',queryCount:0,resultsCount:0}])assert.equal(spyEnvelope(j).kind,'EMPTY',JSON.stringify(j));
++ // valid populated: queryCount is not tied to the returned array
++ for(const j of [{...base,results:[bar]},{...base,resultsCount:1,results:[bar]},{...base,adjusted:true,queryCount:1,resultsCount:1,results:[bar]},{...base,queryCount:5,resultsCount:1,results:[bar]},{...base,status:'DELAYED',resultsCount:2,results:[bar,bar]}])assert.equal(spyEnvelope(j).kind,'ROWS',JSON.stringify(j));
++});
++
++async function producer(t){
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'r2c-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ let reply=[200,{}],calls=0;const server=http.createServer((q,s)=>{calls++;s.statusCode=reply[0];s.setHeader('content-type','application/json');s.end(JSON.stringify(reply[1]));});
++ await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));const url='http://127.0.0.1:'+server.address().port;
++ const run=async()=>{const before=calls;const c=spawn(process.execPath,[path.join(root,'comeback-lab.mjs')],{cwd:dir,env:{PATH:process.env.PATH,MASSIVE_KEY:'synthetic',MASSIVE_BASE:url}});let log='';c.stdout.on('data',x=>log+=x);c.stderr.on('data',x=>log+=x);
++  const code=await new Promise(r=>c.on('close',r));assert.equal(code,0,log);assert.equal(calls-before,1,'one request per run');
++  return {spy:JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-today.json'),'utf8')).sourceStatus.SPY_BARS,cache:JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-spy.json'),'utf8'))};};
++ return {dir,run,set:(st,body)=>reply=[st,body]};
++}
++
++test('actual producer: valid zero, valid populated, malformed, partial and source-failure states stay distinct', async t=>{
++ const f=await producer(t);
++ const table=[
++  [200,{...base,queryCount:0,resultsCount:0},'EMPTY'],[200,{...base,resultsCount:0},'EMPTY'],[200,{...base,results:[]},'EMPTY'],
++  [200,{...base,adjusted:true,queryCount:5,resultsCount:1,results:[bar]},'OBSERVED'],[200,{...base,results:[bar]},'OBSERVED'],
++  [200,{...base,resultsCount:2,results:[bar,{t:'bad',o:1,c:1}]},'PARTIAL'],
++  [200,{...base,queryCount:0,resultsCount:1},'MALFORMED'],[200,{...base,resultsCount:0.5,results:[bar]},'MALFORMED'],[200,{...base,resultsCount:'invalid',results:[bar]},'MALFORMED'],
++  [200,{...base,resultsCount:null,results:[bar]},'MALFORMED'],[200,{...base,queryCount:-3,results:[bar]},'MALFORMED'],[200,{...base},'MALFORMED'],
++  [503,{},'UNAVAILABLE'],[429,{},'RATE_LIMITED'],[403,{},'REFUSED']];
++ for(const [st,body,want] of table){f.set(st,body);const r=await f.run();assert.equal(r.spy.response,want,st+' '+JSON.stringify(body));assert.equal(r.spy.status,want,st+' '+JSON.stringify(body));}
++});
++
++test('R3 preserved: a malformed-count answer after a retained conflict keeps CONFLICT; original bar and first record untouched', async t=>{
++ const f=await producer(t);fs.writeFileSync(path.join(f.dir,'data/comeback-spy.json'),JSON.stringify({bars:{[day]:{o:500,c:501}}}));
++ f.set(200,{...base,results:[{...bar,c:999}]});let r=await f.run();assert.equal(r.spy.status,'CONFLICT');const first=structuredClone(r.cache.conflicts[day]);
++ for(const body of [{...base,queryCount:0,resultsCount:1},{...base,resultsCount:0.5,results:[{...bar,c:777}]},{...base,resultsCount:'invalid',results:[{...bar,c:777}]}]){
++  f.set(200,body);r=await f.run();assert.equal(r.spy.response,'MALFORMED');assert.equal(r.spy.status,'CONFLICT');assert.equal(r.spy.integrity,'CONFLICT_UNRESOLVED');
++  assert.deepEqual(r.cache.bars[day],{o:500,c:501});assert.deepEqual(r.cache.conflicts[day],first);}
++ f.set(200,{...base,queryCount:0,resultsCount:0});r=await f.run();assert.equal(r.spy.response,'EMPTY');assert.equal(r.spy.status,'CONFLICT','a valid empty answer resolves nothing');
++});
+diff --git a/tests/market03-review-codex-spy-envelope.test.mjs b/tests/market03-review-codex-spy-envelope.test.mjs
+new file mode 100644
+index 0000000..0ca9058
+--- /dev/null
++++ b/tests/market03-review-codex-spy-envelope.test.mjs
+@@ -0,0 +1,18 @@
++// Desired behavior review; synthetic local service only. No real data or credentials.
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';import {spawn} from 'node:child_process';import {pathToFileURL} from 'node:url';
++const root=path.resolve(process.env.REVIEW_TREE||process.cwd());
++const {latestCompletedSession}=await import(pathToFileURL(path.join(root,'source-contract.mjs')));
++const bar={t:Date.parse(latestCompletedSession(Date.now())+'T20:00:00Z'),o:500,c:501};
++const cases=[
++ ['conflicting explicit empty counts',{status:'OK',ticker:'SPY',queryCount:0,resultsCount:1},'MALFORMED'],
++ ['noninteger returned count',{status:'OK',ticker:'SPY',resultsCount:0.5,results:[bar]},'MALFORMED'],
++ ['negative returned count',{status:'OK',ticker:'SPY',resultsCount:-1,results:[bar]},'MALFORMED'],
++ ['nonnumeric returned count',{status:'OK',ticker:'SPY',resultsCount:'invalid',results:[bar]},'MALFORMED'],
++ ['valid explicit empty',{status:'OK',ticker:'SPY',queryCount:0,resultsCount:0},'EMPTY'],
++ ['valid one-bar result',{status:'OK',ticker:'SPY',adjusted:true,queryCount:1,resultsCount:1,results:[bar]},'OBSERVED']
++];
++for(const [name,body,expected]of cases)test(name,async t=>{
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'spy-count-review-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));let calls=0;
++ const server=http.createServer((q,s)=>{calls++;s.setHeader('content-type','application/json');s.end(JSON.stringify(body));});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));
++ const child=spawn(process.execPath,[path.join(root,'comeback-lab.mjs')],{cwd:dir,env:{PATH:process.env.PATH,MASSIVE_KEY:'synthetic',MASSIVE_BASE:'http://127.0.0.1:'+server.address().port},stdio:['ignore','pipe','pipe']});let log='';child.stdout.on('data',x=>log+=x);child.stderr.on('data',x=>log+=x);const timer=setTimeout(()=>child.kill('SIGKILL'),5000);const code=await new Promise((r,j)=>{child.on('error',j);child.on('close',r);});clearTimeout(timer);assert.equal(code,0,log);assert.equal(calls,1);const out=JSON.parse(fs.readFileSync(path.join(dir,'data/comeback-today.json')));assert.equal(out.sourceStatus.SPY_BARS.response,expected);assert.equal(out.sourceStatus.SPY_BARS.status,expected);
++});
