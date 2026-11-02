@@ -1,0 +1,149 @@
+{
+ "kind": "MARKET03_CATALYST03_PACKAGE_REVISION_R2",
+ "author": "Claude",
+ "branch": "claude/market03-catalyst03-r2",
+ "reviewed": {
+  "head": "e6a1382c69201bd13add0b2249fa75e1fc3d51bd",
+  "codePatchSha256": "21841f123ccd9e108a5ae83400d3cce5d816148a11d1ea014d4d30b21d82dff1",
+  "review": "Codex docs/reviews/market03-catalyst03/REVIEW.md @ e6c99995 (R1-R3)",
+  "reviewHarnessSha256": "9c3d7475b662d9214df488faf4b4f66a1cb538779e00872eda8a6e6fe74c6029"
+ },
+ "developmentBase": "e6c99995b38602b187cee839c5275c0700f7c1e0",
+ "repinCommit": "cd26692041f5ca70d72590295e66e29166a9dd44",
+ "fixCommit": "456c149536cec1f86a46b0ceaee914e25966c26d",
+ "patch": {
+  "file": "docs/validation/market03-catalyst03-r2-code.patch",
+  "sha256": "cfce2c2c208768295baf670fc1bf18981d788b9e83822c7e454edfff50bf627b",
+  "scope": "development e6c99995 -> 456c1495",
+  "files": [
+   "comeback-lab.mjs",
+   "comeback-provenance.mjs",
+   "discovery-runtime.mjs",
+   "discovery2.mjs",
+   "earnings-study.mjs",
+   "news-revision-archive.mjs",
+   "news-watch.mjs",
+   "source-contract.mjs",
+   "tests/catalyst03-source-to-candidate.test.mjs",
+   "tests/market03-comeback-spy.test.mjs",
+   "tests/market03-ingress-matrix.test.mjs",
+   "tests/market03-review-codex-additional.test.mjs",
+   "tests/market03-review-r1-r3.test.mjs",
+   "tests/market03-source-contract.test.mjs",
+   "tools/market03-ingress-matrix.mjs"
+  ]
+ },
+ "requiredMatrix": {
+  "file": "docs/validation/market03-ingress-matrix.json",
+  "sha256": "a2e21c9a2a6ea2b0f444c48cd3287ab8c576bc43d7b70c487b9f9c2b1491255b"
+ },
+ "before": {
+  "comeback-lab.mjs": "68559eea87bc814984bec1fbb75d233781065db16094b62f54be5283ba858b7b",
+  "comeback-provenance.mjs": null,
+  "discovery-runtime.mjs": "a4a4ac558c34c387e40c5f225a044aef7d2826112bb278e94e4e494073a9280e",
+  "discovery2.mjs": "709033f065571b41bedaff062fe9fe952f162d5a05dbcffcd0af44431da93fee",
+  "earnings-study.mjs": "763bd4733a3c11ef6aa626ad7e61e426605c6ef54dcea582ba04282a1487e09d",
+  "news-revision-archive.mjs": null,
+  "news-watch.mjs": "70c59c185e34c2c7f34499a8df26252e5d07d45984f930f83203b25df457a32d",
+  "source-contract.mjs": null,
+  "tests/catalyst03-source-to-candidate.test.mjs": null,
+  "tests/market03-comeback-spy.test.mjs": null,
+  "tests/market03-ingress-matrix.test.mjs": null,
+  "tests/market03-review-codex-additional.test.mjs": null,
+  "tests/market03-review-r1-r3.test.mjs": null,
+  "tests/market03-source-contract.test.mjs": null,
+  "tools/market03-ingress-matrix.mjs": null
+ },
+ "after": {
+  "comeback-lab.mjs": "43a4af7ecb2060e398a77ff426515845af90b414ec4135d6723221d05c5aadae",
+  "comeback-provenance.mjs": "b956b73773247245580a2df28d7a99a113d4d81965cade3a0802ebcf60fc81d3",
+  "discovery-runtime.mjs": "8fac4c05fdd9fbd92f5b4e8575ff2ca1ba012cdaad427e4bf3800ed1fd39b1e7",
+  "discovery2.mjs": "122660f00e580e300591d15fdcc2edf4df916d15ac29cd86229eb599cf44a6b7",
+  "earnings-study.mjs": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+  "news-revision-archive.mjs": "2eec1e227f88df432ab1caa5c10649bb4afa461a06d11ca1e1560ed305b83e3d",
+  "news-watch.mjs": "08335f2aa69970e65fa5cdc6f5deee2d59d21d712dd4e33ae67e600372e17701",
+  "source-contract.mjs": "515f20341ff46ae1b3477fb0f98b0012e9f9fd1a0c2bc13142fd0395c4a3d31f",
+  "tests/catalyst03-source-to-candidate.test.mjs": "1f3d404dc7d268227b956645fc117af4013a4ea06aca2f5f206a9e004e1cf25c",
+  "tests/market03-comeback-spy.test.mjs": "430d41cf0628ff6601b3006445cab9dd42e17f1e68cf918e377e1d36426a2c76",
+  "tests/market03-ingress-matrix.test.mjs": "299120bded7d98d4fbc95b81f4a3d83e5a91beae41f445afaa39c95710052f0f",
+  "tests/market03-review-codex-additional.test.mjs": "9c3d7475b662d9214df488faf4b4f66a1cb538779e00872eda8a6e6fe74c6029",
+  "tests/market03-review-r1-r3.test.mjs": "54bca800e41368861f6863a22cfa07d5fa74644482541c21a5945fcd5d0f08b1",
+  "tests/market03-source-contract.test.mjs": "8bc469b8708b9e1fdc9d16a27377bf7710059a75f09d964fe5de568153b4a364",
+  "tools/market03-ingress-matrix.mjs": "ec8187d5072008faf5e5b34a563936a120755296916529a1542eba8146545568"
+ },
+ "unchangedDependencies": {
+  "scan.mjs": {
+   "development": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88",
+   "revision": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88",
+   "unchanged": true
+  },
+  "ignition-watch.mjs": {
+   "development": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734",
+   "revision": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734",
+   "unchanged": true
+  },
+  "market-symbol.mjs": {
+   "development": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+   "revision": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+   "unchanged": true
+  },
+  "market-session.mjs": {
+   "development": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+   "revision": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+   "unchanged": true
+  },
+  "comeback-core.mjs": {
+   "development": "7c25bce42a0a1fa70a0c28fa9aa178c4af9606bda60281abb15c75ebdf9e7ad6",
+   "revision": "7c25bce42a0a1fa70a0c28fa9aa178c4af9606bda60281abb15c75ebdf9e7ad6",
+   "unchanged": true
+  },
+  "discovery2-core.mjs": {
+   "development": "a453f3f624094aeb6d9caa8492ef93fe45498261dc413c2b30b3dbf88279316b",
+   "revision": "a453f3f624094aeb6d9caa8492ef93fe45498261dc413c2b30b3dbf88279316b",
+   "unchanged": true
+  },
+  "news-revision-state.mjs": {
+   "development": "4437791c9e05502e6953f06ad7e5ea454ca153a0c6947c15ae5be19fe8ad96c4",
+   "revision": "4437791c9e05502e6953f06ad7e5ea454ca153a0c6947c15ae5be19fe8ad96c4",
+   "unchanged": true
+  },
+  "news-source.mjs": {
+   "development": "55015ab59063d784f9b7cd8e1e81fce5a8bebc80b5f13cfcf8b9aea57b4a24e8",
+   "revision": "55015ab59063d784f9b7cd8e1e81fce5a8bebc80b5f13cfcf8b9aea57b4a24e8",
+   "unchanged": true
+  },
+  "share-supply-source.mjs": {
+   "development": "d1718c31458db28a63296719b9c4dabfc53452c840cebe10def4854056db3fe8",
+   "revision": "d1718c31458db28a63296719b9c4dabfc53452c840cebe10def4854056db3fe8",
+   "unchanged": true
+  },
+  "mentor-plan.mjs": {
+   "development": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
+   "revision": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
+   "unchanged": true
+  },
+  "alpaca-feed.mjs": {
+   "development": "1817b8057d7a879575b3d13080518c445af37ece3c2ac52cfaad593069cf3568",
+   "revision": "1817b8057d7a879575b3d13080518c445af37ece3c2ac52cfaad593069cf3568",
+   "unchanged": true
+  },
+  "leaders-study.mjs": {
+   "development": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3",
+   "revision": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3",
+   "unchanged": true
+  }
+ },
+ "notChanged": [
+  "scan.mjs (earnings-holiday fix already integrated at e17d4181; not duplicated)",
+  "data/** and frozen results",
+  "workflows",
+  "Codex test files (its review harness is added verbatim as a new file)"
+ ],
+ "activity": {
+  "providerCalls": 0,
+  "credentials": 0,
+  "deployment": false,
+  "liveCollection": false,
+  "messages": 0
+ }
+}
