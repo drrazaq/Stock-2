@@ -1,13 +1,13 @@
 {
- "generatedAt": "2026-10-30T21:44:37.712Z",
+ "generatedAt": "2026-11-02T21:39:01.175Z",
  "squad": 1,
  "philosophy": "information edge: official filings and data the market has not priced yet",
  "preRegistered": "squad1-core.mjs RULES (24 Oct 2026, before any run) + data/strategy-library.json SQ1-*",
  "window": [
   "2021-10-12",
-  "2026-10-30"
+  "2026-11-02"
  ],
- "bar": 4.07,
+ "bar": 4.09,
  "split": "2024-01-01",
  "cost": 0.008,
  "data": {
@@ -16,47 +16,47 @@
    "quarters": 23,
    "downloadedNow": 0,
    "missing": [],
-   "purchases": 139403,
+   "purchases": 139431,
    "dataSetsTo": "2026-09-30",
-   "forwardDays": 4,
-   "forwardDocsWithBuys": 33,
+   "forwardDays": 5,
+   "forwardDocsWithBuys": 20,
    "forwardMissing": []
   },
   "si": {
    "ok": true,
-   "months": 61,
+   "months": 62,
    "withData": 61,
    "fromAnomalyCache": 0,
-   "tried": 2,
-   "note": ""
+   "tried": 3,
+   "note": "FINRA API: not a list for 2026-11"
   },
   "efts": {
    "ok": true,
-   "monthsFetchedNow": 39,
+   "monthsFetchedNow": 78,
    "missing": [],
-   "buybackHits": 6717,
-   "guidanceHits": 5589
+   "buybackHits": 6725,
+   "guidanceHits": 5610
   },
   "buyback": {
    "ok": true,
-   "documents": 5179,
-   "readNow": 4,
+   "documents": 5186,
+   "readNow": 7,
    "notRead": 0,
-   "withAmount": 4654,
-   "filings": 4008,
-   "size5": 1543,
-   "size3dip": 431
+   "withAmount": 4661,
+   "filings": 4015,
+   "size5": 1547,
+   "size3dip": 433
   },
   "guidance": {
    "ok": true,
-   "hits": 5589
+   "hits": 5610
   },
   "customer": {
-   "ok": true,
+   "ok": false,
    "links": 628,
    "usable": 420,
    "suppliers": 312,
-   "graphAt": "2026-10-25T06:47:20.344Z"
+   "graphAt": "2026-11-01T08:03:32.040Z"
   },
   "analyst": {
    "ok": false,
@@ -74,19 +74,19 @@
   },
   "divs": {
    "ok": true,
-   "rows": 483928,
+   "rows": 484070,
    "at": "2026-10-30T21:44:32.748Z"
   },
   "price": {
    "ok": true,
-   "sessions": 1269
+   "sessions": 1270
   }
  },
  "signalCounts": {
   "SQ1-INSCLU": {
    "dataOk": true,
    "older": 311,
-   "newer": 341
+   "newer": 342
   },
   "SQ1-CEODIP": {
    "dataOk": true,
@@ -101,7 +101,7 @@
   "SQ1-BBAUTH": {
    "dataOk": true,
    "older": 356,
-   "newer": 486
+   "newer": 489
   },
   "SQ1-BBDIP": {
    "dataOk": true,
@@ -109,14 +109,14 @@
    "newer": 110
   },
   "SQ1-CUSTMOM": {
-   "dataOk": true,
-   "older": 474,
-   "newer": 605
+   "dataOk": false,
+   "older": 0,
+   "newer": 0
   },
   "SQ1-GUIDEUP": {
    "dataOk": true,
    "older": 1094,
-   "newer": 1592
+   "newer": 1622
   },
   "SQ1-RECUP": {
    "dataOk": false,
@@ -126,7 +126,7 @@
   "SQ1-DIVHIKE": {
    "dataOk": true,
    "older": 368,
-   "newer": 367
+   "newer": 371
   },
   "SQ1-SIAVOID": {
    "dataOk": true,
@@ -134,7 +134,7 @@
    "newer": 5328
   }
  },
- "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions, better than the same stock on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.07 -> PROVEN. Gross returns capped at +300% for trades and yardsticks alike (AUD-1). The avoid rule is never a buy.",
+ "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions, better than the same stock on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.09 -> PROVEN. Gross returns capped at +300% for trades and yardsticks alike (AUD-1). The avoid rule is never a buy.",
  "firstRun": {
   "SQ1-INSCLU": {
    "at": "2026-10-24T06:41:41.017Z",
@@ -15455,7 +15455,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-10-30T21:44:37.712Z",
+  "at": "2026-11-02T21:39:01.175Z",
   "results": {
    "SQ1-RECUP": {
     "verdict": "NOT RUN",
