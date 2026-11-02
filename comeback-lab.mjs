@@ -4,6 +4,8 @@
 // data/comeback-lab.json, data/comeback-today.json. Never places an order; no Telegram (scan.mjs shows the board).
 // Run: node comeback-lab.mjs   (GitHub Actions: .github/workflows/comeback.yml, weekday evenings after the labs' paper lanes + Sunday)
 import fs from 'node:fs';
+import { readJsonSource, parseSourceTime, strictNumber, latestCompletedSession, adjustmentBasis } from './source-contract.mjs';
+import { withComebackProvenance } from './comeback-provenance.mjs';
 import { LABS, verdictFile, paperFile, todayPath, effectiveRuns, scanSets, buildBoard, labFile, todayOut, boardText, preRegister, PAPER_FROM } from './comeback-core.mjs';
 
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, PX = local(env.MASSIVE_BASE) || 'https://api.massive.com';
@@ -16,12 +18,35 @@ const BOARD = 'data/comeback-board.json', LAB = 'data/comeback-lab.json', TODAY 
 { const LB = J(LIB, null); if (preRegister(LB)) { LB.updated = iso(Date.now()); fs.writeFileSync(LIB, JSON.stringify(LB, null, 1)); log('library: COMEBACK-1 pre-registered now'); } }
 
 // 1. SPY daily bars from the first forward day (open of the buy session, close of the sell session)
-const SPY = J(SPYF, { bars: {} });
+const SPY = J(SPYF, { bars: {} }); SPY.bars ||= {}; SPY.conflicts ||= {};
+const validConflict = (c) => c && typeof c === 'object' && c.original && c.reported;   // retained revision evidence, never cleared here
+// SPY ingress contract (MARKET-03, 2 Nov 2026): bounded read, Massive envelope checked, bar day from the New York calendar,
+// today's unfinished bar excluded, and a cached bar that a later answer revises is KEPT and recorded as a conflict (never
+// silently overwritten). Status is explicit so a failed fetch is never presented as fresh bars.
+const spyStatus = { status: 'NOT_FETCHED', response: 'NOT_FETCHED', integrity: 'CLEAN', unresolvedConflicts: 0, basis: adjustmentBasis({ provider: 'MASSIVE', adjusted: true }), added: 0, revised: 0, rejectedBars: 0, transport: null };
 if (env.MASSIVE_KEY || local(env.MASSIVE_BASE)) {
-  try { const from = '2026-10-01', r = await fetch(PX + '/v2/aggs/ticker/SPY/range/1/day/' + from + '/' + iso(Date.now()) + '?adjusted=true&sort=asc&limit=50000&apiKey=' + encodeURIComponent(env.MASSIVE_KEY || ''), { signal: AbortSignal.timeout(60000) });
-    if (r.ok) { const j = await r.json(); let k = 0; for (const b of j.results || []) { const d = iso(b.t + 12 * 3600e3); if (b.o > 0 && b.c > 0) { SPY.bars[d] = { o: b.o, c: b.c }; k++; } } log('SPY: ' + k + ' daily bars from Massive'); }
-    else log('SPY: Massive answered ' + r.status + '; the cached bars are used'); } catch (e) { log('SPY: fetch failed (' + e.message + '); the cached bars are used'); } }
+  const from = '2026-10-01', res = await readJsonSource(fetch, PX + '/v2/aggs/ticker/SPY/range/1/day/' + from + '/' + iso(Date.now()) + '?adjusted=true&sort=asc&limit=50000&apiKey=' + encodeURIComponent(env.MASSIVE_KEY || ''), { timeoutMs: 60000 });
+  spyStatus.transport = res.status; const j = res.body, done = latestCompletedSession(Date.now()), at = new Date().toISOString();
+  if (res.status !== 'OK') { spyStatus.response = res.status === 'REFUSED' || res.status === 'RATE_LIMITED' ? res.status : 'UNAVAILABLE'; log('SPY: Massive ' + res.status + (res.httpStatus ? ' (HTTP ' + res.httpStatus + ')' : '') + '; the cached bars are used'); }
+  // Review R2 (Codex, 1 Nov): a 200 answer counts only if it is the official aggregates envelope for SPY: status OK or DELAYED,
+  // ticker SPY, and results an array (Massive omits results when there are none: then resultsCount/queryCount must say 0).
+  else if (!j || typeof j !== 'object' || Array.isArray(j) || !['OK', 'DELAYED'].includes(j.status) || j.ticker !== 'SPY' || j.adjusted === false
+    || (j.results === undefined ? !(j.resultsCount === 0 || j.queryCount === 0) : !Array.isArray(j.results))
+    || (Array.isArray(j.results) && Number.isInteger(j.resultsCount) && j.resultsCount !== j.results.length)) { spyStatus.response = 'MALFORMED'; log('SPY: malformed or non-SPY Massive answer; the cached bars are used'); }
+  else if (!Array.isArray(j.results) || !j.results.length) { spyStatus.response = 'EMPTY'; log('SPY: Massive answered with no bars; the cached bars are used'); }
+  else { for (const b of j.results || []) { const t = b && parseSourceTime(b.t, { kind: 'epoch_ms', at: Date.now() }), o = strictNumber(b && b.o, { min: 1e-9 }), c = strictNumber(b && b.c, { min: 1e-9 });
+      if (!t || t.status !== 'OK' || o.status !== 'OK' || c.status !== 'OK') { spyStatus.rejectedBars++; continue; }
+      const d = t.nyDay; if (!done || d > done) continue;                                         // the session has not closed yet
+      const old = SPY.bars[d], bar = { o: o.value, c: c.value };
+      if (old && (old.o !== bar.o || old.c !== bar.c)) { SPY.conflicts[d] ||= { firstObservedAt: at, original: old, reported: bar }; spyStatus.revised++; continue; }
+      if (!old) { SPY.bars[d] = bar; spyStatus.added++; } }
+    spyStatus.response = spyStatus.rejectedBars ? 'PARTIAL' : 'OBSERVED';
+    log('SPY: ' + spyStatus.added + ' new daily bars from Massive (' + spyStatus.response + (spyStatus.revised ? ', ' + spyStatus.revised + ' revised bars kept as original' : '') + ')'); } }
 else log('SPY: no MASSIVE_KEY; the cached bars and the labs\' own SPY figures are used');
+// Review R3 (Codex, 1 Nov): a retained revision conflict stays unresolved across reversions, restarts and later failures. The
+// latest response is reported separately (response); the lane status is CONFLICT while any conflict is retained.
+{ const open = Object.values(SPY.conflicts).filter(validConflict).length; spyStatus.unresolvedConflicts = open; spyStatus.integrity = open ? 'CONFLICT_UNRESOLVED' : 'CLEAN';
+  spyStatus.status = open ? 'CONFLICT' : spyStatus.response; }
 const spyOf = (buy, sell) => { const a = SPY.bars[buy], b = SPY.bars[sell]; return a && b && a.o > 0 ? b.c / a.o - 1 : null; };
 
 // 2. every lab: effective frozen runs (read only), forward ledger, today file
@@ -37,6 +62,8 @@ const sets = scanSets(scanSrc); log('scan.mjs sets: ' + sets.duplicate.size + ' 
 const board = buildBoard(labs, { sets, names, spyOf }); board.text = boardText(board);
 fs.writeFileSync(BOARD, JSON.stringify(board));
 fs.writeFileSync(LAB, JSON.stringify(labFile(board), null, 1));
-fs.writeFileSync(TODAY, JSON.stringify(todayOut(board, todays), null, 1));
-fs.writeFileSync(SPYF, JSON.stringify({ updated: new Date().toISOString(), from: PAPER_FROM, note: 'SPY daily open / close (Massive, split-adjusted) for the comeback board\'s per-year-of-capital comparison', bars: SPY.bars }));
+// Today-file provenance (CATALYST-03): see comeback-provenance.mjs.
+const todayDoc = withComebackProvenance(todayOut(board, todays), todays, { spyStatus });
+fs.writeFileSync(TODAY, JSON.stringify(todayDoc, null, 1));
+fs.writeFileSync(SPYF, JSON.stringify({ updated: new Date().toISOString(), from: PAPER_FROM, conflicts: SPY.conflicts, status: spyStatus.status, response: spyStatus.response, integrity: spyStatus.integrity, note: 'SPY daily open / close (Massive, split-adjusted) for the comeback board\'s per-year-of-capital comparison', bars: SPY.bars }));
 log(board.text);
