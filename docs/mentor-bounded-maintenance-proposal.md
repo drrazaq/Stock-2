@@ -1,0 +1,89 @@
+# Bounded mentor maintenance procedure — preparation only
+
+**NOT AUTHORIZED TO EXECUTE.** This prepares a controlled alternative to the repeatedly unavailable natural boundary. It does not pause/cancel/dispatch anything, install a workflow, authorize protected execution, or broaden the mentor patch. The existing approval for deployment at a genuinely verified natural boundary remains valid and available.
+
+## Exact release and current observation
+
+- Approved PR #3 head: **`25a85000b076c4da649634606467e71b577bc75c`**.
+- Exact eight-file patch SHA256: **`1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7`**.
+- Manifest SHA256: **`13b120e52a2e6dcfe505136c430ebd7875fea6e18a581e39f610e62fa4f3e250`**.
+- Inspected main: **`f6a9b1668d0591cf24a734034949b96b241fe35b`**. Use fresh source/dependency checks at execution, never restore this old data tree.
+- Observation **2 November 2026, 05:32 UTC / 08:32 Kuwait**: bot run **41384810187**, reply job **125091176540**, IN PROGRESS; run **41390705327** PENDING. No active/pending scanner appeared in the complete inspected status pages. The job started **04:15:06 UTC**; its loop step started **04:15:15 UTC**. These are observations, not a lock on later starts.
+- Configured loop duration is 330 minutes; job timeout is 350 minutes. A timeout is an incomplete drain, never successful final persistence. Calculate remaining time from fresh job metadata rather than reuse an old completion estimate. No assessment appointment is an authorization to deploy.
+
+Full machine-readable bounds, pins, gates and known limitations: [plan](validation/mentor-bounded-maintenance-plan.json).
+
+## Readiness gate — before any disable or cancellation
+
+This procedure is **not execution-ready today**. Resolve these three items first; do not pause service merely to discover the evidence is unavailable:
+
+1. **Workflow-control capability and original states.** Capture the actual enabled/disabled state and immutable definitions of `.github/workflows/bot.yml` and `main.yml`. The current connector rejects `actions/workflows` and individual workflow-state endpoints with **HTTP 400 / INVALID_ARGUMENT: URL not an allowed endpoint**. This is a connector capability restriction, not evidence of GitHub denying the account's permission. Both states are therefore **UNKNOWN here**. No alternative route was used to bypass the restriction. A permitted operator interface/environment must supply state/control capability; no new repository permission or secret is presumed necessary or authorized.
+2. **Authenticated final-run persistence evidence.** Existing bot source calls `save; mirror` each iteration, but redirects processing logs to an unretained runner file; its save function can log an error and still return success. No final local-state/offset versus committed-state receipt is retained. SUCCESS, an unchanged repository head, the latest offset by itself, or a later bot successfully running cannot prove what the earlier runner last acknowledged/persisted. Require the original runner's final state-to-commit proof described below. **The currently active old run cannot be retrofitted with a changed workflow definition.** If its evidence is unavailable, classify that run UNKNOWN and abort this attempt. Any future final-only receipt hook/retained encrypted evidence needs an exact inactive patch, synthetic tests and independent review before a separately approved installation; it is not implemented or installed by this proposal. A future hook cannot retroactively authenticate the old run.
+3. **Production tests.** The unchanged approved mentor caller suites pass 30/30 on current main plus the exact patch. At the new NY date, original production TRY SMALL fixtures 1 and 3b fail identically on main and main plus mentor (14 PASS/2 FAIL), while the separate development fixture correction passes 16/16 before/after NY midnight. This is a reproduced baseline fixture problem, not a new mentor regression or a fresh full-production-suite PASS. Resolve the required-test disposition before maintenance; do not silently waive failures or add development fixture changes to the approved patch. Preserve prior dated full-suite evidence separately.
+
+No fresh protected preflight is dispatched under this proposal. Do not consume any unused authorization from a different task. The installed accounting-only preflight does not prove the bot's final Telegram offset; moreover disabling `bot.yml` also disables its manual preflight entry, so briefly re-enabling it to dispatch a check would break the proposed boundary. A protected verification path must be reviewed and available **before** entering maintenance.
+
+## Execution sequence, only after a separate bounded authorization
+
+### 1. Establish scope, start time and deadlines
+
+The operator records a dated **T0 in UTC and Kuwait**, the original two workflow states, exact main/source/dependency hashes, approved patch hash, and every affected run/job/attempt. Search all run status classes with complete pagination: active, queued, pending, waiting/requested; fetch complete jobs/steps. A status or creation timestamp alone does not establish non-execution. Recheck that only these two workflows call the production scanner/command handler; a newly discovered financial writer stops the attempt for scope review. Research/price/news workflows are not broadly paused, and unrelated publications must remain preserved.
+
+**Do not start the pause unless every active affected job has at most 60 minutes left under its verified configured timeout and the required evidence path is available.** Do not alter that timeout or shorten/kill a running job. Bound the entire pause to **120 minutes from T0**. Latest release decision is T0+75; ordinary CI deadline T0+105; reserve the final 15 minutes for verified restoration/code-only abort. Missing readiness or an infeasible budget means no pause, not an unbounded extension.
+
+### 2. Prevent replacements, not active work
+
+Using the separately authorized existing workflow controls, temporarily disable **new starts of `bot.yml` and `main.yml` only** and read back both disabled states. Do not edit their YAML, schedules, permissions, secrets or concurrency configuration as a substitute. Record the state-change results. If one change fails, restore any successfully changed workflow to its exact original state and stop.
+
+Disabling a workflow must **not** be assumed to remove already queued runs. Re-enumerate all affected runs. Cancel a queued/pending run **only if** complete job evidence demonstrates that no job/step ever started and that cancellation is separately within the approved scope. Snapshot and recheck immediately before the request; if a job has started or its history is unavailable, do not cancel it. Let it drain and recompute whether the 120-minute bound is still feasible. A run moving to active during this race stops the deployment decision. The currently observed pending ID is evidence only, not a permanent cancellation target.
+
+Verify both disabled states again and inspect all status pages twice after any cancellation completes. Do not cancel `in_progress` writers, suppress normal delivery inside active jobs, dispatch a replacement, or interfere with other workflows.
+
+### 3. Drain naturally and preserve the command queue
+
+Allow every already-started affected writer to complete its current normal command, normal state writes and ordinary save/mirror path. Do not change its source files underneath it, invoke another `scan.mjs`, terminate its process, or force a save/recovery. A cancelled/timed-out/failed run is not a successful drain.
+
+During the eventual service gap, **make no Telegram diagnostic calls**: no `getUpdates`, offset probes/resets/negative offsets, webhook changes, `drop_pending_updates`, test messages or fabricated commands. Do not ask the owner to resend financial commands. Messages arriving during the gap remain with Telegram for ordinary resumed processing from the saved offset; they are not claimed processed. Telegram retention is finite (the API documents updates retained for no longer than 24 hours); the pre-existing oldest pending age is unknown without consuming/probing. A bounded pause reduces risk but cannot guarantee an already-old update survives. Record this uncertainty; do not manufacture a queue count.
+
+### 4. Prove final saves and the offset, privately
+
+After the **last actual command-processing child exits**, a trusted evidence path in the **original run** must establish all of the following, without making financial-record changes or contacting Telegram/providers:
+
+- Final working/index state for every command-written file is saved; required files are readable, regular, nonsymlink inputs, with no ignored/untracked pending state silently omitted.
+- Final runner `tg-state.json` has a valid offset; it agrees **exactly** with the saved authoritative commit's offset. Keep the offset and all financial bytes/digests private. This proves persisted resume state, not that every fetched update received a successful reply.
+- The final saved commit exists in current main's ancestry, and the latest authoritative command/financial files agree with the final runner bytes. Include positions, journal, encrypted accounting, LEADER DIP results, pending intents/receipts, settings/marks/watch/callback state and every other path actually changed by commands—not just three legacy conflict-preference files. Preserve original evidence and source data.
+- Existing accounting/pending-state consistency is PASS under a separately authorized **read-only** check using existing bindings if required. A pending intent, partial/uncertain write, mismatched journal/ledger/receipt or missing authoritative state is BLOCKED; no recovery or historical reconciliation is part of mentor maintenance.
+- Evidence binds the original run/job/attempt, reviewed checker/definition, actual runtime source and saved/fetched commit identities. Verify fresh main again before deployment; a conflicting data/source change invalidates the receipt. Any private mirror result is reported separately: a successful mirror cannot substitute for authoritative public-state persistence in the current stage-1 architecture.
+
+Public output is only **PASS, BLOCKED or ERROR**, plus non-sensitive operational metadata such as run IDs, source commit and times. No offsets, private state digests, identifiers, record excerpts, holdings or secrets. Unknown/missing evidence is BLOCKED/ERROR, never inferred PASS. Do not print raw runner logs as a substitute. An end-of-run receipt cannot prove historical exactly-once delivery or repair a previously lost acknowledgment.
+
+### 5. Apply only the already-approved release
+
+Require all affected writers terminal, no replacement able to start, final persistence PASS, fresh current-main compatibility and all required tests/CI conditions satisfied. Rehash the exact approved patch/manifest and every dependency. New regressions or changed dependencies stop the release. The known baseline fixture problem must not be concealed by reporting only the focused mentor tests.
+
+Apply the unchanged patch to fresh main as a **normal isolated commit**, preserving the latest data tree. Exactly these eight files may change:
+
+`scan.mjs`, `mentor-plan.mjs`, `test/load-scan.mjs`, `test/mentor-readonly.test.mjs`, `test/mentor-release.test.mjs`, `test/mentor-release-plan.test.mjs`, `test/mentor-release-examples.mjs`, `test/mentor-m1-m3.test.mjs`.
+
+Verify before/after and dependency hashes, financial/data/workflow byte preservation and compare-and-swap parent identity. Do not merge PR #1, include the new development fixture fix, optional reviewer wording, source contracts, privacy changes or workflow hooks. Record deployed SHA and observe ordinary push-triggered CI only; no manual dispatch/retry.
+
+### 6. Restore service and verify restoration
+
+After verified success, restore **each workflow to its captured original state**; do not enable one that was originally disabled. Confirm readback through the permitted operator interface and record timestamps. If aborting before code deployment and persistence remains verified, restore original states with code/data unchanged. Do not leave workflows disabled waiting for another review or a market observation.
+
+Verify the next ordinary scheduled bot/scanner starts using the intended main code and saved offset; no normal dispatch or test command. The bot cron is every 30 minutes, but GitHub delay means 30 minutes is not a guaranteed resumption SLA. If an originally enabled bot has not resumed within 45 minutes of restoration, report an operational incident without dispatching it. Observe actual saves and a naturally occurring owner mentor request if one appears; absence remains pending. Never claim queued commands processed from job success, elapsed time or a lower queue count.
+
+Record two intervals separately: workflow-start suppression T0→state restoration, and actual bot unavailability last-reader-stop→next-reader-ready. Enumerate scanner schedules missed in the actual interval (current intraday cron is 13:10/13:40 through 20:10/20:40 UTC; daily is 21:30 UTC on weekdays). Record coverage unavailable; do not backfill observations. Existing unrelated watcher coverage is a separate observation, not proof scanner/mentor service remained available.
+
+## Abort, rollback and deadline behavior
+
+- **Before any pause:** unknown original states, missing control capability, unavailable final receipt path, unresolved production-test disposition or an infeasible drain budget means **do nothing** and report the prerequisite. Existing natural-boundary approval is preserved.
+- **Before deployment:** new active writer, incomplete/cancelled/timed-out drain, missing/moved persistence evidence, pending transaction, dependency/patch mismatch or new regression means no release. Restore original workflow states once preservation is verified; do not reset offsets, replay commands, restore old data or run financial recovery.
+- **After deployment:** a new attributable CI/operational failure invokes only a separately approved **code-only rollback** of this isolated mentor commit, at the held verified boundary. Revert only its eight-file code/test changes, recheck newer dependencies and preserve all latest data, offsets, pending intents, journal/ledger evidence and accounting. No reset/force-push, historical tree restore or broad PR revert. A conflict requires reconciliation; do not overwrite unrelated work. Observe ordinary rollback CI and report any still-pending results honestly.
+- **At the bound:** if verified success is not achievable by T0+105, use the reserved abort/restoration interval. Do not keep waiting indefinitely. If state uncertainty prevents a safe abort/resumption, report an incident **immediately**, with exact workflow states and failed action, before the deadline; no financial reconciliation or unsafe automatic re-enable is authorized. A fixed deadline is not permission to discard state. This failure contingency must be agreed before maintenance; it is why the readiness gate is mandatory.
+
+## Exact additional authorization, only after readiness is solved
+
+The existing exact mentor approval does **not** need repeating. A later maintenance approval must separately cover: temporary state changes for these two workflows; cancellation only of refreshed, proven never-started queued/pending attempts; the exact reviewed protected read-only persistence verification; restoration to captured original states; and, if desired, one exact code-only rollback on the stated failure conditions. Any required finalizer/receipt workflow amendment must first exist as its own immutable reviewed inactive package and receive specific installation approval—this proposal does not authorize or pretend to contain one. No indefinite pause, active cancellation, normal dispatch, real message, provider call, trade, purchase, privacy cutover or secret/permission change is included.
+
+**Next preparation dependency:** obtain a trustworthy original-run final persistence path or prepare/review the smallest final-only receipt hook for future runs, plus a permitted workflow-state/control interface and explicit baseline-test disposition. Until then this is a bounded reviewable procedure with identified execution blockers, not a claim that pausing alone solves preservation.

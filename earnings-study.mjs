@@ -18,6 +18,7 @@ const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 //   Verdict saved in data/earnings-study.json.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import {providerSymbol,strictNumber,earningsTiming,reactionSession,digest,readJsonSource} from './source-contract.mjs';
 const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const AV = local(env.AV_BASE) || 'https://www.alphavantage.co', FMPB = local(env.FMP_BASE) || 'https://financialmodelingprep.com', FH = local(env.FH_BASE) || 'https://finnhub.io/api/v1', TG = local(env.TG_BASE) || 'https://api.telegram.org';
@@ -32,35 +33,97 @@ try { cache = JSON.parse(zlib.gunzipSync(fs.readFileSync(CACHE)).toString()); } 
 cache.syms = cache.syms || {}; cache.tried = cache.tried || {};
 const save = () => fs.writeFileSync(CACHE, zlib.gzipSync(JSON.stringify(cache)));
 // one report: { d: report date, t: 'bmo'|'amc'|null, a: actual EPS, e: estimated EPS }
-const eps=x=>typeof x==='number'&&Number.isFinite(x)?x:typeof x==='string'&&/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(x.trim())?Number(x):NaN;
-const addRep = (sym, r) => { if (!r || typeof r.d!=='string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.d)||!Number.isFinite(Date.parse(r.d+'T00:00:00Z'))||iso(Date.parse(r.d+'T00:00:00Z'))!==r.d||r.d>iso(Date.now())||!Number.isFinite(r.a)||!Number.isFinite(r.e)) return false; const L = cache.syms[sym] || (cache.syms[sym] = []); const k = L.findIndex(x => x.d === r.d);if(cache.revisionConflicts?.[sym+'|'+r.d])return false; if (k >= 0) {if(L[k].a!==r.a||L[k].e!==r.e||(L[k].t??null)!==(r.t??null)){cache.revisionConflicts||={};cache.revisionConflicts[sym+'|'+r.d]||={firstObservedAt:new Date().toISOString(),original:{...L[k]},reported:r};return false;}}else L.push({...r,firstObservedAt:new Date().toISOString()}); L.sort((x, y) => x.d < y.d ? -1 : 1);return true; };
-async function getJson(url) { try { const r = await fetch(url,{redirect:'error',signal:AbortSignal.timeout(15000)}); if (r.status === 401 || r.status === 403 || r.status === 402) return { refused: r.status }; if (!r.ok) return null; return await r.json(); } catch (e) { return null; } }
+// ---- fetch-mode ingress contract (MARKET-03 / CATALYST-03, 2 Nov 2026) -----------------------------------------------------
+// Every provider answer is classified (OBSERVED / EMPTY / RATE_LIMITED / REFUSED / MALFORMED / IDENTITY_MISMATCH / ...), so a
+// refusal, limit or malformed body is never recorded as "no reports". A provider row must name the symbol that was asked for.
+// A value that is missing (not yet reported, "None") is pending, not malformed. `t` keeps its exact meaning for MODE=study
+// ('bmo' | 'amc' | null); the provider timing, including Finnhub's during-market-hours, is kept separately in `timing`.
+// Revisions: the same provider changing a report latches a conflict exactly as before. Across providers, a value that agrees
+// to the cent is corroboration, and a provider that does not report timing (FMP) is unknown, not a disagreement.
+const eps=x=>{const v=strictNumber(x);return v.status==='OK'?v.value:NaN;};
+const epsState=x=>strictNumber(x).status;
+const sameValue=(x,y,crossProvider)=>crossProvider?Math.abs(x-y)<=0.005+1e-9:x===y;
+const addRep = (sym, r) => { if (!r || typeof r.d!=='string' || !/^\d{4}-\d{2}-\d{2}$/.test(r.d)||!Number.isFinite(Date.parse(r.d+'T00:00:00Z'))||iso(Date.parse(r.d+'T00:00:00Z'))!==r.d||r.d>iso(Date.now())||!Number.isFinite(r.a)||!Number.isFinite(r.e)) return false;
+  const L = cache.syms[sym] || (cache.syms[sym] = []); const k = L.findIndex(x => x.d === r.d);if(cache.revisionConflicts?.[sym+'|'+r.d])return false;
+  if (k >= 0) {const o=L[k],cross=!!(o.src&&r.src&&o.src!==r.src),tKnown=(o.t??null)!==null&&(r.t??null)!==null;
+    if(!sameValue(o.a,r.a,cross)||!sameValue(o.e,r.e,cross)||tKnown&&o.t!==r.t||!cross&&(o.t??null)!==(r.t??null)){cache.revisionConflicts||={};cache.revisionConflicts[sym+'|'+r.d]||={firstObservedAt:new Date().toISOString(),original:{...o},reported:r,kind:cross?'CROSS_PROVIDER':'SAME_PROVIDER_REVISION'};return false;}
+    if(cross&&!(o.corroboratedBy||[]).includes(r.src))(o.corroboratedBy||=[]).push(r.src);
+    if((o.t??null)===null&&(r.t??null)!==null&&cross){o.timingFrom=r.src;o.t=r.t;o.timing=r.timing;}
+  } else L.push({...r,firstObservedAt:new Date().toISOString()}); L.sort((x, y) => x.d < y.d ? -1 : 1);return true; };
+const getJson = (url) => readJsonSource(fetch, url, {timeoutMs:15000});
+const providerStatus=()=>({status:'NOT_FETCHED',calls:0,unknownSymbol:0,observedSymbols:0,emptySymbols:0,identityMismatch:0,malformedRows:0,pendingRows:0,rejectedRows:0,acceptedRows:0,conflictRows:0,stopReason:null});
 
 if (MODE === 'fetch') {
   const sig = readJson('data/signals.json', {}), order = [...new Set([...(sig.stocks || []).map(x => x.sym), ...((sig.uni || []).map(x => x.sym))])].filter(s => /^[A-Z]{1,5}$/.test(s));
   const today = iso(Date.now()), stale = (s) => !cache.tried[s] || (Date.now() - Date.parse(cache.tried[s])) / 864e5 > 100;
-  const todo = order.filter(stale); let av = 0, fmp = 0, fmpOff = false, avOff = false;
+  const todo = order.filter(stale); const AVS=providerStatus(),FMPS=providerStatus(); let av = 0, fmp = 0, fmpOff = false, avOff = false;
+  const put=(S,sym,r)=>{const before=cache.revisionConflicts?.[sym+'|'+r.d];if(addRep(sym,r))S.acceptedRows++;else{S.rejectedRows++;if(!before&&cache.revisionConflicts?.[sym+'|'+r.d])S.conflictRows++;}};
+  const finish=(S,stopStatus)=>{S.status=S.calls===0?'NOT_FETCHED':stopStatus||(S.observedSymbols+S.emptySymbols===S.calls&&!S.identityMismatch&&!S.malformedRows&&!S.unknownSymbol?(S.observedSymbols?'OBSERVED':'EMPTY'):S.observedSymbols+S.emptySymbols?'PARTIAL':'UNKNOWN');};
   // 1. Alpha Vantage: full quarterly history with report date and time (free plan: 25 calls a day, 5 a minute)
+  let avStop=null;
   if (env.ALPHAVANTAGE_KEY) for (const sym of todo) { if (av >= +(env.AV_CALLS || 25) || avOff) break;
-    const j = await getJson(AV + '/query?function=EARNINGS&symbol=' + sym + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)); av++;
-    if (j && (j.Note || j.Information)) { avOff = true; console.log('Alpha Vantage limit reached:', String(j.Note || j.Information).slice(0, 120)); break; }
-    if (j && Array.isArray(j.quarterlyEarnings)) { for (const q of j.quarterlyEarnings) addRep(sym, { d: q.reportedDate, t: /pre/i.test(q.reportTime || '') ? 'bmo' : /post/i.test(q.reportTime || '') ? 'amc' : null, a: eps(q.reportedEPS), e: eps(q.estimatedEPS) }); cache.tried[sym] = today; }
+    const res = await getJson(AV + '/query?function=EARNINGS&symbol=' + sym + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)); av++; AVS.calls++;
+    const j=res.status==='OK'?res.body:null;
+    if (res.status==='RATE_LIMITED'||j && (j.Note || j.Information)) { avOff = true; avStop='RATE_LIMITED'; AVS.stopReason='provider limit'; console.log('Alpha Vantage limit reached:', String(j?.Note || j?.Information || 'HTTP 429').slice(0, 120)); break; }
+    if (res.status==='REFUSED') { avOff = true; avStop='REFUSED'; AVS.stopReason='HTTP '+res.httpStatus; break; }
+    if (!j || typeof j!=='object' || Array.isArray(j)) { AVS.malformedRows++; }
+    else if (j['Error Message']) { AVS.unknownSymbol=(AVS.unknownSymbol||0)+1; }                // AV does not know this symbol: not observed, not empty
+    else if (providerSymbol(j.symbol,{provider:'ALPHA_VANTAGE',requested:sym}).status!=='OK') { AVS.identityMismatch++; }
+    else if (Array.isArray(j.quarterlyEarnings)) { if(!j.quarterlyEarnings.length)AVS.emptySymbols++;else AVS.observedSymbols++;
+      for (const q of j.quarterlyEarnings) { if(!q||typeof q!=='object'){AVS.malformedRows++;continue;}const sa=epsState(q.reportedEPS),se=epsState(q.estimatedEPS);if(sa==='INVALID'||se==='INVALID'){AVS.malformedRows++;continue;}if(sa==='MISSING'||se==='MISSING'){AVS.pendingRows++;continue;}
+        const timing=earningsTiming('ALPHA_VANTAGE',q.reportTime);
+        put(AVS,sym,{ d: q.reportedDate, t: timing==='BMO' ? 'bmo' : timing==='AMC' ? 'amc' : null, a: eps(q.reportedEPS), e: eps(q.estimatedEPS), src:'ALPHA_VANTAGE', timing, fiscalPeriodEnd:typeof q.fiscalDateEnding==='string'?q.fiscalDateEnding.slice(0,10):null }); }
+      cache.tried[sym] = today; }
+    else AVS.malformedRows++;
     if (!local(env.AV_BASE)) await sleep(13000); }
+  finish(AVS,avStop);
   // 2. FMP (only if the key's plan includes earnings history): report dates, actual and estimated EPS
+  let fmpStop=null;
   if (env.FMP_KEY) for (const sym of todo.filter(s => cache.tried[s] !== today)) { if (fmp >= +(env.FMP_CALLS || 200) || fmpOff) break;
-    const j = await getJson(FMPB + '/stable/earnings?symbol=' + sym + '&limit=40&apikey=' + encodeURIComponent(env.FMP_KEY)); fmp++;
-    if (j && j.refused) { fmpOff = true; console.log('FMP earnings history is not in this plan (HTTP ' + j.refused + '); Alpha Vantage and Finnhub only.'); break; }
-    if (Array.isArray(j)) { for (const q of j) addRep(sym, { d: String(q.date || '').slice(0, 10), t: null, a: eps(q.epsActual), e: eps(q.epsEstimated) }); cache.tried[sym] = today; }
+    const res = await getJson(FMPB + '/stable/earnings?symbol=' + sym + '&limit=40&apikey=' + encodeURIComponent(env.FMP_KEY)); fmp++; FMPS.calls++;
+    if (res.status==='REFUSED') { fmpOff = true; fmpStop='REFUSED'; FMPS.stopReason='HTTP '+res.httpStatus; console.log('FMP earnings history is not in this plan (HTTP ' + res.httpStatus + '); Alpha Vantage and Finnhub only.'); break; }
+    if (res.status==='RATE_LIMITED') { fmpOff = true; fmpStop='RATE_LIMITED'; FMPS.stopReason='HTTP 429'; break; }
+    const j=res.status==='OK'?res.body:null;
+    // A response carrying any other symbol is not this security's history: the whole answer is rejected, nothing stored.
+    const foreign=Array.isArray(j)?j.filter(q=>q&&typeof q==='object'&&providerSymbol(q.symbol,{provider:'FMP',requested:sym}).status!=='OK').length:0;
+    if (Array.isArray(j)&&foreign) { FMPS.identityMismatch++; FMPS.rejectedRows+=j.length; }
+    else if (Array.isArray(j)) { if(!j.length)FMPS.emptySymbols++;else FMPS.observedSymbols++;
+      for (const q of j) { if(!q||typeof q!=='object'){FMPS.malformedRows++;continue;}
+        const sa=epsState(q.epsActual),se=epsState(q.epsEstimated);if(sa==='INVALID'||se==='INVALID'){FMPS.malformedRows++;continue;}if(sa==='MISSING'||se==='MISSING'){FMPS.pendingRows++;continue;}
+        put(FMPS,sym,{ d: String(q.date || '').slice(0, 10), t: null, a: eps(q.epsActual), e: eps(q.epsEstimated), src:'FMP', timing:'UNKNOWN' }); }
+      cache.tried[sym] = today; }
+    else FMPS.malformedRows++;
     if (!local(env.FMP_BASE)) await sleep(300); }
+  finish(FMPS,fmpStop);
   // 3. Finnhub calendar: the last 10 days of reports for every company (actual vs estimate, before/after the market)
-  let recent = [], calendarStatus='NOT_FETCHED',calendarRejected=0;
-  if (env.FINNHUB_KEY) { const j = await getJson(FH + '/calendar/earnings?from=' + iso(Date.now() - 10 * 864e5) + '&to=' + today + '&token=' + encodeURIComponent(env.FINNHUB_KEY));
-    const rows = j&&!j.error&&Array.isArray(j.earningsCalendar)?j.earningsCalendar:[];calendarStatus=j&&!j.error&&Array.isArray(j.earningsCalendar)?'OBSERVED':'UNKNOWN';
-    for (const q of rows) { if (!q||typeof q!=='object'||!/^[A-Z]{1,5}$/.test(q.symbol || '')) {calendarRejected++;continue;}
-      const r = { d: q.date, t: q.hour === 'bmo' ? 'bmo' : q.hour === 'amc' ? 'amc' : null, a: eps(q.epsActual), e: eps(q.epsEstimate) }; if(!addRep(q.symbol,r)){calendarRejected++;continue;}const stored=cache.syms[q.symbol].find(x=>x.d===r.d);recent.push({ sym: q.symbol,...r,sourceId:q.symbol+'|'+r.d,firstObservedAt:stored.firstObservedAt||null }); } }
-  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), reports: recent,sourceStatus:{FINNHUB_CALENDAR:{status:calendarRejected&&calendarStatus==='OBSERVED'?'PARTIAL_OR_UNKNOWN':calendarStatus,rejectedRows:calendarRejected}} }, null, 1));
+  let recent = [], calendarStatus='NOT_FETCHED',calendarRejected=0; const FHS={malformedRows:0,pendingRows:0,unsupportedClassRows:0,conflictRows:0,quarantinedRows:0,receivedRows:0,transport:null};
+  if (env.FINNHUB_KEY) { const res = await getJson(FH + '/calendar/earnings?from=' + iso(Date.now() - 10 * 864e5) + '&to=' + today + '&token=' + encodeURIComponent(env.FINNHUB_KEY)); FHS.transport=res.status;
+    const j=res.status==='OK'?res.body:null, valid=!!(j&&typeof j==='object'&&!j.error&&Array.isArray(j.earningsCalendar));
+    const rows = valid?j.earningsCalendar:[];calendarStatus=valid?'OBSERVED':'UNKNOWN';FHS.receivedRows=rows.length;
+    for (const q of rows) { if (!q||typeof q!=='object') {calendarRejected++;FHS.malformedRows++;continue;}
+      const id=providerSymbol(q.symbol,{provider:'FINNHUB'});if(id.status!=='OK'){calendarRejected++;FHS.malformedRows++;continue;}
+      if(!/^[A-Z]{1,5}$/.test(id.symbol)){calendarRejected++;FHS.unsupportedClassRows++;continue;}             // cache keys are plain tickers; classes are not mapped
+      const sa=epsState(q.epsActual),se=epsState(q.epsEstimate);
+      if(sa==='INVALID'||se==='INVALID'){calendarRejected++;FHS.malformedRows++;continue;}
+      if(sa==='MISSING'||se==='MISSING'){calendarRejected++;FHS.pendingRows++;continue;}                 // scheduled or no estimate: not a report yet
+      const timing=earningsTiming('FINNHUB',q.hour);
+      const r = { d: q.date, t: timing === 'BMO' ? 'bmo' : timing === 'AMC' ? 'amc' : null, a: eps(q.epsActual), e: eps(q.epsEstimate), src:'FINNHUB', timing };
+      const had=cache.revisionConflicts?.[id.symbol+'|'+r.d];
+      if(!addRep(id.symbol,r)){calendarRejected++;if(had)FHS.quarantinedRows++;else if(cache.revisionConflicts?.[id.symbol+'|'+r.d])FHS.conflictRows++;else FHS.malformedRows++;continue;}
+      // The exported row describes the merged report: a timing another provider supplied fills Finnhub's unknown hour.
+      const stored=cache.syms[id.symbol].find(x=>x.d===r.d),tm=timing!=='UNKNOWN'?timing:stored.timing||(stored.t==='bmo'?'BMO':stored.t==='amc'?'AMC':'UNKNOWN'),react=reactionSession(r.d,tm);
+      recent.push({ sym: id.symbol,d:r.d,t:stored.t??null,a:r.a,e:r.e,sourceId:id.symbol+'|'+r.d,firstObservedAt:stored.firstObservedAt||null,
+        src:'FINNHUB',timing:tm,timingFrom:timing!=='UNKNOWN'?'FINNHUB':stored.timingFrom||stored.src||null,publicationDay:r.d,reactionSession:react.session||null,reactionStatus:react.status,...(react.candidates?{reactionCandidates:react.candidates}:{}),
+        providers:[stored.src||'UNRECORDED',...(stored.corroboratedBy||[])],corroboratedBy:[stored.src,...(stored.corroboratedBy||[])].filter(x=>x&&x!=='FINNHUB'),sourceRevisionId:digest({a:r.a,e:r.e,timing:tm}),sourceIdentityBasis:'PROVIDER_TICKER_NOT_SECURITY_ID',sourceClockBasis:'DATE_ONLY_PROVIDER_REPORT',epsUnit:'PROVIDER_REPORTED_PER_SHARE_CURRENCY_UNSTATED' }); } }
+  // Status vocabulary kept for discovery-runtime: a malformed/conflicting row makes the calendar PARTIAL_OR_UNKNOWN; pending rows
+  // (not reported yet) and unsupported share classes are counted but do not make an observed calendar look broken.
+  const fhStatus=calendarStatus!=='OBSERVED'?calendarStatus:FHS.malformedRows||FHS.conflictRows?'PARTIAL_OR_UNKNOWN':'OBSERVED';
+  const quarantinedSourceIds=Object.keys(cache.revisionConflicts||{}).filter(k=>{const d=k.split('|')[1];return d&&d>=iso(Date.now()-10*864e5);}).slice(0,1000);
+  fs.writeFileSync(RECENT, JSON.stringify({ updated: new Date().toISOString(), reports: recent,quarantinedSourceIds,
+    sourceStatus:{FINNHUB_CALENDAR:{status:fhStatus,rejectedRows:calendarRejected,...FHS},ALPHA_VANTAGE:AVS,FMP:FMPS},
+    contract:'earnings ingress v2 (2 Nov 2026): provider symbol must equal the request; pending/unsupported rows are not malformed; t is the study timing, timing is the provider timing; EPS currency is not stated by the providers' }, null, 1));
   save();
-  console.log('earnings history: ' + Object.keys(cache.syms).length + ' stocks (' + Object.values(cache.syms).reduce((a, x) => a + x.length, 0) + ' reports) | today: Alpha Vantage ' + av + ' calls, FMP ' + fmp + (fmpOff ? ' (not in plan)' : '') + ', Finnhub calendar ' + recent.length + ' recent reports | still to fetch ' + todo.filter(s => cache.tried[s] !== today).length);
+  console.log('earnings history: ' + Object.keys(cache.syms).length + ' stocks (' + Object.values(cache.syms).reduce((a, x) => a + x.length, 0) + ' reports) | today: Alpha Vantage ' + av + ' calls (' + AVS.status + '), FMP ' + fmp + ' (' + FMPS.status + ')' + (fmpOff ? ' (stopped: ' + FMPS.stopReason + ')' : '') + ', Finnhub calendar ' + recent.length + ' recent reports (' + fhStatus + ') | still to fetch ' + todo.filter(s => cache.tried[s] !== today).length);
   process.exit(0);
 }
 

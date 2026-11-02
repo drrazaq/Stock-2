@@ -1,0 +1,110 @@
+{
+  "kind": "MENTOR_BOUNDED_MAINTENANCE_PROPOSAL_ONLY",
+  "executionAuthorized": false,
+  "executionReady": false,
+  "naturalBoundaryApprovalPreserved": true,
+  "observedAtUTC": "2026-11-02T05:32:00Z",
+  "observedAtKuwait": "2026-11-02T08:32:00+03:00",
+  "main": "f6a9b1668d0591cf24a734034949b96b241fe35b",
+  "developmentBase": "92ebff50c729fd3b39963fd9548dac5265aefd2e",
+  "approvedMentorHead": "25a85000b076c4da649634606467e71b577bc75c",
+  "patchSha256": "1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7",
+  "manifestSha256": "13b120e52a2e6dcfe505136c430ebd7875fea6e18a581e39f610e62fa4f3e250",
+  "releaseFiles": [
+    "scan.mjs",
+    "mentor-plan.mjs",
+    "test/load-scan.mjs",
+    "test/mentor-readonly.test.mjs",
+    "test/mentor-release.test.mjs",
+    "test/mentor-release-plan.test.mjs",
+    "test/mentor-release-examples.mjs",
+    "test/mentor-m1-m3.test.mjs"
+  ],
+  "affectedWorkflows": [
+    {
+      "path": ".github/workflows/bot.yml",
+      "sourceSha256": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40",
+      "enabledState": "UNKNOWN",
+      "loopMinutes": 330,
+      "jobTimeoutMinutes": 350
+    },
+    {
+      "path": ".github/workflows/main.yml",
+      "sourceSha256": "8856c2b72c11b450da752b111260615d39e342e8e03bf87b2f0724a3a2581c5e",
+      "enabledState": "UNKNOWN",
+      "jobTimeoutMinutes": 300
+    }
+  ],
+  "runSnapshot": {
+    "active": [
+      {
+        "run": 41384810187,
+        "job": 125091176540,
+        "jobStartedUTC": "2026-11-02T04:15:06Z",
+        "loopStepStartedUTC": "2026-11-02T04:15:15Z"
+      }
+    ],
+    "pending": [
+      41390705327
+    ],
+    "queued": [],
+    "waiting": [],
+    "identitiesMustBeRefreshedBeforeAnyAction": true
+  },
+  "bounds": {
+    "startOnlyWhenAllActiveJobsHaveAtMostRemainingMinutes": 60,
+    "maxWorkflowSuppressionMinutes": 120,
+    "latestReleaseDecisionMinutesAfterT0": 75,
+    "ordinaryCIDeadlineMinutesAfterT0": 105,
+    "restorationReserveMinutes": 15,
+    "resumptionIncidentMinutesAfterRestore": 45,
+    "normalBotCronMinutes": 30,
+    "schedulerDelayGuarantee": false
+  },
+  "publicProtectedOutputs": [
+    "PASS",
+    "BLOCKED",
+    "ERROR"
+  ],
+  "outputMetadataAllowed": [
+    "workflow/run/job/attempt identities",
+    "source/saved commit identities",
+    "operational timestamps"
+  ],
+  "privateOutputsForbidden": [
+    "Telegram offsets",
+    "private state digests",
+    "financial record/holding identifiers",
+    "decrypted contents",
+    "credentials"
+  ],
+  "blockers": [
+    "Workflow enabled-state/control endpoint not supported by this connector: HTTP400 INVALID_ARGUMENT; no bypass attempted",
+    "No original-run final local-state/offset versus authoritative-commit receipt; job success is insufficient",
+    "Production baseline TRY SMALL fixture failures require explicit test disposition; do not modify approved mentor patch"
+  ],
+  "currentEvidence": {
+    "focusedMentorOnProductionPlusExactPatch": "30/30PASS",
+    "productionBaselineTrySmall": "14PASS/2FAIL",
+    "productionPlusMentorTrySmall": "same14PASS/2FAIL",
+    "fullProductionSuiteFreshPass": false,
+    "finalOffsetReceipt": "NOT_ESTABLISHED"
+  },
+  "prohibited": [
+    "workflow mutation or dispatch during preparation",
+    "active-run cancellation",
+    "Telegram polling/reset/webhook/test message",
+    "provider/broker calls",
+    "financial recovery or historical rewrite",
+    "data restore or offset advance",
+    "full development PR merge",
+    "additional production source/workflow changes without exact approval"
+  ],
+  "rollbackRequiresSeparateScope": true,
+  "receiptFinalizerImplemented": false,
+  "acceptance": {
+    "accepted": 24,
+    "total": 40,
+    "newClosures": 0
+  }
+}
