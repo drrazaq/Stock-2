@@ -1,3 +1,5 @@
+> **2 November 2026 status correction:** Historical blocked draft only. The 13-hour window is **NOT APPROVED** and must not be executed. [New inactive receipt proof and remaining prerequisites](mentor-persistence-receipt/README.md) supersede the stale component/test-status claims below. This document is not replaced by an execution procedure: access, original-run persistence and restoration prerequisites are still unmet.
+
 # Bounded mentor maintenance procedure — preparation only, no cancellations
 
 **NOT AUTHORIZED TO EXECUTE.** This prepares a controlled alternative to the repeatedly unavailable natural boundary. It does not pause/cancel/dispatch anything, install a workflow, authorize protected execution, or broaden the mentor patch. The existing approval for deployment at a genuinely verified natural boundary remains valid and available.
