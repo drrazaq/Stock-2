@@ -1,0 +1,74 @@
+{
+ "kind": "MARKET03_INGRESS_BATCH2_REVISION_R2",
+ "author": "Claude",
+ "branch": "claude/market03-batch2-r2",
+ "reviewed": {
+  "head": "5418fff47cac6f193be8304d403a027d571a07ce",
+  "patchSha256": "9cc0e02f3fb61a46306b81b7cb3d77e1108d0c6319cec576ed783e567feda0cd",
+  "review": "Codex docs/reviews/market03-batch2/REVIEW.md @ 58be2ace82e9eceab4f880c057e1604dce94bdd8",
+  "reviewCasesSha256": "f6a01a85c79d4640d175b0dfb8fcfd8829accaf0881cc8cc514164692befad65"
+ },
+ "fixCommit": "50b55a40b37042b9abd31bc708b5224a2fe29d1d",
+ "patch": {
+  "file": "docs/validation/market03-batch2-r2-code.patch",
+  "sha256": "e15d5d09a2dfd526bba12f207443abe85cabcfe4ad8ad8ddb9688b67dcb6cc59"
+ },
+ "requiredMatrix": {
+  "file": "docs/validation/market03-ingress-matrix.json",
+  "sha256": "49a071ca593a2e63d9c09c7d18b01422c96601fd9c327d517376da81d4d00a0f"
+ },
+ "files": {
+  "smart-money.mjs": {
+   "reviewed": "f16ff5f206513bbbd2c2f7971ceae262ae585e1c9190d768f8348d672bf812cd",
+   "fixed": "7b93fee6d1deb95e679e59991215603fbc205ecc7256d2c8e59570dbc2e4d437",
+   "codexDevelopment": "109adc3b5f0cf25b1a4e3b1bd490486cfc19ab37a0249725cbbd434ad78f6238"
+  },
+  "calendar.mjs": {
+   "reviewed": "8ca4391c2af9f18a622b8d702bafb414dc16f19b5b625b036b8964c0ac9ea5eb",
+   "fixed": "3d4c80709fd3bc24fb5e805cfc10a6959d7e460b131bad03bb685c6d3e421b59",
+   "codexDevelopment": "6bc0b508f72b3a64e660ea1df0efa6cf7490c690d09cdf1652b545c7b248bbeb"
+  },
+  "source-contract.mjs": {
+   "reviewed": "392f65eb99381a870d6fc06182f55b290e0a374fcf103b322f9493292f6cfc81",
+   "fixed": "392f65eb99381a870d6fc06182f55b290e0a374fcf103b322f9493292f6cfc81",
+   "note": "unchanged; rebase onto r2 held until Codex resolves r2"
+  }
+ },
+ "evidence": {
+  "codexCases": {
+   "before": "0/4",
+   "after": "4/4",
+   "withR2Helper": "4/4"
+  },
+  "newCases": {
+   "before": "0/5",
+   "after": "5/5",
+   "withR2Helper": "5/5"
+  },
+  "existingBatchTests": {
+   "smartMoney": "3/3",
+   "calendar": "3/3 (updated: dividend counts read from encrypted file)"
+  },
+  "node22": "all four batch files pass"
+ },
+ "fullSuite": {
+  "commit": "50b55a40",
+  "result": "244/247",
+  "failures": {
+   "tests/research-recovery-publication.test.mjs": "root-only environment",
+   "test/try-small-audit.test.mjs": "pre-existing on development e6c99995",
+   "test/native-sec-colocated-host.test.mjs": "intermittent timing scenario; base and revision each passed 12/12 once and failed 11/12 once unloaded; no import reaches changed files"
+  }
+ },
+ "coordination": [
+  "scan.mjs dividend currency reader: separate coordinated change, not edited here",
+  "shared source-contract rebase onto r2: held"
+ ],
+ "activity": {
+  "providerCalls": 0,
+  "credentials": 0,
+  "deployment": false,
+  "liveCollection": false,
+  "messages": 0
+ }
+}
