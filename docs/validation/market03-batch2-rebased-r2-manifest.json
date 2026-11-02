@@ -1,0 +1,81 @@
+{
+ "package": "market03-batch2-rebased-r2",
+ "branch": "claude/market03-batch2-rebased-r2",
+ "base": "e0c12d31e1e741762da76ce3cdbad466c213e5f2",
+ "previousReviewedHead": "b021d6f5f503b47d4b8c6125212f4eac91e1dbb5",
+ "codeCommit": "6b91c4f71576f2b139d8439b2624a8d95fb1b70e",
+ "review": "docs/reviews/market03-rebased-followup/REVIEW.md @ 54eb49fe2819e7710aaba308c2c3acb3262e861a",
+ "reviewerHarness": {
+  "file": "docs/reviews/market03-rebased-followup/fu-calendar-empty-regression.mjs",
+  "sha256": "8269582c05c865316104c766160e2dd5aed938215ff5fcb726da11fd31d39e57",
+  "unchanged": true
+ },
+ "codePatch": {
+  "path": "docs/validation/market03-batch2-rebased-r2-code.patch",
+  "sha256": "edcd9812ae449823eb5c69eb3f2175c71504bbd1e37de0045aec8f6046a99517",
+  "from": "e0c12d31e1e741762da76ce3cdbad466c213e5f2",
+  "to": "6b91c4f71576f2b139d8439b2624a8d95fb1b70e",
+  "appliesCleanlyTo": "e0c12d31e1e741762da76ce3cdbad466c213e5f2",
+  "files": [
+   "calendar.mjs",
+   "docs/validation/market03-ingress-matrix.json",
+   "smart-money.mjs",
+   "tests/market03-batch2-codex-review.test.mjs",
+   "tests/market03-batch2-review.test.mjs",
+   "tests/market03-batch2-smart-money.test.mjs",
+   "tests/market03-batch3-calendar.test.mjs",
+   "tools/market03-ingress-matrix.mjs"
+  ]
+ },
+ "fixDelta": {
+  "path": "docs/validation/market03-batch2-rebased-r2-fix-delta.patch",
+  "sha256": "22b2894380390db1e170de5c341dc217d4f682863d15c2e8b2c367c2b79acc16",
+  "from": "b021d6f5f503b47d4b8c6125212f4eac91e1dbb5",
+  "to": "6b91c4f71576f2b139d8439b2624a8d95fb1b70e"
+ },
+ "files": {
+  "calendar.mjs": {
+   "base": "6bc0b508f72b3a64e660ea1df0efa6cf7490c690d09cdf1652b545c7b248bbeb",
+   "previous": "3d4c80709fd3bc24fb5e805cfc10a6959d7e460b131bad03bb685c6d3e421b59",
+   "revision": "a7c0767dab097acf21b91a22d6a1a986e4d5c15ca5dfd0fa208fa4365297a0af"
+  },
+  "smart-money.mjs": {
+   "base": "109adc3b5f0cf25b1a4e3b1bd490486cfc19ab37a0249725cbbd434ad78f6238",
+   "previous": "7b93fee6d1deb95e679e59991215603fbc205ecc7256d2c8e59570dbc2e4d437",
+   "revision": "7b93fee6d1deb95e679e59991215603fbc205ecc7256d2c8e59570dbc2e4d437"
+  },
+  "tests/market03-batch2-review.test.mjs": {
+   "base": null,
+   "previous": "fc350ff3d73f718b9d2d68d634353312f7243cae42d025b2b5e87ea5e5e6add0",
+   "revision": "2263051f8f53608c3076dbea28b31b48e68594dca6c5f10324a84dcbfa61a153"
+  },
+  "tests/market03-batch3-calendar.test.mjs": {
+   "base": null,
+   "previous": "dd277e9b383ceeb291152d9b57356ab7ebb6afa1bfa66450cb290a558e35337c",
+   "revision": "dd277e9b383ceeb291152d9b57356ab7ebb6afa1bfa66450cb290a558e35337c"
+  },
+  "tests/market03-batch2-smart-money.test.mjs": {
+   "base": null,
+   "previous": "ffe6ea20f9a55f40e9d5e12488e5baa3c2ec026f92f0cb6390242f18c89189a1",
+   "revision": "ffe6ea20f9a55f40e9d5e12488e5baa3c2ec026f92f0cb6390242f18c89189a1"
+  },
+  "tests/market03-batch2-codex-review.test.mjs": {
+   "base": null,
+   "previous": "f6a01a85c79d4640d175b0dfb8fcfd8829accaf0881cc8cc514164692befad65",
+   "revision": "f6a01a85c79d4640d175b0dfb8fcfd8829accaf0881cc8cc514164692befad65"
+  },
+  "docs/validation/market03-ingress-matrix.json": {
+   "base": "a2e21c9a2a6ea2b0f444c48cd3287ab8c576bc43d7b70c487b9f9c2b1491255b",
+   "previous": "49a071ca593a2e63d9c09c7d18b01422c96601fd9c327d517376da81d4d00a0f",
+   "revision": "49a071ca593a2e63d9c09c7d18b01422c96601fd9c327d517376da81d4d00a0f"
+  }
+ },
+ "results": {
+  "reviewerBefore": "3 pass / 1 fail (the `review:` case: `observed 0, none 0`)",
+  "reviewerAfter": "4/4 (Node 20 and 22)",
+  "originalTestsAfter": "batch2-review 6/6, batch3-calendar 3/3, batch2-smart-money 3/3, vendored Codex batch-2 cases 4/4 (16/16) (Node 20 and 22)",
+  "fullSuiteNode20Root": "261 of 262 files; only tests/research-recovery-publication.test.mjs fails (refuses root)"
+ },
+ "offline": true,
+ "production": false
+}
