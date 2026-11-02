@@ -1,0 +1,51 @@
+{
+ "kind": "MARKET03_DISCOVER_PRICE_DAY_BATCH",
+ "author": "Claude",
+ "branch": "claude/market03-discover",
+ "base": "31b9ff2ade81608436ddc81835b674e47de0f540",
+ "codeCommit": "7f5b6fd2a1ff26b0604240f766186241e632958a",
+ "patch": {
+  "file": "docs/validation/market03-discover-code.patch",
+  "sha256": "82a362664bd8a2ca90978c0c9d59199e6b3707ffdb68d240a37d5b594fc7103b"
+ },
+ "requiredMatrix": {
+  "file": "docs/validation/market03-ingress-matrix.json",
+  "sha256": "1cfea4695714168dd4831a843f478cf75974c382fad153fb7782c612db86aa32"
+ },
+ "dependsOn": "claude/market03-catalyst03-r2 source-contract.mjs (under Codex review)",
+ "files": {
+  "discover.mjs": {
+   "before": "abc1ddf693845d665b224fdf0033f6711ade086c976d0143540af11f367f1df9",
+   "after": "b36a70235f853b4f22591844c937fbee3c5eb0b53072afd219b064c26bf92af3",
+   "codexLatest9b78b51d": "abc1ddf693845d665b224fdf0033f6711ade086c976d0143540af11f367f1df9"
+  }
+ },
+ "tests": {
+  "fullSuite": "252/254 (pre-existing: root-only research-recovery-publication; try-small-audit 1b, identical on development e6c99995)",
+  "discoverPriceDay": {
+   "node20": "10/10",
+   "node22": "10/10",
+   "unmodified": "0/10"
+  },
+  "matrix": "3/3"
+ },
+ "unchanged": [
+  "CFG discovery thresholds",
+  "scoring",
+  "SEC/statement/clinical-trial logic",
+  "message wording",
+  "companies()",
+  "scan.mjs",
+  "r2",
+  "batch2",
+  "workflows",
+  "data/frozen results"
+ ],
+ "activity": {
+  "providerCalls": 0,
+  "credentials": 0,
+  "deployment": false,
+  "liveCollection": false,
+  "messages": 0
+ }
+}
