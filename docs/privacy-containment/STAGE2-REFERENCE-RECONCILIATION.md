@@ -1,0 +1,24 @@
+# Sanitized stage-2 preservation: historical reference reconciliation
+
+Received `claude/privacy-stage2-preservation` at **`dc8a1a5db7372926637052a27f84931b00db1df2`**. Its preserved historical parent is `51ad0b1971a967413357802b98f545e9aba9c7f9`; it is **not a current-main cutover patch**. The original unpublished/private-bearing commit is neither recovered nor fetched/applied here. No deletion, financial migration, history rewrite, repository visibility or secret/permission change is authorized or performed.
+
+Independent source-only verification: sanitized patch SHA256 **`e6f40ec81f1796a7e201aae840844e6a07323598bc6ac444a83cb74c317f5cd0`**, verifier **`beea808c9459563daa098a219356741c7e268b04bd629b40a9f05120bf16b42a`**, manifest **`25eba0c44127b17ac10424300afb9f9bce26f23af43b2c681bcd363d2f95283d`**. Patch scope is **80 source/documentation/workflow files, zero `data/` files**. [Source-only inventory](stage2-reference-reconciliation.json). No patch contents containing private records are reproduced here.
+
+The historical verifier builds sensitive sets from repository history. It was inspected but **not run**; this checkpoint does not claim independent full-history leak clearance or repeat Claude's reported 28/28 functional results. Its helper catches Git errors as empty text, so a successful status alone would not prove complete history coverage. The original source set and all required Git objects would need explicit completeness validation before treating that scan as evidence. Existing published history remains exposed independently of the new patch's contents.
+
+## Reuse by contract, never by applying the old branch
+
+| Historical machinery | Current-main proposal requirement |
+|---|---|
+| Explicit private-file list, load/push/show helpers and mode flag | Reconcile with the [current-main inventory](current-main-manifest.json), classify every derived output and source archive, and validate authenticated state/schema/freshness. Missing required positions/offset/intents/receipts must not become empty defaults. A mode flag is configuration, not cutover authorization. |
+| Workflow hooks around every reader/writer | Retain the current watcher/accounting/SEC/feed fixes and current workflow guards. Add a reviewed load boundary and acknowledged private save **before** dependent publication/delivery; source-level hook counts are not caller verification. No workflow installation now. |
+| General save helper, private-owner conflict selection and JSONL union | Do not port automatic hunk preference/union as proof of accounting consistency. Pin expected base/private state, retain idempotent sale IDs/intents/receipts, reject conflicting mutable state, and test interrupted/retried/concurrent writes with disposable remotes. A push exit alone is not a per-file immutable acknowledgment. |
+| Scrubber and public-file removal/cutover helpers | Scrubbing cannot replace prevention. Use explicit owner-independent public projections, staged-publication guard coverage for every broad/explicit writer, symlink-safe outputs and artifact/log checks. Neither the removal helpers nor old cutover command may run under this preparation scope. |
+| Derived owner-data split in historical scripts | Reconcile the current consumers, including news/revision state and scanner views. The website currently publishes `index.html` then reads public raw JSON: provide a sanitized public projection and browser/reader tests; never put private credentials or private fallback data in the client. |
+| Restore/rollback helper | Do not blindly restore its old data or recommit private plaintext. Rollback is code/config only and must retain latest private state, command offset, pending intents, sale receipts and archived evidence. Unknown persistence requires a safe abort and an explicit resumption decision. |
+
+## Exact preparation still missing
+
+The [inactive current-main package](CURRENT-MAIN-PACKAGE.md) remains **NOT READY FOR CUTOVER**. Its read-only staging guard and synthetic tests are available; the old preservation artifact is now available too. Remaining engineering is the authenticated private-load/save acknowledgment implementation, all coordinated writer/read hooks, owner-independent public projection/website reader changes, and end-to-end failure/retry/recovery tests over current main. This is implementation work, not simply a missing owner approval.
+
+Prepare those with local synthetic state/remotes only. Do not bind a private service, migrate current state, alter the public index/history, or run any historical cutover/restore command. Only after a complete reviewed inactive package should the owner receive one exact proposal covering data classification, access/bindings, preservation/rollback, service boundary and the limited meaning of historical cleanup. Removing a current file does not erase commits, forks, caches, prior logs or downloaded artifacts; no claim of complete unpublication is made.

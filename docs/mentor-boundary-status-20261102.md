@@ -7,7 +7,8 @@ The exact approved PR #3 head remains `25a85000b076c4da649634606467e71b577bc75c`
 | `41327224130`, job `124919084401` | Completed SUCCESS, **1 Nov 2026 22:44:30 UTC / 2 Nov 01:44:30 Kuwait**. |
 | Successor `41354916865`, job `125004035374` | Started 1 Nov 22:44:33 UTC; completed SUCCESS **2 Nov 2026 04:15:04 UTC / 07:15:04 Kuwait**. |
 | Pending `41379232542` | Now CANCELLED, no jobs recorded. This session did not cancel it; the actor/reason is not inferred. |
-| Latest `41384810187`, job `125091176540` | IN PROGRESS. Job started **2 Nov 04:15:06 UTC**; loop step **04:15:15 UTC**. |
+| Later pending `41390705327` | PENDING at the r2 review checkpoint; it has not been cancelled or dispatched by this session. Inspect its jobs before any boundary decision. |
+| Latest active `41384810187`, job `125091176540` | IN PROGRESS. Job started **2 Nov 04:15:06 UTC**; loop step **04:15:15 UTC**. |
 
 The previous transition left only a two-second job-start interval, not a verified quiet recording boundary. A cron/concurrency successor can begin immediately. Neither absence of `queued` results alone nor an unchanged main head proves that the old process has stopped or its state is preserved; pending/waiting/active runs must be enumerated together.
 

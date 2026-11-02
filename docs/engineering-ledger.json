@@ -5293,16 +5293,24 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "NOV2_REGISTRY_RENDER_AND_PRIVACY_PREPARATION_MENTOR_BLOCKED",
-    "source": "9b78b51d02228419e5ec6a01410ce447df32e027",
-    "report": "docs/november02-engineering-checkpoint.md",
-    "evidence": "docs/validation/november02-engineering-evidence.json",
+    "status": "R2_REVIEW_CHANGES_REQUIRED_MENTOR_STILL_BLOCKED",
+    "basedOnDevelopment": "58be2ace82e9eceab4f880c057e1604dce94bdd8",
+    "runtimeSource": "9b78b51d02228419e5ec6a01410ce447df32e027",
+    "report": "docs/november02-source-contract-review-checkpoint.md",
+    "review": "docs/reviews/market03-catalyst03-r2/REVIEW.md",
+    "evidence": "docs/reviews/market03-catalyst03-r2/evidence.json",
+    "sourcePackage": "31b9ff2ade81608436ddc81835b674e47de0f540",
+    "verdict": "CHANGES_REQUIRED",
+    "integrated": false,
     "accepted": 24,
     "total": 40,
     "closuresEarned": [],
     "genuineAdmissions": 0,
-    "privacyReadiness": "NOT_READY_FOR_CUTOVER",
-    "next": "Mentor valid natural boundary/save receipt first; Claude corrected ingress re-review; current-main private-save/reader/website integration. No extra production authority."
+    "privacyPreservation": "dc8a1a5db7372926637052a27f84931b00db1df2; source-only reference, not applied",
+    "discoverOwnership": "Available for Claude isolated ingress; Codex has no changes; Claude to publish claim",
+    "next": "Correct residual R2 count schema/contradiction cases; re-review then selective development integration. Mentor exact approval remains first release priority, blocked on active writer and persisted-offset/final-save proof.",
+    "pendingWriter": 41390705327,
+    "activeWriter": 41384810187
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -8380,5 +8388,17 @@
     "productionChanged": false,
     "privateContentsPublished": false,
     "privacyReadiness": "NOT_READY_FOR_CUTOVER"
+  },
+  "preR2Review_latestSessionCheckpoint": {
+    "status": "NOV2_REGISTRY_RENDER_AND_PRIVACY_PREPARATION_MENTOR_BLOCKED",
+    "source": "9b78b51d02228419e5ec6a01410ce447df32e027",
+    "report": "docs/november02-engineering-checkpoint.md",
+    "evidence": "docs/validation/november02-engineering-evidence.json",
+    "accepted": 24,
+    "total": 40,
+    "closuresEarned": [],
+    "genuineAdmissions": 0,
+    "privacyReadiness": "NOT_READY_FOR_CUTOVER",
+    "next": "Mentor valid natural boundary/save receipt first; Claude corrected ingress re-review; current-main private-save/reader/website integration. No extra production authority."
   }
 }

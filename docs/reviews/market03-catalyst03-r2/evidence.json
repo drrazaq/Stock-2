@@ -1,0 +1,138 @@
+{
+  "kind": "INDEPENDENT_OFFLINE_MARKET03_CATALYST03_R2_REVIEW",
+  "verdict": "CHANGES_REQUIRED",
+  "reviewedHead": "31b9ff2ade81608436ddc81835b674e47de0f540",
+  "developmentBase": "e6c99995b38602b187cee839c5275c0700f7c1e0",
+  "currentDevelopment": "58be2ace82e9eceab4f880c057e1604dce94bdd8",
+  "patchSha256": "cfce2c2c208768295baf670fc1bf18981d788b9e83822c7e454edfff50bf627b",
+  "manifestSha256": "d40f8af6bbb89263f98b246d885bf9c80189fbac644c9762dbfbdba6a0f58705",
+  "matrixSha256": "a2e21c9a2a6ea2b0f444c48cd3287ab8c576bc43d7b70c487b9f9c2b1491255b",
+  "patchAndFilePinsMatch": true,
+  "scopeFiles": 15,
+  "requiredExtraMatrix": "docs/validation/market03-ingress-matrix.json",
+  "dependencyReconciliation": {
+    "scan.mjs": {
+      "manifestBase": "541f343cc624452c883e94208e53b3b84c4301c4f7711836269d2983ae780f88",
+      "currentDevelopment": "18a5765c1a72391630aaa4d519bee32c2c5992c1cee1629981ffbd0bc27e0eab",
+      "unchangedByReview": true
+    },
+    "ignition-watch.mjs": {
+      "manifestBase": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734",
+      "currentDevelopment": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734",
+      "unchangedByReview": true
+    },
+    "market-symbol.mjs": {
+      "manifestBase": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+      "currentDevelopment": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+      "unchangedByReview": true
+    },
+    "market-session.mjs": {
+      "manifestBase": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+      "currentDevelopment": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+      "unchangedByReview": true
+    },
+    "comeback-core.mjs": {
+      "manifestBase": "7c25bce42a0a1fa70a0c28fa9aa178c4af9606bda60281abb15c75ebdf9e7ad6",
+      "currentDevelopment": "7c25bce42a0a1fa70a0c28fa9aa178c4af9606bda60281abb15c75ebdf9e7ad6",
+      "unchangedByReview": true
+    },
+    "discovery2-core.mjs": {
+      "manifestBase": "a453f3f624094aeb6d9caa8492ef93fe45498261dc413c2b30b3dbf88279316b",
+      "currentDevelopment": "a453f3f624094aeb6d9caa8492ef93fe45498261dc413c2b30b3dbf88279316b",
+      "unchangedByReview": true
+    },
+    "news-revision-state.mjs": {
+      "manifestBase": "4437791c9e05502e6953f06ad7e5ea454ca153a0c6947c15ae5be19fe8ad96c4",
+      "currentDevelopment": "4437791c9e05502e6953f06ad7e5ea454ca153a0c6947c15ae5be19fe8ad96c4",
+      "unchangedByReview": true
+    },
+    "news-source.mjs": {
+      "manifestBase": "55015ab59063d784f9b7cd8e1e81fce5a8bebc80b5f13cfcf8b9aea57b4a24e8",
+      "currentDevelopment": "55015ab59063d784f9b7cd8e1e81fce5a8bebc80b5f13cfcf8b9aea57b4a24e8",
+      "unchangedByReview": true
+    },
+    "share-supply-source.mjs": {
+      "manifestBase": "d1718c31458db28a63296719b9c4dabfc53452c840cebe10def4854056db3fe8",
+      "currentDevelopment": "d1718c31458db28a63296719b9c4dabfc53452c840cebe10def4854056db3fe8",
+      "unchangedByReview": true
+    },
+    "mentor-plan.mjs": {
+      "manifestBase": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
+      "currentDevelopment": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
+      "unchangedByReview": true
+    },
+    "alpaca-feed.mjs": {
+      "manifestBase": "1817b8057d7a879575b3d13080518c445af37ece3c2ac52cfaad593069cf3568",
+      "currentDevelopment": "1817b8057d7a879575b3d13080518c445af37ece3c2ac52cfaad593069cf3568",
+      "unchangedByReview": true
+    },
+    "leaders-study.mjs": {
+      "manifestBase": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3",
+      "currentDevelopment": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3",
+      "unchangedByReview": true
+    }
+  },
+  "independentExecution": {
+    "runtime": "Node 24.19.0",
+    "uid": 1000,
+    "exactTargeted": {
+      "pass": 54,
+      "fail": 0
+    },
+    "currentCandidateTargetedWithExistingFixture": {
+      "pass": 70,
+      "fail": 0
+    },
+    "preFixNegativeControl": {
+      "pass": 0,
+      "fail": 11
+    },
+    "residualEnvelopeExactAndCurrent": {
+      "pass": 3,
+      "fail": 3
+    },
+    "baselineOriginalTrySmall": {
+      "pass": 15,
+      "fail": 1
+    },
+    "r2OriginalTrySmall": {
+      "pass": 15,
+      "fail": 1
+    },
+    "existingSessionFixtureOverBaseline": {
+      "pass": 16,
+      "fail": 0
+    },
+    "existingSessionFixtureOverR2": {
+      "pass": 16,
+      "fail": 0
+    },
+    "rootSensitiveRegression": {
+      "pass": 7,
+      "fail": 0,
+      "runAsNonRoot": true
+    },
+    "fixtureCause": {
+      "observationUTC": "2026-11-02T04:50:15.594Z",
+      "newYorkDay": "2026-11-01",
+      "tenCalendarDayFixture": "2026-10-23",
+      "actualSessionsAfter": 5,
+      "rejectionThreshold": "strictly greater than 5"
+    }
+  },
+  "findings": {
+    "R1": "PASS scoped row isolation/invalid date regressions",
+    "R2": "CHANGES_REQUIRED: contradictory/noninteger/nonnumeric count evidence",
+    "R3": "PASS retained original and first conflict through reversion/restart/HTTP failure"
+  },
+  "extraHarnessSha256": "fc2a918795f921943209bace204ef9abedfa7382db52fa66e74fdd77af66c4b4",
+  "integrated": false,
+  "productionChanges": false,
+  "realProviderRequests": 0,
+  "realMessages": 0,
+  "acceptance": {
+    "accepted": 24,
+    "total": 40,
+    "newClosures": 0
+  }
+}
