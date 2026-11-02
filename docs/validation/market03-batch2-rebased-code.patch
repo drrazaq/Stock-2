@@ -1,0 +1,614 @@
+diff --git a/calendar.mjs b/calendar.mjs
+index f5a9767..9183ac0 100644
+--- a/calendar.mjs
++++ b/calendar.mjs
+@@ -14,6 +14,10 @@
+ import fs from 'node:fs';
+ import zlib from 'node:zlib';
+ import crypto from 'node:crypto';
++import {readJsonSource,providerSymbol,strictNumber,isDay as isDayShared} from './source-contract.mjs';
++// Review B2-1 (Codex, 2 Nov): an impossible day is a malformed row, never a crash, whichever shared-helper version is in use.
++const isDay = (d) => { try { return isDayShared(d); } catch { return false; } };
++import {marketSession} from './market-session.mjs';
+ const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch', local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
+ const MCP = (local(env.TR_BASE) || 'https://mcp.tipranks.com') + '/mcp/?apikey=' + encodeURIComponent(env.TIPRANKS_KEY || ''), PX = local(env.PX_BASE) || 'https://api.massive.com';
+ const AVB = local(env.AV_BASE) || 'https://www.alphavantage.co', BLS = local(env.BLS_BASE) || 'https://www.bls.gov', FED = local(env.FED_BASE) || 'https://www.federalreserve.gov';
+@@ -130,13 +134,56 @@ if (MODE === 'fetch') {
+     out.econ = out.official.sort((a, b) => a.t < b.t ? -1 : 1); delete out.official; }
+   for (const e of out.econ) fillAct(e); for (const e of out.hist) fillAct(e);
+   // ---- 2. Massive: market holidays, and ex-dividend dates of the stocks you hold
+-  if (env.MASSIVE_KEY) try {
+-    const get = async (p) => { const r = await fetch(PX + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY)); return r.ok ? r.json() : null; };
+-    const h = await get('/v1/marketstatus/upcoming'); if (Array.isArray(h)) out.holidays = h.filter(x => /nyse|nasdaq/i.test(x.exchange || '')).map(x => ({ d: x.date, name: x.name, status: x.status, open: x.open || null, close: x.close || null })).filter((x, i, a) => a.findIndex(y => y.d === x.d) === i).slice(0, 12);
+-    const held = Object.keys(readJson('data/my-positions.json', {})).filter(s => /^[A-Z.]{1,6}$/.test(s)).slice(0, 30);
+-    for (const s of held) { const j = await get('/v3/reference/dividends?ticker=' + encodeURIComponent(s) + '&ex_dividend_date.gte=' + iso(Date.now() - 864e5) + '&limit=3&order=asc&sort=ex_dividend_date'); const r = j && j.results; if (r && r.length) out.div[s] = r.map(x => ({ ex: x.ex_dividend_date, pay: x.pay_date, amt: x.cash_amount })); await sleep(150); }
+-    status.massive = 'ok: ' + out.holidays.length + ' holidays, dividends for ' + Object.keys(out.div).length + ' of ' + held.length + ' held stocks';
+-  } catch (e) { status.massive = 'failed: ' + String(e.message || e).slice(0, 120); }
++  // Ingress contract (MARKET-03 batch 3, 2 Nov 2026). A failed or malformed answer keeps the previous list but is reported as
++  // such (never "ok"); past holidays are dropped; each date is checked against the exchange calendar (market-session.mjs) and a
++  // disagreement, or NYSE and Nasdaq disagreeing on a date, is kept and labelled CONFLICT. Dividends must name the held ticker,
++  // carry a valid ex-date and a finite amount; a non-USD amount is labelled with its currency. The public status holds counts
++  // only, never the held symbols.
++  const M = { holidays: { status: 'NOT_FETCHED', received: 0, kept: 0, malformedRows: 0, pastRows: 0, conflicts: 0, calendarDisagreements: 0 },
++    dividends: { status: 'NOT_FETCHED', held: 0, observed: 0, none: 0, failed: 0, identityMismatch: 0, identityMissing: 0, malformedRows: 0, nonUsd: 0 } };
++  out.holidays = (out.holidays || []).filter(x => x && typeof x.d === 'string' && x.d >= iso(Date.now()));
++  if (env.MASSIVE_KEY) {
++    const get = (p) => readJsonSource(fetch, PX + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY), { timeoutMs: 20000 });
++    const hr = await get('/v1/marketstatus/upcoming'), today = iso(Date.now());
++    if (hr.status !== 'OK') M.holidays.status = hr.status === 'REFUSED' || hr.status === 'RATE_LIMITED' ? hr.status : 'UNAVAILABLE';
++    else if (!Array.isArray(hr.body)) M.holidays.status = 'MALFORMED';
++    else { const byDay = new Map(); M.holidays.received = hr.body.length;
++      for (const x of hr.body) { if (!x || typeof x !== 'object' || !/nyse|nasdaq/i.test(x.exchange || '')) continue;
++        if (!isDay(x.date) || !['closed', 'early-close'].includes(x.status)) { M.holidays.malformedRows++; continue; }
++        if (x.date < today) { M.holidays.pastRows++; continue; }
++        const row = { d: x.date, name: typeof x.name === 'string' ? x.name.slice(0, 80) : '', status: x.status, open: x.open || null, close: x.close || null, exchanges: [String(x.exchange).toUpperCase()] };
++        const prev = byDay.get(x.date); if (!prev) { byDay.set(x.date, row); continue; }
++        if (!prev.exchanges.includes(row.exchanges[0])) prev.exchanges.push(row.exchanges[0]);
++        if (prev.status !== row.status && !prev.conflict) { prev.conflict = 'EXCHANGES_DISAGREE'; M.holidays.conflicts++; } }
++      const rows = [...byDay.values()].sort((p, q) => p.d < q.d ? -1 : 1).slice(0, 12);
++      for (const h of rows) { const ms = marketSession(h.d); if (!ms.known) { h.calendar = 'UNKNOWN'; continue; }
++        const agrees = h.status === 'closed' ? ms.closed : !ms.closed && ms.close < 960; h.calendar = agrees ? 'AGREES' : 'DISAGREES';
++        if (!agrees) { M.holidays.calendarDisagreements++; h.conflict = h.conflict || 'EXCHANGE_CALENDAR_DISAGREES'; } }
++      out.holidays = rows; M.holidays.kept = rows.length;
++      M.holidays.status = M.holidays.conflicts || M.holidays.calendarDisagreements ? 'CONFLICT' : M.holidays.malformedRows ? 'PARTIAL' : rows.length ? 'OBSERVED' : 'EMPTY'; }
++    const held = Object.keys(readJson('data/my-positions.json', {})).filter(s => /^[A-Z.]{1,6}$/.test(s)).slice(0, 30); M.dividends.held = held.length;
++    for (const s of held) { const dr = await get('/v3/reference/dividends?ticker=' + encodeURIComponent(s) + '&ex_dividend_date.gte=' + iso(Date.now() - 864e5) + '&limit=3&order=asc&sort=ex_dividend_date');
++      if (dr.status !== 'OK') { M.dividends.failed++; await sleep(150); continue; }   // as before: nothing shown, but the failure is counted
++      const r = dr.body && Array.isArray(dr.body.results) ? dr.body.results : null;
++      if (!r) { M.dividends.failed++; M.dividends.malformedRows++; await sleep(150); continue; }
++      if (r.some(x => x && x.ticker !== undefined && x.ticker !== null && x.ticker !== '' && providerSymbol(x.ticker, { provider: 'MASSIVE', requested: s }).status !== 'OK')) { M.dividends.identityMismatch++; await sleep(150); continue; }
++      // Review B2-2 (Codex, 2 Nov): a row that does not name its ticker is not this holding's dividend. It is kept, encrypted, as
++      // unattributed evidence of the lookup, never shown as the held stock's ex-dividend date.
++      const unnamed = r.filter(x => x && (x.ticker === undefined || x.ticker === null || x.ticker === ''));
++      if (unnamed.length) { M.dividends.identityMissing++; (out.divUnattributed ||= []).push({ requested: s, rows: unnamed.slice(0, 3).map(x => ({ ex: isDay(x.ex_dividend_date) ? x.ex_dividend_date : null, amt: strictNumber(x.cash_amount, { min: 0 }).value, currency: typeof x.currency === 'string' ? x.currency.trim().toUpperCase() : 'UNSTATED' })) }); }
++      const named = r.filter(x => !unnamed.includes(x)); if (!named.length) { await sleep(150); continue; }
++      const rows = []; for (const x of named) { const amt = strictNumber(x && x.cash_amount, { min: 0 });
++        if (!x || !isDay(x.ex_dividend_date) || amt.status === 'INVALID' || amt.status === 'OUT_OF_RANGE') { M.dividends.malformedRows++; continue; }
++        const cur = typeof x.currency === 'string' && x.currency.trim() ? x.currency.trim().toUpperCase() : null; if (cur && cur !== 'USD') M.dividends.nonUsd++;
++        rows.push({ ex: x.ex_dividend_date, pay: isDay(x.pay_date) ? x.pay_date : null, amt: amt.status === 'OK' ? amt.value : null, currency: cur || 'UNSTATED' }); }
++      if (rows.length) { out.div[s] = rows; M.dividends.observed++; } else M.dividends.none++;
++      await sleep(150); }
++    M.dividends.status = !held.length ? 'EMPTY' : M.dividends.failed + M.dividends.identityMismatch + M.dividends.identityMissing >= held.length && !M.dividends.observed ? 'UNAVAILABLE' : M.dividends.failed || M.dividends.identityMismatch || M.dividends.identityMissing || M.dividends.malformedRows ? 'PARTIAL' : 'OBSERVED'; }
++  // Privacy (review note, 2 Nov): dividend counts derive from the holdings (how many, how many pay), so they are kept only in the
++  // encrypted calendar file; the public status carries the outcome word. Holiday counts come from public market data.
++  out.privateStatus = { dividends: M.dividends };
++  status.massiveContract = { holidays: M.holidays, dividends: { status: M.dividends.status } };
++  status.massive = !env.MASSIVE_KEY ? 'not tried (no MASSIVE_KEY)' : 'holidays ' + M.holidays.status + ' (' + M.holidays.kept + ' kept' + (M.holidays.conflicts + M.holidays.calendarDisagreements ? ', ' + (M.holidays.conflicts + M.holidays.calendarDisagreements) + ' conflicting' : '') + '); dividends ' + M.dividends.status;
+   out.study = old.study || null;
+   calWrite(out); status.econUpcoming = out.econ.filter(e => e.t >= new Date().toISOString().slice(0, 10)).length; status.econUpcomingOfficial = out.econ.filter(e => e.src && e.t >= new Date().toISOString().slice(0, 10)).length;
+   fs.writeFileSync(STATUS, JSON.stringify(status, null, 1)); console.log('calendar: ' + JSON.stringify(status));
+diff --git a/docs/validation/market03-ingress-matrix.json b/docs/validation/market03-ingress-matrix.json
+index d21459c..6931dc5 100644
+--- a/docs/validation/market03-ingress-matrix.json
++++ b/docs/validation/market03-ingress-matrix.json
+@@ -4,10 +4,9 @@
+   "pairs": 442,
+   "providerPairs": 305,
+   "decisionPathPairs": 97,
+-  "reviewedDecisionPairs": 29,
++  "reviewedDecisionPairs": 34,
+   "fullyCoveredDecisionPairs": 3,
+   "unreviewedDecisionPairs": [
+-   "calendar.mjs|MASSIVE",
+    "calendar.mjs|TIPRANKS",
+    "calendar.mjs|ALPHA_VANTAGE",
+    "calendar.mjs|BLS",
+@@ -57,10 +56,6 @@
+    "scorecard-1023.mjs|ALPACA_DATA",
+    "shadow-outcomes.mjs|ALPACA_DATA",
+    "shares.mjs|SEC",
+-   "smart-money.mjs|MASSIVE",
+-   "smart-money.mjs|POLYGON",
+-   "smart-money.mjs|FMP",
+-   "smart-money.mjs|FINNHUB",
+    "squad26-watch.mjs|ALPACA_DATA",
+    "squad26-watch.mjs|FINNHUB",
+    "squad26-watch.mjs|SEC",
+@@ -71,7 +66,7 @@
+   "unclassified": [],
+   "frozenResearchPairs": 187,
+   "decisionIngress": 87,
+-  "reviewedIngress": 27,
++  "reviewedIngress": 32,
+   "fullyCoveredIngress": [
+    "comeback-lab.mjs|MASSIVE",
+    "discovery2.mjs|SEC",
+@@ -338,7 +333,17 @@
+    "kind": "PROVIDER",
+    "provider": "MASSIVE",
+    "role": "LIVE_DELIVERY_PATH",
+-   "contract": "NOT_REVIEWED"
++   "contract": {
++    "identity": "Y",
++    "units": "P",
++    "clock": "Y",
++    "session": "Y",
++    "adjustment": "NA",
++    "revision": "P",
++    "status": "Y",
++    "by": "claude/market03-batch2 (batch 3)",
++    "note": "holidays: validated, past dropped, NYSE/Nasdaq and exchange-calendar disagreements kept as CONFLICT, failure never ok; dividends: held-ticker identity (a row without a ticker stays unattributed, encrypted), valid ex-date, finite amount, currency labelled; impossible days are malformed rows; public status: holiday counts, dividend outcome word only"
++   }
+   },
+   {
+    "file": "calendar.mjs",
+@@ -1942,7 +1947,17 @@
+    "kind": "PROVIDER",
+    "provider": "MASSIVE",
+    "role": "LIVE_DELIVERY_PATH",
+-   "contract": "NOT_REVIEWED"
++   "contract": {
++    "identity": "P",
++    "units": "Y",
++    "clock": "Y",
++    "session": "Y",
++    "adjustment": "Y",
++    "revision": "N",
++    "status": "Y",
++    "by": "claude/market03-batch2",
++    "note": "grouped prices: exchange-calendar day, envelope checked, day/lag/basis recorded, no tips on a stale day; plain tickers only (classes excluded)"
++   }
+   },
+   {
+    "file": "smart-money.mjs",
+@@ -1950,7 +1965,17 @@
+    "kind": "PROVIDER",
+    "provider": "POLYGON",
+    "role": "LIVE_DELIVERY_PATH",
+-   "contract": "NOT_REVIEWED"
++   "contract": {
++    "identity": "P",
++    "units": "Y",
++    "clock": "Y",
++    "session": "Y",
++    "adjustment": "Y",
++    "revision": "N",
++    "status": "Y",
++    "by": "claude/market03-batch2",
++    "note": "fallback host of the same grouped request"
++   }
+   },
+   {
+    "file": "smart-money.mjs",
+@@ -1963,7 +1988,17 @@
+    "kind": "PROVIDER",
+    "provider": "FMP",
+    "role": "LIVE_DELIVERY_PATH",
+-   "contract": "NOT_REVIEWED"
++   "contract": {
++    "identity": "Y",
++    "units": "NA",
++    "clock": "Y",
++    "session": "NA",
++    "adjustment": "NA",
++    "revision": "N",
++    "status": "Y",
++    "by": "claude/market03-batch2",
++    "note": "grades-latest-news: bounded read, REFUSED/RATE_LIMITED/MALFORMED distinct, future rows excluded, classes counted"
++   }
+   },
+   {
+    "file": "smart-money.mjs",
+@@ -1971,7 +2006,17 @@
+    "kind": "PROVIDER",
+    "provider": "FINNHUB",
+    "role": "LIVE_DELIVERY_PATH",
+-   "contract": "NOT_REVIEWED"
++   "contract": {
++    "identity": "Y",
++    "units": "Y",
++    "clock": "Y",
++    "session": "NA",
++    "adjustment": "NA",
++    "revision": "P",
++    "status": "Y",
++    "by": "claude/market03-batch2",
++    "note": "insider + recommendation: outcome per call, requested-symbol identity, strict numbers, no future dates or periods, whole-number analyst counts (missing/invalid apart), duplicate rows once, one person once, consecutive sorted months; study block unchanged"
++   }
+   },
+   {
+    "file": "squad1-core.mjs",
+diff --git a/smart-money.mjs b/smart-money.mjs
+index 59da6d7..989e509 100644
+--- a/smart-money.mjs
++++ b/smart-money.mjs
+@@ -1,5 +1,8 @@
+ import {telegramFetch as sharedTelegramFetch,splitTelegramText} from './telegram-delivery.mjs';
+ const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
++import {readJsonSource,providerSymbol,strictNumber,parseSourceTime,latestCompletedSession,closeLagSessions,adjustmentBasis,nextSession,isDay as isDayShared} from './source-contract.mjs';
++// Review B2-1 (Codex, 2 Nov): an impossible day is a malformed row, never a crash, whichever shared-helper version is in use.
++const isDay = (d) => { try { return isDayShared(d); } catch { return false; } };
+ // SMART MONEY AND ANALYSTS. Once each market morning (Kuwait ~2:20 pm):
+ //   1. INSIDER BUYING (Finnhub, free): company executives buying their own stock on the open market in the last 14 days:
+ //      two or more buyers of 10,000 USD+ each (50,000 USD+ together), or 250,000 USD+ in total.
+@@ -39,6 +42,18 @@ async function fh(path) {                       // free plan: 60 calls a minute
+   }
+   return null;
+ }
++// Live ingress (MARKET-03 batch 2, 2 Nov 2026): every Finnhub answer keeps its outcome, so a failed call is never read as
++// "no insider buying" or "no analyst change". Same pacing and 429 retries as fh(); bounded body and a hard deadline.
++async function fhLive(path) {
++  let last = { status: 'NOT_FETCHED' };
++  for (let a = 0; a < 3; a++) {
++    const wait = 1050 - (Date.now() - fhLast); if (wait > 0 && !FAST) await sleep(wait); fhLast = Date.now();
++    last = await readJsonSource(fetch, FH + path + (path.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(env.FINNHUB_KEY), { timeoutMs: 15000 });
++    if (last.status === 'RATE_LIMITED') { await sleep(FAST ? 5 : 30000); continue; }
++    if (last.status === 'NETWORK_ERROR' || last.status === 'TIMEOUT') { await sleep(FAST ? 5 : 2000); continue; }
++    return last; }
++  return last;
++}
+ let mvHost = 0;
+ async function mv(path) {
+   if (!env.MASSIVE_KEY) return null;
+@@ -53,8 +68,18 @@ async function mv(path) {
+ // ---- universe: liquid companies (price 5 USD+, 10M USD+ a day), strongest-traded first, plus your holdings and candidates
+ const co = read('data/companies.json', null), CS = co && co.syms && co.syms.length > 3000 ? new Set(co.syms) : null;
+ const last = new Map();
+-for (let k = 1; k < 8 && !last.size; k++) { const d = new Date(Date.now() - k * 86400000); if ([0, 6].includes(d.getUTCDay())) continue;
+-  const j = await mv('/v2/aggs/grouped/locale/us/market/stocks/' + iso(+d) + '?adjusted=true'); for (const r of (j && j.results) || []) if (/^[A-Z]{1,5}$/.test(r.T)) last.set(r.T, r); }
++// Prices: the newest completed session on the exchange calendar (holidays skipped), at most 5 sessions back. The day used, its
++// lag and the adjustment basis are recorded; a malformed bar is dropped, never a NaN price.
++const priceStatus = { status: 'NOT_FETCHED', day: null, lagSessions: null, basis: adjustmentBasis({ provider: 'MASSIVE', adjusted: true }), triedDays: [], rejectedBars: 0 };
++{ const nowMs = Date.now(); let d = latestCompletedSession(nowMs);
++  for (let k = 0; k < 5 && d && !last.size; k++) { priceStatus.triedDays.push(d);
++    const j = await mv('/v2/aggs/grouped/locale/us/market/stocks/' + d + '?adjusted=true');
++    if (j && typeof j === 'object' && !Array.isArray(j) && j.status !== 'ERROR' && Array.isArray(j.results)) for (const r of j.results) { const c = strictNumber(r && r.c, { min: 1e-9 }), v = strictNumber(r && r.v, { min: 0 });
++      if (!r || !/^[A-Z]{1,5}$/.test(r.T) || c.status !== 'OK' || v.status !== 'OK') { priceStatus.rejectedBars++; continue; } last.set(r.T, { ...r, c: c.value, v: v.value }); }
++    if (last.size) { priceStatus.day = d; break; }
++    let p = d; for (let i = 0; i < 10; i++) { p = new Date(Date.parse(p + 'T12:00:00Z') - 864e5).toISOString().slice(0, 10); if (nextSession(p, { inclusive: true }) === p) break; } d = p; }
++  priceStatus.lagSessions = priceStatus.day ? closeLagSessions(priceStatus.day, nowMs) : null;
++  priceStatus.status = !env.MASSIVE_KEY ? 'NOT_FETCHED' : !priceStatus.day ? 'UNAVAILABLE' : priceStatus.lagSessions > 1 ? 'STALE' : 'OBSERVED'; }
+ const liquid = [...last.values()].filter(r => r.c >= 5 && r.c * r.v >= 1e7 && (!CS || CS.has(r.T))).sort((a, b) => b.c * b.v - a.c * a.v).map(r => r.T);
+ const extra = [...Object.keys(read('data/my-positions.json', {})), ...((read('data/discovery.json', {}).candidates || []).map(c => c.sym)), ...((read('data/radar-universe.json', {}).syms || []).map(x => x.sym))];
+ const MAXN = +(env.SM_MAX || 450);
+@@ -64,18 +89,48 @@ console.log('smart money universe:', UNI.length, 'stocks');
+ 
+ // ---- 1 + 2: insider buying and analyst trends
+ const today = iso(Date.now()), since14 = iso(Date.now() - 14 * 86400000), insiders = [], analysts = [], snap = [];
++const counts = () => ({ calls: 0, observed: 0, empty: 0, failed: 0, identityMismatch: 0, malformedRows: 0, duplicateRows: 0, failures: {} });
++const insS = counts(), recS = { ...counts(), notConsecutive: 0, unordered: 0, futureRows: 0, missingCountRows: 0 };
++// Review B2-3/B2-4 (Codex, 2 Nov): a recommendation row counts only if its period is a real day in a month that has started (no future
++// observation can create a current turn) and all five counts are finite whole numbers >= 0. Missing and invalid counts are
++// kept apart from zero and from each other.
++const REC_FIELDS = ['strongBuy', 'buy', 'hold', 'sell', 'strongSell'], monthStart = today.slice(0, 7) + '-01';
++const recRow = (x) => { if (!x || typeof x !== 'object' || !isDay(String(x.period || ''))) return { bad: 'MALFORMED' }; if (x.period > monthStart) return { bad: 'FUTURE' };
++  const v = {}; for (const f of REC_FIELDS) { const n = strictNumber(x[f], { min: 0 }); if (n.status === 'MISSING') return { bad: 'MISSING_COUNT' }; if (n.status !== 'OK' || !Number.isInteger(n.value)) return { bad: 'MALFORMED' }; v[f] = n.value; }
++  return { row: { ...x, ...v } }; };
++const fail = (S, st) => { S.failed++; S.failures[st] = (S.failures[st] || 0) + 1; };
++const person = (n) => String(n).trim().replace(/\s+/g, ' ').toUpperCase();          // one person, however the name is spaced or cased
++const monthBefore = (p) => { const [y, m] = p.split('-').map(Number), t = new Date(Date.UTC(y, m - 2, 1)); return t.toISOString().slice(0, 7); };
+ for (const sym of UNI) {
+-  const ins = await fh('/stock/insider-transactions?symbol=' + sym + '&from=' + since14);
+-  const buys = ((ins && ins.data) || []).filter(t => t.transactionCode === 'P' && t.change > 0 && t.transactionPrice > 0 && (t.transactionDate || t.filingDate) >= since14);
++  insS.calls++; const insR = await fhLive('/stock/insider-transactions?symbol=' + sym + '&from=' + since14), ins = insR.status === 'OK' ? insR.body : null;
++  let buys = [];
++  if (insR.status !== 'OK') fail(insS, insR.status);
++  else if (!ins || typeof ins !== 'object' || Array.isArray(ins) || !Array.isArray(ins.data)) fail(insS, 'MALFORMED');
++  else if (ins.symbol !== undefined && providerSymbol(ins.symbol, { provider: 'FINNHUB', requested: sym }).status !== 'OK') insS.identityMismatch++;
++  else { if (ins.data.length) insS.observed++; else insS.empty++; const seen = new Set();
++    for (const t of ins.data) { if (!t || typeof t !== 'object') { insS.malformedRows++; continue; }
++      if (t.transactionCode !== 'P') continue;
++      const ch = strictNumber(t.change), pr = strictNumber(t.transactionPrice), d = String(t.transactionDate || t.filingDate || '');
++      if (ch.status !== 'OK' || pr.status !== 'OK' || typeof t.name !== 'string' || !t.name.trim() || !isDay(d) || d > today) { insS.malformedRows++; continue; }
++      if (!(ch.value > 0 && pr.value > 0) || d < since14) continue;
++      const key = [person(t.name), d, ch.value, pr.value].join('|'); if (seen.has(key)) { insS.duplicateRows++; continue; } seen.add(key);   // a repeated (amended) row counts once
++      buys.push({ ...t, name: t.name.trim(), change: ch.value, transactionPrice: pr.value, who: person(t.name), d }); } }
+   // count a buyer only if they put in 10,000 USD or more (small employee-plan purchases are not a signal)
+-  const per = {}; for (const b of buys) per[b.name] = (per[b.name] || 0) + b.change * b.transactionPrice;
+-  const real = buys.filter(b => per[b.name] >= 10000);
+-  if (real.length) { const who = new Set(real.map(b => b.name)), usd = real.reduce((a, b) => a + b.change * b.transactionPrice, 0);
+-    if ((who.size >= 2 && usd >= 50000) || usd >= 250000) insiders.push({ sym, n: who.size, usd, names: [...who].slice(0, 3), last: real.map(b => b.transactionDate || b.filingDate).sort().pop() }); }
++  const per = {}; for (const b of buys) per[b.who] = (per[b.who] || 0) + b.change * b.transactionPrice;
++  const real = buys.filter(b => per[b.who] >= 10000);
++  if (real.length) { const who = new Set(real.map(b => b.who)), usd = real.reduce((a, b) => a + b.change * b.transactionPrice, 0);
++    if ((who.size >= 2 && usd >= 50000) || usd >= 250000) insiders.push({ sym, n: who.size, usd, names: [...new Set(real.map(b => b.name))].slice(0, 3), last: real.map(b => b.d).sort().pop() }); }
+   // analysts: real rating changes only (not new analysts starting coverage), stocks 5 USD+
+-  const rec = await fh('/stock/recommendation?symbol=' + sym);
++  recS.calls++; const recR = await fhLive('/stock/recommendation?symbol=' + sym); let rec = null;
++  if (recR.status !== 'OK') fail(recS, recR.status);
++  else if (!Array.isArray(recR.body)) fail(recS, 'MALFORMED');
++  else { const rows = []; for (const x of recR.body) { const v = recRow(x); if (v.row) rows.push(v.row); else if (v.bad === 'FUTURE') recS.futureRows++; else if (v.bad === 'MISSING_COUNT') recS.missingCountRows++; else recS.malformedRows++; }
++    if (rows.some(x => x.symbol !== undefined && providerSymbol(x.symbol, { provider: 'FINNHUB', requested: sym }).status !== 'OK')) recS.identityMismatch++;
++    else { const sorted = [...rows].sort((p, q) => q.period < p.period ? -1 : q.period > p.period ? 1 : 0); if (sorted.some((x, i) => x !== rows[i])) recS.unordered++;
++      rec = sorted; if (rec.length) recS.observed++; else recS.empty++; } }
+   if (Array.isArray(rec) && rec.length) { const a = rec[0]; snap.push({ s: sym, p: a.period, sb: a.strongBuy || 0, b: a.buy || 0, h: a.hold || 0, se: a.sell || 0, ss: a.strongSell || 0 }); }
+-  if (Array.isArray(rec) && rec.length >= 2) { const [a, b] = rec, pos = (x) => (x.strongBuy || 0) + (x.buy || 0), tot = (x) => pos(x) + (x.hold || 0) + (x.sell || 0) + (x.strongSell || 0);
++  if (Array.isArray(rec) && rec.length >= 2 && monthBefore(rec[0].period) !== rec[1].period.slice(0, 7)) recS.notConsecutive++;
++  else if (Array.isArray(rec) && rec.length >= 2) { const [a, b] = rec, pos = (x) => (x.strongBuy || 0) + (x.buy || 0), tot = (x) => pos(x) + (x.hold || 0) + (x.sell || 0) + (x.strongSell || 0);
+     if ((px(sym) || 0) >= 5 && tot(a) >= 5 && tot(b) >= 5 && tot(a) - tot(b) <= 2 && pos(a) - pos(b) >= 2 && pos(a) / tot(a) >= 0.6) analysts.push({ sym, now: pos(a), was: pos(b), of: tot(a), period: a.period }); }
+ }
+ insiders.sort((p, q) => q.usd - p.usd); analysts.sort((p, q) => (q.now - q.was) - (p.now - p.was));
+@@ -87,20 +142,29 @@ if (snap.length) { const F = 'data/analyst-archive-' + today.slice(0, 7) + '.jso
+ 
+ // ---- 3: FMP upgrades (only if the FMP plan allows this endpoint; otherwise skipped quietly)
+ let upgrades = [], fmpNote = '';
++const fmpS = { status: 'NOT_FETCHED', received: 0, malformedRows: 0, futureRows: 0, classRows: 0 };
+ if (env.FMP_KEY) {
+-  try { const r = await fetch(FMP + '/stable/grades-latest-news?page=0&limit=100&apikey=' + encodeURIComponent(env.FMP_KEY));
+-    if (r.ok) { const j = await r.json(); const arr = Array.isArray(j) ? j : [];
+-      upgrades = arr.filter(x => x && /^[A-Z]{1,5}$/.test(x.symbol || '') && /upgrade/i.test(x.action || x.newsTitle || '') && String(x.publishedDate || '').slice(0, 10) >= iso(Date.now() - 3 * 86400000))
+-        .map(x => ({ sym: x.symbol, firm: x.gradingCompany || x.newsPublisher || '', to: x.newGrade || '', from: x.previousGrade || '' }));
+-      upgrades = upgrades.filter((u, i) => upgrades.findIndex(v => v.sym === u.sym) === i && px(u.sym)); }
+-    else fmpNote = 'FMP upgrades not available on this plan (HTTP ' + r.status + ').'; } catch (e) { fmpNote = 'FMP upgrades unreachable.'; }
++  const res = await readJsonSource(fetch, FMP + '/stable/grades-latest-news?page=0&limit=100&apikey=' + encodeURIComponent(env.FMP_KEY), { timeoutMs: 15000 });
++  if (res.status !== 'OK') { fmpS.status = res.status; fmpNote = res.status === 'REFUSED' ? 'FMP upgrades not available on this plan (HTTP ' + res.httpStatus + ').' : 'FMP upgrades unreachable (' + res.status + ').'; }
++  else if (!Array.isArray(res.body)) { fmpS.status = 'MALFORMED'; fmpNote = 'FMP upgrades answer was malformed.'; }
++  else { const arr = res.body; fmpS.received = arr.length; const from3 = iso(Date.now() - 3 * 86400000), sel = [];
++    for (const x of arr) { if (!x || typeof x !== 'object') { fmpS.malformedRows++; continue; }
++      const id = providerSymbol(x.symbol, { provider: 'FMP' }), d = String(x.publishedDate || '').slice(0, 10);
++      if (id.status !== 'OK' || !isDay(d)) { fmpS.malformedRows++; continue; } if (!/^[A-Z]{1,5}$/.test(id.symbol)) { fmpS.classRows++; continue; }
++      if (d > today) { fmpS.futureRows++; continue; }
++      if (/upgrade/i.test(x.action || x.newsTitle || '') && d >= from3) sel.push({ sym: id.symbol, firm: x.gradingCompany || x.newsPublisher || '', to: x.newGrade || '', from: x.previousGrade || '', d }); }
++    upgrades = sel.filter((u, i) => sel.findIndex(v => v.sym === u.sym) === i && px(u.sym));
++    fmpS.status = fmpS.malformedRows ? 'PARTIAL' : arr.length ? 'OBSERVED' : 'EMPTY'; }
+ }
++const live = (S) => S.calls === 0 ? 'NOT_FETCHED' : S.failed + S.identityMismatch === S.calls ? 'UNAVAILABLE' : S.failed || S.identityMismatch || S.malformedRows || S.futureRows || S.missingCountRows ? 'PARTIAL' : S.observed ? 'OBSERVED' : 'EMPTY';
++const sourceStatus = { GROUPED_PRICES: priceStatus, FINNHUB_INSIDER: { status: live(insS), ...insS }, FINNHUB_RECOMMENDATION: { status: live(recS), ...recS }, FMP_UPGRADES: fmpS };
+ 
+ // ---- hand the names to the nightly scan, and log each as a tip of its source (scored against the S&P 500)
+ const picks = [...new Set([...insiders.slice(0, 15).map(x => x.sym), ...analysts.slice(0, 10).map(x => x.sym), ...upgrades.slice(0, 10).map(x => x.sym)])];
+-fs.writeFileSync('data/smart-money.json', JSON.stringify({ generatedAt: new Date().toISOString(), insiders, analysts, upgrades, picks }, null, 1));
++fs.writeFileSync('data/smart-money.json', JSON.stringify({ generatedAt: new Date().toISOString(), insiders, analysts, upgrades, picks, sourceStatus, priceDay: priceStatus.day,
++  contract: 'smart-money ingress v2 (2 Nov 2026): failed calls are counted, not read as no activity; the price day, its lag and basis are recorded; tips are not logged on a stale or missing price day' }, null, 1));
+ { const TIPS = 'data/tips.jsonl', old = fs.existsSync(TIPS) ? fs.readFileSync(TIPS, 'utf8') : '', lines = [];
+-  const add = (sym, src) => { const p0 = px(sym); if (!p0 || old.includes('"sym":"' + sym + '","src":"' + src + '","d":"' + today)) return; lines.push(JSON.stringify({ sym, src, d: today, p0, below: null, ts: Date.now() })); };
++  const add = (sym, src) => { const p0 = priceStatus.status === 'OBSERVED' ? px(sym) : null; if (!p0 || old.includes('"sym":"' + sym + '","src":"' + src + '","d":"' + today)) return; lines.push(JSON.stringify({ sym, src, d: today, p0, below: null, ts: Date.now() })); };
+   insiders.slice(0, 15).forEach(x => add(x.sym, 'Insider buying')); analysts.slice(0, 10).forEach(x => add(x.sym, 'Analysts turning positive')); upgrades.slice(0, 10).forEach(x => add(x.sym, 'Analyst upgrades'));
+   if (lines.length) fs.appendFileSync(TIPS, lines.join('\n') + '\n'); }
+ 
+diff --git a/tests/market03-batch2-codex-review.test.mjs b/tests/market03-batch2-codex-review.test.mjs
+new file mode 100644
+index 0000000..a931ad4
+--- /dev/null
++++ b/tests/market03-batch2-codex-review.test.mjs
+@@ -0,0 +1,13 @@
++// Desired behavior, synthetic inputs and actual scripts. No real key/provider/message.
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import http from 'node:http';import crypto from 'node:crypto';import zlib from 'node:zlib';import {spawn} from 'node:child_process';
++const root=path.resolve(process.env.REVIEW_TREE||process.cwd()),key='synthetic-review-key';
++async function run(t,script,route){const dir=fs.mkdtempSync(path.join(os.tmpdir(),'m03-review-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));fs.writeFileSync(path.join(dir,'data/settings.json'),'{"quiet":true}');fs.writeFileSync(path.join(dir,'data/my-positions.json'),'{"AAA":{"entry":10}}');
++ const server=http.createServer((q,s)=>{const [status,body]=route(new URL(q.url,'http://synthetic'));s.statusCode=status;s.end(JSON.stringify(body));});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.closeAllConnections();server.close();});const base='http://127.0.0.1:'+server.address().port;
++ const c=spawn(process.execPath,[path.join(root,script)],{cwd:dir,env:{PATH:process.env.PATH,PRIVATE_KEY:key,MASSIVE_KEY:'synthetic',FINNHUB_KEY:'synthetic',FMP_KEY:'synthetic',PX_BASE:base,MASSIVE_BASE:base,FH_BASE:base,FMP_BASE:base,BLS_BASE:base,FED_BASE:base}});let output='';c.stdout.on('data',b=>output+=b);c.stderr.on('data',b=>output+=b);const timer=setTimeout(()=>c.kill('SIGKILL'),6000),code=await new Promise(r=>c.on('close',r));clearTimeout(timer);assert.equal(code,0,'actual script failed; synthetic output category '+(/RangeError/.test(output)?'INVALID_DATE_EXCEPTION':'OTHER'));
++ const json=f=>JSON.parse(fs.readFileSync(path.join(dir,'data',f),'utf8'));const calendar=()=>{const b=Buffer.from(fs.readFileSync(path.join(dir,'data/calendar.enc'),'utf8'),'base64'),d=crypto.createDecipheriv('aes-256-gcm',crypto.createHash('sha256').update(key).digest(),b.subarray(0,12));d.setAuthTag(b.subarray(12,28));return JSON.parse(zlib.gunzipSync(Buffer.concat([d.update(b.subarray(28)),d.final()])));};return{json,calendar};}
++test('calendar rejects impossible-month rows without aborting unrelated valid evidence',async t=>{const f=await run(t,'calendar.mjs',u=>u.pathname==='/v1/marketstatus/upcoming'?[200,[{date:'2026-13-01',exchange:'NYSE',status:'closed'},{date:'2026-11-26',exchange:'NYSE',status:'closed'}]]:u.pathname==='/v3/reference/dividends'?[200,{results:[]}]:[404,{}]);assert.equal(f.calendar().holidays.length,1);});
++test('dividend without returned ticker is not silently attached to a held security as observed',async t=>{const f=await run(t,'calendar.mjs',u=>u.pathname==='/v1/marketstatus/upcoming'?[200,[]]:u.pathname==='/v3/reference/dividends'?[200,{results:[{ex_dividend_date:'2026-11-20',pay_date:'2026-12-01',cash_amount:1,currency:'USD'}]}]:[404,{}]);assert.equal(f.calendar().div.AAA,undefined);assert.notEqual(f.json('calendar-status.json').massiveContract.dividends.status,'OBSERVED');});
++const today=new Date(),month=n=>new Date(Date.UTC(today.getUTCFullYear(),today.getUTCMonth()+n,1)).toISOString().slice(0,10);
++function smartRoute(rows){return u=>u.pathname.startsWith('/v2/aggs/grouped/')?[200,{status:'OK',results:[{T:'AAA',c:20,o:19,h:21,l:19,v:1000000}]}]:u.pathname==='/stock/recommendation'?[200,rows]:u.pathname==='/stock/insider-transactions'?[200,{symbol:'AAA',data:[]}]:[200,[]];}
++test('future monthly recommendation periods cannot create a current analyst turn',async t=>{const rows=[{symbol:'AAA',period:month(1),strongBuy:4,buy:3,hold:3,sell:0,strongSell:0},{symbol:'AAA',period:month(0),strongBuy:2,buy:2,hold:6,sell:0,strongSell:0}],f=await run(t,'smart-money.mjs',smartRoute(rows));assert.deepEqual(f.json('smart-money.json').analysts,[]);});
++test('nonnumeric recommendation counts are malformed rather than an observed record',async t=>{const rows=[{symbol:'AAA',period:month(0),strongBuy:'not-a-number',buy:3,hold:3,sell:0,strongSell:0}],f=await run(t,'smart-money.mjs',smartRoute(rows)),status=f.json('smart-money.json').sourceStatus;assert.ok(JSON.stringify(status).includes('malformedRows'));const rec=Object.entries(status).find(([k])=>/RECOMMEND|ANALYST/i.test(k))?.[1];assert.ok(rec&&rec.malformedRows>0);});
+diff --git a/tests/market03-batch2-review.test.mjs b/tests/market03-batch2-review.test.mjs
+new file mode 100644
+index 0000000..f11f680
+--- /dev/null
++++ b/tests/market03-batch2-review.test.mjs
+@@ -0,0 +1,69 @@
++// Regressions for Codex's batch-2 review B2-1..B2-4 (Claude, 2 Nov 2026): the ACTUAL calendar.mjs and smart-money.mjs against loopback
++// providers with synthetic data and a synthetic encryption key. No network, credentials or messages.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import zlib from 'node:zlib';
++import crypto from 'node:crypto';
++import {spawn} from 'node:child_process';
++const root=path.resolve(import.meta.dirname,'..'),KEY='synthetic-review-key';
++const decrypt=f=>{const k=crypto.createHash('sha256').update(KEY).digest(),b=Buffer.from(fs.readFileSync(f,'utf8'),'base64'),d=crypto.createDecipheriv('aes-256-gcm',k,b.subarray(0,12));d.setAuthTag(b.subarray(12,28));return JSON.parse(zlib.gunzipSync(Buffer.concat([d.update(b.subarray(28)),d.final()])).toString());};
++async function run(t,script,route,positions={AAA:{entry:10}}){
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'b2rev-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ fs.writeFileSync(path.join(dir,'data/settings.json'),'{"quiet":true}');fs.writeFileSync(path.join(dir,'data/my-positions.json'),JSON.stringify(positions));
++ const server=http.createServer((q,s)=>{const [st,body]=route(new URL(q.url,'http://x'));s.statusCode=st;s.end(JSON.stringify(body));});
++ await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.closeAllConnections();server.close();});const base='http://127.0.0.1:'+server.address().port;
++ const c=spawn(process.execPath,[path.join(root,script)],{cwd:dir,env:{PATH:process.env.PATH,PRIVATE_KEY:KEY,MASSIVE_KEY:'synthetic',FINNHUB_KEY:'synthetic',FMP_KEY:'synthetic',PX_BASE:base,MASSIVE_BASE:base,FH_BASE:base,FMP_BASE:base,BLS_BASE:base,FED_BASE:base,SM_MAX:'10'}});
++ let log='';c.stdout.on('data',x=>log+=x);c.stderr.on('data',x=>log+=x);const code=await new Promise(r=>c.on('close',r));assert.equal(code,0,log.slice(-1200));
++ return {json:f=>JSON.parse(fs.readFileSync(path.join(dir,'data',f),'utf8')),cal:()=>decrypt(path.join(dir,'data/calendar.enc')),text:f=>fs.readFileSync(path.join(dir,'data',f),'utf8')};
++}
++const today=new Date().toISOString().slice(0,10),month=n=>new Date(Date.UTC(+today.slice(0,4),+today.slice(5,7)-1+n,1)).toISOString().slice(0,10);
++const cal=({holidays=[],div=()=>({results:[]})})=>u=>u.pathname==='/v1/marketstatus/upcoming'?[200,holidays]:u.pathname==='/v3/reference/dividends'?[200,div(u.searchParams.get('ticker'))]:[404,{}];
++
++test('B2-1: impossible holiday and ex-dividend days are malformed rows; valid neighbours are kept; the process never aborts', async t=>{
++ const f=await run(t,'calendar.mjs',cal({holidays:[{date:'2026-13-01',exchange:'NYSE',status:'closed'},{date:'2026-00-10',exchange:'NASDAQ',status:'closed'},{date:'2026-02-30',exchange:'NYSE',status:'closed'},{date:'2026-11-26',exchange:'NYSE',status:'closed',name:'Thanksgiving'}],
++  div:()=>({results:[{ticker:'AAA',ex_dividend_date:'2026-13-05',cash_amount:1},{ticker:'AAA',ex_dividend_date:'2026-11-20',cash_amount:0.5,currency:'USD'}]})}));
++ const c=f.cal();assert.deepEqual(c.holidays.map(h=>h.d),['2026-11-26']);assert.equal(f.json('calendar-status.json').massiveContract.holidays.malformedRows,3);
++ assert.deepEqual(c.div.AAA.map(x=>x.ex),['2026-11-20']);assert.equal(c.privateStatus.dividends.malformedRows,1);
++});
++
++test('B2-1: impossible insider-transaction and upgrade dates are malformed rows in the actual smart-money producer', async t=>{
++ const d=new Date(Date.now()-3*864e5).toISOString().slice(0,10),buy=(name,date)=>({name,transactionCode:'P',change:1000,transactionPrice:30,transactionDate:date,filingDate:date});
++ const f=await run(t,'smart-money.mjs',u=>u.pathname.startsWith('/v2/aggs/grouped/')?[200,{status:'OK',results:[{T:'AAA',c:20,v:1e6}]}]
++  :u.pathname==='/stock/insider-transactions'?[200,{symbol:'AAA',data:[buy('A One','2026-13-01'),buy('B Two',d),buy('C Three',d)]}]
++  :u.pathname==='/stock/recommendation'?[200,[]]:u.pathname==='/stable/grades-latest-news'?[200,[{symbol:'AAA',action:'upgrade',publishedDate:'2026-02-30T10:00:00Z'},{symbol:'AAA',action:'upgrade',publishedDate:today+'T10:00:00Z',gradingCompany:'X'}]]:[200,[]]);
++ const s=f.json('smart-money.json');assert.equal(s.sourceStatus.FINNHUB_INSIDER.malformedRows,1);assert.deepEqual(s.insiders.map(x=>[x.sym,x.n]),[['AAA',2]]);
++ assert.equal(s.sourceStatus.FMP_UPGRADES.malformedRows,1);assert.deepEqual(s.upgrades.map(x=>x.sym),['AAA']);
++});
++
++test('B2-2: a dividend row without a returned ticker is never attached to the holding; named rows still are; nothing is published', async t=>{
++ let f=await run(t,'calendar.mjs',cal({div:()=>({results:[{ex_dividend_date:'2026-11-20',cash_amount:1,currency:'USD'},{ticker:null,ex_dividend_date:'2026-11-21',cash_amount:2},{ticker:'',ex_dividend_date:'2026-11-22',cash_amount:3}]})}));
++ let c=f.cal();assert.equal(c.div.AAA,undefined);assert.equal(c.divUnattributed.length,1);assert.equal(c.divUnattributed[0].rows.length,3);
++ assert.equal(c.privateStatus.dividends.identityMissing,1);assert.equal(f.json('calendar-status.json').massiveContract.dividends.status,'UNAVAILABLE');
++ f=await run(t,'calendar.mjs',cal({div:s=>s==='AAA'?{results:[{ticker:'AAA',ex_dividend_date:'2026-11-20',cash_amount:0.5,currency:'USD'},{ex_dividend_date:'2026-11-27',cash_amount:9}]}:{results:[{ticker:'BBB',ex_dividend_date:'2026-11-23',cash_amount:0.2,currency:'USD'}]}}),{AAA:{entry:10},BBB:{entry:20}});
++ c=f.cal();assert.deepEqual(c.div.AAA.map(x=>x.ex),['2026-11-20']);assert.deepEqual(c.div.BBB.map(x=>x.ex),['2026-11-23']);assert.equal(c.privateStatus.dividends.identityMissing,1);
++ assert.equal(f.json('calendar-status.json').massiveContract.dividends.status,'PARTIAL');
++ const pub=f.text('calendar-status.json');for(const s of ['AAA','BBB'])assert.equal(pub.includes(s),false);
++ assert.deepEqual(Object.keys(f.json('calendar-status.json').massiveContract.dividends),['status'],'holding-derived counts stay encrypted');assert.doesNotMatch(f.json('calendar-status.json').massive,/held/);
++});
++
++const smart=(rec)=>u=>u.pathname.startsWith('/v2/aggs/grouped/')?[200,{status:'OK',results:[{T:'AAA',c:20,v:1e6}]}]:u.pathname==='/stock/recommendation'?[200,rec]:u.pathname==='/stock/insider-transactions'?[200,{symbol:'AAA',data:[]}]:[200,[]];
++const R=(period,sb,b,h,extra={})=>({symbol:'AAA',period,strongBuy:sb,buy:b,hold:h,sell:0,strongSell:0,...extra});
++
++test('B2-3: future periods are excluded and counted; the turn is judged on the latest two started, consecutive months', async t=>{
++ let s=(await run(t,'smart-money.mjs',smart([R(month(1),9,9,0),R(month(0),2,2,6)]))).json('smart-money.json');
++ assert.deepEqual(s.analysts,[]);assert.equal(s.sourceStatus.FINNHUB_RECOMMENDATION.futureRows,1);assert.equal(s.sourceStatus.FINNHUB_RECOMMENDATION.status,'PARTIAL');
++ s=(await run(t,'smart-money.mjs',smart([R(month(3),9,9,0),R(month(0),4,3,3),R(month(-1),2,2,6)]))).json('smart-money.json');
++ assert.deepEqual(s.analysts.map(x=>[x.sym,x.now,x.was,x.period]),[['AAA',7,4,month(0)]]);assert.equal(s.sourceStatus.FINNHUB_RECOMMENDATION.futureRows,1);
++});
++
++test('B2-4: every count must be a finite whole number >= 0; missing and invalid are counted apart and never become zero', async t=>{
++ for(const [bad,field] of [['not-a-number','malformedRows'],[-1,'malformedRows'],[2.5,'malformedRows'],[true,'malformedRows'],[null,'missingCountRows'],[undefined,'missingCountRows']]){
++  const s=(await run(t,'smart-money.mjs',smart([R(month(0),bad,3,3),R(month(-1),0,1,6)]))).json('smart-money.json'),S=s.sourceStatus.FINNHUB_RECOMMENDATION;
++  assert.equal(S[field],1,JSON.stringify(bad));assert.equal(S.status,'PARTIAL');assert.deepEqual(s.analysts,[],'a row with a bad count is not a turn: '+JSON.stringify(bad));}
++ const s=(await run(t,'smart-money.mjs',smart([R(month(0),'4',3,3),R(month(-1),2,2,6)]))).json('smart-money.json');
++ assert.deepEqual(s.analysts.map(x=>x.now),[7],'a numeric string count is still a valid count');
++});
+diff --git a/tests/market03-batch2-smart-money.test.mjs b/tests/market03-batch2-smart-money.test.mjs
+new file mode 100644
+index 0000000..d95dff1
+--- /dev/null
++++ b/tests/market03-batch2-smart-money.test.mjs
+@@ -0,0 +1,71 @@
++// MARKET-03 batch 2 (Claude, 2 Nov 2026): the ACTUAL smart-money.mjs against local fake Finnhub / Massive / FMP answers.
++// Thresholds are unchanged; these cases check what counts as evidence. No network, no credentials, no Telegram.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import {spawn} from 'node:child_process';
++import {latestCompletedSession,nextSession} from '../source-contract.mjs';
++const root=path.resolve(import.meta.dirname,'..');
++const day=ms=>new Date(ms).toISOString().slice(0,10),today=day(Date.now()),ago=n=>day(Date.now()-n*864e5);
++const prevSession=d=>{let x=d;for(let i=0;i<10;i++){x=day(Date.parse(x+'T12:00:00Z')-864e5);if(nextSession(x,{inclusive:true})===x)return x;}return null;};
++const L=latestCompletedSession(Date.now()),P1=prevSession(L),P2=prevSession(P1);
++const SYMS=['AAA','BBB','DDD','EEE','FFF','GGG'],bar=T=>({T,c:20,v:1e6,o:19,h:21,l:19});
++const buy=(name,usd,d=ago(3))=>({name,transactionCode:'P',change:1000,transactionPrice:usd/1000,transactionDate:d,filingDate:d});
++const rec=(period,sb,b,h)=>({symbol:undefined,period,strongBuy:sb,buy:b,hold:h,sell:0,strongSell:0});
++const m=(k)=>{const t=new Date(Date.UTC(+today.slice(0,4),+today.slice(5,7)-1-k,1));return t.toISOString().slice(0,10);};
++function routes({grouped}){return u=>{
++ if(u.pathname.startsWith('/v2/aggs/grouped/')){const d=u.pathname.split('/').pop();return grouped(d);}
++ if(u.pathname==='/stock/insider-transactions'){const s=u.searchParams.get('symbol');
++  if(s==='AAA')return [200,{symbol:'AAA',data:[buy('smith  john',26000),buy('SMITH JOHN',26500)]}];                  // one person, two spellings, two real buys
++  if(s==='BBB')return [200,{symbol:'BBB',data:[buy('Doe Jane',30000),buy('Doe Jane',30000),buy('Roe Rich',15000)]}];  // amended duplicate row
++  if(s==='DDD')return [500,{error:'upstream'}];
++  if(s==='EEE')return [200,{symbol:'XYZ',data:[buy('A One',60000),buy('B Two',60000)]}];                            // answers for another ticker
++  if(s==='FFF')return [200,{symbol:'FFF',data:[buy('C Three',30000),buy('D Four',30000),buy('E Five',90000,ago(-3))]}]; // one future-dated row
++  return [200,{symbol:s,data:[]}];}
++ if(u.pathname==='/stock/recommendation'){const s=u.searchParams.get('symbol');
++  if(s==='AAA')return [200,[rec(m(1),2,2,6),rec(m(0),4,3,3)]];      // oldest first: must be sorted before comparing
++  if(s==='GGG')return [200,[rec(m(0),4,3,3),rec(m(2),2,2,6)]];      // a month is missing: not a month-on-month change
++  return [200,[]];}
++ if(u.pathname==='/stable/grades-latest-news')return [402,{error:'plan'}];
++ return [200,{}];};}
++async function fixture(t,opts){
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'sm-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ const route=routes(opts),hits=[];const server=http.createServer((req,res)=>{const u=new URL(req.url,'http://x');hits.push(u.pathname);const [st,body]=route(u);res.statusCode=st;res.end(JSON.stringify(body));});
++ await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;
++ await new Promise((resolve,reject)=>{const c=spawn(process.execPath,[path.join(root,'smart-money.mjs')],{cwd:dir,env:{PATH:process.env.PATH,FINNHUB_KEY:'fixture',FH_BASE:base,MASSIVE_KEY:'fixture',MASSIVE_BASE:base,FMP_KEY:'fixture',FMP_BASE:base,SM_MAX:'20'}});
++  let out='';c.stdout.on('data',x=>out+=x);c.stderr.on('data',x=>out+=x);c.on('exit',code=>code===0?resolve(out):reject(Error('exit '+code+': '+out.slice(-1500))));});
++ const doc=JSON.parse(fs.readFileSync(path.join(dir,'data/smart-money.json'),'utf8')),tips=fs.existsSync(path.join(dir,'data/tips.jsonl'))?fs.readFileSync(path.join(dir,'data/tips.jsonl'),'utf8').split('\n').filter(Boolean).map(JSON.parse):[];
++ return {doc,tips,hits};
++}
++
++test('insider clusters: duplicates and spelling variants cannot inflate a cluster; failures and foreign answers are counted, not read as quiet', async t=>{
++ const {doc,tips}=await fixture(t,{grouped:d=>d===L?[200,{status:'OK',results:[...SYMS.map(bar),{T:'BAD',c:'x',v:1}]}]:[200,{status:'OK',results:[]}]});
++ assert.deepEqual(doc.insiders.map(x=>x.sym),['FFF'],'only the genuine two-buyer cluster qualifies');
++ const S=doc.sourceStatus.FINNHUB_INSIDER;assert.equal(S.status,'PARTIAL');assert.equal(S.failed,1);assert.equal(S.identityMismatch,1);
++ assert.equal(S.duplicateRows,1);assert.equal(S.malformedRows,1,'the future-dated row');
++ assert.equal(doc.insiders[0].n,2);assert.equal(doc.insiders[0].usd,60000);
++ assert.equal(doc.sourceStatus.GROUPED_PRICES.status,'OBSERVED');assert.equal(doc.sourceStatus.GROUPED_PRICES.day,L);assert.equal(doc.sourceStatus.GROUPED_PRICES.rejectedBars,1);
++ assert.equal(doc.sourceStatus.GROUPED_PRICES.basis,'SPLIT_ADJUSTED_AS_OF_FETCH');
++ assert.ok(tips.some(x=>x.sym==='FFF'&&x.src==='Insider buying'&&x.p0===20),'tip starts at the current close');
++});
++
++test('analyst turns use sorted, consecutive months only; an FMP refusal is a status, not "no upgrades"', async t=>{
++ const {doc}=await fixture(t,{grouped:d=>d===L?[200,{status:'OK',results:SYMS.map(bar)}]:[200,{status:'OK',results:[]}]});
++ assert.deepEqual(doc.analysts.map(x=>x.sym),['AAA']);assert.equal(doc.analysts[0].now,7);assert.equal(doc.analysts[0].was,4);
++ const R=doc.sourceStatus.FINNHUB_RECOMMENDATION;assert.equal(R.unordered,1);assert.equal(R.notConsecutive,1);
++ assert.equal(doc.sourceStatus.FMP_UPGRADES.status,'REFUSED');assert.deepEqual(doc.upgrades,[]);
++});
++
++test('prices: an error day falls back on the exchange calendar; a stale or missing price day logs no tips', async t=>{
++ let r=await fixture(t,{grouped:d=>d===L?[200,{status:'ERROR',error:'x'}]:d===P1?[200,{status:'OK',results:SYMS.map(bar)}]:[200,{status:'OK',results:[]}]});
++ assert.equal(r.doc.sourceStatus.GROUPED_PRICES.day,P1);assert.deepEqual(r.doc.sourceStatus.GROUPED_PRICES.triedDays.slice(0,2),[L,P1]);
++ assert.equal(r.doc.sourceStatus.GROUPED_PRICES.status,'OBSERVED');assert.ok(r.tips.length>0);
++ r=await fixture(t,{grouped:d=>d===P2?[200,{status:'OK',results:SYMS.map(bar)}]:[200,{status:'OK',results:[]}]});
++ assert.equal(r.doc.sourceStatus.GROUPED_PRICES.status,'STALE');assert.equal(r.tips.length,0,'no tip is scored from a two-session-old price');
++ assert.ok(r.doc.picks.includes('FFF'),'the evidence itself is still handed to the scan, which prices it independently');
++ r=await fixture(t,{grouped:()=>[503,{}]});
++ assert.equal(r.doc.sourceStatus.GROUPED_PRICES.status,'UNAVAILABLE');assert.equal(r.tips.length,0);
++});
+diff --git a/tests/market03-batch3-calendar.test.mjs b/tests/market03-batch3-calendar.test.mjs
+new file mode 100644
+index 0000000..eb3843d
+--- /dev/null
++++ b/tests/market03-batch3-calendar.test.mjs
+@@ -0,0 +1,63 @@
++// MARKET-03 batch 3 (Claude, 2 Nov 2026): the ACTUAL calendar.mjs (MODE=fetch) Massive block against local fake answers.
++// Synthetic positions and a synthetic encryption key; BLS/Fed answer 404 locally. No network, credentials or Telegram.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import zlib from 'node:zlib';
++import crypto from 'node:crypto';
++import {spawn} from 'node:child_process';
++const root=path.resolve(import.meta.dirname,'..'),KEY='synthetic-test-key';
++const decrypt=f=>{const k=crypto.createHash('sha256').update(KEY).digest(),b=Buffer.from(fs.readFileSync(f,'utf8'),'base64'),d=crypto.createDecipheriv('aes-256-gcm',k,b.subarray(0,12));d.setAuthTag(b.subarray(12,28));return JSON.parse(zlib.gunzipSync(Buffer.concat([d.update(b.subarray(28)),d.final()])).toString());};
++async function run(t,route,positions={AAA:{entry:10},BBB:{entry:20},CCC:{entry:30},DDD:{entry:40}}){
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'cal-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ fs.writeFileSync(path.join(dir,'data/my-positions.json'),JSON.stringify(positions));
++ const server=http.createServer((req,res)=>{const u=new URL(req.url,'http://x');const [st,body]=route(u);res.statusCode=st;res.end(typeof body==='string'?body:JSON.stringify(body));});
++ await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;
++ const go=()=>new Promise((resolve,reject)=>{const c=spawn(process.execPath,[path.join(root,'calendar.mjs')],{cwd:dir,env:{PATH:process.env.PATH,PRIVATE_KEY:KEY,MASSIVE_KEY:'fixture',PX_BASE:base,BLS_BASE:base,FED_BASE:base}});
++  let out='';c.stdout.on('data',x=>out+=x);c.stderr.on('data',x=>out+=x);c.on('exit',code=>code===0?resolve(out):reject(Error('exit '+code+': '+out.slice(-1500))));});
++ await go();return {cal:()=>decrypt(path.join(dir,'data/calendar.enc')),status:()=>JSON.parse(fs.readFileSync(path.join(dir,'data/calendar-status.json'),'utf8')),go,dir};
++}
++const H=(date,exchange,status,name='Holiday')=>({date,exchange,status,name});
++const upcoming=[H('2026-11-26','NYSE','closed','Thanksgiving'),H('2026-11-26','NASDAQ','closed','Thanksgiving'),H('2026-11-27','NYSE','early-close','Day after Thanksgiving'),H('2026-11-27','NASDAQ','closed','Day after Thanksgiving'),
++ H('2026-12-25','NYSE','closed','Christmas'),H('2026-12-30','NYSE','closed','Not a holiday'),H('2026-10-01','NYSE','closed','Past'),H('bad','NYSE','closed'),H('2027-01-01','NYSE','shut')];
++function route({holidays=[200,upcoming],div}={}){return u=>{
++ if(u.pathname==='/v1/marketstatus/upcoming')return holidays;
++ if(u.pathname==='/v3/reference/dividends'){const s=u.searchParams.get('ticker');return div?div(s):[200,{results:[]}];}
++ return [404,'not here'];};}
++
++test('holidays: past and malformed rows dropped; exchange disagreement and exchange-calendar disagreement kept as CONFLICT', async t=>{
++ const f=await run(t,route());const c=f.cal(),S=f.status().massiveContract.holidays;
++ const by=Object.fromEntries(c.holidays.map(h=>[h.d,h]));
++ assert.deepEqual(Object.keys(by).sort(),['2026-11-26','2026-11-27','2026-12-25','2026-12-30']);
++ assert.equal(by['2026-11-26'].calendar,'AGREES');assert.equal(by['2026-11-26'].conflict,undefined);
++ assert.equal(by['2026-11-27'].conflict,'EXCHANGES_DISAGREE','NYSE half day vs Nasdaq closed');
++ assert.equal(by['2026-12-30'].calendar,'DISAGREES');assert.equal(by['2026-12-30'].conflict,'EXCHANGE_CALENDAR_DISAGREES');
++ assert.equal(S.status,'CONFLICT');assert.equal(S.pastRows,1);assert.equal(S.malformedRows,2);
++ assert.match(f.status().massive,/^holidays CONFLICT/);
++});
++
++test('a failed holiday request keeps the old list but is never reported as ok', async t=>{
++ const f=await run(t,route());let r=f.status();assert.equal(r.massiveContract.holidays.kept,4);
++ // second run: Massive fails
++ const dir=f.dir,server=http.createServer((req,res)=>{const u=new URL(req.url,'http://x');res.statusCode=u.pathname==='/v1/marketstatus/upcoming'?503:u.pathname==='/v3/reference/dividends'?200:404;res.end(u.pathname==='/v3/reference/dividends'?'{"results":[]}':'{}');});
++ await new Promise(x=>server.listen(0,'127.0.0.1',x));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;
++ await new Promise((resolve,reject)=>{const c=spawn(process.execPath,[path.join(root,'calendar.mjs')],{cwd:dir,env:{PATH:process.env.PATH,PRIVATE_KEY:KEY,MASSIVE_KEY:'fixture',PX_BASE:base,BLS_BASE:base,FED_BASE:base}});c.on('exit',code=>code===0?resolve():reject(Error('exit '+code)));});
++ r=JSON.parse(fs.readFileSync(path.join(dir,'data/calendar-status.json'),'utf8'));
++ assert.equal(r.massiveContract.holidays.status,'UNAVAILABLE');assert.doesNotMatch(r.massive,/\bok\b/);
++ assert.equal(decrypt(path.join(dir,'data/calendar.enc')).holidays.length,4,'previous future holidays are kept for display');
++});
++
++test('dividends: wrong ticker, malformed rows, failed lookups and non-USD amounts are distinct; the public status has no symbols', async t=>{
++ const f=await run(t,route({div:s=>s==='AAA'?[200,{results:[{ticker:'AAA',ex_dividend_date:'2026-11-20',pay_date:'2026-12-01',cash_amount:0.25,currency:'USD'}]}]
++  :s==='BBB'?[200,{results:[{ticker:'BBBX',ex_dividend_date:'2026-11-20',cash_amount:9}]}]
++  :s==='CCC'?[500,{}]
++  :[200,{results:[{ticker:'DDD',ex_dividend_date:'2026-11-21',cash_amount:1.1,currency:'CAD'},{ticker:'DDD',ex_dividend_date:'nope',cash_amount:1}]}]}));
++ const c=f.cal(),D=c.privateStatus.dividends;                    // holding-derived counts live only in the encrypted file
++ assert.deepEqual(Object.keys(f.status().massiveContract.dividends),['status'],'public status: outcome word only');assert.equal(f.status().massiveContract.dividends.status,'PARTIAL');
++ assert.deepEqual(Object.keys(c.div).sort(),['AAA','DDD']);assert.equal(c.div.AAA[0].currency,'USD');assert.equal(c.div.DDD[0].currency,'CAD');
++ assert.equal(D.identityMismatch,1);assert.equal(D.failed,1);assert.equal(D.malformedRows,1);assert.equal(D.nonUsd,1);assert.equal(D.status,'PARTIAL');
++ const pub=fs.readFileSync(path.join(f.dir,'data/calendar-status.json'),'utf8');for(const s of ['AAA','BBB','CCC','DDD'])assert.equal(pub.includes(s),false,'held symbol '+s+' in the public status');
++});
+diff --git a/tools/market03-ingress-matrix.mjs b/tools/market03-ingress-matrix.mjs
+index 3f9459f..8b177a3 100644
+--- a/tools/market03-ingress-matrix.mjs
++++ b/tools/market03-ingress-matrix.mjs
+@@ -50,6 +50,11 @@ export const CONTRACTS={
+  'ignition-watch.mjs|ALPACA_DATA':C('Y','P','Y','Y','NA','N','P','Codex market-ingress-calendar','actual alpacaAll caller test'),
+  'ignition-watch.mjs|MASSIVE':C('N','N','P','P','N','N','P','open','15-minute delayed plan; contract not reviewed in this package (Codex watcher scope)'),
+  'leaders-study.mjs|MASSIVE':C('P','P','P','N','P','N','P','open (Codex-owned shared cache)','grouped bars split-adjusted as of each fetch + heuristic split repair; share classes excluded (/^[A-Z]{1,5}$/); ticker reuse not detected'),
++ 'smart-money.mjs|FINNHUB':C('Y','Y','Y','NA','NA','P','Y','claude/market03-batch2','insider + recommendation: outcome per call, requested-symbol identity, strict numbers, no future dates or periods, whole-number analyst counts (missing/invalid apart), duplicate rows once, one person once, consecutive sorted months; study block unchanged'),
++ 'smart-money.mjs|FMP':C('Y','NA','Y','NA','NA','N','Y','claude/market03-batch2','grades-latest-news: bounded read, REFUSED/RATE_LIMITED/MALFORMED distinct, future rows excluded, classes counted'),
++ 'smart-money.mjs|MASSIVE':C('P','Y','Y','Y','Y','N','Y','claude/market03-batch2','grouped prices: exchange-calendar day, envelope checked, day/lag/basis recorded, no tips on a stale day; plain tickers only (classes excluded)'),
++ 'smart-money.mjs|POLYGON':C('P','Y','Y','Y','Y','N','Y','claude/market03-batch2','fallback host of the same grouped request'),
++ 'calendar.mjs|MASSIVE':C('Y','P','Y','Y','NA','P','Y','claude/market03-batch2 (batch 3)','holidays: validated, past dropped, NYSE/Nasdaq and exchange-calendar disagreements kept as CONFLICT, failure never ok; dividends: held-ticker identity (a row without a ticker stays unattributed, encrypted), valid ex-date, finite amount, currency labelled; impossible days are malformed rows; public status: holiday counts, dividend outcome word only'),
+  'scan.mjs|TWELVE_DATA':C('N','N','N','N','N','N','N','open (scan.mjs owned by main session)','proposal in docs/market03-catalyst03/SCAN-PROPOSAL.md'),
+  'scan.mjs|ALPACA_DATA':C('N','N','P','P','N','N','N','open (scan.mjs owned by main session)','proposal'),
+  'scan.mjs|FINNHUB':C('N','N','N','N','NA','N','N','open (scan.mjs owned by main session)','proposal'),

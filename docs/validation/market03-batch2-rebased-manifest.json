@@ -1,0 +1,149 @@
+{
+ "kind": "MARKET03_REBASED_PACKAGE",
+ "name": "market03-batch2-rebased",
+ "author": "Claude",
+ "acceptedDevelopmentBase": "e0c12d31e1e741762da76ce3cdbad466c213e5f2",
+ "head": "76cdb349d11d2b85c5f6c1b27c6c2996dfa49363",
+ "sourcePackageHead": "1873fda416b3fd0607afef91d0b6b05c70c0b2da",
+ "patch": {
+  "file": "docs/validation/market03-batch2-rebased-code.patch",
+  "sha256": "1718e13dc3a232e5e2cc96fada1c19c2cc996b5b2917698686cc2a0f98d5c7e2",
+  "files": [
+   "calendar.mjs",
+   "docs/validation/market03-ingress-matrix.json",
+   "smart-money.mjs",
+   "tests/market03-batch2-codex-review.test.mjs",
+   "tests/market03-batch2-review.test.mjs",
+   "tests/market03-batch2-smart-money.test.mjs",
+   "tests/market03-batch3-calendar.test.mjs",
+   "tools/market03-ingress-matrix.mjs"
+  ],
+  "note": "base e0c12d31 -> 76cdb349; includes the regenerated required matrix"
+ },
+ "requiredMatrix": {
+  "file": "docs/validation/market03-ingress-matrix.json",
+  "sha256": "49a071ca593a2e63d9c09c7d18b01422c96601fd9c327d517376da81d4d00a0f"
+ },
+ "before": {
+  "calendar.mjs": "6bc0b508f72b3a64e660ea1df0efa6cf7490c690d09cdf1652b545c7b248bbeb",
+  "docs/validation/market03-ingress-matrix.json": "a2e21c9a2a6ea2b0f444c48cd3287ab8c576bc43d7b70c487b9f9c2b1491255b",
+  "smart-money.mjs": "109adc3b5f0cf25b1a4e3b1bd490486cfc19ab37a0249725cbbd434ad78f6238",
+  "tests/market03-batch2-codex-review.test.mjs": null,
+  "tests/market03-batch2-review.test.mjs": null,
+  "tests/market03-batch2-smart-money.test.mjs": null,
+  "tests/market03-batch3-calendar.test.mjs": null,
+  "tools/market03-ingress-matrix.mjs": "ec8187d5072008faf5e5b34a563936a120755296916529a1542eba8146545568"
+ },
+ "after": {
+  "calendar.mjs": "3d4c80709fd3bc24fb5e805cfc10a6959d7e460b131bad03bb685c6d3e421b59",
+  "docs/validation/market03-ingress-matrix.json": "49a071ca593a2e63d9c09c7d18b01422c96601fd9c327d517376da81d4d00a0f",
+  "smart-money.mjs": "7b93fee6d1deb95e679e59991215603fbc205ecc7256d2c8e59570dbc2e4d437",
+  "tests/market03-batch2-codex-review.test.mjs": "f6a01a85c79d4640d175b0dfb8fcfd8829accaf0881cc8cc514164692befad65",
+  "tests/market03-batch2-review.test.mjs": "fc350ff3d73f718b9d2d68d634353312f7243cae42d025b2b5e87ea5e5e6add0",
+  "tests/market03-batch2-smart-money.test.mjs": "ffe6ea20f9a55f40e9d5e12488e5baa3c2ec026f92f0cb6390242f18c89189a1",
+  "tests/market03-batch3-calendar.test.mjs": "dd277e9b383ceeb291152d9b57356ab7ebb6afa1bfa66450cb290a558e35337c",
+  "tools/market03-ingress-matrix.mjs": "c93bf2a1ccc0061f7c8946c6b30352a2da5aac7ca2c0a6e8c3147bddae1e07a0"
+ },
+ "transplantedFromSourcePackage": {
+  "calendar.mjs": {
+   "source": "3d4c80709fd3bc24fb5e805cfc10a6959d7e460b131bad03bb685c6d3e421b59",
+   "rebased": "3d4c80709fd3bc24fb5e805cfc10a6959d7e460b131bad03bb685c6d3e421b59",
+   "identical": true
+  },
+  "smart-money.mjs": {
+   "source": "7b93fee6d1deb95e679e59991215603fbc205ecc7256d2c8e59570dbc2e4d437",
+   "rebased": "7b93fee6d1deb95e679e59991215603fbc205ecc7256d2c8e59570dbc2e4d437",
+   "identical": true
+  },
+  "tests/market03-batch2-codex-review.test.mjs": {
+   "source": "f6a01a85c79d4640d175b0dfb8fcfd8829accaf0881cc8cc514164692befad65",
+   "rebased": "f6a01a85c79d4640d175b0dfb8fcfd8829accaf0881cc8cc514164692befad65",
+   "identical": true
+  },
+  "tests/market03-batch2-review.test.mjs": {
+   "source": "fc350ff3d73f718b9d2d68d634353312f7243cae42d025b2b5e87ea5e5e6add0",
+   "rebased": "fc350ff3d73f718b9d2d68d634353312f7243cae42d025b2b5e87ea5e5e6add0",
+   "identical": true
+  },
+  "tests/market03-batch2-smart-money.test.mjs": {
+   "source": "ffe6ea20f9a55f40e9d5e12488e5baa3c2ec026f92f0cb6390242f18c89189a1",
+   "rebased": "ffe6ea20f9a55f40e9d5e12488e5baa3c2ec026f92f0cb6390242f18c89189a1",
+   "identical": true
+  },
+  "tests/market03-batch3-calendar.test.mjs": {
+   "source": "dd277e9b383ceeb291152d9b57356ab7ebb6afa1bfa66450cb290a558e35337c",
+   "rebased": "dd277e9b383ceeb291152d9b57356ab7ebb6afa1bfa66450cb290a558e35337c",
+   "identical": true
+  }
+ },
+ "unchangedDependencies": {
+  "source-contract.mjs": {
+   "base": "515f20341ff46ae1b3477fb0f98b0012e9f9fd1a0c2bc13142fd0395c4a3d31f",
+   "rebased": "515f20341ff46ae1b3477fb0f98b0012e9f9fd1a0c2bc13142fd0395c4a3d31f",
+   "unchanged": true
+  },
+  "comeback-provenance.mjs": {
+   "base": "c37b8c75510c4f3f2878d8c48a7d5a12b181604bfe32726c25b76b8239463f31",
+   "rebased": "c37b8c75510c4f3f2878d8c48a7d5a12b181604bfe32726c25b76b8239463f31",
+   "unchanged": true
+  },
+  "comeback-lab.mjs": {
+   "base": "02a17a6d193e7f21d795343f9d6330f1e3ade520d8906ec74f6c335af387f670",
+   "rebased": "02a17a6d193e7f21d795343f9d6330f1e3ade520d8906ec74f6c335af387f670",
+   "unchanged": true
+  },
+  "discovery-runtime.mjs": {
+   "base": "8fac4c05fdd9fbd92f5b4e8575ff2ca1ba012cdaad427e4bf3800ed1fd39b1e7",
+   "rebased": "8fac4c05fdd9fbd92f5b4e8575ff2ca1ba012cdaad427e4bf3800ed1fd39b1e7",
+   "unchanged": true
+  },
+  "market-session.mjs": {
+   "base": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+   "rebased": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+   "unchanged": true
+  },
+  "market-symbol.mjs": {
+   "base": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+   "rebased": "16892af51732cd28977923e7c927cadc73802ec8769bdba65bf88362dfc3d54f",
+   "unchanged": true
+  },
+  "scan.mjs": {
+   "base": "18a5765c1a72391630aaa4d519bee32c2c5992c1cee1629981ffbd0bc27e0eab",
+   "rebased": "18a5765c1a72391630aaa4d519bee32c2c5992c1cee1629981ffbd0bc27e0eab",
+   "unchanged": true
+  },
+  "ignition-watch.mjs": {
+   "base": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734",
+   "rebased": "030b35a015fa807731a0476026f92b9d5407e3a490636d2b33f8fd63a9388734",
+   "unchanged": true
+  },
+  "mentor-plan.mjs": {
+   "base": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
+   "rebased": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1",
+   "unchanged": true
+  },
+  "news-watch.mjs": {
+   "base": "08335f2aa69970e65fa5cdc6f5deee2d59d21d712dd4e33ae67e600372e17701",
+   "rebased": "08335f2aa69970e65fa5cdc6f5deee2d59d21d712dd4e33ae67e600372e17701",
+   "unchanged": true
+  },
+  "earnings-study.mjs": {
+   "base": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+   "rebased": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+   "unchanged": true
+  },
+  "discovery2.mjs": {
+   "base": "122660f00e580e300591d15fdcc2edf4df916d15ac29cd86229eb599cf44a6b7",
+   "rebased": "122660f00e580e300591d15fdcc2edf4df916d15ac29cd86229eb599cf44a6b7",
+   "unchanged": true
+  }
+ },
+ "acceptedSourceContractSha256": "515f20341ff46ae1b3477fb0f98b0012e9f9fd1a0c2bc13142fd0395c4a3d31f",
+ "activity": {
+  "providerCalls": 0,
+  "credentials": 0,
+  "deployment": false,
+  "liveCollection": false,
+  "messages": 0
+ }
+}
