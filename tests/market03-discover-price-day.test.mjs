@@ -63,3 +63,15 @@ test('unchanged behaviour: the same session already processed exits quietly with
  const prev={generatedAt:'2026-10-31T06:00:00.000Z',session:LATEST,candidates:[{sym:'KEEP'}]};
  const r=await run(t,()=>FULL,prev);assert.equal(r.code,0);assert.match(r.log,/No new session since/);assert.deepEqual(r.asked,[LATEST]);assert.deepEqual(r.doc.candidates,[{sym:'KEEP'}]);
 });
+
+// Follow-up review (Codex, 2 Nov): a nonempty answer in which every row is invalid is MALFORMED, never a genuine empty day; a truly
+// empty array stays EMPTY; a full market with some invalid rows keeps its valid neighbours. No older day becomes current in any case.
+test('follow-up: all-invalid rows are MALFORMED; an empty array stays EMPTY; valid neighbours of invalid rows are kept', async t=>{
+ const prev={generatedAt:'2026-10-20T06:00:00.000Z',session:'2026-10-19',candidates:[{sym:'OLD1'}]};
+ for(const [results,status] of [[[{T:'AAA',c:'invalid',v:1}],'MALFORMED'],[[{T:'AAA',c:0,v:1},{T:'BBB',c:5,v:-1},{c:5,v:1},null],'MALFORMED'],[[],'EMPTY']]){
+  const r=await run(t,d=>d===LATEST?[200,{status:'OK',adjusted:true,results}]:FULL,prev);assert.equal(r.code,1,r.log);
+  assert.deepEqual(r.asked,[LATEST],'no older day is requested as current');assert.equal(r.doc.lastAttempt.priceDay.status,status,JSON.stringify(results));
+  assert.equal(r.doc.session,'2026-10-19');assert.deepEqual(r.doc.candidates,[{sym:'OLD1'}]);}
+ const r=await run(t,d=>d===LATEST?[200,{status:'OK',adjusted:true,results:[...rows(600),{T:'BAD',c:'x',v:1},{T:'BAD2',c:1,v:'y'}]}]:FULL);
+ assert.equal(r.code,0,r.log);assert.equal(r.doc.session,LATEST);assert.equal(r.doc.priceDay.status,'OBSERVED');
+});

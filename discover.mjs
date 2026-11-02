@@ -52,7 +52,9 @@ async function grouped(date) {
     if (j.results === undefined) return (j.resultsCount === 0 || j.queryCount === 0) ? { outcome: 'EMPTY', rows: [] } : { outcome: 'MALFORMED', rows: [] };
     if (!Array.isArray(j.results)) return { outcome: 'MALFORMED', rows: [] };
     const rows = j.results.filter(x => x && typeof x.T === 'string' && Number.isFinite(x.c) && x.c > 0 && Number.isFinite(x.v) && x.v >= 0);
-    if (!rows.length) return { outcome: 'EMPTY', rows: [] };
+    // Follow-up review (Codex, 2 Nov): EMPTY only when the provider returned no rows. A nonempty answer in which every row is invalid is
+    // MALFORMED, with the rejected count kept; it is never presented as a genuine empty day.
+    if (!rows.length) return j.results.length ? { outcome: 'MALFORMED', rows: [], received: j.results.length, rejectedRows: j.results.length } : { outcome: 'EMPTY', rows: [] };
     return rows.length > MIN_MARKET_ROWS ? { outcome: 'OBSERVED', rows, rejectedRows: j.results.length - rows.length } : { outcome: 'INCOMPLETE', rows: [], received: rows.length };
   }
   return { outcome: last, rows: [] };
