@@ -1,0 +1,57 @@
+{
+ "package": "market03-discover-rebased-r2",
+ "branch": "claude/market03-discover-rebased-r2",
+ "base": "e0c12d31e1e741762da76ce3cdbad466c213e5f2",
+ "previousReviewedHead": "65109ced4a519dd92d3729372a1556073c51e9d5",
+ "codeCommit": "b807126b9927cc57a486b3813c6d49b1b108d31b",
+ "review": "docs/reviews/market03-rebased-followup/REVIEW.md @ 54eb49fe2819e7710aaba308c2c3acb3262e861a",
+ "reviewerHarness": {
+  "file": "docs/reviews/market03-rebased-followup/discover-regression.mjs",
+  "sha256": "ed42e142c5c13c9a11dddec753c8f477f20f559d51662556d270e14e0e7c0a03",
+  "unchanged": true
+ },
+ "codePatch": {
+  "path": "docs/validation/market03-discover-rebased-r2-code.patch",
+  "sha256": "01c7301da9de1fd31b38dd97c099547e4ef0b0fb4e9fb7a7b3db171cd2a8b6ba",
+  "from": "e0c12d31e1e741762da76ce3cdbad466c213e5f2",
+  "to": "b807126b9927cc57a486b3813c6d49b1b108d31b",
+  "appliesCleanlyTo": "e0c12d31e1e741762da76ce3cdbad466c213e5f2",
+  "files": [
+   "discover.mjs",
+   "docs/validation/market03-ingress-matrix.json",
+   "tests/market03-discover-price-day.test.mjs",
+   "tools/market03-ingress-matrix.mjs"
+  ]
+ },
+ "fixDelta": {
+  "path": "docs/validation/market03-discover-rebased-r2-fix-delta.patch",
+  "sha256": "479460ed50c1b756262a198b3b5ed023ce9b5dd8129f0e99ab0c80670478ccba",
+  "from": "65109ced4a519dd92d3729372a1556073c51e9d5",
+  "to": "b807126b9927cc57a486b3813c6d49b1b108d31b"
+ },
+ "files": {
+  "discover.mjs": {
+   "base": "abc1ddf693845d665b224fdf0033f6711ade086c976d0143540af11f367f1df9",
+   "previous": "b36a70235f853b4f22591844c937fbee3c5eb0b53072afd219b064c26bf92af3",
+   "revision": "ec864cfaa304d1bc12d2e518b962c61dbd931ae7868fcdb0b812179e271d8245"
+  },
+  "tests/market03-discover-price-day.test.mjs": {
+   "base": null,
+   "previous": "e3831d9b5fa3cdf08293cdfb26ba988011224d63a5c4bd3c99cb95c5c6e81b66",
+   "revision": "84f59ac9f9bfdc775b3d729812d09ba2e12a933ba426e819f12a39fb26e03caa"
+  },
+  "docs/validation/market03-ingress-matrix.json": {
+   "base": "a2e21c9a2a6ea2b0f444c48cd3287ab8c576bc43d7b70c487b9f9c2b1491255b",
+   "previous": "1cfea4695714168dd4831a843f478cf75974c382fad153fb7782c612db86aa32",
+   "revision": "1cfea4695714168dd4831a843f478cf75974c382fad153fb7782c612db86aa32"
+  }
+ },
+ "results": {
+  "reviewerBefore": "10 pass / 1 fail (the `review:` case: EMPTY)",
+  "reviewerAfter": "11/11 (Node 20 and 22)",
+  "originalTestsAfter": "discover price-day 11/11 (the 10 original cases plus the follow-up case) (Node 20 and 22)",
+  "fullSuiteNode20Root": "258 of 259 files; only tests/research-recovery-publication.test.mjs fails (refuses root)"
+ },
+ "offline": true,
+ "production": false
+}
