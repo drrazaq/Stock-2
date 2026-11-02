@@ -1,3 +1,5 @@
+> **Alternative decision only:** see [committed-checkpoint boundary proposal](mentor-checkpoint-boundary-decision.md). It explicitly changes the historical evidence condition only if separately approved; it does not waive the existing conditions or activate this historical13-hour draft. Receipt54eb49fe remains frozen. No action authorized or taken.
+
 > **2 November 2026 status correction:** Historical blocked draft only. The 13-hour window is **NOT APPROVED** and must not be executed. [New inactive receipt proof and remaining prerequisites](mentor-persistence-receipt/README.md) supersede the stale component/test-status claims below. This document is not replaced by an execution procedure: access, original-run persistence and restoration prerequisites are still unmet.
 
 # Bounded mentor maintenance procedure — preparation only, no cancellations
