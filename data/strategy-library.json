@@ -32818,7 +32818,7 @@
    "name": "R&D increase (R&D up 5%+ on a year before, per assets up 5%+, R&D 5%+ of assets), hold 6 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-02 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "Buy the next open after a 10-Q/10-K (SEC XBRL) whose quarterly R&D expense is 5%+ above the same quarter a year before, whose R&D per total assets is also 5%+ higher, and whose annualised R&D (4 x quarter) is 5%+ of assets (filed within 120 days of the quarter end; assets 10M USD+); stock liquid; sell the close 126 sessions later. Measure, quarter filter, year-ago match, the three increase tests and the data rule fixed in research-core.mjs (IDEA 7) before any run.",
    "sources": [
     "https://doi.org/10.1111/j.1540-6261.2004.00644.x",
@@ -32826,7 +32826,45 @@
     "https://papers.ssrn.com/abstract=897385"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-02: Eberhart, Maxwell and Siddique (2004, Journal of Finance) R&D increases: firms that raise R&D meaningfully (intensity 5%+, R&D and R&D/assets up 5%+) earned positive long-term abnormal returns. New event (the year-on-year R&D increase; ANOM-RD tested the level, SQ4-RDCOMP the share of revenue with growth). Quarterly year-on-year version from official SEC XBRL company facts; R&D/sales test left out (stated). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 3 Nov 2026."
+   "note": "Daily researcher 2026-11-02: Eberhart, Maxwell and Siddique (2004, Journal of Finance) R&D increases: firms that raise R&D meaningfully (intensity 5%+, R&D and R&D/assets up 5%+) earned positive long-term abnormal returns. New event (the year-on-year R&D increase; ANOM-RD tested the level, SQ4-RDCOMP the share of revenue with growth). Quarterly year-on-year version from official SEC XBRL company facts; R&D/sales test left out (stated). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 3 Nov 2026.",
+   "tested": "2026-10-30",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     919,
+     598
+    ],
+    "avg": [
+     -0.0377,
+     0.1662
+    ],
+    "stress": [
+     -0.0417,
+     0.1622
+    ],
+    "edge": [
+     -0.0236,
+     0.0892
+    ],
+    "vsOwn": [
+     -0.1087,
+     0.0838
+    ],
+    "noTop2": [
+     -0.0442,
+     0.1567
+    ],
+    "tBlock": [
+     -0.18,
+     1.8
+    ],
+    "win": [
+     0.4298,
+     0.5619
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.18 under 2.5 in the older half; block t 1.8 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-RDI-252",
@@ -32834,7 +32872,7 @@
    "name": "R&D increase, hold 1 year",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-02 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-RDI-126, hold 252 sessions. Measure, quarter filter, year-ago match, the three increase tests and the data rule fixed in research-core.mjs (IDEA 7) before any run.",
    "sources": [
     "https://doi.org/10.1111/j.1540-6261.2004.00644.x",
@@ -32842,7 +32880,45 @@
     "https://papers.ssrn.com/abstract=897385"
    ],
    "hold": 252,
-   "note": "Daily researcher 2026-11-02: Eberhart, Maxwell and Siddique (2004, Journal of Finance) R&D increases: firms that raise R&D meaningfully (intensity 5%+, R&D and R&D/assets up 5%+) earned positive long-term abnormal returns. New event (the year-on-year R&D increase; ANOM-RD tested the level, SQ4-RDCOMP the share of revenue with growth). Quarterly year-on-year version from official SEC XBRL company facts; R&D/sales test left out (stated). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 3 Nov 2026."
+   "note": "Daily researcher 2026-11-02: Eberhart, Maxwell and Siddique (2004, Journal of Finance) R&D increases: firms that raise R&D meaningfully (intensity 5%+, R&D and R&D/assets up 5%+) earned positive long-term abnormal returns. New event (the year-on-year R&D increase; ANOM-RD tested the level, SQ4-RDCOMP the share of revenue with growth). Quarterly year-on-year version from official SEC XBRL company facts; R&D/sales test left out (stated). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 3 Nov 2026.",
+   "tested": "2026-10-30",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     683,
+     352
+    ],
+    "avg": [
+     -0.0341,
+     0.295
+    ],
+    "stress": [
+     -0.0381,
+     0.291
+    ],
+    "edge": [
+     -0.0368,
+     0.1876
+    ],
+    "vsOwn": [
+     -0.1608,
+     0.1231
+    ],
+    "noTop2": [
+     -0.0429,
+     0.2796
+    ],
+    "tBlock": [
+     -0.16,
+     0.66
+    ],
+    "win": [
+     0.4202,
+     0.5483
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.16 under 2.5 in the older half; block t 0.66 under 2.5 in the newer half"
+   }
   }
  ]
 }
