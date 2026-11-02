@@ -42,16 +42,20 @@ export function strictNumber(x,{min=-Infinity,max=Infinity}={}){
 
 // ---- clocks --------------------------------------------------------------------------------------------------------
 const MIN_MS=Date.parse('2000-01-01T00:00:00Z'),MAX_MS=Date.parse('2100-01-01T00:00:00Z');
-const validDay=d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)&&new Date(Date.parse(d+'T00:00:00Z')).toISOString().slice(0,10)===d;
+// A JS Date holds |ms| <= 8.64e15; outside that, Date/Intl formatting throws. Every formatter below checks first.
+const inRange=ms=>typeof ms==='number'&&Number.isFinite(ms)&&Math.abs(ms)<=8.64e15;
+// Review R1 (Codex, 1 Nov): an impossible day (month 13 or 00, day 32, 30 Feb) is false, never a thrown RangeError.
+const validDay=d=>{if(typeof d!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(d))return false;const ms=Date.parse(d+'T00:00:00Z');return inRange(ms)&&new Date(ms).toISOString().slice(0,10)===d;};
 export const isDay=validDay;
 export function nyParts(ms){
+ if(!inRange(ms))return {day:null,minute:null};
  const p={};for(const x of new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(ms)))p[x.type]=x.value;
  return {day:p.year+'-'+p.month+'-'+p.day,minute:+p.hour*60+ +p.minute};
 }
 // kind: 'epoch_s' | 'epoch_ms' | 'iso' (explicit Z or +hh:mm required) | 'date' (YYYY-MM-DD, day precision)
 export function parseSourceTime(value,{kind,at,maxFutureMs=0,maxAgeMs=null}={}){
  const now=typeof at==='string'?Date.parse(at):at;
- if(!Number.isFinite(now))throw new TypeError('parseSourceTime needs an explicit observation clock');
+ if(!inRange(now))throw new TypeError('parseSourceTime needs an explicit observation clock');
  if(value===undefined||value===null||value==='')return {status:'MISSING'};
  let ms,precision='INSTANT',basis;
  if(kind==='epoch_s'||kind==='epoch_ms'){
@@ -84,7 +88,7 @@ export function parseSourceTime(value,{kind,at,maxFutureMs=0,maxAgeMs=null}={}){
 // ---- New York session --------------------------------------------------------------------------------------------
 // Phases use the exchange calendar in market-session.mjs; a day outside it is CALENDAR_UNKNOWN, never assumed open.
 export function sessionPhase(ms){
- if(!Number.isFinite(ms))return {phase:'INVALID'};
+ if(!inRange(ms))return {phase:'INVALID'};
  const {day,minute}=nyParts(ms),s=marketSession(day);
  if(!s.known)return {phase:'CALENDAR_UNKNOWN',day};
  if(s.closed)return {phase:'CLOSED',day};
@@ -179,7 +183,7 @@ export async function readJsonSource(fetcher,url,{maxBytes=JSON_SOURCE_LIMITS.by
 // The newest regular session whose close has happened at `ms` (New York calendar). Weekends and holidays do not age a close:
 // Friday's close is current until Monday's close. Outside the known calendar the answer is null (unknown), never a guess.
 export function latestCompletedSession(ms){
- if(!Number.isFinite(ms))return null;const {day,minute}=nyParts(ms);let d=day;
+ if(!inRange(ms))return null;const {day,minute}=nyParts(ms);let d=day;
  for(let i=0;i<15;i++){const s=marketSession(d);if(!s.known)return null;if(!s.closed&&(d<day||minute>=s.close))return d;d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);}
  return null;
 }

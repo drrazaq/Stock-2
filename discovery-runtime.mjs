@@ -70,8 +70,9 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
    if(!Array.isArray(rows))throw Error('invalid rows');
    if(source.lane!=='NEWS_CATALYST'&&!clock(generated)){sources.push({...source,status:'MISSING_OUTPUT_TIMESTAMP',rows:rows.length});continue;}
    if(generated&&(Date.parse(generated)>at||at-Date.parse(generated)>source.hours*3600000)){sources.push({...source,status:Date.parse(generated)>at?'FUTURE':'STALE',rows:rows.length});continue;}
-   let accepted=0,rejected=preRejected;
+   let accepted=0,rejected=preRejected,rowErrors=0;
    for(const row of rows.slice(0,500)){
+    try{
     if(!object(row)){rejected++;continue;}
     if(row.revisionStatus==='CONFLICT'){rejected++;continue;}
     const sym=row.sym||row.symbol;if(!symbol(sym)){rejected++;continue;}
@@ -101,8 +102,9 @@ export function collectDiscovery({readText,cutoff,live=[]}) {
      ...(source.lane==='SEC_EVENT'?{reportedSourceId:row.sourceId||null,sourceNamespace:row.sourceNamespace||'UNKNOWN',outputAvailableAt:generated}:{} ),
      ...(source.lane==='EARNINGS_SURPRISE'&&row.timing!==undefined?{earnings:{provider:row.src||null,timing:row.timing,reactionSession:row.reactionSession??null,reactionStatus:row.reactionStatus||'UNKNOWN',reactionCandidates:Array.isArray(row.reactionCandidates)?row.reactionCandidates.slice(0,2):null,corroboratedBy:Array.isArray(row.corroboratedBy)?row.corroboratedBy.slice(0,4):[],epsUnit:row.epsUnit||'UNKNOWN'}}:{}),
      ...(row.lastCloseDay!==undefined?{lastCloseDay:row.lastCloseDay,closeLagSessions:closeLagSessions(row.lastCloseDay,at)}:{})});accepted++;
+    }catch{rejected++;rowErrors++;}
    }
-   sources.push({...source,status:'READ',revokedSourceIds,revokedReportedIds,rows:rows.length,accepted,rejected,truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(producerStatus?{producerStatus}:{}),...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
+   sources.push({...source,status:'READ',revokedSourceIds,revokedReportedIds,rows:rows.length,accepted,rejected,...(rowErrors?{rowErrors}:{}),truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(producerStatus?{producerStatus}:{}),...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
   }catch{sources.push({...source,status:'MALFORMED',rows:0});}
  }
  return {observations,sources};

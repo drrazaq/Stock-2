@@ -26,5 +26,7 @@ test('comeback SPY ingress: malformed bars rejected, today\'s unfinished bar exc
  assert.equal(spy.bars[latest].c,511);assert.equal(spy.status,'CONFLICT');
  const today=w.json('data/comeback-today.json');assert.equal(today.sourceStatus.SPY_BARS.status,'CONFLICT');assert.equal(today.sourceStatus.SPY_BARS.rejectedBars>=2,true);assert.equal(today.sourceStatus.LAB_TODAY_FILES.status,'EMPTY');
  const p2=await provider(t,async()=>[503,{}]);await run(w.dir,'comeback-lab.mjs',{MASSIVE_BASE:p2.base});
- assert.equal(w.json('data/comeback-today.json').sourceStatus.SPY_BARS.status,'UNAVAILABLE','a failed fetch is never shown as fresh bars');
+ const later=w.json('data/comeback-today.json').sourceStatus.SPY_BARS;
+ assert.equal(later.response,'UNAVAILABLE','a failed fetch is never shown as fresh bars');
+ assert.equal(later.status,'CONFLICT','review R3: the conflict retained from the first run stays unresolved through a later failure');
 });
