@@ -52,11 +52,16 @@
     "identitiesMustBeRefreshedBeforeAnyAction": true
   },
   "bounds": {
-    "startOnlyWhenAllActiveJobsHaveAtMostRemainingMinutes": 60,
-    "maxWorkflowSuppressionMinutes": 120,
-    "latestReleaseDecisionMinutesAfterT0": 75,
-    "ordinaryCIDeadlineMinutesAfterT0": 105,
-    "restorationReserveMinutes": 15,
+    "maxAcceptedWritersPerGroup": 2,
+    "maxActivePerGroup": 1,
+    "maxPendingPerGroup": 1,
+    "maxBotJobMinutes": 350,
+    "maxScannerJobMinutes": 300,
+    "latestDrainDecisionMinutesAfterT0": 700,
+    "maxWorkflowSuppressionMinutes": 780,
+    "latestReleaseDecisionMinutesAfterT0": 715,
+    "ordinaryCIDeadlineMinutesAfterT0": 760,
+    "restorationReserveMinutes": 20,
     "resumptionIncidentMinutesAfterRestore": 45,
     "normalBotCronMinutes": 30,
     "schedulerDelayGuarantee": false
@@ -81,8 +86,7 @@
   "blockers": [
     "Workflow enabled-state/control endpoint not supported by this connector: HTTP400 INVALID_ARGUMENT; no bypass attempted",
     "No original-run final local-state/offset versus authoritative-commit receipt; job success is insufficient",
-    "Production baseline TRY SMALL fixture failures require explicit test disposition; do not modify approved mentor patch",
-    "Pending-only cancellation must have a verified no-start fence; status recheck alone cannot establish atomicity. If unavailable, do not cancel or start an infeasible pause."
+    "Production baseline TRY SMALL fixture failures require explicit test disposition; do not modify approved mentor patch"
   ],
   "currentEvidence": {
     "focusedMentorOnProductionPlusExactPatch": "30/30PASS",
@@ -99,7 +103,8 @@
     "financial recovery or historical rewrite",
     "data restore or offset advance",
     "full development PR merge",
-    "additional production source/workflow changes without exact approval"
+    "additional production source/workflow changes without exact approval",
+    "cancellation of active OR pending/queued/waiting runs"
   ],
   "rollbackRequiresSeparateScope": true,
   "receiptFinalizerImplemented": false,
@@ -117,5 +122,20 @@
     "dataContentsInspected": false,
     "notFinalSaveOrOffsetProof": true
   },
-  "pendingCancellationFenceVerified": false
+  "proposalRevision": 2,
+  "supersedesDraftAt": "e0c12d31e1e741762da76ce3cdbad466c213e5f2",
+  "proposedWindow": {
+    "approved": false,
+    "startEarliestUTC": "2026-11-02T21:40:00Z",
+    "startLatestUTC": "2026-11-02T22:00:00Z",
+    "startKuwait": "2026-11-03T00:40:00+03:00 to01:00:00+03:00",
+    "latestRestorationUTC": "2026-11-03T11:00:00Z",
+    "latestRestorationKuwait": "2026-11-03T14:00:00+03:00",
+    "nextConfiguredScannerUTC": "2026-11-03T13:10:00Z",
+    "actualCoverageMustBeVerified": true
+  },
+  "cancellationsAuthorized": false,
+  "cancellationsRequested": false,
+  "cancelledRunAllowance": 0,
+  "rollbackApprovalIsReadinessPrerequisite": true
 }
