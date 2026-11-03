@@ -1,0 +1,89 @@
+{
+  "sourceReviewPackage": "97dd460cf52f0364c170010b2880680c0cd0070b",
+  "optionalOfflineCompanionNotReleasePrerequisite": true,
+  "unitCasesPassed": 33,
+  "unitLogSHA256": "b7d34125db88c13ef68da76a3962b2a2b80adce3d647bec6c0d4a9ba01871bde",
+  "actualCLIReplays": [
+    {
+      "case": "retained_green",
+      "expectedExit": 0,
+      "actualExit": 0,
+      "receipt": {
+        "covered_files": 131,
+        "failing_files": [],
+        "job_id": 125906184924,
+        "log_bytes": 546192,
+        "log_lines": 8249,
+        "log_sha256": "bc7aa0a3e38f3c2c1e9508baf16869685c4a5764b723c0df544d25014e600ace",
+        "pass_files": 131,
+        "reason": "all_required_files_passed",
+        "required_files": 131,
+        "run_attempt": 1,
+        "run_id": 41632750514,
+        "sha": "9f53fdad27dfd2acfb21c14f293f1bfa18577425",
+        "status": "PASS"
+      },
+      "meaning": "Replay of retained authentic evidence or explicitly truncated negative; not a new hosted/production run."
+    },
+    {
+      "case": "retained_historical_failure",
+      "expectedExit": 1,
+      "actualExit": 1,
+      "receipt": {
+        "covered_files": 130,
+        "failing_files": [
+          "test/try-small-audit.test.mjs"
+        ],
+        "job_id": 125814418123,
+        "log_bytes": 546749,
+        "log_lines": 8250,
+        "log_sha256": "1f2f957ca198768bb0bf015df7b3611fd062b258d00d8200cc33893db2cc06df",
+        "pass_files": 129,
+        "reason": "hosted_test_failure",
+        "required_files": 130,
+        "run_attempt": 1,
+        "run_id": 41605568600,
+        "sha": "7bd91089449c436cc2645ece425beb427aef1377",
+        "status": "FAIL"
+      },
+      "meaning": "Replay of retained authentic evidence or explicitly truncated negative; not a new hosted/production run."
+    },
+    {
+      "case": "actual_last_5000_only",
+      "expectedExit": 2,
+      "actualExit": 2,
+      "receipt": {
+        "reason": "incomplete_log",
+        "sha": "9f53fdad27dfd2acfb21c14f293f1bfa18577425",
+        "status": "UNVERIFIED"
+      },
+      "meaning": "Replay of retained authentic evidence or explicitly truncated negative; not a new hosted/production run."
+    }
+  ],
+  "knownGitNonDataIdentity": {
+    "baseline": "9f53fdad27dfd2acfb21c14f293f1bfa18577425",
+    "gitTree": "02c9bcf4fbd19f248cd3e80b18d46676c671fb14",
+    "method": "Pure SHA1 Git tree encoding excluding exact rootdata; tested without writing Git objects"
+  },
+  "correctionDuringVerification": "Real failed job has legitimate skipped optional post-cache cleanup. Reader now distinguishes optional cleanup from required test steps; failure still FAIL. Synthetic regression added.",
+  "ordinaryCIRunsThisCompanion": false,
+  "productionImportsOrBindingsAdded": false,
+  "productionActions": [],
+  "liveCalls": [],
+  "reviewVerdict": "NOT_REVIEWED; ready for separate focused review; R4 stays stable.",
+  "replayOutcomesCheckedAfterFinalNumericGuards": true,
+  "frozenR4AndReleaseArtifactsVerified": {
+    "docs/nov2-actions-correction/bounded-maintenance-proposal.md": "d0b283a478063480407eccf8cb9f910735955b0ee1d2f5660046bc1ebd6efe8e",
+    "docs/nov2-actions-correction/maintenance-approval-manifest.json": "4c8352ffc0c2bbc80aa070d991a66787f71e0066d6b45ac081aff08d3a2d35c1",
+    "docs/nov2-actions-correction/production-standalone.patch": "a9560969298368490a0b3cbd5b151e429b7d68b2bc302ba35025ccebb0981a53",
+    "docs/nov2-actions-correction/standalone-manifest.json": "545e1a7775f43f6b3b6b8e72c84a6f8e47c8ecde0b560128695ab17f2a67cd2b",
+    "docs/nov2-actions-correction/rollback-standalone.patch": "4e28ee37e58e8f0ea57b3d70a09438562efc12aaa8a5a1e9075df3927c6d91c9",
+    "docs/nov2-watcher-scheduling/production.patch": "781f6644faf97b160451d3b455dfb12efb84679a5adcec9e69a5cafdee431d2e"
+  },
+  "existingR4DevelopmentCI": {
+    "sha": "97dd460cf52f0364c170010b2880680c0cd0070b",
+    "passed": 6,
+    "total": 6,
+    "scope": "Wider development checkpoint, not future production D or companion33unit tests"
+  }
+}

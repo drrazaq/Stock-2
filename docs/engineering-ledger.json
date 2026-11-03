@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03T14:42:38.107587+00:00",
+  "updated": "2026-11-03T15:19:55.846192+00:00",
   "branch": "Stock2-safety-fixes",
   "pr": 1,
   "mission": "Full repository engineering; no merge/deploy/messages/orders/paid services",
@@ -5326,7 +5326,7 @@
     "closuresEarned": [],
     "genuineAdmissions": 0,
     "publicationCI": "Check exact final published SHA; do not inherit predecessor CI.",
-    "next": "Claude focused R1 confirmation of exact r4; future release requires complete exact-D hosted all-PASS results, with verified source-equivalent main run informational only. No production action.",
+    "next": "Await Claude focused R1 confirmation and separate optional reader review. No clicks or maintenance while owner away; workflow controls untouched.",
     "watcherApprovalPackage": "docs/nov2-watcher-scheduling/deployment-approval-package.md",
     "watcherReviewEvidence": "docs/nov2-watcher-scheduling/review-confirmation/evidence-audit.json",
     "watcherReviewFocusedLogRetention": "Reviewer focused outputs are transcript extracts only; Codex new complete65case log is separately retained.",
@@ -5340,7 +5340,8 @@
       "nonDataTree": "02c9bcf4fbd19f248cd3e80b18d46676c671fb14",
       "equivalentMain": "c8e76e205389a8fb98cd6d66b4a983b10c12b2cf",
       "role": "INFORMATIONAL"
-    }
+    },
+    "offlineCompanion": "Optional read-only CI reader completed with33unit tests + real retained-log replays PASS0/FAIL1/UNVERIFIED2. R4/nine-file/watcher scopes unchanged. Owner away: no maintenance/clicks/controls."
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -8757,5 +8758,29 @@
       "additionalFailures": []
     },
     "scope": "Unchanged exact approved nine-file patch; fresh production validation and operational proposal only; no production mutation."
+  },
+  "ownerAbsenceRestriction": {
+    "noticeAtUTC": "2026-11-03T14:50:51Z",
+    "duration": "approximately2hours; not an automatic expiry/start time",
+    "noMaintenanceScheduling": true,
+    "noClickRequests": true,
+    "noProductionActions": true,
+    "noWorkflowControlsIssued": true,
+    "workflowStateReadback": "Codex connector lacks workflow-state endpoint; read-only Claude confirmation requested in PR1comment6607018343; no enabled-state inference from running jobs.",
+    "resumption": "Only an explicit later owner instruction, existing exact approvals and verified safety gates can authorize an operation. No timer-based start."
+  },
+  "optionalActionsCIVerifierCompanion": {
+    "path": "docs/actions-ci-verifier-review",
+    "manifest": "docs/actions-ci-verifier-review/manifest.json",
+    "stableProcedure": "97dd460cf52f0364c170010b2880680c0cd0070b unchanged",
+    "scope": "Offline read-only completed production Tests-job assessment; optional review companion, not added production/gate prerequisite",
+    "unitCases": 33,
+    "realGreenGroups": 131,
+    "realHistoricalFailureDisposition": "FAIL; no old TRY SMALL exception",
+    "partialLogDisposition": "UNVERIFIED",
+    "gitTransportDisabled": true,
+    "gitObjectWrites": false,
+    "independentReview": "PENDING_SEPARATE_FROM_R4",
+    "productionActions": []
   }
 }
