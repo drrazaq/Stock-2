@@ -184,3 +184,33 @@ export function sectorCap(picks, share) {
   const out = []; for (const [g, a] of by) { const cap = Math.max(1, Math.round(K * (share[g] || 0))); a.sort((x, y) => y.f - x.f || y.dv - x.dv); out.push(...a.slice(0, cap)); }
   return out;
 }
+
+// ---- B-FCF-EM1 (pre-registered 3 Nov 2026, value-lab.mjs header, before any run) ----
+// The latest earnings report of a stock public BEFORE the day asked about: report date strictly before asOf (a report on the formation
+// day itself, before or after the open, is not used), and no older than maxAge calendar days (else there is no current report -> null).
+// R = reports { d: date, t: 'bmo'|'amc'|..., a: actual EPS, e: estimate }, any order. beat = a > e, both finite (equal is not a beat;
+// either unknown -> beat null).
+export function latestReport(R, asOf, maxAge = 120) {
+  let best = null; for (const r of R || []) { if (!r || !r.d || !(r.d < asOf)) continue; if (!best || r.d > best.d) best = r; }
+  if (!best || days(best.d, asOf) > maxAge) return null;
+  const beat = isFinite(best.a) && isFinite(best.e) && best.a !== null && best.e !== null ? best.a > best.e : null;
+  return { d: best.d, a: best.a, e: best.e, beat };
+}
+
+// ---- V17 NET PAYOUT YIELD on one day (pre-registered 3 Nov 2026, value-lab.mjs header, before any run) ----
+// co: { div, rep, iss } each { tag: facts } in priority order. TTM (ttmAt) of dividends paid (PaymentsOfDividends, else
+// PaymentsOfDividendsCommonStock), repurchases (PaymentsForRepurchaseOfCommonStock) and common stock issued
+// (ProceedsFromIssuanceOfCommonStock). Anchor = the TTM period end of dividends if known, else of repurchases; it must have ended under
+// 200 days before the day (else stale -> null). Each other item counts only if its TTM ends within 5 days of the anchor; else 0. No
+// dividends AND no repurchases known (non-stale) -> null (the company is not ranked). npy = (div + rep - iss) / market value;
+// market value = shares known x close (as B-FCF1); npy >= 0.4 = a data error -> null.
+export function npyAt(co, asOf, mv) {
+  if (!(mv > 0)) return null;
+  const fresh = (r) => r && days(r.end, asOf) <= STALE_DAYS ? r : null;
+  const d0 = fresh(firstOf(co.div, f => ttmAt(f, asOf))), r0 = fresh(firstOf(co.rep, f => ttmAt(f, asOf)));
+  const anchor = d0 || r0; if (!anchor) return null;
+  const at = (m) => { const r = firstOf(m, f => { const x = ttmAt(f, asOf); return x && near(x.end, anchor.end, 5) ? x : null; }); return r ? r.val : 0; };
+  const div = d0 && near(d0.end, anchor.end, 5) ? d0.val : 0, rep = at(co.rep), iss = at(co.iss);
+  const npy = (div + rep - iss) / mv; if (!isFinite(npy) || npy >= 0.4) return null;
+  return { end: anchor.end, div, rep, iss, npy };
+}

@@ -40,6 +40,25 @@
 //           stocks on their other formation days (value-core avoidJudge = the squad 29 AVOID standard). An AVOID block is never a short.
 //   Sources: Huang and Ritter, Corporate Cash Shortfalls and Financing Decisions (RFS 2021); DeAngelo, DeAngelo and Stulz, Seasoned
 //           equity offerings, market timing, and the corporate lifecycle (JFE 2010, NBER w13285): firms short of cash issue equity.
+// ---- PRE-REGISTERED 3 Nov 2026 (Agent B, Tuesday session), written here and in the library BEFORE any run; each run ONCE as written,
+// first complete verdict frozen; yardstick mode capBoth (AUD-1). Both appear under `research` in value-today.json, never as buys. ----
+//   B-FCF-EM1  B-FCF1 EXACTLY as built (its picks on each 21-session formation day, FCF_PICKS), kept only when the stock's latest earnings
+//           report in data/earnings-cache.json.gz dated STRICTLY BEFORE the formation day (value-core latestReport; no older than 120
+//           days) had actual EPS above the estimate (equal = no beat; no report / unknown = left out). Buy the next open, sell the close
+//           63 sessions later. value-core judge (tier 2 at block t 2.5, PROVEN at the bar) plus these gates in BOTH halves (average after
+//           cost, same formation dates): (a) better than B-FCF1 (all its picks); (b) better than B-FCF1's picks that are in the earnings
+//           cache with a current report, beat or not (the matched control: the cache holds mostly large companies alive today, so this
+//           gate removes that survivorship from the comparison); (c) better than SPY bought the same dates.
+//   V17     NET PAYOUT YIELD (Boudoukh, Michaely, Richardson and Roberts 2007, JF; NBER w10651). Each 21-session formation; liquid stocks
+//           (5 USD+, 5M USD+ a day), financials (SIC 6xxx) left out, SEC facts and a share count known. npy = TTM (dividends paid +
+//           common stock repurchased - common stock issued) / (shares known x close) (value-core npyAt: dividends PaymentsOfDividends
+//           else PaymentsOfDividendsCommonStock; repurchases PaymentsForRepurchaseOfCommonStock; issuance ProceedsFromIssuanceOfCommonStock;
+//           anchor period = dividends' TTM end, else repurchases'; under 200 days old; other items of another period end count 0; neither
+//           dividends nor repurchases known -> not ranked; npy >= 40% = data error). Picks = the top 10% of ranked stocks by npy (rounded
+//           up), npy > 0 only. Equal weight; buy the next open, sell the close 126 sessions later. value-core judge plus: better than SPY
+//           bought the same dates, both halves. The 12-month version is NOT judged (252-session blocks: under 3 per half on this cache).
+//           Differs from ANOM-BBY (repurchases only, 63 sessions, rejected) and SQ16-SHYLD (adds debt paydown, top 100 of the 1000
+//           largest, rejected): disclosed, so a fail here is expected by its siblings and a pass would be a new league trial.
 // DATA: prices = the 5-year whole-market cache (study-cache/grouped.json.gz, READ ONLY; x rows value exits of stocks that fell under
 // the cache filter). SEC: yearly F-score inputs from quality.mjs's cache (study-cache/fund.json.gz, READ ONLY, same fscore code);
 // quarterly / TTM numbers point in time from SEC companyfacts (the bulk companyfacts.zip, else one request per company), kept compact
@@ -51,7 +70,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { execFileSync } from 'node:child_process';
 import { freezeEach, latestBlock } from './first-run.mjs';
-import { growthRun, beatStreak, fcfCheck, halfStat, judge, r4, COST, TIER2_T, STALE_DAYS, runwayAt, avoidStat, avoidJudge, sectorCap } from './value-core.mjs';
+import { growthRun, beatStreak, fcfCheck, halfStat, judge, r4, COST, TIER2_T, STALE_DAYS, runwayAt, avoidStat, avoidJudge, sectorCap, latestReport, npyAt } from './value-core.mjs';
 import { tradeG, yardPush, yardMean, correctedEntry } from './yardstick.mjs';
 const env = process.env, OUT = env.OUT || 'data/value-lab.json', TODAY_OUT = env.TODAY_OUT || 'data/value-today.json', VC = env.VALUE_CACHE || 'value-cache', DIAG = !!env.DIAG;
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -106,8 +125,9 @@ const LIQ = new Map(), LIQS = new Map(); for (const t of FORM) { const a = []; f
 const TAGS = { cfo: ['NetCashProvidedByUsedInOperatingActivities', 'NetCashProvidedByUsedInOperatingActivitiesContinuingOperations'], capex: ['PaymentsToAcquirePropertyPlantAndEquipment', 'PaymentsToAcquireProductiveAssets'],
   rev: ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'SalesRevenueNet', 'RevenueFromContractWithCustomerIncludingAssessedTax'], cogs: ['CostOfGoodsAndServicesSold', 'CostOfRevenue', 'CostOfGoodsSold'],
   inv: ['InventoryNet'], eq: ['StockholdersEquity'], debt: ['LongTermDebt', 'LongTermDebtNoncurrent', 'LongTermDebtCurrent', 'DebtCurrent', 'ShortTermBorrowings'],
-  cash: ['CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents'], sti: ['ShortTermInvestments', 'MarketableSecuritiesCurrent', 'AvailableForSaleSecuritiesDebtSecuritiesCurrent'] };
-const TAGV = 2;   // 27 Oct 2026: cash and short-term investment tags added (B-CR1); a cache of an older tag set is read again in full
+  cash: ['CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents'], sti: ['ShortTermInvestments', 'MarketableSecuritiesCurrent', 'AvailableForSaleSecuritiesDebtSecuritiesCurrent'],
+  div: ['PaymentsOfDividends', 'PaymentsOfDividendsCommonStock'], rep: ['PaymentsForRepurchaseOfCommonStock'], iss: ['ProceedsFromIssuanceOfCommonStock'] };
+const TAGV = 3;   // 3 Nov 2026: payout tags added (V17)   // 27 Oct 2026: cash and short-term investment tags added (B-CR1); a cache of an older tag set is read again in full
 const ALLTAGS = [...new Set(Object.values(TAGS).flat())];
 // compact: periods ending 2017 or later; the same figure filed again later (the prior-year column of a newer report) is kept once, at its
 // FIRST filing date (a later filing of the same figure changes nothing point in time); a restated figure is a new row.
@@ -134,7 +154,7 @@ if (todo.length) {
   console.log('value-lab: SEC companyfacts for ' + got + ' of ' + todo.length + ' companies (' + (zipOk ? 'bulk file' : secReq + ' requests, ' + secFail + ' failed') + ')' + (secNote ? '; ' + secNote : ''));
 }
 const factsOf = (cik) => { const c = FX.c[String(cik)]; if (!c) return null; const m = (tags) => { const o = {}; for (const t of tags) if (c[t]) o[t] = c[t].map(([s, e, v, f]) => ({ s, e, v, f })); return o; };
-  return { cfo: m(TAGS.cfo), capex: m(TAGS.capex), rev: m(TAGS.rev), cogs: m(TAGS.cogs), inv: m(TAGS.inv), eq: m(TAGS.eq), debt: m(TAGS.debt), cash: m(TAGS.cash), sti: m(TAGS.sti) }; };
+  return { cfo: m(TAGS.cfo), capex: m(TAGS.capex), rev: m(TAGS.rev), cogs: m(TAGS.cogs), inv: m(TAGS.inv), eq: m(TAGS.eq), debt: m(TAGS.debt), cash: m(TAGS.cash), sti: m(TAGS.sti), div: m(TAGS.div), rep: m(TAGS.rep), iss: m(TAGS.iss) }; };
 const coMemo = new Map(), coOf = (s) => { const cik = symCik(s); if (!cik) return null; if (!coMemo.has(cik)) coMemo.set(cik, factsOf(cik)); return coMemo.get(cik); };
 const covered = [...needCiks].filter(c => FX.c[c] && Object.keys(FX.c[c]).length).length;
 
@@ -143,7 +163,9 @@ const liqAt = (t) => { if (!LIQ.has(t)) { const a = []; for (let i = 0; i < NS; 
 // mode (engine audit AUD-1, yardstick.mjs): 'asFrozen' = the frozen runs (stocks of +300% or more dropped from the yardstick, trades
 // uncapped); 'capBoth' = the correction (both capped at +300%); 'raw' = no cap (sensitivity)
 const ctrlMemo = new Map(); const ctrl = (t, h, mode = 'asFrozen') => { const k = t + '_' + h + mode; if (ctrlMemo.has(k)) return ctrlMemo.get(k); const v = []; for (const i of liqAt(t)) yardPush(v, fwd(i, t, h), mode); const m = yardMean(v, 50); ctrlMemo.set(k, m); return m; };
-const fwdMemo = new Map(); const fwdM = (i, t, h) => { const k = i * 1e7 + t * 10 + (h === 21 ? 1 : h === 63 ? 2 : 3); if (!fwdMemo.has(k)) fwdMemo.set(k, fwd(i, t, h)); return fwdMemo.get(k); };
+// BUG VL-1 (found 3 Nov 2026 by Agent B): the memo key used one slot for every hold other than 21 / 63, so B-CR1 / B-CR1-AVOID (60
+// sessions, run after V15-SN at 126) could read V15-SN's 126-session return for the same stock and day. Fixed: the key holds the hold.
+const fwdMemo = new Map(); const fwdM = (i, t, h) => { const k = i + '_' + t + '_' + h; if (!fwdMemo.has(k)) fwdMemo.set(k, fwd(i, t, h)); return fwdMemo.get(k); };
 // the same stock's average forward return on the OTHER formation days of the same half (days it was not picked by this rule)
 function ownOf(i, t, h, days, picked, mid, mode = 'asFrozen') { const half = t < mid, v = []; for (const u of days) { if ((u < mid) !== half || picked.has(i + '_' + u)) continue; liqAt(u); if (!LIQS.get(u).has(i)) continue; yardPush(v, fwdM(i, u, h), mode); } return v.length >= 3 ? mean(v) : null; }
 const midOf = (ts) => { const u = [...new Set(ts)].sort((a, b) => a - b); return u[Math.floor(u.length / 2)]; };
@@ -318,6 +340,32 @@ const had424 = (s, d) => { const cik = symCik(s), a = cik && F424.get(String(+ci
   for (let i = 0; i < NS; i++) { if (i === spyI || !liquid(i, lastT)) continue; const s = SYMS[i]; if (finCo(s)) continue; const r = rwAt(s, asOf); if (r && r.burner && r.runway < 4) flags.push({ sym: s, runwayQuarters: r4(r.runway), cash: Math.round(r.cash), ttmOperatingCash: Math.round(r.cfo), periodEnd: r.end, recent424B5: had424(s, D[lastT]) }); }
   AVOID_TODAY = { asOf: D[lastT], flags: flags.sort((x, y) => x.runwayQuarters - y.runwayQuarters) }; }
 
+// ================= 3 Nov 2026 pre-registered rules (header): B-FCF-EM1, V17. Yardstick mode capBoth =================
+// ---- B-FCF-EM1 ----
+{ const em = new Map(), base = new Map(), matched = new Map(), diag = { formations: 0, fcfPicks: 0, inCache: 0, withReport: 0, beat: 0 };
+  for (const [t, a] of FCF_PICKS) { const e = [], m = []; diag.formations++;
+    for (const i of a) { diag.fcfPicks++; const rs = ES[SYMS[i]]; if (!rs) continue; diag.inCache++; const r = latestReport(rs, D[t]); if (!r || r.beat === null) continue; diag.withReport++; m.push(i); if (r.beat) { diag.beat++; e.push(i); } }
+    em.set(t, e); base.set(t, a); matched.set(t, m); }
+  DIAGS['B-FCF-EM1'] = { ...diag, note: 'earnings-cache stocks only (' + Object.keys(ES).length + ', mostly large companies alive today); gate (b) compares with the same cache' };
+  if (!DIAG) { const days = [...em.keys()], { trades, mid } = basketTrades(em, 63, days, NEWMODE), R = halves(trades, 63), extra = [], vs = {};
+    const tag = (tr) => tr.map(z => ({ ...z, half: z.t < mid ? 'older' : 'newer' })), bt = tag(basketTrades(base, 63, days, NEWMODE).trades), mt = tag(basketTrades(matched, 63, days, NEWMODE).trades);
+    for (const k of ['older', 'newer']) { const a = avgNet(trades.filter(z => z.half === k)), b = avgNet(bt.filter(z => z.half === k)), c = avgNet(mt.filter(z => z.half === k)); vs[k] = { rule: r4(a), fcf1: r4(b), fcf1InCache: r4(c) };
+      if (!(a !== null && b !== null && a > b)) extra.push('not better than B-FCF1 on the same dates in the ' + k + ' half (' + pc(a) + ' vs ' + pc(b) + ')');
+      if (!(a !== null && c !== null && a > c)) extra.push('not better than B-FCF1 picks in the earnings cache (beat or not) in the ' + k + ' half (' + pc(a) + ' vs ' + pc(c) + ')'); }
+    const sp = spyGate(trades, 63, extra);
+    RES['B-FCF-EM1'] = { ...judge(R, { bar: BAR, extra }), results: R, vsSameDates: vs, vsSpy: sp, hold: 63, split: D[mid], mode: NEWMODE, caveat: DIAGS['B-FCF-EM1'].note, trades: tradeRows(trades) }; }
+  const tL = FORM[FORM.length - 1]; NEW_TODAY['B-FCF-EM1'] = { formed: D[tL], syms: (em.get(tL) || []).map(i => SYMS[i]) }; }
+// ---- V17 ----
+{ const picks = new Map(), diag = { formations: 0, checked: 0, ranked: 0, picks: [] };
+  for (const t of FORM) { const rows = []; diag.formations++;
+    for (const i of LIQ.get(t)) { const s = SYMS[i]; if (finCo(s)) continue; const co = coOf(s); if (!co) continue; const cik = symCik(s), sh = sharesKnown(cik, D[t]); if (!(sh > 0)) continue; diag.checked++;
+      const r = npyAt(co, D[t], sh * C[i * T + t]); if (!r) continue; diag.ranked++; rows.push({ i, y: r.npy }); }
+    rows.sort((a, b) => b.y - a.y); const p = rows.slice(0, Math.ceil(rows.length * 0.1)).filter(x => x.y > 0).map(x => x.i); picks.set(t, p); diag.picks.push(p.length); }
+  DIAGS.V17 = { formations: diag.formations, checked: diag.checked, ranked: diag.ranked, picksPerMonth: diag.picks };
+  if (!DIAG) { const days = [...picks.keys()], { trades, mid } = basketTrades(picks, 126, days, NEWMODE), R = halves(trades, 126), extra = [], sp = spyGate(trades, 126, extra);
+    RES.V17 = { ...judge(R, { bar: BAR, extra }), results: R, vsSpy: sp, hold: 126, split: D[mid], mode: NEWMODE, trades: tradeRows(trades) }; }
+  const tL = FORM[FORM.length - 1]; NEW_TODAY.V17 = { formed: D[tL], syms: (picks.get(tL) || []).map(i => SYMS[i]) }; }
+
 // ---- output ----
 const cover = { companiesNeeded: needCiks.size, withSecFacts: covered, factsAt: FX.at, secNote };
 if (DIAG) { console.log('VALUE LAB DIAGNOSTICS (coverage only, no returns computed) ' + D[0] + ' to ' + D[T - 1]); console.log(JSON.stringify({ cover, ...DIAGS }, null, 1).slice(0, 12000)); process.exit(0); }
@@ -335,6 +383,12 @@ if (complete) for (const id of ['B-FCF1', 'B-BASK1_1m', 'B-BASK1_3m']) { const f
   correctedRun[id] = correctedEntry({ frozen: fr, fixed: run('capBoth'), asFrozen: run('asFrozen'), raw: run('raw'), bugs: ['AUD-1'], window: [D[0], D[end]], extra: { hold: fr.hold } });
   const c = correctedRun[id]; console.log('AUDIT ' + id + ': frozen ' + fr.verdict + ' -> corrected ' + c.verdict + ' (reproduced: ' + c.reproduced.matchesFrozen + ') | older edge ' + pc(fr.results.older.edge) + ' -> ' + pc(c.results.older.edge) + ' | newer edge ' + pc(fr.results.newer.edge) + ' -> ' + pc(c.results.newer.edge)); }
 LIMIT = T - 1;
+// VL-1 corrected runs: B-CR1 and B-CR1-AVOID re-judged ONCE with the fixed memo key, only when this run covers exactly their frozen
+// window (same last session); same picks, entries, exits, costs, halves and judge. firstRun is never touched.
+if (complete) for (const id of ['B-CR1', 'B-CR1-AVOID']) { const fr = firstRun[id], r = RES[id]; if (!fr || !r || correctedRun[id] || String(fr.to) !== D[T - 1]) continue;
+  correctedRun[id] = { ...strip(r), at: new Date().toISOString(), to: D[T - 1], bar: fr.bar, bugs: ['VL-1'], frozenVerdict: fr.verdict, window: [D[0], D[T - 1]],
+    explanation: 'VL-1: the forward-return memo shared one key for holds 60 and 126, so some B-CR1 / B-CR1-AVOID returns (and same-stock-other-days values) were 126-session returns from V15-SN. Re-run once on the frozen window with the hold in the key; nothing else changed.' };
+  console.log('VL-1 ' + id + ': frozen ' + fr.verdict + ' -> corrected ' + r.verdict); }
 const tierOf = (id) => { const ks = Object.keys(firstRun).filter(k => k === id || k.startsWith(id + '_')), v = ks.map(k => firstRun[k].verdict); return v.includes('PROVEN') ? 'PROVEN' : v.includes('TRADABLE SMALL') ? 'TRADABLE SMALL' : null; };
 // today's picks with the live gates (halal, lottery 15%+ one-day jump in the last 21 sessions, share count up 10%+ in a year = dilution)
 const HAL = J('data/halal.json', {}), zbad = new Set((J('data/zad-list.json', {}).notHalal) || []);
@@ -343,10 +397,10 @@ const dilution = (s) => { const cik = symCik(s), a = cik && SH.c[cik]; if (!a ||
 const todayRules = {}, research = {}; for (const [id, p] of [...Object.entries(PICKS_TODAY), ...Object.entries(NEW_TODAY)]) (NEW_TODAY[id] ? research : todayRules)[id] = { tier: tierOf(id), formed: p.formed, picks: p.syms.map(s => { const i = SY.get(s), why = [], hal = zbad.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
   const lt = i !== undefined ? lottery(i) : null, dl = dilution(s); if (hal === 'fail') why.push('not halal (ZAD)'); if (lt !== null) why.push('lottery-like jump ' + pc(lt)); if (dl !== null) why.push('share count up ' + pc(dl) + ' in a year');
   return { sym: s, lastClose: i !== undefined ? r4(CC(i, T - 1)) : null, halal: hal, blocked: why.length > 0, why, ...(p.detail ? { detail: p.detail.find(x => x.sym === s) } : {}) }; }) };
-fs.writeFileSync(TODAY_OUT, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], holdSessions: { 'B-FCF1': 63, 'B-BASK1': 63, 'B-EM1': 60, 'B-SIF1': 63, 'V15-SN': 126, 'B-CR1': 60 }, stopPct: 0.15, buyUpToPct: 0.03,
+fs.writeFileSync(TODAY_OUT, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], holdSessions: { 'B-FCF1': 63, 'B-BASK1': 63, 'B-EM1': 60, 'B-SIF1': 63, 'V15-SN': 126, 'B-CR1': 60, 'B-FCF-EM1': 63, V17: 126 }, stopPct: 0.15, buyUpToPct: 0.03,
   avoid: { 'B-CR1-AVOID': { verdict: firstRun['B-CR1-AVOID'] ? firstRun['B-CR1-AVOID'].verdict : null, confirmed: !!(firstRun['B-CR1-AVOID'] && firstRun['B-CR1-AVOID'].verdict === 'AVOID CONFIRMED'), rule: 'cash burner (TTM operating cash flow < 0) with cash + short-term investments under 4 quarters of burn', note: 'information only unless confirmed is true; an AVOID block is never a short', ...(AVOID_TODAY || {}) } },
-  note: 'Agent B value rules. A rule shows buys in ACTIONS only when its frozen first verdict is TRADABLE SMALL or PROVEN; otherwise this file is information only. research = rules first run on 27 Oct 2026 (V15-SN, B-CR1): never offered as buys from this file (a new study never goes straight into buys); the main session decides.', rules: todayRules, research }, null, 1));
-const out = { generatedAt: new Date().toISOString(), versions: Object.keys(RES).length, preRegistered: 'data/strategy-library.json (B-FCF1 23 Oct; B-BASK1 21 Oct; B-EM1 and B-SIF1 22 Oct; V15-SN, B-CR1 and B-CR1-AVOID 27 Oct, value-lab.mjs header)', window: [D[0], D[T - 1]], bar: BAR, leagueBar: LEAGUE.bar || null, complete, cover, diagnostics: DIAGS,
+  note: 'Agent B value rules. A rule shows buys in ACTIONS only when its frozen first verdict is TRADABLE SMALL or PROVEN; otherwise this file is information only. research = rules first run on 27 Oct 2026 (V15-SN, B-CR1) and 3 Nov 2026 (B-FCF-EM1, V17): never offered as buys from this file (a new study never goes straight into buys); the main session decides.', rules: todayRules, research }, null, 1));
+const out = { generatedAt: new Date().toISOString(), versions: Object.keys(RES).length, preRegistered: 'data/strategy-library.json (B-FCF1 23 Oct; B-BASK1 21 Oct; B-EM1 and B-SIF1 22 Oct; V15-SN, B-CR1 and B-CR1-AVOID 27 Oct; B-FCF-EM1 and V17 3 Nov, value-lab.mjs header)', window: [D[0], D[T - 1]], bar: BAR, leagueBar: LEAGUE.bar || null, complete, cover, diagnostics: DIAGS,
   notBuilt: { 'V15 ex-tech (SIC 35/36/38)': 'V15-NO35, squad 21 forward paper only (never backtested, by design)', 'V15 12 months, full gates': '252-session blocks: at most 2 per half on the 5-year cache (3 needed); and V15 12 m already lost to the S&P 500 in 2021-23 (quality.json v15)' },
   standard: 'both halves: > 0 after 0.8% and 1.2% cost, edge over the average stock > 0, better than the same stocks on their other formation days, > 0 without the 2 best, block t >= ' + TIER2_T + ' (blocks = the hold length) -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN; plus each rule\'s own gates',
   firstRun, correctedRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }), trades: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, r.trades || r.months || []])) };
@@ -357,7 +411,7 @@ for (const [k, r] of Object.entries(RES)) { if (r.kind === 'avoid') { const g = 
   console.log('- ' + k + ': ' + r.verdict + ' | older ' + f(o) + ' | newer ' + f(n) + ' | ' + r.why); }
 // library: from firstRun only
 try { const LB = J('data/strategy-library.json', null); let ch = false;
-  for (const id of ['B-FCF1', 'B-BASK1', 'B-EM1', 'B-SIF1', 'V15-SN', 'B-CR1']) { const e = LB && LB.strategies.find(x => x.id === id), ks = Object.keys(firstRun).filter(k => k === id || k.startsWith(id + '_')); if (!e || !ks.length || /^tested/.test(e.status || '')) continue;
+  for (const id of ['B-FCF1', 'B-BASK1', 'B-EM1', 'B-SIF1', 'V15-SN', 'B-CR1', 'B-FCF-EM1', 'V17']) { const e = LB && LB.strategies.find(x => x.id === id), ks = Object.keys(firstRun).filter(k => k === id || k.startsWith(id + '_')); if (!e || !ks.length || /^tested/.test(e.status || '')) continue;
     const res = Object.fromEntries(ks.map(k => { const r = firstRun[k], R = r.results; return [k, { verdict: r.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg, R.newer.avg], median: [R.older.median, R.newer.median], edge: [R.older.edge, R.newer.edge], vsOwn: [R.older.vsOwn, R.newer.vsOwn], noTop2: [R.older.noTop2, R.newer.noTop2], stress: [R.older.avgStress, R.newer.avgStress], tBlock: [R.older.tBlock, R.newer.tBlock], why: r.why }]; }));
     const best = tierOf(id), v = ks.map(k => firstRun[k].verdict);
     e.status = 'tested: ' + (best ? best.toLowerCase() : v.includes('NOT PROVEN') ? 'not proven' : v.every(x => x === 'TOO FEW CASES') ? 'too few cases' : 'rejected') + (best === 'TRADABLE SMALL' ? ' (tier 2)' : '');

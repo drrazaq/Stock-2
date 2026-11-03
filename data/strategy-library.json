@@ -2311,9 +2311,11 @@
    "family": "Quality and value",
    "name": "Net payout yield (dividends + buybacks - issuance)",
    "explain": "Boudoukh, Michaely, Richardson and Roberts (2007, Journal of Finance): total payout yield predicts returns better than the dividend yield alone. Testable from SEC frames: PaymentsOfDividends + PaymentsForRepurchaseOfCommonStock - ProceedsFromIssuanceOfCommonStock, over market value; top 10% of liquid stocks, held 6 and 12 months; financials left out.",
-   "status": "queued (Agent B)",
+   "status": "pre-registered 2026-11-03 (Agent B); run once in value-lab.mjs",
    "agent": "B",
-   "note": "Added 20 Oct by Agent B from outside research (https://www.nber.org/papers/w10651). Needs 3 more yearly frame tags (about 27 SEC calls). Differs from V11 shareholder yield (which used share-count change only and was rejected): it uses the cash paid out."
+   "note": "Added 20 Oct by Agent B from outside research (https://www.nber.org/papers/w10651). Needs 3 more yearly frame tags (about 27 SEC calls). Differs from V11 shareholder yield (which used share-count change only and was rejected): it uses the cash paid out.",
+   "built": "Pre-registered 3 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs npyAt): each 21-session formation, liquid non-financial stocks; npy = TTM (PaymentsOfDividends else PaymentsOfDividendsCommonStock + PaymentsForRepurchaseOfCommonStock - ProceedsFromIssuanceOfCommonStock) / (shares known x close), point in time (filed before the day, period under 200 days old, other items of another period end = 0, no dividends and no repurchases = not ranked, 40%+ = data error); top 10% by npy, npy > 0; buy next open, sell the close 126 sessions later; yardstick capBoth. Gates: value-core judge plus beat SPY bought the same dates, both halves. 12-month version not judged (under 3 blocks of 252 sessions per half). Siblings ANOM-BBY and SQ16-SHYLD were rejected (disclosed).",
+   "registered": "2026-11-03"
   },
   {
    "id": "C-GOV1",
@@ -3853,9 +3855,11 @@
    "family": "Quality and value",
    "name": "Cash-rich, growing, low-debt companies that also just beat earnings",
    "explain": "B-FCF1 exactly as built (FCF yield > 5%, revenue growth >= 10%, D/E < 0.5, DSI < 60 where inventory exists, above the 200-day; monthly formation, hold 63 sessions), kept only when the latest quarterly EPS, filed before the formation date, beat the consensus estimate. Same gates as B-FCF1: both halves, 0.8%/1.2% cost, vs the average stock, vs B-FCF1 itself on the same dates (it must add something), vs the same stocks on other months, without the 2 best, t >= 2.5 for tier 2. Counts as a new trial for the luck bar.",
-   "status": "queued (Agent B, Tuesday 27 Oct)",
+   "status": "pre-registered 2026-11-03 (Agent B); run once in value-lab.mjs",
    "agent": "B",
-   "note": "Suggested by an outside review on 23 Oct after B-FCF1 and B-EM1 results were known, so it is a new trial, not a rescue: it must beat B-FCF1 on the same dates to matter. Pre-registered before any run."
+   "note": "Suggested by an outside review on 23 Oct after B-FCF1 and B-EM1 results were known, so it is a new trial, not a rescue: it must beat B-FCF1 on the same dates to matter. Pre-registered before any run.",
+   "built": "Pre-registered 3 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs latestReport): B-FCF1 picks on each 21-session formation day, kept only if the latest earnings-cache report dated strictly before the formation day (max 120 days old) beat the estimate (actual > estimate). Buy next open, sell the close 63 sessions later; yardstick capBoth (AUD-1). Gates: value-core judge (tier 2 at block t 2.5, PROVEN at the league bar) plus, in both halves on the same dates: beat B-FCF1 (all picks), beat B-FCF1 picks in the earnings cache with a current report (survivorship-matched control), beat SPY. Shown only under research in value-today.json, never as a buy.",
+   "registered": "2026-11-03"
   },
   {
    "id": "DEC-QBO",
@@ -33078,6 +33082,32 @@
     ],
     "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
    }
+  },
+  {
+   "id": "B-FCFN1",
+   "family": "Quality and value",
+   "name": "Free cash flow news drift after the 10-Q / 10-K",
+   "agent": "B",
+   "status": "queued (Agent B)",
+   "registered": "2026-11-03",
+   "explain": "At each 10-Q / 10-K filing (SEC acceptance time, entry the next open): FCF news = (this quarter's operating cash flow - capex) minus the same quarter a year earlier, over market value; top 10% of liquid non-financial filers that day group (monthly pool); hold 63 sessions. Must beat the average stock, the same stocks on other filings, and an earnings-news-only version (net income change, same scaling) on the same filings, both halves, value-core judge.",
+   "sources": [
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5375954"
+   ],
+   "note": "Web scout 3 Nov 2026. Lem, Koski and McVay (SSRN 2025): the market reacts to FCF news at the earnings announcement, more for growth firms and noisy earnings; the paper measures the reaction, NOT a later drift, so a drift test is a new trial. Data: SEC companyfacts quarterly cash flows (in value-cache) + filing dates: the system has it. Queue position 1 for Agent B."
+  },
+  {
+   "id": "B-BBG1",
+   "family": "Quality and value",
+   "name": "Quantitative buyback guidance (a stated repurchase target) vs a plain authorization",
+   "agent": "B",
+   "status": "needs data",
+   "registered": "2026-11-03",
+   "explain": "Companies whose earnings release states a numeric buyback target for the coming period (dollars or shares), entry the next open after the 8-K exhibit 99.1, hold 126 sessions; vs companies with only a board authorization (SQ1-BBAUTH) on the same dates.",
+   "sources": [
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5023151"
+   ],
+   "note": "Web scout 3 Nov 2026 (Buyback guidance and the agency costs of cash, SSRN 2024-25). Needs a reliable parser of 8-K exhibit 99.1 text for repurchase targets (EDGAR full-text search is official but phrase matching is fragile, see SQ1-BBAUTH). Unlock: a validated 8-K text parser. Queue position 4."
   }
  ]
 }
