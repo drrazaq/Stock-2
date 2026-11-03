@@ -154,6 +154,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'eat') { ch += preRegisterEat(LB); continue; }
     if (R.family === 'tax') { ch += preRegisterTax(LB); continue; }
     if (R.family === 'rdi') { ch += preRegisterRdi(LB); continue; }
+    if (R.family === 'inv') { ch += preRegisterInv(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -512,4 +513,66 @@ export function preRegisterRdi(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of RDI_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-02 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Measure, quarter filter, year-ago match, the three increase tests and the data rule fixed in research-core.mjs (IDEA 7) before any run.', sources: RDI_SOURCES, hold: R.hold, note: RDI_NOTE }); ch++; }
+  return ch; }
+// ---------------- IDEA 8 (pre-registered 3 Nov 2026, before any run): INVENTORY CHANGES (Thomas and Zhang 2002) ----------------
+// Source: Thomas and Zhang, "Inventory Changes and Future Returns", Review of Accounting Studies 7, 2002, 163-187 (doi 10.1023/A:1020274002135):
+// the accrual anomaly is mostly the inventory part; firms whose inventory rises most (per average assets) earn lower returns over the next
+// year and firms whose inventory falls most earn higher returns. NEW information line (the inventory balance, official SEC XBRL); the
+// library has total accruals (ANOM-ACC, rejected) and a days-of-inventory screen inside SQ12 (a level, not the change). Long only: buy the
+// bottom (inventory cut the most); the top (inventory built the most) is an AVOID check (never a buy).
+// MEASURE (fixed now, no tuning): us-gaap:InventoryNet (instant, USD, forms 10-Q/10-K, no amendments, end from 2019-06-01); us-gaap:Assets
+// (instant). Only InventoryNet (other inventory tags not used; stated). A filing date F is an EVENT when the latest inventory instant E it
+// reports is later than every instant reported before F and 0 <= F - E <= 120 days (10-K year ends included: a balance, not a flow).
+// CUR = that filing's inventory at E; PRIOR = inventory at the instant closest to E - 365 within E-385..E-345 (latest filed on or before F);
+// PRIOR > 0 (an inventory holder). A1 = assets at E, A0 = assets at the PRIOR instant (+-20 days, latest filed on or before F); A0 >= 10M USD.
+// dINV = (CUR - PRIOR) / ((A0 + A1) / 2) (the paper's scaling by average total assets).
+// RANK (point in time, the lazy-prices ranker): dINV's percentile among ALL events filed in the 365 days before F (300+ needed).
+//   RQ-INV-LOW126  BUY the next open after a filing whose dINV is in the bottom 20% (percentile <= 0.20); sell the close 126 sessions later.
+//   RQ-INV-LOW252  the same, hold 252 sessions (the paper's one-year window).
+//   RQ-INV-TOP126  AVOID check: top 20% dINV (percentile >= 0.80), 126 sessions; judged GROSS vs GROSS (31 Oct method). Never a buy.
+// Public on the 'filed' date: bought at the OPEN of the first session strictly AFTER it. Liquid (system rule) on the session before entry.
+// One open trade per stock per rule.
+// DATA RULE (fixed now): no verdict until (a) 95%+ of universe companies looked up in the SEC bulk company facts file, (b) 85%+ of liquid
+// stock-months map to an SEC number, (c) 10,000+ inventory events from 2021-10-01 (fewer = the reader is broken: fix it, no verdict).
+export const INV = { tag: 'InventoryNet', assets: 'Assets', endFrom: '2019-06-01', maxLag: 120, prevLo: 345, prevHi: 385, aWin: 20, minAssets: 10e6, eventsFrom: '2021-10-01' };
+export const INV_DATA = { looked: 0.95, map: 0.85, events: 10000 };
+RULES['RQ-INV-LOW126'] = { kind: 'buy', hold: 126, side: 'bottom', family: 'inv', name: 'Inventory cut (inventory change vs a year before, per average assets) in the bottom 20%, hold 6 months',
+  rule: 'Buy the next open after a 10-Q/10-K whose inventory (us-gaap InventoryNet) minus the inventory a year before, divided by average total assets, is in the bottom 20% (percentile <= 0.20 vs all such filings of the prior 365 days; filed within 120 days of the balance date; year-ago inventory > 0; assets 10M USD+); stock liquid; sell the close 126 sessions later.' };
+RULES['RQ-INV-LOW252'] = { kind: 'buy', hold: 252, side: 'bottom', family: 'inv', name: 'Inventory cut in the bottom 20%, hold 1 year', rule: 'As RQ-INV-LOW126, hold 252 sessions.' };
+RULES['RQ-INV-TOP126'] = { kind: 'avoid', hold: 126, side: 'top', family: 'inv', name: 'AVOID check: inventory build-up in the top 20%, 126 sessions',
+  rule: 'Information only: stocks whose inventory change per average assets is among the 20% highest (percentile >= 0.80), bought next open, 126 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+export const INV_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'inv');
+for (const id of INV_IDS) { if (!IDS.includes(id)) IDS.push(id); if (RULES[id].kind === 'buy' && !BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// companyfacts JSON -> { v: [[end, val, filed, form]] inventory instants, a: [[end, val, filed]] assets }, sorted by filed
+export function invRows(j) { const g = j && j.facts && j.facts['us-gaap'], form = (x) => x.form === '10-Q' || x.form === '10-K';
+  const inst = (tag, from, pos) => { const u = g && g[tag] && g[tag].units, o = [], s = new Set();
+    for (const x of (u && Array.isArray(u.USD) ? u.USD : [])) { if (!x || x.start || !x.end || !x.filed || !ok(x.val) || x.val < 0 || (pos && x.val <= 0) || !form(x) || x.end < from) continue;
+      const k = x.end + '|' + x.val + '|' + x.filed; if (s.has(k)) continue; s.add(k); o.push([x.end, x.val, x.filed, x.form]); }
+    return o.sort((p, r) => p[2] < r[2] ? -1 : p[2] > r[2] ? 1 : p[0] < r[0] ? -1 : p[0] > r[0] ? 1 : 0); };
+  return { v: inst(INV.tag, '2018-03-01', false), a: inst(INV.assets, '2018-03-01', true).map(x => [x[0], x[1], x[2]]) }; }
+const invAssetsNear = (A, F, end) => { let as = null; for (const x of A) { if (x[2] > F) break; const gap = Math.abs(daysBetween(x[0], end)); if (gap > INV.aWin) continue;
+  if (!as || gap < Math.abs(daysBetween(as[0], end)) || (x[0] === as[0] && x[2] >= as[2])) as = x; } return as; };
+// rows -> events [{ d (filed), end, cur, prior, a0, a1, g (= dINV), form }]
+export function invEvents(rows) { const out = [], v = (rows && rows.v) || [], A = (rows && rows.a) || []; let maxEnd = '';
+  const byF = new Map(); for (const r of v) (byF.get(r[2]) || byF.set(r[2], []).get(r[2])).push(r);
+  const known = [];
+  for (const F of [...byF.keys()].sort()) { const here = byF.get(F); known.push(...here); const E = here.reduce((m, r) => r[0] > m ? r[0] : m, '');
+    if (E > maxEnd && E >= INV.endFrom && daysBetween(E, F) >= 0 && daysBetween(E, F) <= INV.maxLag) { const cur = here.filter(r => r[0] === E).pop()[1], target = addDays(E, -365); let best = null;
+      for (const r of known) { const gap = daysBetween(r[0], E); if (gap < INV.prevLo || gap > INV.prevHi) continue;
+        if (!best || Math.abs(daysBetween(r[0], target)) < Math.abs(daysBetween(best[0], target)) || (r[0] === best[0] && r[2] >= best[2])) best = r; }
+      const a0 = best ? invAssetsNear(A, F, best[0]) : null, a1 = invAssetsNear(A, F, E);
+      if (best && best[1] > 0 && a0 && a1 && a0[1] >= INV.minAssets) out.push({ d: F, end: E, cur, prior: best[1], a0: a0[1], a1: a1[1], g: +((cur - best[1]) / ((a0[1] + a1[1]) / 2)).toFixed(6), form: here.find(r => r[0] === E)[3] }); }
+    if (E > maxEnd) maxEnd = E; }
+  return out; }
+export function invDataRule({ ciks, looked, liqMonths, liqMapped, events }) { const r = { looked: ciks ? looked / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.looked >= INV_DATA.looked)) why.push('company facts looked up ' + (r.looked * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= INV_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(events >= INV_DATA.events)) why.push('inventory change events ' + events + ' (10,000 needed: reader check)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+const INV_SOURCES = ['https://doi.org/10.1023/A:1020274002135', 'https://www3.ntu.edu.sg/home/HuaiZhang/inventory%20paper-RAST.pdf'];
+const INV_NOTE = 'Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) "Inventory Changes and Future Returns": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026.';
+export function preRegisterInv(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of INV_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-03 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Measure, event timing, year-ago match, average-assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 8) before any run.', sources: INV_SOURCES, hold: R.hold, note: INV_NOTE }); ch++; }
   return ch; }

@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-11-01",
+ "updated": "2026-11-03",
  "strategies": [
   {
    "id": "T1",
@@ -32919,6 +32919,51 @@
     ],
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.16 under 2.5 in the older half; block t 0.66 under 2.5 in the newer half"
    }
+  },
+  {
+   "id": "RQ-INV-LOW126",
+   "family": "Daily researcher (RQ)",
+   "name": "Inventory cut (inventory change vs a year before, per average assets) in the bottom 20%, hold 6 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-03 (daily researcher); 5-year one-shot pending",
+   "explain": "Buy the next open after a 10-Q/10-K whose inventory (us-gaap InventoryNet) minus the inventory a year before, divided by average total assets, is in the bottom 20% (percentile <= 0.20 vs all such filings of the prior 365 days; filed within 120 days of the balance date; year-ago inventory > 0; assets 10M USD+); stock liquid; sell the close 126 sessions later. Measure, event timing, year-ago match, average-assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 8) before any run.",
+   "sources": [
+    "https://doi.org/10.1023/A:1020274002135",
+    "https://www3.ntu.edu.sg/home/HuaiZhang/inventory%20paper-RAST.pdf"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) \"Inventory Changes and Future Returns\": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026."
+  },
+  {
+   "id": "RQ-INV-LOW252",
+   "family": "Daily researcher (RQ)",
+   "name": "Inventory cut in the bottom 20%, hold 1 year",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-03 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-INV-LOW126, hold 252 sessions. Measure, event timing, year-ago match, average-assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 8) before any run.",
+   "sources": [
+    "https://doi.org/10.1023/A:1020274002135",
+    "https://www3.ntu.edu.sg/home/HuaiZhang/inventory%20paper-RAST.pdf"
+   ],
+   "hold": 252,
+   "note": "Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) \"Inventory Changes and Future Returns\": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026."
+  },
+  {
+   "id": "RQ-INV-TOP126",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: inventory build-up in the top 20%, 126 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-03 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: stocks whose inventory change per average assets is among the 20% highest (percentile >= 0.80), bought next open, 126 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, event timing, year-ago match, average-assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 8) before any run.",
+   "sources": [
+    "https://doi.org/10.1023/A:1020274002135",
+    "https://www3.ntu.edu.sg/home/HuaiZhang/inventory%20paper-RAST.pdf"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) \"Inventory Changes and Future Returns\": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026."
   }
  ]
 }
