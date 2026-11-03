@@ -1,0 +1,4996 @@
+{
+  "kind": "ACTIONS_WATCHER_STANDALONE_RELEASE_EVIDENCE_V1",
+  "atUTC": "2026-11-03T09:36:32.080088+00:00",
+  "runtime": "Node20.20.2, UID1000 non-root",
+  "baseDevelopment": "e357ce4d5da61337cfa9385e697c6ef0e8cf7b3b",
+  "productionBase": "bac971eebfd8df259af7e29dc909cd5b255a39c8",
+  "compatibleMain": "eac0e91630de3967221482530e92f3f9408d2cf9",
+  "actionsPatchSha256": "a9560969298368490a0b3cbd5b151e429b7d68b2bc302ba35025ccebb0981a53",
+  "actionsManifestSha256": "545e1a7775f43f6b3b6b8e72c84a6f8e47c8ecde0b560128695ab17f2a67cd2b",
+  "watcherPatchSha256": "781f6644faf97b160451d3b455dfb12efb84679a5adcec9e69a5cafdee431d2e",
+  "fullSuiteTrials": {
+    "baseline": {
+      "files": 131,
+      "pass": 131,
+      "failures": [],
+      "fixtureClockExceptions": [
+        "test/try-small-audit.test.mjs"
+      ]
+    },
+    "actions": {
+      "files": 133,
+      "pass": 133,
+      "failures": [],
+      "fixtureClockExceptions": [
+        "test/try-small-audit.test.mjs"
+      ]
+    },
+    "watcher": {
+      "files": 133,
+      "pass": 133,
+      "failures": [],
+      "fixtureClockExceptions": [
+        "test/try-small-audit.test.mjs"
+      ]
+    },
+    "combined": {
+      "files": 135,
+      "pass": 135,
+      "failures": [],
+      "fixtureClockExceptions": [
+        "test/try-small-audit.test.mjs"
+      ]
+    },
+    "development": {
+      "files": 268,
+      "pass": 267,
+      "failures": [
+        {
+          "tree": "development",
+          "file": "tests/incident-reporting.test.mjs",
+          "exit": 1,
+          "mode": "ordinary"
+        }
+      ],
+      "fixtureClockExceptions": []
+    }
+  },
+  "fileResults": [
+    {
+      "tree": "baseline",
+      "file": "test/account-replay-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/accounting-durability.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/accounting-fixes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/agent-a-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/agent-a-ldx-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/agent-a-tgt-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/agent-c-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/alpaca-feed.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/angles-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/anomaly-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/audit-engines.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/basket-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/blocked-runner-policy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/bot-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/bot-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/buy-gates.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/buy-more.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/catalyst-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/catalyst-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/catalyst-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/catalyst-lab.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/chain-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/chain-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/chain-decoder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/cluster-risk.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/comeback-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/confluence-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/decoded-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/decoded2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/discovery-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/discovery2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/discovery2-run.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/early-alerts.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/early-wave-discovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/earnings-study-dead-stocks.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/event-orb-retest-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/expert-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/feed-integrity-watcher.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/feed-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/focus-per-kind.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/follow-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/follow-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/gate-verdict.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/halal-batch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/hold-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/ignition-freshness.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/ignition-paper.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/ladder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/leader-dip-sale-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/leader-dip.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/loss-line.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/macro-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/ml-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/opp-mode.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/options-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/options-lab-live.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/options-ticket.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/positions-merge.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/premarket-feed.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/private-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/radar-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/radar-v3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/rank-models.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/research-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/research-eat.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/research-inv.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/research-isc.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/research-rdi.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/research-rpo.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/research-tax.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/research-tender.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/runner-hunter-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/save-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/sec-request-runtime.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/sec-time.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/sell-discipline.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/settings-writes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/shadow.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/split-adjust.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad1-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad10-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad11-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad12-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad13-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad14-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad15-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad15b-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad16-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad17-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad18-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad19-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad20-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad21-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad22-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad23-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad24-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad24-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad25-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad25-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad26-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad27-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad28-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad29-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad4-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad5-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad6-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad7-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad8-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/squad9-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/stop-raise.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/stop-watch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/sunday-scoreboard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/telegram-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/tier2-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/tier2.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/tipster-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/trade-words.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/try-small-audit.test.mjs",
+      "exit": 0,
+      "mode": "explicit historical TRY SMALL fixture replay; ordinary failures separate"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/try-small.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/unresolved-sells.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/value-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/verify-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/watcher-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/watcher-incident-revision.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/watcher-message-publish.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/watcher-resilience.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/watcher-retry-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "test/winners-autopsy-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "baseline",
+      "file": "tests/instrument-type.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/account-replay-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/accounting-durability.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/accounting-fixes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/actions-reconciliation.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/actions-release-safeguards.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/agent-a-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/agent-a-ldx-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/agent-a-tgt-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/agent-c-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/alpaca-feed.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/angles-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/anomaly-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/audit-engines.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/basket-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/blocked-runner-policy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/bot-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/bot-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/buy-gates.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/buy-more.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/catalyst-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/catalyst-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/catalyst-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/catalyst-lab.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/chain-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/chain-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/chain-decoder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/cluster-risk.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/comeback-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/confluence-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/decoded-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/decoded2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/discovery-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/discovery2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/discovery2-run.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/early-alerts.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/early-wave-discovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/earnings-study-dead-stocks.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/event-orb-retest-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/expert-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/feed-integrity-watcher.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/feed-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/focus-per-kind.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/follow-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/follow-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/gate-verdict.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/halal-batch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/hold-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/ignition-freshness.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/ignition-paper.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/ladder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/leader-dip-sale-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/leader-dip.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/loss-line.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/macro-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/ml-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/opp-mode.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/options-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/options-lab-live.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/options-ticket.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/positions-merge.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/premarket-feed.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/private-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/radar-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/radar-v3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/rank-models.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/research-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/research-eat.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/research-inv.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/research-isc.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/research-rdi.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/research-rpo.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/research-tax.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/research-tender.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/runner-hunter-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/save-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/sec-request-runtime.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/sec-time.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/sell-discipline.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/settings-writes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/shadow.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/split-adjust.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad1-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad10-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad11-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad12-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad13-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad14-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad15-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad15b-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad16-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad17-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad18-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad19-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad20-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad21-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad22-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad23-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad24-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad24-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad25-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad25-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad26-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad27-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad28-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad29-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad4-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad5-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad6-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad7-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad8-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/squad9-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/stop-raise.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/stop-watch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/sunday-scoreboard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/telegram-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/tier2-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/tier2.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/tipster-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/trade-words.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/try-small-audit.test.mjs",
+      "exit": 0,
+      "mode": "explicit historical TRY SMALL fixture replay; ordinary failures separate"
+    },
+    {
+      "tree": "actions",
+      "file": "test/try-small.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/unresolved-sells.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/value-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/verify-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/watcher-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/watcher-incident-revision.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/watcher-message-publish.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/watcher-resilience.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/watcher-retry-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "test/winners-autopsy-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "actions",
+      "file": "tests/instrument-type.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/account-replay-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/accounting-durability.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/accounting-fixes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/agent-a-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/agent-a-ldx-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/agent-a-tgt-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/agent-c-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/alpaca-feed.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/angles-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/anomaly-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/audit-engines.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/basket-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/blocked-runner-policy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/bot-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/bot-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/buy-gates.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/buy-more.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/catalyst-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/catalyst-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/catalyst-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/catalyst-lab.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/chain-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/chain-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/chain-decoder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/cluster-risk.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/comeback-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/confluence-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/decoded-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/decoded2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/discovery-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/discovery2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/discovery2-run.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/early-alerts.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/early-wave-discovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/earnings-study-dead-stocks.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/event-orb-retest-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/expert-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/feed-integrity-watcher.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/feed-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/focus-per-kind.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/follow-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/follow-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/gate-verdict.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/halal-batch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/hold-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/ignition-freshness.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/ignition-paper.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/ladder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/leader-dip-sale-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/leader-dip.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/loss-line.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/macro-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/ml-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/opp-mode.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/options-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/options-lab-live.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/options-ticket.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/positions-merge.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/premarket-feed.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/private-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/radar-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/radar-v3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/rank-models.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/research-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/research-eat.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/research-inv.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/research-isc.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/research-rdi.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/research-rpo.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/research-tax.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/research-tender.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/runner-hunter-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/save-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/sec-request-runtime.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/sec-time.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/sell-discipline.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/settings-writes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/shadow.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/split-adjust.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad1-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad10-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad11-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad12-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad13-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad14-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad15-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad15b-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad16-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad17-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad18-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad19-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad20-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad21-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad22-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad23-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad24-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad24-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad25-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad25-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad26-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad27-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad28-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad29-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad4-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad5-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad6-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad7-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad8-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/squad9-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/stop-raise.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/stop-watch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/sunday-scoreboard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/telegram-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/tier2-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/tier2.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/tipster-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/trade-words.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/try-small-audit.test.mjs",
+      "exit": 0,
+      "mode": "explicit historical TRY SMALL fixture replay; ordinary failures separate"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/try-small.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/unresolved-sells.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/value-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/verify-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/watcher-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/watcher-incident-revision.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/watcher-message-publish.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/watcher-nov2-clock.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/watcher-nov2-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/watcher-resilience.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/watcher-retry-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "test/winners-autopsy-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "watcher",
+      "file": "tests/instrument-type.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/account-replay-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/accounting-durability.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/accounting-fixes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/actions-reconciliation.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/actions-release-safeguards.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/agent-a-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/agent-a-ldx-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/agent-a-tgt-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/agent-c-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/alpaca-feed.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/angles-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/anomaly-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/audit-engines.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/basket-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/blocked-runner-policy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/bot-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/bot-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/buy-gates.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/buy-more.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/catalyst-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/catalyst-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/catalyst-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/catalyst-lab.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/chain-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/chain-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/chain-decoder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/cluster-risk.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/comeback-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/confluence-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/decoded-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/decoded2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/discovery-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/discovery2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/discovery2-run.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/early-alerts.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/early-wave-discovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/earnings-study-dead-stocks.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/event-orb-retest-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/expert-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/feed-integrity-watcher.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/feed-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/focus-per-kind.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/follow-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/follow-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/gate-verdict.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/halal-batch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/hold-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/ignition-freshness.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/ignition-paper.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/ladder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/leader-dip-sale-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/leader-dip.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/loss-line.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/macro-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/ml-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/opp-mode.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/options-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/options-lab-live.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/options-ticket.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/positions-merge.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/premarket-feed.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/private-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/radar-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/radar-v3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/rank-models.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/research-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/research-eat.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/research-inv.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/research-isc.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/research-rdi.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/research-rpo.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/research-tax.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/research-tender.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/runner-hunter-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/save-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/sec-request-runtime.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/sec-time.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/sell-discipline.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/settings-writes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/shadow.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/split-adjust.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad1-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad10-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad11-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad12-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad13-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad14-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad15-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad15b-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad16-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad17-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad18-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad19-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad20-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad21-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad22-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad23-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad24-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad24-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad25-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad25-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad26-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad27-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad28-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad29-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad4-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad5-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad6-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad7-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad8-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/squad9-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/stop-raise.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/stop-watch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/sunday-scoreboard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/telegram-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/tier2-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/tier2.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/tipster-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/trade-words.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/try-small-audit.test.mjs",
+      "exit": 0,
+      "mode": "explicit historical TRY SMALL fixture replay; ordinary failures separate"
+    },
+    {
+      "tree": "combined",
+      "file": "test/try-small.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/unresolved-sells.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/value-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/verify-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/watcher-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/watcher-incident-revision.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/watcher-message-publish.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/watcher-nov2-clock.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/watcher-nov2-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/watcher-resilience.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/watcher-retry-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "test/winners-autopsy-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "combined",
+      "file": "tests/instrument-type.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/account-replay-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/accounting-durability.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/accounting-fixes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/accounting-preflight.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/actions-reconciliation.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/actions-release-safeguards.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/agent-a-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/agent-a-tgt-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/alpaca-feed.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/angles-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/anomaly-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/approved-capture-binding.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/artifact-wire-client.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/audit-engines.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/basket-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/blocked-runner-policy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/bot-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/bot-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/buy-gates.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/buy-more.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/catalyst-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/catalyst-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/catalyst-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/catalyst-lab.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/chain-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/chain-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/chain-decoder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/cluster-risk.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/comeback-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/confluence-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/decoded-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/decoded2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/discovery-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/discovery2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/discovery2-run.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/early-alerts.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/early-wave-discovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/earnings-holiday.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/earnings-study-dead-stocks.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/event-orb-retest-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/expert-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/focus-per-kind.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/follow-actions.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/follow-lane.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/gate-verdict.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/github-history-contract.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/halal-batch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/health-delivery-contract.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/history03-attribution.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/history03-claims.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/history03-current-policy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/history03-delivery-counts.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/history03-dependency-closure.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/history03-rendering.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/history03-source-anchors.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/history03-vocabulary.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/hold-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/ignition-freshness.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/ignition-paper.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/instrument-reference-preparation.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/intraday-delivery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/ladder.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/leader-dip-sale-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/leader-dip.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/legacy-paper-audit.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/logic-loader-isolation.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/loss-line.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/macro-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/mentor-lifecycle.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/mentor-m1-m3.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/mentor-plan.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/mentor-production-package.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/mentor-readonly.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/mentor-release-plan.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/mentor-release.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/ml-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-actual-watcher.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-bounded-clients.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-colocated-host.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-colocated-prefix.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-events.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-handoff.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-host-guards.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-incremental.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-lineage-history.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-lineage.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-parent-client.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-schedule.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/native-sec-shadow-package.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/one-session-adapter-spec.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/opp-mode.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/options-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/options-lab-live.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/options-ticket.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/paper-capture-ports.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/paper-capture-wrapper.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/positions-merge.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/privacy-publication-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/private-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/prospective-capture-package.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/prospective-paper-capture.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/radar-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/radar-v3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/rank-models.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/repo03-host-monitor.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/repo03-host-storage.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/research-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/research-isc.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/research-rpo.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/research-tender.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/runner-hunter-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/save-data.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sec-proof-ready-proposal.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sec-selection-telemetry.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sec-time.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sec-v2-evidence.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sec-v2-host-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sec-v2-host.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sec-v2-wire.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sell-discipline.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/settings-writes.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/shadow.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sip-access-corrections.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sip-access-diagnostic.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sip-access-package.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sip-access-workflow.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/split-adjust.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad1-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad10-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad11-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad12-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad13-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad14-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad15-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad15b-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad16-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad17-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad18-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad19-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad2-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad20-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad21-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad22-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad23-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad24-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad24-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad25-audit-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad25-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad26-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad27-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad28-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad29-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad3-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad4-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad5-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad6-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad7-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad8-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/squad9-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/stop-raise.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/stop-watch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/sunday-scoreboard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/telegram-commands.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/tier2-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/tier2.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/tipster-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/trade-words.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/try-small-audit.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/try-small.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/unresolved-sells.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/value-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/verify-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/watcher-contract-profile.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/watcher-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/watcher-incident-revision.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/watcher-message-publish.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/watcher-nov2-clock.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/watcher-nov2-guard.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/watcher-resilience.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/watcher-retry-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/winners-autopsy-core.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "test/zad-policy-integration.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/add-reply-owner-policy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/alert-delivery-state.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/alpaca-access-audit.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/alpaca-batch-access-probe.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/approved-quote-gate.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/basket-delivery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/bot-publication.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/c0-diagnostic.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/cached-leaders-policy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/catalyst-direction.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/catalyst-source-errors.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/catalyst03-source-to-candidate.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/chain-ripple-caller.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/collector-news-lineage.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/discovery-paper.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/discovery-runtime.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/discovery-session-funnel.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/earnings-source-caller.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/guard-dispatch.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/historical-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/hybrid-research-checkpoint.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/hybrid-research-fixture.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/hybrid-research-session.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/hybrid-snapshot-transport.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/ignition-replay.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/incident-production-package.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/incident-reporting.test.mjs",
+      "exit": 1,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/insider-fetch-caller.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/insider-source-caller.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/instrument-type.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/key-proof-scope.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/lab-publication-faults.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/live-refresh-universe.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/market-heartbeat.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/market03-comeback-spy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/market03-discover-price-day.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/market03-ingress-matrix.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/market03-r2-spy-counts.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/market03-review-codex-additional.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/market03-review-codex-spy-envelope.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/market03-review-r1-r3.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/market03-source-contract.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/mentor-persistence-receipt.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/move-categories.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/multi-angle-discovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/news-delivery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/news-source-bounds.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/paper-caller-faults.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/paper-gates-safety.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/paper-mutation-journal.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/paper-transport.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/phase-a-preflight.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/pre-ignition-discovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/premarket-schedule.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/provider-decision-provenance.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/provider-probe.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/provider-provenance.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/quote-freshness-safety.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/rebalance-owner-gate.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/recorded-plan-contract.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/repository-preservation.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/research-artifact.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/research-checkpoint-integrity.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/research-collector.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/research-key-binding.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/research-quote-followups.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/research-recovery-publication.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/research-recovery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/sec-source-caller.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/session-coverage.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/share-supply-caller.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/snapshot-fields.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/snapshot-ingress-calendar.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/source-conflict-consumers.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/telegram-delivery-ledger.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/telegram-delivery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/telegram-policy.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/trade-plan.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/watchdog-delivery.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/watcher-refresh.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/watcher-runtime.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/watcher-schedule.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/watcher-session.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/workflow-publication-faults.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/zad-compliance.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    },
+    {
+      "tree": "development",
+      "file": "tests/zad-route-closure.test.mjs",
+      "exit": 0,
+      "mode": "ordinary"
+    }
+  ],
+  "postTrialDevelopmentCompanion": {
+    "file": "tests/incident-reporting.test.mjs",
+    "cause": "one assertion retained superseded SELL-header literal; now asserts both close-based next-open timing and separate broker stop behavior",
+    "tests": 17,
+    "pass": 17,
+    "sourceUnchangedAfterFullTrial": true
+  },
+  "focused": {
+    "actionsCases": 20,
+    "developmentPass": 20,
+    "standaloneMainPass": 20,
+    "priorOverlayPass": 2,
+    "priorOverlayFail": 5,
+    "watcherActualClockGuard": 38,
+    "watcherCurrentB1B2": 11,
+    "watcherCurrentResilience": 9,
+    "calendarSemanticFixture": 11,
+    "pythonBehavior": 7,
+    "pythonVerifier": 2
+  },
+  "productionOrdinaryBaseline": "baseline and combined TRY SMALL both14PASS/2FAIL, same cases1/3b; the full production trials replay only that file with the already-labelled historical clock. Not ordinary all-green results.",
+  "calendarFixtureCorrection": "unchanged e357 producer; original target-only assertion FAILS case9, corrected actual-day/attempt provenance assertions11/11PASS; known closures remain prohibited",
+  "watcherManifestUnchanged": true,
+  "mentorRequired": false,
+  "approvedMentorPatchUnchanged": true,
+  "frozenProtocolsStrategiesAndDataUnchanged": true,
+  "logs": {
+    "actions-final-focused.log": {
+      "sha256": "b843f73b6aa67b10d1264720c446a7cf0c8d3d7897e730c7a4a16e731c7bc8b4",
+      "summary": [
+        "# tests 20",
+        "# pass 20",
+        "# fail 0",
+        "# skipped 0"
+      ],
+      "failureNames": [],
+      "rawLogsPublished": false
+    },
+    "watcher-current-b1-b2.log": {
+      "sha256": "253e0701fe559dbe7df8c3389ccb27f30ea6dedb648ca9141ee113a31c3b561b",
+      "summary": [
+        "# tests 11",
+        "# pass 11",
+        "# fail 0",
+        "# skipped 0"
+      ],
+      "failureNames": [],
+      "rawLogsPublished": false
+    },
+    "watcher-current-resilience.log": {
+      "sha256": "aee34afed7a7bac62e91e79e3736359875f24520e13e710f5eca0e95ea7c00fc",
+      "summary": [
+        "# tests 9",
+        "# pass 9",
+        "# fail 0",
+        "# skipped 0"
+      ],
+      "failureNames": [],
+      "rawLogsPublished": false
+    },
+    "calendar-original-fixture-negative.log": {
+      "sha256": "aae3705ed394b9a22b5ab4f347ef0100b48ed93bfd161adb5d04841f6e2d122a",
+      "summary": [
+        "# tests 11",
+        "# pass 10",
+        "# fail 1",
+        "# skipped 0"
+      ],
+      "failureNames": [
+        "not ok 9 - outside the exchange calendar years, samples use the labelled weekday walk and record each outcome"
+      ],
+      "rawLogsPublished": false
+    },
+    "incident-renderer-companion.log": {
+      "sha256": "4373ecfa3dfd615fe3895e889d9d57cc2a5eff2a06d7103926e16a117b7421ab",
+      "summary": [
+        "# tests 17",
+        "# pass 17",
+        "# fail 0",
+        "# skipped 0"
+      ],
+      "failureNames": [],
+      "rawLogsPublished": false
+    },
+    "python-behavior.log": {
+      "sha256": "4950411df6063d589419f85727085d90222516634f66d27babd3e6dadc7a9b97",
+      "summary": [],
+      "failureNames": [],
+      "rawLogsPublished": false
+    },
+    "python-verifier.log": {
+      "sha256": "535aec016583122ef7353c3ee36971432107fecf64b3ea827597c51c509eaed2",
+      "summary": [],
+      "failureNames": [],
+      "rawLogsPublished": false
+    },
+    "baseline-ordinary-try-small.log": {
+      "sha256": "671599f2891fffc7f59d219f040ff290a5e8233f5fcd807018bff5baee76461b",
+      "summary": [
+        "# tests 16",
+        "# pass 14",
+        "# fail 2",
+        "# skipped 0"
+      ],
+      "failureNames": [
+        "not ok 1 - 1. a new-signal list from an older close than the newest session is not shown as a buy",
+        "not ok 6 - 3b. the TRY SMALL ledger row carries the hold and stop that were shown"
+      ],
+      "rawLogsPublished": false
+    },
+    "combined-ordinary-try-small.log": {
+      "sha256": "3ad562e424cd3707332282026aeea901ab9ccd11a5750b71e9f65b3caf9848a3",
+      "summary": [
+        "# tests 16",
+        "# pass 14",
+        "# fail 2",
+        "# skipped 0"
+      ],
+      "failureNames": [
+        "not ok 1 - 1. a new-signal list from an older close than the newest session is not shown as a buy",
+        "not ok 6 - 3b. the TRY SMALL ledger row carries the hold and stop that were shown"
+      ],
+      "rawLogsPublished": false
+    },
+    "prior-overlay-review-regressions": {
+      "sha256": "5b41c68231fdaf388813ae19df91329be2ba220e1148817ed5d6f25c3e7d7cdd",
+      "summary": [
+        "# tests 7",
+        "# pass 2",
+        "# fail 5"
+      ]
+    }
+  },
+  "hostedCI": "final published SHA required; exact receipt in PR1 after completion",
+  "productionActionsPerformed": false,
+  "liveProviderOrRealTelegramCalls": false
+}

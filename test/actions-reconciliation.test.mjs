@@ -28,7 +28,7 @@ test('notices before current recorded purchase do not attach to a new position; 
  p.ZZQ.since='2025-08-04';assert.match(await S.fn('actionsText')(sig,p,null,'SYNTHETIC'),/PRIOR SELL NEEDS RECONCILIATION/);
 }));
 test('missing price history is UNKNOWN, preserves previous assessment and never produces a fresh HOLD',()=>run({},false,async({S,sig})=>{
- const pos={ZZQ:P()},before=JSON.stringify(pos);const t=await S.fn('actionsText')(sig,pos,null,'SYNTHETIC');assert.match(t,/ASSESSMENT UNKNOWN/);assert.doesNotMatch(t,/HOLD: ZZQ/);assert.equal(JSON.stringify(pos),before);
+ const pos={ZZQ:P()},before=JSON.stringify(pos);const t=await S.fn('actionsText')(sig,pos,null,'SYNTHETIC');assert.match(t,/ASSESSMENT UNKNOWN: price\/history too short or unavailable/);assert.doesNotMatch(t,/HOLD: ZZQ/);assert.equal(JSON.stringify(pos),before);
 }));
 test('missing leader-dip prices does not erase prior SELL; a persisted explicit exit still applies',()=>run({},false,async({S})=>{
  const p={ZZQ:{...P(),src:'leader dip',kind:'leader dip',target:84,ldHold:126}},before=JSON.stringify(p);
@@ -57,7 +57,7 @@ test('normalized journal and private cash goal label different populations and n
  const t=await S.fn('actionsText')(sig,{},null,'SYNTHETIC');assert.match(t,/3 sales[^\n]*\+14.0% summed normalized net return/);assert.match(t,/not account return or dollar P&L/);assert.match(t,/private cash accounting since 2025-09-01/);assert.match(t,/-60.00 USD from 2 sales/);assert.match(t,/separate population/);
 }));
 test('existing close-based sell timing uses the regular open; winter time conversion is explicit',()=>run({},true,async({S,sig})=>{
- assert.equal(S.fn('kwt')(570,'2026-11-02'),'5:30 pm');const t=await S.fn('actionsText')({...sig,posVerdict:{ZZQ:'synthetic registered exit'}},{ZZQ:{entry:70,stop:80,since:'2025-08-04'}},null,'SYNTHETIC');assert.match(t,/next regular-session open/);assert.doesNotMatch(t,/at the open after the first 15 minutes/);
+ assert.equal(S.fn('kwt')(570,'2026-11-02'),'5:30 pm');const t=await S.fn('actionsText')({...sig,posVerdict:{ZZQ:'synthetic registered exit'}},{ZZQ:{entry:70,stop:80,since:'2025-08-04'}},null,'SYNTHETIC');assert.match(t,/next regular-session open/);assert.match(t,/stop-reached lines: your broker stop applies/);assert.doesNotMatch(t,/at the open after the first 15 minutes/);
 }));
 test('actual Telegram command caller renders UNKNOWN and preserves position economics under missing history',async()=>{
  const x=await setup({'data/my-positions.json':{ZZQ:P()},'data/signals.json':{session:'2025-10-17',market:{up:true,above50:true},stocks:[{sym:'ZZQ',last:75}]}},false,'actions');

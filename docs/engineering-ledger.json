@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-02T21:39:09.300361+00:00",
+  "updated": "2026-11-03T09:37:49.173961+00:00",
   "branch": "Stock2-safety-fixes",
   "pr": 1,
   "mission": "Full repository engineering; no merge/deploy/messages/orders/paid services",
@@ -8491,19 +8491,18 @@
     "next": "Claude calendar aggregate-status correction; owner may review explicit mentor committed-checkpoint alternative, no execution or waiver assumed."
   },
   "nov2ActionsCorrection": {
-    "status": "DEVELOPMENT_TESTED_SEPARATE_PROPOSAL_NOT_DEPLOYED",
+    "status": "STANDALONE_ENGINEERING_PASS_PENDING_INDEPENDENT_REVIEW_NOT_APPROVED",
     "report": "docs/nov2-actions-correction/README.md",
-    "manifest": "docs/nov2-actions-correction/manifest.json",
-    "patchSha256": "5fc6c316847bfc3b298035954d0eabdb833af1ef47a34689995631d8ff71ccc1",
+    "manifest": "docs/nov2-actions-correction/standalone-manifest.json",
+    "patchSha256": "a9560969298368490a0b3cbd5b151e429b7d68b2bc302ba35025ccebb0981a53",
+    "mentorRequired": false,
     "runtimeFiles": [
       "scan.mjs"
     ],
-    "testCompanions": 7,
+    "files": 9,
     "newAcceptanceClosures": 0,
-    "mentorApprovedPatchUnchanged": true,
-    "privateOriginalMessageInspected": false,
-    "cashMembershipJoinPerformed": false,
-    "naturalSessionCoverage": "PENDING_SEPARATE"
+    "privateMessageInspected": false,
+    "financialMembershipJoinPerformed": false
   },
   "nov2WatcherIncident": {
     "status": "OFFLINE_VERIFIED_PACKAGE_PENDING_INDEPENDENT_REVIEW_NOT_DEPLOYED",
@@ -8552,5 +8551,44 @@
     "executionAuthorizedByReview": false,
     "unsettledWritesBlockTakeoverAndEnable": true,
     "readinessNotPromised": true
+  },
+  "historicalNov2ActionsAfterMentor": {
+    "status": "DEVELOPMENT_TESTED_SEPARATE_PROPOSAL_NOT_DEPLOYED",
+    "report": "docs/nov2-actions-correction/README.md",
+    "manifest": "docs/nov2-actions-correction/manifest.json",
+    "patchSha256": "5fc6c316847bfc3b298035954d0eabdb833af1ef47a34689995631d8ff71ccc1",
+    "runtimeFiles": [
+      "scan.mjs"
+    ],
+    "testCompanions": 7,
+    "newAcceptanceClosures": 0,
+    "mentorApprovedPatchUnchanged": true,
+    "privateOriginalMessageInspected": false,
+    "cashMembershipJoinPerformed": false,
+    "naturalSessionCoverage": "PENDING_SEPARATE"
+  },
+  "productionRepairReadiness": {
+    "report": "docs/production-actions-watcher-readiness.md",
+    "actions": "ENGINEERING_PASS_REVIEW_APPROVAL_PENDING",
+    "watcher": "ENGINEERING_PASS_REVIEW_APPROVAL_PENDING",
+    "mentorRequiredForEither": false,
+    "mainTestBase": "bac971eebfd8df259af7e29dc909cd5b255a39c8",
+    "compatibleMain": "eac0e91630de3967221482530e92f3f9408d2cf9",
+    "sourceScope": "ACTIONS runtime scan only; watcher exact package unchanged",
+    "counts": {
+      "baselineFiles": 131,
+      "actionsFiles": 133,
+      "watcherFiles": 133,
+      "combinedFiles": 135
+    },
+    "ordinaryBaselineException": "TRY SMALL cases1/3b unchanged; full production profiles use labelled historical clock only for that file",
+    "rowsAdvanced": [
+      "HISTORY-03",
+      "REPO-03",
+      "EXEC-03",
+      "ACTIONS-04"
+    ],
+    "rowsClosed": [],
+    "deployed": false
   }
 }

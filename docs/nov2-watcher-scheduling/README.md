@@ -1,3 +1,5 @@
+> **3 November current-main revalidation:** see [independent release-readiness report](../production-actions-watcher-readiness.md). Exact ten-file patch781f6644…431d2e is unchanged; mentor is not a prerequisite. No deployment or activation. Historical evidence below is preserved.
+
 # November 2 watcher incident — bounded review package
 
 **Inactive development preparation. No deployment, workflow installation, dispatch, cancellation, credential use, provider call or real message.** Synthetic tests use local services. Original evidence and frozen results are preserved. This operational correction is not evidence of profitable trading, full-session readiness or broad-universe real-time surveillance.

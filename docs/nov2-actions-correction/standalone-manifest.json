@@ -1,0 +1,145 @@
+{
+  "kind": "ACTIONS_STANDALONE_REVIEW_PACKAGE_V2",
+  "status": "OFFLINE_TESTED_PENDING_INDEPENDENT_REVIEW_NOT_APPROVED",
+  "productionBase": "bac971eebfd8df259af7e29dc909cd5b255a39c8",
+  "requiredPredecessor": null,
+  "mentorRequired": false,
+  "patch": "production-standalone.patch",
+  "patchSha256": "a9560969298368490a0b3cbd5b151e429b7d68b2bc302ba35025ccebb0981a53",
+  "inverse": "rollback-standalone.patch",
+  "inverseSha256": "4e28ee37e58e8f0ea57b3d70a09438562efc12aaa8a5a1e9075df3927c6d91c9",
+  "files": [
+    {
+      "path": "scan.mjs",
+      "beforeSha256": "76ffcd5675a00a881432d5cb0dad69d6d5235cd66932ef07eb4530ddca9c1a99",
+      "afterSha256": "91c7c7019ae08bde9c3c43fa6e571b05cebf53aa2c1a41cd9db75ed43a3f70d8"
+    },
+    {
+      "path": "test/actions-reconciliation.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "a63bb5793651a5b0cd4862233b90a6c6da07c29f55557a740eaf9a3891dcbe41"
+    },
+    {
+      "path": "test/bot-actions.test.mjs",
+      "beforeSha256": "2e234bda6758f5225377589641dff117dcc8150815da50f4d9b522dbe2a87690",
+      "afterSha256": "f34c8c714160d9fb33c7de0756fbb08706e16993ac6e803d0d56dfce33b0795a"
+    },
+    {
+      "path": "test/buy-gates.test.mjs",
+      "beforeSha256": "38e3339be5aee0ad47f43fa223f0d097d9e7996d3483610d3dbbbe0f01819a9f",
+      "afterSha256": "af4e7d4d40183809c57e32036242064f8e87d5fdfc9d13d4140f7d0d3d0a799d"
+    },
+    {
+      "path": "test/buy-more.test.mjs",
+      "beforeSha256": "37833789cf8496b9c6e7151d3c7b8a58ce89cc261d4832479d679e075d53893b",
+      "afterSha256": "db662d2ed866d2dd2adf1a6fc8c5408b79478645ffe948ac4de7170efa284424"
+    },
+    {
+      "path": "test/focus-per-kind.test.mjs",
+      "beforeSha256": "eb9d15859fe3636cad7655888b5b68f41f81f390f70fbe521d1cd6fcbb55ba19",
+      "afterSha256": "332d528bab9fd30b709c788a8566dc89b852b9bd6c48836b49cdeecd3f84ca77"
+    },
+    {
+      "path": "test/follow-actions.test.mjs",
+      "beforeSha256": "01b5f8d36b3be600303fdae24b0da155bfe0968cde6da8fb5d1fa0c0fda65a74",
+      "afterSha256": "0b1a060778e0fb307a66408871757162a7e136dc55780d8421d7e90154173d6e"
+    },
+    {
+      "path": "test/gate-verdict.test.mjs",
+      "beforeSha256": "d8487c3ef313d056c2cbb8b095d8e4ddb72153d67fac65230243bc82b037444b",
+      "afterSha256": "631324dab43e1968c62b3537072d558aad6b6f2b70718fd3ddc24b7be003a7ae"
+    },
+    {
+      "path": "test/actions-release-safeguards.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "f0a0a057d3324a271899dac0f31879201da8d742a667e4187dc32e3d6716204b"
+    }
+  ],
+  "unchangedDependencies": [
+    {
+      "path": ".github/private-data.sh",
+      "sha256": "dd82ffa949f0f84e81cd1d8ceb7f4babde88817df6e435eca4dcb235824b793d"
+    },
+    {
+      "path": ".github/private-files.txt",
+      "sha256": "f78988302329fe6e69c77783fc5b905b0a4629ea6be1b99069d6ed0ff9b897a5"
+    },
+    {
+      "path": ".github/save-data.sh",
+      "sha256": "8a399645f8e6a777f5a76a81f2bcf8a5b4e8c5f6934601d2eefcd9103dfcd8e2"
+    },
+    {
+      "path": ".github/workflows/bot.yml",
+      "sha256": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40"
+    },
+    {
+      "path": ".github/workflows/main.yml",
+      "sha256": "8856c2b72c11b450da752b111260615d39e342e8e03bf87b2f0724a3a2581c5e"
+    },
+    {
+      "path": "index.html",
+      "sha256": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348"
+    },
+    {
+      "path": "market-session.mjs",
+      "sha256": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21"
+    },
+    {
+      "path": "test/load-scan.mjs",
+      "sha256": "6478d0b89f75b6eb188dac97b154fc181749a1b6b5d010315f375272ff2f82e2"
+    }
+  ],
+  "protectedCodeEvidence": {
+    "encrypted_accounting_and_sale_recovery": {
+      "mutationAndPersistenceCoreUnchanged": true,
+      "onlyPermittedDifference": "one read-only SIZE LEVEL display label; all arithmetic unchanged"
+    },
+    "existing_reply_transport": {
+      "byteIdentical": true
+    },
+    "position_normalization": {
+      "byteIdentical": true
+    },
+    "existing_lane_rule_and_brake": {
+      "byteIdentical": true
+    }
+  },
+  "reviewFindings": {
+    "F1": "ACTIONS omits research board in both focus modes; direct opportunities caller retains unknown-labelled research without buy/entry/stop ranges",
+    "F2": "newer-half result explicitly NOT PROVEN",
+    "F3": "close-based next-open exits distinguished from existing broker stop instructions",
+    "F4": "too-short or unavailable history explicitly UNKNOWN",
+    "F5": "existing recurring prior-notice context and six-item pending-ZAD display cap disclosed; no new acknowledgment/enrollment policy"
+  },
+  "noChangesTo": [
+    "mentor-plan.mjs or original approved mentor patch",
+    "financial records or offsets",
+    "accounting mutation/persistence/recovery code",
+    "strategy thresholds, exits, size/risk, frozen protocols",
+    "provider routing or new requests",
+    "ZAD/privacy policy",
+    "workflows, permissions, secrets"
+  ],
+  "mentorCoordination": {
+    "approvedPatchUnchanged": "1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7",
+    "originalMentorBeforeScanHash": "76ffcd5675a00a881432d5cb0dad69d6d5235cd66932ef07eb4530ddca9c1a99",
+    "bothPackagesTouchScan": true,
+    "note": "Standalone ACTIONS does not wait for mentor. If ACTIONS is deployed first, original mentor before/after hashes no longer describe current scan bytes: reconcile/review the future mentor package separately; no old approval is extended."
+  },
+  "historicalAfterMentorManifest": "manifest.json (superseded; preserve as historical review evidence)",
+  "privateOriginalMessageInspected": false,
+  "financialMembershipJoinPerformed": false,
+  "acceptance": {
+    "accepted": 24,
+    "total": 40,
+    "closedRows": [],
+    "prospectiveAdmissions": 0
+  },
+  "deploymentPerformed": false,
+  "currentMainCompatibility": {
+    "sha": "eac0e91630de3967221482530e92f3f9408d2cf9",
+    "allBeforeAndDependencyPinsMatch": true,
+    "changesSinceBaseDataOnly": true,
+    "changedDataFiles": 6
+  }
+}
