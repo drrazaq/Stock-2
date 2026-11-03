@@ -1,8 +1,8 @@
 {
   "sourceReviewPackage": "97dd460cf52f0364c170010b2880680c0cd0070b",
   "optionalOfflineCompanionNotReleasePrerequisite": true,
-  "unitCasesPassed": 34,
-  "unitLogSHA256": "2ee399d4d32683fbdde87ddb994f06cff08642b224d744196edb0a4122117837",
+  "unitCasesPassed": 36,
+  "unitLogSHA256": "3d23fd55ddbfed7daa0e129e784711b14f43dff08aa5f36f6579db7045e856d8",
   "actualCLIReplays": [
     {
       "case": "retained_green",
@@ -103,5 +103,25 @@
     },
     "scope": "Disposable local input probe only, no production/workflow cancellation",
     "testBootstrapCorrection": "First new CLI regression used python under a minimal PATH without that name; corrected to sys.executable. Final34testsPASS."
+  },
+  "missingOutcomeCorrection": {
+    "beforeFix": {
+      "reproduced": true,
+      "mutation": "Missing job conclusion in local copy of authentic metadata; original unchanged",
+      "before": {
+        "status": "FAIL",
+        "exit": 1
+      },
+      "required": "UNVERIFIED2, since missing outcome is not an observed test failure",
+      "productionActions": []
+    },
+    "afterFix": {
+      "reason": "outcome_unavailable",
+      "sha": "9f53fdad27dfd2acfb21c14f293f1bfa18577425",
+      "status": "UNVERIFIED"
+    },
+    "afterExit": 2,
+    "fix": "Require known non-null outcomes before classifying an observed failure; missing or unknown outcome remains UNVERIFIED",
+    "scope": "Local mutation of retained metadata, not a changed real job outcome"
   }
 }

@@ -113,6 +113,20 @@ class VerifierTests(unittest.TestCase):
         self.job["status"] = "in_progress"
         self.unverified()
 
+    def test_missing_final_outcomes_are_unverified(self):
+        run, job = copy.deepcopy(self.run), copy.deepcopy(self.job)
+        for target in ["run", "job", "step"]:
+            self.run, self.job = copy.deepcopy(run), copy.deepcopy(job)
+            value = self.run if target == "run" else self.job if target == "job" else self.job["steps"][3]
+            value["conclusion"] = None
+            self.unverified()
+
+    def test_unknown_final_outcome_is_not_echoed(self):
+        self.job["conclusion"] = "SYNTHETIC_UNKNOWN_OUTCOME"
+        receipt = self.assess()
+        self.assertEqual(receipt["status"], "UNVERIFIED")
+        self.assertNotIn("SYNTHETIC_UNKNOWN_OUTCOME", json.dumps(receipt))
+
     def test_metadata_not_objects(self):
         self.assertEqual(V.assess(self.repo, self.sha, [], [], self.log)["status"], "UNVERIFIED")
 

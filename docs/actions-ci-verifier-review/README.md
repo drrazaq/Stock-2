@@ -40,7 +40,7 @@ This package is not registered in ordinary CI. The tests above were run explicit
 
 ## Verified behavior and limits
 
-[Recorded verification](verification.json):34 synthetic unit cases PASS, plus actual CLI replay of retained evidence:
+[Recorded verification](verification.json):36 synthetic unit cases PASS, plus actual CLI replay of retained evidence:
 
 - Real green main job125906184924, SHA9f53fdad: PASS/exit0, all131expected file groups and PASS results.
 - Historical failed job125814418123, SHA7bd91089: FAIL/exit1,130groups with129PASS and failed TRY SMALL file. This is an expected negative control, never an accepted baseline exception.
@@ -57,3 +57,5 @@ Review this companion separately for false PASS cases, source/attempt binding, c
 Acceptance remains24/40,16open,0new closures/admissions. This advances the engineering assurance of the existing release-log handoff; it does not close a mixed acceptance row or add a trading strategy.
 
 Follow-up before activation: a disposable1.5second probe reproduced FIFO blocking before the old file-type check. `O_NONBLOCK` now permits immediate type refusal; the real CLI returns UNVERIFIED/2 within the2second regression bound. This fixes only the optional companion; the stable R4 procedure and release packages are unchanged.
+
+A second local metadata mutation found missing conclusions were incorrectly labelled FAIL. Known observed failures remain FAIL; missing/unknown run, job or step outcomes now remain UNVERIFIED, with explicit regressions. Genuine green/failed and partial-log CLI replays still produce the expected0/1/2 results.

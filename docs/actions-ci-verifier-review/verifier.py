@@ -118,6 +118,12 @@ def assess(repo, sha, run, job, raw):
             raise Unverified("metadata_mismatch")
         if any(s.get("status") != "completed" for s in job["steps"]):
             raise Unverified("job_incomplete")
+        known_outcomes = {"success", "failure", "neutral", "cancelled", "skipped",
+                          "timed_out", "action_required", "stale", "startup_failure"}
+        outcomes = [run.get("conclusion"), job.get("conclusion")]
+        outcomes.extend(s.get("conclusion") for s in job["steps"])
+        if any(not isinstance(value, str) or value not in known_outcomes for value in outcomes):
+            raise Unverified("outcome_unavailable")
         workflow = git(repo, "show", sha + ":.github/workflows/tests.yml")
         if hashlib.sha256(workflow).hexdigest() != WORKFLOW_SHA256:
             raise Unverified("unsupported_workflow")
