@@ -55,12 +55,12 @@
     "scope": "Persisted Git-managed checkpoint; does not prove individual saves or commands",
     "unavailableEvidenceDisposition": "UNVERIFIED; no fabricated commit/records"
   },
-  "independentFocusedConfirmation": "r3REQUEST_AFTER_PUBLICATION_NOT_YET_RECEIVED",
+  "independentFocusedConfirmation": "r4REQUEST_AFTER_PUBLICATION_NOT_YET_RECEIVED",
   "productionActions": [],
-  "narrowRevisionReviewCommit": "0fc705a95dba940c71cf5af5d635d597c347d25a",
-  "preservedReviewPasses": "C1-C4 confirmed incorporated by0fc705a9; unchanged in r3",
+  "narrowRevisionReviewCommit": "af24b863bc2ac90b13ab43bed2dd61cbcd253517",
+  "preservedReviewPasses": "C1-C4,D1,D2-handoff PASS fromaf24b863; unchanged except R1 baseline selection and all-PASS policy requested by owner",
   "D1": {
-    "status": "SUPPORTED_WITH_LIMITED_CLAIM_PENDING_CLAUDE_CONFIRMATION",
+    "status": "PASS_PRESERVED_FROM_AF24B863",
     "evidence": "silent-save-D1-evidence.json",
     "fiveConditions": "adopted conjunctively; exact source/shell, full whole-step log and ancestry essential",
     "offlineCasesPassed": 9,
@@ -68,12 +68,24 @@
     "caughtErrors": "Initial pull errors and full-check/reply failures can be hidden from job stdout; tested explicitly"
   },
   "D2": {
-    "status": "FULL_LOG_READ_PATH_DEMONSTRATED_FUTURE_EXACT_COMMIT_GATE_UNVERIFIED",
+    "status": "HANDOFF_PASS_PRESERVED_R1_GATE_UPDATED",
     "evidence": "hosted-full-log-access-evidence.json",
     "readOnlyVerifier": "Codex, explicitly activated/current availability; no release/rollback authority",
-    "primaryGate": "complete exact M/D hosted logs and all-file assessment; missing evidence UNVERIFIED",
-    "exactMainExample": "e15ce188 has no hosted check run; no source-equivalent log relabelled as exact M",
+    "primaryGate": "Exact release D complete hosted all required tests PASS; latest non-data-identical main run informational",
+    "exactMainExample": "No exact-M hosted run is required. Fresh Mc8e76e20 and B9f53fdad have identical complete non-data trees.",
     "futureIsolatedRelease": "Not created; no future hosted-log verdict claimed",
-    "alternative": "hosted-tail-alternative-NOT-ADOPTED.md requires separate review/owner gate decision; never automatic"
+    "alternative": "Historical tail alternative withdrawn, never adopted; no local/tail substitution for D"
+  },
+  "R1": {
+    "status": "IMPLEMENTED_PENDING_CLAUDE_FOCUSED_CONFIRMATION",
+    "sourceReview": "af24b863bc2ac90b13ab43bed2dd61cbcd253517",
+    "procedureSection": "8",
+    "releaseGate": "Exact D complete hosted all-PASS required results; no baseline failure allowance",
+    "baselineRole": "Informational latest main run with verified identical entire non-data contents to actual parent",
+    "identityEvidence": "R1-current-main-verification.json",
+    "noEquivalentBaseline": "Report limitation; do not fabricate equivalence/dispatch; D absolute gate unchanged",
+    "codePackageRefreshNeeded": false,
+    "protectedPinsMatch": 17,
+    "candidateAfterHashesMatch": 9
   }
 }

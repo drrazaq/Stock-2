@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03T11:52:51.102837+00:00",
+  "updated": "2026-11-03T14:42:38.107587+00:00",
   "branch": "Stock2-safety-fixes",
   "pr": 1,
   "mission": "Full repository engineering; no merge/deploy/messages/orders/paid services",
@@ -4995,20 +4995,19 @@
   },
   "latestVerifiedEngineeringMilestone": {
     "sourceSha": "7f579b23a487cdf84d80b50bab1e04e0b170cf6e",
-    "status": "ACTIONS_EXACT_CODE_APPROVED_NATURAL_BOUNDARY_BLOCKED_NOT_DEPLOYED",
-    "verification": "docs/nov2-actions-correction/approved-attempt-verification.json",
+    "status": "ACTIONS_R1_ALL_PASS_REFRESHED_NO_DEPLOYMENT",
+    "verification": "docs/nov2-actions-correction/R1-current-main-verification.json",
     "tests": {
-      "baselinePassedFiles": 130,
-      "baselineFiles": 131,
-      "actionsPassedFiles": 132,
-      "actionsFiles": 133,
-      "onlyKnownFailures": [
-        "TRY SMALL case1",
-        "TRY SMALL case3b"
-      ],
-      "additionalFailures": []
+      "baselinePassedFiles": 132,
+      "baselineFiles": 132,
+      "actionsPassedFiles": 134,
+      "actionsFiles": 134,
+      "registeredBaseline": 131,
+      "registeredCandidate": 133,
+      "failures": [],
+      "failureAllowance": null
     },
-    "scope": "Unchanged exact approved nine-file patch; fresh production validation and operational proposal only; no production mutation."
+    "scope": "Same approved nine-file patch, fresh main source/pin/test/inverse verification and R1 procedure only; no production mutation."
   },
   "revisionIdentityMission": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -5298,42 +5297,50 @@
     "ciEvidence": "docs/validation/recorded-plan-contract-ci.json"
   },
   "latestSessionCheckpoint": {
-    "status": "ACTIONS_EXACT_CODE_APPROVED_NATURAL_BOUNDARY_BLOCKED_NOT_DEPLOYED",
-    "dateUTC": "2026-11-03T10:53:14.236464+00:00",
+    "status": "ACTIONS_R1_ALL_PASS_REFRESHED_NO_DEPLOYMENT",
+    "dateUTC": "2026-11-03T14:42:38.107587+00:00",
     "sourcePackage": "7f579b23a487cdf84d80b50bab1e04e0b170cf6e",
     "priorEvidenceCommit": "813f231b3307cb95413924602e22abc51fbcdda3",
-    "productionBaseTested": "e15ce188e034dc9269ee7348de0bf6e320324d58",
-    "report": "docs/nov2-actions-correction/approved-attempt-verification.json",
+    "productionBaseTested": "fd650fb0147613e1ff40f28d499ef5f449e655f0",
+    "report": "docs/nov2-actions-correction/R1-current-main-verification.json",
     "maintenanceProposal": "docs/nov2-actions-correction/bounded-maintenance-proposal.md",
     "artifactBytesUnchanged": true,
     "productionTestsOrdinary": {
-      "baselinePassedFiles": 130,
-      "baselineFiles": 131,
-      "actionsPassedFiles": 132,
-      "actionsFiles": 133,
-      "onlyKnownFailures": [
-        "TRY SMALL case1",
-        "TRY SMALL case3b"
-      ],
-      "additionalFailures": []
+      "baselinePassedFiles": 132,
+      "baselineFiles": 132,
+      "actionsPassedFiles": 134,
+      "actionsFiles": 134,
+      "registeredBaseline": 131,
+      "registeredCandidate": 133,
+      "failures": [],
+      "failureAllowance": null
     },
     "checks": "17before/dependency pins;9after hashes;9syntax checks PASS; prior code-only inverse whole-tree proof PASS",
-    "naturalBoundary": "BLOCKED: bot41592873150/job125791909328 active; bot41600894879 pending with zero jobs at read. Final persistence unavailable. No command-processing claim.",
+    "naturalBoundary": "Not certified in this R1 procedure review; prior dated run observations are historical, not current status. No maintenance execution.",
     "productionActions": [],
-    "additionalOperationalAuthorization": "NOT GRANTED: two workflow start suppressions/restorations and cancellation only of freshly verified never-started scheduled runs are proposals, not performed",
+    "additionalOperationalAuthorization": "NOT GRANTED: bot-only owner Disable/Enable and one separately approved P cancellation by Claude remain proposed; scanner stays enabled.",
     "mentor": "Deferred until ACTIONS deployment; original scan compatibility approval is not carried over. Rebase and independent re-review afterward.",
-    "watcher": "PASS WITH CONDITIONS at review4de7635b; separate reviewer executed, Claude spot-checked/published; owner approval outstanding. Exact package unchanged.65fresh focused cases and race independently reproduced.37pins match fresh main; no deployment.",
+    "watcher": "20ad7211 package unchanged; terminal6/6CI retained; deployment remains unapproved. No watcher revalidation or deployment performed in this R1 task.",
     "accepted": 24,
     "total": 40,
     "closuresEarned": [],
     "genuineAdmissions": 0,
     "publicationCI": "Check exact final published SHA; do not inherit predecessor CI.",
-    "next": "Claude focused D1/D2 confirmation; owner may later choose unchanged full-hosted gate or explicitly reviewed alternative. No implicit substitution and no maintenance execution.",
+    "next": "Claude focused R1 confirmation of exact r4; future release requires complete exact-D hosted all-PASS results, with verified source-equivalent main run informational only. No production action.",
     "watcherApprovalPackage": "docs/nov2-watcher-scheduling/deployment-approval-package.md",
     "watcherReviewEvidence": "docs/nov2-watcher-scheduling/review-confirmation/evidence-audit.json",
     "watcherReviewFocusedLogRetention": "Reviewer focused outputs are transcript extracts only; Codex new complete65case log is separately retained.",
     "actionsMaintenanceProcedure": "docs/nov2-actions-correction/bounded-maintenance-proposal.md",
-    "actionsMaintenanceStatus": "r3 narrow D1/D2 revision, C1-C4 passes preserved:9 exact-shell save cases; full hosted-log read path demonstrated, exact current parent/no release logs missing means UNVERIFIED; alternate gate separate/unadopted; Claude confirmation pending; no production action"
+    "actionsMaintenanceStatus": "R1 implemented;C1-C4,D1,D2passes preserved.17pins and9after match main after9f;132/132 +134/134ordinary testsPASS. No patch refresh needed; no forced application.",
+    "freshMainObserved": "c8e76e205389a8fb98cd6d66b4a983b10c12b2cf",
+    "baselineComparison": {
+      "sha": "9f53fdad27dfd2acfb21c14f293f1bfa18577425",
+      "run": 41632750514,
+      "job": 125906184924,
+      "nonDataTree": "02c9bcf4fbd19f248cd3e80b18d46676c671fb14",
+      "equivalentMain": "c8e76e205389a8fb98cd6d66b4a983b10c12b2cf",
+      "role": "INFORMATIONAL"
+    }
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -8695,5 +8702,60 @@
     "alternativeAdopted": false,
     "focusedConfirmation": "PENDING",
     "productionActions": []
+  },
+  "preR1_latestSessionCheckpoint": {
+    "status": "ACTIONS_EXACT_CODE_APPROVED_NATURAL_BOUNDARY_BLOCKED_NOT_DEPLOYED",
+    "dateUTC": "2026-11-03T10:53:14.236464+00:00",
+    "sourcePackage": "7f579b23a487cdf84d80b50bab1e04e0b170cf6e",
+    "priorEvidenceCommit": "813f231b3307cb95413924602e22abc51fbcdda3",
+    "productionBaseTested": "e15ce188e034dc9269ee7348de0bf6e320324d58",
+    "report": "docs/nov2-actions-correction/approved-attempt-verification.json",
+    "maintenanceProposal": "docs/nov2-actions-correction/bounded-maintenance-proposal.md",
+    "artifactBytesUnchanged": true,
+    "productionTestsOrdinary": {
+      "baselinePassedFiles": 130,
+      "baselineFiles": 131,
+      "actionsPassedFiles": 132,
+      "actionsFiles": 133,
+      "onlyKnownFailures": [
+        "TRY SMALL case1",
+        "TRY SMALL case3b"
+      ],
+      "additionalFailures": []
+    },
+    "checks": "17before/dependency pins;9after hashes;9syntax checks PASS; prior code-only inverse whole-tree proof PASS",
+    "naturalBoundary": "BLOCKED: bot41592873150/job125791909328 active; bot41600894879 pending with zero jobs at read. Final persistence unavailable. No command-processing claim.",
+    "productionActions": [],
+    "additionalOperationalAuthorization": "NOT GRANTED: two workflow start suppressions/restorations and cancellation only of freshly verified never-started scheduled runs are proposals, not performed",
+    "mentor": "Deferred until ACTIONS deployment; original scan compatibility approval is not carried over. Rebase and independent re-review afterward.",
+    "watcher": "PASS WITH CONDITIONS at review4de7635b; separate reviewer executed, Claude spot-checked/published; owner approval outstanding. Exact package unchanged.65fresh focused cases and race independently reproduced.37pins match fresh main; no deployment.",
+    "accepted": 24,
+    "total": 40,
+    "closuresEarned": [],
+    "genuineAdmissions": 0,
+    "publicationCI": "Check exact final published SHA; do not inherit predecessor CI.",
+    "next": "Claude focused D1/D2 confirmation; owner may later choose unchanged full-hosted gate or explicitly reviewed alternative. No implicit substitution and no maintenance execution.",
+    "watcherApprovalPackage": "docs/nov2-watcher-scheduling/deployment-approval-package.md",
+    "watcherReviewEvidence": "docs/nov2-watcher-scheduling/review-confirmation/evidence-audit.json",
+    "watcherReviewFocusedLogRetention": "Reviewer focused outputs are transcript extracts only; Codex new complete65case log is separately retained.",
+    "actionsMaintenanceProcedure": "docs/nov2-actions-correction/bounded-maintenance-proposal.md",
+    "actionsMaintenanceStatus": "r3 narrow D1/D2 revision, C1-C4 passes preserved:9 exact-shell save cases; full hosted-log read path demonstrated, exact current parent/no release logs missing means UNVERIFIED; alternate gate separate/unadopted; Claude confirmation pending; no production action"
+  },
+  "preR1_latestVerifiedEngineeringMilestone": {
+    "sourceSha": "7f579b23a487cdf84d80b50bab1e04e0b170cf6e",
+    "status": "ACTIONS_EXACT_CODE_APPROVED_NATURAL_BOUNDARY_BLOCKED_NOT_DEPLOYED",
+    "verification": "docs/nov2-actions-correction/approved-attempt-verification.json",
+    "tests": {
+      "baselinePassedFiles": 130,
+      "baselineFiles": 131,
+      "actionsPassedFiles": 132,
+      "actionsFiles": 133,
+      "onlyKnownFailures": [
+        "TRY SMALL case1",
+        "TRY SMALL case3b"
+      ],
+      "additionalFailures": []
+    },
+    "scope": "Unchanged exact approved nine-file patch; fresh production validation and operational proposal only; no production mutation."
   }
 }

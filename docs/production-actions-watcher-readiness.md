@@ -1,3 +1,5 @@
+> **ACTIONS status superseded by R1/r4:** [Current procedure](nov2-actions-correction/bounded-maintenance-proposal.md) and [fresh proof](nov2-actions-correction/R1-current-main-verification.json).132/132 baseline and134/134candidate filesPASS; no TRY SMALL allowance. Exact D complete hosted all-PASS is the gate; latest verified non-data-identical main run is informational. Nine-file patch unchanged; Claude R1 confirmation pending; no production action. Older ACTIONS counts/allowances below are historical. Watcher package20ad7211 remains unchanged/unapproved.
+
 # Separate ACTIONS and watcher release decisions —3November2026
 
 **No production changes performed.** ACTIONS has exact conditional code approval but no verified natural recording boundary. Watcher now has published PASS WITH CONDITIONS review evidence but no owner deployment approval. Neither depends on mentor. No strategy, ZAD, financial-record or frozen-evidence policy changes.

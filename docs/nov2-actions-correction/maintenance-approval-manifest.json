@@ -1,10 +1,10 @@
 {
-  "kind": "ACTIONS_MAINTENANCE_PROCEDURE_R3_D1_D2_REVIEW_ONLY",
-  "status": "NARROW_REVISION_PENDING_FOCUSED_CONFIRMATION_PRIMARY_HOSTED_GATE_UNVERIFIED",
+  "kind": "ACTIONS_MAINTENANCE_PROCEDURE_R4_R1_ALL_PASS_REVIEW_ONLY",
+  "status": "R1_IMPLEMENTED_PENDING_FOCUSED_CONFIRMATION_OPERATIONAL_APPROVAL",
   "files": [
     {
       "path": "bounded-maintenance-proposal.md",
-      "sha256": "e7a2d8976b130870dc03d15085d33ab0a18d8fcf6b71d4c781ac0a8d27a61393"
+      "sha256": "d0b283a478063480407eccf8cb9f910735955b0ee1d2f5660046bc1ebd6efe8e"
     },
     {
       "path": "verify-save-evidence.py",
@@ -20,7 +20,7 @@
     },
     {
       "path": "maintenance-review-disposition.json",
-      "sha256": "a8681ee895c234a064be5befeb29ca473ada6fdef11bfad76b60676e7be5e84e"
+      "sha256": "35d8b59dfc8df5f5809e34ad0aaf48db7c457135ba7a359da60b99d2c3e2978c"
     },
     {
       "path": "silent-save-D1-evidence.json",
@@ -32,7 +32,11 @@
     },
     {
       "path": "hosted-tail-alternative-NOT-ADOPTED.md",
-      "sha256": "4add37810b5291751b6ea865ceb432b0f9adaa7ee1be66a1f28eda9128dafa69"
+      "sha256": "c8b11b371789a01b5620f22bdf29f6b8d8ecdaf1f9d3c27f377ca945b1770c1b"
+    },
+    {
+      "path": "R1-current-main-verification.json",
+      "sha256": "3829eee0a74b29ad206d22059d2eddc0604fdb3c531ddb99c80b36618fc8847e"
     }
   ],
   "frozenProductionArtifacts": [
@@ -53,10 +57,13 @@
   "ownerActions": "bot.yml Disable/Enable only; exact P-ID cancellation approval separately",
   "scanner": "remains enabled",
   "watcherPackageSourceUnchanged": "20ad7211af6fc01f4a877cc50c608685ba39f8cf",
-  "claudeFocusedConfirmation": "r3 PENDING; C1-C4 previous passes preserved",
+  "claudeFocusedConfirmation": "r4 R1 PENDING; C1-C4,D1,D2 handoff passes preserved",
   "maintenanceApproved": false,
   "scheduled": false,
   "productionActions": [],
   "readOnlyLogVerifier": "Codex only when actively started and currently available; no code/control authority",
-  "alternativeAdopted": false
+  "alternativeAdopted": false,
+  "primaryReleaseGate": "Exact D complete hosted required results all PASS",
+  "baselineComparison": "Latest main Tests run with entire non-data tree identical to actual parent, informational only",
+  "failureAllowance": null
 }
