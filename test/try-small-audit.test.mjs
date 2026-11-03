@@ -20,6 +20,8 @@ const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'dat
 const half = (avgStress, edge, noTop2) => ({ avgStress, edge, noTop2, avg: avgStress + 0.004 });
 const good = (hold) => ({ verdict: 'NOT PROVEN', hold, results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } });
 const now = new Date().toISOString(), day = (n) => new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
+// (3 Nov 2026) tests 1 and 3b used the fixed session 2026-10-23, which aged past the 5-session freshness window: use the last weekday instead
+const SESS = (() => { for (let n = 1; ; n++) { const d = new Date(Date.now() - n * 864e5), w = d.getUTCDay(); if (w !== 0 && w !== 6) return d.toISOString().slice(0, 10); } })();
 const HAL = { TPC: { s: 'ok', d: '2026-10-23', by: 'you' }, QLYS: { s: 'ok', d: '2026-10-23', by: 'you' }, RELY: { s: 'ok', d: '2026-10-23', by: 'you' } };
 const lab = (lastClose, extra = {}) => ({ 'data/value-lab.json': { firstRun: {} }, 'data/halal.json': HAL,
   'data/squad6-lab.json': { firstRun: { 'SQ6-MTUM': good(126) } },
@@ -27,9 +29,9 @@ const lab = (lastClose, extra = {}) => ({ 'data/value-lab.json': { firstRun: {} 
 
 test('1. a new-signal list from an older close than the newest session is not shown as a buy', async () => {
   const S = await loadScan({ files: lab('2026-10-16') });
-  assert.deepEqual(S.fn('trySmallLines')({}, {}, null, '2026-10-23'), []);
-  const S2 = await loadScan({ files: lab('2026-10-23') });
-  assert.match(S2.fn('trySmallLines')({}, {}, null, '2026-10-23').join('\n'), /- BUY TPC 1000 USD up to 80\.34\. STOP 50\.70 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\).*SQ6-MTUM/);
+  assert.deepEqual(S.fn('trySmallLines')({}, {}, null, SESS), []);
+  const S2 = await loadScan({ files: lab(SESS) });
+  assert.match(S2.fn('trySmallLines')({}, {}, null, SESS).join('\n'), /- BUY TPC 1000 USD up to 80\.34\. STOP 50\.70 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\).*SQ6-MTUM/);
 });
 
 test('1b. without a session, a list whose close is more than 5 trading sessions old is not shown', async () => {
@@ -62,8 +64,8 @@ test('3. a stock already a BUY elsewhere in the message is not bought again by T
 });
 
 test('3b. the TRY SMALL ledger row carries the hold and stop that were shown', async () => {
-  const S = await loadScan({ files: lab('2026-10-23') });
-  S.fn('trySmallLines')({}, { TPC: 78 }, null, '2026-10-23');
+  const S = await loadScan({ files: lab(SESS) });
+  S.fn('trySmallLines')({}, { TPC: 78 }, null, SESS);
   const row = S.read('data/tier2-ledger.jsonl').trim().split('\n').map(x => JSON.parse(x)).find(r => r.kind === 'try:SQ6-MTUM');
   assert.equal(row.hold, 126); assert.equal(row.stopPct, 0.35); assert.equal(row.sym, 'TPC');
 });
