@@ -371,7 +371,7 @@ Nothing else changed.
 | ACK READY | Must arrive by **E − 12**; otherwise no Disable request and no attempt. |
 | CLICK DISABLE NOW | Turn-ending, at **E − 15 … E − 12** (on ACK READY, never before E − 15). Opens request **REQ-D** (§14.4). |
 | Disable cutoff | `bot.yml` must **read** `disabled_manually` by **E − 8**. Then a visible "DISABLE CONFIRMED – waiting for J". |
-| J ends | By **E + 10**, otherwise ABORT A. If J has not ended by **E + 7**, a visible "DRAINING – J still running" status. On J's end, a visible "J ENDED – PUSH TURN NEXT", with a 1-minute watcher deadline. |
+| J ends | By **E + 10**, otherwise ABORT A. While J runs, a visible "DRAINING – J still running" status **at most 15 minutes after DISABLE CONFIRMED**, and in any case by E + 7. On J's end, a visible "J ENDED – PUSH TURN NEXT", with a 1-minute watcher deadline. |
 | Push turn (one active turn, ≤ 15 min) | Step-4 log check, build D, pre-push WC, PR #3 "PUSHING" record, push D (**by E + 20**). D **APPLIED** → wait for hosted CI **until D push + 10**. Pass → V1. Fail or no result → ABORT B in the same turn: pre-R WC, "PUSHING R" record, push R, verify V2 by **D push + 15**. |
 | Enable target | **E + 45** at the latest for V1 (≤ E + 30) or V2 (≤ E + 35). |
 
@@ -398,12 +398,12 @@ Nothing else changed.
 ### 14.5 Silence and takeover: the original §9b rule, unchanged
 
 - **"Claude silent" means 20 minutes with no visible (turn-ending) message from Claude.** The owner then sends PING in this chat. If there is **no visible answer within 10 more minutes**, the §9b transfer may begin. **There is no earlier trigger.**
-- Normal operation keeps every gap at 15 minutes or less (14.2 item 4; the E + 7 drain status covers the E − 8 to E + 10 interval), so this rule fires only when Claude is actually unreachable.
+- Normal operation keeps every gap at 15 minutes or less (14.2 item 4; the drain status at most 15 minutes after DISABLE CONFIRMED, and by E + 7, covers the drain), so this rule fires only when Claude is actually unreachable.
 - Claude answers any owner message (PING, transfer, withdrawal) as the first act of its next turn, never gated on a code word. On a transfer, Claude's suspension under §9b applies immediately.
 
 ### 14.6 Synthetic scenario walk-through
 
-The checker is in `scenarios-r5.4.py` in this folder; times are in minutes from E. It checks the visible gaps, the D-push deadline, the CI and rollback windows, Enable only after VERIFIED, no push while idle, the takeover timing, and the reconciliation of open requests.
+The checker is in `scenarios-r5.4.py` in this folder; times are in minutes from E. It checks the visible gaps after the Disable request (≤ 15 minutes), the D-push deadline, the CI and rollback windows, Enable only after VERIFIED, no push while idle, the takeover timing, and the reconciliation of open requests.
 
 | Scenario | Timeline (key points) | Result |
 |---|---|---|
@@ -411,8 +411,8 @@ The checker is in `scenarios-r5.4.py` in this folder; times are in minutes from 
 | S2 late click | CLICK −15, still active at cutoff −8 → WINDOW CLOSED; disabled read −6 → V0 → Enable −5, active −2 | **VERIFIED V0, restored, no attempt**; REQ-D and REQ-E reconciled |
 | S3 missing ACK READY | READY −25; no ACK by −12 | **No attempt**; no request ever opened |
 | S3b DONE DISABLE missing, no click | CLICK −15; still active through +30 | **UNVERIFIED: REQ-D outstanding**; follow-up NOT CLICKED required |
-| S4 slow CI | D push +5; no CI result by +15 → ABORT B; R push +16; V2 +18; active +21 | **VERIFIED V2, restored** |
-| S5 rollback blocked | D push +5; CI fail +8; scanner running → BLOCKED +9; visible +24; drained → R push +31; V2 +33; active +36 | **VERIFIED V2, restored (late, block recorded)**; no gap over 15 minutes |
+| S4 slow CI | disabled read −12, drain status +3, J end +4, D push +5; no CI result by +15 → ABORT B; R push +16; V2 +18; active +21 | **VERIFIED V2, restored** |
+| S5 rollback blocked | disabled read −12, drain status +3, J end +4, D push +5; CI fail +8; scanner running → BLOCKED +9; visible +24; drained → R push +31; V2 +33; active +36 | **VERIFIED V2, restored (late, block recorded)**; no gap over 15 minutes |
 | S6 operator lost after D | "PUSHING D" on PR #3 +3; D push +5; Claude unreachable +6; PING +23; transfer +33; Codex verifies V1 from the APPLIED D and CI pass; Enable +36 | **VERIFIED V1 via Codex, restored**; transfer timing passes the 20 + 10 rule |
 | S6b lost push response | as S6, but the push outcome is unknown | **UNVERIFIED: write UNKNOWN; bot stays disabled; owner decides** (accepted residual) |
 
@@ -422,7 +422,7 @@ The checker is in `scenarios-r5.4.py` in this folder; times are in minutes from 
 - V2 latest ≤ the Enable target;
 - the post-push turn ≤ 15 minutes;
 - the turn cadence is below the silence trigger;
-- the longest designed gap ≤ 15 minutes (E − 8 → E + 7 drain status → E + 10).
+- every visible gap after the Disable request ≤ 15 minutes in every scenario, including the drain (E − 8 → E + 7 status → E + 10).
 
 ### 14.7 Not changed
 

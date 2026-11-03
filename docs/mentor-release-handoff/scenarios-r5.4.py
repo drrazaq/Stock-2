@@ -4,7 +4,8 @@ RULE = dict(ready_from=-30, ready_to=-20, ack_by=-12, click_from=-15, click_to=-
             max_visible_gap=15, max_turn=15, disable_watch_until=30, enable_resend=10, silence=20, ping=10)
 def check(name, ev):
     """ev: list of (t, kind, detail). Returns violations and final state."""
-    v=[]; vis=[t for t,k,_ in ev if k=='visible']; push=[t for t,k,_ in ev if k=='push']
+    v=[]; push=[t for t,k,_ in ev if k=='push']
+    t0=min([t for t,k,_ in ev if k=='click_request'] or [99]); allvis=[t for t,k,_ in ev if k=='visible']; vis=[t for t in allvis if t>=t0]   # cadence applies once a request is outstanding
     gaps=[b-a for a,b in zip(vis,vis[1:])]
     if gaps and max(gaps)>RULE['max_visible_gap'] and not any(k=='unreachable' for _,k,_ in ev): v.append(f'visible gap {max(gaps)}')
     for t,k,d in ev:
@@ -15,7 +16,7 @@ def check(name, ev):
         if k=='enable_request' and 'VERIFIED' not in d: v.append('enable without VERIFIED')
         if k=='push' and any(k2=='idle' and t2<=t<=t3 for t2,k2,t3 in [(a,b,c) for a,b,c in ev if b=='idle']): v.append('push while idle')
         if k=='transfer':
-            last=max(x for x in vis if x<t); pings=[x for x,kk,_ in ev if kk=='ping' and x<t]
+            last=max(x for x in allvis if x<t); pings=[x for x,kk,_ in ev if kk=='ping' and x<t]
             if not pings or t-last<RULE['silence']+RULE['ping'] or t-max(pings)<RULE['ping']: v.append('early transfer')
     dpush=[t for t,k,d in ev if k=='push' and d=='D']
     for t,k,d in ev:
@@ -38,9 +39,9 @@ S=[
  ('S3 missing ACK READY',[(-25,'ready',''),(-25,'visible','READY'),(-12,'visible','NO ATTEMPT – no ACK'),(-12,'final','no attempt; no request issued')]),
  ('S3b DONE DISABLE missing, no click',[(-25,'ready',''),(-25,'visible','READY'),(-20,'ack',''),(-15,'click_request',''),(-15,'visible','CLICK DISABLE NOW'),(-8,'visible','WINDOW CLOSED'),(5,'visible','still active'),(20,'visible','still active'),(30,'visible','monitoring ended'),
    (30,'final','UNVERIFIED: Disable request outstanding; owner must confirm NOT CLICKED')]),
- ('S4 slow CI',[(-25,'ready',''),(-25,'visible','READY'),(-20,'ack',''),(-15,'click_request',''),(-15,'visible','CLICK'),(-12,'reconciled','click_request'),(-12,'visible','CONFIRMED'),(4,'visible','J ended'),(5,'push','D'),(15,'visible_note','CI cutoff, no result -> ABORT B'),
+ ('S4 slow CI',[(-25,'ready',''),(-25,'visible','READY'),(-20,'ack',''),(-15,'click_request',''),(-15,'visible','CLICK'),(-12,'reconciled','click_request'),(-12,'visible','CONFIRMED'),(3,'visible','DRAINING'),(4,'visible','J ended'),(5,'push','D'),(15,'visible_note','CI cutoff, no result -> ABORT B'),
    (16,'push','R'),(18,'v2','ok'),(18,'enable_request','VERIFIED V2'),(18,'visible','VERIFIED V2 – CLICK ENABLE NOW'),(21,'reconciled','enable_request'),(21,'visible','FINAL'),(21,'final','VERIFIED V2, restored')]),
- ('S5 rollback blocked by writer',[(-25,'ready',''),(-25,'visible','READY'),(-20,'ack',''),(-15,'click_request',''),(-15,'visible','CLICK'),(-12,'reconciled','click_request'),(-12,'visible','CONFIRMED'),(4,'visible','J ended'),(5,'push','D'),(8,'ci_verdict','fail'),
+ ('S5 rollback blocked by writer',[(-25,'ready',''),(-25,'visible','READY'),(-20,'ack',''),(-15,'click_request',''),(-15,'visible','CLICK'),(-12,'reconciled','click_request'),(-12,'visible','CONFIRMED'),(3,'visible','DRAINING'),(4,'visible','J ended'),(5,'push','D'),(8,'ci_verdict','fail'),
    (9,'visible','D APPLIED, CI FAILED, ROLLBACK BLOCKED by scanner run (drain)'),(24,'visible','still blocked'),(31,'push','R'),(33,'v2','after blocked drain'),(33,'enable_request','VERIFIED V2'),(33,'visible','VERIFIED V2 – CLICK ENABLE NOW'),(36,'reconciled','enable_request'),(36,'visible','FINAL'),(36,'final','VERIFIED V2, restored (late: drain)')]),
  ('S6 operator interrupted after D',[(-25,'ready',''),(-25,'visible','READY'),(-20,'ack',''),(-15,'click_request',''),(-15,'visible','CLICK'),(-12,'reconciled','click_request'),(-12,'visible','CONFIRMED'),(3,'visible','J ended; PUSHING D recorded on PR #3'),(5,'push','D'),(6,'unreachable',''),
    (23,'ping',''),(33,'transfer',''),(36,'enable_request','VERIFIED V1 (Codex, CI pass)'),(39,'reconciled','enable_request'),(40,'visible','Codex report'),(40,'final','VERIFIED V1 via Codex, restored')]),
