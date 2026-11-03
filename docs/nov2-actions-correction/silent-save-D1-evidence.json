@@ -1,0 +1,83 @@
+{
+  "sourceReview": "0fc705a95dba940c71cf5af5d635d597c347d25a",
+  "workflowSha256": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40",
+  "scannerSaveHelperSha256": "8a399645f8e6a777f5a76a81f2bcf8a5b4e8c5f6934601d2eefcd9103dfcd8e2",
+  "helperDistinction": "bot.yml uses its embedded save(); .github/save-data.sh is scanner-only and must not be substituted into this proof",
+  "authenticJobLog": {
+    "job": 125684790153,
+    "lines": 196,
+    "sha256": "f304e6dc9b4d0e41f6903c14b748298d745381a47358e773ed2fcb0f52d40a67",
+    "shell": "/usr/bin/bash --noprofile --norc -e -o pipefail {0}",
+    "mainStepSuccessVerifiedByAPI": true,
+    "echoedScriptMatchesPinnedWorkflowByteForByte": true,
+    "executedOutputLinesAcrossWholeMainStep": 0,
+    "setupAndCleanupPresent": true,
+    "scope": "Source/shell/output facts; condition(e) and a future maintenance J boundary not certified by this sample"
+  },
+  "offlineCases": {
+    "status": "PASS",
+    "cases": [
+      {
+        "case": "unchanged save",
+        "pass": true,
+        "newCommitRequired": false,
+        "support": "exact shell/save are silent; test directly verifies clean data/index, unchanged HEAD and persisted remote"
+      },
+      {
+        "case": "changed save",
+        "pass": true,
+        "support": "data commit positively present on disposable remote"
+      },
+      {
+        "case": "refused publication",
+        "pass": true,
+        "support": "save exits zero but emits error and leaves an unpublished local commit",
+        "boundaryDisposition": "BLOCKED"
+      },
+      {
+        "case": "silent no-op after refused push",
+        "pass": true,
+        "support": "last call is silent with an unpushed commit; whole-run output/ancestry must reject, not just final-call silence",
+        "boundaryDisposition": "BLOCKED"
+      },
+      {
+        "case": "silent commit failure",
+        "pass": true,
+        "support": "actual -e shell exits nonzero despite silence; SUCCESS condition is essential",
+        "boundaryDisposition": "BLOCKED"
+      },
+      {
+        "case": "git add failure",
+        "pass": true,
+        "support": "actual -e shell exits nonzero, no commit or push",
+        "boundaryDisposition": "BLOCKED"
+      },
+      {
+        "case": "caught initial pull failure",
+        "pass": true,
+        "support": "silent successful step can miss a refresh while HEAD remains previously persisted; five conditions do not prove freshness"
+      },
+      {
+        "case": "caught full check",
+        "pass": true,
+        "support": "real caller catches failure into run.log; silent job output cannot prove command/scan success or intent"
+      },
+      {
+        "case": "caught reply",
+        "pass": true,
+        "support": "real caller catches failure into run.log; silent job output cannot prove command/scan success or intent"
+      }
+    ],
+    "scope": "synthetic offline evidence companion; not production save proof",
+    "noChangeCaveat": "All five conditions support a persisted Git-managed checkpoint, not which save changed data, refresh success, historical command intent or every Telegram command being saved. Silence alone is insufficient."
+  },
+  "verdict": "FIVE_CONDITIONS_SUPPORTED_FOR_GIT_MANAGED_PERSISTED_CHECKPOINT_ONLY",
+  "doesNotEstablish": [
+    "which saves changed data",
+    "successful source refresh after a caught pull failure",
+    "successful caught scan/reply execution",
+    "historical Telegram command intent or every command saved",
+    "valid financial reconciliation",
+    "ignored/untracked data or latest remote state without separate checkpoint/writer checks"
+  ]
+}

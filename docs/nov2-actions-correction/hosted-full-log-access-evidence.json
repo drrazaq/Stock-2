@@ -1,0 +1,80 @@
+{
+  "reader": "Codex github_fetch_workflow_job_logs; full redirect-followed decoded content",
+  "demonstrations": [
+    {
+      "job": 125814418123,
+      "run": 41605568600,
+      "event": "push",
+      "sourceSHA": "7bd91089449c436cc2645ece425beb427aef1377",
+      "actualCheckoutVerified": true,
+      "logSHA256": "1f2f957ca198768bb0bf015df7b3611fd062b258d00d8200cc33893db2cc06df",
+      "bytes": 546749,
+      "lines": 8250,
+      "setupAndCleanupPresent": true,
+      "workflowSelectors": [
+        "test/*.test.mjs"
+      ],
+      "expectedFileGroups": 130,
+      "seenFileGroups": 130,
+      "passFiles": 129,
+      "failureGroups": [
+        "test/try-small-audit.test.mjs"
+      ],
+      "failureCases": [
+        {
+          "group": "test/try-small-audit.test.mjs",
+          "case": "not ok 1 - 1. a new-signal list from an older close than the newest session is not shown as a buy"
+        },
+        {
+          "group": "test/try-small-audit.test.mjs",
+          "case": "not ok 6 - 3b. the TRY SMALL ledger row carries the hold and stop that were shown"
+        }
+      ],
+      "jobConclusion": "failure",
+      "otherStepsSuccessOrSkipped": true,
+      "fullAssessment": "BASELINE_EXCEPTIONS_ONLY",
+      "last5000LineSimulation": {
+        "seenFileGroups": 81,
+        "missingFileGroups": 49,
+        "disposition": "UNVERIFIED_PARTIAL_LOG"
+      },
+      "scope": "Full-log access demonstration; not a future isolated ACTIONS deployment"
+    },
+    {
+      "job": 125878630898,
+      "run": 41624588930,
+      "event": "push",
+      "sourceSHA": "20ad7211af6fc01f4a877cc50c608685ba39f8cf",
+      "actualCheckoutVerified": true,
+      "logSHA256": "2cb5dd678718fc8eb9f65de6a5c72bd89a40f591cbf1c6fb23a2d4f6714be160",
+      "bytes": 1112076,
+      "lines": 16699,
+      "setupAndCleanupPresent": true,
+      "workflowSelectors": [
+        "test/*.test.mjs",
+        "tests/*.test.mjs"
+      ],
+      "expectedFileGroups": 268,
+      "seenFileGroups": 268,
+      "passFiles": 268,
+      "failureGroups": [],
+      "failureCases": [],
+      "jobConclusion": "success",
+      "otherStepsSuccessOrSkipped": true,
+      "fullAssessment": "PASS",
+      "last5000LineSimulation": {
+        "seenFileGroups": 87,
+        "missingFileGroups": 181,
+        "disposition": "UNVERIFIED_PARTIAL_LOG"
+      },
+      "scope": "Full-log access demonstration; not a future isolated ACTIONS deployment"
+    }
+  ],
+  "currentImmediateMain": {
+    "sha": "e15ce188e034dc9269ee7348de0bf6e320324d58",
+    "checkRuns": 0,
+    "exactHostedBaselineVerdict": "UNVERIFIED_NO_EXACT_COMMIT_TEST_RUN"
+  },
+  "futureIsolatedActionsRelease": "NOT CREATED; no hosted release log or verdict claimed",
+  "fallbackAdopted": false
+}

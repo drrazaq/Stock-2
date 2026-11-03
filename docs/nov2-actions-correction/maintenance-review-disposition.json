@@ -12,7 +12,7 @@
   },
   "findings": {
     "C1": {
-      "status": "IMPLEMENTED_PENDING_FOCUSED_CONFIRMATION",
+      "status": "PASS_PRESERVED_FROM_0FC705A9",
       "sections": [
         "3",
         "7",
@@ -21,7 +21,7 @@
       "proof": "Visible turn-ending instructions, exact owner code words, independent readback despite missing acknowledgments,15minute visible cadence,20minute silence/10minute ping; no unattended monitoring promise."
     },
     "C2": {
-      "status": "IMPLEMENTED_PENDING_FOCUSED_CONFIRMATION",
+      "status": "PASS_PRESERVED_FROM_0FC705A9",
       "sections": [
         "1",
         "2",
@@ -30,7 +30,7 @@
       "proof": "Claude sole proposed release/rollback operator; owner-only bot workflow clicks. Claude API reads current states/jobs/logs and cancels only explicitly approved exact P after fresh checks; no Codex capability conflation."
     },
     "C3": {
-      "status": "IMPLEMENTED_PENDING_FOCUSED_CONFIRMATION",
+      "status": "PASS_PRESERVED_FROM_0FC705A9",
       "sections": [
         "1",
         "4",
@@ -39,7 +39,7 @@
       "proof": "Scanner remains active, no scanner Disable/Enable action. Fresh complete writer checks before/after each mutation; unexpected scanner drains naturally."
     },
     "C4": {
-      "status": "IMPLEMENTED_PENDING_FOCUSED_CONFIRMATION",
+      "status": "PASS_PRESERVED_FROM_0FC705A9",
       "sections": [
         "4",
         "8"
@@ -50,10 +50,30 @@
   "noChangeSave": {
     "section": "6",
     "newCommitRequired": false,
-    "positiveSupportingEvidenceRequired": true,
+    "fiveConditionsAllRequired": true,
     "quietLogAloneSufficient": false,
-    "unavailableEvidenceDisposition": "BLOCKED, no fabricated commit/record or new instrumentation"
+    "scope": "Persisted Git-managed checkpoint; does not prove individual saves or commands",
+    "unavailableEvidenceDisposition": "UNVERIFIED; no fabricated commit/records"
   },
-  "independentFocusedConfirmation": "REQUEST_AFTER_PUBLICATION_NOT_YET_RECEIVED",
-  "productionActions": []
+  "independentFocusedConfirmation": "r3REQUEST_AFTER_PUBLICATION_NOT_YET_RECEIVED",
+  "productionActions": [],
+  "narrowRevisionReviewCommit": "0fc705a95dba940c71cf5af5d635d597c347d25a",
+  "preservedReviewPasses": "C1-C4 confirmed incorporated by0fc705a9; unchanged in r3",
+  "D1": {
+    "status": "SUPPORTED_WITH_LIMITED_CLAIM_PENDING_CLAUDE_CONFIRMATION",
+    "evidence": "silent-save-D1-evidence.json",
+    "fiveConditions": "adopted conjunctively; exact source/shell, full whole-step log and ancestry essential",
+    "offlineCasesPassed": 9,
+    "scope": "Previously published Git-managed checkpoint, not latest-state freshness or historical command intent/every command saved",
+    "caughtErrors": "Initial pull errors and full-check/reply failures can be hidden from job stdout; tested explicitly"
+  },
+  "D2": {
+    "status": "FULL_LOG_READ_PATH_DEMONSTRATED_FUTURE_EXACT_COMMIT_GATE_UNVERIFIED",
+    "evidence": "hosted-full-log-access-evidence.json",
+    "readOnlyVerifier": "Codex, explicitly activated/current availability; no release/rollback authority",
+    "primaryGate": "complete exact M/D hosted logs and all-file assessment; missing evidence UNVERIFIED",
+    "exactMainExample": "e15ce188 has no hosted check run; no source-equivalent log relabelled as exact M",
+    "futureIsolatedRelease": "Not created; no future hosted-log verdict claimed",
+    "alternative": "hosted-tail-alternative-NOT-ADOPTED.md requires separate review/owner gate decision; never automatic"
+  }
 }

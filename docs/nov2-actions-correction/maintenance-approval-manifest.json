@@ -1,18 +1,18 @@
 {
-  "kind": "ACTIONS_MAINTENANCE_PROCEDURE_R2_REVIEW_ONLY",
-  "status": "DECISION_READY_CONTENT_PENDING_CLAUDE_FOCUSED_CONFIRMATION_AND_OWNER_OPERATIONAL_APPROVAL",
+  "kind": "ACTIONS_MAINTENANCE_PROCEDURE_R3_D1_D2_REVIEW_ONLY",
+  "status": "NARROW_REVISION_PENDING_FOCUSED_CONFIRMATION_PRIMARY_HOSTED_GATE_UNVERIFIED",
   "files": [
     {
       "path": "bounded-maintenance-proposal.md",
-      "sha256": "18a2c4e174cae176a5270f57bd161b44552822341d6612fd9824fefa358f1156"
+      "sha256": "e7a2d8976b130870dc03d15085d33ab0a18d8fcf6b71d4c781ac0a8d27a61393"
     },
     {
       "path": "verify-save-evidence.py",
-      "sha256": "5e8e22f2b2cc31dc53bd145e3e8132e5317f9a63fa7f95d11c3db06de6e61fcb"
+      "sha256": "7705012ee7e035216b74cd3342ee6e9c4dc2eeb08ab22f6f1168464fa759bc60"
     },
     {
       "path": "save-evidence-tests.json",
-      "sha256": "95e6c791d47d19e0d8ed8220bae318c29871213243d3a6ddff8cb993bda03e38"
+      "sha256": "fe5af332f963dce314e0c9285f863efd6c40a1d1519d1037e17163350d3b7006"
     },
     {
       "path": "ci-log-normalization-evidence.json",
@@ -20,7 +20,19 @@
     },
     {
       "path": "maintenance-review-disposition.json",
-      "sha256": "dfa50a53d821a0449fcc36f6fb4600e55dafc5ee1a4469940fc8f51e59ed4635"
+      "sha256": "a8681ee895c234a064be5befeb29ca473ada6fdef11bfad76b60676e7be5e84e"
+    },
+    {
+      "path": "silent-save-D1-evidence.json",
+      "sha256": "897833b22a24b51d615442056e0b0133e4b43769639309b83b62058dbad31dd7"
+    },
+    {
+      "path": "hosted-full-log-access-evidence.json",
+      "sha256": "8f388081847aa798127c04cfc83a5f8242048a152617ba17ff1226b3d0a9d874"
+    },
+    {
+      "path": "hosted-tail-alternative-NOT-ADOPTED.md",
+      "sha256": "4add37810b5291751b6ea865ceb432b0f9adaa7ee1be66a1f28eda9128dafa69"
     }
   ],
   "frozenProductionArtifacts": [
@@ -41,8 +53,10 @@
   "ownerActions": "bot.yml Disable/Enable only; exact P-ID cancellation approval separately",
   "scanner": "remains enabled",
   "watcherPackageSourceUnchanged": "20ad7211af6fc01f4a877cc50c608685ba39f8cf",
-  "claudeFocusedConfirmation": "PENDING; no PASS invented",
+  "claudeFocusedConfirmation": "r3 PENDING; C1-C4 previous passes preserved",
   "maintenanceApproved": false,
   "scheduled": false,
-  "productionActions": []
+  "productionActions": [],
+  "readOnlyLogVerifier": "Codex only when actively started and currently available; no code/control authority",
+  "alternativeAdopted": false
 }

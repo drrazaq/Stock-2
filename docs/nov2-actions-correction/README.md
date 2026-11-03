@@ -1,3 +1,5 @@
+> **Current narrow revision r3:** [D1/D2 procedure and read-only log handoff](bounded-maintenance-proposal.md), [exact manifest](maintenance-approval-manifest.json). C1–C4 prior passes preserved; focused r3 confirmation pending. Five save conditions support persisted checkpoint only. Full exact-M/D hosted gate remains controlling; partial/local alternative is separate and NOT ADOPTED. No production action.
+
 > **Current maintenance preparation:** [Final r2 procedure](bounded-maintenance-proposal.md) and [exact manifest](maintenance-approval-manifest.json) incorporate Claude C1–C4. Sole proposed operator Claude; scanner stays enabled; owner bot-only clicks; specific P approval. Focused confirmation/operational authorization pending. Original nine-file code approval stands; no production action.
 
 # ACTIONS correction — standalone review package

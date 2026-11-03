@@ -5,7 +5,7 @@
       "case": "unchanged save",
       "pass": true,
       "newCommitRequired": false,
-      "support": "actual quiet-diff branch trace plus clean data/index and unchanged remote"
+      "support": "exact shell/save are silent; test directly verifies clean data/index, unchanged HEAD and persisted remote"
     },
     {
       "case": "changed save",
@@ -17,8 +17,41 @@
       "pass": true,
       "support": "save exits zero but emits error and leaves an unpublished local commit",
       "boundaryDisposition": "BLOCKED"
+    },
+    {
+      "case": "silent no-op after refused push",
+      "pass": true,
+      "support": "last call is silent with an unpushed commit; whole-run output/ancestry must reject, not just final-call silence",
+      "boundaryDisposition": "BLOCKED"
+    },
+    {
+      "case": "silent commit failure",
+      "pass": true,
+      "support": "actual -e shell exits nonzero despite silence; SUCCESS condition is essential",
+      "boundaryDisposition": "BLOCKED"
+    },
+    {
+      "case": "git add failure",
+      "pass": true,
+      "support": "actual -e shell exits nonzero, no commit or push",
+      "boundaryDisposition": "BLOCKED"
+    },
+    {
+      "case": "caught initial pull failure",
+      "pass": true,
+      "support": "silent successful step can miss a refresh while HEAD remains previously persisted; five conditions do not prove freshness"
+    },
+    {
+      "case": "caught full check",
+      "pass": true,
+      "support": "real caller catches failure into run.log; silent job output cannot prove command/scan success or intent"
+    },
+    {
+      "case": "caught reply",
+      "pass": true,
+      "support": "real caller catches failure into run.log; silent job output cannot prove command/scan success or intent"
     }
   ],
   "scope": "synthetic offline evidence companion; not production save proof",
-  "noChangeCaveat": "A quiet production log alone cannot prove the no-op branch; unavailable supporting evidence blocks deployment."
+  "noChangeCaveat": "All five conditions support a persisted Git-managed checkpoint, not which save changed data, refresh success, historical command intent or every Telegram command being saved. Silence alone is insufficient."
 }
