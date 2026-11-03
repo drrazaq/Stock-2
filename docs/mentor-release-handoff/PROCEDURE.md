@@ -1,6 +1,6 @@
 # Mentor release: FINAL plan (single version, revision 5)
 
-**Status: revision 5.3 (communication-only amendment in §14, revised for Codex's r5.2 findings), awaiting Codex's focused confirmation and then the owner's approval. §14 overrides only the clauses it names; every other section is unchanged from r5.1. Earlier status: revision 5 (two narrow corrections), awaiting Codex's focused confirmation. Nothing in this document has been executed. Prepared 2 Nov 2026 by Claude (release-preparation owner).**
+**Status: revision 5.4 (communication amendment in §14, consolidated for Codex's findings on `10711172`, with synthetic scenario results), awaiting Codex's focused confirmation and then the owner's approval. §14 overrides only the clauses it names; every other section is unchanged from r5.1. Earlier status: revision 5 (two narrow corrections), awaiting Codex's focused confirmation. Nothing in this document has been executed. Prepared 2 Nov 2026 by Claude (release-preparation owner).**
 
 This one plan replaces Claude's `bd415ecb` procedure and the control proposal in `docs/mentor-checkpoint-boundary-decision.md` (`11f1ac9a`). It keeps that decision's committed-checkpoint boundary and all preservation rules.
 
@@ -331,62 +331,102 @@ Nothing else changed.
 2. **Designated bot job J (§6c, §7.6):** at entry and during the drain, J (and the jobless D-Q) are explicitly allowed. The pre-push WC requires J terminal with SUCCESS and save evidence, no executing writer, and no UNKNOWN write.
 3. **Labels only:** the rule references change from r4 to r5 (ACK TRANSFER RULE r5, ROLLBACK TRANSFER r5).
 
-## 14. Revision 5.3: communication-only amendment
+## 14. Revision 5.4: communication amendment (consolidated)
 
-**Why:** in the 3 Nov attempt, "OPERATOR READY" (07:01 UTC) and "CLICK DISABLE NOW" (07:32:53 UTC) were written in the middle of a working turn. This session's event log recorded both as hidden reasoning, not visible text, and the owner did not act; the attempt stopped correctly at step 2 with V0 verified and nothing changed (PR #3 comment 6598055427).
+**Why:**
+- In the 3 Nov attempt, "OPERATOR READY" and "CLICK DISABLE NOW" were written mid-turn and stored as hidden reasoning. The owner did not act, and the attempt stopped at step 2 with V0 (PR #3 comment 6598055427).
+- Three test exchanges then showed that **turn-ending** messages reach the owner within about a minute.
+- This section replaces r5.2/r5.3 §14 and resolves Codex's three findings on `10711172`. **Unchanged:** the patch, manifest and inverse, the eight-file scope, §3 verified states, §4 test rule, §5 accepted uncertainty, §6c writer rule, §6d write ledger and UNKNOWN rules, the §9b transfer (with the silence rule restored as original), §10 and §11.
 
-Three test exchanges showed that a message which **ends** a turn reaches the owner promptly: test 3 was sent at about 11:34:30 Kuwait, seen at 11:35 on the owner's device, and acknowledged by 11:35:10.
+### 14.1 What the tools can and cannot do (stated limitation)
 
-r5.2 (`f7e231fe`) was revised for Codex's findings: verify actual workflow states, never let waits block safety work, and measure silence correctly. **This section replaces only the clauses it names.** The patch, manifest, inverse, eight-file scope, test rule, writer rule, verified states, write ledger and UNKNOWN rules, the rollback transfer and the §11 conditions are unchanged.
+- **Monitoring is continuous only while one of Claude's turns is active.** Ending a turn creates no timer.
+- **Between turns, Claude is woken only by:**
+  - (a) a **background watcher** started before the turn ends: a shell command that polls the authenticated GitHub API (workflow states, writer runs) and `git ls-remote` (`main`) every 30 seconds, and exits on any change or at a stated deadline;
+  - (b) a **scheduled message** at the same deadline (minute granularity; it waits until any running turn ends);
+  - (c) **any owner message**.
+- **Evidence:**
+  - On 3 Nov the watcher's reads worked: `bot.yml` state came back through the API with a 15,000-per-hour limit, and `main` through `ls-remote`.
+  - Background completions and a scheduled message woke this session after its turns had ended, on 2–3 Nov.
+  - This is observed behaviour, not a guarantee.
+- **Consequence:**
+  - Nothing irreversible happens while Claude is idle. Every push, and the whole post-push phase up to V1, V2, a recorded rollback block, or an UNKNOWN report, runs inside **one active turn of at most 15 minutes**.
+  - A missed wake delays detection (longer start suppression). It never permits unverified code.
+  - **If wakes fail entirely, the §9b silence rule and the owner's PING are the recovery path.** This is the residual, not a blocker, because no step depends on an unguaranteed wake for its safety.
 
-### 14.1 Stated limitation: how Claude's monitoring works
+### 14.2 Visible messages
 
-- **Continuous only while a turn is active.** Claude can watch and act only while one of its turns is running.
-- **Ending a turn creates no timer.** Between turns Claude is idle, and it is woken only by:
-  - (a) a background check command that Claude started before ending the turn, finishing;
-  - (b) a scheduled message into this session (one-minute granularity; it waits until any running turn ends);
-  - (c) a message from the owner.
-- **Not guaranteed.** Wakes (a) and (c) have worked repeatedly in this session on 2–3 Nov, but no service guarantees them.
-- **Design consequence:** nothing irreversible happens while Claude is idle.
-  - Every push to `main` (D, R or a retry), and the whole post-push phase up to VERIFIED V1, VERIFIED V2 or an UNKNOWN report, happens inside **one active turn**, which ends within 20 minutes of the D push with a visible message.
-  - A missed or late wake can delay detection of an owner click or a new writer. That costs service time, never unverified code.
+1. Only a **turn-ending** message counts as delivered. Mid-turn text never carries an instruction, request, decision or VERIFIED result.
+2. Every turn-ending message states its send time (UTC and Kuwait), the current state, and the next wake deadline.
+3. **Owner code words exist only for owner actions:** ACK READY, DONE DISABLE, DONE ENABLE, NOT CLICKED. Claude's checks, aborts and rollback **never wait** for any reply.
+4. Claude ends a turn with a visible message **at most every 15 minutes** while any request, write or drain is outstanding.
+5. **The authoritative "PUSHING <candidate> onto <expected parent>" record (§6d) is the PR #3 comment**, which is posted before the push. A copy in chat may be hidden if written mid-turn.
 
-### 14.2 Visible messages (replaces §7.3 "one continuous turn" and "a status line at every step")
-
-1. **Only a turn-ending message counts as delivered.** Text written mid-turn may be invisible and never carries an instruction, a request or a VERIFIED result.
-2. **Every instruction or decision ends Claude's turn and states its send time** (UTC and Kuwait).
-3. **Owner code words exist only for owner actions:** ACK READY, DONE DISABLE, DONE ENABLE. **There is no CONTINUE gate.** Claude's safety checks, aborts and rollback never wait for any owner reply.
-4. **Before ending any turn between OPERATOR READY and the final report, Claude starts both wakes:**
-   - a background check command that re-reads `bot.yml` and `main.yml` states, writer runs and `main` every 30 seconds, and exits on any change or at the next deadline;
-   - a scheduled message at that same deadline, as a backstop.
-
-   Each turn-ending message names its next deadline.
-
-### 14.3 Disable and Enable: actual state always verified (replaces §8 steps 1–2 and step 8)
+### 14.3 One timeline (relative to the actual E; replaces §6b targets and §8 steps 1–2 and 8)
 
 | Point | Rule |
 |---|---|
-| OPERATOR READY | Turn-ending, sent between **E − 30 and E − 20** after all §7 entry checks pass. Asks for ACK READY. |
-| CLICK DISABLE NOW | Turn-ending, sent **at E − 15** after a fresh writer check, only if ACK READY has arrived. Asks for DONE DISABLE. **Cutoff: E − 8.** |
-| Disable verification | On every wake, Claude reads the **actual** `bot.yml` state, whether or not DONE DISABLE has arrived. `disabled_manually` before the cutoff → proceed to step 3. |
-| At the cutoff (E − 8) still `active` | **No attempt today, and it cannot be revived by a late reply.** Claude sends a turn-ending "WINDOW CLOSED – DO NOT CLICK DISABLE" and keeps checking the actual state until E + 30. **Claude never assumes no click occurred.** |
-| Disable seen after the cutoff | **No deployment.** Claude verifies V0, then sends "VERIFIED V0 – CLICK ENABLE NOW", asking for DONE ENABLE. |
-| Enable verification | After any "CLICK ENABLE NOW", Claude reads the actual state on every wake, whether or not DONE ENABLE has arrived, until `bot.yml` reads `active`. If it does not read `active` within 10 minutes, Claude resends the instruction as a new turn-ending message. |
+| Entry checks | From E − 45. |
+| OPERATOR READY | Turn-ending, at **E − 30 … E − 20**. Asks for ACK READY. |
+| ACK READY | Must arrive by **E − 12**; otherwise no Disable request and no attempt. |
+| CLICK DISABLE NOW | Turn-ending, at **E − 15 … E − 12** (on ACK READY, never before E − 15). Opens request **REQ-D** (§14.4). |
+| Disable cutoff | `bot.yml` must **read** `disabled_manually` by **E − 8**. Then a visible "DISABLE CONFIRMED – waiting for J". |
+| J ends | By **E + 10**, otherwise ABORT A. On J's end, a visible "J ENDED – PUSH TURN NEXT", with a 1-minute watcher deadline. |
+| Push turn (one active turn, ≤ 15 min) | Step-4 log check, build D, pre-push WC, PR #3 "PUSHING" record, push D (**by E + 20**). D **APPLIED** → wait for hosted CI **until D push + 10**. Pass → V1. Fail or no result → ABORT B in the same turn: pre-R WC, "PUSHING R" record, push R, verify V2 by **D push + 15**. |
+| Enable target | **E + 45** at the latest for V1 (≤ E + 30) or V2 (≤ E + 35). |
 
-**Late replies:** a code word that arrives after its window or cutoff revives nothing. Claude answers it with the current state only.
+**Write states:**
+- **APPLIED-AWAITING-CI:** D is confirmed on `main` by a fresh read of the exact SHA. This is not UNKNOWN; the turn continues to the CI verdict and V1 or ABORT B.
+- **UNKNOWN:** no definitive outcome for a recorded push. The turn ends with a visible "UNKNOWN: <sha> onto <parent> – no retry, no takeover, no VERIFIED". Claude re-reads `main` every ≤ 15 minutes with visible status. Only APPLIED or a definitive rejection resolves it (§6d), or the owner's decision.
 
-### 14.4 Silence and reaching Claude (clarifies §9b)
+**Rollback blocked by another writer (pre-R WC fails):**
+- The push turn ends with a visible "D APPLIED, CI <failed|missing>, ROLLBACK BLOCKED BY <run id> – draining, bot stays disabled".
+- The watcher exits when that writer finishes, or every 15 minutes for a visible status.
+- When the WC passes, a new active turn pushes R and verifies V2. The block is recorded, so V2 may come after D push + 15.
+- **No cancellation, ever.** If the blocking writer checked out D, it is running D code (§6c post-push rule); this is reported, not interrupted.
 
-- **Silence is measured from Claude's last visible (turn-ending) message.**
-- **Deliberate waiting is not silence.** A turn-ending message that says "WAITING FOR <code word or event> — next check by <time>" is deliberate waiting until that time plus 5 minutes.
-- **Unreachable** means that time has passed, or it is 20 minutes since Claude's last visible message, whichever is earlier, **and** a PING sent by the owner in this chat has had no visible answer for 10 minutes. The §9b transfer may then begin. **The 20-minute plus 10-minute rule is unchanged in substance.**
-- **Answered first, never gated:** any owner message (PING, a transfer, a withdrawal) is answered as the first act of Claude's next turn. It is never gated on a code word.
-- **On a transfer**, Claude's suspension (§9b) applies at once, and the rest of §9b is unchanged.
+### 14.4 Outstanding owner requests are tracked until reconciled
 
-### 14.5 Not changed
+| Request | Opened by | Reconciled only by | If not reconciled |
+|---|---|---|---|
+| **REQ-D** (Disable) | CLICK DISABLE NOW | (1) Claude reads `disabled_manually` (before the cutoff → proceed; after it → no deployment, and REQ-E opens after V0), or (2) the owner's explicit "NOT CLICKED" reply | Claude keeps reading the actual state on every wake until E + 30, then reports **UNVERIFIED: REQ-D outstanding**. Follow-up: the owner replies NOT CLICKED, or, if a click happens later, clicks Enable at once and tells Claude. **A monitoring deadline never reconciles a request.** |
+| **REQ-E** (Enable) | VERIFIED V0/V1/V2 – CLICK ENABLE NOW | Claude reads `bot.yml` `active` (or owner-confirmed, labelled as such) | Re-instructed after 10 minutes. The final report says **UNVERIFIED restoration** until reconciled, with the follow-up: the owner clicks Enable and confirms. |
+
+- **Late replies:** a late code word never revives an expired window. Claude answers it with the current state.
+- **Final report:** it says "restored" only when REQ-E is reconciled and **no REQ-D is outstanding**.
+
+### 14.5 Silence and takeover: the original §9b rule, unchanged
+
+- **"Claude silent" means 20 minutes with no visible (turn-ending) message from Claude.** The owner then sends PING in this chat. If there is **no visible answer within 10 more minutes**, the §9b transfer may begin. **There is no earlier trigger.**
+- Normal operation keeps every gap under 20 minutes (14.2 item 4). The longest designed gap is the 18 minutes from the E − 8 cutoff to the E + 10 J-end limit, so this rule fires only when Claude is actually unreachable.
+- Claude answers any owner message (PING, transfer, withdrawal) as the first act of its next turn, never gated on a code word. On a transfer, Claude's suspension under §9b applies immediately.
+
+### 14.6 Synthetic scenario walk-through
+
+The checker is in `scenarios-r5.4.py` in this folder; times are in minutes from E. It checks the visible gaps, the D-push deadline, the CI and rollback windows, Enable only after VERIFIED, no push while idle, the takeover timing, and the reconciliation of open requests.
+
+| Scenario | Timeline (key points) | Result |
+|---|---|---|
+| S1 normal success | READY −25, ACK −23, CLICK −15, disabled read −13, J end +0.3, D push +2, CI pass +5, Enable +6, active read +8 | **VERIFIED V1, restored**; no violations |
+| S2 late click | CLICK −15, still active at cutoff −8 → WINDOW CLOSED; disabled read −6 → V0 → Enable −5, active −2 | **VERIFIED V0, restored, no attempt**; REQ-D and REQ-E reconciled |
+| S3 missing ACK READY | READY −25; no ACK by −12 | **No attempt**; no request ever opened |
+| S3b DONE DISABLE missing, no click | CLICK −15; still active through +30 | **UNVERIFIED: REQ-D outstanding**; follow-up NOT CLICKED required |
+| S4 slow CI | D push +5; no CI result by +15 → ABORT B; R push +16; V2 +18; active +21 | **VERIFIED V2, restored** |
+| S5 rollback blocked | D push +5; CI fail +8; scanner running → BLOCKED +9; visible +24; drained → R push +31; V2 +33; active +36 | **VERIFIED V2, restored (late, block recorded)**; no gap over 15 minutes |
+| S6 operator lost after D | "PUSHING D" on PR #3 +3; D push +5; Claude unreachable +6; PING +23; transfer +33; Codex verifies V1 from the APPLIED D and CI pass; Enable +36 | **VERIFIED V1 via Codex, restored**; transfer timing passes the 20 + 10 rule |
+| S6b lost push response | as S6, but the push outcome is unknown | **UNVERIFIED: write UNKNOWN; bot stays disabled; owner decides** (accepted residual) |
+
+**Cross-deadline checks, all PASS:**
+- the ACK cutoff leaves time to click;
+- D push latest + CI window ≤ E + 30;
+- V2 latest ≤ the Enable target;
+- the post-push turn ≤ 15 minutes;
+- the turn cadence is below the silence trigger;
+- the longest designed gap ≤ 20 minutes.
+
+### 14.7 Not changed
 
 - The patch `1841837e…`, the manifest `13b120e5…` and the inverse `15ed5256…`.
-- §3, §4, §5, §6c, §6d, §9b (except the clarification in 14.4), §10 and §11.
-- No repository, workflow, secret or permission change. The two wakes in 14.2 are existing session tools, used only during an approved attempt.
-- Before any new attempt, the owner approves r5.3 in writing and sets a new date.
+- No repository, workflow, secret or permission change. The watcher and scheduled message are existing session tools, used only during an approved attempt.
+- Before any new attempt, the owner approves this revision in writing and sets a new date.
 
