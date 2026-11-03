@@ -32926,14 +32926,52 @@
    "name": "Inventory cut (inventory change vs a year before, per average assets) in the bottom 20%, hold 6 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-03 (daily researcher); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "explain": "Buy the next open after a 10-Q/10-K whose inventory (us-gaap InventoryNet) minus the inventory a year before, divided by average total assets, is in the bottom 20% (percentile <= 0.20 vs all such filings of the prior 365 days; filed within 120 days of the balance date; year-ago inventory > 0; assets 10M USD+); stock liquid; sell the close 126 sessions later. Measure, event timing, year-ago match, average-assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 8) before any run.",
    "sources": [
     "https://doi.org/10.1023/A:1020274002135",
     "https://www3.ntu.edu.sg/home/HuaiZhang/inventory%20paper-RAST.pdf"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) \"Inventory Changes and Future Returns\": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026."
+   "note": "Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) \"Inventory Changes and Future Returns\": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026.",
+   "tested": "2026-11-02",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     1006,
+     687
+    ],
+    "avg": [
+     0.0179,
+     0.0904
+    ],
+    "stress": [
+     0.0139,
+     0.0864
+    ],
+    "edge": [
+     0.0094,
+     0.0021
+    ],
+    "vsOwn": [
+     0.0005,
+     0.0498
+    ],
+    "noTop2": [
+     0.0153,
+     0.0828
+    ],
+    "tBlock": [
+     0.48,
+     -0.51
+    ],
+    "win": [
+     0.5219,
+     0.5357
+    ],
+    "why": "block t 0.48 under 2.5 in the older half; block t -0.51 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-INV-LOW252",
@@ -32941,14 +32979,52 @@
    "name": "Inventory cut in the bottom 20%, hold 1 year",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-03 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-INV-LOW126, hold 252 sessions. Measure, event timing, year-ago match, average-assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 8) before any run.",
    "sources": [
     "https://doi.org/10.1023/A:1020274002135",
     "https://www3.ntu.edu.sg/home/HuaiZhang/inventory%20paper-RAST.pdf"
    ],
    "hold": 252,
-   "note": "Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) \"Inventory Changes and Future Returns\": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026."
+   "note": "Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) \"Inventory Changes and Future Returns\": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026.",
+   "tested": "2026-11-02",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     786,
+     359
+    ],
+    "avg": [
+     0.0635,
+     0.1068
+    ],
+    "stress": [
+     0.0595,
+     0.1028
+    ],
+    "edge": [
+     0.0172,
+     -0.0411
+    ],
+    "vsOwn": [
+     -0.0528,
+     -0.0666
+    ],
+    "noTop2": [
+     0.0561,
+     0.0906
+    ],
+    "tBlock": [
+     0.15,
+     -0.29
+    ],
+    "win": [
+     0.5483,
+     0.4763
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 0.15 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.29 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-INV-TOP126",
@@ -32956,14 +33032,52 @@
    "name": "AVOID check: inventory build-up in the top 20%, 126 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-03 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Information only: stocks whose inventory change per average assets is among the 20% highest (percentile >= 0.80), bought next open, 126 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, event timing, year-ago match, average-assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 8) before any run.",
    "sources": [
     "https://doi.org/10.1023/A:1020274002135",
     "https://www3.ntu.edu.sg/home/HuaiZhang/inventory%20paper-RAST.pdf"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) \"Inventory Changes and Future Returns\": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026."
+   "note": "Daily researcher 2026-11-03: Thomas and Zhang (2002, Review of Accounting Studies) \"Inventory Changes and Future Returns\": the year-on-year inventory change per average assets predicts returns (inventory cutters beat inventory builders over the next year; the inventory part drives the accrual anomaly). New line (the inventory balance, official SEC XBRL company facts); ANOM-ACC tested total accruals. Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 4 Nov 2026.",
+   "tested": "2026-11-02",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "n": [
+     854,
+     1002
+    ],
+    "avg": [
+     -0.0739,
+     0.116
+    ],
+    "stress": [
+     -0.0779,
+     0.112
+    ],
+    "edge": [
+     -0.0244,
+     0.0221
+    ],
+    "vsOwn": [
+     -0.1304,
+     0.0036
+    ],
+    "noTop2": [
+     -0.0788,
+     0.1103
+    ],
+    "tBlock": [
+     -0.95,
+     0.75
+    ],
+    "win": [
+     0.3981,
+     0.5569
+    ],
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
   }
  ]
 }
