@@ -1,6 +1,6 @@
 # Mentor release: FINAL plan (single version, revision 5)
 
-**Status: revision 5 (two narrow corrections), awaiting Codex's focused confirmation. Nothing in this document has been executed. Prepared 2 Nov 2026 by Claude (release-preparation owner).**
+**Status: revision 5.2 (communication-only amendment in §14), awaiting Codex's focused review and then the owner's approval. §14 overrides only the clauses it names; every other section is unchanged from r5.1. Earlier status: revision 5 (two narrow corrections), awaiting Codex's focused confirmation. Nothing in this document has been executed. Prepared 2 Nov 2026 by Claude (release-preparation owner).**
 
 This one plan replaces Claude's `bd415ecb` procedure and the control proposal in `docs/mentor-checkpoint-boundary-decision.md` (`11f1ac9a`). It keeps that decision's committed-checkpoint boundary and all preservation rules.
 
@@ -330,4 +330,49 @@ Nothing else changed.
    - Any UNKNOWN blocks retries, takeover and every VERIFIED / Enable signal, for Claude's updates and Codex's alike.
 2. **Designated bot job J (§6c, §7.6):** at entry and during the drain, J (and the jobless D-Q) are explicitly allowed. The pre-push WC requires J terminal with SUCCESS and save evidence, no executing writer, and no UNKNOWN write.
 3. **Labels only:** the rule references change from r4 to r5 (ACK TRANSFER RULE r5, ROLLBACK TRANSFER r5).
+
+## 14. Revision 5.2: communication-only amendment
+
+**Why:** in the 3 Nov attempt, "OPERATOR READY" (07:01 UTC) and "CLICK DISABLE NOW" (07:32:53 UTC) were written in the middle of a working turn. This session's event log recorded both as hidden reasoning, not visible text, and the owner did not act; the attempt stopped correctly at step 2 with V0 verified and nothing changed (PR #3 comment 6598055427).
+
+Three test exchanges on 3 Nov showed that a message which **ends** a turn reaches the owner promptly: test 3 was sent at about 11:34:30 Kuwait, seen at 11:35 on the owner's device, and acknowledged by 11:35:10.
+
+**This section replaces only the clauses listed below. The patch, manifest, inverse, eight-file scope, test rule, writer rules, verified states, UNKNOWN rules, rollback transfer, roles and approval conditions are unchanged.**
+
+### 14.1 Message rule (replaces §7.3 "one continuous turn" and "a status line at every step")
+
+1. **A message counts as delivered only if it is the final message of one of Claude's turns.** Text written in the middle of a turn may not be visible to the owner and **never** carries an instruction, a request or a VERIFIED result.
+2. **Every message that needs the owner, or reports a decision, ends Claude's turn and states its send time** in UTC and Kuwait time.
+3. **The owner answers with the code word the message names.** Claude takes the next step only after that reply.
+
+   | Code word | Means |
+   |---|---|
+   | ACK READY | the owner has seen OPERATOR READY |
+   | DONE DISABLE | the owner has clicked Disable workflow |
+   | CONTINUE | the owner has seen a status message; Claude may go on |
+   | DONE ENABLE | the owner has clicked Enable workflow |
+
+4. **No working turn runs longer than 15 minutes without ending on a visible status message.** If no further owner action is needed, that message asks for CONTINUE.
+5. **Silence is never permission.** A late or missing code word means Claude waits; it never acts as if the reply had arrived.
+
+### 14.2 Timeline changes (replace §8 steps 1–2 and step 8; all other steps unchanged)
+
+| Point | r5.2 rule |
+|---|---|
+| OPERATOR READY | Sent as a turn-ending message between **E − 30 and E − 20**, after all §7 entry checks pass. It asks for **ACK READY**. |
+| CLICK DISABLE NOW | Sent as a turn-ending message **at E − 15**, after a fresh writer check, **only if ACK READY has arrived**. It asks for **DONE DISABLE**. |
+| Disable readback | Claude reads the workflow state **only after DONE DISABLE arrives** (this replaces the fixed 3-minute timer). If DONE DISABLE has not arrived **by E − 8**, there is no attempt today; nothing has changed. If DONE DISABLE arrives but `bot.yml` does not read `disabled_manually` within 3 minutes after it, the attempt stops (V0). |
+| During the drain, release and CI | Claude ends a turn with a visible status at least every 15 minutes (for example when J ends, and after the D push), each asking for CONTINUE. While waiting for CONTINUE the bot stays disabled. The existing targets in §6b still apply; a late CONTINUE can cause ABORT A (before D) or extend start suppression; it never permits a step without the required evidence. |
+| Enable | "VERIFIED V0 / V1 / V2 – CLICK ENABLE NOW" is a turn-ending message asking for **DONE ENABLE**. Claude then confirms `bot.yml` reads `active`. |
+
+### 14.3 Silence trigger (clarifies §9b "Claude silent for 20 minutes")
+
+"Claude silent" means **no turn-ending message for 20 minutes** after the owner's last code-word reply. Hidden mid-turn text does not count. The rest of §9b, including the transfer text, the suspension of Claude's write authority and Codex's rollback-only role, is unchanged.
+
+### 14.4 Not changed
+
+- The patch `1841837e…`, the manifest `13b120e5…` and the inverse `15ed5256…`.
+- §3 verified states, §4 test rule, §5 accepted historical uncertainty, §6c writer rule, §6d write ledger, §9b transfer, §10 residual risk and the §11 approval conditions.
+- No new infrastructure, schedules, workflows or permissions.
+- Before any new attempt, the owner approves r5.2 in writing, and a new date is set by the owner.
 
