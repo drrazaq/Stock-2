@@ -1,3 +1,5 @@
+> **Current maintenance preparation:** [Final r2 procedure](bounded-maintenance-proposal.md) and [exact manifest](maintenance-approval-manifest.json) incorporate Claude C1–C4. Sole proposed operator Claude; scanner stays enabled; owner bot-only clicks; specific P approval. Focused confirmation/operational authorization pending. Original nine-file code approval stands; no production action.
+
 # ACTIONS correction — standalone review package
 
 3 November2026. **Mentor is not a dependency. The owner has approved the exact nine-file patch conditionally on a verified natural boundary; that boundary is currently BLOCKED. No deployment has been performed.** The previous after-mentor-only proposal is superseded; preserve its [historical report](historical-after-mentor-readme.md), manifest.json, production-after-mentor.patch, rollback.patch and evidence.json as earlier review evidence, not current deployment instructions.

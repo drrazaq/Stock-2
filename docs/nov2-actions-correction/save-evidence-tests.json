@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "cases": [
+    {
+      "case": "unchanged save",
+      "pass": true,
+      "newCommitRequired": false,
+      "support": "actual quiet-diff branch trace plus clean data/index and unchanged remote"
+    },
+    {
+      "case": "changed save",
+      "pass": true,
+      "support": "data commit positively present on disposable remote"
+    },
+    {
+      "case": "refused publication",
+      "pass": true,
+      "support": "save exits zero but emits error and leaves an unpublished local commit",
+      "boundaryDisposition": "BLOCKED"
+    }
+  ],
+  "scope": "synthetic offline evidence companion; not production save proof",
+  "noChangeCaveat": "A quiet production log alone cannot prove the no-op branch; unavailable supporting evidence blocks deployment."
+}

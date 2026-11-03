@@ -1,0 +1,48 @@
+{
+  "kind": "ACTIONS_MAINTENANCE_PROCEDURE_R2_REVIEW_ONLY",
+  "status": "DECISION_READY_CONTENT_PENDING_CLAUDE_FOCUSED_CONFIRMATION_AND_OWNER_OPERATIONAL_APPROVAL",
+  "files": [
+    {
+      "path": "bounded-maintenance-proposal.md",
+      "sha256": "18a2c4e174cae176a5270f57bd161b44552822341d6612fd9824fefa358f1156"
+    },
+    {
+      "path": "verify-save-evidence.py",
+      "sha256": "5e8e22f2b2cc31dc53bd145e3e8132e5317f9a63fa7f95d11c3db06de6e61fcb"
+    },
+    {
+      "path": "save-evidence-tests.json",
+      "sha256": "95e6c791d47d19e0d8ed8220bae318c29871213243d3a6ddff8cb993bda03e38"
+    },
+    {
+      "path": "ci-log-normalization-evidence.json",
+      "sha256": "bc2be80560156c0c9149543c720bcfcf2d8dc7cda1234a0a5ecc2adb7063f372"
+    },
+    {
+      "path": "maintenance-review-disposition.json",
+      "sha256": "dfa50a53d821a0449fcc36f6fb4600e55dafc5ee1a4469940fc8f51e59ed4635"
+    }
+  ],
+  "frozenProductionArtifacts": [
+    {
+      "path": "production-standalone.patch",
+      "sha256": "a9560969298368490a0b3cbd5b151e429b7d68b2bc302ba35025ccebb0981a53"
+    },
+    {
+      "path": "standalone-manifest.json",
+      "sha256": "545e1a7775f43f6b3b6b8e72c84a6f8e47c8ecde0b560128695ab17f2a67cd2b"
+    },
+    {
+      "path": "rollback-standalone.patch",
+      "sha256": "4e28ee37e58e8f0ea57b3d70a09438562efc12aaa8a5a1e9075df3927c6d91c9"
+    }
+  ],
+  "operator": "Claude, proposed sole release and rollback operator",
+  "ownerActions": "bot.yml Disable/Enable only; exact P-ID cancellation approval separately",
+  "scanner": "remains enabled",
+  "watcherPackageSourceUnchanged": "20ad7211af6fc01f4a877cc50c608685ba39f8cf",
+  "claudeFocusedConfirmation": "PENDING; no PASS invented",
+  "maintenanceApproved": false,
+  "scheduled": false,
+  "productionActions": []
+}
