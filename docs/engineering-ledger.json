@@ -1,5 +1,5 @@
 {
-  "updated": "2026-11-03T10:53:14.236464+00:00",
+  "updated": "2026-11-03T11:03:34.412034+00:00",
   "branch": "Stock2-safety-fixes",
   "pr": 1,
   "mission": "Full repository engineering; no merge/deploy/messages/orders/paid services",
@@ -5322,13 +5322,16 @@
     "productionActions": [],
     "additionalOperationalAuthorization": "NOT GRANTED: two workflow start suppressions/restorations and cancellation only of freshly verified never-started scheduled runs are proposals, not performed",
     "mentor": "Deferred until ACTIONS deployment; original scan compatibility approval is not carried over. Rebase and independent re-review afterward.",
-    "watcher": "HOLD: missing published commit-pinned review and separate execution evidence; no deployment",
+    "watcher": "PASS WITH CONDITIONS at review4de7635b; separate reviewer executed, Claude spot-checked/published; owner approval outstanding. Exact package unchanged.65fresh focused cases and race independently reproduced.37pins match fresh main; no deployment.",
     "accepted": 24,
     "total": 40,
     "closuresEarned": [],
     "genuineAdmissions": 0,
     "publicationCI": "Check exact final published SHA; do not inherit predecessor CI.",
-    "next": "Review bounded ACTIONS maintenance alternative if a verified natural boundary remains unavailable. No additional code approval is requested."
+    "next": "Owner reviews exact watcher conditional approval separately. ACTIONS natural boundary remains blocked; its additional-operations proposal is not approved. Mentor scan rebase/re-review only after ACTIONS deployment.",
+    "watcherApprovalPackage": "docs/nov2-watcher-scheduling/deployment-approval-package.md",
+    "watcherReviewEvidence": "docs/nov2-watcher-scheduling/review-confirmation/evidence-audit.json",
+    "watcherReviewFocusedLogRetention": "Reviewer focused outputs are transcript extracts only; Codex new complete65case log is separately retained."
   },
   "shareSupplyCaller": {
     "base": "5fce3f9d0eadfc9dd03387c662c7e72850cbed28",
@@ -8640,5 +8643,24 @@
     },
     "ci": "docs/validation/history03-reconciliation-ci.json",
     "scope": "One residual radar approval label removed; no counter, scoring, gate or policy change."
+  },
+  "watcherIndependentReviewConfirmation": {
+    "reviewCommit": "4de7635b2ddcc5f2a302704139aa9c9525b2af26",
+    "verdict": "PASS WITH CONDITIONS",
+    "executor": "Separate Claude reviewer agent",
+    "publisher": "Claude delegating session, spot-checked only",
+    "checksumEntriesVerified": 270,
+    "ordinaryRegisteredBaseline": "129/130",
+    "ordinaryRegisteredWatcher": "131/132",
+    "soleFailures": [
+      "TRY SMALL1",
+      "TRY SMALL3b"
+    ],
+    "codexFreshFocusedCases": 65,
+    "disclosedRaceIndependentlyReproduced": true,
+    "all37PinsMatchMain": "e15ce188e034dc9269ee7348de0bf6e320324d58",
+    "ownerApproval": false,
+    "deployment": false,
+    "proposal": "docs/nov2-watcher-scheduling/deployment-approval-package.md"
   }
 }

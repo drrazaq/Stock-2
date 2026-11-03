@@ -1,3 +1,5 @@
+> **3November review evidence received:** [Exact approval package](deployment-approval-package.md), [corrected readiness/counts](readiness-20261103.json). Pinned review4de7635b is PASS WITH CONDITIONS; the separate reviewer executed, Claude spot-checked/published. Focused reviewer results are transcript extracts only. Codex independently confirms65focused cases and the disclosed attribution race. All37pins match fresh main. Watcher remains UNAPPROVED/UNDEPLOYED. Earlier missing-review status and count labels below are historical, superseded here.
+
 # Watcher-only deployment preparation — HOLD
 
 3 November2026. **Not an approval request and not deployment authorization.** Owner confirmed the review was received only in chat; no published review commit/path or separate reviewer's execution evidence is available. Deployment remains pending those exact artifacts. Author tests and hosted CI are not substitutes for independent reviewer execution.

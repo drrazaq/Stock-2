@@ -1,0 +1,40 @@
+{
+  "reviewCommit": "4de7635b2ddcc5f2a302704139aa9c9525b2af26",
+  "checksumEntriesVerified": 270,
+  "unlistedFiles": [],
+  "SHA256SUMSsha256": "773bf248bac1d8af08e279a0a8565af56534af91b4257e2d4788e9799124dd48",
+  "reviewREADMEsha256": "01659c8b29463e1d4b30db1a2762c50c2034f1fde25216899557e8a219aeb9ab",
+  "retainedSuites": {
+    "main": {
+      "files": 130,
+      "passed": 129,
+      "failedFiles": [
+        "test/try-small-audit.test.mjs"
+      ],
+      "failedCases": [
+        "not ok 1 - 1. a new-signal list from an older close than the newest session is not shown as a buy",
+        "not ok 6 - 3b. the TRY SMALL ledger row carries the hold and stop that were shown"
+      ]
+    },
+    "patched": {
+      "files": 132,
+      "passed": 131,
+      "failedFiles": [
+        "test/try-small-audit.test.mjs"
+      ],
+      "failedCases": [
+        "not ok 1 - 1. a new-signal list from an older close than the newest session is not shown as a buy",
+        "not ok 6 - 3b. the TRY SMALL ledger row carries the hold and stop that were shown"
+      ]
+    }
+  },
+  "plainAssertionLogsWithoutTAP": [
+    "logs/logs-main-event-orb-retest-core.test.mjs.log",
+    "logs/logs-main-sec-time.test.mjs.log",
+    "logs/logs-patched-event-orb-retest-core.test.mjs.log",
+    "logs/logs-patched-sec-time.test.mjs.log"
+  ],
+  "focusedEvidence": "transcript extracts only; no complete focused logs retained by reviewer",
+  "attribution": "Separate Claude reviewer agent executed; Claude delegating session spot-checked and published; Codex verified retained artifacts/checksums, not reviewer identity cryptographically.",
+  "auditCorrection": "An initial audit incorrectly required every PASS log to emit TAP; event-orb-retest-core uses plain assert and emits its own success line. Corrected to check TAP totals where present, retained result lists and matching logs elsewhere. No package defect found."
+}

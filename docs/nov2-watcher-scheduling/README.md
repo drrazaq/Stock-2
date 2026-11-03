@@ -1,3 +1,5 @@
+> **3November review evidence received:** [Exact approval package](deployment-approval-package.md), [corrected readiness/counts](readiness-20261103.json). Pinned review4de7635b is PASS WITH CONDITIONS; the separate reviewer executed, Claude spot-checked/published. Focused reviewer results are transcript extracts only. Codex independently confirms65focused cases and the disclosed attribution race. All37pins match fresh main. Watcher remains UNAPPROVED/UNDEPLOYED. Earlier missing-review status and count labels below are historical, superseded here.
+
 > **3 November current-main revalidation:** see [independent release-readiness report](../production-actions-watcher-readiness.md). Exact ten-file patch781f6644…431d2e is unchanged; mentor is not a prerequisite. No deployment or activation. Historical evidence below is preserved.
 
 # November 2 watcher incident — bounded review package

@@ -1,21 +1,85 @@
 {
-  "kind": "WATCHER_CURRENT_MAIN_READINESS_REVALIDATION_V1",
-  "productionBase": "bac971eebfd8df259af7e29dc909cd5b255a39c8",
-  "compatibleMain": "eac0e91630de3967221482530e92f3f9408d2cf9",
-  "all37PinsMatch": true,
+  "kind": "WATCHER_EXACT_APPROVAL_PREPARATION_V2_NOT_APPROVED",
+  "sourcePackage": "7f579b23a487cdf84d80b50bab1e04e0b170cf6e",
+  "productionBase": "e15ce188e034dc9269ee7348de0bf6e320324d58",
   "patchSha256": "781f6644faf97b160451d3b455dfb12efb84679a5adcec9e69a5cafdee431d2e",
   "originalManifestSha256": "5d9f8c443fc3b04cdff0231bcbfbedf2b8cd08f3037546b43d086ca847a970d7",
-  "codeUnchangedFromECD23CAF": true,
-  "focusedCases": 38,
-  "fullProductionFiles": 133,
-  "pass": 133,
-  "currentB1B2Cases": 20,
-  "actionsCombinedFiles": 135,
-  "combinedPass": 135,
-  "fixtureClockException": "TRY SMALL only; ordinary same cases1/3b fail baseline/combined",
-  "reviewVerdict": "ENGINEERING_PASS_INDEPENDENT_REVIEW_PENDING_NOT_APPROVED_FOR_DEPLOYMENT",
+  "inverseSha256": "3f628c2e8a2d3788712aa94250703d83657268b11e3bcc8d8d911a12732c3c86",
+  "all37PinsMatch": true,
+  "all10AfterHashesMatch": true,
+  "inverseRestoresWholeTree": true,
+  "dataUnchanged": true,
+  "independentReview": {
+    "commit": "4de7635b2ddcc5f2a302704139aa9c9525b2af26",
+    "verdict": "PASS WITH CONDITIONS",
+    "executor": "Separate Claude reviewer agent",
+    "publisher": "Claude delegating session; spot-checks only, not a second suite execution",
+    "fullSuiteLogs": "262 retained per-file logs; ordinary main129/130 and watcher131/132 registered files",
+    "focusedEvidence": "Transcript extracts only; complete focused logs not retained by reviewer",
+    "race": "Admission-in-progress no-op can retain wrong earliest attribution and suppress later LATE; optional separate repair, unchanged here"
+  },
+  "codexIndependentConfirmation": {
+    "retainedChecksums": 270,
+    "focusedCasesPassed": 65,
+    "focusedCaseGroups": {
+      "guardClockSchedule": 38,
+      "publicationIncidentResilienceRetry": 27
+    },
+    "focusedFiles": 7,
+    "fullLog": "review-confirmation/independent-focused.tap",
+    "sameRaceReproduced": true,
+    "freshCompatibility": "review-confirmation/fresh-compatibility.json",
+    "ordinaryFullSuitePreviousRun": {
+      "productionBase": "eae28a73cde999fd10852aea3707e705dcce3421",
+      "baselinePassed": 130,
+      "baselineFiles": 131,
+      "watcherPassed": 132,
+      "watcherFiles": 133,
+      "includesExtraInstrumentTest": true,
+      "record": "../ordinary-vs-replay-release-counts.json",
+      "notRerunFullSuiteThisConfirmation": true
+    },
+    "currentSourceDiffFromPriorMain": "data/squad26-today.json only; all protected pins match"
+  },
+  "ordinaryRegisteredWorkflowCounts": {
+    "baselinePassed": 129,
+    "baselineFiles": 130,
+    "watcherPassed": 131,
+    "watcherFiles": 132,
+    "soleFailedFile": "test/try-small-audit.test.mjs",
+    "failedCases": [
+      "1",
+      "3b"
+    ],
+    "withinFailedFile": {
+      "passed": 14,
+      "failed": 2
+    }
+  },
+  "historicalControlledReplay": {
+    "baselinePassed": 131,
+    "baselineFiles": 131,
+    "watcherPassed": 133,
+    "watcherFiles": 133,
+    "actionsWatcherPassed": 135,
+    "actionsWatcherFiles": 135,
+    "scope": "Earlier broader all-file runs; only TRY SMALL used historical clock. NOT ordinary all-green production or separate reviewer evidence."
+  },
+  "proposal": "deployment-approval-package.md",
+  "ownerWatcherApproval": false,
+  "deploymentPerformed": false,
+  "actionsStatus": "Separately exact-code-approved; natural bot boundary blocked; no deployment/control actions",
   "mentorRequired": false,
-  "naturalCorrectedProductionRun": "NOT_OBSERVED_PATCH_NOT_DEPLOYED",
-  "originalNov2Coverage": "318/331 retained configured slots; canonical unchanged;13gaps;~43% fresh evaluated-price share and SEC failures remain separate",
-  "evidence": "../nov2-actions-correction/standalone-evidence.json"
+  "afterExactActions": {
+    "allWatcherDependencyPinsStillMatch": true,
+    "watcherInversePreservesActionsAndData": true,
+    "source": "review-confirmation/fresh-compatibility.json"
+  },
+  "naturalCorrectedProductionRun": "NOT OBSERVED; patch not deployed",
+  "acceptance": {
+    "accepted": 24,
+    "total": 40,
+    "closed": [],
+    "prospectiveAdmissions": 0
+  }
 }
