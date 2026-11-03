@@ -59,7 +59,7 @@ def non_data_tree(repo, sha):
 
 def read_input(path, limit):
     """Bound reads; reject a symlink, growing input or non-regular input."""
-    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         before = os.fstat(fd)
         if not stat.S_ISREG(before.st_mode) or before.st_size > limit:

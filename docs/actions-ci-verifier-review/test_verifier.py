@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -193,6 +194,19 @@ class VerifierTests(unittest.TestCase):
             link.symlink_to(p)
             with self.assertRaises(OSError):
                 V.read_input(link, 10)
+
+    def test_fifo_is_refused_through_cli_without_waiting_for_writer(self):
+        with tempfile.TemporaryDirectory() as directory:
+            fifo = Path(directory) / "synthetic-fifo"
+            os.mkfifo(fifo)
+            p = subprocess.run(
+                [sys.executable, "-B", str(HERE / "verifier.py"), "--repo", str(self.repo),
+                 "--sha", self.sha, "--run", str(fifo), "--job", "unused", "--log", "unused"],
+                env=self.env, capture_output=True, text=True, timeout=2,
+            )
+            self.assertEqual(p.returncode, 2)
+            self.assertEqual(json.loads(p.stdout)["status"], "UNVERIFIED")
+            self.assertEqual(p.stderr, "")
 
     def test_reader_does_not_write_git(self):
         before = {str(p): p.read_bytes() for p in (self.repo / ".git").rglob("*") if p.is_file()}

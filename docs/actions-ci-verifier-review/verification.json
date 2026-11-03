@@ -1,8 +1,8 @@
 {
   "sourceReviewPackage": "97dd460cf52f0364c170010b2880680c0cd0070b",
   "optionalOfflineCompanionNotReleasePrerequisite": true,
-  "unitCasesPassed": 33,
-  "unitLogSHA256": "b7d34125db88c13ef68da76a3962b2a2b80adce3d647bec6c0d4a9ba01871bde",
+  "unitCasesPassed": 34,
+  "unitLogSHA256": "2ee399d4d32683fbdde87ddb994f06cff08642b224d744196edb0a4122117837",
   "actualCLIReplays": [
     {
       "case": "retained_green",
@@ -85,5 +85,23 @@
     "passed": 6,
     "total": 6,
     "scope": "Wider development checkpoint, not future production D or companion33unit tests"
+  },
+  "fifoCorrection": {
+    "beforeFix": {
+      "reproduced": true,
+      "cause": "Blocking os.open on a FIFO occurs before fstat can reject non-regular input",
+      "boundedProbeSeconds": 1.5,
+      "child": "disposable local CLI probe terminated by subprocess timeout",
+      "networkOrProductionAction": false
+    },
+    "fix": "O_NONBLOCK with O_NOFOLLOW, reject non-regular fd before reading",
+    "afterFix": {
+      "status": "UNVERIFIED",
+      "exit": 2,
+      "completedUnderSeconds": 2,
+      "observedSeconds": 0.0392
+    },
+    "scope": "Disposable local input probe only, no production/workflow cancellation",
+    "testBootstrapCorrection": "First new CLI regression used python under a minimal PATH without that name; corrected to sys.executable. Final34testsPASS."
   }
 }

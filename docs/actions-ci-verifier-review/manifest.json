@@ -1,22 +1,22 @@
 {
-  "kind": "OPTIONAL_OFFLINE_ACTIONS_CI_READER_REVIEW_V1",
+  "kind": "OPTIONAL_OFFLINE_ACTIONS_CI_READER_REVIEW_V2_FIFO_FIX",
   "status": "ENGINEERING_TESTED_INACTIVE_INDEPENDENT_REVIEW_PENDING",
   "files": [
     {
       "path": "README.md",
-      "sha256": "6e598b7c94b0c7e198655762541eb6fad308f25c5ed20dcd3b5114a18cf3874c"
+      "sha256": "cb0a05627394dbab7305fd612f2fa3de7afc80b2e30a233388e85ee4b88decb4"
     },
     {
       "path": "verifier.py",
-      "sha256": "2a986b0d2c76afa3358cb916193e0129c4e59def7f4c9e441d1209c1535b6e17"
+      "sha256": "0b84af636f14970277925f72a465f387ed8c985de572c1ffdadaae22ff9f0684"
     },
     {
       "path": "test_verifier.py",
-      "sha256": "70f3d70134c220b99c546fe7fc852a37ae882658c56c650b2f9d6489629eb274"
+      "sha256": "0cef6b5de13f33194592700431ed0b302c6c9a59ee5b388b0e91145a9bf57713"
     },
     {
       "path": "verification.json",
-      "sha256": "d3cc336d4d67d03328cc0e3324cd3434d49ecc05bbc29ce6163cfa0870fce90a"
+      "sha256": "4d8dee3cc8305ae864da0eb934907cfaea3586a0967e755d9c0d0b409313250f"
     }
   ],
   "stableR4Commit": "97dd460cf52f0364c170010b2880680c0cd0070b",
@@ -25,12 +25,13 @@
   "watcherPackageChanged": false,
   "productionImportsAdded": false,
   "ordinaryCIIncludesCompanionTests": false,
-  "unitTestsExplicitlyRun": 33,
+  "unitTestsExplicitlyRun": 34,
   "realCLIReplayOutcomes": [
     "PASS0",
     "FAIL1_expected_historical_negative",
     "UNVERIFIED2_expected_partial_log"
   ],
   "productionActions": [],
-  "schedules": []
+  "schedules": [],
+  "supersedesCompanion": "a33c5c290af3ced20104104dfe8ccf8f6e9d5844 (inactive prototype)"
 }
