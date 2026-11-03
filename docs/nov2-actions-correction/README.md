@@ -1,8 +1,8 @@
 # ACTIONS correction — standalone review package
 
-3 November2026. **Mentor is not a dependency. No deployment is authorized or performed.** The previous after-mentor-only proposal is superseded; preserve its [historical report](historical-after-mentor-readme.md), manifest.json, production-after-mentor.patch, rollback.patch and evidence.json as earlier review evidence, not current deployment instructions.
+3 November2026. **Mentor is not a dependency. The owner has approved the exact nine-file patch conditionally on a verified natural boundary; that boundary is currently BLOCKED. No deployment has been performed.** The previous after-mentor-only proposal is superseded; preserve its [historical report](historical-after-mentor-readme.md), manifest.json, production-after-mentor.patch, rollback.patch and evidence.json as earlier review evidence, not current deployment instructions.
 
-Use only the [standalone nine-file patch](production-standalone.patch), [manifest and dependency pins](standalone-manifest.json), [code-only inverse](rollback-standalone.patch), [inverse/combination proof](standalone-inverse-proof.json) and [current evidence](standalone-evidence.json). Runtime scope is scan.mjs; the other eight paths are test companions. Base is current production bac971eebfd8df259af7e29dc909cd5b255a39c8. The candidate has no mentor-plan import or mentor command; it is tested without installing the mentor package.
+Use only the [standalone nine-file patch](production-standalone.patch), [manifest and dependency pins](standalone-manifest.json), [code-only inverse](rollback-standalone.patch), [inverse/combination proof](standalone-inverse-proof.json) and [current evidence](standalone-evidence.json). Runtime scope is scan.mjs; the other eight paths are test companions. Extraction base is bac971eebfd8df259af7e29dc909cd5b255a39c8; fresh tested production base is e15ce188e034dc9269ee7348de0bf6e320324d58. The candidate has no mentor-plan import or mentor command; it is tested without installing the mentor package.
 
 ## Repairs and independent-review findings
 
@@ -22,7 +22,9 @@ ACTIONS and the ten-file watcher scheduling patch have disjoint paths. Applying 
 
 ## Release verdict and deployment proposal
 
-**Engineering verification: see current evidence. Independent production review: REQUIRED. Deployment: NOT APPROVED.** Request a focused re-review of this standalone extraction, including F1–F4, rather than the old after-mentor patch. No full-development-PR merge.
+**Exact code package conditionally approved by the owner; execution BLOCKED on the natural recording boundary.** The owner identifies the nine-file package as independently reviewed; no unseen review report is fabricated. The frozen manifest retains its original preparation-time status to preserve the approved manifest hash; [current verification and approval disposition](approved-attempt-verification.json) supersedes only that status metadata. No full-development-PR merge.
+
+Fresh ordinary-clock tests: production **130/131 files**, production plus exact ACTIONS **132/133 files**. Both fail only TRY SMALL cases1/3b (14PASS/2FAIL inside that file), the sole baseline exceptions accepted by the owner. These totals include the additional tests/instrument-type.test.mjs file: the registered production workflow itself has130 baseline/132 patched test files. No new failure appeared. Historical-clock all-green results are controlled replay only, not ordinary success. Nine syntax checks,17 before/dependency pins and nine after pins PASS. See the linked execution record.
 
 A future approved attempt must recheck fresh main, all before/dependency hashes and exact patch hash; stop on unreviewed drift. Establish a safe bot/scanner recording boundary under its own explicitly approved procedure, preserving current committed state, queued commands and offsets. No cancellation, workflow suppression, protected operation or dispatch is authorized by this preparation. The boundary is not certified by a job-success title or by the mentor plan.
 

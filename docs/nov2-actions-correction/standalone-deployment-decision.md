@@ -1,3 +1,5 @@
+> **Superseded preparation status:** The owner has now approved the exact nine-file code package conditionally on a verified natural boundary. See [current verification](approved-attempt-verification.json) and [additional-operations proposal](bounded-maintenance-proposal.md). The historical preparation below does not revoke that approval or request it again. No deployment has occurred.
+
 # ACTIONS-only release decision — separate preparation
 
 3November2026. No deployment or workflow control performed. Watcher review evidence is not a dependency. The owner describes ACTIONS as independently reviewed; the accessible published Claude reportc25a0a26 covers the earlier overlay, while the current exact nine-file scope is pinned below. No unseen review URL, separate execution or updated reviewer quote is invented. Any production decision must identify this exact scope, not the superseded after-mentor artifact.

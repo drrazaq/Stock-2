@@ -1,0 +1,52 @@
+# ACTIONS-only maintenance alternative — PREPARATION ONLY
+
+3 November 2026. The exact nine-file code change is already approved, **only if a verified safe natural bot/scanner recording boundary exists**. No such boundary exists at the recorded read: bot41592873150/job125791909328 is active and bot41600894879 is pending. This proposal does not authorize any additional action. ACTIONS has priority over mentor; watcher and mentor are excluded.
+
+## Exact immutable release and baseline
+
+| Artifact | SHA256 |
+|---|---|
+| production-standalone.patch | a9560969298368490a0b3cbd5b151e429b7d68b2bc302ba35025ccebb0981a53 |
+| standalone-manifest.json | 545e1a7775f43f6b3b6b8e72c84a6f8e47c8ecde0b560128695ab17f2a67cd2b |
+| rollback-standalone.patch | 4e28ee37e58e8f0ea57b3d70a09438562efc12aaa8a5a1e9075df3927c6d91c9 |
+
+Only scan.mjs and its eight listed test companions may change. No workflow files, data, accounting mutation/recovery, strategy rules, financial records or offsets change. Fresh production e15ce188 passes all17 before/dependency pins and nine after pins. [Ordinary production validation](approved-attempt-verification.json): baseline130/131, exact patch132/133 files, with only TRY SMALL cases1/3b failing in both. Those are the only owner-accepted baseline exceptions. Historical-clock replay is separately labelled; any additional failure blocks release. Do not modify the approved manifest to update its historical status field.
+
+## Proposed session and bounded entry
+
+Propose an attended readiness assessment on **Wednesday4November2026 at05:00UTC /08:00 Kuwait /00:00 New York**. This is a proposal, not a scheduled action or promise of availability. Select one actual bot J whose projected natural loop end E is05:15–08:00UTC that day; derive E from the actual shell-loop start plus330minutes, not run creation. J may overrun its projection: only its actual terminal execution and final persistence permit a push. If no suitable J/operator exists, do not start suppression; re-date the proposal.
+
+Perform readiness checks and production-plus-patch tests before suppression. Propose owner-controlled start suppression at E−10…E−5, stopping new runs of just [Telegram bot replies](https://github.com/drrazaq/Stock-2/actions/workflows/bot.yml) and [Stock scanner](https://github.com/drrazaq/Stock-2/actions/workflows/main.yml). Record their original actual enabled states. Never enable an originally disabled workflow. All active bot/scanner jobs drain naturally. No active run is cancelled.
+
+Disabling a workflow does **not** prove existing queued work disappeared. After Disable, enumerate every active/pending/queued/waiting/requested affected run, all attempts and jobs. This proposal requests separate approval to cancel only an already-created scheduled bot/scanner run proven never to have executed any job. Recheck immediately before a cancellation; any started job forbids cancellation and triggers the pre-push abort below. No manual-dispatch run, command or active job may be cancelled. Publish the concrete candidate run IDs to the owner before any cancellation. If the interface cannot establish complete evidence, do not cancel or deploy. Current pending41600894879 is an example requiring fresh verification, not advance authority to cancel that ID after its status changes.
+
+The GitHub connector used here rejects workflow-state/list/control URLs (read attempt returned HTTP400 INVALID_ARGUMENT). It is not a practical control interface. The owner must use the exact workflow pages above and provide/read back the actual UI state, with that evidence explicitly labelled owner-supplied. No secret binding or replacement credential is requested. No new workflow is installed. Code publication remains with one explicitly designated live operator; no concurrent mentor/ACTIONS pushes or unattended takeover.
+
+## Recording proof and commands
+
+1. Record fresh main and the complete data subtree/ciphertext/offset-file blob identities privately before entry. Do not print decrypted data, identifiers or offset values. Public logs and commit timestamps are source evidence, **not authenticated proof of every intended historical write**.
+2. J and any other accepted active scanner must finish naturally. Inspect the complete final save sequence and committed state. The bot's save function can print a save error yet return success, so job success alone is insufficient: any save/reply error, failed/unknown publication, missing final-save evidence or incomplete logs blocks the push. Do not run protected diagnosis, recover transactions or consume messages under this proposal.
+3. Identify the final persisted command-state checkpoint from the final completed save and verify its byte identity on fresh main. Compare the full committed data checkpoint before/after deployment. If logs/state cannot establish the required final recording checkpoint, **abort unchanged**; this proposal does not waive the original boundary condition or invent a receipt. Historical intended saves that were never recorded cannot be reconstructed.
+4. Pending Telegram commands stay on Telegram behind the existing persisted offset. Never call getUpdates, send test messages, reset offsets, replay commands or infer that pending commands were processed. Cancelling a verified never-started scheduled GitHub run does not cancel Telegram commands. After restoration, normal naturally scheduled service handles them; processing is confirmed only by subsequent genuine evidence. A long outage risks Telegram update expiry (approximately24hours), so do not describe retention as an indefinite guarantee.
+
+## Push, failure and restoration limits
+
+Before any push, both affected workflows must be verified suppressed, all affected jobs terminal, no unresolved queued work, and final checkpoint established. Other lab/data writers may continue: preserve every data-only advancement and recheck source/dependency pins on the exact new parent. Any unexpected code or dependency drift blocks release. Compare the candidate data tree byte-for-byte with that parent.
+
+Build one normal nine-file commit and pre-record its exact parent, tree and SHA. Use the supported atomic expected-parent branch update, never force-push or a full-PR merge. A network interruption is UNKNOWN until positive evidence shows the exact commit applied or that exact request was definitively rejected. Later movement of main, five minutes of silence or an operator timeout does not settle it. UNKNOWN blocks retry, takeover, VERIFIED clearance and Enable requests.
+
+**No release push after E+10.** If J/Q starts late, any writer remains active at that deadline, or persistence/entry fails, abort before changing code. Once fresh source/dependency bytes are verified unchanged, no code request is unresolved, and all outstanding clicks are reconciled, restore the workflows to their original enabled states; an already-active original-code job may continue naturally on this no-code-change abort path. Do not wait another5.5hours merely to abort an unchanged release.
+
+After a push, verify all nine actual checkout bytes, all unchanged dependencies and the preserved data checkpoint. Run ordinary push-triggered CI only. The only permitted production-test failures are the two accepted TRY SMALL cases; neither a missing result nor historical replay counts as ordinary CI success. If additional failures, missing proof or CI delay prevent verification by E+30, prepare the exact inverse on fresh main. Apply it only if all nine deployed after hashes match, dependencies still match, no affected writer is executing, and every code write is positively settled. Preserve all intervening data commits. Never revert the release commit wholesale with data, restore an old tree/offset, or add optional fixes. If inverse compatibility or writer state blocks rollback, stop and report; no guaranteed later rollback deadline is claimed.
+
+Target suppression is at most60minutes, **conditional** on verifiable code/write/writer state and timely owner responses, not an absolute outage guarantee. No Enable request until fresh original/released/rolled-back source bytes and dependencies are VERIFIED, no UNKNOWN write exists, and all clicks are reconciled. If state uncertainty makes safe restoration impossible, leave the affected workflow disabled, report immediately and require an explicit owner decision; do not silently leave it disabled while awaiting an unspecified future session.
+
+An outstanding Disable click remains unresolved until actual state is read back or the owner confirms NOT CLICKED. A late/missing acknowledgment never means no click. Late Disable requires a new state read and verified restoration, not unilateral Enable. Deadlines do not authorize bypassing these gates. The operator cannot promise automatic wake-up or unattended availability. If contact is lost, the owner must actively resume the designated operator; another operator cannot take over while a code write is unresolved or exclusive handover is absent. The mentor rollback transfer authority is not borrowed for ACTIONS.
+
+Read back the actual restored workflow states and reconcile every outstanding click. Normal bot cron is every30minutes; restoration is not immediate response-service recovery. Passive verification waits for the next naturally scheduled job, its actual scan bytes and subsequent persisted saves/offset continuity. No manual dispatch or fabricated command/trade is permitted. Record suppression, first natural restart and any missing coverage; never claim queued commands processed without evidence.
+
+## Exact additional decision — no duplicate code approval requested
+
+Approve or decline **only**: attended4November event-anchored start suppression/restoration of bot.yml and main.yml through the owner UI; cancellation only of freshly verified never-started scheduled runs after their concrete IDs are reported; the conditional60minute target and abort/restoration safeguards above. The nine-file code approval and exact inverse remain unchanged. No historical checkpoint proof is waived. If this alternative cannot establish the original recording condition, it aborts without deployment.
+
+This is preparation only. No suppression, cancellation, protected operation, dispatch or production write has occurred. No watcher/mentor deployment, new messages, provider calls, collection, privacy/ZAD policy, order, purchase or secret/permission change is included.
