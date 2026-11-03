@@ -80,25 +80,40 @@ async function companies() {
   if (out.size > 3000) { fs.writeFileSync('data/companies.json', JSON.stringify({ at: new Date().toISOString(), complete, syms: [...out].sort() })); return out; }
   return old ? new Set(old.syms) : null;          // could not load: use the last list, or no filter at all
 }
-// The session on or before a calendar day, on the exchange calendar (market-session.mjs): weekends and holidays are never requested.
-// Returns { date, rows, outcome, attempts }. A historical sample may fall back to the previous session (recorded); the current day
-// is handled by currentSession() and never falls back.
-const prevSessionOf = (d) => { let x = d; for (let i = 0; i < 10; i++) { x = new Date(Date.parse(x + 'T12:00:00Z') - 86400000).toISOString().slice(0, 10); const m = marketSession(x); if (!m.known) return null; if (!m.closed) return x; } return null; };
-const sessionOnOrBeforeDay = (d) => { const m = marketSession(d); return !m.known ? null : !m.closed ? d : prevSessionOf(d); };
+// Historical price samples never request a known closed exchange day. Outside the reviewed calendar (2026/27), successful
+// provider days may be used ONLY as explicitly labelled WEEKDAY_WALK_UNVERIFIED; they are not claimed to be NYSE-open dates.
+// This includes the 2026-01-01 boundary, whose prior session is in the unreviewed 2025 calendar.
+const previousDay = d => new Date(Date.parse(d + 'T12:00:00Z') - 86400000).toISOString().slice(0, 10);
+const prevSessionOf = d => { for (let i = 0; i < 10; i++) { d = previousDay(d); const m = marketSession(d); if (!m.known) return null; if (!m.closed) return d; } return null; };
+const unknownPriorOf = d => { for (let i = 0; i < 10; i++) { d = previousDay(d); const m = marketSession(d); if (!m.known) return d; if (!m.closed) return null; } return null; };
+const sessionOnOrBeforeDay = d => { const m = marketSession(d); return !m.known ? null : !m.closed ? d : prevSessionOf(d); };
 async function sessionOnOrBefore(ms, { maxFallbacks = 2 } = {}) {
   const target = iso(ms), attempts = [];
-  if (!marketSession(target).known) {
-    // Outside the exchange calendar's years (market-session.mjs): the original weekday walk, with every outcome recorded and the
-    // sample labelled; a day that fails or has no market data is not called a holiday, it is recorded as what it was.
-    for (let k = 0; k < 7; k++) { const d = iso(ms - k * 86400000), wd = new Date(ms - k * 86400000).getUTCDay(); if (wd === 0 || wd === 6) continue;
+  const weekdayWalk = async (startMs) => {
+    for (let k = 0; k < 7; k++) {
+      const at = startMs - k * 86400000, d = iso(at), wd = new Date(at).getUTCDay();
+      if (wd === 0 || wd === 6 || (marketSession(d).known && marketSession(d).closed)) continue;
       const g = await grouped(d); attempts.push({ day: d, outcome: g.outcome });
-      if (g.outcome === 'OBSERVED') return { date: d, rows: g.rows, outcome: 'OBSERVED', target, attempts, fellBack: attempts.length > 1, calendarBasis: 'WEEKDAY_WALK_UNVERIFIED' }; }
+      if (g.outcome === 'OBSERVED') return { date: d, rows: g.rows, outcome: 'OBSERVED', target, attempts, fellBack: d !== target || attempts.length > 1, calendarBasis: 'WEEKDAY_WALK_UNVERIFIED' };
+    }
     return { date: null, rows: [], outcome: 'UNAVAILABLE', target, attempts, calendarBasis: 'WEEKDAY_WALK_UNVERIFIED' };
-  }
+  };
+  if (!marketSession(target).known) return weekdayWalk(ms);
   let d = sessionOnOrBeforeDay(target);
-  for (let k = 0; d && k <= maxFallbacks; k++) { const g = await grouped(d); attempts.push({ day: d, outcome: g.outcome });
+  if (!d) {
+    const unknown = unknownPriorOf(target);
+    return unknown ? weekdayWalk(Date.parse(unknown + 'T12:00:00Z')) : { date: null, rows: [], outcome: 'CALENDAR_UNKNOWN', target, attempts, calendarBasis: 'EXCHANGE_CALENDAR' };
+  }
+  for (let k = 0; d && k <= maxFallbacks; k++) {
+    const g = await grouped(d); attempts.push({ day: d, outcome: g.outcome });
     if (g.outcome === 'OBSERVED') return { date: d, rows: g.rows, outcome: 'OBSERVED', target, attempts, fellBack: k > 0, calendarBasis: 'EXCHANGE_CALENDAR' };
-    d = prevSessionOf(d); }
+    const next = prevSessionOf(d);
+    if (!next) {
+      const unknown = unknownPriorOf(d);
+      if (unknown) return weekdayWalk(Date.parse(unknown + 'T12:00:00Z'));
+    }
+    d = next;
+  }
   return { date: null, rows: [], outcome: attempts.length ? 'UNAVAILABLE' : 'CALENDAR_UNKNOWN', target, attempts, calendarBasis: 'EXCHANGE_CALENDAR' };
 }
 // The current price day is the latest COMPLETED session (never today's unfinished one). If it cannot be read, the run stops: an

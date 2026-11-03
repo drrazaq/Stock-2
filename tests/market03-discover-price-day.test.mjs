@@ -32,6 +32,15 @@ test('the current price day is the latest completed session, never today\'s unfi
  assert.equal(r.asked[0],LATEST,'the first request is the latest completed session');
  for(const d of r.asked){const m=marketSession(d);if(m.known)assert.equal(m.closed,false,'requested a closed day inside the exchange calendar: '+d);}
  assert.equal(r.doc.priceDay.samples.length,12);assert.equal(r.doc.priceDay.samplesComplete,true);
+ // Jan 1, 2026 is a known exchange holiday; Dec 31, 2025 is outside the reviewed calendar.
+ // A complete provider reply can be used only with an explicit unverified-calendar basis.
+ const crossing=r.doc.priceDay.samples.find(x=>x.target==='2026-01-01');
+ if(crossing){
+  assert.equal(crossing.day,'2025-12-31');assert.equal(crossing.outcome,'OBSERVED');
+  assert.equal(crossing.calendarBasis,'WEEKDAY_WALK_UNVERIFIED');assert.equal(crossing.fellBack,true);
+  assert.deepEqual(crossing.attempts,[{day:'2025-12-31',outcome:'OBSERVED'}]);
+  assert.equal(r.asked.includes('2026-01-01'),false,'known NYSE holiday was requested');
+ }
 });
 
 for(const [label,reply,status] of [['a failed request (HTTP 500)',[500,'{}'],'FAILED'],['rate limiting that never clears (429)',[429,'{}'],'RATE_LIMITED'],['a plan refusal (403)',[403,'{}'],'REFUSED'],['a malformed answer ({})',[200,{}],'MALFORMED'],
