@@ -1,7 +1,7 @@
 # Synthetic walk-through of procedure r5.4 rules. Times are minutes relative to E (the running job's estimated end).
 RULE = dict(ready_from=-30, ready_to=-20, ack_by=-12, click_from=-15, click_to=-12, cutoff=-8,
             j_end_by=10, push_by=20, ci_window=10, rollback_window=15, enable_target=45,
-            max_visible_gap=20, max_turn=15, disable_watch_until=30, enable_resend=10, silence=20, ping=10)
+            max_visible_gap=15, max_turn=15, disable_watch_until=30, enable_resend=10, silence=20, ping=10)
 def check(name, ev):
     """ev: list of (t, kind, detail). Returns violations and final state."""
     v=[]; vis=[t for t,k,_ in ev if k=='visible']; push=[t for t,k,_ in ev if k=='push']
@@ -55,5 +55,5 @@ c.append(('D push latest + CI window <= E+30', R['push_by']+R['ci_window']<=30))
 c.append(('V2 latest (push_by+rollback) <= enable target', R['push_by']+R['rollback_window']<=R['enable_target']))
 c.append(('post-push turn <= max turn', R['rollback_window']<=R['max_turn']))
 c.append(('turn cadence below silence trigger', R['max_turn']<R['silence']))
-c.append(('disable-confirm(E-8) to J-end check(E+10) gap <= 20', R['j_end_by']-R['cutoff']<=R['max_visible_gap']))
+c.append(('designed drain gaps (E-8 -> E+7 status -> E+10) <= 15', max(7-R['cutoff'], R['j_end_by']-7)<=R['max_turn']))
 for n,ok in c: print(f'{"PASS" if ok else "FAIL"} {n}')

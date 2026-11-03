@@ -371,7 +371,7 @@ Nothing else changed.
 | ACK READY | Must arrive by **E − 12**; otherwise no Disable request and no attempt. |
 | CLICK DISABLE NOW | Turn-ending, at **E − 15 … E − 12** (on ACK READY, never before E − 15). Opens request **REQ-D** (§14.4). |
 | Disable cutoff | `bot.yml` must **read** `disabled_manually` by **E − 8**. Then a visible "DISABLE CONFIRMED – waiting for J". |
-| J ends | By **E + 10**, otherwise ABORT A. On J's end, a visible "J ENDED – PUSH TURN NEXT", with a 1-minute watcher deadline. |
+| J ends | By **E + 10**, otherwise ABORT A. If J has not ended by **E + 7**, a visible "DRAINING – J still running" status. On J's end, a visible "J ENDED – PUSH TURN NEXT", with a 1-minute watcher deadline. |
 | Push turn (one active turn, ≤ 15 min) | Step-4 log check, build D, pre-push WC, PR #3 "PUSHING" record, push D (**by E + 20**). D **APPLIED** → wait for hosted CI **until D push + 10**. Pass → V1. Fail or no result → ABORT B in the same turn: pre-R WC, "PUSHING R" record, push R, verify V2 by **D push + 15**. |
 | Enable target | **E + 45** at the latest for V1 (≤ E + 30) or V2 (≤ E + 35). |
 
@@ -398,7 +398,7 @@ Nothing else changed.
 ### 14.5 Silence and takeover: the original §9b rule, unchanged
 
 - **"Claude silent" means 20 minutes with no visible (turn-ending) message from Claude.** The owner then sends PING in this chat. If there is **no visible answer within 10 more minutes**, the §9b transfer may begin. **There is no earlier trigger.**
-- Normal operation keeps every gap under 20 minutes (14.2 item 4). The longest designed gap is the 18 minutes from the E − 8 cutoff to the E + 10 J-end limit, so this rule fires only when Claude is actually unreachable.
+- Normal operation keeps every gap at 15 minutes or less (14.2 item 4; the E + 7 drain status covers the E − 8 to E + 10 interval), so this rule fires only when Claude is actually unreachable.
 - Claude answers any owner message (PING, transfer, withdrawal) as the first act of its next turn, never gated on a code word. On a transfer, Claude's suspension under §9b applies immediately.
 
 ### 14.6 Synthetic scenario walk-through
@@ -422,7 +422,7 @@ The checker is in `scenarios-r5.4.py` in this folder; times are in minutes from 
 - V2 latest ≤ the Enable target;
 - the post-push turn ≤ 15 minutes;
 - the turn cadence is below the silence trigger;
-- the longest designed gap ≤ 20 minutes.
+- the longest designed gap ≤ 15 minutes (E − 8 → E + 7 drain status → E + 10).
 
 ### 14.7 Not changed
 
