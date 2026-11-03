@@ -2311,11 +2311,49 @@
    "family": "Quality and value",
    "name": "Net payout yield (dividends + buybacks - issuance)",
    "explain": "Boudoukh, Michaely, Richardson and Roberts (2007, Journal of Finance): total payout yield predicts returns better than the dividend yield alone. Testable from SEC frames: PaymentsOfDividends + PaymentsForRepurchaseOfCommonStock - ProceedsFromIssuanceOfCommonStock, over market value; top 10% of liquid stocks, held 6 and 12 months; financials left out.",
-   "status": "pre-registered 2026-11-03 (Agent B); run once in value-lab.mjs",
+   "status": "tested: rejected",
    "agent": "B",
    "note": "Added 20 Oct by Agent B from outside research (https://www.nber.org/papers/w10651). Needs 3 more yearly frame tags (about 27 SEC calls). Differs from V11 shareholder yield (which used share-count change only and was rejected): it uses the cash paid out.",
    "built": "Pre-registered 3 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs npyAt): each 21-session formation, liquid non-financial stocks; npy = TTM (PaymentsOfDividends else PaymentsOfDividendsCommonStock + PaymentsForRepurchaseOfCommonStock - ProceedsFromIssuanceOfCommonStock) / (shares known x close), point in time (filed before the day, period under 200 days old, other items of another period end = 0, no dividends and no repurchases = not ranked, 40%+ = data error); top 10% by npy, npy > 0; buy next open, sell the close 126 sessions later; yardstick capBoth. Gates: value-core judge plus beat SPY bought the same dates, both halves. 12-month version not judged (under 3 blocks of 252 sessions per half). Siblings ANOM-BBY and SQ16-SHYLD were rejected (disclosed).",
-   "registered": "2026-11-03"
+   "registered": "2026-11-03",
+   "tested": "2026-10-19",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     2432,
+     2389
+    ],
+    "avg": [
+     0.0068,
+     0.0234
+    ],
+    "median": [
+     -0.0043,
+     -0.0235
+    ],
+    "edge": [
+     0.0116,
+     -0.0499
+    ],
+    "vsOwn": [
+     0.0157,
+     0.0327
+    ],
+    "noTop2": [
+     0.0054,
+     0.0212
+    ],
+    "stress": [
+     0.0028,
+     0.0194
+    ],
+    "tBlock": [
+     0.64,
+     -3.91
+    ],
+    "why": "block t 0.64 under 2.5 in the older half; not better than the average stock in the newer half; block t -3.91 under 2.5 in the newer half; not better than SPY bought the same dates in the older half (+0.7% after cost vs +4.7%); not better than SPY bought the same dates in the newer half (+2.3% after cost vs +8.8%)"
+   }
   },
   {
    "id": "C-GOV1",
@@ -3855,11 +3893,49 @@
    "family": "Quality and value",
    "name": "Cash-rich, growing, low-debt companies that also just beat earnings",
    "explain": "B-FCF1 exactly as built (FCF yield > 5%, revenue growth >= 10%, D/E < 0.5, DSI < 60 where inventory exists, above the 200-day; monthly formation, hold 63 sessions), kept only when the latest quarterly EPS, filed before the formation date, beat the consensus estimate. Same gates as B-FCF1: both halves, 0.8%/1.2% cost, vs the average stock, vs B-FCF1 itself on the same dates (it must add something), vs the same stocks on other months, without the 2 best, t >= 2.5 for tier 2. Counts as a new trial for the luck bar.",
-   "status": "pre-registered 2026-11-03 (Agent B); run once in value-lab.mjs",
+   "status": "tested: not proven",
    "agent": "B",
    "note": "Suggested by an outside review on 23 Oct after B-FCF1 and B-EM1 results were known, so it is a new trial, not a rescue: it must beat B-FCF1 on the same dates to matter. Pre-registered before any run.",
    "built": "Pre-registered 3 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs latestReport): B-FCF1 picks on each 21-session formation day, kept only if the latest earnings-cache report dated strictly before the formation day (max 120 days old) beat the estimate (actual > estimate). Buy next open, sell the close 63 sessions later; yardstick capBoth (AUD-1). Gates: value-core judge (tier 2 at block t 2.5, PROVEN at the league bar) plus, in both halves on the same dates: beat B-FCF1 (all picks), beat B-FCF1 picks in the earnings cache with a current report (survivorship-matched control), beat SPY. Shown only under research in value-today.json, never as a buy.",
-   "registered": "2026-11-03"
+   "registered": "2026-11-03",
+   "tested": "2026-10-19",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     56,
+     52
+    ],
+    "avg": [
+     0.0527,
+     0.1211
+    ],
+    "median": [
+     0.0484,
+     0.1173
+    ],
+    "edge": [
+     0.0347,
+     0.097
+    ],
+    "vsOwn": [
+     0.0027,
+     0.0996
+    ],
+    "noTop2": [
+     0.0361,
+     0.1068
+    ],
+    "stress": [
+     0.0487,
+     0.1171
+    ],
+    "tBlock": [
+     1.28,
+     2.96
+    ],
+    "why": "block t 1.28 under 2.5 in the older half"
+   }
   },
   {
    "id": "DEC-QBO",

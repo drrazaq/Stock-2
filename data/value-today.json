@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-01T13:56:24.624Z",
+ "generatedAt": "2026-11-03T12:01:23.241Z",
  "lastClose": "2026-10-19",
  "holdSessions": {
   "B-FCF1": 63,
@@ -7,7 +7,9 @@
   "B-EM1": 60,
   "B-SIF1": 63,
   "V15-SN": 126,
-  "B-CR1": 60
+  "B-CR1": 60,
+  "B-FCF-EM1": 63,
+  "V17": 126
  },
  "stopPct": 0.15,
  "buyUpToPct": 0.03,
@@ -374,7 +376,7 @@
    ]
   }
  },
- "note": "Agent B value rules. A rule shows buys in ACTIONS only when its frozen first verdict is TRADABLE SMALL or PROVEN; otherwise this file is information only. research = rules first run on 27 Oct 2026 (V15-SN, B-CR1): never offered as buys from this file (a new study never goes straight into buys); the main session decides.",
+ "note": "Agent B value rules. A rule shows buys in ACTIONS only when its frozen first verdict is TRADABLE SMALL or PROVEN; otherwise this file is information only. research = rules first run on 27 Oct 2026 (V15-SN, B-CR1) and 3 Nov 2026 (B-FCF-EM1, V17): never offered as buys from this file (a new study never goes straight into buys); the main session decides.",
  "rules": {
   "B-FCF1": {
    "tier": null,
@@ -535,6 +537,13 @@
     {
      "sym": "CERT",
      "lastClose": 9.45,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "EXLS",
+     "lastClose": 39.76,
      "halal": "unknown",
      "blocked": false,
      "why": []
@@ -788,25 +797,6 @@
      }
     },
     {
-     "sym": "CDNA",
-     "lastClose": 67.08,
-     "halal": "fail",
-     "blocked": true,
-     "why": [
-      "not halal (ZAD)"
-     ],
-     "detail": {
-      "sym": "CDNA",
-      "report": "2026-10-29",
-      "streak": 5,
-      "growth": [
-       0.5223,
-       0.3899,
-       0.2519
-      ]
-     }
-    },
-    {
      "sym": "PBF",
      "lastClose": 81.26,
      "halal": "unknown",
@@ -817,26 +807,9 @@
       "report": "2026-10-29",
       "streak": 7,
       "growth": [
+       0.5858,
        0.5623,
-       0.1186,
-       -0.0288
-      ]
-     }
-    },
-    {
-     "sym": "DINO",
-     "lastClose": 124.42,
-     "halal": "ok",
-     "blocked": false,
-     "why": [],
-     "detail": {
-      "sym": "DINO",
-      "report": "2026-10-28",
-      "streak": 7,
-      "growth": [
-       0.5315,
-       0.1182,
-       -0.7738
+       0.1186
       ]
      }
     },
@@ -851,9 +824,9 @@
       "report": "2026-10-27",
       "streak": 12,
       "growth": [
+       0.1391,
        0.0772,
-       0.0557,
-       0.0441
+       0.0557
       ]
      }
     },
@@ -902,26 +875,9 @@
       "report": "2026-10-27",
       "streak": 14,
       "growth": [
+       0.6101,
        0.4849,
-       0.4407,
-       0.2151
-      ]
-     }
-    },
-    {
-     "sym": "WKC",
-     "lastClose": 35.62,
-     "halal": "unknown",
-     "blocked": false,
-     "why": [],
-     "detail": {
-      "sym": "WKC",
-      "report": "2026-10-29",
-      "streak": 3,
-      "growth": [
-       0.5029,
-       0.0246,
-       -0.0749
+       0.4407
       ]
      }
     },
@@ -936,9 +892,9 @@
       "report": "2026-10-28",
       "streak": 23,
       "growth": [
+       0.2886,
        0.1521,
-       0.1149,
-       0.0716
+       0.1149
       ]
      }
     },
@@ -960,40 +916,6 @@
      }
     },
     {
-     "sym": "TER",
-     "lastClose": 335.53,
-     "halal": "unknown",
-     "blocked": false,
-     "why": [],
-     "detail": {
-      "sym": "TER",
-      "report": "2026-10-27",
-      "streak": 64,
-      "growth": [
-       1.039,
-       0.8704,
-       0.4389
-      ]
-     }
-    },
-    {
-     "sym": "TWLO",
-     "lastClose": 257.29,
-     "halal": "unknown",
-     "blocked": false,
-     "why": [],
-     "detail": {
-      "sym": "TWLO",
-      "report": "2026-10-29",
-      "streak": 7,
-      "growth": [
-       0.2203,
-       0.2,
-       0.1432
-      ]
-     }
-    },
-    {
      "sym": "MANH",
      "lastClose": 225.43,
      "halal": "unknown",
@@ -1004,9 +926,9 @@
       "report": "2026-10-27",
       "streak": 35,
       "growth": [
+       0.1102,
        0.0931,
-       0.0739,
-       0.057
+       0.0739
       ]
      }
     },
@@ -1028,23 +950,6 @@
      }
     },
     {
-     "sym": "FTNT",
-     "lastClose": 171.5,
-     "halal": "unknown",
-     "blocked": false,
-     "why": [],
-     "detail": {
-      "sym": "FTNT",
-      "report": "2026-10-28",
-      "streak": 35,
-      "growth": [
-       0.2564,
-       0.2013,
-       0.1475
-      ]
-     }
-    },
-    {
      "sym": "PWR",
      "lastClose": 618.41,
      "halal": "unknown",
@@ -1055,9 +960,9 @@
       "report": "2026-10-29",
       "streak": 9,
       "growth": [
+       0.5744,
        0.411,
-       0.2633,
-       0.1966
+       0.2633
       ]
      }
     },
@@ -1072,9 +977,9 @@
       "report": "2026-10-29",
       "streak": 15,
       "growth": [
+       0.2939,
        0.2406,
-       0.191,
-       0.1465
+       0.191
       ]
      }
     },
@@ -1106,9 +1011,9 @@
       "report": "2026-10-22",
       "streak": 8,
       "growth": [
+       0.5993,
        0.3742,
-       0.3042,
-       0.1895
+       0.3042
       ]
      }
     },
@@ -1126,6 +1031,40 @@
        0.1199,
        0.101,
        0.0172
+      ]
+     }
+    },
+    {
+     "sym": "SLB",
+     "lastClose": 49.09,
+     "halal": "unknown",
+     "blocked": false,
+     "why": [],
+     "detail": {
+      "sym": "SLB",
+      "report": "2026-10-23",
+      "streak": 6,
+      "growth": [
+       0.0584,
+       0.0498,
+       0.0272
+      ]
+     }
+    },
+    {
+     "sym": "LNG",
+     "lastClose": 286.6,
+     "halal": "unknown",
+     "blocked": false,
+     "why": [],
+     "detail": {
+      "sym": "LNG",
+      "report": "2026-10-29",
+      "streak": 3,
+      "growth": [
+       0.39,
+       0.2351,
+       0.0779
       ]
      }
     },
@@ -1194,9 +1133,63 @@
       "report": "2026-10-29",
       "streak": 4,
       "growth": [
+       0.2461,
        0.1146,
-       0.0501,
-       -0.0305
+       0.0501
+      ]
+     }
+    },
+    {
+     "sym": "BFLY",
+     "lastClose": 7.47,
+     "halal": "fail",
+     "blocked": true,
+     "why": [
+      "not halal (ZAD)",
+      "lottery-like jump +22.0%"
+     ],
+     "detail": {
+      "sym": "BFLY",
+      "report": "2026-10-29",
+      "streak": 7,
+      "growth": [
+       0.517,
+       0.3947,
+       0.2499
+      ]
+     }
+    },
+    {
+     "sym": "CARR",
+     "lastClose": 55.21,
+     "halal": "unknown",
+     "blocked": false,
+     "why": [],
+     "detail": {
+      "sym": "CARR",
+      "report": "2026-10-29",
+      "streak": 3,
+      "growth": [
+       0.1226,
+       0.0389,
+       0.0236
+      ]
+     }
+    },
+    {
+     "sym": "RIVN",
+     "lastClose": 12.34,
+     "halal": "unknown",
+     "blocked": false,
+     "why": [],
+     "detail": {
+      "sym": "RIVN",
+      "report": "2026-10-29",
+      "streak": 4,
+      "growth": [
+       0.3832,
+       0.2724,
+       0.1137
       ]
      }
     }
@@ -2107,6 +2100,13 @@
      ]
     },
     {
+     "sym": "WNC",
+     "lastClose": 12.26,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
      "sym": "CGEM",
      "lastClose": 13.98,
      "halal": "unknown",
@@ -2199,6 +2199,13 @@
      "why": [
       "share count up +41.6% in a year"
      ]
+    },
+    {
+     "sym": "ULCC",
+     "lastClose": 4.61,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
     },
     {
      "sym": "ABUS",
@@ -2944,6 +2951,850 @@
      "why": [
       "share count up +1948.7% in a year"
      ]
+    }
+   ]
+  },
+  "B-FCF-EM1": {
+   "tier": null,
+   "formed": "2026-09-21",
+   "picks": [
+    {
+     "sym": "QLYS",
+     "lastClose": 190.08,
+     "halal": "ok",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "EBAY",
+     "lastClose": 120.47,
+     "halal": "ok",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "NEM",
+     "lastClose": 118.01,
+     "halal": "ok",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CVX",
+     "lastClose": 224.37,
+     "halal": "unknown",
+     "blocked": true,
+     "why": [
+      "share count up +14.3% in a year"
+     ]
+    },
+    {
+     "sym": "DVN",
+     "lastClose": 50.92,
+     "halal": "unknown",
+     "blocked": true,
+     "why": [
+      "share count up +73.3% in a year"
+     ]
+    },
+    {
+     "sym": "DINO",
+     "lastClose": 124.42,
+     "halal": "ok",
+     "blocked": false,
+     "why": []
+    }
+   ]
+  },
+  "V17": {
+   "tier": null,
+   "formed": "2026-09-21",
+   "picks": [
+    {
+     "sym": "YELP",
+     "lastClose": 19.57,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "ACI",
+     "lastClose": 13.14,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "DIN",
+     "lastClose": 32.32,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "YEXT",
+     "lastClose": 6.95,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "SMPL",
+     "lastClose": 11,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "PRKS",
+     "lastClose": 32.28,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "WU",
+     "lastClose": 6.16,
+     "halal": "fail",
+     "blocked": true,
+     "why": [
+      "not halal (ZAD)"
+     ]
+    },
+    {
+     "sym": "FSK",
+     "lastClose": 10.14,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "IT",
+     "lastClose": 207.72,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "HOV",
+     "lastClose": 90.75,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "HGV",
+     "lastClose": 35.28,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "FCN",
+     "lastClose": 148.1,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "BFAM",
+     "lastClose": 69.52,
+     "halal": "fail",
+     "blocked": true,
+     "why": [
+      "not halal (ZAD)"
+     ]
+    },
+    {
+     "sym": "CGBD",
+     "lastClose": 10.25,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "FOUR",
+     "lastClose": 39.77,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "DAN",
+     "lastClose": 28.76,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CRM",
+     "lastClose": 242.45,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "PLGO",
+     "lastClose": 25.08,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "MIDD",
+     "lastClose": 107.76,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "PD",
+     "lastClose": 16.69,
+     "halal": "fail",
+     "blocked": true,
+     "why": [
+      "not halal (ZAD)"
+     ]
+    },
+    {
+     "sym": "MAT",
+     "lastClose": 16.88,
+     "halal": "unknown",
+     "blocked": true,
+     "why": [
+      "lottery-like jump +18.8%"
+     ]
+    },
+    {
+     "sym": "LAD",
+     "lastClose": 293.17,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "AN",
+     "lastClose": 160.39,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "FICO",
+     "lastClose": 781.07,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "ADT",
+     "lastClose": 6.7,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "OBDC",
+     "lastClose": 9.89,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CART",
+     "lastClose": 49.91,
+     "halal": "ok",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "FLR",
+     "lastClose": 46.57,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "PFLT",
+     "lastClose": 6.3,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "BCSF",
+     "lastClose": 10.06,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "MSDL",
+     "lastClose": 12.78,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "OMC",
+     "lastClose": 79.44,
+     "halal": "unknown",
+     "blocked": true,
+     "why": [
+      "share count up +41.4% in a year"
+     ]
+    },
+    {
+     "sym": "UPWK",
+     "lastClose": 8.52,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "SOLS",
+     "lastClose": 60.47,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "KBH",
+     "lastClose": 42.59,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "OTF",
+     "lastClose": 9.01,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CARS",
+     "lastClose": 10.17,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "HOG",
+     "lastClose": 26.73,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "GPI",
+     "lastClose": 239.28,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "BBW",
+     "lastClose": 24.12,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "DXC",
+     "lastClose": 14.26,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "PCRX",
+     "lastClose": 36.34,
+     "halal": "ok",
+     "blocked": true,
+     "why": [
+      "lottery-like jump +44.4%"
+     ]
+    },
+    {
+     "sym": "FLO",
+     "lastClose": 5.98,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "ZUMZ",
+     "lastClose": 14.24,
+     "halal": "fail",
+     "blocked": true,
+     "why": [
+      "not halal (ZAD)"
+     ]
+    },
+    {
+     "sym": "LZ",
+     "lastClose": 6.3,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "DFIN",
+     "lastClose": 52.24,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "ZD",
+     "lastClose": 56.36,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "PYPL",
+     "lastClose": 56.51,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "BL",
+     "lastClose": 30.11,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CNXC",
+     "lastClose": 28.22,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CCC",
+     "lastClose": 7.63,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "BILL",
+     "lastClose": 45.69,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "BYD",
+     "lastClose": 70.96,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "LVS",
+     "lastClose": 38.01,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "TRS",
+     "lastClose": 39.43,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "MTH",
+     "lastClose": 58.38,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "YETI",
+     "lastClose": 42.12,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "FMC",
+     "lastClose": 5.36,
+     "halal": "unknown",
+     "blocked": true,
+     "why": [
+      "share count up +24.5% in a year"
+     ]
+    },
+    {
+     "sym": "BBDC",
+     "lastClose": 8.32,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "KR",
+     "lastClose": 63.05,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "VTS",
+     "lastClose": 18.33,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "TNC",
+     "lastClose": 64.57,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "ZTS",
+     "lastClose": 79.59,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "OCSL",
+     "lastClose": 11.39,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "GDDY",
+     "lastClose": 106.7,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "EPAM",
+     "lastClose": 127.38,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "GBDC",
+     "lastClose": 12.01,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "LYFT",
+     "lastClose": 16.99,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "EFOR",
+     "lastClose": 37.63,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "STRA",
+     "lastClose": 81.2,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "FTV",
+     "lastClose": 57.48,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "YUMC",
+     "lastClose": 45.01,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "UTHR",
+     "lastClose": 543.15,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "MMS",
+     "lastClose": 61.33,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CALX",
+     "lastClose": 35.64,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "TNL",
+     "lastClose": 65.23,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "TDG",
+     "lastClose": 1142.45,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CCOI",
+     "lastClose": 7.76,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "BLKB",
+     "lastClose": 53.24,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "KD",
+     "lastClose": 13.28,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "GAP",
+     "lastClose": 23.54,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CTSH",
+     "lastClose": 66.79,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "NTGR",
+     "lastClose": 22.76,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "MTN",
+     "lastClose": 150.97,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "OTEX",
+     "lastClose": 25.72,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "DECK",
+     "lastClose": 87.24,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "PGNY",
+     "lastClose": 27.84,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "NCNO",
+     "lastClose": 20.35,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "PEGA",
+     "lastClose": 35.04,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "PENN",
+     "lastClose": 14.71,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CNX",
+     "lastClose": 35.68,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "BXSL",
+     "lastClose": 23.5,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CROX",
+     "lastClose": 120.18,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "GM",
+     "lastClose": 82.75,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "NVR",
+     "lastClose": 5828,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "FLGT",
+     "lastClose": 20.1,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "BKE",
+     "lastClose": 46.95,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "EBS",
+     "lastClose": 6.36,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "LULU",
+     "lastClose": 97.76,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "ASO",
+     "lastClose": 58.24,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "HUBS",
+     "lastClose": 234.63,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "LEA",
+     "lastClose": 119.76,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "FIZZ",
+     "lastClose": 34.71,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CHE",
+     "lastClose": 508.29,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "HCA",
+     "lastClose": 454.88,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "CSL",
+     "lastClose": 330.47,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "HURN",
+     "lastClose": 174.72,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "ROP",
+     "lastClose": 383.5,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "DBD",
+     "lastClose": 67.57,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
+    },
+    {
+     "sym": "INTA",
+     "lastClose": 44.29,
+     "halal": "unknown",
+     "blocked": false,
+     "why": []
     }
    ]
   }
