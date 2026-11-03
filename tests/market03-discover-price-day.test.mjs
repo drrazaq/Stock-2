@@ -65,7 +65,14 @@ test('a failed historical sample falls back only with the fallback recorded; the
 test('outside the exchange calendar years, samples use the labelled weekday walk and record each outcome', async t=>{
  const r=await run(t,()=>FULL);const outside=r.doc.priceDay.samples.filter(x=>x.calendarBasis==='WEEKDAY_WALK_UNVERIFIED');
  const inside=r.doc.priceDay.samples.filter(x=>x.calendarBasis==='EXCHANGE_CALENDAR');
- assert.ok(inside.length>0);for(const x of outside)assert.equal(marketSession(x.target).known,false);for(const x of inside)assert.equal(marketSession(x.target).known,true);
+ assert.ok(inside.length>0);
+ for(const x of outside){
+  assert.equal(marketSession(x.day).known,false,'the observed fallback day, not necessarily its target, is outside the reviewed calendar');
+  assert.ok(x.attempts.some(a=>!marketSession(a.day).known),'an unverified calendar walk must retain its actual outside-calendar attempt');
+  for(const a of x.attempts){const m=marketSession(a.day);if(m.known)assert.equal(m.closed,false,'a known closure must never be requested');}
+ }
+ for(const x of inside){assert.equal(marketSession(x.target).known,true);assert.equal(marketSession(x.day).known,true);assert.equal(marketSession(x.day).closed,false);}
+
 });
 
 test('unchanged behaviour: the same session already processed exits quietly without a new request beyond the current day', async t=>{
