@@ -1,0 +1,45 @@
+TAP version 13
+# Subtest: frozen as approved: dates, cap, B and C criteria
+ok 1 - frozen as approved: dates, cap, B and C criteria
+  ---
+  duration_ms: 2.613081
+  ...
+# Subtest: online picking: time order, cap 5, only accepted candidates; random control is a fixed hash
+ok 2 - online picking: time order, cap 5, only accepted candidates; random control is a fixed hash
+  ---
+  duration_ms: 1.002508
+  ...
+# Subtest: D criteria: fresh 8-K / 6-K, not negative or financing, not yet moved, liquid, 1 USD+, every hard rule
+ok 3 - D criteria: fresh 8-K / 6-K, not negative or financing, not yet moved, liquid, 1 USD+, every hard rule
+  ---
+  duration_ms: 1.102569
+  ...
+# Subtest: evaluate: only counted sessions; COLLECTING before 20 sessions; cap cost shows first five vs after the cap vs a hindsight bound
+ok 4 - evaluate: only counted sessions; COLLECTING before 20 sessions; cap cost shows first five vs after the cap vs a hindsight bound
+  ---
+  duration_ms: 6.119165
+  ...
+# Subtest: SEC feed parser: form, CIK, items, accession and acceptance time; New York minute
+ok 5 - SEC feed parser: form, CIK, items, accession and acceptance time; New York minute
+  ---
+  duration_ms: 22.42021
+  ...
+# Subtest: malformed or overflowing quotes cannot manufacture a narrow-spread ranking advantage
+ok 6 - malformed or overflowing quotes cannot manufacture a narrow-spread ranking advantage
+  ---
+  duration_ms: 0.294472
+  ...
+# Subtest: dated owner exclusion applies even with explicit primary start; reconstruction is secondary only
+ok 7 - dated owner exclusion applies even with explicit primary start; reconstruction is secondary only
+  ---
+  duration_ms: 1.991612
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 49.202693

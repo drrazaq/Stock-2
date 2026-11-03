@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: three TAX rules: two buys, one avoid; holds fixed; one open trade per stock
+ok 1 - three TAX rules: two buys, one avoid; holds fixed; one open trade per stock
+  ---
+  duration_ms: 2.221981
+  ...
+# Subtest: rows: discrete quarters only (80-100 days), original 10-Q/10-K, deduplicated; assets instants
+ok 2 - rows: discrete quarters only (80-100 days), original 10-Q/10-K, deduplicated; assets instants
+  ---
+  duration_ms: 1.761208
+  ...
+# Subtest: events: new latest quarter, timely, (current - year-ago) / year-ago assets, assets floor
+ok 3 - events: new latest quarter, timely, (current - year-ago) / year-ago assets, assets floor
+  ---
+  duration_ms: 1.22591
+  ...
+# Subtest: data rule: 95% looked up, 85% mapped, 15,000 events
+ok 4 - data rule: 95% looked up, 85% mapped, 15,000 events
+  ---
+  duration_ms: 0.5358
+  ...
+# Subtest: pre-registration writes the three entries once, with sources, before any run
+ok 5 - pre-registration writes the three entries once, with sources, before any run
+  ---
+  duration_ms: 2.386368
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 22.2925

@@ -1,0 +1,75 @@
+TAP version 13
+# Subtest: grade classes: buy-side words, hold words, sell words, unknown
+ok 1 - grade classes: buy-side words, hold words, sell words, unknown
+  ---
+  duration_ms: 3.989889
+  ...
+# Subtest: analyst events: an upgrade INTO buy, or an initiation at buy; nothing else
+ok 2 - analyst events: an upgrade INTO buy, or an initiation at buy; nothing else
+  ---
+  duration_ms: 1.984151
+  ...
+# Subtest: hold walk: buy the open of k, sell the close of k+hold-1, or the next open after a close 35% under the buy
+ok 3 - hold walk: buy the open of k, sell the close of k+hold-1, or the next open after a close 35% under the buy
+  ---
+  duration_ms: 1.99142
+  ...
+# Subtest: PIT ranker: only calls resolved BEFORE the day count; top decile by success rate and average excess; minimums
+ok 4 - PIT ranker: only calls resolved BEFORE the day count; top decile by success rate and average excess; minimums
+  ---
+  duration_ms: 3.057098
+  ...
+# Subtest: PIT ranker lastN: only the latest N resolved calls of an expert count
+ok 5 - PIT ranker lastN: only the latest N resolved calls of an expert count
+  ---
+  duration_ms: 0.504509
+  ...
+# Subtest: clusters: 2+ DIFFERENT experts on the same stock within the window; fires at the completing call, once per window
+ok 6 - clusters: 2+ DIFFERENT experts on the same stock within the window; fires at the completing call, once per window
+  ---
+  duration_ms: 0.606412
+  ...
+# Subtest: 13F: issuer names normalised; values in dollars (thousands before 3 Jan 2023)
+ok 7 - 13F: issuer names normalised; values in dollars (thousands before 3 Jan 2023)
+  ---
+  duration_ms: 1.12363
+  ...
+# Subtest: 13F changes: new positions and split-safe large adds (value growth over price growth >= 1.5), weight >= 1%
+ok 8 - 13F changes: new positions and split-safe large adds (value growth over price growth >= 1.5), weight >= 1%
+  ---
+  duration_ms: 0.633659
+  ...
+# Subtest: top weights: the N largest, weights summing to 1
+ok 9 - top weights: the N largest, weights summing to 1
+  ---
+  duration_ms: 0.842681
+  ...
+# Subtest: SEC XML readers: 13F information table and Form 4 purchases
+ok 10 - SEC XML readers: 13F information table and Form 4 purchases
+  ---
+  duration_ms: 6.046951
+  ...
+# Subtest: eToro: new long, unleveraged positions since the last snapshot only
+ok 11 - eToro: new long, unleveraged positions since the last snapshot only
+  ---
+  duration_ms: 0.479922
+  ...
+# Subtest: board and readiness; rules are registered with holds, stop and data needs
+ok 12 - board and readiness; rules are registered with holds, stop and data needs
+  ---
+  duration_ms: 0.819775
+  ...
+# Subtest: halves: split at the median distinct signal session
+ok 13 - halves: split at the median distinct signal session
+  ---
+  duration_ms: 0.272034
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 46.186402

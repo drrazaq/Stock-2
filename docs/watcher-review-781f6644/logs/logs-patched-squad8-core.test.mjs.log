@@ -1,0 +1,65 @@
+TAP version 13
+# Subtest: registry: 10 rules, ids SQ8-*, hold 20, every rule has a rule text, a linked paper and a library check
+ok 1 - registry: 10 rules, ids SQ8-*, hold 20, every rule has a rule text, a linked paper and a library check
+  ---
+  duration_ms: 2.389569
+  ...
+# Subtest: runner: first session the 10-session gain crosses +15% (and stays <= +100%), complete data only
+ok 2 - runner: first session the 10-session gain crosses +15% (and stays <= +100%), complete data only
+  ---
+  duration_ms: 0.458017
+  ...
+# Subtest: path split: overnight + regular-hours log returns add up to the close-to-close gain
+ok 3 - path split: overnight + regular-hours log returns add up to the close-to-close gain
+  ---
+  duration_ms: 2.396618
+  ...
+# Subtest: tug of war: open above the previous close AND close under the open
+ok 4 - tug of war: open above the previous close AND close under the open
+  ---
+  duration_ms: 0.267672
+  ...
+# Subtest: up/down volume: ratio, no down session passes, a flat close counts as neither
+ok 5 - up/down volume: ratio, no down session passes, a flat close counts as neither
+  ---
+  duration_ms: 0.545696
+  ...
+# Subtest: orderly: up closes and the largest single session as a share of the gain
+ok 6 - orderly: up closes and the largest single session as a share of the gain
+  ---
+  duration_ms: 0.289368
+  ...
+# Subtest: breakout that holds: new 60-session closing high, first in 20 sessions, 3 closes at or above the old high
+ok 7 - breakout that holds: new 60-session closing high, first in 20 sessions, 3 closes at or above the old high
+  ---
+  duration_ms: 2.466032
+  ...
+# Subtest: share counts: 30 days late, stale rows ignored, unadjusted splits fixed, yearly change
+ok 8 - share counts: 30 days late, stale rows ignored, unadjusted splits fixed, yearly change
+  ---
+  duration_ms: 1.721952
+  ...
+# Subtest: reverse splits within 3 years, clean supply and the combination rule
+ok 9 - reverse splits within 3 years, clean supply and the combination rule
+  ---
+  duration_ms: 0.453561
+  ...
+# Subtest: helpers: halves, cap, same stock on other days (capped), paper readiness
+ok 10 - helpers: halves, cap, same stock on other days (capped), paper readiness
+  ---
+  duration_ms: 0.753707
+  ...
+# Subtest: library pre-registration is append-only and idempotent
+ok 11 - library pre-registration is append-only and idempotent
+  ---
+  duration_ms: 0.704008
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 30.248058

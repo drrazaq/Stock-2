@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: cap, halves, sessions strictly after a filing date
+ok 1 - cap, halves, sessions strictly after a filing date
+  ---
+  duration_ms: 1.405218
+  ...
+# Subtest: week keys and month-end formation sessions (only months that are over)
+ok 2 - week keys and month-end formation sessions (only months that are over)
+  ---
+  duration_ms: 1.062439
+  ...
+# Subtest: hold returns: open of k to close of x; a stock that stops trading = its last close; no open at k = no trade
+ok 3 - hold returns: open of k to close of x; a stock that stops trading = its last close; no open at k = no trade
+  ---
+  duration_ms: 1.897724
+  ...
+# Subtest: liquidity: close 5+ and 20-session average traded value 5M+, a missing session counts 0
+ok 4 - liquidity: close 5+ and 20-session average traded value 5M+, a missing session counts 0
+  ---
+  duration_ms: 0.666868
+  ...
+# Subtest: weekly returns use only weeks that ended by the formation close
+ok 5 - weekly returns use only weeks that ended by the formation close
+  ---
+  duration_ms: 0.646893
+  ...
+# Subtest: MSCI momentum pick: risk-adjusted z of 6 and 12 months, 50/50, re-z, positive only, best first
+ok 6 - MSCI momentum pick: risk-adjusted z of 6 and 12 months, 50/50, re-z, positive only, best first
+  ---
+  duration_ms: 1.303111
+  ...
+# Subtest: 8-K text: the authorized size from sentences naming a repurchase AND an authorization
+ok 7 - 8-K text: the authorized size from sentences naming a repurchase AND an authorization
+  ---
+  duration_ms: 4.009255
+  ...
+# Subtest: share counts are known 30 days after their date; first event per company in 180 days
+ok 8 - share counts are known 30 days after their date; first event per company in 180 days
+  ---
+  duration_ms: 0.637172
+  ...
+# Subtest: same stock on its other days: capped, non-overlapping, 3+ windows
+ok 9 - same stock on its other days: capped, non-overlapping, 3+ windows
+  ---
+  duration_ms: 0.628731
+  ...
+# Subtest: trade comparison matches by symbol and signal date
+ok 10 - trade comparison matches by symbol and signal date
+  ---
+  duration_ms: 0.773371
+  ...
+# Subtest: QMOM: frog in the pan and the smoother half of the top 10%
+ok 11 - QMOM: frog in the pan and the smoother half of the top 10%
+  ---
+  duration_ms: 0.612258
+  ...
+# Subtest: PB12: split basis, 50-session closing high, 200-session average, FIRST close 12% under the high
+ok 12 - PB12: split basis, 50-session closing high, 200-session average, FIRST close 12% under the high
+  ---
+  duration_ms: 4.206631
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 34.538729

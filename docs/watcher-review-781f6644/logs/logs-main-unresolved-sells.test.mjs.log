@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: a SELL carried from an earlier day is listed with its age and the move since
+ok 1 - a SELL carried from an earlier day is listed with its age and the move since
+  ---
+  duration_ms: 2.365996
+  ...
+# Subtest: a SELL first given today is not listed (it is already in SELL)
+ok 2 - a SELL first given today is not listed (it is already in SELL)
+  ---
+  duration_ms: 0.814944
+  ...
+# Subtest: an old record without since or price uses its date and leaves the price out
+ok 3 - an old record without since or price uses its date and leaves the price out
+  ---
+  duration_ms: 0.260144
+  ...
+# Subtest: holdings without the owner's halal mark are named
+ok 4 - holdings without the owner's halal mark are named
+  ---
+  duration_ms: 0.743105
+  ...
+# Subtest: no network was used
+ok 5 - no network was used
+  ---
+  duration_ms: 0.292239
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17.438073

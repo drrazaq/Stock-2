@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: 6 rules, one version each; holds fixed; two with a portfolio test
+ok 1 - 6 rules, one version each; holds fixed; two with a portfolio test
+  ---
+  duration_ms: 2.902092
+  ...
+# Subtest: MTUM inputs: weekly volatility needs 52+ returns; momentum skips the last month; last complete week
+ok 2 - MTUM inputs: weekly volatility needs 52+ returns; momentum skips the last month; last complete week
+  ---
+  duration_ms: 0.778199
+  ...
+# Subtest: industry: SIC 4-digit, catch-alls out, 4+ members, ranked by market value
+ok 3 - industry: SIC 4-digit, catch-alls out, 4+ members, ranked by market value
+  ---
+  duration_ms: 0.72132
+  ...
+# Subtest: first 52-week high in 63 sessions: series version equals the point version
+ok 4 - first 52-week high in 63 sessions: series version equals the point version
+  ---
+  duration_ms: 10.878918
+  ...
+# Subtest: followers: ranks 2-4 that rose under +2%
+ok 5 - followers: ranks 2-4 that rose under +2%
+  ---
+  duration_ms: 0.808784
+  ...
+# Subtest: MTPB add: the first pullback at t with t+1 before the base exit
+ok 6 - MTPB add: the first pullback at t with t+1 before the base exit
+  ---
+  duration_ms: 0.353951
+  ...
+# Subtest: account: slots, skips when full or held, priority, cost on both sides, marks
+ok 7 - account: slots, skips when full or held, priority, cost on both sides, marks
+  ---
+  duration_ms: 1.562078
+  ...
+# Subtest: path stats and year table
+ok 8 - path stats and year table
+  ---
+  duration_ms: 0.660105
+  ...
+# Subtest: TRY SMALL re-statement: halves, perYear gate, portfolio gate
+ok 9 - TRY SMALL re-statement: halves, perYear gate, portfolio gate
+  ---
+  duration_ms: 0.82135
+  ...
+# Subtest: pre-registration writes each SQ14 rule once (idempotent)
+ok 10 - pre-registration writes each SQ14 rule once (idempotent)
+  ---
+  duration_ms: 0.674851
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 43.336476

@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: publication retry budget and exponential cooldown persist across restart
+ok 1 - publication retry budget and exponential cooldown persist across restart
+  ---
+  duration_ms: 18.649266
+  ...
+# Subtest: failed outcome publication survives restart without replay: {"ok":true}
+ok 2 - failed outcome publication survives restart without replay: {"ok":true}
+  ---
+  duration_ms: 14.766172
+  ...
+# Subtest: failed outcome publication survives restart without replay: {"ok":false}
+ok 3 - failed outcome publication survives restart without replay: {"ok":false}
+  ---
+  duration_ms: 10.177708
+  ...
+# Subtest: failed outcome publication survives restart without replay: {"ok":false,"definitelyUnsent":true}
+ok 4 - failed outcome publication survives restart without replay: {"ok":false,"definitelyUnsent":true}
+  ---
+  duration_ms: 10.627531
+  ...
+# Subtest: failed finalization retries are capped and visible; never call transport
+ok 5 - failed finalization retries are capped and visible; never call transport
+  ---
+  duration_ms: 9.449787
+  ...
+# Subtest: interruption after reservation and malformed local state fail closed
+ok 6 - interruption after reservation and malformed local state fail closed
+  ---
+  duration_ms: 4.903227
+  ...
+# Subtest: health exposes unresolved delivery independently of complete configured coverage
+ok 7 - health exposes unresolved delivery independently of complete configured coverage
+  ---
+  duration_ms: 4.350218
+  ...
+# Subtest: partial local outcome write cannot erase durable reservation or permit resend
+ok 8 - partial local outcome write cannot erase durable reservation or permit resend
+  ---
+  duration_ms: 6.333401
+  ...
+# Subtest: publication exceptions retain retry budget and never escape into observation caller
+ok 9 - publication exceptions retain retry budget and never escape into observation caller
+  ---
+  duration_ms: 5.000908
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 106.86849

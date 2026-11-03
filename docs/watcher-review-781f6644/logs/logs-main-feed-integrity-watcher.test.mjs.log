@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: SIP answer: SIP price and quote with their own clocks; SIP daily volume used but labelled as having no stated as-of time
+ok 1 - SIP answer: SIP price and quote with their own clocks; SIP daily volume used but labelled as having no stated as-of time
+  ---
+  duration_ms: 562.102893
+  ...
+# Subtest: SIP 403: IEX price is used, IEX volume is never used as market volume
+ok 2 - SIP 403: IEX price is used, IEX volume is never used as market volume
+  ---
+  duration_ms: 534.063033
+  ...
+# Subtest: SIP 422: a failed request, not a downgrade; no IEX request is made
+ok 3 - SIP 422: a failed request, not a downgrade; no IEX request is made
+  ---
+  duration_ms: 482.828626
+  ...
+# Subtest: 429: one request, no retry inside the cool-down
+ok 4 - 429: one request, no retry inside the cool-down
+  ---
+  duration_ms: 624.439853
+  ...
+# Subtest: concurrent parts: an IEX response is never read as SIP when another part's SIP answer lands in between
+ok 5 - concurrent parts: an IEX response is never read as SIP when another part's SIP answer lands in between
+  ---
+  duration_ms: 921.033436
+  ...
+# Subtest: top-50 fallback keeps its original field set (no quote fields added)
+ok 6 - top-50 fallback keeps its original field set (no quote fields added)
+  ---
+  duration_ms: 561.695877
+  ...
+# Subtest: top-50 fallback: a future-dated Massive volume clock is rejected; this response's consistent SIP daily volume is used instead
+ok 7 - top-50 fallback: a future-dated Massive volume clock is rejected; this response's consistent SIP daily volume is used instead
+  ---
+  duration_ms: 475.605549
+  ...
+# Subtest: top-50 fallback: future-dated volume on both sources leaves volume unknown (never a future-clocked figure)
+ok 8 - top-50 fallback: future-dated volume on both sources leaves volume unknown (never a future-clocked figure)
+  ---
+  duration_ms: 467.711647
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4640.435142

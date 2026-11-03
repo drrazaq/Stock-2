@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: SIP answer: SIP price and quote with their own clocks; SIP daily volume used but labelled as having no stated as-of time
+ok 1 - SIP answer: SIP price and quote with their own clocks; SIP daily volume used but labelled as having no stated as-of time
+  ---
+  duration_ms: 635.90945
+  ...
+# Subtest: SIP 403: IEX price is used, IEX volume is never used as market volume
+ok 2 - SIP 403: IEX price is used, IEX volume is never used as market volume
+  ---
+  duration_ms: 601.196137
+  ...
+# Subtest: SIP 422: a failed request, not a downgrade; no IEX request is made
+ok 3 - SIP 422: a failed request, not a downgrade; no IEX request is made
+  ---
+  duration_ms: 604.131816
+  ...
+# Subtest: 429: one request, no retry inside the cool-down
+ok 4 - 429: one request, no retry inside the cool-down
+  ---
+  duration_ms: 696.749971
+  ...
+# Subtest: concurrent parts: an IEX response is never read as SIP when another part's SIP answer lands in between
+ok 5 - concurrent parts: an IEX response is never read as SIP when another part's SIP answer lands in between
+  ---
+  duration_ms: 1005.198044
+  ...
+# Subtest: top-50 fallback keeps its original field set (no quote fields added)
+ok 6 - top-50 fallback keeps its original field set (no quote fields added)
+  ---
+  duration_ms: 540.362445
+  ...
+# Subtest: top-50 fallback: a future-dated Massive volume clock is rejected; this response's consistent SIP daily volume is used instead
+ok 7 - top-50 fallback: a future-dated Massive volume clock is rejected; this response's consistent SIP daily volume is used instead
+  ---
+  duration_ms: 549.055983
+  ...
+# Subtest: top-50 fallback: future-dated volume on both sources leaves volume unknown (never a future-clocked figure)
+ok 8 - top-50 fallback: future-dated volume on both sources leaves volume unknown (never a future-clocked figure)
+  ---
+  duration_ms: 622.429941
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5267.539187

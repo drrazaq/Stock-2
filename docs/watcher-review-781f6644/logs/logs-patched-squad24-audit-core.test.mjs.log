@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: registry: counted families, labels sha placeholder, ambiguous aliases
+ok 1 - registry: counted families, labels sha placeholder, ambiguous aliases
+  ---
+  duration_ms: 3.190653
+  ...
+# Subtest: ATRS 2022-04-13: "Apple" is CEO Robert F. Apple, never Apple Inc.
+ok 2 - ATRS 2022-04-13: "Apple" is CEO Robert F. Apple, never Apple Inc.
+  ---
+  duration_ms: 4.601888
+  ...
+# Subtest: RGNX 2025-01-14: "AMD" is wet AMD (the eye disease), not Advanced Micro Devices
+ok 3 - RGNX 2025-01-14: "AMD" is wet AMD (the eye disease), not Advanced Micro Devices
+  ---
+  duration_ms: 8.772018
+  ...
+# Subtest: GRVI 2022-04-20: an amount over 1 trillion USD (a "$26,540,000 million" unit error) is UNKNOWN and out of the gate
+ok 4 - GRVI 2022-04-20: an amount over 1 trillion USD (a "$26,540,000 million" unit error) is UNKNOWN and out of the gate
+  ---
+  duration_ms: 1.767902
+  ...
+# Subtest: FBIO: About-Fortress "partnerships include AstraZeneca" and About-Oaktree "$192 billion" are boilerplate
+ok 5 - FBIO: About-Fortress "partnerships include AstraZeneca" and About-Oaktree "$192 billion" are boilerplate
+  ---
+  duration_ms: 1.160636
+  ...
+# Subtest: PCT: P&G from forward-looking statements, $ from capital-and-surplus / liquidity text
+ok 6 - PCT: P&G from forward-looking statements, $ from capital-and-surplus / liquidity text
+  ---
+  duration_ms: 1.50853
+  ...
+# Subtest: banks from credit-agreement boilerplate are never a deal
+ok 7 - banks from credit-agreement boilerplate are never a deal
+  ---
+  duration_ms: 1.979568
+  ...
+# Subtest: real deals still pass: party patterns, amount classes, families
+ok 8 - real deals still pass: party patterns, amount classes, families
+  ---
+  duration_ms: 4.153801
+  ...
+# Subtest: amount helpers and gate
+ok 9 - amount helpers and gate
+  ---
+  duration_ms: 0.42454
+  ...
+# Subtest: submission parsing keeps block breaks; decide() combines extractor, size gate and hand label
+ok 10 - submission parsing keeps block breaks; decide() combines extractor, size gate and hand label
+  ---
+  duration_ms: 1.685095
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 47.701073

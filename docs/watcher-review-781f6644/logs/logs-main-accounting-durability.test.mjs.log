@@ -1,0 +1,111 @@
+TAP version 13
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: actual sale caller rejects without position/journal mutation: sold ZZA 110 0 shares
+ok 1 - actual sale caller rejects without position/journal mutation: sold ZZA 110 0 shares
+  ---
+  duration_ms: 219.918938
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: actual sale caller rejects without position/journal mutation: sold ZZA 0 5 shares
+ok 2 - actual sale caller rejects without position/journal mutation: sold ZZA 0 5 shares
+  ---
+  duration_ms: 117.358537
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: actual sale caller rejects without position/journal mutation: sold ZZA 110 11 shares
+ok 3 - actual sale caller rejects without position/journal mutation: sold ZZA 110 11 shares
+  ---
+  duration_ms: 135.233196
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: actual sale caller rejects without position/journal mutation: sold ZZA 110 2.5 shares
+ok 4 - actual sale caller rejects without position/journal mutation: sold ZZA 110 2.5 shares
+  ---
+  duration_ms: 89.369526
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: actual sale caller rejects without position/journal mutation: sold ZZA Infinity 4 shares
+ok 5 - actual sale caller rejects without position/journal mutation: sold ZZA Infinity 4 shares
+  ---
+  duration_ms: 93.638403
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: encrypted prepare failure preserves actual caller and retry: sold ZZA 110 4 shares
+ok 6 - encrypted prepare failure preserves actual caller and retry: sold ZZA 110 4 shares
+  ---
+  duration_ms: 149.620286
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: encrypted prepare failure preserves actual caller and retry: sold half ZZA 110
+ok 7 - encrypted prepare failure preserves actual caller and retry: sold half ZZA 110
+  ---
+  duration_ms: 147.440232
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: encrypted prepare failure preserves actual caller and retry: sold ZZA 110
+ok 8 - encrypted prepare failure preserves actual caller and retry: sold ZZA 110
+  ---
+  duration_ms: 125.621436
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: durable partial intent recovers exactly once after journal
+ok 9 - durable partial intent recovers exactly once after journal
+  ---
+  duration_ms: 140.805922
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: durable partial intent recovers exactly once after position
+ok 10 - durable partial intent recovers exactly once after position
+  ---
+  duration_ms: 209.91704
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: durable partial intent recovers exactly once after final-encrypted
+ok 11 - durable partial intent recovers exactly once after final-encrypted
+  ---
+  duration_ms: 164.554433
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: corrupt encrypted state and zero stored quantity cannot remove a position
+ok 12 - corrupt encrypted state and zero stored quantity cannot remove a position
+  ---
+  duration_ms: 157.067366
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: a new sale preserves all original historical journal bytes
+ok 13 - a new sale preserves all original historical journal bytes
+  ---
+  duration_ms: 129.07403
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1893.164993

@@ -1,0 +1,75 @@
+TAP version 13
+# Subtest: registry: 8 rules SQ13-*, holds 20 / 63, each with rule text, a linked paper and a library check
+ok 1 - registry: 8 rules SQ13-*, holds 20 / 63, each with rule text, a linked paper and a library check
+  ---
+  duration_ms: 1.489448
+  ...
+# Subtest: sic3: first 3 digits of a 4-digit code, padded; blank / zero -> null
+ok 2 - sic3: first 3 digits of a 4-digit code, padded; blank / zero -> null
+  ---
+  duration_ms: 1.610225
+  ...
+# Subtest: pullback: first close 8-15% under the post-run high in sessions t+5..t+15, above base and 20-day average
+ok 3 - pullback: first close 8-15% under the post-run high in sessions t+5..t+15, above base and 20-day average
+  ---
+  duration_ms: 0.47234
+  ...
+# Subtest: pullback: void when a close breaks 15% off the high or the pre-run base; needs the 20-day average under the close
+ok 4 - pullback: void when a close breaks 15% off the high or the pre-run base; needs the 20-day average under the close
+  ---
+  duration_ms: 0.339131
+  ...
+# Subtest: supply: clean = count up at most 1% and no reverse split; buyback = down 2%+ (not below -40%) and no reverse split; unknown -> null
+ok 5 - supply: clean = count up at most 1% and no reverse split; buyback = down 2%+ (not below -40%) and no reverse split; unknown -> null
+  ---
+  duration_ms: 0.219018
+  ...
+# Subtest: wave: breadth over 60% now and under 40% on a session of the last 21; one wave per 63 sessions
+ok 6 - wave: breadth over 60% now and under 40% on a session of the last 21; one wave per 63 sessions
+  ---
+  duration_ms: 1.127636
+  ...
+# Subtest: topBy: highest values first, non-finite left out, ties by key
+ok 7 - topBy: highest values first, non-finite left out, ties by key
+  ---
+  duration_ms: 0.240473
+  ...
+# Subtest: 52-week highs: plain, first in 63 sessions, and above the pre-results high
+ok 8 - 52-week highs: plain, first in 63 sessions, and above the pre-results high
+  ---
+  duration_ms: 8.291237
+  ...
+# Subtest: reaction session: first session on / after the filing date
+ok 9 - reaction session: first session on / after the filing date
+  ---
+  duration_ms: 0.544037
+  ...
+# Subtest: followers: ranks 2-4 whose return is under +2% (unknown left out)
+ok 10 - followers: ranks 2-4 whose return is under +2% (unknown left out)
+  ---
+  duration_ms: 0.4933
+  ...
+# Subtest: per year of capital: sum of net returns / years tied up; SPY on the same rows without cost; calendar years
+ok 11 - per year of capital: sum of net returns / years tied up; SPY on the same rows without cost; calendar years
+  ---
+  duration_ms: 0.555015
+  ...
+# Subtest: smaArr: NaN until p values, NaN window when one is missing
+ok 12 - smaArr: NaN until p values, NaN window when one is missing
+  ---
+  duration_ms: 0.328742
+  ...
+# Subtest: library pre-registration: appends the 8 rules once, never edits existing entries
+ok 13 - library pre-registration: appends the 8 rules once, never edits existing entries
+  ---
+  duration_ms: 0.621016
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 34.369893

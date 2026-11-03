@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: the lab runs to the end on complete data
+ok 1 - the lab runs to the end on complete data
+  ---
+  duration_ms: 1.302561
+  ...
+# Subtest: AAA: bought the open 30 sessions before the 14 June 2024 PDUFA date, sold the close 2 sessions before, after 0.8% costs
+ok 2 - AAA: bought the open 30 sessions before the 14 June 2024 PDUFA date, sold the close 2 sessions before, after 0.8% costs
+  ---
+  duration_ms: 0.179829
+  ...
+# Subtest: BBB (424B5 6 sessions before its buy day) and DDD (+20% in one day the month before) are excluded
+ok 3 - BBB (424B5 6 sessions before its buy day) and DDD (+20% in one day the month before) are excluded
+  ---
+  duration_ms: 0.219638
+  ...
+# Subtest: one trade is no verdict: nothing is frozen and the library is not marked tested
+ok 4 - one trade is no verdict: nothing is frozen and the library is not marked tested
+  ---
+  duration_ms: 0.247787
+  ...
+# Subtest: CCC: the upcoming list carries the buy and sell dates on the NYSE calendar and the halal status
+ok 5 - CCC: the upcoming list carries the buy and sell dates on the NYSE calendar and the halal status
+  ---
+  duration_ms: 0.239784
+  ...
+# Subtest: CAT-NEWS1: the third positive 8-K (1 March 2024) with the price above its 50-day -> buy 4 March, sell the close 15 sessions later; a clinical hold in the window blocks FFF
+ok 6 - CAT-NEWS1: the third positive 8-K (1 March 2024) with the price above its 50-day -> buy 4 March, sell the close 15 sessions later; a clinical hold in the window blocks FFF
+  ---
+  duration_ms: 0.139345
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 12.435681

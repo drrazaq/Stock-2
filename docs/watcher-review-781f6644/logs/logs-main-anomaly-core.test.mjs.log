@@ -1,0 +1,90 @@
+TAP version 13
+# Subtest: registry: at least 25 runnable anomalies, each with a rule, hold, papers and a library note; needs-data entries are separate
+ok 1 - registry: at least 25 runnable anomalies, each with a rule, hold, papers and a library note; needs-data entries are separate
+  ---
+  duration_ms: 3.043964
+  ...
+# Subtest: decile pick: top / bottom 10%, at least 100 usable rows, NaN ignored
+ok 2 - decile pick: top / bottom 10%, at least 100 usable rows, NaN ignored
+  ---
+  duration_ms: 2.180863
+  ...
+# Subtest: momentum, 52-week high, volatility and MAX use only closes up to t
+ok 3 - momentum, 52-week high, volatility and MAX use only closes up to t
+  ---
+  duration_ms: 0.933727
+  ...
+# Subtest: market model: OLS, residual momentum, shrunk beta, idiosyncratic volatility
+ok 4 - market model: OLS, residual momentum, shrunk beta, idiosyncratic volatility
+  ---
+  duration_ms: 3.273926
+  ...
+# Subtest: overnight vs intraday sums and the high-volume week
+ok 5 - overnight vs intraday sums and the high-volume week
+  ---
+  duration_ms: 0.618709
+  ...
+# Subtest: seasonality: average of the same calendar month in earlier years only
+ok 6 - seasonality: average of the same calendar month in earlier years only
+  ---
+  duration_ms: 0.377905
+  ...
+# Subtest: calendar: month and week starts, pre-holiday, turn of the month, next NYSE session
+ok 7 - calendar: month and week starts, pre-holiday, turn of the month, next NYSE session
+  ---
+  duration_ms: 1.198045
+  ...
+# Subtest: earnings: reaction session, rolling quantile, SURGE
+ok 8 - earnings: reaction session, rolling quantile, SURGE
+  ---
+  duration_ms: 0.641485
+  ...
+# Subtest: insiders: routine = the same month in each of the last 3 years; unclassified without 3 years of history
+ok 9 - insiders: routine = the same month in each of the last 3 years; unclassified without 3 years of history
+  ---
+  duration_ms: 0.686468
+  ...
+# Subtest: EDGAR master index: wanted forms only, amendments out, grouped per filing
+ok 10 - EDGAR master index: wanted forms only, amendments out, grouped per filing
+  ---
+  duration_ms: 0.899679
+  ...
+# Subtest: 13F best idea = largest weight above the aggregate weight, managers with 20-300 positions only
+ok 11 - 13F best idea = largest weight above the aggregate weight, managers with 20-300 positions only
+  ---
+  duration_ms: 0.883153
+  ...
+# Subtest: dividend initiations: first regular cash dividend after 2 dividend-free years
+ok 12 - dividend initiations: first regular cash dividend after 2 dividend-free years
+  ---
+  duration_ms: 0.60874
+  ...
+# Subtest: emerging industry leadership gates
+ok 13 - emerging industry leadership gates
+  ---
+  duration_ms: 0.400557
+  ...
+# Subtest: same stock on its other days: windows skip busy spans and failing days; 3 needed
+ok 14 - same stock on its other days: windows skip busy spans and failing days; 3 needed
+  ---
+  duration_ms: 0.674942
+  ...
+# Subtest: paper board: after 0.8% cost, edge vs the average stock, ready at 30 trades on 10 days with a positive average
+ok 15 - paper board: after 0.8% cost, edge vs the average stock, ready at 30 trades on 10 days with a positive average
+  ---
+  duration_ms: 1.141632
+  ...
+# Subtest: library pre-registration: every ANOM entry once, with its rule and library check; idempotent; existing entries untouched
+ok 16 - library pre-registration: every ANOM entry once, with its rule and library check; idempotent; existing entries untouched
+  ---
+  duration_ms: 1.677496
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 53.568768

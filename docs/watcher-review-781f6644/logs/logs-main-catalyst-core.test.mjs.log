@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: PDUFA target action date with an exact day
+ok 1 - PDUFA target action date with an exact day
+  ---
+  duration_ms: 3.286995
+  ...
+# Subtest: topline data expected in a quarter -> the first day of that quarter (the earliest it could come)
+ok 2 - topline data expected in a quarter -> the first day of that quarter (the earliest it could come)
+  ---
+  duration_ms: 2.040737
+  ...
+# Subtest: other stated forms: Q3 2025, 1H 2026, a month, an advisory committee day
+ok 3 - other stated forms: Q3 2025, 1H 2026, a month, an advisory committee day
+  ---
+  duration_ms: 0.676013
+  ...
+# Subtest: past dates, vague timing and topline sentences without an expectation are not catalysts
+ok 4 - past dates, vague timing and topline sentences without an expectation are not catalysts
+  ---
+  duration_ms: 0.203856
+  ...
+# Subtest: the U.S. abbreviation does not cut the sentence away from its date
+ok 5 - the U.S. abbreviation does not cut the sentence away from its date
+  ---
+  duration_ms: 0.350186
+  ...
+# Subtest: html2text strips tags and entities from an exhibit
+ok 6 - html2text strips tags and entities from an exhibit
+  ---
+  duration_ms: 0.730075
+  ...
+# Subtest: trading sessions skip weekends and NYSE holidays (Good Friday, Juneteenth, Christmas observed)
+ok 7 - trading sessions skip weekends and NYSE holidays (Good Friday, Juneteenth, Christmas observed)
+  ---
+  duration_ms: 1.067172
+  ...
+# Subtest: run-up plan: buy the open 30 sessions before the event session, sell the close 2 sessions before
+ok 8 - run-up plan: buy the open 30 sessions before the event session, sell the close 2 sessions before
+  ---
+  duration_ms: 1.168771
+  ...
+# Subtest: dilution: a 424B5, S-1 or S-3 filed in the 20 sessions before entry excludes the trade
+ok 9 - dilution: a 424B5, S-1 or S-3 filed in the 20 sessions before entry excludes the trade
+  ---
+  duration_ms: 0.51636
+  ...
+# Subtest: verdict: the registered tier-2 gates (both halves, 0.8% and 1.2% cost, average stock, same stock, without the 2 best, t >= 2.5)
+ok 10 - verdict: the registered tier-2 gates (both halves, 0.8% and 1.2% cost, average stock, same stock, without the 2 best, t >= 2.5)
+  ---
+  duration_ms: 0.85719
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25.336196

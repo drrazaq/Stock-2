@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: master index: SC TO-I rows only, one per accession
+ok 1 - master index: SC TO-I rows only, one per accession
+  ---
+  duration_ms: 1.684071
+  ...
+# Subtest: index page: offer exhibit picked; amendment press release picked
+ok 2 - index page: offer exhibit picked; amendment press release picked
+  ---
+  duration_ms: 2.542461
+  ...
+# Subtest: text: entities and curly quotes; dates
+ok 3 - text: entities and curly quotes; dates
+  ---
+  duration_ms: 1.257243
+  ...
+# Subtest: offer fields: Dutch range, ticker, odd lot, expiry, conditions
+ok 4 - offer fields: Dutch range, ticker, odd lot, expiry, conditions
+  ---
+  duration_ms: 4.965033
+  ...
+# Subtest: amendments: extension, termination, final price; conditional sentences ignored
+ok 5 - amendments: extension, termination, final price; conditional sentences ignored
+  ---
+  duration_ms: 2.03121
+  ...
+# Subtest: timeline and entry: extension filed before the entry moves the entry; after it does not
+ok 6 - timeline and entry: extension filed before the entry moves the entry; after it does not
+  ---
+  duration_ms: 0.416836
+  ...
+# Subtest: arbitrage: gate, payout, fees, terminated valuation
+ok 7 - arbitrage: gate, payout, fees, terminated valuation
+  ---
+  duration_ms: 0.692202
+  ...
+# Subtest: summaries, completeness, halal mark, pre-registration
+ok 8 - summaries, completeness, halal mark, pre-registration
+  ---
+  duration_ms: 0.925155
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 29.825477

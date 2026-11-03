@@ -1,0 +1,15 @@
+# Focused tests run by the reviewer agent (call 23 in command-log.md). Node v20.20.0, env -i PATH HOME.
+# Patched tree (main eae28a73 + production.patch 781f6644...):
+$ node --test test/watcher-guard.test.mjs test/watcher-nov2-clock.test.mjs test/watcher-nov2-guard.test.mjs
+# tests 38  # pass 38  # fail 0
+$ node --test test/watcher-message-publish.test.mjs test/watcher-incident-revision.test.mjs test/watcher-resilience.test.mjs test/watcher-retry-recovery.test.mjs
+# tests 27  # pass 27  # fail 0
+# Main tree (eae28a73, unpatched):
+$ node --test test/watcher-guard.test.mjs
+# tests 8   # pass 8   # fail 0
+# Full-suite baseline failure, both trees (logs/logs-{main,patched}-try-small-audit.test.mjs.log):
+not ok 1 - 1. a new-signal list from an older close than the newest session is not shown as a buy
+not ok 6 - 3b. the TRY SMALL ledger row carries the hold and stop that were shown
+# tests 16  # pass 14  # fail 2
+# Worktree status after runs: patched 10 changed paths (the patch), main 0 (clean).
+# Note: these focused outputs were captured as grep-filtered console output in the transcript, not saved as separate log files.

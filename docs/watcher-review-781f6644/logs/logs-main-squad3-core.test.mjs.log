@@ -1,0 +1,90 @@
+TAP version 13
+# Subtest: registry: 11 pre-registered policies, 8 input rules with family and hold, stop by hold
+ok 1 - registry: 11 pre-registered policies, 8 input rules with family and hold, stop by hold
+  ---
+  duration_ms: 2.933895
+  ...
+# Subtest: sizing math: fixed, % of equity, volatility target (cap 20%, floor 250 USD)
+ok 2 - sizing math: fixed, % of equity, volatility target (cap 20%, floor 250 USD)
+  ---
+  duration_ms: 0.481811
+  ...
+# Subtest: cost math: 0.4% + 3 USD on each side; a flat round trip of 1,000 USD costs 14 USD
+ok 3 - cost math: 0.4% + 3 USD on each side; a flat round trip of 1,000 USD costs 14 USD
+  ---
+  duration_ms: 0.38625
+  ...
+# Subtest: time exit at the close of the last hold session; cash math exact
+ok 4 - time exit at the close of the last hold session; cash math exact
+  ---
+  duration_ms: 4.89387
+  ...
+# Subtest: stop: a close 15% under the buy sells at the NEXT open
+ok 5 - stop: a close 15% under the buy sells at the NEXT open
+  ---
+  duration_ms: 0.928304
+  ...
+# Subtest: cash reservation: full size, else what the cash covers if at least half, else skip; most liquid first; cash never negative
+ok 6 - cash reservation: full size, else what the cash covers if at least half, else skip; most liquid first; cash never negative
+  ---
+  duration_ms: 2.077297
+  ...
+# Subtest: sales at an open come before buys: the stopped position funds the new one; a held stock is not bought twice
+ok 7 - sales at an open come before buys: the stopped position funds the new one; a held stock is not bought twice
+  ---
+  duration_ms: 0.679431
+  ...
+# Subtest: pyramiding: add 50% once, at the next open after a close +10% above the buy and above the 20-day
+ok 8 - pyramiding: add 50% once, at the next open after a close +10% above the buy and above the 20-day
+  ---
+  duration_ms: 17.586307
+  ...
+# Subtest: cut losers at -8%; winners above their 50-day keep running after the hold and leave on a close under it
+ok 9 - cut losers at -8%; winners above their 50-day keep running after the hold and leave on a close under it
+  ---
+  duration_ms: 12.249843
+  ...
+# Subtest: regime: crash = SPY 15% under its 252-day high; full needs SPY above its 200-day AND breadth > 50%
+ok 10 - regime: crash = SPY 15% under its 252-day high; full needs SPY above its 200-day AND breadth > 50%
+  ---
+  duration_ms: 11.616058
+  ...
+# Subtest: sector cap 25%: a buy that would put a sector over 25% of equity is skipped
+ok 11 - sector cap 25%: a buy that would put a sector over 25% of equity is skipped
+  ---
+  duration_ms: 0.800669
+  ...
+# Subtest: drawdown brake: half tickets while equity is 10%+ under its peak
+ok 12 - drawdown brake: half tickets while equity is 10%+ under its peak
+  ---
+  duration_ms: 1.001508
+  ...
+# Subtest: rank-and-rotate: holds the strongest live signals at equity/N; drops a stock when its signal is no longer live
+ok 13 - rank-and-rotate: holds the strongest live signals at equity/N; drops a stock when its signal is no longer live
+  ---
+  duration_ms: 3.595352
+  ...
+# Subtest: fund held, curve stats and the four gates
+ok 14 - fund held, curve stats and the four gates
+  ---
+  duration_ms: 3.394304
+  ...
+# Subtest: indicators: 20/50-day averages need full history; volatility from daily returns
+ok 15 - indicators: 20/50-day averages need full history; volatility from daily returns
+  ---
+  duration_ms: 0.776942
+  ...
+# Subtest: pre-registration writes each SQ3 policy once into the library
+ok 16 - pre-registration writes each SQ3 policy once into the library
+  ---
+  duration_ms: 1.56794
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 100.773226

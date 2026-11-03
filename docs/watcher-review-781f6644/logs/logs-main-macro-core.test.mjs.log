@@ -1,0 +1,90 @@
+TAP version 13
+# Subtest: every rule is fully pre-registered: id, rule text, hold 20/60 or monthly, sources with links, a library check
+ok 1 - every rule is fully pre-registered: id, rule text, hold 20/60 or monthly, sources with links, a library check
+  ---
+  duration_ms: 2.625851
+  ...
+# Subtest: event table: fixed dates, a known timing, a source, kinds; events sorted; the owner-named dates are present
+ok 2 - event table: fixed dates, a known timing, a source, kinds; events sorted; the owner-named dates are present
+  ---
+  duration_ms: 1.598761
+  ...
+# Subtest: entry session: news before the open -> that session; after the open, or on a weekend -> the next session
+ok 3 - entry session: news before the open -> that session; after the open, or on a weekend -> the next session
+  ---
+  duration_ms: 0.271016
+  ...
+# Subtest: driver momentum: today's 20-session return in the top 20% of the past year (only earlier values), bottom 20% for side down
+ok 4 - driver momentum: today's 20-session return in the top 20% of the past year (only earlier values), bottom 20% for side down
+  ---
+  duration_ms: 11.79202
+  ...
+# Subtest: VIX: a spike (30%+ over its 60-session average in the last 10 sessions) then a close 15%+ under the 10-session high; first day only
+ok 5 - VIX: a spike (30%+ over its 60-session average in the last 10 sessions) then a close 15%+ under the 10-session high; first day only
+  ---
+  duration_ms: 0.87852
+  ...
+# Subtest: sector groups by SIC: energy, gold, metals (not gold or uranium), defense; lists for gas producers and clean energy
+ok 6 - sector groups by SIC: energy, gold, metals (not gold or uranium), defense; lists for gas producers and clean energy
+  ---
+  duration_ms: 0.303736
+  ...
+# Subtest: top by traded value: the n largest, ties broken by key, invalid left out
+ok 7 - top by traded value: the n largest, ties broken by key, invalid left out
+  ---
+  duration_ms: 0.248107
+  ...
+# Subtest: driver score: 63-session return over the volatility scale; rotation picks the 2 strongest positive scores
+ok 8 - driver score: 63-session return over the volatility scale; rotation picks the 2 strongest positive scores
+  ---
+  duration_ms: 0.696451
+  ...
+# Subtest: worst sector: the lowest finite return
+ok 9 - worst sector: the lowest finite return
+  ---
+  duration_ms: 0.267855
+  ...
+# Subtest: stitching: Nasdaq rows before Massive's first day, scaled to Massive at the first common day; a split-sized jump in the old part is repaired
+ok 10 - stitching: Nasdaq rows before Massive's first day, scaled to Massive at the first common day; a split-sized jump in the old part is repaired
+  ---
+  duration_ms: 0.719949
+  ...
+# Subtest: event window: from the close before the entry session to the close of day 1 / 5 / 20 / 60
+ok 11 - event window: from the close before the entry session to the close of day 1 / 5 / 20 / 60
+  ---
+  duration_ms: 0.272711
+  ...
+# Subtest: correlation and beta of daily returns
+ok 12 - correlation and beta of daily returns
+  ---
+  duration_ms: 0.273881
+  ...
+# Subtest: judging: the system gates plus "better than SPY" (and the rotation's equal-weight yardstick); too few cases stays too few
+ok 13 - judging: the system gates plus "better than SPY" (and the rotation's equal-weight yardstick); too few cases stays too few
+  ---
+  duration_ms: 0.720244
+  ...
+# Subtest: month end after an entry date, on the NYSE calendar
+ok 14 - month end after an entry date, on the NYSE calendar
+  ---
+  duration_ms: 0.775264
+  ...
+# Subtest: halves split at 2024-01-01
+ok 15 - halves split at 2024-01-01
+  ---
+  duration_ms: 1.227621
+  ...
+# Subtest: library pre-registration adds each MACRO entry once and never touches others
+ok 16 - library pre-registration adds each MACRO entry once and never touches others
+  ---
+  duration_ms: 0.741644
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 46.600736

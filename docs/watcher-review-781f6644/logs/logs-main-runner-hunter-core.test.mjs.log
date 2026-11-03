@@ -1,0 +1,30 @@
+TAP version 13
+# Subtest: labels a next-session 40% high without using future fields as signal features
+ok 1 - labels a next-session 40% high without using future fields as signal features
+  ---
+  duration_ms: 11.28713
+  ...
+# Subtest: excludes prices outside $0.10-$5 and low dollar-volume signal days
+ok 2 - excludes prices outside $0.10-$5 and low dollar-volume signal days
+  ---
+  duration_ms: 2.708261
+  ...
+# Subtest: does not bridge a missing market session for a symbol
+ok 3 - does not bridge a missing market session for a symbol
+  ---
+  duration_ms: 0.407518
+  ...
+# Subtest: analysis reports both halves and warns that it is not a trading rule
+ok 4 - analysis reports both halves and warns that it is not a trading rule
+  ---
+  duration_ms: 1.704256
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 29.301836

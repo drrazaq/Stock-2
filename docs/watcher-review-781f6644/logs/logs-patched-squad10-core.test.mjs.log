@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: Shariah screen: business, each ratio vs the average market value, interest income
+ok 1 - Shariah screen: business, each ratio vs the average market value, interest income
+  ---
+  duration_ms: 2.577864
+  ...
+# Subtest: balance sheet point in time: filed before the day, debt parts, cash + investments, receivables, TTM interest / revenue
+ok 2 - balance sheet point in time: filed before the day, debt parts, cash + investments, receivables, TTM interest / revenue
+  ---
+  duration_ms: 4.167857
+  ...
+# Subtest: cap weights and the 15% cap: excess re-spread pro rata until none is above
+ok 3 - cap weights and the 15% cap: excess re-spread pro rata until none is above
+  ---
+  duration_ms: 0.948692
+  ...
+# Subtest: MSCI momentum tilt: 1 + z above the mean, 1 / (1 - z) below; no history = neutral
+ok 4 - MSCI momentum tilt: 1 + z above the mean, 1 / (1 - z) below; no history = neutral
+  ---
+  duration_ms: 0.543367
+  ...
+# Subtest: bottom third by 12-1 return is dropped; members without one stay
+ok 5 - bottom third by 12-1 return is dropped; members without one stay
+  ---
+  duration_ms: 0.431968
+  ...
+# Subtest: rule weights: CW uncapped by default, C15 capped, overrides for the sensitivity
+ok 6 - rule weights: CW uncapped by default, C15 capped, overrides for the sensitivity
+  ---
+  duration_ms: 2.750403
+  ...
+# Subtest: review months and holds; library pre-registration is idempotent
+ok 7 - review months and holds; library pre-registration is idempotent
+  ---
+  duration_ms: 0.970961
+  ...
+# Subtest: implied splits: a near-whole jump in the statement share count with no listed split
+ok 8 - implied splits: a near-whole jump in the statement share count with no listed split
+  ---
+  duration_ms: 0.835747
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 34.848563

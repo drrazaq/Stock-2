@@ -1,0 +1,80 @@
+TAP version 13
+# Subtest: control: FOCUS on and no live record anywhere: both are paper only
+ok 1 - control: FOCUS on and no live record anywhere: both are paper only
+  ---
+  duration_ms: 58.190684
+  ...
+# Subtest: a POSITIVE TRADABLE SMALL ledger never lifts FOCUS for the engines
+ok 2 - a POSITIVE TRADABLE SMALL ledger never lifts FOCUS for the engines
+  ---
+  duration_ms: 40.390945
+  ...
+# Subtest: a POSITIVE Alpaca record of another kind does not lift FOCUS for quick or swing trades
+ok 3 - a POSITIVE Alpaca record of another kind does not lift FOCUS for quick or swing trades
+  ---
+  duration_ms: 41.111965
+  ...
+# Subtest: the quick-trade record POSITIVE under the full bar lifts FOCUS for quick trades only
+ok 4 - the quick-trade record POSITIVE under the full bar lifts FOCUS for quick trades only
+  ---
+  duration_ms: 46.308435
+  ...
+# Subtest: the Alpaca quick record POSITIVE under the full bar lifts quick trades only
+ok 5 - the Alpaca quick record POSITIVE under the full bar lifts quick trades only
+  ---
+  duration_ms: 47.363947
+  ...
+# Subtest: a quick-trade record POSITIVE on 40 trades but without its days and stocks known does not lift FOCUS (full bar not shown)
+ok 6 - a quick-trade record POSITIVE on 40 trades but without its days and stocks known does not lift FOCUS (full bar not shown)
+  ---
+  duration_ms: 38.125045
+  ...
+# Subtest: a quick-trade record on 40 trades but only 5 distinct days does not lift FOCUS
+ok 7 - a quick-trade record on 40 trades but only 5 distinct days does not lift FOCUS
+  ---
+  duration_ms: 47.77567
+  ...
+# Subtest: FOCUS on: a ticker with no tested setup is blocked even when one engine kind is working
+ok 8 - FOCUS on: a ticker with no tested setup is blocked even when one engine kind is working
+  ---
+  duration_ms: 41.266267
+  ...
+# Subtest: tier2 off: the TRADABLE SMALL ledger rows are not shown or counted in the scorecard
+ok 9 - tier2 off: the TRADABLE SMALL ledger rows are not shown or counted in the scorecard
+  ---
+  duration_ms: 37.144412
+  ...
+# Subtest: control: tier2 on: the ledger row is shown in the scorecard
+ok 10 - control: tier2 on: the ledger row is shown in the scorecard
+  ---
+  duration_ms: 31.602543
+  ...
+# Subtest: ACTIONS: a POSITIVE tier-2 ledger alone keeps the FOCUS MODE notice and does not open the opportunities board
+ok 11 - ACTIONS: a POSITIVE tier-2 ledger alone keeps the FOCUS MODE notice and does not open the opportunities board
+  ---
+  duration_ms: 91.568185
+  ...
+# Subtest: ACTIONS (bot repair 28 Oct): long-term advice is not in ACTIONS at all; one pointer to  longterm , which holds it
+ok 12 - ACTIONS (bot repair 28 Oct): long-term advice is not in ACTIONS at all; one pointer to  longterm , which holds it
+  ---
+  duration_ms: 67.226326
+  ...
+# Subtest: CONCLUSION: with only quick trades working, the same stock as a swing setup is not printed as a swing BUY
+ok 13 - CONCLUSION: with only quick trades working, the same stock as a swing setup is not printed as a swing BUY
+  ---
+  duration_ms: 47.564714
+  ...
+# Subtest: no network was touched
+ok 14 - no network was touched
+  ---
+  duration_ms: 0.500003
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 648.650203

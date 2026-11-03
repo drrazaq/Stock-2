@@ -1,0 +1,54 @@
+TAP version 13
+Telegram: 1 message(s) read
+# Subtest: "options lab" prints each rule's verdict with its numbers, the data coverage and that no new ticket is shown
+ok 1 - "options lab" prints each rule's verdict with its numbers, the data coverage and that no new ticket is shown
+  ---
+  duration_ms: 153.096302
+  ...
+Telegram: 1 message(s) read
+# Subtest: plain "options" still answers with the paper trial, not the lane
+ok 2 - plain "options" still answers with the paper trial, not the lane
+  ---
+  duration_ms: 79.555567
+  ...
+Telegram: 1 message(s) read
+# Subtest: "options lab" before the first run says so
+ok 3 - "options lab" before the first run says so
+  ---
+  duration_ms: 70.437563
+  ...
+# Subtest: tier: TRADABLE SMALL -> small only while tier 2 is on and its own option ledger is not negative; PROVEN -> proven; others -> null
+ok 4 - tier: TRADABLE SMALL -> small only while tier 2 is on and its own option ledger is not negative; PROVEN -> proven; others -> null
+  ---
+  duration_ms: 172.776498
+  ...
+# Subtest: the ledger never prices an option ticket with the stock's price; a stock row is still resolved
+ok 5 - the ledger never prices an option ticket with the stock's price; a stock row is still resolved
+  ---
+  duration_ms: 31.469622
+  ...
+# Subtest: a lane ticket names its rule, tier and record, says 1 contract and BUY CALL, and gives the rule's sell date
+ok 6 - a lane ticket names its rule, tier and record, says 1 contract and BUY CALL, and gives the rule's sell date
+  ---
+  duration_ms: 29.936528
+  ...
+Telegram: 1 message(s) read
+# Subtest: "bought option" for a lane ticket keeps the rule and its sell date
+ok 7 - "bought option" for a lane ticket keeps the rule and its sell date
+  ---
+  duration_ms: 72.99734
+  ...
+# Subtest: no network was touched
+ok 8 - no network was touched
+  ---
+  duration_ms: 0.689395
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 623.010249

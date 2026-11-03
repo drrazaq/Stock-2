@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: size ranking: largest first, bad or missing values out, ties by key
+ok 1 - size ranking: largest first, bad or missing values out, ties by key
+  ---
+  duration_ms: 3.168563
+  ...
+# Subtest: 12-1 momentum skips the last month and needs 252 sessions
+ok 2 - 12-1 momentum skips the last month and needs 252 sessions
+  ---
+  duration_ms: 0.544579
+  ...
+# Subtest: index buffer: keep holdings within the top 2N, drop the rest, fill with the best not held
+ok 3 - index buffer: keep holdings within the top 2N, drop the rest, fill with the best not held
+  ---
+  duration_ms: 0.566702
+  ...
+# Subtest: new entrant: in now and in none of the previous 12; fewer than 12 known -> no
+ok 4 - new entrant: in now and in none of the previous 12; fewer than 12 known -> no
+  ---
+  duration_ms: 0.393715
+  ...
+# Subtest: quality pick: both ROIC and FCF margin positive, average of percentile ranks
+ok 5 - quality pick: both ROIC and FCF margin positive, average of percentile ranks
+  ---
+  duration_ms: 0.517302
+  ...
+# Subtest: Shariah proxy: business screen and both 33% ratios
+ok 6 - Shariah proxy: business screen and both 33% ratios
+  ---
+  duration_ms: 0.488945
+  ...
+# Subtest: debt and cash at the latest balance sheet filed before the day; never reported debt = 0
+ok 7 - debt and cash at the latest balance sheet filed before the day; never reported debt = 0
+  ---
+  duration_ms: 1.56681
+  ...
+# Subtest: trend filter: close above its 200-session average
+ok 8 - trend filter: close above its 200-session average
+  ---
+  duration_ms: 0.490709
+  ...
+# Subtest: portfolio: reset to equal weights, costs on every buy and sale, daily marks
+ok 9 - portfolio: reset to equal weights, costs on every buy and sale, daily marks
+  ---
+  duration_ms: 1.443304
+  ...
+# Subtest: portfolio: drift keeps winners without re-weighting; freed cash split among new entries
+ok 10 - portfolio: drift keeps winners without re-weighting; freed cash split among new entries
+  ---
+  duration_ms: 0.67596
+  ...
+# Subtest: portfolio: cash event, dead stock worth 0, bought-out stock paid its last close
+ok 11 - portfolio: cash event, dead stock worth 0, bought-out stock paid its last close
+  ---
+  duration_ms: 0.671833
+  ...
+# Subtest: equal weights can be capped (new entrants: at most 5% each)
+ok 12 - equal weights can be capped (new entrants: at most 5% each)
+  ---
+  duration_ms: 0.298687
+  ...
+# Subtest: path statistics and monthly returns
+ok 13 - path statistics and monthly returns
+  ---
+  duration_ms: 0.866546
+  ...
+# Subtest: library pre-registration is idempotent and carries the rule text
+ok 14 - library pre-registration is idempotent and carries the rule text
+  ---
+  duration_ms: 0.896522
+  ...
+# Subtest: board helpers
+ok 15 - board helpers
+  ---
+  duration_ms: 0.510992
+  ...
+# Subtest: holding periods: a holding is cut at every review it lives through; first / last pieces keep the real entry / exit
+ok 16 - holding periods: a holding is cut at every review it lives through; first / last pieces keep the real entry / exit
+  ---
+  duration_ms: 1.002884
+  ...
+# Subtest: data guards: a market value far above its traded value is a unit error; US domicile
+ok 17 - data guards: a market value far above its traded value is a unit error; US domicile
+  ---
+  duration_ms: 0.626445
+  ...
+# Subtest: market value from as-traded numbers: later splits restore the traded price; counts follow splits after their date
+ok 18 - market value from as-traded numbers: later splits restore the traded price; counts follow splits after their date
+  ---
+  duration_ms: 0.830628
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 55.938486

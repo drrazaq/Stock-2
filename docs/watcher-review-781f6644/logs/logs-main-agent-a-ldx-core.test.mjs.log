@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: registry: three pre-registered variants, none of them TGT20 itself
+ok 1 - registry: three pre-registered variants, none of them TGT20 itself
+  ---
+  duration_ms: 4.541132
+  ...
+# Subtest: live exit: +20% limit, else the planned close
+ok 2 - live exit: +20% limit, else the planned close
+  ---
+  duration_ms: 0.661174
+  ...
+# Subtest: halfway: under the buy at session 63 -> next open; at or above, or target first -> live
+ok 3 - halfway: under the buy at session 63 -> next open; at or above, or target first -> live
+  ---
+  duration_ms: 0.586209
+  ...
+# Subtest: 200-day average and the trend break
+ok 4 - 200-day average and the trend break
+  ---
+  duration_ms: 1.84995
+  ...
+# Subtest: stats, compare and the adoption test
+ok 5 - stats, compare and the adoption test
+  ---
+  duration_ms: 1.488204
+  ...
+# Subtest: library pre-registration is idempotent
+ok 6 - library pre-registration is idempotent
+  ---
+  duration_ms: 0.491561
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 28.608854

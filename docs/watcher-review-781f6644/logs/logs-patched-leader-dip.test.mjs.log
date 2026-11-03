@@ -1,0 +1,82 @@
+TAP version 13
+# Subtest: a fresh pick is a BUY of 1,000 USD with the +20% sell limit, no stop and the time exit; at most 3 slots
+ok 1 - a fresh pick is a BUY of 1,000 USD with the +20% sell limit, no stop and the time exit; at most 3 slots
+  ---
+  duration_ms: 45.140977
+  ...
+# Subtest: a stale list (older close than the newest session, or 9 sessions old) shows nothing: no late entries
+ok 2 - a stale list (older close than the newest session, or 9 sessions old) shows nothing: no late entries
+  ---
+  duration_ms: 74.842062
+  ...
+# Subtest: halal: unknown -> MARK HALAL FIRST; NOT halal (your mark or the ZAD list) -> dropped; danger filing -> dropped
+ok 3 - halal: unknown -> MARK HALAL FIRST; NOT halal (your mark or the ZAD list) -> dropped; danger filing -> dropped
+  ---
+  duration_ms: 66.135786
+  ...
+# Subtest: settings.leaderDip = false: the same picks as PAPER lines, no BUY
+ok 4 - settings.leaderDip = false: the same picks as PAPER lines, no BUY
+  ---
+  duration_ms: 34.100632
+  ...
+# Subtest: auto-off: 10+ finished real trades averaging below 0 stop NEW buys
+ok 5 - auto-off: 10+ finished real trades averaging below 0 stop NEW buys
+  ---
+  duration_ms: 64.772076
+  ...
+# Subtest: the exits: a day's HIGH at the +20% target -> SELL; 126 sessions counting the buy day -> TIME EXIT
+ok 6 - the exits: a day's HIGH at the +20% target -> SELL; 126 sessions counting the buy day -> TIME EXIT
+  ---
+  duration_ms: 1.427067
+  ...
+Telegram: 1 message(s) read
+# Subtest: bought SYM PRICE: tagged LEADER DIP (target +20%, 126 sessions, no stop), before TRY SMALL; the review never says SET A STOP
+ok 7 - bought SYM PRICE: tagged LEADER DIP (target +20%, 126 sessions, no stop), before TRY SMALL; the review never says SET A STOP
+  ---
+  duration_ms: 150.793984
+  ...
+# Subtest: holdings review: HOLD shows the target and time exit (no stop nag); a HIGH at the target gives a SELL
+ok 8 - holdings review: HOLD shows the target and time exit (no stop nag); a HIGH at the target gives a SELL
+  ---
+  duration_ms: 170.11609
+  ...
+Telegram: 1 message(s) read
+# Subtest: sold SYM PRICE on a leader dip position: the result goes to the leader dip ledger
+ok 9 - sold SYM PRICE on a leader dip position: the result goes to the leader dip ledger
+  ---
+  duration_ms: 61.25119
+  ...
+# Subtest: SQ11-PB12 is no longer in the TRY SMALL list (it is the LEADER DIP lane); other rules still are
+ok 10 - SQ11-PB12 is no longer in the TRY SMALL list (it is the LEADER DIP lane); other rules still are
+  ---
+  duration_ms: 92.204014
+  ...
+# Subtest: Basket 1 reminders are OFF by default; Basket 2 monthly reminder takes the whole amount; settings.basket1 = true turns Basket 1 back on
+ok 11 - Basket 1 reminders are OFF by default; Basket 2 monthly reminder takes the whole amount; settings.basket1 = true turns Basket 1 back on
+  ---
+  duration_ms: 84.585504
+  ...
+# Subtest: nightly close checks: leader dip exits are flagged (also for a short history) and kept as the exit flag; the nightly line has no stop nag
+ok 12 - nightly close checks: leader dip exits are flagged (also for a short history) and kept as the exit flag; the nightly line has no stop nag
+  ---
+  duration_ms: 5.360659
+  ...
+# Subtest: no network was used
+ok 13 - no network was used
+  ---
+  duration_ms: 0.235087
+  ...
+# Subtest: practice line shows the Alpaca paper total, wins and losses, labelled not a buy
+ok 14 - practice line shows the Alpaca paper total, wins and losses, labelled not a buy
+  ---
+  duration_ms: 43.76467
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 904.893819

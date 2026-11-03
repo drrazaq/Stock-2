@@ -1,0 +1,65 @@
+TAP version 13
+# Subtest: frozen policy: scan.mjs src order, SUESURGE info only, live stops 35% over hold 100 else 15%
+ok 1 - frozen policy: scan.mjs src order, SUESURGE info only, live stops 35% over hold 100 else 15%
+  ---
+  duration_ms: 2.122667
+  ...
+# Subtest: ledgerOff: 10+ finished results with a negative average
+ok 2 - ledgerOff: 10+ finished results with a negative average
+  ---
+  duration_ms: 0.2458
+  ...
+# Subtest: cost and whole shares
+ok 3 - cost and whole shares
+  ---
+  duration_ms: 1.350811
+  ...
+# Subtest: account: max 2 open, priority order, full-slot skips, duplicate skip, exits free the slot next session
+ok 4 - account: max 2 open, priority order, full-slot skips, duplicate skip, exits free the slot next session
+  ---
+  duration_ms: 1.43858
+  ...
+# Subtest: account: ticket = remaining cash when below 1,000; too expensive is skipped
+ok 5 - account: ticket = remaining cash when below 1,000; too expensive is skipped
+  ---
+  duration_ms: 0.351697
+  ...
+# Subtest: account: a rule switches off after 10 losing results, stays on otherwise
+ok 6 - account: a rule switches off after 10 losing results, stays on otherwise
+  ---
+  duration_ms: 0.968795
+  ...
+# Subtest: account: a stop sale at the open does not free the slot for that same open
+ok 7 - account: a stop sale at the open does not free the slot for that same open
+  ---
+  duration_ms: 0.411054
+  ...
+# Subtest: open positions at the end are marked at the last close (unrealised)
+ok 8 - open positions at the end are marked at the last close (unrealised)
+  ---
+  duration_ms: 0.359413
+  ...
+# Subtest: buy and hold, drawdown, compound return, calendar years
+ok 9 - buy and hold, drawdown, compound return, calendar years
+  ---
+  duration_ms: 0.639279
+  ...
+# Subtest: shuffleWithin keeps each rule/day group and only reorders it; shiftStats nets after cost
+ok 10 - shuffleWithin keeps each rule/day group and only reorders it; shiftStats nets after cost
+  ---
+  duration_ms: 1.095928
+  ...
+# Subtest: PB12T20: target exit at the limit (high), at the open on a gap over, none when not reached; trade stats
+ok 11 - PB12T20: target exit at the limit (high), at the open on a gap over, none when not reached; trade stats
+  ---
+  duration_ms: 0.695254
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26.868394

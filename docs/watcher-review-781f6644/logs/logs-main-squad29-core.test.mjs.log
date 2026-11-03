@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: registry: six families, each with a SQ29 id
+ok 1 - registry: six families, each with a SQ29 id
+  ---
+  duration_ms: 2.39696
+  ...
+# Subtest: candidate families from form and items; amendments left out
+ok 2 - candidate families from form and items; amendments left out
+  ---
+  duration_ms: 0.875763
+  ...
+# Subtest: F2: auditor resigned / declined to stand counts; dismissal and firm combinations do not
+ok 3 - F2: auditor resigned / declined to stand counts; dismissal and firm combinations do not
+  ---
+  duration_ms: 3.04865
+  ...
+# Subtest: F3: CEO / CFO leaving within 30 days without a successor; orderly transitions and named successors do not count
+ok 4 - F3: CEO / CFO leaving within 30 days without a successor; orderly transitions and named successors do not count
+  ---
+  duration_ms: 2.731211
+  ...
+# Subtest: F5: affirmative going-concern sentences only
+ok 5 - F5: affirmative going-concern sentences only
+  ---
+  duration_ms: 1.612107
+  ...
+# Subtest: text helpers: html, sentences keep Mr. / Inc. together
+ok 6 - text helpers: html, sentences keep Mr. / Inc. together
+  ---
+  duration_ms: 0.771296
+  ...
+# Subtest: previous periodic filing: the latest 10-K / 10-Q before, within 400 days
+ok 7 - previous periodic filing: the latest 10-K / 10-Q before, within 400 days
+  ---
+  duration_ms: 0.288798
+  ...
+# Subtest: entry session: before 09:30 New York -> that open; later or weekend -> the next session open
+ok 8 - entry session: before 09:30 New York -> that open; later or weekend -> the next session open
+  ---
+  duration_ms: 0.387829
+  ...
+# Subtest: dedupe: one event per stock per family per 60 sessions
+ok 9 - dedupe: one event per stock per family per 60 sessions
+  ---
+  duration_ms: 8.455675
+  ...
+# Subtest: window return: normal, late entry, stop = -100%, rename followed, beyond cache = null
+ok 10 - window return: normal, late entry, stop = -100%, rename followed, beyond cache = null
+  ---
+  duration_ms: 0.705916
+  ...
+# Subtest: block t, half stats and the decision rule
+ok 11 - block t, half stats and the decision rule
+  ---
+  duration_ms: 3.335549
+  ...
+# Subtest: library pre-registration is idempotent and append only
+ok 12 - library pre-registration is idempotent and append only
+  ---
+  duration_ms: 2.024691
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 47.40476

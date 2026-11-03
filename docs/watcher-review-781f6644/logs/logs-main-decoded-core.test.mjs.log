@@ -1,0 +1,120 @@
+TAP version 13
+# Subtest: QBO: a tight base after a 30%+ move, in an up market, gives a buy-stop at the base high
+ok 1 - QBO: a tight base after a 30%+ move, in an up market, gives a buy-stop at the base high
+  ---
+  duration_ms: 5.184829
+  ...
+# Subtest: QBO without a prior move is not a setup
+ok 2 - QBO without a prior move is not a setup
+  ---
+  duration_ms: 1.702509
+  ...
+# Subtest: regimeUp: 10-day above 20-day and both rising
+ok 3 - regimeUp: 10-day above 20-day and both rising
+  ---
+  duration_ms: 0.26859
+  ...
+# Subtest: KQ: buy-stop fill at the trigger, 1/3 sold on day 3 above the fill, rest at the next open after a close under the 10-day
+ok 4 - KQ: buy-stop fill at the trigger, 1/3 sold on day 3 above the fill, rest at the next open after a close under the 10-day
+  ---
+  duration_ms: 2.702574
+  ...
+# Subtest: KQ: the stop is the entry day low; a later trade under it closes the rest at the stop (or the open if it gaps under)
+ok 5 - KQ: the stop is the entry day low; a later trade under it closes the rest at the stop (or the open if it gaps under)
+  ---
+  duration_ms: 7.013453
+  ...
+# Subtest: KQ: an entry day that falls more than 1 ADR under the fill is booked as stopped at 1 ADR (worst case)
+ok 6 - KQ: an entry day that falls more than 1 ADR under the fill is booked as stopped at 1 ADR (worst case)
+  ---
+  duration_ms: 0.800064
+  ...
+# Subtest: buy-stop orders: pending, expired after 5 sessions, cancelled by a close under the base low
+ok 7 - buy-stop orders: pending, expired after 5 sessions, cancelled by a close under the base low
+  ---
+  duration_ms: 1.872465
+  ...
+# Subtest: EP: a 10%+ gap on 3x volume that holds, in a stock that had not run, fires; stop = gap-day low, capped at 1.5 ADR
+ok 8 - EP: a 10%+ gap on 3x volume that holds, in a stock that had not run, fires; stop = gap-day low, capped at 1.5 ADR
+  ---
+  duration_ms: 1.686486
+  ...
+# Subtest: EP / KQ with an open entry: the stop is live from the entry day; skipped when it opens under the stop
+ok 9 - EP / KQ with an open entry: the stop is live from the entry day; skipped when it opens under the stop
+  ---
+  duration_ms: 0.99466
+  ...
+# Subtest: MB: +4% close near the high on rising volume, breadth >= 1, not after 3 up days
+ok 10 - MB: +4% close near the high on rising volume, breadth >= 1, not after 3 up days
+  ---
+  duration_ms: 0.698379
+  ...
+# Subtest: MB exit: sold at the close of day 5, or at the burst-day low
+ok 11 - MB exit: sold at the close of day 5, or at the burst-day low
+  ---
+  duration_ms: 0.631878
+  ...
+# Subtest: VCP: trend template + three shrinking contractions + dry volume near the pivot
+ok 12 - VCP: trend template + three shrinking contractions + dry volume near the pivot
+  ---
+  duration_ms: 2.465639
+  ...
+# Subtest: MO exit: half at +20%, stop to the fill after +10%, rest at the next open after a close under the 50-day; no fill 5%+ above the pivot
+ok 13 - MO exit: half at +20%, stop to the fill after +10%, rest at the next open after a close under the 50-day; no fill 5%+ above the pivot
+  ---
+  duration_ms: 1.706049
+  ...
+# Subtest: PB: a strong stock dips to its rising 21-day EMA and closes back above it, up on the day
+ok 14 - PB: a strong stock dips to its rising 21-day EMA and closes back above it, up on the day
+  ---
+  duration_ms: 1.38805
+  ...
+# Subtest: PB exit: the next open after a close under the 9-day EMA
+ok 15 - PB exit: the next open after a close under the 9-day EMA
+  ---
+  duration_ms: 0.831631
+  ...
+# Subtest: information discreteness: many small up days = low (negative) ID; a few jumps = high ID
+ok 16 - information discreteness: many small up days = low (negative) ID; a few jumps = high ID
+  ---
+  duration_ms: 0.93216
+  ...
+# Subtest: frogPick: the top 30% by 12-1 return, then the lowest ID first
+ok 17 - frogPick: the top 30% by 12-1 return, then the lowest ID first
+  ---
+  duration_ms: 0.94367
+  ...
+# Subtest: CRASH: down 50%+ in 6 months, no lower low, a tighter range, rising volume; the control keeps making lower lows
+ok 18 - CRASH: down 50%+ in 6 months, no lower low, a tighter range, rising volume; the control keeps making lower lows
+  ---
+  duration_ms: 1.211005
+  ...
+# Subtest: TIME exit: sold at the close of day 126
+ok 19 - TIME exit: sold at the close of day 126
+  ---
+  duration_ms: 0.619979
+  ...
+# Subtest: a stock with no prices for 15+ sessions is closed at its last price
+ok 20 - a stock with no prices for 15+ sessions is closed at its last price
+  ---
+  duration_ms: 1.083702
+  ...
+# Subtest: board stats net of 0.8% cost, and the TRY SMALL readiness rule (30+ trades, 10+ days, positive)
+ok 21 - board stats net of 0.8% cost, and the TRY SMALL readiness rule (30+ trades, 10+ days, positive)
+  ---
+  duration_ms: 0.404256
+  ...
+# Subtest: every method has an engine, a block length and a name; RS score needs a year
+ok 22 - every method has an engine, a block length and a name; RS score needs a year
+  ---
+  duration_ms: 0.368388
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 69.494962

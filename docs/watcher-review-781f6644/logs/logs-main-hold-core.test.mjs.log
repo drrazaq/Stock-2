@@ -1,0 +1,95 @@
+TAP version 13
+# Subtest: get-even: sells at the next open after the first close 5% above the buy; nothing earlier
+ok 1 - get-even: sells at the next open after the first close 5% above the buy; nothing earlier
+  ---
+  duration_ms: 2.014771
+  ...
+# Subtest: get-even: a close exactly 10% above counts; on the last allowed session it sells at that close
+ok 2 - get-even: a close exactly 10% above counts; on the last allowed session it sells at that close
+  ---
+  duration_ms: 0.302829
+  ...
+# Subtest: get-even: never recovered -> sold at the close of the last allowed session, still under water
+ok 3 - get-even: never recovered -> sold at the close of the last allowed session, still under water
+  ---
+  duration_ms: 0.296127
+  ...
+# Subtest: get-even: a window that runs past the end of the data is not judged (censored)
+ok 4 - get-even: a window that runs past the end of the data is not judged (censored)
+  ---
+  duration_ms: 0.16889
+  ...
+# Subtest: get-even with the 35% disaster stop (the yardstick): sells at the next open after a close 35%+ under the buy
+ok 5 - get-even with the 35% disaster stop (the yardstick): sells at the next open after a close 35%+ under the buy
+  ---
+  duration_ms: 0.266964
+  ...
+# Subtest: delisting: a stock that falls under 3 USD and disappears = the remaining value is lost (-100%)
+ok 6 - delisting: a stock that falls under 3 USD and disappears = the remaining value is lost (-100%)
+  ---
+  duration_ms: 0.778443
+  ...
+# Subtest: a stock that disappears ABOVE 3 USD (bought out, merged, renamed) is paid out at its last close, not counted as dead
+ok 7 - a stock that disappears ABOVE 3 USD (bought out, merged, renamed) is paid out at its last close, not counted as dead
+  ---
+  duration_ms: 0.203245
+  ...
+# Subtest: the last few sessions of the data are not a delisting (a stock that simply has no bar yet today is alive)
+ok 8 - the last few sessions of the data are not a delisting (a stock that simply has no bar yet today is alive)
+  ---
+  duration_ms: 0.167075
+  ...
+# Subtest: averaging down: equal money per unit, average cost = harmonic mean, sell all at average cost +10%
+ok 9 - averaging down: equal money per unit, average cost = harmonic mean, sell all at average cost +10%
+  ---
+  duration_ms: 1.033979
+  ...
+# Subtest: averaging down: target reached after one add (at the average cost +10%, not the first buy +10%)
+ok 10 - averaging down: target reached after one add (at the average cost +10%, not the first buy +10%)
+  ---
+  duration_ms: 0.43518
+  ...
+# Subtest: averaging down: one close under both levels buys both extra units at the next open; a missing open retries later
+ok 11 - averaging down: one close under both levels buys both extra units at the next open; a missing open retries later
+  ---
+  duration_ms: 0.424269
+  ...
+# Subtest: averaging down against the fund high: levels measured from the running high, not the first buy
+ok 12 - averaging down against the fund high: levels measured from the running high, not the first buy
+  ---
+  duration_ms: 0.278455
+  ...
+# Subtest: regime labels use only closes up to that day: 200-day trend, crash = 15%+ under the 1-year high, 20-day volatility
+ok 13 - regime labels use only closes up to that day: 200-day trend, crash = 15%+ under the 1-year high, 20-day volatility
+  ---
+  duration_ms: 10.924519
+  ...
+# Subtest: deterministic sampling: the same seed gives the same picks, no repeats
+ok 14 - deterministic sampling: the same seed gives the same picks, no repeats
+  ---
+  duration_ms: 0.812203
+  ...
+# Subtest: recovery report: shares recovered / under water / dead, median wait, return per year of capital tied up vs the S&P 500
+ok 15 - recovery report: shares recovered / under water / dead, median wait, return per year of capital tied up vs the S&P 500
+  ---
+  duration_ms: 0.822925
+  ...
+# Subtest: monthly saving: buying every month vs keeping the cash for a 10% dip from the high
+ok 16 - monthly saving: buying every month vs keeping the cash for a 10% dip from the high
+  ---
+  duration_ms: 0.428064
+  ...
+# Subtest: judgeHold: the system tier-2 gates, the yardstick named, plus the per-year gate against the S&P 500
+ok 17 - judgeHold: the system tier-2 gates, the yardstick named, plus the per-year gate against the S&P 500
+  ---
+  duration_ms: 0.756147
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 43.54487

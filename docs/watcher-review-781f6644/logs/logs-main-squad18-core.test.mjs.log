@@ -1,0 +1,90 @@
+TAP version 13
+# Subtest: 10 rules: 7 trade rules (holds 21 / 63 / 126) and 3 contribution rules
+ok 1 - 10 rules: 7 trade rules (holds 21 / 63 / 126) and 3 contribution rules
+  ---
+  duration_ms: 2.075861
+  ...
+# Subtest: distribution = 0.2%+ down on higher volume; accumulation = 0.2%+ up on higher volume; last 25 sessions only
+ok 2 - distribution = 0.2%+ down on higher volume; accumulation = 0.2%+ up on higher volume; last 25 sessions only
+  ---
+  duration_ms: 1.418604
+  ...
+# Subtest: market stress: SPY -2%, VIXY +15%, or 5+ distribution days
+ok 3 - market stress: SPY -2%, VIXY +15%, or 5+ distribution days
+  ---
+  duration_ms: 0.803332
+  ...
+# Subtest: active IBD distribution days retire once SPY closes 5%+ above them
+ok 4 - active IBD distribution days retire once SPY closes 5%+ above them
+  ---
+  duration_ms: 0.433572
+  ...
+# Subtest: shrinking-volume pullback: last 10 days vs the 50 before
+ok 5 - shrinking-volume pullback: last 10 days vs the 50 before
+  ---
+  duration_ms: 0.431901
+  ...
+# Subtest: Friday leader dip: stock -2%, SPY better than -1%, Friday only
+ok 6 - Friday leader dip: stock -2%, SPY better than -1%, Friday only
+  ---
+  duration_ms: 0.370396
+  ...
+# Subtest: Thursday / Friday signals are bought at the next week's first session (Tuesday after a Monday holiday)
+ok 7 - Thursday / Friday signals are bought at the next week's first session (Tuesday after a Monday holiday)
+  ---
+  duration_ms: 0.45275
+  ...
+# Subtest: calm delay: next open when calm; else the open after the first calm close; at most 21 sessions
+ok 8 - calm delay: next open when calm; else the open after the first calm close; at most 21 sessions
+  ---
+  duration_ms: 1.71685
+  ...
+# Subtest: contribution days: first session, mid-month, last session, after the first 3% dip (else the last session)
+ok 9 - contribution days: first session, mid-month, last session, after the first 3% dip (else the last session)
+  ---
+  duration_ms: 0.664819
+  ...
+# Subtest: accounts per half and the monthly advantage vs plain
+ok 10 - accounts per half and the monthly advantage vs plain
+  ---
+  duration_ms: 1.232731
+  ...
+# Subtest: contribution verdict: better needs both halves, a bigger account and t >= 2
+ok 11 - contribution verdict: better needs both halves, a bigger account and t >= 2
+  ---
+  duration_ms: 0.510922
+  ...
+# Subtest: basket value: weights at each period open, cash after a member is sold, re-spread at the next period
+ok 12 - basket value: weights at each period open, cash after a member is sold, re-spread at the next period
+  ---
+  duration_ms: 0.857345
+  ...
+# Subtest: holdFrom(k = t + 1) equals squad11 holdTrade; a fixed sell session is honoured
+ok 13 - holdFrom(k = t + 1) equals squad11 holdTrade; a fixed sell session is honoured
+  ---
+  duration_ms: 0.554783
+  ...
+# Subtest: pre-holiday and turn-of-month tags
+ok 14 - pre-holiday and turn-of-month tags
+  ---
+  duration_ms: 0.785812
+  ...
+# Subtest: removed report and paired comparison
+ok 15 - removed report and paired comparison
+  ---
+  duration_ms: 0.784011
+  ...
+# Subtest: library pre-registration is idempotent and written before any result
+ok 16 - library pre-registration is idempotent and written before any result
+  ---
+  duration_ms: 0.547415
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 45.497779

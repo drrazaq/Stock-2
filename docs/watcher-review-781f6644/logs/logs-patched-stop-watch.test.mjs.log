@@ -1,0 +1,25 @@
+TAP version 13
+# Subtest: price at or under the stop: one SELL NOW message, not repeated
+ok 1 - price at or under the stop: one SELL NOW message, not repeated
+  ---
+  duration_ms: 1.639986
+  ...
+# Subtest: within 2% above the stop: one NEAR STOP warning, then the hit still comes
+ok 2 - within 2% above the stop: one NEAR STOP warning, then the hit still comes
+  ---
+  duration_ms: 0.315571
+  ...
+# Subtest: no stop, no price, or a bad price: nothing
+ok 3 - no stop, no price, or a bad price: nothing
+  ---
+  duration_ms: 0.707639
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15.213993

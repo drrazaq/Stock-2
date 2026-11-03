@@ -1,0 +1,120 @@
+TAP version 13
+# Subtest: only a rule positive after stress cost, ahead of the average stock and positive without its 2 best in BOTH halves qualifies
+ok 1 - only a rule positive after stress cost, ahead of the average stock and positive without its 2 best in BOTH halves qualifies
+  ---
+  duration_ms: 3.103712
+  ...
+# Subtest: halal-ok picks become 300 USD buys with a 15% stop; unknown ones ask for a mark; failed and blocked ones are dropped
+ok 2 - halal-ok picks become 300 USD buys with a 15% stop; unknown ones ask for a mark; failed and blocked ones are dropped
+  ---
+  duration_ms: 33.066501
+  ...
+# Subtest: max 2 open: with 2 TRY SMALL positions held, no new buys
+ok 3 - max 2 open: with 2 TRY SMALL positions held, no new buys
+  ---
+  duration_ms: 3.963805
+  ...
+# Subtest: switched off in settings: nothing shown
+ok 4 - switched off in settings: nothing shown
+  ---
+  duration_ms: 47.975421
+  ...
+# Subtest: its own ledger negative after 10+ resolved cases: that rule is off
+ok 5 - its own ledger negative after 10+ resolved cases: that rule is off
+  ---
+  duration_ms: 49.186756
+  ...
+# Subtest: no network was used
+ok 6 - no network was used
+  ---
+  duration_ms: 0.379833
+  ...
+# Subtest: a decoded-lab rule that meets the standard gives buys with its own hold and a 35% stop
+ok 7 - a decoded-lab rule that meets the standard gives buys with its own hold and a 35% stop
+  ---
+  duration_ms: 126.699706
+  ...
+# Subtest: a rule failing its per-budget check is excluded even if its frozen first run qualifies
+ok 8 - a rule failing its per-budget check is excluded even if its frozen first run qualifies
+  ---
+  duration_ms: 64.411179
+  ...
+# Subtest: anomaly-lab rules that meet the standard give buys with their own hold
+ok 9 - anomaly-lab rules that meet the standard give buys with their own hold
+  ---
+  duration_ms: 47.910628
+  ...
+# Subtest: the angles lab (and any standard lab) feeds TRY SMALL by the same standard
+ok 10 - the angles lab (and any standard lab) feeds TRY SMALL by the same standard
+  ---
+  duration_ms: 59.99172
+  ...
+# Subtest: TRY SMALL trades are 1,000 USD
+ok 11 - TRY SMALL trades are 1,000 USD
+  ---
+  duration_ms: 0.482339
+  ...
+# Subtest: too few cases, too few trades or too few blocks never qualify
+ok 12 - too few cases, too few trades or too few blocks never qualify
+  ---
+  duration_ms: 0.484371
+  ...
+# Subtest: a corrected run replaces the frozen first run for TRY SMALL
+ok 13 - a corrected run replaces the frozen first run for TRY SMALL
+  ---
+  duration_ms: 50.484878
+  ...
+# Subtest: ANOM-SUESURGE stays paused even with a corrected run
+ok 14 - ANOM-SUESURGE stays paused even with a corrected run
+  ---
+  duration_ms: 0.512154
+  ...
+# Subtest: squad20 filter/exit versions of live rules are not read by TRY SMALL (27 Oct)
+ok 15 - squad20 filter/exit versions of live rules are not read by TRY SMALL (27 Oct)
+  ---
+  duration_ms: 6.740931
+  ...
+# Subtest: a rule that loses to the S&P 500 per year does not qualify
+ok 16 - a rule that loses to the S&P 500 per year does not qualify
+  ---
+  duration_ms: 0.632172
+  ...
+# Subtest: SQ1-BBAUTH is paused until its corrected run exists (survivorship bug found by the independent re-check)
+ok 17 - SQ1-BBAUTH is paused until its corrected run exists (survivorship bug found by the independent re-check)
+  ---
+  duration_ms: 0.312249
+  ...
+# Subtest: a basket whose whole-portfolio test lagged SPY does not qualify (SQ5-TOP20-TF, 24 Oct)
+ok 18 - a basket whose whole-portfolio test lagged SPY does not qualify (SQ5-TOP20-TF, 24 Oct)
+  ---
+  duration_ms: 0.520796
+  ...
+# Subtest: basket labs squad5 and squad10 are not read by TRY SMALL
+ok 19 - basket labs squad5 and squad10 are not read by TRY SMALL
+  ---
+  duration_ms: 6.726997
+  ...
+# Subtest: near-copies of SQ11-PB12 from Squad 14 never trade
+ok 20 - near-copies of SQ11-PB12 from Squad 14 never trade
+  ---
+  duration_ms: 0.390141
+  ...
+# Subtest: Squad 18 filtered copies of PB12 / QMOM never trade
+ok 21 - Squad 18 filtered copies of PB12 / QMOM never trade
+  ---
+  duration_ms: 0.377225
+  ...
+# Subtest: TRY SMALL is paper only by default (no BUY line, picks still logged)
+ok 22 - TRY SMALL is paper only by default (no BUY line, picks still logged)
+  ---
+  duration_ms: 56.827183
+  ...
+1..22
+# tests 22
+# suites 0
+# pass 22
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 574.794525

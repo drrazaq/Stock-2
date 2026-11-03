@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: daylight saving: New York is UTC-4 until 1 Nov 2026, UTC-5 after; the 12:45 / 13:45 UTC crons are both 8:45 New York in their season
+ok 1 - daylight saving: New York is UTC-4 until 1 Nov 2026, UTC-5 after; the 12:45 / 13:45 UTC crons are both 8:45 New York in their season
+  ---
+  duration_ms: 17.791551
+  ...
+# Subtest: market days: weekends and NYSE holidays are skipped
+ok 2 - market days: weekends and NYSE holidays are skipped
+  ---
+  duration_ms: 1.835326
+  ...
+# Subtest: nothing is done outside 9:10-14:55 New York; no start after 14:00
+ok 3 - nothing is done outside 9:10-14:55 New York; no start after 14:00
+  ---
+  duration_ms: 1.218173
+  ...
+# Subtest: not running at 9:12 New York: starts it once, then waits 15 minutes before a second attempt, at most 3, then one DOWN alert
+ok 4 - not running at 9:12 New York: starts it once, then waits 15 minutes before a second attempt, at most 3, then one DOWN alert
+  ---
+  duration_ms: 1.227094
+  ...
+# Subtest: running on time: no alert, start time recorded; running late (GitHub delay like 11:10 on 26 Oct): one LATE alert
+ok 5 - running on time: no alert, start time recorded; running late (GitHub delay like 11:10 on 26 Oct): one LATE alert
+  ---
+  duration_ms: 1.934913
+  ...
+# Subtest: queued but not started by 9:25: one WAITING alert and no extra dispatch (concurrency would only queue it)
+ok 6 - queued but not started by 9:25: one WAITING alert and no extra dispatch (concurrency would only queue it)
+  ---
+  duration_ms: 0.797259
+  ...
+# Subtest: a run that watched and then ended before 11:00 is reported once, not restarted; a quick early exit (winter 7:45 run) does not count
+ok 7 - a run that watched and then ended before 11:00 is reported once, not restarted; a quick early exit (winter 7:45 run) does not count
+  ---
+  duration_ms: 0.686616
+  ...
+# Subtest: yesterday's runs do not count for today
+ok 8 - yesterday's runs do not count for today
+  ---
+  duration_ms: 0.400078
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 41.172933

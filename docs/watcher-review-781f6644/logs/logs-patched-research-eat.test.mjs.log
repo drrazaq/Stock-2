@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: three EAT rules: two buys (21, 63), one avoid; one open trade per stock
+ok 1 - three EAT rules: two buys (21, 63), one avoid; one open trade per stock
+  ---
+  duration_ms: 5.528565
+  ...
+# Subtest: announcements: only item 2.02, New York date, filings within 30 days grouped (first one dates it)
+ok 2 - announcements: only item 2.02, New York date, filings within 30 days grouped (first one dates it)
+  ---
+  duration_ms: 1.769803
+  ...
+# Subtest: events: shift vs year-ago + 364 days; closest match within +-30; advancer / delayer / neither
+ok 3 - events: shift vs year-ago + 364 days; closest match within +-30; advancer / delayer / neither
+  ---
+  duration_ms: 1.40616
+  ...
+# Subtest: data rule: 95% 8-K lists, 85% mapping, 5,000 matched announcements
+ok 4 - data rule: 95% 8-K lists, 85% mapping, 5,000 matched announcements
+  ---
+  duration_ms: 0.800555
+  ...
+# Subtest: pre-registration writes the three EAT entries once, never over a result
+ok 5 - pre-registration writes the three EAT entries once, never over a result
+  ---
+  duration_ms: 1.70634
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 34.978654

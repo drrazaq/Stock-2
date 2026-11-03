@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable
+ok 1 - configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable
+  ---
+  duration_ms: 3.646078
+  ...
+# Subtest: health reports configured gaps and known outside hour separately; explicit actionable thresholds
+ok 2 - health reports configured gaps and known outside hour separately; explicit actionable thresholds
+  ---
+  duration_ms: 3.171307
+  ...
+# Subtest: message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed
+ok 3 - message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed
+  ---
+  duration_ms: 12.268101
+  ...
+# Subtest: unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY
+ok 4 - unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY
+  ---
+  duration_ms: 2.267357
+  ...
+# Subtest: actual watcher shadow producer retains unknown observations and filing records without adding source calls
+ok 5 - actual watcher shadow producer retains unknown observations and filing records without adding source calls
+  ---
+  duration_ms: 2.586098
+  ...
+# Subtest: reservation publication failure prevents send and quarantines local retry
+ok 6 - reservation publication failure prevents send and quarantines local retry
+  ---
+  duration_ms: 4.964601
+  ...
+# Subtest: actual watcher approved-alert caller blocks unknown identity before any send
+ok 7 - actual watcher approved-alert caller blocks unknown identity before any send
+  ---
+  duration_ms: 1.406087
+  ...
+# Subtest: actual filing decision caller records eligible unknown-type research, and preserves source failure
+ok 8 - actual filing decision caller records eligible unknown-type research, and preserves source failure
+  ---
+  duration_ms: 1.572463
+  ...
+# Subtest: actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment
+ok 9 - actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment
+  ---
+  duration_ms: 3.610209
+  ...
+# Subtest: actual shadow caller captures identity once rather than retroactively reclassifying the first observation
+ok 10 - actual shadow caller captures identity once rather than retroactively reclassifying the first observation
+  ---
+  duration_ms: 1.509424
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54.93335

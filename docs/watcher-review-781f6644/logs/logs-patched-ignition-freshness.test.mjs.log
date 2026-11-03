@@ -1,0 +1,30 @@
+TAP version 13
+# Subtest: freshness gate accepts only known, finite ages from 0 through 3 minutes
+ok 1 - freshness gate accepts only known, finite ages from 0 through 3 minutes
+  ---
+  duration_ms: 1.454185
+  ...
+# Subtest: age rejection distinguishes stale, unknown, and future-dated prices
+ok 2 - age rejection distinguishes stale, unknown, and future-dated prices
+  ---
+  duration_ms: 0.309059
+  ...
+# Subtest: paper scoring excludes missing, non-finite, negative, and stale signal ages
+ok 3 - paper scoring excludes missing, non-finite, negative, and stale signal ages
+  ---
+  duration_ms: 20.401636
+  ...
+# Subtest: legacy scored outcomes with missing or invalid signal age are removed from aggregate records
+ok 4 - legacy scored outcomes with missing or invalid signal age are removed from aggregate records
+  ---
+  duration_ms: 0.959605
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 38.842827

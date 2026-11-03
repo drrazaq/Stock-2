@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: averages, 52-week high, 6-month drawdown: only closes up to the day
+ok 1 - averages, 52-week high, 6-month drawdown: only closes up to the day
+  ---
+  duration_ms: 22.025644
+  ...
+# Subtest: tightness, up days, volume vs average, volume trend
+ok 2 - tightness, up days, volume vs average, volume trend
+  ---
+  duration_ms: 0.839436
+  ...
+# Subtest: the path of the prior gain: one big jump vs many small steps; median dollar volume counts a missing day as 0
+ok 3 - the path of the prior gain: one big jump vs many small steps; median dollar volume counts a missing day as 0
+  ---
+  duration_ms: 2.619713
+  ...
+# Subtest: flags: registered thresholds as bits; unknown values switch a flag off
+ok 4 - flags: registered thresholds as bits; unknown values switch a flag off
+  ---
+  duration_ms: 0.984583
+  ...
+# Subtest: winner episodes: start after the lowest close, 30%+ within 10 sessions, inside the window, universe at the base, one per 10 sessions
+ok 5 - winner episodes: start after the lowest close, 30%+ within 10 sessions, inside the window, universe at the base, one per 10 sessions
+  ---
+  duration_ms: 1.73019
+  ...
+# Subtest: realistic entry: next open after the first +10% close; what was left of the move
+ok 6 - realistic entry: next open after the first +10% close; what was left of the move
+  ---
+  duration_ms: 0.722452
+  ...
+# Subtest: controls: same industry first, nearest price / volatility / market value; others fill a short list
+ok 7 - controls: same industry first, nearest price / volatility / market value; others fill a short list
+  ---
+  duration_ms: 0.800608
+  ...
+# Subtest: combinations: counted when all flags were on together on one of the 10 days; clearly-more-often needs counts, lift, z and added value
+ok 8 - combinations: counted when all flags were on together on one of the 10 days; clearly-more-often needs counts, lift, z and added value
+  ---
+  duration_ms: 3.52569
+  ...
+# Subtest: exit S8T10: stop at 8% under the entry open, a gap under it sells at the open, else the 10th close
+ok 9 - exit S8T10: stop at 8% under the entry open, a gap under it sells at the open, else the 10th close
+  ---
+  duration_ms: 0.823561
+  ...
+# Subtest: exit TRAIL: the stop follows 10% under the highest close and never falls; at most 20 sessions
+ok 10 - exit TRAIL: the stop follows 10% under the highest close and never falls; at most 20 sessions
+  ---
+  duration_ms: 0.633239
+  ...
+# Subtest: rule trades: only fresh signals, in the universe, one open trade per stock
+ok 11 - rule trades: only fresh signals, in the universe, one open trade per stock
+  ---
+  duration_ms: 0.680525
+  ...
+# Subtest: board: n, days, stocks, win rate, average after 0.8%, average win / loss, profit factor; READY at 30+ trades on 10+ days and positive
+ok 12 - board: n, days, stocks, win rate, average after 0.8%, average win / loss, profit factor; READY at 30+ trades on 10+ days and positive
+  ---
+  duration_ms: 0.757106
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 59.036202

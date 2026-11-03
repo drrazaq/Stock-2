@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: IESC 2-for-1: bars before the split are halved and volume doubled
+ok 1 - IESC 2-for-1: bars before the split are halved and volume doubled
+  ---
+  duration_ms: 3.357056
+  ...
+# Subtest: GRML 1-for-50 reverse split: bars before are multiplied by 50
+ok 2 - GRML 1-for-50 reverse split: bars before are multiplied by 50
+  ---
+  duration_ms: 0.44273
+  ...
+# Subtest: a series that is already adjusted is not adjusted again
+ok 3 - a series that is already adjusted is not adjusted again
+  ---
+  duration_ms: 0.294127
+  ...
+# Subtest: future splits and other tickers are ignored
+ok 4 - future splits and other tickers are ignored
+  ---
+  duration_ms: 0.394962
+  ...
+# Subtest: no network was used
+ok 5 - no network was used
+  ---
+  duration_ms: 0.236616
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 22.429482

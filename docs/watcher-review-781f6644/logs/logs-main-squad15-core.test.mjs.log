@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: black-scholes: price, delta and implied vol round trip
+ok 1 - black-scholes: price, delta and implied vol round trip
+  ---
+  duration_ms: 3.752322
+  ...
+# Subtest: expiry: the longest 150-270 calendar days out
+ok 2 - expiry: the longest 150-270 calendar days out
+  ---
+  duration_ms: 1.277911
+  ...
+# Subtest: contract picks: nearest strike with a bar that day; delta target uses the ATM implied vol
+ok 3 - contract picks: nearest strike with a bar that day; delta target uses the ATM implied vol
+  ---
+  duration_ms: 0.951121
+  ...
+# Subtest: exit session: the stock sell or the last session on/before expiry - 30 days, whichever first
+ok 4 - exit session: the stock sell or the last session on/before expiry - 30 days, whichever first
+  ---
+  duration_ms: 0.630409
+  ...
+# Subtest: exit price: close, then a late close within 5 sessions, then intrinsic
+ok 5 - exit price: close, then a late close within 5 sessions, then intrinsic
+  ---
+  duration_ms: 0.428243
+  ...
+# Subtest: option net: spread on both sides, 5 USD a side, worthless = -100%
+ok 6 - option net: spread on both sides, 5 USD a side, worthless = -100%
+  ---
+  duration_ms: 0.298674
+  ...
+# Subtest: half-spread from snapshot rows: floor 1%, nearest target
+ok 7 - half-spread from snapshot rows: floor 1%, nearest target
+  ---
+  duration_ms: 0.712033
+  ...
+# Subtest: one open call per stock
+ok 8 - one open call per stock
+  ---
+  duration_ms: 0.32637
+  ...
+# Subtest: judge: halves 2024 / 2025-26, too few, rejected when the stock is better
+ok 9 - judge: halves 2024 / 2025-26, too few, rejected when the stock is better
+  ---
+  duration_ms: 7.82403
+  ...
+# Subtest: library pre-registration is idempotent
+ok 10 - library pre-registration is idempotent
+  ---
+  duration_ms: 0.831276
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 37.643053

@@ -1,0 +1,95 @@
+TAP version 13
+# Subtest: plan: holds to the last session and sells at that close; no add when the price never falls 15%
+ok 1 - plan: holds to the last session and sells at that close; no add when the price never falls 15%
+  ---
+  duration_ms: 3.232894
+  ...
+# Subtest: plan: adds 0.5 unit at the NEXT open after the first close 15% under the first buy, once
+ok 2 - plan: adds 0.5 unit at the NEXT open after the first close 15% under the first buy, once
+  ---
+  duration_ms: 0.71905
+  ...
+# Subtest: plan: the 35% stop is on the TOTAL position (money in), sold at the next open
+ok 3 - plan: the 35% stop is on the TOTAL position (money in), sold at the next open
+  ---
+  duration_ms: 0.791388
+  ...
+# Subtest: plan: a dead stock (vanished under 3 USD) loses the rest; a vanished stock above 3 USD is paid out at its last close
+ok 4 - plan: a dead stock (vanished under 3 USD) loses the rest; a vanished stock above 3 USD is paid out at its last close
+  ---
+  duration_ms: 0.70072
+  ...
+# Subtest: plan: a window past the end of the data is not judged; no open = no buy
+ok 5 - plan: a window past the end of the data is not judged; no open = no buy
+  ---
+  duration_ms: 0.280884
+  ...
+# Subtest: plan partial (paper lane): past the data = open, marked at the newest close; a stop before the newest close is final
+ok 6 - plan partial (paper lane): past the data = open, marked at the newest close; a stop before the newest close is final
+  ---
+  duration_ms: 0.488741
+  ...
+# Subtest: plan MONTHLY: adds everySize at the open every `every` sessions after the entry, not on the last session
+ok 7 - plan MONTHLY: adds everySize at the open every `every` sessions after the entry, not on the last session
+  ---
+  duration_ms: 1.28946
+  ...
+# Subtest: split repair: a 4:1 jump between two share rows scales the older rows; a 30% issuance is left alone
+ok 8 - split repair: a 4:1 jump between two share rows scales the older rows; a 30% issuance is left alone
+  ---
+  duration_ms: 0.43188
+  ...
+# Subtest: shares known on a day: 30 days late, and only for quarterly filers (2+ rows in 400 days)
+ok 9 - shares known on a day: 30 days late, and only for quarterly filers (2+ rows in 400 days)
+  ---
+  duration_ms: 0.874508
+  ...
+# Subtest: industry leaders: top 3 by cap in industries with 5+ members; small industries have no leaders; largest-N
+ok 10 - industry leaders: top 3 by cap in industries with 5+ members; small industries have no leaders; largest-N
+  ---
+  duration_ms: 2.518196
+  ...
+# Subtest: DIP-LEADER: every condition is needed; the thresholds are inclusive
+ok 11 - DIP-LEADER: every condition is needed; the thresholds are inclusive
+  ---
+  duration_ms: 0.365699
+  ...
+# Subtest: THEME: the accelerating industry with the best 12-month return; a hotter non-accelerating one is skipped
+ok 12 - THEME: the accelerating industry with the best 12-month return; a hotter non-accelerating one is skipped
+  ---
+  duration_ms: 0.40914
+  ...
+# Subtest: TURNAROUND: former leader near its 3-year low, growth rising, and big insider money or an item 3.02 8-K
+ok 13 - TURNAROUND: former leader near its 3-year low, growth rising, and big insider money or an item 3.02 8-K
+  ---
+  duration_ms: 0.207018
+  ...
+# Subtest: helpers: low before t, 52-week high cover, insider sums and item 3.02 filings in the 90 days before (filed that day = not yet)
+ok 14 - helpers: low before t, 52-week high cover, insider sums and item 3.02 filings in the 90 days before (filed that day = not yet)
+  ---
+  duration_ms: 0.660507
+  ...
+# Subtest: revenue growth point in time: TTM vs a year earlier from 10-K figures; a filing on the day is not yet known
+ok 15 - revenue growth point in time: TTM vs a year earlier from 10-K figures; a filing on the day is not yet known
+  ---
+  duration_ms: 1.182766
+  ...
+# Subtest: weights, per year of capital, failures, halves
+ok 16 - weights, per year of capital, failures, halves
+  ---
+  duration_ms: 0.696279
+  ...
+# Subtest: library pre-registration: six TIP entries, idempotent, rule text included
+ok 17 - library pre-registration: six TIP entries, idempotent, rule text included
+  ---
+  duration_ms: 0.453128
+  ...
+1..17
+# tests 17
+# suites 0
+# pass 17
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 44.811481

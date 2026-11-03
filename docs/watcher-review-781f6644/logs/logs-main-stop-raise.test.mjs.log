@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: the owner's own 35% disaster stop is never raised
+ok 1 - the owner's own 35% disaster stop is never raised
+  ---
+  duration_ms: 1.986609
+  ...
+# Subtest: control: a system stop with the same reason is raised to the higher of close - 2 ATR (90) and the 50-day (85)
+ok 2 - control: a system stop with the same reason is raised to the higher of close - 2 ATR (90) and the 50-day (85)
+  ---
+  duration_ms: 0.914968
+  ...
+# Subtest: a stop is never lowered
+ok 3 - a stop is never lowered
+  ---
+  duration_ms: 0.233527
+  ...
+# Subtest: the owner's own stop on a leader position is never raised
+ok 4 - the owner's own stop on a leader position is never raised
+  ---
+  duration_ms: 0.21949
+  ...
+# Subtest: no network was touched
+ok 5 - no network was touched
+  ---
+  duration_ms: 1.294469
+  ...
+# Subtest: a raise above the entry rewrites the stale "below your entry" part of the reason
+ok 6 - a raise above the entry rewrites the stale "below your entry" part of the reason
+  ---
+  duration_ms: 0.646723
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 23.360114

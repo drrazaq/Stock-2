@@ -1,0 +1,75 @@
+TAP version 13
+# Subtest: pre-registration: 9 rules, each with a rule text, a source link, a kind and its old next-open counterpart(s); library add is idempotent
+ok 1 - pre-registration: 9 rules, each with a rule text, a source link, a kind and its old next-open counterpart(s); library add is idempotent
+  ---
+  duration_ms: 4.585703
+  ...
+# Subtest: clock: New York offset (summer / winter) and regular-session filter
+ok 2 - clock: New York offset (summer / winter) and regular-session filter
+  ---
+  duration_ms: 1.603516
+  ...
+# Subtest: relative volume curve and price scale
+ok 3 - relative volume curve and price scale
+  ---
+  duration_ms: 0.476747
+  ...
+# Subtest: fill ordering: a buy-stop fills only on a bar after the decision, at max(level, open)
+ok 4 - fill ordering: a buy-stop fills only on a bar after the decision, at max(level, open)
+  ---
+  duration_ms: 2.986716
+  ...
+# Subtest: no look-ahead (minutes): changing bars AFTER the fill never changes the entry, the stop or the pool
+ok 5 - no look-ahead (minutes): changing bars AFTER the fill never changes the entry, the stop or the pool
+  ---
+  duration_ms: 0.951641
+  ...
+# Subtest: no look-ahead (EMA pullback): the trend must exist BEFORE the pullback bar; the order lives 15 minutes only
+ok 6 - no look-ahead (EMA pullback): the trend must exist BEFORE the pullback bar; the order lives 15 minutes only
+  ---
+  duration_ms: 2.682074
+  ...
+# Subtest: gap through a stop: a bar opening under the stop fills at its open (minutes and daily)
+ok 7 - gap through a stop: a bar opening under the stop fills at its open (minutes and daily)
+  ---
+  duration_ms: 0.891998
+  ...
+# Subtest: same-minute ambiguity: intrabar fill + low under the stop = worst case stopped, best case not; a fill at the open is not ambiguous
+ok 8 - same-minute ambiguity: intrabar fill + low under the stop = worst case stopped, best case not; a fill at the open is not ambiguous
+  ---
+  duration_ms: 2.562392
+  ...
+# Subtest: matched control: other stocks of the same pool that had NOT triggered by the entry minute, bought at that minute, sold at the close
+ok 9 - matched control: other stocks of the same pool that had NOT triggered by the entry minute, bought at that minute, sold at the close
+  ---
+  duration_ms: 3.622084
+  ...
+# Subtest: no look-ahead (daily): day-t flags use only data to t-1 plus the open of t
+ok 10 - no look-ahead (daily): day-t flags use only data to t-1 plus the open of t
+  ---
+  duration_ms: 1.216607
+  ...
+# Subtest: swing exits on daily bars: KQ sells 1/3 on day 3 and trails the 10-day; L10 trails the 10-day low; partial legs add up
+ok 11 - swing exits on daily bars: KQ sells 1/3 on day 3 and trails the 10-day; L10 trails the 10-day low; partial legs add up
+  ---
+  duration_ms: 0.491386
+  ...
+# Subtest: power hour: decided at 15:00 on completed bars only; buy-stop at the day high so far
+ok 12 - power hour: decided at 15:00 on completed bars only; buy-stop at the day high so far
+  ---
+  duration_ms: 1.047433
+  ...
+# Subtest: five-minute bars are clock aligned and know their last minute
+ok 13 - five-minute bars are clock aligned and know their last minute
+  ---
+  duration_ms: 0.308347
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 42.106591

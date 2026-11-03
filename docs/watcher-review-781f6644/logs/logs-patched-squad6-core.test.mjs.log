@@ -1,0 +1,110 @@
+TAP version 13
+# Subtest: every rule is registered with a source URL, a replication label and its block length
+ok 1 - every rule is registered with a source URL, a replication label and its block length
+  ---
+  duration_ms: 1.706544
+  ...
+# Subtest: Wilder RSI: all up = 100, all down = 0, seeded after p changes, a missing bar restarts it
+ok 2 - Wilder RSI: all up = 100, all down = 0, seeded after p changes, a missing bar restarts it
+  ---
+  duration_ms: 0.322408
+  ...
+# Subtest: streak and percent rank as ConnorsRSI defines them
+ok 3 - streak and percent rank as ConnorsRSI defines them
+  ---
+  duration_ms: 1.720569
+  ...
+# Subtest: ADX: a steady one-way trend has a high ADX, a choppy series a low one
+ok 4 - ADX: a steady one-way trend has a high ADX, a choppy series a low one
+  ---
+  duration_ms: 0.942089
+  ...
+# Subtest: Clenow score: a smooth 0.1%-a-day climb scores about 28.6% a year x R2 1; noise lowers R2
+ok 5 - Clenow score: a smooth 0.1%-a-day climb scores about 28.6% a year x R2 1; noise lowers R2
+  ---
+  duration_ms: 0.800038
+  ...
+# Subtest: Clenow week: sells leavers of the top 20% and filter failures; buys from the top only while the sizes fit and the index is up
+ok 6 - Clenow week: sells leavers of the top 20% and filter failures; buys from the top only while the sizes fit and the index is up
+  ---
+  duration_ms: 0.420826
+  ...
+# Subtest: Radge: 20-week closing high with ROC >= 30%; the stop ratchets 40% -> 10% and never falls
+ok 7 - Radge: 20-week closing high with ROC >= 30%; the stop ratchets 40% -> 10% and never falls
+  ---
+  duration_ms: 2.568045
+  ...
+# Subtest: weeks, Wednesdays and month ends from session dates
+ok 8 - weeks, Wednesdays and month ends from session dates
+  ---
+  duration_ms: 1.029498
+  ...
+# Subtest: three weeks tight: two tight steps after a 20%+ advance
+ok 9 - three weeks tight: two tight steps after a 20%+ advance
+  ---
+  duration_ms: 0.535757
+  ...
+# Subtest: TD buy setup 9: exactly the 9th lower close, perfected by the lows of bars 8/9
+ok 10 - TD buy setup 9: exactly the 9th lower close, perfected by the lows of bars 8/9
+  ---
+  duration_ms: 0.505903
+  ...
+# Subtest: ConnorsRSI pullback setup gates: ADX, a 4% intraday drop, a close in the bottom quarter, ConnorsRSI < 15, volume
+ok 11 - ConnorsRSI pullback setup gates: ADX, a 4% intraday drop, a close in the bottom quarter, ConnorsRSI < 15, volume
+  ---
+  duration_ms: 0.561597
+  ...
+# Subtest: frog in the pan and the QMOM half: top decile by momentum, then the smoothest half
+ok 12 - frog in the pan and the QMOM half: top decile by momentum, then the smoothest half
+  ---
+  duration_ms: 0.684508
+  ...
+# Subtest: MSCI momentum pick: risk-adjusted, z-scored, positive only, n names
+ok 13 - MSCI momentum pick: risk-adjusted, z-scored, positive only, n names
+  ---
+  duration_ms: 1.091832
+  ...
+# Subtest: walkers: next-open exit after the trigger close; max hold sells that close; data end leaves it open
+ok 14 - walkers: next-open exit after the trigger close; max hold sells that close; data end leaves it open
+  ---
+  duration_ms: 0.770894
+  ...
+# Subtest: walkers: a stock that stops trading leaves at its last close
+ok 15 - walkers: a stock that stops trading leaves at its last close
+  ---
+  duration_ms: 0.360816
+  ...
+# Subtest: resting orders: limit and buy-stop fills, gaps fill at the open, unfilled -> null, data end -> open
+ok 16 - resting orders: limit and buy-stop fills, gaps fill at the open, unfilled -> null, data end -> open
+  ---
+  duration_ms: 0.520952
+  ...
+# Subtest: bracket: stop and target the same day = stop; a gap under the stop sells at the open; target hit sells at the level
+ok 17 - bracket: stop and target the same day = stop; a gap under the stop sells at the open; target hit sells at the level
+  ---
+  duration_ms: 0.471954
+  ...
+# Subtest: yardstick: the average stock bought and sold at the same moments, +300% capped, 50 needed
+ok 18 - yardstick: the average stock bought and sold at the same moments, +300% capped, 50 needed
+  ---
+  duration_ms: 0.806915
+  ...
+# Subtest: shape, newer-vs-older and helpers
+ok 19 - shape, newer-vs-older and helpers
+  ---
+  duration_ms: 0.920042
+  ...
+# Subtest: library pre-registration is idempotent and carries sources and the replication label
+ok 20 - library pre-registration is idempotent and carries sources and the replication label
+  ---
+  duration_ms: 0.827356
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 55.397634

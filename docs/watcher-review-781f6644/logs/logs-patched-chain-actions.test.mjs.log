@@ -1,0 +1,56 @@
+TAP version 13
+# Subtest: no rule qualified -> ACTIONS shows nothing new, nothing is logged
+ok 1 - no rule qualified -> ACTIONS shows nothing new, nothing is logged
+  ---
+  duration_ms: 47.21443
+  ...
+# Subtest: TRADABLE SMALL -> one line: BUY at the next open up to +3%, the sell date, the chain/layer and the source event; logged as chain:CHAIN-MOM1
+ok 2 - TRADABLE SMALL -> one line: BUY at the next open up to +3%, the sell date, the chain/layer and the source event; logged as chain:CHAIN-MOM1
+  ---
+  duration_ms: 52.126819
+  ...
+# Subtest: a rule with a tested stop shows that stop (CHAIN-DEMAND1: 20%)
+ok 3 - a rule with a tested stop shows that stop (CHAIN-DEMAND1: 20%)
+  ---
+  duration_ms: 50.887955
+  ...
+# Subtest: halal unknown -> shown with "check ZAD first"; ZAD not halal, lottery-like, an offering filing, held, or another buy day -> not shown
+ok 4 - halal unknown -> shown with "check ZAD first"; ZAD not halal, lottery-like, an offering filing, held, or another buy day -> not shown
+  ---
+  duration_ms: 60.686949
+  ...
+# Subtest: tier2 off -> nothing; PROVEN still shown; its own ledger negative (20+ finished) -> off
+ok 5 - tier2 off -> nothing; PROVEN still shown; its own ledger negative (20+ finished) -> off
+  ---
+  duration_ms: 142.948432
+  ...
+# Subtest: the  chains  command: hot and cold layers now and every decoder verdict
+ok 6 - the  chains  command: hot and cold layers now and every decoder verdict
+  ---
+  duration_ms: 48.338209
+  ...
+# Subtest: check SYM: the stock's chain(s) and layer from the point-in-time graph
+ok 7 - check SYM: the stock's chain(s) and layer from the point-in-time graph
+  ---
+  duration_ms: 45.79268
+  ...
+Telegram: 1 message(s) read
+# Subtest: the  chains  command is routed by the bot
+ok 8 - the  chains  command is routed by the bot
+  ---
+  duration_ms: 155.813618
+  ...
+# Subtest: no network was used
+ok 9 - no network was used
+  ---
+  duration_ms: 0.541161
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 683.159915

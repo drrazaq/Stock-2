@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: AUD-1: asFrozen reproduces the old yardstick (big winners dropped, trades uncapped)
+ok 1 - AUD-1: asFrozen reproduces the old yardstick (big winners dropped, trades uncapped)
+  ---
+  duration_ms: 1.933948
+  ...
+# Subtest: AUD-1: capBoth treats the strategy and the yardstick the same way (+300% cap, never dropped)
+ok 2 - AUD-1: capBoth treats the strategy and the yardstick the same way (+300% cap, never dropped)
+  ---
+  duration_ms: 0.384444
+  ...
+# Subtest: AUD-1: one +400% stock in both the picks and the market: the old rule shows an edge that is not there
+ok 3 - AUD-1: one +400% stock in both the picks and the market: the old rule shows an edge that is not there
+  ---
+  duration_ms: 1.068831
+  ...
+# Subtest: AUD-1: ownAverage keeps the old drop by default and caps both ways in capBoth mode
+ok 4 - AUD-1: ownAverage keeps the old drop by default and caps both ways in capBoth mode
+  ---
+  duration_ms: 0.440381
+  ...
+# Subtest: AUD-2: the SURGE cut-off counts only revenue surprises public by the entry session
+ok 5 - AUD-2: the SURGE cut-off counts only revenue surprises public by the entry session
+  ---
+  duration_ms: 0.407959
+  ...
+# Subtest: correctedRun: written next to firstRun, frozen once, and effectiveRuns prefers it
+ok 6 - correctedRun: written next to firstRun, frozen once, and effectiveRuns prefers it
+  ---
+  duration_ms: 0.659442
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 18.03103

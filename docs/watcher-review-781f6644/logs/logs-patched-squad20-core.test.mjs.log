@@ -1,0 +1,65 @@
+TAP version 13
+# Subtest: registry: 18 filters, 36 exits, 3 trade rules; holds from the base rules
+ok 1 - registry: 18 filters, 36 exits, 3 trade rules; holds from the base rules
+  ---
+  duration_ms: 2.124063
+  ...
+# Subtest: dayMove: close over the last close (gaps up to 5 sessions); artifacts and missing closes are not moves
+ok 2 - dayMove: close over the last close (gaps up to 5 sessions); artifacts and missing closes are not moves
+  ---
+  duration_ms: 0.226092
+  ...
+# Subtest: AVOID filter: the signal close and the 9 sessions before it; the threshold is inclusive
+ok 3 - AVOID filter: the signal close and the 9 sessions before it; the threshold is inclusive
+  ---
+  duration_ms: 0.253026
+  ...
+# Subtest: jump exit: first holding close with a +25% move; buy day measured from the open; never on the planned sell day
+ok 4 - jump exit: first holding close with a +25% move; buy day measured from the open; never on the planned sell day
+  ---
+  duration_ms: 0.275332
+  ...
+# Subtest: holdFrom: sell at the close of session hold; gone stocks at their last close; open past the data
+ok 5 - holdFrom: sell at the close of session hold; gone stocks at their last close; open past the data
+  ---
+  duration_ms: 0.30314
+  ...
+# Subtest: holdStop: a close 15% under the buy -> next open; no stop -> the hold; data end -> open
+ok 6 - holdStop: a close 15% under the buy -> next open; no stop -> the hold; data end -> open
+  ---
+  duration_ms: 0.306854
+  ...
+# Subtest: spike second setup: held half, quiet, no lower low, breakout on 1.5x volume at 10-30 sessions; first signal only
+ok 7 - spike second setup: held half, quiet, no lower low, breakout on 1.5x volume at 10-30 sessions; first signal only
+  ---
+  duration_ms: 3.559557
+  ...
+# Subtest: spike controls: bought at s+21, held or not
+ok 8 - spike controls: bought at s+21, held or not
+  ---
+  duration_ms: 1.522485
+  ...
+# Subtest: stmomPick: in both top deciles; turnover needs shares and 15 volume days
+ok 9 - stmomPick: in both top deciles; turnover needs shares and 15 volume days
+  ---
+  duration_ms: 0.822357
+  ...
+# Subtest: reporting and adoption rules
+ok 10 - reporting and adoption rules
+  ---
+  duration_ms: 1.500032
+  ...
+# Subtest: preRegister: idempotent, every rule once, exits marked as exits
+ok 11 - preRegister: idempotent, every rule once, exits marked as exits
+  ---
+  duration_ms: 0.654649
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26.947472

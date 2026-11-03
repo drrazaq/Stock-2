@@ -1,0 +1,75 @@
+TAP version 13
+# Subtest: switch rule: passes both halves at t >= 2.5, positive, positive without the top 2 -> small
+ok 1 - switch rule: passes both halves at t >= 2.5, positive, positive without the top 2 -> small
+  ---
+  duration_ms: 55.440216
+  ...
+# Subtest: switch rule: tier2 switched off -> null (the system is proven-only exactly as before)
+ok 2 - switch rule: tier2 switched off -> null (the system is proven-only exactly as before)
+  ---
+  duration_ms: 37.457695
+  ...
+# Subtest: switch rule: one t below 2.5 -> null
+ok 3 - switch rule: one t below 2.5 -> null
+  ---
+  duration_ms: 35.79407
+  ...
+# Subtest: switch rule: no profit without the 2 best trades in one half -> null
+ok 4 - switch rule: no profit without the 2 best trades in one half -> null
+  ---
+  duration_ms: 35.452794
+  ...
+# Subtest: switch rule: live record of 20 finished cases averaging negative switches it off
+ok 5 - switch rule: live record of 20 finished cases averaging negative switches it off
+  ---
+  duration_ms: 34.804777
+  ...
+# Subtest: switch rule: 19 negative cases are not yet a verdict, and other triggers do not count
+ok 6 - switch rule: 19 negative cases are not yet a verdict, and other triggers do not count
+  ---
+  duration_ms: 54.33224
+  ...
+# Subtest: LONGER HOLDS: passes both halves at t >= 2.5 and beat the average stock in most months -> small
+ok 7 - LONGER HOLDS: passes both halves at t >= 2.5 and beat the average stock in most months -> small
+  ---
+  duration_ms: 42.970653
+  ...
+# Subtest: LONGER HOLDS: tier2 switched off -> null
+ok 8 - LONGER HOLDS: tier2 switched off -> null
+  ---
+  duration_ms: 41.521145
+  ...
+# Subtest: LONGER HOLDS: newer-half t 2.4 -> null
+ok 9 - LONGER HOLDS: newer-half t 2.4 -> null
+  ---
+  duration_ms: 35.283952
+  ...
+# Subtest: LONGER HOLDS: a negative live league record (3+ months scored, behind the S&P 500) switches it off
+ok 10 - LONGER HOLDS: a negative live league record (3+ months scored, behind the S&P 500) switches it off
+  ---
+  duration_ms: 39.724246
+  ...
+# Subtest: no network was touched
+ok 11 - no network was touched
+  ---
+  duration_ms: 1.267328
+  ...
+# Subtest: switch rule: the USD switch-vs-holding test (A-SWR1) not passed -> null
+ok 12 - switch rule: the USD switch-vs-holding test (A-SWR1) not passed -> null
+  ---
+  duration_ms: 29.852414
+  ...
+# Subtest: switch rule: A-SWR1 passed for that trigger -> the old test still decides
+ok 13 - switch rule: A-SWR1 passed for that trigger -> the old test still decides
+  ---
+  duration_ms: 31.697923
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 484.93562

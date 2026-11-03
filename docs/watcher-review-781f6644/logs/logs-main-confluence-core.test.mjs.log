@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: registry: every input rule has a family and a hold; the TRY SMALL set is the five rules of 24 Oct; two versions
+ok 1 - registry: every input rule has a family and a hold; the TRY SMALL set is the five rules of 24 Oct; two versions
+  ---
+  duration_ms: 2.588745
+  ...
+# Subtest: matching: two rules of ONE family never fire; two families within 5 sessions fire on the completing signal
+ok 2 - matching: two rules of ONE family never fire; two families within 5 sessions fire on the completing signal
+  ---
+  duration_ms: 0.590181
+  ...
+# Subtest: matching: hold = the shortest contributing hold, stop 35% only for a 126-session hold; 3+ version needs three families
+ok 3 - matching: hold = the shortest contributing hold, stop 35% only for a 126-session hold; 3+ version needs three families
+  ---
+  duration_ms: 1.745283
+  ...
+# Subtest: one open trade per stock: a fire while the stock is held is dropped; after the sale it may fire again
+ok 4 - one open trade per stock: a fire while the stock is held is dropped; after the sale it may fire again
+  ---
+  duration_ms: 0.42162
+  ...
+# Subtest: walk: time exit at the close of k + hold - 1; stop sells at the next open; gaps; still open
+ok 5 - walk: time exit at the close of k + hold - 1; stop sells at the next open; gaps; still open
+  ---
+  duration_ms: 0.37953
+  ...
+# Subtest: cost math: 300 USD at +10% gross = 300 x 9.2% - 6 = 21.60; 1000 USD flat = -14
+ok 6 - cost math: 300 USD at +10% gross = 300 x 9.2% - 6 = 21.60; 1000 USD flat = -14
+  ---
+  duration_ms: 0.178247
+  ...
+# Subtest: portfolio: slots, liquidity priority, no double position, stop frees the slot at that open; USD adds up
+ok 7 - portfolio: slots, liquidity priority, no double position, stop frees the slot at that open; USD adds up
+  ---
+  duration_ms: 1.426506
+  ...
+# Subtest: curve stats and losing streak
+ok 8 - curve stats and losing streak
+  ---
+  duration_ms: 0.541404
+  ...
+# Subtest: library pre-registration is idempotent and adds CONF-2 and CONF-3 only
+ok 9 - library pre-registration is idempotent and adds CONF-2 and CONF-3 only
+  ---
+  duration_ms: 0.542986
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 22.542599

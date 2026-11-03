@@ -1,0 +1,45 @@
+TAP version 13
+# Subtest: highest delta within 300 USD all-in, 45-180 days, full spread <= 5%, usable quote; alternatives kept
+ok 1 - highest delta within 300 USD all-in, 45-180 days, full spread <= 5%, usable quote; alternatives kept
+  ---
+  duration_ms: 2.764106
+  ...
+# Subtest: exit trigger = hold-th session from entry or the last session <= expiry - 30, whichever first; exit quote checks
+ok 2 - exit trigger = hold-th session from entry or the last session <= expiry - 30, whichever first; exit quote checks
+  ---
+  duration_ms: 0.69316
+  ...
+# Subtest: returns, stress and dedupe
+ok 3 - returns, stress and dedupe
+  ---
+  duration_ms: 0.605133
+  ...
+# Subtest: board: median, losses, drawdown and streak beside the mean
+ok 4 - board: median, losses, drawdown and streak beside the mean
+  ---
+  duration_ms: 2.238202
+  ...
+# Subtest: library pre-registration is idempotent
+ok 5 - library pre-registration is idempotent
+  ---
+  duration_ms: 0.374474
+  ...
+# Subtest: SQ15-PB12-2000: 2,000 USD all-in budget, highest delta <= 0.85 (and >= 0.30); same quote/spread/window checks
+ok 6 - SQ15-PB12-2000: 2,000 USD all-in budget, highest delta <= 0.85 (and >= 0.30); same quote/spread/window checks
+  ---
+  duration_ms: 0.72052
+  ...
+# Subtest: both rules pre-registered, idempotent, 2000 status as decided
+ok 7 - both rules pre-registered, idempotent, 2000 status as decided
+  ---
+  duration_ms: 0.210442
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 24.68788

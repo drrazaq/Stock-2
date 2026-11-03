@@ -1,0 +1,42 @@
+TAP version 13
+Telegram: 1 message(s) read
+# Subtest: 1. a part sale with no stored share count asks; the position and its alerts stay, nothing is recorded
+ok 1 - 1. a part sale with no stored share count asks; the position and its alerts stay, nothing is recorded
+  ---
+  duration_ms: 182.047527
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: control: a part sale with a known share count works as before
+ok 2 - control: a part sale with a known share count works as before
+  ---
+  duration_ms: 162.646057
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: 2. "sold half" of a 1-share position records nothing and says why
+ok 3 - 2. "sold half" of a 1-share position records nothing and says why
+  ---
+  duration_ms: 166.436707
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: 3. "add more SYM PRICE N shares" updates the average (it used to run "check MORE")
+ok 4 - 3. "add more SYM PRICE N shares" updates the average (it used to run "check MORE")
+  ---
+  duration_ms: 73.810889
+  ...
+# Subtest: 4. at the stop: a loss under the buy price, a kept gain above it, fees included, never a negative loss
+ok 5 - 4. at the stop: a loss under the buy price, a kept gain above it, fees included, never a negative loss
+  ---
+  duration_ms: 40.581803
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 638.339973

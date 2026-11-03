@@ -1,0 +1,30 @@
+TAP version 13
+# Subtest: does not infer that safety blocks are correct from a small or missing sample
+ok 1 - does not infer that safety blocks are correct from a small or missing sample
+  ---
+  duration_ms: 1.915595
+  ...
+# Subtest: keeps blocks when a sufficiently large matched forward sample meets the preregistered fade bar
+ok 2 - keeps blocks when a sufficiently large matched forward sample meets the preregistered fade bar
+  ---
+  duration_ms: 0.27436
+  ...
+# Subtest: flags block reasons for review when most blocked runners do not fade
+ok 3 - flags block reasons for review when most blocked runners do not fade
+  ---
+  duration_ms: 0.189795
+  ...
+# Subtest: does not apply blocked policy when another category dominates
+ok 4 - does not apply blocked policy when another category dominates
+  ---
+  duration_ms: 0.208396
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 18.517587

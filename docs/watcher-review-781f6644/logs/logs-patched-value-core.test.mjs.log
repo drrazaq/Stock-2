@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: TTM from a 10-Q = this YTD + last full year - last YTD, only from filings public before the day
+ok 1 - TTM from a 10-Q = this YTD + last full year - last YTD, only from filings public before the day
+  ---
+  duration_ms: 3.393174
+  ...
+# Subtest: the year-earlier TTM: same rule, only periods ending a year or more before
+ok 2 - the year-earlier TTM: same rule, only periods ending a year or more before
+  ---
+  duration_ms: 1.813954
+  ...
+# Subtest: balance sheet: the latest period end known before the day, latest filing of it
+ok 3 - balance sheet: the latest period end known before the day, latest filing of it
+  ---
+  duration_ms: 0.32647
+  ...
+# Subtest: quarter revenue: the 3-month figure, or for the 4th quarter the full year minus the 9-month YTD
+ok 4 - quarter revenue: the 3-month figure, or for the 4th quarter the full year minus the 9-month YTD
+  ---
+  duration_ms: 0.576521
+  ...
+# Subtest: revenue growth run: year-on-year growth of the last three quarters known, newest first
+ok 5 - revenue growth run: year-on-year growth of the last three quarters known, newest first
+  ---
+  duration_ms: 1.11592
+  ...
+# Subtest: beat streak: consecutive reports with actual EPS above the estimate, ending at this report
+ok 6 - beat streak: consecutive reports with actual EPS above the estimate, ending at this report
+  ---
+  duration_ms: 0.268154
+  ...
+# Subtest: half statistics: averages after cost, edge over the average stock, block t over blocks of the hold length
+ok 7 - half statistics: averages after cost, edge over the average stock, block t over blocks of the hold length
+  ---
+  duration_ms: 1.045783
+  ...
+# Subtest: verdict: every gate in both halves -> TRADABLE SMALL; block t over the proof bar -> PROVEN; an extra gate missed -> NOT PROVEN
+ok 8 - verdict: every gate in both halves -> TRADABLE SMALL; block t over the proof bar -> PROVEN; an extra gate missed -> NOT PROVEN
+  ---
+  duration_ms: 1.036347
+  ...
+# Subtest: B-FCF1 company check: FCF yield > 5%, revenue +10%, debt/equity < 0.5, inventory days < 60 (point in time)
+ok 9 - B-FCF1 company check: FCF yield > 5%, revenue +10%, debt/equity < 0.5, inventory days < 60 (point in time)
+  ---
+  duration_ms: 2.555765
+  ...
+# Subtest: cash runway: cash + same-date short-term investments over a quarter of TTM burn, point in time; non-burners have no runway
+ok 10 - cash runway: cash + same-date short-term investments over a quarter of TTM burn, point in time; non-burners have no runway
+  ---
+  duration_ms: 0.487875
+  ...
+# Subtest: AVOID judge: both halves excess <= -3%, block t <= -2.5, worse than the same stocks on other days
+ok 11 - AVOID judge: both halves excess <= -3%, block t <= -2.5, worse than the same stocks on other days
+  ---
+  duration_ms: 1.233075
+  ...
+# Subtest: V15-SN sector cap: each SIC group keeps max(1, round(K x its share)) names, best F-score then traded value
+ok 12 - V15-SN sector cap: each SIC group keeps max(1, round(K x its share)) names, best F-score then traded value
+  ---
+  duration_ms: 0.431937
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 31.9461

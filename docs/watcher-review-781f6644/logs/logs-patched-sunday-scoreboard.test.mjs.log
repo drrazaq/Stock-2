@@ -1,0 +1,36 @@
+TAP version 13
+Sunday scoreboard sent
+# Subtest: on a Sunday morning (Kuwait) the bot sends the scoreboard with the owner's decision, once
+ok 1 - on a Sunday morning (Kuwait) the bot sends the scoreboard with the owner's decision, once
+  ---
+  duration_ms: 123.721975
+  ...
+# Subtest: not on a Saturday, and not before 08:00 Kuwait on Sunday
+ok 2 - not on a Saturday, and not before 08:00 Kuwait on Sunday
+  ---
+  duration_ms: 52.445316
+  ...
+# Subtest: the nightly SPY closes give the scoreboard its S&P 500 numbers (week and 90 days)
+ok 3 - the nightly SPY closes give the scoreboard its S&P 500 numbers (week and 90 days)
+  ---
+  duration_ms: 43.261955
+  ...
+# Subtest: control: without the SPY closes the scoreboard says n/a
+ok 4 - control: without the SPY closes the scoreboard says n/a
+  ---
+  duration_ms: 48.369215
+  ...
+# Subtest: no network was touched
+ok 5 - no network was touched
+  ---
+  duration_ms: 0.911374
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 277.035501

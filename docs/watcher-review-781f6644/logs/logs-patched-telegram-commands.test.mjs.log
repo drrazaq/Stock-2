@@ -1,0 +1,51 @@
+TAP version 13
+Telegram: 1 message(s) read
+# Subtest: the first decision is saved with a due date 90 days later
+ok 1 - the first decision is saved with a due date 90 days later
+  ---
+  duration_ms: 144.119128
+  ...
+Telegram: 1 message(s) read
+# Subtest: a second decision before the due date does not overwrite the first
+ok 2 - a second decision before the due date does not overwrite the first
+  ---
+  duration_ms: 63.15772
+  ...
+Telegram: 1 message(s) read
+# Subtest: control: once the due date has passed, a new decision can be written
+ok 3 - control: once the due date has passed, a new decision can be written
+  ---
+  duration_ms: 73.526008
+  ...
+Telegram: 1 message(s) read
+# Subtest: "bought option ..." is recorded in the options trial, never as a stock position
+ok 4 - "bought option ..." is recorded in the options trial, never as a stock position
+  ---
+  duration_ms: 75.283563
+  ...
+Telegram: 1 message(s) read
+# Subtest: "sold option ..." closes the trial contract and scores it in USD after the ZAD fees
+ok 5 - "sold option ..." closes the trial contract and scores it in USD after the ZAD fees
+  ---
+  duration_ms: 54.893603
+  ...
+# Subtest: no network was touched
+ok 6 - no network was touched
+  ---
+  duration_ms: 1.030358
+  ...
+Telegram: 1 message(s) read
+# Subtest: many halal marks in one message are all saved
+ok 7 - many halal marks in one message are all saved
+  ---
+  duration_ms: 63.954165
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 484.017221

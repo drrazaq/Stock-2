@@ -1,0 +1,35 @@
+TAP version 13
+# Subtest: two RDI buy rules, holds 126 and 252, one open trade per stock
+ok 1 - two RDI buy rules, holds 126 and 252, one open trade per stock
+  ---
+  duration_ms: 2.831662
+  ...
+# Subtest: rows: discrete quarters only, originals only, dedup; fallback tag only when the main tag has no quarter
+ok 2 - rows: discrete quarters only, originals only, dedup; fallback tag only when the main tag has no quarter
+  ---
+  duration_ms: 2.323697
+  ...
+# Subtest: events: the three tests (R&D +5%, R&D/assets +5%, 4 x R&D / assets >= 5%)
+ok 3 - events: the three tests (R&D +5%, R&D/assets +5%, 4 x R&D / assets >= 5%)
+  ---
+  duration_ms: 1.759704
+  ...
+# Subtest: events: point in time (assets known by the filing), assets floor, late filings and old quarters skipped, zero prior skipped
+ok 4 - events: point in time (assets known by the filing), assets floor, late filings and old quarters skipped, zero prior skipped
+  ---
+  duration_ms: 1.047534
+  ...
+# Subtest: data rule and pre-registration
+ok 5 - data rule and pre-registration
+  ---
+  duration_ms: 1.481206
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26.474979

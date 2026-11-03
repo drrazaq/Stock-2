@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: labels: +30% close within 20 sessions of the NEXT open; window must be complete; loser and forward return
+ok 1 - labels: +30% close within 20 sessions of the NEXT open; window must be complete; loser and forward return
+  ---
+  duration_ms: 3.752453
+  ...
+# Subtest: episodes: first day of a run of winning days, then a cooldown
+ok 2 - episodes: first day of a run of winning days, then a cooldown
+  ---
+  duration_ms: 1.191282
+  ...
+# Subtest: matching cells and a deterministic pick
+ok 3 - matching cells and a deterministic pick
+  ---
+  duration_ms: 0.83911
+  ...
+# Subtest: price features use only data up to t
+ok 4 - price features use only data up to t
+  ---
+  duration_ms: 31.620971
+  ...
+# Subtest: sector features: median includes the stock; breadth counts the others
+ok 5 - sector features: median includes the stock; breadth counts the others
+  ---
+  duration_ms: 0.666496
+  ...
+# Subtest: shares 30 days late, a year apart; split repair; earnings known from their date
+ok 6 - shares 30 days late, a year apart; split repair; earnings known from their date
+  ---
+  duration_ms: 1.323926
+  ...
+# Subtest: ranking: AUC, deciles, lift, best quintile and pairs
+ok 7 - ranking: AUC, deciles, lift, best quintile and pairs
+  ---
+  duration_ms: 8.912001
+  ...
+# Subtest: rules registry, board, library
+ok 8 - rules registry, board, library
+  ---
+  duration_ms: 0.756198
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 114.574387

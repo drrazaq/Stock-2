@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: actual workflow refuses opposite-DST queued start without source I/O 2026-10-30
+ok 1 - actual workflow refuses opposite-DST queued start without source I/O 2026-10-30
+  ---
+  duration_ms: 256.598571
+  ...
+# Subtest: actual workflow refuses opposite-DST queued start without source I/O 2026-11-02
+ok 2 - actual workflow refuses opposite-DST queued start without source I/O 2026-11-02
+  ---
+  duration_ms: 175.18798
+  ...
+# Subtest: actual workflow preserves configured virtual schedule and observation budget after early wait 2026-10-30
+ok 3 - actual workflow preserves configured virtual schedule and observation budget after early wait 2026-10-30
+  ---
+  duration_ms: 2932.535744
+  ...
+# Subtest: actual workflow preserves configured virtual schedule and observation budget after early wait 2026-11-02
+ok 4 - actual workflow preserves configured virtual schedule and observation budget after early wait 2026-11-02
+  ---
+  duration_ms: 2953.088099
+  ...
+# Subtest: correct-season setup too early for the single-job envelope is explicitly refused; existing09:10 guard path remains available
+ok 5 - correct-season setup too early for the single-job envelope is explicitly refused; existing09:10 guard path remains available
+  ---
+  duration_ms: 167.666287
+  ...
+# Subtest: correct-season late start remains labelled partial, archives both attempts and preserves richer canonical/delivery state
+ok 6 - correct-season late start remains labelled partial, archives both attempts and preserves richer canonical/delivery state
+  ---
+  duration_ms: 3392.697745
+  ...
+# Subtest: slow sources leave explicit missing slots and do not extend beyond configured end
+ok 7 - slow sources leave explicit missing slots and do not extend beyond configured end
+  ---
+  duration_ms: 1761.359255
+  ...
+# Subtest: setup/cache delays preserve original chronological clocks and label the resulting late start
+ok 8 - setup/cache delays preserve original chronological clocks and label the resulting late start
+  ---
+  duration_ms: 2541.27017
+  ...
+# Subtest: setup/cache delays beyond the configured window never manufacture observations
+ok 9 - setup/cache delays beyond the configured window never manufacture observations
+  ---
+  duration_ms: 226.147889
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 14416.750208

@@ -1,0 +1,30 @@
+TAP version 13
+# Subtest: on a conflicting hunk the owner's positions keep the bot's copy on origin, not the job's stale one
+ok 1 - on a conflicting hunk the owner's positions keep the bot's copy on origin, not the job's stale one
+  ---
+  duration_ms: 563.844815
+  ...
+# Subtest: the owner's trades and the bot state keep origin's copy on a conflict
+ok 2 - the owner's trades and the bot state keep origin's copy on a conflict
+  ---
+  duration_ms: 511.371992
+  ...
+# Subtest: control: any other data file still keeps the job's copy on a conflict (as -X theirs did)
+ok 3 - control: any other data file still keeps the job's copy on a conflict (as -X theirs did)
+  ---
+  duration_ms: 623.481469
+  ...
+# Subtest: control: with no conflict both sides are kept and the commit carries the message
+ok 4 - control: with no conflict both sides are kept and the commit carries the message
+  ---
+  duration_ms: 510.539218
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2229.524245

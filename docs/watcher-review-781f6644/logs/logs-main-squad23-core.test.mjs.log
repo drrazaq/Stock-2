@@ -1,0 +1,65 @@
+TAP version 13
+# Subtest: no candidate ever holds a Basket 1 name (Shariah ranks 1-20)
+ok 1 - no candidate ever holds a Basket 1 name (Shariah ranks 1-20)
+  ---
+  duration_ms: 3.398172
+  ...
+# Subtest: NEXT30 = ranks 21-50, cap-weighted, max 10%
+ok 2 - NEXT30 = ranks 21-50, cap-weighted, max 10%
+  ---
+  duration_ms: 1.754498
+  ...
+# Subtest: MIDQ: ranks 101-500, the 30 highest GP/A, unknown left out, equal weight
+ok 3 - MIDQ: ranks 101-500, the 30 highest GP/A, unknown left out, equal weight
+  ---
+  duration_ms: 1.157762
+  ...
+# Subtest: NEXT30-MOM: ranks 21-100 by 12-1, no history left out, ties to the larger company
+ok 4 - NEXT30-MOM: ranks 21-100 by 12-1, no history left out, ties to the larger company
+  ---
+  duration_ms: 0.400176
+  ...
+# Subtest: combo: 70% Basket 1 + 30% candidate, sums to 1
+ok 5 - combo: 70% Basket 1 + 30% candidate, sums to 1
+  ---
+  duration_ms: 0.250427
+  ...
+# Subtest: gross profitability is point in time (filed before the day), stale or missing = null, latest tag wins
+ok 6 - gross profitability is point in time (filed before the day), stale or missing = null, latest tag wins
+  ---
+  duration_ms: 0.718462
+  ...
+# Subtest: key test comparison: return per unit of drawdown, or (a CAGR <= 0) higher CAGR and no deeper fall
+ok 7 - key test comparison: return per unit of drawdown, or (a CAGR <= 0) higher CAGR and no deeper fall
+  ---
+  duration_ms: 0.331367
+  ...
+# Subtest: correlation of monthly returns
+ok 8 - correlation of monthly returns
+  ---
+  duration_ms: 0.562765
+  ...
+# Subtest: whole percentages sum to 100 (largest remainder)
+ok 9 - whole percentages sum to 100 (largest remainder)
+  ---
+  duration_ms: 2.39427
+  ...
+# Subtest: calendar years and the worst year
+ok 10 - calendar years and the worst year
+  ---
+  duration_ms: 0.402934
+  ...
+# Subtest: library: five SQ23 rules registered once, basket study
+ok 11 - library: five SQ23 rules registered once, basket study
+  ---
+  duration_ms: 0.388128
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 32.833574

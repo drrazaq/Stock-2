@@ -1,0 +1,65 @@
+TAP version 13
+# Subtest: luck bar: 10 rules tested together need t 2.58 (one-sided 0.5%); 1 rule needs the 2.5 floor; it rises with the count
+ok 1 - luck bar: 10 rules tested together need t 2.58 (one-sided 0.5%); 1 rule needs the 2.5 floor; it rises with the count
+  ---
+  duration_ms: 2.275502
+  ...
+# Subtest: hold return: no stop hit -> close of the h-th session over the next open
+ok 2 - hold return: no stop hit -> close of the h-th session over the next open
+  ---
+  duration_ms: 1.507631
+  ...
+# Subtest: hold return: the low touches the 15% stop -> sold at the stop; a gap below the stop -> sold at that open
+ok 3 - hold return: the low touches the 15% stop -> sold at the stop; a gap below the stop -> sold at that open
+  ---
+  duration_ms: 0.278103
+  ...
+# Subtest: judgeNewer: a steady winner passes tier 2 (net after 0.8% and 1.2%, beats average and own stock, without the 2 best, day and block t)
+ok 4 - judgeNewer: a steady winner passes tier 2 (net after 0.8% and 1.2%, beats average and own stock, without the 2 best, day and block t)
+  ---
+  duration_ms: 2.387512
+  ...
+# Subtest: judgeNewer: under 20 trades -> TOO FEW CASES; loses after costs -> each failed gate is named
+ok 5 - judgeNewer: under 20 trades -> TOO FEW CASES; loses after costs -> each failed gate is named
+  ---
+  duration_ms: 2.079581
+  ...
+# Subtest: judgeNewer: beats the average stock but not its own stock on other days -> NOT PROVEN
+ok 6 - judgeNewer: beats the average stock but not its own stock on other days -> NOT PROVEN
+  ---
+  duration_ms: 0.566597
+  ...
+# Subtest: judgeNewer: one lucky trade carries it -> fails "without the 2 best"
+ok 7 - judgeNewer: one lucky trade carries it -> fails "without the 2 best"
+  ---
+  duration_ms: 0.398666
+  ...
+# Subtest: discover: ranks the feature that is more common among runners first, freezes its threshold, and writes a plain spec
+ok 8 - discover: ranks the feature that is more common among runners first, freezes its threshold, and writes a plain spec
+  ---
+  duration_ms: 43.509634
+  ...
+# Subtest: discover: a feature unknown for every runner is never chosen
+ok 9 - discover: a feature unknown for every runner is never chosen
+  ---
+  duration_ms: 22.671838
+  ...
+# Subtest: nextBatch: takes only untested pool entries, numbers the counter, and the batch bar uses the new total
+ok 10 - nextBatch: takes only untested pool entries, numbers the counter, and the batch bar uses the new total
+  ---
+  duration_ms: 1.544679
+  ...
+# Subtest: costReality: the same gross trades at 0.8% / 0.4% / 0.2%; a rule whose sign changes is flagged as a flip
+ok 11 - costReality: the same gross trades at 0.8% / 0.4% / 0.2%; a rule whose sign changes is flagged as a flip
+  ---
+  duration_ms: 0.568676
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 101.527845

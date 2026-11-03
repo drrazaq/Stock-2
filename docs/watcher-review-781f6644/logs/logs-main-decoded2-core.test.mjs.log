@@ -1,0 +1,145 @@
+TAP version 13
+# Subtest: indicators: Wilder average, RSI(2), ADX direction
+ok 1 - indicators: Wilder average, RSI(2), ADX direction
+  ---
+  duration_ms: 8.390145
+  ...
+# Subtest: every method has a detector, a block, a time limit; 91 versions; needs-data list
+ok 2 - every method has a detector, a block, a time limit; 91 versions; needs-data list
+  ---
+  duration_ms: 0.669326
+  ...
+# Subtest: engine = batch-1 KQ exit (QBO) for the F- versions, and ADD adds 50% at a new closing high
+ok 3 - engine = batch-1 KQ exit (QBO) for the F- versions, and ADD adds 50% at a new closing high
+  ---
+  duration_ms: 24.965276
+  ...
+# Subtest: engine = batch-1 PB exit; EXT10 refuses an extended signal
+ok 4 - engine = batch-1 PB exit; EXT10 refuses an extended signal
+  ---
+  duration_ms: 11.919464
+  ...
+# Subtest: STRONG filter: no signal unless the strong market flag is on (or the no-filter shadow)
+ok 5 - STRONG filter: no signal unless the strong market flag is on (or the no-filter shadow)
+  ---
+  duration_ms: 1.619393
+  ...
+# Subtest: exit set (A): day-low vs 2 ATR stop, 10-day-low trail, half at 3R
+ok 6 - exit set (A): day-low vs 2 ATR stop, 10-day-low trail, half at 3R
+  ---
+  duration_ms: 11.403031
+  ...
+# Subtest: Darvas: buy-stop over a confirmed box top at a 52-week high; stop under the box bottom; raised by the next box
+ok 7 - Darvas: buy-stop over a confirmed box top at a 52-week high; stop under the box bottom; raised by the next box
+  ---
+  duration_ms: 4.005357
+  ...
+# Subtest: Turtles: 20-day breakout fills during the day, 2N stop, a unit added at +1/2 N, exit under the 10-day low
+ok 8 - Turtles: 20-day breakout fills during the day, 2N stop, a unit added at +1/2 N, exit under the 10-day low
+  ---
+  duration_ms: 3.657044
+  ...
+# Subtest: Weinstein: weekly breakout on 2x volume, MA turning up, RS > 0, SPY over its 30-week; exit on a week close under the 30-week
+ok 9 - Weinstein: weekly breakout on 2x volume, MA turning up, RS > 0, SPY over its 30-week; exit on a week close under the 30-week
+  ---
+  duration_ms: 8.184209
+  ...
+# Subtest: Livermore: close through the pivot after a 10%+ reaction, on volume; out under the pivot
+ok 10 - Livermore: close through the pivot after a 10%+ reaction, on volume; out under the pivot
+  ---
+  duration_ms: 5.183172
+  ...
+# Subtest: Zanger: close over a tight base on volume, 7% max stop, day-one rule, 25% at +15%
+ok 11 - Zanger: close over a tight base on volume, 7% max stop, day-one rule, 25% at +15%
+  ---
+  duration_ms: 4.58567
+  ...
+# Subtest: IBD: RS 85+ base breakout on 40% more volume; 20% profit taken, or held 8 weeks if it came within 3 weeks
+ok 12 - IBD: RS 85+ base breakout on 40% more volume; 20% profit taken, or held 8 weeks if it came within 3 weeks
+  ---
+  duration_ms: 11.145785
+  ...
+# Subtest: Bollinger squeeze fires on a close over the band after a 6-month low bandwidth; the SAR stop only rises
+ok 13 - Bollinger squeeze fires on a close over the band after a 6-month low bandwidth; the SAR stop only rises
+  ---
+  duration_ms: 2.141455
+  ...
+# Subtest: Keltner: buy over yesterday's upper band; the stop follows the lower band
+ok 14 - Keltner: buy over yesterday's upper band; the stop follows the lower band
+  ---
+  duration_ms: 0.838702
+  ...
+# Subtest: Golden cross, Ichimoku, Appel MACD: fire on the cross, exit on the opposite signal
+ok 15 - Golden cross, Ichimoku, Appel MACD: fire on the cross, exit on the opposite signal
+  ---
+  duration_ms: 2.092545
+  ...
+# Subtest: pocket pivot and buyable gap-up; the 10-day violation + undercut sells, the 50-day takes over after 7 weeks
+ok 16 - pocket pivot and buyable gap-up; the 10-day violation + undercut sells, the 50-day takes over after 7 weeks
+  ---
+  duration_ms: 3.599919
+  ...
+# Subtest: Kell wedge pop: gap back over the EMAs after a tight dip; half at the exhaustion extension
+ok 17 - Kell wedge pop: gap back over the EMAs after a tight dip; half at the exhaustion extension
+  ---
+  duration_ms: 1.217704
+  ...
+# Subtest: Minervini template (fresh) + 25% trail; Stine needs a small share count
+ok 18 - Minervini template (fresh) + 25% trail; Stine needs a small share count
+  ---
+  duration_ms: 4.446855
+  ...
+# Subtest: Holy Grail: buy-stop over the EMA-touch bar, stop at its low, target the swing high
+ok 19 - Holy Grail: buy-stop over the EMA-touch bar, stop at its low, target the swing high
+  ---
+  duration_ms: 1.132875
+  ...
+# Subtest: 80-20 and NR7 inside day: worst-case same-day stop; 80-20 sells on day 2
+ok 20 - 80-20 and NR7 inside day: worst-case same-day stop; 80-20 sells on day 2
+  ---
+  duration_ms: 1.603516
+  ...
+# Subtest: Larry Williams: buy-stop at open + half a range; bail out at the first profitable open
+ok 21 - Larry Williams: buy-stop at open + half a range; bail out at the first profitable open
+  ---
+  duration_ms: 0.732725
+  ...
+# Subtest: Connors: RSI(2) exit over the 5-day; TPS scales in 10/20/30/40 and exits at RSI(2) > 70; Double 7s
+ok 22 - Connors: RSI(2) exit over the 5-day; TPS scales in 10/20/30/40 and exits at RSI(2) > 70; Double 7s
+  ---
+  duration_ms: 1.931447
+  ...
+# Subtest: Brooks H2, Nison and Turtle Soup Plus One fire on their patterns
+ok 23 - Brooks H2, Nison and Turtle Soup Plus One fire on their patterns
+  ---
+  duration_ms: 1.481377
+  ...
+# Subtest: Wyckoff spring: break under support, close back inside; half at the range top with the stop to cost
+ok 24 - Wyckoff spring: break under support, close back inside; half at the range top with the stop to cost
+  ---
+  duration_ms: 1.005686
+  ...
+# Subtest: gap and go (stop if the gap fills) and gap fill (target = yesterday's close)
+ok 25 - gap and go (stop if the gap fills) and gap fill (target = yesterday's close)
+  ---
+  duration_ms: 2.057826
+  ...
+# Subtest: calendar (SPY only): Santa and turn of the month read the month position
+ok 26 - calendar (SPY only): Santa and turn of the month read the month position
+  ---
+  duration_ms: 0.592055
+  ...
+# Subtest: FROG combination needs basket membership; CONTRACT needs a recent 8-K 1.01 and a small value; INSQ needs the B-FCF1 pass
+ok 27 - FROG combination needs basket membership; CONTRACT needs a recent 8-K 1.01 and a small value; INSQ needs the B-FCF1 pass
+  ---
+  duration_ms: 1.318569
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 27
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 164.512018

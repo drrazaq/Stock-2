@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: exact payload only: distinct time/panel/rule/price retained, unknown identity not merged
+ok 1 - exact payload only: distinct time/panel/rule/price retained, unknown identity not merged
+  ---
+  duration_ms: 3.313527
+  ...
+# Subtest: retry after process restart preserves bytes
+ok 2 - retry after process restart preserves bytes
+  ---
+  duration_ms: 122.288423
+  ...
+# Subtest: six independent writers append one logical observation
+ok 3 - six independent writers append one logical observation
+  ---
+  duration_ms: 415.794142
+  ...
+# Subtest: pending append recovery at prefix 0 preserves original bytes
+ok 4 - pending append recovery at prefix 0 preserves original bytes
+  ---
+  duration_ms: 77.658214
+  ...
+# Subtest: pending append recovery at prefix 1 preserves original bytes
+ok 5 - pending append recovery at prefix 1 preserves original bytes
+  ---
+  duration_ms: 56.04036
+  ...
+# Subtest: pending append recovery at prefix 20 preserves original bytes
+ok 6 - pending append recovery at prefix 20 preserves original bytes
+  ---
+  duration_ms: 55.543696
+  ...
+# Subtest: pending append recovery at prefix 99 preserves original bytes
+ok 7 - pending append recovery at prefix 99 preserves original bytes
+  ---
+  duration_ms: 77.277115
+  ...
+# Subtest: pending append recovery at prefix 10000 preserves original bytes
+ok 8 - pending append recovery at prefix 10000 preserves original bytes
+  ---
+  duration_ms: 70.055905
+  ...
+# Subtest: malformed unjournaled bytes preserved and refused
+ok 9 - malformed unjournaled bytes preserved and refused
+  ---
+  duration_ms: 54.437444
+  ...
+# Subtest: raw and corrected frozen scorecard remain separate
+ok 10 - raw and corrected frozen scorecard remain separate
+  ---
+  duration_ms: 1.982021
+  ...
+# Subtest: actual radar caller: rejection/retry, concurrent restarts, partial recovery and scored counts
+ok 11 - actual radar caller: rejection/retry, concurrent restarts, partial recovery and scored counts
+  ---
+  duration_ms: 1857.946943
+  ...
+# Subtest: actual caller write-boundary failures and killed worker recover without duplicate research
+ok 12 - actual caller write-boundary failures and killed worker recover without duplicate research
+  ---
+  duration_ms: 3422.969286
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 6230.40926

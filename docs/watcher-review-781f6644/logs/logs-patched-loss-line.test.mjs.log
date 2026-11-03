@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: CCJ: own pick with the 35% disaster stop -> the stop, never the 50-day above the price
+ok 1 - CCJ: own pick with the 35% disaster stop -> the stop, never the 50-day above the price
+  ---
+  duration_ms: 1.946563
+  ...
+# Subtest: leader with the 50-day under the price -> the 50-day (higher than the stop)
+ok 2 - leader with the 50-day under the price -> the 50-day (higher than the stop)
+  ---
+  duration_ms: 0.29344
+  ...
+# Subtest: a 50-day above the price is never the HOLD line -> the stop
+ok 3 - a 50-day above the price is never the HOLD line -> the stop
+  ---
+  duration_ms: 0.308569
+  ...
+# Subtest: ordinary stop -> the stop
+ok 4 - ordinary stop -> the stop
+  ---
+  duration_ms: 0.21213
+  ...
+# Subtest: no stop and no usable 50-day -> null
+ok 5 - no stop and no usable 50-day -> null
+  ---
+  duration_ms: 0.201202
+  ...
+# Subtest: no network was used
+ok 6 - no network was used
+  ---
+  duration_ms: 0.784611
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 20.831994

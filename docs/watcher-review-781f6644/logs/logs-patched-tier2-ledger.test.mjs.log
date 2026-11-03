@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: control: the switch rule passes every check -> small
+ok 1 - control: the switch rule passes every check -> small
+  ---
+  duration_ms: 52.041717
+  ...
+# Subtest: switch: 20 resolved switch cases in its own ledger averaging -1% after costs switch it off
+ok 2 - switch: 20 resolved switch cases in its own ledger averaging -1% after costs switch it off
+  ---
+  duration_ms: 49.516483
+  ...
+# Subtest: switch: 19 resolved negative cases are not yet a verdict, and longer-hold rows do not count for it
+ok 3 - switch: 19 resolved negative cases are not yet a verdict, and longer-hold rows do not count for it
+  ---
+  duration_ms: 39.431636
+  ...
+# Subtest: switch: loses at the stress cost (newer half) -> null
+ok 4 - switch: loses at the stress cost (newer half) -> null
+  ---
+  duration_ms: 29.326265
+  ...
+# Subtest: switch: no stress figure in the study output -> null (not shown unverified)
+ok 5 - switch: no stress figure in the study output -> null (not shown unverified)
+  ---
+  duration_ms: 36.56743
+  ...
+# Subtest: control: LONGER HOLDS passes every check -> small
+ok 6 - control: LONGER HOLDS passes every check -> small
+  ---
+  duration_ms: 34.725969
+  ...
+# Subtest: LONGER HOLDS: 20 resolved longer-hold cases in its own ledger averaging -2% after costs switch it off
+ok 7 - LONGER HOLDS: 20 resolved longer-hold cases in its own ledger averaging -2% after costs switch it off
+  ---
+  duration_ms: 36.553545
+  ...
+# Subtest: LONGER HOLDS: loses at the stress cost -> null
+ok 8 - LONGER HOLDS: loses at the stress cost -> null
+  ---
+  duration_ms: 45.314764
+  ...
+# Subtest: LONGER HOLDS: no profit without its 2 best trades in the older half -> null
+ok 9 - LONGER HOLDS: no profit without its 2 best trades in the older half -> null
+  ---
+  duration_ms: 35.711695
+  ...
+# Subtest: LONGER HOLDS: the trade study row missing from quality.json -> null (not shown unverified)
+ok 10 - LONGER HOLDS: the trade study row missing from quality.json -> null (not shown unverified)
+  ---
+  duration_ms: 36.787602
+  ...
+# Subtest: the ledger takes the round-trip cost from a switch case too: sold at 100, back at 90 -> +11.1% - 0.8% = +10.31%
+ok 11 - the ledger takes the round-trip cost from a switch case too: sold at 100, back at 90 -> +11.1% - 0.8% = +10.31%
+  ---
+  duration_ms: 35.879664
+  ...
+# Subtest: no network was touched
+ok 12 - no network was touched
+  ---
+  duration_ms: 0.744303
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 447.556508

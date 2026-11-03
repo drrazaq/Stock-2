@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: on by default; off only when radar is false
+ok 1 - on by default; off only when radar is false
+  ---
+  duration_ms: 1.368301
+  ...
+# Subtest: 2% net needs 2% + 0.6% fees + spread: 3.6% under 5 USD, 2.9% above (1,000 USD)
+ok 2 - 2% net needs 2% + 0.6% fees + spread: 3.6% under 5 USD, 2.9% above (1,000 USD)
+  ---
+  duration_ms: 0.221593
+  ...
+# Subtest: hard blocks: under 1 USD, NOT HALAL, SEC danger, one-day-jump AVOID; a normal 8-K is a catalyst, not a block
+ok 3 - hard blocks: under 1 USD, NOT HALAL, SEC danger, one-day-jump AVOID; a normal 8-K is a catalyst, not a block
+  ---
+  duration_ms: 1.607581
+  ...
+# Subtest: halal map: ZAD list fills in, a newer own mark wins, marks older than 90 days expire
+ok 4 - halal map: ZAD list fills in, a newer own mark wins, marks older than 90 days expire
+  ---
+  duration_ms: 0.344604
+  ...
+# Subtest: closest rule names its history verdict and what is missing; a rejected rule is never called approvable
+ok 5 - closest rule names its history verdict and what is missing; a rejected rule is never called approvable
+  ---
+  duration_ms: 0.638373
+  ...
+# Subtest: silence reason picks the biggest code and its kind
+ok 6 - silence reason picks the biggest code and its kind
+  ---
+  duration_ms: 0.292924
+  ...
+# Subtest: midday: labelled panels, hard blocks shown as BLOCKED never as leads, one line per stock, extended stocks left out
+ok 7 - midday: labelled panels, hard blocks shown as BLOCKED never as leads, one line per stock, extended stocks left out
+  ---
+  duration_ms: 2.125802
+  ...
+# Subtest: midday: an empty day still says 0 approved, no leads, and why; a late watcher is named
+ok 8 - midday: an empty day still says 0 approved, no leads, and why; a late watcher is named
+  ---
+  duration_ms: 0.467583
+  ...
+# Subtest: midday: tested alerts are counted as approved
+ok 9 - midday: tested alerts are counted as approved
+  ---
+  duration_ms: 0.354421
+  ...
+# Subtest: scorecard: same-day net after costs vs the market; 5-session net vs SPY
+ok 10 - scorecard: same-day net after costs vs the market; 5-session net vs SPY
+  ---
+  duration_ms: 0.609494
+  ...
+# Subtest: after the close: scores today, lists missed runners with reasons, says when the watcher saved nothing
+ok 11 - after the close: scores today, lists missed runners with reasons, says when the watcher saved nothing
+  ---
+  duration_ms: 0.596241
+  ...
+# Subtest: (28 Oct fix) with the live SEC check in the snapshot: a share-sale filing or a failed / missing check blocks a lead; the live catalyst is shown
+ok 12 - (28 Oct fix) with the live SEC check in the snapshot: a share-sale filing or a failed / missing check blocks a lead; the live catalyst is shown
+  ---
+  duration_ms: 1.170192
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 31.492361

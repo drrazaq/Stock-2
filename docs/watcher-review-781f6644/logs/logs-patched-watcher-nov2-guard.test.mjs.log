@@ -1,0 +1,85 @@
+TAP version 13
+# Subtest: first verified job and early stop survive later in_progress duplicate
+ok 1 - first verified job and early stop survive later in_progress duplicate
+  ---
+  duration_ms: 21.014164
+  ...
+# Subtest: first verified job and early stop survive later queued duplicate
+ok 2 - first verified job and early stop survive later queued duplicate
+  ---
+  duration_ms: 1.605156
+  ...
+# Subtest: verified no-op with long queue time is not observation and does not consume the start
+ok 3 - verified no-op with long queue time is not observation and does not consume the start
+  ---
+  duration_ms: 0.69802
+  ...
+# Subtest: unavailable job evidence never becomes a creation-time start
+ok 4 - unavailable job evidence never becomes a creation-time start
+  ---
+  duration_ms: 0.590698
+  ...
+# Subtest: configured boundary15:00 is independent of16:00 exchange close
+ok 5 - configured boundary15:00 is independent of16:00 exchange close
+  ---
+  duration_ms: 1.192258
+  ...
+# Subtest: day query bounds follow New York across23/25-hour DST days
+ok 6 - day query bounds follow New York across23/25-hour DST days
+  ---
+  duration_ms: 4.127891
+  ...
+# Subtest: manual/guard admission is bounded; late legitimate collection stays explicitly partial
+ok 7 - manual/guard admission is bounded; late legitimate collection stays explicitly partial
+  ---
+  duration_ms: 1.181487
+  ...
+# Subtest: complete daily pagination is independent of lifetime runs and uses actual jobs
+ok 8 - complete daily pagination is independent of lifetime runs and uses actual jobs
+  ---
+  duration_ms: 30.212455
+  ...
+# Subtest: history request cap and failed jobs are UNKNOWN, never proof of an earlier observation or permission to dispatch
+ok 9 - history request cap and failed jobs are UNKNOWN, never proof of an earlier observation or permission to dispatch
+  ---
+  duration_ms: 5.393526
+  ...
+# Subtest: actual guard handles metadata failure without declaring a start or dispatching
+ok 10 - actual guard handles metadata failure without declaring a start or dispatching
+  ---
+  duration_ms: 355.08458
+  ...
+# Subtest: a later completed duplicate reaching15:00 cannot erase the earlier stop
+ok 11 - a later completed duplicate reaching15:00 cannot erase the earlier stop
+  ---
+  duration_ms: 1.6518
+  ...
+# Subtest: partial history does not mislabel a later job as the original late start
+ok 12 - partial history does not mislabel a later job as the original late start
+  ---
+  duration_ms: 0.981437
+  ...
+# Subtest: short attempts retain the existing bounded startup retry rule without claiming observation coverage
+ok 13 - short attempts retain the existing bounded startup retry rule without claiming observation coverage
+  ---
+  duration_ms: 0.872581
+  ...
+# Subtest: earliest actual watcher job remains recorded when a later job in the same run is active
+ok 14 - earliest actual watcher job remains recorded when a later job in the same run is active
+  ---
+  duration_ms: 0.849636
+  ...
+# Subtest: malformed run identity/status never establishes an empty history or permits dispatch
+ok 15 - malformed run identity/status never establishes an empty history or permits dispatch
+  ---
+  duration_ms: 3.383173
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 440.965015

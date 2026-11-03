@@ -1,0 +1,200 @@
+TAP version 13
+# Subtest: tickers: $TICKER and (TICKER) count; CEO, AI, USA in a sentence do not
+ok 1 - tickers: $TICKER and (TICKER) count; CEO, AI, USA in a sentence do not
+  ---
+  duration_ms: 4.743729
+  ...
+# Subtest: tickers: "TICKER stock" counts; common words that are also tickers (NOW, ALL, BIG) do not
+ok 2 - tickers: "TICKER stock" counts; common words that are also tickers (NOW, ALL, BIG) do not
+  ---
+  duration_ms: 1.664997
+  ...
+# Subtest: tickers: a shouting all-caps title gives no bare tickers (only $ or brackets count there)
+ok 3 - tickers: a shouting all-caps title gives no bare tickers (only $ or brackets count there)
+  ---
+  duration_ms: 0.468054
+  ...
+# Subtest: tickers: a bare ticker counts only with its company name in the same text; at most 5 per video (title first)
+ok 4 - tickers: a bare ticker counts only with its company name in the same text; at most 5 per video (title first)
+  ---
+  duration_ms: 1.810419
+  ...
+# Subtest: direction: a bearish video is not a buy call; a neutral or bullish one is
+ok 5 - direction: a bearish video is not a buy call; a neutral or bullish one is
+  ---
+  duration_ms: 1.096301
+  ...
+# Subtest: levels: entry, target and stop are read only when the video names one stock
+ok 6 - levels: entry, target and stop are read only when the video names one stock
+  ---
+  duration_ms: 0.600359
+  ...
+# Subtest: entry: published before 9:30 New York -> that day’s open
+ok 7 - entry: published before 9:30 New York -> that day’s open
+  ---
+  duration_ms: 27.827734
+  ...
+# Subtest: entry: published during the session -> the NEXT session’s open (the open had passed)
+ok 8 - entry: published during the session -> the NEXT session’s open (the open had passed)
+  ---
+  duration_ms: 0.943503
+  ...
+# Subtest: entry: published after the close on Friday -> Monday’s open
+ok 9 - entry: published after the close on Friday -> Monday’s open
+  ---
+  duration_ms: 0.798194
+  ...
+# Subtest: entry: published on Saturday or Sunday -> Monday’s open
+ok 10 - entry: published on Saturday or Sunday -> Monday’s open
+  ---
+  duration_ms: 0.960704
+  ...
+# Subtest: entry: published late on a UTC Saturday that is still Friday evening in New York -> Monday
+ok 11 - entry: published late on a UTC Saturday that is still Friday evening in New York -> Monday
+  ---
+  duration_ms: 0.567204
+  ...
+# Subtest: entry: published after the last session in the data -> -1 (pending, a new call)
+ok 12 - entry: published after the last session in the data -> -1 (pending, a new call)
+  ---
+  duration_ms: 0.510874
+  ...
+# Subtest: score: held 5 sessions = bought at the 10.00 open, sold at the 5th close 11.00 -> +10% gross, +9.2% after 0.8%
+ok 13 - score: held 5 sessions = bought at the 10.00 open, sold at the 5th close 11.00 -> +10% gross, +9.2% after 0.8%
+  ---
+  duration_ms: 0.675253
+  ...
+# Subtest: score: the trader’s own stop 9.00 is hit on session 3 (low 8.90) -> -10% even though the stock ended higher
+ok 14 - score: the trader’s own stop 9.00 is hit on session 3 (low 8.90) -> -10% even though the stock ended higher
+  ---
+  duration_ms: 0.456471
+  ...
+# Subtest: score: the trader’s own target 10.80 is reached on session 4 (high 10.90) -> +8%
+ok 15 - score: the trader’s own target 10.80 is reached on session 4 (high 10.90) -> +8%
+  ---
+  duration_ms: 0.287108
+  ...
+# Subtest: score: a horizon not finished yet -> null; a stock that stops trading is valued at its last trade
+ok 16 - score: a horizon not finished yet -> null; a stock that stops trading is valued at its last trade
+  ---
+  duration_ms: 0.374494
+  ...
+# Subtest: judge: 30 calls on 10 days, t exactly 2.5, positive in both halves after 1.2% -> FOLLOW
+ok 17 - judge: 30 calls on 10 days, t exactly 2.5, positive in both halves after 1.2% -> FOLLOW
+  ---
+  duration_ms: 3.292862
+  ...
+# Subtest: judge: the same record with t 2.49 -> NO EDGE
+ok 18 - judge: the same record with t 2.49 -> NO EDGE
+  ---
+  duration_ms: 1.196801
+  ...
+# Subtest: judge: 29 calls, or 30 calls on only 9 days -> WATCH (too few)
+ok 19 - judge: 29 calls, or 30 calls on only 9 days -> WATCH (too few)
+  ---
+  duration_ms: 2.402278
+  ...
+# Subtest: judge: winning on average but losing in the newer half -> NO EDGE
+ok 20 - judge: winning on average but losing in the newer half -> NO EDGE
+  ---
+  duration_ms: 0.979344
+  ...
+# Subtest: judge: the mirror image (t -2.5, worse in both halves) -> FADE
+ok 21 - judge: the mirror image (t -2.5, worse in both halves) -> FADE
+  ---
+  duration_ms: 0.778293
+  ...
+# Subtest: judge: positive edge but loses money after the 1.2% stress cost in a half -> NO EDGE
+ok 22 - judge: positive edge but loses money after the 1.2% stress cost in a half -> NO EDGE
+  ---
+  duration_ms: 1.010912
+  ...
+# Subtest: luck: 1,000 traders screened at t 2.5 -> about 6 pass by luck alone
+ok 23 - luck: 1,000 traders screened at t 2.5 -> about 6 pass by luck alone
+  ---
+  duration_ms: 0.35635
+  ...
+# Subtest: horizon: fixed in advance from the channel’s own words
+ok 24 - horizon: fixed in advance from the channel’s own words
+  ---
+  duration_ms: 0.97305
+  ...
+# Subtest: congress: a stock BUY is a call dated at the FILING (when the public could know), never the trade date
+ok 25 - congress: a stock BUY is a call dated at the FILING (when the public could know), never the trade date
+  ---
+  duration_ms: 0.988546
+  ...
+# Subtest: congress: sales, untickered assets, puts and unknown symbols are not buy calls; a call option is
+ok 26 - congress: sales, untickered assets, puts and unknown symbols are not buy calls; a call option is
+  ---
+  duration_ms: 0.51685
+  ...
+# Subtest: 13F: a new position or one raised 50%+ is a call; held, trimmed, small adds and puts are not
+ok 27 - 13F: a new position or one raised 50%+ is a call; held, trimmed, small adds and puts are not
+  ---
+  duration_ms: 0.31333
+  ...
+# Subtest: 13F: the information table is read (shares summed per CUSIP; put and call lines left out)
+ok 28 - 13F: the information table is read (shares summed per CUSIP; put and call lines left out)
+  ---
+  duration_ms: 1.100102
+  ...
+# Subtest: judge: calls on many days but inside few non-overlapping H-session blocks are not independent -> not FOLLOW
+ok 29 - judge: calls on many days but inside few non-overlapping H-session blocks are not independent -> not FOLLOW
+  ---
+  duration_ms: 1.182083
+  ...
+# Subtest: non-US channel: Australian / Indian market channels are excluded (their codes are other companies in the US)
+ok 30 - non-US channel: Australian / Indian market channels are excluded (their codes are other companies in the US)
+  ---
+  duration_ms: 0.786387
+  ...
+# Subtest: congress: an option BUY that names no type counts (members’ option buys are mostly calls); one that says put does not
+ok 31 - congress: an option BUY that names no type counts (members’ option buys are mostly calls); one that says put does not
+  ---
+  duration_ms: 0.226115
+  ...
+# Subtest: tickers: AI words that are also tickers (AGI, MIT) are not calls when bare
+ok 32 - tickers: AI words that are also tickers (AGI, MIT) are not calls when bare
+  ---
+  duration_ms: 0.578917
+  ...
+# Subtest: strict tickers: capitalised words in titles are not calls (all of these are listed tickers in the test universe)
+ok 33 - strict tickers: capitalised words in titles are not calls (all of these are listed tickers in the test universe)
+  ---
+  duration_ms: 0.859703
+  ...
+# Subtest: strict tickers: real calls still count ($, "TICKER stock/shares", (TICKER), EXCHANGE: TICKER, or the company named)
+ok 34 - strict tickers: real calls still count ($, "TICKER stock/shares", (TICKER), EXCHANGE: TICKER, or the company named)
+  ---
+  duration_ms: 0.736656
+  ...
+# Subtest: strict tickers: in a shouting title "WORD STOCK" needs the company name too
+ok 35 - strict tickers: in a shouting title "WORD STOCK" needs the company name too
+  ---
+  duration_ms: 0.495809
+  ...
+# Subtest: luck bar: with 155 traders judged a FOLLOW needs block t 3.41; 3.38 stays WATCH ("could be luck"), 3.88 stays FOLLOW
+ok 36 - luck bar: with 155 traders judged a FOLLOW needs block t 3.41; 3.38 stays WATCH ("could be luck"), 3.88 stays FOLLOW
+  ---
+  duration_ms: 1.282511
+  ...
+# Subtest: FADE -> AVOID: buy calls of FADE traders whose entry is within the last 20 sessions, latest per stock
+ok 37 - FADE -> AVOID: buy calls of FADE traders whose entry is within the last 20 sessions, latest per stock
+  ---
+  duration_ms: 1.528923
+  ...
+# Subtest: posts: a Mastodon post in HTML with a cashtag is a call at its post time; an emphasis word is not; a bearish post is not
+ok 38 - posts: a Mastodon post in HTML with a cashtag is a call at its post time; an emphasis word is not; a bearish post is not
+  ---
+  duration_ms: 1.095454
+  ...
+1..38
+# tests 38
+# suites 0
+# pass 38
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 106.846692

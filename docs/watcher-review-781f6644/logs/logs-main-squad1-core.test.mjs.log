@@ -1,0 +1,105 @@
+TAP version 13
+# Subtest: registry: 9 buy rules + 1 avoid rule, every rule has a hold, a rule text, a paper with a link and a library check
+ok 1 - registry: 9 buy rules + 1 avoid rule, every rule has a hold, a rule text, a paper with a link and a library check
+  ---
+  duration_ms: 2.597021
+  ...
+# Subtest: insider roles: 10%-only owners are not insiders; CEO/CFO titles are recognised
+ok 2 - insider roles: 10%-only owners are not insiders; CEO/CFO titles are recognised
+  ---
+  duration_ms: 1.790518
+  ...
+# Subtest: cluster: 3 insiders, 300k USD, an officer, within 30 days fires once on the completing filing date; cooldown blocks a re-fire
+ok 3 - cluster: 3 insiders, 300k USD, an officer, within 30 days fires once on the completing filing date; cooldown blocks a re-fire
+  ---
+  duration_ms: 1.418653
+  ...
+# Subtest: top-officer purchases are summed per filing and need 100k USD
+ok 4 - top-officer purchases are summed per filing and need 100k USD
+  ---
+  duration_ms: 0.485333
+  ...
+# Subtest: Form 4 XML: open-market purchases and owner roles are read; grants and sales are not purchases
+ok 5 - Form 4 XML: open-market purchases and owner roles are read; grants and sales are not purchases
+  ---
+  duration_ms: 4.597473
+  ...
+# Subtest: EDGAR daily index: Form 4 rows, one per file, both index layouts
+ok 6 - EDGAR daily index: Form 4 rows, one per file, both index layouts
+  ---
+  duration_ms: 1.07349
+  ...
+# Subtest: buyback size: dollars and share counts are read only from authorization sentences
+ok 7 - buyback size: dollars and share counts are read only from authorization sentences
+  ---
+  duration_ms: 2.527395
+  ...
+# Subtest: survivorship fix: a company absent from TODAY's ticker list still gets its share count (filing CIK or point-in-time CIK)
+ok 8 - survivorship fix: a company absent from TODAY's ticker list still gets its share count (filing CIK or point-in-time CIK)
+  ---
+  duration_ms: 0.691861
+  ...
+# Subtest: first event per company per window; EDGAR full-text hits are compacted with tickers
+ok 9 - first event per company per window; EDGAR full-text hits are compacted with tickers
+  ---
+  duration_ms: 0.897606
+  ...
+# Subtest: customer link: active from the session after the first filing, until 400 days after the latest filing known that day
+ok 10 - customer link: active from the session after the first filing, until 400 days after the latest filing known that day
+  ---
+  duration_ms: 0.465812
+  ...
+# Subtest: consensus change: only months before the formation month; 5+ analysts; +15 points
+ok 11 - consensus change: only months before the formation month; 5+ analysts; +15 points
+  ---
+  duration_ms: 2.278766
+  ...
+# Subtest: dividend hikes: 25%+ on the previous regular dividend of the same frequency, 20-400 days apart, at most 3x
+ok 12 - dividend hikes: 25%+ on the previous regular dividend of the same frequency, 20-400 days apart, at most 3x
+  ---
+  duration_ms: 0.637483
+  ...
+# Subtest: short interest: known 14 days after settlement; low-short filter; avoid verdicts always say REJECTED AS A BUY
+ok 13 - short interest: known 14 days after settlement; low-short filter; avoid verdicts always say REJECTED AS A BUY
+  ---
+  duration_ms: 0.973104
+  ...
+# Subtest: the avoid verdict can never pass the TRY SMALL reader of scan.mjs (it refuses REJECTED)
+ok 14 - the avoid verdict can never pass the TRY SMALL reader of scan.mjs (it refuses REJECTED)
+  ---
+  duration_ms: 0.686145
+  ...
+# Subtest: yardstick and trades capped alike at +300%; same-stock windows need 3+
+ok 15 - yardstick and trades capped alike at +300%; same-stock windows need 3+
+  ---
+  duration_ms: 0.679059
+  ...
+# Subtest: helpers: picks, month starts, first session after a date, NYSE next session, halves
+ok 16 - helpers: picks, month starts, first session after a date, NYSE next session, halves
+  ---
+  duration_ms: 0.736248
+  ...
+# Subtest: pre-registration writes every SQ1 rule once, before any result
+ok 17 - pre-registration writes every SQ1 rule once, before any result
+  ---
+  duration_ms: 0.709855
+  ...
+# Subtest: paper board: capped, after cost; ready at 30+ trades on 10+ days with a positive average
+ok 18 - paper board: capped, after cost; ready at 30+ trades on 10+ days with a positive average
+  ---
+  duration_ms: 0.830479
+  ...
+# Subtest: the standard is the system judge, unchanged: a rule that wins only in one half is not TRADABLE SMALL
+ok 19 - the standard is the system judge, unchanged: a rule that wins only in one half is not TRADABLE SMALL
+  ---
+  duration_ms: 0.626641
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 19
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 63.575718

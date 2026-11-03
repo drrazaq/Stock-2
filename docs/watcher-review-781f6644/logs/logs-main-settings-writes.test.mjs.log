@@ -1,0 +1,67 @@
+TAP version 13
+Error: data/settings.json does not parse; nothing was written to it
+Telegram: 1 message(s) read
+# Subtest: "quiet on" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+ok 1 - "quiet on" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+  ---
+  duration_ms: 145.469107
+  ...
+Error: data/settings.json does not parse; nothing was written to it
+Telegram: 1 message(s) read
+# Subtest: "focus off" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+ok 2 - "focus off" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+  ---
+  duration_ms: 72.502204
+  ...
+Error: data/settings.json does not parse; nothing was written to it
+Telegram: 1 message(s) read
+# Subtest: "tier2 off" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+ok 3 - "tier2 off" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+  ---
+  duration_ms: 83.311794
+  ...
+Error: data/settings.json does not parse; nothing was written to it
+Telegram: 1 message(s) read
+# Subtest: "fee 3" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+ok 4 - "fee 3" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+  ---
+  duration_ms: 62.067218
+  ...
+Error: data/settings.json does not parse; nothing was written to it
+Telegram: 1 message(s) read
+# Subtest: "runners on" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+ok 5 - "runners on" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+  ---
+  duration_ms: 56.090133
+  ...
+Telegram: 1 message(s) read
+# Subtest: "decision Keep tradin" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+ok 6 - "decision Keep tradin" with a settings file that does not parse: the file is left exactly as it is, and the owner is told
+  ---
+  duration_ms: 61.270389
+  ...
+Telegram: 1 message(s) read
+# Subtest: control: a setting command keeps every other key (the decision stays)
+ok 7 - control: a setting command keeps every other key (the decision stays)
+  ---
+  duration_ms: 46.118833
+  ...
+# Subtest: a one-time migration does not run again when its done-flag cannot be read
+ok 8 - a one-time migration does not run again when its done-flag cannot be read
+  ---
+  duration_ms: 38.082199
+  ...
+# Subtest: no network was touched
+ok 9 - no network was touched
+  ---
+  duration_ms: 0.356391
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 574.828308

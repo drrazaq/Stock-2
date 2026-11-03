@@ -1,0 +1,80 @@
+TAP version 13
+# Subtest: toNy keeps 04:00-15:59 New York and sorts
+ok 1 - toNy keeps 04:00-15:59 New York and sorts
+  ---
+  duration_ms: 1.931235
+  ...
+# Subtest: dayFacts: gap, pre-market, crosses, reach40, close vs high
+ok 2 - dayFacts: gap, pre-market, crosses, reach40, close vs high
+  ---
+  duration_ms: 0.873056
+  ...
+# Subtest: base triggers fire once at the right minute; FAST needs a non-gap open
+ok 3 - base triggers fire once at the right minute; FAST needs a non-gap open
+  ---
+  duration_ms: 0.314405
+  ...
+# Subtest: trade: fill = next bar open after the trigger, 2% each way, stop 10% at the stop or a gap-through open
+ok 4 - trade: fill = next bar open after the trigger, 2% each way, stop 10% at the stop or a gap-through open
+  ---
+  duration_ms: 0.49562
+  ...
+# Subtest: trade: a halt pushes the fill to the next real bar; no entry after 15:30
+ok 5 - trade: a halt pushes the fill to the next real bar; no entry after 15:30
+  ---
+  duration_ms: 0.251524
+  ...
+# Subtest: trail and target exits
+ok 6 - trail and target exits
+  ---
+  duration_ms: 0.171859
+  ...
+# Subtest: halt-like gaps need active trading before the silence
+ok 7 - halt-like gaps need active trading before the silence
+  ---
+  duration_ms: 0.257032
+  ...
+# Subtest: news classes: reaction articles are not catalysts; first category wins
+ok 8 - news classes: reaction articles are not catalysts; first category wins
+  ---
+  duration_ms: 2.747186
+  ...
+# Subtest: filters read only what is known before the trigger minute
+ok 9 - filters read only what is known before the trigger minute
+  ---
+  duration_ms: 0.419911
+  ...
+# Subtest: summary and verdict: weeks are blocks; too few cases; a clean winner passes
+ok 10 - summary and verdict: weeks are blocks; too few cases; a clean winner passes
+  ---
+  duration_ms: 3.581215
+  ...
+# Subtest: daily holdTrade: stop at the open or the stop, else the close of session N
+ok 11 - daily holdTrade: stop at the open or the stop, else the close of session N
+  ---
+  duration_ms: 0.395653
+  ...
+# Subtest: daily jumpTrade: half at the first +20% close, stop to the fill, rest by day 3
+ok 12 - daily jumpTrade: half at the first +20% close, stop to the fill, rest by day 3
+  ---
+  duration_ms: 0.373291
+  ...
+# Subtest: daily EPS-LOW and REVERSE signals
+ok 13 - daily EPS-LOW and REVERSE signals
+  ---
+  duration_ms: 0.536786
+  ...
+# Subtest: daily verdict and pre-registration: 4 owner rules, idempotent
+ok 14 - daily verdict and pre-registration: 4 owner rules, idempotent
+  ---
+  duration_ms: 0.580344
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 35.768369

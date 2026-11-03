@@ -1,0 +1,80 @@
+TAP version 13
+# Subtest: plan G: holds 252 sessions and sells at that close when nothing triggers
+ok 1 - plan G: holds 252 sessions and sells at that close when nothing triggers
+  ---
+  duration_ms: 2.896664
+  ...
+# Subtest: plan G: the 35% disaster stop sells at the NEXT open
+ok 2 - plan G: the 35% disaster stop sells at the NEXT open
+  ---
+  duration_ms: 0.572788
+  ...
+# Subtest: plan G: after +100% a close under the 50-session average exits; before +100% it does not
+ok 3 - plan G: after +100% a close under the 50-session average exits; before +100% it does not
+  ---
+  duration_ms: 1.334238
+  ...
+# Subtest: plan T: adds 0.5 unit after the first close 15% under the first buy; stop on the TOTAL
+ok 4 - plan T: adds 0.5 unit after the first close 15% under the first buy; stop on the TOTAL
+  ---
+  duration_ms: 0.539264
+  ...
+# Subtest: plans: a dead stock loses everything left; a stock gone above 3 USD is paid its last close; too short a window is not judged
+ok 5 - plans: a dead stock loses everything left; a stock gone above 3 USD is paid its last close; too short a window is not judged
+  ---
+  duration_ms: 2.248396
+  ...
+# Subtest: sustained multiples: a one-day spike does not count; holding 20 sessions does
+ok 6 - sustained multiples: a one-day spike does not count; holding 20 sessions does
+  ---
+  duration_ms: 0.990794
+  ...
+# Subtest: split artifacts: near-whole 3x-50x one-day jumps are flagged; ordinary big moves are not
+ok 7 - split artifacts: near-whole 3x-50x one-day jumps are flagged; ordinary big moves are not
+  ---
+  duration_ms: 1.61724
+  ...
+# Subtest: fundamentals point in time: TTM growth, acceleration, margin trend, R&D, operating margin, FCF, ROIC, debt
+ok 8 - fundamentals point in time: TTM growth, acceleration, margin trend, R&D, operating margin, FCF, ROIC, debt
+  ---
+  duration_ms: 4.822405
+  ...
+# Subtest: insiders: common-stock holdings per ownership line, officers/directors only, stale owners dropped
+ok 9 - insiders: common-stock holdings per ownership line, officers/directors only, stale owners dropped
+  ---
+  duration_ms: 1.241753
+  ...
+# Subtest: rule checks as registered
+ok 10 - rule checks as registered
+  ---
+  duration_ms: 1.371384
+  ...
+# Subtest: payoff: the share of profit from the top 5% and the shape
+ok 11 - payoff: the share of profit from the top 5% and the shape
+  ---
+  duration_ms: 1.162749
+  ...
+# Subtest: look-alike buckets and precision
+ok 12 - look-alike buckets and precision
+  ---
+  duration_ms: 0.944344
+  ...
+# Subtest: helpers: highs, averages, shares, month starts, halves, weighting, per year, dedupe, board
+ok 13 - helpers: highs, averages, shares, month starts, halves, weighting, per year, dedupe, board
+  ---
+  duration_ms: 1.788356
+  ...
+# Subtest: pre-registration: eight rules, idempotent, marks B-100X1 with the exact spec; every rule has a plan
+ok 14 - pre-registration: eight rules, idempotent, marks B-100X1 with the exact spec; every rule has a plan
+  ---
+  duration_ms: 0.992711
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54.505221

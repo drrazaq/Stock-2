@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: registry: 5 exits x 3 bases, holds from the bases
+ok 1 - registry: 5 exits x 3 bases, holds from the bases
+  ---
+  duration_ms: 1.353499
+  ...
+# Subtest: target: first high at the target sells at the target; a gap over it sells at the open; never past x
+ok 2 - target: first high at the target sells at the target; a gap over it sells at the open; never past x
+  ---
+  duration_ms: 0.708342
+  ...
+# Subtest: trailing 10%: from the highest close (buy counts), sold at the next open; not on the planned sale day
+ok 3 - trailing 10%: from the highest close (buy counts), sold at the next open; not on the planned sale day
+  ---
+  duration_ms: 0.311619
+  ...
+# Subtest: stop 10% from the buy; next open; a gone stock is sold at the trigger close; past the data -> open
+ok 4 - stop 10% from the buy; next open; a gone stock is sold at the trigger close; past the data -> open
+  ---
+  duration_ms: 0.760577
+  ...
+# Subtest: same window over all trades and the adoption test
+ok 5 - same window over all trades and the adoption test
+  ---
+  duration_ms: 2.175689
+  ...
+# Subtest: pre-registration is idempotent
+ok 6 - pre-registration is idempotent
+  ---
+  duration_ms: 0.506179
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 25.175005

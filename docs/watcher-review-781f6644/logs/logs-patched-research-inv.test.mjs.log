@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: three INV rules: two buys (bottom), one avoid (top); holds fixed; one open trade per stock
+ok 1 - three INV rules: two buys (bottom), one avoid (top); holds fixed; one open trade per stock
+  ---
+  duration_ms: 2.633341
+  ...
+# Subtest: rows: instants only, original 10-Q/10-K, deduplicated, zero inventory kept, negative dropped
+ok 2 - rows: instants only, original 10-Q/10-K, deduplicated, zero inventory kept, negative dropped
+  ---
+  duration_ms: 2.06299
+  ...
+# Subtest: events: new latest balance, timely, (current - year-ago) / average assets; 10-K year ends count
+ok 3 - events: new latest balance, timely, (current - year-ago) / average assets; 10-K year ends count
+  ---
+  duration_ms: 1.618894
+  ...
+# Subtest: events: no year-ago inventory, zero year-ago inventory, assets unknown by F, or assets under 10M -> no event
+ok 4 - events: no year-ago inventory, zero year-ago inventory, assets unknown by F, or assets under 10M -> no event
+  ---
+  duration_ms: 1.082582
+  ...
+# Subtest: data rule: 95% looked up, 85% mapped, 10,000 events
+ok 5 - data rule: 95% looked up, 85% mapped, 10,000 events
+  ---
+  duration_ms: 1.1162
+  ...
+# Subtest: pre-registration: three RQ-INV entries, once, with sources and holds
+ok 6 - pre-registration: three RQ-INV entries, once, with sources and holds
+  ---
+  duration_ms: 1.14255
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 27.299375

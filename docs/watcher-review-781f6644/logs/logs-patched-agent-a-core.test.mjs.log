@@ -1,0 +1,90 @@
+TAP version 13
+# Subtest: runRotation: holds from the open after a month end to the open after the next month end, cost 0.4% per side traded
+ok 1 - runRotation: holds from the open after a month end to the open after the next month end, cost 0.4% per side traded
+  ---
+  duration_ms: 2.399455
+  ...
+# Subtest: runRotation: a full switch from one fund to another costs a round trip (0.8%); cash earns 0
+ok 2 - runRotation: a full switch from one fund to another costs a round trip (0.8%); cash earns 0
+  ---
+  duration_ms: 2.560509
+  ...
+# Subtest: rot1Pick 6m: the 3 funds with the best return from 6 month ends ago, equal weights; fewer than 4 eligible funds -> null
+ok 3 - rot1Pick 6m: the 3 funds with the best return from 6 month ends ago, equal weights; fewer than 4 eligible funds -> null
+  ---
+  duration_ms: 1.505082
+  ...
+# Subtest: rot1Pick 12-1: return from 12 month ends ago to 1 month end ago (the last month is skipped)
+ok 4 - rot1Pick 12-1: return from 12 month ends ago to 1 month end ago (the last month is skipped)
+  ---
+  duration_ms: 0.390964
+  ...
+# Subtest: rot2Pick: the fund above its 10-month average -> fund; else gold above its own 10-month average -> gold; else cash
+ok 5 - rot2Pick: the fund above its 10-month average -> fund; else gold above its own 10-month average -> gold; else cash
+  ---
+  duration_ms: 0.424215
+  ...
+# Subtest: monthlyStats: CAGR, worst drawdown and monthly win rate of a monthly return series
+ok 6 - monthlyStats: CAGR, worst drawdown and monthly win rate of a monthly return series
+  ---
+  duration_ms: 0.445646
+  ...
+# Subtest: judgeMonthly: both halves beat every yardstick, t 2.62 per half -> TRADABLE SMALL under a 4.0 bar
+ok 7 - judgeMonthly: both halves beat every yardstick, t 2.62 per half -> TRADABLE SMALL under a 4.0 bar
+  ---
+  duration_ms: 1.684768
+  ...
+# Subtest: judgeMonthly: +3% / -1% (t 2.18) -> NOT PROVEN, and the reason names the t
+ok 8 - judgeMonthly: +3% / -1% (t 2.18) -> NOT PROVEN, and the reason names the t
+  ---
+  duration_ms: 0.77632
+  ...
+# Subtest: judgeMonthly: loses to the same funds held equally (vsOwn) -> not tier 2
+ok 9 - judgeMonthly: loses to the same funds held equally (vsOwn) -> not tier 2
+  ---
+  duration_ms: 0.69054
+  ...
+# Subtest: judgeMonthly: fewer than 20 months in a half -> TOO FEW MONTHS
+ok 10 - judgeMonthly: fewer than 20 months in a half -> TOO FEW MONTHS
+  ---
+  duration_ms: 1.966462
+  ...
+# Subtest: switchCase: sold at the next open, bought back 10% lower; the gain is counted in USD of the money at the trigger
+ok 11 - switchCase: sold at the next open, bought back 10% lower; the gain is counted in USD of the money at the trigger
+  ---
+  duration_ms: 0.481337
+  ...
+# Subtest: switchCase: never came back 10% lower -> bought back at the day-60 close (the live rule), counted at its opportunity cost
+ok 12 - switchCase: never came back 10% lower -> bought back at the day-60 close (the live rule), counted at its opportunity cost
+  ---
+  duration_ms: 0.599481
+  ...
+# Subtest: switchVerdict: ahead of holding in both halves at both costs, block t 3.73 at worst -> TRADABLE SMALL under a 4.0 bar
+ok 13 - switchVerdict: ahead of holding in both halves at both costs, block t 3.73 at worst -> TRADABLE SMALL under a 4.0 bar
+  ---
+  duration_ms: 1.788881
+  ...
+# Subtest: switchVerdict: the same stocks switched on other days do better (the trigger adds nothing) -> NOT PROVEN
+ok 14 - switchVerdict: the same stocks switched on other days do better (the trigger adds nothing) -> NOT PROVEN
+  ---
+  duration_ms: 0.75824
+  ...
+# Subtest: switchVerdict: behind holding in both halves -> HOLDING WINS
+ok 15 - switchVerdict: behind holding in both halves -> HOLDING WINS
+  ---
+  duration_ms: 5.046245
+  ...
+# Subtest: nasdaqReport: one Nasdaq calendar row -> an E1 report { d, t, a, e } (negative EPS in brackets; no actual -> null)
+ok 16 - nasdaqReport: one Nasdaq calendar row -> an E1 report { d, t, a, e } (negative EPS in brackets; no actual -> null)
+  ---
+  duration_ms: 0.850506
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 55.200592

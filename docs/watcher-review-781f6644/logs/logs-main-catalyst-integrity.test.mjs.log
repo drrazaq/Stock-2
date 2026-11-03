@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: exact day is accepted only as an exact day
+ok 1 - exact day is accepted only as an exact day
+  ---
+  duration_ms: 2.082615
+  ...
+# Subtest: month-only event never becomes first-of-month trade date
+ok 2 - month-only event never becomes first-of-month trade date
+  ---
+  duration_ms: 0.24679
+  ...
+# Subtest: exact event date must have been public before entry
+ok 3 - exact event date must have been public before entry
+  ---
+  duration_ms: 0.261976
+  ...
+# Subtest: early actual event is explicitly flagged as event exposure
+ok 4 - early actual event is explicitly flagged as event exposure
+  ---
+  duration_ms: 0.168562
+  ...
+# Subtest: value-change gate fails closed on missing runway, novelty, share-supply or competitor evidence
+ok 5 - value-change gate fails closed on missing runway, novelty, share-supply or competitor evidence
+  ---
+  duration_ms: 0.406143
+  ...
+# Subtest: materiality requires quantified value to be meaningful relative to scale
+ok 6 - materiality requires quantified value to be meaningful relative to scale
+  ---
+  duration_ms: 0.217717
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 17.325584

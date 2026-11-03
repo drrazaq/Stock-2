@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: registry and pre-registration
+ok 1 - registry and pre-registration
+  ---
+  duration_ms: 3.809903
+  ...
+# Subtest: counterparty: alias + optional corporate form, no further name word, in a deal sentence
+ok 2 - counterparty: alias + optional corporate form, no further name word, in a deal sentence
+  ---
+  duration_ms: 4.028793
+  ...
+# Subtest: largest dollar value: units, US$, per-share and trillions ignored, 100k floor
+ok 3 - largest dollar value: units, US$, per-share and trillions ignored, 100k floor
+  ---
+  duration_ms: 1.269794
+  ...
+# Subtest: acceptance time (Eastern) -> UTC -> filing session
+ok 4 - acceptance time (Eastern) -> UTC -> filing session
+  ---
+  duration_ms: 2.383567
+  ...
+# Subtest: filters: close 1-10, traded value, no 15% move in the 21 sessions before f (either way); reaction day free
+ok 5 - filters: close 1-10, traded value, no 15% move in the 21 sessions before f (either way); reaction day free
+  ---
+  duration_ms: 0.835314
+  ...
+# Subtest: share count known 30 days late, not older than 400 days
+ok 6 - share count known 30 days late, not older than 400 days
+  ---
+  duration_ms: 0.33253
+  ...
+# Subtest: exit: buy the open, 25% stop (open gap / intraday), else the close of session 10; slippage
+ok 7 - exit: buy the open, 25% stop (open gap / intraday), else the close of session 10; slippage
+  ---
+  duration_ms: 0.730919
+  ...
+# Subtest: the frozen list: quarter of a date, list in force, top by cap merged by CIK
+ok 8 - the frozen list: quarter of a date, list in force, top by cap merged by CIK
+  ---
+  duration_ms: 0.665233
+  ...
+# Subtest: addendum helpers: path stats 1/3/5/10 and max favourable / adverse; insider cluster window f-10..f-1
+ok 9 - addendum helpers: path stats 1/3/5/10 and max favourable / adverse; insider cluster window f-10..f-1
+  ---
+  duration_ms: 1.090628
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 33.589204

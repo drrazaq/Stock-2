@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: cluster: 2 different insiders, 200k+ within 5 sessions, fires on the completing filing date
+ok 1 - cluster: 2 different insiders, 200k+ within 5 sessions, fires on the completing filing date
+  ---
+  duration_ms: 1.529681
+  ...
+# Subtest: cluster: too far apart, same person twice, under 200k, or a 10%-only owner do not fire
+ok 2 - cluster: too far apart, same person twice, under 200k, or a 10%-only owner do not fire
+  ---
+  duration_ms: 0.361002
+  ...
+# Subtest: stop walk: 15% under the fill exits at min(open, level); else the close of the last hold session
+ok 3 - stop walk: 15% under the fill exits at min(open, level); else the close of the last hold session
+  ---
+  duration_ms: 0.293587
+  ...
+# Subtest: 200-session average needs 190+ closes
+ok 4 - 200-session average needs 190+ closes
+  ---
+  duration_ms: 0.585784
+  ...
+# Subtest: House index: PTR rows with ISO filing dates
+ok 5 - House index: PTR rows with ISO filing dates
+  ---
+  duration_ms: 1.402893
+  ...
+# Subtest: PTR text: rows, tickers on the wrapped line, options and sales kept apart, amount ranges
+ok 6 - PTR text: rows, tickers on the wrapped line, options and sales kept apart, amount ranges
+  ---
+  duration_ms: 1.291897
+  ...
+# Subtest: data stop: each failure is named; a complete set passes
+ok 7 - data stop: each failure is named; a complete set passes
+  ---
+  duration_ms: 0.366997
+  ...
+# Subtest: TRY SMALL bar and helpers
+ok 8 - TRY SMALL bar and helpers
+  ---
+  duration_ms: 0.375799
+  ...
+# Subtest: library pre-registration: own entries once, idempotent, never touches other entries
+ok 9 - library pre-registration: own entries once, idempotent, never touches other entries
+  ---
+  duration_ms: 3.212091
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 26.589707

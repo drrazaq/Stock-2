@@ -1,0 +1,75 @@
+TAP version 13
+# Subtest: registry and pre-registration
+ok 1 - registry and pre-registration
+  ---
+  duration_ms: 3.121811
+  ...
+# Subtest: strict aliases: legal name minus corporate form; no acronyms, no person names
+ok 2 - strict aliases: legal name minus corporate form; no acronyms, no person names
+  ---
+  duration_ms: 3.187765
+  ...
+# Subtest: major-customer sentence: alias + revenue + concentration, first percentage after the alias >= 10
+ok 3 - major-customer sentence: alias + revenue + concentration, first percentage after the alias >= 10
+  ---
+  duration_ms: 7.254944
+  ...
+# Subtest: 10-K cover ticker
+ok 4 - 10-K cover ticker
+  ---
+  duration_ms: 0.618998
+  ...
+# Subtest: link activity: the latest 10-K before the day must show the link, at most 400 days old
+ok 5 - link activity: the latest 10-K before the day must show the link, at most 400 days old
+  ---
+  duration_ms: 0.560417
+  ...
+# Subtest: SUE: rolling top 30% over the 63 sessions before, 30+ values
+ok 6 - SUE: rolling top 30% over the 63 sessions before, 30+ values
+  ---
+  duration_ms: 2.198299
+  ...
+# Subtest: own report window r-4..r+20 and reaction sessions
+ok 7 - own report window r-4..r+20 and reaction sessions
+  ---
+  duration_ms: 0.507149
+  ...
+# Subtest: exit: 20 sessions, 20% stop, gap through the stop sells at the open
+ok 8 - exit: 20 sessions, 20% stop, gap through the stop sells at the open
+  ---
+  duration_ms: 0.691586
+  ...
+# Subtest: placebo: same quarter, not within 20 sessions of an event session, seeded
+ok 9 - placebo: same quarter, not within 20 sessions of an event session, seeded
+  ---
+  duration_ms: 4.960991
+  ...
+# Subtest: stats helpers
+ok 10 - stats helpers
+  ---
+  duration_ms: 0.548914
+  ...
+# Subtest: v2 extractor: rejects the failure kinds found in the first hand check
+ok 11 - v2 extractor: rejects the failure kinds found in the first hand check
+  ---
+  duration_ms: 1.66926
+  ...
+# Subtest: v3 extractor: lists, respectively, combined figures, the year of the figure, vendors
+ok 12 - v3 extractor: lists, respectively, combined figures, the year of the figure, vendors
+  ---
+  duration_ms: 1.008813
+  ...
+# Subtest: correctedRun SQ28-TIMING: reaction session from the 8-K Item 2.02 acceptance time
+ok 13 - correctedRun SQ28-TIMING: reaction session from the 8-K Item 2.02 acceptance time
+  ---
+  duration_ms: 0.684982
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 53.945653

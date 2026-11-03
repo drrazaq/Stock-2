@@ -1,0 +1,75 @@
+TAP version 13
+# Subtest: each payload carries the feed of its own response, even when concurrent requests race on a SIP 403
+ok 1 - each payload carries the feed of its own response, even when concurrent requests race on a SIP 403
+  ---
+  duration_ms: 138.591595
+  ...
+# Subtest: SIP 422 is a failed request, never an entitlement downgrade: no IEX request, nothing returned
+ok 2 - SIP 422 is a failed request, never an entitlement downgrade: no IEX request, nothing returned
+  ---
+  duration_ms: 1.013116
+  ...
+# Subtest: forced SIP never falls back to IEX on 403
+ok 3 - forced SIP never falls back to IEX on 403
+  ---
+  duration_ms: 0.450945
+  ...
+# Subtest: an invalid forced feed is refused before any request
+ok 4 - an invalid forced feed is refused before any request
+  ---
+  duration_ms: 0.337566
+  ...
+# Subtest: 429 is not retried; Retry-After is honoured but capped at 5 minutes
+ok 5 - 429 is not retried; Retry-After is honoured but capped at 5 minutes
+  ---
+  duration_ms: 1.132982
+  ...
+# Subtest: network failure, non-JSON body and an unrequested symbol all return nothing (never a partial guess)
+ok 6 - network failure, non-JSON body and an unrequested symbol all return nothing (never a partial guess)
+  ---
+  duration_ms: 1.205114
+  ...
+# Subtest: a null row is dropped for that symbol only; the rest of the batch is kept
+ok 7 - a null row is dropped for that symbol only; the rest of the batch is kept
+  ---
+  duration_ms: 0.380867
+  ...
+# Subtest: only the Alpaca data origin or a local test service is accepted as a base
+ok 8 - only the Alpaca data origin or a local test service is accepted as a base
+  ---
+  duration_ms: 0.337884
+  ...
+# Subtest: Alpaca SIP daily volume: documented contract gives no as-of time; session and minute bar are observations, never a freshness clock
+ok 9 - Alpaca SIP daily volume: documented contract gives no as-of time; session and minute bar are observations, never a freshness clock
+  ---
+  duration_ms: 0.900611
+  ...
+# Subtest: SIP daily volume is rejected when it contradicts itself, is another session, or carries a future clock
+ok 10 - SIP daily volume is rejected when it contradicts itself, is another session, or carries a future clock
+  ---
+  duration_ms: 0.602171
+  ...
+# Subtest: per-field clock validation: future price, volume and quote clocks never vouch for their values
+ok 11 - per-field clock validation: future price, volume and quote clocks never vouch for their values
+  ---
+  duration_ms: 0.307021
+  ...
+# Subtest: Massive price clock follows the price actually used; the snapshot "updated" time is never a price clock
+ok 12 - Massive price clock follows the price actually used; the snapshot "updated" time is never a price clock
+  ---
+  duration_ms: 0.398239
+  ...
+# Subtest: merge: SIP daily volume (no as-of) is used only when consistent with the earlier clocked count; IEX never; future and crossed values never win
+ok 13 - merge: SIP daily volume (no as-of) is used only when consistent with the earlier clocked count; IEX never; future and crossed values never win
+  ---
+  duration_ms: 0.666947
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 164.7114

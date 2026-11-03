@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: 7 rules: 6 dip rules with holds fixed at 21 / 63 / 126 and one month-start control
+ok 1 - 7 rules: 6 dip rules with holds fixed at 21 / 63 / 126 and one month-start control
+  ---
+  duration_ms: 1.857983
+  ...
+# Subtest: month ends need the next session in a later month; leader month = the latest month end strictly before t
+ok 2 - month ends need the next session in a later month; leader month = the latest month end strictly before t
+  ---
+  duration_ms: 1.222714
+  ...
+# Subtest: 12-1 month return skips the last 21 sessions; leaders = top 20% (ceil) of those with a return, ties by key
+ok 3 - 12-1 month return skips the last 21 sessions; leaders = top 20% (ceil) of those with a return, ties by key
+  ---
+  duration_ms: 0.658464
+  ...
+# Subtest: pullback: the FIRST close 8% (12%) under the 50-session closing high, above the 200-day
+ok 4 - pullback: the FIRST close 8% (12%) under the 50-session closing high, above the 200-day
+  ---
+  duration_ms: 0.406103
+  ...
+# Subtest: 50-day touch from above: low at or under the 50-day after 10 closes above it
+ok 5 - 50-day touch from above: low at or under the 50-day after 10 closes above it
+  ---
+  duration_ms: 0.411817
+  ...
+# Subtest: third down close in a row only (not the 4th)
+ok 6 - third down close in a row only (not the 4th)
+  ---
+  duration_ms: 0.19741
+  ...
+# Subtest: flush: leader -5% on a day SPY -2% (both close to close)
+ok 7 - flush: leader -5% on a day SPY -2% (both close to close)
+  ---
+  duration_ms: 0.321875
+  ...
+# Subtest: first close under the 20-day after a 20%+ 3-month run
+ok 8 - first close under the 20-day after a 20%+ 3-month run
+  ---
+  duration_ms: 0.530174
+  ...
+# Subtest: dipSignals lists every rule that fires
+ok 9 - dipSignals lists every rule that fires
+  ---
+  duration_ms: 0.628631
+  ...
+# Subtest: fixed hold: next open -> close of the hold session; gone = last close; data end = open; no open bar = not bought
+ok 10 - fixed hold: next open -> close of the hold session; gone = last close; data end = open; no open bar = not bought
+  ---
+  duration_ms: 0.545884
+  ...
+# Subtest: per year of capital, timing comparison and per-year table
+ok 11 - per year of capital, timing comparison and per-year table
+  ---
+  duration_ms: 2.207313
+  ...
+# Subtest: pre-registration is idempotent and carries the rule text
+ok 12 - pre-registration is idempotent and carries the rule text
+  ---
+  duration_ms: 0.664899
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 31.459988

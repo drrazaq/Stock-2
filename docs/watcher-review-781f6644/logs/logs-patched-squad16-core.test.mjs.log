@@ -1,0 +1,85 @@
+TAP version 13
+# Subtest: 10 rules, one version each, every one with a source, a claim and deviations
+ok 1 - 10 rules, one version each, every one with a source, a claim and deviations
+  ---
+  duration_ms: 3.122764
+  ...
+# Subtest: sectors and ranks
+ok 2 - sectors and ranks
+  ---
+  duration_ms: 1.207612
+  ...
+# Subtest: magic formula: earnings yield, return on capital, rank sum
+ok 3 - magic formula: earnings yield, return on capital, rank sum
+  ---
+  duration_ms: 2.050132
+  ...
+# Subtest: magic formula tie order is by earnings yield
+ok 4 - magic formula tie order is by earnings yield
+  ---
+  duration_ms: 0.324273
+  ...
+# Subtest: acquirer's multiple, F-score and the QVAL pick
+ok 5 - acquirer's multiple, F-score and the QVAL pick
+  ---
+  duration_ms: 3.97561
+  ...
+# Subtest: two-rank composite and top-by
+ok 6 - two-rank composite and top-by
+  ---
+  duration_ms: 0.833499
+  ...
+# Subtest: MSCI quality: variability, z composite, buffer, capped weights
+ok 7 - MSCI quality: variability, z composite, buffer, capped weights
+  ---
+  duration_ms: 2.589056
+  ...
+# Subtest: shareholder yield and industry momentum
+ok 8 - shareholder yield and industry momentum
+  ---
+  duration_ms: 0.982566
+  ...
+# Subtest: RS line blue dot: RS at a 52-week high, price not, within 15%, above the 50-day, fresh
+ok 9 - RS line blue dot: RS at a 52-week high, price not, within 15%, above the 50-day, fresh
+  ---
+  duration_ms: 6.576194
+  ...
+# Subtest: point-in-time fact helpers
+ok 10 - point-in-time fact helpers
+  ---
+  duration_ms: 1.305872
+  ...
+# Subtest: sleeves: one-year holds, re-picks continue, held names are skipped
+ok 11 - sleeves: one-year holds, re-picks continue, held names are skipped
+  ---
+  duration_ms: 1.245878
+  ...
+# Subtest: holdings -> trades: buy the next open, sell the open after the dropping review; gone = last close
+ok 12 - holdings -> trades: buy the next open, sell the open after the dropping review; gone = last close
+  ---
+  duration_ms: 0.694069
+  ...
+# Subtest: account: exits at the open before buys, costs on both sides
+ok 13 - account: exits at the open before buys, costs on both sides
+  ---
+  duration_ms: 1.018671
+  ...
+# Subtest: review sessions
+ok 14 - review sessions
+  ---
+  duration_ms: 0.668991
+  ...
+# Subtest: library pre-registration: idempotent, append only
+ok 15 - library pre-registration: idempotent, append only
+  ---
+  duration_ms: 1.010441
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 61.420393

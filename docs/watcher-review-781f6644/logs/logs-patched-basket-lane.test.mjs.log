@@ -1,0 +1,74 @@
+TAP version 13
+# Subtest: a member marked NOT halal is replaced by the first reserve marked halal (unmarked and NOT halal reserves are passed over)
+ok 1 - a member marked NOT halal is replaced by the first reserve marked halal (unmarked and NOT halal reserves are passed over)
+  ---
+  duration_ms: 3.17822
+  ...
+# Subtest: weights are renormalised to 100% after a NOT halal member with no halal reserve is dropped
+ok 2 - weights are renormalised to 100% after a NOT halal member with no halal reserve is dropped
+  ---
+  duration_ms: 0.593759
+  ...
+# Subtest: an unmarked member is listed to check in ZAD first and, on a buy, its share goes to SPUS until marked
+ok 3 - an unmarked member is listed to check in ZAD first and, on a buy, its share goes to SPUS until marked
+  ---
+  duration_ms: 0.669591
+  ...
+# Subtest: top 10 whole-number %: total exactly 100, min 1%, today = NVDA 15, AAPL 15, GOOGL 15, MSFT 15, AMZN 11, META 7, AVGO 7, TSLA 6, MU 5, LLY 4
+ok 4 - top 10 whole-number %: total exactly 100, min 1%, today = NVDA 15, AAPL 15, GOOGL 15, MSFT 15, AMZN 11, META 7, AVGO 7, TSLA 6, MU 5, LLY 4
+  ---
+  duration_ms: 1.56244
+  ...
+# Subtest: monthly split: Basket 2 = 65% (SPUS 54% / IAUM 46%, cents to SPUS), 35% set aside as cash for Basket 1
+ok 5 - monthly split: Basket 2 = 65% (SPUS 54% / IAUM 46%, cents to SPUS), 35% set aside as cash for Basket 1
+  ---
+  duration_ms: 1.099287
+  ...
+# Subtest: Basket 1 buy days: first US trading day of January, May and September
+ok 6 - Basket 1 buy days: first US trading day of January, May and September
+  ---
+  duration_ms: 0.949464
+  ...
+# Subtest: fee check: 10 stocks x 3 USD = 30 USD; warning above 2% of the buy (save longer)
+ok 7 - fee check: 10 stocks x 3 USD = 30 USD; warning above 2% of the buy (save longer)
+  ---
+  duration_ms: 0.814411
+  ...
+# Subtest: rebalance change detection: members in/out or a weight change at a new formation; drift-free repeats are silent
+ok 8 - rebalance change detection: members in/out or a weight change at a new formation; drift-free repeats are silent
+  ---
+  duration_ms: 1.054421
+  ...
+# Subtest: rebalance notice: baseline silent (also over an old top-20 state); a new top-10 list is sent once with the % for the next Basket 1 buy and no selling
+ok 9 - rebalance notice: baseline silent (also over an old top-20 state); a new top-10 list is sent once with the % for the next Basket 1 buy and no selling
+  ---
+  duration_ms: 17.872549
+  ...
+# Subtest: monthly reminder: first US trading day of each month after the open, once; Jan / May / Sep add the Basket 1 buy-day line
+ok 10 - monthly reminder: first US trading day of each month after the open, once; Jan / May / Sep add the Basket 1 buy-day line
+  ---
+  duration_ms: 101.889232
+  ...
+# Subtest: basket text: 65/35 month, next Basket 1 buy day with 4 months saved, top-10 whole % list, ZAD notes, tested record
+ok 11 - basket text: 65/35 month, next Basket 1 buy day with 4 months saved, top-10 whole % list, ZAD notes, tested record
+  ---
+  duration_ms: 136.155408
+  ...
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+# Subtest: basket buy text: top-10 dollar split of the saved cash, fee line and the save-longer warning; Telegram commands
+ok 12 - basket buy text: top-10 dollar split of the saved cash, fee line and the save-longer warning; Telegram commands
+  ---
+  duration_ms: 131.460951
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 462.238826

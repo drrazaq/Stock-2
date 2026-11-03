@@ -1,0 +1,65 @@
+TAP version 13
+# Subtest: level: all by default; paper / approved / off narrow it; unknown values fall back to all
+ok 1 - level: all by default; paper / approved / off narrow it; unknown values fall back to all
+  ---
+  duration_ms: 3.490641
+  ...
+# Subtest: lead trigger EW-ALERT-1 (pre-registered): +3% to +8%, score 80+, 1M USD traded, live, 9:35-11:30
+ok 2 - lead trigger EW-ALERT-1 (pre-registered): +3% to +8%, score 80+, 1M USD traded, live, 9:35-11:30
+  ---
+  duration_ms: 1.45812
+  ...
+# Subtest: hard rules: under 1 USD, NOT HALAL, AVOID list, SEC danger, and a FAILED SEC check all block
+ok 3 - hard rules: under 1 USD, NOT HALAL, AVOID list, SEC danger, and a FAILED SEC check all block
+  ---
+  duration_ms: 0.402419
+  ...
+# Subtest: leads: one message, labelled NOT AN APPROVED BUY, hard blocks never sent, each stock decided once
+ok 4 - leads: one message, labelled NOT AN APPROVED BUY, hard blocks never sent, each stock decided once
+  ---
+  duration_ms: 2.630822
+  ...
+# Subtest: a stock under the trigger is re-checked until it qualifies; an extended one is final
+ok 5 - a stock under the trigger is re-checked until it qualifies; an extended one is final
+  ---
+  duration_ms: 0.832717
+  ...
+# Subtest: daily cap: 5 leads, the rest logged as LIMIT; level paper mutes leads but logs them
+ok 6 - daily cap: 5 leads, the rest logged as LIMIT; level paper mutes leads but logs them
+  ---
+  duration_ms: 0.962976
+  ...
+# Subtest: paper setups: separate message with the rule record, the without-2-best figure and the 5-year verdict; none after 11:30
+ok 7 - paper setups: separate message with the rule record, the without-2-best figure and the 5-year verdict; none after 11:30
+  ---
+  duration_ms: 0.729977
+  ...
+# Subtest: a failed Telegram send is recorded as SEND FAILED, not as delivered; latency is measured
+ok 8 - a failed Telegram send is recorded as SEND FAILED, not as delivered; latency is measured
+  ---
+  duration_ms: 0.641308
+  ...
+# Subtest: scorecard: funnel counts, results after costs at 15:00, and every eligible +2% net candidate that was not delivered, with why
+ok 9 - scorecard: funnel counts, results after costs at 15:00, and every eligible +2% net candidate that was not delivered, with why
+  ---
+  duration_ms: 4.380971
+  ...
+# Subtest: a lead that never met the trigger keeps the reason that blocked it inside the window, not "after 11:30"
+ok 10 - a lead that never met the trigger keeps the reason that blocked it inside the window, not "after 11:30"
+  ---
+  duration_ms: 0.565821
+  ...
+# Subtest: (owner approved 28 Oct) the alert shows the REAL spread and the gross move +2% net needs; a stale quote falls back to the assumed spread and says so
+ok 11 - (owner approved 28 Oct) the alert shows the REAL spread and the gross move +2% net needs; a stale quote falls back to the assumed spread and says so
+  ---
+  duration_ms: 0.995971
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 41.087634

@@ -1,0 +1,117 @@
+TAP version 13
+# Subtest: 1. a new-signal list from an older close than the newest session is not shown as a buy
+not ok 1 - 1. a new-signal list from an older close than the newest session is not shown as a buy
+  ---
+  duration_ms: 107.742812
+  location: '/tmp/claude-0/-home-user-Stock-2/fa72ce54-d39f-5b70-9df0-456caf706062/scratchpad/wrev/patched/test/try-small-audit.test.mjs:28:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /- BUY TPC 1000 USD up to 80\.34\. STOP 50\.70 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\).*SQ6-MTUM/. Input:
+    
+    ''
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: ''
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///tmp/claude-0/-home-user-Stock-2/fa72ce54-d39f-5b70-9df0-456caf706062/scratchpad/wrev/patched/test/try-small-audit.test.mjs:32:10)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: 1b. without a session, a list whose close is more than 5 trading sessions old is not shown
+ok 2 - 1b. without a session, a list whose close is more than 5 trading sessions old is not shown
+  ---
+  duration_ms: 89.916325
+  ...
+# Subtest: 2. a value pick priced only by the lab's week-old close gets no stale limit or stop
+ok 3 - 2. a value pick priced only by the lab's week-old close gets no stale limit or stop
+  ---
+  duration_ms: 37.703266
+  ...
+# Subtest: 2b. ACTIONS prices TRY SMALL from sig.uni too (QLYS was only there on 23 Oct)
+ok 4 - 2b. ACTIONS prices TRY SMALL from sig.uni too (QLYS was only there on 23 Oct)
+  ---
+  duration_ms: 7.369851
+  ...
+# Subtest: 3. a stock already a BUY elsewhere in the message is not bought again by TRY SMALL
+ok 5 - 3. a stock already a BUY elsewhere in the message is not bought again by TRY SMALL
+  ---
+  duration_ms: 37.619286
+  ...
+# Subtest: 3b. the TRY SMALL ledger row carries the hold and stop that were shown
+not ok 6 - 3b. the TRY SMALL ledger row carries the hold and stop that were shown
+  ---
+  duration_ms: 42.289512
+  location: '/tmp/claude-0/-home-user-Stock-2/fa72ce54-d39f-5b70-9df0-456caf706062/scratchpad/wrev/patched/test/try-small-audit.test.mjs:64:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, open '/tmp/scan-test-uSXdMO/data/tier2-ledger.jsonl'"
+  code: 'ENOENT'
+  stack: |-
+    Object.readFileSync (node:fs:448:20)
+    Object.read (file:///tmp/claude-0/-home-user-Stock-2/fa72ce54-d39f-5b70-9df0-456caf706062/scratchpad/wrev/patched/test/load-scan.mjs:48:128)
+    TestContext.<anonymous> (file:///tmp/claude-0/-home-user-Stock-2/fa72ce54-d39f-5b70-9df0-456caf706062/scratchpad/wrev/patched/test/try-small-audit.test.mjs:67:17)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+Telegram: 1 message(s) read
+# Subtest: 4. bought SYM after the signal list changed: still tagged TRY SMALL with the shown hold and stop
+ok 7 - 4. bought SYM after the signal list changed: still tagged TRY SMALL with the shown hold and stop
+  ---
+  duration_ms: 142.869609
+  ...
+# Subtest: 5. the HOLD line of a TRY SMALL holding names its real exits, not "target or 5 sessions"
+ok 8 - 5. the HOLD line of a TRY SMALL holding names its real exits, not "target or 5 sessions"
+  ---
+  duration_ms: 37.995582
+  ...
+# Subtest: 6. a TRY SMALL holding's stop-at-close and time exit are computed from its own bars, however short its history
+ok 9 - 6. a TRY SMALL holding's stop-at-close and time exit are computed from its own bars, however short its history
+  ---
+  duration_ms: 37.35381
+  ...
+# Subtest: 7. every lab keeps the newest close's signals when re-run on the same close
+ok 10 - 7. every lab keeps the newest close's signals when re-run on the same close
+  ---
+  duration_ms: 4.821869
+  ...
+# Subtest: 8. LATE ENTRIES: a value list is offered only within 5 sessions of its formation; older says when the next one is due
+ok 11 - 8. LATE ENTRIES: a value list is offered only within 5 sessions of its formation; older says when the next one is due
+  ---
+  duration_ms: 137.572439
+  ...
+# Subtest: 8b. sessions are counted on the exchange calendar (weekends and holidays skipped)
+ok 12 - 8b. sessions are counted on the exchange calendar (weekends and holidays skipped)
+  ---
+  duration_ms: 49.137306
+  ...
+# Subtest: 9. B-BASK1 (judged as one basket a month) never feeds TRY SMALL; B-FCF1 (judged per stock) still does
+ok 13 - 9. B-BASK1 (judged as one basket a month) never feeds TRY SMALL; B-FCF1 (judged per stock) still does
+  ---
+  duration_ms: 50.787065
+  ...
+# Subtest: 10. AUTO-OFF: a TRY SMALL ledger row is resolved at its own hold, or at its stop
+ok 14 - 10. AUTO-OFF: a TRY SMALL ledger row is resolved at its own hold, or at its stop
+  ---
+  duration_ms: 45.803742
+  ...
+# Subtest: 10b. AUTO-OFF: every logged stock is priced from daily bars (not only the scan list), so 10 losers switch the rule off
+ok 15 - 10b. AUTO-OFF: every logged stock is priced from daily bars (not only the scan list), so 10 losers switch the rule off
+  ---
+  duration_ms: 326.263221
+  ...
+# Subtest: no network was used
+ok 16 - no network was used
+  ---
+  duration_ms: 0.284137
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 14
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1169.746609

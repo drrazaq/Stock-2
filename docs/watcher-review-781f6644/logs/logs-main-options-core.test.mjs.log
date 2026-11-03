@@ -1,0 +1,90 @@
+TAP version 13
+# Subtest: a call bought at 2.00 and sold at 3.00 with a 5% half-spread and 5 USD each side
+ok 1 - a call bought at 2.00 and sold at 3.00 with a 5% half-spread and 5 USD each side
+  ---
+  duration_ms: 1.346169
+  ...
+# Subtest: a call that expires worthless loses the premium plus the entry fee and nothing more
+ok 2 - a call that expires worthless loses the premium plus the entry fee and nothing more
+  ---
+  duration_ms: 0.203033
+  ...
+# Subtest: the nearest strike that traded on the entry session is chosen; one that did not trade that day is skipped
+ok 3 - the nearest strike that traded on the entry session is chosen; one that did not trade that day is skipped
+  ---
+  duration_ms: 0.545464
+  ...
+# Subtest: a tie between two strikes goes to the lower strike; nothing traded -> null
+ok 4 - a tie between two strikes goes to the lower strike; nothing traded -> null
+  ---
+  duration_ms: 0.192947
+  ...
+# Subtest: exit: the close of the exit session; no bar that day -> the intrinsic floor at the stock close
+ok 5 - exit: the close of the exit session; no bar that day -> the intrinsic floor at the stock close
+  ---
+  duration_ms: 0.859192
+  ...
+# Subtest: every gate passed, block t below the proof bar -> TRADABLE SMALL; at or above it -> PROVEN
+ok 6 - every gate passed, block t below the proof bar -> TRADABLE SMALL; at or above it -> PROVEN
+  ---
+  duration_ms: 1.6006
+  ...
+# Subtest: 19 trades in a half -> TOO FEW CASES
+ok 7 - 19 trades in a half -> TOO FEW CASES
+  ---
+  duration_ms: 1.603095
+  ...
+# Subtest: beats the stock in both halves but loses at the 1.5x spread stress in one half -> NOT PROVEN, and the reason is named
+ok 8 - beats the stock in both halves but loses at the 1.5x spread stress in one half -> NOT PROVEN, and the reason is named
+  ---
+  duration_ms: 0.555978
+  ...
+# Subtest: makes money but less than buying the same stock with the same money -> REJECTED
+ok 9 - makes money but less than buying the same stock with the same money -> REJECTED
+  ---
+  duration_ms: 0.470583
+  ...
+# Subtest: a profit that is only its 2 best trades is not tier 2
+ok 10 - a profit that is only its 2 best trades is not tier 2
+  ---
+  duration_ms: 0.513891
+  ...
+# Subtest: explicit bullish options calls on the named stock are counted
+ok 11 - explicit bullish options calls on the named stock are counted
+  ---
+  duration_ms: 1.241161
+  ...
+# Subtest: education, selling, other meanings of "call", funds, unnamed tickers and bearish posts are not
+ok 12 - education, selling, other meanings of "call", funds, unnamed tickers and bearish posts are not
+  ---
+  duration_ms: 0.488233
+  ...
+# Subtest: entry: before 9:30 New York on a session -> that open; during or after it -> the next session; a weekend -> Monday
+ok 13 - entry: before 9:30 New York on a session -> that open; during or after it -> the next session; a weekend -> Monday
+  ---
+  duration_ms: 24.101622
+  ...
+# Subtest: live candidates: LONGER HOLDS picks 60-90 days; CAT-RUN1 entries for the next session (not blocked) expiring after the event; FOLLOW traders' new options calls 30-60 days
+ok 14 - live candidates: LONGER HOLDS picks 60-90 days; CAT-RUN1 entries for the next session (not blocked) expiring after the event; FOLLOW traders' new options calls 30-60 days
+  ---
+  duration_ms: 2.128192
+  ...
+# Subtest: ticket: the earliest expiry in the window, the strike nearest the money; sell date 21 days before expiry for LONGER HOLDS
+ok 15 - ticket: the earliest expiry in the window, the strike nearest the money; sell date 21 days before expiry for LONGER HOLDS
+  ---
+  duration_ms: 0.567212
+  ...
+# Subtest: ticket: the at-the-money call costs over 300 USD -> no ticket (never a cheaper far strike instead)
+ok 16 - ticket: the at-the-money call costs over 300 USD -> no ticket (never a cheaper far strike instead)
+  ---
+  duration_ms: 0.359239
+  ...
+1..16
+# tests 16
+# suites 0
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 61.881296

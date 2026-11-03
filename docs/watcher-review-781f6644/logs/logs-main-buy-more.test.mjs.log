@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: control: focus off, a proven quick setup on a stock you own is an add, with its range and stop
+ok 1 - control: focus off, a proven quick setup on a stock you own is an add, with its range and stop
+  ---
+  duration_ms: 55.18268
+  ...
+# Subtest: FOCUS on and the quick engine not proven live: no add
+ok 2 - FOCUS on and the quick engine not proven live: no add
+  ---
+  duration_ms: 52.935755
+  ...
+# Subtest: FOCUS on and the quick engine proven live under the full bar: the add is back
+ok 3 - FOCUS on and the quick engine proven live under the full bar: the add is back
+  ---
+  duration_ms: 41.034946
+  ...
+# Subtest: the quick engine LOSING on its live record: no add, even with focus off
+ok 4 - the quick engine LOSING on its live record: no add, even with focus off
+  ---
+  duration_ms: 44.661155
+  ...
+# Subtest: a stock you marked NOT halal: no add
+ok 5 - a stock you marked NOT halal: no add
+  ---
+  duration_ms: 47.48988
+  ...
+# Subtest: lottery-like (15%+ one-day jump in the last month): no add
+ok 6 - lottery-like (15%+ one-day jump in the last month): no add
+  ---
+  duration_ms: 58.423486
+  ...
+# Subtest: FOCUS on with only quick trades working: a swing setup on the stock is not an add
+ok 7 - FOCUS on with only quick trades working: a swing setup on the stock is not an add
+  ---
+  duration_ms: 50.995983
+  ...
+# Subtest: no network was touched
+ok 8 - no network was touched
+  ---
+  duration_ms: 0.308651
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 363.585386

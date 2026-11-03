@@ -1,0 +1,100 @@
+TAP version 13
+# Subtest: every angle is fully pre-registered: rule, hold, a source with a link, a library check
+ok 1 - every angle is fully pre-registered: rule, hold, a source with a link, a library check
+  ---
+  duration_ms: 1.69561
+  ...
+# Subtest: library pre-registration adds each entry once and never touches others
+ok 2 - library pre-registration adds each entry once and never touches others
+  ---
+  duration_ms: 0.641574
+  ...
+# Subtest: Russell calendar: published dates, rank day before recon, semi-annual December 2026 marked as estimated
+ok 3 - Russell calendar: published dates, rank day before recon, semi-annual December 2026 marked as estimated
+  ---
+  duration_ms: 0.200626
+  ...
+# Subtest: rank by value: largest first, cumulative share of the total
+ok 4 - rank by value: largest first, cumulative share of the total
+  ---
+  duration_ms: 0.769952
+  ...
+# Subtest: Russell additions from below: now inside the 2000 range, last rank day under the smallest member
+ok 5 - Russell additions from below: now inside the 2000 range, last rank day under the smallest member
+  ---
+  duration_ms: 0.224422
+  ...
+# Subtest: Russell 1000 -> 2000 migrants: only past the 2.5% band, and only former 1000 members
+ok 6 - Russell 1000 -> 2000 migrants: only past the 2.5% band, and only former 1000 members
+  ---
+  duration_ms: 2.236008
+  ...
+# Subtest: news filter: an 8-K with item 2.02 or 8.01 inside the window blocks; other items or other days do not
+ok 7 - news filter: an 8-K with item 2.02 or 8.01 inside the window blocks; other items or other days do not
+  ---
+  duration_ms: 0.409018
+  ...
+# Subtest: earnings gap: 4%+ open gap on 2x volume; holds when each of the next 3 lows stays above the gap-day low
+ok 8 - earnings gap: 4%+ open gap on 2x volume; holds when each of the next 3 lows stays above the gap-day low
+  ---
+  duration_ms: 0.301917
+  ...
+# Subtest: quality at the low: the first close above the 20-day after touching within 5% of the 1-year low
+ok 9 - quality at the low: the first close above the 20-day after touching within 5% of the 1-year low
+  ---
+  duration_ms: 0.522495
+  ...
+# Subtest: the fast series version agrees with the reference rule on a random walk with gaps
+ok 10 - the fast series version agrees with the reference rule on a random walk with gaps
+  ---
+  duration_ms: 6.748438
+  ...
+# Subtest: F-score: the quality.mjs checks; a 10-K counts from 10 April
+ok 11 - F-score: the quality.mjs checks; a 10-K counts from 10 April
+  ---
+  duration_ms: 0.497665
+  ...
+# Subtest: IPO first base: 15+ sessions since the base high, 8-40% deep, close within 5% over it on 1.5x volume, 3-24 months old
+ok 12 - IPO first base: 15+ sessions since the base high, 8-40% deep, close within 5% over it on 1.5x volume, 3-24 months old
+  ---
+  duration_ms: 0.417163
+  ...
+# Subtest: blank-check detector and the O'Neil 8% stop
+ok 13 - blank-check detector and the O'Neil 8% stop
+  ---
+  duration_ms: 0.262584
+  ...
+# Subtest: dividend streak: each year vs the year before in the SAME filing (a split restates both); only public filings count
+ok 14 - dividend streak: each year vs the year before in the SAME filing (a split restates both); only public filings count
+  ---
+  duration_ms: 0.721446
+  ...
+# Subtest: interest-bearing debt: total if reported, else the parts; never reported = 0; reported before but not at the latest date = unknown
+ok 15 - interest-bearing debt: total if reported, else the parts; never reported = 0; reported before but not at the latest date = unknown
+  ---
+  duration_ms: 0.326362
+  ...
+# Subtest: FOMC: statement days from the Fed calendar; eve close to statement close
+ok 16 - FOMC: statement days from the Fed calendar; eve close to statement close
+  ---
+  duration_ms: 0.474858
+  ...
+# Subtest: first splits: forward only, none of any kind in the 3 years before
+ok 17 - first splits: forward only, none of any kind in the 3 years before
+  ---
+  duration_ms: 0.658115
+  ...
+# Subtest: calendars: week and month ends (the newest session uses the NYSE calendar), sorted-date lookups, halves, bottom picks, average
+ok 18 - calendars: week and month ends (the newest session uses the NYSE calendar), sorted-date lookups, halves, bottom picks, average
+  ---
+  duration_ms: 0.769694
+  ...
+1..18
+# tests 18
+# suites 0
+# pass 18
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 46.610652

@@ -1,0 +1,65 @@
+TAP version 13
+# Subtest: registry: 8-12 rules, each with a video, a claim, a replication label, a max hold and a library note
+ok 1 - registry: 8-12 rules, each with a video, a claim, a replication label, a max hold and a library note
+  ---
+  duration_ms: 3.5661
+  ...
+# Subtest: moving averages, ATR and RSI
+ok 2 - moving averages, ATR and RSI
+  ---
+  duration_ms: 1.03982
+  ...
+# Subtest: supertrend flips green on a breakout; TSV sign; KST / MACD cross under zero
+ok 3 - supertrend flips green on a breakout; TSV sign; KST / MACD cross under zero
+  ---
+  duration_ms: 1.835021
+  ...
+# Subtest: McGinley follows the price; WAE explosion; QQE bars; SSL state
+ok 4 - McGinley follows the price; WAE explosion; QQE bars; SSL state
+  ---
+  duration_ms: 52.826802
+  ...
+# Subtest: pivots and hidden bullish divergence: oscillator lower low, price higher low, confirmed 5 sessions later
+ok 5 - pivots and hidden bullish divergence: oscillator lower low, price higher low, confirmed 5 sessions later
+  ---
+  duration_ms: 0.547364
+  ...
+# Subtest: Kalman z: a sharp drop under a steady series gives z <= -2; the mean adapts
+ok 6 - Kalman z: a sharp drop under a steady series gives z <= -2; the mean adapts
+  ---
+  duration_ms: 7.482192
+  ...
+# Subtest: candles: three-line strike and bullish engulfing
+ok 7 - candles: three-line strike and bullish engulfing
+  ---
+  duration_ms: 0.389683
+  ...
+# Subtest: simulator: stop first on a two-sided day; gaps; target; time; limit fills; 1R half with break-even next session
+ok 8 - simulator: stop first on a two-sided day; gaps; target; time; limit fills; 1R half with break-even next session
+  ---
+  duration_ms: 0.937611
+  ...
+# Subtest: signals never use a future bar (every rule, random walks)
+ok 9 - signals never use a future bar (every rule, random walks)
+  ---
+  duration_ms: 38.65039
+  ...
+# Subtest: fib setup: impulse after a break of structure, untouched 0.618, limit at E
+ok 10 - fib setup: impulse after a break of structure, untouched 0.618, limit at E
+  ---
+  duration_ms: 6.116054
+  ...
+# Subtest: stats, own-days yardstick, board, close exits, library pre-registration
+ok 11 - stats, own-days yardstick, board, close exits, library pre-registration
+  ---
+  duration_ms: 1.600417
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 135.21531

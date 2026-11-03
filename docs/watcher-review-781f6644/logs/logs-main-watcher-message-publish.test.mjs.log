@@ -1,0 +1,45 @@
+TAP version 13
+# Subtest: isolated reservation publication: success
+ok 1 - isolated reservation publication: success
+  ---
+  duration_ms: 295.791115
+  ...
+# Subtest: isolated reservation publication: push-refused
+ok 2 - isolated reservation publication: push-refused
+  ---
+  duration_ms: 382.437919
+  ...
+# Subtest: isolated reservation publication: moved-remote
+ok 3 - isolated reservation publication: moved-remote
+  ---
+  duration_ms: 385.663276
+  ...
+# Subtest: isolated reservation publication: object-refused
+ok 4 - isolated reservation publication: object-refused
+  ---
+  duration_ms: 287.707042
+  ...
+# Subtest: isolated reservation publication: persistent-cooldown
+ok 5 - isolated reservation publication: persistent-cooldown
+  ---
+  duration_ms: 308.459369
+  ...
+# Subtest: isolated reservation publication: stale-attempt
+ok 6 - isolated reservation publication: stale-attempt
+  ---
+  duration_ms: 254.44278
+  ...
+# Subtest: isolated reservation publication: malformed-retry
+ok 7 - isolated reservation publication: malformed-retry
+  ---
+  duration_ms: 252.649723
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2180.441565

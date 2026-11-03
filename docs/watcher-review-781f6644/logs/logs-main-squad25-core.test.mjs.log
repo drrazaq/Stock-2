@@ -1,0 +1,65 @@
+TAP version 13
+# Subtest: registry and pre-registration
+ok 1 - registry and pre-registration
+  ---
+  duration_ms: 6.147467
+  ...
+# Subtest: EDGAR master rows: only 13F / 13D / 13G forms
+ok 2 - EDGAR master rows: only 13F / 13D / 13G forms
+  ---
+  duration_ms: 0.924103
+  ...
+# Subtest: filing header: acceptance, form, FILED BY vs SUBJECT COMPANY; cover CUSIP
+ok 3 - filing header: acceptance, form, FILED BY vs SUBJECT COMPANY; cover CUSIP
+  ---
+  duration_ms: 3.808615
+  ...
+# Subtest: 13F information table: equity rows only; first appearances vs the previous period
+ok 4 - 13F information table: equity rows only; first appearances vs the previous period
+  ---
+  duration_ms: 2.914873
+  ...
+# Subtest: 13D / 13G events: originals always, an amendment only as the first filing on the subject
+ok 5 - 13D / 13G events: originals always, an amendment only as the first filing on the subject
+  ---
+  duration_ms: 0.713482
+  ...
+# Subtest: CUSIP -> symbol, point in time (fails-to-deliver records)
+ok 6 - CUSIP -> symbol, point in time (fails-to-deliver records)
+  ---
+  duration_ms: 0.689984
+  ...
+# Subtest: acceptance -> last close before (p) and the A entry session; B fill bar and session 1
+ok 7 - acceptance -> last close before (p) and the A entry session; B fill bar and session 1
+  ---
+  duration_ms: 1.186568
+  ...
+# Subtest: universe and share counts
+ok 8 - universe and share counts
+  ---
+  duration_ms: 0.590702
+  ...
+# Subtest: exit: stop, open gap, time; B on session 1; slippage
+ok 9 - exit: stop, open gap, time; B on session 1; slippage
+  ---
+  duration_ms: 1.02039
+  ...
+# Subtest: giants: groups and point in time
+ok 10 - giants: groups and point in time
+  ---
+  duration_ms: 0.711963
+  ...
+# Subtest: SGML header form (index-headers page) and new-format 13G CUSIP
+ok 11 - SGML header form (index-headers page) and new-format 13G CUSIP
+  ---
+  duration_ms: 0.871129
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 37.950553

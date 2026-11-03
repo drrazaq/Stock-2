@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: 28 Oct contradiction fixed: focus on + LONGER HOLDS buys (marked halal) -> buys under TODAY'S ACTIONS with their status; the policy says engine buys only are paused
+ok 1 - 28 Oct contradiction fixed: focus on + LONGER HOLDS buys (marked halal) -> buys under TODAY'S ACTIONS with their status; the policy says engine buys only are paused
+  ---
+  duration_ms: 119.11057
+  ...
+# Subtest: a pick without the owner's ZAD mark is never a BUY: NOT ACTIONABLE with the exact command per stock
+ok 2 - a pick without the owner's ZAD mark is never a BUY: NOT ACTIONABLE with the exact command per stock
+  ---
+  duration_ms: 55.984729
+  ...
+# Subtest: a NOT HALAL mark drops the pick entirely (never offered, not even as MARK HALAL)
+ok 3 - a NOT HALAL mark drops the pick entirely (never offered, not even as MARK HALAL)
+  ---
+  duration_ms: 54.173083
+  ...
+# Subtest: a quiet day: TODAY'S ACTIONS says None; nothing long-term in the message, one pointer to  longterm 
+ok 4 - a quiet day: TODAY'S ACTIONS says None; nothing long-term in the message, one pointer to  longterm 
+  ---
+  duration_ms: 56.017567
+  ...
+# Subtest: sections come in order of importance; CRITICAL (a holding leaving the ZAD list) comes first
+ok 5 - sections come in order of importance; CRITICAL (a holding leaving the ZAD list) comes first
+  ---
+  duration_ms: 108.497946
+  ...
+# Subtest: records are kept apart and labelled: the practice account is fake money, the paper record is not your trades
+ok 6 - records are kept apart and labelled: the practice account is fake money, the paper record is not your trades
+  ---
+  duration_ms: 55.777611
+  ...
+# Subtest: Kuwait times follow the New York calendar: 4:30 pm in summer, 5:30 pm from 2 Nov 2026; holidays and weekends roll to the next session
+ok 7 - Kuwait times follow the New York calendar: 4:30 pm in summer, 5:30 pm from 2 Nov 2026; holidays and weekends roll to the next session
+  ---
+  duration_ms: 55.723333
+  ...
+# Subtest: a stock picked by two lanes (LONGER HOLDS and LEADER DIP) is ONE buy, under the first lane, never twice
+ok 8 - a stock picked by two lanes (LONGER HOLDS and LEADER DIP) is ONE buy, under the first lane, never twice
+  ---
+  duration_ms: 92.589094
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 609.444624

@@ -1,0 +1,75 @@
+TAP version 13
+# Subtest: the code is exactly the frozen spec (features, hyper-parameters, dates, strategy numbers)
+ok 1 - the code is exactly the frozen spec (features, hyper-parameters, dates, strategy numbers)
+  ---
+  duration_ms: 2.93631
+  ...
+# Subtest: decision dates = the last session of each ISO week; a Friday holiday makes Thursday the week end; the newest day uses the calendar
+ok 2 - decision dates = the last session of each ISO week; a Friday holiday makes Thursday the week end; the newest day uses the calendar
+  ---
+  duration_ms: 0.451488
+  ...
+# Subtest: walk-forward: retrain on the first decision of each quarter from 2023-10-01, predict only that quarter, train only on labels known at the retrain close
+ok 3 - walk-forward: retrain on the first decision of each quarter from 2023-10-01, predict only that quarter, train only on labels known at the retrain close
+  ---
+  duration_ms: 9.388222
+  ...
+# Subtest: no look-ahead in the features: changing every price after the decision day changes nothing
+ok 4 - no look-ahead in the features: changing every price after the decision day changes nothing
+  ---
+  duration_ms: 5.957334
+  ...
+# Subtest: the target and the trade: buy the open of t+1, sell the close of t+20; nothing before t+1 or after t+20 is read
+ok 5 - the target and the trade: buy the open of t+1, sell the close of t+20; nothing before t+1 or after t+20 is read
+  ---
+  duration_ms: 0.362012
+  ...
+# Subtest: the 35% disaster stop: exit at the stop price, or at the open when the stock opens below it; a low just above it does not trigger
+ok 6 - the 35% disaster stop: exit at the stop price, or at the open when the stock opens below it; a low just above it does not trigger
+  ---
+  duration_ms: 0.510278
+  ...
+# Subtest: universe liquidity: close >= 5 and the median of 20 dollar volumes >= 5M, all 20 present
+ok 7 - universe liquidity: close >= 5 and the median of 20 dollar volumes >= 5M, all 20 present
+  ---
+  duration_ms: 0.333733
+  ...
+# Subtest: cross-sectional ranks, group-relative strength, winsorizing
+ok 8 - cross-sectional ranks, group-relative strength, winsorizing
+  ---
+  duration_ms: 0.614438
+  ...
+# Subtest: bins come from the training rows only; missing values get bin 0
+ok 9 - bins come from the training rows only; missing values get bin 0
+  ---
+  duration_ms: 1.047752
+  ...
+# Subtest: the tree learner finds a step and an interaction, handles missing values, and is deterministic
+ok 10 - the tree learner finds a step and an interaction, handles missing values, and is deterministic
+  ---
+  duration_ms: 706.361959
+  ...
+# Subtest: ridge recovers a linear rule; missing inputs count as the training average
+ok 11 - ridge recovers a linear rule; missing inputs count as the training average
+  ---
+  duration_ms: 10.474037
+  ...
+# Subtest: top 10: highest scores, ties by symbol, unscored left out
+ok 12 - top 10: highest scores, ties by symbol, unscored left out
+  ---
+  duration_ms: 0.875274
+  ...
+# Subtest: the extra gates: must beat the momentum baseline in both halves and hold up in the holdout
+ok 13 - the extra gates: must beat the momentum baseline in both halves and hold up in the holdout
+  ---
+  duration_ms: 0.71611
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 761.939487

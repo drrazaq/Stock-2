@@ -1,0 +1,40 @@
+TAP version 13
+# Subtest: mix: half SPUS, the basket halved, sums to 1
+ok 1 - mix: half SPUS, the basket halved, sums to 1
+  ---
+  duration_ms: 10.752791
+  ...
+# Subtest: momentum: best 30 by 12-1 among the first 100, no history left out, cap-weighted capped 15%
+ok 2 - momentum: best 30 by 12-1 among the first 100, no history left out, cap-weighted capped 15%
+  ---
+  duration_ms: 1.913615
+  ...
+# Subtest: SH20-C15 and the pure cap weight yearly
+ok 3 - SH20-C15 and the pure cap weight yearly
+  ---
+  duration_ms: 1.291703
+  ...
+# Subtest: 10-month trend: month-end closes, average incl. this month, never a later month, needs 10 months
+ok 4 - 10-month trend: month-end closes, average incl. this month, never a later month, needs 10 months
+  ---
+  duration_ms: 3.689025
+  ...
+# Subtest: account: calendar-year returns, worst year, return for the drawdown, the owner answer
+ok 5 - account: calendar-year returns, worst year, return for the drawdown, the owner answer
+  ---
+  duration_ms: 2.574629
+  ...
+# Subtest: pre-registration is idempotent and carries the rule text
+ok 6 - pre-registration is idempotent and carries the rule text
+  ---
+  duration_ms: 1.051431
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 50.677965

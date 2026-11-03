@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: variants: base needs every gate; each no_ variant drops exactly one gate
+ok 1 - variants: base needs every gate; each no_ variant drops exactly one gate
+  ---
+  duration_ms: 2.615921
+  ...
+# Subtest: recorder: one row per stock, first entry per variant kept, next-minute / 30-minute prices and high / low followed
+ok 2 - recorder: one row per stock, first entry per variant kept, next-minute / 30-minute prices and high / low followed
+  ---
+  duration_ms: 3.451212
+  ...
+# Subtest: fills: ask when the quote is fresh and the spread sane; else last price plus an assumed half spread, flagged
+ok 3 - fills: ask when the quote is fresh and the spread sane; else last price plus an assumed half spread, flagged
+  ---
+  duration_ms: 1.163706
+  ...
+# Subtest: score: every horizon after costs; excursions reported separately
+ok 4 - score: every horizon after costs; excursions reported separately
+  ---
+  duration_ms: 0.455071
+  ...
+# Subtest: stats: median, hit rate for +2%, without the 2 best, worst
+ok 5 - stats: median, hit rate for +2%, without the 2 best, worst
+  ---
+  duration_ms: 0.941805
+  ...
+# Subtest: filter table: a gate is judged only on the candidates it alone rejects; hard-ineligible rows never count; COLLECTING before 10 sessions
+ok 6 - filter table: a gate is judged only on the candidates it alone rejects; hard-ineligible rows never count; COLLECTING before 10 sessions
+  ---
+  duration_ms: 1.443779
+  ...
+# Subtest: catalyst classes: source, direction and freshness are separate; a failed source is UNAVAILABLE, never NONE; no reason is invented
+ok 7 - catalyst classes: source, direction and freshness are separate; a failed source is UNAVAILABLE, never NONE; no reason is invented
+  ---
+  duration_ms: 32.823364
+  ...
+# Subtest: (owner item 6) spread counted once: ask entry pays half going in, half coming out; last-trade entry pays both halves; stress adds slippage
+ok 8 - (owner item 6) spread counted once: ask entry pays half going in, half coming out; last-trade entry pays both halves; stress adds slippage
+  ---
+  duration_ms: 0.514739
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 67.52294

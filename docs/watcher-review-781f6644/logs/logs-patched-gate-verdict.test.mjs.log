@@ -1,0 +1,45 @@
+TAP version 13
+# Subtest: control: focus off, a proven quick trade with no block passes the gate
+ok 1 - control: focus off, a proven quick trade with no block passes the gate
+  ---
+  duration_ms: 49.103708
+  ...
+# Subtest: a threat headline in the last 24 hours blocks it, with the reason
+ok 2 - a threat headline in the last 24 hours blocks it, with the reason
+  ---
+  duration_ms: 35.611762
+  ...
+# Subtest: early evidence (20 unseen trades, +3% gross a trade) is watch only, not a buy
+ok 3 - early evidence (20 unseen trades, +3% gross a trade) is watch only, not a buy
+  ---
+  duration_ms: 34.474837
+  ...
+# Subtest: a falling market blocks a quick trade without its own falling-market record
+ok 4 - a falling market blocks a quick trade without its own falling-market record
+  ---
+  duration_ms: 35.097945
+  ...
+# Subtest: the dilution / trial-risk block (discovery) blocks it
+ok 5 - the dilution / trial-risk block (discovery) blocks it
+  ---
+  duration_ms: 54.324347
+  ...
+# Subtest: an error inside the gate means blocked, not allowed
+ok 6 - an error inside the gate means blocked, not allowed
+  ---
+  duration_ms: 40.438117
+  ...
+# Subtest: no network was touched
+ok 7 - no network was touched
+  ---
+  duration_ms: 1.00979
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 257.950858

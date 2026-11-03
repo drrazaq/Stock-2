@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: eligibility: a strong forward record comes back; a weak one fades; a short one is too early
+ok 1 - eligibility: a strong forward record comes back; a weak one fades; a short one is too early
+  ---
+  duration_ms: 15.038725
+  ...
+# Subtest: eligibility: every gate is needed (SPY, the average stock, 10 days, the halves)
+ok 2 - eligibility: every gate is needed (SPY, the average stock, 10 days, the halves)
+  ---
+  duration_ms: 10.56952
+  ...
+# Subtest: Bonferroni bar: max(2.5, one-sided z for 0.05 / rules with 30+ forward trades)
+ok 3 - Bonferroni bar: max(2.5, one-sided z for 0.05 / rules with 30+ forward trades)
+  ---
+  duration_ms: 76.378023
+  ...
+# Subtest: after-freeze filter: only signals dated after the rule's own frozenAt count
+ok 4 - after-freeze filter: only signals dated after the rule's own frozenAt count
+  ---
+  duration_ms: 3.110478
+  ...
+# Subtest: near-copies of a live rule (scan.mjs TRY_DUPLICATE), paused rules, baskets, options, intraday and live rules never come back
+ok 5 - near-copies of a live rule (scan.mjs TRY_DUPLICATE), paused rules, baskets, options, intraday and live rules never come back
+  ---
+  duration_ms: 11.092258
+  ...
+# Subtest: format: board fields, comeback-lab.json passes scan.mjs tryQualifies, comeback-today.json copies the rule's own signals
+ok 6 - format: board fields, comeback-lab.json passes scan.mjs tryQualifies, comeback-today.json copies the rule's own signals
+  ---
+  duration_ms: 43.508341
+  ...
+# Subtest: scoreboard section, bot text and the library entry
+ok 7 - scoreboard section, bot text and the library entry
+  ---
+  duration_ms: 120.810014
+  ...
+# Subtest: cosmetics and the +300% cap: the bar sentence before any rule has 30 trades; a +900% trade counts as +300%
+ok 8 - cosmetics and the +300% cap: the bar sentence before any rule has 30 trades; a +900% trade counts as +300%
+  ---
+  duration_ms: 2.139621
+  ...
+# Subtest: decoded and expert paper lanes record the average stock (capped +300%) on every resolved trade
+ok 9 - decoded and expert paper lanes record the average stock (capped +300%) on every resolved trade
+  ---
+  duration_ms: 1.229921
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 299.156407

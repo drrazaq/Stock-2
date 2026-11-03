@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: registry: SQ21-CONTRACT10D (buy, max 120, blocks 21) and V15-NO35 (forward only, hold 126); frozenAt before the V15 start
+ok 1 - registry: SQ21-CONTRACT10D (buy, max 120, blocks 21) and V15-NO35 (forward only, hold 126); frozenAt before the V15 start
+  ---
+  duration_ms: 4.783051
+  ...
+# Subtest: text: named counterparty after agreement / contract with, (purchase) order from; defined terms, people and personal agreements rejected
+ok 2 - text: named counterparty after agreement / contract with, (purchase) order from; defined terms, people and personal agreements rejected
+  ---
+  duration_ms: 4.324413
+  ...
+# Subtest: dollar value: exactly one amount of 100k USD+, none per share / unit; else null
+ok 3 - dollar value: exactly one amount of 100k USD+, none per share / unit; else null
+  ---
+  duration_ms: 0.94601
+  ...
+# Subtest: EDGAR hits: items, file type, form; main document = the 8-K itself, not an exhibit or amendment
+ok 4 - EDGAR hits: items, file type, form; main document = the 8-K itself, not an exhibit or amendment
+  ---
+  duration_ms: 0.960998
+  ...
+# Subtest: signal: price conditions a, d, e, f; the first session 1..10 after the filing that passes; shares and dilution
+ok 5 - signal: price conditions a, d, e, f; the first session 1..10 after the filing that passes; shares and dilution
+  ---
+  duration_ms: 1.318748
+  ...
+# Subtest: shares: count known 30 days late vs the count known 90 days earlier; dilution window of 20 sessions
+ok 6 - shares: count known 30 days late vs the count known 90 days earlier; dilution window of 20 sessions
+  ---
+  duration_ms: 1.022869
+  ...
+# Subtest: exit: stop at the open / at the stop, sell next open after a close under the 10-day average, max hold, data end, gone
+ok 7 - exit: stop at the open / at the stop, sell next open after a close under the 10-day average, max hold, data end, gone
+  ---
+  duration_ms: 2.843416
+  ...
+# Subtest: volatility deciles; signals per month; per year of capital
+ok 8 - volatility deciles; signals per month; per year of capital
+  ---
+  duration_ms: 1.151154
+  ...
+# Subtest: V15 lane: SIC 35/36/38 test, monthly keys from 27 Oct 2026, the two versions
+ok 9 - V15 lane: SIC 35/36/38 test, monthly keys from 27 Oct 2026, the two versions
+  ---
+  duration_ms: 0.70838
+  ...
+# Subtest: library: three entries once (CONTRACT10D, V15-NO35 forward only, the untested wide version); idempotent
+ok 10 - library: three entries once (CONTRACT10D, V15-NO35 forward only, the untested wide version); idempotent
+  ---
+  duration_ms: 0.803783
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 44.36872

@@ -1,0 +1,50 @@
+TAP version 13
+# Subtest: no rule qualified -> ACTIONS shows nothing new, nothing is logged
+ok 1 - no rule qualified -> ACTIONS shows nothing new, nothing is logged
+  ---
+  duration_ms: 72.523631
+  ...
+# Subtest: TRADABLE SMALL -> BUY at the next open up to +3%, stop 15%, SELL on the date 2 sessions before the event; logged as catalyst
+ok 2 - TRADABLE SMALL -> BUY at the next open up to +3%, stop 15%, SELL on the date 2 sessions before the event; logged as catalyst
+  ---
+  duration_ms: 61.520748
+  ...
+# Subtest: tier2 switched off -> nothing (proven-only, as before)
+ok 3 - tier2 switched off -> nothing (proven-only, as before)
+  ---
+  duration_ms: 49.601092
+  ...
+# Subtest: PROVEN is shown even with tier2 off
+ok 4 - PROVEN is shown even with tier2 off
+  ---
+  duration_ms: 51.442666
+  ...
+# Subtest: its own ledger turned negative (20+ finished catalyst calls) -> off
+ok 5 - its own ledger turned negative (20+ finished catalyst calls) -> off
+  ---
+  duration_ms: 50.499536
+  ...
+# Subtest: not halal, blocked by a gate, already held, lottery-like, or a buy day other than the next session -> not shown
+ok 6 - not halal, blocked by a gate, already held, lottery-like, or a buy day other than the next session -> not shown
+  ---
+  duration_ms: 62.979829
+  ...
+# Subtest: the  catalysts  command shows the calendar as information only when no rule qualified
+ok 7 - the  catalysts  command shows the calendar as information only when no rule qualified
+  ---
+  duration_ms: 46.003888
+  ...
+# Subtest: no network was used
+ok 8 - no network was used
+  ---
+  duration_ms: 0.360992
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 407.421967

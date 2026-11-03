@@ -1,0 +1,71 @@
+TAP version 13
+# Subtest: a FOLLOW trader’s halal-ok call is shown with his record, the entry range up to +3%, the 15% stop and his horizon
+ok 1 - a FOLLOW trader’s halal-ok call is shown with his record, the entry range up to +3%, the 15% stop and his horizon
+  ---
+  duration_ms: 87.629455
+  ...
+# Subtest: each FOLLOW is labelled with its source type (a 13F fund here)
+ok 2 - each FOLLOW is labelled with its source type (a 13F fund here)
+  ---
+  duration_ms: 57.810508
+  ...
+# Subtest: the trader’s own stop is used when he gave one
+ok 3 - the trader’s own stop is used when he gave one
+  ---
+  duration_ms: 50.765275
+  ...
+# Subtest: halal fail is removed; unknown halal is shown with "check ZAD first"
+ok 4 - halal fail is removed; unknown halal is shown with "check ZAD first"
+  ---
+  duration_ms: 77.710321
+  ...
+# Subtest: a lottery-like stock is removed
+ok 5 - a lottery-like stock is removed
+  ---
+  duration_ms: 63.743629
+  ...
+# Subtest: a stock with an offering filing in the last 30 days is removed (dilution)
+ok 6 - a stock with an offering filing in the last 30 days is removed (dilution)
+  ---
+  duration_ms: 47.285794
+  ...
+# Subtest: every shown call is logged once to the tier-2 ledger as follow:<trader>
+ok 7 - every shown call is logged once to the tier-2 ledger as follow:<trader>
+  ---
+  duration_ms: 51.112349
+  ...
+# Subtest: a trader whose own ledger has 20+ resolved negative cases is switched off
+ok 8 - a trader whose own ledger has 20+ resolved negative cases is switched off
+  ---
+  duration_ms: 34.788325
+  ...
+# Subtest: tier 2 switched off, or no new calls: no section
+ok 9 - tier 2 switched off, or no new calls: no section
+  ---
+  duration_ms: 76.272917
+  ...
+Telegram: 1 message(s) read
+# Subtest: "traders" shows FOLLOW, FADE and the closest others with numbers, the count screened and the luck line
+ok 10 - "traders" shows FOLLOW, FADE and the closest others with numbers, the count screened and the luck line
+  ---
+  duration_ms: 166.363418
+  ...
+# Subtest: a stock a FADE trader called in the last 20 sessions is not a buy, says why, and is listed under AVOID
+ok 11 - a stock a FADE trader called in the last 20 sessions is not a buy, says why, and is listed under AVOID
+  ---
+  duration_ms: 70.036831
+  ...
+# Subtest: no network was touched
+ok 12 - no network was touched
+  ---
+  duration_ms: 0.397546
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 798.118113

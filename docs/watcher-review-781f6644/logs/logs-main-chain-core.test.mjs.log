@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: demand signal: raised guidance or higher capital spending counts; lowered guidance does not
+ok 1 - demand signal: raised guidance or higher capital spending counts; lowered guidance does not
+  ---
+  duration_ms: 3.480339
+  ...
+# Subtest: demand signal reports the sentence that triggered it
+ok 2 - demand signal reports the sentence that triggered it
+  ---
+  duration_ms: 0.401372
+  ...
+# Subtest: read-through: revenue up 10%+ on the prior-year quarter AND raised guidance, both needed
+ok 3 - read-through: revenue up 10%+ on the prior-year quarter AND raised guidance, both needed
+  ---
+  duration_ms: 3.770726
+  ...
+# Subtest: major customer: the customer must be named next to concentration words
+ok 4 - major customer: the customer must be named next to concentration words
+  ---
+  duration_ms: 1.441682
+  ...
+# Subtest: a link is active from the first session on/after its first filing until 400 days after the latest filing that showed it
+ok 5 - a link is active from the first session on/after its first filing until 400 days after the latest filing that showed it
+  ---
+  duration_ms: 0.490993
+  ...
+# Subtest: material agreement: the customer named in an agreement sentence, with the stated value in USD
+ok 6 - material agreement: the customer named in an agreement sentence, with the stated value in USD
+  ---
+  duration_ms: 1.167545
+  ...
+# Subtest: CHAIN-MOM1: top 3 layers by average 3-month return minus the S&P 500; buy their members above the 50-day that pass the gates, once each
+ok 7 - CHAIN-MOM1: top 3 layers by average 3-month return minus the S&P 500; buy their members above the 50-day that pass the gates, once each
+  ---
+  duration_ms: 0.655677
+  ...
+# Subtest: CHAIN-LAG1: learns only same-chain pairs whose lead is strong (|t| >= 3, 15+ months), at most 10; predicts the sign
+ok 8 - CHAIN-LAG1: learns only same-chain pairs whose lead is strong (|t| >= 3, 15+ months), at most 10; predicts the sign
+  ---
+  duration_ms: 1.069539
+  ...
+# Subtest: stop 20%: out at the stop on the first session whose low reaches it (at the open if it gapped below); else the close of the last session
+ok 9 - stop 20%: out at the stop on the first session whose low reaches it (at the open if it gapped below); else the close of the last session
+  ---
+  duration_ms: 0.399587
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 29.914441

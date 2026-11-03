@@ -1,0 +1,45 @@
+TAP version 13
+# Subtest: registry: two tender rules beside the three lazy rules; spreads 3-15% and >0-15%; max hold 120
+ok 1 - registry: two tender rules beside the three lazy rules; spreads 3-15% and >0-15%; max hold 120
+  ---
+  duration_ms: 3.081538
+  ...
+# Subtest: submission: subject company CIK (not the filer), NY acceptance date, only SC TO / EX-99 documents kept
+ok 2 - submission: subject company CIK (not the filer), NY acceptance date, only SC TO / EX-99 documents kept
+  ---
+  duration_ms: 1.25193
+  ...
+# Subtest: offer price: the most frequent cash amount; par value and graphics ignored; CVR flagged; stock offers give none
+ok 3 - offer price: the most frequent cash amount; par value and graphics ignored; CVR flagged; stock offers give none
+  ---
+  duration_ms: 1.79822
+  ...
+# Subtest: spread windows: 3-15% and >0-15%; sanity -50%..+100%
+ok 4 - spread windows: 3-15% and >0-15%; sanity -50%..+100%
+  ---
+  duration_ms: 0.316625
+  ...
+# Subtest: exits: deal closed (10-session gap), break (close 10% under the filing-day close), 120 sessions, not complete yet
+ok 5 - exits: deal closed (10-session gap), break (close 10% under the filing-day close), 120 sessions, not complete yet
+  ---
+  duration_ms: 0.661291
+  ...
+# Subtest: data rule: 95% index days, 95% filings read, 50% offer price found among priced targets
+ok 6 - data rule: 95% index days, 95% filings read, 50% offer price found among priced targets
+  ---
+  duration_ms: 0.51632
+  ...
+# Subtest: library: the tender entries are added once with their own note and sources; existing lazy entries untouched
+ok 7 - library: the tender entries are added once with their own note and sources; existing lazy entries untouched
+  ---
+  duration_ms: 1.549129
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 24.491807

@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: six rules, each with a paper URL, a rule text, the 63-session hold and a library check
+ok 1 - six rules, each with a paper URL, a rule text, the 63-session hold and a library check
+  ---
+  duration_ms: 4.891869
+  ...
+# Subtest: sessions: before-open report reacts the same day, after-close the next session, weekend and no time flag handled
+ok 2 - sessions: before-open report reacts the same day, after-close the next session, weekend and no time flag handled
+  ---
+  duration_ms: 3.015373
+  ...
+# Subtest: gap that holds: 3%+ gap, close in the upper half of the range and above the previous close
+ok 3 - gap that holds: 3%+ gap, close in the upper half of the range and above the previous close
+  ---
+  duration_ms: 0.572356
+  ...
+# Subtest: 52-week closing high needs 252 earlier sessions (90% present) and a close above all of them
+ok 4 - 52-week closing high needs 252 earlier sessions (90% present) and a close above all of them
+  ---
+  duration_ms: 0.943627
+  ...
+# Subtest: 8-K confirmation: close after the filing date above the close before it (weekend filing, no rise)
+ok 5 - 8-K confirmation: close after the filing date above the close before it (weekend filing, no rise)
+  ---
+  duration_ms: 0.503666
+  ...
+# Subtest: quarter values are point in time; the fourth quarter = the year minus nine months (else minus three quarters)
+ok 6 - quarter values are point in time; the fourth quarter = the year minus nine months (else minus three quarters)
+  ---
+  duration_ms: 2.311297
+  ...
+# Subtest: growth of three quarters and two accelerations in a row
+ok 7 - growth of three quarters and two accelerations in a row
+  ---
+  duration_ms: 2.084333
+  ...
+# Subtest: diluted EPS growth needs a prior-year EPS above zero; filings of a company (originals only, latest end)
+ok 8 - diluted EPS growth needs a prior-year EPS above zero; filings of a company (originals only, latest end)
+  ---
+  duration_ms: 1.482556
+  ...
+# Subtest: one open trade per stock (exit = close of t + 63; a signal on that exit session may enter next morning), first event per company
+ok 9 - one open trade per stock (exit = close of t + 63; a signal on that exit session may enter next morning), first event per company
+  ---
+  duration_ms: 1.102557
+  ...
+# Subtest: EDGAR full-text rows keep the 8-K items; the investor-day item filter
+ok 10 - EDGAR full-text rows keep the 8-K items; the investor-day item filter
+  ---
+  duration_ms: 1.52389
+  ...
+# Subtest: calendar-year table by entry year vs SPY on the same days
+ok 11 - calendar-year table by entry year vs SPY on the same days
+  ---
+  duration_ms: 1.001611
+  ...
+# Subtest: library pre-registration is idempotent and carries the rule text, papers and the overlap check
+ok 12 - library pre-registration is idempotent and carries the rule text, papers and the overlap check
+  ---
+  duration_ms: 3.087833
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54.855682

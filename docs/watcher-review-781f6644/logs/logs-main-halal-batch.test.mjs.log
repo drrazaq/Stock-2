@@ -1,0 +1,30 @@
+TAP version 13
+# Subtest: every mark in one message is read, yes and no
+ok 1 - every mark in one message is read, yes and no
+  ---
+  duration_ms: 2.692036
+  ...
+# Subtest: one per line also works; a single command still works; plain text gives nothing
+ok 2 - one per line also works; a single command still works; plain text gives nothing
+  ---
+  duration_ms: 0.397641
+  ...
+# Subtest: no network was used
+ok 3 - no network was used
+  ---
+  duration_ms: 0.180155
+  ...
+# Subtest: a comma list with one verdict marks every ticker
+ok 4 - a comma list with one verdict marks every ticker
+  ---
+  duration_ms: 0.189687
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13.629048
