@@ -397,7 +397,7 @@ Nothing else changed.
 
 | Request | Reconciled only by | If not reconciled |
 |---|---|---|
-| **REQ-D** (Disable) | Claude reading `disabled_manually`, or the owner's explicit NOT CLICKED reply | Claude reads the actual state on every wake until E + 30, then reports **UNVERIFIED: REQ-D outstanding**, with the follow-up (NOT CLICKED, or Enable at once if a click happens later). A deadline never reconciles a request. |
+| **REQ-D** (Disable) | Claude reading `disabled_manually`, or the owner's explicit NOT CLICKED reply | Claude reads the actual state on every wake until E + 30, then reports **UNVERIFIED: REQ-D outstanding**, with the follow-up: the owner replies NOT CLICKED, or, if a click happens later, the owner tells Claude and does **not** Enable on their own. Claude then follows the late-click sequence below (fresh post-click V0 and no UNKNOWN write) before any "VERIFIED V0 – CLICK ENABLE NOW". A deadline never reconciles a request. |
 | **REQ-E** (Enable) | Claude reading `bot.yml` `active` (or owner-confirmed, labelled as such) | Re-instructed after 10 minutes; the final report says **UNVERIFIED restoration** until reconciled. |
 
 **Late click** (`disabled_manually` first read after the E − 8 cutoff):
