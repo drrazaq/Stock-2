@@ -22,8 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      AUDIT_SOURCE_SHA: SOURCE_COMMIT_TO_BE_PINNED_AFTER_PUBLICATION
-      AUDIT_MANIFEST_SHA256: MANIFEST_RAW_SHA256_TO_BE_PINNED
+      AUDIT_SOURCE_SHA: 3334e10efbb2e7b011ed07030e9bccace2d20373
+      AUDIT_MANIFEST_SHA256: 73707d494f0c1b8938e85b2f493d8c9400af2687fadd4a37323538faa730cf76
       AUDIT_SOURCE_ROOT: ${{ github.workspace }}/source
       AUDIT_AUTHORIZATION_FILE: ${{ github.workspace }}/control/authorization.json
       AUDIT_EVIDENCE_FILE: ${{ github.workspace }}/control/evidence.json
