@@ -28,7 +28,7 @@ test('control: FOCUS on and no live record anywhere: both are paper only', async
 test('a POSITIVE TRADABLE SMALL ledger never lifts FOCUS for the engines', async () => {
   const S = await loadScan({ files: { 'data/settings.json': { focus: true, tier2: true }, 'data/signals.json': sig(), 'data/tier2-ledger.jsonl': tier2Ledger } });
   assert.deepEqual(ok(S, sig()), { AAA: false, BBB: false });
-  assert.match(S.fn('gateVerdict')('AAA', sig()), /focus mode/);
+  assert.match(S.fn('gateVerdict')('AAA', sig()), /evidence gate/);
 });
 
 test('a POSITIVE Alpaca record of another kind does not lift FOCUS for quick or swing trades', async () => {
@@ -41,7 +41,7 @@ test('the quick-trade record POSITIVE under the full bar lifts FOCUS for quick t
   const S = await loadScan({ files: { 'data/settings.json': { focus: true }, 'data/signals.json': s } });
   assert.deepEqual(ok(S, s), { AAA: true, BBB: false });
   assert.equal(S.fn('gateVerdict')('AAA', s), null);
-  assert.match(S.fn('gateVerdict')('BBB', s), /focus mode/);
+  assert.match(S.fn('gateVerdict')('BBB', s), /evidence gate/);
 });
 
 test('the Alpaca quick record POSITIVE under the full bar lifts quick trades only', async () => {
