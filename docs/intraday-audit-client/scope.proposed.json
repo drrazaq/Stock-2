@@ -1,0 +1,135 @@
+{
+  "kind": "UNAPPROVED_INTRADAY_HISTORICAL_FEASIBILITY_SCOPE_V1",
+  "approved": false,
+  "implementedCollector": false,
+  "sourceCommit": "f0911952ca2529a2eadb23c9a6e3b4cb86211253",
+  "sourcePath": "data/ignition-paper.jsonl",
+  "sourceSHA256": "a4de490a80493a064cc0f05854e2f8681941a4546e9bb42cd57703624c41b0b4",
+  "selection": "First three unique IG1/v3 security-days per date in original append order; stop at12; no replacement for identity or quote failures",
+  "previouslyExaminedEvidence": true,
+  "prospectiveAdmissions": 0,
+  "cases": [
+    {
+      "sourceRow1Based": 15,
+      "day": "2026-10-15",
+      "symbol": "BBCI",
+      "recordedMinuteNY": 588,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 17,
+      "day": "2026-10-15",
+      "symbol": "OPK",
+      "recordedMinuteNY": 588,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 18,
+      "day": "2026-10-15",
+      "symbol": "SPRC",
+      "recordedMinuteNY": 588,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 294,
+      "day": "2026-10-16",
+      "symbol": "XLAB",
+      "recordedMinuteNY": 579,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 296,
+      "day": "2026-10-16",
+      "symbol": "QXL",
+      "recordedMinuteNY": 580,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 343,
+      "day": "2026-10-16",
+      "symbol": "ATGL",
+      "recordedMinuteNY": 647,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 356,
+      "day": "2026-10-19",
+      "symbol": "YMAT",
+      "recordedMinuteNY": 586,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 360,
+      "day": "2026-10-19",
+      "symbol": "LITC",
+      "recordedMinuteNY": 586,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 361,
+      "day": "2026-10-19",
+      "symbol": "SLN",
+      "recordedMinuteNY": 586,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 453,
+      "day": "2026-10-20",
+      "symbol": "XCH",
+      "recordedMinuteNY": 580,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 454,
+      "day": "2026-10-20",
+      "symbol": "MYGN",
+      "recordedMinuteNY": 580,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    },
+    {
+      "sourceRow1Based": 456,
+      "day": "2026-10-20",
+      "symbol": "BRZE",
+      "recordedMinuteNY": 580,
+      "originalFirstIngestion": "UNKNOWN",
+      "authenticatedInstrumentType": "NOT_YET_VERIFIED"
+    }
+  ],
+  "requestBudget": {
+    "caseCount": 12,
+    "massiveIdentityPerCase": 1,
+    "massiveSplitsPerCase": 1,
+    "massiveDividendsPerCase": 1,
+    "alpacaDailyWarmupPerCase": 1,
+    "alpacaSessionMinutesPerCase": 1,
+    "alpacaQuotePagesPerCase": 8,
+    "massiveMaximum": 36,
+    "alpacaMaximum": 120,
+    "combinedMaximum": 156,
+    "retries": 0,
+    "fallbacks": 0,
+    "unbudgetedPagination": false
+  },
+  "bounds": {
+    "providerPhaseSeconds": 600,
+    "perRequestFullResponseSeconds": 20,
+    "requestsPerSecondMaximum": 1,
+    "quoteRowsPerPageRequested": 10000,
+    "perBodyBytes": 4194304,
+    "aggregateRawBytes": 134217728,
+    "aggregateEncryptedBytes": 167772160,
+    "publicReportBytes": 16384
+  },
+  "decision": "DATA_AND_QUOTE_PAPER_COST_FEASIBILITY_ONLY_NOT_STRATEGY_ACCEPTANCE"
+}
