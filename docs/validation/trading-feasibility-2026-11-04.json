@@ -1,0 +1,6252 @@
+{
+  "analysisKind": "ALREADY_EXAMINED_SAVED_EVIDENCE_NOT_NEW_HOLDOUT",
+  "attemptedComparisons": [
+    "full_firstRun_verdict_inventory",
+    "four_horizon_records_and_four_existing_comparators",
+    "SQ11_frozen_window_and_all_halves",
+    "SQ11_all_four_paired_control_fields",
+    "SQ11_five_predeclared_cost_scenarios",
+    "IG1_close_census_and_record_reconciliation"
+  ],
+  "basisCommit": "f92a29d8e96df7c3b9fa012d699a41fdd28d0d07",
+  "blockers": [
+    "No original grouped/minute price caches in selected checkout",
+    "Missing original fill prices, sizes, BBO and identity in saved trade rows",
+    "Original frozen trade populations not available for all candidates",
+    "No authenticated point-in-time universe/delistings/corporate-action path or portfolio marks"
+  ],
+  "candidates": [
+    {
+      "conclusion": "No credible candidate currently",
+      "file": "data/squad2-lab.json",
+      "horizon": "intraday",
+      "original": {
+        "at": "2026-10-24T06:05:27.224Z",
+        "bar": 4.02,
+        "block": 5,
+        "cost": 0.008,
+        "frozenAt": "2026-10-24T06:05:27.986Z",
+        "hold": 1,
+        "info": {
+          "ambiguousTrades": 11,
+          "bestCaseSameMinute": {
+            "newer": -0.0073,
+            "older": -0.0081
+          },
+          "cost04": {
+            "newer": -0.0033,
+            "older": -0.0041
+          },
+          "matchedControlShare": 0.9741,
+          "poolStockDays": 10194,
+          "slip005": {
+            "newer": -0.0063,
+            "older": -0.0071
+          }
+        },
+        "intradayEntry": true,
+        "kind": "day",
+        "maxHold": 1,
+        "old": [
+          {
+            "avg": -0.0082,
+            "avgLoss": null,
+            "avgWin": null,
+            "edge": -0.0082,
+            "id": "A-ORB1",
+            "n": [
+              1920,
+              2087
+            ],
+            "verdict": null,
+            "win": null
+          },
+          {
+            "avg": [
+              -0.0074,
+              -0.0089
+            ],
+            "avgLoss": -0.0483,
+            "avgWin": 0.058,
+            "edge": [
+              -0.0097,
+              -0.0099
+            ],
+            "id": "DEC2-GAPGO",
+            "n": [
+              5352,
+              14757
+            ],
+            "verdict": "REJECTED",
+            "win": 0.3743
+          }
+        ],
+        "results": {
+          "all": {
+            "avg": -0.0076,
+            "avgStress": -0.0116,
+            "best": 2.0527,
+            "blocks": 248,
+            "ctrl": -0.0082,
+            "days": 1163,
+            "edge": -0.0038,
+            "median": -0.0135,
+            "n": 6438,
+            "noTop2": -0.0081,
+            "ownCovered": 1163,
+            "stocks": 1951,
+            "tBlock": -2.24,
+            "tDay": -3.33,
+            "vsOwn": -0.0002,
+            "win": 0.3493,
+            "worst": -0.3731
+          },
+          "newer": {
+            "avg": -0.0073,
+            "avgStress": -0.0113,
+            "best": 2.0527,
+            "blocks": 141,
+            "ctrl": -0.0082,
+            "days": 669,
+            "edge": -0.0032,
+            "median": -0.0135,
+            "n": 4066,
+            "noTop2": -0.008,
+            "ownCovered": 669,
+            "stocks": 1527,
+            "tBlock": -0.99,
+            "tDay": -2.02,
+            "vsOwn": 0.0003,
+            "win": 0.3532,
+            "worst": -0.2049
+          },
+          "older": {
+            "avg": -0.0081,
+            "avgStress": -0.0121,
+            "best": 0.305,
+            "blocks": 108,
+            "ctrl": -0.0081,
+            "days": 494,
+            "edge": -0.0045,
+            "median": -0.0135,
+            "n": 2372,
+            "noTop2": -0.0083,
+            "ownCovered": 494,
+            "stocks": 1099,
+            "tBlock": -3.08,
+            "tDay": -2.9,
+            "vsOwn": -0.0009,
+            "win": 0.3427,
+            "worst": -0.3731
+          }
+        },
+        "shape": {
+          "avg": -0.0076,
+          "avgHeld": 1,
+          "avgLoss": -0.0351,
+          "avgWin": 0.0437,
+          "byYear": {
+            "2021": {
+              "avg": -0.017,
+              "n": 185
+            },
+            "2022": {
+              "avg": -0.0071,
+              "n": 1153
+            },
+            "2023": {
+              "avg": -0.0077,
+              "n": 1034
+            },
+            "2024": {
+              "avg": -0.0075,
+              "n": 1339
+            },
+            "2025": {
+              "avg": -0.0065,
+              "n": 1562
+            },
+            "2026": {
+              "avg": -0.0081,
+              "n": 1165
+            }
+          },
+          "n": 6438,
+          "pf": 0.6686,
+          "win": 0.3493
+        },
+        "split": "2024-01-01",
+        "verdict": "REJECTED",
+        "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.08 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.99 under 2.5 in the newer half",
+        "window": [
+          "2021-11-10",
+          "2026-10-19"
+        ]
+      },
+      "path": "firstRun.SQ2-ORB5",
+      "period": [
+        "2021-11-10",
+        "2026-10-19"
+      ]
+    },
+    {
+      "conclusion": "Insufficient evidence, with a finite path to a decision",
+      "file": "data/insider-study.json",
+      "horizon": "weeks",
+      "original": {
+        "frozenAt": "2026-10-19T07:59:42.248Z",
+        "name": "3+ different insiders buying within 10 days, bought the next open after the filing, held 20 sessions",
+        "results": {
+          "newer": {
+            "avg": 0.0118,
+            "ctrl": 0.0083,
+            "days": 369,
+            "edge": 0.0018,
+            "n": 739,
+            "noTop2": 0.007,
+            "t": 0.2,
+            "tOwn": 1.6,
+            "topStock": 0.062,
+            "vsOwn": 0.014,
+            "win": 0.503
+          },
+          "older": {
+            "avg": -0.0049,
+            "ctrl": -0.0008,
+            "days": 376,
+            "edge": 0.0003,
+            "n": 812,
+            "noTop2": -0.0076,
+            "t": 0.05,
+            "tOwn": 2.18,
+            "topStock": 0.033,
+            "vsOwn": 0.015,
+            "win": 0.462
+          },
+          "stress": {
+            "avg": 0.0078,
+            "ctrl": 0.0083,
+            "days": 369,
+            "edge": -0.0022,
+            "n": 739,
+            "noTop2": 0.003,
+            "t": -0.25,
+            "tOwn": 1.6,
+            "topStock": 0.064,
+            "vsOwn": 0.014,
+            "win": 0.49
+          }
+        },
+        "verdict": "NOT PROVEN",
+        "why": "not clearly better than the average stock in the older half (+0.0%, t 0.05, 2.7 needed); lost money after costs in the older half; not clearly better than the average stock in the newer half (+0.2%, t 0.2, 2.7 needed); not clearly better than the same stock on other days in the newer half (+1.4%, t 1.6)"
+      },
+      "path": "firstRun.results.CLUSTER3_20",
+      "period": [
+        "2021-10-12",
+        "2026-10-19"
+      ]
+    },
+    {
+      "conclusion": "Insufficient evidence, with a finite path to a decision",
+      "file": "data/anomaly-lab.json",
+      "horizon": "months",
+      "original": {
+        "at": "2026-10-23T20:20:21.074Z",
+        "bar": 4.02,
+        "cost": 0.008,
+        "family": "price",
+        "frozenAt": "2026-10-23T20:20:21.074Z",
+        "hold": 63,
+        "info": {},
+        "results": {
+          "all": {
+            "avg": 0.0383,
+            "avgStress": 0.0343,
+            "best": 5.0499,
+            "blocks": 15,
+            "ctrl": 0.0216,
+            "days": 45,
+            "edge": 0.0088,
+            "median": 0.0145,
+            "n": 10719,
+            "noTop2": 0.0375,
+            "ownCovered": 45,
+            "stocks": 1869,
+            "tBlock": 1.01,
+            "tDay": 1.38,
+            "vsOwn": -0.0809,
+            "win": 0.5345,
+            "worst": -0.8874
+          },
+          "newer": {
+            "avg": 0.0446,
+            "avgStress": 0.0406,
+            "best": 4.0344,
+            "blocks": 11,
+            "ctrl": 0.025,
+            "days": 31,
+            "edge": 0.0117,
+            "median": 0.0183,
+            "n": 7461,
+            "noTop2": 0.0438,
+            "ownCovered": 31,
+            "stocks": 1487,
+            "tBlock": 1.4,
+            "tDay": 1.62,
+            "vsOwn": -0.0541,
+            "win": 0.5426,
+            "worst": -0.8829
+          },
+          "older": {
+            "avg": 0.0239,
+            "avgStress": 0.0199,
+            "best": 5.0499,
+            "blocks": 5,
+            "ctrl": 0.0136,
+            "days": 14,
+            "edge": 0.0025,
+            "median": 0.0053,
+            "n": 3258,
+            "noTop2": 0.0214,
+            "ownCovered": 14,
+            "stocks": 963,
+            "tBlock": 0.32,
+            "tDay": 0.19,
+            "vsOwn": -0.1404,
+            "win": 0.516,
+            "worst": -0.8874
+          }
+        },
+        "shape": {
+          "avgLoss": -0.1424,
+          "avgWin": 0.1957,
+          "byYear": {
+            "2022": {
+              "avg": -0.0065,
+              "n": 473,
+              "win": 0.4313
+            },
+            "2023": {
+              "avg": 0.029,
+              "n": 2785,
+              "win": 0.5303
+            },
+            "2024": {
+              "avg": 0.0445,
+              "n": 2809,
+              "win": 0.5635
+            },
+            "2025": {
+              "avg": 0.0425,
+              "n": 2884,
+              "win": 0.5378
+            },
+            "2026": {
+              "avg": 0.0483,
+              "n": 1768,
+              "win": 0.517
+            }
+          },
+          "pf": 1.5784,
+          "trades": 10719,
+          "win": 0.5345
+        },
+        "split": "2024-01-01",
+        "verdict": "NOT PROVEN",
+        "why": "not better than the same stocks on their other days in the older half; block t 0.32 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.4 under 2.5 in the newer half",
+        "window": [
+          "2021-10-12",
+          "2026-10-23"
+        ]
+      },
+      "path": "firstRun.ANOM-RESMOM",
+      "period": [
+        "2021-10-12",
+        "2026-10-23"
+      ]
+    },
+    {
+      "conclusion": "Insufficient evidence, with a finite path to a decision",
+      "file": "data/squad11-lab.json",
+      "horizon": "longer",
+      "original": {
+        "at": "2026-10-24T07:47:40.769Z",
+        "bar": 4.02,
+        "block": 63,
+        "byYear": {
+          "2022": {
+            "avg": -0.0898,
+            "avgStock": 0.0141,
+            "beatsSpy": false,
+            "n": 17,
+            "spy": 0.0939
+          },
+          "2023": {
+            "avg": 0.1907,
+            "avgStock": 0.0567,
+            "beatsSpy": true,
+            "n": 82,
+            "spy": 0.1371
+          },
+          "2024": {
+            "avg": 0.1406,
+            "avgStock": 0.0403,
+            "beatsSpy": true,
+            "n": 108,
+            "spy": 0.0867
+          },
+          "2025": {
+            "avg": 0.1681,
+            "avgStock": 0.1123,
+            "beatsSpy": true,
+            "n": 106,
+            "spy": 0.1046
+          },
+          "2026": {
+            "avg": 0.2259,
+            "avgStock": 0.0892,
+            "beatsSpy": true,
+            "n": 42,
+            "spy": 0.1246
+          }
+        },
+        "control": false,
+        "cost": 0.008,
+        "exits": {
+          "gone": 3,
+          "max": 352
+        },
+        "frozenAt": "2026-10-24T07:47:40.769Z",
+        "hold": 126,
+        "name": "Leader pullback: first close 12% under its 50-day high, still above its 200-day (hold 126)",
+        "notes": {
+          "artifacts": 0,
+          "notBought": 0,
+          "open": 64,
+          "skippedBusy": 863
+        },
+        "perYear": {
+          "newer": {
+            "avgStock": 0.1727,
+            "rule": 0.333,
+            "spy": 0.2012
+          },
+          "older": {
+            "avgStock": 0.1157,
+            "rule": 0.2874,
+            "spy": 0.2615
+          }
+        },
+        "results": {
+          "all": {
+            "avg": 0.1594,
+            "avgStress": 0.1554,
+            "best": 2.992,
+            "blocks": 15,
+            "ctrl": 0.0701,
+            "days": 228,
+            "edge": 0.0599,
+            "median": 0.0876,
+            "n": 355,
+            "noTop2": 0.1434,
+            "ownCovered": 215,
+            "stocks": 221,
+            "tBlock": 0.91,
+            "tDay": 2.72,
+            "vsOwn": -0.1084,
+            "win": 0.6451,
+            "worst": -0.5606
+          },
+          "newer": {
+            "avg": 0.166,
+            "avgStress": 0.162,
+            "best": 2.992,
+            "blocks": 11,
+            "ctrl": 0.0781,
+            "days": 159,
+            "edge": 0.0484,
+            "median": 0.0758,
+            "n": 256,
+            "noTop2": 0.1437,
+            "ownCovered": 153,
+            "stocks": 179,
+            "tBlock": 0.54,
+            "tDay": 1.64,
+            "vsOwn": -0.1102,
+            "win": 0.6367,
+            "worst": -0.5606
+          },
+          "older": {
+            "avg": 0.1425,
+            "avgStress": 0.1385,
+            "best": 0.7765,
+            "blocks": 5,
+            "ctrl": 0.0494,
+            "days": 69,
+            "edge": 0.0863,
+            "median": 0.0909,
+            "n": 99,
+            "noTop2": 0.1299,
+            "ownCovered": 62,
+            "stocks": 93,
+            "tBlock": 1.24,
+            "tDay": 3.3,
+            "vsOwn": -0.1039,
+            "win": 0.6667,
+            "worst": -0.4202
+          }
+        },
+        "shape": {
+          "newer": {
+            "avg": 0.166,
+            "avgLoss": -0.1784,
+            "avgWin": 0.3625,
+            "n": 256,
+            "win": 0.6367,
+            "worst": -0.5606
+          },
+          "older": {
+            "avg": 0.1425,
+            "avgLoss": -0.1127,
+            "avgWin": 0.2701,
+            "n": 99,
+            "win": 0.6667,
+            "worst": -0.4202
+          }
+        },
+        "split": "2024-01-01",
+        "timing": {
+          "all": {
+            "dipAvg": 0.1594,
+            "dipBetterShare": 0.8254,
+            "dipMinusFixed": 0.0907,
+            "fixedDateAvg": 0.0688,
+            "n": 355
+          },
+          "newer": {
+            "dipAvg": 0.166,
+            "dipBetterShare": 0.8203,
+            "dipMinusFixed": 0.0899,
+            "fixedDateAvg": 0.0761,
+            "n": 256
+          },
+          "note": "twin = the same leader bought at the open after its leader month end (the fixed date) and held the same number of sessions; dipMinusFixed > 0 = waiting for the dip paid",
+          "older": {
+            "dipAvg": 0.1425,
+            "dipBetterShare": 0.8384,
+            "dipMinusFixed": 0.0926,
+            "fixedDateAvg": 0.05,
+            "n": 99
+          }
+        },
+        "verdict": "NOT PROVEN",
+        "why": "not better than the same stocks held as long on their other days in the older half; block t 1.24 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.54 under 2.5 in the newer half",
+        "window": [
+          "2021-10-12",
+          "2026-10-23"
+        ],
+        "yardstick": "capBoth (AUD-1)"
+      },
+      "path": "firstRun.SQ11-PB12",
+      "period": [
+        "2021-10-12",
+        "2026-10-23"
+      ]
+    },
+    {
+      "conclusion": "Insufficient evidence, with a finite path to a decision",
+      "file": "data/squad6-lab.json",
+      "horizon": "longer_comparator",
+      "original": {
+        "at": "2026-10-24T06:34:35.831Z",
+        "bar": 4.02,
+        "block": 126,
+        "cost": 0.008,
+        "exits": {
+          "gone": 18,
+          "max": 821
+        },
+        "frozenAt": "2026-10-24T06:34:35.831Z",
+        "hold": 126,
+        "newerVsOlder": {
+          "avg": [
+            0.0728,
+            0.1929
+          ],
+          "better": true,
+          "edge": [
+            0.0313,
+            0.1215
+          ],
+          "note": "newer half better on average and edge",
+          "win": [
+            0.5861,
+            0.6576
+          ]
+        },
+        "notes": {
+          "artifacts": 1,
+          "notFilled": 0,
+          "open": 120,
+          "skipped": 0
+        },
+        "replication": "proxy",
+        "results": {
+          "all": {
+            "avg": 0.1414,
+            "avgStress": 0.1374,
+            "best": 2.992,
+            "blocks": 7,
+            "ctrl": 0.0508,
+            "days": 7,
+            "edge": 0.0828,
+            "median": 0.0629,
+            "n": 839,
+            "noTop2": 0.1346,
+            "ownCovered": 7,
+            "stocks": 510,
+            "tBlock": 1.67,
+            "tDay": 1.67,
+            "vsOwn": -0.06,
+            "win": 0.6269,
+            "worst": -0.6397
+          },
+          "newer": {
+            "avg": 0.1929,
+            "avgStress": 0.1889,
+            "best": 2.992,
+            "blocks": 4,
+            "ctrl": 0.0639,
+            "days": 4,
+            "edge": 0.1215,
+            "median": 0.0945,
+            "n": 479,
+            "noTop2": 0.1812,
+            "ownCovered": 4,
+            "stocks": 338,
+            "tBlock": 1.52,
+            "tDay": 1.52,
+            "vsOwn": 0.0128,
+            "win": 0.6576,
+            "worst": -0.6397
+          },
+          "older": {
+            "avg": 0.0728,
+            "avgStress": 0.0688,
+            "best": 2.224,
+            "blocks": 3,
+            "ctrl": 0.0334,
+            "days": 3,
+            "edge": 0.0313,
+            "median": 0.0299,
+            "n": 360,
+            "noTop2": 0.0609,
+            "ownCovered": 3,
+            "stocks": 281,
+            "tBlock": 0.68,
+            "tDay": 0.68,
+            "vsOwn": -0.1571,
+            "win": 0.5861,
+            "worst": -0.5616
+          }
+        },
+        "shape": {
+          "all": {
+            "avg": 0.1414,
+            "avgLoss": -0.1563,
+            "avgWin": 0.3185,
+            "medianDays": 126,
+            "n": 839,
+            "pf": 3.4246,
+            "win": 0.6269,
+            "worst": -0.6397,
+            "worst5pctAvg": -0.3996
+          },
+          "newer": {
+            "avg": 0.1929,
+            "avgLoss": -0.1606,
+            "avgWin": 0.377,
+            "medianDays": 126,
+            "n": 479,
+            "pf": 4.5083,
+            "win": 0.6576,
+            "worst": -0.6397,
+            "worst5pctAvg": -0.4037
+          },
+          "older": {
+            "avg": 0.0728,
+            "avgLoss": -0.1515,
+            "avgWin": 0.2311,
+            "medianDays": 126,
+            "n": 360,
+            "pf": 2.1602,
+            "win": 0.5861,
+            "worst": -0.5616,
+            "worst5pctAvg": -0.3938
+          }
+        },
+        "split": "2024-01-01",
+        "verdict": "NOT PROVEN",
+        "why": "not better than the same stocks on their other days in the older half; block t 0.68 under 2.5 in the older half; block t 1.52 under 2.5 in the newer half",
+        "window": [
+          "2021-10-12",
+          "2026-10-23"
+        ],
+        "yardstick": "capBoth (AUD-1)"
+      },
+      "path": "firstRun.SQ6-MTUM",
+      "period": [
+        "2021-10-12",
+        "2026-10-23"
+      ]
+    },
+    {
+      "conclusion": "Insufficient evidence, with a finite path to a decision",
+      "file": "data/squad6-lab.json",
+      "horizon": "longer_comparator",
+      "original": {
+        "at": "2026-10-24T06:34:35.831Z",
+        "bar": 4.02,
+        "block": 63,
+        "cost": 0.008,
+        "exits": {
+          "gone": 3,
+          "max": 747
+        },
+        "frozenAt": "2026-10-24T06:34:35.831Z",
+        "hold": 63,
+        "newerVsOlder": {
+          "avg": [
+            0.0458,
+            0.0536
+          ],
+          "better": true,
+          "edge": [
+            0.0233,
+            0.0246
+          ],
+          "note": "newer half better on average and edge",
+          "win": [
+            0.524,
+            0.522
+          ]
+        },
+        "notes": {
+          "artifacts": 0,
+          "notFilled": 0,
+          "open": 50,
+          "skipped": 0
+        },
+        "replication": "partial",
+        "results": {
+          "all": {
+            "avg": 0.051,
+            "avgStress": 0.047,
+            "best": 2.992,
+            "blocks": 15,
+            "ctrl": 0.0188,
+            "days": 15,
+            "edge": 0.0242,
+            "median": 0.0136,
+            "n": 750,
+            "noTop2": 0.0448,
+            "ownCovered": 15,
+            "stocks": 383,
+            "tBlock": 0.9,
+            "tDay": 0.9,
+            "vsOwn": -0.1099,
+            "win": 0.5227,
+            "worst": -0.535
+          },
+          "newer": {
+            "avg": 0.0536,
+            "avgStress": 0.0496,
+            "best": 1.7318,
+            "blocks": 10,
+            "ctrl": 0.021,
+            "days": 10,
+            "edge": 0.0246,
+            "median": 0.0102,
+            "n": 500,
+            "noTop2": 0.047,
+            "ownCovered": 10,
+            "stocks": 267,
+            "tBlock": 0.75,
+            "tDay": 0.75,
+            "vsOwn": -0.1059,
+            "win": 0.522,
+            "worst": -0.535
+          },
+          "older": {
+            "avg": 0.0458,
+            "avgStress": 0.0418,
+            "best": 2.992,
+            "blocks": 5,
+            "ctrl": 0.0145,
+            "days": 5,
+            "edge": 0.0233,
+            "median": 0.0146,
+            "n": 250,
+            "noTop2": 0.0285,
+            "ownCovered": 5,
+            "stocks": 170,
+            "tBlock": 0.45,
+            "tDay": 0.45,
+            "vsOwn": -0.118,
+            "win": 0.524,
+            "worst": -0.4878
+          }
+        },
+        "shape": {
+          "all": {
+            "avg": 0.051,
+            "avgLoss": -0.171,
+            "avgWin": 0.2538,
+            "medianDays": 63,
+            "n": 750,
+            "pf": 1.625,
+            "win": 0.5227,
+            "worst": -0.535,
+            "worst5pctAvg": -0.3898
+          },
+          "newer": {
+            "avg": 0.0536,
+            "avgLoss": -0.1837,
+            "avgWin": 0.271,
+            "medianDays": 63,
+            "n": 500,
+            "pf": 1.6107,
+            "win": 0.522,
+            "worst": -0.535,
+            "worst5pctAvg": -0.4074
+          },
+          "older": {
+            "avg": 0.0458,
+            "avgLoss": -0.1454,
+            "avgWin": 0.2195,
+            "medianDays": 63,
+            "n": 250,
+            "pf": 1.6612,
+            "win": 0.524,
+            "worst": -0.4878,
+            "worst5pctAvg": -0.3347
+          }
+        },
+        "split": "2024-01-01",
+        "verdict": "NOT PROVEN",
+        "why": "not better than the same stocks on their other days in the older half; block t 0.45 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.75 under 2.5 in the newer half",
+        "window": [
+          "2021-10-12",
+          "2026-10-23"
+        ],
+        "yardstick": "capBoth (AUD-1)"
+      },
+      "path": "firstRun.SQ6-QMOM",
+      "period": [
+        "2021-10-12",
+        "2026-10-23"
+      ]
+    },
+    {
+      "conclusion": "Insufficient evidence, with a finite path to a decision",
+      "file": "data/squad10-lab.json",
+      "horizon": "longer_portfolio_comparator",
+      "original": {
+        "at": "2026-10-24T10:03:10.641Z",
+        "bar": 4.02,
+        "cost": 0.008,
+        "counts": {
+          "dead": 0,
+          "gone": 0,
+          "holdings": 50,
+          "periods": 400,
+          "splitArtifactsLeftOut": 0,
+          "stillHeld": 20,
+          "stocks": 36
+        },
+        "frozenAt": "2026-10-24T10:03:10.641Z",
+        "hold": 63,
+        "holdMedianSessions": 63,
+        "name": "Halal top 20, capped 15%, quarterly",
+        "perYear": {
+          "newer": {
+            "avgStock": 0.1156,
+            "rule": 0.2371,
+            "spy": 0.1829
+          },
+          "older": {
+            "avgStock": -0.068,
+            "rule": 0.0448,
+            "spy": 0.0056
+          }
+        },
+        "portfolio": {
+          "beatsSpusBothHalves": true,
+          "beatsSpusBothHalvesStress": true,
+          "beatsSpyBothHalves": true,
+          "beatsSpyBothHalvesStress": true,
+          "costPaid": 0.012,
+          "ddBetterThanSpusBothHalves": false,
+          "rebalances": 20,
+          "standard": {
+            "halves": {
+              "all": {
+                "avgStock": {
+                  "cagr": 0.0215,
+                  "maxDD": -0.2932,
+                  "total": 0.1071,
+                  "years": 4.7857
+                },
+                "beatsAvgStock": true,
+                "beatsSpus": true,
+                "beatsSpy": true,
+                "ddBetterThanSpus": false,
+                "from": "2022-01-03",
+                "hlal": {
+                  "cagr": 0.112,
+                  "maxDD": -0.238,
+                  "total": 0.6623,
+                  "years": 4.7857
+                },
+                "rule": {
+                  "cagr": 0.1624,
+                  "maxDD": -0.3305,
+                  "total": 1.0551,
+                  "years": 4.7857
+                },
+                "spus": {
+                  "cagr": 0.1217,
+                  "maxDD": -0.2842,
+                  "total": 0.7329,
+                  "years": 4.7857
+                },
+                "spy": {
+                  "cagr": 0.1019,
+                  "maxDD": -0.2536,
+                  "total": 0.5909,
+                  "years": 4.7857
+                },
+                "to": "2026-10-23"
+              },
+              "newer": {
+                "avgStock": {
+                  "cagr": 0.093,
+                  "maxDD": -0.1508,
+                  "total": 0.283,
+                  "years": 2.8016
+                },
+                "beatsAvgStock": true,
+                "beatsSpus": true,
+                "beatsSpy": true,
+                "ddBetterThanSpus": false,
+                "from": "2023-12-29",
+                "hlal": {
+                  "cagr": 0.1813,
+                  "maxDD": -0.2192,
+                  "total": 0.595,
+                  "years": 2.8016
+                },
+                "rule": {
+                  "cagr": 0.2677,
+                  "maxDD": -0.2473,
+                  "total": 0.9434,
+                  "years": 2.8016
+                },
+                "spus": {
+                  "cagr": 0.2124,
+                  "maxDD": -0.2297,
+                  "total": 0.7152,
+                  "years": 2.8016
+                },
+                "spy": {
+                  "cagr": 0.1824,
+                  "maxDD": -0.19,
+                  "total": 0.5989,
+                  "years": 2.8016
+                },
+                "to": "2026-10-23"
+              },
+              "older": {
+                "avgStock": {
+                  "cagr": -0.0716,
+                  "maxDD": -0.2932,
+                  "total": -0.1371,
+                  "years": 1.9841
+                },
+                "beatsAvgStock": true,
+                "beatsSpus": true,
+                "beatsSpy": true,
+                "ddBetterThanSpus": false,
+                "from": "2022-01-03",
+                "hlal": {
+                  "cagr": 0.021,
+                  "maxDD": -0.238,
+                  "total": 0.0422,
+                  "years": 1.9841
+                },
+                "rule": {
+                  "cagr": 0.0286,
+                  "maxDD": -0.3305,
+                  "total": 0.0575,
+                  "years": 1.9841
+                },
+                "spus": {
+                  "cagr": 0.0052,
+                  "maxDD": -0.2842,
+                  "total": 0.0103,
+                  "years": 1.9841
+                },
+                "spy": {
+                  "cagr": -0.0025,
+                  "maxDD": -0.2536,
+                  "total": -0.005,
+                  "years": 1.9841
+                },
+                "to": "2023-12-29"
+              }
+            },
+            "label": "0.4% per side",
+            "months": [
+              {
+                "m": "2022-01",
+                "r": -0.0858
+              },
+              {
+                "m": "2022-02",
+                "r": -0.0502
+              },
+              {
+                "m": "2022-03",
+                "r": 0.0576
+              },
+              {
+                "m": "2022-04",
+                "r": -0.1163
+              },
+              {
+                "m": "2022-05",
+                "r": -0.0259
+              },
+              {
+                "m": "2022-06",
+                "r": -0.0766
+              },
+              {
+                "m": "2022-07",
+                "r": 0.1139
+              },
+              {
+                "m": "2022-08",
+                "r": -0.0557
+              },
+              {
+                "m": "2022-09",
+                "r": -0.09
+              },
+              {
+                "m": "2022-10",
+                "r": 0.03
+              },
+              {
+                "m": "2022-11",
+                "r": 0.0366
+              },
+              {
+                "m": "2022-12",
+                "r": -0.0808
+              },
+              {
+                "m": "2023-01",
+                "r": 0.1035
+              },
+              {
+                "m": "2023-02",
+                "r": 0.01
+              },
+              {
+                "m": "2023-03",
+                "r": 0.0877
+              },
+              {
+                "m": "2023-04",
+                "r": 0.024
+              },
+              {
+                "m": "2023-05",
+                "r": 0.0714
+              },
+              {
+                "m": "2023-06",
+                "r": 0.0703
+              },
+              {
+                "m": "2023-07",
+                "r": 0.0316
+              },
+              {
+                "m": "2023-08",
+                "r": 0.0009
+              },
+              {
+                "m": "2023-09",
+                "r": -0.05
+              },
+              {
+                "m": "2023-10",
+                "r": -0.0166
+              },
+              {
+                "m": "2023-11",
+                "r": 0.0897
+              },
+              {
+                "m": "2023-12",
+                "r": 0.0307
+              },
+              {
+                "m": "2024-01",
+                "r": 0.0331
+              },
+              {
+                "m": "2024-02",
+                "r": 0.0809
+              },
+              {
+                "m": "2024-03",
+                "r": 0.0268
+              },
+              {
+                "m": "2024-04",
+                "r": -0.0308
+              },
+              {
+                "m": "2024-05",
+                "r": 0.0801
+              },
+              {
+                "m": "2024-06",
+                "r": 0.082
+              },
+              {
+                "m": "2024-07",
+                "r": -0.0194
+              },
+              {
+                "m": "2024-08",
+                "r": 0.0189
+              },
+              {
+                "m": "2024-09",
+                "r": 0.0294
+              },
+              {
+                "m": "2024-10",
+                "r": -0.0035
+              },
+              {
+                "m": "2024-11",
+                "r": 0.0529
+              },
+              {
+                "m": "2024-12",
+                "r": 0.0313
+              },
+              {
+                "m": "2025-01",
+                "r": 0.0099
+              },
+              {
+                "m": "2025-02",
+                "r": -0.0378
+              },
+              {
+                "m": "2025-03",
+                "r": -0.0917
+              },
+              {
+                "m": "2025-04",
+                "r": 0.012
+              },
+              {
+                "m": "2025-05",
+                "r": 0.0954
+              },
+              {
+                "m": "2025-06",
+                "r": 0.0673
+              },
+              {
+                "m": "2025-07",
+                "r": 0.0504
+              },
+              {
+                "m": "2025-08",
+                "r": 0.0143
+              },
+              {
+                "m": "2025-09",
+                "r": 0.0635
+              },
+              {
+                "m": "2025-10",
+                "r": 0.0445
+              },
+              {
+                "m": "2025-11",
+                "r": -0.0032
+              },
+              {
+                "m": "2025-12",
+                "r": -0.0103
+              },
+              {
+                "m": "2026-01",
+                "r": 0.0035
+              },
+              {
+                "m": "2026-02",
+                "r": -0.0452
+              },
+              {
+                "m": "2026-03",
+                "r": -0.0468
+              },
+              {
+                "m": "2026-04",
+                "r": 0.1496
+              },
+              {
+                "m": "2026-05",
+                "r": 0.0802
+              },
+              {
+                "m": "2026-06",
+                "r": -0.0651
+              },
+              {
+                "m": "2026-07",
+                "r": -0.0016
+              },
+              {
+                "m": "2026-08",
+                "r": 0.0264
+              },
+              {
+                "m": "2026-09",
+                "r": 0.0364
+              },
+              {
+                "m": "2026-10",
+                "r": -0.0206
+              }
+            ],
+            "monthsBeatingSpus": 0.6207,
+            "spusMonths": [
+              {
+                "m": "2022-01",
+                "r": -0.0724
+              },
+              {
+                "m": "2022-02",
+                "r": -0.0478
+              },
+              {
+                "m": "2022-03",
+                "r": 0.0438
+              },
+              {
+                "m": "2022-04",
+                "r": -0.0923
+              },
+              {
+                "m": "2022-05",
+                "r": -0.0067
+              },
+              {
+                "m": "2022-06",
+                "r": -0.081
+              },
+              {
+                "m": "2022-07",
+                "r": 0.1002
+              },
+              {
+                "m": "2022-08",
+                "r": -0.0541
+              },
+              {
+                "m": "2022-09",
+                "r": -0.0914
+              },
+              {
+                "m": "2022-10",
+                "r": 0.063
+              },
+              {
+                "m": "2022-11",
+                "r": 0.0562
+              },
+              {
+                "m": "2022-12",
+                "r": -0.0627
+              },
+              {
+                "m": "2023-01",
+                "r": 0.0606
+              },
+              {
+                "m": "2023-02",
+                "r": -0.0114
+              },
+              {
+                "m": "2023-03",
+                "r": 0.0749
+              },
+              {
+                "m": "2023-04",
+                "r": 0.0155
+              },
+              {
+                "m": "2023-05",
+                "r": 0.0292
+              },
+              {
+                "m": "2023-06",
+                "r": 0.0633
+              },
+              {
+                "m": "2023-07",
+                "r": 0.0289
+              },
+              {
+                "m": "2023-08",
+                "r": -0.0136
+              },
+              {
+                "m": "2023-09",
+                "r": -0.0547
+              },
+              {
+                "m": "2023-10",
+                "r": -0.0301
+              },
+              {
+                "m": "2023-11",
+                "r": 0.095
+              },
+              {
+                "m": "2023-12",
+                "r": 0.0414
+              },
+              {
+                "m": "2024-01",
+                "r": 0.0181
+              },
+              {
+                "m": "2024-02",
+                "r": 0.0612
+              },
+              {
+                "m": "2024-03",
+                "r": 0.0249
+              },
+              {
+                "m": "2024-04",
+                "r": -0.0391
+              },
+              {
+                "m": "2024-05",
+                "r": 0.053
+              },
+              {
+                "m": "2024-06",
+                "r": 0.0558
+              },
+              {
+                "m": "2024-07",
+                "r": -0.0074
+              },
+              {
+                "m": "2024-08",
+                "r": 0.0144
+              },
+              {
+                "m": "2024-09",
+                "r": 0.0243
+              },
+              {
+                "m": "2024-10",
+                "r": -0.017
+              },
+              {
+                "m": "2024-11",
+                "r": 0.0468
+              },
+              {
+                "m": "2024-12",
+                "r": -0.0002
+              },
+              {
+                "m": "2025-01",
+                "r": 0.013
+              },
+              {
+                "m": "2025-02",
+                "r": -0.0315
+              },
+              {
+                "m": "2025-03",
+                "r": -0.0755
+              },
+              {
+                "m": "2025-04",
+                "r": -0.0074
+              },
+              {
+                "m": "2025-05",
+                "r": 0.0825
+              },
+              {
+                "m": "2025-06",
+                "r": 0.0602
+              },
+              {
+                "m": "2025-07",
+                "r": 0.0363
+              },
+              {
+                "m": "2025-08",
+                "r": 0.02
+              },
+              {
+                "m": "2025-09",
+                "r": 0.0537
+              },
+              {
+                "m": "2025-10",
+                "r": 0.0441
+              },
+              {
+                "m": "2025-11",
+                "r": -0.0056
+              },
+              {
+                "m": "2025-12",
+                "r": -0.0045
+              },
+              {
+                "m": "2026-01",
+                "r": 0.0076
+              },
+              {
+                "m": "2026-02",
+                "r": -0.0103
+              },
+              {
+                "m": "2026-03",
+                "r": -0.0544
+              },
+              {
+                "m": "2026-04",
+                "r": 0.1163
+              },
+              {
+                "m": "2026-05",
+                "r": 0.0889
+              },
+              {
+                "m": "2026-06",
+                "r": -0.0178
+              },
+              {
+                "m": "2026-07",
+                "r": -0.0203
+              },
+              {
+                "m": "2026-08",
+                "r": 0.0446
+              },
+              {
+                "m": "2026-09",
+                "r": 0.0119
+              },
+              {
+                "m": "2026-10",
+                "r": -0.0148
+              }
+            ]
+          },
+          "stress": {
+            "halves": {
+              "all": {
+                "avgStock": {
+                  "cagr": 0.0215,
+                  "maxDD": -0.2932,
+                  "total": 0.1071,
+                  "years": 4.7857
+                },
+                "beatsAvgStock": true,
+                "beatsSpus": true,
+                "beatsSpy": true,
+                "ddBetterThanSpus": false,
+                "from": "2022-01-03",
+                "hlal": {
+                  "cagr": 0.112,
+                  "maxDD": -0.238,
+                  "total": 0.6623,
+                  "years": 4.7857
+                },
+                "rule": {
+                  "cagr": 0.1612,
+                  "maxDD": -0.3324,
+                  "total": 1.0443,
+                  "years": 4.7857
+                },
+                "spus": {
+                  "cagr": 0.1217,
+                  "maxDD": -0.2842,
+                  "total": 0.7329,
+                  "years": 4.7857
+                },
+                "spy": {
+                  "cagr": 0.1019,
+                  "maxDD": -0.2536,
+                  "total": 0.5909,
+                  "years": 4.7857
+                },
+                "to": "2026-10-23"
+              },
+              "newer": {
+                "avgStock": {
+                  "cagr": 0.093,
+                  "maxDD": -0.1508,
+                  "total": 0.283,
+                  "years": 2.8016
+                },
+                "beatsAvgStock": true,
+                "beatsSpus": true,
+                "beatsSpy": true,
+                "ddBetterThanSpus": false,
+                "from": "2023-12-29",
+                "hlal": {
+                  "cagr": 0.1813,
+                  "maxDD": -0.2192,
+                  "total": 0.595,
+                  "years": 2.8016
+                },
+                "rule": {
+                  "cagr": 0.267,
+                  "maxDD": -0.2475,
+                  "total": 0.9405,
+                  "years": 2.8016
+                },
+                "spus": {
+                  "cagr": 0.2124,
+                  "maxDD": -0.2297,
+                  "total": 0.7152,
+                  "years": 2.8016
+                },
+                "spy": {
+                  "cagr": 0.1824,
+                  "maxDD": -0.19,
+                  "total": 0.5989,
+                  "years": 2.8016
+                },
+                "to": "2026-10-23"
+              },
+              "older": {
+                "avgStock": {
+                  "cagr": -0.0716,
+                  "maxDD": -0.2932,
+                  "total": -0.1371,
+                  "years": 1.9841
+                },
+                "beatsAvgStock": true,
+                "beatsSpus": true,
+                "beatsSpy": true,
+                "ddBetterThanSpus": false,
+                "from": "2022-01-03",
+                "hlal": {
+                  "cagr": 0.021,
+                  "maxDD": -0.238,
+                  "total": 0.0422,
+                  "years": 1.9841
+                },
+                "rule": {
+                  "cagr": 0.0266,
+                  "maxDD": -0.3324,
+                  "total": 0.0535,
+                  "years": 1.9841
+                },
+                "spus": {
+                  "cagr": 0.0052,
+                  "maxDD": -0.2842,
+                  "total": 0.0103,
+                  "years": 1.9841
+                },
+                "spy": {
+                  "cagr": -0.0025,
+                  "maxDD": -0.2536,
+                  "total": -0.005,
+                  "years": 1.9841
+                },
+                "to": "2023-12-29"
+              }
+            },
+            "label": "0.6% per side",
+            "months": [
+              {
+                "m": "2022-01",
+                "r": -0.0876
+              },
+              {
+                "m": "2022-02",
+                "r": -0.0502
+              },
+              {
+                "m": "2022-03",
+                "r": 0.0576
+              },
+              {
+                "m": "2022-04",
+                "r": -0.1165
+              },
+              {
+                "m": "2022-05",
+                "r": -0.0259
+              },
+              {
+                "m": "2022-06",
+                "r": -0.0766
+              },
+              {
+                "m": "2022-07",
+                "r": 0.1137
+              },
+              {
+                "m": "2022-08",
+                "r": -0.0557
+              },
+              {
+                "m": "2022-09",
+                "r": -0.09
+              },
+              {
+                "m": "2022-10",
+                "r": 0.0299
+              },
+              {
+                "m": "2022-11",
+                "r": 0.0366
+              },
+              {
+                "m": "2022-12",
+                "r": -0.0808
+              },
+              {
+                "m": "2023-01",
+                "r": 0.1031
+              },
+              {
+                "m": "2023-02",
+                "r": 0.0099
+              },
+              {
+                "m": "2023-03",
+                "r": 0.0877
+              },
+              {
+                "m": "2023-04",
+                "r": 0.0236
+              },
+              {
+                "m": "2023-05",
+                "r": 0.0713
+              },
+              {
+                "m": "2023-06",
+                "r": 0.0703
+              },
+              {
+                "m": "2023-07",
+                "r": 0.0314
+              },
+              {
+                "m": "2023-08",
+                "r": 0.0009
+              },
+              {
+                "m": "2023-09",
+                "r": -0.05
+              },
+              {
+                "m": "2023-10",
+                "r": -0.0168
+              },
+              {
+                "m": "2023-11",
+                "r": 0.0897
+              },
+              {
+                "m": "2023-12",
+                "r": 0.0307
+              },
+              {
+                "m": "2024-01",
+                "r": 0.0331
+              },
+              {
+                "m": "2024-02",
+                "r": 0.0809
+              },
+              {
+                "m": "2024-03",
+                "r": 0.0268
+              },
+              {
+                "m": "2024-04",
+                "r": -0.031
+              },
+              {
+                "m": "2024-05",
+                "r": 0.0801
+              },
+              {
+                "m": "2024-06",
+                "r": 0.082
+              },
+              {
+                "m": "2024-07",
+                "r": -0.0195
+              },
+              {
+                "m": "2024-08",
+                "r": 0.0189
+              },
+              {
+                "m": "2024-09",
+                "r": 0.0294
+              },
+              {
+                "m": "2024-10",
+                "r": -0.0037
+              },
+              {
+                "m": "2024-11",
+                "r": 0.0529
+              },
+              {
+                "m": "2024-12",
+                "r": 0.0313
+              },
+              {
+                "m": "2025-01",
+                "r": 0.0099
+              },
+              {
+                "m": "2025-02",
+                "r": -0.0378
+              },
+              {
+                "m": "2025-03",
+                "r": -0.0917
+              },
+              {
+                "m": "2025-04",
+                "r": 0.0119
+              },
+              {
+                "m": "2025-05",
+                "r": 0.0954
+              },
+              {
+                "m": "2025-06",
+                "r": 0.0673
+              },
+              {
+                "m": "2025-07",
+                "r": 0.0504
+              },
+              {
+                "m": "2025-08",
+                "r": 0.0143
+              },
+              {
+                "m": "2025-09",
+                "r": 0.0635
+              },
+              {
+                "m": "2025-10",
+                "r": 0.0444
+              },
+              {
+                "m": "2025-11",
+                "r": -0.0032
+              },
+              {
+                "m": "2025-12",
+                "r": -0.0103
+              },
+              {
+                "m": "2026-01",
+                "r": 0.0034
+              },
+              {
+                "m": "2026-02",
+                "r": -0.0452
+              },
+              {
+                "m": "2026-03",
+                "r": -0.0468
+              },
+              {
+                "m": "2026-04",
+                "r": 0.1495
+              },
+              {
+                "m": "2026-05",
+                "r": 0.0802
+              },
+              {
+                "m": "2026-06",
+                "r": -0.0651
+              },
+              {
+                "m": "2026-07",
+                "r": -0.0018
+              },
+              {
+                "m": "2026-08",
+                "r": 0.0264
+              },
+              {
+                "m": "2026-09",
+                "r": 0.0363
+              },
+              {
+                "m": "2026-10",
+                "r": -0.0209
+              }
+            ],
+            "monthsBeatingSpus": 0.6207,
+            "spusMonths": [
+              {
+                "m": "2022-01",
+                "r": -0.0724
+              },
+              {
+                "m": "2022-02",
+                "r": -0.0478
+              },
+              {
+                "m": "2022-03",
+                "r": 0.0438
+              },
+              {
+                "m": "2022-04",
+                "r": -0.0923
+              },
+              {
+                "m": "2022-05",
+                "r": -0.0067
+              },
+              {
+                "m": "2022-06",
+                "r": -0.081
+              },
+              {
+                "m": "2022-07",
+                "r": 0.1002
+              },
+              {
+                "m": "2022-08",
+                "r": -0.0541
+              },
+              {
+                "m": "2022-09",
+                "r": -0.0914
+              },
+              {
+                "m": "2022-10",
+                "r": 0.063
+              },
+              {
+                "m": "2022-11",
+                "r": 0.0562
+              },
+              {
+                "m": "2022-12",
+                "r": -0.0627
+              },
+              {
+                "m": "2023-01",
+                "r": 0.0606
+              },
+              {
+                "m": "2023-02",
+                "r": -0.0114
+              },
+              {
+                "m": "2023-03",
+                "r": 0.0749
+              },
+              {
+                "m": "2023-04",
+                "r": 0.0155
+              },
+              {
+                "m": "2023-05",
+                "r": 0.0292
+              },
+              {
+                "m": "2023-06",
+                "r": 0.0633
+              },
+              {
+                "m": "2023-07",
+                "r": 0.0289
+              },
+              {
+                "m": "2023-08",
+                "r": -0.0136
+              },
+              {
+                "m": "2023-09",
+                "r": -0.0547
+              },
+              {
+                "m": "2023-10",
+                "r": -0.0301
+              },
+              {
+                "m": "2023-11",
+                "r": 0.095
+              },
+              {
+                "m": "2023-12",
+                "r": 0.0414
+              },
+              {
+                "m": "2024-01",
+                "r": 0.0181
+              },
+              {
+                "m": "2024-02",
+                "r": 0.0612
+              },
+              {
+                "m": "2024-03",
+                "r": 0.0249
+              },
+              {
+                "m": "2024-04",
+                "r": -0.0391
+              },
+              {
+                "m": "2024-05",
+                "r": 0.053
+              },
+              {
+                "m": "2024-06",
+                "r": 0.0558
+              },
+              {
+                "m": "2024-07",
+                "r": -0.0074
+              },
+              {
+                "m": "2024-08",
+                "r": 0.0144
+              },
+              {
+                "m": "2024-09",
+                "r": 0.0243
+              },
+              {
+                "m": "2024-10",
+                "r": -0.017
+              },
+              {
+                "m": "2024-11",
+                "r": 0.0468
+              },
+              {
+                "m": "2024-12",
+                "r": -0.0002
+              },
+              {
+                "m": "2025-01",
+                "r": 0.013
+              },
+              {
+                "m": "2025-02",
+                "r": -0.0315
+              },
+              {
+                "m": "2025-03",
+                "r": -0.0755
+              },
+              {
+                "m": "2025-04",
+                "r": -0.0074
+              },
+              {
+                "m": "2025-05",
+                "r": 0.0825
+              },
+              {
+                "m": "2025-06",
+                "r": 0.0602
+              },
+              {
+                "m": "2025-07",
+                "r": 0.0363
+              },
+              {
+                "m": "2025-08",
+                "r": 0.02
+              },
+              {
+                "m": "2025-09",
+                "r": 0.0537
+              },
+              {
+                "m": "2025-10",
+                "r": 0.0441
+              },
+              {
+                "m": "2025-11",
+                "r": -0.0056
+              },
+              {
+                "m": "2025-12",
+                "r": -0.0045
+              },
+              {
+                "m": "2026-01",
+                "r": 0.0076
+              },
+              {
+                "m": "2026-02",
+                "r": -0.0103
+              },
+              {
+                "m": "2026-03",
+                "r": -0.0544
+              },
+              {
+                "m": "2026-04",
+                "r": 0.1163
+              },
+              {
+                "m": "2026-05",
+                "r": 0.0889
+              },
+              {
+                "m": "2026-06",
+                "r": -0.0178
+              },
+              {
+                "m": "2026-07",
+                "r": -0.0203
+              },
+              {
+                "m": "2026-08",
+                "r": 0.0446
+              },
+              {
+                "m": "2026-09",
+                "r": 0.0119
+              },
+              {
+                "m": "2026-10",
+                "r": -0.0148
+              }
+            ]
+          },
+          "turnoverPerYear": 0.4837
+        },
+        "results": {
+          "all": {
+            "avg": 0.0376,
+            "avgStress": 0.0336,
+            "best": 2.0432,
+            "blocks": 20,
+            "ctrl": 0.0014,
+            "days": 20,
+            "edge": 0.0282,
+            "median": 0.0199,
+            "n": 400,
+            "noTop2": 0.0286,
+            "ownCovered": 20,
+            "stocks": 36,
+            "tBlock": 2.31,
+            "tDay": 2.31,
+            "vsOwn": -0.0055,
+            "win": 0.5525,
+            "worst": -0.5725
+          },
+          "newer": {
+            "avg": 0.0553,
+            "avgStress": 0.0513,
+            "best": 2.0432,
+            "blocks": 12,
+            "ctrl": 0.0189,
+            "days": 12,
+            "edge": 0.0283,
+            "median": 0.0271,
+            "n": 240,
+            "noTop2": 0.0403,
+            "ownCovered": 12,
+            "stocks": 33,
+            "tBlock": 1.8,
+            "tDay": 1.8,
+            "vsOwn": 0.0096,
+            "win": 0.5875,
+            "worst": -0.3406
+          },
+          "older": {
+            "avg": 0.0111,
+            "avgStress": 0.0071,
+            "best": 0.9118,
+            "blocks": 8,
+            "ctrl": -0.0249,
+            "days": 8,
+            "edge": 0.028,
+            "median": -0.0014,
+            "n": 160,
+            "noTop2": 0.0004,
+            "ownCovered": 8,
+            "stocks": 26,
+            "tBlock": 1.36,
+            "tDay": 1.36,
+            "vsOwn": -0.0283,
+            "win": 0.5,
+            "worst": -0.5725
+          }
+        },
+        "split": "2024-01-01",
+        "start": "2022-01-03",
+        "to": "2026-10-23",
+        "uncappedSensitivity": {
+          "newer": {
+            "avg": 0.0553,
+            "edge": 0.0277,
+            "tBlock": 1.77
+          },
+          "older": {
+            "avg": 0.0111,
+            "edge": 0.028,
+            "tBlock": 1.36
+          },
+          "verdict": "NOT PROVEN"
+        },
+        "verdict": "NOT PROVEN",
+        "why": "not better than the same stocks held as long on their other days in the older half; block t 1.36 under 2.5 in the older half; block t 1.8 under 2.5 in the newer half",
+        "window": [
+          "2021-10-12",
+          "2026-10-23"
+        ]
+      },
+      "path": "firstRun.SQ10-SH20-C15",
+      "period": [
+        "2021-10-12",
+        "2026-10-23"
+      ]
+    },
+    {
+      "conclusion": "Insufficient evidence, with a finite path to a decision",
+      "file": "data/squad23-lab.json",
+      "horizon": "outside_stock_entry_scope",
+      "original": {
+        "aloneBeatsSpusBothHalves": true,
+        "aloneBeatsSpyBothHalves": true,
+        "at": "2026-10-25T19:55:14.761Z",
+        "firstTrade": "2022-01-04",
+        "frozenAt": "2026-10-25T19:55:14.761Z",
+        "name": "Gold sleeve (GLD price as the physical-gold proxy) held",
+        "overlapsWithBasket1": [],
+        "passesTest2": true,
+        "reviews": 20,
+        "standard": {
+          "costPaid": {
+            "alone": 0.004,
+            "basket1": 0.012,
+            "combo": 0.014
+          },
+          "halves": {
+            "all": {
+              "alone": {
+                "cagr": 0.1748,
+                "maxDD": -0.264,
+                "total": 1.1619,
+                "years": 4.7857
+              },
+              "aloneBeatsSpus": true,
+              "aloneBeatsSpy": true,
+              "aloneDDvsSpus": 0.0202,
+              "basket1": {
+                "cagr": 0.1624,
+                "maxDD": -0.3305,
+                "total": 1.0551,
+                "years": 4.7857
+              },
+              "basket1Ratio": 0.4914,
+              "combo": {
+                "cagr": 0.175,
+                "maxDD": -0.2616,
+                "total": 1.1634,
+                "years": 4.7857
+              },
+              "comboBetter": true,
+              "comboRatio": 0.669,
+              "corrWithBasket1": 0.0936,
+              "from": "2022-01-03",
+              "spus": {
+                "cagr": 0.1217,
+                "maxDD": -0.2842,
+                "total": 0.7329,
+                "years": 4.7857
+              },
+              "spy": {
+                "cagr": 0.1019,
+                "maxDD": -0.2536,
+                "total": 0.5909,
+                "years": 4.7857
+              },
+              "to": "2026-10-23"
+            },
+            "newer": {
+              "alone": {
+                "cagr": 0.2616,
+                "maxDD": -0.264,
+                "total": 0.9177,
+                "years": 2.8016
+              },
+              "aloneBeatsSpus": true,
+              "aloneBeatsSpy": true,
+              "aloneDDvsSpus": -0.0343,
+              "basket1": {
+                "cagr": 0.2677,
+                "maxDD": -0.2473,
+                "total": 0.9434,
+                "years": 2.8016
+              },
+              "basket1Ratio": 1.0825,
+              "combo": {
+                "cagr": 0.2767,
+                "maxDD": -0.1612,
+                "total": 0.9824,
+                "years": 2.8016
+              },
+              "comboBetter": true,
+              "comboRatio": 1.7165,
+              "corrWithBasket1": -0.0622,
+              "from": "2023-12-29",
+              "spus": {
+                "cagr": 0.2124,
+                "maxDD": -0.2297,
+                "total": 0.7152,
+                "years": 2.8016
+              },
+              "spy": {
+                "cagr": 0.1824,
+                "maxDD": -0.19,
+                "total": 0.5989,
+                "years": 2.8016
+              },
+              "to": "2026-10-23"
+            },
+            "older": {
+              "alone": {
+                "cagr": 0.0623,
+                "maxDD": -0.2103,
+                "total": 0.1273,
+                "years": 1.9841
+              },
+              "aloneBeatsSpus": true,
+              "aloneBeatsSpy": true,
+              "aloneDDvsSpus": 0.0739,
+              "basket1": {
+                "cagr": 0.0286,
+                "maxDD": -0.3305,
+                "total": 0.0575,
+                "years": 1.9841
+              },
+              "basket1Ratio": 0.0865,
+              "combo": {
+                "cagr": 0.045,
+                "maxDD": -0.2616,
+                "total": 0.0913,
+                "years": 1.9841
+              },
+              "comboBetter": true,
+              "comboRatio": 0.172,
+              "corrWithBasket1": 0.2862,
+              "from": "2022-01-03",
+              "spus": {
+                "cagr": 0.0052,
+                "maxDD": -0.2842,
+                "total": 0.0103,
+                "years": 1.9841
+              },
+              "spy": {
+                "cagr": -0.0025,
+                "maxDD": -0.2536,
+                "total": -0.005,
+                "years": 1.9841
+              },
+              "to": "2023-12-29"
+            }
+          },
+          "turnoverPerYear": {
+            "alone": 0.1388,
+            "basket1": 0.4837,
+            "combo": 0.5317
+          },
+          "worstYear": {
+            "alone": {
+              "from": "2025-12-31",
+              "r": -0.0749,
+              "to": "2026-10-23",
+              "y": "2026"
+            },
+            "basket1": {
+              "from": "2022-01-03",
+              "r": -0.3143,
+              "to": "2022-12-30",
+              "y": "2022"
+            },
+            "combo": {
+              "from": "2022-01-03",
+              "r": -0.2272,
+              "to": "2022-12-30",
+              "y": "2022"
+            },
+            "spus": {
+              "from": "2022-01-03",
+              "r": -0.2399,
+              "to": "2022-12-30",
+              "y": "2022"
+            },
+            "spy": {
+              "from": "2022-01-03",
+              "r": -0.1995,
+              "to": "2022-12-30",
+              "y": "2022"
+            }
+          },
+          "years": {
+            "alone": [
+              {
+                "from": "2022-01-03",
+                "r": 0.0004,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.1269,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.2666,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.6368,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": -0.0749,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ],
+            "basket1": [
+              {
+                "from": "2022-01-03",
+                "r": -0.3143,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.5421,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.4454,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.2191,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": 0.1029,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ],
+            "combo": [
+              {
+                "from": "2022-01-03",
+                "r": -0.2272,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.4121,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.395,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.3459,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": 0.0559,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ],
+            "spus": [
+              {
+                "from": "2022-01-03",
+                "r": -0.2399,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.3292,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.2553,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.1896,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": 0.1486,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ],
+            "spy": [
+              {
+                "from": "2022-01-03",
+                "r": -0.1995,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.2429,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.233,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.1635,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": 0.1145,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ]
+          }
+        },
+        "start": "2022-01-03",
+        "stress": {
+          "costPaid": {
+            "alone": 0.006,
+            "basket1": 0.0179,
+            "combo": 0.0209
+          },
+          "halves": {
+            "all": {
+              "alone": {
+                "cagr": 0.1743,
+                "maxDD": -0.264,
+                "total": 1.1576,
+                "years": 4.7857
+              },
+              "aloneBeatsSpus": true,
+              "aloneBeatsSpy": true,
+              "aloneDDvsSpus": 0.0202,
+              "basket1": {
+                "cagr": 0.1612,
+                "maxDD": -0.3324,
+                "total": 1.0443,
+                "years": 4.7857
+              },
+              "basket1Ratio": 0.485,
+              "combo": {
+                "cagr": 0.1736,
+                "maxDD": -0.2634,
+                "total": 1.1511,
+                "years": 4.7857
+              },
+              "comboBetter": true,
+              "comboRatio": 0.6591,
+              "corrWithBasket1": 0.0948,
+              "from": "2022-01-03",
+              "spus": {
+                "cagr": 0.1217,
+                "maxDD": -0.2842,
+                "total": 0.7329,
+                "years": 4.7857
+              },
+              "spy": {
+                "cagr": 0.1019,
+                "maxDD": -0.2536,
+                "total": 0.5909,
+                "years": 4.7857
+              },
+              "to": "2026-10-23"
+            },
+            "newer": {
+              "alone": {
+                "cagr": 0.2616,
+                "maxDD": -0.264,
+                "total": 0.9177,
+                "years": 2.8016
+              },
+              "aloneBeatsSpus": true,
+              "aloneBeatsSpy": true,
+              "aloneDDvsSpus": -0.0343,
+              "basket1": {
+                "cagr": 0.267,
+                "maxDD": -0.2475,
+                "total": 0.9405,
+                "years": 2.8016
+              },
+              "basket1Ratio": 1.0788,
+              "combo": {
+                "cagr": 0.2757,
+                "maxDD": -0.1614,
+                "total": 0.9784,
+                "years": 2.8016
+              },
+              "comboBetter": true,
+              "comboRatio": 1.7082,
+              "corrWithBasket1": -0.0621,
+              "from": "2023-12-29",
+              "spus": {
+                "cagr": 0.2124,
+                "maxDD": -0.2297,
+                "total": 0.7152,
+                "years": 2.8016
+              },
+              "spy": {
+                "cagr": 0.1824,
+                "maxDD": -0.19,
+                "total": 0.5989,
+                "years": 2.8016
+              },
+              "to": "2026-10-23"
+            },
+            "older": {
+              "alone": {
+                "cagr": 0.0612,
+                "maxDD": -0.2103,
+                "total": 0.1251,
+                "years": 1.9841
+              },
+              "aloneBeatsSpus": true,
+              "aloneBeatsSpy": true,
+              "aloneDDvsSpus": 0.0739,
+              "basket1": {
+                "cagr": 0.0266,
+                "maxDD": -0.3324,
+                "total": 0.0535,
+                "years": 1.9841
+              },
+              "basket1Ratio": 0.08,
+              "combo": {
+                "cagr": 0.0431,
+                "maxDD": -0.2634,
+                "total": 0.0873,
+                "years": 1.9841
+              },
+              "comboBetter": true,
+              "comboRatio": 0.1636,
+              "corrWithBasket1": 0.2885,
+              "from": "2022-01-03",
+              "spus": {
+                "cagr": 0.0052,
+                "maxDD": -0.2842,
+                "total": 0.0103,
+                "years": 1.9841
+              },
+              "spy": {
+                "cagr": -0.0025,
+                "maxDD": -0.2536,
+                "total": -0.005,
+                "years": 1.9841
+              },
+              "to": "2023-12-29"
+            }
+          },
+          "turnoverPerYear": {
+            "alone": 0.1388,
+            "basket1": 0.4836,
+            "combo": 0.5313
+          },
+          "worstYear": {
+            "alone": {
+              "from": "2025-12-31",
+              "r": -0.0749,
+              "to": "2026-10-23",
+              "y": "2026"
+            },
+            "basket1": {
+              "from": "2022-01-03",
+              "r": -0.316,
+              "to": "2022-12-30",
+              "y": "2022"
+            },
+            "combo": {
+              "from": "2022-01-03",
+              "r": -0.2291,
+              "to": "2022-12-30",
+              "y": "2022"
+            },
+            "spus": {
+              "from": "2022-01-03",
+              "r": -0.2399,
+              "to": "2022-12-30",
+              "y": "2022"
+            },
+            "spy": {
+              "from": "2022-01-03",
+              "r": -0.1995,
+              "to": "2022-12-30",
+              "y": "2022"
+            }
+          },
+          "years": {
+            "alone": [
+              {
+                "from": "2022-01-03",
+                "r": -0.0016,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.1269,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.2666,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.6368,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": -0.0749,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ],
+            "basket1": [
+              {
+                "from": "2022-01-03",
+                "r": -0.316,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.5401,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.4447,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.2188,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": 0.102,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ],
+            "combo": [
+              {
+                "from": "2022-01-03",
+                "r": -0.2291,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.4105,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.3942,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.3451,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": 0.0549,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ],
+            "spus": [
+              {
+                "from": "2022-01-03",
+                "r": -0.2399,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.3292,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.2553,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.1896,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": 0.1486,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ],
+            "spy": [
+              {
+                "from": "2022-01-03",
+                "r": -0.1995,
+                "to": "2022-12-30",
+                "y": "2022"
+              },
+              {
+                "from": "2022-12-30",
+                "r": 0.2429,
+                "to": "2023-12-29",
+                "y": "2023"
+              },
+              {
+                "from": "2023-12-29",
+                "r": 0.233,
+                "to": "2024-12-31",
+                "y": "2024"
+              },
+              {
+                "from": "2024-12-31",
+                "r": 0.1635,
+                "to": "2025-12-31",
+                "y": "2025"
+              },
+              {
+                "from": "2025-12-31",
+                "r": 0.1145,
+                "to": "2026-10-23",
+                "y": "2026"
+              }
+            ]
+          }
+        },
+        "test2": {
+          "newer": true,
+          "newerStress": true,
+          "older": true,
+          "olderStress": true
+        },
+        "to": "2026-10-23",
+        "verdict": "EARNS ITS PLACE",
+        "why": "the 70/30 account had a higher return per unit of max drawdown than Basket 1 alone in both halves, also at 0.6% per side",
+        "window": [
+          "2021-10-12",
+          "2026-10-23"
+        ]
+      },
+      "path": "firstRun.SQ23-GOLD",
+      "period": [
+        "2021-10-12",
+        "2026-10-23"
+      ]
+    }
+  ],
+  "frozenCatalogue": [
+    {
+      "file": "data/agent-a-lab.json",
+      "path": "firstRun.results.A-ROT1/6m",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-lab.json",
+      "path": "firstRun.results.A-ROT1/12-1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-lab.json",
+      "path": "firstRun.results.A-ROT2/SPUS",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-lab.json",
+      "path": "firstRun.results.A-ROT2/HLAL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-lab.json",
+      "path": "firstRun.results.A-SWR1/STRETCH/LOWER10",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-lab.json",
+      "path": "firstRun.results.A-SWR1/SPIKE/LOWER10",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-lab.json",
+      "path": "firstRun.results.A-E1W1/tested270",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-lab.json",
+      "path": "firstRun.results.A-E1W1/rest",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-lab.json",
+      "path": "firstRun.results.A-E1W1/whole",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT10-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT10-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT15-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT15-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT20-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT20-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TRAIL10-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TRAIL10-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-STOP10-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-STOP10-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT10-MTUM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT10-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT15-MTUM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT15-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT20-MTUM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT20-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TRAIL10-MTUM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TRAIL10-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-STOP10-MTUM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-STOP10-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT10-QMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT10-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT15-QMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT15-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT20-QMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TGT20-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TRAIL10-QMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-TRAIL10-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-STOP10-QMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/agent-a-tgt-lab.json",
+      "path": "firstRun.A-TGT-STOP10-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-IPOBASE",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-LCREV-W",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-LCREV-M",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-LCGAP20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-LCGAP60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-QLOW",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-LOCKUP",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-DIVG",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-SPLIT",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-RUS-ADD",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-RUS-DOWN",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/angles-lab.json",
+      "path": "firstRun.ANG-FOMC",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-MOM12",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-52WH",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-RESMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-INDMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-TSMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-LOWVOL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-LOWBETA",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-LOWMAX",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-LOWIVOL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-SEASON",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-OVNMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-DAYMOM12",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-DAYMOM1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-DAYREV1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-DAYNIGHT",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-HVP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-EIL20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-EIL60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-TOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-PREHOL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-EAP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-SUE",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-EAR",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-SUESURGE",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-GP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-CFOA",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-AG",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-ACC",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-QMJ",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-RD",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-OL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-CAPEX",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-NSI",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-BBY",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-INSIDER",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-13D",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-SPIN",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-DIVINIT",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-13FBEST",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-SILOW",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-DTCLOW",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/anomaly-lab.json",
+      "path": "firstRun.ANOM-SIDROP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/catalyst-lab.json",
+      "path": "firstRun.results.CAT-RUN1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/catalyst-lab.json",
+      "path": "firstRun.results.CAT-NEWS1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/confluence-lab.json",
+      "path": "firstRun.CONF-2",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/confluence-lab.json",
+      "path": "firstRun.CONF-3",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/expert-lab.json",
+      "path": "firstRun.EXP-INS1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/expert-lab.json",
+      "path": "firstRun.EXP-13F1",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/expert-lab.json",
+      "path": "firstRun.EXP-13F2",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/a/GE5-252",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/a/GE5-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/a/GE10-252",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/a/GE10-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-AVGDOWN/a",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/b1/GE5-252",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/b1/GE5-504",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/b1/GE10-252",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/b1/GE10-504",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-AVGDOWN/b1",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/b2/GE5-252",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/b2/GE5-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/b2/GE10-252",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/b2/GE10-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-AVGDOWN/b2",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/c/GE5-252",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/c/GE5-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/c/GE10-252",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/c/GE10-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-AVGDOWN/c",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/SPUS-all/GE5-252",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/SPUS-all/GE5-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/SPUS-all/GE10-252",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/SPUS-all/GE10-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-AVGDOWN/SPUS-all",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-AVGDOWN/SPUS-fundhi",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-DIPFUND/SPUS",
+      "verdict": "INFORMATION"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/HLAL-all/GE5-252",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/HLAL-all/GE5-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/HLAL-all/GE10-252",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-GETEVEN/HLAL-all/GE10-504",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-AVGDOWN/HLAL-all",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-AVGDOWN/HLAL-fundhi",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-DIPFUND/HLAL",
+      "verdict": "INFORMATION"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-DIPFUND/SPY",
+      "verdict": "INFORMATION"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-REGIME/lanes",
+      "verdict": "INFORMATION"
+    },
+    {
+      "file": "data/hold-lab.json",
+      "path": "firstRun.H-REGIME/summary",
+      "verdict": "INFORMATION"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-OIL-E20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-OIL-S20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-OIL-E60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-OIL-S60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-GAS-E20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-GAS-S20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-GAS-E60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-GAS-S60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-GOLD-E20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-GOLD-S20",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-GOLD-E60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-GOLD-S60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-CU-E20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-CU-S20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-CU-E60",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-CU-S60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-RATE-E20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-USD-E20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-VIX-E20",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-WAR-E20",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-WAR-S20",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-PEACE-E20",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-OPEC-E20",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-OPEC-S20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-CLIM-E20",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-CLIM-S20",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-RATE-E60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-USD-E60",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-VIX-E60",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-WAR-E60",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-WAR-S60",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-PEACE-E60",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-OPEC-E60",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-OPEC-S60",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-CLIM-E60",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-CLIM-S60",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/macro-lab.json",
+      "path": "firstRun.MACRO-ROT",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/ml-lab.json",
+      "path": "firstRun.ML-RANK1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/options-lab.json",
+      "path": "firstRun.results.OPT-LH1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/options-lab.json",
+      "path": "firstRun.results.OPT-CAT1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/pattern-lab.json",
+      "path": "firstRun.results.VP1_5",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/pattern-lab.json",
+      "path": "firstRun.results.VP1_20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/pattern-lab.json",
+      "path": "firstRun.results.VP2_5",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/pattern-lab.json",
+      "path": "firstRun.results.VP2_20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/pattern-lab.json",
+      "path": "firstRun.results.VP3_10",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/pattern-lab.json",
+      "path": "firstRun.results.SMC1_10",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/pattern-lab.json",
+      "path": "firstRun.results.SMC2_10",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/pattern-lab.json",
+      "path": "firstRun.results.SMC3_5",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-LAZY-63",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-LAZY-126",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-LAZY-CHG63",
+      "verdict": "AVOID WEAK (REJECTED AS A BUY)"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-TENDER-3-15",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-TENDER-ALL",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-ISC-21",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-ISC-63",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-ISC-E-21",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-ISC-NE-21",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-RPO-63",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-RPO-126",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/research-lab.json",
+      "path": "firstRun.RQ-RPO-LOW63",
+      "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)"
+    },
+    {
+      "file": "data/squad1-lab.json",
+      "path": "firstRun.SQ1-INSCLU",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad1-lab.json",
+      "path": "firstRun.SQ1-CEODIP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad1-lab.json",
+      "path": "firstRun.SQ1-INSLOWSI",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad1-lab.json",
+      "path": "firstRun.SQ1-BBAUTH",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad1-lab.json",
+      "path": "firstRun.SQ1-BBDIP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad1-lab.json",
+      "path": "firstRun.SQ1-CUSTMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad1-lab.json",
+      "path": "firstRun.SQ1-GUIDEUP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad1-lab.json",
+      "path": "firstRun.SQ1-DIVHIKE",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad1-lab.json",
+      "path": "firstRun.SQ1-SIAVOID",
+      "verdict": "AVOID WEAK (REJECTED AS A BUY)"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH10",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH10.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH10-C15",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH10-C15.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH20",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH20.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH20-C15",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH20-C15.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH30-C15",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH30-C15.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH30-MOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH30-MOM.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH50-XMOM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad10-lab.json",
+      "path": "firstRun.SQ10-SH50-XMOM.uncappedSensitivity",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad11-lab.json",
+      "path": "firstRun.SQ11-PB8",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad11-lab.json",
+      "path": "firstRun.SQ11-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad11-lab.json",
+      "path": "firstRun.SQ11-MA50",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad11-lab.json",
+      "path": "firstRun.SQ11-3DN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad11-lab.json",
+      "path": "firstRun.SQ11-FLUSH",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/squad11-lab.json",
+      "path": "firstRun.SQ11-20D",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad11-lab.json",
+      "path": "firstRun.SQ11-MS63",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-EGAPHOLD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-EGAPHOLD.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-EGAPHOLD.top100",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-EARN52H",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-EARN52H.uncappedSensitivity",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-EARN52H.top100",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-REVEPS",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-REVEPS.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-REVEPS.top100",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-ACCEL2",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-ACCEL2.uncappedSensitivity",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-ACCEL2.top100",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-RAISECONF",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-RAISECONF.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-RAISECONF.top100",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-INVDAY",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-INVDAY.uncappedSensitivity",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad12-lab.json",
+      "path": "firstRun.SQ12-INVDAY.top100",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/squad13-lab.json",
+      "path": "firstRun.SQ13-RPB",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad13-lab.json",
+      "path": "firstRun.SQ13-RPB-CLEAN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad13-lab.json",
+      "path": "firstRun.SQ13-RPB-BUYBACK",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad13-lab.json",
+      "path": "firstRun.SQ13-RPB-LARGE",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad13-lab.json",
+      "path": "firstRun.SQ13-WAVE-BIG",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad13-lab.json",
+      "path": "firstRun.SQ13-WAVE-STRONG",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad13-lab.json",
+      "path": "firstRun.SQ13-LEADF",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad13-lab.json",
+      "path": "firstRun.SQ13-LEADH",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad14-lab.json",
+      "path": "firstRun.SQ14-PB12M",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad14-lab.json",
+      "path": "firstRun.SQ14-PB15",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad14-lab.json",
+      "path": "firstRun.SQ14-PB12P5",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/squad14-lab.json",
+      "path": "firstRun.SQ14-PB12H",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad14-lab.json",
+      "path": "firstRun.SQ14-LEADH4",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad14-lab.json",
+      "path": "firstRun.SQ14-MTPB",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad15-lab.json",
+      "path": "firstRun.SQ15-PB12-ATM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad15-lab.json",
+      "path": "firstRun.SQ15-PB12-ITM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad15-lab.json",
+      "path": "firstRun.SQ15-MOM-ATM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad15-lab.json",
+      "path": "firstRun.SQ15-MOM-ITM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad15-lab.json",
+      "path": "firstRun.SQ15-REPL",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad15-lab.json",
+      "path": "firstRun.SQ15-DIP",
+      "verdict": "INFORMATION (TOO FEW CASES)"
+    },
+    {
+      "file": "data/squad15-lab.json",
+      "path": "firstRun.SQ15-DIP.atm",
+      "verdict": "INFORMATION (TOO FEW CASES)"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-MAGIC",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-ACQM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-QVAL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-GPVAL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-MSCIQ",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-SHYLD",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-VALMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-CORNER",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-IND12",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad16-lab.json",
+      "path": "firstRun.SQ16-RSNH",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad17-lab.json",
+      "path": "firstRun.SQ17-MIX50",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad17-lab.json",
+      "path": "firstRun.SQ17-MIX50.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad17-lab.json",
+      "path": "firstRun.SQ17-SH20-TF10",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad17-lab.json",
+      "path": "firstRun.SQ17-SH20-TF10.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad17-lab.json",
+      "path": "firstRun.SQ17-SHMOM30",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad17-lab.json",
+      "path": "firstRun.SQ17-SHMOM30.uncappedSensitivity",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-PB12-CALM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-PB12-MON",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-FRIDIP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-PB12-ACCUM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-PB12-DRY",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-MTUM-CALM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-QMOM-CALM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-BASK-DIP3",
+      "verdict": "WORSE TIMING"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-BASK-MID",
+      "verdict": "WORSE TIMING"
+    },
+    {
+      "file": "data/squad18-lab.json",
+      "path": "firstRun.SQ18-BASK-END",
+      "verdict": "WORSE TIMING"
+    },
+    {
+      "file": "data/squad19-lab.json",
+      "path": "firstRun.SQ19-FAST-PM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad19-lab.json",
+      "path": "firstRun.SQ19-FAST-PM-RV3",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad19-lab.json",
+      "path": "firstRun.SQ19-FAST-PM-REPEAT",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad19-lab.json",
+      "path": "firstRun.SQ19-FAST-EARLY-RV3",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad19-lab.json",
+      "path": "firstRun.SQ19-FAST-2TO5-PM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad19-lab.json",
+      "path": "firstRun.SQ19-GAP20-8K-NONEWS",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad19-lab.json",
+      "path": "firstRun.SQ19-HODBRK-LIVENEWS",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-ORB5",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-ORB5.old[1]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-ORB30",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-ORB30.old[1]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-EPORB",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-EPORB.old[0]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-QBO",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-QBO.old[0]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-VWAP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-VWAP.old[0]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-EMAPB",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-EMAPB.old[0]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-EMAPB.old[1]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-HTF",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-HTF.old[0]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-PWR",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-SWING",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-SWING.old[0]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad2-lab.json",
+      "path": "firstRun.SQ2-SWING.old[1]",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-MTUM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-MTUM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-QMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-QMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-FCF1",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-FCF1.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-FCF1",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-FCF1.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-FROG",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-FROG.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-FROG",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-FROG.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-RESMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-RESMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-RESMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-RESMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-SUESURGE",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-SUESURGE.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-SUESURGE",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-SUESURGE.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-GOLD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-GOLD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-GOLD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-GOLD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-USD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV40-USD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-USD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-AV25-USD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-PB12",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-PB12.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-MTUM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-MTUM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-MTUM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-MTUM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-MTUM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-QMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-QMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-QMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-QMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-QMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-FCF1",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-FCF1.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-FCF1",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-FCF1.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-FCF1",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-FCF1.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-FCF1",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-FCF1.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-FROG",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-FROG.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-FROG",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-FROG.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-FROG",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-FROG.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-FROG",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-FROG.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-RESMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-RESMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-RESMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-RESMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-RESMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-RESMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-RESMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-RESMOM.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-SUESURGE",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-SUESURGE.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-SUESURGE",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-SUESURGE.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-SUESURGE",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-SUESURGE.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-SUESURGE",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-SUESURGE.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-GOLD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-GOLD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-GOLD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-GOLD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-GOLD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-GOLD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-GOLD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-GOLD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-USD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH25-USD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-USD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA25-USD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-USD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XH40-USD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-USD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-XA40-USD.baseRef",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-SPIKE2",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-STMOM-1000",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad20-lab.json",
+      "path": "firstRun.SQ20-STMOM-500",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad21-lab.json",
+      "path": "firstRun.SQ21-CONTRACT10D",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad21-lab.json",
+      "path": "firstRun.V15-NO35",
+      "verdict": "FORWARD ONLY (not backtested)"
+    },
+    {
+      "file": "data/squad22-lab.json",
+      "path": "firstRun.SQ22-CASHCONV",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad22-lab.json",
+      "path": "firstRun.SQ22-SPINOFF",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/squad22-lab.json",
+      "path": "firstRun.SQ22-NEGLECTED",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/squad23-lab.json",
+      "path": "firstRun.SQ23-NEXT30",
+      "verdict": "DOES NOT EARN ITS PLACE"
+    },
+    {
+      "file": "data/squad23-lab.json",
+      "path": "firstRun.SQ23-MIDQ",
+      "verdict": "DOES NOT EARN ITS PLACE"
+    },
+    {
+      "file": "data/squad23-lab.json",
+      "path": "firstRun.SQ23-WORLD",
+      "verdict": "DOES NOT EARN ITS PLACE"
+    },
+    {
+      "file": "data/squad23-lab.json",
+      "path": "firstRun.SQ23-GOLD",
+      "verdict": "EARNS ITS PLACE"
+    },
+    {
+      "file": "data/squad23-lab.json",
+      "path": "firstRun.SQ23-NEXT30-MOM",
+      "verdict": "DOES NOT EARN ITS PLACE"
+    },
+    {
+      "file": "data/squad24-lab.json",
+      "path": "firstRun.SQ24-MEGADEAL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad25-lab.json",
+      "path": "firstRun.SQ25-GIANTSTAKE-A",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad25-lab.json",
+      "path": "firstRun.SQ25-GIANTSTAKE-B",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-101-first-close",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-FIRSTMIN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-101-first-10d",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-101-open-close",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-101-open-3d",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-101-open-10d",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-801-first-close",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-801-first-3d",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-801-first-10d",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-801-open-close",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-801-open-3d",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad26-lab.json",
+      "path": "firstRun.SQ26-V-801-open-10d",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad27-lab.json",
+      "path": "firstRun.SQ27-ODDLOT",
+      "verdict": "TOO FEW (information only)"
+    },
+    {
+      "file": "data/squad27-lab.json",
+      "path": "firstRun.SQ27-ODDLOT-A1",
+      "verdict": "TOO FEW (information only)"
+    },
+    {
+      "file": "data/squad28-lab.json",
+      "path": "firstRun.SQ28-SUPDRIFT",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/squad28-lab.json",
+      "path": "firstRun.SQ28-SUPDRIFT-ANY",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad29-lab.json",
+      "path": "firstRun.SQ29-F1-RESTATE",
+      "verdict": "INFO"
+    },
+    {
+      "file": "data/squad29-lab.json",
+      "path": "firstRun.SQ29-F2-AUDRESIGN",
+      "verdict": "INFO"
+    },
+    {
+      "file": "data/squad29-lab.json",
+      "path": "firstRun.SQ29-F3-EXECGONE",
+      "verdict": "INFO"
+    },
+    {
+      "file": "data/squad29-lab.json",
+      "path": "firstRun.SQ29-F4-LATEFILE",
+      "verdict": "SELL-WARNING"
+    },
+    {
+      "file": "data/squad29-lab.json",
+      "path": "firstRun.SQ29-F5-GOINGCONCERN",
+      "verdict": "INFO"
+    },
+    {
+      "file": "data/squad29-lab.json",
+      "path": "firstRun.SQ29-F6-DELISTNOTICE",
+      "verdict": "SELL-WARNING"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-VOLRISK",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-PYRAMID",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-CUTRUN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-REGIME",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-ROTATE",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-FAMEQ",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-SECTOR",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-DDBRAKE",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-SLOT10",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-SLOT5",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad3-lab.json",
+      "path": "firstRun.SQ3-COMBO",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-GROWLEAD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-GROWLEAD.sensitivityCap300",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-RULE40",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-RULE40.sensitivityCap300",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-INSIDER",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-INSIDER.sensitivityCap300",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-RDCOMP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-RDCOMP.sensitivityCap300",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-QUALDIP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-QUALDIP.sensitivityCap300",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-IPOLEAD",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-IPOLEAD.sensitivityCap300",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-PROFILE",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad4-lab.json",
+      "path": "firstRun.SQ4-PROFILE.sensitivityCap300",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-TOP20",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-TOP20.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-TOP20-TF",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-TOP20-TF.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-EW100",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-EW100.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-MOMBUF",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-MOMBUF.uncappedSensitivity",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-MOMBUF-TF",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-MOMBUF-TF.uncappedSensitivity",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-QUAL20",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-QUAL20.uncappedSensitivity",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-NEWIN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-NEWIN.uncappedSensitivity",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-SHARIAH30",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad5-lab.json",
+      "path": "firstRun.SQ5-SHARIAH30.uncappedSensitivity",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad6-lab.json",
+      "path": "firstRun.SQ6-CLENOW",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad6-lab.json",
+      "path": "firstRun.SQ6-RADGE",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad6-lab.json",
+      "path": "firstRun.SQ6-CRSIPB",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad6-lab.json",
+      "path": "firstRun.SQ6-CUMRSI",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad6-lab.json",
+      "path": "firstRun.SQ6-MTUM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad6-lab.json",
+      "path": "firstRun.SQ6-QMOM",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/squad6-lab.json",
+      "path": "firstRun.SQ6-3WT",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad6-lab.json",
+      "path": "firstRun.SQ6-TD9",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad7-lab.json",
+      "path": "firstRun.SQ7-DEEPGAP",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad7-lab.json",
+      "path": "firstRun.SQ7-DEEPEARN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad7-lab.json",
+      "path": "firstRun.SQ7-BUYBACKVOL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad7-lab.json",
+      "path": "firstRun.SQ7-DEEPNODIL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad7-lab.json",
+      "path": "firstRun.SQ7-LAGEARN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-NIGHTRUN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-TUG",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-ACCUM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-ORDERLY",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-HOLD3",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-SHRINK",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-LOWTURN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-POSTLOCK",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-CLEAN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad8-lab.json",
+      "path": "firstRun.SQ8-REAL",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-DT-3ST",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-DT-KST",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-DT-MACD",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-DT-WQM",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-DT-SSLW",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-DT-HDIV",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-TMA-3LS",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-TMA-TREND",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-TMA-FIB",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/squad9-lab.json",
+      "path": "firstRun.SQ9-QG-KALMAN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/swing-lab.json",
+      "path": "firstRun.results.SW1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/swing-lab.json",
+      "path": "firstRun.results.SW2",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/swing-lab.json",
+      "path": "firstRun.results.SW3",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/swing-lab.json",
+      "path": "firstRun.results.SW4",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/swing-lab.json",
+      "path": "firstRun.results.SW5",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-DIPLEAD",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-DIPLEAD.modes.asFrozen",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-DIPLEAD.modes.raw",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-THEME",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-THEME.modes.asFrozen",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-THEME.modes.raw",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-TURN",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-TURN.modes.asFrozen",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-TURN.modes.raw",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-DIPLEAD-100",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-DIPLEAD-100.modes.asFrozen",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-DIPLEAD-100.modes.raw",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-THEME-100",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-THEME-100.modes.asFrozen",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-THEME-100.modes.raw",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-TURN-100",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-TURN-100.modes.asFrozen",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/tipster-lab.json",
+      "path": "firstRun.TIP-TURN-100.modes.raw",
+      "verdict": "TOO FEW CASES"
+    },
+    {
+      "file": "data/value-lab.json",
+      "path": "firstRun.B-FCF1",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/value-lab.json",
+      "path": "firstRun.B-BASK1_1m",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/value-lab.json",
+      "path": "firstRun.B-BASK1_3m",
+      "verdict": "NOT PROVEN"
+    },
+    {
+      "file": "data/value-lab.json",
+      "path": "firstRun.B-EM1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/value-lab.json",
+      "path": "firstRun.B-SIF1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/value-lab.json",
+      "path": "firstRun.V15-SN",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/value-lab.json",
+      "path": "firstRun.B-CR1",
+      "verdict": "REJECTED"
+    },
+    {
+      "file": "data/value-lab.json",
+      "path": "firstRun.B-CR1-AVOID",
+      "verdict": "NO AVOID"
+    }
+  ],
+  "independentExecutableAfterCostEvaluationPossible": false,
+  "legacyIG1": {
+    "census": 102,
+    "days": 8,
+    "metrics": {
+      "averageLoss": -0.06463170731707317,
+      "averageWin": 0.15137037037037035,
+      "bestTrade": 1.1018,
+      "expectancy": 0.02113382352941176,
+      "n": 68,
+      "noBestTwo": -0.0022909090909090917,
+      "portfolioDrawdown": null,
+      "profitFactor": 1.5423223517868596,
+      "topTwoShareOfPositiveReturn": 0.3886224614631759,
+      "winRate": 0.39705882352941174,
+      "worstTrade": -0.1317
+    },
+    "missingBBOAndSecurityId": 68,
+    "nonScored": 34,
+    "nonScoredReasons": {
+      "no bars": 1,
+      "no fill (opened past the 3% limit)": 10,
+      "stale signal (price 16.1 min old): removed from the record because price age was not verified": 1,
+      "stale signal (price 16.2 min old): removed from the record because price age was not verified": 6,
+      "stale signal (price 16.3 min old): not scored": 1,
+      "stale signal (price 16.3 min old): removed from the record because price age was not verified": 3,
+      "stale signal (price 16.4 min old): removed from the record because price age was not verified": 1,
+      "stale signal (price 16.5 min old): removed from the record because price age was not verified": 2,
+      "stale signal (price 16.7 min old): removed from the record because price age was not verified": 1,
+      "stale signal (price 16.8 min old): not scored": 1,
+      "stale signal (price 16.8 min old): removed from the record because price age was not verified": 1,
+      "stale signal (price 16.9 min old): removed from the record because price age was not verified": 3,
+      "stale signal (price 19.6 min old): removed from the record because price age was not verified": 1,
+      "stale signal (price 3.6 min old): removed from the record because price age was not verified": 1,
+      "stale signal (price 59.3 min old): removed from the record because price age was not verified": 1
+    },
+    "scoredClose": 68,
+    "status": "Legacy minute-bar estimates, not admitted prospective evidence; no matched controls in these rows",
+    "stocks": 64,
+    "stressMean": 0.01197941176470588,
+    "updated": "2026-10-28T04:48:32.829Z"
+  },
+  "newProspectiveAdmissions": 0,
+  "sources": {
+    "anomaly-core.mjs": {
+      "bytes": 56074,
+      "sha256": "c761ea1296ca625e742d6a17b6006171548498ae02ffadd7dd467dc919932b02"
+    },
+    "data/agent-a-lab.json": {
+      "bytes": 67503,
+      "sha256": "777a56b2f2796454bd96b3e9fcf5b7bf4c7a725436d91851d044f9a15d37d922"
+    },
+    "data/agent-a-tgt-lab.json": {
+      "bytes": 843016,
+      "sha256": "3acc7c47e2132fcea92caf3edf016290915d70ef798ebfa3ddd2e646145041ac"
+    },
+    "data/angles-lab.json": {
+      "bytes": 33546,
+      "sha256": "ba6c6c8bfc543af9923388c1b6432b827c0ae4d2abe57b351f2ea71d8a662819"
+    },
+    "data/anomaly-lab.json": {
+      "bytes": 117538,
+      "sha256": "aaafede53d9d0ef7f96972f08154c3e1ee89a26b4133fbdba4a0520ce81dbad9"
+    },
+    "data/autolab.json": {
+      "bytes": 709569,
+      "sha256": "067c738be13841abc6d7c6fc88e6a0d12cee11af8c5a1904f70bd6c31dbd685e"
+    },
+    "data/catalyst-lab.json": {
+      "bytes": 348542,
+      "sha256": "fe39c3b3e9596cf76a0670dd583f84c3f05f682f5974c78739318c07404b821e"
+    },
+    "data/comeback-lab.json": {
+      "bytes": 541,
+      "sha256": "90bf1b186295048ba19715a4fc26a0bc95027aadd092db867b81e854c426c1c9"
+    },
+    "data/confluence-lab.json": {
+      "bytes": 3651059,
+      "sha256": "83d94079f201be7421a546b9b9c71ca7c1c951d9a4d68e0e7071d6e446b679a9"
+    },
+    "data/expert-lab.json": {
+      "bytes": 358585,
+      "sha256": "dbee6dbab6f00077d0c0802d3a813c66c0e7913309ac7c0d3176716bab7acf9a"
+    },
+    "data/fastmover-lab.json": {
+      "bytes": 49684,
+      "sha256": "53e7ad649d5f01f6a68e7b28763bae60b20a46a0e684d19d8787671c3f6b5ed5"
+    },
+    "data/hold-lab.json": {
+      "bytes": 1373429,
+      "sha256": "0c6ce2322717169e36d8a478a3038fa9237e4d9a9bc68de9e2de3c811d7d91b3"
+    },
+    "data/hunting-lab.json": {
+      "bytes": 52761,
+      "sha256": "ad4c426fc102436bc9dea5748085654d1eee2511673d062f5b756a4b4dd1d9f1"
+    },
+    "data/ignition-lab.json": {
+      "bytes": 75595,
+      "sha256": "4fcc04bb8136f760c299dc4de8400f51d11af2f906bda6ae2d873bf148388fe8"
+    },
+    "data/ignition-results.json": {
+      "bytes": 221072,
+      "sha256": "e1130f86dfea135e99b11ebcee698a5c7dae7e153253fb18b0bfaf55458a770a"
+    },
+    "data/insider-study.json": {
+      "bytes": 25147,
+      "sha256": "c60c6fb95dfd61133aebbba77c74c1cae717d6115506ff29c7f104249c601adf"
+    },
+    "data/macro-lab.json": {
+      "bytes": 1702740,
+      "sha256": "93e3169bd082a7f6882c2b1b6007fb8907c065701443ff09155b71a807d5fbc1"
+    },
+    "data/ml-lab.json": {
+      "bytes": 244836,
+      "sha256": "15c2f0b4210cdaa1570dc37c04ea8414ebfbffb5c4741e026934cb31cf812584"
+    },
+    "data/options-lab.json": {
+      "bytes": 142629,
+      "sha256": "e9a14f6166383f1481632dc1c13518c31577025a9737a24c902a57ec6b9492e3"
+    },
+    "data/pattern-lab.json": {
+      "bytes": 29802,
+      "sha256": "6d85b9996325a01c035970e582890f94649e8d1b10ace6d2ec660c6c3cf5895a"
+    },
+    "data/research-lab.json": {
+      "bytes": 274681,
+      "sha256": "d68f21cf300e00e65000cd45ad58d39d289ae9a14463123f9902a21c69111ba4"
+    },
+    "data/squad1-lab.json": {
+      "bytes": 305494,
+      "sha256": "8bf6d81a6608aa15c9584bfad2f0e4ea39e17914cfff2417226d0909157b7cfd"
+    },
+    "data/squad10-lab.json": {
+      "bytes": 1055523,
+      "sha256": "e71933a0bc7cd584995848846d383d19a3e8a4db1239039e1e5ae9da20a5989c"
+    },
+    "data/squad11-lab.json": {
+      "bytes": 638980,
+      "sha256": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a"
+    },
+    "data/squad12-lab.json": {
+      "bytes": 913606,
+      "sha256": "34f73717dc7abfe39bb465738cec5282183d5ede4e27518161648c7c2a60f9bf"
+    },
+    "data/squad13-lab.json": {
+      "bytes": 39951,
+      "sha256": "8bfcb37eacc7726e7417bc43df5200ae0a418a0832ac57976560c1f13e1b772c"
+    },
+    "data/squad14-lab.json": {
+      "bytes": 464152,
+      "sha256": "28afa0bd12d6a4950c98647025e1e6258b9cfa0563b3d73834b14c54f297b0bb"
+    },
+    "data/squad15-lab.json": {
+      "bytes": 454780,
+      "sha256": "f1111b73980a56b48c7cb76f811c790e9c1f16d91af8b81e0d37fb396843f1a0"
+    },
+    "data/squad16-lab.json": {
+      "bytes": 1571178,
+      "sha256": "fe7cd6f819b5be0ff7de1cd1a353b0a67ee04b51d3912baf671774ad850f45ea"
+    },
+    "data/squad17-lab.json": {
+      "bytes": 526186,
+      "sha256": "e5b69eed466f6b86006224a81a396622f359a6c03aafc98049b17da12ca33665"
+    },
+    "data/squad18-lab.json": {
+      "bytes": 573690,
+      "sha256": "fd31a7b1be5dcd0799cd34b5dc9cbc30bd40c9cd7e5fc3222d56cd0ca4cbfc70"
+    },
+    "data/squad19-lab.json": {
+      "bytes": 777204,
+      "sha256": "51890317de4a9168a142b0cb59bad439894cc349083a614f56274d788b18f2bd"
+    },
+    "data/squad2-lab.json": {
+      "bytes": 39480,
+      "sha256": "4eda2e234fb0d151d2bbece6f2101c706b50f6c654c0e3e9010f01ca2f179b37"
+    },
+    "data/squad20-lab.json": {
+      "bytes": 572457,
+      "sha256": "30b2a3ffb714238b36c427a4ea721fc860801466f30e57fefc852530d4b5be2a"
+    },
+    "data/squad21-lab.json": {
+      "bytes": 12039,
+      "sha256": "f9a5ccc78edc25cfff0e0f8ff956430866ab78ad0cf3e3266f4ca0999c997695"
+    },
+    "data/squad22-lab.json": {
+      "bytes": 20826,
+      "sha256": "08150ec794c22202ed04dfd28fe52bde909b59382b06c228d1493481f7f175d7"
+    },
+    "data/squad23-lab.json": {
+      "bytes": 186485,
+      "sha256": "c8bf28355631f7b35887b89abe7d0a1ec952b3557444fd5796750271ad374db3"
+    },
+    "data/squad24-lab.json": {
+      "bytes": 373277,
+      "sha256": "ebcc1c51d4c58772de061dbb25c2c8ac6d8454b266ac5d37466513ab676d9fbe"
+    },
+    "data/squad25-lab.json": {
+      "bytes": 399514,
+      "sha256": "468367da8dd9fa0d33e2086a27554e49c7575fe36f9af4f1c3ed728707b361ef"
+    },
+    "data/squad26-lab.json": {
+      "bytes": 431528,
+      "sha256": "2d2dc3ac02adde4e2716c75e5651b65a848cfd094df06e8345c95b1ffe2ae3e8"
+    },
+    "data/squad27-lab.json": {
+      "bytes": 44261,
+      "sha256": "b3ec9f04ad083a95783b2e39fdf95a6e249e0d98737cb621e57f85b2b635ad44"
+    },
+    "data/squad28-lab.json": {
+      "bytes": 229493,
+      "sha256": "7b230116f85cf6a20a8a8e3c3169bf9e8ee9b5fcb52e0fd4ab4851aa96afb140"
+    },
+    "data/squad29-lab.json": {
+      "bytes": 110761,
+      "sha256": "bec398e769170ecdbcbf5b0067ccf31db523a794eac13086c9cacd583924b925"
+    },
+    "data/squad3-lab.json": {
+      "bytes": 585382,
+      "sha256": "fc93f80a9131f78fd0f7923d8b85dcabd2a5989007ccb7ed099a73a069352922"
+    },
+    "data/squad4-lab.json": {
+      "bytes": 925087,
+      "sha256": "1538f8fe32365d28389b81cf2bdf1b3cd51b3b05f275b55ca0865f92779f09c4"
+    },
+    "data/squad5-lab.json": {
+      "bytes": 1975483,
+      "sha256": "419afa436404b600e669aae34fb4628a647ee55aa01bfb14f78bb9c928340240"
+    },
+    "data/squad6-lab.json": {
+      "bytes": 519848,
+      "sha256": "75e2ab93d2f94164e146cebf0e66b55db27fcc03a97cf922b8a171338ed02e53"
+    },
+    "data/squad7-lab.json": {
+      "bytes": 14352,
+      "sha256": "b20d999d918488923f17e701a9527edf08e105cec66276975a42e8fab69b2d18"
+    },
+    "data/squad8-lab.json": {
+      "bytes": 33553,
+      "sha256": "ae40e6ca69b7a3e35feb099c0654faa0884ca970ae16213161670a278d9a5358"
+    },
+    "data/squad9-lab.json": {
+      "bytes": 94269,
+      "sha256": "c65511bbff47a8feacf05249dbda3d73e82358239ea3975118c590e016616233"
+    },
+    "data/swing-lab.json": {
+      "bytes": 26526,
+      "sha256": "ce5126910f553f00aa8129ea508eb2eae3f5b9b595e338222c67d082d840fbae"
+    },
+    "data/tipster-lab.json": {
+      "bytes": 261011,
+      "sha256": "ead6b5e896d4a28cd322c9b52f4e3a5c4ff1e179b0fc3a1baf188ec0174f2cb7"
+    },
+    "data/value-lab.json": {
+      "bytes": 1715422,
+      "sha256": "0d8dc5e9753c43aa17cb3c2369f4da2dd4f17756c5297093eb7ba6204304c1a5"
+    },
+    "data/verify-lab.json": {
+      "bytes": 395335,
+      "sha256": "b9d705c0b475d44affe6b7422b2fea28bc9b728154ca2d2ea9100359254c4bfe"
+    },
+    "docs/insider-form4-comparison.md": {
+      "bytes": 11646,
+      "sha256": "2d1ac1edaea72920dc7bfebd42e9f46572b7e8f9dc5f7bedff0fa763b04e3e0a"
+    },
+    "docs/mentor-horizon-comparison.json": {
+      "bytes": 12490,
+      "sha256": "427466fe8b15ded2052942bb1687549c9bd654646c55e0aba845ceaea813cecb"
+    },
+    "ignition-core.mjs": {
+      "bytes": 8317,
+      "sha256": "3e0ca9cdc9ed78e0a466c2bea409e955f947b0ce704487881037f0058c863f08"
+    },
+    "ignition-paper.mjs": {
+      "bytes": 3530,
+      "sha256": "ea246d9190a7e43d12fe2218102c202a23a3524c09a0d579af081051adc3289d"
+    },
+    "insider-study.mjs": {
+      "bytes": 20819,
+      "sha256": "a24f7c32c7bbf398aed7bbb57bd2b36161624f64deb11cfcaf813dc7095e1e54"
+    },
+    "squad10-core.mjs": {
+      "bytes": 21331,
+      "sha256": "fc6e2de082d058c4e3baee211a7aa1952105894366772486c8192c33aaf6f5cb"
+    },
+    "squad11-core.mjs": {
+      "bytes": 17973,
+      "sha256": "29044a5bfe27e60d47f7373963fef80d9c06972cce7987026dea3d30f5676ba9"
+    },
+    "squad11-lab.mjs": {
+      "bytes": 43229,
+      "sha256": "6851886bfb72e9bb680f4c69a4f20b38f1e2f6b9fb3cd51d394213b7cb8b3b52"
+    },
+    "squad2-core.mjs": {
+      "bytes": 33161,
+      "sha256": "bbc695a738b3960649e3f9550f41947e970b42e22bc948d9f96928293cb2651d"
+    },
+    "squad23-core.mjs": {
+      "bytes": 16976,
+      "sha256": "231b470daeb5fa0005f901bd9169c876f83a457bf291816815181134eda69a95"
+    },
+    "squad6-core.mjs": {
+      "bytes": 36352,
+      "sha256": "8808727db42fd54d5bb138394209f3133ffc712e52a1ff7b2045c408944522af"
+    }
+  },
+  "sq11": {
+    "arithmetic": {
+      "all": {
+        "frozenDateWeightedEdgeVersusGrossAverageStock": 0.05988575449039265,
+        "frozenDateWeightedSameStockDifference": -0.10836343632336655,
+        "pairedControls": {
+          "avgStock": {
+            "n": 355,
+            "tradeWeightedMeanDifference": 0.08933802816901408
+          },
+          "fixedDate": {
+            "n": 355,
+            "tradeWeightedMeanDifference": 0.09067126760563379
+          },
+          "sameStock": {
+            "n": 322,
+            "tradeWeightedMeanDifference": -0.07182080745341615
+          },
+          "spy": {
+            "n": 355,
+            "tradeWeightedMeanDifference": 0.050929577464788725
+          }
+        },
+        "roundedSavedReturns": {
+          "averageLoss": -0.16121269841269842,
+          "averageWin": 0.3358711790393013,
+          "bestTrade": 2.992,
+          "expectancy": 0.15944140845070423,
+          "n": 355,
+          "noBestTwo": 0.1433929178470255,
+          "portfolioDrawdown": null,
+          "profitFactor": 3.7865040762474895,
+          "topTwoShareOfPositiveReturn": 0.07780067477523743,
+          "winRate": 0.6450704225352113,
+          "worstTrade": -0.5606
+        },
+        "weighting": "Original edge charges strategy cost but gross average-stock benchmark; row arithmetic and date weights distinguished"
+      },
+      "newer": {
+        "frozenDateWeightedEdgeVersusGrossAverageStock": 0.04840572551662174,
+        "frozenDateWeightedSameStockDifference": -0.11015902272019919,
+        "pairedControls": {
+          "avgStock": {
+            "n": 256,
+            "tradeWeightedMeanDifference": 0.087869921875
+          },
+          "fixedDate": {
+            "n": 256,
+            "tradeWeightedMeanDifference": 0.089937109375
+          },
+          "sameStock": {
+            "n": 237,
+            "tradeWeightedMeanDifference": -0.06297974683544304
+          },
+          "spy": {
+            "n": 256,
+            "tradeWeightedMeanDifference": 0.065656640625
+          }
+        },
+        "roundedSavedReturns": {
+          "averageLoss": -0.17844193548387094,
+          "averageWin": 0.3624963190184049,
+          "bestTrade": 2.992,
+          "expectancy": 0.16598359375,
+          "n": 256,
+          "noBestTwo": 0.14373149606299213,
+          "portfolioDrawdown": null,
+          "profitFactor": 3.560502799018988,
+          "topTwoShareOfPositiveReturn": 0.10127456339730126,
+          "winRate": 0.63671875,
+          "worstTrade": -0.5606
+        },
+        "weighting": "Original edge charges strategy cost but gross average-stock benchmark; row arithmetic and date weights distinguished"
+      },
+      "older": {
+        "frozenDateWeightedEdgeVersusGrossAverageStock": 0.08633973429951691,
+        "frozenDateWeightedSameStockDifference": -0.10393239247311828,
+        "pairedControls": {
+          "avgStock": {
+            "n": 99,
+            "tradeWeightedMeanDifference": 0.09313434343434343
+          },
+          "fixedDate": {
+            "n": 99,
+            "tradeWeightedMeanDifference": 0.09256969696969697
+          },
+          "sameStock": {
+            "n": 85,
+            "tradeWeightedMeanDifference": -0.09647176470588237
+          },
+          "spy": {
+            "n": 99,
+            "tradeWeightedMeanDifference": 0.01284747474747475
+          }
+        },
+        "roundedSavedReturns": {
+          "averageLoss": -0.11265757575757576,
+          "averageWin": 0.27011515151515153,
+          "bestTrade": 0.7765,
+          "expectancy": 0.14252424242424241,
+          "n": 99,
+          "noBestTwo": 0.12994536082474226,
+          "portfolioDrawdown": null,
+          "profitFactor": 4.7953304462436455,
+          "topTwoShareOfPositiveReturn": 0.08443088245192847,
+          "winRate": 0.6666666666666666,
+          "worstTrade": -0.4202
+        },
+        "weighting": "Original edge charges strategy cost but gross average-stock benchmark; row arithmetic and date weights distinguished"
+      }
+    },
+    "costSensitivity": [
+      {
+        "assumedNotional": 1000,
+        "assumedOtherRoundTripFriction": 0.002,
+        "commissionRoundTripUSD": 6,
+        "result": {
+          "averageLoss": -0.16121269841269842,
+          "averageWin": 0.3358711790393013,
+          "bestTrade": 2.992,
+          "expectancy": 0.15944140845070423,
+          "n": 355,
+          "noBestTwo": 0.1433929178470255,
+          "portfolioDrawdown": null,
+          "profitFactor": 3.7865040762474895,
+          "topTwoShareOfPositiveReturn": 0.07780067477523743,
+          "winRate": 0.6450704225352113,
+          "worstTrade": -0.5606
+        },
+        "totalCost": 0.008
+      },
+      {
+        "assumedNotional": 1000,
+        "assumedOtherRoundTripFriction": 0.006,
+        "commissionRoundTripUSD": 6,
+        "result": {
+          "averageLoss": -0.16139612403100775,
+          "averageWin": 0.33629115044247787,
+          "bestTrade": 2.988,
+          "expectancy": 0.15544140845070423,
+          "n": 355,
+          "noBestTwo": 0.13939291784702548,
+          "portfolioDrawdown": null,
+          "profitFactor": 3.6504051373432405,
+          "topTwoShareOfPositiveReturn": 0.0786297166646053,
+          "winRate": 0.6366197183098592,
+          "worstTrade": -0.5646
+        },
+        "totalCost": 0.012
+      },
+      {
+        "assumedNotional": 1000,
+        "assumedOtherRoundTripFriction": 0.014,
+        "commissionRoundTripUSD": 6,
+        "result": {
+          "averageLoss": -0.16447593984962405,
+          "averageWin": 0.3343108108108108,
+          "bestTrade": 2.98,
+          "expectancy": 0.14744140845070422,
+          "n": 355,
+          "noBestTwo": 0.1313929178470255,
+          "portfolioDrawdown": null,
+          "profitFactor": 3.392730613980151,
+          "topTwoShareOfPositiveReturn": 0.0803050514033173,
+          "winRate": 0.6253521126760564,
+          "worstTrade": -0.5726
+        },
+        "totalCost": 0.02
+      },
+      {
+        "assumedNotional": 500,
+        "assumedOtherRoundTripFriction": 0.002,
+        "commissionRoundTripUSD": 6,
+        "result": {
+          "averageLoss": -0.1597151515151515,
+          "averageWin": 0.33880762331838565,
+          "bestTrade": 2.986,
+          "expectancy": 0.15344140845070423,
+          "n": 355,
+          "noBestTwo": 0.13739291784702548,
+          "portfolioDrawdown": null,
+          "profitFactor": 3.5837523242135623,
+          "topTwoShareOfPositiveReturn": 0.07904269920494057,
+          "winRate": 0.6281690140845071,
+          "worstTrade": -0.5666
+        },
+        "totalCost": 0.014
+      },
+      {
+        "assumedNotional": 2500,
+        "assumedOtherRoundTripFriction": 0.002,
+        "commissionRoundTripUSD": 6,
+        "result": {
+          "averageLoss": -0.1642090909090909,
+          "averageWin": 0.3322606837606838,
+          "bestTrade": 2.9956,
+          "expectancy": 0.16304140845070422,
+          "n": 355,
+          "noBestTwo": 0.1469929178470255,
+          "portfolioDrawdown": null,
+          "profitFactor": 3.913021596130715,
+          "topTwoShareOfPositiveReturn": 0.0770582258292711,
+          "winRate": 0.6591549295774648,
+          "worstTrade": -0.5569999999999999
+        },
+        "totalCost": 0.004399999999999999
+      }
+    ],
+    "duplicateLogicalRows": 0,
+    "excludedLaterClosedRows": 2,
+    "fieldCoverage": {
+      "avgStock": 355,
+      "entryPrice": 0,
+      "exitPrice": 0,
+      "fixedDate": 355,
+      "qty": 0,
+      "sameStock": 322,
+      "securityId": 0,
+      "spy": 355
+    },
+    "firstSignal": "2022-11-02",
+    "frozenWindowMatchedRows": 355,
+    "lastExit": "2026-10-23",
+    "savedRows": 357,
+    "validity": "Rounded saved-return arithmetic only; not an independently repriced backtest or investable portfolio"
+  },
+  "strategiesOrFrozenResultsChanged": false,
+  "verdictCounts": {
+    "AVOID NOT SUPPORTED (REJECTED AS A BUY)": 1,
+    "AVOID WEAK (REJECTED AS A BUY)": 2,
+    "DOES NOT EARN ITS PLACE": 4,
+    "EARNS ITS PLACE": 1,
+    "FORWARD ONLY (not backtested)": 1,
+    "INFO": 4,
+    "INFORMATION": 5,
+    "INFORMATION (TOO FEW CASES)": 2,
+    "NO AVOID": 1,
+    "NOT PROVEN": 218,
+    "REJECTED": 277,
+    "SELL-WARNING": 2,
+    "TOO FEW (information only)": 2,
+    "TOO FEW CASES": 46,
+    "WORSE TIMING": 3
+  },
+  "version": "SAVED_EVIDENCE_AUDIT_2026_11_04_V1"
+}
