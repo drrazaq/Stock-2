@@ -6,6 +6,19 @@ Prepared by Claude on branch `claude/stop-alert-validity`, from main `a95af150`.
 - **Private text:** the owner's messages are not in this repository. Every test uses invented tickers and prices.
 - **Deployment:** needs Codex's independent review and a separate owner approval.
 
+## Revision 2 (Codex corrections)
+
+- **Future timestamps:** any future provider timestamp is now **UNKNOWN**. The previous 60-second tolerance is removed, and a nonfinite clock never vouches for freshness.
+- **Prices:** a nonfinite, non-numeric or non-positive price (`Infinity`, `NaN`, `"79"`, `null`) is **UNKNOWN**.
+- **Recorded stops:** a recorded stop that is not a finite positive number is now one **STOP CHECK UNKNOWN** line ("the recorded stop is not a valid number"). Before, the watcher skipped it silently, and the bot route could treat `Infinity` as crossed. A position with no stop recorded is still not checked.
+- **Watcher scenarios now executed** (`INCIDENT_WATCHER_SRC=<branch>/ignition-watch.mjs`):
+  - `watcher-resilience`: 9/9 pass.
+  - `watcher-incident-revision`: 11/11 pass.
+  - The first run exposed one unconverted `STOP HIT NOW` assertion. It also showed that the radar child's fixed module set lacked `stop-watch.mjs`, which `early-alerts.mjs` had started importing. `nyStamp` is now defined locally in `early-alerts.mjs`, and a test checks that both modules produce the same format.
+- **Results:**
+  - `test/stop-alert-validity.test.mjs`: 17/17 pass, including actual bot-caller cases for future-dated and nonfinite quotes.
+  - Full suite: 136/136 pass.
+
 ## What changes
 
 | Finding | Change |

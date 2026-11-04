@@ -1,10 +1,33 @@
 {
   "base": "a95af15061569854c89350a5fb0f981e99783822",
-  "node": "v20 (/opt/node20), env -i PATH HOME, sequential node \"$f\" per test file",
-  "newFile": {"file": "test/stop-alert-validity.test.mjs", "pass": 14, "fail": 0},
-  "updatedFile": {"file": "test/stop-watch.test.mjs", "pass": 3, "fail": 0},
-  "againstUnchangedMainCode": {"stop-alert-validity": "fails (new exports absent)", "stop-watch": "1 pass, 2 fail"},
-  "fullSuite": {"files": 136, "pass": 136, "fail": 0},
-  "notRunHere": "test/watcher-resilience.test.mjs scenarios run only with INCIDENT_WATCHER_SRC set; its one STOP assertion was updated to the new wording but was not executed in this session",
-  "network": "none (load-scan blocks non-loopback; blocked list empty)"
+  "revision": 2,
+  "node": "v20 (/opt/node20), env -i PATH HOME, sequential node \"$f\"",
+  "packageFiles": {
+    "test/stop-alert-validity.test.mjs": {
+      "pass": 17,
+      "fail": 0
+    },
+    "test/stop-watch.test.mjs": {
+      "pass": 3,
+      "fail": 0
+    }
+  },
+  "watcherScenarios": {
+    "env": "INCIDENT_WATCHER_SRC=<branch>/ignition-watch.mjs",
+    "test/watcher-resilience.test.mjs": {
+      "pass": 9,
+      "fail": 0
+    },
+    "test/watcher-incident-revision.test.mjs": {
+      "pass": 11,
+      "fail": 0
+    },
+    "note": "first r2 run exposed an unconverted 'STOP HIT NOW' assertion and an early-alerts import of stop-watch.mjs missing from the radar child's module set; both fixed, nyStamp kept local in early-alerts"
+  },
+  "fullSuite": {
+    "files": 136,
+    "pass": 136,
+    "fail": 0
+  },
+  "network": "none (loopback only)"
 }

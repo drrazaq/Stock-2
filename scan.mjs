@@ -9,7 +9,7 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
-import { priceEvidence, stopText, stopMessageKey } from './stop-watch.mjs';
+import { priceEvidence, stopText, stopMessageKey, validStop } from './stop-watch.mjs';
 
 const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;   // test hooks: localhost only
@@ -4178,13 +4178,13 @@ async function intraday(onlyMine) {
   // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
   // was reached; otherwise one STOP CHECK UNKNOWN line a day. Stop levels and positions are only read.
   const watcherDelivered = (sym, kind) => { try { return JSON.parse(fs.readFileSync('data/watcher-message-state/' + day + '/' + crypto.createHash('sha256').update(stopMessageKey(sym, kind)).digest('hex') + '.json', 'utf8')).state === 'ACKNOWLEDGED'; } catch (e) { return false; } };
-  const stopFallback = (sym, P, j) => { const ev = priceEvidence(sym, { sym, price: +j.price, t: j.t, provider: j.src || 'unknown source', kind: 'TRADE' }, Date.now());
+  const stopFallback = (sym, P, j) => { const ev = !validStop(P.stop) ? { state: 'UNKNOWN', why: 'the recorded stop is not a valid number' } : priceEvidence(sym, { sym, price: +j.price, t: j.t, provider: j.src || 'unknown source', kind: 'TRADE' }, Date.now());
     if (ev.state !== 'OK') { if (st.sent[sym + 'myunk'] || st.sent[sym + 'myst'] || watcherDelivered(sym, 'unknown') || watcherDelivered(sym, 'hit')) return; st.sent[sym + 'myunk'] = 1; stopAlerts.push(stopText('unknown', sym, P, ev)); return; }
     if (!(ev.price <= P.stop) || st.sent[sym + 'myst']) return;
     if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
     st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
   for (const sym of watch) {
-    const j = (await liveQ((sym))) || {}, p = +j.price; if (myPos[sym] && myPos[sym].stop > 0) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
+    const j = (await liveQ((sym))) || {}, p = +j.price; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
     const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
     if (mp) {   // you told the bot you bought this one

@@ -1,24 +1,21 @@
 diff --git a/early-alerts.mjs b/early-alerts.mjs
-index 0263544..12e6e4a 100644
+index 0263544..a3260f3 100644
 --- a/early-alerts.mjs
 +++ b/early-alerts.mjs
-@@ -12,6 +12,7 @@
- // approved = approved only; off = none of these (approved alerts keep their own existing switches). quiet / opportunitiesOnly / focus
- // do not apply here: this channel exists because the owner asked for prompt, labelled research (28 Oct).
- import { netHurdle, netOf } from './radar-v3-core.mjs';
-+import { nyStamp } from './stop-watch.mjs';   // (4 Nov) catalyst times: full date, one time zone
- 
- export const LEAD = { minScore: 80, chgMin: 0.03, chgMax: 0.08, minDollarVol: 1e6, from: 575, to: 690, perDay: 5 };
- export const PAPER = { to: 690, perDay: 4 };
-@@ -52,6 +53,7 @@ export function hardReason({ price, halalFail, lottery, sec }) {
+@@ -51,7 +51,12 @@ export function hardReason({ price, halalFail, lottery, sec }) {
+ //              / UNKNOWN (nothing found)
  //   FRESHNESS  FRESH (in the 24 h before the check) / RECYCLED (only 24-72 h old, or an amended filing /A: old news moving now)
  // cls (kept for the ledger): VERIFIED (SEC, fresh) / UNCONFIRMED (headline only, fresh) / RECYCLED / NONE / UNAVAILABLE.
++// (4 Nov) catalyst times carry their full date and one time zone: 'Nov 3 16:07 New York' (same format as stop-watch.mjs nyStamp; kept
++// local so the radar child keeps its existing module set)
++const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
++export function nyStamp(ms) { if (!Number.isFinite(ms)) return 'time unknown'; const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(ms)).forEach(x => p[x.type] = x.value); return MON3[+p.month - 1] + ' ' + (+p.day) + ' ' + p.hour + ':' + p.minute + ' New York'; }
  const nyHM = (ms) => new Date(ms).toLocaleTimeString('en-GB', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit' });
 +// (4 Nov) catalyst times carry their full date and one time zone: 'Nov 3 16:07 New York' (a previous-day item no longer reads like today)
  export const NEG_ITEMS = ['1.02', '1.03', '2.04', '2.05', '2.06', '3.01', '4.01', '4.02'], DIL_ITEMS = ['2.03', '3.02', '3.03'];
  export const DIL_FORMS = /^(424B|S-1|S-3|F-1|F-3)/, EVENT_FORMS = /^(8-K|6-K|SC 13D|425|DEFA14A)/;
  const DIL_W = /\b(offering|private placement|registered direct|priced at|pricing of|warrants?|at-the-market|ATM program|convertible|shelf)\b/i;
-@@ -76,11 +78,11 @@ export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours =
+@@ -76,11 +81,11 @@ export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours =
    const hDir = fN.length ? (() => { const ds = fN.map(x => headlineDirection(x.headline)); return ds.includes('DILUTION') ? 'DILUTION' : ds.includes('NEGATIVE') && ds.includes('POSITIVE') ? 'AMBIGUOUS' : worst(ds); })() : null;
    const tag = (o) => ({ ...o, filingEconomicClassification:F.some(x=>DIL_FORMS.test(x.form))?'UNREVIEWED':'NOT_ASSESSED', text: o.text + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
    if (fF.length) { const x = fF[0], fd = worst(fF.map(filingDirection)), dir = fd !== 'AMBIGUOUS' ? fd : hDir && hDir !== 'AMBIGUOUS' ? hDir : 'AMBIGUOUS';
@@ -50,14 +47,14 @@ index 7cda237..77b4b56 100644
      if (rd !== null) ages.push(rd); if (r.vt > 0) vages.push((nowMs - r.vt) / 60000); if (live) liveN++;
      // visibility ledger: every stock from its first sighting
 diff --git a/scan.mjs b/scan.mjs
-index 5197cfb..1a4c94a 100644
+index 5197cfb..46322d0 100644
 --- a/scan.mjs
 +++ b/scan.mjs
 @@ -9,6 +9,7 @@ import crypto from 'node:crypto';
  import zlib from 'node:zlib';
  import { createRequire } from 'node:module';
  import { execSync } from 'node:child_process';
-+import { priceEvidence, stopText, stopMessageKey } from './stop-watch.mjs';
++import { priceEvidence, stopText, stopMessageKey, validStop } from './stop-watch.mjs';
  
  const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
  const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;   // test hooks: localhost only
@@ -72,14 +69,14 @@ index 5197cfb..1a4c94a 100644
 +  // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
 +  // was reached; otherwise one STOP CHECK UNKNOWN line a day. Stop levels and positions are only read.
 +  const watcherDelivered = (sym, kind) => { try { return JSON.parse(fs.readFileSync('data/watcher-message-state/' + day + '/' + crypto.createHash('sha256').update(stopMessageKey(sym, kind)).digest('hex') + '.json', 'utf8')).state === 'ACKNOWLEDGED'; } catch (e) { return false; } };
-+  const stopFallback = (sym, P, j) => { const ev = priceEvidence(sym, { sym, price: +j.price, t: j.t, provider: j.src || 'unknown source', kind: 'TRADE' }, Date.now());
++  const stopFallback = (sym, P, j) => { const ev = !validStop(P.stop) ? { state: 'UNKNOWN', why: 'the recorded stop is not a valid number' } : priceEvidence(sym, { sym, price: +j.price, t: j.t, provider: j.src || 'unknown source', kind: 'TRADE' }, Date.now());
 +    if (ev.state !== 'OK') { if (st.sent[sym + 'myunk'] || st.sent[sym + 'myst'] || watcherDelivered(sym, 'unknown') || watcherDelivered(sym, 'hit')) return; st.sent[sym + 'myunk'] = 1; stopAlerts.push(stopText('unknown', sym, P, ev)); return; }
 +    if (!(ev.price <= P.stop) || st.sent[sym + 'myst']) return;
 +    if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
 +    st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
    for (const sym of watch) {
 -    const j = await liveQ((sym)), p = +j.price; if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
-+    const j = (await liveQ((sym))) || {}, p = +j.price; if (myPos[sym] && myPos[sym].stop > 0) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
++    const j = (await liveQ((sym))) || {}, p = +j.price; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
      const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
      const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
      if (mp) {   // you told the bot you bought this one
@@ -98,10 +95,10 @@ index 5197cfb..1a4c94a 100644
    console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
  }
 diff --git a/stop-watch.mjs b/stop-watch.mjs
-index 42019ee..5505045 100644
+index 42019ee..f22b3c0 100644
 --- a/stop-watch.mjs
 +++ b/stop-watch.mjs
-@@ -1,18 +1,57 @@
+@@ -1,18 +1,59 @@
 -// LIVE STOP WATCH (23 Oct 2026). The nightly scan saw a broken stop only at the close, and the owner then sold days later (DOCN: stop
 -// 120.81 broken on 14 Oct, sold 20 Oct at 100). The live watcher now calls stopHits() every minute with full-market live prices:
 -// one SELL NOW message when a held stock trades at or under its stop, one NEAR STOP warning within 2% above it. Sent once a day each.
@@ -109,10 +106,11 @@ index 42019ee..5505045 100644
 +// owner then sold days later (DOCN: stop 120.81 broken on 14 Oct, sold 20 Oct at 100). The live watcher calls stopHits() every minute,
 +// and the bot's market-hours check uses the same evidence rule and the same wording as a fallback.
 +// (4 Nov) A stop crossing is shown as current ONLY on valid price evidence: a positive trade price whose response is bound to that exact
-+// ticker, with a provider timestamp that is known, not in the future and at most STOP_MAX_AGE_MIN old. Anything else is a STOP CHECK
++// ticker, with a finite provider timestamp that is known, not in the future (no tolerance) and at most STOP_MAX_AGE_MIN old. Anything else is a STOP CHECK
 +// UNKNOWN line (never silently "safe"). Stop levels, holdings and trading rules are read, never changed. The wording respects a broker stop
 +// order that may already have filled: it never tells the owner to sell a second time.
 +export const STOP_MAX_AGE_MIN = 5;
++export const validStop = (x) => typeof x === 'number' && Number.isFinite(x) && x > 0;
  const m2 = (x) => (+x).toFixed(2);
 -export function stopHits(pos, priceOf, sent) {
 +const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -128,14 +126,14 @@ index 42019ee..5505045 100644
 +  const unk = (why) => ({ state: 'UNKNOWN', why });
 +  if (!q || typeof q !== 'object') return unk('no live price for this stock');
 +  if (q.sym !== sym) return unk('the price response is not for this ticker');
-+  if (!(+q.price > 0)) return unk('no valid price');
++  if (typeof q.price !== 'number' || !Number.isFinite(q.price) || !(q.price > 0)) return unk('no valid price');
 +  if (q.kind && q.kind !== 'TRADE') return unk('the only price is a ' + String(q.kind).toLowerCase().replace('_', ' ') + ', not a live trade');
-+  const t = +q.t; if (!(t > 0)) return unk('the price has no source timestamp');
-+  if (t > nowMs + 60000) return unk('the price timestamp is in the future');
++  const t = q.t; if (typeof t !== 'number' || !Number.isFinite(t) || !(t > 0)) return unk('the price has no source timestamp');
++  if (!Number.isFinite(nowMs) || t > nowMs) return unk('the price timestamp is in the future');
 +  const ageSec = Math.max(0, (nowMs - t) / 1000);
 +  if (ageSec > maxAgeMin * 60) return unk('the latest price is ' + ageText(ageSec).replace(' old', '') + ' old (limit ' + maxAgeMin + ' min)');
 +  const src = String(q.provider || 'unknown source').toUpperCase() + (q.feed ? ' ' + String(q.feed).toUpperCase() : '');
-+  return { state: 'OK', price: +q.price, t, ageSec, src };
++  return { state: 'OK', price: q.price, t, ageSec, src };
 +}
 +const chgOf = (P, px) => P && P.entry > 0 ? ' (bought ' + m2(P.entry) + ', ' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '%)' : '';
 +const seenOf = (ev) => ev.src + ', ' + nyStamp(ev.t) + ', ' + ageText(ev.ageSec);
@@ -160,7 +158,8 @@ index 42019ee..5505045 100644
 -      continue; }
 -    if (px <= st * 1.02 && !sent[sym + '|near'] && !sent[sym + '|hit']) { sent[sym + '|near'] = 1;
 -      out.push({ sym, kind: 'near', text: 'NEAR STOP: ' + sym + ' ' + m2(px) + ', only ' + ((px / st - 1) * 100).toFixed(1) + '% above your stop ' + m2(st) + chg + '. Make sure the stop order is placed at your broker.' }); }
-+    if (!(P && P.stop > 0)) continue;
++    if (!P || P.stop === undefined || P.stop === null) continue;   // no stop recorded
++    if (!validStop(P.stop)) { if (!sent[sym + '|badstop']) { sent[sym + '|badstop'] = 1; out.push({ sym, kind: 'unknown', why: 'the recorded stop is not a valid number', text: 'STOP CHECK UNKNOWN: ' + sym + ': the recorded stop is not a valid number, so it cannot be checked; this is not a sign the position is safe. Re-send your stop (stop ' + sym + ' PRICE) and check your broker.' }); } continue; }
 +    const ev = priceEvidence(sym, quotes && quotes[sym], nowMs, maxAgeMin);
 +    if (ev.state !== 'OK') { if (!sent[sym + '|unknown'] && !sent[sym + '|hit']) { sent[sym + '|unknown'] = 1; out.push({ sym, kind: 'unknown', why: ev.why, text: stopText('unknown', sym, P, ev) }); } continue; }
 +    if (ev.price <= P.stop) { if (sent[sym + '|hit']) continue; sent[sym + '|hit'] = 1; out.push({ sym, kind: 'hit', price: ev.price, t: ev.t, text: stopText('hit', sym, P, ev) }); continue; }
@@ -200,10 +199,10 @@ index 7ab669a..7f708bd 100644
    c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '1.01,3.02', at: '2026-10-29T11:02:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
 diff --git a/test/stop-alert-validity.test.mjs b/test/stop-alert-validity.test.mjs
 new file mode 100644
-index 0000000..483c7bd
+index 0000000..5c76baa
 --- /dev/null
 +++ b/test/stop-alert-validity.test.mjs
-@@ -0,0 +1,128 @@
+@@ -0,0 +1,154 @@
 +// Stop-alert validity (4 Nov 2026 review, findings 1-5). Synthetic fixtures only: invented tickers and prices, loopback services,
 +// no owner records, credentials, provider requests or real messages.
 +// 1 one stop route at a time: the bot repeats a stop only when the watcher has no ACKNOWLEDGED delivery for it
@@ -215,7 +214,7 @@ index 0000000..483c7bd
 +import http from 'node:http';
 +import crypto from 'node:crypto';
 +import { stopHits, priceEvidence, nyStamp, stopMessageKey, STOP_MAX_AGE_MIN } from '../stop-watch.mjs';
-+import { classifyCatalyst } from '../early-alerts.mjs';
++import { classifyCatalyst, nyStamp as nyStampAlerts } from '../early-alerts.mjs';
 +import { loadScan, blocked } from './load-scan.mjs';
 +
 +const NOW = Date.parse('2026-11-05T15:31:00Z');   // Thu 10:31 New York (winter time)
@@ -233,6 +232,24 @@ index 0000000..483c7bd
 +  assert.match(why(q('ZZA', 79, -600)), /in the future/);
 +  assert.match(why(q('ZZA', 79, STOP_MAX_AGE_MIN * 60 + 1)), /latest price is 5 min old \(limit 5 min\)/);
 +  assert.equal(priceEvidence('ZZA', q('ZZA', 79, STOP_MAX_AGE_MIN * 60), NOW).state, 'OK');   // exactly at the limit
++});
++
++test('r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN', () => {
++  const why = (x) => priceEvidence('ZZA', x, NOW).why;
++  assert.match(why(q('ZZA', 79, -1)), /in the future/);
++  assert.match(why(q('ZZA', 79, 20, { t: Infinity })), /no source timestamp/);
++  assert.match(why(q('ZZA', 79, 20, { t: NaN })), /no source timestamp/);
++  for (const price of [Infinity, -Infinity, NaN, '79', null]) assert.match(why(q('ZZA', price)), /no valid price/, String(price));
++  assert.equal(priceEvidence('ZZA', q('ZZA', 79), NaN).state, 'UNKNOWN', 'a nonfinite clock never vouches for freshness');
++  const a = stopHits(POS, { ZZA: q('ZZA', Infinity) }, {}, NOW); assert.equal(a[0].kind, 'unknown'); assert.doesNotMatch(a[0].text, /REACHED/);
++});
++
++test('r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip', () => {
++  for (const stop of [Infinity, NaN, '80', 0, -5]) {
++    const a = stopHits({ ZZA: { entry: 100, stop } }, { ZZA: q('ZZA', 70) }, {}, NOW);
++    assert.equal(a.length, 1, String(stop)); assert.equal(a[0].kind, 'unknown'); assert.match(a[0].text, /recorded stop is not a valid number/);
++  }
++  assert.deepEqual(stopHits({ ZZA: { entry: 100 } }, { ZZA: q('ZZA', 70) }, {}, NOW), [], 'no stop recorded: nothing to check');
 +});
 +
 +test('stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts', () => {
@@ -273,6 +290,7 @@ index 0000000..483c7bd
 +test('catalyst times have a full date and one time zone (previous-day items no longer read like today)', () => {
 +  assert.equal(nyStamp(Date.parse('2026-11-03T21:07:00Z')), 'Nov 3 16:07 New York');   // EST
 +  assert.equal(nyStamp(Date.parse('2026-10-30T20:07:00Z')), 'Oct 30 16:07 New York');   // EDT, before the 1 Nov change
++  for (const t of ['2026-11-03T21:07:00Z', '2026-10-30T20:07:00Z', '2027-03-15T13:30:00Z']) assert.equal(nyStampAlerts(Date.parse(t)), nyStamp(Date.parse(t)), 'one format in both modules');
 +  const now = Date.parse('2026-11-04T14:37:00Z');
 +  const v = classifyCatalyst({ sec: { known: true, filings: [{ form: '6-K', at: '2026-11-03T21:07:00Z' }] }, news: { ok: true, items: [{ at: Date.parse('2026-11-03T21:05:00Z'), source: 'Yahoo', headline: 'ZZQ Reports Third Quarter' }] }, nowMs: now });
 +  assert.match(v.text, /SEC 6-K accepted Nov 3 16:07 New York; headline Nov 3 16:05 New York \(Yahoo\)/);
@@ -331,6 +349,13 @@ index 0000000..483c7bd
 +  assert.match(b.sent.find(x => /STOP CHECK UNKNOWN/.test(x)), /latest price is 30 min old/);
 +});
 +
++test('r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller', async t => {
++  const f = await botRun(t, { quote: { c: 70, t: Math.floor(NOW / 1000) + 5 } });
++  assert.match(f.sent.find(x => /STOP CHECK UNKNOWN/.test(x)) || '', /in the future/); assert.equal(f.sent.filter(x => /REACHED/.test(x)).length, 0);
++  const n = await botRun(t, { quote: { c: 'Infinity', t: Math.floor((NOW - 20000) / 1000) } });
++  assert.equal(n.sent.filter(x => /REACHED/.test(x)).length, 0);
++});
++
 +test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
 diff --git a/test/stop-watch.test.mjs b/test/stop-watch.test.mjs
 index 2d08657..2a78e6d 100644
@@ -383,6 +408,19 @@ index 2d08657..2a78e6d 100644
 +  assert.deepEqual(stopHits({ NOSTOP: { entry: 10 } }, { NOSTOP: q('NOSTOP', 1) }, {}, NOW), []);
 +  assert.deepEqual(stopHits(null, { DOCN: q('DOCN', 1) }, {}, NOW), []);
  });
+diff --git a/test/watcher-incident-revision.test.mjs b/test/watcher-incident-revision.test.mjs
+index 46b41ed..51e6727 100644
+--- a/test/watcher-incident-revision.test.mjs
++++ b/test/watcher-incident-revision.test.mjs
+@@ -10,7 +10,7 @@ test('actual watcher shadow producer retains unknown observations and filing rec
+ if(process.env.INCIDENT_WATCHER_SRC)test('actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop',async t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-actual-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const source=path.resolve(process.env.INCIDENT_WATCHER_SRC),root=path.dirname(source);fs.mkdirSync(path.join(dir,'data'));fs.copyFileSync(path.join(root,'opportunity-radar.mjs'),path.join(dir,'opportunity-radar.mjs'));for(const file of ['radar-ledger.mjs','watcher-session.mjs','session-coverage.mjs','market-session.mjs','early-alerts.mjs','rank-models.mjs','ranking-cohort.mjs','shadow-eval.mjs','radar-v3-core.mjs'])fs.copyFileSync(path.join(root,file),path.join(dir,file));spawnSync('git',['init','-q'],{cwd:dir});spawnSync('git',['-c','user.name=fixture','-c','user.email=fixture@example.test','commit','--allow-empty','-qm','fixture'],{cwd:dir});const bin=path.join(dir,'bin');fs.mkdirSync(bin);const real=spawnSync('sh',['-c','command -v git'],{encoding:'utf8'}).stdout.trim();fs.writeFileSync(path.join(bin,'git'),'#!/bin/sh\nif [ "$1" = fetch ]; then exit 1; fi\nexec '+real+' "$@"\n',{mode:0o755});// (1 Nov) Frozen fixture clock for the watcher process and the synthetic trade times: IG_DAY at minute 900 (15:00 New York), advancing in real time.
+ const AT=Date.parse(day+'T19:00:00Z'),T0=Date.now(),fixtureNow=()=>AT+Date.now()-T0,clock=path.join(dir,'clock.mjs');fs.writeFileSync(clock,'const D=Date,at='+AT+',t0='+T0+',now=()=>at+D.now()-t0;globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[now()]));}static now(){return now();}};');
+ let snapshots=0,messages=[];const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{let out={};if(req.url.includes('/sendMessage')){messages.push(JSON.parse(body).text);out={ok:true,result:{message_id:messages.length}};}else if(req.url.includes('/snapshot/')){snapshots++;out={tickers:[{ticker:'ZZQ',lastTrade:{p:8,t:fixtureNow()*1e6},prevDay:{c:10,v:1e6},day:{o:8,c:8,v:1e6}}]};}else if(req.url.includes('company_tickers'))out={};res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;
+-const run=id=>new Promise((resolve,reject)=>{const child=spawn(process.execPath,[source],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,MASSIVE_BASE:base,MASSIVE_KEY:'synthetic',SEC_BASE:base,TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_DAY:day,IG_FAKE_MIN:'900',IG_FAKE_STEP:'1',GITHUB_RUN_ID:id,NODE_OPTIONS:'--import='+clock},stdio:['ignore','pipe','pipe']});let text='';child.stdout.on('data',x=>text+=x);child.stderr.on('data',x=>text+=x);child.on('error',reject);child.on('close',code=>resolve({code,text}));});const write=(file,x)=>fs.writeFileSync(path.join(dir,'data',file),JSON.stringify(x));write('ignition-live.json',{day,heartbeat:full});let x=await run('complete');assert.equal(x.code,0,x.text);assert.match(x.text,/skipping duplicate/);assert.equal(snapshots,0);write('ignition-live.json',{day,heartbeat:[beat(570)]});write('my-positions.json',{ZZQ:{entry:10,stop:9}});x=await run('recover1');assert.equal(x.code,0,x.text);assert.ok(snapshots>0);assert.equal(messages.filter(x=>x.includes('STOP HIT NOW')).length,1);assert.ok(messages.some(x=>x.includes('OPPORTUNITY RADAR')), 'actual radar child sent one synthetic message');assert.ok(messages.some(x=>x.includes('Instrument identity may be UNKNOWN')), 'radar preserves explicit unknown context');const n=messages.length,before=snapshots;x=await run('recover2');assert.equal(x.code,0,x.text);assert.ok(snapshots>before);assert.equal(messages.length,n);assert.ok(fs.existsSync(path.join(dir,'data/ignition-runs',day,'recover2-1.json')));});
++const run=id=>new Promise((resolve,reject)=>{const child=spawn(process.execPath,[source],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,MASSIVE_BASE:base,MASSIVE_KEY:'synthetic',SEC_BASE:base,TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_DAY:day,IG_FAKE_MIN:'900',IG_FAKE_STEP:'1',GITHUB_RUN_ID:id,NODE_OPTIONS:'--import='+clock},stdio:['ignore','pipe','pipe']});let text='';child.stdout.on('data',x=>text+=x);child.stderr.on('data',x=>text+=x);child.on('error',reject);child.on('close',code=>resolve({code,text}));});const write=(file,x)=>fs.writeFileSync(path.join(dir,'data',file),JSON.stringify(x));write('ignition-live.json',{day,heartbeat:full});let x=await run('complete');assert.equal(x.code,0,x.text);assert.match(x.text,/skipping duplicate/);assert.equal(snapshots,0);write('ignition-live.json',{day,heartbeat:[beat(570)]});write('my-positions.json',{ZZQ:{entry:10,stop:9}});x=await run('recover1');assert.equal(x.code,0,x.text);assert.ok(snapshots>0);assert.equal(messages.filter(x=>x.includes('STOP LEVEL REACHED')).length,1);assert.ok(messages.some(x=>x.includes('OPPORTUNITY RADAR')), 'actual radar child sent one synthetic message');assert.ok(messages.some(x=>x.includes('Instrument identity may be UNKNOWN')), 'radar preserves explicit unknown context');const n=messages.length,before=snapshots;x=await run('recover2');assert.equal(x.code,0,x.text);assert.ok(snapshots>before);assert.equal(messages.length,n);assert.ok(fs.existsSync(path.join(dir,'data/ignition-runs',day,'recover2-1.json')));});
+ 
+ test('reservation publication failure prevents send and quarantines local retry',t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-reservation-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));let sent=0,published=0;const box=createWatcherMessages({day,directory:dir,persist:()=>{published++;throw Error('synthetic remote refusal');}});if(box.reserve('stop:ZZQ:hit'))sent++;assert.equal(sent,0);assert.equal(box.state('stop:ZZQ:hit'),'UNSENT');assert.equal(box.reserve('stop:ZZQ:hit'),false);assert.equal(published,1);});
+ 
 diff --git a/test/watcher-resilience.test.mjs b/test/watcher-resilience.test.mjs
 index f3f5524..86106a5 100644
 --- a/test/watcher-resilience.test.mjs

@@ -2,10 +2,11 @@
 // owner then sold days later (DOCN: stop 120.81 broken on 14 Oct, sold 20 Oct at 100). The live watcher calls stopHits() every minute,
 // and the bot's market-hours check uses the same evidence rule and the same wording as a fallback.
 // (4 Nov) A stop crossing is shown as current ONLY on valid price evidence: a positive trade price whose response is bound to that exact
-// ticker, with a provider timestamp that is known, not in the future and at most STOP_MAX_AGE_MIN old. Anything else is a STOP CHECK
+// ticker, with a finite provider timestamp that is known, not in the future (no tolerance) and at most STOP_MAX_AGE_MIN old. Anything else is a STOP CHECK
 // UNKNOWN line (never silently "safe"). Stop levels, holdings and trading rules are read, never changed. The wording respects a broker stop
 // order that may already have filled: it never tells the owner to sell a second time.
 export const STOP_MAX_AGE_MIN = 5;
+export const validStop = (x) => typeof x === 'number' && Number.isFinite(x) && x > 0;
 const m2 = (x) => (+x).toFixed(2);
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 // "Nov 4 10:12 New York": full date and one time zone for every observation time
@@ -20,14 +21,14 @@ export function priceEvidence(sym, q, nowMs = Date.now(), maxAgeMin = STOP_MAX_A
   const unk = (why) => ({ state: 'UNKNOWN', why });
   if (!q || typeof q !== 'object') return unk('no live price for this stock');
   if (q.sym !== sym) return unk('the price response is not for this ticker');
-  if (!(+q.price > 0)) return unk('no valid price');
+  if (typeof q.price !== 'number' || !Number.isFinite(q.price) || !(q.price > 0)) return unk('no valid price');
   if (q.kind && q.kind !== 'TRADE') return unk('the only price is a ' + String(q.kind).toLowerCase().replace('_', ' ') + ', not a live trade');
-  const t = +q.t; if (!(t > 0)) return unk('the price has no source timestamp');
-  if (t > nowMs + 60000) return unk('the price timestamp is in the future');
+  const t = q.t; if (typeof t !== 'number' || !Number.isFinite(t) || !(t > 0)) return unk('the price has no source timestamp');
+  if (!Number.isFinite(nowMs) || t > nowMs) return unk('the price timestamp is in the future');
   const ageSec = Math.max(0, (nowMs - t) / 1000);
   if (ageSec > maxAgeMin * 60) return unk('the latest price is ' + ageText(ageSec).replace(' old', '') + ' old (limit ' + maxAgeMin + ' min)');
   const src = String(q.provider || 'unknown source').toUpperCase() + (q.feed ? ' ' + String(q.feed).toUpperCase() : '');
-  return { state: 'OK', price: +q.price, t, ageSec, src };
+  return { state: 'OK', price: q.price, t, ageSec, src };
 }
 const chgOf = (P, px) => P && P.entry > 0 ? ' (bought ' + m2(P.entry) + ', ' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '%)' : '';
 const seenOf = (ev) => ev.src + ', ' + nyStamp(ev.t) + ', ' + ageText(ev.ageSec);
@@ -44,7 +45,8 @@ export function stopText(kind, sym, P, ev) {
 export function stopHits(pos, quotes, sent, nowMs = Date.now(), maxAgeMin = STOP_MAX_AGE_MIN) {
   const out = [];
   for (const [sym, P] of Object.entries(pos || {})) {
-    if (!(P && P.stop > 0)) continue;
+    if (!P || P.stop === undefined || P.stop === null) continue;   // no stop recorded
+    if (!validStop(P.stop)) { if (!sent[sym + '|badstop']) { sent[sym + '|badstop'] = 1; out.push({ sym, kind: 'unknown', why: 'the recorded stop is not a valid number', text: 'STOP CHECK UNKNOWN: ' + sym + ': the recorded stop is not a valid number, so it cannot be checked; this is not a sign the position is safe. Re-send your stop (stop ' + sym + ' PRICE) and check your broker.' }); } continue; }
     const ev = priceEvidence(sym, quotes && quotes[sym], nowMs, maxAgeMin);
     if (ev.state !== 'OK') { if (!sent[sym + '|unknown'] && !sent[sym + '|hit']) { sent[sym + '|unknown'] = 1; out.push({ sym, kind: 'unknown', why: ev.why, text: stopText('unknown', sym, P, ev) }); } continue; }
     if (ev.price <= P.stop) { if (sent[sym + '|hit']) continue; sent[sym + '|hit'] = 1; out.push({ sym, kind: 'hit', price: ev.price, t: ev.t, text: stopText('hit', sym, P, ev) }); continue; }

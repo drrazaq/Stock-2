@@ -9,7 +9,7 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import crypto from 'node:crypto';
 import { stopHits, priceEvidence, nyStamp, stopMessageKey, STOP_MAX_AGE_MIN } from '../stop-watch.mjs';
-import { classifyCatalyst } from '../early-alerts.mjs';
+import { classifyCatalyst, nyStamp as nyStampAlerts } from '../early-alerts.mjs';
 import { loadScan, blocked } from './load-scan.mjs';
 
 const NOW = Date.parse('2026-11-05T15:31:00Z');   // Thu 10:31 New York (winter time)
@@ -27,6 +27,24 @@ test('price evidence: only a ticker-bound, dated, fresh trade price is OK', () =
   assert.match(why(q('ZZA', 79, -600)), /in the future/);
   assert.match(why(q('ZZA', 79, STOP_MAX_AGE_MIN * 60 + 1)), /latest price is 5 min old \(limit 5 min\)/);
   assert.equal(priceEvidence('ZZA', q('ZZA', 79, STOP_MAX_AGE_MIN * 60), NOW).state, 'OK');   // exactly at the limit
+});
+
+test('r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN', () => {
+  const why = (x) => priceEvidence('ZZA', x, NOW).why;
+  assert.match(why(q('ZZA', 79, -1)), /in the future/);
+  assert.match(why(q('ZZA', 79, 20, { t: Infinity })), /no source timestamp/);
+  assert.match(why(q('ZZA', 79, 20, { t: NaN })), /no source timestamp/);
+  for (const price of [Infinity, -Infinity, NaN, '79', null]) assert.match(why(q('ZZA', price)), /no valid price/, String(price));
+  assert.equal(priceEvidence('ZZA', q('ZZA', 79), NaN).state, 'UNKNOWN', 'a nonfinite clock never vouches for freshness');
+  const a = stopHits(POS, { ZZA: q('ZZA', Infinity) }, {}, NOW); assert.equal(a[0].kind, 'unknown'); assert.doesNotMatch(a[0].text, /REACHED/);
+});
+
+test('r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip', () => {
+  for (const stop of [Infinity, NaN, '80', 0, -5]) {
+    const a = stopHits({ ZZA: { entry: 100, stop } }, { ZZA: q('ZZA', 70) }, {}, NOW);
+    assert.equal(a.length, 1, String(stop)); assert.equal(a[0].kind, 'unknown'); assert.match(a[0].text, /recorded stop is not a valid number/);
+  }
+  assert.deepEqual(stopHits({ ZZA: { entry: 100 } }, { ZZA: q('ZZA', 70) }, {}, NOW), [], 'no stop recorded: nothing to check');
 });
 
 test('stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts', () => {
@@ -67,6 +85,7 @@ test('stop levels and positions are read, never changed', () => {
 test('catalyst times have a full date and one time zone (previous-day items no longer read like today)', () => {
   assert.equal(nyStamp(Date.parse('2026-11-03T21:07:00Z')), 'Nov 3 16:07 New York');   // EST
   assert.equal(nyStamp(Date.parse('2026-10-30T20:07:00Z')), 'Oct 30 16:07 New York');   // EDT, before the 1 Nov change
+  for (const t of ['2026-11-03T21:07:00Z', '2026-10-30T20:07:00Z', '2027-03-15T13:30:00Z']) assert.equal(nyStampAlerts(Date.parse(t)), nyStamp(Date.parse(t)), 'one format in both modules');
   const now = Date.parse('2026-11-04T14:37:00Z');
   const v = classifyCatalyst({ sec: { known: true, filings: [{ form: '6-K', at: '2026-11-03T21:07:00Z' }] }, news: { ok: true, items: [{ at: Date.parse('2026-11-03T21:05:00Z'), source: 'Yahoo', headline: 'ZZQ Reports Third Quarter' }] }, nowMs: now });
   assert.match(v.text, /SEC 6-K accepted Nov 3 16:07 New York; headline Nov 3 16:05 New York \(Yahoo\)/);
@@ -123,6 +142,13 @@ test('bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNO
   assert.equal(a.sent.filter(x => /REACHED/.test(x)).length, 0);
   const b = await botRun(t, { quote: { c: 70, t: Math.floor((NOW - 30 * 60000) / 1000) } });
   assert.match(b.sent.find(x => /STOP CHECK UNKNOWN/.test(x)), /latest price is 30 min old/);
+});
+
+test('r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller', async t => {
+  const f = await botRun(t, { quote: { c: 70, t: Math.floor(NOW / 1000) + 5 } });
+  assert.match(f.sent.find(x => /STOP CHECK UNKNOWN/.test(x)) || '', /in the future/); assert.equal(f.sent.filter(x => /REACHED/.test(x)).length, 0);
+  const n = await botRun(t, { quote: { c: 'Infinity', t: Math.floor((NOW - 20000) / 1000) } });
+  assert.equal(n.sent.filter(x => /REACHED/.test(x)).length, 0);
 });
 
 test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));

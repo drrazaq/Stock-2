@@ -12,7 +12,6 @@
 // approved = approved only; off = none of these (approved alerts keep their own existing switches). quiet / opportunitiesOnly / focus
 // do not apply here: this channel exists because the owner asked for prompt, labelled research (28 Oct).
 import { netHurdle, netOf } from './radar-v3-core.mjs';
-import { nyStamp } from './stop-watch.mjs';   // (4 Nov) catalyst times: full date, one time zone
 
 export const LEAD = { minScore: 80, chgMin: 0.03, chgMax: 0.08, minDollarVol: 1e6, from: 575, to: 690, perDay: 5 };
 export const PAPER = { to: 690, perDay: 4 };
@@ -52,6 +51,10 @@ export function hardReason({ price, halalFail, lottery, sec }) {
 //              / UNKNOWN (nothing found)
 //   FRESHNESS  FRESH (in the 24 h before the check) / RECYCLED (only 24-72 h old, or an amended filing /A: old news moving now)
 // cls (kept for the ledger): VERIFIED (SEC, fresh) / UNCONFIRMED (headline only, fresh) / RECYCLED / NONE / UNAVAILABLE.
+// (4 Nov) catalyst times carry their full date and one time zone: 'Nov 3 16:07 New York' (same format as stop-watch.mjs nyStamp; kept
+// local so the radar child keeps its existing module set)
+const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+export function nyStamp(ms) { if (!Number.isFinite(ms)) return 'time unknown'; const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(ms)).forEach(x => p[x.type] = x.value); return MON3[+p.month - 1] + ' ' + (+p.day) + ' ' + p.hour + ':' + p.minute + ' New York'; }
 const nyHM = (ms) => new Date(ms).toLocaleTimeString('en-GB', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit' });
 // (4 Nov) catalyst times carry their full date and one time zone: 'Nov 3 16:07 New York' (a previous-day item no longer reads like today)
 export const NEG_ITEMS = ['1.02', '1.03', '2.04', '2.05', '2.06', '3.01', '4.01', '4.02'], DIL_ITEMS = ['2.03', '3.02', '3.03'];
