@@ -1,0 +1,9 @@
+{
+  "base": "51b5e3499dd6f4a077c32fe93641622f0cf72b3b",
+  "node": "v20 (/opt/node20), env -i PATH HOME, sequential node \"$f\" per test file as in tests.yml",
+  "newFile": {"file": "test/health-line-freshness.test.mjs", "pass": 11, "fail": 0},
+  "newFileAgainstUnchangedReleaseCode": {"pass": 2, "fail": 9, "passingCases": ["old watchdog alert after recovery (old code also says checks OK)", "offline guard"]},
+  "fullSuite": {"files": 134, "pass": 134, "fail": 0},
+  "currentMainCompatibility": {"main": "8f34ba78ab8d31c13e1cd8ccff05eeb2447e3064", "applies": true, "rollbackRestoresTree": true},
+  "network": "none (load-scan blocks non-loopback; blocked list empty)"
+}
