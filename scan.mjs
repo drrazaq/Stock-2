@@ -2569,7 +2569,7 @@ function healthLine(nowMs = Date.now()) { const out = [];
   try { let H = null; try { H = readJson0('data/health.json'); } catch (e) {}
     const at = H ? Date.parse(H.at) : NaN, snap = 'saved check ' + (Number.isFinite(at) ? kw(at) : 'time unknown'), probs = H && Array.isArray(H.problems) ? H.problems : null;
     const F = sourceFreshness(nowMs, freshHaves()), bad = F.rows.filter(r => r.state === 'LATE' || r.state === 'UNKNOWN');
-    const src = F.expected ? 'sources for the ' + F.expected + ' close: ' + F.rows.map(r => r.what + ' ' + (r.state === 'CURRENT' ? 'current' : r.state === 'PENDING' ? 'not due yet (due ' + r.dueText + ')' : r.state === 'LATE' ? 'LATE (latest ' + r.have + ')' : 'UNKNOWN (no readable session)')).join(', ') : '';
+    const src = F.expected ? 'sources for the ' + F.expected + ' close: ' + F.rows.map(r => r.what + ' ' + (r.state === 'CURRENT' ? 'current' : r.state === 'PENDING' ? 'not due yet (due ' + r.dueText + ')' : r.state === 'LATE' ? 'LATE (latest ' + r.have + ')' : 'UNKNOWN (no valid session date)')).join(', ') : '';
     const lateTxt = bad.map(r => r.what + (r.state === 'LATE' ? ' LATE' : ' UNKNOWN')).join(', ');
     if (!probs) out.push('saved check UNKNOWN (no readable health snapshot)' + (bad.length ? '; NOT CURRENT: ' + lateTxt : ''));
     else if (probs.length) out.push(probs.length + ' problem' + (probs.length > 1 ? 's' : '') + ' (' + snap + '): ' + probs.slice(0, 2).map(x => String(x).replace(/\. The job is probably failing\.?$/, ' (job probably failing)').slice(0, 170)).join(' | ') + (probs.length > 2 ? ' (send  health )' : '') + (bad.length ? '; also NOT CURRENT now: ' + lateTxt : ''));
@@ -2966,18 +2966,23 @@ async function natural(text, sig, pos) {
 }
 // (4 Nov) SOURCE FRESHNESS: one rule shared by the watchdog and the SYSTEM HEALTH line. The expected close is the latest US session that
 // has ended (4:10 pm New York) on a weekday that is not a market holiday. Each source is due some time after that close. States: CURRENT
-// (its session is the expected one or later), LATE (due, but older), PENDING (older but not yet due), UNKNOWN (no readable session; never OK).
+// (its session is the expected one), LATE (due, but older), PENDING (older but not yet due), UNKNOWN (missing, not a real trading-session
+// date, or after the expected close; never OK).
 const FRESH_SOURCES = [
   ['scan', 'nightly scan', 'Stock scanner', (later, m) => later || m >= 1230, '8:30 pm New York'],
   ['disc', 'discovery engine', 'Discovery engine', (later, m) => later && m >= 150, '2:30 am New York'],
   ['movers', 'movers radar', 'Movers radar', (later, m) => later && m >= 210, '3:30 am New York'],
 ];
+// a source's session must be a real calendar date that was a US trading session (weekday, not a market holiday); one after the expected
+// close cannot be evidence yet, so the caller treats it as UNKNOWN too (never CURRENT)
+const isSessionDate = (v) => { if (typeof v !== 'string' || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return false; const t = Date.parse(v + 'T12:00:00Z');
+  if (!Number.isFinite(t) || new Date(t).toISOString().slice(0, 10) !== v) return false; const w = new Date(t).getUTCDay(); return w !== 0 && w !== 6 && !isHoliday(v); };
 function sourceFreshness(nowMs, haves) {
   const n = ny(nowMs); let expected = '';
   for (let k = 0; k < 10; k++) { const x = ny(nowMs - k * 86400000); if (x.weekend || isHoliday(x.d) || (k === 0 && x.mins < 970)) continue; expected = x.d; break; }
   if (!expected) return { expected: '', rows: [] };
   const later = n.d > expected;
-  return { expected, rows: FRESH_SOURCES.map(([key, what, name, dueF, dueText]) => { const have = haves && haves[key], ok = typeof have === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(have), due = dueF(later, n.mins);
+  return { expected, rows: FRESH_SOURCES.map(([key, what, name, dueF, dueText]) => { const have = haves && haves[key], ok = isSessionDate(have) && have <= expected, due = dueF(later, n.mins);
     return { key, what, name, dueText, due, have: ok ? have : null, state: !ok ? 'UNKNOWN' : have >= expected ? 'CURRENT' : due ? 'LATE' : 'PENDING' }; }) };
 }
 const freshHaves = (sig) => { const rd = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return null; } };

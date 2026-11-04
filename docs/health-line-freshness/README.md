@@ -2,6 +2,38 @@
 
 Prepared on 4 Nov 2026 by Claude on the isolated branch `claude/health-line-freshness`, from release `51b5e349`. This is preparation and synthetic tests only. There was no production change, deployment, dispatch, provider call or real message. Deployment needs its own approval.
 
+## Revision 2 (Codex blocker on 787a902f)
+
+- **Codex's blocker:** in revision 1, any `NNNN-NN-NN` string counted as evidence. `2026-99-99` or a session after the expected close could therefore read as CURRENT, and the watchdog stayed silent.
+- **The fix:** session evidence must now pass the new `isSessionDate()` check *and* be no later than the expected close. That means:
+  - a real calendar date (round-trip checked);
+  - a US trading session (a weekday that is not a market holiday);
+  - not after the expected close.
+
+  Anything else is **UNKNOWN**, in both the ACTIONS health line (`UNKNOWN (no valid session date)`, never "checks OK") and the watchdog (warned once per session when due, without echoing the bad value).
+- **Unchanged:** the expected-close calendar, the due times and all strategy rules.
+
+**New regressions:**
+- **Rejected values:**
+  - malformed or impossible dates: `2026-99-99`, `2026-02-30`, `2026-02-29` (2026 is not a leap year), `2026-13-01`, `2026-11-31`, `2026-00-10`;
+  - sessions after the expected close: `2026-11-04`, `2026-11-05`, `2027-01-04`;
+  - days that were not trading sessions: weekend days `2026-10-31` and `2026-11-01`, and Thanksgiving `2026-11-26`;
+  - wrong formats and types: `20261103`, a leading space, a number, null and an object.
+- **Valid controls:**
+  - current (`2026-11-03`);
+  - older (`2026-11-02`, `2025-12-31`);
+  - not yet due;
+  - the real leap day `2028-02-29`.
+- **End-to-end checks:** the actual ACTIONS health line, and the actual watchdog through a loopback Telegram stub. The stub checks one message per session, the offset preserved, and no alert for current evidence.
+
+**Calendar parity:** the check against the old rule still runs hourly from 31 Oct to 1 Dec 2026. The expected close is identical for every hour, and warnings are identical for valid evidence. Future evidence is now asserted to be UNKNOWN.
+
+**Results:**
+- New file: 14/14 pass.
+- Against revision 1 (787a902f): 5 fail. The 3 new regressions, the reworked parity check, and one wording assertion (`no valid session date`).
+- Against the unchanged release code: 12 fail.
+- Full suite: see `verification.json`.
+
 ## Problem (4 Nov)
 
 ACTIONS printed `SYSTEM HEALTH: checks OK` while the watchdog had just reported discovery for the 3 Nov close as missing. There were two causes:

@@ -3,20 +3,48 @@
   "status": "PREPARED_FOR_REVIEW_NOT_DEPLOYED",
   "base": "51b5e3499dd6f4a077c32fe93641622f0cf72b3b",
   "files": [
-    {"path": "scan.mjs", "beforeSha256": "91c7c7019ae08bde9c3c43fa6e571b05cebf53aa2c1a41cd9db75ed43a3f70d8", "afterSha256": "c10ad0af13d1b831e8a37fa5a5e50e2e26bcef4a3dac62545fb963cc40b02f85"},
-    {"path": "test/health-line-freshness.test.mjs", "beforeSha256": null, "afterSha256": "fd09181f6a026f567fec101ae66864a11c4055c8ada3f2b4db490a9b22623636"}
+    {
+      "path": "scan.mjs",
+      "beforeSha256": "91c7c7019ae08bde9c3c43fa6e571b05cebf53aa2c1a41cd9db75ed43a3f70d8",
+      "afterSha256": "19a5368bff6e14d4d114d9a3c9b52d395ee3b4dad8164a0a8a01762f16f5799f"
+    },
+    {
+      "path": "test/health-line-freshness.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "415476f360ec56df86b049837ef746e841371348e694dacd98a5796de875f6ab"
+    }
   ],
   "unchangedDependencies": [
-    {"path": "test/load-scan.mjs", "sha256": "6478d0b89f75b6eb188dac97b154fc181749a1b6b5d010315f375272ff2f82e2"},
-    {"path": "index.html", "sha256": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348"},
-    {"path": "health.mjs", "sha256": "1b46a3186707d0c2c90afb599bdc79db3fc8df4cf24ad933dd38609cc43e09bc"},
-    {"path": ".github/workflows/bot.yml", "sha256": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40"},
-    {"path": ".github/workflows/main.yml", "sha256": "8856c2b72c11b450da752b111260615d39e342e8e03bf87b2f0724a3a2581c5e"}
+    {
+      "path": "test/load-scan.mjs",
+      "sha256": "6478d0b89f75b6eb188dac97b154fc181749a1b6b5d010315f375272ff2f82e2"
+    },
+    {
+      "path": "index.html",
+      "sha256": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348"
+    },
+    {
+      "path": "health.mjs",
+      "sha256": "1b46a3186707d0c2c90afb599bdc79db3fc8df4cf24ad933dd38609cc43e09bc"
+    },
+    {
+      "path": ".github/workflows/bot.yml",
+      "sha256": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40"
+    },
+    {
+      "path": ".github/workflows/main.yml",
+      "sha256": "8856c2b72c11b450da752b111260615d39e342e8e03bf87b2f0724a3a2581c5e"
+    }
   ],
-  "productionPatchSha256": "fcee641da52640b94ae43b99209a3cb60c4c7855cd6a800d210029b2e0706671",
-  "rollbackPatchSha256": "95644f155dcfa8f3f6567544b483e2e33e5758addc7eca773c83488edb2ba9ce",
-  "scanMjsRegions": ["healthLine()", "watchdog() and the new sourceFreshness()/freshHaves()/FRESH_SOURCES directly above it"],
+  "productionPatchSha256": "daea92ef80a3aa6901ba9c48b5e00710169584301fffea0ec74b7713c6642771",
+  "rollbackPatchSha256": "56dcc36cbcfcc8214945485dc44d0018c8b94e4303f284e9761bf49d48defc18",
+  "scanMjsRegions": [
+    "healthLine()",
+    "watchdog() and the new isSessionDate()/sourceFreshness()/freshHaves()/FRESH_SOURCES directly above it"
+  ],
   "dataChanged": false,
   "workflowsChanged": false,
-  "deployed": false
+  "deployed": false,
+  "revision": 2,
+  "supersedes": "787a902f1a42b9bf2ccf9827391af5d63010bd31"
 }
