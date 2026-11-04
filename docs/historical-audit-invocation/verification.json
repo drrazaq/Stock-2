@@ -1,0 +1,32 @@
+{
+  "status": "OFFLINE_IMPLEMENTED_INACTIVE_REVIEW_PENDING",
+  "node": "v20.20.2",
+  "uid": 1000,
+  "clientCommit": "84937c966cd1bc85ab5f240f3e53a44dc4fa98ba",
+  "scopeHash": "9751a2a0db8bf41a1788a61270be927a983da28170e51c72d68ee8f8759e2772",
+  "focused": {
+    "clientTests": 42,
+    "companionTests": 54,
+    "total": 96,
+    "pass": 96,
+    "fail": 0,
+    "command": "node --test test/historical-sip-audit-client.test.mjs test/historical-audit-invocation.test.mjs",
+    "evidence": "offline96.tap"
+  },
+  "network": "synthetic loopback HTTPS/HTTP and injected artifact transport only; no live provider/API upload",
+  "providerRequests": 0,
+  "realCredentialUse": false,
+  "workflowInstalled": false,
+  "financialMirrorUsed": false,
+  "privateExecutorVerified": false,
+  "currentKeyCustodyVerified": false,
+  "independentClientAndScopeReview": "PENDING",
+  "independentCompanionReview": "PENDING",
+  "earlierFixtureFailure": {
+    "tests": 93,
+    "pass": 92,
+    "cause": "new approved-dispatch-actor guard exposed missing GITHUB_ACTOR in synthetic action fixture; fixed without weakening assertion",
+    "retainedCompleteFailureLog": false
+  },
+  "fullSuite": "see PR1 exact-commit CI and final checkpoint receipt; focused count is not full-suite evidence"
+}

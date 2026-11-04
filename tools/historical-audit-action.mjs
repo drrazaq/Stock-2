@@ -1,0 +1,24 @@
+// Invoked only by the separately proposed local Node20 action, after credential-
+// free guards. Importing this module never reads bindings or starts a network call.
+import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {pathToFileURL} from 'node:url';
+import {createHttpsPageTransport} from './historical-sip-audit-client.mjs';
+import {hash,privateRead,publishAndVerifyArchive} from './historical-audit-custody.mjs';
+import {preflight,runProtectedAudit,resultValid,EXIT,RESULT_CODES} from './historical-audit-invocation.mjs';
+import {singleHttpsRequest} from './historical-audit-wire.mjs';
+export async function actionMain(env=process.env,ports={}){
+ // These paths/hashes are non-secret immutable workflow configuration. Actual
+ // keys and runtime-upload bindings are read only inside bindingReader below.
+ let result;try{
+  const root=fs.realpathSync(env.AUDIT_SOURCE_ROOT),raw=privateRead(env.AUDIT_CONTROL_FILE,262144);if(hash(raw)!==env.AUDIT_CONTROL_SHA256)throw Error('CONTROL_PIN');const cfg=JSON.parse(raw);
+  const manifest=JSON.parse(fs.readFileSync(path.join(root,'docs/historical-audit-invocation/source-manifest.json'))),scope=JSON.parse(fs.readFileSync(path.join(root,'docs/intraday-audit-client/scope.proposed.json')));
+  const options={root,scope,manifest,authorization:cfg.authorization,evidence:cfg.evidence,context:{repository:env.GITHUB_REPOSITORY,actor:env.GITHUB_ACTOR,repositoryPrivate:JSON.parse(privateRead(env.GITHUB_EVENT_PATH,262144)).repository?.private===true,event:env.GITHUB_EVENT_NAME,ref:env.GITHUB_REF,attempt:Number(env.GITHUB_RUN_ATTEMPT),sourceSHA:env.AUDIT_SOURCE_SHA,workflowSHA:env.GITHUB_SHA,runId:Number(env.GITHUB_RUN_ID)},history:cfg.history,profile:ports.profile||'LIVE'};
+  // A credential-free step must supply a complete same-ref run list. Revalidate
+  // via one public GitHub read inside this action before any key is read.
+  preflight({...options,now:ports.clock?ports.clock():Date.now()});const u='https://api.github.com/repos/'+encodeURIComponent(env.GITHUB_REPOSITORY.split('/')[0])+'/'+encodeURIComponent(env.GITHUB_REPOSITORY.split('/')[1])+'/actions/workflows/historical-audit-once.yml/runs?event=workflow_dispatch&branch=historical-audit-once-9751a2a0&per_page=100';const h=await (ports.historyWire||singleHttpsRequest)({url:u,headers:{'User-Agent':'Stock2HistoricalReadOnly','Accept':'application/vnd.github+json',...(env.GITHUB_TOKEN?{Authorization:'Bearer '+env.GITHUB_TOKEN}:{})},timeoutMs:10000,maxBytes:262144});if(h.status!==200)throw Error('HISTORY');const history=JSON.parse(h.body.toString());options.history={...history,complete:history.total_count===history.workflow_runs?.length&&history.total_count<=100};
+  const parent=path.join(env.RUNNER_TEMP||os.tmpdir(),'stock2-private-historical-'+options.context.runId);fs.mkdirSync(parent,{mode:0o700});const interrupted=new AbortController();const onSignal=()=>interrupted.abort();process.once('SIGTERM',onSignal);process.once('SIGINT',onSignal);let runtimeToken,resultsOrigin;
+  try{result=await runProtectedAudit({...options,outputParent:parent,interruption:interrupted,...(ports.clock?{clock:ports.clock}:{}),...(ports.monotonic?{monotonic:ports.monotonic}:{}),...(ports.sleep?{sleep:ports.sleep}:{}),bindingReader:()=>{runtimeToken=env.ACTIONS_RUNTIME_TOKEN;resultsOrigin=env.ACTIONS_RESULTS_URL;if(!runtimeToken||!resultsOrigin)throw Error('BINDING_UNAVAILABLE');return Object.fromEntries(['ALPACA_KEY','ALPACA_SECRET','MASSIVE_KEY','RESEARCH_ARTIFACT_KEY'].map(k=>[k,env[k]]));},makeTransport:(b,signal)=>{if(ports.providerFactory)return ports.providerFactory(b,signal);const call=createHttpsPageTransport({ALPACA:{'APCA-API-KEY-ID':b.ALPACA_KEY,'APCA-API-SECRET-KEY':b.ALPACA_SECRET},MASSIVE:{Authorization:'Bearer '+b.MASSIVE_KEY}});return r=>call({...r,signal:AbortSignal.any([r.signal,signal])});},publish:async x=>publishAndVerifyArchive({...x,runtimeToken,resultsOrigin:new URL(resultsOrigin).origin,repository:options.context.repository,runId:options.context.runId,wire:ports.artifactWire||singleHttpsRequest})});}
+  finally{process.removeListener('SIGTERM',onSignal);process.removeListener('SIGINT',onSignal);runtimeToken=null;for(const k of ['ALPACA_KEY','ALPACA_SECRET','MASSIVE_KEY','RESEARCH_ARTIFACT_KEY','ACTIONS_RUNTIME_TOKEN'])delete env[k];}
+ }catch(error){const reason=RESULT_CODES.BLOCKED.includes(error?.message)?error.message:error?.message==='HISTORY'?'SINGLE_RUN_UNVERIFIED':'CONTEXT_INVALID';result={publicResult:{status:'BLOCKED',reason,counts:{providerRequests:0,responses:0}},exit:EXIT.BLOCKED};}
+ if(!resultValid(result.publicResult,result.exit))return {publicResult:{status:'ERROR',reason:'INTERNAL_ERROR',counts:{providerRequests:0,responses:0}},exit:1};return result;
+}
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){const r=await actionMain();process.stdout.write(JSON.stringify(r.publicResult)+'\n');process.exitCode=r.exit;}

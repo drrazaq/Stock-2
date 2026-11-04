@@ -1,0 +1,490 @@
+TAP version 13
+# Subtest: actual guarded client and ZIP/encrypted readback retain all156 slots and12 dispositions, with no admission
+ok 1 - actual guarded client and ZIP/encrypted readback retain all156 slots and12 dispositions, with no admission
+  ---
+  duration_ms: 392.705671
+  ...
+# Subtest: guard refuses approval before binding access or provider I/O
+ok 2 - guard refuses approval before binding access or provider I/O
+  ---
+  duration_ms: 2.146897
+  ...
+# Subtest: guard refuses future window before binding access or provider I/O
+ok 3 - guard refuses future window before binding access or provider I/O
+  ---
+  duration_ms: 2.2737
+  ...
+# Subtest: guard refuses late window before binding access or provider I/O
+ok 4 - guard refuses late window before binding access or provider I/O
+  ---
+  duration_ms: 2.116999
+  ...
+# Subtest: guard refuses rerun before binding access or provider I/O
+ok 5 - guard refuses rerun before binding access or provider I/O
+  ---
+  duration_ms: 2.184317
+  ...
+# Subtest: guard refuses main branch before binding access or provider I/O
+ok 6 - guard refuses main branch before binding access or provider I/O
+  ---
+  duration_ms: 0.931527
+  ...
+# Subtest: guard refuses unknown history before binding access or provider I/O
+ok 7 - guard refuses unknown history before binding access or provider I/O
+  ---
+  duration_ms: 1.437934
+  ...
+# Subtest: guard refuses competing run before binding access or provider I/O
+ok 8 - guard refuses competing run before binding access or provider I/O
+  ---
+  duration_ms: 1.557737
+  ...
+# Subtest: guard refuses semantics before binding access or provider I/O
+ok 9 - guard refuses semantics before binding access or provider I/O
+  ---
+  duration_ms: 1.414269
+  ...
+# Subtest: guard refuses retention before binding access or provider I/O
+ok 10 - guard refuses retention before binding access or provider I/O
+  ---
+  duration_ms: 1.921885
+  ...
+# Subtest: guard refuses public artifact storage before binding access or provider I/O
+ok 11 - guard refuses public artifact storage before binding access or provider I/O
+  ---
+  duration_ms: 1.051306
+  ...
+# Subtest: guard refuses synthetic live bypass before binding access or provider I/O
+ok 12 - guard refuses synthetic live bypass before binding access or provider I/O
+  ---
+  duration_ms: 1.275475
+  ...
+# Subtest: dependency mutation and symlink replacement both block before binding access
+ok 13 - dependency mutation and symlink replacement both block before binding access
+  ---
+  duration_ms: 2.107149
+  ...
+# Subtest: HTTP refusal archives its raw response and reports every remaining case unattempted
+ok 14 - HTTP refusal archives its raw response and reports every remaining case unattempted
+  ---
+  duration_ms: 101.287195
+  ...
+# Subtest: unacknowledged upload preserves local encrypted evidence and never repeats provider or upload
+ok 15 - unacknowledged upload preserves local encrypted evidence and never repeats provider or upload
+  ---
+  duration_ms: 195.950999
+  ...
+# Subtest: mid-batch code mutation stops further provider calls and preserves dispositions
+ok 16 - mid-batch code mutation stops further provider calls and preserves dispositions
+  ---
+  duration_ms: 118.760176
+  ...
+# Subtest: interruption stops without a second request, seals partial evidence and refuses retry by contract
+ok 17 - interruption stops without a second request, seals partial evidence and refuses retry by contract
+  ---
+  duration_ms: 113.512509
+  ...
+# Subtest: private journal parent replacement cannot redirect subsequent writes through a symlink
+ok 18 - private journal parent replacement cannot redirect subsequent writes through a symlink
+  ---
+  duration_ms: 34.030182
+  ...
+# Subtest: recovery detects wrong key, changed archive, reordered records and omitted complete tail
+ok 19 - recovery detects wrong key, changed archive, reordered records and omitted complete tail
+  ---
+  duration_ms: 312.22327
+  ...
+# Subtest: result+exit validation rejects malformed, unknown and mismatched outputs
+ok 20 - result+exit validation rejects malformed, unknown and mismatched outputs
+  ---
+  duration_ms: 0.538555
+  ...
+# Subtest: credential-free preflight rejects missing approval without history or bindings, actual action default is BLOCKED
+ok 21 - credential-free preflight rejects missing approval without history or bindings, actual action default is BLOCKED
+  ---
+  duration_ms: 1.621696
+  ...
+# Subtest: actual artifact protocol uploads encrypted ZIP once and independently reads back exact bytes with bounded wire requests
+ok 22 - actual artifact protocol uploads encrypted ZIP once and independently reads back exact bytes with bounded wire requests
+  ---
+  duration_ms: 2.447815
+  ...
+# Subtest: artifact failure boundary 1 does not retry or claim acknowledgement
+ok 23 - artifact failure boundary 1 does not retry or claim acknowledgement
+  ---
+  duration_ms: 0.310088
+  ...
+# Subtest: artifact failure boundary 2 does not retry or claim acknowledgement
+ok 24 - artifact failure boundary 2 does not retry or claim acknowledgement
+  ---
+  duration_ms: 0.188755
+  ...
+# Subtest: artifact failure boundary 3 does not retry or claim acknowledgement
+ok 25 - artifact failure boundary 3 does not retry or claim acknowledgement
+  ---
+  duration_ms: 0.26805
+  ...
+# Subtest: artifact failure boundary 4 does not retry or claim acknowledgement
+ok 26 - artifact failure boundary 4 does not retry or claim acknowledgement
+  ---
+  duration_ms: 0.309768
+  ...
+# Subtest: artifact failure boundary 5 does not retry or claim acknowledgement
+ok 27 - artifact failure boundary 5 does not retry or claim acknowledgement
+  ---
+  duration_ms: 0.294281
+  ...
+# Subtest: artifact failure boundary 6 does not retry or claim acknowledgement
+ok 28 - artifact failure boundary 6 does not retry or claim acknowledgement
+  ---
+  duration_ms: 0.329452
+  ...
+# Subtest: artifact readback corruption is not durable success
+ok 29 - artifact readback corruption is not durable success
+  ---
+  duration_ms: 0.605216
+  ...
+# Subtest: original binding derives recovery key deterministically without exposing or changing it
+ok 30 - original binding derives recovery key deterministically without exposing or changing it
+  ---
+  duration_ms: 68.14294
+  ...
+# Subtest: actual action orchestration uses real page client through local services and actual artifact/readback protocol
+ok 31 - actual action orchestration uses real page client through local services and actual artifact/readback protocol
+  ---
+  duration_ms: 381.835387
+  ...
+# Subtest: custody detects a removed terminal record even if attacker supplies the new ZIP hash
+ok 32 - custody detects a removed terminal record even if attacker supplies the new ZIP hash
+  ---
+  duration_ms: 276.203612
+  ...
+# Subtest: source changes to symlink during capture cannot redirect source reads into approval or key files
+ok 33 - source changes to symlink during capture cannot redirect source reads into approval or key files
+  ---
+  duration_ms: 101.37809
+  ...
+# Subtest: all source dependencies are required, and omitted dependencies cannot release bindings
+ok 34 - all source dependencies are required, and omitted dependencies cannot release bindings
+  ---
+  duration_ms: 1.010458
+  ...
+# Subtest: missing existing binding cannot call a provider
+ok 35 - missing existing binding cannot call a provider
+  ---
+  duration_ms: 1.396106
+  ...
+# Subtest: private output permissions are checked under the normal non-root test user
+ok 36 - private output permissions are checked under the normal non-root test user
+  ---
+  duration_ms: 1.181422
+  ...
+# Subtest: the pinned real client reaches its original600-second deadline without another provider call
+ok 37 - the pinned real client reaches its original600-second deadline without another provider call
+  ---
+  duration_ms: 100.5178
+  ...
+# Subtest: finalizer and real child exit are verified together for valid controls, malformed outputs, timeout and exits1/2/124/137
+ok 38 - finalizer and real child exit are verified together for valid controls, malformed outputs, timeout and exits1/2/124/137
+  ---
+  duration_ms: 366.302091
+  ...
+# Subtest: recovery CLI verifies actual format privately and never prints the decrypted case/source records
+ok 39 - recovery CLI verifies actual format privately and never prints the decrypted case/source records
+  ---
+  duration_ms: 284.264337
+  ...
+# Subtest: repeat and competing invocations with the same run/scope cannot consume a second provider budget
+ok 40 - repeat and competing invocations with the same run/scope cannot consume a second provider budget
+  ---
+  duration_ms: 214.441121
+  ...
+# Subtest: concurrent actual invocations have one durable batch claimant before key access
+ok 41 - concurrent actual invocations have one durable batch claimant before key access
+  ---
+  duration_ms: 219.28033
+  ...
+# Subtest: private evidence from this public repository cannot be treated as private-ACL artifact storage
+ok 42 - private evidence from this public repository cannot be treated as private-ACL artifact storage
+  ---
+  duration_ms: 0.921035
+  ...
+# Subtest: actual bounded HTTPS wire verifies TLS locally, does not follow redirects and enforces full-body cap/deadline
+ok 43 - actual bounded HTTPS wire verifies TLS locally, does not follow redirects and enforces full-body cap/deadline
+  ---
+  duration_ms: 175.593464
+  ...
+# Subtest: actual response-body timeout uses the unchanged20-second client deadline and preserves an unresolved intent
+ok 44 - actual response-body timeout uses the unchanged20-second client deadline and preserves an unresolved intent
+  ---
+  duration_ms: 20154.155525
+  ...
+# Subtest: failed final persistence at CASE_DISPOSITIONS cannot claim capture/recovery success or rerun requests
+ok 45 - failed final persistence at CASE_DISPOSITIONS cannot claim capture/recovery success or rerun requests
+  ---
+  duration_ms: 161.950926
+  ...
+# Subtest: failed final persistence at CUSTODY_FINISHED cannot claim capture/recovery success or rerun requests
+ok 46 - failed final persistence at CUSTODY_FINISHED cannot claim capture/recovery success or rerun requests
+  ---
+  duration_ms: 120.799338
+  ...
+# Subtest: artifact total deadline and insecure service origin fail without a second control-plane request
+ok 47 - artifact total deadline and insecure service origin fail without a second control-plane request
+  ---
+  duration_ms: 0.699819
+  ...
+# Subtest: missing current key custody proof refuses before binding lookup
+ok 48 - missing current key custody proof refuses before binding lookup
+  ---
+  duration_ms: 1.578077
+  ...
+# Subtest: actual local action entry refuses missing control without credentials or private output
+ok 49 - actual local action entry refuses missing control without credentials or private output
+  ---
+  duration_ms: 120.702796
+  ...
+# Subtest: immutable approved workflow/operator refuses changed workflowSHA before bindings
+ok 50 - immutable approved workflow/operator refuses changed workflowSHA before bindings
+  ---
+  duration_ms: 2.253597
+  ...
+# Subtest: immutable approved workflow/operator refuses changed actor before bindings
+ok 51 - immutable approved workflow/operator refuses changed actor before bindings
+  ---
+  duration_ms: 1.563954
+  ...
+# Subtest: the actual published dependency manifest and inactive approval templates match the package
+ok 52 - the actual published dependency manifest and inactive approval templates match the package
+  ---
+  duration_ms: 1.606447
+  ...
+# Subtest: actual capture readback verifies archive format without duplicating sealed evidence on disk
+ok 53 - actual capture readback verifies archive format without duplicating sealed evidence on disk
+  ---
+  duration_ms: 279.580797
+  ...
+# Subtest: actual child wrapper converts malformed and inherited status names to ERROR without throwing or reflecting them
+ok 54 - actual child wrapper converts malformed and inherited status names to ERROR without throwing or reflecting them
+  ---
+  duration_ms: 266.515004
+  ...
+# Subtest: exact fixed scope and single-page paths are deterministic
+ok 55 - exact fixed scope and single-page paths are deterministic
+  ---
+  duration_ms: 2.881531
+  ...
+# Subtest: no authorization means no client or request
+ok 56 - no authorization means no client or request
+  ---
+  duration_ms: 0.564658
+  ...
+# Subtest: all three approval/evidence requirements are mandatory
+ok 57 - all three approval/evidence requirements are mandatory
+  ---
+  duration_ms: 0.357274
+  ...
+# Subtest: cannot replace durable sink with an arbitrary append function
+ok 58 - cannot replace durable sink with an arbitrary append function
+  ---
+  duration_ms: 0.5268
+  ...
+# Subtest: scope symbol or bounds changes cannot inherit authority
+ok 59 - scope symbol or bounds changes cannot inherit authority
+  ---
+  duration_ms: 0.347347
+  ...
+# Subtest: one call retains one page and never follows its token automatically
+ok 60 - one call retains one page and never follows its token automatically
+  ---
+  duration_ms: 4.814131
+  ...
+# Subtest: a page token must come from that case preceding response
+ok 61 - a page token must come from that case preceding response
+  ---
+  duration_ms: 2.430344
+  ...
+# Subtest: request spacing is serial and at least one second
+ok 62 - request spacing is serial and at least one second
+  ---
+  duration_ms: 1.898817
+  ...
+# Subtest: duplicate request is not retried
+ok 63 - duplicate request is not retried
+  ---
+  duration_ms: 1.219298
+  ...
+# Subtest: HTTP 301 stops without redirect, retry or alternate feed
+ok 64 - HTTP 301 stops without redirect, retry or alternate feed
+  ---
+  duration_ms: 1.633568
+  ...
+# Subtest: HTTP 302 stops without redirect, retry or alternate feed
+ok 65 - HTTP 302 stops without redirect, retry or alternate feed
+  ---
+  duration_ms: 1.306798
+  ...
+# Subtest: HTTP 401 stops without redirect, retry or alternate feed
+ok 66 - HTTP 401 stops without redirect, retry or alternate feed
+  ---
+  duration_ms: 1.535683
+  ...
+# Subtest: HTTP 403 stops without redirect, retry or alternate feed
+ok 67 - HTTP 403 stops without redirect, retry or alternate feed
+  ---
+  duration_ms: 1.439136
+  ...
+# Subtest: HTTP 429 stops without redirect, retry or alternate feed
+ok 68 - HTTP 429 stops without redirect, retry or alternate feed
+  ---
+  duration_ms: 1.604235
+  ...
+# Subtest: HTTP 500 stops without redirect, retry or alternate feed
+ok 69 - HTTP 500 stops without redirect, retry or alternate feed
+  ---
+  duration_ms: 2.43029
+  ...
+# Subtest: malformed JSON
+ok 70 - malformed JSON
+  ---
+  duration_ms: 1.983449
+  ...
+# Subtest: wrong quote symbol
+ok 71 - wrong quote symbol
+  ---
+  duration_ms: 1.616322
+  ...
+# Subtest: wrong returned feed
+ok 72 - wrong returned feed
+  ---
+  duration_ms: 1.751192
+  ...
+# Subtest: missing quote array
+ok 73 - missing quote array
+  ---
+  duration_ms: 1.16313
+  ...
+# Subtest: too many quote rows
+ok 74 - too many quote rows
+  ---
+  duration_ms: 4.044122
+  ...
+# Subtest: oversized body
+ok 75 - oversized body
+  ---
+  duration_ms: 1.148649
+  ...
+# Subtest: non-object body
+ok 76 - non-object body
+  ---
+  duration_ms: 1.14576
+  ...
+# Subtest: unexpected reference pagination is incomplete, never silently exhausted
+ok 77 - unexpected reference pagination is incomplete, never silently exhausted
+  ---
+  duration_ms: 0.821876
+  ...
+# Subtest: wrong identity and wrong action symbols stop
+ok 78 - wrong identity and wrong action symbols stop
+  ---
+  duration_ms: 1.885821
+  ...
+# Subtest: eighth quote page with another token stops incomplete
+ok 79 - eighth quote page with another token stops incomplete
+  ---
+  duration_ms: 4.81754
+  ...
+# Subtest: full 156-request fixed plan stays within all caps, with no automatic evaluation
+ok 80 - full 156-request fixed plan stays within all caps, with no automatic evaluation
+  ---
+  duration_ms: 43.081125
+  ...
+# Subtest: exhausted raw budget stops before a request
+ok 81 - exhausted raw budget stops before a request
+  ---
+  duration_ms: 0.538305
+  ...
+# Subtest: provider deadline stops before a request
+ok 82 - provider deadline stops before a request
+  ---
+  duration_ms: 0.627834
+  ...
+# Subtest: timeout aborts once, preserves unresolved request and prevents resume
+ok 83 - timeout aborts once, preserves unresolved request and prevents resume
+  ---
+  duration_ms: 16.163174
+  ...
+# Subtest: seal failure before REQUEST_INTENT prevents any transport call
+ok 84 - seal failure before REQUEST_INTENT prevents any transport call
+  ---
+  duration_ms: 0.607959
+  ...
+# Subtest: response durability failure retains unresolved request and stops
+ok 85 - response durability failure retains unresolved request and stops
+  ---
+  duration_ms: 1.081362
+  ...
+# Subtest: started directory cannot be reused for an automatic second batch
+ok 86 - started directory cannot be reused for an automatic second batch
+  ---
+  duration_ms: 0.425303
+  ...
+# Subtest: encrypted records contain no plaintext source body and detect tampering
+ok 87 - encrypted records contain no plaintext source body and detect tampering
+  ---
+  duration_ms: 1.046462
+  ...
+# Subtest: sealed storage cap is enforced before writing a record
+ok 88 - sealed storage cap is enforced before writing a record
+  ---
+  duration_ms: 0.550526
+  ...
+# Subtest: symlink directory is refused
+ok 89 - symlink directory is refused
+  ---
+  duration_ms: 0.360593
+  ...
+# Subtest: post-construction scope mutation cannot change the authorized symbol
+ok 90 - post-construction scope mutation cannot change the authorized symbol
+  ---
+  duration_ms: 0.497789
+  ...
+# Subtest: concurrent page call cannot start a second wire request
+ok 91 - concurrent page call cannot start a second wire request
+  ---
+  duration_ms: 1.083292
+  ...
+# Subtest: unsealed interruption intent survives recovery with no automatic resume
+ok 92 - unsealed interruption intent survives recovery with no automatic resume
+  ---
+  duration_ms: 0.961333
+  ...
+# Subtest: corrupt final record permits only explicitly labeled verified-prefix recovery, never complete clearance
+ok 93 - corrupt final record permits only explicitly labeled verified-prefix recovery, never complete clearance
+  ---
+  duration_ms: 0.855789
+  ...
+# Subtest: real loopback wire does not follow redirects and streams within body cap
+ok 94 - real loopback wire does not follow redirects and streams within body cap
+  ---
+  duration_ms: 16.331613
+  ...
+# Subtest: real loopback response-body wait honors abort after headers
+ok 95 - real loopback response-body wait honors abort after headers
+  ---
+  duration_ms: 30.969048
+  ...
+# Subtest: wire refuses non-loopback test origins, cross-origin requests and missing live headers without network
+ok 96 - wire refuses non-loopback test origins, cross-origin requests and missing live headers without network
+  ---
+  duration_ms: 0.371984
+  ...
+1..96
+# tests 96
+# suites 0
+# pass 96
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 24707.881694

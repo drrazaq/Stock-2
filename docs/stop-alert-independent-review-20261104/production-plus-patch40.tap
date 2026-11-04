@@ -1,0 +1,237 @@
+TAP version 13
+# Subtest: price evidence: only a ticker-bound, dated, fresh trade price is OK
+ok 1 - price evidence: only a ticker-bound, dated, fresh trade price is OK
+  ---
+  duration_ms: 2.665512
+  ...
+# Subtest: r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN
+ok 2 - r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN
+  ---
+  duration_ms: 0.564848
+  ...
+# Subtest: r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip
+ok 3 - r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip
+  ---
+  duration_ms: 0.814341
+  ...
+# Subtest: stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts
+ok 4 - stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts
+  ---
+  duration_ms: 18.213251
+  ...
+# Subtest: "at or below": a price equal to the stop is a crossing and is worded as at or below
+ok 5 - "at or below": a price equal to the stop is a crossing and is worded as at or below
+  ---
+  duration_ms: 0.403889
+  ...
+# Subtest: wording respects an order that already filled: no second sale, the fill price is what to report
+ok 6 - wording respects an order that already filled: no second sale, the fill price is what to report
+  ---
+  duration_ms: 0.342761
+  ...
+# Subtest: already sold (position no longer recorded): nothing is sent for it
+ok 7 - already sold (position no longer recorded): nothing is sent for it
+  ---
+  duration_ms: 0.147675
+  ...
+# Subtest: stop levels and positions are read, never changed
+ok 8 - stop levels and positions are read, never changed
+  ---
+  duration_ms: 0.503127
+  ...
+# Subtest: catalyst times have a full date and one time zone (previous-day items no longer read like today)
+ok 9 - catalyst times have a full date and one time zone (previous-day items no longer read like today)
+  ---
+  duration_ms: 4.290921
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated
+ok 10 - bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated
+  ---
+  duration_ms: 106.499657
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery missing -> the bot sends the stop once, in the shared wording
+ok 11 - bot fallback: watcher delivery missing -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 66.880265
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery UNSENT -> the bot sends the stop once, in the shared wording
+ok 12 - bot fallback: watcher delivery UNSENT -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 67.199523
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery UNCERTAIN -> the bot sends the stop once, in the shared wording
+ok 13 - bot fallback: watcher delivery UNCERTAIN -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 64.951692
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: duplicate delivery prevention holds across runs (once a day)
+ok 14 - bot fallback: duplicate delivery prevention holds across runs (once a day)
+  ---
+  duration_ms: 76.117559
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing
+ok 15 - bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing
+  ---
+  duration_ms: 108.66386
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller
+ok 16 - r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller
+  ---
+  duration_ms: 107.417291
+  ...
+# Subtest: all requests stayed synthetic and on loopback
+ok 17 - all requests stayed synthetic and on loopback
+  ---
+  duration_ms: 0.161268
+  ...
+# Subtest: price at or below the stop: one STOP LEVEL REACHED message, not repeated
+ok 18 - price at or below the stop: one STOP LEVEL REACHED message, not repeated
+  ---
+  duration_ms: 21.277329
+  ...
+# Subtest: within 2% above the stop: one NEAR STOP warning, then the hit still comes
+ok 19 - within 2% above the stop: one NEAR STOP warning, then the hit still comes
+  ---
+  duration_ms: 0.614477
+  ...
+# Subtest: no stop: nothing; no positions: nothing
+ok 20 - no stop: nothing; no positions: nothing
+  ---
+  duration_ms: 0.477837
+  ...
+# Subtest: configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable
+ok 21 - configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable
+  ---
+  duration_ms: 2.740411
+  ...
+# Subtest: health reports configured gaps and known outside hour separately; explicit actionable thresholds
+ok 22 - health reports configured gaps and known outside hour separately; explicit actionable thresholds
+  ---
+  duration_ms: 3.199356
+  ...
+# Subtest: message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed
+ok 23 - message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed
+  ---
+  duration_ms: 4.654211
+  ...
+# Subtest: unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY
+ok 24 - unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY
+  ---
+  duration_ms: 2.042195
+  ...
+# Subtest: actual watcher shadow producer retains unknown observations and filing records without adding source calls
+ok 25 - actual watcher shadow producer retains unknown observations and filing records without adding source calls
+  ---
+  duration_ms: 2.005165
+  ...
+# Subtest: actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop
+ok 26 - actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop
+  ---
+  duration_ms: 778.854135
+  ...
+# Subtest: reservation publication failure prevents send and quarantines local retry
+ok 27 - reservation publication failure prevents send and quarantines local retry
+  ---
+  duration_ms: 1.389483
+  ...
+# Subtest: actual watcher approved-alert caller blocks unknown identity before any send
+ok 28 - actual watcher approved-alert caller blocks unknown identity before any send
+  ---
+  duration_ms: 1.195653
+  ...
+# Subtest: actual filing decision caller records eligible unknown-type research, and preserves source failure
+ok 29 - actual filing decision caller records eligible unknown-type research, and preserves source failure
+  ---
+  duration_ms: 1.569612
+  ...
+# Subtest: actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment
+ok 30 - actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment
+  ---
+  duration_ms: 5.490809
+  ...
+# Subtest: actual shadow caller captures identity once rather than retroactively reclassifying the first observation
+ok 31 - actual shadow caller captures identity once rather than retroactively reclassifying the first observation
+  ---
+  duration_ms: 1.034006
+  ...
+# Subtest: publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct
+ok 32 - publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct
+  ---
+  duration_ms: 7.032729
+  ...
+# Subtest: actual Actions watcher survives moved
+ok 33 - actual Actions watcher survives moved
+  ---
+  duration_ms: 1365.776216
+  ...
+# Subtest: actual Actions watcher survives competing
+ok 34 - actual Actions watcher survives competing
+  ---
+  duration_ms: 1212.401831
+  ...
+# Subtest: actual Actions watcher survives refusal-retry
+ok 35 - actual Actions watcher survives refusal-retry
+  ---
+  duration_ms: 1519.43285
+  ...
+# Subtest: actual Actions watcher survives interrupted
+ok 36 - actual Actions watcher survives interrupted
+  ---
+  duration_ms: 892.000553
+  ...
+# Subtest: actual Actions watcher survives uncertain
+ok 37 - actual Actions watcher survives uncertain
+  ---
+  duration_ms: 1272.278765
+  ...
+# Subtest: actual Actions watcher survives clear-rejection
+ok 38 - actual Actions watcher survives clear-rejection
+  ---
+  duration_ms: 1634.397551
+  ...
+# Subtest: actual Actions watcher survives finish-refusal
+ok 39 - actual Actions watcher survives finish-refusal
+  ---
+  duration_ms: 1773.030196
+  ...
+# Subtest: actual Actions watcher survives missing-snapshot
+ok 40 - actual Actions watcher survives missing-snapshot
+  ---
+  duration_ms: 1515.33837
+  ...
+1..40
+# tests 40
+# suites 0
+# pass 40
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 11298.794265

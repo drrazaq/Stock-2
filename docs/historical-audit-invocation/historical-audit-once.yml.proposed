@@ -1,0 +1,116 @@
+# INACTIVE. Research-only PRIVATE repository; never install in the public bot or financial mirror.
+# Needs separate setup review, approved private control files and later execution approval.
+name: One bounded private historical audit
+on:
+  workflow_dispatch:
+    inputs:
+      authorization_sha256:
+        required: true
+        type: string
+      evidence_sha256:
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: historical-audit-once-9751a2a0
+  cancel-in-progress: false
+jobs:
+  audit:
+    if: github.event.repository.private == true && github.ref == 'refs/heads/historical-audit-once-9751a2a0' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      AUDIT_SOURCE_SHA: SOURCE_COMMIT_TO_BE_PINNED_AFTER_PUBLICATION
+      AUDIT_MANIFEST_SHA256: MANIFEST_RAW_SHA256_TO_BE_PINNED
+      AUDIT_SOURCE_ROOT: ${{ github.workspace }}/source
+      AUDIT_AUTHORIZATION_FILE: ${{ github.workspace }}/control/authorization.json
+      AUDIT_EVIDENCE_FILE: ${{ github.workspace }}/control/evidence.json
+      AUDIT_AUTHORIZATION_SHA256: ${{ inputs.authorization_sha256 }}
+      AUDIT_EVIDENCE_SHA256: ${{ inputs.evidence_sha256 }}
+      AUDIT_CONTROL_FILE: ${{ runner.temp }}/audit-control.json
+      AUDIT_RESULT_FILE: ${{ runner.temp }}/audit-result.json
+    steps:
+      - name: Read immutable private controls
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # official v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          path: control
+      - name: Read immutable public source
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: drrazaq/Stock-2
+          ref: ${{ env.AUDIT_SOURCE_SHA }}
+          persist-credentials: false
+          path: source
+      - name: Pin the tested Node runtime
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # official v4.4.0
+        with:
+          node-version: 20.20.2
+      - name: Verify source bytes without research bindings
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,pathlib,json,hashlib,subprocess
+          root=pathlib.Path(os.environ['AUDIT_SOURCE_ROOT'])
+          assert subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()==os.environ['AUDIT_SOURCE_SHA']
+          raw=(root/'docs/historical-audit-invocation/source-manifest.json').read_bytes()
+          assert hashlib.sha256(raw).hexdigest()==os.environ['AUDIT_MANIFEST_SHA256']
+          for name,digest in json.loads(raw)['files'].items():
+            file=root/name
+            assert file.resolve()==file.absolute() and hashlib.sha256(file.read_bytes()).hexdigest()==digest
+          PY
+      - name: Credential-free approval and history guard
+        id: guard
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: node "$AUDIT_SOURCE_ROOT/tools/historical-audit-preflight.mjs"
+      - name: Exactly one bounded private invocation
+        id: capture
+        if: steps.guard.outputs.ready == 'true'
+        continue-on-error: true
+        uses: ./source/tools/historical-audit-action
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          AUDIT_CONTROL_SHA256: ${{ steps.guard.outputs.control_sha256 }}
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          RESEARCH_ARTIFACT_KEY: ${{ secrets.RESEARCH_ARTIFACT_KEY }}
+      - name: Validate result and actual action outcome together
+        if: always()
+        env:
+          CAPTURE_OUTCOME: ${{ steps.capture.outcome }}
+        shell: bash
+        run: |
+          node --input-type=module <<'JS'
+          import fs from 'node:fs';
+          import {pathToFileURL} from 'node:url';
+          let ok=false;
+          try {
+            const {verifyFinalizer}=await import(pathToFileURL(process.env.AUDIT_SOURCE_ROOT+'/tools/historical-audit-launcher.mjs'));
+            const record=JSON.parse(fs.readFileSync(process.env.AUDIT_RESULT_FILE));
+            ok=verifyFinalizer(record.result,record.exit,process.env.CAPTURE_OUTCOME);
+            console.log(ok?JSON.stringify(record.result):'ERROR');
+            process.exitCode=ok&&record.exit===0?0:1;
+          } catch { console.log('ERROR');process.exitCode=1; }
+          JS
+      - name: Remove ephemeral controls
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os,pathlib,shutil
+          root=pathlib.Path(os.environ['RUNNER_TEMP']).resolve()
+          # Leave sealed partials until runner teardown if upload/readback failed.
+          # No decrypted file is ever created here. Hosted teardown is not recovery.
+          for name in ['audit-control.json','audit-result.json']:
+            p=root/name
+            if p.is_symlink(): p.unlink()
+            elif p.is_dir(): shutil.rmtree(p)
+            elif p.exists(): p.unlink()
+          PY
