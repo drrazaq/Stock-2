@@ -33191,7 +33191,7 @@
    "name": "AVOID check: goodwill impairment of 1%+ of assets in a new 10-Q/10-K, 126 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-04 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Information only: a 10-Q/10-K (filed within 120 days of the period end) reports a NEW goodwill impairment (us-gaap GoodwillImpairmentLoss, net of the same-start year-to-date already reported) of 1%+ of total assets (assets 10M USD+); bought next open, 126 sessions; a valid AVOID / SELL filter if these stocks lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, new-impairment netting, event timing, assets scaling, thresholds and data rule fixed in research-core.mjs (IDEA 9) before any run.",
    "sources": [
     "https://rpc.cfainstitute.org/research/financial-analysts-journal/2003/investor-underreaction-to-goodwill-write-offs",
@@ -33199,7 +33199,45 @@
     "https://researchconnect.buffalo.edu/en/publications/overpriced-shares-ill-advised-acquisitions-and-goodwill-impairmen/"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-03",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "n": [
+     170,
+     276
+    ],
+    "avg": [
+     -0.0744,
+     0.0708
+    ],
+    "stress": [
+     -0.0784,
+     0.0668
+    ],
+    "edge": [
+     -0.0792,
+     -0.0215
+    ],
+    "vsOwn": [
+     -0.036,
+     0.095
+    ],
+    "noTop2": [
+     -0.0854,
+     0.0533
+    ],
+    "tBlock": [
+     -2.92,
+     0.25
+    ],
+    "win": [
+     0.3882,
+     0.5326
+    ],
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
   },
   {
    "id": "RQ-GWI-AV63",
@@ -33207,7 +33245,7 @@
    "name": "AVOID check: goodwill impairment of 1%+ of assets, 63 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-04 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "As RQ-GWI-AV126, 63 sessions. Never a buy. Measure, new-impairment netting, event timing, assets scaling, thresholds and data rule fixed in research-core.mjs (IDEA 9) before any run.",
    "sources": [
     "https://rpc.cfainstitute.org/research/financial-analysts-journal/2003/investor-underreaction-to-goodwill-write-offs",
@@ -33215,7 +33253,45 @@
     "https://researchconnect.buffalo.edu/en/publications/overpriced-shares-ill-advised-acquisitions-and-goodwill-impairmen/"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-03",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "n": [
+     186,
+     324
+    ],
+    "avg": [
+     -0.0351,
+     0.0264
+    ],
+    "stress": [
+     -0.0391,
+     0.0224
+    ],
+    "edge": [
+     -0.0226,
+     -0.024
+    ],
+    "vsOwn": [
+     0.0176,
+     0.0202
+    ],
+    "noTop2": [
+     -0.0421,
+     0.0176
+    ],
+    "tBlock": [
+     -0.79,
+     -1.23
+    ],
+    "win": [
+     0.4247,
+     0.5123
+    ],
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
   },
   {
    "id": "RQ-GWI-BIG126",
@@ -33223,7 +33299,7 @@
    "name": "AVOID check: large goodwill impairment (5%+ of assets), 126 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-04 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "As RQ-GWI-AV126 with a new impairment of 5%+ of total assets. Never a buy. Measure, new-impairment netting, event timing, assets scaling, thresholds and data rule fixed in research-core.mjs (IDEA 9) before any run.",
    "sources": [
     "https://rpc.cfainstitute.org/research/financial-analysts-journal/2003/investor-underreaction-to-goodwill-write-offs",
@@ -33231,7 +33307,45 @@
     "https://researchconnect.buffalo.edu/en/publications/overpriced-shares-ill-advised-acquisitions-and-goodwill-impairmen/"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-03",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "n": [
+     70,
+     116
+    ],
+    "avg": [
+     -0.1258,
+     0.0545
+    ],
+    "stress": [
+     -0.1298,
+     0.0505
+    ],
+    "edge": [
+     -0.1267,
+     -0.0465
+    ],
+    "vsOwn": [
+     0.0494,
+     0.0877
+    ],
+    "noTop2": [
+     -0.1481,
+     0.0122
+    ],
+    "tBlock": [
+     -2.14,
+     -0.89
+    ],
+    "win": [
+     0.3,
+     0.4741
+    ],
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
   }
  ]
 }
