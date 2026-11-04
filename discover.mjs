@@ -414,8 +414,8 @@ const record = aged.length ? { n: aged.length, avgReturn: aged.reduce((a, x) => 
 
 // The public file carries only what came from the price sweep and Finnhub. FMP and TipRanks material goes to Telegram only,
 // because their terms do not allow displaying it on a public page.
-const pub = top.map(({ privateNotes, deep, analyst, ...c }) => c);
-fs.writeFileSync('data/discovery.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session: first.date, priceDay, swept: closes[0].size, strong: strong.length, quarter: P, source: source.replace(' + FMP statements', '').replace(' + Alpha Vantage statements', ''), secNote, record, candidates: pub }, null, 1));
+const pub = top.map(({ privateNotes, deep, analyst, ...c }) => ({ ...c, priceEvidence: { basis: 'COMPLETED_DAILY_CLOSE', session: first.date, provider: 'MASSIVE', executableQuote: false } }));
+fs.writeFileSync('data/discovery.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session: first.date, priceDay, swept: closes[0].size, strong: strong.length, quarter: P, source: source.replace(' + FMP statements', '').replace(' + Alpha Vantage statements', ''), secNote, record, recordBasis: { kind: 'LEGACY_GROSS_VARIABLE_AGE_MODEL_MARKS', minimumCalendarDays: 28, fixedExit: false, executionCostsIncluded: false, journalPricesAffectSelection: false }, candidates: pub }, null, 1));
 console.log('discovery done:', top.length, 'candidates,', fresh.length, 'new');
 
 // Statement findings (cash flow, debt, dilution) are private, so they are sent once per company even when it is not a new candidate.

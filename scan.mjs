@@ -549,7 +549,7 @@ function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 =
     if (H.length) out.push('QUICK SETUPS [EARLY] (NOT PROVEN; legacy historical sample only):', ...H.map(x => { const q = Q.get(x.sym); return '- ' + x.sym + ': research only; ' + researchZad(x.sym) + (q && q.n ? '; ' + q.n + ' legacy historical cases, not prospective approval' : ''); }), ''); }
   // 5. strong companies by their reports (discovery)
   { const DC = readJson0('data/discovery.json'), dc = DC && DC.candidates ? DC.candidates.filter(x => !skip(x.sym)).slice(0, N) : [];
-    if (dc.length) out.push('STRONG COMPANIES [INFO] (growth + momentum from their reports):', ...dc.map(x => '- ' + x.sym + ' ' + m0(x.price) + ': ' + (x.revGrowth !== undefined ? 'revenue ' + pcs(x.revGrowth) : '') + (x.profitTrend ? ', ' + x.profitTrend : '') + (x.mom6 !== undefined ? ', 6 months ' + pcs(x.mom6) : '')), ''); }
+    if (dc.length) out.push('STRONG COMPANIES [INFO] (growth + momentum; ' + (DC.session || 'UNKNOWN SESSION') + ' completed-close references, not live BBO):', ...dc.map(x => '- ' + x.sym + ' ' + m0(x.price) + ': ' + (x.revGrowth !== undefined ? 'revenue ' + pcs(x.revGrowth) : '') + (x.profitTrend ? ', ' + x.profitTrend : '') + (x.mom6 !== undefined ? ', 6 months ' + pcs(x.mom6) : '')), ''); }
   // 6. quality and autolab (after Sunday)
   { const Q = readJson0('data/quality.json'), q = Q && Q.status === 'OK' ? Q.today.filter(x => !skip(x.sym)).slice(0, N) : [], pass = Q && Q.results && Object.entries(Q.results).some(([k, r]) => /^QUALITY_/.test(k) && r.verdict === 'PROMISING');
     if (q.length) out.push('TOP QUALITY COMPANIES [' + (pass ? 'TESTED on history, paper next' : 'INFO') + ']: ' + q.map(x => x.sym).join(', '), ''); }
@@ -747,8 +747,24 @@ const SETTINGS_BAD = 'Not saved: your settings file could not be read (data/sett
 const DEFAULT = 'SPY QQQ IWM DIA AAPL MSFT NVDA AMZN GOOGL META TSLA AVGO AMD NFLX ORCL CRM JPM BAC V MA UNH LLY JNJ XOM CVX WMT COST HD PG KO PEP DIS'.split(' ');
 const fromFile = fs.existsSync('watchlist.txt') ? fs.readFileSync('watchlist.txt', 'utf8').toUpperCase().split(/[\s,]+/).filter(s => /^[A-Z.\-]{1,8}$/.test(s)) : [];
 // Candidates from the discovery engine are tested automatically, so a Buy watch with prices is sent if a tested rule fires on one.
-let DISC = new Set(), BIOBLOCK = new Map(), DISCMETA = null;
-try { DISCMETA = JSON.parse(fs.readFileSync('data/discovery.json', 'utf8')); const cs = DISCMETA.candidates || []; DISC = new Set(cs.map(c => c.sym).filter(x => /^[A-Z.\-]{1,8}$/.test(x))); for (const c of cs) { if (c.bio && (c.bio.risk === 'high' || c.bio.risk === 'unknown')) BIOBLOCK.set(c.sym, c.bio.text); else if (c.hardBlock) BIOBLOCK.set(c.sym, 'dilution: ' + String(c.hardBlock).slice(0, 120)); } } catch {}
+let DISC = new Set(), BIOBLOCK = new Map(), DISCMETA = null, DISCINPUT = null;
+// Pin the public discovery input actually read; this is not its original detection time.
+function discoveryCoverage(discovery, list, loaded, stocks, uni, input = null) {
+  const enrolled = new Set(list), assessed = new Set(stocks.map(x => x.sym)), quick = new Set(uni.map(x => x.sym));
+  const rows = Array.isArray(discovery?.candidates) ? discovery.candidates : [], symbols = rows.map(x => x?.sym).filter(x => typeof x === 'string' && /^[A-Z.\-]{1,8}$/.test(x));
+  return { version: 1, input, rejectedInputRows: rows.length - symbols.length, requiredCompletedBars: 600, candidates: [...new Set(symbols)].map(sym => {
+    const bars = Array.isArray(loaded[sym]?.candles) ? loaded[sym].candles.length : null;
+    const status = !enrolled.has(sym) ? 'NOT_ENROLLED' : bars === null ? 'HISTORY_UNAVAILABLE' : bars < 600 ? 'INSUFFICIENT_HISTORY' : assessed.has(sym) ? 'ASSESSED' : quick.has(sym) ? 'QUICK_ONLY' : 'ASSESSMENT_NOT_RECORDED';
+    return { sym, status, completedBars: bars, requiredCompletedBars: 600, rejectionInferred: false };
+  }) };
+}
+function discoveryCoverageText(sym, sig) {
+  const row = sig?.discoveryCoverage?.candidates?.find(x => x.sym === sym);
+  if (row?.status === 'INSUFFICIENT_HISTORY') return 'Scanner coverage: ' + row.completedBars + '/600 completed daily bars returned. The existing model requires 600; no model assessment was stored. This is not a strategy rejection. Listing age versus incomplete provider history is unresolved.';
+  if (row) return 'Scanner coverage: ' + row.status + '. No stored core model assessment; this does not establish strategy rejection.';
+  return 'Scanner coverage UNKNOWN: no core model assessment or per-symbol coverage reason was retained. Missing coverage is not a strategy rejection; adding it to a watchlist is not a proven remedy.';
+}
+try { const raw = fs.readFileSync('data/discovery.json', 'utf8'); DISCMETA = JSON.parse(raw); DISCINPUT = { sha256: crypto.createHash('sha256').update(raw).digest('hex'), readAt: new Date().toISOString(), generatedAt: DISCMETA.generatedAt || null, priceSession: DISCMETA.session || null }; const cs = DISCMETA.candidates || []; DISC = new Set(cs.map(c => c.sym).filter(x => /^[A-Z.\-]{1,8}$/.test(x))); for (const c of cs) { if (c.bio && (c.bio.risk === 'high' || c.bio.risk === 'unknown')) BIOBLOCK.set(c.sym, c.bio.text); else if (c.hardBlock) BIOBLOCK.set(c.sym, 'dilution: ' + String(c.hardBlock).slice(0, 120)); } } catch {}
 // Several ZAD marks in one message (owner, 23 Oct: 15 marks in one message got no reply): every "halal SYM yes/no" in the text, in order.
 function halalBatch(text) {
   const out = [], seen = new Set();
@@ -1887,12 +1903,14 @@ async function deepInfo(sym) {
 async function checkLive(sym) {
   const d = await loadDaily(sym); if (!d || !d.candles.length) return sym + ': I could not load prices for this ticker. Check the symbol.';
   const c = d.candles, i = c.length - 1, out = [sym + ', analysed now from the ' + c[i].d + ' close', 'Closed ' + money(c[i].c) + '.'], added = addExtra(sym);
+  const stored = readJson0('data/signals.json');
+  if (DISC.has(sym) && !(stored?.stocks || []).some(x => x.sym === sym)) out.push(discoveryCoverageText(sym, stored));
   const refLine2 = () => { const r = L.refPlan(c, d.last), o = L.refOdds(c);
     if (!r) return 'CONCLUSION: no plan. ' + (c.length < 30 ? 'It is too new.' : 'the short-term rules only buy stocks above their 50-day average, and this one is under it (that is the short-term angle only; see mid / long term below).');
     if (o && o.won < 0.25) return 'CONCLUSION: no plan. On its own history the reward marker came before the stop in only ' + Math.round(o.won * 100) + '% of cases, which loses on average.';
     return 'REFERENCE LEVELS (not tested, not a buy): ' + (r.extended ? 'after a pullback, range ' : 'range ') + money(r.lo) + ' to ' + money(r.hi) + ' | STOP ' + money(r.stop) + ' | reward marker ' + money(r.target) + (o ? '. The marker came first in ' + Math.round(o.won * 100) + '% of ' + o.cases + ' past cases.' : '.'); };
   let word = 'NO BUY: no tested rule supports a trade on it.';
-  if (c.length < 600) out.push('It has under three years of price history, so no rule can be tested on it.', refLine2());
+  if (c.length < 600) out.push('This response contains ' + c.length + '/600 completed daily bars. The existing core scanner model cannot be assessed from it; this is not a strategy rejection or a test of every other lane. Listing age versus incomplete provider history is unresolved.', refLine2());
   else {
     const spy = await loadDaily('SPY'), mkt = spy ? L.marketMap(spy.candles) : null, ind = L.indicators(c, mkt);
     const mom = spy && spy.candles.length > 130 ? spy.candles[spy.candles.length - 1].c / spy.candles[spy.candles.length - 127].c - 1 : undefined;
@@ -1985,7 +2003,7 @@ function checkOne(sym, sig) {
   const gv1 = gateVerdict(sym, sig), lines = [sym + ': ' + (myHalal(sym) === 'fail' ? 'NO BUY: you marked it NOT halal in ZAD.' : gv1 && /^BUY/.test(word) ? 'NO BUY (paper only): ' + gv1 + '.' : word), sym + ', from the ' + sig.session + ' close'];
   if (q) lines.push((gv1?'RESEARCH ONLY — NO BUY APPROVAL. ':'')+'Quick trade setup: entry ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ', invalidation ' + money(q.stop) + (q.t1 ? ', target 1 ' + money(q.t1) : '') + '. Past result ' + Math.round(q.win * 100) + '% wins over ' + q.n + ' trades.');
   if (st) lines.push('Closed ' + money(st.last) + '. ' + (st.uptrend ? 'In an uptrend' : 'Not in an uptrend') + ', ' + (st.mom6 >= 0 ? '+' : '') + Math.round(st.mom6 * 100) + '% over 6 months.', 'Rule: ' + st.rule + '. ' + (st.proven ? 'It passed its tests.' : 'It did not pass its tests, so no signals are given.'), 'State: ' + (gv1?'RESEARCH ONLY — NO BUY APPROVAL; ':'') + (st.state === 'Buy watch' ? 'ENTRY CONFIRMED' : st.trigger ? 'BUY WATCH, needs a close above ~' + money(st.trigger) : st.state) + '. ' + st.why, L.HALAL_TEXT[myHalal(sym)] || '');
-  if (!q && !st) lines.push('Not on the scanned list, or it has under three years of price history. To have me scan it, add it to watchlist.txt in the repository. To check it right away, add it to the watchlist in Setup on the page.');
+  if (!q && !st) lines.push(discoveryCoverageText(sym, sig));
   return lines.filter(Boolean).join('\n');
 }
 // Pre-market briefing: sent once each weekday about an hour before the US open, without being asked.
@@ -4076,6 +4094,7 @@ async function daily() {
   // ---- LEADERS: rank tonight, keep a paper portfolio of five going forward, and give prices only while the past test is positive
   // memory: the whole-market stocks have been tested already; keep only their last year, and leave them out of the LEADERS
   // re-test (which runs nine versions over every loaded stock and would not fit in memory with 2,500 more)
+  const discoveryScanCoverage = discoveryCoverage(DISCMETA, LIST, loaded, stocks, uni, DISCINPUT);
   for (const x of WIDE) if (loaded[x]) loaded[x] = { candles: loaded[x].candles.slice(-260), last: loaded[x].last, wide: true };
   const coreLoaded = Object.fromEntries(Object.entries(loaded).filter(([k]) => !WIDE.has(k)));
   const LS0 = readJson(LEAD_FILE, { paper: [], done: [] }), LS = LS0, LC = leadersPick(coreLoaded, spy, BTSET, LS0.rule), leadRows = [], leadOut = [], leadSkip = [];
@@ -4174,7 +4193,7 @@ async function daily() {
   fs.writeFileSync('data/models.json', JSON.stringify(models, null, 1));
   { const n = await zoyaCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym), ...Object.keys(myPos)]); if (env.ZOYA_KEY) console.log('Zoya halal checks:', n, zoyaLive() ? '(live)' : '(sandbox)'); }
   { const n = await halalExtCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym)]); if (n) console.log('other halal checks:', n); }
-  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.length, tested: Object.keys(loaded).length, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
+  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.length, tested: Object.keys(loaded).length, discoveryCoverage: discoveryScanCoverage, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
   fs.writeFileSync('data/alert-state.json', JSON.stringify({ day: '', sent: {} }));
   { const n = ledgerAppend(); if (n) console.log('research ledger: ' + n + ' new result' + (n > 1 ? 's' : '') + ' logged'); }
   try { switchPaper(loaded); } catch (e) { console.log('switch paper: ' + e.message); }
@@ -4260,7 +4279,7 @@ async function daily() {
     const fams = Object.entries(famRes);
     if (fams.length) w.push('', 'WHAT IS WORKING, all finished paper trades', ...fams.map(([k, g]) => k + ': ' + g.n + ' finished, ' + Math.round(g.win / g.n * 100) + '% wins, average ' + pc(g.pct / g.n) + (g.week ? ' (' + g.week + ' ended this week)' : '')), (results.length + qFin.length) < 20 ? 'Fewer than 20 finished trades: too few to judge.' : '');
     else w.push('', 'WHAT IS WORKING', 'No paper trade has finished yet.');
-    if (DISCMETA && DISCMETA.candidates) { const bl = DISCMETA.candidates.filter(c => c.bio && (c.bio.risk === 'high' || c.bio.risk === 'unknown')).length; w.push('', 'DISCOVERY', DISCMETA.candidates.length + ' candidates on the list' + (bl ? ', ' + bl + ' blocked for binary event risk' : '') + '.' + (DISCMETA.record ? ' Earlier picks after 4+ weeks: ' + pc(DISCMETA.record.avgReturn) + ' on average, S&P 500 ' + pc(DISCMETA.record.avgSpy) + ' (' + DISCMETA.record.n + ' stocks).' : ' Their results are counted after four weeks.')); }
+    if (DISCMETA && DISCMETA.candidates) { const bl = DISCMETA.candidates.filter(c => c.bio && (c.bio.risk === 'high' || c.bio.risk === 'unknown')).length; w.push('', 'DISCOVERY', DISCMETA.candidates.length + ' candidates on the list' + (bl ? ', ' + bl + ' blocked for binary event risk' : '') + '.' + (DISCMETA.record ? ' Legacy gross model marks, variable ages of at least 28 calendar days, no execution costs: ' + pc(DISCMETA.record.avgReturn) + ' on average, S&P 500 ' + pc(DISCMETA.record.avgSpy) + ' (' + DISCMETA.record.n + ' stocks).' : ' Legacy model marks are tracked after at least 28 calendar days; not an executable strategy record.')); }
     if (tipBoardData.sources.length) w.push('', 'TIP SOURCES', ...tipBoardData.sources.map(g => g.src + ': ' + g.n + ' tips, average ' + pc(g.avg) + ' against ' + pc(g.spy) + ' for the S&P 500' + (g.n < 10 || g.days < 20 ? ' (too early to judge)' : '')));
     w.push('', 'FOR NEXT WEEK', 'Check earnings dates and halal status on the page before acting on anything. Research only: nothing here is an order.');
     await telegram(w.filter(x => x !== '').join('\n').replace(/\n(SECTORS|BIGGEST|TREND|SIGNALS|WHAT|DISCOVERY|TIP SOURCES|FOR NEXT)/g, '\n\n$1') + '\n' + FOOT);

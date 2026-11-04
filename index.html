@@ -1258,6 +1258,8 @@ function render() {
 
 function pickPlan(sym) {   // the best plan available for one discovery pick
   const raw = state.loaded[sym], s0 = study(sym);
+  // A newly generated shortlist must not turn an older cached model into today's entry plan.
+  if (raw && (!state.disc?.session || raw.candles?.at(-1)?.d !== state.disc.session || (s0 && s0.candles?.at(-1)?.d !== state.disc.session))) return { tier: 4, label: 'No current plan · session unresolved', cls: 'wait', rows: [['Model price session', raw.candles?.at(-1)?.d || 'UNKNOWN', 'Discovery daily-close reference: ' + (state.disc?.session || 'UNKNOWN') + '. No current entry/exit range is established from mismatched or undated history.']] };
   if (s0 && s0.learned.proven) {
     const i = s0.candles.length - 1, d0 = s0.learned.v.mult * s0.ind.atr[i], half = 0.5 * s0.ind.atr[i], tp = s0.learned.v.tp, exit = sellLevel({ v: s0.learned.v }, s0.candles, s0.ind);
     if (s0.v.act) return { tier: 0, label: 'Entry confirmed (tested rule)', cls: 'buy', rows: [['Buy range', money(s0.last) + ' to ' + money(s0.last + half), 'At the next open'], ['Sell to cut the loss at', money(s0.last - d0)], ['Sell to take profit at', tp ? money(s0.last + tp * d0) : 'no fixed price', tp ? '' : 'Ride the trend until the exit below'], ['Also sell if it closes below', '~' + money(exit)]] };
@@ -1283,8 +1285,8 @@ function renderDiscovery() {
   const body = $('discBody'); body.replaceChildren();
   if (!d || !Array.isArray(d.candidates)) { $('discNote').textContent = 'Not set up yet. The discovery engine runs in your GitHub repository each night, sweeps every US stock, and lists small companies with strong prices and fast-growing revenue here.'; return; }
   const sp = (x) => (x >= 0 ? '+' : '') + Math.round(x * 100) + '%';
-  $('discNote').textContent = 'Filtered for you from ' + Number(d.swept).toLocaleString('en-US') + ' US stocks at the ' + d.session + ' close: ' + d.strong + ' strong uptrends, cut to ' + d.candidates.length + ' with fast-growing revenue. They load by themselves and each gets a buy range and sell prices. A tested plan comes from a rule that passed on this stock. A reference plan is volatility arithmetic only and is weaker. Most fast movers fall back.'
-    + (d.record ? ' Earlier picks after 4 or more weeks: ' + sp(d.record.avgReturn) + ' on average against ' + sp(d.record.avgSpy) + ' for the S&P 500 (' + d.record.n + ' stocks).' : ' Results are tracked here after four weeks.');
+  $('discNote').textContent = 'Filtered for you from ' + Number(d.swept).toLocaleString('en-US') + ' US stocks at the ' + d.session + ' close: ' + d.strong + ' strong uptrends, cut to ' + d.candidates.length + ' with fast-growing revenue. Candidate prices are completed-session daily-close references, not live quotes or entry offers. Historical journal prices do not select this list. A tested plan requires a separately qualifying rule. Reference ranges are untested volatility arithmetic, not BUY approval. Most fast movers fall back.'
+    + (d.record ? ' Legacy gross model marks, variable ages of at least 28 calendar days, without execution costs: ' + sp(d.record.avgReturn) + ' on average against ' + sp(d.record.avgSpy) + ' for the S&P 500 (' + d.record.n + ' stocks).' : ' Legacy model marks are tracked after at least 28 calendar days; this is not a fixed-horizon executable strategy record.');
   const halalMarks = ctx().halal;
   const picks = d.candidates.filter(c => { const h = halalOf(c.sym, halalMarks, state.zadList); return h !== 'no' && h !== 'fail'; }).map(c => ({ c, p: pickPlan(c.sym) })).sort((x, y) => ((x.c.bio && (x.c.bio.risk === 'high' || x.c.bio.risk === 'unknown')) ? 9 : x.p.tier) - ((y.c.bio && (y.c.bio.risk === 'high' || y.c.bio.risk === 'unknown')) ? 9 : y.p.tier) || y.c.score - x.c.score);
   const build = ({ c, p }) => {
