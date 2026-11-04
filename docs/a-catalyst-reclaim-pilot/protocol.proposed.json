@@ -1,0 +1,117 @@
+{
+  "id": "A_CONTRACT_RECLAIM_PILOT_PROPOSED_1",
+  "createdKuwaitDate": "2026-11-05",
+  "status": "DRAFT_FOR_INDEPENDENT_REVIEW",
+  "approved": false,
+  "collectionAuthorized": false,
+  "liveBuyAllowed": false,
+  "realDollars": 0,
+  "purpose": "Finite A-only operational and economic pilot. Not an edge-confirmation trial; B/C and IG1 are separate.",
+  "codeReference": {
+    "commit": "84937c966cd1bc85ab5f240f3e53a44dc4fa98ba",
+    "files": [
+      "catalyst-reclaim-prototype.mjs",
+      "reclaim-research-workflow.mjs",
+      "reclaim-research-runner.mjs",
+      "reclaim-research-summary.mjs"
+    ],
+    "example": "docs/examples/reclaim-synthetic.json",
+    "review": "REQUESTED_NOT_RECEIVED"
+  },
+  "policyCandidate": {
+    "id": "UNAPPROVED_CONTRACT_RECLAIM_RESEARCH_1",
+    "version": 1,
+    "mode": "OFFLINE_RESEARCH_ONLY",
+    "adopted": false,
+    "minPrice": 2,
+    "minDollarVolume": 500000,
+    "maxSpreadPct": 3,
+    "maxQuoteAgeMs": 30000,
+    "materialityRatio": 0.1,
+    "openingBarMs": 300000,
+    "maxTriggerAgeMs": 30000,
+    "minOpeningVolumeRatio": 1.5,
+    "maxHoldSessions": 5,
+    "exitRule": "FIRST_CLOSE_BELOW_OPENING_LOW_ELSE_MAX_SESSION_CLOSE",
+    "exitContract": "PROPOSED ONLY: max 5 sessions; close below opening low exits next session open",
+    "invalidationContract": "PROPOSED ONLY: close below opening low; no intraday stop or target",
+    "commissionPerSideUsd": 3,
+    "slippagePerSidePct": 0.25,
+    "maxExitQuoteAgeMs": 30000
+  },
+  "policyInterpretation": {
+    "catalyst": "Pre-open, fixed committed USD material agreement; an 8-K item/exhibit or award label alone is insufficient. Verify actual content, amount, parties, issuer mapping and availability. Do not treat contract ceilings, contingent maximums or an unrelated press release as committed revenue.",
+    "opening": "First completed five-minute regular-session bar; volume-only 1.5x same-interval prior median gate, then pullback above opening low and subsequent completed close above opening high. No gap OR volume ambiguity.",
+    "exit": "Earlier of fifth-session close or next-session open following an earlier daily close below opening low. Fifth-day invalidation never extends to day six. No added intraday stop, target, trim or options.",
+    "ZAD": "Require a current valid owner ZAD status at decision time with evidence and validity clocks. Do not force the owner to repeat an existing valid decision daily; same-day validity is not proof of a same-day manual mark.",
+    "costs": "Cash-inclusive USD1000 minimum independent whole-share unit; USD3 each side; entry ask/exit bid include spread once; primary proposed adverse slippage 0.25% each side. Displayed size is not a guaranteed fill. No account-return claim."
+  },
+  "bounds": {
+    "targetEligiblePaperEntries": 30,
+    "maximumCalendarDays": 60,
+    "minimumDistinctEntryDaysForContinueConsideration": 10,
+    "start": null,
+    "end": null,
+    "counting": "Count first 30 unique issuer-session eligible paper entries in chronological trigger order; stable security ID breaks timestamp ties. Missing outcomes count against the sample and are never replaced. Log all attempted candidates and rejections.",
+    "enrollmentEnd": "Whichever is earlier: thirtieth eligible entry, or the last entry session whose full five-session exit runout fits inside day60 using the reviewed authoritative exchange calendar.",
+    "hardFinish": "Day60 inclusive. Resolve remaining outcomes from already authorized observations; missing or unrecoverable outcomes remain UNKNOWN. No automatic extension.",
+    "capabilityCalibration": "Offline/synthetic and any separately approved calibration must precede final freeze and cannot be pooled with untouched pilot outcomes.",
+    "fixedCalendarAndRiskSet": "Exact dates, security universe, candidate source/risk set, data endpoints and mandatory request/storage/retention caps must be filled and independently reviewed before approval; 60 days alone is not a sufficient acquisition bound."
+  },
+  "controls": {
+    "status": "ALGORITHM_NOT_YET_FROZEN_NO_ACTIVATION",
+    "sameStock": "Fix outcome-independent matched non-event days and the exact technical entry/exit procedure before evaluation; do not invent a catalyst for controls or pick favorable comparison dates.",
+    "sameDayMarket": "Fix an eligible-stock comparison universe, deterministic selection/weighting and same execution/cost clocks before evaluation. A SPY-only view must be separately labeled a benchmark proxy, not called the average stock.",
+    "missing": "Retain every missing control and unpriced outcome. No positive pilot continuation decision with economically unbounded missingness.",
+    "independentUnits": "Descriptive independent-unit economics, not funded portfolio performance. Account-level capital/overlap replay remains a separate requirement before any live use."
+  },
+  "outcomes": {
+    "immediateTechnicalStop": [
+      "Wrong or unresolved security mapping",
+      "Untrustworthy/future availability clocks or after-outcome rule/input changes",
+      "Loss of mandatory raw evidence, seal-key custody or durability",
+      "Unexpected request/storage/time cap breach, authentication/refusal or prohibited fallback"
+    ],
+    "methodRule": "A technical stop means incomplete data/implementation, not evidence that A loses money. Preserve records; no automatic retry, sample replacement or retuned continuation.",
+    "stopThisVariantAfterCompletePilot": [
+      "Mean primary after-cost return is nonpositive",
+      "Primary net excess is nonpositive against either frozen matched-control comparison"
+    ],
+    "continueResearchOnlyIf": [
+      "30 resolved entries on at least10 distinct entry days",
+      "Mandatory input/execution/control evidence complete or missingness economically bounded under the frozen rule",
+      "Positive primary after-cost mean and positive excess against both frozen comparisons",
+      "Report concentration, remove-two-best view, losses, missingness and cost sensitivity without selecting a favorable variant"
+    ],
+    "otherwise": "INCONCLUSIVE if coverage, controls or mandatory evidence are insufficient. A positive but fragile result is not validated; independent review decides whether any further research is justified.",
+    "forbidden": "No PROVEN label, live BUY, automatic promotion after30 trades, significance threshold invented from this pilot, or winner-preserving filter stacking."
+  },
+  "evidence": {
+    "sourceArchive": "Private, timestamped original source/response bytes plus content hashes and provenance; public documentation contains only sanitized aggregates.",
+    "observationsLog": "a-catalyst-reclaim-observations.jsonl: one record per candidate assessment, including no-trades; observationId/securityId/policyHash, source and capture clocks, decision clock, ZAD validity evidence, quote/feed/unit/condition/age/size evidence, opening/reclaim evidence, disposition and reason. Repeat assessments link to a stable candidate ID.",
+    "dispositionCodes": [
+      "RESEARCH_ONLY",
+      "STALE_QUOTE",
+      "SPREAD_TOO_WIDE",
+      "NO_QUALIFYING_SETUP",
+      "DETECTED_LATE",
+      "MISSING_DATA",
+      "NOT_TRADABLE",
+      "CORRECTLY_REJECTED"
+    ],
+    "lateClassification": "Use retained clocks and the predefined entry expiry; do not assert late detection from an arbitrarily chosen60-minute threshold or from a later price rise. Unknown original clocks remain MISSING_DATA.",
+    "decisionCard": "One immutable A paper card per eligible candidate, linked by card/input/policy hashes. Entry reference/expiry/whole-share size/invalidation/exit and limitations; no real order.",
+    "outcomeLog": "a-catalyst-reclaim-outcomes.jsonl: append events linked to original card hash; quote-based entry/exit, fee/slippage views, failures/unknowns and both predeclared controls. Missing outcomes are not silently omitted.",
+    "delivery": "For an offline pilot delivery delay is NOT_APPLICABLE; for a separately approved shadow-delivery pilot preserve actual capture/send/Telegram acknowledgment clocks. Never fabricate a delivery time or send real test messages.",
+    "existingRunner": "Existing CLI outputs one JSON report/ledger to stdout. It does not yet implement these two durable JSONL logs or an authenticated A source collector. Raw retention, authoritative source adapters and control generation need implementation/review."
+  },
+  "activationChecklist": [
+    "Independent A code and hypothesis review with exact pins; resolve findings",
+    "Authenticated source/archive and quote/size/condition/calendar/identity contracts; valid ZAD-at-decision checks",
+    "Outcome-independent candidate universe, control selection and precise observation/deduplication clocks",
+    "Durable observations/outcomes and original-card binding tested with actual callers",
+    "Exact dates, endpoints, request/storage/retention limits and private custody frozen",
+    "One separately reviewed owner approval for A data acquisition/pilot; IG1 approval cannot authorize A"
+  ],
+  "relationToIG1": "The 12-case IG1 audit tests historical data/cost feasibility only. Useful field-contract findings may be reused; cases, trades, verdicts, authority and outputs never count as A evidence."
+}
