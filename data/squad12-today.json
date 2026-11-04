@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-03T01:15:54.119Z",
- "lastClose": "2026-11-02",
+ "generatedAt": "2026-11-04T01:17:52.789Z",
+ "lastClose": "2026-11-03",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Squad 12: events in the 300 largest US companies (SQ12-*). newSignals = signals on the last close (buy at the next open, hold 63 sessions). Nothing here is a buy by itself: a rule needs a frozen 5-year verdict that qualifies (data/squad12-lab.json firstRun). Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
@@ -8,35 +8,76 @@
    "name": "Big company: earnings gap-up of 3%+ that closes in the upper half of the day",
    "hold": 63,
    "tier": "NOT PROVEN",
-   "newSignals": [
-    {
-     "sym": "IDXX",
-     "close": 671.64,
-     "halal": "unknown",
-     "rank": 213,
-     "ev": "2026-11-02 06:30 NY 0001104659-26-120892"
-    }
-   ]
+   "newSignals": []
   },
   "SQ12-EARN52H": {
    "name": "Big company closes at a new 52-week high on its earnings reaction day",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": [
-    {
-     "sym": "MAR",
-     "close": 416.3,
-     "halal": "unknown",
-     "rank": 100,
-     "ev": "2026-11-02 07:00 NY 0001048286-26-000040"
-    }
-   ]
+   "newSignals": []
   },
   "SQ12-REVEPS": {
    "name": "Big company 10-Q: revenue AND diluted EPS both up 10%+ on the same quarter last year",
    "hold": 63,
    "tier": "NOT PROVEN",
-   "newSignals": []
+   "newSignals": [
+    {
+     "sym": "PNC",
+     "close": 229.41,
+     "halal": "unknown",
+     "rank": 124,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +10.9% eps +14.3%"
+    },
+    {
+     "sym": "AME",
+     "close": 248.58,
+     "halal": "unknown",
+     "rank": 201,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +17.3% eps +15.6%"
+    },
+    {
+     "sym": "LITE",
+     "close": 680.16,
+     "halal": "unknown",
+     "rank": 188,
+     "ev": "10-Q 2026-11-03 q 2026-09-26 rev +136.5% eps +6980.0%"
+    },
+    {
+     "sym": "MPC",
+     "close": 427.34,
+     "halal": "fail",
+     "rank": 88,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +61.0% eps +489.6%"
+    },
+    {
+     "sym": "MPWR",
+     "close": 1328.3,
+     "halal": "unknown",
+     "rank": 189,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +63.1% eps +47.3%"
+    },
+    {
+     "sym": "PLTR",
+     "close": 175.4,
+     "halal": "fail",
+     "rank": 21,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +95.9% eps +144.4%"
+    },
+    {
+     "sym": "ABBV",
+     "close": 286,
+     "halal": "ok",
+     "rank": 19,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +10.3% eps +2270.0%"
+    },
+    {
+     "sym": "O",
+     "close": 57.5,
+     "halal": "unknown",
+     "rank": 204,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +10.3% eps +22.9%"
+    }
+   ]
   },
   "SQ12-ACCEL2": {
    "name": "Big company whose revenue growth accelerated two quarters in a row (10-Q / 10-K)",
@@ -44,11 +85,46 @@
    "tier": "REJECTED",
    "newSignals": [
     {
-     "sym": "EL",
-     "close": 104.77,
+     "sym": "AME",
+     "close": 248.58,
      "halal": "unknown",
-     "rank": 267,
-     "ev": "10-Q 2026-11-02 q 2026-09-30 growth +6.7% > +6.3% > +4.6%"
+     "rank": 201,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +17.3% > +15.0% > +11.3%"
+    },
+    {
+     "sym": "MPC",
+     "close": 427.34,
+     "halal": "fail",
+     "rank": 88,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +61.0% > +53.8% > +8.5%"
+    },
+    {
+     "sym": "MPWR",
+     "close": 1328.3,
+     "halal": "unknown",
+     "rank": 189,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +63.1% > +47.6% > +26.1%"
+    },
+    {
+     "sym": "PLTR",
+     "close": 175.4,
+     "halal": "fail",
+     "rank": 21,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +95.9% > +92.8% > +84.7%"
+    },
+    {
+     "sym": "ADM",
+     "close": 70.6,
+     "halal": "unknown",
+     "rank": 276,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +9.6% > +7.2% > +1.6%"
+    },
+    {
+     "sym": "XYZ",
+     "close": 76,
+     "halal": "unknown",
+     "rank": 235,
+     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +9.9% > +9.3% > +4.9%"
     }
    ]
   },
