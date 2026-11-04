@@ -12,6 +12,7 @@ function fixture() {
 test('valid synthetic sequence yields paper-only card, whole shares and no mutation',()=>{const x=fixture(),before=JSON.stringify(x),p=JSON.stringify(policy),r=assessReclaim(x,policy);assert.equal(r.status,'PAPER_SETUP_ONLY');assert.equal(r.actionable,false);assert.equal(r.realDollars,0);assert.equal(r.card.entryIsFill,false);assert.equal(r.card.paperShares,94);assert.equal(JSON.stringify(x),before);assert.equal(JSON.stringify(policy),p);});
 const controls = [
  ['options excluded',x=>x.instrument='OPTION','UNSUPPORTED_INSTRUMENT'],
+ ['impossible session date',x=>x.sessionOpen='2026-02-30T14:30:00Z','INVALID_SESSION_CLOCK'],
  ['ZAD required',x=>x.zad='UNKNOWN','ZAD_NOT_CONFIRMED'],
  ['stale quote',x=>x.quote.at='2026-11-04T14:40:00Z','STALE_OR_INVALID_QUOTE_CLOCK'],
  ['future quote',x=>x.quote.at='2026-11-04T14:46:00Z','STALE_OR_INVALID_QUOTE_CLOCK'],

@@ -1,0 +1,381 @@
+{
+  "schemaVersion": 1,
+  "origin": "SYNTHETIC",
+  "datasetId": "SYNTHETIC_DEMO_NOT_MARKET_EVIDENCE",
+  "policy": {
+    "id": "UNAPPROVED_CONTRACT_RECLAIM_RESEARCH_1",
+    "version": 1,
+    "mode": "OFFLINE_RESEARCH_ONLY",
+    "adopted": false,
+    "minPrice": 2,
+    "minDollarVolume": 500000,
+    "maxSpreadPct": 3,
+    "maxQuoteAgeMs": 30000,
+    "materialityRatio": 0.1,
+    "openingBarMs": 300000,
+    "maxTriggerAgeMs": 30000,
+    "minOpeningVolumeRatio": 1.5,
+    "maxHoldSessions": 5,
+    "exitRule": "FIRST_CLOSE_BELOW_OPENING_LOW_ELSE_MAX_SESSION_CLOSE",
+    "exitContract": "PROPOSED ONLY: max 5 sessions; close below opening low exits next session open",
+    "invalidationContract": "PROPOSED ONLY: close below opening low; no intraday stop or target",
+    "commissionPerSideUsd": 3,
+    "slippagePerSidePct": 0.25,
+    "maxExitQuoteAgeMs": 30000
+  },
+  "observations": [
+    {
+      "observationId": "SYNTHETIC_OBSERVATION_1",
+      "symbol": "TEST",
+      "securityId": "SYNTHETIC_SECURITY",
+      "identityEvidenceId": "SYNTHETIC_IDENTITY",
+      "identityAsOf": "2026-11-03T21:00:00Z",
+      "instrument": "US_COMMON_STOCK",
+      "zad": "YES",
+      "zadAsOf": "2026-11-03T21:00:00Z",
+      "zadEvidenceId": "SYNTHETIC_OWNER_MARK",
+      "asOf": "2026-11-04T14:45:05Z",
+      "sessionOpen": "2026-11-04T14:30:00Z",
+      "sessionClose": "2026-11-04T21:00:00Z",
+      "calendar": {
+        "source": "SYNTHETIC_TEST_NOT_AUTHORITATIVE",
+        "evidenceId": "SYNTHETIC_CALENDAR",
+        "sessions": [
+          {
+            "date": "2026-11-03",
+            "open": "2026-11-03T14:30:00Z",
+            "close": "2026-11-03T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-03"
+          },
+          {
+            "date": "2026-11-04",
+            "open": "2026-11-04T14:30:00Z",
+            "close": "2026-11-04T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-04"
+          },
+          {
+            "date": "2026-11-05",
+            "open": "2026-11-05T14:30:00Z",
+            "close": "2026-11-05T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-05"
+          },
+          {
+            "date": "2026-11-06",
+            "open": "2026-11-06T14:30:00Z",
+            "close": "2026-11-06T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-06"
+          },
+          {
+            "date": "2026-11-09",
+            "open": "2026-11-09T14:30:00Z",
+            "close": "2026-11-09T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-09"
+          },
+          {
+            "date": "2026-11-10",
+            "open": "2026-11-10T14:30:00Z",
+            "close": "2026-11-10T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-10"
+          },
+          {
+            "date": "2026-11-11",
+            "open": "2026-11-11T14:30:00Z",
+            "close": "2026-11-11T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-11"
+          }
+        ]
+      },
+      "prior20DayDollarVolume": 1000000,
+      "liquidityAsOf": "2026-11-03T21:00:00Z",
+      "liquidityEvidenceId": "SYNTHETIC_LIQUIDITY",
+      "paperBudgetUsd": 1000,
+      "catalyst": {
+        "securityId": "SYNTHETIC_SECURITY",
+        "sourceId": "SYNTHETIC_DOCUMENT",
+        "sourceUrl": "https://example.invalid/synthetic",
+        "documentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "verification": "VERIFIED_MATERIAL_AGREEMENT",
+        "publishedAt": "2026-11-04T13:00:00Z",
+        "observedAt": "2026-11-04T13:01:00Z",
+        "firstTradableSessionOpen": "2026-11-04T14:30:00Z",
+        "priorSessionDate": "2026-11-03",
+        "contractValueUsd": 20000000,
+        "priorMarketCapUsd": 100000000,
+        "marketCapAsOf": "2026-11-03T21:00:00Z",
+        "currency": "USD",
+        "contractValueBasis": "FIXED_COMMITTED_NOT_CEILING"
+      },
+      "quote": {
+        "symbol": "TEST",
+        "securityId": "SYNTHETIC_SECURITY",
+        "source": "SYNTHETIC",
+        "evidenceId": "SYNTHETIC_ENTRY_QUOTE",
+        "at": "2026-11-04T14:45:04Z",
+        "observedAt": "2026-11-04T14:45:05Z",
+        "sourceDelayMs": 0,
+        "sizeUnits": "SHARES",
+        "bid": 10.49,
+        "ask": 10.5,
+        "bidSize": 1000,
+        "askSize": 1000
+      },
+      "bars": [
+        {
+          "symbol": "TEST",
+          "securityId": "SYNTHETIC_SECURITY",
+          "start": "2026-11-04T14:30:00Z",
+          "end": "2026-11-04T14:35:00Z",
+          "availableAt": "2026-11-04T14:35:00Z",
+          "open": 10,
+          "high": 10.4,
+          "low": 9.9,
+          "close": 10.3,
+          "volume": 2000,
+          "dollarVolume": 21000,
+          "prior20SessionMedianVolume": 1000,
+          "priorVolumeEvidenceId": "SYNTHETIC_PRIOR_VOLUME",
+          "evidenceId": "SYNTHETIC_BAR_1"
+        },
+        {
+          "symbol": "TEST",
+          "securityId": "SYNTHETIC_SECURITY",
+          "start": "2026-11-04T14:35:00Z",
+          "end": "2026-11-04T14:40:00Z",
+          "availableAt": "2026-11-04T14:40:00Z",
+          "open": 10.3,
+          "high": 10.35,
+          "low": 10.1,
+          "close": 10.2,
+          "volume": 2000,
+          "dollarVolume": 21000,
+          "prior20SessionMedianVolume": 1000,
+          "priorVolumeEvidenceId": "SYNTHETIC_PRIOR_VOLUME",
+          "evidenceId": "SYNTHETIC_BAR_2"
+        },
+        {
+          "symbol": "TEST",
+          "securityId": "SYNTHETIC_SECURITY",
+          "start": "2026-11-04T14:40:00Z",
+          "end": "2026-11-04T14:45:00Z",
+          "availableAt": "2026-11-04T14:45:00Z",
+          "open": 10.2,
+          "high": 10.6,
+          "low": 10.15,
+          "close": 10.5,
+          "volume": 2000,
+          "dollarVolume": 21000,
+          "prior20SessionMedianVolume": 1000,
+          "priorVolumeEvidenceId": "SYNTHETIC_PRIOR_VOLUME",
+          "evidenceId": "SYNTHETIC_BAR_3"
+        }
+      ]
+    },
+    {
+      "observationId": "SYNTHETIC_STALE_QUOTE",
+      "symbol": "TEST",
+      "securityId": "SYNTHETIC_SECURITY",
+      "identityEvidenceId": "SYNTHETIC_IDENTITY",
+      "identityAsOf": "2026-11-03T21:00:00Z",
+      "instrument": "US_COMMON_STOCK",
+      "zad": "YES",
+      "zadAsOf": "2026-11-03T21:00:00Z",
+      "zadEvidenceId": "SYNTHETIC_OWNER_MARK",
+      "asOf": "2026-11-04T14:45:05Z",
+      "sessionOpen": "2026-11-04T14:30:00Z",
+      "sessionClose": "2026-11-04T21:00:00Z",
+      "calendar": {
+        "source": "SYNTHETIC_TEST_NOT_AUTHORITATIVE",
+        "evidenceId": "SYNTHETIC_CALENDAR",
+        "sessions": [
+          {
+            "date": "2026-11-03",
+            "open": "2026-11-03T14:30:00Z",
+            "close": "2026-11-03T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-03"
+          },
+          {
+            "date": "2026-11-04",
+            "open": "2026-11-04T14:30:00Z",
+            "close": "2026-11-04T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-04"
+          },
+          {
+            "date": "2026-11-05",
+            "open": "2026-11-05T14:30:00Z",
+            "close": "2026-11-05T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-05"
+          },
+          {
+            "date": "2026-11-06",
+            "open": "2026-11-06T14:30:00Z",
+            "close": "2026-11-06T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-06"
+          },
+          {
+            "date": "2026-11-09",
+            "open": "2026-11-09T14:30:00Z",
+            "close": "2026-11-09T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-09"
+          },
+          {
+            "date": "2026-11-10",
+            "open": "2026-11-10T14:30:00Z",
+            "close": "2026-11-10T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-10"
+          },
+          {
+            "date": "2026-11-11",
+            "open": "2026-11-11T14:30:00Z",
+            "close": "2026-11-11T21:00:00Z",
+            "evidenceId": "SYNTHETIC_CALENDAR_2026-11-11"
+          }
+        ]
+      },
+      "prior20DayDollarVolume": 1000000,
+      "liquidityAsOf": "2026-11-03T21:00:00Z",
+      "liquidityEvidenceId": "SYNTHETIC_LIQUIDITY",
+      "paperBudgetUsd": 1000,
+      "catalyst": {
+        "securityId": "SYNTHETIC_SECURITY",
+        "sourceId": "SYNTHETIC_DOCUMENT",
+        "sourceUrl": "https://example.invalid/synthetic",
+        "documentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "verification": "VERIFIED_MATERIAL_AGREEMENT",
+        "publishedAt": "2026-11-04T13:00:00Z",
+        "observedAt": "2026-11-04T13:01:00Z",
+        "firstTradableSessionOpen": "2026-11-04T14:30:00Z",
+        "priorSessionDate": "2026-11-03",
+        "contractValueUsd": 20000000,
+        "priorMarketCapUsd": 100000000,
+        "marketCapAsOf": "2026-11-03T21:00:00Z",
+        "currency": "USD",
+        "contractValueBasis": "FIXED_COMMITTED_NOT_CEILING"
+      },
+      "quote": {
+        "symbol": "TEST",
+        "securityId": "SYNTHETIC_SECURITY",
+        "source": "SYNTHETIC",
+        "evidenceId": "SYNTHETIC_ENTRY_QUOTE",
+        "at": "2026-11-04T14:40:00Z",
+        "observedAt": "2026-11-04T14:45:05Z",
+        "sourceDelayMs": 0,
+        "sizeUnits": "SHARES",
+        "bid": 10.49,
+        "ask": 10.5,
+        "bidSize": 1000,
+        "askSize": 1000
+      },
+      "bars": [
+        {
+          "symbol": "TEST",
+          "securityId": "SYNTHETIC_SECURITY",
+          "start": "2026-11-04T14:30:00Z",
+          "end": "2026-11-04T14:35:00Z",
+          "availableAt": "2026-11-04T14:35:00Z",
+          "open": 10,
+          "high": 10.4,
+          "low": 9.9,
+          "close": 10.3,
+          "volume": 2000,
+          "dollarVolume": 21000,
+          "prior20SessionMedianVolume": 1000,
+          "priorVolumeEvidenceId": "SYNTHETIC_PRIOR_VOLUME",
+          "evidenceId": "SYNTHETIC_BAR_1"
+        },
+        {
+          "symbol": "TEST",
+          "securityId": "SYNTHETIC_SECURITY",
+          "start": "2026-11-04T14:35:00Z",
+          "end": "2026-11-04T14:40:00Z",
+          "availableAt": "2026-11-04T14:40:00Z",
+          "open": 10.3,
+          "high": 10.35,
+          "low": 10.1,
+          "close": 10.2,
+          "volume": 2000,
+          "dollarVolume": 21000,
+          "prior20SessionMedianVolume": 1000,
+          "priorVolumeEvidenceId": "SYNTHETIC_PRIOR_VOLUME",
+          "evidenceId": "SYNTHETIC_BAR_2"
+        },
+        {
+          "symbol": "TEST",
+          "securityId": "SYNTHETIC_SECURITY",
+          "start": "2026-11-04T14:40:00Z",
+          "end": "2026-11-04T14:45:00Z",
+          "availableAt": "2026-11-04T14:45:00Z",
+          "open": 10.2,
+          "high": 10.6,
+          "low": 10.15,
+          "close": 10.5,
+          "volume": 2000,
+          "dollarVolume": 21000,
+          "prior20SessionMedianVolume": 1000,
+          "priorVolumeEvidenceId": "SYNTHETIC_PRIOR_VOLUME",
+          "evidenceId": "SYNTHETIC_BAR_3"
+        }
+      ]
+    }
+  ],
+  "exits": {
+    "SYNTHETIC_OBSERVATION_1": {
+      "asOf": "2026-11-10T21:01:00Z",
+      "sessionCloses": [
+        {
+          "sessionDate": "2026-11-04",
+          "securityId": "SYNTHETIC_SECURITY",
+          "evidenceId": "SYNTHETIC_CLOSE_2026-11-04",
+          "at": "2026-11-04T21:00:00Z",
+          "availableAt": "2026-11-04T21:00:00Z",
+          "close": 11
+        },
+        {
+          "sessionDate": "2026-11-05",
+          "securityId": "SYNTHETIC_SECURITY",
+          "evidenceId": "SYNTHETIC_CLOSE_2026-11-05",
+          "at": "2026-11-05T21:00:00Z",
+          "availableAt": "2026-11-05T21:00:00Z",
+          "close": 11
+        },
+        {
+          "sessionDate": "2026-11-06",
+          "securityId": "SYNTHETIC_SECURITY",
+          "evidenceId": "SYNTHETIC_CLOSE_2026-11-06",
+          "at": "2026-11-06T21:00:00Z",
+          "availableAt": "2026-11-06T21:00:00Z",
+          "close": 11
+        },
+        {
+          "sessionDate": "2026-11-09",
+          "securityId": "SYNTHETIC_SECURITY",
+          "evidenceId": "SYNTHETIC_CLOSE_2026-11-09",
+          "at": "2026-11-09T21:00:00Z",
+          "availableAt": "2026-11-09T21:00:00Z",
+          "close": 11
+        },
+        {
+          "sessionDate": "2026-11-10",
+          "securityId": "SYNTHETIC_SECURITY",
+          "evidenceId": "SYNTHETIC_CLOSE_2026-11-10",
+          "at": "2026-11-10T21:00:00Z",
+          "availableAt": "2026-11-10T21:00:00Z",
+          "close": 11
+        }
+      ],
+      "quote": {
+        "symbol": "TEST",
+        "securityId": "SYNTHETIC_SECURITY",
+        "source": "SYNTHETIC",
+        "evidenceId": "SYNTHETIC_EXIT_QUOTE",
+        "at": "2026-11-10T20:59:59Z",
+        "observedAt": "2026-11-10T21:00:00Z",
+        "sourceDelayMs": 0,
+        "sizeUnits": "SHARES",
+        "bid": 11,
+        "ask": 11.01,
+        "bidSize": 1000,
+        "askSize": 1000
+      }
+    }
+  }
+}

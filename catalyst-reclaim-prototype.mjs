@@ -3,7 +3,11 @@
 export function assessReclaim(input, policy) {
   const reject = reason => ({status: 'NO_PAPER_SETUP', reason, actionable: false, realDollars: 0});
   const unknown = reason => ({...reject(reason), status: 'UNKNOWN'});
-  const time = value => typeof value === 'string' && /(?:Z|[+-]\d\d:\d\d)$/.test(value) ? Date.parse(value) : NaN;
+  const time = value => {
+    if (typeof value !== 'string' || !/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,3})?Z$/.test(value)) return NaN;
+    const ms=Date.parse(value);
+    return Number.isFinite(ms) && new Date(ms).toISOString().slice(0,19)===value.slice(0,19) ? ms : NaN;
+  };
   const positive = value => Number.isFinite(value) && value > 0;
   if (!policy || !policy.id || ![policy.minPrice, policy.minDollarVolume, policy.maxSpreadPct, policy.maxQuoteAgeMs, policy.materialityRatio, policy.openingBarMs].every(positive) || !policy.exitContract || !policy.invalidationContract) return unknown('INCOMPLETE_PROPOSED_POLICY');
   if (!input || typeof input.symbol !== 'string' || !input.symbol) return unknown('MISSING_IDENTITY');
