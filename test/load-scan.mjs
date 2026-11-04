@@ -34,6 +34,9 @@ export async function loadScan({ files = {}, env = {} } = {}) {
   const last = src.pop(); if (!/^await \(MODE ===/.test(last)) throw new Error('scan.mjs no longer ends with its main call; update test/load-scan.mjs: ' + last.slice(0, 80));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
   fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
+  // (4 Nov) local modules scan.mjs imports statically (e.g. './stop-watch.mjs') are copied beside the copy, from the same tree
+  const srcDir = path.dirname(process.env.SCAN_SRC ? path.resolve(process.env.SCAN_SRC) : path.join(REPO, 'scan.mjs'));
+  for (const m of new Set([...src.join('\n').matchAll(/^import [^;]*? from '\.\/([\w.-]+\.mjs)';/gm)].map(x => x[1]))) { const f = fs.existsSync(path.join(srcDir, m)) ? path.join(srcDir, m) : path.join(REPO, m); fs.copyFileSync(f, path.join(dir, m)); }
   fs.mkdirSync(path.join(dir, 'data'));
   // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags
   const st0 = files['data/settings.json']; writeFixture(dir, 'data/settings.json', typeof st0 === 'string' ? st0 : { ...DONE, ...(st0 || {}) });
