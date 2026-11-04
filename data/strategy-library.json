@@ -33184,6 +33184,54 @@
     "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5023151"
    ],
    "note": "Web scout 3 Nov 2026 (Buyback guidance and the agency costs of cash, SSRN 2024-25). Needs a reliable parser of 8-K exhibit 99.1 text for repurchase targets (EDGAR full-text search is official but phrase matching is fragile, see SQ1-BBAUTH). Unlock: a validated 8-K text parser. Queue position 4."
+  },
+  {
+   "id": "RQ-GWI-AV126",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: goodwill impairment of 1%+ of assets in a new 10-Q/10-K, 126 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-04 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: a 10-Q/10-K (filed within 120 days of the period end) reports a NEW goodwill impairment (us-gaap GoodwillImpairmentLoss, net of the same-start year-to-date already reported) of 1%+ of total assets (assets 10M USD+); bought next open, 126 sessions; a valid AVOID / SELL filter if these stocks lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, new-impairment netting, event timing, assets scaling, thresholds and data rule fixed in research-core.mjs (IDEA 9) before any run.",
+   "sources": [
+    "https://rpc.cfainstitute.org/research/financial-analysts-journal/2003/investor-underreaction-to-goodwill-write-offs",
+    "https://ideas.repec.org/a/taf/ufajxx/v59y2003i6p75-84.html",
+    "https://researchconnect.buffalo.edu/en/publications/overpriced-shares-ill-advised-acquisitions-and-goodwill-impairmen/"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-GWI-AV63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: goodwill impairment of 1%+ of assets, 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-04 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-GWI-AV126, 63 sessions. Never a buy. Measure, new-impairment netting, event timing, assets scaling, thresholds and data rule fixed in research-core.mjs (IDEA 9) before any run.",
+   "sources": [
+    "https://rpc.cfainstitute.org/research/financial-analysts-journal/2003/investor-underreaction-to-goodwill-write-offs",
+    "https://ideas.repec.org/a/taf/ufajxx/v59y2003i6p75-84.html",
+    "https://researchconnect.buffalo.edu/en/publications/overpriced-shares-ill-advised-acquisitions-and-goodwill-impairmen/"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-GWI-BIG126",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: large goodwill impairment (5%+ of assets), 126 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-04 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-GWI-AV126 with a new impairment of 5%+ of total assets. Never a buy. Measure, new-impairment netting, event timing, assets scaling, thresholds and data rule fixed in research-core.mjs (IDEA 9) before any run.",
+   "sources": [
+    "https://rpc.cfainstitute.org/research/financial-analysts-journal/2003/investor-underreaction-to-goodwill-write-offs",
+    "https://ideas.repec.org/a/taf/ufajxx/v59y2003i6p75-84.html",
+    "https://researchconnect.buffalo.edu/en/publications/overpriced-shares-ill-advised-acquisitions-and-goodwill-impairmen/"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
   }
  ]
 }

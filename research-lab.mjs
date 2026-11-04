@@ -23,7 +23,8 @@ import { RULES, IDS, LAZY_IDS, TENDER_IDS, TO, parseSubmission, offerPrice, spre
   preRegister, termFreq, tenKs, docUrl, pairPrev, pairSim, makeRanker, sideOf, dataComplete,
   ISC, ISC_IDS, sdOf, isShock, eightKs, reactionDate, isEarnings, newsOk, iscDataRule, RPO, RPO_IDS, rpoRows, rpoEvents, rpoDataRule,
   EAT, EAT_IDS, eatAnnouncements, eatEvents, eatDataRule, TAX, TAX_IDS, taxRows, taxEvents, taxDataRule,
-  RDI, RDI_IDS, rdiRows, rdiEvents, rdiDataRule, INV, INV_IDS, invRows, invEvents, invDataRule } from './research-core.mjs';
+  RDI, RDI_IDS, rdiRows, rdiEvents, rdiDataRule, INV, INV_IDS, invRows, invEvents, invDataRule,
+  GWI, GWI_IDS, gwiRows, gwiEvents, gwiDataRule } from './research-core.mjs';
 import { execFileSync } from 'node:child_process';
 import { secNY } from './sec-time.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -422,9 +423,43 @@ for (const id of INV_IDS.filter(x => !FROZEN[x])) { if (!VDATA.ok) { RES[id] = {
     trades: tr.map(z => ({ s: z.s, sig: D[z.t], buy: D[z.k], sell: D[z.x], pct: z.p, net: r4(z.g - COST), avgStock: r4(z.c - COST), sameStock: r4(z.own === null || z.own === undefined ? null : z.own - COST) })) };
   const f = (h) => (h.n || 0) + ' (' + (h.days || 0) + 'd, ' + (h.blocks || 0) + 'bl) avg ' + pc(h.avg) + ' stress ' + pc(h.avgStress) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' no2 ' + pc(h.noTop2) + ' tBlock ' + h.tBlock + ' win ' + pc(h.win);
   log('- ' + id + ': ' + RES[id].verdict + ' | older ' + f(R.older) + ' | newer ' + f(R.newer) + ' | ' + JSON.stringify(tailSplit) + (RES[id].grossEdge ? ' | gross edge ' + JSON.stringify(RES[id].grossEdge) + ' t ' + JSON.stringify(RES[id].grossTBlock) : '') + ' | ' + RES[id].why.slice(0, 300)); }
+// ================= 5i. IDEA 9: GOODWILL IMPAIRMENTS, AVOID / SELL-warning check (pre-registered 4 Nov 2026; research-core.mjs IDEA 9) =================
+// Data: us-gaap:GoodwillImpairmentLoss (durations) + us-gaap:Assets from the official SEC bulk company facts file (companyfacts.zip, read
+// once into research-cache/gwi.json.gz; universe companies only). Avoid checks only: no paper buy lane.
+const GWIF = RC + '/gwi.json.gz', GSTAT = { companies: CIKS.length, looked: 0, withImp: 0, facts: 0, events: 0, liqMonths, liqMapped, noSym: 0, notLiquid: 0, small: 0, big: 0, q4: 0 };
+let GWC = JZ(GWIF, { at: null, c: {} });
+{ const todo = CIKS.filter(c => GWC.c[c] === undefined);
+  if (todo.length && left() > 50 * 60e3 && !local(env.SEC_BASE)) { const zip = RC + '/companyfacts.zip';
+    let zipOk = false; try { execFileSync('curl', ['-sS', '-f', '-L', '--retry', '3', '-A', UA, '-o', zip, SEC + '/Archives/edgar/daily-index/xbrl/companyfacts.zip'], { stdio: ['ignore', 'ignore', 'pipe'], timeout: 40 * 60e3 }); zipOk = fs.statSync(zip).size > 1e8; } catch (e) { log('companyfacts.zip download failed (gwi): ' + String(e.message).slice(0, 200)); }
+    if (zipOk) { let n = 0; const names = new Set(execFileSync('unzip', ['-Z1', zip], { maxBuffer: 1 << 26 }).toString().split('\n').filter(Boolean));
+      for (const c of todo) { if (left() < 30 * 60e3) break; const name = 'CIK' + pad(c) + '.json'; if (!names.has(name)) { GWC.c[c] = { f: [], a: [] }; continue; }
+        try { GWC.c[c] = gwiRows(JSON.parse(execFileSync('unzip', ['-p', zip, name], { maxBuffer: 1 << 30, stdio: ['ignore', 'pipe', 'ignore'] }).toString())); } catch (e) { continue; }
+        if (++n % 1000 === 0) log('company facts (gwi): ' + n + ' read'); }
+      try { fs.unlinkSync(zip); } catch (e) {} GWC.at = new Date().toISOString(); fs.writeFileSync(GWIF, zlib.gzipSync(JSON.stringify(GWC))); } } }
+const GEVS = [];
+for (const c of CIKS) { const rows = GWC.c[c]; if (rows === undefined) continue; GSTAT.looked++; if (!rows.f.length) continue; GSTAT.withImp++; GSTAT.facts += rows.f.length;
+  for (const e of gwiEvents(rows)) GEVS.push({ cik: c, ...e }); }
+const gIn = GEVS.filter(e => e.d >= GWI.eventsFrom && e.d <= D[T - 1]);
+GSTAT.events = gIn.filter(e => e.s >= GWI.small).length; GSTAT.eventsAny = gIn.length; GSTAT.eventsBig = gIn.filter(e => e.s >= GWI.big).length; GSTAT.q4 = gIn.filter(e => e.form === '10-K' && e.s >= GWI.small).length;
+const GDATA = gwiDataRule({ ...GSTAT, ciks: CIKS.length }); GSTAT.complete = GDATA.ok; GSTAT.ratios = GDATA.ratios; GSTAT.why = GDATA.why;
+const GEV = [];
+for (const z of gIn) { if (!(z.s >= GWI.small)) continue; const sym = symFor(z.cik, z.d); if (!sym) { GSTAT.noSym++; continue; } const i = SY.get(sym), k = firstAfter(z.d), t = Math.min(k - 1, T - 1); if (t < 1) continue; if (!liqOn(i, t)) { GSTAT.notLiquid++; continue; }
+  GSTAT.small++; if (z.s >= GWI.big) GSTAT.big++; GEV.push({ t, i, k, d: z.d, p: z.s, end: z.end, future: k >= T }); }
+log('goodwill impairment data: ' + JSON.stringify(GSTAT));
+const gwiSignals = (id) => GEV.filter(z => z.p >= RULES[id].min).map(z => ({ ...z, x: z.k + H(id) - 1 }));
+for (const id of GWI_IDS.filter(x => !FROZEN[x])) { if (!GDATA.ok) { RES[id] = { verdict: 'NOT RUN', why: 'goodwill impairment data rule not met yet: ' + GDATA.why }; continue; } if (left() < 6 * 60e3) { RES[id] = { verdict: 'NOT RUN', why: 'time budget used up this run' }; continue; }
+  const tr = tradesOf(id, gwiSignals(id)), hold = H(id), R = { older: halfStat(tr.filter(z => z.half === 'older'), hold), newer: halfStat(tr.filter(z => z.half === 'newer'), hold), all: halfStat(tr, hold) };
+  const gross = (a) => a.map(z => ({ ...z, g: z.g + COST })), Rg = { older: halfStat(gross(tr.filter(z => z.half === 'older')), hold), newer: halfStat(gross(tr.filter(z => z.half === 'newer')), hold) };
+  const v = { ...avoidVerdict(Rg), grossEdge: { older: Rg.older.edge ?? null, newer: Rg.newer.edge ?? null }, grossTBlock: { older: Rg.older.tBlock ?? null, newer: Rg.newer.tBlock ?? null } };
+  const big = tr.filter(z => z.p >= GWI.big), rest = tr.filter(z => z.p < GWI.big), edgeN = (a) => a.length ? r4(mean(a.map(z => z.g - z.c))) : null, avgG = (a) => a.length ? r4(mean(a.map(z => z.g))) : null;
+  const sizeSplit = { big5pct: { n: big.length, avgGross: avgG(big), edge: edgeN(big) }, under5pct: { n: rest.length, avgGross: avgG(rest), edge: edgeN(rest) } };
+  RES[id] = { ...v, results: R, sizeSplit, shape: shapeOf(tr, z => D[z.t].slice(0, 4)), hold, kind: 'avoid', family: 'gwi', name: RULES[id].name, split: SPLIT, cost: COST, yardstick: 'capBoth (AUD-1); the average liquid stock over the same entry-to-exit sessions; judged gross vs gross',
+    trades: tr.map(z => ({ s: z.s, sig: D[z.t], buy: D[z.k], sell: D[z.x], size: z.p, gross: r4(z.g), avgStock: r4(z.c), sameStock: r4(z.own === null || z.own === undefined ? null : z.own) })) };
+  const f = (h) => (h.n || 0) + ' (' + (h.days || 0) + 'd, ' + (h.blocks || 0) + 'bl) avg ' + pc(h.avg) + ' edge ' + pc(h.edge) + ' own ' + pc(h.vsOwn) + ' tBlock ' + h.tBlock + ' win ' + pc(h.win);
+  log('- ' + id + ': ' + RES[id].verdict + ' | older ' + f(R.older) + ' | newer ' + f(R.newer) + ' | ' + JSON.stringify(sizeSplit) + ' | gross edge ' + JSON.stringify(RES[id].grossEdge) + ' t ' + JSON.stringify(RES[id].grossTBlock) + ' | ' + RES[id].why.slice(0, 300)); }
 const strip = (r) => { const { trades, ...rest } = r; return rest; };
 const isJudged = (r) => r && r.verdict && r.verdict !== 'NOT RUN';
-const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], bar: BAR, data: RULES[k].family === 'tender' ? { ...TSTAT } : RULES[k].family === 'isc' ? { ...ISTAT } : RULES[k].family === 'rpo' ? { ...RSTAT } : RULES[k].family === 'eat' ? { ...ESTAT, multi: { ...ESTAT.multi } } : RULES[k].family === 'tax' ? { ...XSTAT } : RULES[k].family === 'rdi' ? { ...DSTAT } : RULES[k].family === 'inv' ? { ...VSTAT } : { ...STATUS, failSample: undefined }, ...strip(r) }])), isJudged);
+const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], bar: BAR, data: RULES[k].family === 'tender' ? { ...TSTAT } : RULES[k].family === 'isc' ? { ...ISTAT } : RULES[k].family === 'rpo' ? { ...RSTAT } : RULES[k].family === 'eat' ? { ...ESTAT, multi: { ...ESTAT.multi } } : RULES[k].family === 'tax' ? { ...XSTAT } : RULES[k].family === 'rdi' ? { ...DSTAT } : RULES[k].family === 'inv' ? { ...VSTAT } : RULES[k].family === 'gwi' ? { ...GSTAT } : { ...STATUS, failSample: undefined }, ...strip(r) }])), isJudged);
 
 // ================= 6. PAPER LANE (from 26 Oct 2026; only once the data rule has passed, so the ranking has its full reference set) =================
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
@@ -580,7 +615,7 @@ for (const x of sigLines) { const k = x.entryDate ? tOf.get(x.entryDate) : x.lat
   if (!resolved.has(x.id) && g !== null) { resolved.add(x.id); newLines.push({ type: 'result', id: x.id, m: x.m, sym: x.sym, d: x.d, buy: D[k], sell: D[xi], g: r4(g), net: r4(capG(g) - COST), avgStock: c === null ? null : r4(c - COST) }); } }
 if (newLines.length) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x, (k, v) => k[0] === '_' ? undefined : v)).join('\n') + '\n');
 for (const id of IDS) { const mine = sigLines.filter(x => x.m === id), closed = mine.filter(x => x._state === 'closed' && x._g !== null).map(x => ({ d: x.d, sym: x.sym, g: x._g, c: x._c, halal: x.halal })), fr = firstRun[id], st = boardStats(closed);
-  board[id] = { name: RULES[id].name, kind: RULES[id].kind, hold: H(id), family: RULES[id].family, dataOk: RULES[id].family === 'tender' ? TDATA.ok : RULES[id].family === 'isc' ? IDATA.ok : RULES[id].family === 'rpo' ? RDATA.ok : RULES[id].family === 'eat' ? EDATA.ok : RULES[id].family === 'tax' ? XDATA.ok : RULES[id].family === 'rdi' ? DDATA.ok : RULES[id].family === 'inv' ? VDATA.ok : DATA.ok, signals: mine.length, waiting: mine.filter(x => x._state === 'waiting').length, open: mine.filter(x => x._state === 'open').length, closed: st, halalOk: boardStats(closed.filter(z => z.halal === 'ok')), ready: RULES[id].kind === 'buy' && paperReady(st),
+  board[id] = { name: RULES[id].name, kind: RULES[id].kind, hold: H(id), family: RULES[id].family, dataOk: RULES[id].family === 'tender' ? TDATA.ok : RULES[id].family === 'isc' ? IDATA.ok : RULES[id].family === 'rpo' ? RDATA.ok : RULES[id].family === 'eat' ? EDATA.ok : RULES[id].family === 'tax' ? XDATA.ok : RULES[id].family === 'rdi' ? DDATA.ok : RULES[id].family === 'inv' ? VDATA.ok : RULES[id].family === 'gwi' ? GDATA.ok : DATA.ok, signals: mine.length, waiting: mine.filter(x => x._state === 'waiting').length, open: mine.filter(x => x._state === 'open').length, closed: st, halalOk: boardStats(closed.filter(z => z.halal === 'ok')), ready: RULES[id].kind === 'buy' && paperReady(st),
     fiveYear: fr ? { verdict: fr.verdict, why: fr.why } : null };
   if (RULES[id].kind !== 'buy') continue;
   today[id] = { name: RULES[id].name, hold: H(id), tier: fr ? fr.verdict : null, newSignals: mine.filter(x => x.recordedAfter === D[lastT] && !x.late).map(x => ({ sym: x.sym, close: x.close, halal: x.halal, d: x.d, pct: x.pct, plan: x.plan })),
@@ -592,7 +627,7 @@ log('paper lane: ' + newLines.filter(x => x.type === 'signal').length + ' new si
 
 // ================= 7. OUTPUT + LIBRARY =================
 const out = { generatedAt: new Date().toISOString(), lab: 'daily researcher', preRegistered: 'research-core.mjs RULES (25 Oct 2026, before any run) + data/strategy-library.json RQ-*',
-  window: [D[0], D[T - 1]], bar: BAR, split: SPLIT, cost: COST, data: STATUS, tenderData: TSTAT, rpoData: RSTAT, eatData: ESTAT, taxData: XSTAT, rdiData: DSTAT, invData: VSTAT, signalCounts: COUNTS,
+  window: [D[0], D[T - 1]], bar: BAR, split: SPLIT, cost: COST, data: STATUS, tenderData: TSTAT, rpoData: RSTAT, eatData: ESTAT, taxData: XSTAT, rdiData: DSTAT, invData: VSTAT, gwiData: GSTAT, signalCounts: COUNTS,
   standard: 'both halves (signal before / from ' + SPLIT + '): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions, better than the same stock on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= ' + TIER2_T + ' -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN. Gross returns capped at +300% for trades and yardsticks alike (AUD-1). The avoid check is never a buy.',
   firstRun, latest: latestBlock({ at: new Date().toISOString(), results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }),
   trades: Object.fromEntries(Object.entries(RES).filter(([, r]) => r.trades).map(([k, r]) => [k, r.trades.slice(-400)])) };
@@ -602,4 +637,4 @@ try { const LB = J('data/strategy-library.json', null); let ch = false;
     e.status = 'tested: ' + r.verdict.toLowerCase() + (r.verdict === 'TRADABLE SMALL' ? ' (tier 2)' : '') + '; forward paper lane from 26 Oct 2026'; e.tested = String(r.window[1]); e.study = 'research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)';
     e.result = { verdict: r.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg, R.newer.avg], stress: [R.older.avgStress, R.newer.avgStress], edge: [R.older.edge, R.newer.edge], vsOwn: [R.older.vsOwn, R.newer.vsOwn], noTop2: [R.older.noTop2, R.newer.noTop2], tBlock: [R.older.tBlock, R.newer.tBlock], win: [R.older.win, R.newer.win], why: r.why }; ch = true; }
   if (ch) fs.writeFileSync('data/strategy-library.json', JSON.stringify(LB, null, 1)); } catch (e) { console.log('research-lab: library not updated: ' + e.message); }
-console.log('RESEARCH LAB ' + D[0] + ' to ' + D[T - 1] + ' | bar ' + BAR + ' | data ' + (DATA.ok ? 'complete' : 'collecting (' + DATA.why + ')') + ' | tender data ' + (TDATA.ok ? 'complete' : 'collecting (' + TDATA.why + ')') + ' | backlog data ' + (RDATA.ok ? 'complete' : 'collecting (' + RDATA.why + ')') + ' | earnings timing data ' + (EDATA.ok ? 'complete' : 'not met (' + EDATA.why + ')') + ' | tax surprise data ' + (XDATA.ok ? 'complete' : 'not met (' + XDATA.why + ')') + ' | R&D increase data ' + (DDATA.ok ? 'complete' : 'not met (' + DDATA.why + ')') + ' | inventory data ' + (VDATA.ok ? 'complete' : 'not met (' + VDATA.why + ')') + ' | frozen ' + Object.keys(firstRun).length + '/' + IDS.length);
+console.log('RESEARCH LAB ' + D[0] + ' to ' + D[T - 1] + ' | bar ' + BAR + ' | data ' + (DATA.ok ? 'complete' : 'collecting (' + DATA.why + ')') + ' | tender data ' + (TDATA.ok ? 'complete' : 'collecting (' + TDATA.why + ')') + ' | backlog data ' + (RDATA.ok ? 'complete' : 'collecting (' + RDATA.why + ')') + ' | earnings timing data ' + (EDATA.ok ? 'complete' : 'not met (' + EDATA.why + ')') + ' | tax surprise data ' + (XDATA.ok ? 'complete' : 'not met (' + XDATA.why + ')') + ' | R&D increase data ' + (DDATA.ok ? 'complete' : 'not met (' + DDATA.why + ')') + ' | inventory data ' + (VDATA.ok ? 'complete' : 'not met (' + VDATA.why + ')') + ' | goodwill data ' + (GDATA.ok ? 'complete' : 'not met (' + GDATA.why + ')') + ' | frozen ' + Object.keys(firstRun).length + '/' + IDS.length);

@@ -155,6 +155,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'tax') { ch += preRegisterTax(LB); continue; }
     if (R.family === 'rdi') { ch += preRegisterRdi(LB); continue; }
     if (R.family === 'inv') { ch += preRegisterInv(LB); continue; }
+    if (R.family === 'gwi') { ch += preRegisterGwi(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -575,4 +576,69 @@ export function preRegisterInv(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of INV_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-03 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Measure, event timing, year-ago match, average-assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 8) before any run.', sources: INV_SOURCES, hold: R.hold, note: INV_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 9 (pre-registered 4 Nov 2026, before any run): GOODWILL IMPAIRMENTS as a SELL / AVOID warning ----------------
+// Sources: Hirschey and Richardson, "Investor Underreaction to Goodwill Write-Offs", Financial Analysts Journal 59(6), 2003, 75-84
+// (about -11% abnormal return over the year after a goodwill write-off announcement); Gu and Lev, "Overpriced shares, ill-advised
+// acquisitions, and goodwill impairment", The Accounting Review 86(6), 2011. NEW information line (us-gaap GoodwillImpairmentLoss, official
+// SEC XBRL); the library has no goodwill or impairment test. Long only: this is an AVOID / SELL-warning check, NEVER a buy (like Squad 29).
+// MEASURE (fixed now, no tuning): us-gaap:GoodwillImpairmentLoss (DURATION facts, USD, forms 10-Q/10-K, no amendments, val > 0, end from
+// 2019-06-01); us-gaap:Assets (instant). A filing date F is an EVENT when the latest duration end E it reports is later than every end
+// reported before F and 0 <= F - E <= 120 days. NEW impairment of that period = the largest, over this filing's facts ending E, of
+// (val - the latest-ending earlier fact with the SAME start filed before F, or 0 if none) (a 10-K annual minus the 9-month year-to-date
+// already reported; a Q2 year-to-date minus Q1). Size s = new impairment / assets at E (+-20 days, latest filed on or before F); assets
+// 10M USD+. Companies with no impairment fact simply have no events.
+//   RQ-GWI-AV126  AVOID check: s >= 1% of assets; bought next open; 126 sessions; judged GROSS vs GROSS (31 Oct method). Never a buy.
+//   RQ-GWI-AV63   the same, 63 sessions.
+//   RQ-GWI-BIG126 AVOID check: s >= 5% of assets; 126 sessions.
+// Public on the 'filed' date: entry at the OPEN of the first session strictly AFTER it (an earlier 8-K 2.06 or earnings release may have
+// told the market first: stated, not adjusted). Liquid on the session before entry. One open trade per stock per rule.
+// A valid SELL reason only if AVOID CONFIRMED (lag the average stock in both halves before cost, block t <= -2.5 in both).
+// DATA RULE (fixed now): no verdict until (a) 95%+ of universe companies looked up in the SEC bulk company facts file, (b) 85%+ of liquid
+// stock-months map to an SEC number, (c) 300+ events with s >= 1% from 2021-10-01 (fewer = the reader is broken: fix it, no verdict).
+export const GWI = { tag: 'GoodwillImpairmentLoss', assets: 'Assets', endFrom: '2019-06-01', maxLag: 120, aWin: 20, minAssets: 10e6, eventsFrom: '2021-10-01', small: 0.01, big: 0.05 };
+export const GWI_DATA = { looked: 0.95, map: 0.85, events: 300 };
+RULES['RQ-GWI-AV126'] = { kind: 'avoid', hold: 126, min: GWI.small, family: 'gwi', name: 'AVOID check: goodwill impairment of 1%+ of assets in a new 10-Q/10-K, 126 sessions',
+  rule: 'Information only: a 10-Q/10-K (filed within 120 days of the period end) reports a NEW goodwill impairment (us-gaap GoodwillImpairmentLoss, net of the same-start year-to-date already reported) of 1%+ of total assets (assets 10M USD+); bought next open, 126 sessions; a valid AVOID / SELL filter if these stocks lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+RULES['RQ-GWI-AV63'] = { kind: 'avoid', hold: 63, min: GWI.small, family: 'gwi', name: 'AVOID check: goodwill impairment of 1%+ of assets, 63 sessions', rule: 'As RQ-GWI-AV126, 63 sessions. Never a buy.' };
+RULES['RQ-GWI-BIG126'] = { kind: 'avoid', hold: 126, min: GWI.big, family: 'gwi', name: 'AVOID check: large goodwill impairment (5%+ of assets), 126 sessions', rule: 'As RQ-GWI-AV126 with a new impairment of 5%+ of total assets. Never a buy.' };
+export const GWI_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'gwi');
+for (const id of GWI_IDS) { if (!IDS.includes(id)) IDS.push(id); ONE_OPEN.add(id); }
+// companyfacts JSON -> { f: [[start, end, val, filed, form]] impairment durations, a: [[end, val, filed]] assets }, sorted by filed
+export function gwiRows(j) { const g = j && j.facts && j.facts['us-gaap'], form = (x) => x.form === '10-Q' || x.form === '10-K';
+  const u = g && g[GWI.tag] && g[GWI.tag].units, f = [], s = new Set();
+  for (const x of (u && Array.isArray(u.USD) ? u.USD : [])) { if (!x || !x.start || !x.end || !x.filed || !ok(x.val) || x.val < 0 || !form(x) || x.end < '2018-03-01' || x.start > x.end) continue;
+    const k = x.start + '|' + x.end + '|' + x.val + '|' + x.filed; if (s.has(k)) continue; s.add(k); f.push([x.start, x.end, x.val, x.filed, x.form]); }
+  f.sort((p, r) => p[3] < r[3] ? -1 : p[3] > r[3] ? 1 : p[1] < r[1] ? -1 : p[1] > r[1] ? 1 : 0);
+  const ua = g && g[GWI.assets] && g[GWI.assets].units, a = [], sa = new Set();
+  for (const x of (ua && Array.isArray(ua.USD) ? ua.USD : [])) { if (!x || x.start || !x.end || !x.filed || !ok(x.val) || x.val <= 0 || !form(x) || x.end < '2018-03-01') continue;
+    const k = x.end + '|' + x.val + '|' + x.filed; if (sa.has(k)) continue; sa.add(k); a.push([x.end, x.val, x.filed]); }
+  a.sort((p, r) => p[2] < r[2] ? -1 : p[2] > r[2] ? 1 : p[0] < r[0] ? -1 : p[0] > r[0] ? 1 : 0);
+  return { f, a }; }
+const gwiAssetsNear = (A, F, end) => { let as = null; for (const x of A) { if (x[2] > F) break; const gap = Math.abs(daysBetween(x[0], end)); if (gap > GWI.aWin) continue;
+  if (!as || gap < Math.abs(daysBetween(as[0], end)) || (x[0] === as[0] && x[2] >= as[2])) as = x; } return as; };
+// rows -> events [{ d (filed), end, imp (new impairment), a1, s (= imp / a1), form }] (only new impairments > 0)
+export function gwiEvents(rows) { const out = [], f = (rows && rows.f) || [], A = (rows && rows.a) || []; let maxEnd = '';
+  const byF = new Map(); for (const r of f) (byF.get(r[3]) || byF.set(r[3], []).get(r[3])).push(r);
+  const known = [];
+  for (const F of [...byF.keys()].sort()) { const here = byF.get(F), E = here.reduce((m, r) => r[1] > m ? r[1] : m, '');
+    if (E > maxEnd && E >= GWI.endFrom && daysBetween(E, F) >= 0 && daysBetween(E, F) <= GWI.maxLag) { let imp = 0;
+      for (const r of here.filter(x => x[1] === E)) { let prev = null; for (const q of known) if (q[0] === r[0] && q[1] < E && (!prev || q[1] > prev[1] || (q[1] === prev[1] && q[3] >= prev[3]))) prev = q;
+        const inc = r[2] - (prev ? prev[2] : 0); if (inc > imp) imp = inc; }
+      const a1 = gwiAssetsNear(A, F, E);
+      if (imp > 0 && a1 && a1[1] >= GWI.minAssets) out.push({ d: F, end: E, imp, a1: a1[1], s: +(imp / a1[1]).toFixed(6), form: here.find(r => r[1] === E)[4] }); }
+    known.push(...here); if (E > maxEnd) maxEnd = E; }
+  return out; }
+export function gwiDataRule({ ciks, looked, liqMonths, liqMapped, events }) { const r = { looked: ciks ? looked / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.looked >= GWI_DATA.looked)) why.push('company facts looked up ' + (r.looked * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= GWI_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(events >= GWI_DATA.events)) why.push('goodwill impairment events of 1%+ of assets ' + events + ' (300 needed: reader check)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+const GWI_SOURCES = ['https://rpc.cfainstitute.org/research/financial-analysts-journal/2003/investor-underreaction-to-goodwill-write-offs', 'https://ideas.repec.org/a/taf/ufajxx/v59y2003i6p75-84.html', 'https://researchconnect.buffalo.edu/en/publications/overpriced-shares-ill-advised-acquisitions-and-goodwill-impairmen/'];
+const GWI_NOTE = 'Daily researcher 2026-11-04: Hirschey and Richardson (2003, FAJ) found investors underreact to goodwill write-offs (about -11% abnormal over the following year); Gu and Lev (2011, The Accounting Review) link impairments to overpriced acquirers. New line (us-gaap GoodwillImpairmentLoss, official SEC XBRL company facts). AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.';
+export function preRegisterGwi(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of GWI_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-04 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Measure, new-impairment netting, event timing, assets scaling, thresholds and data rule fixed in research-core.mjs (IDEA 9) before any run.', sources: GWI_SOURCES, hold: R.hold, note: GWI_NOTE }); ch++; }
   return ch; }
