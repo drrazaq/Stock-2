@@ -1,0 +1,152 @@
+{
+  "kind": "OFFLINE_POST_ACTIONS_MENTOR_COMPATIBILITY_ONLY",
+  "productionBase": "51b5e3499dd6f4a077c32fe93641622f0cf72b3b",
+  "oldApprovedReview": "25a85000b076c4da649634606467e71b577bc75c",
+  "oldPatchSHA256": "1841837e99f59293cf07c891e7459947c9bc61b2c7b244c43e64dd2de80cb0d7",
+  "scope": [
+    "scan.mjs",
+    "mentor-plan.mjs",
+    "test/load-scan.mjs",
+    "test/mentor-readonly.test.mjs",
+    "test/mentor-release.test.mjs",
+    "test/mentor-release-plan.test.mjs",
+    "test/mentor-release-examples.mjs",
+    "test/mentor-m1-m3.test.mjs"
+  ],
+  "files": [
+    {
+      "path": "scan.mjs",
+      "before": "91c7c7019ae08bde9c3c43fa6e571b05cebf53aa2c1a41cd9db75ed43a3f70d8",
+      "after": "fc75a054d7f3450ce96100dcfdcd679e1a47257874d7ab731f4463d8d6a3aaf0"
+    },
+    {
+      "path": "mentor-plan.mjs",
+      "before": null,
+      "after": "5c081a88fc8d17117c6c411194f9262688003116003a0585c97b8ffa2539dae1"
+    },
+    {
+      "path": "test/load-scan.mjs",
+      "before": "6478d0b89f75b6eb188dac97b154fc181749a1b6b5d010315f375272ff2f82e2",
+      "after": "ca8a48be321215b5d02f9bc09edecf5f562f18dbbe1b3812424f5f97d4b91605"
+    },
+    {
+      "path": "test/mentor-readonly.test.mjs",
+      "before": null,
+      "after": "339ae1baeeb2d079ef88ba0fa5c47de3fcd90d08c6a60fea0203fbff018dc1dc"
+    },
+    {
+      "path": "test/mentor-release.test.mjs",
+      "before": null,
+      "after": "1a5bce0a13144db3362435e960b06286faf6845567c41088bd39b515ddb329f5"
+    },
+    {
+      "path": "test/mentor-release-plan.test.mjs",
+      "before": null,
+      "after": "e78e44d94da96e54bc8d4fe531101d7b2c3b2738382fbfbe65fbe1a6efafcdf0"
+    },
+    {
+      "path": "test/mentor-release-examples.mjs",
+      "before": null,
+      "after": "7d4edd70cc2813a194f73d032050ecf888f24a44706c478f8f1a44fa0d20ee89"
+    },
+    {
+      "path": "test/mentor-m1-m3.test.mjs",
+      "before": null,
+      "after": "4eaa43223c2c5dbbf942c032f050bef88354da213bbd69a7c52c5e789f8bb137"
+    }
+  ],
+  "focusedResults": [
+    {
+      "file": "mentor-after-actions-actions-reconciliation.test.mjs.log",
+      "passLines": 13,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-actions-release-safeguards.test.mjs.log",
+      "passLines": 7,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-bot-actions.test.mjs.log",
+      "passLines": 8,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-buy-gates.test.mjs.log",
+      "passLines": 9,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-buy-more.test.mjs.log",
+      "passLines": 8,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-focus-per-kind.test.mjs.log",
+      "passLines": 14,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-follow-actions.test.mjs.log",
+      "passLines": 12,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-gate-verdict.test.mjs.log",
+      "passLines": 7,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-mentor-m1-m3.test.mjs.log",
+      "passLines": 10,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-mentor-readonly.test.mjs.log",
+      "passLines": 2,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-mentor-release-plan.test.mjs.log",
+      "passLines": 8,
+      "hasNonzeroFail": false
+    },
+    {
+      "file": "mentor-after-actions-mentor-release.test.mjs.log",
+      "passLines": 10,
+      "hasNonzeroFail": false
+    }
+  ],
+  "fullSuiteRerun": true,
+  "releaseReady": false,
+  "reviewRequired": "Refreshed before/after manifest and independent post-ACTIONS review; old source compatibility not inherited",
+  "productionActions": [],
+  "testedCurrentMain": "e6b8d75d5f0a1ba6d6be26b962f3aa7237af5559",
+  "sourceScope": "All134 current production test-file blobs verified against pinned Git tree; research source/workflow/trigger/test delta applied to both source checkouts; no private state included",
+  "node": "20.20.2",
+  "uid": 1000,
+  "fullSuites": {
+    "baseline": {
+      "files": 134,
+      "passed": 134,
+      "failed": 0,
+      "summaryLogSHA256": "e6e34ca3990cfcd16d71f8cb7c1b4aefc9c699411c98c18f45f527bbea88a0d8"
+    },
+    "candidate": {
+      "files": 138,
+      "passed": 138,
+      "failed": 0,
+      "summaryLogSHA256": "8e2a2e9e94df842b81b376d34ba95d265ee4dd45cb20a0a7d75d4d71a3983d86"
+    }
+  },
+  "firstAttemptDisposition": {
+    "result": "one failure in each source-only checkout",
+    "file": "test/private-data.test.mjs",
+    "cause": "repository data directory intentionally omitted; filename-existence assertion failed",
+    "correction": "verified each required filename exists in pinned main Git tree, then created14 empty filename-presence fixtures in each disposable checkout; no original data read/copied and no assertion changed",
+    "originalLogsPreserved": true,
+    "isAcceptedProductionBaselineFailure": false,
+    "notFinancialStateVerification": true
+  },
+  "fixtureLimit": "Full synthetic/source suite; no financial state or Telegram offsets inspected or certified; future isolated hosted release still requires its own complete all-PASS gate"
+}

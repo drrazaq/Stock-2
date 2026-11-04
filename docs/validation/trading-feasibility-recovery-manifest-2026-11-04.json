@@ -1,0 +1,42 @@
+{
+  "kind": "BOUNDED_ORIGINAL_INPUT_RECOVERY_AND_SELECTION_CORRECTION",
+  "basis": "53f3fad259bab08880a2a298f684e26148cd009b",
+  "originalPinnedInputs": "f92a29d8e96df7c3b9fa012d699a41fdd28d0d07",
+  "authorshipAndExecution": "Codex; Claude independent challenge requested, pending",
+  "originalDataOrVerdictsChanged": false,
+  "productionActions": [],
+  "files": [
+    {
+      "path": "docs/trading-feasibility-recovery-decision-2026-11-04.md",
+      "sha256": "fa4e5f910a957a56d24c2c9c1ac4ee07a050e8c19a97839ac3c2da8e74f4dfb8"
+    },
+    {
+      "path": "docs/validation/trading-feasibility-archive-search-2026-11-04.json",
+      "sha256": "08be1249982fae8d93db7c30ddf2da7f8b6a8a9581bee41a5c7f279cfdd1efe0"
+    },
+    {
+      "path": "docs/validation/trading-feasibility-current-inventory-2026-11-04.json",
+      "sha256": "9c5567a97dc6e6beac8088e8d165095d4afb2d594fbc899de19c0f50a93febc6"
+    },
+    {
+      "path": "docs/validation/trading-feasibility-selection-2026-11-04.json",
+      "sha256": "0491683a74570b94cdca6a58a304f86e21d2171e04fb4c79647292b8e70c695e"
+    },
+    {
+      "path": "tools/audit-trading-feasibility.py",
+      "sha256": "7dfb875a60c0ad3dcc517d5d38957f403fc8bb82c41d5592f88ab3526c539adf"
+    },
+    {
+      "path": "docs/validation/mentor-after-actions-compatibility-2026-11-04.json",
+      "sha256": "17137f992995fdcb883e3a96d2b9762d6ec4d1b6339953a7bf4b779497c9232b"
+    }
+  ],
+  "reproduce": [
+    "python -B tools/audit-trading-feasibility.py --selection --check docs/validation/trading-feasibility-selection-2026-11-04.json",
+    "python -B tools/audit-trading-feasibility.py --check docs/validation/trading-feasibility-2026-11-04.json"
+  ],
+  "decision": "GO saved-model arithmetic; NO-GO original-input/executable replay with currently recovered data",
+  "cacheExists": "UNKNOWN due unsupported cache inventory/export capability",
+  "newMarketDataProviderCalls": 0,
+  "operationalProgress": "Current-main e6b8d75d source baseline134/candidate138 registered files PASS with disclosed synthetic filename-presence fixtures; old mentor approval not inherited"
+}

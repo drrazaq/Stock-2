@@ -9,6 +9,7 @@ import collections
 import hashlib
 import json
 import math
+import gzip
 from pathlib import Path
 
 VERSION = 'SAVED_EVIDENCE_AUDIT_2026_11_04_V1'
@@ -147,9 +148,66 @@ def audit(root):
                   'Original frozen trade populations not available for all candidates',
                   'No authenticated point-in-time universe/delistings/corporate-action path or portfolio marks'])
 
+def selection_audit(root):
+    """Extended existing-file census; does not change or replace the V1 receipt."""
+    records=[]; sources={}
+    def read(path):
+        sources[path]=digest(root/path)
+        return json.loads((root/path).read_text())
+    def walk(x,path,file):
+        if isinstance(x,dict):
+            if isinstance(x.get('verdict'),str):
+                records.append(dict(file=file,path=path,verdict=x['verdict']))
+            for k,v in x.items():
+                if isinstance(v,(dict,list)):walk(v,path+'.'+k,file)
+        elif isinstance(x,list):
+            for i,v in enumerate(x):walk(v,path+f'[{i}]',file)
+    files=set((root/'data').glob('*lab.json'))|set((root/'data').glob('*study.json'))|{root/'data/decoded-history.json'}
+    for p in sorted(files):
+        file=str(p.relative_to(root));walk(read(file).get('firstRun',{}),'firstRun',file)
+    registry=read('data/strategy-library.json')['strategies']
+    assert len(registry)==len({x['id'] for x in registry})==747
+    counts=dict(collections.Counter(x['verdict'] for x in records))
+    assert len(records)==690 and counts['PROVEN']==counts['PROMISING']==1
+    decoded=read('data/decoded-history.json')['firstRun']['DEC2-TPS']
+    check=read('data/decoded-check.json')
+    assert decoded['verdict']=='PROVEN'
+    assert all(check['budget'][h]['avg']<0 and check['nextOpen'][h]['avg']<0 for h in ['older','newer'])
+    event=read('data/events-study.json')['firstRun']['link']
+    assert event['verdict']=='PROMISING'
+    trade_file='data/squad2-trades.json.gz'
+    sources[trade_file]=digest(root/trade_file)
+    trades=json.loads(gzip.decompress((root/trade_file).read_bytes()))['trades']['SQ2-ORB5']
+    saved=read('data/squad2-lab.json')['firstRun']['SQ2-ORB5']
+    assert len(trades)==saved['results']['all']['n']==6438
+    assert len({(r[0],r[1],r[2]) for r in trades})==len(trades)
+    sq2={}
+    for name,group in [('older',[r for r in trades if r[0]<'2024-01-01']),
+                       ('newer',[r for r in trades if r[0]>='2024-01-01']),('all',trades)]:
+        s=stats([r[3]-.008 for r in group])
+        assert len(group)==saved['results'][name]['n']
+        assert abs(s['expectancy']-saved['results'][name]['avg'])<.00015
+        sq2[name]=s
+    assert abs(sq2['all']['profitFactor']-saved['shape']['pf'])<.00015
+    for file in ['decoded-lab.mjs','decoded2-core.mjs','events-study.mjs']:
+        sources[file]=digest(root/file)
+    return dict(version='EXISTING_SELECTION_CENSUS_V2_2026_11_04',basisCommit=PIN,
+        correction='V1 examples were not strongest; lab-only census omitted DEC2-TPS and legacy supply-chain result',
+        registryEntries=len(registry),registryStatusCounts=dict(collections.Counter(x.get('status','UNKNOWN') for x in registry)),
+        frozenRecordCount=len(records),frozenRecords=records,verdictCounts=counts,
+        strongerRecordedLabels={'DEC2-TPS':decoded,'DEC2-TPS_money_check':check,'events_link':event},
+        recoveredSQ2TradeArithmetic=sq2,
+        recoveredTPSRows={'retained':len(read('data/decoded-history.json')['trades']['DEC2-TPS']),
+                          'original':decoded['results']['all']['n'],
+                          'complete':False,'reason':'Producer retains only last1500 rows; scale-in fractions/order legs absent'},
+        sources=sources,originalVerdictsChanged=False,studiesRerun=False,
+        conclusion='NO-GO for independently repriced/executable evaluation on presently recovered original inputs',
+        eligibleForTradingOrEconomicPaperValidationEstablished=False,
+        note='Record labels are not independent hypotheses or equivalent evidence standards. TPS PROVEN remains frozen; money check is monitoring, not a replacement verdict.')
+
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[1]);p.add_argument('--check',type=Path);args=p.parse_args()
-    result=audit(args.root)
+    p=argparse.ArgumentParser();p.add_argument('--root',type=Path,default=Path(__file__).resolve().parents[1]);p.add_argument('--check',type=Path);p.add_argument('--selection',action='store_true');args=p.parse_args()
+    result=selection_audit(args.root) if args.selection else audit(args.root)
     if args.check:
         assert result==json.loads(args.check.read_text()),'Saved aggregate receipt differs'
         print('PASS: deterministic evidence, population and arithmetic assertions')

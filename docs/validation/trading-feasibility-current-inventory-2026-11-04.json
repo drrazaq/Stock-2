@@ -1,0 +1,4218 @@
+{
+  "mainSHA": "e6b8d75d5f0a1ba6d6be26b962f3aa7237af5559",
+  "currentRegistryEntries": 783,
+  "previousPinnedEntries": 747,
+  "added": [
+    {
+      "id": "RQ-EAT-ADV-21",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-EAT-ADV-63",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-EAT-DEL-21",
+      "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "D2-011",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-012",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-013",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-014",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-015",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-016",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-017",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-018",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-019",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-020",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "RQ-TAX-63",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-TAX-126",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-TAX-LOW63",
+      "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "C-CONG1-20",
+      "status": "tested: rejected (agent-c-lab, frozen 2026-11-01)"
+    },
+    {
+      "id": "C-CONG1-60",
+      "status": "tested: rejected (agent-c-lab, frozen 2026-11-01)"
+    },
+    {
+      "id": "C-CONG2",
+      "status": "needs data (Agent C queue after C-CONG1)"
+    },
+    {
+      "id": "C-F144X",
+      "status": "queued (Agent C), low"
+    },
+    {
+      "id": "C-INS52W",
+      "status": "not built: short-horizon reaction (2-3 sessions) in 30-500M USD microcaps; the paper finds the longer drift imprecise (t 1.70) and no calendar alpha after day 1; large-cap extension fails"
+    },
+    {
+      "id": "LDX-HALF63",
+      "status": "tested: do not adopt (exit)"
+    },
+    {
+      "id": "LDX-T200",
+      "status": "tested: do not adopt (exit)"
+    },
+    {
+      "id": "LDX-TIME189",
+      "status": "tested: do not adopt (exit)"
+    },
+    {
+      "id": "A-TP1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "A-ANCH1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "RQ-RDI-126",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-RDI-252",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-INV-LOW126",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-INV-LOW252",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-INV-TOP126",
+      "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "B-FCFN1",
+      "status": "queued (Agent B)"
+    },
+    {
+      "id": "B-BBG1",
+      "status": "needs data"
+    },
+    {
+      "id": "RQ-GWI-AV126",
+      "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-GWI-AV63",
+      "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-GWI-BIG126",
+      "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026"
+    }
+  ],
+  "newFirstRunResearchSummaries": [
+    {
+      "id": "RQ-EAT-ADV-21",
+      "verdict": "REJECTED",
+      "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.25 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.4 under 2.5 in the newer half",
+      "results": {
+        "older": {
+          "n": 613,
+          "days": 185,
+          "stocks": 488,
+          "avg": -0.0087,
+          "median": -0.0224,
+          "avgStress": -0.0127,
+          "ctrl": -0.0088,
+          "edge": -0.0014,
+          "tDay": -0.12,
+          "blocks": 17,
+          "tBlock": -0.25,
+          "vsOwn": 0.0085,
+          "ownCovered": 185,
+          "noTop2": -0.0133,
+          "best": 1.4599,
+          "worst": -0.6905,
+          "win": 0.4078
+        },
+        "newer": {
+          "n": 1299,
+          "days": 420,
+          "stocks": 938,
+          "avg": -0.0059,
+          "median": -0.0138,
+          "avgStress": -0.0099,
+          "ctrl": -0.0015,
+          "edge": -0.0089,
+          "tDay": -1.34,
+          "blocks": 34,
+          "tBlock": -0.4,
+          "vsOwn": 0.0011,
+          "ownCovered": 419,
+          "noTop2": -0.008,
+          "best": 1.5616,
+          "worst": -0.8743,
+          "win": 0.4488
+        },
+        "all": {
+          "n": 1912,
+          "days": 605,
+          "stocks": 1246,
+          "avg": -0.0068,
+          "median": -0.0157,
+          "avgStress": -0.0108,
+          "ctrl": -0.0038,
+          "edge": -0.0066,
+          "tDay": -1.14,
+          "blocks": 51,
+          "tBlock": -0.48,
+          "vsOwn": 0.0033,
+          "ownCovered": 604,
+          "noTop2": -0.0084,
+          "best": 1.5616,
+          "worst": -0.8743,
+          "win": 0.4357
+        }
+      }
+    },
+    {
+      "id": "RQ-EAT-ADV-63",
+      "verdict": "REJECTED",
+      "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -3.88 under 2.5 in the older half; not better than the average stock in the newer half; block t 0.23 under 2.5 in the newer half",
+      "results": {
+        "older": {
+          "n": 576,
+          "days": 180,
+          "stocks": 488,
+          "avg": 0.0121,
+          "median": -0.006,
+          "avgStress": 0.0081,
+          "ctrl": 0.015,
+          "edge": -0.022,
+          "tDay": -1.57,
+          "blocks": 6,
+          "tBlock": -3.88,
+          "vsOwn": -0.0117,
+          "ownCovered": 180,
+          "noTop2": 0.0048,
+          "best": 2.2617,
+          "worst": -0.8758,
+          "win": 0.4809
+        },
+        "newer": {
+          "n": 1204,
+          "days": 394,
+          "stocks": 920,
+          "avg": 0.0309,
+          "median": -0.0027,
+          "avgStress": 0.0269,
+          "ctrl": 0.0246,
+          "edge": -0.0008,
+          "tDay": -0.06,
+          "blocks": 12,
+          "tBlock": 0.23,
+          "vsOwn": 0.0035,
+          "ownCovered": 392,
+          "noTop2": 0.0261,
+          "best": 2.992,
+          "worst": -0.9103,
+          "win": 0.4925
+        },
+        "all": {
+          "n": 1780,
+          "days": 574,
+          "stocks": 1231,
+          "avg": 0.0248,
+          "median": -0.0036,
+          "avgStress": 0.0208,
+          "ctrl": 0.0215,
+          "edge": -0.0074,
+          "tDay": -0.75,
+          "blocks": 17,
+          "tBlock": -0.36,
+          "vsOwn": -0.0013,
+          "ownCovered": 572,
+          "noTop2": 0.0216,
+          "best": 2.992,
+          "worst": -0.9103,
+          "win": 0.4888
+        }
+      }
+    },
+    {
+      "id": "RQ-EAT-DEL-21",
+      "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+      "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy",
+      "results": {
+        "older": {
+          "n": 1106,
+          "days": 195,
+          "stocks": 735,
+          "avg": 0.0052,
+          "median": 0.0015,
+          "avgStress": 0.0012,
+          "ctrl": -0.0006,
+          "edge": -0.0005,
+          "tDay": -0.07,
+          "blocks": 17,
+          "tBlock": -0.1,
+          "vsOwn": 0.0089,
+          "ownCovered": 193,
+          "noTop2": 0.0037,
+          "best": 1.0657,
+          "worst": -0.7659,
+          "win": 0.5045
+        },
+        "newer": {
+          "n": 3682,
+          "days": 476,
+          "stocks": 1708,
+          "avg": -0.0029,
+          "median": -0.0051,
+          "avgStress": -0.0069,
+          "ctrl": -0.0017,
+          "edge": -0.0077,
+          "tDay": -1.46,
+          "blocks": 34,
+          "tBlock": -0.63,
+          "vsOwn": -0.0001,
+          "ownCovered": 474,
+          "noTop2": -0.0041,
+          "best": 2.992,
+          "worst": -0.9363,
+          "win": 0.4726
+        },
+        "all": {
+          "n": 4788,
+          "days": 671,
+          "stocks": 1955,
+          "avg": -0.001,
+          "median": -0.004,
+          "avgStress": -0.005,
+          "ctrl": -0.0015,
+          "edge": -0.0056,
+          "tDay": -1.33,
+          "blocks": 50,
+          "tBlock": -0.8,
+          "vsOwn": 0.0025,
+          "ownCovered": 667,
+          "noTop2": -0.0019,
+          "best": 2.992,
+          "worst": -0.9363,
+          "win": 0.4799
+        }
+      }
+    },
+    {
+      "id": "RQ-TAX-63",
+      "verdict": "REJECTED",
+      "why": "not better than the average stock in the older half; not better than the same stocks on their other days in the older half; block t -1.59 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -2.34 under 2.5 in the newer half",
+      "results": {
+        "older": {
+          "n": 1867,
+          "days": 277,
+          "stocks": 1117,
+          "avg": 0.0139,
+          "median": 0.0019,
+          "avgStress": 0.0099,
+          "ctrl": 0.0152,
+          "edge": -0.0115,
+          "tDay": -1.42,
+          "blocks": 9,
+          "tBlock": -1.59,
+          "vsOwn": -0.0485,
+          "ownCovered": 266,
+          "noTop2": 0.0125,
+          "best": 1.4625,
+          "worst": -0.7539,
+          "win": 0.5051
+        },
+        "newer": {
+          "n": 2920,
+          "days": 359,
+          "stocks": 1456,
+          "avg": 0.0353,
+          "median": 0.0127,
+          "avgStress": 0.0313,
+          "ctrl": 0.0368,
+          "edge": -0.0171,
+          "tDay": -1.93,
+          "blocks": 12,
+          "tBlock": -2.34,
+          "vsOwn": -0.0154,
+          "ownCovered": 355,
+          "noTop2": 0.0339,
+          "best": 2.1139,
+          "worst": -1.0077,
+          "win": 0.5329
+        },
+        "all": {
+          "n": 4787,
+          "days": 636,
+          "stocks": 1793,
+          "avg": 0.027,
+          "median": 0.0076,
+          "avgStress": 0.023,
+          "ctrl": 0.0284,
+          "edge": -0.0147,
+          "tDay": -2.4,
+          "blocks": 20,
+          "tBlock": -2.73,
+          "vsOwn": -0.0296,
+          "ownCovered": 621,
+          "noTop2": 0.0261,
+          "best": 2.1139,
+          "worst": -1.0077,
+          "win": 0.522
+        }
+      }
+    },
+    {
+      "id": "RQ-TAX-126",
+      "verdict": "NOT PROVEN",
+      "why": "not better than the same stocks on their other days in the older half; block t 0.22 under 2.5 in the older half; block t 0.39 under 2.5 in the newer half",
+      "results": {
+        "older": {
+          "n": 1568,
+          "days": 258,
+          "stocks": 1117,
+          "avg": 0.0155,
+          "median": 0.0027,
+          "avgStress": 0.0115,
+          "ctrl": -0.004,
+          "edge": 0.0013,
+          "tDay": 0.1,
+          "blocks": 5,
+          "tBlock": 0.22,
+          "vsOwn": -0.0769,
+          "ownCovered": 220,
+          "noTop2": 0.0125,
+          "best": 2.992,
+          "worst": -0.9381,
+          "win": 0.5045
+        },
+        "newer": {
+          "n": 2029,
+          "days": 299,
+          "stocks": 1329,
+          "avg": 0.082,
+          "median": 0.0281,
+          "avgStress": 0.078,
+          "ctrl": 0.0705,
+          "edge": 0.0068,
+          "tDay": 0.37,
+          "blocks": 6,
+          "tBlock": 0.39,
+          "vsOwn": 0.0029,
+          "ownCovered": 279,
+          "noTop2": 0.0792,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.55
+        },
+        "all": {
+          "n": 3597,
+          "days": 557,
+          "stocks": 1729,
+          "avg": 0.053,
+          "median": 0.0173,
+          "avgStress": 0.049,
+          "ctrl": 0.038,
+          "edge": 0.0043,
+          "tDay": 0.37,
+          "blocks": 10,
+          "tBlock": 0.4,
+          "vsOwn": -0.0323,
+          "ownCovered": 499,
+          "noTop2": 0.0514,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.5302
+        }
+      }
+    },
+    {
+      "id": "RQ-TAX-LOW63",
+      "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+      "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy",
+      "results": {
+        "older": {
+          "n": 2478,
+          "days": 303,
+          "stocks": 1398,
+          "avg": 0.0099,
+          "median": 0.0011,
+          "avgStress": 0.0059,
+          "ctrl": 0.0094,
+          "edge": 0.0002,
+          "tDay": 0.03,
+          "blocks": 9,
+          "tBlock": -0.15,
+          "vsOwn": -0.0307,
+          "ownCovered": 296,
+          "noTop2": 0.0081,
+          "best": 2.8075,
+          "worst": -0.9103,
+          "win": 0.5016
+        },
+        "newer": {
+          "n": 2511,
+          "days": 353,
+          "stocks": 1372,
+          "avg": 0.0306,
+          "median": 0.0123,
+          "avgStress": 0.0266,
+          "ctrl": 0.0394,
+          "edge": -0.0145,
+          "tDay": -1.29,
+          "blocks": 12,
+          "tBlock": -1.27,
+          "vsOwn": -0.0082,
+          "ownCovered": 347,
+          "noTop2": 0.029,
+          "best": 2.2126,
+          "worst": -0.9465,
+          "win": 0.5297
+        },
+        "all": {
+          "n": 4989,
+          "days": 656,
+          "stocks": 1894,
+          "avg": 0.0203,
+          "median": 0.006,
+          "avgStress": 0.0163,
+          "ctrl": 0.0245,
+          "edge": -0.0077,
+          "tDay": -1.09,
+          "blocks": 20,
+          "tBlock": -0.96,
+          "vsOwn": -0.0185,
+          "ownCovered": 643,
+          "noTop2": 0.0193,
+          "best": 2.8075,
+          "worst": -0.9465,
+          "win": 0.5157
+        }
+      }
+    },
+    {
+      "id": "RQ-RDI-126",
+      "verdict": "REJECTED",
+      "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.18 under 2.5 in the older half; block t 1.8 under 2.5 in the newer half",
+      "results": {
+        "older": {
+          "n": 919,
+          "days": 191,
+          "stocks": 548,
+          "avg": -0.0377,
+          "median": -0.0563,
+          "avgStress": -0.0417,
+          "ctrl": -0.0253,
+          "edge": -0.0236,
+          "tDay": -1.27,
+          "blocks": 5,
+          "tBlock": -0.18,
+          "vsOwn": -0.1087,
+          "ownCovered": 145,
+          "noTop2": -0.0442,
+          "best": 2.992,
+          "worst": -0.9389,
+          "win": 0.4298
+        },
+        "newer": {
+          "n": 598,
+          "days": 167,
+          "stocks": 417,
+          "avg": 0.1662,
+          "median": 0.0501,
+          "avgStress": 0.1622,
+          "ctrl": 0.0807,
+          "edge": 0.0892,
+          "tDay": 2.32,
+          "blocks": 6,
+          "tBlock": 1.8,
+          "vsOwn": 0.0838,
+          "ownCovered": 159,
+          "noTop2": 0.1567,
+          "best": 2.992,
+          "worst": -1.0031,
+          "win": 0.5619
+        },
+        "all": {
+          "n": 1517,
+          "days": 358,
+          "stocks": 697,
+          "avg": 0.0427,
+          "median": -0.0074,
+          "avgStress": 0.0387,
+          "ctrl": 0.0165,
+          "edge": 0.0291,
+          "tDay": 1.4,
+          "blocks": 10,
+          "tBlock": 1.37,
+          "vsOwn": -0.008,
+          "ownCovered": 304,
+          "noTop2": 0.0388,
+          "best": 2.992,
+          "worst": -1.0031,
+          "win": 0.4819
+        }
+      }
+    },
+    {
+      "id": "RQ-RDI-252",
+      "verdict": "REJECTED",
+      "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.16 under 2.5 in the older half; block t 0.66 under 2.5 in the newer half",
+      "results": {
+        "older": {
+          "n": 683,
+          "days": 172,
+          "stocks": 548,
+          "avg": -0.0341,
+          "median": -0.1022,
+          "avgStress": -0.0381,
+          "ctrl": -0.008,
+          "edge": -0.0368,
+          "tDay": -1.35,
+          "blocks": 3,
+          "tBlock": -0.16,
+          "vsOwn": -0.1608,
+          "ownCovered": 69,
+          "noTop2": -0.0429,
+          "best": 2.992,
+          "worst": -0.9825,
+          "win": 0.4202
+        },
+        "newer": {
+          "n": 352,
+          "days": 113,
+          "stocks": 335,
+          "avg": 0.295,
+          "median": 0.0726,
+          "avgStress": 0.291,
+          "ctrl": 0.1349,
+          "edge": 0.1876,
+          "tDay": 2.87,
+          "blocks": 3,
+          "tBlock": 0.66,
+          "vsOwn": 0.1231,
+          "ownCovered": 70,
+          "noTop2": 0.2796,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.5483
+        },
+        "all": {
+          "n": 1035,
+          "days": 285,
+          "stocks": 673,
+          "avg": 0.0779,
+          "median": -0.0405,
+          "avgStress": 0.0739,
+          "ctrl": 0.0406,
+          "edge": 0.0521,
+          "tDay": 1.67,
+          "blocks": 5,
+          "tBlock": 0.39,
+          "vsOwn": -0.0178,
+          "ownCovered": 139,
+          "noTop2": 0.0722,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.4638
+        }
+      }
+    },
+    {
+      "id": "RQ-INV-LOW126",
+      "verdict": "NOT PROVEN",
+      "why": "block t 0.48 under 2.5 in the older half; block t -0.51 under 2.5 in the newer half",
+      "results": {
+        "older": {
+          "n": 1006,
+          "days": 259,
+          "stocks": 736,
+          "avg": 0.0179,
+          "median": 0.0118,
+          "avgStress": 0.0139,
+          "ctrl": 0.0146,
+          "edge": 0.0094,
+          "tDay": 0.68,
+          "blocks": 5,
+          "tBlock": 0.48,
+          "vsOwn": 0.0005,
+          "ownCovered": 202,
+          "noTop2": 0.0153,
+          "best": 1.4343,
+          "worst": -0.9746,
+          "win": 0.5219
+        },
+        "newer": {
+          "n": 687,
+          "days": 259,
+          "stocks": 470,
+          "avg": 0.0904,
+          "median": 0.0211,
+          "avgStress": 0.0864,
+          "ctrl": 0.0657,
+          "edge": 0.0021,
+          "tDay": 0.09,
+          "blocks": 6,
+          "tBlock": -0.51,
+          "vsOwn": 0.0498,
+          "ownCovered": 229,
+          "noTop2": 0.0828,
+          "best": 2.992,
+          "worst": -0.9874,
+          "win": 0.5357
+        },
+        "all": {
+          "n": 1693,
+          "days": 518,
+          "stocks": 941,
+          "avg": 0.0474,
+          "median": 0.0162,
+          "avgStress": 0.0434,
+          "ctrl": 0.0353,
+          "edge": 0.0057,
+          "tDay": 0.42,
+          "blocks": 10,
+          "tBlock": -0.29,
+          "vsOwn": 0.0267,
+          "ownCovered": 431,
+          "noTop2": 0.0442,
+          "best": 2.992,
+          "worst": -0.9874,
+          "win": 0.5275
+        }
+      }
+    },
+    {
+      "id": "RQ-INV-LOW252",
+      "verdict": "REJECTED",
+      "why": "not better than the same stocks on their other days in the older half; block t 0.15 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.29 under 2.5 in the newer half",
+      "results": {
+        "older": {
+          "n": 786,
+          "days": 237,
+          "stocks": 736,
+          "avg": 0.0635,
+          "median": 0.0433,
+          "avgStress": 0.0595,
+          "ctrl": 0.0574,
+          "edge": 0.0172,
+          "tDay": 0.72,
+          "blocks": 3,
+          "tBlock": 0.15,
+          "vsOwn": -0.0528,
+          "ownCovered": 79,
+          "noTop2": 0.0561,
+          "best": 2.992,
+          "worst": -0.9943,
+          "win": 0.5483
+        },
+        "newer": {
+          "n": 359,
+          "days": 159,
+          "stocks": 330,
+          "avg": 0.1068,
+          "median": -0.0167,
+          "avgStress": 0.1028,
+          "ctrl": 0.1176,
+          "edge": -0.0411,
+          "tDay": -0.98,
+          "blocks": 3,
+          "tBlock": -0.29,
+          "vsOwn": -0.0666,
+          "ownCovered": 90,
+          "noTop2": 0.0906,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.4763
+        },
+        "all": {
+          "n": 1145,
+          "days": 396,
+          "stocks": 899,
+          "avg": 0.0771,
+          "median": 0.0272,
+          "avgStress": 0.0731,
+          "ctrl": 0.0763,
+          "edge": -0.0062,
+          "tDay": -0.28,
+          "blocks": 5,
+          "tBlock": 0.08,
+          "vsOwn": -0.0602,
+          "ownCovered": 169,
+          "noTop2": 0.072,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.5258
+        }
+      }
+    },
+    {
+      "id": "RQ-INV-TOP126",
+      "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+      "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy",
+      "results": {
+        "older": {
+          "n": 854,
+          "days": 244,
+          "stocks": 555,
+          "avg": -0.0739,
+          "median": -0.0707,
+          "avgStress": -0.0779,
+          "ctrl": -0.0621,
+          "edge": -0.0244,
+          "tDay": -1.51,
+          "blocks": 5,
+          "tBlock": -0.95,
+          "vsOwn": -0.1304,
+          "ownCovered": 210,
+          "noTop2": -0.0788,
+          "best": 2.1712,
+          "worst": -0.9353,
+          "win": 0.3981
+        },
+        "newer": {
+          "n": 1002,
+          "days": 313,
+          "stocks": 577,
+          "avg": 0.116,
+          "median": 0.0384,
+          "avgStress": 0.112,
+          "ctrl": 0.071,
+          "edge": 0.0221,
+          "tDay": 1.14,
+          "blocks": 6,
+          "tBlock": 0.75,
+          "vsOwn": 0.0036,
+          "ownCovered": 272,
+          "noTop2": 0.1103,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.5569
+        },
+        "all": {
+          "n": 1856,
+          "days": 557,
+          "stocks": 830,
+          "avg": 0.0286,
+          "median": -0.0106,
+          "avgStress": 0.0246,
+          "ctrl": 0.0097,
+          "edge": 0.0017,
+          "tDay": 0.13,
+          "blocks": 10,
+          "tBlock": 0.1,
+          "vsOwn": -0.0548,
+          "ownCovered": 482,
+          "noTop2": 0.0254,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.4838
+        }
+      }
+    },
+    {
+      "id": "RQ-GWI-AV126",
+      "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+      "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy",
+      "results": {
+        "older": {
+          "n": 170,
+          "days": 103,
+          "stocks": 151,
+          "avg": -0.0744,
+          "median": -0.0559,
+          "avgStress": -0.0784,
+          "ctrl": 0.0062,
+          "edge": -0.0792,
+          "tDay": -3.04,
+          "blocks": 5,
+          "tBlock": -2.92,
+          "vsOwn": -0.036,
+          "ownCovered": 84,
+          "noTop2": -0.0854,
+          "best": 1.0209,
+          "worst": -0.9152,
+          "win": 0.3882
+        },
+        "newer": {
+          "n": 276,
+          "days": 151,
+          "stocks": 223,
+          "avg": 0.0708,
+          "median": 0.0166,
+          "avgStress": 0.0668,
+          "ctrl": 0.0757,
+          "edge": -0.0215,
+          "tDay": -0.68,
+          "blocks": 6,
+          "tBlock": 0.25,
+          "vsOwn": 0.095,
+          "ownCovered": 147,
+          "noTop2": 0.0533,
+          "best": 2.992,
+          "worst": -1.0031,
+          "win": 0.5326
+        },
+        "all": {
+          "n": 446,
+          "days": 254,
+          "stocks": 329,
+          "avg": 0.0154,
+          "median": -0.0123,
+          "avgStress": 0.0114,
+          "ctrl": 0.0492,
+          "edge": -0.0449,
+          "tDay": -2.08,
+          "blocks": 10,
+          "tBlock": -0.96,
+          "vsOwn": 0.0474,
+          "ownCovered": 231,
+          "noTop2": 0.0044,
+          "best": 2.992,
+          "worst": -1.0031,
+          "win": 0.4776
+        }
+      }
+    },
+    {
+      "id": "RQ-GWI-AV63",
+      "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+      "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy",
+      "results": {
+        "older": {
+          "n": 186,
+          "days": 109,
+          "stocks": 151,
+          "avg": -0.0351,
+          "median": -0.0398,
+          "avgStress": -0.0391,
+          "ctrl": -0.0092,
+          "edge": -0.0226,
+          "tDay": -1.15,
+          "blocks": 9,
+          "tBlock": -0.79,
+          "vsOwn": 0.0176,
+          "ownCovered": 98,
+          "noTop2": -0.0421,
+          "best": 0.6626,
+          "worst": -0.8601,
+          "win": 0.4247
+        },
+        "newer": {
+          "n": 324,
+          "days": 173,
+          "stocks": 230,
+          "avg": 0.0264,
+          "median": 0.0049,
+          "avgStress": 0.0224,
+          "ctrl": 0.0292,
+          "edge": -0.024,
+          "tDay": -1.44,
+          "blocks": 11,
+          "tBlock": -1.23,
+          "vsOwn": 0.0202,
+          "ownCovered": 173,
+          "noTop2": 0.0176,
+          "best": 1.7099,
+          "worst": -0.9465,
+          "win": 0.5123
+        },
+        "all": {
+          "n": 510,
+          "days": 282,
+          "stocks": 335,
+          "avg": 0.0039,
+          "median": -0.0125,
+          "avgStress": -0.0001,
+          "ctrl": 0.0152,
+          "edge": -0.0235,
+          "tDay": -1.84,
+          "blocks": 20,
+          "tBlock": -1.46,
+          "vsOwn": 0.0193,
+          "ownCovered": 271,
+          "noTop2": -0.0017,
+          "best": 1.7099,
+          "worst": -0.9465,
+          "win": 0.4804
+        }
+      }
+    },
+    {
+      "id": "RQ-GWI-BIG126",
+      "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+      "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy",
+      "results": {
+        "older": {
+          "n": 70,
+          "days": 59,
+          "stocks": 66,
+          "avg": -0.1258,
+          "median": -0.1144,
+          "avgStress": -0.1298,
+          "ctrl": 0.0018,
+          "edge": -0.1267,
+          "tDay": -3.16,
+          "blocks": 5,
+          "tBlock": -2.14,
+          "vsOwn": 0.0494,
+          "ownCovered": 43,
+          "noTop2": -0.1481,
+          "best": 0.6668,
+          "worst": -0.8589,
+          "win": 0.3
+        },
+        "newer": {
+          "n": 116,
+          "days": 78,
+          "stocks": 101,
+          "avg": 0.0545,
+          "median": -0.0225,
+          "avgStress": 0.0505,
+          "ctrl": 0.0742,
+          "edge": -0.0465,
+          "tDay": -0.91,
+          "blocks": 6,
+          "tBlock": -0.89,
+          "vsOwn": 0.0877,
+          "ownCovered": 74,
+          "noTop2": 0.0122,
+          "best": 2.992,
+          "worst": -1.0031,
+          "win": 0.4741
+        },
+        "all": {
+          "n": 186,
+          "days": 137,
+          "stocks": 154,
+          "avg": -0.0133,
+          "median": -0.0623,
+          "avgStress": -0.0173,
+          "ctrl": 0.0469,
+          "edge": -0.081,
+          "tDay": -2.39,
+          "blocks": 10,
+          "tBlock": -2.12,
+          "vsOwn": 0.0736,
+          "ownCovered": 117,
+          "noTop2": -0.0403,
+          "best": 2.992,
+          "worst": -1.0031,
+          "win": 0.4086
+        }
+      }
+    }
+  ],
+  "note": "Current main research code/workflow/tests changed after ACTIONS; mentor comparison is scoped to exact51b5e349 plus old patch, not all current-main tests",
+  "currentRegistryBlob": "318351d58dd4d96849ea21bb16fe4069b73cb1ca",
+  "currentRegistryUniqueIds": 783,
+  "changedStatuses": [
+    {
+      "id": "V17",
+      "before": "queued (Agent B)",
+      "after": "tested: rejected"
+    },
+    {
+      "id": "C-GOV1b",
+      "before": "pre-registered 22 Oct 2026, built (gov-awards2.mjs); first run Sunday 25 Oct (may need 2 runs to finish the parent lookups)",
+      "after": "tested: TOO FEW CASES for the rule (G1/G2: 9 awards worth 20%+ of market cap in 5 years, 6 older / 3 newer); information version (any 50M+ award) REJECTED (frozen 25 Oct 2026)"
+    },
+    {
+      "id": "C-CONG1",
+      "before": "queued (Agent C): data route found 27 Oct 2026",
+      "after": "tested (agent-c-lab): 20 sessions REJECTED, 60 sessions REJECTED"
+    },
+    {
+      "id": "B-FCF-EM1",
+      "before": "queued (Agent B, Tuesday 27 Oct)",
+      "after": "tested: not proven"
+    },
+    {
+      "id": "EXP-CONG1",
+      "before": "queued (Agent C): data route found 27 Oct 2026",
+      "after": "tested: too few cases (agent-c-lab, frozen 2026-11-01)"
+    },
+    {
+      "id": "C-INSQ1",
+      "before": "queued (Agent C)",
+      "after": "tested: too few cases (agent-c-lab, frozen 2026-11-01)"
+    }
+  ],
+  "currentRegistryStatuses": [
+    {
+      "id": "T1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "T2",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T3",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T4",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T5",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T6",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T7",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "T8",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T9",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T10",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T11",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T12",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T13",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T14",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T15",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "T16",
+      "status": "covered by T4"
+    },
+    {
+      "id": "T17",
+      "status": "covered by T4"
+    },
+    {
+      "id": "T18",
+      "status": "needs data"
+    },
+    {
+      "id": "I1",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "I2",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "I3",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "I4",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "I5",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "I6",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "I7",
+      "status": "live paper (ignition lab)"
+    },
+    {
+      "id": "I8",
+      "status": "collecting data"
+    },
+    {
+      "id": "I9",
+      "status": "live paper (intraday radar)"
+    },
+    {
+      "id": "I10",
+      "status": "live paper (fast-mover lab)"
+    },
+    {
+      "id": "I11",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "I12",
+      "status": "paper (IPO lab)"
+    },
+    {
+      "id": "M1",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M2",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M3",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M4",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M5",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M6",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M7",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M8",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M9",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M10",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M11",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M12",
+      "status": "needs data"
+    },
+    {
+      "id": "M13",
+      "status": "bred every week (autolab)"
+    },
+    {
+      "id": "C1",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "C2",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "C3",
+      "status": "tested"
+    },
+    {
+      "id": "C4",
+      "status": "tested"
+    },
+    {
+      "id": "C5",
+      "status": "needs data"
+    },
+    {
+      "id": "C6",
+      "status": "needs data"
+    },
+    {
+      "id": "E1",
+      "status": "tested"
+    },
+    {
+      "id": "E2",
+      "status": "tested"
+    },
+    {
+      "id": "E3",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "E4",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "E5",
+      "status": "collecting data"
+    },
+    {
+      "id": "E6",
+      "status": "needs data"
+    },
+    {
+      "id": "E7",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "E8",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "E9",
+      "status": "blocked (safety)"
+    },
+    {
+      "id": "E10",
+      "status": "watched (deals)"
+    },
+    {
+      "id": "E11",
+      "status": "not for this system"
+    },
+    {
+      "id": "E12",
+      "status": "risk rule"
+    },
+    {
+      "id": "E13",
+      "status": "covered by E16"
+    },
+    {
+      "id": "E14",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "S1",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "S2",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "S3",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "S4",
+      "status": "risk rule"
+    },
+    {
+      "id": "S5",
+      "status": "needs data"
+    },
+    {
+      "id": "V1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "V2",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "V3",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "V4",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "V5",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "V6",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "V7",
+      "status": "needs data"
+    },
+    {
+      "id": "V8",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "V9",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "V10",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "V11",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "V12",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "V13",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "R1",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "R2",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "R3",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "R4",
+      "status": "tested"
+    },
+    {
+      "id": "R5",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "N1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "N2",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "N3",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "X1",
+      "status": "tested: in use"
+    },
+    {
+      "id": "X2",
+      "status": "tested: in use"
+    },
+    {
+      "id": "X3",
+      "status": "tested: in use"
+    },
+    {
+      "id": "X4",
+      "status": "tested: switched off 23 Oct (A-SWR1: lost ~3% per switch vs holding in USD)"
+    },
+    {
+      "id": "X5",
+      "status": "tested: in use"
+    },
+    {
+      "id": "X6",
+      "status": "tested"
+    },
+    {
+      "id": "Z1",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z2",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z3",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z4",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z5",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z6",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z7",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z8",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z9",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z10",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z11",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z12",
+      "status": "not for this system"
+    },
+    {
+      "id": "Z13",
+      "status": "not for this system"
+    },
+    {
+      "id": "O1",
+      "status": "waiting (needs a tier-2 stock rule to sit on)"
+    },
+    {
+      "id": "O2",
+      "status": "options lab (separate)"
+    },
+    {
+      "id": "O3",
+      "status": "options lab (separate)"
+    },
+    {
+      "id": "P1",
+      "status": "core plan"
+    },
+    {
+      "id": "P2",
+      "status": "needs data"
+    },
+    {
+      "id": "P3",
+      "status": "long-term, not testable in 5 years"
+    },
+    {
+      "id": "R6",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "R7",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "I13",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T19",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M14",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "M15",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T20",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T21",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T22",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "T23",
+      "status": "FAILED DISCOVERY"
+    },
+    {
+      "id": "E15",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "E16",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "E17",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "E18",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "X7",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "X8",
+      "status": "queued (weekly researcher)"
+    },
+    {
+      "id": "N4",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "V14",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "V15",
+      "status": "LONGER HOLDS only (owner's labelled choice, max 3, not proven); not a TRY SMALL rule (status corrected 27 Oct 2026)"
+    },
+    {
+      "id": "V16",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "A-EW1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "A-RG1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "B-CR1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "B-FS2",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "C-CT1",
+      "status": "pre-registered 22 Oct 2026 (both versions); queued as the next Agent C build"
+    },
+    {
+      "id": "C-IC1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "E19",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "C7",
+      "status": "not for this system"
+    },
+    {
+      "id": "A-VP1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-VP2",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-VP3",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-SMC1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-SMC2",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-SMC3",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-ROT1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-ROT2",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-SW1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-SW2",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-SW3",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-SW4",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-SW5",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "V17",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "C-GOV1",
+      "status": "tested: needs data"
+    },
+    {
+      "id": "C-PAT1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "C-INS2",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "C-FADE1",
+      "status": "tested: FADE flags live (first run 20 Oct); AVOID list in data/tip-score.json \"fade\", not yet wired into ACTIONS"
+    },
+    {
+      "id": "B-HAL1",
+      "status": "queued (Agent B)"
+    },
+    {
+      "id": "B-FND1",
+      "status": "queued (Agent B)"
+    },
+    {
+      "id": "A-VIX1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "A-CP1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "C-FUL1",
+      "status": "tested: too few cases"
+    },
+    {
+      "id": "C-QK1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-TRIM1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "A-TRIM2",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "C-S8",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "C-LOCK",
+      "status": "pre-registered 22 Oct 2026, built (share-supply.mjs); first run Sunday 25 Oct"
+    },
+    {
+      "id": "C-INS3",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "C-SI1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "C-13F1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "A-MISS1",
+      "status": "tested: audit done (no buy rule)"
+    },
+    {
+      "id": "A-DEAD1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "A-LEDGER",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "A-ORB1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "A-RT1",
+      "status": "decided (Agent A): no feed now, re-check monthly"
+    },
+    {
+      "id": "C-ISC1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "C-SUP1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "C-PEER1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "A-TURN1",
+      "status": "covered (Agent A): monthly version tested by Squad 20 as SQ20-STMOM-1000 / SQ20-STMOM-500 (rejected); weekly version not built (the under-1-month horizon is closed on daily data)"
+    },
+    {
+      "id": "B-NOW1",
+      "status": "queued (Agent B)"
+    },
+    {
+      "id": "C-REV1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "C-PCR1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "A-FC1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "B-BASK1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "A-E1N1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "A-ANG1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "A-EVR1",
+      "status": "tested: REJECTED"
+    },
+    {
+      "id": "B-100X1",
+      "status": "studied (Squad 4, 2026-10-23): a precursor scorecard, not a buy rule"
+    },
+    {
+      "id": "A-E1W1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "WEB-SCOUT",
+      "status": "in use (research process for agents; not a trading or risk rule)"
+    },
+    {
+      "id": "C-GOV1b",
+      "status": "tested: TOO FEW CASES for the rule (G1/G2: 9 awards worth 20%+ of market cap in 5 years, 6 older / 3 newer); information version (any 50M+ award) REJECTED (frozen 25 Oct 2026)"
+    },
+    {
+      "id": "C-ARK1",
+      "status": "forward logging live from 22 Oct (tip-sources.mjs -> data/tips-public.jsonl, scored by tip-score); historical test queued (Agent C)"
+    },
+    {
+      "id": "C-CONG1",
+      "status": "tested (agent-c-lab): 20 sessions REJECTED, 60 sessions REJECTED"
+    },
+    {
+      "id": "C-CUST1",
+      "status": "needs data"
+    },
+    {
+      "id": "C-NSI1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "C-QP1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "B-EM1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "B-SIF1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "C-DIFF1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "A-IG8X",
+      "status": "queued (Agent A, after IG8 reaches 10 days)"
+    },
+    {
+      "id": "A-SWR1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "CAT-RUN1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "CAT-RUN2",
+      "status": "not built (its condition was not met)"
+    },
+    {
+      "id": "CAT-NEWS1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "CAT-OCGN",
+      "status": "illustration done (not a test)"
+    },
+    {
+      "id": "CAT-SYMP1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "C-SQZ1",
+      "status": "needs data (FINRA short-interest files)"
+    },
+    {
+      "id": "B-V15BE",
+      "status": "queued (Agent B)"
+    },
+    {
+      "id": "C-SPEC1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "A-HVD1",
+      "status": "needs data (real-time premarket feed)"
+    },
+    {
+      "id": "FOLLOW-KINFO",
+      "status": "queued (follow lane)"
+    },
+    {
+      "id": "CHAIN-MOM1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "CHAIN-DEMAND1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "CHAIN-LAG1",
+      "status": "tested: no repeating order found"
+    },
+    {
+      "id": "CHAIN-READ1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "OPT-LH1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "OPT-CAT1",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "OPT-FOLLOW1",
+      "status": "living board: too few cases"
+    },
+    {
+      "id": "OPT-UOA1",
+      "status": "needs data"
+    },
+    {
+      "id": "CAT-IMPACT1",
+      "status": "queued (Agent C)"
+    },
+    {
+      "id": "D2-001",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "D2-002",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "D2-003",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "D2-004",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-005",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-006",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-007",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-008",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-009",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-010",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D3-POOL",
+      "status": "queued (discovery engine, after the 1 Nov batch)"
+    },
+    {
+      "id": "B-FCF1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "B-FCF-EM1",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "DEC-QBO",
+      "status": "live paper from 26 Oct (decoded lane)"
+    },
+    {
+      "id": "DEC-EP",
+      "status": "live paper from 26 Oct (decoded lane)"
+    },
+    {
+      "id": "DEC-MB",
+      "status": "live paper from 26 Oct (decoded lane)"
+    },
+    {
+      "id": "DEC-VCP",
+      "status": "live paper from 26 Oct (decoded lane)"
+    },
+    {
+      "id": "DEC-PB",
+      "status": "live paper from 26 Oct (decoded lane)"
+    },
+    {
+      "id": "DEC-FROG",
+      "status": "live paper from 26 Oct (decoded lane)"
+    },
+    {
+      "id": "DEC-CRASH",
+      "status": "live paper from 26 Oct (decoded lane)"
+    },
+    {
+      "id": "DEC-SOC",
+      "status": "needs data (licensed social attention/sentiment history)"
+    },
+    {
+      "id": "DEC-CANSLIM",
+      "status": "queued (decoded lane): needs SEC quarterly EPS"
+    },
+    {
+      "id": "DEC2-DARVAS",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-WEIN",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-LIVER",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-TURT20",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-TURT55",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-ZANGER",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-IBD",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-BBSQ",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-KELT",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-GOLDX",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-ICHI",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-APPEL",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-POCKET",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-BGU",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-WEDGE",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-MINTT",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-STINE",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-HOLYG",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-8020",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-NR7ID",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-LWVB",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-RSI2",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-TPS",
+      "status": "live paper (decoded lane, batch 2); per-trade verdict PROVEN, but it fails the budget test (loses per dollar planned, decoded-check.json), so it is blocked from TRY SMALL (label clarified 27 Oct 2026)"
+    },
+    {
+      "id": "DEC2-DBL7",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-H2",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-NISON",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-WYCK",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-GAPGO",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-GAPFILL",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-TSOUP",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-SANTA",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-TOM",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-FROGTRIG",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-CONTRACT",
+      "status": "live paper (decoded lane, batch 2) when its data is available"
+    },
+    {
+      "id": "DEC2-INSQ",
+      "status": "live paper (decoded lane, batch 2) when its data is available"
+    },
+    {
+      "id": "DEC2-X-QBO-DL-L10-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-DL-L10-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-DL-E21-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-DL-E21-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-DL-S50-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-DL-S50-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-2A-L10-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-2A-L10-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-2A-E21-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-2A-E21-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-2A-S50-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-QBO-2A-S50-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-DL-L10-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-DL-L10-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-DL-E21-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-DL-E21-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-DL-S50-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-DL-S50-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-2A-L10-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-2A-L10-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-2A-E21-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-2A-E21-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-2A-S50-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-PB-2A-S50-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-DL-L10-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-DL-L10-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-DL-E21-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-DL-E21-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-DL-S50-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-DL-S50-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-2A-L10-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-2A-L10-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-2A-E21-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-2A-E21-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-2A-S50-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-VCP-2A-S50-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-DL-L10-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-DL-L10-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-DL-E21-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-DL-E21-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-DL-S50-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-DL-S50-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-2A-L10-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-2A-L10-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-2A-E21-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-2A-E21-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-2A-S50-P",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-X-EP-2A-S50-N",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-F-QBO-EXT10",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-F-QBO-EXT20",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-F-QBO-STRONG",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-F-QBO-ADD",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-F-PB-EXT10",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-F-PB-EXT20",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-F-PB-STRONG",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-F-PB-ADD",
+      "status": "live paper (decoded lane, batch 2)"
+    },
+    {
+      "id": "DEC2-GREEN",
+      "status": "needs data"
+    },
+    {
+      "id": "DEC2-OSH",
+      "status": "needs data"
+    },
+    {
+      "id": "DEC2-LYNCH",
+      "status": "needs data"
+    },
+    {
+      "id": "DEC2-CAMILLO",
+      "status": "needs data"
+    },
+    {
+      "id": "DEC2-SPINOFF",
+      "status": "needs data"
+    },
+    {
+      "id": "DEC2-SHORT-CATALYST",
+      "status": "needs data"
+    },
+    {
+      "id": "DEC2-EPS-REV",
+      "status": "needs data"
+    },
+    {
+      "id": "DEC2-ASIA-SUPPLIER",
+      "status": "needs data"
+    },
+    {
+      "id": "EXP-AN1",
+      "status": "collecting data (FMP free plan: grades history for part of the market, 20 calls per run)"
+    },
+    {
+      "id": "EXP-AN2",
+      "status": "collecting data (same as EXP-AN1)"
+    },
+    {
+      "id": "EXP-13F1",
+      "status": "tested: not proven (5-year one-shot); live paper from 26 Oct (expert lane)"
+    },
+    {
+      "id": "EXP-13F2",
+      "status": "tested: not proven (5-year one-shot); live paper from 26 Oct (expert lane)"
+    },
+    {
+      "id": "EXP-INS1",
+      "status": "tested: rejected (5-year one-shot); live paper from 26 Oct (expert lane)"
+    },
+    {
+      "id": "EXP-CONG1",
+      "status": "tested: too few cases (agent-c-lab, frozen 2026-11-01)"
+    },
+    {
+      "id": "EXP-ETORO1",
+      "status": "needs owner keys (ETORO_KEY, ETORO_USER_KEY)"
+    },
+    {
+      "id": "WIN-001",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "WIN-002",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "WIN-003",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "HOLD-GETEVEN",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "HOLD-AVGDOWN",
+      "status": "tested: not proven"
+    },
+    {
+      "id": "HOLD-REGIME",
+      "status": "tested: information"
+    },
+    {
+      "id": "HOLD-DIPFUND",
+      "status": "tested: information"
+    },
+    {
+      "id": "ANOM-MOM12",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-52WH",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-RESMOM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-INDMOM",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-TSMOM",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-LOWVOL",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-LOWBETA",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-LOWMAX",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-LOWIVOL",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-SEASON",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-OVNMOM",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-DAYMOM12",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-DAYMOM1",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-DAYREV1",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-DAYNIGHT",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-HVP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-EIL20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-EIL60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-TOM",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-PREHOL",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-EAP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-SUE",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-EAR",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-SUESURGE",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-GP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-CFOA",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-AG",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-ACC",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-QMJ",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-RD",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-OL",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-CAPEX",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-NSI",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-BBY",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-INSIDER",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-13D",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-SPIN",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-DIVINIT",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-13FBEST",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-SILOW",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-DTCLOW",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-SIDROP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANOM-IDXADD",
+      "status": "needs data"
+    },
+    {
+      "id": "ANOM-REVISION",
+      "status": "needs data"
+    },
+    {
+      "id": "ANOM-8KTONE",
+      "status": "needs data"
+    },
+    {
+      "id": "ANOM-OPTSKEW",
+      "status": "needs data"
+    },
+    {
+      "id": "ANOM-BBANN",
+      "status": "needs data"
+    },
+    {
+      "id": "ML-RANK1",
+      "status": "tested: rejected; fails its registered extra gates; forward paper lane from 23 Oct 2026"
+    },
+    {
+      "id": "CONF-2",
+      "status": "tested: rejected; forward paper lane from 23 Oct 2026 close"
+    },
+    {
+      "id": "CONF-3",
+      "status": "tested: rejected; forward paper lane from 23 Oct 2026 close"
+    },
+    {
+      "id": "ANG-RUS-ADD",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-RUS-DOWN",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-IPOBASE",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-LCREV-W",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-LCREV-M",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-LCGAP20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-LCGAP60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-QLOW",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-LOCKUP",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-DIVG",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-FOMC",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-SPLIT",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "ANG-DIP5",
+      "status": "tested: information (one path per fund)"
+    },
+    {
+      "id": "MACRO-OIL-E20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-OIL-S20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-OIL-E60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-OIL-S60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-GAS-E20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-GAS-S20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-GAS-E60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-GAS-S60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-GOLD-E20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-GOLD-S20",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-GOLD-E60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-GOLD-S60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-CU-E20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-CU-S20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-CU-E60",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-CU-S60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-RATE-E20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-USD-E20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-VIX-E20",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-WAR-E20",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-WAR-S20",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-PEACE-E20",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-OPEC-E20",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-OPEC-S20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-CLIM-E20",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-CLIM-S20",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-RATE-E60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-USD-E60",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-VIX-E60",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-WAR-E60",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-WAR-S60",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-PEACE-E60",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-OPEC-E60",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-OPEC-S60",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-CLIM-E60",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-CLIM-S60",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "MACRO-ROT",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "TIP-DIPLEAD",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "TIP-THEME",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "TIP-TURN",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "TIP-DIPLEAD-100",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "TIP-THEME-100",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "TIP-TURN-100",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ3-VOLRISK",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-PYRAMID",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-CUTRUN",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-REGIME",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-ROTATE",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-FAMEQ",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-SECTOR",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-DDBRAKE",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-SLOT10",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-SLOT5",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ3-COMBO",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ1-INSCLU",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ1-CEODIP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ1-INSLOWSI",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ1-BBAUTH",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ1-BBDIP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ1-CUSTMOM",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ1-GUIDEUP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ1-RECUP",
+      "status": "pre-registered 2026-10-24 (squad 1 lab); 5-year one-shot pending"
+    },
+    {
+      "id": "SQ1-DIVHIKE",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ1-SIAVOID",
+      "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ2-ORB5",
+      "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ2-ORB30",
+      "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ2-EPORB",
+      "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ2-QBO",
+      "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ2-VWAP",
+      "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ2-EMAPB",
+      "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ2-HTF",
+      "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ2-PWR",
+      "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ2-SWING",
+      "status": "tested: rejected (squad 2, 1-minute bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ4-GROWLEAD",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ4-THEMEGROW",
+      "status": "pre-registered 2026-10-24 (squad 4); 5-year one-shot pending"
+    },
+    {
+      "id": "SQ4-RULE40",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ4-INSIDER",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ4-RDCOMP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ4-QUALDIP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ4-IPOLEAD",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ4-PROFILE",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ6-CLENOW",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ6-RADGE",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ6-CRSIPB",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ6-CUMRSI",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ6-MTUM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ6-QMOM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ6-3WT",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ6-TD9",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ7-DEEPGAP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ7-DEEPEARN",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ7-BUYBACKVOL",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ7-DEEPNODIL",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ7-LAGEARN",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ7-DNA",
+      "status": "studied (squad 7, 2026-10-24)"
+    },
+    {
+      "id": "SQ8-NIGHTRUN",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ8-TUG",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ8-ACCUM",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ8-ORDERLY",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ8-HOLD3",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ8-SHRINK",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ8-LOWTURN",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ8-POSTLOCK",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ8-CLEAN",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ8-REAL",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-DT-3ST",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-DT-KST",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-DT-MACD",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-DT-WQM",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-DT-SSLW",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-DT-HDIV",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-TMA-3LS",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-TMA-TREND",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-TMA-FIB",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ9-QG-KALMAN",
+      "status": "tested: rejected (squad 9, daily bars); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ5-TOP20",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): not proven"
+    },
+    {
+      "id": "SQ5-TOP20-TF",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): not proven"
+    },
+    {
+      "id": "SQ5-EW100",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): not proven"
+    },
+    {
+      "id": "SQ5-MOMBUF",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): rejected"
+    },
+    {
+      "id": "SQ5-MOMBUF-TF",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): rejected"
+    },
+    {
+      "id": "SQ5-QUAL20",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): rejected"
+    },
+    {
+      "id": "SQ5-NEWIN",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): rejected"
+    },
+    {
+      "id": "SQ5-SHARIAH30",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026; corrected run (data fixes SQ5-DATA1..3, 25 Oct 2026): not proven"
+    },
+    {
+      "id": "SQ13-RPB",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ13-RPB-CLEAN",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ13-RPB-BUYBACK",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ13-RPB-LARGE",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ13-WAVE-BIG",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ13-WAVE-STRONG",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ13-LEADF",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ13-LEADH",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ10-SH10",
+      "status": "tested: not proven; portfolio beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ10-SH10-C15",
+      "status": "tested: not proven; portfolio beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ10-SH20",
+      "status": "tested: not proven; portfolio beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ10-SH20-C15",
+      "status": "tested: not proven; portfolio beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ10-SH20-C15-Y",
+      "status": "pre-registered 2026-10-24 (squad 10); 5-year one-shot pending"
+    },
+    {
+      "id": "SQ10-SH30-C15",
+      "status": "tested: not proven; portfolio beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ10-SH30-MOM",
+      "status": "tested: not proven; portfolio beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ10-SH50-XMOM",
+      "status": "tested: rejected; portfolio did not beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ11-PB8",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ11-PB12",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ11-MA50",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ11-3DN",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ11-FLUSH",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ11-20D",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ11-MS63",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ12-EGAPHOLD",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ12-EARN52H",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ12-REVEPS",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ12-ACCEL2",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ12-RAISECONF",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ12-INVDAY",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ15-PB12-ATM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ15-PB12-ITM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ15-MOM-ATM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ15-MOM-ITM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ15-REPL",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ15-DIP",
+      "status": "tested: information (too few cases); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ14-PB12M",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ14-PB15",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ14-PB12P5",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ14-PB12H",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ14-LEADH4",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ14-MTPB",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-MAGIC",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-ACQM",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-QVAL",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-GPVAL",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-MSCIQ",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-SHYLD",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-VALMOM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-CORNER",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-IND12",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ16-RSNH",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ17-MIX50",
+      "status": "tested: not proven; portfolio beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ17-SH20-TF10",
+      "status": "tested: not proven; portfolio did not beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ17-SHMOM30",
+      "status": "tested: rejected; portfolio did not beat SPUS in both halves; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ17-SH20-CW-Y",
+      "status": "pre-registered 2026-10-24 (squad 17); 5-year one-shot pending"
+    },
+    {
+      "id": "SQ18-PB12-CALM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ18-PB12-MON",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ18-FRIDIP",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ18-PB12-ACCUM",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ18-PB12-DRY",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ18-MTUM-CALM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ18-QMOM-CALM",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ18-BASK-DIP3",
+      "status": "tested: worse timing; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ18-BASK-MID",
+      "status": "tested: worse timing; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ18-BASK-END",
+      "status": "tested: worse timing; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "COMEBACK-1",
+      "status": "pre-registered 25 Oct 2026 before any forward result (forward paper lanes start 26 Oct 2026)"
+    },
+    {
+      "id": "CAT-HUNTER-SUB5",
+      "status": "tested: REJECTED (squad 19, daily bars, 2% slippage each way decides)"
+    },
+    {
+      "id": "UNDER5-JUMP",
+      "status": "tested: TOO FEW CASES (squad 19, daily bars, 2% slippage each way decides)"
+    },
+    {
+      "id": "UNDER5-REVERSE",
+      "status": "tested: TOO FEW CASES (squad 19, daily bars, 2% slippage each way decides)"
+    },
+    {
+      "id": "UNDER5-EPS-LOW",
+      "status": "tested: REJECTED (squad 19, daily bars, 2% slippage each way decides)"
+    },
+    {
+      "id": "SQ19-FAST-PM",
+      "status": "tested: REJECTED (squad 19, 1-minute bars, 2024-01 to 2026-10-23); intraday entry: paper alert only"
+    },
+    {
+      "id": "SQ19-FAST-PM-RV3",
+      "status": "tested: REJECTED (squad 19, 1-minute bars, 2024-01 to 2026-10-23); intraday entry: paper alert only"
+    },
+    {
+      "id": "SQ19-FAST-PM-REPEAT",
+      "status": "tested: REJECTED (squad 19, 1-minute bars, 2024-01 to 2026-10-23); intraday entry: paper alert only"
+    },
+    {
+      "id": "SQ19-FAST-EARLY-RV3",
+      "status": "tested: REJECTED (squad 19, 1-minute bars, 2024-01 to 2026-10-23); intraday entry: paper alert only"
+    },
+    {
+      "id": "SQ19-FAST-2TO5-PM",
+      "status": "tested: REJECTED (squad 19, 1-minute bars, 2024-01 to 2026-10-23); intraday entry: paper alert only"
+    },
+    {
+      "id": "SQ19-GAP20-8K-NONEWS",
+      "status": "tested: REJECTED (squad 19, 1-minute bars, 2024-01 to 2026-10-23); intraday entry: paper alert only"
+    },
+    {
+      "id": "SQ19-HODBRK-LIVENEWS",
+      "status": "tested: REJECTED (squad 19, 1-minute bars, 2024-01 to 2026-10-23); intraday entry: paper alert only"
+    },
+    {
+      "id": "SQ20-AV40-PB12",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-AV25-PB12",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-XH25-PB12",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA25-PB12",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XH40-PB12",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA40-PB12",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-AV40-MTUM",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-AV25-MTUM",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-XH25-MTUM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA25-MTUM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XH40-MTUM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA40-MTUM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-AV40-QMOM",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-AV25-QMOM",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-XH25-QMOM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA25-QMOM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XH40-QMOM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA40-QMOM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-AV40-FCF1",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-AV25-FCF1",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-XH25-FCF1",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA25-FCF1",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XH40-FCF1",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA40-FCF1",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-AV40-FROG",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-AV25-FROG",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-XH25-FROG",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA25-FROG",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XH40-FROG",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA40-FROG",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-AV40-RESMOM",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-AV25-RESMOM",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-XH25-RESMOM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA25-RESMOM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XH40-RESMOM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA40-RESMOM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-AV40-SUESURGE",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-AV25-SUESURGE",
+      "status": "tested: not proven; ADOPT (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-XH25-SUESURGE",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA25-SUESURGE",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XH40-SUESURGE",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA40-SUESURGE",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-AV40-GOLD",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-AV25-GOLD",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-XH25-GOLD",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA25-GOLD",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XH40-GOLD",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA40-GOLD",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-AV40-USD",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-AV25-USD",
+      "status": "tested: not proven; do not adopt (filter); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-XH25-USD",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA25-USD",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XH40-USD",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-XA40-USD",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "SQ20-SPIKE2",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-STMOM-1000",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ20-STMOM-500",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ21-CONTRACT10D",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "V15-NO35",
+      "status": "forward paper only from 27 Oct 2026 (registered 2026-10-25; never backtested)"
+    },
+    {
+      "id": "DEC-CONTRACT-10D-WIDE",
+      "status": "not tested: needs data"
+    },
+    {
+      "id": "RQ-LAZY-63",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-LAZY-126",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-LAZY-CHG63",
+      "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "A-TGT-TGT10-PB12",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TGT15-PB12",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TGT20-PB12",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TRAIL10-PB12",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-STOP10-PB12",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TGT10-MTUM",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TGT15-MTUM",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TGT20-MTUM",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TRAIL10-MTUM",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-STOP10-MTUM",
+      "status": "tested: not proven; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TGT10-QMOM",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TGT15-QMOM",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TGT20-QMOM",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-TRAIL10-QMOM",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "A-TGT-STOP10-QMOM",
+      "status": "tested: rejected; do not adopt (exit)"
+    },
+    {
+      "id": "A-RMOM1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "A-TGT1",
+      "status": "tested: rejected as an exit change (0 of 15 adopted; keep the current fixed-hold exits)"
+    },
+    {
+      "id": "C-INSQ1",
+      "status": "tested: too few cases (agent-c-lab, frozen 2026-11-01)"
+    },
+    {
+      "id": "SQ22-CASHCONV",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ22-SPINOFF",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ22-NEGLECTED",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ22-13D",
+      "status": "not run: duplicate of ANOM-13D (rejected 23 Oct 2026)"
+    },
+    {
+      "id": "REV-QUALITY",
+      "status": "needs data"
+    },
+    {
+      "id": "SUPPLIER-ASIA",
+      "status": "needs data"
+    },
+    {
+      "id": "BUYBACK-INSIDER-CASH",
+      "status": "left to Agent C (overlaps C-INSQ1)"
+    },
+    {
+      "id": "SQ23-NEXT30",
+      "status": "tested: does not earn its place (as 30% next to Basket 1); alone did not beat SPUS in both halves"
+    },
+    {
+      "id": "SQ23-MIDQ",
+      "status": "tested: does not earn its place (as 30% next to Basket 1); alone did not beat SPUS in both halves"
+    },
+    {
+      "id": "SQ23-WORLD",
+      "status": "tested: does not earn its place (as 30% next to Basket 1); alone did not beat SPUS in both halves"
+    },
+    {
+      "id": "SQ23-GOLD",
+      "status": "tested: earns its place (as 30% next to Basket 1); alone beat SPUS in both halves"
+    },
+    {
+      "id": "SQ23-NEXT30-MOM",
+      "status": "tested: does not earn its place (as 30% next to Basket 1); alone did not beat SPUS in both halves"
+    },
+    {
+      "id": "RQ-TENDER-3-15",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-TENDER-ALL",
+      "status": "tested: too few cases; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "SQ15-PB12-300",
+      "status": "forward paper only from 27 Oct 2026"
+    },
+    {
+      "id": "SQ15-PB12-2000",
+      "status": "forward paper only from 28 Oct 2026; owner decision 27 Oct"
+    },
+    {
+      "id": "SQ24-MEGADEAL",
+      "status": "tested: rejected; forward paper lane from 2026-10-28"
+    },
+    {
+      "id": "SQ24-SIDE-FIRST",
+      "status": "exploratory side test run 27 Oct 2026 (never a verdict, never TRY SMALL)"
+    },
+    {
+      "id": "SQ24-SIDE-INSIDER",
+      "status": "exploratory side test run 27 Oct 2026 (never a verdict, never TRY SMALL)"
+    },
+    {
+      "id": "SQ25-GIANTSTAKE-A",
+      "status": "tested: rejected; forward paper lane from 2026-10-28 (record only)"
+    },
+    {
+      "id": "SQ25-GIANTSTAKE-B",
+      "status": "tested: rejected; forward paper lane from 2026-10-28 (record only)"
+    },
+    {
+      "id": "SQ25-GIANTWIDE-A",
+      "status": "not judged: fallback not needed (SQ25-GIANTSTAKE-A had enough cases); information result in data/squad25-lab.json fallbackInfo"
+    },
+    {
+      "id": "SQ25-GIANTWIDE-B",
+      "status": "not judged: fallback not needed (SQ25-GIANTSTAKE-B had enough cases); information result in data/squad25-lab.json fallbackInfo"
+    },
+    {
+      "id": "SQ26-FIRSTMIN",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "SQ26-V-801-first-3d",
+      "status": "tested: rejected (information only; cannot qualify)"
+    },
+    {
+      "id": "SQ26-V-101-open-3d",
+      "status": "tested: rejected (information only; cannot qualify)"
+    },
+    {
+      "id": "SQ27-ODDLOT",
+      "status": "tested 27 Oct 2026: TOO FEW (information only) (corrected run, bug SQ27-B1)"
+    },
+    {
+      "id": "SQ27-ODDLOT-A1",
+      "status": "tested 27 Oct 2026: TOO FEW (information only) (corrected run, bug SQ27-B1)"
+    },
+    {
+      "id": "SQ29-F1-RESTATE",
+      "status": "information only (squad 29, frozen 2026-10-27): did not meet the SELL-WARNING bar"
+    },
+    {
+      "id": "SQ29-F2-AUDRESIGN",
+      "status": "information only (squad 29, frozen 2026-10-27): did not meet the SELL-WARNING bar"
+    },
+    {
+      "id": "SQ29-F3-EXECGONE",
+      "status": "information only (squad 29, frozen 2026-10-27): did not meet the SELL-WARNING bar"
+    },
+    {
+      "id": "SQ29-F4-LATEFILE",
+      "status": "risk rule: SELL WARNING (squad 29, frozen 2026-10-27)"
+    },
+    {
+      "id": "SQ29-F5-GOINGCONCERN",
+      "status": "information only (squad 29, frozen 2026-10-27): did not meet the SELL-WARNING bar"
+    },
+    {
+      "id": "SQ29-F6-DELISTNOTICE",
+      "status": "risk rule: SELL WARNING (squad 29, frozen 2026-10-27)"
+    },
+    {
+      "id": "SQ28-SUPDRIFT",
+      "status": "tested: too few cases; forward paper lane from 2026-10-28"
+    },
+    {
+      "id": "SQ28-SUPDRIFT-ANY",
+      "status": "tested: not proven; forward paper lane from 2026-10-28"
+    },
+    {
+      "id": "RQ-ISC-21",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-ISC-63",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-ISC-E-21",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-ISC-NE-21",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "B-CR1-AVOID",
+      "status": "tested: rejected (no AVOID)"
+    },
+    {
+      "id": "V15-SN",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "RQ-RPO-63",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-RPO-126",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-RPO-LOW63",
+      "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-EAT-ADV-21",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-EAT-ADV-63",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-EAT-DEL-21",
+      "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "D2-011",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-012",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-013",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-014",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-015",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-016",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-017",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-018",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-019",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "D2-020",
+      "status": "tested: rejected"
+    },
+    {
+      "id": "RQ-TAX-63",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-TAX-126",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-TAX-LOW63",
+      "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "C-CONG1-20",
+      "status": "tested: rejected (agent-c-lab, frozen 2026-11-01)"
+    },
+    {
+      "id": "C-CONG1-60",
+      "status": "tested: rejected (agent-c-lab, frozen 2026-11-01)"
+    },
+    {
+      "id": "C-CONG2",
+      "status": "needs data (Agent C queue after C-CONG1)"
+    },
+    {
+      "id": "C-F144X",
+      "status": "queued (Agent C), low"
+    },
+    {
+      "id": "C-INS52W",
+      "status": "not built: short-horizon reaction (2-3 sessions) in 30-500M USD microcaps; the paper finds the longer drift imprecise (t 1.70) and no calendar alpha after day 1; large-cap extension fails"
+    },
+    {
+      "id": "LDX-HALF63",
+      "status": "tested: do not adopt (exit)"
+    },
+    {
+      "id": "LDX-T200",
+      "status": "tested: do not adopt (exit)"
+    },
+    {
+      "id": "LDX-TIME189",
+      "status": "tested: do not adopt (exit)"
+    },
+    {
+      "id": "A-TP1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "A-ANCH1",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "RQ-RDI-126",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-RDI-252",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-INV-LOW126",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-INV-LOW252",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-INV-TOP126",
+      "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "B-FCFN1",
+      "status": "queued (Agent B)"
+    },
+    {
+      "id": "B-BBG1",
+      "status": "needs data"
+    },
+    {
+      "id": "RQ-GWI-AV126",
+      "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-GWI-AV63",
+      "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026"
+    },
+    {
+      "id": "RQ-GWI-BIG126",
+      "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026"
+    }
+  ]
+}
