@@ -3,12 +3,16 @@
 // default (settings.leaderDip = false -> PAPER). Also pinned here: Basket 1 reminders OFF by default (settings.basket1 === true turns them
 // on), Basket 2 monthly reminder unchanged, and SQ11-PB12 no longer in the TRY SMALL list.
 // Run: node --test test/leader-dip.test.mjs
-import test from 'node:test';
+import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { loadScan, blocked } from './load-scan.mjs';
 
-const now = new Date().toISOString();
+// Entry controls run before the declared next open; they must not drift past expiry with wall time.
+const originalNow = Date.now;
+const now = '2026-11-04T13:00:00.000Z';
+Date.now = () => Date.parse(now);
+after(() => { Date.now = originalNow; });
 const S0 = await loadScan({});
 const isS = S0.fn('isSession'), nyd = S0.fn('ny')(Date.now()).d;
 const sessAgo = (n) => { let x = nyd, k = 0; while (k < n) { x = new Date(Date.parse(x) - 864e5).toISOString().slice(0, 10); if (isS(x)) k++; } return x; };
@@ -33,12 +37,13 @@ test('a fresh pick is a BUY of 1,000 USD with the +20% sell limit, no stop and t
   assert.match(L2, /- BUY BBB 1,000 USD at the open \(up to 113\.30\)/); assert.match(L2, /- BUY DDD/); assert.equal((L2.match(/- BUY /g) || []).length, 2);
 });
 
-test('a stale list (older close than the newest session, or 9 sessions old) shows nothing: no late entries', async () => {
+test('a stale list explains UNKNOWN or expired entry and never offers late entries', async () => {
   const S = await loadScan({ files: sig(['AAA'], OLD) });
-  assert.deepEqual(S.fn('ldipLines')({}, {}, null, LAST), []);
-  assert.deepEqual(S.fn('ldipLines')({}, {}), []);
+  assert.match(S.fn('ldipLines')({}, {}, null, LAST).join('\n'), /source session or clock UNKNOWN/);
+  assert.match(S.fn('ldipLines')({}, {}).join('\n'), /next-open entry expired/);
+  assert.doesNotMatch(S.fn('ldipLines')({}, {}).join('\n'), /- BUY/);
   const S2 = await loadScan({ files: sig(['AAA'], sessAgo(2)) });
-  assert.deepEqual(S2.fn('ldipLines')({}, {}, null, LAST), []);   // the scan knows a newer session than the list's close
+  assert.match(S2.fn('ldipLines')({}, {}, null, LAST).join('\n'), /source session or clock UNKNOWN/);   // the scan knows a newer session than the list's close
 });
 
 test('halal: unknown -> MARK HALAL FIRST; NOT halal (your mark or the ZAD list) -> dropped; danger filing -> dropped', async () => {

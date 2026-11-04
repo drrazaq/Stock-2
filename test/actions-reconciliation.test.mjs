@@ -39,11 +39,14 @@ test('same-day notice has unresolved order, never a new compulsory SELL or execu
  const p={ZZQ:{...P(),since:'2025-09-05',lastAct:undefined}};S.write('data/sell-notices.jsonl',[{sym:'ZZQ',d:'2025-09-05',why:'synthetic notice'}]);
  const t=await S.fn('actionsText')(sig,p,null,'SYNTHETIC');assert.match(t,/same-day order unknown/);assert.doesNotMatch(t,/tested rule says sell/);
 }));
-test('pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence',()=>run({},true,async({S,sig})=>{
+test('pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence',async()=>{
+ const previousNow=Date.now;Date.now=()=>Date.parse('2026-11-04T13:00:00Z');
+ try { await run({},true,async({S,sig})=>{
  const today=S.fn('ny')(Date.now()).d;let day=today;do{day=new Date(Date.parse(day)-864e5).toISOString().slice(0,10);}while(!S.fn('isSession')(day));
- S.write('data/halal.json',{});S.write('data/squad11-today.json',{generatedAt:new Date().toISOString(),lastClose:day,methods:{'SQ11-PB12':{newSignals:[{sym:'ZZR',close:75,d:day}]}}});
+ S.write('data/halal.json',{});S.write('data/squad11-today.json',{generatedAt:new Date(Date.now()).toISOString(),lastClose:day,methods:{'SQ11-PB12':{newSignals:[{sym:'ZZR',close:75,d:day}]}}});
  const t=await S.fn('actionsText')({...sig,session:day}, {},null,'SYNTHETIC');assert.match(t,/LEADER DIP: no permitted buy; 1 signal waiting for your ZAD mark/);assert.match(t,/no late entries/);assert.match(t,/LEADER DIP[^\n]*NOT PROVEN/);assert.doesNotMatch(t,/- BUY ZZR/);
-}));
+ }); } finally { Date.now=previousNow; }
+});
 test('frozen research verdict leads over optimistic subset/live labels',()=>run({'data/leaders-study.json':{verdict:'NOT PROVEN',liveVerdict:'PROVISIONALLY PROMISING'},'data/smart-money-study.json':{verdict:'NOT PROVEN',rising:{older:{n:40,avg:.01,spy:.02},newer:{n:40,avg:.03,spy:.04}}}},true,async({S,sig})=>{
  const t=await S.fn('actionsText')(sig,{},null,'SYNTHETIC');assert.match(t,/LEADERS[^;\n]*NOT PROVEN/);assert.doesNotMatch(t,/insider buying works|LEADERS provisionally promising/i);assert.match(t,/not prospective evidence/);
 }));

@@ -1,0 +1,74 @@
+{
+  "schema": "PINNED_DISCOVERY_TO_PLAN_REPLAY_V1",
+  "productionSnapshot": "a95af15061569854c89350a5fb0f981e99783822",
+  "asOf": "2026-11-04T15:00:00.000Z",
+  "publicInputs": {
+    "signals": {
+      "sha256": "c759e2bde152a73a4bc6e48a645bb6833c384c994f89429caefc60dcc91c4e9f",
+      "generatedAt": "2026-11-03T22:10:54.443Z",
+      "session": "2026-11-03"
+    },
+    "discovery": {
+      "sha256": "2038c5ba33a75eb815d462c7a197d5d2bcbacd3657c7fb50762208dc1c93144d",
+      "generatedAt": "2026-11-04T10:03:46.359Z",
+      "session": "2026-11-03"
+    },
+    "squad11-today": {
+      "sha256": "1b3450a950ac2b0e1f8a2c8bec84becf3b10652ba9aa948c05da7404a80ce93d",
+      "generatedAt": "2026-11-04T00:43:22.760Z",
+      "session": "2026-11-03"
+    }
+  },
+  "separatePopulations": {
+    "discovery": {
+      "swept": 12595,
+      "strong": 279,
+      "shortlist": 10,
+      "zad": {
+        "ownerApproved": 0,
+        "policyExcluded": 0,
+        "ownerRejected": 0,
+        "confirmationMissingOrExpired": 10
+      },
+      "trustedSecurityIdentityFields": 0,
+      "bboFields": 0
+    },
+    "scanner": {
+      "scanned": 2120,
+      "tested": 2533,
+      "stocks": 2120,
+      "buyWatchWithPrice": 0,
+      "quickPaused": true,
+      "quickHeld": 5,
+      "earningsRows": 8,
+      "earningsLive": 0,
+      "eventRows": 0
+    },
+    "selectedLane": {
+      "rule": "SQ11-PB12",
+      "verdict": "NOT PROVEN",
+      "leadersAsOf": "2026-10-30",
+      "leaders": 59,
+      "leaderZad": {
+        "ownerApproved": 10,
+        "policyExcluded": 0,
+        "ownerRejected": 1,
+        "confirmationMissingOrExpired": 48
+      },
+      "newSignals": 0,
+      "existingPaperOpen": 6,
+      "actionableEntries": 0
+    }
+  },
+  "actualCaller": "scan.mjs actionsText → ldipLines / lane status",
+  "output": "LEADER DIP: no qualifying trade — no new SQ11-PB12 signal for the 2026-11-03 close. NOT PROVEN; a ZAD mark alone does not establish strategy evidence.",
+  "limits": [
+    "Parallel populations are not one sequential funnel.",
+    "Only the selected lane status is replayed; this is not a complete private ACTIONS message.",
+    "No owner holdings were read; free slots and cash are not assessed.",
+    "Generated time and last close do not establish fresh executable BBO.",
+    "The active intraday run has no terminal evidence in this snapshot.",
+    "Current zero signals cannot establish readiness of identity/quote gates for a future signal."
+  ],
+  "externalRequests": 0
+}

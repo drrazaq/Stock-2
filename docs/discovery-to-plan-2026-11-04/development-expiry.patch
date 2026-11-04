@@ -1,0 +1,166 @@
+diff --git a/scan.mjs b/scan.mjs
+index d7d758d3..21f23f3f 100644
+--- a/scan.mjs
++++ b/scan.mjs
+@@ -2581,11 +2581,27 @@ function ldipRecordLine() { const a = ldipResults(); if (!a.length) return 'LEAD
+ // the time-exit day: the close of session 126 counting the buy day
+ const ldipExitDay = (buyDay, hold = LDIP_HOLD) => sessionPlus(buyDay, hold - 1);
+ // a new-signal list is valid for the next open only (same rule as TRY SMALL): its close must be the newest session the scan knows
+-function ldipFresh(d, gen, session) { return d ? (session ? String(d) >= String(session) : true) && sessionsAfter(String(d).slice(0, 10), ny(Date.now()).d) <= 5 : !!gen && sessionsAfter(new Date(Date.parse(gen) - 864e5).toISOString().slice(0, 10), ny(Date.now()).d) <= 5; }
++function ldipEntryWindow(d, gen, session, nowMs = Date.now()) {
++  const invalid = (reason) => ({ state: 'UNKNOWN', reason, entryDay: null, expiresAt: null });
++  const valid = (x) => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x) && Number.isFinite(Date.parse(x + 'T12:00:00Z')) && new Date(x + 'T12:00:00Z').toISOString().slice(0, 10) === x && isSession(x);
++  if (!Number.isFinite(nowMs) || !valid(d)) return invalid('SOURCE_SESSION_UNKNOWN');
++  const generated = typeof gen === 'string' ? Date.parse(gen) : NaN;
++  if (!Number.isFinite(generated) || generated > nowMs) return invalid('SOURCE_CLOCK_UNKNOWN_OR_FUTURE');
++  if (session && (!valid(session) || d < session)) return invalid('SOURCE_BEHIND_SCANNER');
++  if (!barClosed(d, nowMs)) return invalid('SOURCE_SESSION_NOT_CLOSED');
++  const entryDay = sessionPlus(d, 1), noon = Date.parse(entryDay + 'T12:00:00Z');
++  const expiresMs = noon + (570 - ny(noon).mins) * 60000; // actual New York next open, including DST
++  return { state: nowMs <= expiresMs ? 'IN_WINDOW' : 'EXPIRED', reason: nowMs <= expiresMs ? null : 'NEXT_OPEN_ENTRY_EXPIRED', entryDay, expiresAt: new Date(expiresMs).toISOString() };
++}
++function ldipFresh(d, gen, session) { return ldipEntryWindow(d, gen, session).state === 'IN_WINDOW'; }
+ function ldipLines(pos, lastPx, exclude, session) {
+   const T = readJson0('data/squad11-today.json'), M = T && T.methods && T.methods[LDIP_RULE];
+   if (!M || !Array.isArray(M.newSignals) || !(Date.now() - Date.parse(T.generatedAt || 0) <= 10 * 864e5)) return [];
+-  const sd = T.lastClose || null, picks = M.newSignals.filter(p => p && p.sym && ldipFresh(sd || p.d, T.generatedAt, session));
++  const sd = T.lastClose || null, raw = M.newSignals.filter(p => p && p.sym), picks = raw.filter(p => ldipFresh(sd || p.d, T.generatedAt, session));
++  if (raw.length && !picks.length) {
++    const states = raw.map(p => ldipEntryWindow(sd || p.d, T.generatedAt, session));
++    return states.every(x => x.state === 'EXPIRED') ? ['LEADER DIP: no qualifying trade — next-open entry expired on ' + states[0].entryDay + '; no late entries. Signals remain research context; no new offer recorded.'] : ['LEADER DIP: no qualifying trade — source session or clock UNKNOWN; no BUY inferred. Research signals retained.'];
++  }
+   if (!picks.length) return [];
+   if (ldipOff()) { const a = ldipResults(); return ['LEADER DIP: new buys are OFF. Its ' + a.length + ' finished trades average ' + pcs(a.reduce((x, r) => x + r.pct, 0) / a.length) + ' (below 0). Open positions keep their sell limit and time exit.']; }
+   const Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);
+@@ -2697,7 +2713,8 @@ async function actionsText(sig, pos, px, title) {
+           'Why: a top-300 company closed 12% under its 50-day high while still above its 200-day average. Catalyst: none (a price rule).', ...ldBuy.map(l => { const sy = l.split(' ')[2]; return nm[sy] ? l.replace('- BUY ' + sy, '- BUY ' + sy + ' (' + nm[sy] + ')') : l; })]); }
+         for (const l of ld.filter(l => !ldBuy.includes(l) && !ldHead.includes(l))) (/^- PAPER|PAPER ONLY/.test(l) ? S.shortT : /new buys are OFF/.test(l) ? S.lanes : S.notAct).push(l);
+         const waiting = ld.filter(l => /^MARK HALAL FIRST/.test(l)).flatMap(l => [...l.matchAll(/(?:^|\n)halal ([A-Z][A-Z.\-]{0,7}) yes/g)]).length;
+-        S.lanes.push('LEADER DIP: ' + (ldBuy.length ? ldBuy.length + ' buy' + (ldBuy.length > 1 ? 's' : '') + ' above' : ld.some(l => /new buys are OFF/.test(l)) ? 'new buys OFF (safety brake)' : waiting ? 'no permitted buy; ' + waiting + ' signal' + (waiting === 1 ? '' : 's') + ' waiting for your ZAD mark (existing next-open window only; no late entries)' : 'no permitted buy today') + '. NOT PROVEN; a ZAD mark alone does not establish strategy evidence.'); }
++        const entryProblem = ld.find(l => /^LEADER DIP: no qualifying trade/.test(l)), todaySource = readJson0('data/squad11-today.json'), todayMethod = todaySource && todaySource.methods && todaySource.methods[LDIP_RULE];
++        S.lanes.push((entryProblem || 'LEADER DIP: ' + (ldBuy.length ? ldBuy.length + ' buy' + (ldBuy.length > 1 ? 's' : '') + ' above' : ld.some(l => /new buys are OFF/.test(l)) ? 'new buys OFF (safety brake)' : waiting ? 'no permitted buy; ' + waiting + ' signal' + (waiting === 1 ? '' : 's') + ' waiting for your ZAD mark (existing next-open window only; no late entries)' : todayMethod && Array.isArray(todayMethod.newSignals) && !todayMethod.newSignals.length ? 'no qualifying trade — no new ' + LDIP_RULE + ' signal for the ' + (todaySource.lastClose || 'UNKNOWN') + ' close' : 'no permitted buy today')) + '. NOT PROVEN; a ZAD mark alone does not establish strategy evidence.'); }
+       const tl = trySmallLines(pos, lp, buySyms(), sig && sig.session);
+       if (tl.some(l => /^- BUY /.test(l))) pb(['TRY SMALL | horizon: the rule hold | your real lane only when settings.trySmallReal is on: NOT PROVEN', ...tl]); else if (tl.length) { S.shortT.push(...tl.filter(l => !/^MARK HALAL FIRST/.test(l))); S.notAct.push(...tl.filter(l => /^MARK HALAL FIRST/.test(l))); }
+       S.lanes.push('TRY SMALL: ' + (TRY_REAL() ? 'real' : 'PAPER ONLY (your decision 27 Oct)') + '.'); } catch (e) {} }
+diff --git a/test/actions-reconciliation.test.mjs b/test/actions-reconciliation.test.mjs
+index 07bb71a8..5f3ff5e5 100644
+--- a/test/actions-reconciliation.test.mjs
++++ b/test/actions-reconciliation.test.mjs
+@@ -39,11 +39,14 @@ test('same-day notice has unresolved order, never a new compulsory SELL or execu
+  const p={ZZQ:{...P(),since:'2025-09-05',lastAct:undefined}};S.write('data/sell-notices.jsonl',[{sym:'ZZQ',d:'2025-09-05',why:'synthetic notice'}]);
+  const t=await S.fn('actionsText')(sig,p,null,'SYNTHETIC');assert.match(t,/same-day order unknown/);assert.doesNotMatch(t,/tested rule says sell/);
+ }));
+-test('pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence',()=>run({},true,async({S,sig})=>{
++test('pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence',async()=>{
++ const previousNow=Date.now;Date.now=()=>Date.parse('2026-11-04T13:00:00Z');
++ try { await run({},true,async({S,sig})=>{
+  const today=S.fn('ny')(Date.now()).d;let day=today;do{day=new Date(Date.parse(day)-864e5).toISOString().slice(0,10);}while(!S.fn('isSession')(day));
+- S.write('data/halal.json',{});S.write('data/squad11-today.json',{generatedAt:new Date().toISOString(),lastClose:day,methods:{'SQ11-PB12':{newSignals:[{sym:'ZZR',close:75,d:day}]}}});
++ S.write('data/halal.json',{});S.write('data/squad11-today.json',{generatedAt:new Date(Date.now()).toISOString(),lastClose:day,methods:{'SQ11-PB12':{newSignals:[{sym:'ZZR',close:75,d:day}]}}});
+  const t=await S.fn('actionsText')({...sig,session:day}, {},null,'SYNTHETIC');assert.match(t,/LEADER DIP: no permitted buy; 1 signal waiting for your ZAD mark/);assert.match(t,/no late entries/);assert.match(t,/LEADER DIP[^\n]*NOT PROVEN/);assert.doesNotMatch(t,/- BUY ZZR/);
+-}));
++ }); } finally { Date.now=previousNow; }
++});
+ test('frozen research verdict leads over optimistic subset/live labels',()=>run({'data/leaders-study.json':{verdict:'NOT PROVEN',liveVerdict:'PROVISIONALLY PROMISING'},'data/smart-money-study.json':{verdict:'NOT PROVEN',rising:{older:{n:40,avg:.01,spy:.02},newer:{n:40,avg:.03,spy:.04}}}},true,async({S,sig})=>{
+  const t=await S.fn('actionsText')(sig,{},null,'SYNTHETIC');assert.match(t,/LEADERS[^;\n]*NOT PROVEN/);assert.doesNotMatch(t,/insider buying works|LEADERS provisionally promising/i);assert.match(t,/not prospective evidence/);
+ }));
+diff --git a/test/leader-dip-entry-window.test.mjs b/test/leader-dip-entry-window.test.mjs
+new file mode 100644
+index 00000000..8869cc6e
+--- /dev/null
++++ b/test/leader-dip-entry-window.test.mjs
+@@ -0,0 +1,53 @@
++// Synthetic actual-caller controls; no original owner records, external feeds or delivery.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {loadScan,blocked} from './load-scan.mjs';
++const CLOSE='2026-11-03',GEN='2026-11-03T22:00:00Z';
++const fixture=(signals=[{sym:'ZZQ',close:100,d:CLOSE}],marked=true)=>({
++ 'data/halal.json':marked?{ZZQ:{s:'ok',d:CLOSE,by:'you'}}:{},
++ 'data/settings.json':{focus:false},'data/names.json':{ZZQ:'Synthetic'},
++ 'data/signals.json':{session:CLOSE,market:{up:true,above50:true},stocks:[]},
++ 'data/squad11-today.json':{generatedAt:GEN,lastClose:CLOSE,methods:{'SQ11-PB12':{newSignals:signals}}},
++});
++async function at(iso,fn){const real=Date.now;Date.now=()=>Date.parse(iso);try{return await fn();}finally{Date.now=real;}}
++
++test('next-open expiry is an instant, not a five-session late-entry allowance',async()=>{
++ const S=await loadScan({files:fixture()}),w=S.fn('ldipEntryWindow');
++ for(const [time,state]of [['2026-11-04T14:29:59.999Z','IN_WINDOW'],['2026-11-04T14:30:00.000Z','IN_WINDOW'],['2026-11-04T14:30:00.001Z','EXPIRED'],['2026-11-05T13:00:00Z','EXPIRED']]){
++  const r=w(CLOSE,GEN,CLOSE,Date.parse(time));assert.equal(r.state,state,time);assert.equal(r.entryDay,'2026-11-04');assert.equal(r.expiresAt,'2026-11-04T14:30:00.000Z');
++ }
++});
++test('weekends, holiday and opposite sides of November DST retain the declared next open',async()=>{
++ const S=await loadScan({files:fixture()}),w=S.fn('ldipEntryWindow');
++ for(const [day,gen,now,expiry]of [
++  ['2026-10-29','2026-10-29T22:00:00Z','2026-10-30T13:00:00Z','2026-10-30T13:30:00.000Z'],
++  ['2026-10-30','2026-10-30T22:00:00Z','2026-11-02T14:00:00Z','2026-11-02T14:30:00.000Z'],
++  ['2026-11-25','2026-11-25T22:00:00Z','2026-11-27T14:00:00Z','2026-11-27T14:30:00.000Z']])assert.deepEqual(w(day,gen,day,Date.parse(now)),{state:'IN_WINDOW',reason:null,entryDay:expiry.slice(0,10),expiresAt:expiry});
++});
++test('invalid/missing source clocks or dates never fabricate a signal session',async()=>{
++ const S=await loadScan({files:fixture()}),w=S.fn('ldipEntryWindow'),now=Date.parse('2026-11-04T13:00:00Z');
++ for(const [day,gen,session]of [[null,GEN,CLOSE],['2026-02-30',GEN,CLOSE],['2026-11-07',GEN,CLOSE],[CLOSE,null,CLOSE],[CLOSE,'invalid',CLOSE],[CLOSE,'2026-11-05T00:00:00Z',CLOSE],['2026-11-04',GEN,CLOSE],[CLOSE,GEN,'2026-11-04']])assert.equal(w(day,gen,session,now).state,'UNKNOWN',JSON.stringify([day,gen,session]));
++});
++test('actual expired caller blocks BUY and offer publication while preserving research bytes',async()=>at('2026-11-04T15:00:00Z',async()=>{
++ const S=await loadScan({files:fixture()}),before=S.read('data/squad11-today.json');
++ const t=S.fn('ldipLines')({}, {},null,CLOSE).join('\n');assert.match(t,/no qualifying trade.*entry expired/);assert.doesNotMatch(t,/- BUY|MARK HALAL FIRST/);
++ assert.equal(S.read('data/squad11-today.json'),before);assert.throws(()=>S.read('data/leaderdip-ledger.jsonl'),/ENOENT/);
++}));
++test('a later owner ZAD confirmation cannot revive an expired entry',async()=>at('2026-11-04T15:00:00Z',async()=>{
++ const S=await loadScan({files:fixture(undefined,false)});assert.match(S.fn('ldipLines')({}, {},null,CLOSE).join('\n'),/entry expired/);
++ S.write('data/halal.json',{ZZQ:{s:'ok',d:'2026-11-04',by:'you'}});assert.doesNotMatch(S.fn('ldipLines')({}, {},null,CLOSE).join('\n'),/- BUY/);
++}));
++test('valid pre-open policy control preserves allocation, target overlay and no-stop wording',async()=>at('2026-11-04T13:00:00Z',async()=>{
++ const S=await loadScan({files:fixture()}),t=S.fn('ldipLines')({}, {},null,CLOSE).join('\n');
++ assert.match(t,/- BUY ZZQ 1,000 USD at the open/);assert.match(t,/buy price \+20%/);assert.match(t,/No stop/);assert.match(t,/126 sessions/);
++ // This tests the inherited owner-lane display window only, not BBO/identity evidence or a genuine approved fill.
++}));
++test('actual ACTIONS identifies expired input instead of presenting a future BUY or only missing ZAD',async()=>at('2026-11-04T15:00:00Z',async()=>{
++ const S=await loadScan({files:fixture(undefined,false)}),t=await S.fn('actionsText')(S.readJson('data/signals.json'),{},null,'SYNTHETIC');
++ assert.match(t,/LEADER DIP: no qualifying trade.*entry expired/);assert.match(t,/NOT PROVEN/);assert.doesNotMatch(t,/- BUY ZZQ|signal waiting for your ZAD mark/);
++}));
++test('actual ACTIONS zero-signal lane states the specific no-trade reason',async()=>at('2026-11-04T15:00:00Z',async()=>{
++ const S=await loadScan({files:fixture([])}),t=await S.fn('actionsText')(S.readJson('data/signals.json'),{},null,'SYNTHETIC');
++ assert.match(t,/LEADER DIP: no qualifying trade — no new SQ11-PB12 signal for the 2026-11-03 close/);assert.doesNotMatch(t,/- BUY ZZQ/);
++}));
++test('all external requests stayed blocked',()=>assert.deepEqual(blocked,[]));
+diff --git a/test/leader-dip.test.mjs b/test/leader-dip.test.mjs
+index ab37d62d..89ca5120 100644
+--- a/test/leader-dip.test.mjs
++++ b/test/leader-dip.test.mjs
+@@ -3,12 +3,16 @@
+ // default (settings.leaderDip = false -> PAPER). Also pinned here: Basket 1 reminders OFF by default (settings.basket1 === true turns them
+ // on), Basket 2 monthly reminder unchanged, and SQ11-PB12 no longer in the TRY SMALL list.
+ // Run: node --test test/leader-dip.test.mjs
+-import test from 'node:test';
++import test, { after } from 'node:test';
+ import assert from 'node:assert/strict';
+ import http from 'node:http';
+ import { loadScan, blocked } from './load-scan.mjs';
+ 
+-const now = new Date().toISOString();
++// Entry controls run before the declared next open; they must not drift past expiry with wall time.
++const originalNow = Date.now;
++const now = '2026-11-04T13:00:00.000Z';
++Date.now = () => Date.parse(now);
++after(() => { Date.now = originalNow; });
+ const S0 = await loadScan({});
+ const isS = S0.fn('isSession'), nyd = S0.fn('ny')(Date.now()).d;
+ const sessAgo = (n) => { let x = nyd, k = 0; while (k < n) { x = new Date(Date.parse(x) - 864e5).toISOString().slice(0, 10); if (isS(x)) k++; } return x; };
+@@ -33,12 +37,13 @@ test('a fresh pick is a BUY of 1,000 USD with the +20% sell limit, no stop and t
+   assert.match(L2, /- BUY BBB 1,000 USD at the open \(up to 113\.30\)/); assert.match(L2, /- BUY DDD/); assert.equal((L2.match(/- BUY /g) || []).length, 2);
+ });
+ 
+-test('a stale list (older close than the newest session, or 9 sessions old) shows nothing: no late entries', async () => {
++test('a stale list explains UNKNOWN or expired entry and never offers late entries', async () => {
+   const S = await loadScan({ files: sig(['AAA'], OLD) });
+-  assert.deepEqual(S.fn('ldipLines')({}, {}, null, LAST), []);
+-  assert.deepEqual(S.fn('ldipLines')({}, {}), []);
++  assert.match(S.fn('ldipLines')({}, {}, null, LAST).join('\n'), /source session or clock UNKNOWN/);
++  assert.match(S.fn('ldipLines')({}, {}).join('\n'), /next-open entry expired/);
++  assert.doesNotMatch(S.fn('ldipLines')({}, {}).join('\n'), /- BUY/);
+   const S2 = await loadScan({ files: sig(['AAA'], sessAgo(2)) });
+-  assert.deepEqual(S2.fn('ldipLines')({}, {}, null, LAST), []);   // the scan knows a newer session than the list's close
++  assert.match(S2.fn('ldipLines')({}, {}, null, LAST).join('\n'), /source session or clock UNKNOWN/);   // the scan knows a newer session than the list's close
+ });
+ 
+ test('halal: unknown -> MARK HALAL FIRST; NOT halal (your mark or the ZAD list) -> dropped; danger filing -> dropped', async () => {

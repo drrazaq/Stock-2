@@ -2581,11 +2581,27 @@ function ldipRecordLine() { const a = ldipResults(); if (!a.length) return 'LEAD
 // the time-exit day: the close of session 126 counting the buy day
 const ldipExitDay = (buyDay, hold = LDIP_HOLD) => sessionPlus(buyDay, hold - 1);
 // a new-signal list is valid for the next open only (same rule as TRY SMALL): its close must be the newest session the scan knows
-function ldipFresh(d, gen, session) { return d ? (session ? String(d) >= String(session) : true) && sessionsAfter(String(d).slice(0, 10), ny(Date.now()).d) <= 5 : !!gen && sessionsAfter(new Date(Date.parse(gen) - 864e5).toISOString().slice(0, 10), ny(Date.now()).d) <= 5; }
+function ldipEntryWindow(d, gen, session, nowMs = Date.now()) {
+  const invalid = (reason) => ({ state: 'UNKNOWN', reason, entryDay: null, expiresAt: null });
+  const valid = (x) => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x) && Number.isFinite(Date.parse(x + 'T12:00:00Z')) && new Date(x + 'T12:00:00Z').toISOString().slice(0, 10) === x && isSession(x);
+  if (!Number.isFinite(nowMs) || !valid(d)) return invalid('SOURCE_SESSION_UNKNOWN');
+  const generated = typeof gen === 'string' ? Date.parse(gen) : NaN;
+  if (!Number.isFinite(generated) || generated > nowMs) return invalid('SOURCE_CLOCK_UNKNOWN_OR_FUTURE');
+  if (session && (!valid(session) || d < session)) return invalid('SOURCE_BEHIND_SCANNER');
+  if (!barClosed(d, nowMs)) return invalid('SOURCE_SESSION_NOT_CLOSED');
+  const entryDay = sessionPlus(d, 1), noon = Date.parse(entryDay + 'T12:00:00Z');
+  const expiresMs = noon + (570 - ny(noon).mins) * 60000; // actual New York next open, including DST
+  return { state: nowMs <= expiresMs ? 'IN_WINDOW' : 'EXPIRED', reason: nowMs <= expiresMs ? null : 'NEXT_OPEN_ENTRY_EXPIRED', entryDay, expiresAt: new Date(expiresMs).toISOString() };
+}
+function ldipFresh(d, gen, session) { return ldipEntryWindow(d, gen, session).state === 'IN_WINDOW'; }
 function ldipLines(pos, lastPx, exclude, session) {
   const T = readJson0('data/squad11-today.json'), M = T && T.methods && T.methods[LDIP_RULE];
   if (!M || !Array.isArray(M.newSignals) || !(Date.now() - Date.parse(T.generatedAt || 0) <= 10 * 864e5)) return [];
-  const sd = T.lastClose || null, picks = M.newSignals.filter(p => p && p.sym && ldipFresh(sd || p.d, T.generatedAt, session));
+  const sd = T.lastClose || null, raw = M.newSignals.filter(p => p && p.sym), picks = raw.filter(p => ldipFresh(sd || p.d, T.generatedAt, session));
+  if (raw.length && !picks.length) {
+    const states = raw.map(p => ldipEntryWindow(sd || p.d, T.generatedAt, session));
+    return states.every(x => x.state === 'EXPIRED') ? ['LEADER DIP: no qualifying trade — next-open entry expired on ' + states[0].entryDay + '; no late entries. Signals remain research context; no new offer recorded.'] : ['LEADER DIP: no qualifying trade — source session or clock UNKNOWN; no BUY inferred. Research signals retained.'];
+  }
   if (!picks.length) return [];
   if (ldipOff()) { const a = ldipResults(); return ['LEADER DIP: new buys are OFF. Its ' + a.length + ' finished trades average ' + pcs(a.reduce((x, r) => x + r.pct, 0) / a.length) + ' (below 0). Open positions keep their sell limit and time exit.']; }
   const Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);
@@ -2697,7 +2713,8 @@ async function actionsText(sig, pos, px, title) {
           'Why: a top-300 company closed 12% under its 50-day high while still above its 200-day average. Catalyst: none (a price rule).', ...ldBuy.map(l => { const sy = l.split(' ')[2]; return nm[sy] ? l.replace('- BUY ' + sy, '- BUY ' + sy + ' (' + nm[sy] + ')') : l; })]); }
         for (const l of ld.filter(l => !ldBuy.includes(l) && !ldHead.includes(l))) (/^- PAPER|PAPER ONLY/.test(l) ? S.shortT : /new buys are OFF/.test(l) ? S.lanes : S.notAct).push(l);
         const waiting = ld.filter(l => /^MARK HALAL FIRST/.test(l)).flatMap(l => [...l.matchAll(/(?:^|\n)halal ([A-Z][A-Z.\-]{0,7}) yes/g)]).length;
-        S.lanes.push('LEADER DIP: ' + (ldBuy.length ? ldBuy.length + ' buy' + (ldBuy.length > 1 ? 's' : '') + ' above' : ld.some(l => /new buys are OFF/.test(l)) ? 'new buys OFF (safety brake)' : waiting ? 'no permitted buy; ' + waiting + ' signal' + (waiting === 1 ? '' : 's') + ' waiting for your ZAD mark (existing next-open window only; no late entries)' : 'no permitted buy today') + '. NOT PROVEN; a ZAD mark alone does not establish strategy evidence.'); }
+        const entryProblem = ld.find(l => /^LEADER DIP: no qualifying trade/.test(l)), todaySource = readJson0('data/squad11-today.json'), todayMethod = todaySource && todaySource.methods && todaySource.methods[LDIP_RULE];
+        S.lanes.push((entryProblem || 'LEADER DIP: ' + (ldBuy.length ? ldBuy.length + ' buy' + (ldBuy.length > 1 ? 's' : '') + ' above' : ld.some(l => /new buys are OFF/.test(l)) ? 'new buys OFF (safety brake)' : waiting ? 'no permitted buy; ' + waiting + ' signal' + (waiting === 1 ? '' : 's') + ' waiting for your ZAD mark (existing next-open window only; no late entries)' : todayMethod && Array.isArray(todayMethod.newSignals) && !todayMethod.newSignals.length ? 'no qualifying trade — no new ' + LDIP_RULE + ' signal for the ' + (todaySource.lastClose || 'UNKNOWN') + ' close' : 'no permitted buy today')) + '. NOT PROVEN; a ZAD mark alone does not establish strategy evidence.'); }
       const tl = trySmallLines(pos, lp, buySyms(), sig && sig.session);
       if (tl.some(l => /^- BUY /.test(l))) pb(['TRY SMALL | horizon: the rule hold | your real lane only when settings.trySmallReal is on: NOT PROVEN', ...tl]); else if (tl.length) { S.shortT.push(...tl.filter(l => !/^MARK HALAL FIRST/.test(l))); S.notAct.push(...tl.filter(l => /^MARK HALAL FIRST/.test(l))); }
       S.lanes.push('TRY SMALL: ' + (TRY_REAL() ? 'real' : 'PAPER ONLY (your decision 27 Oct)') + '.'); } catch (e) {} }
