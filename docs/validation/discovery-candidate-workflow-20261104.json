@@ -1,0 +1,1759 @@
+{
+  "kind": "BOUNDED_DISCOVERY_CANDIDATE_AND_CI_CORRECTION_V1",
+  "developmentBase": "aabcafd87691b1b477a6587e3bc6af26e46e6ddf",
+  "retainedSnapshot": "a95af15061569854c89350a5fb0f981e99783822",
+  "activation": "INACTIVE_DEVELOPMENT_ONLY_INDEPENDENT_REVIEW_REQUIRED",
+  "implementationAndTestScope": [
+    "discover.mjs",
+    "native-sec-colocated-prefix.mjs",
+    "test/native-sec-colocated-prefix.test.mjs",
+    "test/native-sec-colocated-host.test.mjs",
+    "test/native-sec-producer-fixture.mjs",
+    "tests/market03-discover-price-day.test.mjs",
+    "test/discovery-candidate-evidence.test.mjs"
+  ],
+  "beforeSHA256": {
+    "discover.mjs": "b73d756034b004cf8b4d4842d7761cb662f4e505ef3c83a878e83e750cd09e6d",
+    "native-sec-colocated-prefix.mjs": "9b4ba6967edfee6459ff59c494bc08f69ad77146e6ff087e3ce122aa47b7049e",
+    "test/native-sec-colocated-prefix.test.mjs": "36c369f00c84cb2778ee3cb481941563148a973725b5ec8324224daec50eda49",
+    "test/native-sec-colocated-host.test.mjs": "2e74ade04cd012b935c4918bd160c0e10bd0ebf1c09ab0bbcb07878081f1db49",
+    "test/native-sec-producer-fixture.mjs": "26609fea41da19ead53fe9bfb65efdc7e6e1c16da029030712e492b2720cb651",
+    "tests/market03-discover-price-day.test.mjs": "3f350724aedcdae1d552b792f5048d7bccf20d5b2ea3c9e456b2e9ae95d6bcc7",
+    "test/discovery-candidate-evidence.test.mjs": null
+  },
+  "afterSHA256": {
+    "discover.mjs": "c2d05c0fd68a71f121affb9e4688afd8b4efdfeb594d5d1cadcae04ba18d4395",
+    "native-sec-colocated-prefix.mjs": "49660b2c5de40dab9ef3e9e33e223a8b18bcbcf2245e2479319ccd42070bad5e",
+    "test/native-sec-colocated-prefix.test.mjs": "e3669803cfd505cb10f41a5837797568e05a218090fde3548b74506c109b1f82",
+    "test/native-sec-colocated-host.test.mjs": "b64b5ed6d84b1d66bc3f8af681464c5c609102a6f58f820f77ee057cf2c4bfe3",
+    "test/native-sec-producer-fixture.mjs": "74e4ab2c3b9eac1f052f791df3bdc05d394d7402d8dd6831b08a49638a802de4",
+    "tests/market03-discover-price-day.test.mjs": "941792a9712711c288b96e57ee48365f3e35102bd6495a15fde3f55e0e1b3fb7",
+    "test/discovery-candidate-evidence.test.mjs": "fea47e702c26e932ff83cd9cc08092161e790f058fc982a96e44e0c061ba140f"
+  },
+  "protectedUnchanged": {
+    "scan.mjs": "0bd0233b4174fab2c75b5f181da5856e1fe203061e7dddc3db269dbfb29f0bea",
+    "strategyAndZadRulesChanged": false,
+    "workflowsChanged": false,
+    "financialOrResearchRecordsChanged": false,
+    "stopPackageChanged": false
+  },
+  "prefixRetry": {
+    "attemptsBefore": 8,
+    "attemptsAfter": 38,
+    "maxSleepsBefore": 7,
+    "maxSleepsAfter": 37,
+    "sleepBudgetMsBefore": 1185,
+    "sleepBudgetMsAfter": 1185,
+    "integrityChecksRelaxed": false,
+    "providerRetriesAdded": 0,
+    "staleLocksRemoved": 0
+  },
+  "hostFixture": {
+    "nativeCommitDelayMs": 500,
+    "maxDeclaredBootstrapMs": 6000,
+    "contendedSnapshotDelayMs": 100,
+    "observations": 331,
+    "childTestDeadlineMs": 60000,
+    "ordinaryChildTestDeadlineMs": 30000,
+    "synchronousWaitForReaderRemoved": true,
+    "bootstrapProgressAssertionAdded": true,
+    "originalAssertionsRemoved": false,
+    "finalHostCases": 13,
+    "finalHostPass": 13,
+    "nominalObservationWaitMs": 33100
+  },
+  "sourceNote": {
+    "originalActualProductionHelperEqualsPreFixDevelopment": true,
+    "controlledInitial404RetryCount": 0,
+    "controlledInitial403RetryCount": 3,
+    "retainedHistoricalFinal404ActualRetrySequence": "UNKNOWN",
+    "fallbackRouteChanged": false,
+    "strategyDecisionsChanged": false
+  },
+  "originalHostedFailure": {
+    "sha": "aabcafd87691b1b477a6587e3bc6af26e46e6ddf",
+    "job": 126701767762,
+    "expectedFileGroups": 269,
+    "passedFileGroups": 268,
+    "failedFileGroups": 1,
+    "failedCase": "actual colocated host success-contended",
+    "code": "NATIVE_PARENT_INCOMPLETE",
+    "logSHA256": "a5f5d0928b663e1deea2bfa5f910fc58de231c2de1c48d267554e8f3b7bc93e9",
+    "waived": false
+  },
+  "regressions": {
+    "exactOriginalPrefixSHA256": "9b4ba6967edfee6459ff59c494bc08f69ad77146e6ff087e3ce122aa47b7049e",
+    "exactOriginalPrefixFailsDeterministicQuietWindow": true,
+    "originalPrefixFailureLogSHA256": "34972fec3ea6e9ecedfe649fca55e3adc49b92e48f0afe764a585b2840bf67cb",
+    "repairedPrefixCases": 12,
+    "originalDiscoveryNoteFailureLogSHA256": "5f6f1c0fd875f107736753d8cad42ed82d3b385bba71d9556147e5d6317521cb",
+    "repairedActualDiscoveryCases": 14,
+    "candidateSemanticsCases": 5,
+    "finalSelectedContendedCases": 2,
+    "finalSelectedContendedPass": 2,
+    "finalSelectedContendedLogSHA256": "ff5c10232feeafd951a8d4c86be243221a67e02e1be6d125c3b3f834f871e30b",
+    "intermediateFailuresPreserved": "/workspace/milestones/native-prefix-cadence-stress-20261104 and native-prefix-host-final-20261104.log; no retry success replaces failed evidence",
+    "finalDiscoveryControlBody": "HTTP200 {data:[]} genuine empty frame; final14/14 rerun",
+    "finalDiscoveryLogSHA256": "6a710efa6b8420f079b113f5801380687a95192c58bb45a7b8f1f72f124ac3b4"
+  },
+  "local": {
+    "nodeVersion": "20.20.2",
+    "uid": 1000,
+    "nodeFiles": 270,
+    "pass": 270,
+    "failures": [],
+    "extra": [
+      {
+        "check": "python",
+        "exit": 0
+      },
+      {
+        "check": "gated-incident",
+        "exit": 0
+      },
+      {
+        "check": "gated-resilience",
+        "exit": 0
+      }
+    ],
+    "syntaxFailures": [],
+    "syntaxFiles": 299,
+    "pythonTests": 39,
+    "gatedCases": 20,
+    "nodeResults": [
+      {
+        "file": "test/account-replay-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/accounting-durability.test.mjs",
+        "exit": 0,
+        "seconds": 0.82
+      },
+      {
+        "file": "test/accounting-fixes.test.mjs",
+        "exit": 0,
+        "seconds": 0.36
+      },
+      {
+        "file": "test/accounting-preflight.test.mjs",
+        "exit": 0,
+        "seconds": 0.42
+      },
+      {
+        "file": "test/actions-reconciliation.test.mjs",
+        "exit": 0,
+        "seconds": 1.04
+      },
+      {
+        "file": "test/actions-release-safeguards.test.mjs",
+        "exit": 0,
+        "seconds": 0.39
+      },
+      {
+        "file": "test/agent-a-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/agent-a-tgt-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/alpaca-feed.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/angles-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.09
+      },
+      {
+        "file": "test/anomaly-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/approved-capture-binding.test.mjs",
+        "exit": 0,
+        "seconds": 54.66
+      },
+      {
+        "file": "test/artifact-wire-client.test.mjs",
+        "exit": 0,
+        "seconds": 4.32
+      },
+      {
+        "file": "test/audit-engines.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/basket-lane.test.mjs",
+        "exit": 0,
+        "seconds": 0.41
+      },
+      {
+        "file": "test/blocked-runner-policy.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "test/bot-actions.test.mjs",
+        "exit": 0,
+        "seconds": 0.48
+      },
+      {
+        "file": "test/bot-commands.test.mjs",
+        "exit": 0,
+        "seconds": 0.73
+      },
+      {
+        "file": "test/buy-gates.test.mjs",
+        "exit": 0,
+        "seconds": 0.4
+      },
+      {
+        "file": "test/buy-more.test.mjs",
+        "exit": 0,
+        "seconds": 0.29
+      },
+      {
+        "file": "test/catalyst-actions.test.mjs",
+        "exit": 0,
+        "seconds": 0.66
+      },
+      {
+        "file": "test/catalyst-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/catalyst-integrity.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/catalyst-lab.test.mjs",
+        "exit": 0,
+        "seconds": 2.49
+      },
+      {
+        "file": "test/chain-actions.test.mjs",
+        "exit": 0,
+        "seconds": 0.62
+      },
+      {
+        "file": "test/chain-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/chain-decoder.test.mjs",
+        "exit": 0,
+        "seconds": 10.53
+      },
+      {
+        "file": "test/cluster-risk.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/comeback-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.27
+      },
+      {
+        "file": "test/confluence-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/decoded-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/decoded2-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.11
+      },
+      {
+        "file": "test/discovery-actions.test.mjs",
+        "exit": 0,
+        "seconds": 0.22
+      },
+      {
+        "file": "test/discovery-candidate-evidence.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/discovery2-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/discovery2-run.test.mjs",
+        "exit": 0,
+        "seconds": 4.43
+      },
+      {
+        "file": "test/early-alerts.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/early-wave-discovery.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/earnings-holiday.test.mjs",
+        "exit": 0,
+        "seconds": 0.16
+      },
+      {
+        "file": "test/earnings-study-dead-stocks.test.mjs",
+        "exit": 0,
+        "seconds": 0.46
+      },
+      {
+        "file": "test/event-orb-retest-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/expert-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/focus-per-kind.test.mjs",
+        "exit": 0,
+        "seconds": 0.73
+      },
+      {
+        "file": "test/follow-actions.test.mjs",
+        "exit": 0,
+        "seconds": 0.66
+      },
+      {
+        "file": "test/follow-lane.test.mjs",
+        "exit": 0,
+        "seconds": 0.1
+      },
+      {
+        "file": "test/gate-verdict.test.mjs",
+        "exit": 0,
+        "seconds": 0.35
+      },
+      {
+        "file": "test/github-history-contract.test.mjs",
+        "exit": 0,
+        "seconds": 0.61
+      },
+      {
+        "file": "test/halal-batch.test.mjs",
+        "exit": 0,
+        "seconds": 0.09
+      },
+      {
+        "file": "test/health-delivery-contract.test.mjs",
+        "exit": 0,
+        "seconds": 1.27
+      },
+      {
+        "file": "test/history03-attribution.test.mjs",
+        "exit": 0,
+        "seconds": 0.49
+      },
+      {
+        "file": "test/history03-claims.test.mjs",
+        "exit": 0,
+        "seconds": 0.26
+      },
+      {
+        "file": "test/history03-current-policy.test.mjs",
+        "exit": 0,
+        "seconds": 0.17
+      },
+      {
+        "file": "test/history03-delivery-counts.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/history03-dependency-closure.test.mjs",
+        "exit": 0,
+        "seconds": 0.18
+      },
+      {
+        "file": "test/history03-rendering.test.mjs",
+        "exit": 0,
+        "seconds": 0.17
+      },
+      {
+        "file": "test/history03-source-anchors.test.mjs",
+        "exit": 0,
+        "seconds": 0.36
+      },
+      {
+        "file": "test/history03-vocabulary.test.mjs",
+        "exit": 0,
+        "seconds": 0.25
+      },
+      {
+        "file": "test/hold-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/ignition-freshness.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/ignition-paper.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/instrument-reference-preparation.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/intraday-delivery.test.mjs",
+        "exit": 0,
+        "seconds": 0.26
+      },
+      {
+        "file": "test/ladder.test.mjs",
+        "exit": 0,
+        "seconds": 0.13
+      },
+      {
+        "file": "test/leader-dip-entry-window.test.mjs",
+        "exit": 0,
+        "seconds": 0.33
+      },
+      {
+        "file": "test/leader-dip-sale-recovery.test.mjs",
+        "exit": 0,
+        "seconds": 0.61
+      },
+      {
+        "file": "test/leader-dip.test.mjs",
+        "exit": 0,
+        "seconds": 0.85
+      },
+      {
+        "file": "test/legacy-paper-audit.test.mjs",
+        "exit": 0,
+        "seconds": 0.24
+      },
+      {
+        "file": "test/logic-loader-isolation.test.mjs",
+        "exit": 0,
+        "seconds": 0.16
+      },
+      {
+        "file": "test/loss-line.test.mjs",
+        "exit": 0,
+        "seconds": 0.12
+      },
+      {
+        "file": "test/macro-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/mentor-lifecycle.test.mjs",
+        "exit": 0,
+        "seconds": 0.26
+      },
+      {
+        "file": "test/mentor-m1-m3.test.mjs",
+        "exit": 0,
+        "seconds": 0.26
+      },
+      {
+        "file": "test/mentor-plan.test.mjs",
+        "exit": 0,
+        "seconds": 0.32
+      },
+      {
+        "file": "test/mentor-production-package.test.mjs",
+        "exit": 0,
+        "seconds": 1.54
+      },
+      {
+        "file": "test/mentor-readonly.test.mjs",
+        "exit": 0,
+        "seconds": 0.22
+      },
+      {
+        "file": "test/mentor-release-plan.test.mjs",
+        "exit": 0,
+        "seconds": 0.25
+      },
+      {
+        "file": "test/mentor-release.test.mjs",
+        "exit": 0,
+        "seconds": 0.84
+      },
+      {
+        "file": "test/ml-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.38
+      },
+      {
+        "file": "test/native-sec-actual-watcher.test.mjs",
+        "exit": 0,
+        "seconds": 7.87
+      },
+      {
+        "file": "test/native-sec-bounded-clients.test.mjs",
+        "exit": 0,
+        "seconds": 0.09
+      },
+      {
+        "file": "test/native-sec-colocated-host.test.mjs",
+        "exit": 0,
+        "seconds": 313.48
+      },
+      {
+        "file": "test/native-sec-colocated-prefix.test.mjs",
+        "exit": 0,
+        "seconds": 0.11
+      },
+      {
+        "file": "test/native-sec-events.test.mjs",
+        "exit": 0,
+        "seconds": 10.93
+      },
+      {
+        "file": "test/native-sec-handoff.test.mjs",
+        "exit": 0,
+        "seconds": 12.66
+      },
+      {
+        "file": "test/native-sec-host-guards.test.mjs",
+        "exit": 0,
+        "seconds": 0.33
+      },
+      {
+        "file": "test/native-sec-incremental.test.mjs",
+        "exit": 0,
+        "seconds": 1.61
+      },
+      {
+        "file": "test/native-sec-lineage-history.test.mjs",
+        "exit": 0,
+        "seconds": 0.23
+      },
+      {
+        "file": "test/native-sec-lineage.test.mjs",
+        "exit": 0,
+        "seconds": 0.34
+      },
+      {
+        "file": "test/native-sec-parent-client.test.mjs",
+        "exit": 0,
+        "seconds": 0.2
+      },
+      {
+        "file": "test/native-sec-schedule.test.mjs",
+        "exit": 0,
+        "seconds": 1.03
+      },
+      {
+        "file": "test/native-sec-shadow-package.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/one-session-adapter-spec.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/opp-mode.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "test/options-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/options-lab-live.test.mjs",
+        "exit": 0,
+        "seconds": 0.51
+      },
+      {
+        "file": "test/options-ticket.test.mjs",
+        "exit": 0,
+        "seconds": 0.17
+      },
+      {
+        "file": "test/paper-capture-ports.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/paper-capture-wrapper.test.mjs",
+        "exit": 0,
+        "seconds": 35.64
+      },
+      {
+        "file": "test/positions-merge.test.mjs",
+        "exit": 0,
+        "seconds": 0.52
+      },
+      {
+        "file": "test/privacy-publication-guard.test.mjs",
+        "exit": 0,
+        "seconds": 0.45
+      },
+      {
+        "file": "test/private-data.test.mjs",
+        "exit": 0,
+        "seconds": 1.4
+      },
+      {
+        "file": "test/prospective-capture-package.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/prospective-paper-capture.test.mjs",
+        "exit": 0,
+        "seconds": 53.83
+      },
+      {
+        "file": "test/radar-ledger.test.mjs",
+        "exit": 0,
+        "seconds": 3.21
+      },
+      {
+        "file": "test/radar-v3-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/rank-models.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/repo03-host-monitor.test.mjs",
+        "exit": 0,
+        "seconds": 16.25
+      },
+      {
+        "file": "test/repo03-host-storage.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/research-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/research-isc.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/research-rpo.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/research-tender.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/runner-hunter-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/save-data.test.mjs",
+        "exit": 0,
+        "seconds": 1.93
+      },
+      {
+        "file": "test/sec-proof-ready-proposal.test.mjs",
+        "exit": 0,
+        "seconds": 9.06
+      },
+      {
+        "file": "test/sec-selection-telemetry.test.mjs",
+        "exit": 0,
+        "seconds": 5.7
+      },
+      {
+        "file": "test/sec-time.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "test/sec-v2-evidence.test.mjs",
+        "exit": 0,
+        "seconds": 24.71
+      },
+      {
+        "file": "test/sec-v2-host-guard.test.mjs",
+        "exit": 0,
+        "seconds": 0.58
+      },
+      {
+        "file": "test/sec-v2-host.test.mjs",
+        "exit": 0,
+        "seconds": 69.36
+      },
+      {
+        "file": "test/sec-v2-wire.test.mjs",
+        "exit": 0,
+        "seconds": 0.3
+      },
+      {
+        "file": "test/sell-discipline.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/settings-writes.test.mjs",
+        "exit": 0,
+        "seconds": 0.43
+      },
+      {
+        "file": "test/shadow.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/sip-access-corrections.test.mjs",
+        "exit": 0,
+        "seconds": 3.57
+      },
+      {
+        "file": "test/sip-access-diagnostic.test.mjs",
+        "exit": 0,
+        "seconds": 0.54
+      },
+      {
+        "file": "test/sip-access-package.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "test/sip-access-workflow.test.mjs",
+        "exit": 0,
+        "seconds": 1.87
+      },
+      {
+        "file": "test/split-adjust.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/squad1-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad10-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/squad11-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/squad12-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad13-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/squad14-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad15-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/squad15b-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/squad16-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad17-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/squad18-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad19-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad2-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/squad20-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/squad21-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad22-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad23-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad24-audit-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad24-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/squad25-audit-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/squad25-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/squad26-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/squad27-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad28-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad29-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad3-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/squad4-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad5-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad6-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/squad7-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.1
+      },
+      {
+        "file": "test/squad8-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/squad9-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/stop-raise.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/stop-watch.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/sunday-scoreboard.test.mjs",
+        "exit": 0,
+        "seconds": 0.25
+      },
+      {
+        "file": "test/telegram-commands.test.mjs",
+        "exit": 0,
+        "seconds": 0.44
+      },
+      {
+        "file": "test/tier2-ledger.test.mjs",
+        "exit": 0,
+        "seconds": 0.37
+      },
+      {
+        "file": "test/tier2.test.mjs",
+        "exit": 0,
+        "seconds": 0.4
+      },
+      {
+        "file": "test/tipster-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "test/trade-words.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/try-small-audit.test.mjs",
+        "exit": 0,
+        "seconds": 0.79
+      },
+      {
+        "file": "test/try-small.test.mjs",
+        "exit": 0,
+        "seconds": 0.35
+      },
+      {
+        "file": "test/unresolved-sells.test.mjs",
+        "exit": 0,
+        "seconds": 0.09
+      },
+      {
+        "file": "test/value-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/verify-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/watcher-contract-profile.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/watcher-guard.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/watcher-incident-revision.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "test/watcher-message-publish.test.mjs",
+        "exit": 0,
+        "seconds": 0.93
+      },
+      {
+        "file": "test/watcher-nov2-clock.test.mjs",
+        "exit": 0,
+        "seconds": 11.09
+      },
+      {
+        "file": "test/watcher-nov2-guard.test.mjs",
+        "exit": 0,
+        "seconds": 0.28
+      },
+      {
+        "file": "test/watcher-resilience.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "test/watcher-retry-recovery.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/winners-autopsy-core.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "test/zad-policy-integration.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "tests/add-reply-owner-policy.test.mjs",
+        "exit": 0,
+        "seconds": 0.37
+      },
+      {
+        "file": "tests/alert-delivery-state.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/alpaca-access-audit.test.mjs",
+        "exit": 0,
+        "seconds": 0.1
+      },
+      {
+        "file": "tests/alpaca-batch-access-probe.test.mjs",
+        "exit": 0,
+        "seconds": 0.11
+      },
+      {
+        "file": "tests/approved-quote-gate.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "tests/basket-delivery.test.mjs",
+        "exit": 0,
+        "seconds": 0.41
+      },
+      {
+        "file": "tests/bot-publication.test.mjs",
+        "exit": 0,
+        "seconds": 0.67
+      },
+      {
+        "file": "tests/c0-diagnostic.test.mjs",
+        "exit": 0,
+        "seconds": 13.2
+      },
+      {
+        "file": "tests/cached-leaders-policy.test.mjs",
+        "exit": 0,
+        "seconds": 0.18
+      },
+      {
+        "file": "tests/catalyst-direction.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "tests/catalyst-source-errors.test.mjs",
+        "exit": 0,
+        "seconds": 0.08
+      },
+      {
+        "file": "tests/catalyst03-source-to-candidate.test.mjs",
+        "exit": 0,
+        "seconds": 0.84
+      },
+      {
+        "file": "tests/chain-ripple-caller.test.mjs",
+        "exit": 0,
+        "seconds": 1.23
+      },
+      {
+        "file": "tests/collector-news-lineage.test.mjs",
+        "exit": 0,
+        "seconds": 0.14
+      },
+      {
+        "file": "tests/discovery-paper.test.mjs",
+        "exit": 0,
+        "seconds": 0.09
+      },
+      {
+        "file": "tests/discovery-runtime.test.mjs",
+        "exit": 0,
+        "seconds": 0.3
+      },
+      {
+        "file": "tests/discovery-session-funnel.test.mjs",
+        "exit": 0,
+        "seconds": 0.09
+      },
+      {
+        "file": "tests/earnings-source-caller.test.mjs",
+        "exit": 0,
+        "seconds": 1.06
+      },
+      {
+        "file": "tests/guard-dispatch.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "tests/historical-integrity.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/hybrid-research-checkpoint.test.mjs",
+        "exit": 0,
+        "seconds": 0.69
+      },
+      {
+        "file": "tests/hybrid-research-fixture.test.mjs",
+        "exit": 0,
+        "seconds": 0.69
+      },
+      {
+        "file": "tests/hybrid-research-session.test.mjs",
+        "exit": 0,
+        "seconds": 0.25
+      },
+      {
+        "file": "tests/hybrid-snapshot-transport.test.mjs",
+        "exit": 0,
+        "seconds": 0.09
+      },
+      {
+        "file": "tests/ignition-replay.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "tests/incident-production-package.test.mjs",
+        "exit": 0,
+        "seconds": 0.94
+      },
+      {
+        "file": "tests/incident-reporting.test.mjs",
+        "exit": 0,
+        "seconds": 0.51
+      },
+      {
+        "file": "tests/insider-fetch-caller.test.mjs",
+        "exit": 0,
+        "seconds": 4.27
+      },
+      {
+        "file": "tests/insider-source-caller.test.mjs",
+        "exit": 0,
+        "seconds": 0.54
+      },
+      {
+        "file": "tests/instrument-type.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "tests/key-proof-scope.test.mjs",
+        "exit": 0,
+        "seconds": 0.16
+      },
+      {
+        "file": "tests/lab-publication-faults.test.mjs",
+        "exit": 0,
+        "seconds": 6.44
+      },
+      {
+        "file": "tests/live-refresh-universe.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/market-heartbeat.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "tests/market03-comeback-spy.test.mjs",
+        "exit": 0,
+        "seconds": 0.32
+      },
+      {
+        "file": "tests/market03-discover-price-day.test.mjs",
+        "exit": 0,
+        "seconds": 2.67
+      },
+      {
+        "file": "tests/market03-ingress-matrix.test.mjs",
+        "exit": 0,
+        "seconds": 0.09
+      },
+      {
+        "file": "tests/market03-r2-spy-counts.test.mjs",
+        "exit": 0,
+        "seconds": 2.68
+      },
+      {
+        "file": "tests/market03-review-codex-additional.test.mjs",
+        "exit": 0,
+        "seconds": 0.45
+      },
+      {
+        "file": "tests/market03-review-codex-spy-envelope.test.mjs",
+        "exit": 0,
+        "seconds": 0.85
+      },
+      {
+        "file": "tests/market03-review-r1-r3.test.mjs",
+        "exit": 0,
+        "seconds": 2.26
+      },
+      {
+        "file": "tests/market03-source-contract.test.mjs",
+        "exit": 0,
+        "seconds": 0.11
+      },
+      {
+        "file": "tests/mentor-persistence-receipt.test.mjs",
+        "exit": 0,
+        "seconds": 69.19
+      },
+      {
+        "file": "tests/move-categories.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/multi-angle-discovery.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/news-delivery.test.mjs",
+        "exit": 0,
+        "seconds": 4.86
+      },
+      {
+        "file": "tests/news-source-bounds.test.mjs",
+        "exit": 0,
+        "seconds": 0.09
+      },
+      {
+        "file": "tests/paper-caller-faults.test.mjs",
+        "exit": 0,
+        "seconds": 0.7
+      },
+      {
+        "file": "tests/paper-gates-safety.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "tests/paper-mutation-journal.test.mjs",
+        "exit": 0,
+        "seconds": 0.17
+      },
+      {
+        "file": "tests/paper-transport.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "tests/phase-a-preflight.test.mjs",
+        "exit": 0,
+        "seconds": 0.15
+      },
+      {
+        "file": "tests/pre-ignition-discovery.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "tests/premarket-schedule.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "tests/provider-decision-provenance.test.mjs",
+        "exit": 0,
+        "seconds": 0.18
+      },
+      {
+        "file": "tests/provider-probe.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "tests/provider-provenance.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/quote-freshness-safety.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "tests/rebalance-owner-gate.test.mjs",
+        "exit": 0,
+        "seconds": 0.5
+      },
+      {
+        "file": "tests/recorded-plan-contract.test.mjs",
+        "exit": 0,
+        "seconds": 1.65
+      },
+      {
+        "file": "tests/repository-preservation.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "tests/research-artifact.test.mjs",
+        "exit": 0,
+        "seconds": 0.43
+      },
+      {
+        "file": "tests/research-checkpoint-integrity.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "tests/research-collector.test.mjs",
+        "exit": 0,
+        "seconds": 0.29
+      },
+      {
+        "file": "tests/research-key-binding.test.mjs",
+        "exit": 0,
+        "seconds": 0.15
+      },
+      {
+        "file": "tests/research-quote-followups.test.mjs",
+        "exit": 0,
+        "seconds": 0.07
+      },
+      {
+        "file": "tests/research-recovery-publication.test.mjs",
+        "exit": 0,
+        "seconds": 0.47
+      },
+      {
+        "file": "tests/research-recovery.test.mjs",
+        "exit": 0,
+        "seconds": 0.53
+      },
+      {
+        "file": "tests/sec-source-caller.test.mjs",
+        "exit": 0,
+        "seconds": 2.61
+      },
+      {
+        "file": "tests/session-coverage.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/share-supply-caller.test.mjs",
+        "exit": 0,
+        "seconds": 5.35
+      },
+      {
+        "file": "tests/snapshot-fields.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/snapshot-ingress-calendar.test.mjs",
+        "exit": 0,
+        "seconds": 0.04
+      },
+      {
+        "file": "tests/source-conflict-consumers.test.mjs",
+        "exit": 0,
+        "seconds": 0.19
+      },
+      {
+        "file": "tests/telegram-delivery-ledger.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/telegram-delivery.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/telegram-policy.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/trade-plan.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/watchdog-delivery.test.mjs",
+        "exit": 0,
+        "seconds": 0.41
+      },
+      {
+        "file": "tests/watcher-refresh.test.mjs",
+        "exit": 0,
+        "seconds": 0.38
+      },
+      {
+        "file": "tests/watcher-runtime.test.mjs",
+        "exit": 0,
+        "seconds": 4.65
+      },
+      {
+        "file": "tests/watcher-schedule.test.mjs",
+        "exit": 0,
+        "seconds": 0.06
+      },
+      {
+        "file": "tests/watcher-session.test.mjs",
+        "exit": 0,
+        "seconds": 0.12
+      },
+      {
+        "file": "tests/workflow-publication-faults.test.mjs",
+        "exit": 0,
+        "seconds": 1.11
+      },
+      {
+        "file": "tests/zad-compliance.test.mjs",
+        "exit": 0,
+        "seconds": 0.05
+      },
+      {
+        "file": "tests/zad-route-closure.test.mjs",
+        "exit": 0,
+        "seconds": 0.63
+      }
+    ],
+    "logSHA256": {
+      "gated-incident.log": "a34ea7f982936a61d8bf0c7141c86272dd76bf8aa2ac4227f92c265c05c17ce3",
+      "gated-resilience.log": "8d858518e89c279288c530b43899de4f87a47b6eb40c5ba1951db5da40a6efcb",
+      "python.log": "c343c441cb0c38854c87562a1040f846bd7955b8a4d4cae8a75caa27cbf19622",
+      "test-account-replay-core.test.mjs.log": "0faab5cf4c91b63209d81fb421d9480af165479f2eb6f82a15c94868965dcc01",
+      "test-accounting-durability.test.mjs.log": "f79c30c48742dbace5e4839376aab929ffe5376c3e282bce9a424d2a936f2dad",
+      "test-accounting-fixes.test.mjs.log": "878696349f707a17696e5f9d9b9285db6ad4ee0eb3b4eab9c1ce9bcfd5509606",
+      "test-accounting-preflight.test.mjs.log": "0ccb625a657f8224988c2f78bada005c4d3fa4302aefaf8e3fd981dc3d45f255",
+      "test-actions-reconciliation.test.mjs.log": "10f314e745e986ac6cbc7776970b9e9a0f4ed0cf2e2311d28a7959d0ed47e4a0",
+      "test-actions-release-safeguards.test.mjs.log": "703c527c8a527ef6e07e2eeb3b49417b3dce10ace1241c3765c9a014c7a68ffa",
+      "test-agent-a-core.test.mjs.log": "28d430afc3a0d8f99309538c3a4c19b355ce3f5ae2da3fa08a2457c4cfe1ee18",
+      "test-agent-a-tgt-core.test.mjs.log": "4ee9db4af38cb299869774b6d018daf43d8151615f27ff7102aaf3a38304f6c9",
+      "test-alpaca-feed.test.mjs.log": "4169cd9d4dce8f6187f9b7bc5d84242ff9fad740551a3e2c83ac938f7c5709c2",
+      "test-angles-core.test.mjs.log": "7e2ea1defb51ec3e574450dc9dc47330515a25c3e824aaae966c51d32d8f2eb4",
+      "test-anomaly-core.test.mjs.log": "b6397d97ee4ce1fcc086faeee49b93bcc88154ebf01fba7cb9ea7a8cad566224",
+      "test-approved-capture-binding.test.mjs.log": "0d53b735cc915c076d293deb26709caca261d010f09b416adb14a77d33d416f9",
+      "test-artifact-wire-client.test.mjs.log": "49d3fe570a400880e2dd6cc480bf21c2ea19898cbb405573ce8a9930348338ca",
+      "test-audit-engines.test.mjs.log": "d164bc44566a5e2ff01cc760e7678593fac38186e7dfe729e9f573872d5f53ea",
+      "test-basket-lane.test.mjs.log": "17ee48d2ecc45bce2f4d349247eed90046da09c5a761d4c02dcc0c86c0794cf7",
+      "test-blocked-runner-policy.test.mjs.log": "c409a325f58f310a7eef4339cc05e25e025b5a11fc46ec6cf94afd7371e0ef85",
+      "test-bot-actions.test.mjs.log": "f3832add1f3eba04f275ff4c48054e2199e2865deb3edc03aa35b6f51963f8d4",
+      "test-bot-commands.test.mjs.log": "bf0518c0683b1f30369d52b33bc054da13476028467d5117935da04bb1c576eb",
+      "test-buy-gates.test.mjs.log": "88c8fbefbf4f4af0b6000d38f4f8a0abb2f6941ef851faf56c5fcd55ddb48d4e",
+      "test-buy-more.test.mjs.log": "3a480461cd418f4e3834f3681cb2edf9935c88b2fb90bffa5bd42a34e9d1b7bf",
+      "test-catalyst-actions.test.mjs.log": "4192e4c86004a908ad24465ff99faa4fd36fef520c2556d45eea2a0752639e0a",
+      "test-catalyst-core.test.mjs.log": "ae7eca89f57b84e2831e4e2aca5962aea10137040854703a78c6d83a4084f59a",
+      "test-catalyst-integrity.test.mjs.log": "a71bf7bd9c811cc82cbe7aa563431cc083ef8294038a43af9981ac0c9402dc57",
+      "test-catalyst-lab.test.mjs.log": "51a20e2876a53c27a067fb539c9495bfa054f58713f71f50a533570403e67e34",
+      "test-chain-actions.test.mjs.log": "fce16a0d0ff8f206b3d360c2b2c9dd13a17cb7fdf92aaabf91f2f4e13a1fb3f0",
+      "test-chain-core.test.mjs.log": "8a07b5a2c92959a2d212cf49c948c1016d5022910bcb8e1a9a46d34a931759e1",
+      "test-chain-decoder.test.mjs.log": "391ca11628f1c4d9e4ae887c6b5396aa5c07c940662d14fa729ccbcd5e04b0bc",
+      "test-cluster-risk.test.mjs.log": "bd0e9f5f841be8bee5bdd9e92dc01b3b6f4da0614181c694034b123f2aba9863",
+      "test-comeback-core.test.mjs.log": "c27e0da60f0438720c81156261602afaf8a28da521f72c11b9128e8ba2215615",
+      "test-confluence-core.test.mjs.log": "6811c312bc9b9cd75e65ad9450c58ca7b95844adfbaa763b95ce0014964fb50a",
+      "test-decoded-core.test.mjs.log": "34768a62c9dc55e5c687b1d29b04c1ab972c9b6ca1d3e00060f1453b9644ede6",
+      "test-decoded2-core.test.mjs.log": "72f8d5ab7b841b29d9cafdb770f676c03e7d824f5df21eec1e41d33316d54f1e",
+      "test-discovery-actions.test.mjs.log": "e9068275491b643bb89fb3704c240e96cc82751ccc9a7010061ef902e08bbbed",
+      "test-discovery-candidate-evidence.test.mjs.log": "dde1435bd213e428150b9b23b3ef7aacdfe9cfe72d71d5c10bf7267c7c1058c8",
+      "test-discovery2-core.test.mjs.log": "4fe41e0e499692a7190ec7ad9f7a1241146d76f08c7dbb91dc9ea8ebff151458",
+      "test-discovery2-run.test.mjs.log": "94676744f6a4292275aebb872d8f97226f5f44d5b96c1a9dea66c6e786921684",
+      "test-early-alerts.test.mjs.log": "de9ade0595709ae984f9af9f13c3a6b890b0c41ffb7716ea67a26b655e86134d",
+      "test-early-wave-discovery.test.mjs.log": "7369d4c563c525efbe1caffab0d6fe4dd1854f6815cae8f48eeca6d8dc1b7dc4",
+      "test-earnings-holiday.test.mjs.log": "91b38e2263a6461c2b8e23b415b03f68dba97b1421ee715b74c8b6efed1cacc3",
+      "test-earnings-study-dead-stocks.test.mjs.log": "60b13d0523fbc2a6ffead36d62dee6bd748dd5638657a4a7d04862427d6f2762",
+      "test-event-orb-retest-core.test.mjs.log": "9c135448a7c76622e49a03c162136c7fec2f9c2892dd305f91651f60c83bdaa0",
+      "test-expert-core.test.mjs.log": "db4ab2386ed2772a63ef61c2a5563cc38e2aafdaa5864bbb05ddaf660cacb011",
+      "test-focus-per-kind.test.mjs.log": "0543dd6d283aa7d6fb66a45e87961b6a488c0506eae38438b8c2c24ce3f6cabc",
+      "test-follow-actions.test.mjs.log": "6d80a893073e6117592f5b8d69c843c831d4b5005470086dfc1cbdeb7ac3c5a3",
+      "test-follow-lane.test.mjs.log": "1ec334aaac1e98aff701087633db534f0562b170a60bb8d3afd83812418de7f7",
+      "test-gate-verdict.test.mjs.log": "3e9f61dabf0a48efd59f55c91660a8f743252221522a98f75a5d38aa950f9f0b",
+      "test-github-history-contract.test.mjs.log": "1e85a3cd34f794c00d899f2b8a0baa347f1d366f0f73fa5967be20008ad91e90",
+      "test-halal-batch.test.mjs.log": "9d0cbc6be583fb860c8c0c88abdfd3d08ae1380463521e8893be15e38fea97ec",
+      "test-health-delivery-contract.test.mjs.log": "8de8bbea202ade114d04f20cf6c683e3e81314e78401c43e96789e7b5ffdcf7c",
+      "test-history03-attribution.test.mjs.log": "64cfdfac266c8ed64207fc58ce260f013980faf7073e6c3d5b22167c26213cbc",
+      "test-history03-claims.test.mjs.log": "46d40e36c4e39b66e502809238602a7947bda81b511e4a598a8f2ba49ec9c9f1",
+      "test-history03-current-policy.test.mjs.log": "6695eff6ee821f3b8ae911e726943a9906036b842c8de7135368e91b3ec4edb4",
+      "test-history03-delivery-counts.test.mjs.log": "ac3d4e8549aa2877bfad3c9e31093b4d5aea40dc16d654ae4398edfcbbe36eae",
+      "test-history03-dependency-closure.test.mjs.log": "a7acb94ba6c90b1a8850861ab8282366eb61c820d5f8c4ed452e97bf5b89fbc2",
+      "test-history03-rendering.test.mjs.log": "045d479b57f3f772bf165cfe7ee706f83b8330f45f20026bed1cb7e33bcf9a35",
+      "test-history03-source-anchors.test.mjs.log": "872c56cf832f6ca50d838a276f47f43ffeb3e0aef5a7b532fea40749ea3ac150",
+      "test-history03-vocabulary.test.mjs.log": "55082f76a23d1ed12d3d1f9bb5e2808740919f1538209266d7bd6b1d0ef5f033",
+      "test-hold-core.test.mjs.log": "bfc1c71a7cac44af507c0b61f1be92c71d0c6488cb30798be87ebd49ed00ee45",
+      "test-ignition-freshness.test.mjs.log": "58888f971002410f61b2167417e9945232e3cd6cbf79c5169059ab934ca3bcd4",
+      "test-ignition-paper.test.mjs.log": "d618cf0454412f9fb084928d7a8ccde46d586e08e0e1f5a39f94f302f77140d1",
+      "test-instrument-reference-preparation.test.mjs.log": "56fe8ac01cdb10a86556eaf8c361ed11f7c24671af233f622bb9deecd4485b52",
+      "test-intraday-delivery.test.mjs.log": "8435ae6df2150341be0f56ed9fcef8d6f665ae51f7c72fa00fc502fe38350bd5",
+      "test-ladder.test.mjs.log": "5c931b5c6a860ebd22a70f09f2e39f6f897f418ad7739020b7c1ccb379b3a759",
+      "test-leader-dip-entry-window.test.mjs.log": "3168e98d569a4cd12eca3967f712bbad7953cd641911ed8d297bc1ab8836f5cf",
+      "test-leader-dip-sale-recovery.test.mjs.log": "5e45c95e975e52380059b29a6e015e989c1b013ad6051854743efde337769dfe",
+      "test-leader-dip.test.mjs.log": "5e56f441b0f3b46348ed4b13924346a28f8fde8ea6fab4e42577228b1554f683",
+      "test-legacy-paper-audit.test.mjs.log": "ae939b1d185a5a52d17d5fd8abf887fa4ccb14b82cd202a76cc4fd668dde36f6",
+      "test-logic-loader-isolation.test.mjs.log": "ae2f88da44d3e149ad85219c0c794154d80e81ee5a55ab1f8f98e9905bc23946",
+      "test-loss-line.test.mjs.log": "6bc6f5bcd6f21e170c09b891859a6f929a47ad66c6dab3203c2c7daab53919e0",
+      "test-macro-core.test.mjs.log": "a111e05b8b77432a04452ccac7ac7e2430aef8987f8c661c9491e73def7a592a",
+      "test-mentor-lifecycle.test.mjs.log": "8ec0c0fba07ea26ac03f90b8eae9cae283ccd0a7bd0960298ca37b7edebff39c",
+      "test-mentor-m1-m3.test.mjs.log": "6efe3510e187ef500746ea8501eae820711a2a815fac22c18dd6d9d08dd085b4",
+      "test-mentor-plan.test.mjs.log": "9c33e1e02c9de50c218075e6b8bcc504931115ea7879b525e2e245f5120e5051",
+      "test-mentor-production-package.test.mjs.log": "67d34dc955aedf2c130b08ee9f43340e2160fe84911061003360a491f67803a0",
+      "test-mentor-readonly.test.mjs.log": "bdfebb8f677dd38b44e11a7dc32288f96761207c17ddf1bd424bf13e4fb0cc63",
+      "test-mentor-release-plan.test.mjs.log": "1fc823848b57cc2b371d694e57a53fec5a01eff3013c49e8904a87aa97f2a1bc",
+      "test-mentor-release.test.mjs.log": "390cd7e84c6fa7a235efe7aca032c65929889d0fee43519f31e5ae6f4fb4bba9",
+      "test-ml-core.test.mjs.log": "ac934dbe5aa7cfa78077523ed70840aec338947256b6e8a2812586c9c5644502",
+      "test-native-sec-actual-watcher.test.mjs.log": "497ed8eaa086bb7b66a1b93c18eb981e8a884d99ef2c77b8922aa8248c0818c4",
+      "test-native-sec-bounded-clients.test.mjs.log": "aa1ded7c1c4cde02e1f7a4de6f3bfc8f5fc0753ff66d01b661ac12b23bb03375",
+      "test-native-sec-colocated-host.test.mjs.log": "6f7a5ed26b4e2e6dc6fb597978784a457eed67db34e08a4aac43426a2de7bfa0",
+      "test-native-sec-colocated-prefix.test.mjs.log": "1593b83b7d08abb1aa9ffe1aa326e5f83ce33752e07363e5511c653939c45103",
+      "test-native-sec-events.test.mjs.log": "312534fc440d3a2ef2c5446926a5886e2674c954f92cb8cf87146847773c4ede",
+      "test-native-sec-handoff.test.mjs.log": "b0db98a728687041f372fa2a2a07dd2b21cc3a591559f9fdce56f369ace29ff1",
+      "test-native-sec-host-guards.test.mjs.log": "67559cc94ece843f42f6a8530fc5d3f6ae30f8767613afed6ef543d76fe7eb13",
+      "test-native-sec-incremental.test.mjs.log": "79bb4bdf6724152e6d532e09d218b26549d042967c42f8db80f01556cbdf86a3",
+      "test-native-sec-lineage-history.test.mjs.log": "91530c04b6250628f3674e61c8fcc2b926c3f2cd310cab88da776e875774fb0c",
+      "test-native-sec-lineage.test.mjs.log": "d0f51ea5d44aa6d674008726cfc1e1505c44b7a9e0c38eedecb413750c11f40f",
+      "test-native-sec-parent-client.test.mjs.log": "33a5cecdd52bd211c8fe3e3903b4947292fd991ca37fa447556360210cec4b60",
+      "test-native-sec-schedule.test.mjs.log": "5fac1634719fb11b7e81ee254d3eb0b743f0607c07c7ec863663a86b2742efc5",
+      "test-native-sec-shadow-package.test.mjs.log": "497037a70df86634b90894b650280bfde47e3b321d6c2ed351986cbf7997f847",
+      "test-one-session-adapter-spec.test.mjs.log": "21da85df40b8970f6b54a0be4d6769ab9fd84b2791620f577f482d7c08347e83",
+      "test-opp-mode.test.mjs.log": "90dbcd03e8ab9e1f001ec85219f1fce548b7a527b993b0b32ca4aba4dc8ab263",
+      "test-options-core.test.mjs.log": "0308dc9bbd273842230f714ae95734262d57fd0f61a200b07e40976b050dd341",
+      "test-options-lab-live.test.mjs.log": "5659befe51ef3e80a1b65525fe0c91d984f1e79c278bb82edba1f058ed81c64a",
+      "test-options-ticket.test.mjs.log": "7f8baac3d6fd434bf0d90bab1c0faff435a286d90cd7692e60f4edcdbafba2fa",
+      "test-paper-capture-ports.test.mjs.log": "f68152407a18074f45b27e84ca351449d3bdbb813957c848430435b8c1ed98db",
+      "test-paper-capture-wrapper.test.mjs.log": "17adf4e4d3d320f980cea8b9bb87c892079a4c6ca49ab32fe62e6703b099c614",
+      "test-positions-merge.test.mjs.log": "8bd96d74fcab10982a38b7cd4034f4e6632c4e4949c6d62551bc2d8e4d62cb36",
+      "test-privacy-publication-guard.test.mjs.log": "b57140e591def1be135f48f7436ba733e5aadc1aa9b1e3fdd739fae9dc907054",
+      "test-private-data.test.mjs.log": "5225c453d8917cb2888832a0e74ee7557e8ddd563269dcf2adf87a2ecfb6cf52",
+      "test-prospective-capture-package.test.mjs.log": "c3f6bf9e64a3a8dacf05028af51f157fb4740a65705ccf6433bfa7983184d529",
+      "test-prospective-paper-capture.test.mjs.log": "389fb2e350735611ba7d3d864e6141e7780224a30e404461a00675dcd3e59f7d",
+      "test-radar-ledger.test.mjs.log": "24f417e2d5e582aee46ccf6b4bf9ddcf8a651241ce74b7f8cf4740c4b1ac89a6",
+      "test-radar-v3-core.test.mjs.log": "f3b133876b210ea9e3df620b62316a5566d6e4743a3fabfdcc4378f812e17614",
+      "test-rank-models.test.mjs.log": "a8b4911db313e5e7f9807bb9073690db12b3f564b712d0490a75d40734b3d6a0",
+      "test-repo03-host-monitor.test.mjs.log": "a5fe5329e6b4ba91c6ae1f0b7a4595d17af54488be1ceeefffae4cd751edae96",
+      "test-repo03-host-storage.test.mjs.log": "e875573cb69e6d7e747dbbd353aeb0838d56dbad5ab3e9e4c6876f5a31ccba15",
+      "test-research-core.test.mjs.log": "f3e9f0ee0ea3518f766c0985e976071e0ba2091c64a8c277ae117dc6d3e1efae",
+      "test-research-isc.test.mjs.log": "d4ae09703ba328ec28ea560412db855ad92042ee340ecfc4be40a1e02597fa6c",
+      "test-research-rpo.test.mjs.log": "b899a423bf2735341c825f1ab1bcd98d85dcc2cb517c9462f01b6de50f917f4e",
+      "test-research-tender.test.mjs.log": "6350028546e52de050b293a9f3c7cc82758c2d3b50ffec554745bd7174662208",
+      "test-runner-hunter-core.test.mjs.log": "f4aade7622847786d9240917ee4fb78f504a81f1f30421c947d8ce6966692bf1",
+      "test-save-data.test.mjs.log": "78543490bd99ae5d07b6a2036409071cf8599ad056b8c9aa65a7802b4cff3f70",
+      "test-sec-proof-ready-proposal.test.mjs.log": "d3177257775c8bcc81e22d0ce34b7c63ad8e35b33613a727767306407efa5d22",
+      "test-sec-selection-telemetry.test.mjs.log": "433b73cad0c50ceaf6f5bb53a305cb9d7a62ddd174fc1813350e2b97bcd031cf",
+      "test-sec-time.test.mjs.log": "3515ca5ff745f7b5e76940e9a522ab685484dd2119286051e2e1b737bfa4a170",
+      "test-sec-v2-evidence.test.mjs.log": "1bcb578148503e4c8a317e00401e72d337ef134fc87c7ad2798216afb2cd87b8",
+      "test-sec-v2-host-guard.test.mjs.log": "ddee18ba9eb314a34f27f2577abd39111b89b1528c41f44ed98b7a57506e2762",
+      "test-sec-v2-host.test.mjs.log": "adbc8014baff82b5959f46ff8e027c98b55d0a0dd06808f263aee1e78007dd6d",
+      "test-sec-v2-wire.test.mjs.log": "61211c2d3a42d7bd752831bb152067b79f0599aae56b3cfac1bfd319929337cb",
+      "test-sell-discipline.test.mjs.log": "67a895eb256cbd0783804649302e8cffb1ccebba087132bf115671975c4ccb0a",
+      "test-settings-writes.test.mjs.log": "0e01e5e1a3ce7dfa6cd143960cffe570ca781893e8d822e07e9fc2f616d0ecbe",
+      "test-shadow.test.mjs.log": "5080b502df0cd9f96054a685dcbe3dbfad7c7795e83179eef5aed15377355bb6",
+      "test-sip-access-corrections.test.mjs.log": "c8f5132caac661d5ca526414e24eadb8d5c5b6b7c65bce13f0917718b624f983",
+      "test-sip-access-diagnostic.test.mjs.log": "5c5c50f2bc6fd95674603420f2faadaeaef30a14f046f4502e6447673bff12b8",
+      "test-sip-access-package.test.mjs.log": "8158679326235737c465023b65e2b1e83ea3b39504a3ac28ed766afff4cde6ad",
+      "test-sip-access-workflow.test.mjs.log": "06e90b3c3eee751692e206fab459805e78b5d690543df3016b6ec4b52016d579",
+      "test-split-adjust.test.mjs.log": "1e9de6eeb1ad66e070fa655c5bac61a6252e3b8582893bce87538449b216f0e1",
+      "test-squad1-core.test.mjs.log": "494ca152cc3f12e04eb8f3da2e7f5379f698db5b8b3e974c57509014fef50104",
+      "test-squad10-core.test.mjs.log": "d30b6f136e47e46869da9319935dead85448d4ec4f562d376827450dd7808fc3",
+      "test-squad11-core.test.mjs.log": "7e2491bca91cbfff22fef285037ed892a7ed3d2ad5a1648c342a106392b111fa",
+      "test-squad12-core.test.mjs.log": "06a4a5b7bc8934a62223c109398ba957626680ecc853940726f50f9bcb7cd745",
+      "test-squad13-core.test.mjs.log": "91597c5f9060ba82e78eb5dafb368a8af7669fcb85954ab40f1ff12dcd3c33c8",
+      "test-squad14-core.test.mjs.log": "95c1a85928f4dc4a4a9b895d208d432fb99fd78a01a650b88e77f8f310e04298",
+      "test-squad15-core.test.mjs.log": "15bedecb1cfdaf1c3f8c64a9ec1db00544972aa4556db4482a6f874a2d14affe",
+      "test-squad15b-core.test.mjs.log": "90cde273ce98c9b929d24c92989ae540dc8916a6b4b45693cb6c92a853a662d4",
+      "test-squad16-core.test.mjs.log": "2d7bac7a08e9b5cd138ce5ce137f23c28d4ca99ea8f3cfb745f343dce601cbb8",
+      "test-squad17-core.test.mjs.log": "ef6cd4d6f7d24498332495e9679154b4907740a66a784c011813cfe66e4fbb3c",
+      "test-squad18-core.test.mjs.log": "14966a28148b52cb1b3a2bc5ec86c83c6ba00fd37acd28df3fdeaa21053a04b3",
+      "test-squad19-core.test.mjs.log": "59bfbcdbad3041d852756e4aa9595a4506835422c9eeb2e418027fa0fd5bf001",
+      "test-squad2-core.test.mjs.log": "5f65b97acb89376ed325eff0ec3cdb6b1c350ae25a174fae1fdd5fe67dbce762",
+      "test-squad20-core.test.mjs.log": "41eb8ba84441c5c3e182eb5744bc2283546099033506d5d0679cf5292ef4a16a",
+      "test-squad21-core.test.mjs.log": "7c8640bb8c9a352da3887bdf511d5e8c41cad77e464ade81ac1d80af0349460b",
+      "test-squad22-core.test.mjs.log": "1fd250f941e47af299626d3c4bade12804a205a7e893b9778bda213ff3e1c1aa",
+      "test-squad23-core.test.mjs.log": "23192762342a254cec3daf7ef90bbcb16b0f9c08dea105010b3e889015974573",
+      "test-squad24-audit-core.test.mjs.log": "7de867173339beca5ce4c359e705350d832a5137478412c1faef4d6993ff10b7",
+      "test-squad24-core.test.mjs.log": "e607d5dcb3caf0e1a6a617a29d95158e9c52c0b2f281ce370e1c48c3ece581f5",
+      "test-squad25-audit-core.test.mjs.log": "174a52f98489fe13e0bffdba1c69f4c47c92158c1db23011b0641afa39608337",
+      "test-squad25-core.test.mjs.log": "2fce6af95e9878ebc141b7f18857ab841a2abff9779dbcd1360cfad2ad19e23f",
+      "test-squad26-core.test.mjs.log": "f9e5e93c429e4d33d9f21a058b8b41f7b5ae92f0b9c4547998e73411d171b710",
+      "test-squad27-core.test.mjs.log": "dcea29dfa7abcae363e64ae0cd898ed5046cceb0bdd5af8bc9c98b87e9410804",
+      "test-squad28-core.test.mjs.log": "2096abafd328bf82a597e2d9ae0b1f8e165fcb672b7a70e4066a428456a3c5fa",
+      "test-squad29-core.test.mjs.log": "1d9e183e3ed7a1afeb5c61ff6f25f12470293cf0cf800dd3feacc6601cc869f5",
+      "test-squad3-core.test.mjs.log": "388fcdd7827b6c1525acde5222c4f1e8c52bc61887c0a361bfd30ffb74369eaf",
+      "test-squad4-core.test.mjs.log": "705dd7d4475a6d7aa96bfc113d5fb075598f79a185723752aa3bc3a9186bb991",
+      "test-squad5-core.test.mjs.log": "385485871131e441cf280f9cdd4604ce8c2a38cf31d98db2ad7ee1f0a17db6ea",
+      "test-squad6-core.test.mjs.log": "3c7e8c6cb612353d3750c72e927ef87a45f83c1faa2a056626306439a09ebeae",
+      "test-squad7-core.test.mjs.log": "defa064260421b90f1a856a231f45c098cbccfe1537d032dfc30cb4c33baf341",
+      "test-squad8-core.test.mjs.log": "a2ab5e9da026a4f26cd812e83014c399559735793a29700694f75d1100329ff7",
+      "test-squad9-core.test.mjs.log": "e5b7801f0faa192b5c6f9f30ab5139b2447d2e84284257175bdd9872f11a2a9d",
+      "test-stop-raise.test.mjs.log": "8eb482470cfbbe38028f12d25bf99f3ba6ed26ddca50e3354eb033cbf3fd1dc7",
+      "test-stop-watch.test.mjs.log": "bd285fea68c054a4fb59b4db1e61840909a016824b360a5e4d2a8dedfe673f68",
+      "test-sunday-scoreboard.test.mjs.log": "3594bea0096039cc1c163159c09d026327aed75b49403a3539c52e24815a5fa0",
+      "test-telegram-commands.test.mjs.log": "291c6c42569456f7e3793aab9b7549f8b458cc7dcd086a03244193cb47c9e420",
+      "test-tier2-ledger.test.mjs.log": "50021b8bc0af15a31a66f8427925d4f58f89bf52401611f2463e88343e0f2104",
+      "test-tier2.test.mjs.log": "c7127f70833a1796ee9fff91443c6382e07e76257e21f43282a514fd52c4c301",
+      "test-tipster-core.test.mjs.log": "c7950639e1fdc5599a10e3b024e13e7109feeae33486cd3e5a87af5c1507d9e7",
+      "test-trade-words.test.mjs.log": "8c00461687937ffb282a627bff1d2bf208c90613e7fc4a14a5819d50b4ffb83f",
+      "test-try-small-audit.test.mjs.log": "d798dead8aa1331a30f69dcdbb5fe288b2ecfa3509565ed9b5dc0217085a4272",
+      "test-try-small.test.mjs.log": "a16a16bfb1dbbb046fb4453d45d74ab990352faffb0343cf0693040a3b13fc3e",
+      "test-unresolved-sells.test.mjs.log": "38151476e23fb0e056a0a26b77822daf8affb650797f3d11e4a77554283fca28",
+      "test-value-core.test.mjs.log": "748f8327f49657b0e09759f0917e04742694bd2a2ac643b4b77717ce27978a4d",
+      "test-verify-core.test.mjs.log": "c03bf563c45d28101734dced781c415e859d3ed9b8122b52225b1f2a731b76bf",
+      "test-watcher-contract-profile.test.mjs.log": "1f485698a41768d1d5c9e812f3ac147ec2c9551298f24f7e8a9172baf0dd5a7a",
+      "test-watcher-guard.test.mjs.log": "dda2e7e73a1108b80cd61e7a887f09c435097d8826dce5151f74fe2274859252",
+      "test-watcher-incident-revision.test.mjs.log": "8f5ee7830dacfaeeb296ea3998db2f7f0479859b27a492b0326e64ff0af8888e",
+      "test-watcher-message-publish.test.mjs.log": "03b4a7305dd83987c9a94469e7e3c9ddbe44298dd28ca99e11a0d835783aa104",
+      "test-watcher-nov2-clock.test.mjs.log": "1221d5daf723e1c0b46dbc72b4bea6fcacb867d631cf98d8a629f8ccfc276360",
+      "test-watcher-nov2-guard.test.mjs.log": "9019a898b64ea227bd8db1df7039b008c2d72b1efe58f995b60e38fa4bbe9b13",
+      "test-watcher-resilience.test.mjs.log": "28abbb8d1144cb6f4081b19d5169df7f65c935e00c48467e9a7148aee7d797a8",
+      "test-watcher-retry-recovery.test.mjs.log": "5454c39ad09e5db89b62724060780b38afd27c4046b02f51d32d9e63341de57f",
+      "test-winners-autopsy-core.test.mjs.log": "b1be1ec98c473c6a533192318acbb38f00c9915ec5f63914407b1a7861cc7149",
+      "test-zad-policy-integration.test.mjs.log": "e5ea8ca099a32a9683ca28359a63dc4f37ac31b75a2313dbfeb27810e64f2189",
+      "tests-add-reply-owner-policy.test.mjs.log": "608ae7e9e45753fe9ef4fe5439977334ea8b162776cd0cceaddd490f5b1e3d2f",
+      "tests-alert-delivery-state.test.mjs.log": "0456f465670ccdb9c182d50a00bea4c23d2a088b5e7d47969968f488626dd99d",
+      "tests-alpaca-access-audit.test.mjs.log": "6c445769ed8bf889c7cde407dd9c6b0579be9b4f57d2ae6c9fac4c8b88777d5e",
+      "tests-alpaca-batch-access-probe.test.mjs.log": "04a761707c5277402db145e016d4378cf1ed911e49e609337227f98869c02c52",
+      "tests-approved-quote-gate.test.mjs.log": "8d359fb4bf3946850c920e3c4298c92066cdacce77113190b46b6333ab73487b",
+      "tests-basket-delivery.test.mjs.log": "7c4d5eb2f8f7d55cabbccac0569d6c8003bca652c936b68eeab040dc1f837cf0",
+      "tests-bot-publication.test.mjs.log": "6996f37d86b86a0b8400e1cae2c31e64fb96dd86c90c957f8f19ea0466a8ce73",
+      "tests-c0-diagnostic.test.mjs.log": "92d11bc91753ec7bb22f40f9839981cf2aa2cbe61ee81d5bf21543eb94b94501",
+      "tests-cached-leaders-policy.test.mjs.log": "a799c689bd9743faf9109d5c9c4cbc6387b6abb952a75f922a4727138150dbeb",
+      "tests-catalyst-direction.test.mjs.log": "829383383669167281eef9c18f08f0e3d2cedfac5253eb87c33f1afd070dd158",
+      "tests-catalyst-source-errors.test.mjs.log": "beb3e9270b94b922e5b9d724e558e32aa88a0edf4847afcdb57928e31e105c4e",
+      "tests-catalyst03-source-to-candidate.test.mjs.log": "e796e3cb85c6500b9ce3628285356a66770696d6d30f0a3830f120e894336a7b",
+      "tests-chain-ripple-caller.test.mjs.log": "4b2a02a730fa9ec90585923630d5baab28ae8e5ce83ae2a77f04c4bc699f0d1d",
+      "tests-collector-news-lineage.test.mjs.log": "2757c2bead66459eb9f2ffeb7624657df084274f44837d9e16c51d6cbe73fb72",
+      "tests-discovery-paper.test.mjs.log": "a76d204295a61040c758459300d723ac8ac59c6e0b8f5972f07588d0c5108cf4",
+      "tests-discovery-runtime.test.mjs.log": "28c83954402cda3059cf3245ca059a7f60024f5af2844911c01d714be9427788",
+      "tests-discovery-session-funnel.test.mjs.log": "30f2c24ccfc8052caa7a0f9fd36fbc0d6053416053d37f0917b76f3041613421",
+      "tests-earnings-source-caller.test.mjs.log": "24f83db77212d0879a641539508b432ae18dda3bc9bdece3038cffc5e2dfeb1f",
+      "tests-guard-dispatch.test.mjs.log": "f73558fa33cf0b35fd47783bd1dedf5d180e7ebd8fe04aec90fb2ff3398ec250",
+      "tests-historical-integrity.test.mjs.log": "b0b952827b584cf9983658319ffec862baacabfe8142a830ebcf9d3ca5c87c5a",
+      "tests-hybrid-research-checkpoint.test.mjs.log": "ccdd9c361560256da0b89055a4c19aad6883a580dcddfea86c17a251e7b6775f",
+      "tests-hybrid-research-fixture.test.mjs.log": "8d8f706c8a452d5f3ea417a5935383c401e1a506af4c322605484d5951badc55",
+      "tests-hybrid-research-session.test.mjs.log": "e717e06bb65c86ed74e43ba85bc572f3beb41dc0ebe78fdfeba24db54bf98ebb",
+      "tests-hybrid-snapshot-transport.test.mjs.log": "1c6bac287414db7c0fb7ad478abdf9d4298309ac65cf1821acd928678608956c",
+      "tests-ignition-replay.test.mjs.log": "467fe480760963f3b6aa5a6cb58b58fa376f75e037e4d48a8400b519c2303ae2",
+      "tests-incident-production-package.test.mjs.log": "a510279b09e8946b903937873f47209b279a5aa89576f4bc16d6cf5944d10b65",
+      "tests-incident-reporting.test.mjs.log": "13988f6a363285ba870d4d130ebb25ffb82a2539fcc21641cb5a391838b4b5ef",
+      "tests-insider-fetch-caller.test.mjs.log": "b1a0b60e26e1cfee519b32ca1bd8a2297dbd04e2154c90769a696bde68f205bc",
+      "tests-insider-source-caller.test.mjs.log": "dac719aa56285f947b8be99da0f35fce40d59bfa0c079d4c9548129c2b8384b8",
+      "tests-instrument-type.test.mjs.log": "31d40eddc1e43c4271e7ddf804c4c0ef6233ff4c383e16341ce135bec97dd08f",
+      "tests-key-proof-scope.test.mjs.log": "58194970c7d5f99c42f8f0e21e2d91b2598c660d5e32c6735b72d32aad5fca05",
+      "tests-lab-publication-faults.test.mjs.log": "df480a9fc7d02362155b151f6bd9c38d03af1c10b15902e5ef1f33925b0f20d2",
+      "tests-live-refresh-universe.test.mjs.log": "10397b52149ac83175c02baa5f9d27eb6d4f661cb44bf17699c3bc7bbc78356f",
+      "tests-market-heartbeat.test.mjs.log": "786e972b386bf6830ec38579de533de3560b680a7333d6be0c2b27e835d63362",
+      "tests-market03-comeback-spy.test.mjs.log": "4b85bbb26d713818fbeb2879b6e8552f8517d7a3cfb00ba8b8500760ca89fd36",
+      "tests-market03-discover-price-day.test.mjs.log": "567f54a46321a340f4fbff86f3171919e63f946318ac69af0e9f2ee3f5cd0d12",
+      "tests-market03-ingress-matrix.test.mjs.log": "6a1f2e105b9477dea49741c73ece5d95fca6935213809879eb76e0ca66fe34ac",
+      "tests-market03-r2-spy-counts.test.mjs.log": "0dd2edb951e35152cd52c16bede9c17a25eaead46392869f2d51546de463d976",
+      "tests-market03-review-codex-additional.test.mjs.log": "aa822ca72ca127969a8341232ea229e83196f06d0090a22726e1a78853d4c6fc",
+      "tests-market03-review-codex-spy-envelope.test.mjs.log": "73f9cdad2e76d607627a5d874e184723ab2db81869ff189270bf8fcfb2f32586",
+      "tests-market03-review-r1-r3.test.mjs.log": "c2f3424d3e19c1d7b3657d1f558ccd9224c6abd23c8a0de54e41ba14f0e22ef2",
+      "tests-market03-source-contract.test.mjs.log": "a30beb047d8ea525b8ac15ec61b6eeeea269cd8797bb33093b0ca4ba4aefda59",
+      "tests-mentor-persistence-receipt.test.mjs.log": "c2e3c4079de4c288622d1f2aed0cebb6ccfca54dcfb4fdeaf5acf2746f6b0237",
+      "tests-move-categories.test.mjs.log": "3fe9381c426cd6d7ee19ca08e79ec8e082c98b49308eb295b884504f57d05db9",
+      "tests-multi-angle-discovery.test.mjs.log": "9656cabdb11a0ebd44226146e8d22037d778393d849140302bf063cbf37e9599",
+      "tests-news-delivery.test.mjs.log": "c0fef7198d0b776c3118fa29de6818f6b4791e85cbdb06204084eb4128c0779b",
+      "tests-news-source-bounds.test.mjs.log": "edc8f84a893294fdd2b6836fd01d14911bc0a539ef231ad168ed35796879ec16",
+      "tests-paper-caller-faults.test.mjs.log": "41caaacf35abb59b0650ce49e3f116e2ae03c72d5ae4897bf37f31c2f5a0213c",
+      "tests-paper-gates-safety.test.mjs.log": "91f6c279a0d2a2a253581babdc44592fdc8a7ea4b90e75674594c3d96d84bf6f",
+      "tests-paper-mutation-journal.test.mjs.log": "49c03866039d47dc1c24e9c05bcd0167a732c638628e86d923d58ba2f1cd08a5",
+      "tests-paper-transport.test.mjs.log": "244cabf13a106a2d6d6c2039dcfb110c40728ac3bb79cfba1a3949ac97eeb854",
+      "tests-phase-a-preflight.test.mjs.log": "b5c5c1d7d6dab102a7eaa4f568355890d1f8727fd795dc86f5a8ecc85afc85ec",
+      "tests-pre-ignition-discovery.test.mjs.log": "cb0bc965eea48cee14f8a8a7cd509d7482077fac8e69e99bec194a51ca549a53",
+      "tests-premarket-schedule.test.mjs.log": "e847ac3ca075f68df6c2b7d92bbd8bd2865aa067734222556816540854e6af64",
+      "tests-provider-decision-provenance.test.mjs.log": "c3a152e49d18926d1a119cdebac3e7f4e1eeaf84d81524aa5787f5aef93235c7",
+      "tests-provider-probe.test.mjs.log": "2183351e397929cd81e7d119119df582ae757c510001f24d33dc3fbe69fe5d63",
+      "tests-provider-provenance.test.mjs.log": "c17a757e7fa181886cd0f884334ae7d3d3514410b347698e0f564542d4948dac",
+      "tests-quote-freshness-safety.test.mjs.log": "beeaa21c723137c0d8f49860299c086ac603c2446fbaf4bfc3df853ed7a510c0",
+      "tests-rebalance-owner-gate.test.mjs.log": "9d6fe333095a9c294ef6e3125b6216dd6e35880054f0282891e188842a7d7442",
+      "tests-recorded-plan-contract.test.mjs.log": "2efcb56ca3230da7e892c7a0c63a1999de6a313fe9a58f6af981ce06331586f5",
+      "tests-repository-preservation.test.mjs.log": "7f1d72060ca30e522f631889d00ac22ee8564c0ca6618aa02aaca87527939125",
+      "tests-research-artifact.test.mjs.log": "46b3d0c98fc636ef5ec0a396a9d0b456d178b4f9fe58139016347c55b8cd1e29",
+      "tests-research-checkpoint-integrity.test.mjs.log": "34b53cfab0d8a4123d407af2720dda10a0b9d697d0e461de0830030256934931",
+      "tests-research-collector.test.mjs.log": "74354919f83db3ba3c1f209986fc61a56235c27249c6dfb897bb470a947a68d2",
+      "tests-research-key-binding.test.mjs.log": "0dd85ff44d68259305a807b0886ff8b1c630366a23d87acd6093d21d43e20144",
+      "tests-research-quote-followups.test.mjs.log": "b2172e3a2fb725898b1eb22412172f81b4f2d9d1deb26098a8944439a1a38871",
+      "tests-research-recovery-publication.test.mjs.log": "4813c2b107d7249971617dfe7e781d26b9394843c1db68e701b75d182384f717",
+      "tests-research-recovery.test.mjs.log": "14fc380cbce02cd72304e3d822869da8ab3c8ff9ecb105ed4f55f5e6c677e013",
+      "tests-sec-source-caller.test.mjs.log": "5693ba52772563815c79e1fe8b113f0709c2dd264b7820a81e1196ef96d378d4",
+      "tests-session-coverage.test.mjs.log": "3eeac0cdf123a4ad9b655ffa0d11ed8af0266792e49ca5659022f614afc25498",
+      "tests-share-supply-caller.test.mjs.log": "fe1fead29ca92737ce52e48f97198d12f58e3f589a70fe9e14de7c4fabe1c52f",
+      "tests-snapshot-fields.test.mjs.log": "7377c033b5eedf2e9391f493add5ec0fb6a6b71f4a41037d4d3283294dceea13",
+      "tests-snapshot-ingress-calendar.test.mjs.log": "d7b8d2a3c89a366c67a93b937580b09893c6046b724c0b269059ab236f366d99",
+      "tests-source-conflict-consumers.test.mjs.log": "66d3bbe8487e1d222b15cff02cd7300b940fbd00e8fdd003ef9c7bf6d210ca73",
+      "tests-telegram-delivery-ledger.test.mjs.log": "4d99d83f6468158d28c59413267f889c43833dd5857f7f1021b374dd8c089696",
+      "tests-telegram-delivery.test.mjs.log": "7219cfef6c22f31365dee402d9238715b895abfbc5316ceb3d06f28f97193a06",
+      "tests-telegram-policy.test.mjs.log": "e13f49246c1f293c5a3594aa38b349e3ade953e491d307f14b45de6b6b5ab125",
+      "tests-trade-plan.test.mjs.log": "d740628823eadf55292cad14066948cafc371e134c5d90adda9dd2b5f24472ec",
+      "tests-watchdog-delivery.test.mjs.log": "3222e18db96fcc1a818b46a1d7af6f8fd2b9d0116f0d157fa2a17d6375d15f83",
+      "tests-watcher-refresh.test.mjs.log": "c25eb8c965ced036b96dbccc7b38aef1008e5612da5d4bb73c4610091dfab7e3",
+      "tests-watcher-runtime.test.mjs.log": "aa8381a514ae1f5bdc565e4a453f45fd57df9624e607f9fcf437a657455c4876",
+      "tests-watcher-schedule.test.mjs.log": "841972a8dff52e2e1dba1175e611b7593e09edcdeaf29ae25d72e4682eec3099",
+      "tests-watcher-session.test.mjs.log": "2b0e9bdcf441f871c481642cf5bc069e9066fbb3620eeb8caedc1f4d6d839eff",
+      "tests-workflow-publication-faults.test.mjs.log": "1ca87f0d380ed91811e09381440afb3489b014a49daecb1464d64d1770dbbd03",
+      "tests-zad-compliance.test.mjs.log": "8ad241ff4c1b74c1bdc2fe7e2427f313a7afee5b416d9678ee374b6c9ad25baf",
+      "tests-zad-route-closure.test.mjs.log": "d309a0ffbc8bab6b1d37d2067cbf37a47df3f1be6e8fa388c2e6598590265324"
+    },
+    "postFullSuiteRevalidation": "Final genuine-empty-response fixture14/14 rerun; host-test comment-only clarification. Runtime source unchanged after complete270-file run. Exact final hosted CI remains mandatory."
+  },
+  "candidateAuditSHA256": "90286ceaab8fc38d09e7dd5e3958487e0830fba267f97776bf284181b4d4b9cb",
+  "actualCallerCounterfactualSHA256": "faa6858a291074ff82f314c34388ff8a39d5dfbf2e5b4ee9d9a30ff0c86a67fd",
+  "actualCallerCounterfactual": "Synthetic all-ten yes:0 raw planner candidates,0 after evidence gates; no actual owner confirmation or financial record",
+  "historicalEntryAssessment": "10 UNKNOWN; no reconstructed BBO/first detection/fill/outcome",
+  "rowsClosed": 0,
+  "admittedProspectiveCases": 0,
+  "exactPublishedCI": "Ordinary push-triggered CI on final SHA; final receipt in PR1. No prior SHA is substituted."
+}

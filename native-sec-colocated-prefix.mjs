@@ -4,7 +4,10 @@ import fs from 'node:fs';import path from 'node:path';import {createHash} from '
 import {nativeRunDigest,nativeEventsForCapture,NATIVE_SEC_CAPS} from './native-sec-events.mjs';import {validateNativeEvidenceAsset} from './native-sec-handoff.mjs';import {immutableRead} from './paper-capture-wrapper.mjs';
 const sha=b=>createHash('sha256').update(b).digest('hex');
 export function colocatedPrefixPort({directory,expectedRunId,expectedSourceSha,wait=ms=>new Promise(r=>setTimeout(r,ms))}){
- const delays=[10,25,50,100,200,400,400];
+ // Same 1185ms maximum sleep budget; sample short quiet gaps after an
+ // initial write instead of spending the final 800ms on just two probes.
+ // Every attempt still requires the original strict, authenticated prefix.
+ const delays=[10,25,50,100,200,...Array(32).fill(25)];
  return async({at,identities})=>{for(let attempt=0;attempt<=delays.length;attempt++)try{
   const prefix=nativeRunDigest(directory),asset={kind:'NATIVE_SEC_COMMITTED_PREFIX_V1',runId:expectedRunId,sourceSha:expectedSourceSha,...prefix},archive=validateNativeEvidenceAsset(asset);
   // A newly appended immutable successor does not alter this already captured

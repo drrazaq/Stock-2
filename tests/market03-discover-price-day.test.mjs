@@ -13,16 +13,18 @@ import {marketSession} from '../market-session.mjs';
 const root=path.resolve(import.meta.dirname,'..');
 const rows=n=>Array.from({length:n},(_,i)=>({T:'S'+String(i).padStart(4,'0'),c:10+i%50,v:1e6,o:10,h:11,l:9}));
 const FULL=[200,{status:'OK',adjusted:true,resultsCount:600,results:rows(600)}];
-async function run(t,answer,prev=null){
+async function run(t,answer,prev=null,secStatus=404){
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'disc-'));fs.mkdirSync(path.join(dir,'data'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
  if(prev)fs.writeFileSync(path.join(dir,'data/discovery.json'),JSON.stringify(prev));
- const asked=[];const server=http.createServer((q,s)=>{const u=new URL(q.url,'http://x');
+ const asked=[],secAsked=[];const server=http.createServer((q,s)=>{const u=new URL(q.url,'http://x');
   if(u.pathname.startsWith('/v2/aggs/grouped/')){const d=u.pathname.split('/').pop();asked.push(d);const [st,body]=answer(d);s.statusCode=st;return s.end(typeof body==='string'?body:JSON.stringify(body));}
+  if(u.pathname==='/files/company_tickers.json'){s.statusCode=200;return s.end(JSON.stringify({0:{ticker:'S0000',cik_str:1,title:'SYNTHETIC'}}));}
+  if(u.pathname.includes('/api/xbrl/frames/')){secAsked.push(u.pathname);s.statusCode=secStatus;return s.end(secStatus===200?JSON.stringify({data:[]}):'{}');}
   s.statusCode=404;s.end('{}');});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>new Promise(r=>server.close(r)));const base='http://127.0.0.1:'+server.address().port;
  const c=spawn(process.execPath,[path.join(root,'discover.mjs')],{cwd:dir,env:{PATH:process.env.PATH,MASSIVE_KEY:'synthetic',MASSIVE_BASE:base,SEC_BASE:base,CT_BASE:base,AV_BASE:base,FH_BASE:base,FMP_BASE:base,TG_BASE:base}});
  let log='';c.stdout.on('data',x=>log+=x);c.stderr.on('data',x=>log+=x);const code=await new Promise(r=>c.on('close',r));
- const f=path.join(dir,'data/discovery.json');return {code,log,asked,doc:fs.existsSync(f)?JSON.parse(fs.readFileSync(f,'utf8')):null};
+ const f=path.join(dir,'data/discovery.json');return {code,log,asked,secAsked,doc:fs.existsSync(f)?JSON.parse(fs.readFileSync(f,'utf8')):null};
 }
 const LATEST=latestCompletedSession(Date.now());
 
@@ -90,4 +92,19 @@ test('follow-up: all-invalid rows are MALFORMED; an empty array stays EMPTY; val
   assert.equal(r.doc.session,'2026-10-19');assert.deepEqual(r.doc.candidates,[{sym:'OLD1'}]);}
  const r=await run(t,d=>d===LATEST?[200,{status:'OK',adjusted:true,results:[...rows(600),{T:'BAD',c:'x',v:1},{T:'BAD2',c:1,v:'y'}]}]:FULL);
  assert.equal(r.code,0,r.log);assert.equal(r.doc.session,LATEST);assert.equal(r.doc.priceDay.status,'OBSERVED');
+});
+
+
+test('actual SEC404 reports zero retries and does not invent server refusal or Finnhub fallback use',async t=>{
+ const r=await run(t,()=>FULL);assert.equal(r.code,0,r.log);assert.ok(r.secAsked.length>0);
+ assert.match(r.doc.secNote,/HTTP 404.*after 0 retries/);assert.equal(new Set(r.secAsked).size,r.secAsked.length);
+ assert.doesNotMatch(r.doc.secNote,/refusing this server|Finnhub fallback is used/);assert.equal(r.doc.source,'price only');
+});
+test('actual SEC403 reports its three bounded retry attempts without claiming a fallback was used',async t=>{
+ const r=await run(t,()=>FULL,null,403);assert.equal(r.code,0,r.log);assert.ok(r.secAsked.length>3);
+ assert.equal(r.secAsked.filter(p=>p===r.secAsked[0]).length,4);assert.match(r.doc.secNote,/HTTP 403.*after 3 retries/);
+ assert.doesNotMatch(r.doc.secNote,/refusing this server|Finnhub fallback is used/);assert.equal(r.doc.source,'price only');
+});
+test('successful genuinely empty SEC frames do not manufacture a source-failure note',async t=>{
+ const r=await run(t,()=>FULL,null,200);assert.equal(r.code,0,r.log);assert.equal(r.doc.secNote,'');assert.equal(r.doc.source,'price only');
 });

@@ -125,11 +125,11 @@ async function currentSession(nowMs) {
 let secNote = '';
 async function sec(url) {
   await sleep(FAST ? 0 : 250);                            // SEC fair-use limit is 10 requests a second
-  let r;
+  let r, retries = 0;
   try { r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } }); } catch (e) { if (!secNote) { secNote = 'SEC request failed: ' + e.message; console.log(secNote); } return null; }
   // If the SEC refuses, it may be because other jobs share this server's address. Wait a random few seconds and try again, up to three times.
-  for (let t = 0; t < 3 && !secNote && (r.status === 403 || r.status === 429); t++) { await sleep(FAST ? 0 : 3000 + Math.random() * 6000); try { r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } }); if (r.ok) console.log('SEC accepted the request on retry ' + (t + 1)); } catch (e) { break; } }
-  if (!r.ok) { if (!secNote) { secNote = 'SEC answered HTTP ' + r.status + ' for ' + url.split('/').slice(-2).join('/') + ' after 3 retries (the SEC is refusing this server; the Finnhub fallback is used instead)'; console.log(secNote); } return null; }
+  for (let t = 0; t < 3 && !secNote && (r.status === 403 || r.status === 429); t++) { await sleep(FAST ? 0 : 3000 + Math.random() * 6000); try { retries++; r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } }); if (r.ok) console.log('SEC accepted the request on retry ' + (t + 1)); } catch (e) { break; } }
+  if (!r.ok) { if (!secNote) { secNote = 'SEC answered HTTP ' + r.status + ' for ' + url.split('/').slice(-2).join('/') + ' after ' + retries + ' retries; response unavailable, source coverage incomplete. Fallback selection is reported separately.'; console.log(secNote); } return null; }
   return r.json().catch(() => null);
 }
 async function frame(taxonomy, tag, unit, period) {
