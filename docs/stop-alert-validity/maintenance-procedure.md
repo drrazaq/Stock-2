@@ -1,4 +1,11 @@
-# STOP R2 bounded maintenance procedure (S1): preparation only, Codex review pending
+# STOP R2 bounded maintenance procedure (S1.1): preparation only, Codex focused confirmation pending
+
+**Revision S1.1** applies Codex's findings R1 and R2 on S1 `4891431feeafb481c692a1b23790009337ad35ab` (PR #1 comment 6651214543):
+- **R1:** the writer check is narrowed to the four demonstrated production workflows (§§2, 4, 6).
+- **R2:** a settlement and withdrawal rule for click requests (§§3, 7, 9).
+- It also states the limited scope of the save proof explicitly (§6) and that R's own CI is additional to its push budget (§7).
+
+The patch, inverse, manifest, `bot.yml` pin and every other S1 rule are unchanged.
 
 **PREPARATION ONLY.**
 - **Not authorized by this document:** scheduling, reminders, Disable or Enable clicks, cancellation, push, deployment or messages.
@@ -54,7 +61,8 @@ It cannot click Enable or Disable. No capability is "tested" by a production wri
 **Window rule** (New York is UTC−5 since 1 Nov; Kuwait is UTC+3). The whole span from **E−45 to E+75** must avoid every patched-file writer:
 - **Weekday upper bound:** E+75 ≤ **12:30 UTC**. That is before the `ignition.yml` watcher crons (12:45 and 13:45 UTC Mon–Fri), the `main.yml` scans (13:10–20:40 UTC Mon–Fri) and the watcher-guard deadline (09:10 New York = 14:10 UTC, which runs inside the bot and is off while the bot is disabled).
 - **Weekday lower bound:** E−45 must come after `main.yml`'s 21:30 UTC run, `opportunity-radar.yml` (20:40 UTC) and the watcher job are all terminal. That is proven by fresh reads (§4), not by the schedule.
-- **Weekends** (Sat and Sun UTC, and Friday night after the 21:30 scan is terminal): those workflows have no crons. Data and lab writers still need the §4 check.
+- **Weekends** (Sat and Sun UTC, and Friday night after the 21:30 scan is terminal): the four production workflows (`ignition.yml`, `main.yml`, `opportunity-radar.yml`, and `bot.yml` apart from J and P) have no other crons.
+- **Data producers keep running and are not blockers** (§4): `movers.yml` 04:00 UTC Tue–Sat and `discover.yml` 05:30 UTC Tue–Sat. They are never suppressed or cancelled; their data commits are preserved by the fresh-parent checks.
 - **US holidays:** treated like weekdays unless the actual reads show nothing ran.
 
 **Example from today's data only (not a proposal):** job 127075951793's loop step started at 05:48:52 UTC on 5 Nov, so E ≈ 11:18:52 UTC. E+75 = 12:34 UTC, which **fails** the 12:30 bound. That J would not be eligible. The next J's end depends on the actual handoff and must be re-derived. No date is proposed.
@@ -85,25 +93,44 @@ It cannot click Enable or Disable. No capability is "tested" by a production wri
 
 | Request | Rule |
 |---|---|
-| **REQ-D (Disable)** | On every wake, read the actual `bot.yml` state (`disabled_manually`), with or without DONE DISABLE. A missing or late acknowledgment does not mean the click didn't happen. If Disable is not verified by **E−8**, there is no deployment, and reconciliation continues. At **E+30** with no resolution, report `UNVERIFIED: REQ-D outstanding` and ask for NOT CLICKED or notice of a later click. A deadline never clears REQ-D. |
-| **REQ-E (Enable)** | Requested only after: verified code (V0, V1 or V2); no UNKNOWN write; writer clearance; REQ-D reconciled. Read the actual `active` state with or without DONE ENABLE; an acknowledgment alone never makes restoration VERIFIED. If the state is still not active after 10 minutes, repeat the visible instruction only after refreshing every gate. Until the API reads `active`, report `UNVERIFIED restoration`. **There is no unconditional Enable.** |
+| **REQ-D (Disable)** | On every wake, read the actual `bot.yml` state (`disabled_manually`), with or without DONE DISABLE. A missing or late acknowledgment does not mean the click didn't happen. If Disable is not verified by **E−8**, there is no deployment: REQ-D is **withdrawn** (below) and settled. At **E+30** with no settlement, report `UNVERIFIED: REQ-D-n outstanding`. A deadline never clears REQ-D. |
+| **REQ-E (Enable)** | Requested only after: verified code (V0, V1 or V2); no UNKNOWN write; writer clearance; **REQ-D settled as COMPLETED**. Read the actual `active` state with or without DONE ENABLE; an acknowledgment alone never makes restoration VERIFIED. If the state is still not active after 10 minutes, repeat the visible instruction (as a new numbered request superseding the old one) only after refreshing every gate. Until the API reads `active`, report `UNVERIFIED restoration`. **There is no unconditional Enable.** |
+
+**Request settlement and withdrawal (R2):**
+- **Numbering:** every click request is numbered (REQ-D-1, REQ-E-1, …) and quoted in the visible message.
+- **Withdrawal:** when a request expires or is invalidated, a **visible turn-ending** `WITHDRAWN: REQ-x-n – DO NOT CLICK` message supersedes it. Triggers include a missed deadline, a new abort or retry path, or a change of plan. A later repeat is a new number.
+- **Settlement:** a request is settled only as one of these:
+  1. **COMPLETED:** after the request was issued, a fresh API read shows the requested state was reached (`disabled_manually` for D, `active` for E).
+  2. **NOT SUBMITTED:** after the withdrawal, the owner replies `NOT CLICKED REQ-x-n`, meaning the click was never submitted and will not be acted on. API state is still read independently.
+- **Outstanding:** anything else, including a transmitted or possible click with no confirmation. Elapsed time, a deadline or one snapshot showing the desired state never settles a request.
+- **Order of requests:**
+  - REQ-D must be settled COMPLETED before any REQ-E is issued.
+  - **No Enable intent may be outstanding** (every REQ-E settled, or withdrawn and confirmed NOT SUBMITTED) before any D, R or retry push.
+  - A COMPLETED REQ-E means the bot is enabled. Any later code mutation then needs a new drain under this procedure; it is never done under an active bot.
+- **Late click:** if a click lands after withdrawal or restoration, re-read state, repeat the verified-state and restoration checks, and issue a fresh numbered request if needed. Restoration is never labelled VERIFIED while a conflicting request is unresolved.
+- **No new controls:** this adds no new workflow control and no new operator authority.
 
 **Late Disable:**
 - If Disable is first verified **after E−8**, there is no deployment. Freshly re-verify the original code and pins after that click, resolve every write, clear the writers, and only then send a visible `VERIFIED V0 – CLICK ENABLE NOW`.
-- A late ACK READY or DONE DISABLE never revives an expired window.
+- A late ACK READY or DONE DISABLE never revives an expired window. An expired REQ-D is withdrawn visibly, and a late click is handled by the settlement rule above.
 - An independent owner override is recorded as outside the procedure, never as VERIFIED.
 
 ## 4. Writer check (WC) and baseline
 
 **When WC runs:** at entry, throughout the drain, immediately before and after **every** D or R push or retry, and before any Enable request.
 
-**What it covers:** complete listings of every status, attempt and job for:
-- `bot.yml` (runs `scan.mjs` and `watcher-guard.mjs`);
+**What it covers:** complete listings of every status, attempt and job for the **four demonstrated production consumers** of the patched code:
+- `bot.yml` `reply` job (runs `scan.mjs` and `watcher-guard.mjs`);
 - `main.yml` (`scan.mjs`);
-- `ignition.yml` (`ignition-watch.mjs` → `stop-watch.mjs`, `early-alerts.mjs`; its midday radar child);
-- `opportunity-radar.yml` (`opportunity-radar.mjs` → `early-alerts.mjs`);
-- the state writers `discover.yml` and `movers.yml` (inputs to `scan.mjs`);
-- any other run found executing a patched file.
+- `ignition.yml` (`ignition-watch.mjs` → `stop-watch.mjs`, and `early-alerts.mjs` directly and via `rank-models.mjs` / `shadow-stream.mjs`; also its midday radar child);
+- `opportunity-radar.yml` (`opportunity-radar.mjs` → `early-alerts.mjs`; `shadow-outcomes.mjs` → `rank-models.mjs` → `early-alerts.mjs`).
+
+**Catch-all:** any other run discovered **executing a patched file with production effects**, meaning production writes, delivery or shared-state effects, is also a blocker.
+
+**Not writers under this procedure:**
+- fixture-only `tests.yml` runs, including D's and R's own CI;
+- the read-only `accounting-preflight` job;
+- `discover.yml` and `movers.yml` (with `fastmover-lab.mjs` and `octopus.mjs`). Their scripts import none of the patched modules (checked on main `8a05fb69`) and they don't write the bot's positions or command-offset state. Their data-only commits are recorded and preserved through the fresh-parent and data-movement checks, never treated as blockers. D's still-running CI never blocks ABORT B.
 
 Where needed, check the actual checked-out or executed source; a head SHA alone is not enough. A gap in the listing, or an execution that can't be identified, blocks any mutation. Schedules are never WC evidence.
 
@@ -112,11 +139,12 @@ Where needed, check the actual checked-out or executed source; a head SHA alone 
 **Before any code mutation, all of these must hold:**
 - J terminal SUCCESS with the §6 proof;
 - P conclusively cancelled with zero jobs, or no P designated and none present;
-- no active, queued or waiting run of any WC workflow;
+- no active, queued or waiting run of any of the four production consumers (or a catch-all production executor);
+- no outstanding Enable intent (§3);
 - a fresh read shows the bot disabled and the scanner active;
 - no UNKNOWN code write.
 
-A new active or pending scanner, watcher, radar, discover or movers run blocks the push. It is never paused or cancelled. Unrelated lab and data writers that don't execute a patched file may continue. Their commits are preserved because D and R are built on fresh `main`.
+A new active or pending scanner, watcher or radar run (or catch-all production executor) blocks the push. It is never paused or cancelled. Data producers, labs and other writers that don't execute patched code with production effects may continue. Their commits are preserved because D and R are built on a fresh immediate parent, with data movement recorded.
 
 **Baseline and compatibility:**
 - **M0** is `main` at readiness. **M** is the **immediate pre-release parent**.
@@ -170,7 +198,14 @@ J must end **naturally** with SUCCESS. Job success alone is not enough, because 
 
 Pending owner messages wait behind the persisted offset. Telegram retention is about 24 hours, so a gap is recorded, not assumed harmless.
 
-**Data writers:** the watcher, radar and scanner do not run in the window. If any runs anyway, it is a §4 blocker, not a save-proof question.
+**Limited scope of this proof (stated with every report of it):** under the exact pinned shell, the five conditions support only a limited claim: the Git save control flow completed, the saved commits are ancestors of `main`, and the persisted data checkpoint exists. They do **not** prove that every intended command took effect:
+- scan, watchdog, reply and mirror output goes to `run.log`;
+- failures there can be caught;
+- `run.log` is tail-truncated.
+
+Quiet hosted output cannot reconstruct intent or prove every Telegram command was saved. Queued messages are never claimed as processed. A no-change save makes no commit, and none is fabricated.
+
+**Production consumers:** the watcher, radar and scanner do not run in the window. If any runs anyway, it is a §4 blocker, not a save-proof question.
 
 ## 7. Timeline, UNKNOWN writes, rollback
 
@@ -185,8 +220,8 @@ Pending owner messages wait behind the persisted offset. Telegram retention is a
 | Preparation ≤10 min | Fetch M, prove baseline identity and pins, run the candidate tests, build D and the inverse, take a fresh WC. Visible `D READY – PUSH TURN NEXT`, with a 1-minute wake deadline. |
 | D push by E+20 | One active push turn: fresh WC and states; **post on PR #1 `PUSHING D=<sha> ONTO M=<parent>` before the request**; push only the normal isolated D. **No release push after E+20.** |
 | D push +10 | Complete hosted all-PASS verdict for exact D (§8) → **V1**. A failure, missing result or late evidence → **ABORT B** in that turn. |
-| Push turn ≤15 min | Targets: CI ≤10, rollback ≤5. Targets never override writer, UNKNOWN or compatibility gates. If blocked, end visibly with the D status, the exact blocker and the next wake. |
-| Enable target E+45 | Only fresh **VERIFIED V0, V1 or V2**, no UNKNOWN, WC pass and REQ-D reconciled allow `VERIFIED Vx – CLICK ENABLE NOW`. Then the API must read bot `active` and scanner `active`. |
+| Push turn ≤15 min | Targets: CI ≤10, rollback ≤5. Targets never override writer, UNKNOWN or compatibility gates. R's own complete hosted all-PASS verification comes **in addition** to its push budget. E+45 and E+75 are therefore conditional, especially if a production consumer blocks R. If blocked, end visibly with the D status, the exact blocker and the next wake. |
+| Enable target E+45 | Only fresh **VERIFIED V0, V1 or V2**, no UNKNOWN, WC pass, REQ-D settled COMPLETED and no other request outstanding allow a numbered `VERIFIED Vx – CLICK ENABLE NOW (REQ-E-n)`. Then the API must read bot `active` and scanner `active`. |
 
 **Code states:**
 - **V0:** original source and pins (D never applied).
@@ -200,7 +235,7 @@ Pending owner messages wait behind the persisted offset. Telegram retention is a
 - **NOT APPLIED** requires a definitive terminal rejection of that exact request.
 - Anything else is **UNKNOWN.** While UNKNOWN: no retry, no takeover, no VERIFIED claim and no Enable request. Report it visibly and re-read. No deadline, silence, owner instruction or later `main` movement settles it.
 
-**ABORT A** (D definitely not applied): freshly verify V0, the pins and the preserved data; reconcile the clicks; restore under REQ-E.
+**ABORT A** (D definitely not applied): freshly verify V0, the pins and the preserved data; settle every click request (§3); restore under REQ-E.
 
 **ABORT B** (D applied, CI failed or unverified):
 - Apply R, which is only `rollback.patch` (`1a13a44d…`), to a fresh parent whose ten after-hashes and dependencies match. Every intervening data or unrelated commit is preserved.
@@ -233,7 +268,7 @@ Pending owner messages wait behind the persisted offset. Telegram retention is a
 
 **Enable conditions:** Enable is requested only when every gate holds, however late. Final restoration requires:
 - bot `active` and scanner `active` by API read;
-- no outstanding REQ-D or REQ-E;
+- every REQ-D and REQ-E settled (§3), none outstanding and none withdrawn but unconfirmed;
 - exact verified code (V0, V1 or V2);
 - no UNKNOWN write.
 
@@ -258,6 +293,6 @@ There are no test messages, no fabricated holdings and no provider probes. Cases
 
 ## 10. Owner decision (after Codex review), not granted
 
-> I approve STOP R2 maintenance procedure S1 at ⟨reviewed commit⟩ with Claude as sole release/rollback operator, Codex as activated read-only verifier, and myself performing only bot.yml Disable/Enable. Stock scanner, watcher, radar and all other workflows stay enabled. Production patch c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b on exactly the ten listed files; rollback only inverse 1a13a44de32db385a330e948d4f354cc399f215f2b4ae75fa8a453e4fcaa0ff9 on the same files, preserving every intervening data commit. The window is derived at readiness from the actual bot job (E−45…E+75 outside watcher/scanner/radar hours). Cancellation is limited to one never-started pending bot run whose exact ID I approve separately at readiness. All candidate tests must PASS; D's complete hosted results gate V1; the five-condition save proof, UNKNOWN handling and verified restoration apply; there is no guaranteed outage limit and no unconditional Enable. No dispatch, workflow edit, data/offset/financial change, test message, provider probe or broad merge. This does not approve historical setup/rehearsal/audit or the A pilot.
+> I approve STOP R2 maintenance procedure S1.1 at ⟨reviewed commit⟩ with Claude as sole release/rollback operator, Codex as activated read-only verifier, and myself performing only bot.yml Disable/Enable. Stock scanner, watcher, radar and all other workflows stay enabled. Production patch c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b on exactly the ten listed files; rollback only inverse 1a13a44de32db385a330e948d4f354cc399f215f2b4ae75fa8a453e4fcaa0ff9 on the same files, preserving every intervening data commit. The window is derived at readiness from the actual bot job (E−45…E+75 outside watcher/scanner/radar hours). Cancellation is limited to one never-started pending bot run whose exact ID I approve separately at readiness. All candidate tests must PASS; D's complete hosted results gate V1; the five-condition save proof (limited scope), numbered click requests with visible withdrawal and settlement, UNKNOWN handling and verified restoration apply; there is no guaranteed outage limit and no unconditional Enable. No dispatch, workflow edit, data/offset/financial change, test message, provider probe or broad merge. This does not approve historical setup/rehearsal/audit or the A pilot.
 
 A readiness session date is a separate, later owner decision.
