@@ -1,0 +1,19 @@
+{
+ "p1_append": "THROW:WRITE_OUTCOME_UNKNOWN",
+ "p1_recover": "THROW:PENDING_ORIGINAL_UNAVAILABLE",
+ "p1_newClaim": "THROW:PENDING_INTENT_REQUIRES_RECOVERY",
+ "p1_otherAppendSameGen": "{\"schema\":1,\"key\":\"5fa0761b929201ac110d056c690ff0cc638b5eef9397207db4af87508471ee23\",\"recordHash\":\"142d314442566a24c2c76262587a5a3753a415095dd17616f65334403dd96",
+ "p1_head": "{\"head\":{\"generation\":1,\"generationHash\":\"179a3f317d33d891c25fc514630dc4cde4add32e7b0e20a7ea25ab4f1ff330f7\"},\"token\":\"5a75903e0b550e036fcf4cfc601c993b16e35e9efc",
+ "p1_pendingFiles": 2,
+ "p2_differentClaim": "THROW:IMMUTABLE_RECORD_CONFLICT",
+ "p2_identicalRetry": "{\"head\":{\"generation\":2,\"generationHash\":\"a78e0171747f1fa9d5158d9167f7c748c0d9ba05769ae54880a85454a2942a60\"},\"token\":\"ed7c74d24dba81b8894fde596dfb83a5ce4f5b1df0",
+ "p3_tokenPublicFromHead": true,
+ "p3_staleAppend": "THROW:STALE_FENCE",
+ "p3_newAppend": "{\"schema\":1,\"key\":\"2bf04e7d4e6930ebdfab735401330bccf3a4165888d351dc1a00af346ef40b5f\",\"recordHash\":\"92d4f71eaf7e108659300c3526b4ea4f90380cfb2d9400d0fcde21b42e209",
+ "p3_staleRecover": "THROW:STALE_FENCE",
+ "p4_pendingDifferent": "THROW:IMMUTABLE_RECORD_CONFLICT",
+ "p4_pendingSame": "{\"schema\":1,\"key\":\"04856f92f6e375a4aca5db0abd11665ac6ae51733979f1f02d93fa62cb5079b5\",\"recordHash\":\"8915f4178e1a291d5746935d1aaa9ea0475ec9e7d04effa361312f79e4df0",
+ "p4_committedDifferent": "THROW:LOGICAL_RECORD_CONFLICT",
+ "p4_originalDifferentBytes": "THROW:LOGICAL_RECORD_CONFLICT",
+ "p4_genericEvaluation": "THROW:STRICT_EVALUATOR_REQUIRED"
+}
