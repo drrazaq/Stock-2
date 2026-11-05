@@ -3,12 +3,16 @@
 // default (settings.leaderDip = false -> PAPER). Also pinned here: Basket 1 reminders OFF by default (settings.basket1 === true turns them
 // on), Basket 2 monthly reminder unchanged, and SQ11-PB12 no longer in the TRY SMALL list.
 // Run: node --test test/leader-dip.test.mjs
-import test from 'node:test';
+import test, { after } from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
 import { loadScan, blocked } from './load-scan.mjs';
 
-const now = new Date().toISOString();
+// Entry controls run before the declared next open; they must not drift past expiry with wall time.
+const originalNow = Date.now;
+const now = '2026-11-04T13:00:00.000Z';
+Date.now = () => Date.parse(now);
+after(() => { Date.now = originalNow; });
 const S0 = await loadScan({});
 const isS = S0.fn('isSession'), nyd = S0.fn('ny')(Date.now()).d;
 const sessAgo = (n) => { let x = nyd, k = 0; while (k < n) { x = new Date(Date.parse(x) - 864e5).toISOString().slice(0, 10); if (isS(x)) k++; } return x; };
@@ -33,20 +37,21 @@ test('a fresh pick is a BUY of 1,000 USD with the +20% sell limit, no stop and t
   assert.match(L2, /- BUY BBB 1,000 USD at the open \(up to 113\.30\)/); assert.match(L2, /- BUY DDD/); assert.equal((L2.match(/- BUY /g) || []).length, 2);
 });
 
-test('a stale list (older close than the newest session, or 9 sessions old) shows nothing: no late entries', async () => {
+test('a stale list explains UNKNOWN or expired entry and never offers late entries', async () => {
   const S = await loadScan({ files: sig(['AAA'], OLD) });
-  assert.deepEqual(S.fn('ldipLines')({}, {}, null, LAST), []);
-  assert.deepEqual(S.fn('ldipLines')({}, {}), []);
+  assert.match(S.fn('ldipLines')({}, {}, null, LAST).join('\n'), /source session or clock UNKNOWN/);
+  assert.match(S.fn('ldipLines')({}, {}).join('\n'), /next-open entry expired/);
+  assert.doesNotMatch(S.fn('ldipLines')({}, {}).join('\n'), /- BUY/);
   const S2 = await loadScan({ files: sig(['AAA'], sessAgo(2)) });
-  assert.deepEqual(S2.fn('ldipLines')({}, {}, null, LAST), []);   // the scan knows a newer session than the list's close
+  assert.match(S2.fn('ldipLines')({}, {}, null, LAST).join('\n'), /source session or clock UNKNOWN/);   // the scan knows a newer session than the list's close
 });
 
 test('halal: unknown -> MARK HALAL FIRST; NOT halal (your mark or the ZAD list) -> dropped; danger filing -> dropped', async () => {
   const S = await loadScan({ files: sig(['UNK', 'BAD', 'ZZL', 'AAA'], LAST, { 'data/halal.json': { ...HAL, BAD: fail }, 'data/zad-list.json': { effective: '2026-10-22', notHalal: ['ZZL'] } }) });
   const t = S.fn('ldipLines')({}, {}, null, LAST).join('\n');
   assert.match(t, /- BUY AAA/); assert.doesNotMatch(t, /BUY (UNK|BAD|ZZL)/);
-  assert.match(t, /MARK HALAL FIRST \(leader dip picks, no ZAD mark of yours yet: not a buy until you mark them\): UNK\./); assert.match(t, /\nhalal UNK yes   or   halal UNK no/); assert.doesNotMatch(t, /halal SYM/);   // (28 Oct) the exact command, never a generic one assert.doesNotMatch(t, /BAD|ZZL/);
-  const S2 = await loadScan({ files: sig(['AAA'], LAST, { 'data/squad29-flags-today.json': { flags: [{ sym: 'AAA', verdict: 'SELL-WARNING', flag: 'F4', form: 'NT 10-K', filed: new Date().toISOString().slice(0, 10), url: 'x' }] } }) });
+  assert.match(t, /MARK HALAL FIRST \(leader dip picks, no ZAD mark of yours yet: not a buy until you mark them\): UNK \(signal from the \d{4}-\d{2}-\d{2} close; entry only at the \d{4}-\d{2}-\d{2} open, \d+:\d\d [ap]m Kuwait; no late entry\)\./);   // D4: source close and entry instant named assert.match(t, /\nhalal UNK yes   or   halal UNK no/); assert.doesNotMatch(t, /halal SYM/);   // (28 Oct) the exact command, never a generic one assert.doesNotMatch(t, /BAD|ZZL/);
+  const S2 = await loadScan({ files: sig(['AAA'], LAST, { 'data/squad29-flags-today.json': { flags: [{ sym: 'AAA', verdict: 'SELL-WARNING', flag: 'F4', form: 'NT 10-K', filed: new Date(Date.now()).toISOString().slice(0, 10), url: 'x' }] } }) });
   assert.match(S2.fn('dangerFlag')('AAA'), /late-filing notice/);
   assert.deepEqual(S2.fn('ldipLines')({}, {}, null, LAST), []);
 });
