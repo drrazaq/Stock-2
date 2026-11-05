@@ -26,6 +26,10 @@ Base: `2c9f418634e05adad5ead5b7fc85de6d1f3eedee`. Review: Claude `80df36fe13fe94
 
 The shared pure native quote parser was extracted without changing its algorithm; the collector imports both its timestamp and quote functions. A first control run caught a missed timestamp import; the failure is retained locally and corrected before publication. Original collector assertions remain unchanged.
 
+## Prior-version first-record compatibility
+
+A final independent compatibility probe used the **actual original store bytes at2c9f4186**, hash742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d. Both its torn signed recovery and torn synthetic claim reproduced `GENERATION_ATTEMPT_CONFLICT` against the initially published56960fd4 schema extension. The correction recognizes an old hash only when an existing attempt/control/archive positively pins that exact prior request. It preserves that hash and every original fragment; it still archives exact signed bytes first and binds their hash into the migrated generation record. A second interruption after that archive resumes through the normal pinned request reader. Different requests remain refused. The original source fixture is preserved for reproducible cross-version worker tests, not substituted for current runtime.
+
 ## Exact remaining dependencies
 
 | Area | What is still indispensable | Boundary |

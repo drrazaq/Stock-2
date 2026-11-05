@@ -11,3 +11,9 @@ This is a local operator procedure for a previously approved store/authority; it
 7. A failed importer append returns UNKNOWN, never a successful card/recording claim. Inspect pending evidence. Exact same pinned import request/originals may retry an append to recover its identical intent; the regression preserves that intent and all raw source bytes. Missing bytes require the separate authorized unresolved transition above. Do not regenerate a request or rewrite existing outcomes to clear a pending state.
 
 Limits remain 16MiB total store, 2000 files, 15s worker timeout; signed source <=1MiB. Exceeding a cap is a refusal, not permission to raise limits or discard evidence. Resumption cannot prove physical power-loss guarantees beyond successful filesystem fsync, trusted storage and preserved external custody; neither signature nor replay reconstructs absent original source truth.
+
+## Older2c9f first-record attempts
+
+The new worker recognizes the previous hash format only from positively matching preserved attempt/control/archive bytes; callers cannot select a legacy mode. Supply the exact original signed source as above. The old request hash and torn fragment remain unchanged. Exact signed bytes are archived before completion, and their raw hash is bound into the migrated generation record. If interrupted again after this archive, use `RECORDED_REQUEST` and its generation/attempt pin. Missing old request fields remain unresolved; no reconstructed signature, discarded fragment or guessed takeover is permitted.
+
+For a previous-version normalized hash, the original whitespace/JSON byte layout cannot be authenticated from that hash alone. Use the retained custody source, never reconstruct missing signed fields. The new raw-byte pin starts at this recovery; it does not backfill historical byte provenance or certify a lost historical artifact.

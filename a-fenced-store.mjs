@@ -108,6 +108,7 @@ function retainedGenerationRequest(d,store,n,requestHash){
   const bytes=safeRead(signed),a=captureJson(bytes.toString()),b=authorization(d,store,a,a.body?.action);
   need(['DISPOSE_INCOMPLETE_AND_ADVANCE','CLAIM_GENERATION'].includes(b.action),'RECOVERY_AUTH_CONTEXT_MISMATCH');
   const mode=b.action==='CLAIM_GENERATION'?'CLAIM':'RECOVERY',request={mode,expectedToken:b.expectedHeadHash,owner:b.nextOwner,at:b.at,boundaryEvidenceHash:b.boundaryEvidenceHash,authorization:a,authorizationRawHash:hash(bytes)};
+  if(evidenceHash(request)!==requestHash)delete request.authorizationRawHash;
   need(evidenceHash(request)===requestHash,'SIGNED_REQUEST_SOURCE_CHANGED');return {request,bytes};
  }
  if(fs.existsSync(plain)){const request=json(plain);need(request.mode==='CLAIM'&&request.authorization===null&&evidenceHash(request)===requestHash,'GENERATION_ATTEMPT_CORRUPT');return {request,bytes:null};}
@@ -122,7 +123,9 @@ function readAttempt(d,store,n){
  if(a.request.mode==='RECOVERY')b=authorization(d,store,a.request.authorization,'DISPOSE_INCOMPLETE_AND_ADVANCE');
  else{need(a.request.mode==='CLAIM','GENERATION_ATTEMPT_CORRUPT');if(store.recoveryAuthority&&a.previous)b=authorization(d,store,a.request.authorization,'CLAIM_GENERATION');}
  if(b)need(b.expectedHeadHash===a.request.expectedToken&&b.nextOwner===a.request.owner&&b.at===a.request.at&&b.boundaryEvidenceHash===a.request.boundaryEvidenceHash,'RECOVERY_AUTH_CONTEXT_MISMATCH');
- if(a.request.authorizationRawHash){const bytes=safeRead(d.anchor+'/takeover-request-'+a.requestHash+'.json');need(hash(bytes)===a.request.authorizationRawHash&&evidenceHash(captureJson(bytes.toString()))===evidenceHash(a.request.authorization),'SIGNED_REQUEST_SOURCE_CHANGED');}
+ const rawRequestHash=a.request.authorizationRawHash??a.authorizationRawHash;
+ if(a.authorizationRawHash)need(a.generationRecord.authorizationRawHash===a.authorizationRawHash,'SIGNED_REQUEST_SOURCE_CHANGED');
+ if(rawRequestHash){const bytes=safeRead(d.anchor+'/takeover-request-'+a.requestHash+'.json');need(hash(bytes)===rawRequestHash&&evidenceHash(captureJson(bytes.toString()))===evidenceHash(a.request.authorization),'SIGNED_REQUEST_SOURCE_CHANGED');}
  return a;
 }
 function unresolved(d,store){
@@ -171,7 +174,13 @@ function beginGeneration(d,store,r,mode,retainedBytes=null){
  need(expected===r.expectedToken,'CONTROL_CAS_FAILED');
  need(typeof r.owner==='string'&&r.owner.length>0&&r.owner.length<=100&&Number.isFinite(evidenceTime(r.at))&&hex(r.boundaryEvidenceHash),'BOUNDARY_CONTEXT_REQUIRED');
  if(old){current(d,expected,true);need(evidenceTime(r.at)>=evidenceTime(json(d.anchor+`/generation-${old.generation}.json`).at),'BOUNDARY_CLOCK_REGRESSION');}
- const request={mode,expectedToken:r.expectedToken,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,authorization:b?source.authorization:null,authorizationRawHash:source?hash(source.bytes):null},requestHash=evidenceHash(request),n=(old?.generation||0)+1;
+ let request={mode,expectedToken:r.expectedToken,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,authorization:b?source.authorization:null,authorizationRawHash:source?hash(source.bytes):null};
+ let requestHash=evidenceHash(request);const n=(old?.generation||0)+1,legacy={...request};delete legacy.authorizationRawHash;
+ const legacyHash=evidenceHash(legacy),pins=[...controlTemps(d,n).map(name=>name.split('-')[2]),...archivedRequests(d,n)];
+ if(fs.existsSync(d.anchor+'/'+attemptName(n)))pins.push(json(d.anchor+'/'+attemptName(n)).requestHash);
+ // Only a positively matching prior-version reservation selects the old hash schema.
+ // Its exact signed original is still archived first; the raw pin belongs to the new attempt envelope.
+ if(pins.includes(legacyHash)){request=legacy;requestHash=legacyHash;}
  const reservation=transition(d);need(!reservation||reservation===n,'GENERATION_TRANSITION_PENDING');
  if(fs.existsSync(d.anchor+'/'+attemptName(n))){const a=readAttempt(d,store,n);need(a.requestHash===requestHash,'GENERATION_ATTEMPT_CONFLICT');return finishGeneration(d,store,a,r);}
  need(controlTemps(d,n).every(name=>name.split('-')[2]===requestHash)&&archivedRequests(d,n).every(hash=>hash===requestHash),'GENERATION_ATTEMPT_CONFLICT');
@@ -180,9 +189,9 @@ function beginGeneration(d,store,r,mode,retainedBytes=null){
   need(b.pending.length||b.residues.length,'NO_UNRESOLVED_EVIDENCE');need(evidenceHash(b.pending)===evidenceHash(currentView.pending)&&evidenceHash(b.residues)===evidenceHash(currentView.residues),'RECOVERY_INVENTORY_CHANGED');
  }else{need(!currentView.pending.length,'PENDING_INTENT_REQUIRES_RECOVERY');need(!currentView.residues.length,'UNRESOLVED_PARTIAL_ARTIFACTS');if(b)need(!b.pending.length&&!b.residues.length,'RECOVERY_AUTH_CONTEXT_MISMATCH');}
  const gf=d.anchor+`/generation-${n}.json`;let legacyGenerationHash;
- let generationRecord={schema:1,generation:n,previous:old,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,cohortHash:store.cohortHash,contractHash:store.contractHash,claimRequestHash:requestHash};
+ let generationRecord={schema:1,generation:n,previous:old,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,cohortHash:store.cohortHash,contractHash:store.contractHash,claimRequestHash:requestHash,...(source&&!request.authorizationRawHash?{authorizationRawHash:hash(source.bytes)}:{})};
  if(fs.existsSync(gf)){const g=json(gf),{claimRequestHash:unused,...expectedGeneration}=generationRecord;need(mode==='CLAIM'&&evidenceHash(g)===evidenceHash(expectedGeneration),'GENERATION_ATTEMPT_CONFLICT');legacyGenerationHash=hash(safeRead(gf));generationRecord=g;}
- const a={schema:1,generation:n,previous:old,request,requestHash,generationRecord,...(legacyGenerationHash?{legacyGenerationHash}:{})};
+ const a={schema:1,generation:n,previous:old,request,requestHash,generationRecord,...(source&&!request.authorizationRawHash?{authorizationRawHash:hash(source.bytes)}:{}),...(legacyGenerationHash?{legacyGenerationHash}:{})};
  // The complete original request is durable before the first generation-attempt mutation.
  immutable(d,(source?'takeover-request-':'claim-request-')+requestHash+'.json',source?source.bytes:encoded(request),{generation:n,requestHash,stage:'REQUEST_ARCHIVE',request:r});fault(d,r,'AFTER_REQUEST_ARCHIVE');
  immutable(d,attemptName(n),encoded(a),{generation:n,requestHash,stage:'ATTEMPT',request:r});fault(d,r,'AFTER_CLAIM_ATTEMPT');

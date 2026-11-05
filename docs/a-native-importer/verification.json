@@ -49,10 +49,46 @@
     {
       "evidence": "docs/a-native-importer/evidence/a-L1-L4-static.log",
       "sha256": "9ca70d27fca364c7c75070b2a04ffbe1c6e366f931108f26c6c0ff2c80fe5b5f"
+    },
+    {
+      "scope": "Expected failing regression on initially published56960fd4: actual2c9 signed/unsigned first-record residues",
+      "passed": 0,
+      "failed": 2,
+      "skipped": 61,
+      "expectedCounterexample": true,
+      "evidence": "docs/a-native-importer/evidence/a-L2-legacy-counterexample.log.gz",
+      "sha256": "b46250cf364838ff2d13a0e2b7845849f0e0d4f23de7ca75430085f05f101936"
+    },
+    {
+      "scope": "Corrected exact two counterexamples; other61deliberately skipped in focused probe",
+      "passed": 2,
+      "failed": 0,
+      "skipped": 61,
+      "expectedCounterexample": false,
+      "evidence": "docs/a-native-importer/evidence/a-L2-legacy-fixed-final.log.gz",
+      "sha256": "ba3aa353103f273170f125ce65918a280e3d644647122aad4fca65006b0195b6"
+    },
+    {
+      "scope": "Final Node20 changed-path full suite including63recovery,20importer,38collector,12store,4package",
+      "passed": 137,
+      "failed": 0,
+      "skipped": 0,
+      "expectedCounterexample": false,
+      "evidence": "docs/a-native-importer/evidence/a-L1-L4-frozen-compat20.log.gz",
+      "sha256": "886039058d38c57d1739ba40e875a4509cd4d02851ef5fea9131d915db16ff3d"
+    },
+    {
+      "scope": "Final Node24 changed-path full suite including same137cases",
+      "passed": 137,
+      "failed": 0,
+      "skipped": 0,
+      "expectedCounterexample": false,
+      "evidence": "docs/a-native-importer/evidence/a-L1-L4-frozen-compat24.log.gz",
+      "sha256": "6637ad6a9b28e72fa2b07931438042e70140f47f711c61bd28a899b9ae8d8dfa"
     }
   ],
-  "distinctFinalFocusedCases": 369,
-  "countsExplanation": "367combined cases before2final controls; final65-case command retests all61recovery+4package controls. These overlaps must not be added as distinct tests. Node24 similarly133before2final controls plus final65overlap. Final exact-commit hosted291-file evidence is separate.",
+  "distinctFinalFocusedCases": 371,
+  "countsExplanation": "Original combined367; final changed-path137 includes4additional recovery controls versus that run. Overlapping commands are not added. Final source/entry/outcome/collector/fence and prior-compatibility tests pass; exact final371-case A scope will also be reconciled in complete hosted291-file receipt onPR1.",
   "commands": [
     "node20 --test --test-concurrency=2 test/a-native-evidence-importer.test.mjs test/a-native-importer-package.test.mjs test/a-fenced-recovery.test.mjs test/a-fenced-store.test.mjs test/a-native-source-package.test.mjs test/a-native-source-join.test.mjs test/a-close-source.test.mjs test/a-authenticated-collector.test.mjs test/a-evidence-contract.test.mjs test/a-independent-coverage.test.mjs test/a-recovery-copy.test.mjs test/a-pathway-review-regressions.test.mjs test/catalyst-reclaim-prototype.test.mjs test/reclaim-research-workflow.test.mjs test/a-catalyst-reclaim-store.test.mjs",
     "node20 --test test/a-fenced-recovery.test.mjs test/a-native-importer-package.test.mjs test/a-native-source-package.test.mjs",
@@ -61,7 +97,9 @@
     "python3 -m unittest discover -s tests -p test_*.py",
     "node --test tests/market03-ingress-matrix.test.mjs",
     "python3 tools/repository-audit.py --root . --syntax --output NEW_UNUSED_PATH",
-    "git diff --check"
+    "git diff --check",
+    "node20 --test --test-concurrency=2 test/a-fenced-recovery.test.mjs test/a-native-importer-package.test.mjs test/a-native-source-package.test.mjs test/a-native-evidence-importer.test.mjs test/a-fenced-store.test.mjs test/a-authenticated-collector.test.mjs",
+    "node24 --test --test-concurrency=2 test/a-fenced-recovery.test.mjs test/a-native-importer-package.test.mjs test/a-native-source-package.test.mjs test/a-native-evidence-importer.test.mjs test/a-fenced-store.test.mjs test/a-authenticated-collector.test.mjs"
   ],
   "pythonPassed": 39,
   "providerMatrixPassed": 4,
@@ -75,7 +113,8 @@
   "developmentFailuresPreserved": {
     "fixtureUndefinedVariable": "first7 importer cases failed on sourceCodeSha typo; fixed before first7pass",
     "collectorExtraction": "3of117old-control cases failed due missing nativeNs import; corrected,38unchangedcollector cases pass subsequently",
-    "manifests": "old package hashes correctly refused until explicit L1-L4 repinning"
+    "manifests": "old package hashes correctly refused until explicit L1-L4 repinning",
+    "previousVersionFirstRecord": "Actual original2c9 source reproduced2conflicts on56960fd4. Corrected matching old reservations with original hash/fragments preserved, signed-source raw hash bound into migrated generation, second interruption resumes. No historical raw-byte provenance reconstructed."
   },
   "independentReview": "REQUEST_ON_PR1_AFTER_PUBLICATION_NOT_YET_APPROVAL",
   "hostedExactCommit": "PENDING_AT_PUBLICATION; terminal receipt will be posted on PR1 without changing source SHA",
@@ -86,5 +125,8 @@
   "setup": false,
   "adoption": false,
   "prospectiveAdmissions": 0,
-  "rowsClosed": 0
+  "rowsClosed": 0,
+  "finalChangedPathNode20": 137,
+  "finalChangedPathNode24": 137,
+  "supersedesIntermediate": "56960fd407892ed878fc3a7b7c4704c266f55945 is preserved; final successor adds this demonstrated L2 backward-compatibility fix only."
 }
