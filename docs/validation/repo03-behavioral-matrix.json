@@ -334,6 +334,87 @@
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
     },
     {
+      "path": "a-close-source.mjs",
+      "sha256": "f43dee772f129e30fdcb9da4d0f9e848b5f6bfe5a3b879ad48b95ebfd95b84bb",
+      "bytes": 5513,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            8,
+            39
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            15
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            14,
+            19,
+            40,
+            42,
+            48,
+            53,
+            57
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            3,
+            5,
+            6,
+            8,
+            9,
+            12,
+            23,
+            30,
+            31,
+            32,
+            45
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            35,
+            44
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "sha256": "f43dee772f129e30fdcb9da4d0f9e848b5f6bfe5a3b879ad48b95ebfd95b84bb",
+        "reviewer": "Codex implementation/source-interface pass, 2026-11-05; independent review pending",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Exact retained single-symbol Alpaca daily-bar response plus explicit symbol/security identity/session and fenced store.",
+        "outputs": "NY calendar aggregate close with original bar and receipt clocks; requested feed and unverified response feed separate; execution UNKNOWN.",
+        "sideEffects": "Optional immutable original/first/conflict writes through existing fenced store; no provider calls, strategy mutation or live caller.",
+        "failure": "Empty, malformed, wrong-symbol, unfinished, closed/unknown session, pagination, unsupported adjustment or persistent revision returns UNKNOWN; partial writes throw unresolved.",
+        "timing": "Explicit 2026/27 calendar, DST and early closes; never substitutes interval timestamp for availability/publication; 2MiB body and existing store caps.",
+        "researchBoundary": "Inactive retained/synthetic research only. No protocol, ZAD, cost, close-execution policy, primary endpoint activation or first-ever/authenticity claim.",
+        "remainingVerification": "Real authenticated originals and approved capture/source-close integration remain absent. Component tests do not close whole acceptance rows.",
+        "evidence": [
+          "docs/a-native-source-join/README.md",
+          "test/a-close-source.test.mjs"
+        ]
+      },
+      "testReferences": [
+        "test/a-close-source.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
       "path": "a-fenced-store.mjs",
       "sha256": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
       "bytes": 11359,
@@ -417,6 +498,88 @@
       "testReferences": [
         "test/a-authenticated-collector.test.mjs",
         "test/a-fenced-store.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "a-native-source-join.mjs",
+      "sha256": "8242ffcec63e25b1fe96b3960524b2a906162c557da9116221571eb8a8e61fd5",
+      "bytes": 11399,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            6,
+            8,
+            18,
+            34,
+            63
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            39,
+            80,
+            99
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            7,
+            29,
+            42,
+            54,
+            65,
+            81
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            11,
+            12,
+            34,
+            37,
+            39,
+            40,
+            41
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            97,
+            115
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "sha256": "8242ffcec63e25b1fe96b3960524b2a906162c557da9116221571eb8a8e61fd5",
+        "reviewer": "Codex implementation/source-interface pass, 2026-11-05; independent review pending",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Pinned native run/parent bytes, exact primary response envelopes, explicit fenced store/token and callback clock.",
+        "outputs": "Research-only official identifier/acceptance/primary join, preserved clocks/hashes/conflicts; authentication/global first/BUY remain UNKNOWN/false.",
+        "sideEffects": "Writes immutable private research originals and decisions through existing fenced store. No network, env credentials, messages, evaluator or production import.",
+        "failure": "Missing primary/late/conflicting/invalid evidence stays UNKNOWN; store refusal/interruption throws unresolved; pending intents require explicit fenced recovery.",
+        "timing": "Callback phase clocks captured before persistence; nanosecond comparison; 100 primary responses, 2MiB each, existing 16MiB store/2000-file caps unchanged.",
+        "researchBoundary": "Inactive retained/synthetic research only. No protocol, ZAD, cost, close-execution policy, primary endpoint activation or first-ever/authenticity claim.",
+        "remainingVerification": "Real authenticated originals and approved capture/source-close integration remain absent. Component tests do not close whole acceptance rows.",
+        "evidence": [
+          "docs/a-native-source-join/README.md",
+          "test/a-native-source-join.test.mjs"
+        ]
+      },
+      "testReferences": [
+        "test/a-close-source.test.mjs",
+        "test/a-native-source-join.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -29854,6 +30017,84 @@
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
     },
     {
+      "path": "tools/market03-ingress-matrix.mjs",
+      "sha256": "b7ead56df0ab32ab9450d077ab04414a58eac9727b80f4a564f8d443f72017db",
+      "bytes": 13665,
+      "status": "STALE_OR_INVALID_REVIEW",
+      "facts": {
+        "inputs": {
+          "matchingLines": [
+            77,
+            95,
+            97
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            28,
+            37,
+            74,
+            97,
+            98
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            7,
+            75,
+            97
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            34,
+            36,
+            39,
+            42,
+            53,
+            57,
+            59,
+            61,
+            62,
+            63,
+            64,
+            65,
+            66,
+            89
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            14,
+            16,
+            19,
+            23,
+            24,
+            29,
+            31,
+            46,
+            82,
+            92
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": null,
+      "testReferences": [
+        "tests/market03-ingress-matrix.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
       "path": "tools/native-sec-capture-worker.mjs",
       "sha256": "cb840c6fb1c893c5c85a4ef9dd784b01d1a4d5ba150a538d97099e5b7f4f1098",
       "bytes": 3928,
@@ -33655,10 +33896,10 @@
     }
   ],
   "totals": {
-    "scripts": 308,
-    "sourceReviewed": 69,
-    "pending": 239,
-    "reviewedWithOpenFindings": 35
+    "scripts": 311,
+    "sourceReviewed": 71,
+    "pending": 240,
+    "reviewedWithOpenFindings": 37
   },
   "accepted": false,
   "note": "An explicit hash-matched review is required. Empty axes, source changes and inventories cannot silently count as reviewed; review is distinct from all-path runtime verification."

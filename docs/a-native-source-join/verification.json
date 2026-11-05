@@ -1,0 +1,70 @@
+{
+  "date": "2026-11-05",
+  "base": "572dc5aeacb1f10d4590123432e4203cd0d347e2",
+  "executionAuthor": "Codex, synthetic/retained local fixtures; not independent Claude review",
+  "node20": "20.20.2",
+  "node24": "24.19.0",
+  "focusedCommand": "node --test test/a-native-source-join.test.mjs test/a-close-source.test.mjs test/a-native-source-package.test.mjs test/a-authenticated-collector.test.mjs test/a-fenced-store.test.mjs",
+  "focusedEachRuntime": {
+    "tests": 94,
+    "pass": 94,
+    "fail": 0,
+    "skipped": 0,
+    "new": 44,
+    "inherited": 50
+  },
+  "matrixTests": {
+    "command": "node tests/market03-ingress-matrix.test.mjs",
+    "pass": 4
+  },
+  "pythonRequired": {
+    "repositoryBehavior": 7,
+    "incidentVerifierEvidence": 2,
+    "pass": 9
+  },
+  "staticChecks": [
+    "node --check a-native-source-join.mjs",
+    "node --check a-close-source.mjs",
+    "git diff --cached --check",
+    "All manifest protected files byte-identical to base"
+  ],
+  "actualWatcher": {
+    "fixture": "test/native-sec-producer-fixture.mjs",
+    "providerRequestsOff": 5,
+    "providerRequestsOn": 5,
+    "requestsEqual": true,
+    "snapshotEqual": true,
+    "legacyRowsEqual": true,
+    "primaryDocumentAcquisitionExisting": false,
+    "newPrimaryPort": "SYNTHETIC supplied response only",
+    "genuineAdmissions": 0
+  },
+  "failureEvidence": {
+    "realSIGKILL": [
+      "primary original AFTER_INTENT and exact body retry",
+      "SEC conflict AFTER_INTENT/AFTER_RECORD/AFTER_COMMIT and reversion",
+      "close conflict AFTER_INTENT/AFTER_RECORD/AFTER_COMMIT and reversion"
+    ],
+    "concurrency": "two real child processes through actual join and fenced store; terminal bounded refusal allowed; serial completion only after competitors exit",
+    "initialFaultHarness": "Three missing-expected-exception failures: wrapper passed fault at seventh argument instead of sixth. Corrected args[5]; assertions unchanged. Original complete failure log was not retained; final executed TAP is retained."
+  },
+  "logs": {
+    "evidence/focused-node20.tap": {
+      "bytes": 21004,
+      "sha256": "bb56226539b27ebd0a58f55bfe1ab4fe74b06ccd24ed067bc94d68208c17c439"
+    },
+    "evidence/focused-node24.tap": {
+      "bytes": 9638,
+      "sha256": "ceaa10e1e1254cd0322fe83cb947ff8c9211d048bdb5bf72ba7d9c7401014b47"
+    },
+    "evidence/python.log": {
+      "bytes": 205,
+      "sha256": "2f3afc1e18134ba74953f0aa3836846ac78d40bc3bb7b57e65cedcde9a42f2e4"
+    }
+  },
+  "hostedExactCommit": "Pending at publication; terminal exact-SHA check-runs and complete test receipt to PR1, not inferred from local results",
+  "independentReview": "Claude requested for this exact new join; prior572 PASS WITH FINDINGS at446cd250 is separate",
+  "providerCalls": 0,
+  "productionChanges": false,
+  "rowsClosed": 0
+}

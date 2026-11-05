@@ -1075,5 +1075,37 @@
       "tests/market03-ingress-matrix.test.mjs",
       "docs/a-collector-fenced/README.md"
     ]
+  },
+  "a-native-source-join.mjs": {
+    "sha256": "8242ffcec63e25b1fe96b3960524b2a906162c557da9116221571eb8a8e61fd5",
+    "reviewer": "Codex implementation/source-interface pass, 2026-11-05; independent review pending",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Pinned native run/parent bytes, exact primary response envelopes, explicit fenced store/token and callback clock.",
+    "outputs": "Research-only official identifier/acceptance/primary join, preserved clocks/hashes/conflicts; authentication/global first/BUY remain UNKNOWN/false.",
+    "sideEffects": "Writes immutable private research originals and decisions through existing fenced store. No network, env credentials, messages, evaluator or production import.",
+    "failure": "Missing primary/late/conflicting/invalid evidence stays UNKNOWN; store refusal/interruption throws unresolved; pending intents require explicit fenced recovery.",
+    "timing": "Callback phase clocks captured before persistence; nanosecond comparison; 100 primary responses, 2MiB each, existing 16MiB store/2000-file caps unchanged.",
+    "researchBoundary": "Inactive retained/synthetic research only. No protocol, ZAD, cost, close-execution policy, primary endpoint activation or first-ever/authenticity claim.",
+    "remainingVerification": "Real authenticated originals and approved capture/source-close integration remain absent. Component tests do not close whole acceptance rows.",
+    "evidence": [
+      "docs/a-native-source-join/README.md",
+      "test/a-native-source-join.test.mjs"
+    ]
+  },
+  "a-close-source.mjs": {
+    "sha256": "f43dee772f129e30fdcb9da4d0f9e848b5f6bfe5a3b879ad48b95ebfd95b84bb",
+    "reviewer": "Codex implementation/source-interface pass, 2026-11-05; independent review pending",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Exact retained single-symbol Alpaca daily-bar response plus explicit symbol/security identity/session and fenced store.",
+    "outputs": "NY calendar aggregate close with original bar and receipt clocks; requested feed and unverified response feed separate; execution UNKNOWN.",
+    "sideEffects": "Optional immutable original/first/conflict writes through existing fenced store; no provider calls, strategy mutation or live caller.",
+    "failure": "Empty, malformed, wrong-symbol, unfinished, closed/unknown session, pagination, unsupported adjustment or persistent revision returns UNKNOWN; partial writes throw unresolved.",
+    "timing": "Explicit 2026/27 calendar, DST and early closes; never substitutes interval timestamp for availability/publication; 2MiB body and existing store caps.",
+    "researchBoundary": "Inactive retained/synthetic research only. No protocol, ZAD, cost, close-execution policy, primary endpoint activation or first-ever/authenticity claim.",
+    "remainingVerification": "Real authenticated originals and approved capture/source-close integration remain absent. Component tests do not close whole acceptance rows.",
+    "evidence": [
+      "docs/a-native-source-join/README.md",
+      "test/a-close-source.test.mjs"
+    ]
   }
 }

@@ -1,8 +1,8 @@
 {
  "summary": {
-  "files": 325,
-  "pairs": 450,
-  "providerPairs": 309,
+  "files": 327,
+  "pairs": 453,
+  "providerPairs": 312,
   "decisionPathPairs": 97,
   "reviewedDecisionPairs": 31,
   "fullyCoveredDecisionPairs": 3,
@@ -93,6 +93,60 @@
     "status": "Y",
     "by": "Codex inactive A collector/fence",
     "note": "offline actual-caller guards; supplied identity/semantics/trust only, no live binding or source truth; late historical HTTP stays unresolved"
+   }
+  },
+  {
+   "file": "a-close-source.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "P",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex inactive retained close",
+    "note": "explicit raw daily aggregate basis, NY completed session/DST/half day; requested feed not returned-feed proof; closing auction/finality/execution contract unadopted"
+   }
+  },
+  {
+   "file": "a-native-source-join.mjs",
+   "host": "data.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "NA",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex inactive native primary join",
+    "note": "actual native reader + original Atom/submissions/primary bytes; explicit acceptance never Atom updated; persistent first conflict; metadata match is not authentication or global first ingestion"
+   }
+  },
+  {
+   "file": "a-native-source-join.mjs",
+   "host": "www.sec.gov",
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "NA",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex inactive native primary join",
+    "note": "actual native reader + original Atom/submissions/primary bytes; explicit acceptance never Atom updated; persistent first conflict; metadata match is not authentication or global first ingestion"
    }
   },
   {
