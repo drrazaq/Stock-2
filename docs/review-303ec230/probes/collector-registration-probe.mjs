@@ -1,0 +1,3 @@
+const W=process.argv[2];const {evidenceFixture}=await import(W+'/test/helper-a-evidence.mjs');const C=await import(W+'/a-evidence-contract.mjs');
+const f=evidenceFixture();f.contract.collectors=[];f.request();let r;try{r=C.runAEvidenceDataset(f.dataset,f.contract,f.directory).results.map(x=>x.status+(x.reason?':'+x.reason:''));}catch(e){r='THROW:'+e.message;}console.log('noCollectorsRun',JSON.stringify(r));
+const g=evidenceFixture();g.contract.collectors[1].id='OTHER';g.request();try{r=C.runAEvidenceDataset(g.dataset,g.contract,g.directory).results.map(x=>x.status+(x.reason?':'+x.reason:''));}catch(e){r='THROW:'+e.message;}console.log('witnessCollectorIdUnregistered',JSON.stringify(r));f.cleanup();g.cleanup();

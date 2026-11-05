@@ -1,0 +1,86 @@
+{
+ "baseline": [
+  "VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT net=35.95"
+ ],
+ "baselineCLI": {
+  "exit": 0,
+  "stdout": "{\"status\":\"OFFLINE_REPORT_SAVED\",\"synthetic\":true,\"allowBuy\":false,\"prospectiveAdmissions\":0}",
+  "stderr": "",
+  "report": [
+   "VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT"
+  ]
+ },
+ "omitTapeWitnessFull": [
+  "UNRESOLVED:INDEPENDENT_CAPTURE_SET_MISMATCH"
+ ],
+ "omitTapeWitnessFullCLI": {
+  "exit": 0,
+  "stdout": "{\"status\":\"OFFLINE_REPORT_SAVED\",\"synthetic\":true,\"allowBuy\":false,\"prospectiveAdmissions\":0}",
+  "stderr": "",
+  "report": [
+   "UNRESOLVED:INDEPENDENT_CAPTURE_SET_MISMATCH"
+  ]
+ },
+ "bothFull": [
+  "VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT net=-479.76"
+ ],
+ "witnessAlsoOmits_sameAsBaseline": [
+  "VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT net=35.95"
+ ],
+ "noWitness": [
+  "UNRESOLVED:INDEPENDENT_COVERAGE_REQUIRED"
+ ],
+ "samePemTwoRoles": "UNDERLYING_KEY_REUSED",
+ "sameKeyDerEncoding": "UNDERLYING_KEY_REUSED",
+ "sameKeyCRLFPem": "UNDERLYING_KEY_REUSED",
+ "sameKeyJwk": "UNDERLYING_KEY_REUSED",
+ "oneRootTwoRoles": "ONE_ROLE_PER_KEY_REQUIRED",
+ "witnessCollectorOnCaptureKey": "COLLECTOR_PROVENANCE_REQUIRED",
+ "noCollectors": "ACCEPTED",
+ "inputDelay_NaN": "THROW:INVALID_SOURCE_DELAY",
+ "inputDelay_-1": "THROW:INVALID_SOURCE_DELAY",
+ "inputDelay_Infinity": "THROW:INVALID_SOURCE_DELAY",
+ "inputDelay_5": "THROW:INVALID_SOURCE_DELAY",
+ "inputDelay_null": "THROW:INVALID_SOURCE_DELAY",
+ "inputDelay_MISSING": "THROW:INVALID_SOURCE_DELAY",
+ "tapeDelay_-1": [
+  "UNRESOLVED:INVALID_SOURCE_DELAY"
+ ],
+ "tapeDelay_5": [
+  "UNRESOLVED:INVALID_SOURCE_DELAY"
+ ],
+ "tapeDelay_null": [
+  "UNRESOLVED:INVALID_SOURCE_DELAY"
+ ],
+ "tapeDelay_MISSING": [
+  "UNRESOLVED:INVALID_SOURCE_DELAY"
+ ],
+ "legacyEvaluate2024": {
+  "status": "UNKNOWN",
+  "reason": "AUTHENTICATED_A_EVIDENCE_REQUIRED",
+  "actionable": false,
+  "realDollars": 0
+ },
+ "legacyAssess": {
+  "status": "UNKNOWN",
+  "reason": "AUTHENTICATED_A_EVIDENCE_REQUIRED",
+  "actionable": false,
+  "realDollars": 0
+ },
+ "legacyMeasure": {
+  "status": "UNRESOLVED",
+  "reason": "AUTHENTICATED_A_EVIDENCE_REQUIRED",
+  "allowBuy": false
+ },
+ "legacy_runResearchDataset": "AUTHENTICATED_A_EVIDENCE_REQUIRED_USE_A_EVIDENCE_RUNNER",
+ "legacy_persistResearchDataset": "AUTHENTICATED_A_EVIDENCE_REQUIRED_USE_A_EVIDENCE_RUNNER",
+ "legacy_appendObservation": "AUTHENTICATED_A_EVIDENCE_REQUIRED",
+ "legacy_storeNoMode": "LEGACY_A_WRITER_DISABLED",
+ "legacy_structuralRetained": "SYNTHETIC_REHEARSAL_ONLY",
+ "legacy_storeRehearsalRetained": "LEGACY_A_WRITER_DISABLED",
+ "structural2024": {
+  "status": "PAPER_SETUP_ONLY",
+  "evidenceAuthenticated": false,
+  "rehearsal": "UNAUTHENTICATED_STRUCTURAL_REHEARSAL"
+ }
+}
