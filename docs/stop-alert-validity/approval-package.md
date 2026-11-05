@@ -91,27 +91,42 @@
 | next | Thu 22:20 | Fri 01:20 | Rule-eligible only if the scanner's 21:30 UTC run is finished by 21:35 UTC. GitHub fired it at 01:34 UTC today (it ran until 02:24), so it is **likely blocked**. It is also after midnight in Kuwait. |
 | **next** | **Fri 6 Nov ≈ 03:50** | **≈ 06:50** | **Yes. Earliest practical window.** |
 
-**Proposed attended session: Friday 6 November 2026, about 06:05–08:05 Kuwait time** (03:05–05:05 UTC; 22:05–00:05 New York, Thursday night).
+**Owner availability (5 Nov):** not available at 06:05 Kuwait, available from midday. The proposal therefore uses the **next** candidate.
+
+| Bot job ending | E (UTC) | E (Kuwait) | Eligible? |
+|---|---|---|---|
+| after the 06:50 Kuwait one | **Fri 6 Nov ≈ 09:20** | **≈ 12:20** | **Yes.** E+75 ≈ 10:35 UTC, well before the 12:30 UTC bound. |
+
+**12:20 Kuwait is the bot job's projected END time (E), not the arrival time.** Readiness starts at E−45.
+
+**Proposed attended session: Friday 6 November 2026, owner and Claude present from 11:30 Kuwait** (08:30 UTC). The procedure starts at about 11:35 (E−45). Plan to stay until about 13:35 (E+75), and longer if restoration is still open, because that end time is not guaranteed.
 
 | Kuwait time (projected) | Step |
 |---|---|
-| ≈ 06:05 (E−45) | Owner and Claude present. Claude does the readiness checks and publishes the waiting-run ID. |
-| ≈ 06:20–06:30 | `OPERATOR READY`. Owner replies ACK READY and gives the separate decision on the run ID. |
-| ≈ 06:35–06:38 | `CLICK DISABLE NOW (REQ-D-1)`. |
-| by ≈ 06:42 (E−8) | Disable must be settled. Otherwise no deployment. |
-| ≈ 06:50–07:00 | Bot job ends naturally; save proof checked. Owner activates Codex as verifier. |
-| by ≈ 07:10 (E+20) | Release push, or no push. |
-| ≈ 07:20 | Codex log receipt; V1, or rollback. |
-| target ≈ 07:35 (E+45) | `CLICK ENABLE NOW (REQ-E-1)` if every gate passes. |
-| ≈ 08:05 (E+75) | Expected natural bot restart. **Conditional, not guaranteed.** |
+| 11:30 | Owner messages Claude to start. Claude re-derives E from the actual bot job. |
+| ≈ 11:35 (E−45) | Readiness checks; Claude publishes the waiting-run ID. |
+| ≈ 11:50–12:00 | `OPERATOR READY`. Owner replies ACK READY and gives the separate decision on the run ID. |
+| ≈ 12:05–12:08 (E−15…E−12) | `CLICK DISABLE NOW (REQ-D-1)`. |
+| by ≈ 12:12 (E−8) | Disable must be settled, or no deployment. |
+| ≈ 12:20–12:30 | Bot job ends naturally; save proof checked. Owner activates Codex as verifier. |
+| by ≈ 12:40 (E+20) | Release push, or no push. |
+| ≈ 12:50 | Codex log receipt; V1, or rollback. |
+| target ≈ 13:05 (E+45) | `CLICK ENABLE NOW (REQ-E-1)` if every gate passes. |
+| ≈ 13:35 (E+75) | Expected natural bot restart. **Conditional, not guaranteed.** |
+
+**Eligibility margin:**
+- The bound holds as long as the actual E is no later than **11:15 UTC (14:15 Kuwait)**.
+- If the chain has shifted so E is earlier, readiness moves earlier by the same amount. That is why you arrive at 11:30 and Claude recomputes first.
+- If E then falls before 12:05 Kuwait (readiness would already have been due before 11:20), that job is **not used**. The next one comes about 5 h 30 m later and fails the bound, so the result is **NO ATTEMPT**, with nothing changed.
+- If E is later than 14:15 Kuwait, also NO ATTEMPT.
 
 **Caveats:**
-- These are projections. E is re-derived from the actual job at readiness, and the window is dropped if the chain shifts so the bounds no longer hold.
-- GitHub fires schedules late. A late scanner or watcher run that is active at a check blocks the push. It is never paused or cancelled.
-- Data jobs (movers 04:00 UTC = 07:00 Kuwait; discover 05:30 UTC) may run. They are not blockers, and their commits are kept.
-- If you are unavailable then, the next candidate is roughly 5 h 30 m later (≈ 12:20 Kuwait, E ≈ 09:20 UTC). It is eligible if the chain holds, but it must be re-derived.
-- No reminder or wake-up is installed. You start the session by messaging Claude.
+- The 06:50 Kuwait job is left alone and nothing is done then.
+- GitHub fires schedules late. A late scanner or watcher run that is active at a check blocks the push; it is never paused or cancelled. Today's watcher crons fired at 20:04 and 20:33 UTC, and the scanner's 21:30 UTC run at 01:34 UTC.
+- Data jobs (discover at 05:30 UTC) may run. They are not blockers, and their commits are kept.
+- This window is the same day as Codex's proposed historical-rehearsal slot (08:00–08:30 UTC = 11:00–11:30 Kuwait). That rehearsal is unapproved and separate, and it touches a different repository. It must not overlap this session.
+- No reminder or wake-up is installed. You start the session by messaging Claude at 11:30 Kuwait.
 
 ## 7. Approval wording (for the owner to send; not granted)
 
-> I approve STOP R2 maintenance under procedure S1.2 at 3af43a092de136aa034b32e84e53ab653981a114 (Codex PASS 6651816688) for the attended session Friday 6 November 2026 from about 06:05 Kuwait, subject to fresh readiness checks and E re-derived from the actual bot job (E−45…E+75 outside scanner/watcher/radar hours; otherwise no attempt). Claude is sole release/rollback operator; Codex is the activated read-only verifier; I perform only the numbered bot.yml Disable and Enable clicks. Stock scanner and all other workflows stay enabled. Release only production patch c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b on the ten listed files; rollback only inverse 1a13a44de32db385a330e948d4f354cc399f215f2b4ae75fa8a453e4fcaa0ff9 on the same files, preserving all intervening data. Cancellation is limited to one never-started pending bot run whose exact ID I approve separately at readiness. All tests must pass, the five-condition save proof (limited scope) and D's complete hosted-log gate apply, requests settle only by numbered evidence, and UNKNOWN writes block retry and Enable. No guaranteed outage limit, no unconditional Enable, no dispatch, workflow edit, data/offset/financial change, test message, provider probe or broad merge. This does not approve historical setup, rehearsal or audit, or the A pilot.
+> I approve STOP R2 maintenance under procedure S1.2 at 3af43a092de136aa034b32e84e53ab653981a114 (Codex PASS 6651816688) for one attended session on Friday 6 November 2026, with owner and Claude present from 11:30 Kuwait time, readiness at E−45 (about 11:35 Kuwait) for the bot job projected to end at about 12:20 Kuwait (09:20 UTC), and attendance until restoration is verified (target about 13:05, expected bot restart about 13:35, not guaranteed). E is re-derived from the actual bot job at 11:30; the attempt proceeds only if E−45…E+75 lies outside scanner/watcher/radar hours and E is between 12:05 and 14:15 Kuwait; otherwise NO ATTEMPT, nothing changed. Claude is sole release/rollback operator; Codex is the activated read-only verifier; I perform only the numbered bot.yml Disable and Enable clicks. Stock scanner and all other workflows stay enabled. Release only production patch c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b on the ten listed files; rollback only inverse 1a13a44de32db385a330e948d4f354cc399f215f2b4ae75fa8a453e4fcaa0ff9 on the same files, preserving all intervening data. Cancellation is limited to one never-started pending bot run whose exact ID I approve separately at readiness. All tests must pass, the five-condition save proof (limited scope) and D's complete hosted-log gate apply, requests settle only by numbered evidence, and UNKNOWN writes block retry and Enable. No guaranteed outage limit, no unconditional Enable, no dispatch, workflow edit, data/offset/financial change, test message, provider probe or broad merge. This does not approve historical setup, rehearsal or audit, or the A pilot.
