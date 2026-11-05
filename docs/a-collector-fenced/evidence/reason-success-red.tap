@@ -1,0 +1,212 @@
+TAP version 13
+# Subtest: actual SIP protocol → original-byte artifact → independent frame through fenced writer; full real 30-second window
+ok 1 - actual SIP protocol → original-byte artifact → independent frame through fenced writer; full real 30-second window # SKIP test name does not match pattern
+  ---
+  duration_ms: 1.296607
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: late
+ok 2 - actual SIP failure preserves prefix and incomplete/empty distinction: late # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.17347
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: close
+ok 3 - actual SIP failure preserves prefix and incomplete/empty distinction: close # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.09206
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: error
+ok 4 - actual SIP failure preserves prefix and incomplete/empty distinction: error # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.09056
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: malformed
+ok 5 - actual SIP failure preserves prefix and incomplete/empty distinction: malformed # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.114279
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: wrong-symbol
+ok 6 - actual SIP failure preserves prefix and incomplete/empty distinction: wrong-symbol # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.073052
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: refused
+ok 7 - actual SIP failure preserves prefix and incomplete/empty distinction: refused # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.154422
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: empty
+ok 8 - actual SIP failure preserves prefix and incomplete/empty distinction: empty # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.07848
+  ...
+# Subtest: native nanoseconds just outside end cannot be rounded into an eligible window
+ok 9 - native nanoseconds just outside end cannot be rounded into an eligible window # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.231446
+  ...
+# Subtest: bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":null,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["R"]}
+ok 10 - bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":null,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["R"]} # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.160766
+  ...
+# Subtest: bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":0,"bx":"V","ax":"V","z":"C","c":["R"]}
+ok 11 - bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":0,"bx":"V","ax":"V","z":"C","c":["R"]} # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.089317
+  ...
+# Subtest: bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["UNVERIFIED"]}
+ok 12 - bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["UNVERIFIED"]} # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.073702
+  ...
+# Subtest: HTTP historical response retained but late receipt cannot become contemporaneous outcome evidence
+ok 13 - HTTP historical response retained but late receipt cannot become contemporaneous outcome evidence # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.063973
+  ...
+# Subtest: malformed/missing/page-limited HTTP bodies fail closed
+ok 14 - malformed/missing/page-limited HTTP bodies fail closed # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.224731
+  ...
+# Subtest: malformed/missing/page-limited HTTP bodies fail closed
+ok 15 - malformed/missing/page-limited HTTP bodies fail closed # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.089883
+  ...
+# Subtest: malformed/missing/page-limited HTTP bodies fail closed
+ok 16 - malformed/missing/page-limited HTTP bodies fail closed # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.246804
+  ...
+# Subtest: hung transport deadline aborts without retry and retains auditable incomplete frame
+ok 17 - hung transport deadline aborts without retry and retains auditable incomplete frame # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.093107
+  ...
+# Subtest: oversized streamed response stops at cap with no retry
+ok 18 - oversized streamed response stops at cap with no retry # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.180036
+  ...
+# Subtest: supplied signer cannot use wrong role; absent client and unverified semantics refuse before transport
+ok 19 - supplied signer cannot use wrong role; absent client and unverified semantics refuse before transport # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.114408
+  ...
+# Subtest: primary original → signed receipt → fenced strict evaluator succeeds, with no invented provenance/BUY
+ok 20 - primary original → signed receipt → fenced strict evaluator succeeds, with no invented provenance/BUY # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.113865
+  ...
+# Subtest: restart reuses exact original ingestion; a source revision is retained and conflict survives a revert
+ok 21 - restart reuses exact original ingestion; a source revision is retained and conflict survives a revert # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.066293
+  ...
+# Subtest: request reserved before interruption cannot be retried by a new collector
+ok 22 - request reserved before interruption cannot be retried by a new collector # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.053604
+  ...
+# Subtest: actual client interruption and startup refusal clean timers and never leak outgoing authentication into incoming artifacts
+ok 23 - actual client interruption and startup refusal clean timers and never leak outgoing authentication into incoming artifacts # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.049689
+  ...
+# Subtest: backward original receipt clocks, excess early waiting and missing bindings refuse
+ok 24 - backward original receipt clocks, excess early waiting and missing bindings refuse # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.228012
+  ...
+# Subtest: body-cap refusal retains labelled original prefix without truncating previous evidence
+ok 25 - body-cap refusal retains labelled original prefix without truncating previous evidence # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.050416
+  ...
+# Subtest: strict evaluation recovery revalidates originals at AFTER_INTENT
+ok 26 - strict evaluation recovery revalidates originals at AFTER_INTENT # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.046597
+  ...
+# Subtest: strict evaluation recovery revalidates originals at AFTER_RECORD
+ok 27 - strict evaluation recovery revalidates originals at AFTER_RECORD # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.04813
+  ...
+# Subtest: strict evaluation recovery revalidates originals at AFTER_COMMIT
+ok 28 - strict evaluation recovery revalidates originals at AFTER_COMMIT # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.046615
+  ...
+# Subtest: changed evidence prevents pending evaluation recovery; no old result silently blessed
+ok 29 - changed evidence prevents pending evaluation recovery; no old result silently blessed # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.049987
+  ...
+# Subtest: real protocol rejects impossible handshake without extra requests: auth-before-connected
+ok 30 - real protocol rejects impossible handshake without extra requests: auth-before-connected # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.047068
+  ...
+# Subtest: real protocol rejects impossible handshake without extra requests: duplicate-connected
+ok 31 - real protocol rejects impossible handshake without extra requests: duplicate-connected # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.045884
+  ...
+# Subtest: real protocol rejects impossible handshake without extra requests: subscription-before-auth
+ok 32 - real protocol rejects impossible handshake without extra requests: subscription-before-auth # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.113913
+  ...
+# Subtest: actual wall-clock primary receipt is captured before blocking store work, with no caller backdating
+ok 33 - actual wall-clock primary receipt is captured before blocking store work, with no caller backdating # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.107415
+  ...
+# Subtest: early subscription retains pre-window quotes as research context without invalidating full frozen-window capture
+ok 34 - early subscription retains pre-window quotes as research context without invalidating full frozen-window capture # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.051534
+  ...
+# Subtest: repeated identical SIP observation preserves its first receipt while both wire originals remain retained
+ok 35 - repeated identical SIP observation preserves its first receipt while both wire originals remain retained # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.057875
+  ...
+# Subtest: provider-supplied text cannot become a status reason or success: SYNTHETIC_PRIVATE_PROVIDER_DETAIL
+ok 36 - provider-supplied text cannot become a status reason or success: SYNTHETIC_PRIVATE_PROVIDER_DETAIL
+  ---
+  duration_ms: 678.16491
+  ...
+# Subtest: provider-supplied text cannot become a status reason or success: COMPLETE
+not ok 37 - provider-supplied text cannot become a status reason or success: COMPLETE
+  ---
+  duration_ms: 368.758077
+  location: '/workspace/stock2-a-collector-20261105/test/a-authenticated-collector.test.mjs:50:75'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'COMPLETE'
+    - 'SOURCE_SCHEMA_OR_IO_ERROR'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'SOURCE_SCHEMA_OR_IO_ERROR'
+  actual: 'COMPLETE'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/stock2-a-collector-20261105/test/a-authenticated-collector.test.mjs:50:311)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+1..37
+# tests 37
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 35
+# todo 0
+# duration_ms 1178.236074

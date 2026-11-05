@@ -3,11 +3,11 @@
   "node20": "20.20.2",
   "node24": "24.19.0",
   "focusedNode20": {
-    "pass": 47,
+    "pass": 50,
     "fail": 0
   },
   "focusedNode24": {
-    "pass": 47,
+    "pass": 50,
     "fail": 0
   },
   "concurrencyStress": {
@@ -41,5 +41,6 @@
   "streamingBoundaryRegressions": [
     "legitimate early subscription retains pre-window packets without changing frozen windows",
     "exact native duplicate retains earliest receipt and both wire-arrival references"
-  ]
+  ],
+  "reasonContract": "PASS: fixed collector/client error allowlists; arbitrary uppercase text and thrown COMPLETE cannot become a refusal reason or success; reproduced red1pass/1fail retained"
 }

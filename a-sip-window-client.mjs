@@ -1,6 +1,7 @@
 // Inactive Alpaca SIP protocol adapter. No default socket, credentials, environment reads or reconnects.
 // Official wire contract: https://docs.alpaca.markets/docs/streaming-market-data (stocks / v2/sip).
 import {evidenceTime} from './reclaim-research-workflow.mjs';
+const WIRE_ERRORS=new Set(['RECEIVE_CLOCK_INVALID','WIRE_TEXT_REQUIRED','CLIENT_STORAGE_CAP','WIRE_SCHEMA_ERROR','PROVIDER_REFUSAL','PROTOCOL_ORDER_UNKNOWN','SUBSCRIPTION_MISMATCH','UNSUBSCRIBED_OR_WRONG_SYMBOL','UNEXPECTED_WIRE_MESSAGE']);
 export function createASipWindowClient({socketFactory,credentials,clock=Date.now,timers={set:setTimeout,clear:clearTimeout},maxBytes=1024*1024,maxMessages=10000}){
  const need=(v,c)=>{if(!v)throw Error(c);};need(typeof socketFactory==='function'&&typeof credentials?.key==='string'&&credentials.key.length>0&&credentials.key.length<=256&&typeof credentials?.secret==='string'&&credentials.secret.length>0&&credentials.secret.length<=256,'EXPLICIT_CLIENT_BINDINGS_REQUIRED');
  need(Number.isInteger(maxBytes)&&maxBytes>0&&maxBytes<=1024*1024&&Number.isInteger(maxMessages)&&maxMessages>0&&maxMessages<=10000,'CLIENT_BOUNDS_REQUIRED');
@@ -31,7 +32,7 @@ export function createASipWindowClient({socketFactory,credentials,clock=Date.now
       else if(row.T==='q')need(state==='ACTIVE'&&subscribedAt!==null&&row.S===symbol,'UNSUBSCRIBED_OR_WRONG_SYMBOL');
       else throw Error('UNEXPECTED_WIRE_MESSAGE');
      }
-    }catch(e){finish(/^[A-Z_]+$/.test(e.message)?e.message:'WIRE_SCHEMA_ERROR');}
+    }catch(e){finish(WIRE_ERRORS.has(e.message)?e.message:'WIRE_SCHEMA_ERROR');}
    });
   });
  }};

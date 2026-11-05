@@ -7,6 +7,10 @@ const hash=b=>createHash('sha256').update(b).digest('hex');
 const time=s=>{const n=evidenceTime(s);need(Number.isFinite(n),'CLOCK_INVALID');return n;};
 const iso=n=>new Date(n).toISOString();
 const ref=b=>({file:'raw-'+hash(b)+'.bin',sha256:hash(b)});
+// Format alone cannot make provider-supplied text safe for a status reason.
+const REASONS=new Set(['CLOCK_INVALID','NATIVE_QUOTE_CLOCK_INVALID','QUOTE_ENVELOPE_OR_PAGINATION_UNKNOWN','QUOTE_SEMANTICS_UNVERIFIED','QUOTE_COUNT_CAP','EMPTY_RESPONSE_UNVERIFIED','QUOTE_OUTSIDE_WINDOW_OR_FUTURE','QUOTE_VALUES_UNKNOWN','QUOTE_FIRMNESS_UNKNOWN','SIGNER_OR_RECEIPT_INVALID','SEMANTICS_REVIEW_FUTURE','FRAME_NOT_ENDED','COLLECTOR_BUDGET_OR_DEADLINE','TRANSPORT_CONTEXT_UNKNOWN','BOUNDED_RESPONSE_STREAM_REQUIRED','TRANSPORT_DEADLINE','RESPONSE_BYTE_CAP','COLLECTOR_CLOCK_OR_DEADLINE','EARLIER_REQUEST_OUTCOME_UNKNOWN','TRANSPORT_PROVENANCE_MISMATCH','SOURCE_HTTP_FAILURE','LATE_FRAME_HANDOFF','WIRE_HISTORY_UNKNOWN','SOURCE_WINDOW_INCOMPLETE','SOURCE_SCHEMA_OR_IO_ERROR']);
+const reason=e=>REASONS.has(e?.message)?e.message:'SOURCE_SCHEMA_OR_IO_ERROR';
+
 function checkedSignature(receipt,role,contract,body){
  const root=contract.roots.find(r=>r.id===receipt?.keyId&&r.roles[0]===role);
  need(root&&receipt?.body&&Object.entries(body).every(([k,v])=>evidenceHash(receipt.body[k])===evidenceHash(v))&&typeof receipt.signature==='string'&&verify(null,Buffer.from(evidenceHash(receipt.body)),root.publicKey,Buffer.from(receipt.signature,'base64')),'SIGNER_OR_RECEIPT_INVALID');return receipt;
@@ -72,7 +76,7 @@ export function createACollector({store,token,contract,role,collectorId,signRece
    const parsed=JSON.parse(response.bytes.toString());events=normalizeAlpacaAQuotes(parsed,{symbol,securityId,slot,receivedAt:response.receivedAt,profile});
    // Retrospective retrieval does not backdate observations: a late response stays incomplete for timely evidence.
    need(time(response.receivedAt)<=time(slot.end),'LATE_FRAME_HANDOFF');
-  }catch(e){if(e.partial?.bytes.length)persist('TRANSPORT',id+':PARTIAL',{status:'INCOMPLETE_RAW_PREFIX',receivedAt:e.partial.receivedAt,sourceStatus:e.partial.status},e.partial.bytes);code=/^[A-Z_]+$/.test(e.message)?e.message:'SOURCE_SCHEMA_OR_IO_ERROR';}
+  }catch(e){if(e.partial?.bytes.length)persist('TRANSPORT',id+':PARTIAL',{status:'INCOMPLETE_RAW_PREFIX',receivedAt:e.partial.receivedAt,sourceStatus:e.partial.status},e.partial.bytes);code=reason(e);}
   const receivedAt=response?.receivedAt||iso(clock()),complete=code==='COMPLETE';
   for(const event of events)persist('ORIGINAL',collectorId+':'+event.record.evidenceId,event.record);
   const original=Buffer.from(JSON.stringify({schema:'A_INDEPENDENT_FRAME_V1',planHash,slotId:slot.id,securityId,events}));
@@ -100,7 +104,7 @@ export function createACollector({store,token,contract,role,collectorId,signRece
    }
    need(wire.status==='COMPLETE'&&wire.coveredFrom===slot.start&&wire.coveredUntil===slot.end,'SOURCE_WINDOW_INCOMPLETE');
    need(clock()>=time(slot.end)&&clock()-started<=limits.durationMs,'COLLECTOR_CLOCK_OR_DEADLINE');
-  }catch(e){code=/^[A-Z_]+$/.test(e.message)?e.message:'SOURCE_SCHEMA_OR_IO_ERROR';stopped=true;}finally{clearTimeout(timer);abort.abort();}
+  }catch(e){code=reason(e);stopped=true;}finally{clearTimeout(timer);abort.abort();}
   // Deduplicate only exact native events; competing revisions/ties remain visible to the strict verifier.
   const first=new Map();for(const event of events)if(!first.has(event.record.evidenceId))first.set(event.record.evidenceId,event);events=[...first.values()];
   for(const event of events)persist('ORIGINAL',collectorId+':'+event.record.evidenceId,event.record);
