@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-11-03",
+ "updated": "2026-11-06",
  "strategies": [
   {
    "id": "T1",
@@ -1946,9 +1946,10 @@
    "family": "Events",
    "name": "Contract size vs company size",
    "explain": "8-K item 1.01 whose stated dollar value is over 10% of market cap (value from the filing / Exhibit 10, SEC official APIs); hold 20 days. Stop if most filings state no amount. Second pre-registered version (from the 20 Oct evening review): the contract value must also cover 4+ quarters of operating cash burn (10-Q cash flow).",
-   "status": "pre-registered 22 Oct 2026 (both versions); queued as the next Agent C build",
+   "status": "operationalised 2026-11-06 as C-CT1a / C-CT1b (agent-c2-core.mjs, rule of 22 Oct unchanged); built agent-c2-lab.mjs; one-shot pending",
    "agent": "C",
-   "note": "From the outside review of 20 Oct (see project doc Agent inbox). | PRE-REGISTERED 22 Oct 2026 (Agent C), exact rule: event = 8-K with item 1.01 (from the SEC event cache, acceptance time UTC -> New York session via sec-time.mjs; earnings-day 8-Ks excluded as in events-study). Amount = the LARGEST dollar figure written as '$X million' or '$X billion' (or '$X,XXX,XXX' of 1,000,000+) in the item 1.01 section of the primary 8-K document (EDGAR Archives, accession from the cache); figures inside 'up to' are counted, figures labelled credit facility / loan / notes / debt / lease are NOT (those are financing, not customer contracts). CT1a: amount >= 10% of market cap (close of the reaction session x SEC share count known by then). CT1b: CT1a AND amount >= 4 quarters of operating cash burn (minus NetCashProvidedByUsedInOperatingActivities, last 10-Q/10-K known 30 days before; companies with positive operating cash flow pass). Buy the open after the reaction session, hold 20 sessions; one event per stock per 60 sessions. STOP RULE: if under 40% of item 1.01 filings state any parsable amount, 'needs data'. Gates: 0.8% / 1.2% stress, both halves, vs average stock, S&P 500 and own other days, without 2 best; PROVEN at t >= max(own, league, 4.0); TRADABLE SMALL tier 2 = both halves positive after 1.2%, beats average stock and S&P, without 2 best positive, t >= 2.5. Universe caveat: the event cache covers the scan universe + watch list only."
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox). | PRE-REGISTERED 22 Oct 2026 (Agent C), exact rule: event = 8-K with item 1.01 (from the SEC event cache, acceptance time UTC -> New York session via sec-time.mjs; earnings-day 8-Ks excluded as in events-study). Amount = the LARGEST dollar figure written as '$X million' or '$X billion' (or '$X,XXX,XXX' of 1,000,000+) in the item 1.01 section of the primary 8-K document (EDGAR Archives, accession from the cache); figures inside 'up to' are counted, figures labelled credit facility / loan / notes / debt / lease are NOT (those are financing, not customer contracts). CT1a: amount >= 10% of market cap (close of the reaction session x SEC share count known by then). CT1b: CT1a AND amount >= 4 quarters of operating cash burn (minus NetCashProvidedByUsedInOperatingActivities, last 10-Q/10-K known 30 days before; companies with positive operating cash flow pass). Buy the open after the reaction session, hold 20 sessions; one event per stock per 60 sessions. STOP RULE: if under 40% of item 1.01 filings state any parsable amount, 'needs data'. Gates: 0.8% / 1.2% stress, both halves, vs average stock, S&P 500 and own other days, without 2 best; PROVEN at t >= max(own, league, 4.0); TRADABLE SMALL tier 2 = both halves positive after 1.2%, beats average stock and S&P, without 2 best positive, t >= 2.5. Universe caveat: the event cache covers the scan universe + watch list only.",
+   "preRegistered": "2026-11-06"
   },
   {
    "id": "C-IC1",
@@ -2565,18 +2566,28 @@
    "family": "Share supply",
    "name": "Lock-up expiry (avoid)",
    "explain": "IPO or secondary lock-up expiry (S-1 / 424B4 date + 90 or 180 days): avoid 10 sessions after. SEC official data only.",
-   "status": "pre-registered 22 Oct 2026, built (share-supply.mjs); first run Sunday 25 Oct",
+   "status": "tested: too few cases (share-supply.mjs, frozen 23 Oct 2026; closed by Agent C 6 Nov)",
    "agent": "C",
-   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them. | Agent C 22 Oct: pre-registered in share-supply.mjs. IPO = first 424B4 with the stock first in the price cache within 15 sessions after it; expiry = 424B4 date + 180 days. L180 (library rule): the 10 sessions from the expiry open. L180W: 5 sessions before to 1 after (published window, Field and Hanka 2001, Journal of Finance 56(2), 'The Expiration of IPO Share Lockups'). L90 information only. Same avoid gates and tier-2 test as C-S8. Universe caveat: today's SEC ticker list only (delisted IPOs missing)."
+   "note": "From the review of 20 Oct (evening). Pre-register, run once, same gates. The review quotes numbers for these (e.g. +2.3% vs +1.9%, -0.8% vs +0.4%) that do not exist in this system; ignore them. | Agent C 22 Oct: pre-registered in share-supply.mjs. IPO = first 424B4 with the stock first in the price cache within 15 sessions after it; expiry = 424B4 date + 180 days. L180 (library rule): the 10 sessions from the expiry open. L180W: 5 sessions before to 1 after (published window, Field and Hanka 2001, Journal of Finance 56(2), 'The Expiration of IPO Share Lockups'). L90 information only. Same avoid gates and tier-2 test as C-S8. Universe caveat: today's SEC ticker list only (delisted IPOs missing).",
+   "tested": "2026-10-23",
+   "result": {
+    "version": "L180",
+    "verdict": "TOO FEW CASES",
+    "level": "NONE",
+    "older": "17 cases",
+    "newer": "76 cases, edge -3.5%, t -1.3",
+    "why": "too few cases in the older half (17); newer t -1.3 (tier-2 avoid needs -2.5)"
+   }
   },
   {
    "id": "C-INS3",
    "family": "Insiders",
    "name": "Opportunistic insider buys (routine buyers removed)",
    "explain": "Drop insiders who bought in the same calendar month in each of the last 3 years (routine); keep the rest (opportunistic). Cluster of 2+ opportunistic buyers, hold 20 and 60 sessions. Same SEC Form 4 cache as insider-study (insider CIK + filing date).",
-   "status": "queued (Agent C)",
+   "status": "pre-registered 2026-11-06 as C-INS3-20 / C-INS3-60 (agent-c2-core.mjs, CMP definition); built agent-c2-lab.mjs; one-shot pending",
    "agent": "C",
-   "note": "Agent C outside research, 20 Oct. Published: Cohen, Malloy and Pomorski, 'Decoding Inside Information', Journal of Finance 2012 (opportunistic trades predict returns, routine ones do not). Needs 3+ years of history per insider, so only the newer half can be tested; pre-register, run once."
+   "note": "Agent C outside research, 20 Oct. Published: Cohen, Malloy and Pomorski, 'Decoding Inside Information', Journal of Finance 2012 (opportunistic trades predict returns, routine ones do not). Needs 3+ years of history per insider, so only the newer half can be tested; pre-register, run once.",
+   "preRegistered": "2026-11-06"
   },
   {
    "id": "C-SI1",
@@ -33508,6 +33519,68 @@
     ],
     "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
    }
+  },
+  {
+   "id": "C-CT1a",
+   "family": "Events",
+   "agent": "C",
+   "name": "Contract size >= 10% of market cap (8-K 1.01), hold 20",
+   "explain": "C-CT1 version a (agent-c2-core.mjs).",
+   "status": "pre-registered 2026-11-06 (agent-c2-core.mjs header, exact rule); built agent-c2-lab.mjs; one-shot pending",
+   "study": "agent-c2-lab.mjs -> data/agent-c2-lab.json firstRun",
+   "sources": [
+    "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search, 8-K item 1.01)",
+    "https://www.sec.gov/Archives/edgar/data/ (primary 8-K documents and .hdr.sgml acceptance times)",
+    "value-cache facts (SEC companyfacts)"
+   ],
+   "rule": "Plain 8-K listing item 1.01 (not 2.02); amount = largest $ figure (million/billion or 1M+) in the item 1.01 section of the primary document, figures in sentences naming credit facility/loan/note(s)/debt/lease excluded; amount >= 10% of market cap (close of the reaction session x share count known 30 days before); reaction session from the EDGAR acceptance time (before 16:00 ET that day, else next); buy the next open, liquid, hold 20, no stop; one event per stock per 60 sessions; stop rule: under 40% of filings with any figure -> NEEDS DATA. Gates + S&P 500 gate.",
+   "preRegistered": "2026-11-06"
+  },
+  {
+   "id": "C-CT1b",
+   "family": "Events",
+   "agent": "C",
+   "name": "Contract size >= 10% of market cap and >= 4 quarters of cash burn, hold 20",
+   "explain": "C-CT1 version b (agent-c2-core.mjs).",
+   "status": "pre-registered 2026-11-06 (agent-c2-core.mjs header, exact rule); built agent-c2-lab.mjs; one-shot pending",
+   "study": "agent-c2-lab.mjs -> data/agent-c2-lab.json firstRun",
+   "sources": [
+    "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search, 8-K item 1.01)",
+    "https://www.sec.gov/Archives/edgar/data/ (primary 8-K documents and .hdr.sgml acceptance times)",
+    "value-cache facts (SEC companyfacts)"
+   ],
+   "rule": "C-CT1a AND the amount covers 4 quarters of operating cash burn (TTM operating cash flow known before R-30 days: >= 0 passes; < 0 passes if amount >= -TTM; unknown fails).",
+   "preRegistered": "2026-11-06"
+  },
+  {
+   "id": "C-INS3-20",
+   "family": "Insiders",
+   "agent": "C",
+   "name": "Opportunistic insider cluster (CMP 2012), hold 20",
+   "explain": "C-INS3 version with a 20-session hold (agent-c2-core.mjs).",
+   "status": "pre-registered 2026-11-06 (agent-c2-core.mjs header, exact rule); built agent-c2-lab.mjs; one-shot pending",
+   "study": "agent-c2-lab.mjs -> data/agent-c2-lab.json firstRun",
+   "sources": [
+    "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+    "Cohen, Malloy and Pomorski 2012, Journal of Finance 67(3), Decoding Inside Information"
+   ],
+   "rule": "SEC Form 3/4/5 data sets from 2018 Q1. Owner classified for trade-year Y if P or S trades in each of Y-1..Y-3; routine if one calendar month has a trade in all three; opportunistic = classified, not routine. Cluster: 2+ different opportunistic officers/directors/other with Form 4 open-market purchases filed in 5 sessions; buy the next open after the filing date, liquid, hold 20, no stop, one open trade per stock. Gates + S&P 500 gate.",
+   "preRegistered": "2026-11-06"
+  },
+  {
+   "id": "C-INS3-60",
+   "family": "Insiders",
+   "agent": "C",
+   "name": "Opportunistic insider cluster (CMP 2012), hold 60",
+   "explain": "C-INS3 version with a 60-session hold (agent-c2-core.mjs).",
+   "status": "pre-registered 2026-11-06 (agent-c2-core.mjs header, exact rule); built agent-c2-lab.mjs; one-shot pending",
+   "study": "agent-c2-lab.mjs -> data/agent-c2-lab.json firstRun",
+   "sources": [
+    "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+    "Cohen, Malloy and Pomorski 2012, Journal of Finance 67(3), Decoding Inside Information"
+   ],
+   "rule": "SEC Form 3/4/5 data sets from 2018 Q1. Owner classified for trade-year Y if P or S trades in each of Y-1..Y-3; routine if one calendar month has a trade in all three; opportunistic = classified, not routine. Cluster: 2+ different opportunistic officers/directors/other with Form 4 open-market purchases filed in 5 sessions; buy the next open after the filing date, liquid, hold 60, no stop, one open trade per stock. Gates + S&P 500 gate.",
+   "preRegistered": "2026-11-06"
   }
  ]
 }
