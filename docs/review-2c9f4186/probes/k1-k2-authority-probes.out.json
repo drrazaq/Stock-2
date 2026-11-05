@@ -1,0 +1,60 @@
+{
+ "k1_append": "THROW:WRITE_OUTCOME_UNKNOWN",
+ "k1_otherAppendOldGen": "THROW:PENDING_INTENT_REQUIRES_RECOVERY",
+ "k1_recover": "THROW:PENDING_ORIGINAL_UNAVAILABLE",
+ "k1_unsignedClaim": "THROW:RECOVERY_AUTH_CONTEXT_MISMATCH",
+ "k1_wrongKey": "THROW:RECOVERY_AUTH_SIGNATURE_INVALID",
+ "k1_wrongAction": "THROW:RECOVERY_AUTH_CONTEXT_MISMATCH",
+ "k1_inventoryChanged": "n/a",
+ "k1_dispose": "{\"gen\":2,\"unresolved\":1}",
+ "k1_replaySameAuth": "THROW:CONTROL_CAS_FAILED",
+ "k1_staleAppend": "THROW:STALE_FENCE",
+ "k1_lookup": "{\"status\":\"UNRESOLVED\",\"allowBuy\":false,\"disposition\":{\"schema\":1,\"status\":\"UNRESOLVED\",\"allowBuy\":false,\"storeId\":\"a96d7079-93ff-4418-8fe8-",
+ "k1_reappendLost": "THROW:INTENT_PERMANENTLY_UNRESOLVED",
+ "k1_evaluate": "{\"status\":\"UNRESOLVED_STORE_EVIDENCE\",\"allowBuy\":false,\"result\":{\"status\":\"UNRESOLVED_STORE_EVIDENCE\",\"allowBuy\":false,\"prospectiveAdmission",
+ "k1_rawInvented": false,
+ "k1_inventoryChangedAfterSign": "THROW:RECOVERY_INVENTORY_CHANGED",
+ "noAuth_dispose": "THROW:RECOVERY_AUTHORITY_NOT_CONFIGURED",
+ "noAuth_claim": "THROW:PENDING_INTENT_REQUIRES_RECOVERY",
+ "noAuth_append": "THROW:PENDING_INTENT_REQUIRES_RECOVERY",
+ "k2_AFTER_CLAIM_ATTEMPT": {
+  "first": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED\",\"generation\":2,\"attemptHash\":\"9cf19ebc9691a79a013b1fa3781e2",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeOrIdentical": "{\"head\":{\"generation\":2,\"generationHash\":\"660af7ba9c149ee8b1",
+  "staleOld": "THROW:STALE_FENCE"
+ },
+ "k2_DURING_ATTEMPT_WRITE": {
+  "first": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"ORIGINAL_REQUEST_REQUIRED\",\"generation\":2,\"attemptHashes\":[\"f23082580",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeOrIdentical": "{\"head\":{\"generation\":2,\"generationHash\":\"dc83ddbf09d0272c37",
+  "staleOld": "THROW:STALE_FENCE"
+ },
+ "k2_AFTER_GENERATION": {
+  "first": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED\",\"generation\":2,\"attemptHash\":\"a8f73d321ac9cdbabcf89971fd21e",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeOrIdentical": "{\"head\":{\"generation\":2,\"generationHash\":\"1c5d9bfd1336e51f23",
+  "staleOld": "THROW:STALE_FENCE"
+ },
+ "k2_BEFORE_HEAD": {
+  "first": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED\",\"generation\":2,\"attemptHash\":\"94e34d3c58b7013ae8883ccb4e476",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeOrIdentical": "{\"head\":{\"generation\":2,\"generationHash\":\"57cd404ab59e1794f9",
+  "staleOld": "THROW:STALE_FENCE"
+ },
+ "k2_AFTER_SWITCH_WRITE": {
+  "first": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED\",\"generation\":2,\"attemptHash\":\"b40e6d5e1e4eeb14e70cc5686e735",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeOrIdentical": "{\"head\":{\"generation\":2,\"generationHash\":\"02febe5b56de672532",
+  "staleOld": "THROW:STALE_FENCE"
+ },
+ "k2torn_view": "{\"storeId\":\"a2b7be87-6ea8-4b5f-b48a-24ccc5f20335\",\"cohortHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"contractH",
+ "k2torn_attempt": "{\"status\":\"ORIGINAL_REQUEST_REQUIRED\",\"generation\":2,\"attemptHashes\":[\"589693b3ae4019d5dc4e92926b48f8ee53cc1e52df00f8202321cb3438c13b47\"]}",
+ "k2torn_dispose": "THROW:GENERATION_ATTEMPT_CONFLICT",
+ "k2torn_newClaim": "THROW:GENERATION_ATTEMPT_CONFLICT",
+ "k2torn_identical": "{\"head\":{\"generation\":2,\"generationHash\":\"a459c069ef1ff45ed50d51954c2b94e473a3b724f8ef2c49718e218634fb81dc\"},\"token\":\"c6453925cd9c7546a1253a"
+}
