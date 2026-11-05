@@ -15,14 +15,16 @@
       "tests": 379,
       "pass": 379,
       "fail": 0,
-      "skipped": 0
+      "skipped": 0,
+      "sourceCommit": "d15bab2a58b1e33aa0a586d6ebeba1cf0f71ea3e"
     },
     "node24": {
       "version": "24.19.0",
       "command": "node --test test/a-n-review-regressions.test.mjs test/a-native-evidence-importer.test.mjs test/bc-research-rehearsal.test.mjs test/a-fenced-recovery.test.mjs",
       "tests": 142,
       "pass": 142,
-      "fail": 0
+      "fail": 0,
+      "sourceCommit": "d15bab2a58b1e33aa0a586d6ebeba1cf0f71ea3e"
     },
     "python": {
       "command": "python -m unittest discover -s tests -p 'test_*.py'",
@@ -122,6 +124,21 @@
       "sha256": "d32c1a12372939f90cb78ea9b90b4b9317015a410dcc03b81af949ee8dd48f20",
       "bytes": 262,
       "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    },
+    "export-destination-original-failure.tap": {
+      "sha256": "58446bc06251eb46041a1b5f2a23942e438689083b26045cd628916e5d999feb",
+      "bytes": 8360,
+      "execution": "Codex synthetic/local only, no real migration/provider/keys"
+    },
+    "export-anchor-node20.tap": {
+      "sha256": "f2c7f4b2c6acc7b931812f94f9c4e3c7d2230fdc1bca5ab1dad071ee4492b721",
+      "bytes": 12606,
+      "execution": "Codex synthetic/local only, no real migration/provider/keys"
+    },
+    "export-anchor-node24.log": {
+      "sha256": "d546a4d45085bba39b71430f3e16a8d2e918b00990311bf724d13faf44395442",
+      "bytes": 3054,
+      "execution": "Codex synthetic/local only, no real migration/provider/keys"
     }
   },
   "providerCalls": 0,
@@ -143,5 +160,24 @@
       "EXEC-03",
       "HISTORY-04"
     ]
+  },
+  "followup": {
+    "scope": "Only inactive legacy export destination check and its regression; A importer/fence/evaluation/B-C source bytes unchanged from379/142controls",
+    "counterexample": "Destination switched after lstat but before open; old code rejected only after writing in the replacement. Reproduced assertion failure on d15bab2a, retained full log.",
+    "repair": "Compare opened directory inode/device/private mode before creating any file, keep final path revalidation and all no-overwrite/readback guards.",
+    "node20AffectedTests": {
+      "tests": 60,
+      "pass": 60,
+      "fail": 0,
+      "command": "node --test test/a-n-review-regressions.test.mjs test/bc-research-rehearsal.test.mjs"
+    },
+    "node24AffectedTests": {
+      "tests": 27,
+      "pass": 27,
+      "fail": 0,
+      "command": "node --test test/a-n-review-regressions.test.mjs"
+    },
+    "newTests": 1,
+    "nonRoot": true
   }
 }

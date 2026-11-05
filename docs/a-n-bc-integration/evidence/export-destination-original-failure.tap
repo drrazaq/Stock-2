@@ -1,0 +1,169 @@
+TAP version 13
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_INTENT
+ok 1 - N1 tagged original exact recovery after durable boundary AFTER_INTENT # SKIP test name does not match pattern
+  ---
+  duration_ms: 1.176096
+  ...
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_ORIGINAL
+ok 2 - N1 tagged original exact recovery after durable boundary AFTER_ORIGINAL # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.110006
+  ...
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_RECORD
+ok 3 - N1 tagged original exact recovery after durable boundary AFTER_RECORD # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.099496
+  ...
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_COMMIT
+ok 4 - N1 tagged original exact recovery after durable boundary AFTER_COMMIT # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.066412
+  ...
+# Subtest: N1 legacy missing bytes remain distinct from tagged replay; no auto-disposal or fake evidence
+ok 5 - N1 legacy missing bytes remain distinct from tagged replay; no auto-disposal or fake evidence # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.059672
+  ...
+# Subtest: N1 foreign import and changed inline replay cannot be recovered under another request
+ok 6 - N1 foreign import and changed inline replay cannot be recovered under another request # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.057096
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_1
+ok 7 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_1 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.225313
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_2
+ok 8 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_2 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.070909
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_3
+ok 9 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_3 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.139508
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_4
+ok 10 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_4 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.115908
+  ...
+# Subtest: N3 unsigned planted request retained by signed reconciliation and cannot take over
+ok 11 - N3 unsigned planted request retained by signed reconciliation and cannot take over # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.065083
+  ...
+# Subtest: N3 malformed planted request retained by signed reconciliation and cannot take over
+ok 12 - N3 malformed planted request retained by signed reconciliation and cannot take over # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.053207
+  ...
+# Subtest: N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_1
+ok 13 - N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_1 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.046766
+  ...
+# Subtest: N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_2
+ok 14 - N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_2 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.083194
+  ...
+# Subtest: N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_3
+ok 15 - N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_3 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.052494
+  ...
+# Subtest: N3 changed planted file, forged signature and old token are not reconciliation authority
+ok 16 - N3 changed planted file, forged signature and old token are not reconciliation authority # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.098596
+  ...
+# Subtest: N2 marker authority refused before a real namespace is created; neutral names are explicitly unauthenticated
+ok 17 - N2 marker authority refused before a real namespace is created; neutral names are explicitly unauthenticated # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.093113
+  ...
+# Subtest: N4 readonly export preserves every legacy byte and pending unknown; copy-out never restores outcomes as new
+ok 18 - N4 readonly export preserves every legacy byte and pending unknown; copy-out never restores outcomes as new # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.121487
+  ...
+# Subtest: N4 non-root readable-but-not-writable source supports read-only export; symlink copy-out refuses
+ok 19 - N4 non-root readable-but-not-writable source supports read-only export; symlink copy-out refuses # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.059981
+  ...
+# Subtest: N4 near-cap source export/readback stays within explicit16MiB raw /32MiB copy envelope, no limit inflation
+ok 20 - N4 near-cap source export/readback stays within explicit16MiB raw /32MiB copy envelope, no limit inflation # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.181407
+  ...
+# Subtest: N1 inline replay capacity is charged up front; insufficient total cap leaves no new pending intent
+ok 21 - N1 inline replay capacity is charged up front; insufficient total cap leaves no new pending intent # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.123447
+  ...
+# Subtest: N3 exact reviewed unsigned planted claim cannot take over and can be signed-quarantined without deletion
+ok 22 - N3 exact reviewed unsigned planted claim cannot take over and can be signed-quarantined without deletion # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.04859
+  ...
+# Subtest: N3 changed unreferenced planted bytes require a new authorization; all prior bytes/receipts retained
+ok 23 - N3 changed unreferenced planted bytes require a new authorization; all prior bytes/receipts retained # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.037092
+  ...
+# Subtest: N2 fixed public test-vector key rejected by fingerprint even under a neutral authority ID
+ok 24 - N2 fixed public test-vector key rejected by fingerprint even under a neutral authority ID # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.036591
+  ...
+# Subtest: N3 a fully valid unreferenced signed takeover is protected; quarantine cannot choose a replacement owner
+ok 25 - N3 a fully valid unreferenced signed takeover is protected; quarantine cannot choose a replacement owner # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.053099
+  ...
+# Subtest: N2 actual importer refuses relabelled fixture at retained store boundary before originals or cards
+ok 26 - N2 actual importer refuses relabelled fixture at retained store boundary before originals or cards # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.036884
+  ...
+# Subtest: N4 replacement destination directory is refused before any copy-out write
+not ok 27 - N4 replacement destination directory is refused before any copy-out write
+  ---
+  duration_ms: 215.231941
+  location: '/workspace/stock2-a-n-bc-20261105/test/a-n-review-regressions.test.mjs:29:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly deep-equal:
+    + actual - expected
+    
+    + [
+    +   'legacy.json'
+    + ]
+    - []
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual:
+    0: 'legacy.json'
+  operator: 'deepStrictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/stock2-a-n-bc-20261105/test/a-n-review-regressions.test.mjs:29:686)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+1..27
+# tests 27
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 26
+# todo 0
+# duration_ms 372.889392

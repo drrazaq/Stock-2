@@ -1,0 +1,310 @@
+TAP version 13
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_INTENT
+ok 1 - N1 tagged original exact recovery after durable boundary AFTER_INTENT
+  ---
+  duration_ms: 667.598041
+  ...
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_ORIGINAL
+ok 2 - N1 tagged original exact recovery after durable boundary AFTER_ORIGINAL
+  ---
+  duration_ms: 619.569448
+  ...
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_RECORD
+ok 3 - N1 tagged original exact recovery after durable boundary AFTER_RECORD
+  ---
+  duration_ms: 631.853254
+  ...
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_COMMIT
+ok 4 - N1 tagged original exact recovery after durable boundary AFTER_COMMIT
+  ---
+  duration_ms: 638.730947
+  ...
+# Subtest: N1 legacy missing bytes remain distinct from tagged replay; no auto-disposal or fake evidence
+ok 5 - N1 legacy missing bytes remain distinct from tagged replay; no auto-disposal or fake evidence
+  ---
+  duration_ms: 392.151205
+  ...
+# Subtest: N1 foreign import and changed inline replay cannot be recovered under another request
+ok 6 - N1 foreign import and changed inline replay cannot be recovered under another request
+  ---
+  duration_ms: 312.756206
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_1
+ok 7 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_1
+  ---
+  duration_ms: 399.894379
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_2
+ok 8 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_2
+  ---
+  duration_ms: 361.557697
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_3
+ok 9 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_3
+  ---
+  duration_ms: 371.336791
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_4
+ok 10 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_4
+  ---
+  duration_ms: 347.321628
+  ...
+# Subtest: N3 unsigned planted request retained by signed reconciliation and cannot take over
+ok 11 - N3 unsigned planted request retained by signed reconciliation and cannot take over
+  ---
+  duration_ms: 675.611811
+  ...
+# Subtest: N3 malformed planted request retained by signed reconciliation and cannot take over
+ok 12 - N3 malformed planted request retained by signed reconciliation and cannot take over
+  ---
+  duration_ms: 743.720037
+  ...
+# Subtest: N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_1
+ok 13 - N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_1
+  ---
+  duration_ms: 444.177023
+  ...
+# Subtest: N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_2
+ok 14 - N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_2
+  ---
+  duration_ms: 439.148676
+  ...
+# Subtest: N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_3
+ok 15 - N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_3
+  ---
+  duration_ms: 412.31257
+  ...
+# Subtest: N3 changed planted file, forged signature and old token are not reconciliation authority
+ok 16 - N3 changed planted file, forged signature and old token are not reconciliation authority
+  ---
+  duration_ms: 427.332372
+  ...
+# Subtest: N2 marker authority refused before a real namespace is created; neutral names are explicitly unauthenticated
+ok 17 - N2 marker authority refused before a real namespace is created; neutral names are explicitly unauthenticated
+  ---
+  duration_ms: 147.883562
+  ...
+# Subtest: N4 readonly export preserves every legacy byte and pending unknown; copy-out never restores outcomes as new
+ok 18 - N4 readonly export preserves every legacy byte and pending unknown; copy-out never restores outcomes as new
+  ---
+  duration_ms: 255.73681
+  ...
+# Subtest: N4 non-root readable-but-not-writable source supports read-only export; symlink copy-out refuses
+ok 19 - N4 non-root readable-but-not-writable source supports read-only export; symlink copy-out refuses
+  ---
+  duration_ms: 357.352308
+  ...
+# Subtest: N4 near-cap source export/readback stays within explicit16MiB raw /32MiB copy envelope, no limit inflation
+ok 20 - N4 near-cap source export/readback stays within explicit16MiB raw /32MiB copy envelope, no limit inflation
+  ---
+  duration_ms: 1670.039256
+  ...
+# Subtest: N1 inline replay capacity is charged up front; insufficient total cap leaves no new pending intent
+ok 21 - N1 inline replay capacity is charged up front; insufficient total cap leaves no new pending intent
+  ---
+  duration_ms: 613.483
+  ...
+# Subtest: N3 exact reviewed unsigned planted claim cannot take over and can be signed-quarantined without deletion
+ok 22 - N3 exact reviewed unsigned planted claim cannot take over and can be signed-quarantined without deletion
+  ---
+  duration_ms: 548.479225
+  ...
+# Subtest: N3 changed unreferenced planted bytes require a new authorization; all prior bytes/receipts retained
+ok 23 - N3 changed unreferenced planted bytes require a new authorization; all prior bytes/receipts retained
+  ---
+  duration_ms: 471.156473
+  ...
+# Subtest: N2 fixed public test-vector key rejected by fingerprint even under a neutral authority ID
+ok 24 - N2 fixed public test-vector key rejected by fingerprint even under a neutral authority ID
+  ---
+  duration_ms: 128.763997
+  ...
+# Subtest: N3 a fully valid unreferenced signed takeover is protected; quarantine cannot choose a replacement owner
+ok 25 - N3 a fully valid unreferenced signed takeover is protected; quarantine cannot choose a replacement owner
+  ---
+  duration_ms: 530.412993
+  ...
+# Subtest: N2 actual importer refuses relabelled fixture at retained store boundary before originals or cards
+ok 26 - N2 actual importer refuses relabelled fixture at retained store boundary before originals or cards
+  ---
+  duration_ms: 388.873766
+  ...
+# Subtest: N4 replacement destination directory is refused before any copy-out write
+ok 27 - N4 replacement destination directory is refused before any copy-out write
+  ---
+  duration_ms: 192.944618
+  ...
+# Subtest: B frozen proposed rules -> synthetic source/identity/quote -> separate paper card/outcome/control ledger
+ok 28 - B frozen proposed rules -> synthetic source/identity/quote -> separate paper card/outcome/control ledger
+  ---
+  duration_ms: 20.655689
+  ...
+# Subtest: C frozen proposed rules -> synthetic source/identity/quote -> separate paper card/outcome/control ledger
+ok 29 - C frozen proposed rules -> synthetic source/identity/quote -> separate paper card/outcome/control ledger
+  ---
+  duration_ms: 198.930097
+  ...
+# Subtest: B losses retained and same whole shares/costs at stress; stop never assumed filled
+ok 30 - B losses retained and same whole shares/costs at stress; stop never assumed filled
+  ---
+  duration_ms: 2.718104
+  ...
+# Subtest: C losses retained and same whole shares/costs at stress; stop never assumed filled
+ok 31 - C losses retained and same whole shares/costs at stress; stop never assumed filled
+  ---
+  duration_ms: 62.204248
+  ...
+# Subtest: B unresolved boundary identity
+ok 32 - B unresolved boundary identity
+  ---
+  duration_ms: 1.700986
+  ...
+# Subtest: B unresolved boundary quote
+ok 33 - B unresolved boundary quote
+  ---
+  duration_ms: 2.158202
+  ...
+# Subtest: B unresolved boundary owner
+ok 34 - B unresolved boundary owner
+  ---
+  duration_ms: 2.126856
+  ...
+# Subtest: B unresolved boundary coverage
+ok 35 - B unresolved boundary coverage
+  ---
+  duration_ms: 1.655482
+  ...
+# Subtest: B unresolved boundary expiry
+ok 36 - B unresolved boundary expiry
+  ---
+  duration_ms: 2.53075
+  ...
+# Subtest: B unresolved boundary capacity
+ok 37 - B unresolved boundary capacity
+  ---
+  duration_ms: 1.530131
+  ...
+# Subtest: B unresolved boundary future
+ok 38 - B unresolved boundary future
+  ---
+  duration_ms: 1.555469
+  ...
+# Subtest: C unresolved boundary identity
+ok 39 - C unresolved boundary identity
+  ---
+  duration_ms: 45.702561
+  ...
+# Subtest: C unresolved boundary quote
+ok 40 - C unresolved boundary quote
+  ---
+  duration_ms: 42.677908
+  ...
+# Subtest: C unresolved boundary owner
+ok 41 - C unresolved boundary owner
+  ---
+  duration_ms: 43.6528
+  ...
+# Subtest: C unresolved boundary coverage
+ok 42 - C unresolved boundary coverage
+  ---
+  duration_ms: 41.682749
+  ...
+# Subtest: C unresolved boundary expiry
+ok 43 - C unresolved boundary expiry
+  ---
+  duration_ms: 42.956897
+  ...
+# Subtest: C unresolved boundary capacity
+ok 44 - C unresolved boundary capacity
+  ---
+  duration_ms: 44.985176
+  ...
+# Subtest: C unresolved boundary future
+ok 45 - C unresolved boundary future
+  ---
+  duration_ms: 47.976552
+  ...
+# Subtest: B control symmetry, no same issuer, same clock, and fixed membership before exit evidence
+ok 46 - B control symmetry, no same issuer, same clock, and fixed membership before exit evidence
+  ---
+  duration_ms: 9.754043
+  ...
+# Subtest: C control symmetry, no same issuer, same clock, and fixed membership before exit evidence
+ok 47 - C control symmetry, no same issuer, same clock, and fixed membership before exit evidence
+  ---
+  duration_ms: 281.077257
+  ...
+# Subtest: B missing/late/contradictory followups never become zero or a favorable replacement
+ok 48 - B missing/late/contradictory followups never become zero or a favorable replacement
+  ---
+  duration_ms: 3.585997
+  ...
+# Subtest: C missing/late/contradictory followups never become zero or a favorable replacement
+ok 49 - C missing/late/contradictory followups never become zero or a favorable replacement
+  ---
+  duration_ms: 85.727338
+  ...
+# Subtest: C reuses PB12 signal, no rejected21session rule or invented stop/target; B remains one session
+ok 50 - C reuses PB12 signal, no rejected21session rule or invented stop/target; B remains one session
+  ---
+  duration_ms: 43.793732
+  ...
+# Subtest: B/C reject real retained input; no name/flag can activate authenticated collection
+ok 51 - B/C reject real retained input; no name/flag can activate authenticated collection
+  ---
+  duration_ms: 1.307882
+  ...
+# Subtest: duplicate/conflict and malformed rows retained; valid neighboring case preserved
+ok 52 - duplicate/conflict and malformed rows retained; valid neighboring case preserved
+  ---
+  duration_ms: 7.055356
+  ...
+# Subtest: shared fenced infrastructure keeps B and C namespaces distinct; report is not an A evaluation or an admitted result
+ok 53 - shared fenced infrastructure keeps B and C namespaces distinct; report is not an A evaluation or an admitted result
+  ---
+  duration_ms: 659.565651
+  ...
+# Subtest: NYSE DST/halfday bounds used by proposals without changing A calendar contracts
+ok 54 - NYSE DST/halfday bounds used by proposals without changing A calendar contracts
+  ---
+  duration_ms: 0.936494
+  ...
+# Subtest: paired statistics include losses/censored cases and never manufacture full drawdown or a PASS
+ok 55 - paired statistics include losses/censored cases and never manufacture full drawdown or a PASS
+  ---
+  duration_ms: 28.231661
+  ...
+# Subtest: allocation counts cash and real known exit clocks; missing exits do not free slots or use future gains
+ok 56 - allocation counts cash and real known exit clocks; missing exits do not free slots or use future gains
+  ---
+  duration_ms: 155.278436
+  ...
+# Subtest: C cannot count trading rows as independent blocks or omit zero-event enrollment months
+ok 57 - C cannot count trading rows as independent blocks or omit zero-event enrollment months
+  ---
+  duration_ms: 164.082355
+  ...
+# Subtest: actual offline command accepts only synthetic input and never performs live bindings
+ok 58 - actual offline command accepts only synthetic input and never performs live bindings
+  ---
+  duration_ms: 258.881535
+  ...
+# Subtest: C missing formation price/share/CIK evidence is UNKNOWN rather than a strategy rejection
+ok 59 - C missing formation price/share/CIK evidence is UNKNOWN rather than a strategy rejection
+  ---
+  duration_ms: 168.803823
+  ...
+# Subtest: allocator collapses two share classes of the same issuer before using another slot
+ok 60 - allocator collapses two share classes of the same issuer before using another slot
+  ---
+  duration_ms: 193.619182
+  ...
+1..60
+# tests 60
+# suites 0
+# pass 60
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13314.718009

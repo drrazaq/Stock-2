@@ -1,0 +1,35 @@
+✔ N1 tagged original exact recovery after durable boundary AFTER_INTENT (727.435956ms)
+✔ N1 tagged original exact recovery after durable boundary AFTER_ORIGINAL (733.586444ms)
+✔ N1 tagged original exact recovery after durable boundary AFTER_RECORD (752.03182ms)
+✔ N1 tagged original exact recovery after durable boundary AFTER_COMMIT (674.095701ms)
+✔ N1 legacy missing bytes remain distinct from tagged replay; no auto-disposal or fake evidence (441.938104ms)
+✔ N1 foreign import and changed inline replay cannot be recovered under another request (324.639723ms)
+✔ N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_1 (401.136396ms)
+✔ N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_2 (613.175585ms)
+✔ N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_3 (443.246403ms)
+✔ N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_4 (380.925936ms)
+✔ N3 unsigned planted request retained by signed reconciliation and cannot take over (669.374622ms)
+✔ N3 malformed planted request retained by signed reconciliation and cannot take over (718.878638ms)
+✔ N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_1 (425.080283ms)
+✔ N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_2 (392.345132ms)
+✔ N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_3 (402.426531ms)
+✔ N3 changed planted file, forged signature and old token are not reconciliation authority (438.30007ms)
+✔ N2 marker authority refused before a real namespace is created; neutral names are explicitly unauthenticated (142.066766ms)
+✔ N4 readonly export preserves every legacy byte and pending unknown; copy-out never restores outcomes as new (254.390776ms)
+✔ N4 non-root readable-but-not-writable source supports read-only export; symlink copy-out refuses (313.068356ms)
+✔ N4 near-cap source export/readback stays within explicit16MiB raw /32MiB copy envelope, no limit inflation (816.023136ms)
+✔ N1 inline replay capacity is charged up front; insufficient total cap leaves no new pending intent (445.272357ms)
+✔ N3 exact reviewed unsigned planted claim cannot take over and can be signed-quarantined without deletion (540.549397ms)
+✔ N3 changed unreferenced planted bytes require a new authorization; all prior bytes/receipts retained (469.375827ms)
+✔ N2 fixed public test-vector key rejected by fingerprint even under a neutral authority ID (144.742642ms)
+✔ N3 a fully valid unreferenced signed takeover is protected; quarantine cannot choose a replacement owner (551.078989ms)
+✔ N2 actual importer refuses relabelled fixture at retained store boundary before originals or cards (362.517813ms)
+✔ N4 replacement destination directory is refused before any copy-out write (193.127898ms)
+ℹ tests 27
+ℹ suites 0
+ℹ pass 27
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 12895.291444
