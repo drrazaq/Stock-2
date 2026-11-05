@@ -1,11 +1,15 @@
-# STOP R2 bounded maintenance procedure (S1.1): preparation only, Codex focused confirmation pending
+# STOP R2 bounded maintenance procedure (S1.2): preparation only, Codex focused confirmation pending
 
 **Revision S1.1** applies Codex's findings R1 and R2 on S1 `4891431feeafb481c692a1b23790009337ad35ab` (PR #1 comment 6651214543):
 - **R1:** the writer check is narrowed to the four demonstrated production workflows (§§2, 4, 6).
 - **R2:** a settlement and withdrawal rule for click requests (§§3, 7, 9).
 - It also states the limited scope of the save proof explicitly (§6) and that R's own CI is additional to its push budget (§7).
 
-The patch, inverse, manifest, `bot.yml` pin and every other S1 rule are unchanged.
+**Revision S1.2** applies Codex's S1.1 review (PR #1 comment 6651622565), which passed R1:
+- **R2, completed properly:** observed workflow state is now kept separate from request settlement. COMPLETED needs definitive evidence tied to the numbered request; a state snapshot is never enough. Withdrawal or replacement never settles a request. A repeat reuses the same number. Unsettled requests block conflicting actions (§3; used in §§7 and 9).
+- **Weekend wording:** `bot.yml` keeps its daily */30 schedule until Disable is verified (§2).
+
+The patch, inverse, manifest, `bot.yml` pin and every other S1/S1.1 rule are unchanged.
 
 **PREPARATION ONLY.**
 - **Not authorized by this document:** scheduling, reminders, Disable or Enable clicks, cancellation, push, deployment or messages.
@@ -61,7 +65,8 @@ It cannot click Enable or Disable. No capability is "tested" by a production wri
 **Window rule** (New York is UTC−5 since 1 Nov; Kuwait is UTC+3). The whole span from **E−45 to E+75** must avoid every patched-file writer:
 - **Weekday upper bound:** E+75 ≤ **12:30 UTC**. That is before the `ignition.yml` watcher crons (12:45 and 13:45 UTC Mon–Fri), the `main.yml` scans (13:10–20:40 UTC Mon–Fri) and the watcher-guard deadline (09:10 New York = 14:10 UTC, which runs inside the bot and is off while the bot is disabled).
 - **Weekday lower bound:** E−45 must come after `main.yml`'s 21:30 UTC run, `opportunity-radar.yml` (20:40 UTC) and the watcher job are all terminal. That is proven by fresh reads (§4), not by the schedule.
-- **Weekends** (Sat and Sun UTC, and Friday night after the 21:30 scan is terminal): the four production workflows (`ignition.yml`, `main.yml`, `opportunity-radar.yml`, and `bot.yml` apart from J and P) have no other crons.
+- **Weekends** (Sat and Sun UTC, and Friday night after the 21:30 scan is terminal): the **other three** production consumers (`ignition.yml`, `main.yml`, `opportunity-radar.yml`) have no weekend crons.
+- **`bot.yml`** keeps its */30 schedule **every day**. New bot starts stop only after Disable is **verified** (§3). A run already created before that, P, is governed by §5. The bot's starts are therefore never assumed suppressed from the calendar.
 - **Data producers keep running and are not blockers** (§4): `movers.yml` 04:00 UTC Tue–Sat and `discover.yml` 05:30 UTC Tue–Sat. They are never suppressed or cancelled; their data commits are preserved by the fresh-parent checks.
 - **US holidays:** treated like weekdays unless the actual reads show nothing ran.
 
@@ -93,26 +98,66 @@ It cannot click Enable or Disable. No capability is "tested" by a production wri
 
 | Request | Rule |
 |---|---|
-| **REQ-D (Disable)** | On every wake, read the actual `bot.yml` state (`disabled_manually`), with or without DONE DISABLE. A missing or late acknowledgment does not mean the click didn't happen. If Disable is not verified by **E−8**, there is no deployment: REQ-D is **withdrawn** (below) and settled. At **E+30** with no settlement, report `UNVERIFIED: REQ-D-n outstanding`. A deadline never clears REQ-D. |
-| **REQ-E (Enable)** | Requested only after: verified code (V0, V1 or V2); no UNKNOWN write; writer clearance; **REQ-D settled as COMPLETED**. Read the actual `active` state with or without DONE ENABLE; an acknowledgment alone never makes restoration VERIFIED. If the state is still not active after 10 minutes, repeat the visible instruction (as a new numbered request superseding the old one) only after refreshing every gate. Until the API reads `active`, report `UNVERIFIED restoration`. **There is no unconditional Enable.** |
+| **REQ-D (Disable)** | Issued once (§7). On every wake, read the actual `bot.yml` state (`disabled_manually`), with or without DONE DISABLE. A missing or late acknowledgment does not mean the click didn't happen. **Disable is VERIFIED for the deployment path only when REQ-D-n is SETTLED COMPLETED (below) and the API reads `disabled_manually`.** If that has not happened by **E−8**, there is no deployment: REQ-D-n is **withdrawn but stays outstanding until it is settled**. At **E+30** without settlement, report `UNVERIFIED: REQ-D-n outstanding`. No deadline ever settles it. |
+| **REQ-E (Enable)** | Issued only after: verified code (V0, V1 or V2); no UNKNOWN write; writer clearance; **every REQ-D SETTLED (the one used for this path COMPLETED)**; no other request outstanding. Read the actual `active` state with or without DONE ENABLE. If the state is still not `active` after 10 minutes, **repeat the same REQ-E-n** visibly, only after refreshing every gate. A repeat is a reminder of the same request, not a new one. Until REQ-E-n is SETTLED COMPLETED **and** the API reads `active`, report `UNVERIFIED restoration`. **There is no unconditional Enable.** |
 
-**Request settlement and withdrawal (R2):**
-- **Numbering:** every click request is numbered (REQ-D-1, REQ-E-1, …) and quoted in the visible message.
-- **Withdrawal:** when a request expires or is invalidated, a **visible turn-ending** `WITHDRAWN: REQ-x-n – DO NOT CLICK` message supersedes it. Triggers include a missed deadline, a new abort or retry path, or a change of plan. A later repeat is a new number.
-- **Settlement:** a request is settled only as one of these:
-  1. **COMPLETED:** after the request was issued, a fresh API read shows the requested state was reached (`disabled_manually` for D, `active` for E).
-  2. **NOT SUBMITTED:** after the withdrawal, the owner replies `NOT CLICKED REQ-x-n`, meaning the click was never submitted and will not be acted on. API state is still read independently.
-- **Outstanding:** anything else, including a transmitted or possible click with no confirmation. Elapsed time, a deadline or one snapshot showing the desired state never settles a request.
-- **Order of requests:**
-  - REQ-D must be settled COMPLETED before any REQ-E is issued.
-  - **No Enable intent may be outstanding** (every REQ-E settled, or withdrawn and confirmed NOT SUBMITTED) before any D, R or retry push.
-  - A COMPLETED REQ-E means the bot is enabled. Any later code mutation then needs a new drain under this procedure; it is never done under an active bot.
-- **Late click:** if a click lands after withdrawal or restoration, re-read state, repeat the verified-state and restoration checks, and issue a fresh numbered request if needed. Restoration is never labelled VERIFIED while a conflicting request is unresolved.
+**Observed state versus request settlement (R2):**
+
+- **Two separate facts:**
+  - **Observed workflow state:** the GitHub API state of `bot.yml` and `main.yml`. It is read on every wake, independently of any acknowledgment. It is necessary for every gate, but **it never settles a request**: the state can reflect another click, an earlier request, or a request still in flight.
+  - **Request settlement:** whether one numbered request has definitively finished. It is decided only by the evidence listed below.
+- **Numbering:**
+  - Every click request has one number (REQ-D-1, REQ-E-1, …), quoted in the visible message.
+  - **At most one request is ever outstanding.** No new number, of either kind, is issued while an earlier request is unsettled.
+  - Reminders repeat the **same** number.
+
+**Sufficient evidence**, all parts required:
+
+| Settlement | Evidence |
+|---|---|
+| **COMPLETED** | **(1)** The owner's terminal confirmation for that number, given after the click: `DONE DISABLE REQ-D-n` or `DONE ENABLE REQ-E-n`. It confirms that the button was pressed once, the GitHub page then showed the workflow in the requested state, and no other tab, retry or attempt for that number is still open. **(2)** An independent API read taken **after** that confirmation shows the requested state. **(3)** No contradicting read appears between issue and confirmation without explanation. Example of a contradiction: the requested state appeared, then reverted. |
+| **NOT SUBMITTED** | **(1)** A visible withdrawal of REQ-x-n was sent. **(2)** After it, the owner replies `NOT CLICKED REQ-x-n`, confirming the button was never pressed for that number and will not be. **(3)** An independent API read shows that the state did not change because of it. |
+
+**Not sufficient on its own:**
+- an API snapshot showing the desired state (however fresh or late);
+- an acknowledgment without the matching API read;
+- a bare DONE or NOT CLICKED without the number;
+- elapsed time or a deadline;
+- a withdrawal message;
+- issuing a reminder or a later request;
+- the owner's silence.
+
+**Outstanding / UNKNOWN:** a request that is neither COMPLETED nor NOT SUBMITTED. Two cases need care:
+- If the owner's confirmation and the API read disagree, the request stays **UNKNOWN**. It is reported visibly, never resolved by inference.
+- If the owner reports a click whose outcome they are unsure of, it stays outstanding until the owner can give the full COMPLETED confirmation.
+
+**Withdrawal never settles a request:**
+- `WITHDRAWN: REQ-x-n – DO NOT CLICK` (visible, turn-ending) is sent whenever a request expires or is invalidated: a missed deadline, an abort or retry path, or a change of plan.
+- The request then stays outstanding until it reaches COMPLETED or NOT SUBMITTED.
+
+**How unresolved requests block conflicting actions:**
+
+| Outstanding request | Blocks |
+|---|---|
+| Any **REQ-D** | Issuing any REQ-E; any D push (D needs that REQ-D COMPLETED); a VERIFIED restoration or `NO ATTEMPT` outcome. A late Disable could stop the bot after restoration. |
+| Any **REQ-E** | Any D, R or retry push and any cancellation, since a late Enable could start the bot during the mutation; issuing any REQ-D; and a VERIFIED restoration. |
+| Either, unresolved | Its own report line in every visible status until it is settled. |
+
+The block holds even if the desired state is currently observed. With the bot enabled, every mutation is excluded anyway: a COMPLETED REQ-E means any later code change needs a new drain.
+
+**Late click** (a click landing after withdrawal or after restoration):
+1. Re-read the state.
+2. Treat the click as the outcome of that same numbered request, and settle it by the rules above.
+3. Repeat the verified-state, writer and restoration checks.
+4. If the resulting state conflicts with the verified one, report it, and issue a new numbered request only after the old one is settled.
+
+Restoration is never labelled VERIFIED while any request is outstanding or UNKNOWN.
+
 - **No new controls:** this adds no new workflow control and no new operator authority.
 
 **Late Disable:**
-- If Disable is first verified **after E−8**, there is no deployment. Freshly re-verify the original code and pins after that click, resolve every write, clear the writers, and only then send a visible `VERIFIED V0 – CLICK ENABLE NOW`.
-- A late ACK READY or DONE DISABLE never revives an expired window. An expired REQ-D is withdrawn visibly, and a late click is handled by the settlement rule above.
+- If Disable is first verified **after E−8**, there is no deployment. First settle that REQ-D (COMPLETED evidence). Then freshly re-verify the original code and pins after that click, resolve every write and clear the writers. Only then send a visible, numbered `VERIFIED V0 – CLICK ENABLE NOW (REQ-E-n)`.
+- A late ACK READY or DONE DISABLE never revives an expired window. An expired REQ-D is withdrawn visibly, stays outstanding until it is settled, and a late click is handled by the settlement rule above.
 - An independent owner override is recorded as outside the procedure, never as VERIFIED.
 
 ## 4. Writer check (WC) and baseline
@@ -141,7 +186,7 @@ Where needed, check the actual checked-out or executed source; a head SHA alone 
 - P conclusively cancelled with zero jobs, or no P designated and none present;
 - no active, queued or waiting run of any of the four production consumers (or a catch-all production executor);
 - no outstanding Enable intent (§3);
-- a fresh read shows the bot disabled and the scanner active;
+- REQ-D-1 SETTLED COMPLETED, no request outstanding, and a fresh read shows the bot disabled and the scanner active;
 - no UNKNOWN code write.
 
 A new active or pending scanner, watcher or radar run (or catch-all production executor) blocks the push. It is never paused or cancelled. Data producers, labs and other writers that don't execute patched code with production effects may continue. Their commits are preserved because D and R are built on a fresh immediate parent, with data movement recorded.
@@ -166,7 +211,7 @@ A new active or pending scanner, watcher or radar run (or catch-all production e
 - More than one pending run, a replaced P, a manual-event P or incomplete history means **no entry**.
 
 **Cancellation:**
-1. After Disable is verified and while J is still active, re-read P with all its attempts and jobs.
+1. After Disable is verified (REQ-D-1 SETTLED COMPLETED and the API reads `disabled_manually`) and while J is still active, re-read P with all its attempts and jobs.
 2. Cancel **only P**, only with the specific approval, and only if P has **never started** (zero jobs). Never J, never an active writer, never another or replacement ID.
 3. A submitted cancellation is not proof. Re-read a terminal `cancelled` with zero jobs.
 4. If P has gained a job, do not cancel. Abort the deployment and let P finish naturally (it is now the active writer). Then follow verified restoration (ABORT A).
@@ -213,8 +258,8 @@ Quiet hosted output cannot reconstruct intent or prove every Telegram command wa
 |---|---|
 | Entry from E−45 | Claude confirms capability, J/E, the §2 window bounds, M0 tests and pins, the prepared inverse, both workflow states, P, and Codex availability for §8. |
 | E−30…E−20 | Visible turn-ending `OPERATOR READY – STOP R2`: names J, E, P (ID and URL), the next wake time, and asks for **ACK READY** plus a separate decision on the P cancellation. |
-| By E−12 | ACK READY is required. Only then, at E−15…E−12, a visible `CLICK DISABLE NOW` with the bot-only link. REQ-D opens. |
-| By E−8 | The API must read bot `disabled_manually` and scanner `active`, checked without relying on DONE DISABLE. Otherwise no deployment, and REQ-D is reconciled. |
+| By E−12 | ACK READY is required. Only then, at E−15…E−12, a visible `CLICK DISABLE NOW (REQ-D-1)` with the bot-only link. REQ-D-1 opens; the owner confirms with `DONE DISABLE REQ-D-1` (§3). |
+| By E−8 | **Disable VERIFIED**, meaning both: REQ-D-1 SETTLED COMPLETED (owner `DONE DISABLE REQ-D-1` confirmation plus a later API read), and the API reads bot `disabled_manually` and scanner `active`. A state read alone is not enough. Otherwise no deployment: REQ-D-1 is withdrawn visibly and stays outstanding until settled (§3). |
 | Before J ends | Claude cancels only the approved, never-started P, and verifies terminal `cancelled` with zero jobs (§5). |
 | By E+10 | J has finished naturally, the §6 proof holds and WC passes. Otherwise **ABORT A** with unchanged code. |
 | Preparation ≤10 min | Fetch M, prove baseline identity and pins, run the candidate tests, build D and the inverse, take a fresh WC. Visible `D READY – PUSH TURN NEXT`, with a 1-minute wake deadline. |
@@ -267,7 +312,7 @@ Quiet hosted output cannot reconstruct intent or prove every Telegram command wa
 ## 9. Restoration and final outcomes
 
 **Enable conditions:** Enable is requested only when every gate holds, however late. Final restoration requires:
-- bot `active` and scanner `active` by API read;
+- REQ-E-n SETTLED COMPLETED (§3), **and** bot `active` and scanner `active` by an independent API read;
 - every REQ-D and REQ-E settled (§3), none outstanding and none withdrawn but unconfirmed;
 - exact verified code (V0, V1 or V2);
 - no UNKNOWN write.
@@ -293,6 +338,6 @@ There are no test messages, no fabricated holdings and no provider probes. Cases
 
 ## 10. Owner decision (after Codex review), not granted
 
-> I approve STOP R2 maintenance procedure S1.1 at ⟨reviewed commit⟩ with Claude as sole release/rollback operator, Codex as activated read-only verifier, and myself performing only bot.yml Disable/Enable. Stock scanner, watcher, radar and all other workflows stay enabled. Production patch c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b on exactly the ten listed files; rollback only inverse 1a13a44de32db385a330e948d4f354cc399f215f2b4ae75fa8a453e4fcaa0ff9 on the same files, preserving every intervening data commit. The window is derived at readiness from the actual bot job (E−45…E+75 outside watcher/scanner/radar hours). Cancellation is limited to one never-started pending bot run whose exact ID I approve separately at readiness. All candidate tests must PASS; D's complete hosted results gate V1; the five-condition save proof (limited scope), numbered click requests with visible withdrawal and settlement, UNKNOWN handling and verified restoration apply; there is no guaranteed outage limit and no unconditional Enable. No dispatch, workflow edit, data/offset/financial change, test message, provider probe or broad merge. This does not approve historical setup/rehearsal/audit or the A pilot.
+> I approve STOP R2 maintenance procedure S1.2 at ⟨reviewed commit⟩ with Claude as sole release/rollback operator, Codex as activated read-only verifier, and myself performing only bot.yml Disable/Enable. Stock scanner, watcher, radar and all other workflows stay enabled. Production patch c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b on exactly the ten listed files; rollback only inverse 1a13a44de32db385a330e948d4f354cc399f215f2b4ae75fa8a453e4fcaa0ff9 on the same files, preserving every intervening data commit. The window is derived at readiness from the actual bot job (E−45…E+75 outside watcher/scanner/radar hours). Cancellation is limited to one never-started pending bot run whose exact ID I approve separately at readiness. All candidate tests must PASS; D's complete hosted results gate V1; the five-condition save proof (limited scope), numbered click requests settled only by definitive evidence tied to each number (never by a state snapshot, withdrawal or replacement), UNKNOWN handling and verified restoration apply; there is no guaranteed outage limit and no unconditional Enable. No dispatch, workflow edit, data/offset/financial change, test message, provider probe or broad merge. This does not approve historical setup/rehearsal/audit or the A pilot.
 
 A readiness session date is a separate, later owner decision.
