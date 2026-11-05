@@ -1,6 +1,6 @@
 {
- "updated": "2026-11-03T22:10:54.443Z",
- "session": "2026-11-03",
+ "updated": "2026-11-05T01:34:32.000Z",
+ "session": "2026-11-04",
  "rules": {
   "quick|2|5|2||1|10|low|h10": {
    "name": "Quick trade: a close at its lowest in 10 days (stop 2 daily moves, max 10 days)",
@@ -238,31 +238,6 @@
    ],
    "wasDemoted": false
   },
-  "quick|2|5|2||0|3|down": {
-   "name": "Quick trade: 3 lower closes in a row (stop 2 daily moves, max 5 days)",
-   "n": 3,
-   "win": 0.6666666666666666,
-   "avg": -0.0021611206193506614,
-   "ends": {
-    "stop": 1,
-    "rule_exit": 2
-   },
-   "fill": {
-    "inN": 3,
-    "inSum": -0.006483361858051984,
-    "upN": 0,
-    "upSum": 0
-   },
-   "t1Rate": 0,
-   "medianRunUp": 0.015352197471402818,
-   "demoted": false,
-   "last": [
-    "AEHR -21.1% (stop)",
-    "SLS +19.4% (rule exit)",
-    "EGBN +1.0% (rule exit)"
-   ],
-   "wasDemoted": false
-  },
   "quick|2|5|3||0|5|low": {
    "name": "Quick trade: a close at its lowest in 5 days (stop 3 daily moves, max 5 days)",
    "n": 1,
@@ -305,6 +280,53 @@
    "last": [
     "CRWD -4.5% (rule exit)",
     "CRWD +5.0% (rule exit)"
+   ],
+   "wasDemoted": false
+  },
+  "cross|10|30|1.5||0||": {
+   "name": "10/30 day cross (stop 1.5 daily moves)",
+   "n": 3,
+   "win": 0,
+   "avg": -0.05027159287551338,
+   "ends": {
+    "stop": 2,
+    "rule_exit": 1
+   },
+   "fill": {
+    "inN": 3,
+    "inSum": -0.15081477862654014,
+    "upN": 0,
+    "upSum": 0
+   },
+   "t1Rate": null,
+   "medianRunUp": 0.051069250366710506,
+   "demoted": false,
+   "last": [
+    "CRWD -7.6% (stop)",
+    "SKE -0.3% (rule exit)",
+    "SKE -7.2% (stop)"
+   ],
+   "wasDemoted": false
+  },
+  "brk|20|50|2.5|2|1||": {
+   "name": "buy a new 52 week high (stop 2.5 daily moves)",
+   "n": 1,
+   "win": 0,
+   "avg": -0.07756533967051416,
+   "ends": {
+    "stop": 1
+   },
+   "fill": {
+    "inN": 1,
+    "inSum": -0.07756533967051416,
+    "upN": 0,
+    "upSum": 0
+   },
+   "t1Rate": null,
+   "medianRunUp": 0.06989958188900403,
+   "demoted": false,
+   "last": [
+    "PSX -7.8% (stop)"
    ],
    "wasDemoted": false
   },
@@ -363,25 +385,28 @@
   },
   "pull|20|50|1.5|3|0|||h20": {
    "name": "buy the dip back above the 20 day average (stop 1.5 daily moves, max 20 days)",
-   "n": 3,
-   "win": 0,
-   "avg": -0.024278629723459993,
+   "n": 5,
+   "win": 0.2,
+   "avg": -0.02323889066235474,
    "ends": {
-    "rule_exit": 3
+    "rule_exit": 4,
+    "stop": 1
    },
    "fill": {
-    "inN": 2,
-    "inSum": -0.06431075697211153,
+    "inN": 4,
+    "inSum": -0.10766932111350525,
     "upN": 1,
     "upSum": -0.008525132198268448
    },
    "t1Rate": null,
-   "medianRunUp": 0.011331280144110556,
+   "medianRunUp": 0.016666666666666607,
    "demoted": false,
    "last": [
     "VCYT -3.4% (rule exit)",
     "VCYT -3.0% (rule exit)",
-    "NTRS -0.9% (rule exit)"
+    "NTRS -0.9% (rule exit)",
+    "NTRS +2.5% (rule exit)",
+    "TEN -6.9% (stop)"
    ],
    "wasDemoted": false
   },
@@ -410,49 +435,53 @@
   },
   "quick|2|5|2||0|3|down|h10": {
    "name": "Quick trade: 3 lower closes in a row (stop 2 daily moves, max 10 days)",
-   "n": 1,
-   "win": 1,
-   "avg": 0.03489743589743599,
+   "n": 3,
+   "win": 0.6666666666666666,
+   "avg": -0.0886831338088313,
    "ends": {
-    "rule_exit": 1
+    "rule_exit": 2,
+    "stop": 1
    },
    "fill": {
-    "inN": 1,
-    "inSum": 0.03489743589743599,
+    "inN": 3,
+    "inSum": -0.2660494014264939,
     "upN": 0,
     "upSum": 0
    },
    "t1Rate": null,
-   "medianRunUp": 0.07613412228796834,
+   "medianRunUp": 0.03681612505141896,
    "demoted": false,
    "last": [
-    "NRIX +3.5% (rule exit)"
+    "NRIX +3.5% (rule exit)",
+    "NRIX -33.4% (stop)",
+    "GRC +3.3% (rule exit)"
    ],
    "wasDemoted": false
   },
   "pull|20|50|1.5||0||": {
    "name": "buy the dip back above the 20 day average (stop 1.5 daily moves)",
-   "n": 5,
+   "n": 6,
    "win": 0,
-   "avg": -0.03343566150950339,
+   "avg": -0.04016439025624576,
    "ends": {
-    "rule_exit": 5
+    "rule_exit": 5,
+    "stop": 1
    },
    "fill": {
-    "inN": 4,
-    "inSum": -0.15337507304616926,
+    "inN": 5,
+    "inSum": -0.22718310703612687,
     "upN": 1,
     "upSum": -0.013803234501347683
    },
    "t1Rate": null,
-   "medianRunUp": 0.009530227185213791,
+   "medianRunUp": 0.011201235998455017,
    "demoted": false,
    "last": [
-    "COHR -9.3% (rule exit)",
-    "VIK -0.4% (rule exit)",
     "DOCN -5.4% (rule exit)",
+    "VIK -0.4% (rule exit)",
     "MCY -0.3% (rule exit)",
-    "MCY -1.4% (rule exit)"
+    "MCY -1.4% (rule exit)",
+    "MCY -7.4% (stop)"
    ],
    "wasDemoted": false
   },
@@ -726,6 +755,51 @@
    ],
    "wasDemoted": false
   },
+  "cross|9|21|2.5|3|0||": {
+   "name": "9/21 day cross (stop 2.5 daily moves)",
+   "n": 1,
+   "win": 0,
+   "avg": -0.04518744163185051,
+   "ends": {
+    "stop": 1
+   },
+   "fill": {
+    "inN": 0,
+    "inSum": 0,
+    "upN": 1,
+    "upSum": -0.04518744163185051
+   },
+   "t1Rate": null,
+   "medianRunUp": 0.05124109117719344,
+   "demoted": false,
+   "last": [
+    "BUD -4.5% (stop)"
+   ],
+   "wasDemoted": false
+  },
+  "quick|2|5|2||1|10|rsi|h3": {
+   "name": "Quick trade: a 2 day RSI under 10 (stop 2 daily moves, max 3 days)",
+   "n": 2,
+   "win": 0,
+   "avg": -0.049244478528154056,
+   "ends": {
+    "time_exit": 2
+   },
+   "fill": {
+    "inN": 2,
+    "inSum": -0.09848895705630811,
+    "upN": 0,
+    "upSum": 0
+   },
+   "t1Rate": null,
+   "medianRunUp": 0.0008134490238609349,
+   "demoted": false,
+   "last": [
+    "VIAV -7.4% (time exit)",
+    "VIAV -2.4% (time exit)"
+   ],
+   "wasDemoted": false
+  },
   "cross|9|21|1.5|3|1||": {
    "name": "9/21 day cross (stop 1.5 daily moves)",
    "n": 1,
@@ -770,48 +844,28 @@
    ],
    "wasDemoted": false
   },
-  "cross|9|21|2.5|3|0||": {
-   "name": "9/21 day cross (stop 2.5 daily moves)",
-   "n": 1,
-   "win": 0,
-   "avg": -0.04518744163185051,
+  "quick|2|5|2||0|3|down": {
+   "name": "Quick trade: 3 lower closes in a row (stop 2 daily moves, max 5 days)",
+   "n": 3,
+   "win": 0.6666666666666666,
+   "avg": -0.0021611206193506614,
    "ends": {
-    "stop": 1
+    "stop": 1,
+    "rule_exit": 2
    },
    "fill": {
-    "inN": 0,
-    "inSum": 0,
-    "upN": 1,
-    "upSum": -0.04518744163185051
-   },
-   "t1Rate": null,
-   "medianRunUp": 0.05124109117719344,
-   "demoted": false,
-   "last": [
-    "BUD -4.5% (stop)"
-   ],
-   "wasDemoted": false
-  },
-  "quick|2|5|2||1|10|rsi|h3": {
-   "name": "Quick trade: a 2 day RSI under 10 (stop 2 daily moves, max 3 days)",
-   "n": 2,
-   "win": 0,
-   "avg": -0.049244478528154056,
-   "ends": {
-    "time_exit": 2
-   },
-   "fill": {
-    "inN": 2,
-    "inSum": -0.09848895705630811,
+    "inN": 3,
+    "inSum": -0.006483361858051984,
     "upN": 0,
     "upSum": 0
    },
-   "t1Rate": null,
-   "medianRunUp": 0.0008134490238609349,
+   "t1Rate": 0,
+   "medianRunUp": 0.015352197471402818,
    "demoted": false,
    "last": [
-    "VIAV -7.4% (time exit)",
-    "VIAV -2.4% (time exit)"
+    "AEHR -21.1% (stop)",
+    "SLS +19.4% (rule exit)",
+    "EGBN +1.0% (rule exit)"
    ],
    "wasDemoted": false
   },
@@ -911,16 +965,16 @@
   },
   "quick|2|5|2||1|5|low|h3": {
    "name": "Quick trade: a close at its lowest in 5 days (stop 2 daily moves, max 3 days)",
-   "n": 7,
-   "win": 0.42857142857142855,
-   "avg": 0.010687238493986022,
+   "n": 8,
+   "win": 0.375,
+   "avg": 0.00922633368223777,
    "ends": {
     "rule_exit": 4,
-    "time_exit": 3
+    "time_exit": 4
    },
    "fill": {
-    "inN": 7,
-    "inSum": 0.07481066945790216,
+    "inN": 8,
+    "inSum": 0.07381066945790216,
     "upN": 0,
     "upSum": 0
    },
@@ -1003,6 +1057,28 @@
    ],
    "wasDemoted": false
   },
+  "quick|2|5|2||0|15|rsi": {
+   "name": "Quick trade: a 2 day RSI under 15 (stop 2 daily moves, max 5 days)",
+   "n": 1,
+   "win": 1,
+   "avg": 0.028067041725269637,
+   "ends": {
+    "rule_exit": 1
+   },
+   "fill": {
+    "inN": 1,
+    "inSum": 0.028067041725269637,
+    "upN": 0,
+    "upSum": 0
+   },
+   "t1Rate": null,
+   "medianRunUp": 0.057665260196905876,
+   "demoted": false,
+   "last": [
+    "CGAU +2.8% (rule exit)"
+   ],
+   "wasDemoted": false
+  },
   "pull|20|50|2.5|3|0||": {
    "name": "buy the dip back above the 20 day average (stop 2.5 daily moves)",
    "n": 2,
@@ -1052,46 +1128,23 @@
   },
   "pull|20|50|1.5|3|0||": {
    "name": "buy the dip back above the 20 day average (stop 1.5 daily moves)",
-   "n": 2,
-   "win": 0.5,
-   "avg": -0.023347608024691324,
-   "ends": {
-    "rule_exit": 2
-   },
-   "fill": {
-    "inN": 2,
-    "inSum": -0.04669521604938265,
-    "upN": 0,
-    "upSum": 0
-   },
-   "t1Rate": null,
-   "medianRunUp": 0.0780268959435626,
-   "demoted": false,
-   "last": [
-    "PDFS -5.0% (rule exit)",
-    "TSAT +0.3% (rule exit)"
-   ],
-   "wasDemoted": false
-  },
-  "quick|2|5|2||0|15|rsi": {
-   "name": "Quick trade: a 2 day RSI under 15 (stop 2 daily moves, max 5 days)",
    "n": 1,
-   "win": 1,
-   "avg": 0.028067041725269637,
+   "win": 0,
+   "avg": -0.04988392857142854,
    "ends": {
     "rule_exit": 1
    },
    "fill": {
     "inN": 1,
-    "inSum": 0.028067041725269637,
+    "inSum": -0.04988392857142854,
     "upN": 0,
     "upSum": 0
    },
    "t1Rate": null,
-   "medianRunUp": 0.057665260196905876,
+   "medianRunUp": 0.0418526785714286,
    "demoted": false,
    "last": [
-    "CGAU +2.8% (rule exit)"
+    "PDFS -5.0% (rule exit)"
    ],
    "wasDemoted": false
   },
@@ -1185,6 +1238,28 @@
    ],
    "wasDemoted": false
   },
+  "quick|2|5|2||0|15|rsi|h3": {
+   "name": "Quick trade: a 2 day RSI under 15 (stop 2 daily moves, max 3 days)",
+   "n": 1,
+   "win": 1,
+   "avg": 0.01037931034482742,
+   "ends": {
+    "rule_exit": 1
+   },
+   "fill": {
+    "inN": 1,
+    "inSum": 0.01037931034482742,
+    "upN": 0,
+    "upSum": 0
+   },
+   "t1Rate": null,
+   "medianRunUp": 0.02218390804597714,
+   "demoted": false,
+   "last": [
+    "NMM +1.0% (rule exit)"
+   ],
+   "wasDemoted": false
+  },
   "quick|2|5|2||1|5|low|h7": {
    "name": "Quick trade: a close at its lowest in 5 days (stop 2 daily moves, max 7 days)",
    "n": 2,
@@ -1205,52 +1280,6 @@
    "last": [
     "NBN +2.1% (rule exit)",
     "NBN +3.9% (rule exit)"
-   ],
-   "wasDemoted": false
-  },
-  "cross|10|30|1.5||0||": {
-   "name": "10/30 day cross (stop 1.5 daily moves)",
-   "n": 2,
-   "win": 0,
-   "avg": -0.03755538012620918,
-   "ends": {
-    "rule_exit": 1,
-    "stop": 1
-   },
-   "fill": {
-    "inN": 2,
-    "inSum": -0.07511076025241836,
-    "upN": 0,
-    "upSum": 0
-   },
-   "t1Rate": null,
-   "medianRunUp": 0.053289473684210664,
-   "demoted": false,
-   "last": [
-    "SKE -0.3% (rule exit)",
-    "SKE -7.2% (stop)"
-   ],
-   "wasDemoted": false
-  },
-  "quick|2|5|2||0|15|rsi|h3": {
-   "name": "Quick trade: a 2 day RSI under 15 (stop 2 daily moves, max 3 days)",
-   "n": 1,
-   "win": 1,
-   "avg": 0.01037931034482742,
-   "ends": {
-    "rule_exit": 1
-   },
-   "fill": {
-    "inN": 1,
-    "inSum": 0.01037931034482742,
-    "upN": 0,
-    "upSum": 0
-   },
-   "t1Rate": null,
-   "medianRunUp": 0.02218390804597714,
-   "demoted": false,
-   "last": [
-    "NMM +1.0% (rule exit)"
    ],
    "wasDemoted": false
   }
