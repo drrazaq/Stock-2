@@ -1,0 +1,274 @@
+{
+  "schemaVersion": 1,
+  "status": "OFFLINE_RESEARCH_ONLY",
+  "allowBuy": false,
+  "realDollars": 0,
+  "datasetId": "A_REVIEW_FIX_EXAMPLE_ONLY",
+  "origin": "SYNTHETIC",
+  "datasetHash": "ed99b53a896bff6c8b5b5ed2a60ae287b57f505cdc894e1a74e900f6d061c982",
+  "policyHash": "94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b",
+  "ledger": {
+    "schemaVersion": 1,
+    "status": "OFFLINE_RESEARCH_ONLY",
+    "allowBuy": false,
+    "policyHash": "94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b",
+    "events": [
+      {
+        "schemaVersion": 1,
+        "type": "OBSERVATION",
+        "observationId": "SYNTHETIC_REPEATED_ASSESSMENT",
+        "symbol": "TEST",
+        "securityId": "SYNTHETIC_SECURITY",
+        "issuerId": "SYNTHETIC_ISSUER",
+        "issuerEvidenceId": "SYNTHETIC_ISSUER_MAPPING",
+        "sessionOpen": "2026-11-04T14:30:00Z",
+        "asOf": "2026-11-04T14:45:06Z",
+        "policyHash": "94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b",
+        "inputHash": "16771d821ae744f481711331e5c86203117e19a155739bf52d8642f16a1d1360",
+        "result": {
+          "status": "PAPER_SETUP_ONLY",
+          "actionable": false,
+          "realDollars": 0,
+          "policyId": "UNAPPROVED_CONTRACT_RECLAIM_RESEARCH_1",
+          "symbol": "TEST",
+          "assessedAt": "2026-11-04T14:45:06Z",
+          "card": {
+            "reason": "Supplied agreement verification and completed opening-range pullback/reclaim under proposed policy; source authenticity is not established by this evaluator",
+            "entryReferenceAsk": 10.5,
+            "entryIsFill": false,
+            "paperShares": 94,
+            "sizingEntryPrice": 10.52625,
+            "entrySlippagePct": 0.25,
+            "paperBudgetUsd": 1000,
+            "commissionPerSideUsd": 3,
+            "expiry": "2026-11-04T21:00:00Z",
+            "invalidation": "PROPOSED ONLY: close below opening low; no intraday stop or target",
+            "exit": "PROPOSED ONLY: max 5 sessions; close below opening low exits next session open",
+            "spreadPct": 0.0952380952380932,
+            "quoteAt": "2026-11-04T14:45:04Z",
+            "quoteSource": "SYNTHETIC",
+            "limits": "Untested hypothesis; ticker-level identity; displayed size is not a guaranteed fill; exit costs/outcome not evaluated"
+          },
+          "evidence": {
+            "catalyst": "SYNTHETIC_DOCUMENT",
+            "documentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "quote": "SYNTHETIC_ENTRY_QUOTE",
+            "bars": [
+              "SYNTHETIC_BAR_1",
+              "SYNTHETIC_BAR_2",
+              "SYNTHETIC_BAR_3"
+            ]
+          }
+        },
+        "previousHash": "GENESIS",
+        "eventHash": "a0b4d59bbad3b0900cf43fc35f453efbd0288c61b13d5844e729db0debdfe5ca"
+      },
+      {
+        "schemaVersion": 1,
+        "type": "OBSERVATION",
+        "observationId": "SYNTHETIC_STALE",
+        "symbol": "TEST",
+        "securityId": "SYNTHETIC_SECURITY",
+        "issuerId": "SYNTHETIC_ISSUER",
+        "issuerEvidenceId": "SYNTHETIC_ISSUER_MAPPING",
+        "sessionOpen": "2026-11-04T14:30:00Z",
+        "asOf": "2026-11-04T14:45:05Z",
+        "policyHash": "94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b",
+        "inputHash": "de842e6ce283f231d8188cb603accbb8e3b1723acc8599b8cf1bc75e24f6b629",
+        "result": {
+          "status": "UNKNOWN",
+          "reason": "STALE_OR_INVALID_QUOTE_CLOCK",
+          "actionable": false,
+          "realDollars": 0
+        },
+        "previousHash": "a0b4d59bbad3b0900cf43fc35f453efbd0288c61b13d5844e729db0debdfe5ca",
+        "eventHash": "96fa2ad216f3a32f58acd0069290f7e7ca8d87944f451b5764e7b599a6bdbc27"
+      },
+      {
+        "schemaVersion": 1,
+        "type": "OBSERVATION",
+        "observationId": "SYNTHETIC_OBSERVATION_1",
+        "symbol": "TEST",
+        "securityId": "SYNTHETIC_SECURITY",
+        "issuerId": "SYNTHETIC_ISSUER",
+        "issuerEvidenceId": "SYNTHETIC_ISSUER_MAPPING",
+        "sessionOpen": "2026-11-04T14:30:00Z",
+        "asOf": "2026-11-04T14:45:05Z",
+        "policyHash": "94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b",
+        "inputHash": "ca92850d33fb0c4faff113e48f57e9a5b38a42ff9d617aa0a908697de3e9e418",
+        "result": {
+          "status": "PAPER_SETUP_ONLY",
+          "actionable": false,
+          "realDollars": 0,
+          "policyId": "UNAPPROVED_CONTRACT_RECLAIM_RESEARCH_1",
+          "symbol": "TEST",
+          "assessedAt": "2026-11-04T14:45:05Z",
+          "card": {
+            "reason": "Supplied agreement verification and completed opening-range pullback/reclaim under proposed policy; source authenticity is not established by this evaluator",
+            "entryReferenceAsk": 10.5,
+            "entryIsFill": false,
+            "paperShares": 94,
+            "sizingEntryPrice": 10.52625,
+            "entrySlippagePct": 0.25,
+            "paperBudgetUsd": 1000,
+            "commissionPerSideUsd": 3,
+            "expiry": "2026-11-04T21:00:00Z",
+            "invalidation": "PROPOSED ONLY: close below opening low; no intraday stop or target",
+            "exit": "PROPOSED ONLY: max 5 sessions; close below opening low exits next session open",
+            "spreadPct": 0.0952380952380932,
+            "quoteAt": "2026-11-04T14:45:04Z",
+            "quoteSource": "SYNTHETIC",
+            "limits": "Untested hypothesis; ticker-level identity; displayed size is not a guaranteed fill; exit costs/outcome not evaluated"
+          },
+          "evidence": {
+            "catalyst": "SYNTHETIC_DOCUMENT",
+            "documentHash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "quote": "SYNTHETIC_ENTRY_QUOTE",
+            "bars": [
+              "SYNTHETIC_BAR_1",
+              "SYNTHETIC_BAR_2",
+              "SYNTHETIC_BAR_3"
+            ]
+          }
+        },
+        "previousHash": "96fa2ad216f3a32f58acd0069290f7e7ca8d87944f451b5764e7b599a6bdbc27",
+        "eventHash": "516a4504b5b7fb8627174cad93cc172c10f03adb69ee90876d2216f0ef4377b7"
+      }
+    ]
+  },
+  "admissions": [
+    {
+      "observationId": "SYNTHETIC_OBSERVATION_1",
+      "issuerId": "SYNTHETIC_ISSUER",
+      "sessionOpen": "2026-11-04T14:30:00Z",
+      "candidateId": "f698e80cdb321f96c9fda42cc0f3bd4779d3e62a54bd7fee086b2766e8149510",
+      "inputHash": "ca92850d33fb0c4faff113e48f57e9a5b38a42ff9d617aa0a908697de3e9e418",
+      "policyHash": "94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b"
+    }
+  ],
+  "duplicateCandidateAssessments": [
+    {
+      "observationId": "SYNTHETIC_REPEATED_ASSESSMENT",
+      "admittedObservationId": "SYNTHETIC_OBSERVATION_1",
+      "candidateId": "f698e80cdb321f96c9fda42cc0f3bd4779d3e62a54bd7fee086b2766e8149510",
+      "reason": "CANDIDATE_ALREADY_CARDED"
+    }
+  ],
+  "admissionRejections": [],
+  "unappliedExitEvidence": [
+    {
+      "observationId": "SYNTHETIC_REPEATED_ASSESSMENT",
+      "exitEvidenceHash": "a6d53a40a285eb26cbe226115a7de55240ea09e4accf851dcd2d4a6801582b39",
+      "reason": "NOT_AN_ADMITTED_PAPER_ENTRY"
+    }
+  ],
+  "cards": [
+    "TEST — RESEARCH / PAPER ONLY — $0 REAL\nSupplied agreement verification and completed opening-range pullback/reclaim under proposed policy; source authenticity is not established by this evaluator\nReference ask 10.5; 94 hypothetical shares. No fill established.\nSizing price 10.52625 includes 0.25% proposed entry slippage.\nEntry expires 2026-11-04T21:00:00Z.\nInvalidation: PROPOSED ONLY: close below opening low; no intraday stop or target\nExit: PROPOSED ONLY: max 5 sessions; close below opening low exits next session open\nSource SYNTHETIC, quote 2026-11-04T14:45:04Z.\nCommission $3 per side; spread included by ask/bid; exit slippage additional.\nPolicy 94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b; evidence ca92850d33fb0c4faff113e48f57e9a5b38a42ff9d617aa0a908697de3e9e418.\nNOT PROVEN. No automatic promotion."
+  ],
+  "assessmentMessages": [
+    "TEST: RESEARCH_ONLY — no new issuer/session entry admitted.",
+    "TEST: UNKNOWN — STALE_OR_INVALID_QUOTE_CLOCK. No live entry.",
+    "TEST — RESEARCH / PAPER ONLY — $0 REAL\nSupplied agreement verification and completed opening-range pullback/reclaim under proposed policy; source authenticity is not established by this evaluator\nReference ask 10.5; 94 hypothetical shares. No fill established.\nSizing price 10.52625 includes 0.25% proposed entry slippage.\nEntry expires 2026-11-04T21:00:00Z.\nInvalidation: PROPOSED ONLY: close below opening low; no intraday stop or target\nExit: PROPOSED ONLY: max 5 sessions; close below opening low exits next session open\nSource SYNTHETIC, quote 2026-11-04T14:45:04Z.\nCommission $3 per side; spread included by ask/bid; exit slippage additional.\nPolicy 94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b; evidence ca92850d33fb0c4faff113e48f57e9a5b38a42ff9d617aa0a908697de3e9e418.\nNOT PROVEN. No automatic promotion."
+  ],
+  "outcomes": [
+    {
+      "observationId": "SYNTHETIC_OBSERVATION_1",
+      "status": "MODELED_PAPER_ECONOMICS_ONLY",
+      "allowBuy": false,
+      "realDollars": 0,
+      "policyHash": "94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b",
+      "inputHash": "ca92850d33fb0c4faff113e48f57e9a5b38a42ff9d617aa0a908697de3e9e418",
+      "exitEvidenceHash": "a6d53a40a285eb26cbe226115a7de55240ea09e4accf851dcd2d4a6801582b39",
+      "exitKind": "MAX_SESSION_CLOSE",
+      "ruleExitAt": "2026-11-10T21:00:00.000Z",
+      "shares": 94,
+      "entryAsk": 10.5,
+      "exitBid": 11,
+      "modeledEntry": 10.52625,
+      "modeledExit": 10.9725,
+      "commissionsUsd": 6,
+      "netUsd": 35.94750000000009,
+      "returnOnBudgetPct": 3.594750000000009,
+      "uninvestedCashUsd": 7.532500000000027,
+      "limits": [
+        "Quote-based model, not actual fills",
+        "Cash-inclusive independent unit, not account return",
+        "Full failed/rejected cohort and matched controls still required",
+        "No proof or live BUY promotion"
+      ]
+    }
+  ],
+  "summary": {
+    "supplied": 3,
+    "uniqueObservations": 3,
+    "qualifyingAssessments": 2,
+    "paperSetups": 1,
+    "duplicateCandidateAssessments": 1,
+    "unknown": 1,
+    "reasons": {
+      "STALE_OR_INVALID_QUOTE_CLOCK": 1
+    },
+    "modeledOutcomes": 1,
+    "missingOutcomes": 0
+  },
+  "readiness": {
+    "software": "Offline candidate-to-card and supplied-quote economics implemented",
+    "marketInputs": "Supplied assertions/provenance are checked structurally, not independently authenticated",
+    "strategy": "NOT_PROVEN",
+    "controls": "Not evaluated by this runner",
+    "production": "NOT_CONNECTED",
+    "promotion": "NONE; no count or positive return can enable BUY"
+  },
+  "descriptiveSummary": {
+    "status": "DESCRIPTIVE_RESEARCH_ONLY",
+    "allowBuy": false,
+    "origin": "SYNTHETIC",
+    "datasetHash": "ed99b53a896bff6c8b5b5ed2a60ae287b57f505cdc894e1a74e900f6d061c982",
+    "policyHash": "94d0c95e8fa441f9085f1b0a396a63757fdd4faf9fc29bad229d753bf8e9e65b",
+    "observations": 3,
+    "admittedUnits": 1,
+    "resolvedModeledUnits": 1,
+    "missingOutcomeIds": [],
+    "unresolvedOutcomeIds": [],
+    "uniqueSymbols": 1,
+    "uniqueUtcDecisionDays": 1,
+    "meanCashInclusiveUnitReturnPct": 3.594750000000009,
+    "meanUnitNetUsd": 35.94750000000009,
+    "sumIndependentUnitNetUsd": 35.94750000000009,
+    "winRate": 1,
+    "profitFactor": null,
+    "profitFactorUndefined": true,
+    "withoutTwoBestMeanUnitReturnPct": null,
+    "utcDayClusterT": null,
+    "resolvedSubsetOnly": {
+      "meanCashInclusiveUnitReturnPct": 3.594750000000009,
+      "meanUnitNetUsd": 35.94750000000009,
+      "sumIndependentUnitNetUsd": 35.94750000000009,
+      "winRate": 1,
+      "profitFactor": null,
+      "profitFactorUndefined": true,
+      "withoutTwoBestMeanUnitReturnPct": null,
+      "utcDayClusterT": null
+    },
+    "missingness": {
+      "overallEconomicsStatus": "COMPLETE_SUPPLIED_MODEL_COHORT",
+      "conditionalLowerNetUsdBound": 35.94750000000009,
+      "conditionalLowerMeanUnitReturnPct": 3.594750000000009,
+      "upperNetUsdBound": 35.94750000000009,
+      "assumptions": "Conditional supplied-model bound only: known entry units, zero missing exit proceeds, exactly USD3 each side, no leverage or additional charges. Not authenticated real execution or a risk guarantee.",
+      "candidateDenominatorStatus": "SUPPLIED_ONLY_NOT_COMPLETE_RISK_SET"
+    },
+    "sourceAndExitAuthentication": "NOT_IMPLEMENTED",
+    "pilotReadiness": "BLOCKED",
+    "liveBuyAdmission": false,
+    "strategyVerdict": "NOT_PROVEN",
+    "blockers": [
+      "No independently authenticated input archive in this runner",
+      "Matched same-stock and market controls not evaluated",
+      "No account-equity replay; units may overlap",
+      "No untouched holdout or multiple-testing assessment",
+      "Synthetic rows are software tests, never market evidence"
+    ],
+    "limits": "Descriptive figures only. UTC decision-day clustering is labeled; it is not the system’s required session/block evidence test. Positive figures or sample counts cannot promote a strategy."
+  }
+}

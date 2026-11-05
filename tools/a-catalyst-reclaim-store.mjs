@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {randomBytes} from 'node:crypto';
 import {pathToFileURL,fileURLToPath} from 'node:url';
-import {evidenceHash,evaluateObservation,freezeProposal,measurePaperExit,renderDecisionCard} from '../reclaim-research-workflow.mjs';
+import {compareAssessmentOrder,evidenceHash,evaluateObservation,freezeProposal,measurePaperExit,renderDecisionCard} from '../reclaim-research-workflow.mjs';
 import {runResearchDataset} from '../reclaim-research-runner.mjs';
 
 const NAMES=Object.freeze({observations:'a-catalyst-reclaim-observations.jsonl',outcomes:'a-catalyst-reclaim-outcomes.jsonl',transactions:'a-catalyst-reclaim-transactions.jsonl'});
@@ -123,11 +123,12 @@ export class ReclaimResearchStore {
  static inspect(directory){const s=stateOf(directory),notes=s.logs.outcomes.filter(r=>r.record.payload.outcome.status==='REVIEW_NOTE_NOT_AN_OUTCOME').length;return{origin:s.manifest.origin,observations:s.logs.observations.length,outcomes:s.logs.outcomes.length-notes,reviewNotes:notes,requiresReview:notes>0,cards:s.cards.size,pendingOperationIds:s.pending.map(t=>t.operationId),lockPresent:fs.existsSync(path.join(directory,'.a-reclaim-writer.lock')),automaticRecovery:false,allowBuy:false};}
 }
 export function persistResearchDataset(dataset,directory){
- runResearchDataset(dataset); // Validate the entire explicit dataset before any write.
+ const report=runResearchDataset(dataset); // Validate the entire explicit dataset before any write.
  const implementationId=evidenceHash({format:'A_PRIVATE_OFFLINE_STORE_V1',files:[fs.readFileSync(fileURLToPath(import.meta.url),'utf8'),fs.readFileSync(new URL('../reclaim-research-workflow.mjs',import.meta.url),'utf8'),fs.readFileSync(new URL('../catalyst-reclaim-prototype.mjs',import.meta.url),'utf8')]});
  const store=new ReclaimResearchStore({directory,policy:dataset.policy,origin:dataset.origin,implementationId});
- try{for(const input of dataset.observations)store.recordObservation(input);for(const input of dataset.observations)if(dataset.exits?.[input.observationId])store.recordOutcome(input,dataset.exits[input.observationId]);}finally{store.close();}
- return ReclaimResearchStore.inspect(directory);
+ const byId=new Map(dataset.observations.map(input=>[input.observationId,input]));
+ try{for(const input of [...dataset.observations].sort(compareAssessmentOrder))store.recordObservation(input);for(const a of report.admissions)if(dataset.exits?.[a.observationId])store.recordOutcome(byId.get(a.observationId),dataset.exits[a.observationId]);}finally{store.close();}
+ return {...ReclaimResearchStore.inspect(directory),unappliedExitEvidence:report.unappliedExitEvidence};
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
  try{if(process.argv.length!==6||process.argv[2]!=='--input'||process.argv[4]!=='--output')error('Usage: node tools/a-catalyst-reclaim-store.mjs --input explicit-dataset.json --output existing-private-0700-directory');if(fs.statSync(process.argv[3]).size>25*1024*1024)error('INPUT_SIZE_CAP');const result=persistResearchDataset(JSON.parse(fs.readFileSync(process.argv[3],'utf8')),process.argv[5]);process.stdout.write(JSON.stringify(result)+'\n');}catch(e){const code=/^[A-Z][A-Z0-9_]{0,79}$/.test(e.message)?e.message:e.code==='EEXIST'?'WRITER_OR_TARGET_EXISTS':e instanceof SyntaxError?'INVALID_JSON_OR_LOG_RECORD':'STORAGE_IO_OR_VALIDATION_ERROR';process.stderr.write('OFFLINE STORE FAILED: '+code+'\n');process.exitCode=1;}

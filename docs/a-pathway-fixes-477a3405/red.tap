@@ -1,0 +1,188 @@
+✖ A1 repeated issuer/session under a second observation ID is retained but counted once (47.451202ms)
+✖ A1 same issuer second class/symbol cannot become a second unit (7.696358ms)
+✖ A1 chronological admission does not choose the larger later supplied outcome (21.381848ms)
+✖ A1 absent issuer mapping cannot be replaced with a security-ID fallback (6.244175ms)
+✖ A2 ask5 card and outcome both size198 shares after slippage and entry fee (6.93967ms)
+✖ A2 share counts match across boundary asks and permitted slippage assumptions (11.478092ms)
+✖ only qualifying admitted entries produce cards; rejection messages stay separate (13.812892ms)
+✖ summary refuses a duplicated issuer/session admission even under another observation ID (6.874723ms)
+✖ A6 missing cohort outcome suppresses headline averages while preserving resolved-only diagnostics (13.204477ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 0
+ℹ fail 9
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 247.943716
+
+✖ failing tests:
+
+test at test/a-pathway-review-regressions.test.mjs:9:1
+✖ A1 repeated issuer/session under a second observation ID is retained but counted once (47.451202ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file://%SCRATCH%/test/a-pathway-review-regressions.test.mjs:9:332)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.start (node:internal/test_runner/test:1262:17)
+      at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/a-pathway-review-regressions.test.mjs:10:1
+✖ A1 same issuer second class/symbol cannot become a second unit (7.696358ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file://%SCRATCH%/test/a-pathway-review-regressions.test.mjs:10:448)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/a-pathway-review-regressions.test.mjs:11:1
+✖ A1 chronological admission does not choose the larger later supplied outcome (21.381848ms)
+  TypeError [Error]: Cannot read properties of undefined (reading '0')
+      at TestContext.<anonymous> (file://%SCRATCH%/test/a-pathway-review-regressions.test.mjs:11:401)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/a-pathway-review-regressions.test.mjs:12:1
+✖ A1 absent issuer mapping cannot be replaced with a security-ID fallback (6.244175ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  1 !== 0
+  
+      at TestContext.<anonymous> (file://%SCRATCH%/test/a-pathway-review-regressions.test.mjs:12:173)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 1,
+    expected: 0,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/a-pathway-review-regressions.test.mjs:13:1
+✖ A2 ask5 card and outcome both size198 shares after slippage and entry fee (6.93967ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  199 !== 198
+  
+      at TestContext.<anonymous> (file://%SCRATCH%/test/a-pathway-review-regressions.test.mjs:13:268)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 199,
+    expected: 198,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/a-pathway-review-regressions.test.mjs:14:1
+✖ A2 share counts match across boundary asks and permitted slippage assumptions (11.478092ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  undefined !== 2
+  
+      at TestContext.<anonymous> (file://%SCRATCH%/test/a-pathway-review-regressions.test.mjs:14:447)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/a-pathway-review-regressions.test.mjs:15:1
+✖ only qualifying admitted entries produce cards; rejection messages stay separate (13.812892ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  2 !== 1
+  
+      at TestContext.<anonymous> (file://%SCRATCH%/test/a-pathway-review-regressions.test.mjs:15:261)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 2,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/a-pathway-review-regressions.test.mjs:16:1
+✖ summary refuses a duplicated issuer/session admission even under another observation ID (6.874723ms)
+  TypeError [Error]: Cannot read properties of undefined (reading 'push')
+      at TestContext.<anonymous> (file://%SCRATCH%/test/a-pathway-review-regressions.test.mjs:16:165)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7)
+
+test at test/a-pathway-review-regressions.test.mjs:17:1
+✖ A6 missing cohort outcome suppresses headline averages while preserving resolved-only diagnostics (13.204477ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + 35.94750000000009
+  - null
+  
+      at TestContext.<anonymous> (file://%SCRATCH%/test/a-pathway-review-regressions.test.mjs:17:419)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 35.94750000000009,
+    expected: null,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

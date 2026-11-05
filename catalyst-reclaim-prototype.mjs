@@ -1,5 +1,10 @@
 // Offline research prototype. Not connected to production or BUY eligibility.
 // Thresholds and exit contracts are caller-supplied proposals, not adopted rules.
+export function paperPositionSize(budget,ask,slippagePct=0) {
+  if(!Number.isFinite(budget)||budget<1000||!Number.isFinite(ask)||ask<=0||!Number.isFinite(slippagePct)||slippagePct<0||slippagePct>=100)return null;
+  const sizingEntryPrice=ask*(1+slippagePct/100);
+  return {shares:Math.floor((budget-3)/sizingEntryPrice),sizingEntryPrice,entryCommissionUsd:3,slippagePct};
+}
 export function assessReclaim(input, policy) {
   const reject = reason => ({status: 'NO_PAPER_SETUP', reason, actionable: false, realDollars: 0});
   const unknown = reason => ({...reject(reason), status: 'UNKNOWN'});
@@ -53,13 +58,16 @@ export function assessReclaim(input, policy) {
   // Refuse historical trigger + later quote joins. No inferred or guaranteed fill.
   if (time(trigger.end) !== time(bars.at(-1).end) || qt < time(trigger.end)) return unknown('ENTRY_QUOTE_NOT_PAIRED_TO_NEW_TRIGGER');
   if (!positive(input.paperBudgetUsd) || input.paperBudgetUsd < 1000) return unknown('PAPER_BUDGET_BELOW_USER_MINIMUM');
-  const shares = Math.floor((input.paperBudgetUsd - 3) / q.ask);
+  const sizing=paperPositionSize(input.paperBudgetUsd,q.ask,policy.slippagePerSidePct??0);
+  if(!sizing)return unknown('INVALID_PAPER_SIZING_POLICY');
+  const shares = sizing.shares;
   if (shares < 1 || q.askSize < shares) return reject('INSUFFICIENT_DISPLAYED_ENTRY_SIZE');
   return {
     status: 'PAPER_SETUP_ONLY', actionable: false, realDollars: 0,
     policyId: policy.id, symbol: input.symbol, assessedAt: input.asOf,
-    card: {reason: 'Verified agreement and completed opening-range pullback/reclaim under proposed policy',
+    card: {reason: 'Supplied agreement verification and completed opening-range pullback/reclaim under proposed policy; source authenticity is not established by this evaluator',
       entryReferenceAsk: q.ask, entryIsFill: false, paperShares: shares,
+      sizingEntryPrice:sizing.sizingEntryPrice,entrySlippagePct:sizing.slippagePct,
       paperBudgetUsd: input.paperBudgetUsd, commissionPerSideUsd: 3,
       expiry: input.sessionClose, invalidation: policy.invalidationContract,
       exit: policy.exitContract, spreadPct, quoteAt: q.at, quoteSource: q.source,

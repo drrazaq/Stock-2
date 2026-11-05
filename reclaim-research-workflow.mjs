@@ -1,7 +1,7 @@
 // Offline evidence adapter, immutable paper ledger and economic measurement.
 // No I/O, production imports, provider calls, notifications or BUY promotion.
 import {createHash} from 'node:crypto';
-import {assessReclaim} from './catalyst-reclaim-prototype.mjs';
+import {assessReclaim,paperPositionSize} from './catalyst-reclaim-prototype.mjs';
 
 const fail = message => { throw new Error(message); };
 const positive = n => typeof n === 'number' && Number.isFinite(n) && n > 0;
@@ -70,7 +70,15 @@ function validationReason(input,policy) {
 export function evaluateObservation(input,policy) {
   const frozen=freezeProposal(policy),reason=validationReason(input,policy);
   const result=reason?{status:'UNKNOWN',reason,actionable:false,realDollars:0}:assessReclaim(input,policy);
-  return {schemaVersion:1,type:'OBSERVATION',observationId:input?.observationId||null,symbol:input?.symbol||null,securityId:input?.securityId||null,asOf:input?.asOf||null,policyHash:frozen.policyHash,inputHash:evidenceHash(input),result};
+  return {schemaVersion:1,type:'OBSERVATION',observationId:input?.observationId||null,symbol:input?.symbol||null,securityId:input?.securityId||null,issuerId:input?.issuerId||null,issuerEvidenceId:input?.issuerEvidenceId||null,sessionOpen:input?.sessionOpen||null,asOf:input?.asOf||null,policyHash:frozen.policyHash,inputHash:evidenceHash(input),result};
+}
+export function issuerSessionCandidate(event){
+  if(typeof event?.issuerId!=='string'||!event.issuerId.trim()||event.issuerId!==event.issuerId.trim()||typeof event.issuerEvidenceId!=='string'||!event.issuerEvidenceId.trim()||!Number.isFinite(evidenceTime(event.sessionOpen))||!event.policyHash)return null;
+  return evidenceHash({issuerId:event.issuerId,sessionOpen:event.sessionOpen,policyHash:event.policyHash});
+}
+export function compareAssessmentOrder(a,b){
+  const at=evidenceTime(a?.asOf),bt=evidenceTime(b?.asOf),ta=Number.isFinite(at)?at:Infinity,tb=Number.isFinite(bt)?bt:Infinity;
+  return (ta===tb?0:ta<tb?-1:1)||(String(a?.securityId)<String(b?.securityId)?-1:String(a?.securityId)>String(b?.securityId)?1:0)||(String(a?.observationId)<String(b?.observationId)?-1:String(a?.observationId)>String(b?.observationId)?1:0);
 }
 export function appendObservation(ledger,input,policy) {
   const frozen=freezeProposal(policy),event=evaluateObservation(input,policy);
@@ -88,7 +96,7 @@ export function renderDecisionCard(event) {
   const clean=x=>String(x).replace(/[\r\n\x00-\x1f]/g,' ').slice(0,500);
   if(event.result.status!=='PAPER_SETUP_ONLY')return `${clean(event.symbol)}: ${clean(event.result.status)} — ${clean(event.result.reason)}. No live entry.`;
   const c=event.result.card;
-  return [`${clean(event.symbol)} — RESEARCH / PAPER ONLY — $0 REAL`,c.reason,`Reference ask ${c.entryReferenceAsk}; ${c.paperShares} hypothetical shares. No fill established.`,`Entry expires ${c.expiry}.`,`Invalidation: ${c.invalidation}`,`Exit: ${c.exit}`,`Source ${clean(c.quoteSource)}, quote ${clean(c.quoteAt)}.`,`Commission $3 per side; spread included by ask/bid; slippage additional.`,`Policy ${event.policyHash}; evidence ${event.inputHash}.`,`NOT PROVEN. No automatic promotion.`].join('\n');
+  return [`${clean(event.symbol)} — RESEARCH / PAPER ONLY — $0 REAL`,c.reason,`Reference ask ${c.entryReferenceAsk}; ${c.paperShares} hypothetical shares. No fill established.`,`Sizing price ${c.sizingEntryPrice} includes ${c.entrySlippagePct}% proposed entry slippage.`,`Entry expires ${c.expiry}.`,`Invalidation: ${c.invalidation}`,`Exit: ${c.exit}`,`Source ${clean(c.quoteSource)}, quote ${clean(c.quoteAt)}.`,`Commission $3 per side; spread included by ask/bid; exit slippage additional.`,`Policy ${event.policyHash}; evidence ${event.inputHash}.`,`NOT PROVEN. No automatic promotion.`].join('\n');
 }
 export function measurePaperExit(input,policy,exitEvidence) {
   const event=evaluateObservation(input,policy);
@@ -112,7 +120,9 @@ export function measurePaperExit(input,policy,exitEvidence) {
     if(!q||q.securityId!==input.securityId||q.symbol!==input.symbol||q.sizeUnits!=='SHARES'||!q.source||!q.evidenceId||!positive(q.bid)||!positive(q.ask)||q.bid>q.ask||!positive(q.bidSize)||!Number.isFinite(t)||!Number.isFinite(seen)||seen<t||seen>asOf||t>asOf||!Number.isFinite(q.sourceDelayMs)||q.sourceDelayMs<0||t+q.sourceDelayMs>asOf)return unresolved('INVALID_EXIT_QUOTE');
     // Pre-close quote models an intended close execution, not an auction fill.
     if(closeExit?!(t>=target-policy.maxExitQuoteAgeMs&&t<target):!(t>=target&&t<=target+policy.maxExitQuoteAgeMs))return unresolved('EXIT_QUOTE_NOT_PAIRED_TO_RULE_CLOCK');
-    const slip=policy.slippagePerSidePct/100,entry=input.quote.ask*(1+slip),exit=q.bid*(1-slip),budget=input.paperBudgetUsd,shares=Math.floor((budget-3)/entry);
+    const sizing=paperPositionSize(input.paperBudgetUsd,input.quote.ask,policy.slippagePerSidePct);
+    if(!sizing)return unresolved('INVALID_PAPER_SIZING_POLICY');
+    const slip=policy.slippagePerSidePct/100,entry=sizing.sizingEntryPrice,exit=q.bid*(1-slip),budget=input.paperBudgetUsd,shares=sizing.shares;
     if(shares<1||input.quote.askSize<shares||q.bidSize<shares)return unresolved('INSUFFICIENT_DISPLAYED_EXECUTION_SIZE');
     const netUsd=shares*(exit-entry)-6;
     return {status:'MODELED_PAPER_ECONOMICS_ONLY',allowBuy:false,realDollars:0,policyHash:event.policyHash,inputHash:event.inputHash,exitEvidenceHash:evidenceHash(exitEvidence),exitKind:kind,ruleExitAt:new Date(target).toISOString(),shares,entryAsk:input.quote.ask,exitBid:q.bid,modeledEntry:entry,modeledExit:exit,commissionsUsd:6,netUsd,returnOnBudgetPct:netUsd/budget*100,uninvestedCashUsd:budget-shares*entry-3,limits:['Quote-based model, not actual fills','Cash-inclusive independent unit, not account return','Full failed/rejected cohort and matched controls still required','No proof or live BUY promotion']};
