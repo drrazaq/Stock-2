@@ -19,7 +19,9 @@
   "fullSuite": "RUNNING; use exact-commit hosted receipt for terminal result",
   "logs": {
     "a-final.tap": "d38f93e337f1a3e27af2ae1afc0e84f944c935a89fe5b5bd2d88eba3ca1a3754",
-    "node24-final.tap": "e975a21885f8a6b50b7d2ba92cbc0c98bd2ca47ec889d9312923b8dbefe7a83c"
+    "node24-final.tap": "e975a21885f8a6b50b7d2ba92cbc0c98bd2ca47ec889d9312923b8dbefe7a83c",
+    "matrix-baseline.tap": "3a2cf334f684664a8b7e8523537548884846b1ffcd645c99369be0c8f926f2ef",
+    "matrix-final.tap": "de54b4408757900948da8eabe272dbb72793445d3a048a518f70d7409c2a6609"
   },
   "historicalManifestsVerified": {
     "source": 13,
@@ -29,5 +31,12 @@
   "closures": 0,
   "productionActions": 0,
   "providerRequests": 0,
-  "secondaryManifestWriterFence": "PASS_AT_ALL_EIGHT_SIGKILL_BOUNDARIES"
+  "secondaryManifestWriterFence": "PASS_AT_ALL_EIGHT_SIGKILL_BOUNDARIES",
+  "inventoryCompanion": {
+    "reason": "three new offline modules require source-file inventory count318->321",
+    "providerPairsUnchanged": 447,
+    "baselineTestsPass": 3,
+    "candidateTestsPass": 3,
+    "assertionsUnchanged": true
+  }
 }
