@@ -1,8 +1,8 @@
 {
   "base": "2c993500752fa13902dcdca46819bc7884eded52",
-  "branchCodeCommit": "462bb5460901042bd0a044635c52a5bcf9a16677",
-  "productionPatchSha256": "861d6f59607a923f691531a0b5d321849bdfe1a27ee7ab3419949c9a7fb42549",
-  "rollbackPatchSha256": "869aa01dbff0129cfacdb3aa64552f3b179bcd47feb2923c49d51f62bf31cad6",
+  "branchCodeCommit": "8b5e07e389f523c926a834f450128c032895af69",
+  "productionPatchSha256": "6889504c6ef67130193b9be0a070a76347bbaec24f83c9b116736c74e2d45bba",
+  "rollbackPatchSha256": "7a9e1250e38176323e8ee88989fefc75a7e017bf2e00dccabc9305ddce39dc7f",
   "patchThenInverseRestoresBase": true,
   "node": "20.20.0, sequential node \"$f\", external connections blocked (0 attempted)",
   "fullSuiteBranch": {
@@ -16,7 +16,7 @@
   },
   "withStopPatch": {
     "appliesBothOrders": true,
-    "identicalScanMjsBothOrders": "daf9a8288a3a1e6f9b2311641b605f84c648a5ae35ceb7ea1cc65391ed9e29a1",
+    "identicalScanMjsBothOrders": "73ad4853340ee5f562618155df92371ab1ff87e62584bf507157d9c84cd276c3",
     "eachInverseAppliesWithOtherPresent": true,
     "fullSuite": {
       "files": 139,
@@ -30,10 +30,16 @@
   },
   "sequencing": "Deploy only AFTER the approved stop release; rebuild on the new main and rerun. Deploying first would change the scan.mjs before-hash pinned by the stop procedure.",
   "d1Provenance": "ldipEntryWindow ported unchanged from Codex 984a1c2 (Stock2-safety-fixes); test/leader-dip-entry-window.test.mjs byte-identical to 984a1c2",
-  "revision": 2,
+  "revision": 3,
   "supersededR1": {
     "production": "17c325f5d8cd35b5bf48952109e9b1fec752a05a30549e18c763b85697b8bedb",
     "rollback": "17bae1085dbbd8e8c8f2cb09c6b4dcbc990e77e43ff1addaf40c7d01d8e398be"
   },
-  "r1R3CounterexamplesFailOnR1Code": true
+  "r1R3CounterexamplesFailOnR1Code": true,
+  "supersededR2": {
+    "production": "861d6f59607a923f691531a0b5d321849bdfe1a27ee7ab3419949c9a7fb42549",
+    "rollback": "869aa01dbff0129cfacdb3aa64552f3b179bcd47feb2923c49d51f62bf31cad6"
+  },
+  "d1d4TestsWithStopApplied": "23/23",
+  "s1s2s4FailOnR2Code": true
 }

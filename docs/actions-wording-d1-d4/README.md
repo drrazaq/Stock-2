@@ -1,4 +1,12 @@
-# ACTIONS wording package D1–D4 (revision 2): development only, not deployed
+# ACTIONS wording package D1–D4 (revision 3): development only, not deployed
+
+**Revision 3** fixes Codex's remaining counterexample on `06253f62`.
+- **Problem:** the D4 source-close label trusted any well-formed weekday date. The current, still-open session or a future session could therefore be labelled "from the … close".
+- **Fix:** the scanner's source session is now named as a completed close only if the reviewed NYSE calendar (`market-session.mjs`) shows a trading session whose **actual close** (16:00, or 13:00 on early-close days) has passed at evaluation time. The 4 pm boundary is inclusive.
+- **UNKNOWN cases:** a holiday, weekend, unclosed current session, future session, unreadable calendar or invalid date gives **"source close UNKNOWN"**.
+- **Tests:** Codex's two failing cases (S1, the current session before its close, including one millisecond before 4 pm; S2, a future session) and the valid controls (S3, the previous completed close and the exactly-4-pm boundary) run through the actual `actionsText` output, with SELL and quick-trade sections both checked. S4 covers Thanksgiving, the 27 Nov 1 pm early close (12:59 is UNKNOWN, 13:00 is named) and an unreadable calendar. **S1, S2 and S4 fail on the r2 code; S3 passes on both.**
+
+## Revision 2 (Codex findings on c670d626), retained
 
 **Revision 2** applies Codex's four findings on `c670d626`. Each counterexample has a regression in `test/actions-wording-d1-d4.test.mjs`, and each of those fails on the r1 code:
 
@@ -31,10 +39,10 @@
 
 | File | Before SHA256 | After SHA256 |
 |---|---|---|
-| `scan.mjs` | `19a5368bff6e14d4d114d9a3c9b52d395ee3b4dad8164a0a8a01762f16f5799f` | `884bfd5baa692014489df21b027e14f452b05064968447cbf36c6bddbe462df6` |
+| `scan.mjs` | `19a5368bff6e14d4d114d9a3c9b52d395ee3b4dad8164a0a8a01762f16f5799f` | `f60800f0d59da0d229130eb59c04fac2a926a7d13c3ce4cf4b38d4eae566dce0` |
 | `test/leader-dip.test.mjs` | `609dee1523c3ddaf3ba089b1eb278cdcb6fbdaa41027cf663de1daf567518e2f` | `850b0f911cbb7785b7ccbfc87223a96c3e2724e0cb2080c7156ea2f5efd2fa58` |
 | `test/leader-dip-entry-window.test.mjs` | absent | `348144d45285e525a78b2b42979740c2bbdfd64f04742899afa3e6d333e09c90` (Codex 984a1c2, byte-identical) |
-| `test/actions-wording-d1-d4.test.mjs` | absent | `da4ac9088c06f0074e806fd7306f6243cf41194c55d0e75be822f44ab162947a` |
+| `test/actions-wording-d1-d4.test.mjs` | absent | `db6dfeff51b1d50a53e52617115fad7a7823e2d8876d95f56f2632113773b238` |
 
 The `test/leader-dip.test.mjs` changes are:
 - Codex 984a1c2's clock pin and expired/UNKNOWN expectations;
@@ -42,9 +50,9 @@ The `test/leader-dip.test.mjs` changes are:
 - the D4 wording in one regex.
 
 **Patch hashes:**
-- `production.patch`: `861d6f59607a923f691531a0b5d321849bdfe1a27ee7ab3419949c9a7fb42549`
-- `rollback.patch` (exact inverse): `869aa01dbff0129cfacdb3aa64552f3b179bcd47feb2923c49d51f62bf31cad6`
-- r1 hashes (`17c325f5…`, `17bae108…`) are superseded.
+- `production.patch`: `6889504c6ef67130193b9be0a070a76347bbaec24f83c9b116736c74e2d45bba`
+- `rollback.patch` (exact inverse): `7a9e1250e38176323e8ee88989fefc75a7e017bf2e00dccabc9305ddce39dc7f`
+- Superseded: r2 (`861d6f59…`, `869aa01d…`) and r1 (`17c325f5…`, `17bae108…`).
 
 Applying the patch and then the inverse to main restores main exactly.
 
@@ -52,11 +60,11 @@ Applying the patch and then the inverse to main restores main exactly.
 
 | Run | Result |
 |---|---|
-| `test/actions-wording-d1-d4.test.mjs` (new; real `actionsText` caller) | 19/19. The R1–R3 counterexample tests fail on the r1 code. |
+| `test/actions-wording-d1-d4.test.mjs` (new; real `actionsText` caller) | **23/23**, and 23/23 with STOP R2 applied. R1–R3 fail on the r1 code; S1, S2 and S4 fail on the r2 code. |
 | `test/leader-dip-entry-window.test.mjs` (Codex, unchanged) | 9/9 |
 | `test/leader-dip.test.mjs` (updated) | 14/14 |
 | Full suite on the branch | 138/138 |
-| Full suite with the stop patch also applied | 139/139, gated watcher scenarios 9/9 and 11/11 |
+| Full suite with the stop patch also applied | 139/139, gated watcher scenarios 9/9 and 11/11 (rerun on r3) |
 
 **Covered (r2 additions):**
 - **R1:** the clock crosses 09:30:00.001 during the loopback name lookup, so there's no BUY. Exactly 09:30:00.000 keeps the BUY (inclusive). A crossing during the calendar read removes the MARK HALAL request.
