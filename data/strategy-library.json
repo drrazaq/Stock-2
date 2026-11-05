@@ -33346,6 +33346,54 @@
     ],
     "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
    }
+  },
+  {
+   "id": "RQ-GPC-63",
+   "family": "Daily researcher (RQ)",
+   "name": "Gross profit rising (quarter vs a year before, per assets) in the top 20%, hold 3 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-05 (daily researcher); 5-year one-shot pending",
+   "explain": "Buy the next open after a 10-Q/10-K whose quarterly gross profit (us-gaap GrossProfit) minus the same quarter a year before, divided by total assets a year before (SEC XBRL), is in the top 20% (percentile >= 0.80 vs all such filings of the prior 365 days; filed within 120 days of the quarter end; assets 10M USD+); stock liquid; sell the close 63 sessions later. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 10) before any run.",
+   "sources": [
+    "https://doi.org/10.2308/accr-51708",
+    "https://alphaarchitect.com/2015/01/predict-stock-returns-using-the-trend-of-profitability/",
+    "https://www.cxoadvisory.com/fundamental-valuation/profitability-momentum-as-a-stock-return-indicator/"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-05: Akbas, Jiang and Koch (2017, The Accounting Review) \"The Trend in Firm Profitability and the Cross-Section of Stock Returns\": rising gross profitability predicts higher returns beyond its level. New line (the change in quarterly gross profit, official SEC XBRL company facts); ANOM-GP tested the level only. Simplified to the year-on-year quarterly change per assets (stated). Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 5 Nov 2026."
+  },
+  {
+   "id": "RQ-GPC-126",
+   "family": "Daily researcher (RQ)",
+   "name": "Gross profit rising in the top 20%, hold 6 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-05 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-GPC-63, hold 126 sessions. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 10) before any run.",
+   "sources": [
+    "https://doi.org/10.2308/accr-51708",
+    "https://alphaarchitect.com/2015/01/predict-stock-returns-using-the-trend-of-profitability/",
+    "https://www.cxoadvisory.com/fundamental-valuation/profitability-momentum-as-a-stock-return-indicator/"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-05: Akbas, Jiang and Koch (2017, The Accounting Review) \"The Trend in Firm Profitability and the Cross-Section of Stock Returns\": rising gross profitability predicts higher returns beyond its level. New line (the change in quarterly gross profit, official SEC XBRL company facts); ANOM-GP tested the level only. Simplified to the year-on-year quarterly change per assets (stated). Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 5 Nov 2026."
+  },
+  {
+   "id": "RQ-GPC-LOW63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: gross profit falling (bottom 20%), 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-05 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: stocks whose gross profit change per assets is among the 20% lowest (percentile <= 0.20), bought next open, 63 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 10) before any run.",
+   "sources": [
+    "https://doi.org/10.2308/accr-51708",
+    "https://alphaarchitect.com/2015/01/predict-stock-returns-using-the-trend-of-profitability/",
+    "https://www.cxoadvisory.com/fundamental-valuation/profitability-momentum-as-a-stock-return-indicator/"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-05: Akbas, Jiang and Koch (2017, The Accounting Review) \"The Trend in Firm Profitability and the Cross-Section of Stock Returns\": rising gross profitability predicts higher returns beyond its level. New line (the change in quarterly gross profit, official SEC XBRL company facts); ANOM-GP tested the level only. Simplified to the year-on-year quarterly change per assets (stated). Buy top 20%; bottom 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 5 Nov 2026."
   }
  ]
 }
