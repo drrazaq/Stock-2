@@ -109,11 +109,13 @@ export function createACollector({store,token,contract,role,collectorId,signRece
   persist('ACQUISITION',id,result);return result;
  }
  function retainPrimaryOriginal({logicalId,securityId,sourceUrl,bytes:body,observedAt}){
+  // Capture our first observation before blocking persistence/hash/signing work; never reconstruct it afterward.
+  const receivedAt=iso(clock());
   need(role==='CAPTURE'&&/^https:\/\//.test(sourceUrl||''),'SOURCE_CONTEXT_REQUIRED');
   const id=collectorId+':SOURCE:'+logicalId,b=Buffer.from(body),old=lookup(id);
   need(b.length>0&&b.length<=limits.bodyBytes,'RESPONSE_BYTE_CAP');
   if(old){
-   need(time(old.receipt.body.recordedAt)<=clock(),'SOURCE_CLOCK_ORDER_UNKNOWN');
+   need(time(old.receipt.body.recordedAt)<=time(receivedAt),'SOURCE_CLOCK_ORDER_UNKNOWN');
    need(store.lookup(token,'ACQUISITION',id+':CONFLICT').status==='NOT_COMMITTED','PERSISTENT_SOURCE_CONFLICT');
    if(old.sha256!==hash(b)||old.receipt.body.sourceUrl!==sourceUrl||old.receipt.body.securityId!==securityId){
     persist('ORIGINAL',id+':REVISION:'+hash(b),{observedAt:iso(clock())},b);
@@ -121,8 +123,8 @@ export function createACollector({store,token,contract,role,collectorId,signRece
    }
    return {...old,reused:true};
   }
-  need(time(observedAt)===clock(),'SOURCE_RECEIPT_NOT_CONTEMPORANEOUS');
-  const original=persist('ORIGINAL',id,null,b).reference,result=signed(original,securityId,observedAt,{sourceUrl});persist('ACQUISITION',id,result);return result;
+  need(observedAt===undefined||time(observedAt)===time(receivedAt),'SOURCE_RECEIPT_NOT_CONTEMPORANEOUS');
+  const original=persist('ORIGINAL',id,null,b).reference,result=signed(original,securityId,observedAt??receivedAt,{sourceUrl});persist('ACQUISITION',id,result);return result;
  }
  function sealCoverage(plan,frames){
   need(role==='WITNESS'&&Array.isArray(frames)&&frames.length===plan.slots.length&&new Set(frames.map(f=>f.slotId)).size===plan.slots.length,'COVERAGE_SLOT_MISSING_OR_DUPLICATE');
