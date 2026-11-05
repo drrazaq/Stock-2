@@ -5,6 +5,8 @@ import {inspectSourceResponse,sourceInstant,sourceHash} from './a-native-source-
 const ny=new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
 function parts(at){return Object.fromEntries(ny.formatToParts(new Date(Number(sourceInstant(at)/1000000n))).map(p=>[p.type,p.value]));}
 function dayOf(at){const p=parts(at);return p.year+'-'+p.month+'-'+p.day;}
+// Relevant bar values define the revision; response order/neighboring sessions do not.
+const barHash=b=>sourceHash(JSON.stringify({t:String(sourceInstant(b.t)),o:b.o,h:b.h,l:b.l,c:b.c,v:b.v,n:b.n,vw:b.vw}));
 export function normalizeRetainedClose(response,{symbol,session,securityId}){
  const out={status:'UNKNOWN',allowBuy:false,sourceAuthentication:'UNVERIFIED',priceBasis:'AGGREGATE_BAR_CLOSE_NOT_AUCTION_OR_EXECUTABLE_FILL',symbol,securityId,session,bodySha256:response?.bodySha256??null,requestedFeed:null,returnedFeed:null,close:null,barTimestamp:null,availableAt:response?.bodyReceivedAt??null,sessionCloseAt:null,reasons:[]};
  const refuse=reason=>({...out,reasons:[reason]});
@@ -23,14 +25,14 @@ export function normalizeRetainedClose(response,{symbol,session,securityId}){
  for(const b of d.bars){if(sourceInstant(b?.t)===null){invalid=true;continue;}if(dayOf(b.t)===session)matches.push(b);}
  if(invalid)return refuse('BAR_TIMESTAMP_INVALID');
  if(!matches.length)return refuse(d.bars.length?'SESSION_BAR_MISSING':'GENUINELY_EMPTY_RESPONSE');
- const hashes=new Set(matches.map(b=>sourceHash(JSON.stringify(b))));if(hashes.size!==1)return refuse('CONFLICTING_SESSION_BARS');
+ const hashes=new Set(matches.map(barHash));if(hashes.size!==1)return refuse('CONFLICTING_SESSION_BARS');
  const b=matches[0];
  if(typeof b.c!=='number'||!Number.isFinite(b.c)||b.c<=0)return refuse('CLOSE_PRICE_INVALID');
  // Derive only the calendar boundary, never a source publication/ingestion time.
  const noon=session+'T12:00:00Z',p=parts(noon),offset=Number(p.hour)*60+Number(p.minute)-720;
  out.sessionCloseAt=new Date(Date.parse(session+'T00:00:00Z')+(cal.close-offset)*60000).toISOString();
  if(sourceInstant(response.bodyReceivedAt)<sourceInstant(out.sessionCloseAt))return refuse('SESSION_NOT_COMPLETED_AT_RECEIPT');
- out.close=b.c;out.barTimestamp=b.t;out.volume=typeof b.v==='number'&&Number.isFinite(b.v)&&b.v>=0?b.v:null;out.volumeBasis='PROVIDER_BAR_VOLUME_NOT_VERIFIED_TOTAL_TRADED_VOLUME';
+ out.close=b.c;out.barTimestamp=b.t;out.barRevisionHash=barHash(b);out.volume=typeof b.v==='number'&&Number.isFinite(b.v)&&b.v>=0?b.v:null;out.volumeBasis='PROVIDER_BAR_VOLUME_NOT_VERIFIED_TOTAL_TRADED_VOLUME';
  // Query feed and bar timestamp do not establish response-specific entitlement or publication age.
  return {...out,status:'NORMALIZED_RESEARCH_ONLY',reasons:['SOURCE_AUTHENTICATION_UNVERIFIED','RESPONSE_FEED_NOT_ATTESTED','FINALITY_AND_CLOSE_EXECUTION_CONTRACT_UNADOPTED']};
 }
@@ -48,7 +50,7 @@ export function retainClose({store,token,response,context}){
   try{store.append(token,'ACQUISITION',id,normalized);}catch(e){if(e.message!=='LOGICAL_RECORD_CONFLICT')throw e;}
  }
  const original=store.lookup(token,'ACQUISITION',id).record.payload;
- if(original.bodySha256!==normalized.bodySha256||original.symbol!==normalized.symbol||original.close!==normalized.close){
+ if(original.barRevisionHash!==normalized.barRevisionHash||original.symbol!==normalized.symbol||original.requestedFeed!==normalized.requestedFeed){
   const conflictId=id+':FIRST_CONFLICT',prior=store.lookup(token,'ACQUISITION',conflictId);
   if(prior.status!=='FOUND')try{store.append(token,'ACQUISITION',conflictId,{original,revised:normalized});}catch(e){if(e.message!=='LOGICAL_RECORD_CONFLICT')throw e;}
  }

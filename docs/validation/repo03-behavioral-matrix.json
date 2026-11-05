@@ -335,8 +335,8 @@
     },
     {
       "path": "a-close-source.mjs",
-      "sha256": "f43dee772f129e30fdcb9da4d0f9e848b5f6bfe5a3b879ad48b95ebfd95b84bb",
-      "bytes": 5513,
+      "sha256": "bb36962e415c33fd0c134f1798d5343236d919c531881e5f1bb3f24339d2971d",
+      "bytes": 5754,
       "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
@@ -345,26 +345,26 @@
         },
         "outputs": {
           "matchingLines": [
-            8,
-            39
+            10,
+            41
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "sideEffects": {
           "matchingLines": [
-            15
+            17
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "failure": {
           "matchingLines": [
-            14,
-            19,
-            40,
+            16,
+            21,
             42,
-            48,
-            53,
-            57
+            44,
+            50,
+            55,
+            59
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -374,26 +374,27 @@
             5,
             6,
             8,
-            9,
-            12,
-            23,
-            30,
-            31,
+            10,
+            11,
+            14,
+            25,
             32,
-            45
+            33,
+            34,
+            47
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "researchBoundary": {
           "matchingLines": [
-            35,
-            44
+            37,
+            46
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
       "contract": {
-        "sha256": "f43dee772f129e30fdcb9da4d0f9e848b5f6bfe5a3b879ad48b95ebfd95b84bb",
+        "sha256": "bb36962e415c33fd0c134f1798d5343236d919c531881e5f1bb3f24339d2971d",
         "reviewer": "Codex implementation/source-interface pass, 2026-11-05; independent review pending",
         "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
         "inputs": "Exact retained single-symbol Alpaca daily-bar response plus explicit symbol/security identity/session and fenced store.",
@@ -409,7 +410,8 @@
         ]
       },
       "testReferences": [
-        "test/a-close-source.test.mjs"
+        "test/a-close-source.test.mjs",
+        "test/a-native-source-package.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -504,8 +506,8 @@
     },
     {
       "path": "a-native-source-join.mjs",
-      "sha256": "8242ffcec63e25b1fe96b3960524b2a906162c557da9116221571eb8a8e61fd5",
-      "bytes": 11399,
+      "sha256": "8c42d9533111444f849c0266bae4f9ae4a4d6ff8ec468d5cab038f3fbb0bdc8a",
+      "bytes": 11586,
       "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
@@ -562,7 +564,7 @@
         }
       },
       "contract": {
-        "sha256": "8242ffcec63e25b1fe96b3960524b2a906162c557da9116221571eb8a8e61fd5",
+        "sha256": "8c42d9533111444f849c0266bae4f9ae4a4d6ff8ec468d5cab038f3fbb0bdc8a",
         "reviewer": "Codex implementation/source-interface pass, 2026-11-05; independent review pending",
         "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
         "inputs": "Pinned native run/parent bytes, exact primary response envelopes, explicit fenced store/token and callback clock.",
@@ -579,7 +581,8 @@
       },
       "testReferences": [
         "test/a-close-source.test.mjs",
-        "test/a-native-source-join.test.mjs"
+        "test/a-native-source-join.test.mjs",
+        "test/a-native-source-package.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."

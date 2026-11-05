@@ -31,6 +31,8 @@ The existing feed tee can preserve the original Atom response and `<entry>` byte
 
 A matched structural join is labelled `MATCHED_RESEARCH_ONLY`, never authenticated/approved. `sourceAuthentication: UNVERIFIED`, `globalFirstIngestionEstablished: false`, `executionEligibility: UNKNOWN`, `allowBuy: false` and zero genuine admissions are explicit. No new signature, root, owner confirmation or ZAD validity is invented. Material-contract/dilution/resale interpretation remains unverified: matching a document path/body is not semantic proof of its contents.
 
+The follow-up close regression is retained red against1e629bc7: changing response field order/adding an unrelated day falsely created a close revision. The corrected fingerprint uses the requested session's actual bar values, while keeping all original body bytes. A changed target-day value still creates a permanent conflict. Primary response lists are ordered by their original nanosecond receipt clocks before selecting the first retained baseline; input array order cannot pick a later revision as first.
+
 ## Failure/recovery contract
 
 Original response bodies and envelope clocks are immutable. Exact duplicate body arrivals retain distinct envelopes when their clocks differ; event joins preserve the first context, not the restart time. Nanosecond comparisons do not round a future acceptance into the observation window. Malformed neighboring submissions rows do not suppress a valid matching row; a malformed matching row remains unresolved.

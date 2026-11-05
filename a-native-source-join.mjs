@@ -99,7 +99,7 @@ export function joinNativePrimary({native,primaryResponses=[],store,token}){
   const expectedUrls=[...new Set(candidates.map(p=>'https://www.sec.gov/Archives/edgar/data/'+Number(event.issuerCik)+'/'+event.accession.replaceAll('-','')+'/'+p.primaryDocument))];
   const matched=primaryResponses.filter(p=>expectedUrls.includes(p.url));
   if(!matched.length)reasons.add('PRIMARY_RESPONSE_MISSING');
-  const valid=matched.filter(p=>{const v=inspectSourceResponse(p);if(v.status==='UNKNOWN')reasons.add(v.reason);return v.status!=='UNKNOWN'&&v.bytes.length>0;});
+  const valid=matched.filter(p=>{const v=inspectSourceResponse(p);if(v.status==='UNKNOWN')reasons.add(v.reason);return v.status!=='UNKNOWN'&&v.bytes.length>0;}).sort((a,b)=>sourceInstant(a.bodyReceivedAt)<sourceInstant(b.bodyReceivedAt)?-1:sourceInstant(a.bodyReceivedAt)>sourceInstant(b.bodyReceivedAt)?1:a.bodySha256.localeCompare(b.bodySha256));
   if(matched.some(p=>Buffer.from(p.bodyBase64,'base64').length===0))reasons.add('PRIMARY_BODY_EMPTY');
   const variants={atom:[...new Set(event.observations.map(p=>p.rawEntrySha256))],acceptance:[...new Set(candidates.map(p=>String(sourceInstant(p.acceptanceAt))+':'+p.primaryDocument))],primary:[...new Set(valid.map(p=>p.bodySha256))]};
   const originalEvidence={eventId,atomHash:original.rawEntrySha256,firstObservedAt:original.observedAt,firstSystemReceiptAt:original.systemReceiptAt,firstBodyIngestedAt:original.bodyIngestedAt,acceptanceAt:proof?.acceptanceAt??null,primaryHash:valid[0]?.bodySha256??null};

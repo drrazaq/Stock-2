@@ -6,11 +6,11 @@
   "node24": "24.19.0",
   "focusedCommand": "node --test test/a-native-source-join.test.mjs test/a-close-source.test.mjs test/a-native-source-package.test.mjs test/a-authenticated-collector.test.mjs test/a-fenced-store.test.mjs",
   "focusedEachRuntime": {
-    "tests": 94,
-    "pass": 94,
+    "tests": 96,
+    "pass": 96,
     "fail": 0,
     "skipped": 0,
-    "new": 44,
+    "new": 46,
     "inherited": 50
   },
   "matrixTests": {
@@ -49,13 +49,21 @@
     "initialFaultHarness": "Three missing-expected-exception failures: wrapper passed fault at seventh argument instead of sixth. Corrected args[5]; assertions unchanged. Original complete failure log was not retained; final executed TAP is retained."
   },
   "logs": {
+    "evidence/all-python.log": {
+      "bytes": 138,
+      "sha256": "e7e39ce5027c27c88e03ffc58897c93742a0708e98c804e995fb6ac42fa9de54"
+    },
+    "evidence/close-unrelated-session-red.tap": {
+      "bytes": 5377,
+      "sha256": "219a15fd39c5c1faf04ab51d46c40b4663a5e234b55bf4f871b131ea80b893ab"
+    },
     "evidence/focused-node20.tap": {
-      "bytes": 21004,
-      "sha256": "bb56226539b27ebd0a58f55bfe1ab4fe74b06ccd24ed067bc94d68208c17c439"
+      "bytes": 21494,
+      "sha256": "ebd0669e2db22435ef91800ade602d4b58f4e8ae4da2736976ff8067d7b7caf9"
     },
     "evidence/focused-node24.tap": {
-      "bytes": 9638,
-      "sha256": "ceaa10e1e1254cd0322fe83cb947ff8c9211d048bdb5bf72ba7d9c7401014b47"
+      "bytes": 9867,
+      "sha256": "6c2e3035b4bbcac8d2a2831f1533036cb9d5d104699bf86ed595db967b21b76b"
     },
     "evidence/python.log": {
       "bytes": 205,
@@ -66,5 +74,23 @@
   "independentReview": "Claude requested for this exact new join; prior572 PASS WITH FINDINGS at446cd250 is separate",
   "providerCalls": 0,
   "productionChanges": false,
-  "rowsClosed": 0
+  "rowsClosed": 0,
+  "additionalNativeInherited": {
+    "command": "node --test test/native-sec-events.test.mjs test/native-sec-lineage.test.mjs test/native-sec-incremental.test.mjs",
+    "pass": 26,
+    "fail": 0,
+    "skipped": 0
+  },
+  "allPython": {
+    "command": "python3 -m unittest discover -s tests",
+    "pass": 39,
+    "fail": 0
+  },
+  "followupDefect": {
+    "reproduced": "UNCHANGED target bar, reordered fields and unrelated added session incorrectly produced REVISION_CONFLICT_PERSISTENT",
+    "repair": "Use stable relevant-bar revision hash; preserve every original response body. Primary-response first baseline selected by original nanosecond receipt clocks, not array order.",
+    "redEvidence": "evidence/close-unrelated-session-red.tap",
+    "finalRegression": "PASS on Node20 and24; actual target-bar changes still persistent conflict",
+    "manifestCorrection": "Guard caught a stale duplicate new-file pin in inheritedDependencies; new files now pinned once under files, inherited protected dependencies remain byte-identical. No assertion relaxed."
+  }
 }

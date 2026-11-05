@@ -1,0 +1,131 @@
+TAP version 13
+# Subtest: actual single-symbol daily bar shape normalizes close with independent feed/finality/execution limitations
+ok 1 - actual single-symbol daily bar shape normalizes close with independent feed/finality/execution limitations # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.867994
+  ...
+# Subtest: NY calendar close across DST and half day: 2026-10-30
+ok 2 - NY calendar close across DST and half day: 2026-10-30 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.092276
+  ...
+# Subtest: NY calendar close across DST and half day: 2026-11-27
+ok 3 - NY calendar close across DST and half day: 2026-11-27 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.064896
+  ...
+# Subtest: truthful close refusal GENUINELY_EMPTY_RESPONSE
+ok 4 - truthful close refusal GENUINELY_EMPTY_RESPONSE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.066092
+  ...
+# Subtest: truthful close refusal MALFORMED_OR_WRONG_SYMBOL
+ok 5 - truthful close refusal MALFORMED_OR_WRONG_SYMBOL # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.062227
+  ...
+# Subtest: truthful close refusal SOURCE_FAILURE
+ok 6 - truthful close refusal SOURCE_FAILURE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.05208
+  ...
+# Subtest: truthful close refusal PAGINATION_INCOMPLETE
+ok 7 - truthful close refusal PAGINATION_INCOMPLETE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.148037
+  ...
+# Subtest: truthful close refusal CLOSE_PRICE_INVALID
+ok 8 - truthful close refusal CLOSE_PRICE_INVALID # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.086407
+  ...
+# Subtest: truthful close refusal BAR_TIMESTAMP_INVALID
+ok 9 - truthful close refusal BAR_TIMESTAMP_INVALID # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.119726
+  ...
+# Subtest: truthful close refusal SESSION_NOT_COMPLETED_AT_RECEIPT
+ok 10 - truthful close refusal SESSION_NOT_COMPLETED_AT_RECEIPT # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.104729
+  ...
+# Subtest: truthful close refusal SESSION_BAR_MISSING
+ok 11 - truthful close refusal SESSION_BAR_MISSING # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.064994
+  ...
+# Subtest: truthful close refusal ADJUSTMENT_BASIS_UNRESOLVED
+ok 12 - truthful close refusal ADJUSTMENT_BASIS_UNRESOLVED # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.054724
+  ...
+# Subtest: truthful close refusal SOURCE_ROUTE_UNVERIFIED
+ok 13 - truthful close refusal SOURCE_ROUTE_UNVERIFIED # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.053547
+  ...
+# Subtest: unknown/closed/impossible session and unfinished bar do not become completed close
+ok 14 - unknown/closed/impossible session and unfinished bar do not become completed close # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.086629
+  ...
+# Subtest: duplicate rows distinct from conflicting values; price never coerced
+ok 15 - duplicate rows distinct from conflicting values; price never coerced # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.050997
+  ...
+# Subtest: close revisions survive restart and reversion without changing any original bytes
+ok 16 - close revisions survive restart and reversion without changing any original bytes # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.099262
+  ...
+# Subtest: close conflict interrupted at AFTER_INTENT stays unresolved through revert/recovery
+ok 17 - close conflict interrupted at AFTER_INTENT stays unresolved through revert/recovery # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.054808
+  ...
+# Subtest: close conflict interrupted at AFTER_RECORD stays unresolved through revert/recovery
+ok 18 - close conflict interrupted at AFTER_RECORD stays unresolved through revert/recovery # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.162948
+  ...
+# Subtest: close conflict interrupted at AFTER_COMMIT stays unresolved through revert/recovery
+ok 19 - close conflict interrupted at AFTER_COMMIT stays unresolved through revert/recovery # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.06017
+  ...
+# Subtest: unchanged target bar with reordered fields and unrelated added sessions is not a close revision
+not ok 20 - unchanged target bar with reordered fields and unrelated added sessions is not a close revision
+  ---
+  duration_ms: 808.163236
+  location: '/workspace/stock2-a-native-join-20261105/test/a-close-source.test.mjs:13:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'UNKNOWN'
+    - 'NORMALIZED_RESEARCH_ONLY'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'NORMALIZED_RESEARCH_ONLY'
+  actual: 'UNKNOWN'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/stock2-a-native-join-20261105/test/a-close-source.test.mjs:13:743)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 19
+# todo 0
+# duration_ms 932.529875
