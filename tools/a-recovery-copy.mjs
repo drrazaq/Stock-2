@@ -61,8 +61,15 @@ export function recoverSecondaryCopy({source,destination,policy,fault=()=>{}}){
  try{store.recoverPending();}finally{store.close();}
  fault('AFTER_REPLAY');
  const state=ReclaimResearchStore.inspect(secondary);if(state.pendingOperationIds.length)fail('RECOVERY_PENDING');
+ // Fence the secondary at the manifest boundary. The unchanged store's exact-manifest
+ // comparison refuses reopening it as a normal writer, even with the old implementation ID.
+ const labelled={...manifest,secondaryRecovery:{schema:1,primaryResumeAuthorized:false,sourceSnapshotHash:evidenceHash(identity(originals))}};
+ write(path.join(secondary,'manifest.secondary.json'),JSON.stringify(labelled)+'\n');
+ const d=fs.openSync(secondary,fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);
+ try{if(fs.realpathSync(`/proc/self/fd/${d}`)!==secondary)fail('DESTINATION_CHANGED');fs.renameSync(`/proc/self/fd/${d}/manifest.secondary.json`,`/proc/self/fd/${d}/manifest.json`);fs.fsyncSync(d);}finally{fs.closeSync(d);}
+
  if(evidenceHash(identity(snapshot(source)))!==evidenceHash(identity(originals)))fail('SOURCE_CHANGED');
- const receipt={schema:1,status:'SECONDARY_RECONSTRUCTION_ONLY',allowBuy:false,originalBytesChanged:false,primaryResumeAuthorized:false,sourceAuthenticity:'NOT_ESTABLISHED',originalFiles:identity(originals),secondaryFiles:identity(snapshot(secondary)),notes,state};
+ const receipt={schema:1,status:'SECONDARY_RECONSTRUCTION_ONLY',allowBuy:false,originalBytesChanged:false,primaryResumeAuthorized:false,readOnlySecondaryFence:true,sourceAuthenticity:'NOT_ESTABLISHED',originalFiles:identity(originals),secondaryFiles:identity(snapshot(secondary)),notes,state};
  write(path.join(destination,'RECOVERY_COMPLETE.json'),JSON.stringify(receipt)+'\n');return receipt;
 }
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){try{if(process.argv.length!==5)fail('ARGS');const policy=JSON.parse(fs.readFileSync(process.argv[4],'utf8'));const r=recoverSecondaryCopy({source:process.argv[2],destination:process.argv[3],policy});process.stdout.write(JSON.stringify({status:r.status,primaryResumeAuthorized:false})+'\n');}catch{process.stderr.write('A_RECOVERY_ERROR_OR_INCOMPLETE\n');process.exitCode=1;}}
