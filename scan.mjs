@@ -2607,6 +2607,15 @@ const SHOCK_SLOT = '\u0000MARKET_SHOCK';
 function nyClockText(mins) { const h = Math.floor(mins / 60), m = mins % 60; return ((h + 11) % 12 + 1) + ':' + String(m).padStart(2, '0') + (h < 12 ? ' am' : ' pm'); }
 // R3 (Codex review of c670d626): "during the session" uses the actual session hours from the reviewed NYSE calendar
 // (market-session.mjs: holidays and 1 pm early closes). If that calendar cannot be read, the session status is stated as UNKNOWN.
+// D4 r3 (Codex review of 06253f62): the scanner's source session is named as a completed close only if the reviewed NYSE calendar
+// says it was a trading session and its actual close (16:00, or 13:00 on early-close days) has passed at evaluation time. A holiday,
+// weekend, the current unclosed session, a future session, an unreadable calendar or an invalid date is UNKNOWN.
+async function completedSourceClose(day, nowMs = Date.now()) {
+  if (typeof day !== 'string' || !isSessionDate(day) || !Number.isFinite(nowMs)) return null;
+  const s = await marketSessionOf(day); if (!s || s.closed || !Number.isFinite(s.close)) return null;
+  const noon = Date.parse(day + 'T12:00:00Z'), closeMs = noon + (s.close - ny(noon).mins) * 60000;
+  return nowMs >= closeMs ? day : null;
+}
 async function marketSessionOf(day) { try { const m = await import(new URL('./market-session.mjs', import.meta.url).href); const s = m.marketSession(day); return s && s.known ? s : null; } catch { return null; } }
 function shockLine(ml, hasBuy, sess) {
   const t = Date.parse(ml.at), n = ny(t), today = ny(Date.now()).d, sameDay = n.d === today;
@@ -2639,7 +2648,7 @@ async function actionsText(sig, pos, px, title) {
   const D = sessDay(), K = (m) => kwt(m, D), pb = (o) => { const f = gateLines(o), n = f.filter(l => /^- BUY /.test(l)).length; if (n || !o.some(l => /^- BUY /.test(l))) S.buys.push('', ...f); return n; };
   const planSells = (plan.match(/\nSELL\n([\s\S]*?)(\n\n|$)/) || [])[1] || '', soldSyms = new Set(planSells.split('\n').map(l => l.replace(/^- /, '').split(/[ :]/)[0]));
   const sells = [...(planSells ? planSells.split('\n') : []), ...h.acts.sell.filter(l => !soldSyms.has(l.split(/[ :]/)[0]))];
-  const srcClose = sig && isSessionDate(sig.session) ? sig.session : null;   // D4: every actionable section names its source close
+  const srcClose = await completedSourceClose(sig && sig.session);   // D4 (r3): named only when that NYSE session has actually closed
   if (sells.length) S.sells.push('SELL (close-based exits: next regular-session open, ' + K(570) + ' Kuwait; stop-reached lines: your broker stop applies. No automatic 15-minute delay. Existing broker stop orders remain active; ' + (srcClose ? 'from the ' + srcClose + ' close' : 'source close UNKNOWN') + '):', ...sells.map(l => '- ' + l));
   { const lp = {}; for (const x of (sig && sig.stocks) || []) if (x.last) lp[x.sym] = x.last; for (const x of (sig && sig.uni) || []) if (x.last && !lp[x.sym]) lp[x.sym] = x.last;
     const un = unresolvedSells(pos, lp, ny(Date.now()).d); if (un.length) S.crit.push('SELLS NOT DONE YET (' + un.length + ')', ...un.map(l => '- ' + l)); }

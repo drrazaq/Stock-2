@@ -150,4 +150,29 @@ test('R3 "during the session" uses the actual close: early close 27 Nov, holiday
   await at('2026-11-27T20:00:00Z', async () => { const { S, close } = await setup(shock('2026-11-27T18:30:00Z'), { calendar: false }); try { const t = await actions(S); assert.match(t, /session status UNKNOWN\)/); assert.doesNotMatch(t, /during the session/); } finally { close(); } });
 });
 
+// ---------- Codex review of 06253f62: the scanner's source session must be an actually completed NYSE close at evaluation time
+const srcCase = async (nowIso, session) => at(nowIso, async () => {
+  const { S, close } = await setup({ 'data/halal.json': { ZZS: { s: 'ok', d: CLOSE, by: 'you' } } }); try {
+    return await actions(S, sig({ session, stocks: [{ sym: 'ZZS', last: 75 }], quickHeld: [{ sym: 'ZQA', why: 'strict gate: fewer than 30 unseen trades (has 19)' }] }), { ZZS: { entry: 100, stop: 80, since: '2025-06-02' } });
+  } finally { close(); } });
+const named = (t, d) => { assert.match(t, new RegExp('SELL \\(close-based exits[^\\n]*; from the ' + d + ' close\\):')); assert.match(t, new RegExp('QUICK TRADES held back \\(not strong enough; logged on paper; from the ' + d + ' close\\)')); };
+const unknown = (t, why) => { assert.match(t, /SELL \(close-based exits[^\n]*; source close UNKNOWN\):/, why); assert.match(t, /QUICK TRADES held back \(not strong enough; logged on paper; source close UNKNOWN\)/, why); assert.doesNotMatch(t, /from the 2026-11-0[56] close/, why); };
+test('S1 (Codex case 1) the current session before its close is UNKNOWN, never a completed source close', async () => {
+  unknown(await srcCase('2026-11-05T15:00:00Z', '2026-11-05'), '10:00 am New York, session open');
+  unknown(await srcCase('2026-11-05T20:59:59.999Z', '2026-11-05'), 'one millisecond before the 4 pm close');
+});
+test('S2 (Codex case 2) a future session is UNKNOWN', async () => {
+  unknown(await srcCase('2026-11-05T22:00:00Z', '2026-11-06'), 'next session, not yet traded');
+});
+test('S3 valid controls: a completed close is named; the 4 pm boundary is inclusive', async () => {
+  named(await srcCase('2026-11-05T09:03:00Z', '2026-11-04'), '2026-11-04');
+  named(await srcCase('2026-11-05T21:00:00.000Z', '2026-11-05'), '2026-11-05');
+});
+test('S4 holidays and early closes come from the actual NYSE calendar', async () => {
+  unknown(await srcCase('2026-11-27T12:00:00Z', '2026-11-26'), 'Thanksgiving is not a session');
+  unknown(await srcCase('2026-11-27T17:59:00Z', '2026-11-27'), '12:59 pm on the 1 pm early-close day');
+  named(await srcCase('2026-11-27T18:00:00Z', '2026-11-27'), '2026-11-27');
+  unknown(await at('2026-11-05T09:03:00Z', async () => { const { S, close } = await setup({ 'data/halal.json': { ZZS: { s: 'ok', d: CLOSE, by: 'you' } } }, { calendar: false }); try { return await actions(S, sig({ stocks: [{ sym: 'ZZS', last: 75 }], quickHeld: [{ sym: 'ZQA', why: 'x' }] }), { ZZS: { entry: 100, stop: 80, since: '2025-06-02' } }); } finally { close(); } }), 'calendar unreadable');
+});
+
 test('all requests stayed on loopback', () => assert.deepEqual(blocked, []));
