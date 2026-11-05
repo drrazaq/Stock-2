@@ -1,0 +1,19 @@
+{
+  "checkedAtUTC": "2026-11-05T05:53Z",
+  "main": "8a05fb6920eae7cb42270ac8a6e248ab67ff7b9c",
+  "base": "a95af15061569854c89350a5fb0f981e99783822",
+  "manifestAndDependencyPathsChangedSinceBase": 0,
+  "productionPatchSha256": "c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b",
+  "rollbackPatchSha256": "1a13a44de32db385a330e948d4f354cc399f215f2b4ae75fa8a453e4fcaa0ff9",
+  "patchApplies": true,
+  "rollbackRestoresMainExactly": true,
+  "fullSuiteMainPlusPatch": {"files": 136, "pass": 136, "fail": 0, "node": "20.20.0", "externalConnections": "blocked; none attempted"},
+  "gatedWatcherScenarios": {"watcher-resilience": "9/9, 0 skipped", "watcher-incident-revision": "11/11, 0 skipped"},
+  "boundary": {
+    "status": "BLOCKED",
+    "activeWriter": {"workflow": "bot.yml", "run": 41947731543, "job": 127075951793, "jobStartedUTC": "2026-11-05T05:48:40Z", "hardLimitUTC": "2026-11-05T11:38:40Z"},
+    "previousHandoff": {"run": 41911711790, "jobEndedUTC": "2026-11-05T05:48:37Z", "successorJobStartedUTC": "2026-11-05T05:48:40Z", "gapSeconds": 3},
+    "queuedAtCheck": 0,
+    "note": "A */30 schedule normally queues a successor long before the active run ends. A natural gap exists only if GitHub fails to queue one (as on 4 Nov 12:55-13:17 UTC, used for c19ef302 at 13:01). Not predictable; never pause, cancel or dispatch to create one."
+  }
+}
