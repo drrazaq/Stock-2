@@ -254,6 +254,214 @@
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
     },
     {
+      "path": "a-authenticated-collector.mjs",
+      "sha256": "73e77ab979888bb111f026d8b8fd7f9a5afb4a4c243ad2c2e67348430caa4809",
+      "bytes": 15371,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            18,
+            34
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            61
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            5,
+            37,
+            56,
+            75,
+            93,
+            103,
+            119
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            8,
+            34,
+            37,
+            56,
+            93,
+            103
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            4
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "inputs": "Explicit mock/reviewed transport/client, role signer, trust contract, semantics/profile, fixed window and limits.",
+        "outputs": "Immutable original/normalized frames with receipt clocks; COMPLETE/INCOMPLETE and fixed refusal reasons.",
+        "sideEffects": "Only explicit supplied transport; persistent request intent before one attempt; private new-store writes.",
+        "failure": "No fallback/retry/backdating; late, partial, malformed, pagination, source/revision or unknown state remains unresolved.",
+        "timing": "Mandatory per-instance body/request/deadline bounds; \u226430s SIP window with bounded startup/shutdown; cross-run intent blocks unknown retry.",
+        "researchBoundary": "No live binding or adopted semantics, enrollment, BUY or full-source completeness claim."
+      },
+      "testReferences": [
+        "test/a-authenticated-collector.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "a-fenced-store.mjs",
+      "sha256": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
+      "bytes": 11359,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [
+            21,
+            104,
+            114
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            29,
+            98,
+            114
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            5,
+            29,
+            31,
+            69,
+            99,
+            104
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            10,
+            83,
+            95,
+            104,
+            105,
+            106,
+            107,
+            114
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            104
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            1,
+            8,
+            38,
+            56,
+            57,
+            59
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "inputs": "Explicit private root/context, generation token, expected-parent and immutable research input references.",
+        "outputs": "Private durable receipts and strict evaluator report, never a public financial/message output.",
+        "sideEffects": "Linux flock child; bounded new-store originals, generations, intents and commits; no old primary/data writes.",
+        "failure": "Stale/CAS/busy/corrupt/missing/symlink/cap/unknown fail closed; no automatic lock deletion or evidence truncation.",
+        "timing": "15s worker bound; synchronous serialized mutation and fsync; real SIGKILL recovery tests.",
+        "researchBoundary": "Inactive unadopted A only; cooperative filesystem fence is not an external-host liveness proof."
+      },
+      "testReferences": [
+        "test/a-authenticated-collector.test.mjs",
+        "test/a-fenced-store.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "a-sip-window-client.mjs",
+      "sha256": "328fca02472a2b475ff483f430e0d3c240d8d5176cc17023a2c23f5e6ad87082",
+      "bytes": 4040,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            4
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            2
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            4,
+            5,
+            12,
+            17,
+            27,
+            34
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            4,
+            12,
+            24
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            3
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "inputs": "Injected socketFactory, synthetic/explicit credential object, clock/timers, exact symbol and window.",
+        "outputs": "Retained original incoming wire messages/system clocks and bounded subscriber continuity status.",
+        "sideEffects": "One supplied SIP socket, auth/subscribe messages, close/cleanup; no environment or default live client.",
+        "failure": "Errors/refusals/wrong symbol/malformed/backward clocks/late startup/early close/interruption produce INCOMPLETE.",
+        "timing": "\u226410s early startup, \u226430s window, finite startup/end timers; no reconnect.",
+        "researchBoundary": "Local continuity under supplied client, not verified provider-wide no-loss/fill/profitability evidence."
+      },
+      "testReferences": [
+        "test/a-authenticated-collector.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
       "path": "account-replay-core.mjs",
       "sha256": "99fcc18b0fbbd51b1c8ea29f8747c34ab43c46f1d3c8465c4f07075e29903141",
       "bytes": 19308,
@@ -33414,10 +33622,10 @@
     }
   ],
   "totals": {
-    "scripts": 305,
-    "sourceReviewed": 66,
+    "scripts": 308,
+    "sourceReviewed": 69,
     "pending": 239,
-    "reviewedWithOpenFindings": 32
+    "reviewedWithOpenFindings": 35
   },
   "accepted": false,
   "note": "An explicit hash-matched review is required. Empty axes, source changes and inventories cannot silently count as reviewed; review is distinct from all-path runtime verification."

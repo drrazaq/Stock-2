@@ -1,0 +1,21 @@
+# One setup-only approval request — no execution included
+
+**Decision requested, not granted.** Dedicated research location only; not the existing financial mirror or any production repository setting. This does not authorize rehearsal, the12-case historical audit, A, B/C, live capture or any provider/broker/Telegram call.
+
+**Named operator:** Codex, explicitly activated on demand for setup; owner creates the private repository and confirms the applicable account quotas. No unattended availability promise. If supported access cannot be established without a new token/permission binding, stop and return the exact missing capability rather than creating one.
+
+> Authorize setup only for the dedicated private `drrazaq/stock-2-research-audit` repository: confirm owner/operator access and private visibility, verify included Actions/artifact headroom with no paid overage, then install only `.github/workflows/custody-rehearsal.yml` from public source07995aff92053f8bce4e0dd5674c46107a73d39f, using `docs/historical-audit-invocation/custody-rehearsal.yml.proposed` SHA256 cb4f3bb67b2338f71235d9ba64914897b32eab70169edf913193871972efbc46 and its17-file rehearsal manifest ac8be83db16f01fcf3e49545ab0f6260640cabe5cb999a2e2b97ca0a04a9aa62. Register the workflow without running it and pin a dedicated execution ref `custody-rehearsal-once-4923b443` to its actual immutable commit W. Record actual visibility/access, W/ref/installed hashes and quota proof. Do not add credentials, keys, secrets, bindings, permissions, crons or push triggers; do not dispatch, rehearse, access financial data, run a provider, purchase anything or modify production. Stop after setup verification, or stop before mutation if a prerequisite cannot be established.
+
+**Evidence already prepared:** exact source/manifests and provider-free runner verified offline; existing subscriptions confirmed; documented platform action pins/runtime and failure/recovery contracts. Dedicated private repository existence, supported write capability, account quota and W remain UNVERIFIED until authorized setup. Financial mirror `stock-2-private-data` and PRIVATE_DATA_TOKEN are excluded.
+
+**Quota/cost gate:** no job during setup. Before installation, confirm included headroom for the later separately approved5-minute standard-Linux rehearsal and160MiB artifact retained3days (0.46875GiB-days), plus existing shared usage, and no paid-overage risk. Source is read-only contents/actions; the native per-job artifact runtime credential belongs to a future job, not a new installed secret. No RESEARCH_ARTIFACT_KEY, ALPACA_KEY, ALPACA_SECRET or MASSIVE_KEY in setup/rehearsal. A genuine custody key would be a later separate decision; ephemeral synthetic rehearsal encryption is not owner-held custody.
+
+**Separate later decisions, never implied:**
+
+| Stage | Separate approval and completion condition |
+|---|---|
+| Provider-free custody rehearsal | Exact actual W, separate control commit C, fixed input hashes/date/operator, one attempt; no provider credentials. Roughly159MiB synthetic archive,160MiB cap;5min job/240s child, bounded23upload+3recovery service requests+1history GET; full readback, failure/timeout and recoverability proven. No automatic retries. |
+| Historical IG1 audit | Independent review plus answers in H-review-disposition.md; genuine owner recovery-key custody, protected bindings/setup and one explicit provider execution approval. Exactly12unchanged previously examined cases, max156requests (36reference+120historical), no retries/fallbacks/replacements.15min job/600s provider phase; existing128MiB raw ceiling/effective112MiB and160MiB sealed;3day private retention. Not untouched holdout/A validation. |
+| A pilot | Separate source/close/identity/ZAD/controls/independent coverage policies, collectors, key custody, authenticated boundary, frozen cohort and bounded acquisition proposal; not licensed by this research repository setup. |
+
+**Unanswered provider questions remain open** in H-review-disposition.md/provider-questions.md (quotes `asof`, genuine-empty semantics, size/condition/firmness, corrected vintages, deprecated Massive routes and account-applicable private retention rights). Setup does not settle these or establish endpoint access, general coverage, fills or profitability. No proposed dated run is scheduled by this request.

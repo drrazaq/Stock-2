@@ -1,0 +1,29 @@
+{
+  "status": "OFFLINE_TESTED_INDEPENDENT_REVIEW_PENDING",
+  "node20": "20.20.2",
+  "node24": "24.19.0",
+  "focusedNode20": {
+    "pass": 44,
+    "fail": 0
+  },
+  "focusedNode24": {
+    "pass": 44,
+    "fail": 0
+  },
+  "concurrencyStress": {
+    "afterFixConsecutivePass": 40,
+    "failureEvidence": "evidence/contention-before.log",
+    "cause": "flock terminal conflict exited1 plus spawnSync EPIPE, misclassified UNKNOWN; dedicated refusal73 is now checked before error"
+  },
+  "pythonInventory": 7,
+  "pythonVerifier": 2,
+  "setupPins": 3,
+  "fullNode20": "IN_PROGRESS; exact hosted results recorded separately on PR1, do not infer success",
+  "secretsOrProviderRequests": false,
+  "syntheticOnly": true,
+  "remainingImplementation": [
+    "Native primary-source response/receipt join",
+    "Session-close contract and client normalizer",
+    "Private host and acknowledged upload/readback integration"
+  ]
+}

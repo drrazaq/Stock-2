@@ -1,0 +1,26 @@
+✖ simultaneous real processes cannot commit duplicate logical observations (193.902079ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 262.599411
+
+✖ failing tests:
+
+test at test/a-fenced-store.test.mjs:16:1
+✖ simultaneous real processes cannot commit duplicate logical observations (193.902079ms)
+  AssertionError [ERR_ASSERTION]: [{"code":0,"out":"LOCAL_DURABLE_COMMIT"},{"code":0,"out":"{\"code\":\"WRITE_OUTCOME_UNKNOWN\",\"cause\":{\"status\":1,\"signal\":null,\"errorCode\":\"EPIPE\",\"stdoutBytes\":0}}"}]
+      at TestContext.<anonymous> (file:///workspace/stock2-a-collector-20261105/test/a-fenced-store.test.mjs:16:934)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1389:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: false,
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }
