@@ -1,0 +1,44 @@
+{
+ "append#1_AFTER_INTENT": {
+  "first": "UNKNOWN/WRITE_OUTCOME_UNKNOWN",
+  "exactImporterRetry": "OFFLINE_RESEARCH_ONLY/",
+  "pending": 0
+ },
+ "append#2_AFTER_INTENT": {
+  "first": "UNKNOWN/WRITE_OUTCOME_UNKNOWN",
+  "exactImporterRetry": "UNKNOWN/PENDING_INTENT_REQUIRES_RECOVERY",
+  "pending": 1,
+  "storeRecover": "THROW:PENDING_ORIGINAL_UNAVAILABLE",
+  "pendingAfterRecover": 1,
+  "manualExactSingleAppend": "LOCAL_DURABLE_COMMIT",
+  "importerAfter": "OFFLINE_RESEARCH_ONLY/"
+ },
+ "append#2_AFTER_RECORD": {
+  "first": "UNKNOWN/WRITE_OUTCOME_UNKNOWN",
+  "exactImporterRetry": "UNKNOWN/PENDING_INTENT_REQUIRES_RECOVERY",
+  "pending": 1,
+  "storeRecover": "LOCAL_RECOVERY_COMPLETE",
+  "pendingAfterRecover": 0,
+  "importerAfter": "OFFLINE_RESEARCH_ONLY/"
+ },
+ "append#5_AFTER_INTENT": {
+  "first": "UNKNOWN/WRITE_OUTCOME_UNKNOWN",
+  "exactImporterRetry": "UNKNOWN/PENDING_INTENT_REQUIRES_RECOVERY",
+  "pending": 1,
+  "storeRecover": "THROW:PENDING_ORIGINAL_UNAVAILABLE",
+  "pendingAfterRecover": 1,
+  "manualExactSingleAppend": "LOCAL_DURABLE_COMMIT",
+  "importerAfter": "OFFLINE_RESEARCH_ONLY/"
+ },
+ "append#2_AFTER_COMMIT": {
+  "first": "UNKNOWN/WRITE_OUTCOME_UNKNOWN",
+  "exactImporterRetry": "OFFLINE_RESEARCH_ONLY/",
+  "pending": 0
+ },
+ "evaluate_AFTER_INTENT": {
+  "first": "UNKNOWN/WRITE_OUTCOME_UNKNOWN",
+  "exactImporterRetry": "UNKNOWN/PENDING_INTENT_REQUIRES_RECOVERY",
+  "storeRecover": "{\"status\":\"LOCAL_RECOVERY_COMPLETE\",\"recovered\":[\"c7a09346c9defecf15248ea15eec727d3a7af2b23ea6693c38dd8e476c40",
+  "importerAfter": "OFFLINE_RESEARCH_ONLY/"
+ }
+}
