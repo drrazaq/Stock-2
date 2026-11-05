@@ -1,3 +1,5 @@
+> **5 November current consolidated setup proposal:** [One private arrangement, official evidence, quota limits and separate W/C control pins](setup-decision-20261105.md). This supersedes the earlier setup wording and workflow8087ed87. Core code/source manifest and twelve-case scope remain unchanged. No setup or execution is approved.
+
 # Bounded historical audit: inactive protected invocation
 
 Prepared 4 November 2026. **NOT AUTHORIZED TO EXECUTE.** No workflow is installed by this package. No provider-data request, credential read, private mirror read, upload or collection was performed. Tests use synthetic credentials, loopback providers and mocked artifact transport. Subscription ownership is confirmed; endpoint access and historical response semantics are separate questions.

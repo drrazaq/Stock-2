@@ -4,6 +4,9 @@ name: One bounded private historical audit
 on:
   workflow_dispatch:
     inputs:
+      control_commit:
+        required: true
+        type: string
       authorization_sha256:
         required: true
         type: string
@@ -22,6 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
+      AUDIT_CONTROL_COMMIT: ${{ inputs.control_commit }}
       AUDIT_SOURCE_SHA: 3334e10efbb2e7b011ed07030e9bccace2d20373
       AUDIT_MANIFEST_SHA256: 73707d494f0c1b8938e85b2f493d8c9400af2687fadd4a37323538faa730cf76
       AUDIT_SOURCE_ROOT: ${{ github.workspace }}/source
@@ -35,7 +39,7 @@ jobs:
       - name: Read immutable private controls
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # official v4.2.2
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ inputs.control_commit }}
           persist-credentials: false
           path: control
       - name: Read immutable public source
@@ -54,7 +58,9 @@ jobs:
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import os,pathlib,json,hashlib,subprocess
+          import os,pathlib,json,hashlib,subprocess,re
+          assert re.fullmatch('[0-9a-f]{40}',os.environ['AUDIT_CONTROL_COMMIT'])
+          assert subprocess.check_output(['git','-C','control','rev-parse','HEAD'],text=True).strip()==os.environ['AUDIT_CONTROL_COMMIT']
           root=pathlib.Path(os.environ['AUDIT_SOURCE_ROOT'])
           assert subprocess.check_output(['git','-C',str(root),'rev-parse','HEAD'],text=True).strip()==os.environ['AUDIT_SOURCE_SHA']
           raw=(root/'docs/historical-audit-invocation/source-manifest.json').read_bytes()
