@@ -23,7 +23,7 @@ jobs:
     env:
       REHEARSAL_APPROVAL_FILE: ${{ github.workspace }}/control/rehearsal-approval.json
       REHEARSAL_APPROVAL_SHA256: ${{ inputs.approval_sha256 }}
-      REHEARSAL_SOURCE_SHA: NEW_H_CODE_SOURCE_PIN_PENDING
+      REHEARSAL_SOURCE_SHA: 07995aff92053f8bce4e0dd5674c46107a73d39f
       REHEARSAL_CONTROL_SHA: ${{ inputs.control_commit }}
       REHEARSAL_MANIFEST_SHA256: ac8be83db16f01fcf3e49545ab0f6260640cabe5cb999a2e2b97ca0a04a9aa62
     steps:

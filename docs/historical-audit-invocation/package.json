@@ -1,11 +1,11 @@
 {
-  "status": "INACTIVE_NOT_EXECUTION_APPROVAL_READY",
-  "sourceCommit": "3334e10efbb2e7b011ed07030e9bccace2d20373",
-  "clientCommit": "84937c966cd1bc85ab5f240f3e53a44dc4fa98ba",
+  "status": "INACTIVE_H_CORRECTIONS_REREVIEW_PENDING",
+  "sourceCommit": "07995aff92053f8bce4e0dd5674c46107a73d39f",
+  "clientCommit": "07995aff92053f8bce4e0dd5674c46107a73d39f",
   "scopeSHA256": "9751a2a0db8bf41a1788a61270be927a983da28170e51c72d68ee8f8759e2772",
-  "sourceManifestRawSHA256": "73707d494f0c1b8938e85b2f493d8c9400af2687fadd4a37323538faa730cf76",
-  "sourceManifestCanonicalSHA256": "e1f11a7f5e983a2826b57a483dd09dfd0cde2536404b2f0c25faa3ec6e781dd6",
-  "workflowProposalSHA256": "fc6edf2e43b19adbd0accc48507d4a3f18dcf5881a30ca011e60de21b1db106b",
+  "sourceManifestRawSHA256": "8b6725ddf10b9ee4616827d7cce0b6a0e7b3483943f2a6182579ac417aa3af87",
+  "sourceManifestCanonicalSHA256": "4064f97eecd8e63c41a898054690651307f488362fce1ade9a06caffc6b41e80",
+  "workflowProposalSHA256": "8f259d2b04e06d95f35c4fb56b95307cfb827939a1416cb6efa604bbdddd2bef",
   "proposedInvocation": "manual workflow_dispatch of historical-audit-once.yml at dedicated historical-audit-once-9751a2a0 ref; private reviewed workflow commit and approval/evidence byte hashes mandatory",
   "proposedPrivateRepository": "drrazaq/stock-2-research-audit",
   "repositoryExistenceOrAccessVerified": false,
@@ -17,12 +17,12 @@
     "MASSIVE_KEY",
     "RESEARCH_ARTIFACT_KEY"
   ],
-  "authorizationTemplateSHA256": "6523e7a02c42ab1a477f2d5c69c77cc2395080cded0a982004ff38404905af4a",
-  "evidenceTemplateSHA256": "31a197793b80c2e806afcf531e309b7e95574ac845842a38d5c12f4f47f4a2c1",
+  "authorizationTemplateSHA256": "132d3cd7d00f52bef4614bbcbe29e002afc5ca586f21d62ff636df25c66fb754",
+  "evidenceTemplateSHA256": "8693fc882bd2d40cf03c4f9a1ba1ca2b3c58e4c8959ddf47e5a3db13d37beb09",
   "codeFiles": {
-    "tools/historical-sip-audit-client.mjs": "55d3661914375dc340e56820f80196fbe337084f7355957a3ff09f4f487027ba",
-    "tools/historical-audit-custody.mjs": "f44f5661e8c08978476ff3e63e5f7363b1fcbe9c8967d2df3bb669e847977810",
-    "tools/historical-audit-invocation.mjs": "d1cd0ec29a9348f53ad473848ed7b1496bf8a77db302c4545b7285e2062fca90",
+    "tools/historical-sip-audit-client.mjs": "43bddb060bb5d29984f32a4b5233f04276da3b2390e2e92968e5b50521bdb282",
+    "tools/historical-audit-custody.mjs": "b8b4fc8094f90273f7c060f372bd9324f5df1d432aa04a12c85ca18de9e84990",
+    "tools/historical-audit-invocation.mjs": "e9c96ef5b859da358aaeaa4963d606402d7c8f79c64135b5d16c35e8fec7dc02",
     "tools/historical-audit-wire.mjs": "fd55cbd2d15c9a4d0ae83bf1bc8024f71aca8770739fa0bd092af683d77af2b5",
     "tools/historical-audit-action.mjs": "18a31c516f2fac9524d4297f45110bfc51d676f3198cccf5466f1e897f8c505c",
     "tools/historical-audit-preflight.mjs": "6522a1f5b9ffb8fa2b1620af4cae83490876c27d0826aabf94c5b3fb2c82db06",
@@ -31,7 +31,8 @@
     "tools/historical-audit-action/action.yml": "34d4bcfe94c64c486f72f34512acc559fe2fbdf6df1f016e5256b3f203fdafc7",
     "tools/historical-audit-action/index.mjs": "e2feefa8f3223932c834021085b14c0a8aad8dfc3d7a597278950ff496d2bf88",
     "capture-artifact.mjs": "4019010f6ad40ca8df27aa5db0c378107e9829073361e788a4e267c0d1e6f981",
-    "docs/intraday-audit-client/scope.proposed.json": "087597180556a4d978978ede6a4215e0b6f12f0456a38765aea5a71a138940da"
+    "docs/intraday-audit-client/scope.proposed.json": "087597180556a4d978978ede6a4215e0b6f12f0456a38765aea5a71a138940da",
+    "tools/build-historical-audit-receipt.mjs": "4c14680febee44afec13561b44b5df03d073304efd2a047ab79e36c5d124567d"
   },
   "testSHA256": "aba1b37a457cf641122c02eebbf59360a9c878062d0082010dd35f7e28aa70a2",
   "ordinaryPushCI": "See exact-commit terminal receipt on PR1; build-time package metadata is not a CI result",
@@ -41,5 +42,10 @@
     "workflowCommit": "W_NOT_INSTALLED",
     "privateControlCommit": "C_NOT_CREATED",
     "separateControlCheckoutInput": "control_commit"
-  }
+  },
+  "clientReviewBase": "84937c966cd1bc85ab5f240f3e53a44dc4fa98ba",
+  "rehearsalWorkflowSHA256": "cb4f3bb67b2338f71235d9ba64914897b32eab70169edf913193871972efbc46",
+  "rehearsalManifestSHA256": "ac8be83db16f01fcf3e49545ab0f6260640cabe5cb999a2e2b97ca0a04a9aa62",
+  "effectiveRawBytes": 117440512,
+  "frozenRawCeilingBytes": 134217728
 }

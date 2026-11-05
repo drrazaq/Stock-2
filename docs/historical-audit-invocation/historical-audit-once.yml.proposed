@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 15
     env:
       AUDIT_CONTROL_COMMIT: ${{ inputs.control_commit }}
-      AUDIT_SOURCE_SHA: NEW_H_CODE_SOURCE_PIN_PENDING
+      AUDIT_SOURCE_SHA: 07995aff92053f8bce4e0dd5674c46107a73d39f
       AUDIT_MANIFEST_SHA256: 8b6725ddf10b9ee4616827d7cce0b6a0e7b3483943f2a6182579ac417aa3af87
       AUDIT_SOURCE_ROOT: ${{ github.workspace }}/source
       AUDIT_AUTHORIZATION_FILE: ${{ github.workspace }}/control/authorization.json
