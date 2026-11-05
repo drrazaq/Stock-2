@@ -86,7 +86,7 @@ export function createACollector({store,token,contract,role,collectorId,signRece
   const profileBytes=Buffer.from(JSON.stringify(profile));checkedSignature(profileReceipt,'REVIEW',contract,{role:'REVIEW',contractHash:evidenceHash(contract),securityId,sha256:hash(profileBytes),recordedAt:profileReceipt?.body?.recordedAt});
   need(time(profileReceipt.body.recordedAt)<=clock()&&client&&typeof client.observe==='function','SEMANTICS_OR_CLIENT_REQUIRED');
   need(!stopped&&requests<limits.requests&&clock()>=started&&clock()-started<limits.durationMs,'COLLECTOR_BUDGET_OR_DEADLINE');requests++;
-  const abort=new AbortController();let timer,wire,code='COMPLETE',events=[];
+  const abort=new AbortController();let timer,wire,code='COMPLETE',events=[],researchContextOutsideWindow=0;
   try{
    reserveRequest(id,{contextHash,route:'wss://stream.data.alpaca.markets/v2/sip'});
    const duration=Math.min(time(slot.end)-clock()+1000,limits.durationMs-(clock()-started));need(duration>0,'COLLECTOR_BUDGET_OR_DEADLINE');
@@ -95,17 +95,17 @@ export function createACollector({store,token,contract,role,collectorId,signRece
    for(let i=0;i<wire.messages.length;i++){
     const message=wire.messages[i],raw=Buffer.from(message.base64,'base64');bytes+=raw.length;need(raw.length<=limits.bodyBytes&&bytes<=limits.totalBytes,'RESPONSE_BYTE_CAP');
     persist('TRANSPORT',id+':WIRE:'+i,{provider:'ALPACA_SIP',route:'wss://stream.data.alpaca.markets/v2/sip',receivedAt:message.receivedAt,collectorId},raw);
-    const quotes=JSON.parse(raw.toString()).filter(q=>q.T==='q'&&q.S===symbol);
+    const quotes=JSON.parse(raw.toString()).filter(q=>q.T==='q'&&q.S===symbol).filter(q=>{const at=nativeNs(q.t);need(at<=BigInt(time(message.receivedAt))*1000000n,'QUOTE_OUTSIDE_WINDOW_OR_FUTURE');if(at<BigInt(time(slot.start))*1000000n){researchContextOutsideWindow++;return false;}return true;});
     if(quotes.length)events.push(...normalizeAlpacaAQuotes({quotes,next_page_token:null},{symbol,securityId,slot,receivedAt:message.receivedAt,profile}));
    }
    need(wire.status==='COMPLETE'&&wire.coveredFrom===slot.start&&wire.coveredUntil===slot.end,'SOURCE_WINDOW_INCOMPLETE');
    need(clock()>=time(slot.end)&&clock()-started<=limits.durationMs,'COLLECTOR_CLOCK_OR_DEADLINE');
   }catch(e){code=/^[A-Z_]+$/.test(e.message)?e.message:'SOURCE_SCHEMA_OR_IO_ERROR';stopped=true;}finally{clearTimeout(timer);abort.abort();}
   // Deduplicate only exact native events; competing revisions/ties remain visible to the strict verifier.
-  events=[...new Map(events.map(e=>[e.record.evidenceId,e])).values()];
+  const first=new Map();for(const event of events)if(!first.has(event.record.evidenceId))first.set(event.record.evidenceId,event);events=[...first.values()];
   for(const event of events)persist('ORIGINAL',collectorId+':'+event.record.evidenceId,event.record);
   const raw=Buffer.from(JSON.stringify({schema:'A_INDEPENDENT_FRAME_V1',planHash,slotId:slot.id,securityId,events})),original=persist('ORIGINAL',id+':FRAME',null,raw).reference;
-  const receivedAt=iso(clock()),complete=code==='COMPLETE',result={contextHash,slotId:slot.id,start:slot.start,end:slot.end,status:complete?'COMPLETE':'INCOMPLETE',reason:code,transportComplete:complete,nextPage:complete?null:'UNKNOWN',receivedAt,recordCount:events.length,original,originalReceipt:signed(original,securityId,receivedAt)};
+  const receivedAt=iso(clock()),complete=code==='COMPLETE',result={contextHash,researchContextOutsideWindow,slotId:slot.id,start:slot.start,end:slot.end,status:complete?'COMPLETE':'INCOMPLETE',reason:code,transportComplete:complete,nextPage:complete?null:'UNKNOWN',receivedAt,recordCount:events.length,original,originalReceipt:signed(original,securityId,receivedAt)};
   persist('ACQUISITION',id,result);return result;
  }
  function retainPrimaryOriginal({logicalId,securityId,sourceUrl,bytes:body,observedAt}){

@@ -2,234 +2,244 @@ TAP version 13
 # Subtest: actual SIP protocol → original-byte artifact → independent frame through fenced writer; full real 30-second window
 ok 1 - actual SIP protocol → original-byte artifact → independent frame through fenced writer; full real 30-second window
   ---
-  duration_ms: 729.051825
+  duration_ms: 681.947562
   ...
 # Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: late
 ok 2 - actual SIP failure preserves prefix and incomplete/empty distinction: late
   ---
-  duration_ms: 535.917408
+  duration_ms: 478.390514
   ...
 # Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: close
 ok 3 - actual SIP failure preserves prefix and incomplete/empty distinction: close
   ---
-  duration_ms: 474.938736
+  duration_ms: 473.118552
   ...
 # Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: error
 ok 4 - actual SIP failure preserves prefix and incomplete/empty distinction: error
   ---
-  duration_ms: 521.482594
+  duration_ms: 533.321658
   ...
 # Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: malformed
 ok 5 - actual SIP failure preserves prefix and incomplete/empty distinction: malformed
   ---
-  duration_ms: 493.785434
+  duration_ms: 588.021243
   ...
 # Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: wrong-symbol
 ok 6 - actual SIP failure preserves prefix and incomplete/empty distinction: wrong-symbol
   ---
-  duration_ms: 542.283888
+  duration_ms: 582.805944
   ...
 # Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: refused
 ok 7 - actual SIP failure preserves prefix and incomplete/empty distinction: refused
   ---
-  duration_ms: 523.509186
+  duration_ms: 564.465293
   ...
 # Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: empty
 ok 8 - actual SIP failure preserves prefix and incomplete/empty distinction: empty
   ---
-  duration_ms: 482.797452
+  duration_ms: 483.953323
   ...
 # Subtest: native nanoseconds just outside end cannot be rounded into an eligible window
 ok 9 - native nanoseconds just outside end cannot be rounded into an eligible window
   ---
-  duration_ms: 0.505202
+  duration_ms: 0.509058
   ...
 # Subtest: bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":null,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["R"]}
 ok 10 - bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":null,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["R"]}
   ---
-  duration_ms: 0.162943
+  duration_ms: 0.327911
   ...
 # Subtest: bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":0,"bx":"V","ax":"V","z":"C","c":["R"]}
 ok 11 - bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":0,"bx":"V","ax":"V","z":"C","c":["R"]}
   ---
-  duration_ms: 0.141379
+  duration_ms: 0.111597
   ...
 # Subtest: bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["UNVERIFIED"]}
 ok 12 - bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["UNVERIFIED"]}
   ---
-  duration_ms: 0.093901
+  duration_ms: 0.093953
   ...
 # Subtest: HTTP historical response retained but late receipt cannot become contemporaneous outcome evidence
 ok 13 - HTTP historical response retained but late receipt cannot become contemporaneous outcome evidence
   ---
-  duration_ms: 379.195558
+  duration_ms: 376.384606
   ...
 # Subtest: malformed/missing/page-limited HTTP bodies fail closed
 ok 14 - malformed/missing/page-limited HTTP bodies fail closed
   ---
-  duration_ms: 336.988447
+  duration_ms: 402.775205
   ...
 # Subtest: malformed/missing/page-limited HTTP bodies fail closed
 ok 15 - malformed/missing/page-limited HTTP bodies fail closed
   ---
-  duration_ms: 342.404895
+  duration_ms: 353.928103
   ...
 # Subtest: malformed/missing/page-limited HTTP bodies fail closed
 ok 16 - malformed/missing/page-limited HTTP bodies fail closed
   ---
-  duration_ms: 337.447337
+  duration_ms: 334.116523
   ...
 # Subtest: hung transport deadline aborts without retry and retains auditable incomplete frame
 ok 17 - hung transport deadline aborts without retry and retains auditable incomplete frame
   ---
-  duration_ms: 320.146035
+  duration_ms: 315.905853
   ...
 # Subtest: oversized streamed response stops at cap with no retry
 ok 18 - oversized streamed response stops at cap with no retry
   ---
-  duration_ms: 324.922104
+  duration_ms: 335.83879
   ...
 # Subtest: supplied signer cannot use wrong role; absent client and unverified semantics refuse before transport
 ok 19 - supplied signer cannot use wrong role; absent client and unverified semantics refuse before transport
   ---
-  duration_ms: 138.191934
+  duration_ms: 130.818552
   ...
 # Subtest: primary original → signed receipt → fenced strict evaluator succeeds, with no invented provenance/BUY
 ok 20 - primary original → signed receipt → fenced strict evaluator succeeds, with no invented provenance/BUY
   ---
-  duration_ms: 372.64929
+  duration_ms: 370.468909
   ...
 # Subtest: restart reuses exact original ingestion; a source revision is retained and conflict survives a revert
 ok 21 - restart reuses exact original ingestion; a source revision is retained and conflict survives a revert
   ---
-  duration_ms: 532.947783
+  duration_ms: 539.035739
   ...
 # Subtest: request reserved before interruption cannot be retried by a new collector
 ok 22 - request reserved before interruption cannot be retried by a new collector
   ---
-  duration_ms: 301.886747
+  duration_ms: 327.984501
   ...
 # Subtest: actual client interruption and startup refusal clean timers and never leak outgoing authentication into incoming artifacts
 ok 23 - actual client interruption and startup refusal clean timers and never leak outgoing authentication into incoming artifacts
   ---
-  duration_ms: 1.05458
+  duration_ms: 0.561077
   ...
 # Subtest: backward original receipt clocks, excess early waiting and missing bindings refuse
 ok 24 - backward original receipt clocks, excess early waiting and missing bindings refuse
   ---
-  duration_ms: 0.672484
+  duration_ms: 0.401487
   ...
 # Subtest: body-cap refusal retains labelled original prefix without truncating previous evidence
 ok 25 - body-cap refusal retains labelled original prefix without truncating previous evidence
   ---
-  duration_ms: 383.697144
+  duration_ms: 383.687618
   ...
 # Subtest: strict evaluation recovery revalidates originals at AFTER_INTENT
 ok 26 - strict evaluation recovery revalidates originals at AFTER_INTENT
   ---
-  duration_ms: 454.335656
+  duration_ms: 440.343234
   ...
 # Subtest: strict evaluation recovery revalidates originals at AFTER_RECORD
 ok 27 - strict evaluation recovery revalidates originals at AFTER_RECORD
   ---
-  duration_ms: 448.594609
+  duration_ms: 471.256047
   ...
 # Subtest: strict evaluation recovery revalidates originals at AFTER_COMMIT
 ok 28 - strict evaluation recovery revalidates originals at AFTER_COMMIT
   ---
-  duration_ms: 413.393975
+  duration_ms: 477.90956
   ...
 # Subtest: changed evidence prevents pending evaluation recovery; no old result silently blessed
 ok 29 - changed evidence prevents pending evaluation recovery; no old result silently blessed
   ---
-  duration_ms: 358.96843
+  duration_ms: 358.934157
   ...
 # Subtest: real protocol rejects impossible handshake without extra requests: auth-before-connected
 ok 30 - real protocol rejects impossible handshake without extra requests: auth-before-connected
   ---
-  duration_ms: 0.250265
+  duration_ms: 0.292336
   ...
 # Subtest: real protocol rejects impossible handshake without extra requests: duplicate-connected
 ok 31 - real protocol rejects impossible handshake without extra requests: duplicate-connected
   ---
-  duration_ms: 0.095826
+  duration_ms: 0.118141
   ...
 # Subtest: real protocol rejects impossible handshake without extra requests: subscription-before-auth
 ok 32 - real protocol rejects impossible handshake without extra requests: subscription-before-auth
   ---
-  duration_ms: 0.07593
+  duration_ms: 0.084252
   ...
 # Subtest: actual wall-clock primary receipt is captured before blocking store work, with no caller backdating
 ok 33 - actual wall-clock primary receipt is captured before blocking store work, with no caller backdating
   ---
-  duration_ms: 255.903358
+  duration_ms: 262.979251
+  ...
+# Subtest: early subscription retains pre-window quotes as research context without invalidating full frozen-window capture
+ok 34 - early subscription retains pre-window quotes as research context without invalidating full frozen-window capture
+  ---
+  duration_ms: 560.09658
+  ...
+# Subtest: repeated identical SIP observation preserves its first receipt while both wire originals remain retained
+ok 35 - repeated identical SIP observation preserves its first receipt while both wire originals remain retained
+  ---
+  duration_ms: 579.004033
   ...
 # Subtest: kernel-serialized append is durable/idempotent, conflicting original never replaces first evidence
-ok 34 - kernel-serialized append is durable/idempotent, conflicting original never replaces first evidence
+ok 36 - kernel-serialized append is durable/idempotent, conflicting original never replaces first evidence
   ---
-  duration_ms: 307.744426
+  duration_ms: 297.645845
   ...
 # Subtest: generation CAS fences old writer before any append/commit/retry/publication
-ok 35 - generation CAS fences old writer before any append/commit/retry/publication
+ok 37 - generation CAS fences old writer before any append/commit/retry/publication
   ---
-  duration_ms: 330.75518
+  duration_ms: 314.618138
   ...
 # Subtest: actual child interruption AFTER_INTENT preserves evidence and losing result exactly once
-ok 36 - actual child interruption AFTER_INTENT preserves evidence and losing result exactly once
+ok 38 - actual child interruption AFTER_INTENT preserves evidence and losing result exactly once
   ---
-  duration_ms: 261.352391
+  duration_ms: 289.586689
   ...
 # Subtest: actual child interruption AFTER_RECORD preserves evidence and losing result exactly once
-ok 37 - actual child interruption AFTER_RECORD preserves evidence and losing result exactly once
+ok 39 - actual child interruption AFTER_RECORD preserves evidence and losing result exactly once
   ---
-  duration_ms: 329.527517
+  duration_ms: 260.198754
   ...
 # Subtest: actual child interruption AFTER_COMMIT preserves evidence and losing result exactly once
-ok 38 - actual child interruption AFTER_COMMIT preserves evidence and losing result exactly once
+ok 40 - actual child interruption AFTER_COMMIT preserves evidence and losing result exactly once
   ---
-  duration_ms: 262.076037
+  duration_ms: 266.252127
   ...
 # Subtest: missing original after intent is unresolved; only exact retained body retry can finish
-ok 39 - missing original after intent is unresolved; only exact retained body retry can finish
+ok 41 - missing original after intent is unresolved; only exact retained body retry can finish
   ---
-  duration_ms: 308.608588
+  duration_ms: 323.118065
   ...
 # Subtest: held kernel lock refuses competing process; no stale-lock deletion or truncation
-ok 40 - held kernel lock refuses competing process; no stale-lock deletion or truncation
+ok 42 - held kernel lock refuses competing process; no stale-lock deletion or truncation
   ---
-  duration_ms: 218.484418
+  duration_ms: 237.787773
   ...
 # Subtest: symlinked store/lock/original refuses without touching target
-ok 41 - symlinked store/lock/original refuses without touching target
+ok 43 - symlinked store/lock/original refuses without touching target
   ---
-  duration_ms: 106.188239
+  duration_ms: 105.88126
   ...
 # Subtest: generic outcome append refused; actual strict evaluator is mandatory and retains unresolved cases
-ok 42 - generic outcome append refused; actual strict evaluator is mandatory and retains unresolved cases
+ok 44 - generic outcome append refused; actual strict evaluator is mandatory and retains unresolved cases
   ---
-  duration_ms: 1375.343742
+  duration_ms: 1509.892288
   ...
 # Subtest: corrupt pending evidence refuses recovery without replacing bytes
-ok 43 - corrupt pending evidence refuses recovery without replacing bytes
+ok 45 - corrupt pending evidence refuses recovery without replacing bytes
   ---
-  duration_ms: 193.943545
+  duration_ms: 158.498662
   ...
 # Subtest: fenced writer checks run after successful commit too: stale token cannot obtain idempotent success
-ok 44 - fenced writer checks run after successful commit too: stale token cannot obtain idempotent success
+ok 46 - fenced writer checks run after successful commit too: stale token cannot obtain idempotent success
   ---
-  duration_ms: 300.40844
+  duration_ms: 281.320235
   ...
 # Subtest: simultaneous real processes cannot commit duplicate logical observations
-ok 45 - simultaneous real processes cannot commit duplicate logical observations
+ok 47 - simultaneous real processes cannot commit duplicate logical observations
   ---
-  duration_ms: 245.659207
+  duration_ms: 237.821941
   ...
-1..45
-# tests 45
+1..47
+# tests 47
 # suites 0
-# pass 45
+# pass 47
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 10102.315328
+# duration_ms 11511.36451
