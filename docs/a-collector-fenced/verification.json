@@ -18,12 +18,23 @@
   "pythonInventory": 7,
   "pythonVerifier": 2,
   "setupPins": 3,
-  "fullNode20": "IN_PROGRESS; exact hosted results recorded separately on PR1, do not infer success",
+  "fullNode20": {
+    "registeredFiles": 285,
+    "passed": 284,
+    "failed": [
+      "tests/market03-ingress-matrix.test.mjs"
+    ],
+    "disposition": "new adapter/source registration omission repaired without waiving assertions; corrected drift guard4/4; latest focused44/44; exact hosted run recorded separately on PR1"
+  },
   "secretsOrProviderRequests": false,
   "syntheticOnly": true,
   "remainingImplementation": [
     "Native primary-source response/receipt join",
     "Session-close contract and client normalizer",
     "Private host and acknowledged upload/readback integration"
-  ]
+  ],
+  "ingressRegistrationTests": {
+    "pass": 4,
+    "fail": 0
+  }
 }

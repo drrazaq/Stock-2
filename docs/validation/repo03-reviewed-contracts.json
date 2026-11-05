@@ -1059,5 +1059,21 @@
       "test/a-authenticated-collector.test.mjs",
       "test/a-fenced-store.test.mjs"
     ]
+  },
+  "tools/market03-ingress-matrix.mjs": {
+    "sha256": "eade93177ba268e7668599ef1e51de9ba8d636d884be1a836a37efa8b18fc139",
+    "reviewer": "Codex A provider-registration extension; original Claude matrix retained",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Tracked repository source and explicit provider/role contracts.",
+    "outputs": "Offline deterministic provider-host matrix and summary.",
+    "sideEffects": "Only --write updates the committed validation matrix; no providers.",
+    "failure": "Drift/unclassified guards remain strict; explicit A role remains inactive and partial.",
+    "timing": "Synchronous bounded repository scan, not a market clock or access test.",
+    "researchBoundary": "No strategy/feed/caller activation or source authenticity claim.",
+    "remainingVerification": "Independent focused review of new A registrations; whole-provider audit remains open.",
+    "evidence": [
+      "tests/market03-ingress-matrix.test.mjs",
+      "docs/a-collector-fenced/README.md"
+    ]
   }
 }

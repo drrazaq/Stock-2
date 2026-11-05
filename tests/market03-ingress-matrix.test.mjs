@@ -14,3 +14,7 @@ test('the committed matrix matches the current sources', () => {
 test('every reviewed contract names its package and uses the Y/P/N/NA scale', () => {
  for(const [k,c] of Object.entries(CONTRACTS)){assert.ok(c.by,k);for(const d of ['identity','units','clock','session','adjustment','revision','status'])assert.ok(['Y','P','N','NA'].includes(c[d]),k+' '+d);}
 });
+test('inactive A adapters are explicit partial contracts, never frozen-input or deployed capability claims',()=>{
+ for(const file of ['a-authenticated-collector.mjs','a-sip-window-client.mjs']){const rows=buildMatrix(root).pairs.filter(p=>p.file===file&&p.kind==='PROVIDER');assert.equal(rows.length,1);assert.equal(rows[0].role,'INACTIVE_RESEARCH_ADAPTER');assert.equal(rows[0].contract.identity,'P');assert.equal(rows[0].contract.units,'P');}
+ assert.equal(buildMatrix(root).pairs.find(p=>p.file==='a-sip-window-client.mjs'&&p.host==='docs.alpaca.markets').kind,'REFERENCE_ONLY');
+});

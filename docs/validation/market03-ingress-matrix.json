@@ -1,8 +1,8 @@
 {
  "summary": {
-  "files": 322,
-  "pairs": 447,
-  "providerPairs": 307,
+  "files": 325,
+  "pairs": 450,
+  "providerPairs": 309,
   "decisionPathPairs": 97,
   "reviewedDecisionPairs": 31,
   "fullyCoveredDecisionPairs": 3,
@@ -77,6 +77,48 @@
   ]
  },
  "pairs": [
+  {
+   "file": "a-authenticated-collector.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "NA",
+    "revision": "Y",
+    "status": "Y",
+    "by": "Codex inactive A collector/fence",
+    "note": "offline actual-caller guards; supplied identity/semantics/trust only, no live binding or source truth; late historical HTTP stays unresolved"
+   }
+  },
+  {
+   "file": "a-sip-window-client.mjs",
+   "host": "docs.alpaca.markets",
+   "kind": "REFERENCE_ONLY"
+  },
+  {
+   "file": "a-sip-window-client.mjs",
+   "host": null,
+   "kind": "PROVIDER",
+   "provider": "ALPACA_SIP_STREAM",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "NA",
+    "revision": "P",
+    "status": "Y",
+    "by": "Codex inactive A collector/fence",
+    "note": "explicit injected wss://stream.data.alpaca.markets/v2/sip client; local handshake/receipt/window continuity only; no real feed access or provider-wide completeness proof"
+   },
+   "via": "shared cache or injected transport"
+  },
   {
    "file": "account-replay-lab.mjs",
    "host": "api.massive.com",
