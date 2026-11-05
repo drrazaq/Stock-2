@@ -33581,6 +33581,54 @@
    ],
    "rule": "SEC Form 3/4/5 data sets from 2018 Q1. Owner classified for trade-year Y if P or S trades in each of Y-1..Y-3; routine if one calendar month has a trade in all three; opportunistic = classified, not routine. Cluster: 2+ different opportunistic officers/directors/other with Form 4 open-market purchases filed in 5 sessions; buy the next open after the filing date, liquid, hold 60, no stop, one open trade per stock. Gates + S&P 500 gate.",
    "preRegistered": "2026-11-06"
+  },
+  {
+   "agent": "C",
+   "registered": "2026-11-06",
+   "id": "C-13FCON1",
+   "family": "Crowd",
+   "name": "Consensus hedge-fund conviction picks (13F)",
+   "status": "queued (Agent C), low",
+   "source": "Iqbal, Jivraj and Angelini 2019, Systematic 13F Hedge Fund Alpha (SSRN); summary https://www.cxoadvisory.com/investing-expertise/exploiting-consensus-hedge-fund-conviction-stock-picks/ (2004-2019: 14.1% vs 10.3% a year gross, 6-factor alpha 0.32%/month; short-term funds no alpha)",
+   "explain": "Rule (written before any test): each quarter, 47 days after quarter end, take funds whose 13F lists 5+ stocks and whose holdings turnover is low (long-term: under 25% of positions new vs the prior 13F); a stock qualifies when it is 7.5%+ of such a fund; rank qualifying stocks by the number of such funds holding them; buy the top 50 equal weight, hold to the next formation; vs SPY and the average stock, both halves.",
+   "data": "needs data: SEC Form 13F structured data sets (official, free, quarterly since 2013) - no loader in the system yet (same loader would unlock C-13F1)",
+   "queue": "with C-13F1, after C-IC1 / C-SI1"
+  },
+  {
+   "agent": "C",
+   "registered": "2026-11-06",
+   "id": "C-10B5T",
+   "family": "Insiders",
+   "name": "Rule 10b5-1 plan terminations (buy)",
+   "status": "queued (Agent C), needs data, low",
+   "source": "Kim, Kim and Rajgopal 2025, Insider Trading After the 2022 Rule 10b5-1 Amendment, https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5362431 (summary https://clsbluesky.law.columbia.edu/2025/07/31/insider-trading-after-the-2022-rule-10b5-1-amendment/): plan terminations are followed by positive abnormal returns; plan sales no longer predict falls",
+   "explain": "Rule (written before any test): a 10-Q or 10-K whose Item 408(a) section says an officer or director TERMINATED a Rule 10b5-1 trading arrangement (EDGAR full-text search, filing acceptance time); buy the next open, liquid, hold 60 sessions; one open trade per stock; vs the average stock and the same stock on other days.",
+   "data": "needs data: Item 408 disclosures exist only from 2023 Q2 (older half too short for the both-halves standard until about 2027); route = EDGAR full-text search (official)",
+   "queue": "after 2027 data, or as forward paper"
+  },
+  {
+   "agent": "C",
+   "registered": "2026-11-06",
+   "id": "C-SOCMKT1",
+   "family": "Crowd",
+   "name": "Market-wide social-media bullishness (contrarian timing)",
+   "status": "queued (Agent A), needs data",
+   "source": "Cookson, Lu, Mullins and Niessner, Market Signals from Social Media (AEA 2026 program, https://www.aeaweb.org/conference/2026/program/paper/9K6d53DN): market-wide StockTwits sentiment and attention both predict negative 20-day returns; out-of-sample next-day strategy alpha about 4.6%/yr 2013-2021. Also GIFfluence, https://arxiv.org/pdf/2512.20027 (1 SD more GIF bullishness -> about -1.3% S&P 500 next month, 2020-2024).",
+   "explain": "Rule (written before any test): when the 20-day average of market-wide StockTwits bullish share is in its top 10% of the prior 2 years, hold cash instead of new LEADER DIP / core buys for 20 sessions; judged as a timing overlay vs always invested.",
+   "data": "needs data: no free official StockTwits history; would need the owner to approve a data source. Timing rule = Agent A lane",
+   "queue": "not buildable now"
+  },
+  {
+   "agent": "C",
+   "registered": "2026-11-06",
+   "id": "C-ANRPT1",
+   "family": "Crowd",
+   "name": "Sell-side report text read by a language model",
+   "status": "needs data",
+   "source": "Do Sell-side Analyst Reports Have Investment Value? https://arxiv.org/abs/2502.20489 (2005-2023 out-of-sample: long-short 1.04%/month, alpha 0.68%, t 2.64; strongest in large mature firms)",
+   "explain": "Rule: model-predicted 12-month return from each analyst report, averaged over 12 months; buy the top decile, value weight, monthly.",
+   "data": "needs data: full analyst report text (Thomson Investext, paid); not available free. Registered so it is not re-scouted",
+   "queue": "not buildable"
   }
  ]
 }
