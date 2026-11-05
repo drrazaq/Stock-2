@@ -1,9 +1,42 @@
 {
- "generatedAt": "2026-11-05T00:18:18.414Z",
- "newYorkDate": "2026-11-04",
+ "generatedAt": "2026-11-05T21:24:48.651Z",
+ "newYorkDate": "2026-11-05",
  "marketOpen": false,
  "note": "PAPER ONLY, LONG CALLS ONLY. SQ15-PB12-300 v1 and SQ15-PB12-2000 v1: nothing here is a buy. Halal = the owner's ZAD mark at signal time.",
- "newSignals": [],
+ "newSignals": [
+  {
+   "rule": "SQ15-PB12-300",
+   "sym": "MPC",
+   "d": "2026-11-04",
+   "from": "SQ11-PB12",
+   "zad": "fail",
+   "skip": "EXCLUDED: not ZAD-halal-ok (fail)"
+  },
+  {
+   "rule": "SQ15-PB12-300",
+   "sym": "PSX",
+   "d": "2026-11-04",
+   "from": "SQ11-PB12",
+   "zad": "unknown",
+   "skip": "EXCLUDED: not ZAD-halal-ok (unknown)"
+  },
+  {
+   "rule": "SQ15-PB12-2000",
+   "sym": "MPC",
+   "d": "2026-11-04",
+   "from": "SQ11-PB12",
+   "zad": "fail",
+   "skip": "EXCLUDED: not ZAD-halal-ok (fail)"
+  },
+  {
+   "rule": "SQ15-PB12-2000",
+   "sym": "PSX",
+   "d": "2026-11-04",
+   "from": "SQ11-PB12",
+   "zad": "unknown",
+   "skip": "EXCLUDED: not ZAD-halal-ok (unknown)"
+  }
+ ],
  "newEntries": [],
  "newResults": []
 }
