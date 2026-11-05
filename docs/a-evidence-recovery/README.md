@@ -1,0 +1,46 @@
+# A: retained-original evidence and secondary recovery — 5 November 2026
+
+**Inactive / unadopted / independent review requested. No real A evidence or admissions.**
+This checkpoint preserves development b46f77f4, A7d3d6ba9 and the clock fixture repair038667ee. It does not change the A strategy, old evaluator/store, frozen outputs, B/C, the12-case IG1 scope or production. A is a proposed contract-catalyst/opening-range reclaim hypothesis, NOT PROVEN. Existing thresholds, whole-share sizing, $3 per side, ask/bid spread counted once and proposed0.25% slippage per side remain unchanged. A1/A2/A6's independent PASS at Claude4923b443 is retained; new work is not covered by that review.
+
+## Actual offline path and precise limits
+
+```
+private retained originals + signed owner/capture/review receipts
+    -> a-evidence-contract.mjs (hash actual bytes, verify supplied trust roots/clocks)
+    -> unchanged runResearchDataset (first issuer/session selection; no exit selection)
+    -> complete bound outcome tape -> deterministic existing rule clock/BBO sampling
+    -> unchanged measurePaperExit -> exclusive0600 private evidence-report.json
+```
+
+`tools/a-evidence-runner.mjs PRIVATE_0700_DIRECTORY` is the actual CLI. It reads local `request.json`, whose dataset/contract references each name a file and its SHA256. It never accesses a provider, credential, Telegram or production caller. Console is status-only; a second invocation cannot overwrite the report. All raw observations remain visible in `structuralNotAuthenticated`, including missing/rejected evidence. A verified receipt is **VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT**, not independently established truth. `allowBuy=false`, `realDollars=0`, `prospectiveAdmissions=0` always.
+
+Retained originals are flat private0600 files in a real0700 directory, at most16MiB total. Reads are anchored to a directory descriptor, refuse symlinks, hash actual bytes and revalidate every read dependency at completion. This implementation uses Linux `/proc/self/fd`, matching the proposed Ubuntu host; it is not a portable Windows runner. Receipts use Ed25519 over the canonical SHA256 of their body. The body binds role, contract hash, security, raw hash and original recording clock. Public keys and role assignments must come from a separately approved trust policy. Arbitrary supplied keys cannot authenticate the owner's decisions or a provider. The shipped proposed contract has **no trust roots**, so it cannot verify a real case. Only tests create synthetic keys.
+
+## Finding disposition
+
+| Finding | Implemented offline | Still not established / exact dependency |
+|---|---|---|
+| A3 | Explicit owner decision, issuer/security, evidence ID, decided/recorded clocks and validity interval. Latest decision known by entry wins; NO/UNKNOWN or expiry does not revive older YES. Equal-clock conflicts block. Future receipt cannot backdate knowledge. Input mark must match attestation. No guessed universal age limit. | Owner agreement to this validity policy and trusted owner-attestation source. Current persisted marks lack these intervals/receipts. Do not invent or request bulk reconfirmations. This proposal does not revoke/bless existing marks or alter production ZAD policy. |
+| A4 | Captured original document bytes must match receipt and input digest/URL/first observation. A separate trusted semantic-review receipt binds the exact claimed fixed committed value, market cap basis and publication/observation fields to that original. Contemporaneous signed decision snapshot binds all entry inputs and the strategy-policy hash at the decision clock; later rule substitution fails. Fake URLs/hashes alone cannot pass. | Genuine primary originals; approved acquisition signer and secure clock/identity provenance; independent semantic review of actual materiality/obligations and prior cap/identity source. The module does not automatically interpret filings. A signed false assertion remains false: format, signature and bytes cannot prove source truth. Live acquisition adapter and trust/key custody are not installed or approved. |
+| A5 | A signed complete tape binds original input/policy/security and entire holding window. Each original close/BBO must match retained bytes and an ordered hash chain. Missing/duplicate closes, revision conflicts, tampering and hindsight-supplied exits fail. First post-open or last pre-close BBO is chosen by clock, never P&L; invalid/undersized selected quote stays unresolved rather than skipping to a favourable quote. Existing invalidation exits at next session open; gaps use observed bid, never stop price. | Real authenticated acquisition/coverage seal and quote units/conditions/rights. A collector's assertion of completeness is not an independent population/coverage audit. Quote-sampling convention is an explicit **unadopted evidence contract**, not a silent change to frozen results. Complete controls, representative enrollment, missing-outcome accounting and prospective authorization remain required. |
+| A7 | `tools/a-recovery-copy.mjs SOURCE NEW_PRIVATE_DEST POLICY_JSON` makes a labelled secondary reconstruction, preserving original store and lock byte-for-byte. Full originals copied; only a validated complete JSONL prefix is used in the secondary view, with excluded tail count recorded. Unique pending intent can reconstruct a torn card; exact transaction replay is idempotent. Committed damage, missing logs or mid-chain corruption refuses. Receipt only after pending0 and stable source recheck. | Original lock liveness remains UNKNOWN. This is **not primary resumption authority**, transaction reconciliation or authenticity proof. A controlled original-writer boundary plus reviewed operator approval would be required before replacing any primary source. No such replacement is implemented or proposed here. |
+
+The new evidence path never retrospectively replaces the first structural issuer/session candidate with a later better-authenticated winner. Its unresolved first entry remains unresolved. The legacy runner/store remain available as explicitly unauthenticated research paths; the new path is not silently enabled on their cohorts. Real adoption needs a new evidence/cohort version agreed before collection, with live signer contracts, not relabelling old rows.
+
+## Recovery integrity and failure handling
+
+Original locks are opaque; age or a missing guessed PID is never permission to delete them. Every attempt uses a fresh exclusive directory. `original/` retains source bytes including lock and damaged tail. `secondary/` contains only a reconstructed view. `RECOVERY_STARTED.json` records original hashes and non-authority; only `RECOVERY_COMPLETE.json` certifies structural secondary completion. A failed/interrupted attempt remains incomplete and is never automatically cleaned up or reused. Retry uses a different destination. Original complete outcomes cannot be replaced; real SIGKILL tests preserve losing outcomes exactly once. A copy cannot recover bytes never persisted, repair mid-chain corruption, authenticate past observations or establish a primary writer's quiescence.
+
+## Reproduced execution
+
+Codex executed, with synthetic inputs only:
+
+- New contract/actual CLI33 tests and recovery17 tests:50/50 on Node20.20.2 and Node24.19.0.
+- All A-focused tests, including the previously reviewed13 regressions, existing workflow/prototype/store and inspector:158/158 on Node20.20.2.
+- Real child SIGKILL at AFTER_INTENT/CARD/LOG/COMMIT for observations and losing outcomes; concurrent recovery processes, torn tail/card, mid-chain corruption, source mutation, missing log, symlink refusal and interrupted recovery.
+- Source/manifest hashes and full-suite/hosted CI results are separate evidence in `verification.json` and PR1's exact-commit receipt. Never infer hosted success from this build-time text.
+
+## Review request / finite next step
+
+Claude: review A3's proposed semantics, actual source/snapshot trust boundaries, deterministic tape selection/revision failures, private CLI output and secondary recovery. Preserve prior A1/A2/A6 passes unless a new regression is found. Do not interpret synthetic signatures as an authenticated collection system. Before any A capture proposal, supply the concrete approved collector/attestation/trust-key contracts, symmetric controls/population and bounded acquisition scope. No live BUY wiring or automatic promotion is included. This work advances CATALYST-03/EXEC-03/HISTORY-02/04 engineering; it closes none of their full evidence requirements.
