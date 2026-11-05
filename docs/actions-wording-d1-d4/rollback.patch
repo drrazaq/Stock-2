@@ -1,8 +1,8 @@
 diff --git a/scan.mjs b/scan.mjs
-index 70857eb..5197cfb 100644
+index 4e14aed..5197cfb 100644
 --- a/scan.mjs
 +++ b/scan.mjs
-@@ -2504,31 +2504,12 @@ function ldipRecordLine() { const a = ldipResults(); if (!a.length) return 'LEAD
+@@ -2504,34 +2504,12 @@ function ldipRecordLine() { const a = ldipResults(); if (!a.length) return 'LEAD
  // the time-exit day: the close of session 126 counting the buy day
  const ldipExitDay = (buyDay, hold = LDIP_HOLD) => sessionPlus(buyDay, hold - 1);
  // a new-signal list is valid for the next open only (same rule as TRY SMALL): its close must be the newest session the scan knows
@@ -12,12 +12,15 @@ index 70857eb..5197cfb 100644
 -  const invalid = (reason) => ({ state: 'UNKNOWN', reason, entryDay: null, expiresAt: null });
 -  const valid = (x) => typeof x === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(x) && Number.isFinite(Date.parse(x + 'T12:00:00Z')) && new Date(x + 'T12:00:00Z').toISOString().slice(0, 10) === x && isSession(x);
 -  if (!Number.isFinite(nowMs) || !valid(d)) return invalid('SOURCE_SESSION_UNKNOWN');
--  const generated = typeof gen === 'string' ? Date.parse(gen) : NaN;
+-  // R2 (Codex review of c670d626): the generation clock must carry an explicit zone (Z or +hh:mm) and must not predate the claimed close
+-  const generated = typeof gen === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})$/.test(gen) ? Date.parse(gen) : NaN;
 -  if (!Number.isFinite(generated) || generated > nowMs) return invalid('SOURCE_CLOCK_UNKNOWN_OR_FUTURE');
+-  if (!barClosed(d, generated)) return invalid('SOURCE_GENERATED_BEFORE_CLAIMED_CLOSE');
 -  if (session && (!valid(session) || d < session)) return invalid('SOURCE_BEHIND_SCANNER');
 -  if (!barClosed(d, nowMs)) return invalid('SOURCE_SESSION_NOT_CLOSED');
 -  const entryDay = sessionPlus(d, 1), noon = Date.parse(entryDay + 'T12:00:00Z');
 -  const expiresMs = noon + (570 - ny(noon).mins) * 60000; // actual New York next open, including DST
+-  if (generated > expiresMs) return invalid('SOURCE_GENERATED_AFTER_ITS_ENTRY_WINDOW');   // a list built after the next open still claiming the older close
 -  return { state: nowMs <= expiresMs ? 'IN_WINDOW' : 'EXPIRED', reason: nowMs <= expiresMs ? null : 'NEXT_OPEN_ENTRY_EXPIRED', entryDay, expiresAt: new Date(expiresMs).toISOString() };
 -}
 -function ldipFresh(d, gen, session) { return ldipEntryWindow(d, gen, session).state === 'IN_WINDOW'; }
@@ -25,18 +28,18 @@ index 70857eb..5197cfb 100644
  function ldipLines(pos, lastPx, exclude, session) {
    const T = readJson0('data/squad11-today.json'), M = T && T.methods && T.methods[LDIP_RULE];
    if (!M || !Array.isArray(M.newSignals) || !(Date.now() - Date.parse(T.generatedAt || 0) <= 10 * 864e5)) return [];
--  const sd = T.lastClose || null, raw = M.newSignals.filter(p => p && p.sym), picks = raw.filter(p => ldipFresh(sd || p.d, T.generatedAt, session));
+-  const sd = T.lastClose || null, raw = M.newSignals.filter(p => p && p.sym), sigDay = (p) => sd && p.d && p.d !== sd ? 'INCONSISTENT' : (sd || p.d), picks = raw.filter(p => ldipFresh(sigDay(p), T.generatedAt, session));
 -  if (raw.length && !picks.length) {
--    const states = raw.map(p => ldipEntryWindow(sd || p.d, T.generatedAt, session));
+-    const states = raw.map(p => ldipEntryWindow(sigDay(p), T.generatedAt, session));
 -    return states.every(x => x.state === 'EXPIRED') ? ['LEADER DIP: no qualifying trade — next-open entry expired on ' + states[0].entryDay + '; no late entries. Signals remain research context; no new offer recorded.'] : ['LEADER DIP: no qualifying trade — source session or clock UNKNOWN; no BUY inferred. Research signals retained.'];
 -  }
 +  const sd = T.lastClose || null, picks = M.newSignals.filter(p => p && p.sym && ldipFresh(sd || p.d, T.generatedAt, session));
    if (!picks.length) return [];
--  const win = ldipEntryWindow(sd || picks[0].d, T.generatedAt, session), srcNote = ' (signal from the ' + (sd || picks[0].d) + ' close; entry only at the ' + win.entryDay + ' open, ' + kwt(570, win.entryDay) + ' Kuwait; no late entry)';   // D4
+-  const win = ldipEntryWindow(sigDay(picks[0]), T.generatedAt, session), srcNote = ' (signal from the ' + (sd || picks[0].d) + ' close; entry only at the ' + win.entryDay + ' open, ' + kwt(570, win.entryDay) + ' Kuwait; no late entry)';   // D4
    if (ldipOff()) { const a = ldipResults(); return ['LEADER DIP: new buys are OFF. Its ' + a.length + ' finished trades average ' + pcs(a.reduce((x, r) => x + r.pct, 0) / a.length) + ' (below 0). Open positions keep their sell limit and time exit.']; }
    const Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), held = new Set([...Object.keys(pos || {}), ...(exclude || [])]);
    const open = Object.values(pos || {}).filter(P => P && P.src === 'leader dip').length; let slots = LDIP_MAX - open; const buys = [], mark = [], full = [];
-@@ -2546,7 +2527,7 @@ function ldipLines(pos, lastPx, exclude, session) {
+@@ -2549,7 +2527,7 @@ function ldipLines(pos, lastPx, exclude, session) {
    else { out.push('LEADER DIP (your trading lane, 27 Oct: 3 slots of 1,000 USD, sell at +20%)');
      for (const b of buys) out.push('- BUY ' + b.sym + ' 1,000 USD at the open (' + (b.px ? 'up to ' + money(b.px * 1.03) : 'no recent price here: check the live price first') + '). Right after you buy, put a SELL LIMIT at your buy price +20% (good-till-cancelled) in ZAD. No stop: this rule was tested without one. If it has not sold by about ' + exitDay + ' (6 months, 126 sessions), sell; the bot reminds you. ' + LDIP_WHAT + ' Then send  bought ' + b.sym + ' PRICE .'); }
    if (full.length) out.push('LEADER DIP: all ' + LDIP_MAX + ' slots are in use, so no buy of ' + full.join(', ') + ' (the rule takes no late entries).');
@@ -45,7 +48,7 @@ index 70857eb..5197cfb 100644
    return out;
  }
  // the two LEADER DIP exits at a daily close: a day's HIGH at or above the +20% target since the buy, and the time exit
-@@ -2598,29 +2579,6 @@ function healthLine(nowMs = Date.now()) { const out = [];
+@@ -2601,33 +2579,6 @@ function healthLine(nowMs = Date.now()) { const out = [];
    try { const L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n'), j = JSON.parse(L[L.length - 1]); if (j.firstMinute) out.push('live watcher on ' + j.day + ': first minute ' + j.firstMinute + ' New York (' + kwt(+j.firstMinute.slice(0, 2) * 60 + +j.firstMinute.slice(3), j.day) + ' Kuwait)' + (j.firstMinute > '09:35' ? ' LATE: the open was not watched' : '')); } catch (e) {}
    try { const F = fs.readFileSync('data/tg-failures.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(x => Date.now() - Date.parse(x.at) < 24 * 3600e3); if (F.length) out.push('TELEGRAM: ' + F.length + ' message' + (F.length > 1 ? 's' : '') + ' NOT delivered in the last 24 h (last: "' + F[F.length - 1].head + '", ' + F[F.length - 1].status + ')'); } catch (e) {}
    return out.length ? 'SYSTEM HEALTH: ' + out.join('; ') + '.' : ''; }
@@ -53,9 +56,13 @@ index 70857eb..5197cfb 100644
 -// close) and never points to buy ranges that do not exist. The 18-hour window, the move threshold and the HOLD advice are unchanged.
 -const SHOCK_SLOT = '\u0000MARKET_SHOCK';
 -function nyClockText(mins) { const h = Math.floor(mins / 60), m = mins % 60; return ((h + 11) % 12 + 1) + ':' + String(m).padStart(2, '0') + (h < 12 ? ' am' : ' pm'); }
--function shockLine(ml, hasBuy) {
--  const t = Date.parse(ml.at), n = ny(t), today = ny(Date.now()).d, sameDay = n.d === today, inSession = !n.weekend && n.mins >= 570 && n.mins < 960;
--  const when = (sameDay ? 'today' : 'on ' + n.d) + ' at ' + nyClockText(n.mins) + ' New York' + (inSession ? ', during the session, not a close' : '');
+-// R3 (Codex review of c670d626): "during the session" uses the actual session hours from the reviewed NYSE calendar
+-// (market-session.mjs: holidays and 1 pm early closes). If that calendar cannot be read, the session status is stated as UNKNOWN.
+-async function marketSessionOf(day) { try { const m = await import(new URL('./market-session.mjs', import.meta.url).href); const s = m.marketSession(day); return s && s.known ? s : null; } catch { return null; } }
+-function shockLine(ml, hasBuy, sess) {
+-  const t = Date.parse(ml.at), n = ny(t), today = ny(Date.now()).d, sameDay = n.d === today;
+-  const status = !sess ? ', session status UNKNOWN' : !sess.closed && n.mins >= sess.open && n.mins < sess.close ? ', during the session, not a close' : sess.closed ? ', market closed that day' : n.mins >= sess.close ? ', after the close' : ', before the open';
+-  const when = (sameDay ? 'today' : 'on ' + n.d) + ' at ' + nyClockText(n.mins) + ' New York' + status;
 -  const advice = ml.kind === 'bigDown' ? 'HOLD everything, keep every stop; no panic-selling.' + (hasBuy ? ' The buys below stay valid at their prices.' : ' No permitted buy today.') : 'HOLD; do not chase; ' + (hasBuy ? 'buy only inside the ranges below.' : 'no permitted buy today.');
 -  return 'MARKET SHOCK' + (sameDay ? ' TODAY' : '') + ' (S&P 500 ' + (ml.dp >= 0 ? '+' : '') + Number(ml.dp).toFixed(1) + '% ' + when + '): ' + advice;
 -}
@@ -75,7 +82,7 @@ index 70857eb..5197cfb 100644
  async function actionsText(sig, pos, px, title) {
    const priorActs = Object.fromEntries(Object.entries(pos || {}).map(([sym, p]) => [sym, p && p.lastAct ? { ...p.lastAct } : null]));
    const h = await holdingsText(sig, pos, null, true), plan = planText(sig, pos, px, 'x', null, null, { actions: true });
-@@ -2632,8 +2590,7 @@ async function actionsText(sig, pos, px, title) {
+@@ -2639,8 +2590,7 @@ async function actionsText(sig, pos, px, title) {
    const D = sessDay(), K = (m) => kwt(m, D), pb = (o) => { const f = gateLines(o), n = f.filter(l => /^- BUY /.test(l)).length; if (n || !o.some(l => /^- BUY /.test(l))) S.buys.push('', ...f); return n; };
    const planSells = (plan.match(/\nSELL\n([\s\S]*?)(\n\n|$)/) || [])[1] || '', soldSyms = new Set(planSells.split('\n').map(l => l.replace(/^- /, '').split(/[ :]/)[0]));
    const sells = [...(planSells ? planSells.split('\n') : []), ...h.acts.sell.filter(l => !soldSyms.has(l.split(/[ :]/)[0]))];
@@ -85,23 +92,25 @@ index 70857eb..5197cfb 100644
    { const lp = {}; for (const x of (sig && sig.stocks) || []) if (x.last) lp[x.sym] = x.last; for (const x of (sig && sig.uni) || []) if (x.last && !lp[x.sym]) lp[x.sym] = x.last;
      const un = unresolvedSells(pos, lp, ny(Date.now()).d); if (un.length) S.crit.push('SELLS NOT DONE YET (' + un.length + ')', ...un.map(l => '- ' + l)); }
    { const hg = halalGapLine(pos); if (hg) S.holds.push(hg); }
-@@ -2670,12 +2627,11 @@ async function actionsText(sig, pos, px, title) {
+@@ -2677,13 +2627,11 @@ async function actionsText(sig, pos, px, title) {
        { const ex0 = new Set([...buySyms(), ...(enginePaused ? [] : [...buyPart.matchAll(/\bBUY ([A-Z][A-Z.\-]{0,7})\b/g)].map(m => m[1]))]);
          let ld = []; try { ld = ldipLines(pos, lp, ex0, sig && sig.session); } catch (e) {}
          const ldBuy = ld.filter(l => /^- BUY /.test(l)), ldHead = ld.filter(l => /^LEADER DIP \(your trading lane/.test(l));
--        if (ldBuy.length) { const nm = await companyNames(ldBuy.map(l => l.split(' ')[2])); const ldSrc = readJson0('data/squad11-today.json'); pb([(ldHead[0] || 'LEADER DIP') + ' | signal from the ' + ((ldSrc && ldSrc.lastClose) || 'UNKNOWN') + ' close; entry at the next open only | horizon: up to 126 sessions (about 6 months) | APPROVED BY YOU as your real lane (27 Oct); tested 73% / 75% of trades won, about equal to SPY as a 3-slot account: NOT PROVEN by the full bar | permitted today: yes',
-+        if (ldBuy.length) { const nm = await companyNames(ldBuy.map(l => l.split(' ')[2])); pb([(ldHead[0] || 'LEADER DIP') + ' | horizon: up to 126 sessions (about 6 months) | APPROVED BY YOU as your real lane (27 Oct); tested 73% / 75% of trades won, about equal to SPY as a 3-slot account: NOT PROVEN by the full bar | permitted today: yes',
-           'Why: a top-300 company closed 12% under its 50-day high while still above its 200-day average. Catalyst: none (a price rule).', ...ldBuy.map(l => { const sy = l.split(' ')[2]; return nm[sy] ? l.replace('- BUY ' + sy, '- BUY ' + sy + ' (' + nm[sy] + ')') : l; })]); }
+-        if (ldBuy.length) { const nm = await companyNames(ldBuy.map(l => l.split(' ')[2])); const ldSrc = readJson0('data/squad11-today.json'); S.ldRecheck = { d: ldSrc && ldSrc.lastClose, gen: ldSrc && ldSrc.generatedAt, session: sig && sig.session, from: S.buys.length }; pb([(ldHead[0] || 'LEADER DIP') + ' | signal from the ' + ((ldSrc && ldSrc.lastClose) || 'UNKNOWN') + ' close; entry at the next open only | horizon: up to 126 sessions (about 6 months) | APPROVED BY YOU as your real lane (27 Oct); tested 73% / 75% of trades won, about equal to SPY as a 3-slot account: NOT PROVEN by the full bar | permitted today: yes',
+-          'Why: a top-300 company closed 12% under its 50-day high while still above its 200-day average. Catalyst: none (a price rule).', ...ldBuy.map(l => { const sy = l.split(' ')[2]; return nm[sy] ? l.replace('- BUY ' + sy, '- BUY ' + sy + ' (' + nm[sy] + ')') : l; })]); S.ldRecheck.to = S.buys.length; }
 -        for (const l of ld.filter(l => !ldBuy.includes(l) && !ldHead.includes(l) && !/^LEADER DIP: no qualifying trade/.test(l))) (/^- PAPER|PAPER ONLY/.test(l) ? S.shortT : /new buys are OFF/.test(l) ? S.lanes : S.notAct).push(l);
++        if (ldBuy.length) { const nm = await companyNames(ldBuy.map(l => l.split(' ')[2])); pb([(ldHead[0] || 'LEADER DIP') + ' | horizon: up to 126 sessions (about 6 months) | APPROVED BY YOU as your real lane (27 Oct); tested 73% / 75% of trades won, about equal to SPY as a 3-slot account: NOT PROVEN by the full bar | permitted today: yes',
++          'Why: a top-300 company closed 12% under its 50-day high while still above its 200-day average. Catalyst: none (a price rule).', ...ldBuy.map(l => { const sy = l.split(' ')[2]; return nm[sy] ? l.replace('- BUY ' + sy, '- BUY ' + sy + ' (' + nm[sy] + ')') : l; })]); }
 +        for (const l of ld.filter(l => !ldBuy.includes(l) && !ldHead.includes(l))) (/^- PAPER|PAPER ONLY/.test(l) ? S.shortT : /new buys are OFF/.test(l) ? S.lanes : S.notAct).push(l);
          const waiting = ld.filter(l => /^MARK HALAL FIRST/.test(l)).flatMap(l => [...l.matchAll(/(?:^|\n)halal ([A-Z][A-Z.\-]{0,7}) yes/g)]).length;
 -        const entryProblem = ld.find(l => /^LEADER DIP: no qualifying trade/.test(l)), todaySource = readJson0('data/squad11-today.json'), todayMethod = todaySource && todaySource.methods && todaySource.methods[LDIP_RULE];
+-        S.ldLaneAt = S.lanes.length; { const T0 = readJson0('data/squad11-today.json'), s0 = T0 && T0.methods && T0.methods[LDIP_RULE] && T0.methods[LDIP_RULE].newSignals; if (ldBuy.length || ld.some(l => /^MARK HALAL FIRST \(leader dip/.test(l))) S.ldMarkSrc = { d: (T0 && T0.lastClose) || (Array.isArray(s0) && s0[0] && s0[0].d) || null, gen: T0 && T0.generatedAt, session: sig && sig.session }; }   // R1: only an offered entry is rechecked
 -        S.lanes.push((entryProblem || 'LEADER DIP: ' + (ldBuy.length ? ldBuy.length + ' buy' + (ldBuy.length > 1 ? 's' : '') + ' above' : ld.some(l => /new buys are OFF/.test(l)) ? 'new buys OFF (safety brake)' : waiting ? 'no permitted buy; ' + waiting + ' signal' + (waiting === 1 ? '' : 's') + ' waiting for your ZAD mark (existing next-open window only; no late entries)' : todayMethod && Array.isArray(todayMethod.newSignals) && !todayMethod.newSignals.length ? 'no qualifying trade — no new ' + LDIP_RULE + ' signal for the ' + (todaySource.lastClose || 'UNKNOWN') + ' close' : 'no permitted buy today')) + '. NOT PROVEN; a ZAD mark alone does not establish strategy evidence.'); }
 +        S.lanes.push('LEADER DIP: ' + (ldBuy.length ? ldBuy.length + ' buy' + (ldBuy.length > 1 ? 's' : '') + ' above' : ld.some(l => /new buys are OFF/.test(l)) ? 'new buys OFF (safety brake)' : waiting ? 'no permitted buy; ' + waiting + ' signal' + (waiting === 1 ? '' : 's') + ' waiting for your ZAD mark (existing next-open window only; no late entries)' : 'no permitted buy today') + '. NOT PROVEN; a ZAD mark alone does not establish strategy evidence.'); }
        const tl = trySmallLines(pos, lp, buySyms(), sig && sig.session);
        if (tl.some(l => /^- BUY /.test(l))) pb(['TRY SMALL | horizon: the rule hold | your real lane only when settings.trySmallReal is on: NOT PROVEN', ...tl]); else if (tl.length) { S.shortT.push(...tl.filter(l => !/^MARK HALAL FIRST/.test(l))); S.notAct.push(...tl.filter(l => /^MARK HALAL FIRST/.test(l))); }
        S.lanes.push('TRY SMALL: ' + (TRY_REAL() ? 'real' : 'PAPER ONLY (your decision 27 Oct)') + '.'); } catch (e) {} }
-@@ -2710,11 +2666,11 @@ async function actionsText(sig, pos, px, title) {
+@@ -2718,11 +2666,11 @@ async function actionsText(sig, pos, px, title) {
      { const tb = cc.filter(x => x.threatBlock); if (tb.length) S.notAct.push('NO BUY TODAY (threat headline in the last day): ' + tb.slice(0, 8).map(x => x.sym).join(', ') + '. Re-checked tomorrow.'); }
      { const ct = calendarText(true); if (ct) S.routine.push(ct); }
      { const ml = macroLines(pos, cc); if (ml.length) S.routine.push(...ml); const mb = cc.filter(x => x.macroBlock); if (mb.length) S.notAct.push('HELD BACK (industry lags after ' + mb[0].macroBlock.toLowerCase() + '): ' + mb.slice(0, 8).map(x => x.sym).join(', ') + '.'); }
@@ -115,15 +124,25 @@ index 70857eb..5197cfb 100644
    { const HL = readJson('data/hunting-lab.json', null), LS = readJson('data/leaders-study.json', null), rows = HL && HL.rules ? HL.rules : [], pass = rows.filter(r => r.verdict === 'PROMISING');
      const SM = readJson('data/smart-money-study.json', null), smUp = SM && SM.rising && SM.rising.older.n >= 30 && SM.rising.newer.n >= 30 && SM.rising.older.avg > 0 && SM.rising.newer.avg > 0;
      const rOnly = rows.filter(r => r.market && r.market.risingOnly).map(r => r.name.replace(/ \(.*\)$/, ''));
-@@ -2728,7 +2684,6 @@ async function actionsText(sig, pos, px, title) {
+@@ -2736,17 +2684,6 @@ async function actionsText(sig, pos, px, title) {
    // ---- assemble, most important first
    const out = [title || 'ACTIONS', 'POLICY TODAY: ' + (enginePaused ? 'focus '+(FOCUS?'ON':'OFF')+': engine buys PAUSED; your own lanes (LEADER DIP, LONGER HOLDS, EARNINGS DRIFT) active.' : FOCUS ? 'focus ON, a proven engine kind is working: its buys are actions.' : 'focus OFF: evidence and compliance gates still apply.') + ' Research and paper are never buys.'];
    const sec = (name, lines) => { if (lines.length) out.push('', name, ...lines); };
--  if (S.shock) { const hasBuy = S.buys.some(l => /^- BUY /.test(l)); S.crit = S.crit.map(l => l === SHOCK_SLOT ? shockLine(S.shock, hasBuy) : l); }   // D2: decided after the buys are known
+-  const shockSession = S.shock ? await marketSessionOf(ny(Date.parse(S.shock.at)).d) : null;   // last asynchronous step before output
+-  // R1 (Codex review of c670d626): asynchronous work above (names, prices, calendar) takes time, so the leader-dip entry window is
+-  // checked again here, synchronously, immediately before the message is built. The cutoff stays inclusive (valid up to 09:30:00.000).
+-  if (S.ldMarkSrc && ldipEntryWindow(S.ldMarkSrc.d, S.ldMarkSrc.gen, S.ldMarkSrc.session).state !== 'IN_WINDOW') {
+-    const w = ldipEntryWindow(S.ldMarkSrc.d, S.ldMarkSrc.gen, S.ldMarkSrc.session);
+-    if (S.ldRecheck && S.ldRecheck.to > S.ldRecheck.from) S.buys.splice(S.ldRecheck.from, S.ldRecheck.to - S.ldRecheck.from);
+-    if (!S.buys.some(l => l !== '')) S.buys.length = 0;
+-    S.notAct = S.notAct.filter(l => !/^MARK HALAL FIRST \(leader dip picks/.test(l));
+-    if (S.ldLaneAt !== undefined) S.lanes[S.ldLaneAt] = (w.state === 'EXPIRED' ? 'LEADER DIP: no qualifying trade — next-open entry expired on ' + w.entryDay + '; no late entries. Signals remain research context; no new offer recorded' : 'LEADER DIP: no qualifying trade — source session or clock UNKNOWN; no BUY inferred. Research signals retained') + '. NOT PROVEN; a ZAD mark alone does not establish strategy evidence.';
+-  }
+-  if (S.shock) { const hasBuy = S.buys.some(l => /^- BUY /.test(l)); S.crit = S.crit.map(l => l === SHOCK_SLOT ? shockLine(S.shock, hasBuy, shockSession) : l); }   // D2: decided after the buys are known
    sec('CRITICAL', S.crit);
    const acts = [...S.sells, ...(S.sells.length && S.buys.length ? [''] : []), ...S.buys.filter((l, i) => !(i === 0 && l === ''))];
    sec("TODAY'S ACTIONS", acts.length ? [...acts, ...(S.buys.length ? ['', ...S.when] : [])] : ['None: no sell or permitted buy today.']);
-@@ -3963,7 +3918,7 @@ async function daily() {
+@@ -3981,7 +3918,7 @@ async function daily() {
    // QUICK-TRADE GATE (stronger quick trades). The dip family loses on the whole market, so a stock's own good record is not enough.
    // 1) If Sunday's lab found a condition under which dips work on the whole market (both halves), only dips meeting it are offered.
    // 2) If no condition passed and the persistence test says a stock's own record does not carry forward, quick trades are paper only.
@@ -132,7 +151,7 @@ index 70857eb..5197cfb 100644
    // Every dip is still logged on paper, so the evidence keeps growing.
    const quickHeld = []; {
      const HL = readJson0('data/hunting-lab.json'), best = HL && HL.quickFilters ? HL.quickFilters.best : null, perBad = Boolean(HL && HL.persistence && /DID NOT HELP/.test(HL.persistence.verdict || ''));
-@@ -3971,11 +3926,9 @@ async function daily() {
+@@ -3989,11 +3926,9 @@ async function daily() {
      const s50 = spy.slice(-50).reduce((a, x) => a + x.c, 0) / Math.min(50, spy.length), up50 = spy[spy.length - 1].c > s50;
      const meets = (r) => !best || best.split('+').every(k => k === 'up' ? up50 : k === 'strong' ? p80 !== null && r.mom6 >= p80 : k === 'deep' ? r.rsi2 !== null && r.rsi2 < 5 : true);
      const strictOk = (r) => { const d = distOf(r.pcts, r.last); return (r.n || 0) >= 30 && d && d.lb > 0; };
@@ -147,10 +166,10 @@ index 70857eb..5197cfb 100644
    for (const st of stocks.filter(x => x.state === 'Buy watch')) {
 diff --git a/test/actions-wording-d1-d4.test.mjs b/test/actions-wording-d1-d4.test.mjs
 deleted file mode 100644
-index 8e94d1a..0000000
+index 9726b38..0000000
 --- a/test/actions-wording-d1-d4.test.mjs
 +++ /dev/null
-@@ -1,109 +0,0 @@
+@@ -1,153 +0,0 @@
 -// D1–D4 (5 Nov 2026) through the real ACTIONS caller. Entirely synthetic: invented tickers, loopback price stub, no owner message,
 -// holdings or private figures, no external request. D1 entry-window semantics are Codex 984a1c2 (see leader-dip-entry-window.test.mjs);
 -// these tests add the owner's 5 Nov case shape: a signal from the previous close, marked or unmarked, before and after the open.
@@ -162,11 +181,13 @@ index 8e94d1a..0000000
 -const CLOSE = '2026-11-04', GEN = '2026-11-05T05:26:00Z';   // previous-close signal list, generated before the open (shape of 5 Nov)
 -const OPEN = '2026-11-05T14:30:00.000Z';                      // 9:30 New York (EST) = 5:30 pm Kuwait
 -async function at(iso, fn) { const real = Date.now; Date.now = () => Date.parse(iso); try { return await fn(); } finally { Date.now = real; } }
--async function setup(files = {}) {
--  const server = http.createServer((req, res) => { const values = []; for (let i = 0; i < 290; i++) values.push({ datetime: new Date(Date.UTC(2025, 0, 1 + i)).toISOString().slice(0, 10), open: 75, high: 76, low: 74, close: 75, volume: 1e6 });
+-const CAL = (await import('node:fs')).readFileSync(new URL('../market-session.mjs', import.meta.url), 'utf8');   // reviewed NYSE calendar
+-let onRequest = null;
+-async function setup(files = {}, { calendar = true } = {}) {
+-  const server = http.createServer((req, res) => { if (onRequest) onRequest(req.url); const values = []; for (let i = 0; i < 290; i++) values.push({ datetime: new Date(Date.UTC(2025, 0, 1 + i)).toISOString().slice(0, 10), open: 75, high: 76, low: 74, close: 75, volume: 1e6 });
 -    res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(req.url.includes('time_series') ? { status: 'ok', values: values.reverse() } : {})); });
 -  await new Promise(r => server.listen(0, '127.0.0.1', r)); const base = 'http://127.0.0.1:' + server.address().port;
--  const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/names.json': { ZZP: 'Synthetic' }, ...files }, env: { TD_BASE: base, FH_BASE: base, SEC_BASE: base } });
+-  const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/names.json': { ZZP: 'Synthetic' }, ...(calendar ? { 'market-session.mjs': CAL } : {}), ...files }, env: { TD_BASE: base, FH_BASE: base, SEC_BASE: base } });
 -  return { S, close: () => server.close() };
 -}
 -const ld = (marked) => ({ 'data/halal.json': marked ? { ZZP: { s: 'ok', d: CLOSE, by: 'you' } } : {},
@@ -220,7 +241,7 @@ index 8e94d1a..0000000
 -  } finally { close(); } }));
 -test('D2 same-day reading with a permitted buy keeps the original advice; big down without buys says so', async () => {
 -  await at('2026-11-05T09:00:00Z', async () => { const { S, close } = await setup({ ...shock('2026-11-05T08:30:00Z'), ...ld(true) }); try {
--    const t = await actions(S); assert.match(t, /MARKET SHOCK TODAY \(S&P 500 \+1\.9% today at 3:30 am New York\): HOLD; do not chase; buy only inside the ranges below\./); assert.match(t, /- BUY ZZP\b/); } finally { close(); } });
+-    const t = await actions(S); assert.match(t, /MARKET SHOCK TODAY \(S&P 500 \+1\.9% today at 3:30 am New York, before the open\): HOLD; do not chase; buy only inside the ranges below\./); assert.match(t, /- BUY ZZP\b/); } finally { close(); } });
 -  await at('2026-11-05T09:03:00Z', async () => { const { S, close } = await setup(shock('2026-11-04T18:22:54Z', -2.1, 'bigDown')); try {
 -    const t = await actions(S); assert.match(t, /HOLD everything, keep every stop; no panic-selling\. No permitted buy today\./); assert.doesNotMatch(t, /buys below stay valid/); } finally { close(); } });
 -});
@@ -258,6 +279,48 @@ index 8e94d1a..0000000
 -  } finally { close(); } }));
 -test('D4 leader-dip BUY block names its signal close', () => at('2026-11-05T09:00:00Z', async () => {
 -  const { S, close } = await setup(ld(true)); try { assert.match(await actions(S), /LEADER DIP \(your trading lane[^\n]*\| signal from the 2026-11-04 close; entry at the next open only \| horizon/); } finally { close(); } }));
+-
+-// ---------- Codex review of c670d626 (R1–R4): each reproduced counterexample
+-async function ticking(startIso, fn) { const real = Date.now; let now = Date.parse(startIso); Date.now = () => now; try { return await fn(iso => { now = Date.parse(iso); }); } finally { Date.now = real; onRequest = null; } }
+-test('R1 the clock crossing 09:30:00.000 New York during ACTIONS async work removes the leader-dip BUY before output', () => ticking('2026-11-05T14:29:59.900Z', async (set) => {
+-  const { S, close } = await setup({ ...ld(true), 'data/names.json': {} }); try {   // unknown name -> the caller awaits a (loopback) name lookup after the lane is computed
+-    onRequest = (url) => { if (/company_tickers/.test(url)) set('2026-11-05T14:30:00.001Z'); };
+-    const t = await actions(S);
+-    assert.doesNotMatch(t, /- BUY ZZP/); assert.doesNotMatch(t, /LEADER DIP \(your trading lane/); assert.match(t, /LEADER DIP: no qualifying trade — next-open entry expired on 2026-11-05/);
+-  } finally { close(); } }));
+-test('R1 the cutoff stays inclusive: crossing exactly to 09:30:00.000 during async work keeps the BUY', () => ticking('2026-11-05T14:29:59.900Z', async (set) => {
+-  const { S, close } = await setup({ ...ld(true), 'data/names.json': {} }); try {
+-    onRequest = (url) => { if (/company_tickers/.test(url)) set(OPEN); };
+-    assert.match(await actions(S), /- BUY ZZP\b/);
+-  } finally { close(); } }));
+-test('R1 an unmarked pick whose window closes during the calendar read (last async step) loses its MARK HALAL request too', () => ticking('2026-11-05T14:29:59.900Z', async (set) => {
+-  const { S, close } = await setup({ ...ld(false), ...shock('2026-11-05T14:00:00Z'), 'market-session.mjs': CAL + '\nglobalThis.__onCalendar && globalThis.__onCalendar();\n' }); try {
+-    globalThis.__onCalendar = () => set('2026-11-05T14:30:00.001Z');
+-    const t = await actions(S);
+-    assert.doesNotMatch(t, /MARK HALAL FIRST \(leader dip/); assert.doesNotMatch(t, /halal ZZP yes/); assert.match(t, /entry expired on 2026-11-05/);
+-  } finally { delete globalThis.__onCalendar; close(); } }));
+-const ldGen = (gen, signalDay = CLOSE, lastClose = CLOSE) => ({ 'data/halal.json': { ZZP: { s: 'ok', d: CLOSE, by: 'you' } }, 'data/squad11-today.json': { generatedAt: gen, lastClose, methods: { 'SQ11-PB12': { newSignals: [{ sym: 'ZZP', close: 100, d: signalDay }] } } } });
+-test('R2 a generation clock without an explicit zone, or inconsistent with the claimed close, is UNKNOWN', async () => {
+-  for (const [files, iso, why] of [
+-    [ldGen('2026-11-05T05:26:00'), '2026-11-05T09:00:00Z', 'no zone'],
+-    [ldGen('2026-11-05 05:26:00Z'), '2026-11-05T09:00:00Z', 'space separator'],
+-    [ldGen('2026-11-04T20:00:00Z'), '2026-11-05T09:00:00Z', 'generated 3 pm New York, before the claimed 2026-11-04 close'],
+-    [ldGen('2026-11-05T14:45:00Z'), '2026-11-05T15:00:00Z', 'generated after its own next open'],
+-    [ldGen(GEN, '2026-11-03'), '2026-11-05T09:00:00Z', 'signal day disagrees with the list close'],
+-    [ldGen('2026-11-05T09:30:00+03:00'), '2026-11-05T05:00:00Z', 'future by offset']]) await at(iso, async () => {
+-    const { S, close } = await setup(files); try { const t = await actions(S); assert.doesNotMatch(t, /- BUY ZZP/, why); assert.match(t, /source session or clock UNKNOWN/, why); } finally { close(); } });
+-  await at('2026-11-05T09:00:00Z', async () => { const { S, close } = await setup(ldGen('2026-11-05T08:26:00+03:00')); try { assert.match(await actions(S), /- BUY ZZP\b/, 'explicit +03:00 offset accepted'); } finally { close(); } });
+-});
+-test('R3 "during the session" uses the actual close: early close 27 Nov, holiday 26 Nov, normal day, calendar missing', async () => {
+-  for (const [atIso, nowIso, re] of [
+-    ['2026-11-27T18:30:00Z', '2026-11-27T20:00:00Z', /at 1:30 pm New York, after the close\)/],          // 1 pm early close
+-    ['2026-11-27T17:30:00Z', '2026-11-27T20:00:00Z', /at 12:30 pm New York, during the session, not a close\)/],
+-    ['2026-11-26T18:30:00Z', '2026-11-26T20:00:00Z', /at 1:30 pm New York, market closed that day\)/],     // Thanksgiving
+-    ['2026-11-30T18:30:00Z', '2026-11-30T20:00:00Z', /at 1:30 pm New York, during the session, not a close\)/],
+-    ['2026-11-30T13:30:00Z', '2026-11-30T20:00:00Z', /at 8:30 am New York, before the open\)/]]) await at(nowIso, async () => {
+-    const { S, close } = await setup(shock(atIso)); try { assert.match(await actions(S), re, atIso); } finally { close(); } });
+-  await at('2026-11-27T20:00:00Z', async () => { const { S, close } = await setup(shock('2026-11-27T18:30:00Z'), { calendar: false }); try { const t = await actions(S); assert.match(t, /session status UNKNOWN\)/); assert.doesNotMatch(t, /during the session/); } finally { close(); } });
+-});
 -
 -test('all requests stayed on loopback', () => assert.deepEqual(blocked, []));
 diff --git a/test/leader-dip-entry-window.test.mjs b/test/leader-dip-entry-window.test.mjs
@@ -320,7 +383,7 @@ index 8869cc6..0000000
 -}));
 -test('all external requests stayed blocked',()=>assert.deepEqual(blocked,[]));
 diff --git a/test/leader-dip.test.mjs b/test/leader-dip.test.mjs
-index 8c17dca..ab37d62 100644
+index 8298aaa..ab37d62 100644
 --- a/test/leader-dip.test.mjs
 +++ b/test/leader-dip.test.mjs
 @@ -3,16 +3,12 @@
@@ -342,7 +405,7 @@ index 8c17dca..ab37d62 100644
  const S0 = await loadScan({});
  const isS = S0.fn('isSession'), nyd = S0.fn('ny')(Date.now()).d;
  const sessAgo = (n) => { let x = nyd, k = 0; while (k < n) { x = new Date(Date.parse(x) - 864e5).toISOString().slice(0, 10); if (isS(x)) k++; } return x; };
-@@ -37,21 +33,20 @@ test('a fresh pick is a BUY of 1,000 USD with the +20% sell limit, no stop and t
+@@ -37,23 +33,20 @@ test('a fresh pick is a BUY of 1,000 USD with the +20% sell limit, no stop and t
    assert.match(L2, /- BUY BBB 1,000 USD at the open \(up to 113\.30\)/); assert.match(L2, /- BUY DDD/); assert.equal((L2.match(/- BUY /g) || []).length, 2);
  });
  
@@ -350,7 +413,9 @@ index 8c17dca..ab37d62 100644
 +test('a stale list (older close than the newest session, or 9 sessions old) shows nothing: no late entries', async () => {
    const S = await loadScan({ files: sig(['AAA'], OLD) });
 -  assert.match(S.fn('ldipLines')({}, {}, null, LAST).join('\n'), /source session or clock UNKNOWN/);
--  assert.match(S.fn('ldipLines')({}, {}).join('\n'), /next-open entry expired/);
+-  // R2 (5 Nov): this fixture's list was generated after its own entry window while still claiming the 9-session-old close, which is
+-  // inconsistent evidence, so it is UNKNOWN rather than merely expired. Either way it is never a BUY (next line).
+-  assert.match(S.fn('ldipLines')({}, {}).join('\n'), /source session or clock UNKNOWN/);
 -  assert.doesNotMatch(S.fn('ldipLines')({}, {}).join('\n'), /- BUY/);
 +  assert.deepEqual(S.fn('ldipLines')({}, {}, null, LAST), []);
 +  assert.deepEqual(S.fn('ldipLines')({}, {}), []);
@@ -363,7 +428,7 @@ index 8c17dca..ab37d62 100644
    const S = await loadScan({ files: sig(['UNK', 'BAD', 'ZZL', 'AAA'], LAST, { 'data/halal.json': { ...HAL, BAD: fail }, 'data/zad-list.json': { effective: '2026-10-22', notHalal: ['ZZL'] } }) });
    const t = S.fn('ldipLines')({}, {}, null, LAST).join('\n');
    assert.match(t, /- BUY AAA/); assert.doesNotMatch(t, /BUY (UNK|BAD|ZZL)/);
--  assert.match(t, /MARK HALAL FIRST \(leader dip picks, no ZAD mark of yours yet: not a buy until you mark them\): UNK \(signal from the \d{4}-\d{2}-\d{2} close; entry only at the \d{4}-\d{2}-\d{2} open, \d+:\d\d [ap]m Kuwait; no late entry\)\./);   // D4: source close and entry instant named assert.match(t, /\nhalal UNK yes   or   halal UNK no/); assert.doesNotMatch(t, /halal SYM/);   // (28 Oct) the exact command, never a generic one assert.doesNotMatch(t, /BAD|ZZL/);
+-  assert.match(t, /MARK HALAL FIRST \(leader dip picks, no ZAD mark of yours yet: not a buy until you mark them\): UNK \(signal from the \d{4}-\d{2}-\d{2} close; entry only at the \d{4}-\d{2}-\d{2} open, \d+:\d\d [ap]m Kuwait; no late entry\)\./);   /* D4: source close and entry instant named */ assert.match(t, /\nhalal UNK yes   or   halal UNK no/); assert.doesNotMatch(t, /halal SYM/);   // (28 Oct) the exact command, never a generic one assert.doesNotMatch(t, /BAD|ZZL/);
 -  const S2 = await loadScan({ files: sig(['AAA'], LAST, { 'data/squad29-flags-today.json': { flags: [{ sym: 'AAA', verdict: 'SELL-WARNING', flag: 'F4', form: 'NT 10-K', filed: new Date(Date.now()).toISOString().slice(0, 10), url: 'x' }] } }) });
 +  assert.match(t, /MARK HALAL FIRST \(leader dip picks, no ZAD mark of yours yet: not a buy until you mark them\): UNK\./); assert.match(t, /\nhalal UNK yes   or   halal UNK no/); assert.doesNotMatch(t, /halal SYM/);   // (28 Oct) the exact command, never a generic one assert.doesNotMatch(t, /BAD|ZZL/);
 +  const S2 = await loadScan({ files: sig(['AAA'], LAST, { 'data/squad29-flags-today.json': { flags: [{ sym: 'AAA', verdict: 'SELL-WARNING', flag: 'F4', form: 'NT 10-K', filed: new Date().toISOString().slice(0, 10), url: 'x' }] } }) });

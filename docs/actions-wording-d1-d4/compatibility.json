@@ -1,19 +1,39 @@
 {
   "base": "2c993500752fa13902dcdca46819bc7884eded52",
-  "branchCodeCommit": "5110a2f322935240d63f5a759c009a3f3b422bb0",
-  "productionPatchSha256": "17c325f5d8cd35b5bf48952109e9b1fec752a05a30549e18c763b85697b8bedb",
-  "rollbackPatchSha256": "17bae1085dbbd8e8c8f2cb09c6b4dcbc990e77e43ff1addaf40c7d01d8e398be",
+  "branchCodeCommit": "462bb5460901042bd0a044635c52a5bcf9a16677",
+  "productionPatchSha256": "861d6f59607a923f691531a0b5d321849bdfe1a27ee7ab3419949c9a7fb42549",
+  "rollbackPatchSha256": "869aa01dbff0129cfacdb3aa64552f3b179bcd47feb2923c49d51f62bf31cad6",
   "patchThenInverseRestoresBase": true,
   "node": "20.20.0, sequential node \"$f\", external connections blocked (0 attempted)",
-  "fullSuiteBranch": {"files": 138, "pass": 138, "fail": 0},
-  "stopReleaseUnchanged": {"productionPatchSha256": "c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b", "rollbackPatchSha256": "1a13a44de32db385a330e948d4f354cc399f215f2b4ae75fa8a453e4fcaa0ff9"},
+  "fullSuiteBranch": {
+    "files": 138,
+    "pass": 138,
+    "fail": 0
+  },
+  "stopReleaseUnchanged": {
+    "productionPatchSha256": "c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b",
+    "rollbackPatchSha256": "1a13a44de32db385a330e948d4f354cc399f215f2b4ae75fa8a453e4fcaa0ff9"
+  },
   "withStopPatch": {
     "appliesBothOrders": true,
-    "identicalScanMjsBothOrders": "9d9d7f7a30a6f6870c047a2418c7d4887499274642b7b868a8b0b97ffa6d8ce6",
+    "identicalScanMjsBothOrders": "daf9a8288a3a1e6f9b2311641b605f84c648a5ae35ceb7ea1cc65391ed9e29a1",
     "eachInverseAppliesWithOtherPresent": true,
-    "fullSuite": {"files": 139, "pass": 139, "fail": 0},
-    "gatedWatcherScenarios": {"watcher-resilience": "9/9, 0 skipped", "watcher-incident-revision": "11/11, 0 skipped"}
+    "fullSuite": {
+      "files": 139,
+      "pass": 139,
+      "fail": 0
+    },
+    "gatedWatcherScenarios": {
+      "watcher-resilience": "9/9, 0 skipped",
+      "watcher-incident-revision": "11/11, 0 skipped"
+    }
   },
   "sequencing": "Deploy only AFTER the approved stop release; rebuild on the new main and rerun. Deploying first would change the scan.mjs before-hash pinned by the stop procedure.",
-  "d1Provenance": "ldipEntryWindow ported unchanged from Codex 984a1c2 (Stock2-safety-fixes); test/leader-dip-entry-window.test.mjs byte-identical to 984a1c2"
+  "d1Provenance": "ldipEntryWindow ported unchanged from Codex 984a1c2 (Stock2-safety-fixes); test/leader-dip-entry-window.test.mjs byte-identical to 984a1c2",
+  "revision": 2,
+  "supersededR1": {
+    "production": "17c325f5d8cd35b5bf48952109e9b1fec752a05a30549e18c763b85697b8bedb",
+    "rollback": "17bae1085dbbd8e8c8f2cb09c6b4dcbc990e77e43ff1addaf40c7d01d8e398be"
+  },
+  "r1R3CounterexamplesFailOnR1Code": true
 }

@@ -1,4 +1,15 @@
-# ACTIONS wording package D1–D4: development only, not deployed
+# ACTIONS wording package D1–D4 (revision 2): development only, not deployed
+
+**Revision 2** applies Codex's four findings on `c670d626`. Each counterexample has a regression in `test/actions-wording-d1-d4.test.mjs`, and each of those fails on the r1 code:
+
+| # | Finding | Change |
+|---|---|---|
+| **R1** | The entry window could close during the ACTIONS caller's asynchronous work (name lookup, prices, calendar) and a BUY could still be output. | The window is rechecked synchronously, after the last `await` and immediately before the message is built. An expired or UNKNOWN entry loses its BUY block **and** its MARK HALAL request, and the lane line states the reason. The cutoff stays inclusive: valid up to 09:30:00.000 New York. Reproduced with a clock that crosses the cutoff during the caller's own loopback name lookup, and during the calendar read. |
+| **R2** | Generation timestamps without a zone were parsed in local time, and were not checked against the claimed close. | `generatedAt` must be ISO with `Z` or `±hh:mm`. It must not predate the claimed close (`barClosed`, 16:10 New York, conservative on early-close days). It must not postdate that list's own next open. Each signal's own day must equal the list's close. Anything else is **UNKNOWN**. |
+| **R3** | "During the session" used fixed 9:30–16:00. | It now uses the reviewed NYSE calendar `market-session.mjs` (holidays; 1 pm early closes such as 27 Nov 2026), loaded at run time with no network: during the session, before the open, after the close, or market closed that day. If the calendar can't be read, the line says "session status UNKNOWN" and never claims "during the session". |
+| **R4** | My r1 D4 edit put an inline `//` comment mid-line in `test/leader-dip.test.mjs`, disabling the two command assertions after it. | Restored (`\nhalal UNK yes   or   halal UNK no`, and no generic `halal SYM`). The third, `/BAD\|ZZL/`, was already commented out on main before this package. It is unchanged here and flagged for Codex. |
+
+**One Codex-origin expectation changed (R2 consequence; please confirm):** in `test/leader-dip.test.mjs`, a fixture list that claims a 9-session-old close but was generated today is now **UNKNOWN** (inconsistent evidence), where it used to be "expired". It is never a BUY either way.
 
 - **Prepared:** 5 Nov 2026 by Claude on branch `claude/actions-wording-d1-d4`, from main `2c993500752fa13902dcdca46819bc7884eded52`.
 - **Not done:** no deployment, workflow change, real message or provider call.
@@ -20,10 +31,10 @@
 
 | File | Before SHA256 | After SHA256 |
 |---|---|---|
-| `scan.mjs` | `19a5368bff6e14d4d114d9a3c9b52d395ee3b4dad8164a0a8a01762f16f5799f` | `92ec1567677adf006d149cf5c6727a7f0289ab4abab83e3df3b33ae182adc76a` |
-| `test/leader-dip.test.mjs` | `609dee1523c3ddaf3ba089b1eb278cdcb6fbdaa41027cf663de1daf567518e2f` | `c7b9506bb2cd4ad8a10b498bc6812f4cbad736a3df67a1cc3ab3e4f17e588150` |
+| `scan.mjs` | `19a5368bff6e14d4d114d9a3c9b52d395ee3b4dad8164a0a8a01762f16f5799f` | `884bfd5baa692014489df21b027e14f452b05064968447cbf36c6bddbe462df6` |
+| `test/leader-dip.test.mjs` | `609dee1523c3ddaf3ba089b1eb278cdcb6fbdaa41027cf663de1daf567518e2f` | `850b0f911cbb7785b7ccbfc87223a96c3e2724e0cb2080c7156ea2f5efd2fa58` |
 | `test/leader-dip-entry-window.test.mjs` | absent | `348144d45285e525a78b2b42979740c2bbdfd64f04742899afa3e6d333e09c90` (Codex 984a1c2, byte-identical) |
-| `test/actions-wording-d1-d4.test.mjs` | absent | `fdc76a5a1b5db2e9b0e930bff45b7cdcc585ec4b7b5028f6e8b20bbbb3638fef` |
+| `test/actions-wording-d1-d4.test.mjs` | absent | `da4ac9088c06f0074e806fd7306f6243cf41194c55d0e75be822f44ab162947a` |
 
 The `test/leader-dip.test.mjs` changes are:
 - Codex 984a1c2's clock pin and expired/UNKNOWN expectations;
@@ -31,8 +42,9 @@ The `test/leader-dip.test.mjs` changes are:
 - the D4 wording in one regex.
 
 **Patch hashes:**
-- `production.patch`: `17c325f5d8cd35b5bf48952109e9b1fec752a05a30549e18c763b85697b8bedb`
-- `rollback.patch` (exact inverse): `17bae1085dbbd8e8c8f2cb09c6b4dcbc990e77e43ff1addaf40c7d01d8e398be`
+- `production.patch`: `861d6f59607a923f691531a0b5d321849bdfe1a27ee7ab3419949c9a7fb42549`
+- `rollback.patch` (exact inverse): `869aa01dbff0129cfacdb3aa64552f3b179bcd47feb2923c49d51f62bf31cad6`
+- r1 hashes (`17c325f5…`, `17bae108…`) are superseded.
 
 Applying the patch and then the inverse to main restores main exactly.
 
@@ -40,12 +52,18 @@ Applying the patch and then the inverse to main restores main exactly.
 
 | Run | Result |
 |---|---|
-| `test/actions-wording-d1-d4.test.mjs` (new; real `actionsText` caller) | 14/14 |
+| `test/actions-wording-d1-d4.test.mjs` (new; real `actionsText` caller) | 19/19. The R1–R3 counterexample tests fail on the r1 code. |
 | `test/leader-dip-entry-window.test.mjs` (Codex, unchanged) | 9/9 |
 | `test/leader-dip.test.mjs` (updated) | 14/14 |
-| Full suite on the branch, and on the branch plus the stop patch | see `compatibility.json` |
+| Full suite on the branch | 138/138 |
+| Full suite with the stop patch also applied | 139/139, gated watcher scenarios 9/9 and 11/11 |
 
-**Covered:**
+**Covered (r2 additions):**
+- **R1:** the clock crosses 09:30:00.001 during the loopback name lookup, so there's no BUY. Exactly 09:30:00.000 keeps the BUY (inclusive). A crossing during the calendar read removes the MARK HALAL request.
+- **R2:** generation clocks rejected: no zone; space separator; before the claimed close; after its own next open; a signal day that disagrees; a future time by offset. An explicit `+03:00` is accepted.
+- **R3:** early close on 27 Nov (1:30 pm is after the close, 12:30 pm is during); Thanksgiving is closed; a normal day; before the open; missing calendar gives UNKNOWN.
+
+**Covered (r1):**
 - **D1:**
   - **Exact cutoff:** 14:29:59.999Z and 14:30:00.000Z give a BUY; 14:30:00.001Z, later the same day and the next morning are expired.
   - **Owner's PSX shape:** an unmarked pick before the open asks for the mark and names its single entry instant. A mark given after the open does not revive it, and the line appears once.
