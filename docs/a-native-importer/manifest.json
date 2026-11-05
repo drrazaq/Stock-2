@@ -4,19 +4,20 @@
   "reviewSource": "80df36fe13fe94634cdd90b1589783be8c4bba16",
   "files": {
     "docs/a-native-importer/fixtures/a-fenced-store-2c9.source": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
-    "a-fenced-store.mjs": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+    "a-fenced-store.mjs": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920",
-    "a-evidence-contract.mjs": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
-    "a-native-evidence-contract.mjs": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
-    "a-native-evidence-importer.mjs": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+    "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+    "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+    "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
     "tools/a-native-evidence-runner.mjs": "c2ba3517764837130bba27544ddaa551ecfe4fff9bc80d3c0155bed8e09bdeeb",
     "test/helper-a-native-import.mjs": "97b9eda77243bccb046b2e1df686454c7c78e5b2767105b7efd1ef20205925a7",
-    "test/a-native-evidence-importer.test.mjs": "7dd7cfff1c9df3d8d5e13b56b05a63a76edd9f0b8ce9724c40a06bf8de0e0a97",
+    "test/a-native-evidence-importer.test.mjs": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed",
     "test/a-native-importer-package.test.mjs": "d75358a497bc3acb838170c94e4af11772e509a9b542e5f0b4f6881aff323f28",
-    "test/a-fenced-recovery.test.mjs": "0eb153f63260c6bfdb5276a7e01aa2d12c3ac6615f6f04d27e0e1e8e4739bf12",
+    "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
-    "tools/market03-ingress-matrix.mjs": "9755dfee45a0f27570ea550fd4f810ae11fb3c0296a7e419b30f408bea7948dd"
+    "tools/market03-ingress-matrix.mjs": "d37b06e1524f87cec5c312c9850c8e2f8705b9e608921093c699a31695e5b089",
+    ".github/workflows/tests.yml": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4"
   },
   "productionProtected": {
     "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
@@ -38,8 +39,7 @@
     "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
     "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
     "test/a-fenced-store.test.mjs": "dc691681ca265ff298ae18279cdbb554c098eef497896716e7ea710aeb1afe8d",
-    "docs/engineering-acceptance-checks.json": "e684f906ec454d7d02db3a1fbad8e89de306709785be3533fe98a1f0602af165",
-    ".github/workflows/tests.yml": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97"
+    "docs/engineering-acceptance-checks.json": "e684f906ec454d7d02db3a1fbad8e89de306709785be3533fe98a1f0602af165"
   },
   "status": "OFFLINE_TESTED_INDEPENDENT_REVIEW_PENDING",
   "allowBuy": false,
@@ -54,5 +54,56 @@
   "workerTimeoutMs": 15000,
   "signedSourceMaxBytes": 1048576,
   "importOriginalCountCap": 400,
-  "quoteParserExtraction": "Algorithm unchanged; both timestamp helper and normalizer imported by collector. Original 38 collector assertions unchanged."
+  "quoteParserExtraction": "Algorithm unchanged; both timestamp helper and normalizer imported by collector. Original 38 collector assertions unchanged.",
+  "followups": [
+    {
+      "base": "a32539f533b89d789822c0896a7ea3dfa2ef410f",
+      "review": "eb234b307258eafb028f36e0f7fcb9c090ed6dae",
+      "status": "N_FOLLOWUP_INDEPENDENT_REVIEW_PENDING",
+      "changes": [
+        {
+          "file": "a-fenced-store.mjs",
+          "priorSha256": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+          "sha256": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "a-evidence-contract.mjs",
+          "priorSha256": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
+          "sha256": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "a-native-evidence-contract.mjs",
+          "priorSha256": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
+          "sha256": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "a-native-evidence-importer.mjs",
+          "priorSha256": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+          "sha256": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "test/a-native-evidence-importer.test.mjs",
+          "priorSha256": "7dd7cfff1c9df3d8d5e13b56b05a63a76edd9f0b8ce9724c40a06bf8de0e0a97",
+          "sha256": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "test/a-fenced-recovery.test.mjs",
+          "priorSha256": "0eb153f63260c6bfdb5276a7e01aa2d12c3ac6615f6f04d27e0e1e8e4739bf12",
+          "sha256": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": ".github/workflows/tests.yml",
+          "priorSha256": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97",
+          "sha256": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        }
+      ]
+    }
+  ]
 }

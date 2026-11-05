@@ -7,6 +7,7 @@ import {randomUUID,createHash,createPublicKey,verify} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import {evidenceHash,evidenceTime} from './reclaim-research-workflow.mjs';
 import {runAEvidenceDataset} from './a-evidence-contract.mjs';
+import {assertResearchBoundary} from './a-origin-contract.mjs';
 import {captureJson} from './capture-json.mjs';
 const need=(ok,code)=>{if(!ok)throw Error(code);};
 const hash=b=>createHash('sha256').update(b).digest('hex');
@@ -35,7 +36,7 @@ function immutable(d,name,bytes,control){
   if(fs.existsSync(d.anchor+'/'+name)){need(safeRead(d.anchor+'/'+name).equals(bytes),'IMMUTABLE_RECORD_CONFLICT');return;}
   fs.renameSync(d.anchor+'/'+tmp,d.anchor+'/'+name);
  }else{fs.linkSync(d.anchor+'/'+tmp,d.anchor+'/'+name);fs.unlinkSync(d.anchor+'/'+tmp);}
- fs.fsyncSync(d.fd);
+ fs.fsyncSync(d.fd);d.durableWrites=(d.durableWrites||0)+1;if(d.request)fault(d,d.request,'AFTER_DURABLE_WRITE_'+d.durableWrites);
 }
 const encoded=o=>Buffer.from(JSON.stringify(o)+'\n');
 function head(d){return fs.existsSync(d.anchor+'/HEAD.json')?json(d.anchor+'/HEAD.json'):null;}
@@ -49,9 +50,38 @@ function pending(d){return names(d).filter(n=>/^intent-[a-f0-9]{64}\.json$/.test
 function fault(d,r,at){if(r.fault===at){need(json(d.anchor+'/STORE.json').origin==='SYNTHETIC','FAULT_INJECTION_REFUSED');process.kill(process.pid,'SIGKILL');}}
 const attemptName=n=>`generation-attempt-${n}.json`,completeName=n=>`generation-complete-${n}.json`;
 function controlTemps(d,n){return names(d).filter(x=>new RegExp('^\\.control-'+n+'-[a-f0-9]{64}-[A-Z_]+-').test(x));}
+function quarantineBody(store,a){
+ const b=a?.body,root=recoveryRoot(store.recoveryAuthority);
+ need(a&&Object.keys(a).sort().join(',')==='body,keyId,signature'&&a.keyId===root.id&&b?.schema===1&&b.action==='QUARANTINE_INVALID_REQUEST','QUARANTINE_AUTH_REQUIRED');
+ need(Object.keys(b).sort().join(',')==='action,at,boundaryEvidenceHash,cohortHash,contractHash,expectedHeadHash,reason,requestFile,requestSha256,schema,storeId','QUARANTINE_AUTH_CONTEXT');
+ need(b.storeId===store.storeId&&b.cohortHash===store.cohortHash&&b.contractHash===store.contractHash&&b.reason==='UNVERIFIABLE_UNREFERENCED_RESERVATION'&&hex(b.boundaryEvidenceHash)&&hex(b.requestSha256)&&Number.isFinite(evidenceTime(b.at))&&/^(?:claim|takeover)-request-[a-f0-9]{64}\.json$/.test(b.requestFile||''),'QUARANTINE_AUTH_CONTEXT');
+ need(typeof a.signature==='string'&&/^[A-Za-z0-9+/]{86}==$/.test(a.signature)&&verify(null,Buffer.from(evidenceHash(b)),root.publicKey,Buffer.from(a.signature,'base64')),'QUARANTINE_SIGNATURE_INVALID');return b;
+}
+const quarantineName=(name,sha)=>'request-quarantine-'+hash(Buffer.from(name))+'-'+sha+'.json';
+function hasQuarantine(d,store,name){
+ const currentHash=hash(safeRead(d.anchor+'/'+name)),f=d.anchor+'/'+quarantineName(name,currentHash);if(!fs.existsSync(f))return false;
+ const q=json(f),b=quarantineBody(store,q.authorization);need(q.kind==='UNTRUSTED_RESERVATION_QUARANTINE_V1'&&b.requestFile===name&&q.requestSha256===b.requestSha256&&currentHash===b.requestSha256&&q.archivedFile==='quarantined-request-bytes-'+b.requestSha256+'.bin'&&hash(safeRead(d.anchor+'/'+q.archivedFile))===b.requestSha256&&hash(safeRead(d.anchor+'/'+q.authorizationFile))===q.authorizationSha256,'QUARANTINE_RECEIPT_CORRUPT');return true;
+}
+function quarantineRequest(d,store,r){
+ need(store.recoveryAuthority,'RECOVERY_AUTHORITY_NOT_CONFIGURED');const source=signedRequestSource(store,r),a=source.authorization,b=quarantineBody(store,a),h=head(d);
+ if(h)current(d,evidenceHash(h),true);need(b.expectedHeadHash===(h?evidenceHash(h):null),'CONTROL_CAS_FAILED');
+ const bytes=safeRead(d.anchor+'/'+b.requestFile);need(hash(bytes)===b.requestSha256,'QUARANTINE_FILE_CHANGED');const requestHash=b.requestFile.slice(b.requestFile.lastIndexOf('-')+1,-5);
+ need(!names(d).some(n=>/^generation-attempt-\d+\.json$/.test(n)&&json(d.anchor+'/'+n).requestHash===requestHash)&&!names(d).some(n=>n.startsWith('.control-')&&n.split('-')[2]===requestHash),'RECORDED_ATTEMPT_CANNOT_BE_QUARANTINED');
+ let valid=false;try{if(b.requestFile.startsWith('takeover-'))valid=!!retainedGenerationRequest(d,store,(h?.generation||0)+1,requestHash);else if(store.origin==='SYNTHETIC'&&(!store.recoveryAuthority||!h))valid=!!retainedGenerationRequest(d,store,(h?.generation||0)+1,requestHash);}catch(e){if(e.message==='REQUEST_QUARANTINED_NO_TAKEOVER')return {status:'QUARANTINED_UNTRUSTED_REQUEST',idempotent:true,allowTakeover:false};}
+ need(!valid,'VALID_REQUEST_CANNOT_BE_QUARANTINED');
+ const authorizationSha256=hash(source.bytes),authorizationFile='quarantine-source-'+authorizationSha256+'.json';immutable(d,authorizationFile,source.bytes);fault(d,r,'AFTER_QUARANTINE_AUTHORIZATION');
+ const archivedFile='quarantined-request-bytes-'+b.requestSha256+'.bin';immutable(d,archivedFile,bytes);fault(d,r,'AFTER_QUARANTINE_ORIGINAL');
+ immutable(d,quarantineName(b.requestFile,b.requestSha256),encoded({archivedFile,kind:'UNTRUSTED_RESERVATION_QUARANTINE_V1',authorization:a,authorizationFile,authorizationSha256,requestSha256:b.requestSha256,allowTakeover:false}));fault(d,r,'AFTER_QUARANTINE_RECEIPT');
+ return {status:'QUARANTINED_UNTRUSTED_REQUEST',preservedFile:b.requestFile,sha256:b.requestSha256,headUnchanged:true,allowTakeover:false,sourceAuthentication:'NOT_ESTABLISHED_BY_QUARANTINE'};
+}
+function exportSnapshot(d,store){
+ const h=head(d);if(h)current(d,evidenceHash(h),true);const rows=names(d).sort().map(file=>{const bytes=safeRead(d.anchor+'/'+file);return {file,sha256:hash(bytes),bytes:bytes.length,base64:bytes.toString('base64')};});
+ const manifest={kind:'READ_ONLY_LEGACY_STORE_SNAPSHOT_V1',origin:store.origin,storeId:store.storeId??null,head:h,sourceFiles:rows.map(({base64,...rest})=>rest),sourceAuthentication:'NOT_ESTABLISHED_BY_EXPORT',admissionEligible:false,financialMigration:false};return {manifest,manifestHash:evidenceHash(manifest),files:rows};
+}
+
 function archivedRequests(d,n){
  const expected=head(d);if(n!==(expected?.generation||0)+1)return [];
- return names(d).filter(x=>/^(?:takeover|claim)-request-[a-f0-9]{64}\.json$/.test(x)).filter(name=>{
+ return names(d).filter(x=>/^(?:takeover|claim)-request-[a-f0-9]{64}\.json$/.test(x)).filter(name=>!hasQuarantine(d,json(d.anchor+'/STORE.json'),name)).filter(name=>{
   const value=json(d.anchor+'/'+name),request=value.body||value;
   return (request.expectedHeadHash??request.expectedToken??null)===(expected?evidenceHash(expected):null);
  }).map(name=>name.slice(name.lastIndexOf('-')+1,-5));
@@ -104,6 +134,7 @@ function signedRequestSource(store,r,retainedBytes){
 }
 function retainedGenerationRequest(d,store,n,requestHash){
  const signed=d.anchor+'/takeover-request-'+requestHash+'.json',plain=d.anchor+'/claim-request-'+requestHash+'.json';
+ for(const name of ['takeover-request-'+requestHash+'.json','claim-request-'+requestHash+'.json'])if(fs.existsSync(d.anchor+'/'+name))need(!hasQuarantine(d,store,name),'REQUEST_QUARANTINED_NO_TAKEOVER');
  if(fs.existsSync(signed)){
   const bytes=safeRead(signed),a=captureJson(bytes.toString()),b=authorization(d,store,a,a.body?.action);
   need(['DISPOSE_INCOMPLETE_AND_ADVANCE','CLAIM_GENERATION'].includes(b.action),'RECOVERY_AUTH_CONTEXT_MISMATCH');
@@ -201,31 +232,40 @@ function transact(d,r,kind,logicalId,payload,original){
  need(typeof logicalId==='string'&&logicalId.length>0&&logicalId.length<=300,'LOGICAL_ID_REQUIRED');
  const key=evidenceHash({kind,logicalId}),record={kind,logicalId,payload,original:original?{file:'raw-'+hash(original)+'.bin',sha256:hash(original)}:null},recordHash=evidenceHash(record);
  const n='intent-'+key+'.json',c='commit-'+key+'.json';
- if(fs.existsSync(d.anchor+'/'+c)){const old=json(d.anchor+'/'+c);need(old.recordHash===recordHash,'LOGICAL_RECORD_CONFLICT');need(evidenceHash(json(d.anchor+'/record-'+key+'.json'))===recordHash,'COMMITTED_RECORD_CORRUPT');return {...old,idempotent:true};}
+ if(fs.existsSync(d.anchor+'/'+c)){const old=json(d.anchor+'/'+c);need(old.recordHash===recordHash,'LOGICAL_RECORD_CONFLICT');need(evidenceHash(json(d.anchor+'/record-'+key+'.json'))===recordHash,'COMMITTED_RECORD_CORRUPT');if(record.original)need(fs.existsSync(d.anchor+'/'+record.original.file)&&hash(safeRead(d.anchor+'/'+record.original.file))===record.original.sha256,'COMMITTED_ORIGINAL_UNAVAILABLE_OR_CHANGED');return {...old,idempotent:true};}
  current(d,r.token);validateLock(d);
- immutable(d,n,encoded({schema:1,key,recordHash,record,generation:head(d).generation}));fault(d,r,'AFTER_INTENT');
+ const intent=encoded({schema:1,key,recordHash,record,generation:head(d).generation,...(r.importHash?{importHash:r.importHash,replayOriginal:original?original.toString('base64'):null}:{})}),receipt={schema:1,key,recordHash,generation:head(d).generation,status:'LOCAL_DURABLE_COMMIT',allowBuy:false};
+ const planned=[[n,intent],['record-'+key+'.json',encoded(record)],[c,encoded(receipt)],...(original?[[record.original.file,original]]:[])],missing=planned.filter(([name])=>!fs.existsSync(d.anchor+'/'+name));
+ need(names(d).length+missing.length<=MAX_FILES,'STORE_FILE_CAP');capacity(d,missing.reduce((s,[name,bytes])=>s+bytes.length,0));if(original&&fs.existsSync(d.anchor+'/'+record.original.file))need(hash(safeRead(d.anchor+'/'+record.original.file))===record.original.sha256,'ORIGINAL_BYTES_CHANGED');
+ immutable(d,n,intent);fault(d,r,'AFTER_INTENT');
  current(d,r.token);validateLock(d);
- if(original)immutable(d,record.original.file,original);
+ if(original)immutable(d,record.original.file,original);fault(d,r,'AFTER_ORIGINAL');
  immutable(d,'record-'+key+'.json',encoded(record));fault(d,r,'AFTER_RECORD');
  current(d,r.token);validateLock(d);
- const receipt={schema:1,key,recordHash,generation:head(d).generation,status:'LOCAL_DURABLE_COMMIT',allowBuy:false};immutable(d,c,encoded(receipt));fault(d,r,'AFTER_COMMIT');return receipt;
+ immutable(d,c,encoded(receipt));fault(d,r,'AFTER_COMMIT');return receipt;
 }
 function strictEvaluation(d,store,datasetRef,contractRef){
+ need(residueDescriptors(d).length===0,'UNCLASSIFIED_PARTIAL_EVIDENCE_REQUIRES_REVIEW');
  const read=ref=>{need(/^raw-[a-f0-9]{64}\.bin$/.test(ref?.file||'')&&hex(ref.sha256),'ORIGINAL_REFERENCE_REQUIRED');const b=safeRead(d.anchor+'/'+ref.file);need(hash(b)===ref.sha256,'ORIGINAL_BYTES_CHANGED');return JSON.parse(b);};
- const dataset=read(datasetRef),contract=read(contractRef);need(dataset.origin===store.origin,'STORE_ORIGIN_MISMATCH');need(evidenceHash(contract)===store.contractHash,'STORE_CONTRACT_MISMATCH');
- return runAEvidenceDataset(dataset,contract,d.root);
+ const dataset=read(datasetRef),contract=read(contractRef);need(dataset.origin===store.origin,'STORE_ORIGIN_MISMATCH');assertResearchBoundary(store,contract);need(evidenceHash(contract)===store.contractHash,'STORE_CONTRACT_MISMATCH');
+ return runAEvidenceDataset(dataset,contract,d.root,store);
 }
 function worker(root,r){
- const d=directory(root);try{
+ const d=directory(root);d.request=r;d.durableWrites=0;try{
  validateLock(d);
  if(r.op==='INIT'){
   need(!head(d)&&['SYNTHETIC','RETAINED_RESEARCH'].includes(r.origin)&&hex(r.cohortHash)&&hex(r.contractHash),'STORE_CONTEXT_REQUIRED');
   need(r.origin==='SYNTHETIC'||r.recoveryAuthority,'RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED');
-  immutable(d,'STORE.json',encoded({kind:'A_FENCED_INACTIVE_RESEARCH_V1',storeId:randomUUID(),origin:r.origin,cohortHash:r.cohortHash,contractHash:r.contractHash,...(r.recoveryAuthority?{recoveryAuthority:recoveryRoot(r.recoveryAuthority)}:{}),allowBuy:false}));return {status:'INITIALIZED'};
+  if(r.origin!=='SYNTHETIC')assertResearchBoundary({origin:r.origin,recoveryAuthority:r.recoveryAuthority,retainedEnrollment:r.retainedEnrollment});
+  immutable(d,'STORE.json',encoded({kind:'A_FENCED_INACTIVE_RESEARCH_V1',storeId:randomUUID(),origin:r.origin,cohortHash:r.cohortHash,contractHash:r.contractHash,...(r.retainedEnrollment?{retainedEnrollment:r.retainedEnrollment}:{}),...(r.recoveryAuthority?{recoveryAuthority:recoveryRoot(r.recoveryAuthority)}:{}),allowBuy:false}));return {status:'INITIALIZED'};
  }
  const store=json(d.anchor+'/STORE.json');need(store.kind==='A_FENCED_INACTIVE_RESEARCH_V1','NOT_A_FENCED_STORE');if(r.fault)need(store.origin==='SYNTHETIC','FAULT_INJECTION_REFUSED');
- if(store.origin!=='SYNTHETIC'&&!store.recoveryAuthority)need(['HEAD','RECOVERY_VIEW','GENERATION_ATTEMPT'].includes(r.op),'RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED');
- if(r.op==='HEAD'){const h=head(d);if(h)current(d,evidenceHash(h),true);return {head:h,token:h?evidenceHash(h):null,pending:pending(d).length,unresolved:unresolved(d,store).length,transition:transition(d),origin:store.origin,authorityEnrolled:!!store.recoveryAuthority};}
+ if(store.origin!=='SYNTHETIC'&&!store.recoveryAuthority)need(['HEAD','RECOVERY_VIEW','GENERATION_ATTEMPT','EXPORT','QUARANTINE_VIEW'].includes(r.op),'RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED');
+ if(store.origin!=='SYNTHETIC'&&!['HEAD','RECOVERY_VIEW','GENERATION_ATTEMPT','EXPORT','QUARANTINE_VIEW'].includes(r.op))assertResearchBoundary(store);
+ if(r.op==='QUARANTINE_VIEW'){need(/^(?:claim|takeover)-request-[a-f0-9]{64}\.json$/.test(r.file||''),'QUARANTINE_FILE_REQUIRED');const h=head(d);if(h)current(d,evidenceHash(h),true);const bytes=safeRead(d.anchor+'/'+r.file);return {storeId:store.storeId,cohortHash:store.cohortHash,contractHash:store.contractHash,expectedHeadHash:h?evidenceHash(h):null,requestFile:r.file,requestSha256:hash(bytes),sourceAuthentication:'NOT_ESTABLISHED_BY_INSPECTION'};}
+ if(r.op==='EXPORT')return exportSnapshot(d,store);
+ if(r.op==='QUARANTINE_REQUEST')return quarantineRequest(d,store,r);
+ if(r.op==='HEAD'){const h=head(d);if(h)current(d,evidenceHash(h),true);return {head:h,token:h?evidenceHash(h):null,pending:pending(d).length,unclassifiedFragments:residueDescriptors(d).length,unresolved:unresolved(d,store).length,transition:transition(d),origin:store.origin,contractHash:store.contractHash,cohortHash:store.cohortHash,authorityEnrolled:!!store.recoveryAuthority,retainedEnrollment:store.retainedEnrollment||null,recoveryAuthority:store.recoveryAuthority||null};}
  if(r.op==='RECOVERY_VIEW')return view(d,store);
  if(r.op==='CLAIM')return beginGeneration(d,store,r,'CLAIM');
  if(r.op==='DISPOSE')return beginGeneration(d,store,r,'RECOVERY');
@@ -245,14 +285,25 @@ function worker(root,r){
   const key=evidenceHash({kind:r.kind,logicalId:r.logicalId}),file=d.anchor+'/commit-'+key+'.json';const u=unresolvedRecords.find(u=>u.target.type==='INTENT'&&u.target.key===key);if(u)return {status:'UNRESOLVED',allowBuy:false,disposition:u,originalIntent:json(d.anchor+'/intent-'+key+'.json')};if(r.kind==='EVALUATION'&&unresolvedRecords.length)return {status:'UNRESOLVED_STORE_EVIDENCE',allowBuy:false};if(!fs.existsSync(file))return {status:'NOT_COMMITTED'};
   const c=json(file),record=json(d.anchor+'/record-'+key+'.json');need(evidenceHash(record)===c.recordHash,'COMMITTED_RECORD_CORRUPT');return {status:'FOUND',record,receipt:c};
  }
- if(r.op==='APPEND'){
+ if(r.op==='IMPORT_PENDING'){return pending(d).map(file=>{const validated=intentDescriptor(d,file),b=safeRead(d.anchor+'/'+file),i=JSON.parse(b),intentHash=hash(b),receiptFile='legacy-import-replay-'+intentHash+'.json';let referencedDataset=null;if(i.record.kind==='EVALUATION'){try{const f=i.record.payload.dataset;const bytes=safeRead(d.anchor+'/'+f.file);need(hash(bytes)===f.sha256,'ORIGINAL_BYTES_CHANGED');referencedDataset=JSON.parse(bytes);}catch{}}return {file,intentHash,recordHash:i.recordHash,record:i.record,importHash:i.importHash||null,legacyScope:fs.existsSync(d.anchor+'/'+receiptFile)?json(d.anchor+'/'+receiptFile).importHash:null,originalAvailable:!!i.record.original&&fs.existsSync(d.anchor+'/'+i.record.original.file),referencedDataset};});}
+ if(r.op==='LEGACY_IMPORT_REPLAY'){
+  need(hex(r.importHash)&&hex(r.intentHash)&&hex(r.recordHash)&&/^intent-[a-f0-9]{64}\.json$/.test(r.file||''),'LEGACY_REPLAY_PIN_REQUIRED');need(pending(d).includes(r.file),'LEGACY_INTENT_NOT_PENDING');intentDescriptor(d,r.file);const b=safeRead(d.anchor+'/'+r.file),i=JSON.parse(b);need(hash(b)===r.intentHash&&i.recordHash===r.recordHash&&evidenceHash(i.record)===r.recordHash&&!i.importHash,'LEGACY_INTENT_CHANGED');
+  let bytes=r.bytes===undefined?null:Buffer.from(r.bytes,'base64');if(i.record.original){if(!bytes&&fs.existsSync(d.anchor+'/'+i.record.original.file))bytes=safeRead(d.anchor+'/'+i.record.original.file);need(bytes&&hash(bytes)===i.record.original.sha256,'LEGACY_EXACT_ORIGINAL_REQUIRED');}else need(!bytes,'LEGACY_UNEXPECTED_ORIGINAL');
+  if(i.record.kind==='EVALUATION')need(evidenceHash(strictEvaluation(d,store,i.record.payload.dataset,i.record.payload.contract))===evidenceHash(i.record.payload.result),'EVALUATION_RECOVERY_SOURCE_CHANGED');
+  immutable(d,'legacy-import-replay-'+r.intentHash+'.json',encoded({schema:1,importHash:r.importHash,intentHash:r.intentHash,intentFile:r.file,recordHash:r.recordHash,expectedToken:r.token,originalBase64:bytes?bytes.toString('base64'):null,authorization:'EXACT_EXISTING_TRANSACTION_REPLAY_NOT_DISPOSAL'}));fault(d,r,'AFTER_LEGACY_REPLAY_RECEIPT');return {status:'LEGACY_EXACT_REPLAY_PREPARED',allowBuy:false};
+ }
+ if(r.op==='APPEND'||r.op==='IMPORT_APPEND'){
   need(['TRANSPORT','ORIGINAL','ACQUISITION'].includes(r.kind),'STRICT_EVALUATOR_REQUIRED');
-  const key=evidenceHash({kind:r.kind,logicalId:r.logicalId});need(!unresolvedRecords.some(u=>u.target.type==='INTENT'&&u.target.key===key),'INTENT_PERMANENTLY_UNRESOLVED');need(pending(d).every(n=>n==='intent-'+key+'.json'),'PENDING_INTENT_REQUIRES_RECOVERY');
+  if(r.op==='IMPORT_APPEND'){need(hex(r.importHash),'IMPORT_PIN_REQUIRED');assertResearchBoundary(store);}
+  const key=evidenceHash({kind:r.kind,logicalId:r.logicalId});need(!unresolvedRecords.some(u=>u.target.type==='INTENT'&&u.target.key===key),'INTENT_PERMANENTLY_UNRESOLVED');if(!fs.existsSync(d.anchor+'/commit-'+key+'.json'))need(pending(d).every(n=>n==='intent-'+key+'.json'),'PENDING_INTENT_REQUIRES_RECOVERY');
   const original=r.bytes===undefined?null:Buffer.from(r.bytes,'base64');return transact(d,r,r.kind,r.logicalId,r.payload,original);
  }
- if(r.op==='RECOVER'){
+ if(r.op==='RECOVER'||r.op==='IMPORT_RECOVER'){
   const recovered=[];for(const n of pending(d)){
-   current(d,r.token);validateLock(d);const i=json(d.anchor+'/'+n);need(evidenceHash(i.record)===i.recordHash,'PENDING_INTENT_CORRUPT');
+   current(d,r.token);validateLock(d);intentDescriptor(d,n);const i=json(d.anchor+'/'+n);need(evidenceHash(i.record)===i.recordHash,'PENDING_INTENT_CORRUPT');
+   let replayOriginal=i.replayOriginal;
+   if(r.op==='IMPORT_RECOVER'){need(hex(r.importHash),'IMPORT_PIN_REQUIRED');if(i.importHash)need(i.importHash===r.importHash,'FOREIGN_OR_LEGACY_PENDING_REQUIRES_REVIEW');else{const source='legacy-import-replay-'+hash(safeRead(d.anchor+'/'+n))+'.json';need(fs.existsSync(d.anchor+'/'+source),'FOREIGN_OR_LEGACY_PENDING_REQUIRES_REVIEW');const a=json(d.anchor+'/'+source);need(a.importHash===r.importHash&&a.intentHash===hash(safeRead(d.anchor+'/'+n))&&a.intentFile===n&&a.recordHash===i.recordHash&&a.expectedToken===r.token,'FOREIGN_OR_LEGACY_PENDING_REQUIRES_REVIEW');replayOriginal=a.originalBase64;}}
+   if(replayOriginal!==undefined&&replayOriginal!==null){const bytes=Buffer.from(replayOriginal,'base64');need((i.importHash||r.op==='IMPORT_RECOVER')&&bytes.toString('base64')===replayOriginal&&i.record.original?.sha256===hash(bytes),'IMPORT_REPLAY_SOURCE_CORRUPT');immutable(d,i.record.original.file,bytes);fault(d,r,'AFTER_RECOVERY_ORIGINAL');}
    // Missing original bytes cannot be invented. Caller must retry the original append with the identical retained body.
    if(i.record.kind==='EVALUATION')need(evidenceHash(strictEvaluation(d,store,i.record.payload.dataset,i.record.payload.contract))===evidenceHash(i.record.payload.result),'EVALUATION_RECOVERY_SOURCE_CHANGED');
    if(i.record.original)need(fs.existsSync(d.anchor+'/'+i.record.original.file)&&hash(safeRead(d.anchor+'/'+i.record.original.file))===i.record.original.sha256,'PENDING_ORIGINAL_UNAVAILABLE');
@@ -260,9 +311,10 @@ function worker(root,r){
    const c={schema:1,key:i.key,recordHash:i.recordHash,generation:head(d).generation,status:'LOCAL_DURABLE_COMMIT',allowBuy:false};immutable(d,'commit-'+i.key+'.json',encoded(c));recovered.push(i.key);
   }return {status:'LOCAL_RECOVERY_COMPLETE',recovered};
  }
- if(r.op==='EVALUATE'){
+ if(r.op==='EVALUATE'||r.op==='IMPORT_EVALUATE'){
   if(unresolvedRecords.length)return {status:'UNRESOLVED_STORE_EVIDENCE',allowBuy:false,result:{status:'UNRESOLVED_STORE_EVIDENCE',allowBuy:false,prospectiveAdmissions:0,unresolvedRecords:unresolvedRecords.length}};
   need(pending(d).length===0||pending(d).every(n=>n==='intent-'+evidenceHash({kind:'EVALUATION',logicalId:r.logicalId})+'.json'),'PENDING_INTENT_REQUIRES_RECOVERY');
+  if(r.op==='IMPORT_EVALUATE')need(hex(r.importHash),'IMPORT_PIN_REQUIRED');
   const result=strictEvaluation(d,store,r.dataset,r.contract);
   return {...transact(d,r,'EVALUATION',r.logicalId,{dataset:r.dataset,contract:r.contract,result}),result};
  }
@@ -272,12 +324,13 @@ function worker(root,r){
 export function createAFencedStore(root,context){
  if(context&&context.origin!=='SYNTHETIC')need(context.recoveryAuthority,'RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED');
  if(context?.recoveryAuthority)recoveryRoot(context.recoveryAuthority);
+ if(context&&context.origin!=='SYNTHETIC')assertResearchBoundary(context);
  if(context){fs.mkdirSync(root,{mode:0o700});const d=directory(root);try{const f=fs.openSync(d.anchor+'/.a-writer.lock',fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);fs.fsyncSync(f);fs.closeSync(f);fs.fsyncSync(d.fd);}finally{fs.closeSync(d.fd);}}
  function invoke(request){
   const d=directory(root);let f;try{
-   f=fs.openSync(d.anchor+'/.a-writer.lock',fs.constants.O_RDWR|fs.constants.O_NOFOLLOW);const st=fs.fstatSync(f);need(st.isFile()&&st.nlink===1&&!(st.mode&0o077),'UNSAFE_LOCK');
+   f=fs.openSync(d.anchor+'/.a-writer.lock',(request.op==='EXPORT'?fs.constants.O_RDONLY:fs.constants.O_RDWR)|fs.constants.O_NOFOLLOW);const st=fs.fstatSync(f);need(st.isFile()&&st.nlink===1&&!(st.mode&0o077),'UNSAFE_LOCK');
    const input=encoded(request);need(input.length<=MAX,'REQUEST_CAP');
-   const child=spawnSync('flock',['--exclusive','--nonblock','--conflict-exit-code','73','/proc/self/fd/3',process.execPath,moduleFile,'--fenced-worker',d.root],{input,stdio:['pipe','pipe','pipe',f],timeout:15000,maxBuffer:MAX,env:{PATH:process.env.PATH}});
+   const child=spawnSync('flock',['--exclusive','--nonblock','--conflict-exit-code','73','/proc/self/fd/3',process.execPath,moduleFile,'--fenced-worker',d.root],{input,stdio:['pipe','pipe','pipe',f],timeout:15000,maxBuffer:['EXPORT','IMPORT_PENDING'].includes(request.op)?MAX*2:MAX,env:{PATH:process.env.PATH}});
    // flock's dedicated refusal is terminal NOT STARTED even if the unused stdin pipe reports EPIPE.
    if(child.status===73&&!child.signal&&!child.stdout.length)throw Error('WRITER_BUSY');
    if(child.signal||child.error)throw Object.assign(Error('WRITE_OUTCOME_UNKNOWN'),{cause:{status:child.status,signal:child.signal,errorCode:child.error?.code||null,stdoutBytes:child.stdout?.length||0}});
@@ -286,6 +339,6 @@ export function createAFencedStore(root,context){
   }finally{if(f!==undefined)fs.closeSync(f);fs.closeSync(d.fd);}
  }
  if(context)invoke({op:'INIT',...context});
- return {head:()=>invoke({op:'HEAD'}),recoveryView:()=>invoke({op:'RECOVERY_VIEW'}),generationAttempt:generation=>invoke({op:'GENERATION_ATTEMPT',generation}),claim:r=>invoke({...r,op:'CLAIM'}),recoverUnresolved:r=>invoke({...r,op:'DISPOSE'}),resumeClaim:r=>invoke({...r,op:'RESUME_CLAIM'}),lookup:(token,kind,logicalId)=>invoke({op:'LOOKUP',token,kind,logicalId}),append:(token,kind,logicalId,payload,bytes,fault)=>invoke({op:'APPEND',token,kind,logicalId,payload,...(bytes?{bytes:Buffer.from(bytes).toString('base64')}:{}),fault}),recover:token=>invoke({op:'RECOVER',token}),evaluate:(token,logicalId,dataset,contract,fault)=>invoke({op:'EVALUATE',token,logicalId,dataset,contract,fault})};
+ return {head:()=>invoke({op:'HEAD'}),inspectImportPending:token=>invoke({op:'IMPORT_PENDING',token}),prepareLegacyImportReplay:(token,importHash,pin,bytes,fault)=>invoke({op:'LEGACY_IMPORT_REPLAY',token,importHash,...pin,...(bytes?{bytes:Buffer.from(bytes).toString('base64')}:{}),fault}),inspectRequest:file=>invoke({op:'QUARANTINE_VIEW',file}),quarantineRequest:r=>invoke({...r,op:'QUARANTINE_REQUEST'}),exportSnapshot:()=>invoke({op:'EXPORT'}),appendImport:(importHash,token,kind,logicalId,payload,bytes,fault)=>invoke({op:'IMPORT_APPEND',importHash,token,kind,logicalId,payload,...(bytes?{bytes:Buffer.from(bytes).toString('base64')}:{}),fault}),recoverImport:(token,importHash,fault)=>invoke({op:'IMPORT_RECOVER',token,importHash,fault}),evaluateImport:(importHash,token,logicalId,dataset,contract,fault)=>invoke({op:'IMPORT_EVALUATE',importHash,token,logicalId,dataset,contract,fault}),recoveryView:()=>invoke({op:'RECOVERY_VIEW'}),generationAttempt:generation=>invoke({op:'GENERATION_ATTEMPT',generation}),claim:r=>invoke({...r,op:'CLAIM'}),recoverUnresolved:r=>invoke({...r,op:'DISPOSE'}),resumeClaim:r=>invoke({...r,op:'RESUME_CLAIM'}),lookup:(token,kind,logicalId)=>invoke({op:'LOOKUP',token,kind,logicalId}),append:(token,kind,logicalId,payload,bytes,fault)=>invoke({op:'APPEND',token,kind,logicalId,payload,...(bytes?{bytes:Buffer.from(bytes).toString('base64')}:{}),fault}),recover:token=>invoke({op:'RECOVER',token}),evaluate:(token,logicalId,dataset,contract,fault)=>invoke({op:'EVALUATE',token,logicalId,dataset,contract,fault})};
 }
 if(process.argv[2]==='--fenced-worker'&&import.meta.url===pathToFileURL(process.argv[1]).href){try{const input=fs.readFileSync(0);need(input.length<=MAX,'REQUEST_CAP');const value=worker(process.argv[3],JSON.parse(input));process.stdout.write(JSON.stringify({ok:true,value}));}catch(e){process.stdout.write(JSON.stringify({ok:false,code:/^[A-Z_]+$/.test(e.message)?e.message:'STORE_IO_ERROR'}));process.exitCode=2;}}

@@ -4,18 +4,19 @@
   "reviewSource": "446cd250bfe1aba6e8e5b949223d5fe4732cb9d2",
   "status": "INACTIVE_OFFLINE_IMPLEMENTED_CONFIRMATION_PENDING",
   "files": {
-    "a-fenced-store.mjs": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+    "a-fenced-store.mjs": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
     "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
-    "test/a-fenced-recovery.test.mjs": "0eb153f63260c6bfdb5276a7e01aa2d12c3ac6615f6f04d27e0e1e8e4739bf12",
+    "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
-    "docs/a-native-source-join/manifest.json": "c1bec718bc060e1f7ced0e650050f025bfb72850f801ce3d8ea365ca83ef1cdf",
+    "docs/a-native-source-join/manifest.json": "243d001fc46036b0e51616dc1bdf388d34c805fe32cb97b6e63c8df6c44b90bc",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
-    "a-evidence-contract.mjs": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
+    "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
     "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
-    "a-native-evidence-contract.mjs": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
-    "a-native-evidence-importer.mjs": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
-    "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920"
+    "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+    "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
+    "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920",
+    ".github/workflows/tests.yml": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4"
   },
   "protectedUnchanged": {
     "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
@@ -33,8 +34,7 @@
     "test/a-authenticated-collector.test.mjs": "e4fd8e652260dcf288874d2183b86c67ce3a900e73e389f1d59050e3657f63dd",
     "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
     "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
-    "docs/engineering-acceptance-checks.json": "e684f906ec454d7d02db3a1fbad8e89de306709785be3533fe98a1f0602af165",
-    ".github/workflows/tests.yml": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97"
+    "docs/engineering-acceptance-checks.json": "e684f906ec454d7d02db3a1fbad8e89de306709785be3533fe98a1f0602af165"
   },
   "actualSetup": false,
   "realKeys": false,
@@ -81,6 +81,51 @@
       },
       "previousDependencyRevisions": {},
       "reason": "L1-L4 authorized strict importer/enrollment/durable exact-request integration; prior review unchanged for original scope."
+    }
+  ],
+  "followups": [
+    {
+      "base": "a32539f533b89d789822c0896a7ea3dfa2ef410f",
+      "review": "eb234b307258eafb028f36e0f7fcb9c090ed6dae",
+      "status": "N_FOLLOWUP_INDEPENDENT_REVIEW_PENDING",
+      "changes": [
+        {
+          "file": "a-fenced-store.mjs",
+          "priorSha256": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+          "sha256": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "test/a-fenced-recovery.test.mjs",
+          "priorSha256": "0eb153f63260c6bfdb5276a7e01aa2d12c3ac6615f6f04d27e0e1e8e4739bf12",
+          "sha256": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "a-evidence-contract.mjs",
+          "priorSha256": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
+          "sha256": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "a-native-evidence-contract.mjs",
+          "priorSha256": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
+          "sha256": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "a-native-evidence-importer.mjs",
+          "priorSha256": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+          "sha256": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": ".github/workflows/tests.yml",
+          "priorSha256": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97",
+          "sha256": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        }
+      ]
     }
   ]
 }

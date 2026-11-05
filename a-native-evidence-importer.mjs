@@ -1,5 +1,6 @@
 // Inactive local-file producer -> strict evaluator -> paper-card/outcome integration.
 // Never acquires data, signs receipts, reads credentials, changes policy or enables BUY.
+import {assertResearchBoundary} from './a-origin-contract.mjs';
 import {captureJson} from './capture-json.mjs';
 import {withOriginals,validateTrustContract} from './a-evidence-contract.mjs';
 import {joinNativePrimary,sourceHash} from './a-native-source-join.mjs';
@@ -13,7 +14,7 @@ function reportEvaluation(evaluation,dataset){
  const cases=dataset.observations.map(input=>{const r=evaluation.result?.results?.find(x=>x.observationId===input.observationId),event=evaluation.result?.structuralNotAuthenticated?.ledger?.events?.find(x=>x.observationId===input.observationId),verified=r?.status==='VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT'&&r.derived?.outcome?.status==='MODELED_PAPER_ECONOMICS_ONLY'&&!!event;
   const reason=verified?null:r?.reason||(r?.status==='VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT'?'STRATEGY_OR_OUTCOME_NOT_ADMISSIBLE':evaluation.status)||'EVIDENCE_UNKNOWN';
   return {observationId:input.observationId,status:verified?'RESEARCH_ONLY_UNDER_SUPPLIED_TRUST':'UNKNOWN',reason,paperCard:verified&&event?renderDecisionCard(event):renderDecisionCard({symbol:input.symbol,result:{status:'UNKNOWN',reason}}),outcome:verified&&r.derived?r.derived.outcome:{status:'UNKNOWN',reason,allowBuy:false},native:r?.native||null,allowBuy:false};});
- return {status:cases.some(c=>c.status==='UNKNOWN')?'UNKNOWN':'OFFLINE_RESEARCH_ONLY',origin:dataset.origin,synthetic:dataset.origin==='SYNTHETIC',cases,allowBuy:false,prospectiveAdmissions:0,realDollars:0,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',strategy:'NOT_PROVEN',policyAdopted:false};
+ return {status:cases.some(c=>c.status==='UNKNOWN')?'UNKNOWN':'OFFLINE_RESEARCH_ONLY',origin:dataset.origin,synthetic:dataset.origin==='SYNTHETIC'?true:null,cases,allowBuy:false,prospectiveAdmissions:0,realDollars:0,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',strategy:'NOT_PROVEN',policyAdopted:false};
 }
 export function importNativeAEvidence({store,token,originalsDirectory,request}){
  let dataset=null;
@@ -23,7 +24,20 @@ export function importNativeAEvidence({store,token,originalsDirectory,request}){
   function collect(ref){need(ref&&typeof ref.file==='string'&&typeof ref.sha256==='string','ORIGINAL_REFERENCE_REQUIRED');const old=bytesByName.get(ref.file);if(old){need(old.sha256===ref.sha256,'NATIVE_IMPORT_FILENAME_CONFLICT');return old.bytes;}const bytes=read(ref);total+=bytes.length;need(total<=16777216&&bytesByName.size<400,'NATIVE_IMPORT_BUDGET');bytesByName.set(ref.file,{bytes,sha256:ref.sha256});let value;try{value=parse(bytes);}catch{return bytes;}walk(value);return bytes;}
   function walk(value){if(!value||typeof value!=='object')return;if(typeof value.file==='string'&&typeof value.sha256==='string')collect(value);for(const v of Object.values(value))if(v&&typeof v==='object')walk(v);}
   dataset=parse(collect(request.dataset));const contract=parse(collect(request.contract));validateTrustContract(contract);need(['SYNTHETIC','RETAINED_RESEARCH'].includes(dataset.origin)&&Array.isArray(dataset.observations)&&dataset.observations.length>0&&dataset.observations.length<=100,'NATIVE_IMPORT_DATASET_REQUIRED');
-  const state=store.head();need(state.token===token,'STALE_FENCE');
+  const state=store.head();need(state.token===token,'STALE_FENCE');need(!state.unclassifiedFragments,'UNCLASSIFIED_PARTIAL_EVIDENCE_REQUIRES_REVIEW');
+  const hosts=[],assetIds=[],securityIds=[];for(const i of dataset.observations){const b=dataset.evidence?.[i.observationId]?.nativeBinding;securityIds.push(i.securityId);if(b?.identity?.review)assetIds.push(parse(collect(b.identity.review)).providerAssetId);if(b?.provenance){const p=parse(collect(b.provenance));for(const x of [p.captureHost,p.witnessHost])if(x)hosts.push(parse(collect(x)).hostId);}}
+  assertResearchBoundary(state,contract,{ids:dataset.observations.flatMap(i=>[i.symbol,i.securityId,i.issuerId]),hosts,assetIds,securityIds});
+  const importHash=evidenceHash(request),backend=store;need(typeof backend.recoverImport==='function','IMPORT_RECOVERY_INTERFACE_REQUIRED');
+  if(state.pending){
+   const available=new Map();for(const {bytes}of bytesByName.values()){available.set(sourceHash(bytes),bytes);try{const v=parse(bytes);if(typeof v.bodyBase64==='string'){const b=Buffer.from(v.bodyBase64,'base64');if(sourceHash(b)===v.bodySha256)available.set(sourceHash(b),b);}if(Array.isArray(v.files))for(const f of v.files){if(typeof f.bodyBase64==='string'){const b=Buffer.from(f.bodyBase64,'base64');if(sourceHash(b)===f.sha256)available.set(f.sha256,b);}}}catch{}}
+   for(const pending of backend.inspectImportPending(token)){if(pending.importHash||pending.legacyScope){need((pending.importHash||pending.legacyScope)===importHash,'FOREIGN_OR_LEGACY_PENDING_REQUIRES_REVIEW');continue;}const r=pending.record;let bytes=null,related=false;
+    if(r.kind==='ORIGINAL'&&r.logicalId.startsWith('A_IMPORT_ORIGINAL:')){related=[...bytesByName].some(([file,v])=>r.logicalId==='A_IMPORT_ORIGINAL:'+evidenceHash({file,sha256:v.sha256})&&r.payload.sourceFilename===file&&r.payload.sourceSha256===v.sha256);bytes=available.get(r.original?.sha256);}
+    else if(r.kind==='ACQUISITION')related=dataset.observations.some(i=>{const id=i.catalyst?.sourceId;return typeof id==='string'&&id.length>0&&(['SEC_FIRST:','SEC_PRIMARY_FIRST:','SEC_ACCEPTANCE_FIRST:','SEC_FIRST_CONFLICT:'].some(p=>r.logicalId===p+id)||r.logicalId.startsWith('SEC_JOIN:'+id+':'))||(dataset.evidence?.[i.observationId]?.nativeBinding?.closes||[]).some(c=>['CLOSE:'+i.securityId+':'+c.sessionDate,'CLOSE:'+i.securityId+':'+c.sessionDate+':FIRST_CONFLICT'].includes(r.logicalId));});
+    else if(r.kind==='EVALUATION'&&pending.referencedDataset){const prior=structuredClone(pending.referencedDataset),current=structuredClone(dataset);for(const d of [prior,current]){delete d.nativeImport;for(const b of Object.values(d.evidence||{})){if(b.nativeBinding){delete b.nativeBinding.join;for(const c of b.nativeBinding.closes||[])delete c.normalized;}}}related=evidenceHash(prior)===evidenceHash(current)&&r.payload.contract?.sha256===request.contract.sha256;}
+    need(related,'FOREIGN_OR_LEGACY_PENDING_REQUIRES_REVIEW');if(r.original)need(bytes,'LEGACY_EXACT_ORIGINAL_OR_DERIVATION_REQUIRED');backend.prepareLegacyImportReplay(token,importHash,{file:pending.file,intentHash:pending.intentHash,recordHash:pending.recordHash},bytes);
+   }backend.recoverImport(token,importHash);
+  }
+  store={...backend,append:(...args)=>backend.appendImport(importHash,...args),evaluate:(...args)=>backend.evaluateImport(importHash,...args)};
   // Store origin cannot be silently replaced by a synthetic fixture label.
   need(request.storeOrigin===dataset.origin&&state.origin===dataset.origin,'NATIVE_IMPORT_ORIGIN_MISMATCH');
   const put=(id,value)=>{const bytes=Buffer.isBuffer(value)?value:Buffer.from(JSON.stringify(value)),sha256=sourceHash(bytes);store.append(token,'ORIGINAL',id,{},bytes);return {file:'raw-'+sha256+'.bin',sha256};};

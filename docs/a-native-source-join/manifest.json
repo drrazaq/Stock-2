@@ -14,8 +14,8 @@
   },
   "inheritedDependencies": {
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
-    "a-evidence-contract.mjs": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
-    "a-fenced-store.mjs": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+    "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+    "a-fenced-store.mjs": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
     "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
     "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
     "capture-json.mjs": "b73a5a9239b6866ad06f915bb1657373aab4c63d216d27483e3f6b7edf858475",
@@ -32,8 +32,8 @@
     "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
     "test/native-sec-producer-fixture.mjs": "74e4ab2c3b9eac1f052f791df3bdc05d394d7402d8dd6831b08a49638a802de4",
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
-    "a-native-evidence-contract.mjs": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
-    "a-native-evidence-importer.mjs": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+    "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+    "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
     "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920"
   },
   "protectedFilesUnchangedFromBase": [
@@ -104,5 +104,38 @@
         "a-evidence-contract.mjs": "9bcad99ee1db29591790830dfbe9702c6706bc5968907a4e4a238be424772504"
       }
     }
-  }
+  },
+  "followups": [
+    {
+      "base": "a32539f533b89d789822c0896a7ea3dfa2ef410f",
+      "review": "eb234b307258eafb028f36e0f7fcb9c090ed6dae",
+      "status": "N_FOLLOWUP_INDEPENDENT_REVIEW_PENDING",
+      "changes": [
+        {
+          "file": "a-evidence-contract.mjs",
+          "priorSha256": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
+          "sha256": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "a-fenced-store.mjs",
+          "priorSha256": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+          "sha256": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "a-native-evidence-contract.mjs",
+          "priorSha256": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
+          "sha256": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        },
+        {
+          "file": "a-native-evidence-importer.mjs",
+          "priorSha256": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+          "sha256": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
+          "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        }
+      ]
+    }
+  ]
 }

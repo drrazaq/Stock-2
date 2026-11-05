@@ -1,0 +1,124 @@
+{
+  "schema": 1,
+  "status": "FROZEN_PROPOSAL_AWAITING_INDEPENDENT_REVIEW_AND_OWNER_ADOPTION",
+  "adopted": false,
+  "sourceBase": "a32539f533b89d789822c0896a7ea3dfa2ef410f",
+  "originAllowed": "SYNTHETIC_ONLY",
+  "liveCollector": "NOT_IMPLEMENTED_NOT_AUTHORIZED",
+  "direction": "LONG_ONLY",
+  "capital": {
+    "allocationUsd": 1000,
+    "paperAccountUsd": 10000,
+    "maxPositions": 5,
+    "leverage": false,
+    "maxNewPerSession": 1
+  },
+  "costs": {
+    "commissionPerSideUsd": 3,
+    "extraSlippageBpsPerSide": 2,
+    "spread": "Already charged through entry ask / exit bid; never add it again",
+    "stressMultiplier": 1.5,
+    "stressShares": "Same whole-share size; report capacity breach, never rescale after outcomes"
+  },
+  "quality": {
+    "minPrice": 5,
+    "minPrior20DollarVolume": 5000000,
+    "maxQuoteAgeMs": 2000,
+    "maxSpreadFraction": 0.005,
+    "displayedSizeFraction": 0.1,
+    "units": "SHARES",
+    "quoteQuality": "Required but not guaranteed fills; all thresholds proposed, unapproved"
+  },
+  "identity": "Authentic US common-stock stable ID/CIK/asset reference as known at signal and entry; exclude ADRs/funds/warrants/rights/unknown from verified stock claims; retain all research rows",
+  "zad": "Existing owner mark required for executable eligibility; unknown remains research; existing90day non-halal exclusion untouched; no automatic owner confirmation",
+  "controls": {
+    "count": 3,
+    "selection": "Same session and entry clock; applicable rule/identity/ZAD/freshness/price/liquidity predicates; same SIC3, price and prior20d dollar-volume within factor2; deterministic SHA256(seed,event,securityId), no outcome selection/replacement",
+    "seed": "BC_FIXED_BEFORE_OUTCOMES_V1",
+    "primary": "net USD /1000 allocation minus equal-weight3matched controls at identical clocks/costs",
+    "secondary": [
+      "SPY same clocks/budget/costs as research benchmark, no purchase/ZAD promotion",
+      "Cost stress",
+      "Remove largest2net winners; report net and paired excess again",
+      "Full unconditional qualified-signal/missingness ledger"
+    ]
+  },
+  "missingness": {
+    "everyInputLogged": true,
+    "noQuote": "UNKNOWN/censored, never fill at stop/close/last known price",
+    "haltGapDilutionDelisting": "Preserve original source/action clocks and full paths; no deletion or split-repair hindsight; unresolved terminal value remains censored",
+    "missingControl": "Keep candidate/payoff and unmatched reason; primary paired result unresolved, no substitute chosen afterward",
+    "duplicate": "One security/day/track logical case; exact duplicates deduplicated; conflicts UNKNOWN; complete rejection log retained",
+    "capacity": "Fixed chronological allocation, max5positions, one per issuer; capital/risk exclusions logged; missing exit does not free capital",
+    "noOutcome": "Never count missing outcome as a zero or discard it"
+  },
+  "inference": {
+    "primaryFamily": [
+      "B_EARNINGS_REACTION_1_V1_PROPOSED",
+      "C_SQ11_PB12_QUOTE126_V1_PROPOSED"
+    ],
+    "familywiseAlpha": 0.05,
+    "perPrimaryAlpha": 0.025,
+    "method": "Fixed two-primary Bonferroni; cluster resampling, fixed seed1337/10000replicates; no interim efficacy looks",
+    "priorSearch": "Both selected after existing research; full prior studies retained. New two-test family does not erase prior search. Only later predeclared untouched confirmation could support a new claim.",
+    "gateProposals": [
+      "Net expectancy>0 and paired excess lower97.5%one-sided bound>0",
+      "Profit factor>=1.2; complete conservative uncertainty/missingness disclosure",
+      "Net and paired excess remain nonnegative without largest2winners",
+      "Nonnegative mean at1.5xfees+extra slippage; no stress capacity breach",
+      "Full mark-to-market portfolio drawdown<=10%; missing marks unresolved",
+      "No issuer>10%or industry>25%of gains; report all concentration failures"
+    ],
+    "ownerAgreed": false,
+    "cluster": "Entry session (not trade count)"
+  },
+  "stopping": {
+    "calibration": "Separate operational calibration, never pooled as untouched confirmation",
+    "safety": "Stop new enrollments for budget/authentication/source/identity/clock/coverage failure; preserve and finish known followups within approved scope, do not fabricate exits",
+    "loss": "Stop new paper allocation at10%account drawdown; keep all original cases/outcomes and report stop; cannot pass stopped study",
+    "noExtension": "Fixed final deadline/sample ends even if inconvenient; insufficient samples stay INSUFFICIENT, no automatic extension",
+    "adoption": "No collection or protocol activation from software tests",
+    "calibrationScheduledSessions": 10,
+    "evaluationMaxScheduledSessions": 252,
+    "evaluationMaxQualifiedCases": 120,
+    "minimumCompletePairs": 120,
+    "minimumEntrySessions": 60,
+    "minimumSecurities": 30,
+    "minimumFeasibilityCalibrationEligibleCases": 2,
+    "maximumMissingOutcomeFraction": 0.05
+  },
+  "results": {
+    "strategy": "NOT_PROVEN",
+    "admittedProspective": 0,
+    "analysisPerformed": "Synthetic software tests only, no new historical/market experiment"
+  },
+  "reservedData": {
+    "priorExamined": "All retained2021\u20132026archives and existing paper observations are examined/development evidence, never untouched holdout",
+    "confirmation": "Only a separately approved future start/session list and frozen rule/collector hashes, before observing outcomes",
+    "startDate": "UNSET_NOT_AUTHORIZED"
+  },
+  "track": "B",
+  "id": "B_EARNINGS_REACTION_1_V1_PROPOSED",
+  "horizonSessions": 1,
+  "primaryHypothesis": "Among eligible timely confirmed earnings releases with a positive first15minute reaction, first breakout BBO entries outperform symmetrically selected non-earnings reaction controls after whole-share costs over the remainder of that session; conditional association, not causation or whole-market coverage.",
+  "population": "All authenticated ZAD-eligible US common stocks in predeclared complete session roster, price>=5/prior20d dollar-volume>=5M; small caps eligible, no future winner shortlist.",
+  "rule": {
+    "knownRelease": "Official issuer/SEC primary earnings release and original publish/receipt before entry; no inferred timestamp or EPS-consensus requirement",
+    "formation": "First15regular-session minutes: complete raw bar series, close>=prior close*1.03",
+    "entry": "First eligible fresh executable-model ask above first15minute high from open+15min through open+30min; no chasing/re-entry",
+    "entryStartMinutesAfterOpen": 15,
+    "entryExpiryMinutesAfterOpen": 30,
+    "minReactionReturn": 0.03,
+    "stop": "First observed executable-model bid<=first15minute low; use that actual bid, including gaps; no fill at stop price",
+    "target": null,
+    "nominalRiskUsd": 25,
+    "holding": "No overnight position; otherwise first fresh BBO at/after sessionClose\u221230seconds; missing/halt exit unresolved",
+    "timeExitSecondsBeforeClose": 30
+  },
+  "lineage": {
+    "original": "earnings-study.mjs /data/earnings-study.json firstRun NOT PROVEN,23Oct2026",
+    "changes": "Different hypothesis: first15minute price reaction and one-session exit; removes EPS surprise prerequisite, does NOT reuse40-session PEAD returns as evidence; newB proposal, not a renamed old verdict.",
+    "unchangedStudy": "PEAD>=10%EPSsurprise/daily3%reaction/nextopen/stop0.5%underreactionlow/20MAor40sessions remains frozen NOT PROVEN."
+  },
+  "timeline": "10separate calibration sessions then up to252scheduled sessions;120pairs may take6\u201312months or fail enrollment. No promise of edge."
+}

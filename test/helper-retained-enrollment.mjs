@@ -1,0 +1,3 @@
+// SYNTHETIC tests of neutral labels: absence of markers is NOT authentication.
+import {generateKeyPairSync} from 'node:crypto';import {publicFingerprint} from '../a-origin-contract.mjs';
+export function neutralEnrollment(recoveryAuthority,roots=null){return {kind:'EXPLICIT_RETAINED_ROOT_ENROLLMENT',version:1,id:'PROPOSED_RESEARCH_REGISTRY_01',reviewReference:'c'.repeat(64),authentication:'NOT_ESTABLISHED_BY_ENROLLMENT',recoveryFingerprint:publicFingerprint(recoveryAuthority.publicKey),roleFingerprints:roots?roots.map(r=>({role:r.roles[0],sha256:publicFingerprint(r.publicKey)})):['OWNER','CAPTURE','REVIEW','WITNESS'].map(role=>({role,sha256:publicFingerprint(generateKeyPairSync('ed25519').publicKey.export({type:'spki',format:'pem'}))})),knownTestFingerprints:[]};}

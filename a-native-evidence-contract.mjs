@@ -1,4 +1,5 @@
 // Strict, inactive retained-original binding. No acquisition, signing, policy adoption or default trust.
+import {assertResearchBoundary} from './a-origin-contract.mjs';
 import {captureJson} from './capture-json.mjs';
 import {evidenceHash,evidenceTime} from './reclaim-research-workflow.mjs';
 import {sourceHash,sourceInstant,inspectSourceResponse} from './a-native-source-join.mjs';
@@ -38,7 +39,7 @@ function quote(ref,profileRef,slot,ctx){
  const u=new URL(q.envelope.url);need(u.origin==='https://data.alpaca.markets'&&u.pathname==='/v2/stocks/'+ctx.input.symbol+'/quotes'&&u.searchParams.get('feed')==='sip','QUOTE_NATIVE_ROUTE_UNKNOWN');
  return normalizeAlpacaAQuotes(q.document(),{symbol:ctx.input.symbol,securityId:ctx.input.securityId,slot,receivedAt:q.envelope.bodyReceivedAt,profile:pr.value});
 }
-export function verifyNativeAInput({input,bundle,contract,read,signedOriginal,origin,policy}){
+export function verifyNativeAInput({input,bundle,contract,read,signedOriginal,origin,policy,storeContext}){
  const binding=bundle.nativeBinding;need(binding?.version===1,'NATIVE_BINDING_REQUIRED');const ctx={input,contract,read,signedOriginal};
  const id=identity(binding.identity,input.asOf,input.asOf,ctx);need(id.id===input.identityEvidenceId&&ns(id.knownAt)===ns(input.identityAsOf),'IDENTITY_INPUT_MISMATCH');
  const prefix=original(binding.archive,'CAPTURE',ctx),snapshot=prefix.value;need(snapshot.sha256===sourceHash(JSON.stringify(snapshot.files)),'NATIVE_ARCHIVE_DIGEST_MISMATCH');
@@ -54,6 +55,7 @@ export function verifyNativeAInput({input,bundle,contract,read,signedOriginal,or
  const join=parse(read(binding.join));need(join.eventId===c.sourceId&&join.joinStatus==='MATCHED_RESEARCH_ONLY'&&!join.firstConflict&&join.primaryResponseHashes.includes(c.documentHash)&&ns(join.original.firstObservedAt)===ns(event.observations[0].observedAt),'NATIVE_JOIN_UNKNOWN_OR_CONFLICT');
  const provenance=original(binding.provenance,'REVIEW',ctx),pv=provenance.value;need(pv.kind==='A_NATIVE_PROVENANCE_REVIEW_V1'&&pv.archiveHash===binding.archive.sha256&&pv.primaryEnvelopeHash===binding.primary.sha256&&pv.identityReviewHash===binding.identity.review.sha256&&pv.sourceCodeSha===snapshot.sourceSha&&pv.origin===origin&&ns(provenance.body.recordedAt)<=ns(input.asOf),'NATIVE_PROVENANCE_REQUIRED');
  const capture=original(pv.captureHost,'CAPTURE',ctx),witness=original(pv.witnessHost,'WITNESS',ctx);
+ if(origin!=='SYNTHETIC')assertResearchBoundary(storeContext||{origin},contract,{hosts:[capture.value.hostId,witness.value.hostId],securityIds:[input.securityId],assetIds:[original(binding.identity.review,'REVIEW',ctx).value.providerAssetId]});
  for(const [p,role]of [[capture,'CAPTURE'],[witness,'WITNESS']])need(p.value.kind==='A_CAPTURE_HOST_CONTEXT_V1'&&p.value.collectorId===p.body.collectorId&&contract.collectors.some(c=>c.id===p.body.collectorId&&c.role===role&&c.provenanceReference===p.value.transportReference)&&p.value.sourceCodeSha===snapshot.sourceSha&&typeof p.value.hostId==='string'&&p.value.hostId&&ns(p.body.recordedAt)<=ns(provenance.body.recordedAt),'AUTHENTICATED_HOST_CONTEXT_REQUIRED');
  need(capture.value.hostId!==witness.value.hostId,'INDEPENDENT_HOST_CONTEXT_REQUIRED');
  const closeContract=original(binding.closeContract,'REVIEW',ctx);need(closeContract.value.kind==='A_RAW_AGGREGATE_TRIGGER_CONTRACT_V1'&&closeContract.value.adopted===false&&closeContract.value.execution==='SEPARATE_BBO_ONLY'&&closeContract.value.adjustment==='raw'&&closeContract.value.finalityEvidenceRequired===true&&ns(closeContract.body.recordedAt)<=ns(input.asOf),'CLOSE_SOURCE_CONTRACT_REQUIRED');

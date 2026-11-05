@@ -1,4 +1,5 @@
 // Synthetic offline authority/records only. No actual key, setup, financial state or provider access.
+import {neutralEnrollment} from './helper-retained-enrollment.mjs';
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';import {generateKeyPairSync,sign,createHash} from 'node:crypto';
 import {createAFencedStore} from '../a-fenced-store.mjs';import {evidenceHash} from '../reclaim-research-workflow.mjs';import {evidenceFixture} from './helper-a-evidence.mjs';
@@ -6,8 +7,8 @@ const h='a'.repeat(64),at='2026-11-05T12:00:00Z',later='2026-11-05T12:01:00Z';
 const digest=b=>createHash('sha256').update(b).digest('hex');
 function setup(t,{authority=true,contractHash=h,origin='SYNTHETIC'}={}){
  const root=fs.mkdtempSync(path.join(os.tmpdir(),'a-authorized-recovery-'));t.after(()=>fs.rmSync(root,{recursive:true,force:true}));
- const pair=generateKeyPairSync('ed25519'),recoveryAuthority={id:'SYNTHETIC_RECOVERY_OWNER',publicKey:pair.publicKey.export({type:'spki',format:'pem'})};
- const directory=root+'/store',store=createAFencedStore(directory,{origin,cohortHash:h,contractHash,...(authority?{recoveryAuthority}:{})});
+ const pair=generateKeyPairSync('ed25519'),recoveryAuthority={id:origin==='SYNTHETIC'?'SYNTHETIC_RECOVERY_OWNER':'RECOVERY_OWNER_01',publicKey:pair.publicKey.export({type:'spki',format:'pem'})};
+ const directory=root+'/store',store=createAFencedStore(directory,{origin,cohortHash:h,contractHash,...(authority?{recoveryAuthority}:{}),...(origin==='RETAINED_RESEARCH'&&authority?{retainedEnrollment:neutralEnrollment(recoveryAuthority)}:{})});
  const initial=store.claim({expectedToken:null,owner:'SYNTHETIC_INITIAL',at,boundaryEvidenceHash:h});return {root,directory,store,token:initial.token,pair,recoveryAuthority};
 }
 function auth(x,{action='DISPOSE_INCOMPLETE_AND_ADVANCE',...overrides}={}){const v=x.store.recoveryView(),body={schema:1,action,storeId:v.storeId,cohortHash:v.cohortHash,contractHash:v.contractHash,expectedHeadHash:v.expectedHeadHash,nextOwner:'SYNTHETIC_NEW_OWNER',at:later,boundaryEvidenceHash:h,pending:v.pending,residues:v.residues,...overrides};return {keyId:x.recoveryAuthority.id,body,signature:sign(null,Buffer.from(evidenceHash(body)),x.pair.privateKey).toString('base64')};}

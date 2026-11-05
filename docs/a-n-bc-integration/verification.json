@@ -1,0 +1,147 @@
+{
+  "kind": "A_N1_N4_BC_OFFLINE_VERIFICATION",
+  "base": "a32539f533b89d789822c0896a7ea3dfa2ef410f",
+  "date": "2026-11-05",
+  "operator": "Codex",
+  "independentPriorReview": {
+    "commit": "eb234b307258eafb028f36e0f7fcb9c090ed6dae",
+    "L1L4": "PASS_ON_A325",
+    "newRevision": "REVIEW_REQUESTED_AFTER_PUBLICATION_NOT_YET_INDEPENDENTLY_APPROVED"
+  },
+  "executed": {
+    "node20": {
+      "version": "20.20.2",
+      "command": "node --test test/a-*.test.mjs test/bc-research-rehearsal.test.mjs",
+      "tests": 379,
+      "pass": 379,
+      "fail": 0,
+      "skipped": 0
+    },
+    "node24": {
+      "version": "24.19.0",
+      "command": "node --test test/a-n-review-regressions.test.mjs test/a-native-evidence-importer.test.mjs test/bc-research-rehearsal.test.mjs test/a-fenced-recovery.test.mjs",
+      "tests": 142,
+      "pass": 142,
+      "fail": 0
+    },
+    "python": {
+      "command": "python -m unittest discover -s tests -p 'test_*.py'",
+      "tests": 39,
+      "pass": 39
+    },
+    "static": {
+      "modules": 292,
+      "workflows": 86,
+      "datasetsChecked": 335,
+      "datasetFailures": 0,
+      "missingImports": 0,
+      "nodeSyntaxFailures": 0
+    },
+    "packageChecks": {
+      "tests": 6,
+      "pass": 6
+    },
+    "nonRoot": {
+      "uid": 1000,
+      "sourceMode": "0500",
+      "lockMode": "0400",
+      "actualCliExercised": true
+    },
+    "importerCrashMatrix": {
+      "operations": 77,
+      "canonicalDurablePublications": 296,
+      "allRecovered": true,
+      "existingBytesPreserved": true,
+      "physicalPowerLossProof": false
+    },
+    "cliNegativeBounds": {
+      "oversizeAndSymlinkRefused": true,
+      "maxInputBytes": 8388608
+    }
+  },
+  "intermediateFailures": [
+    {
+      "case": "nested a-native-source manifest hash inside recovery manifest was stale",
+      "disposition": "Refreshed in leaf-to-parent order; original assertion preserved. Final379 and142 pass."
+    },
+    {
+      "case": "new same-issuer synthetic allocator test omitted its import",
+      "disposition": "Test import corrected; distinct-issuer capacity fixture explicitly names distinct issuers, original5slot assertion preserved. Final tests pass."
+    }
+  ],
+  "oldSourceReproductions": {
+    "N1": "n1-original-reproduction.json",
+    "N2": "n2-original-reproduction.json",
+    "N3": "n3-original-reproduction.json",
+    "note": "Independent Codex replay of inspected Claude synthetic probes on actual a325. Any manual removal in the original counterexample affected disposable synthetic fixtures only; it is not the repaired procedure."
+  },
+  "registeredHostedFiles": 295,
+  "hostedEvidence": "Terminal exact-SHA six checks, complete Node20 registered-file log and30host stress controls recorded on PR1 after ordinary push; never substitute local runs for hosted execution. Pending at source publication.",
+  "logs": {
+    "node20-a-bc.tap": {
+      "sha256": "68a40e22b1f5baf01d4397deee3f820767abd1919881ab335825f5acc0930eb7",
+      "bytes": 79283,
+      "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    },
+    "node24-compatibility.log": {
+      "sha256": "e6846104e85c0d4f38511663e220ad53ec9a82140998748284ecfd6b6cc02aa6",
+      "bytes": 14149,
+      "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    },
+    "python.log": {
+      "sha256": "f88cd69789afdc3d4b3d517424484538b9cb0fb4111ebcf65a529ea6ef714ca1",
+      "bytes": 138,
+      "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    },
+    "static.log": {
+      "sha256": "a5bc9443091074810a0a6471e5ecc3cd5e0c37f66ceb9dd1bf52c88ff4598e0f",
+      "bytes": 119,
+      "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    },
+    "package-six.tap": {
+      "sha256": "a568a14b9b07fd2b0b081f4259eddbf78bd2cfc770de06fb3a68785dc14ac73f",
+      "bytes": 1638,
+      "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    },
+    "intermediate-nested-manifest-failure.tap": {
+      "sha256": "20d883ab7195742e33d78c6ada71b386d916f8c611c95024ec7872d6f77a81ae",
+      "bytes": 79864,
+      "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    },
+    "intermediate-wrapper-test-import-failure.tap": {
+      "sha256": "f64ab460095763068819c4e4d63881635a068c27938fec3ec2929588b02d5016",
+      "bytes": 15316,
+      "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    },
+    "nested-manifest-correction.tap": {
+      "sha256": "7cc9cac5e7470d3886bcd902899b085ec373aac9ff0f785725be301248f2545e",
+      "bytes": 16353,
+      "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    },
+    "cli-bounds.json": {
+      "sha256": "d32c1a12372939f90cb78ea9b90b4b9317015a410dcc03b81af949ee8dd48f20",
+      "bytes": 262,
+      "execution": "Codex local; synthetic data/keys only; no provider calls or real credentials"
+    }
+  },
+  "providerCalls": 0,
+  "realKeys": false,
+  "sourceAuthenticated": false,
+  "genuineAdmissions": 0,
+  "strategyResults": "UNCHANGED_NO_NEW_EXPERIMENT",
+  "policyAdopted": false,
+  "productionChanges": false,
+  "acceptanceRowsClosed": 0,
+  "acceptance": {
+    "accepted": 24,
+    "total": 40,
+    "open": 16,
+    "rowsAdvanced": [
+      "REPO-03",
+      "ACTIONS-04",
+      "CATALYST-03",
+      "EXEC-03",
+      "HISTORY-04"
+    ]
+  }
+}

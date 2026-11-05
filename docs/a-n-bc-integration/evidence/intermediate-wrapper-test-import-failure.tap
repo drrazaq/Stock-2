@@ -1,0 +1,318 @@
+TAP version 13
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_INTENT
+ok 1 - N1 tagged original exact recovery after durable boundary AFTER_INTENT # SKIP test name does not match pattern
+  ---
+  duration_ms: 1.354592
+  ...
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_ORIGINAL
+ok 2 - N1 tagged original exact recovery after durable boundary AFTER_ORIGINAL # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.226913
+  ...
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_RECORD
+ok 3 - N1 tagged original exact recovery after durable boundary AFTER_RECORD # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.127108
+  ...
+# Subtest: N1 tagged original exact recovery after durable boundary AFTER_COMMIT
+ok 4 - N1 tagged original exact recovery after durable boundary AFTER_COMMIT # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.107188
+  ...
+# Subtest: N1 legacy missing bytes remain distinct from tagged replay; no auto-disposal or fake evidence
+ok 5 - N1 legacy missing bytes remain distinct from tagged replay; no auto-disposal or fake evidence # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.122858
+  ...
+# Subtest: N1 foreign import and changed inline replay cannot be recovered under another request
+ok 6 - N1 foreign import and changed inline replay cannot be recovered under another request # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.323655
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_1
+ok 7 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_1 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.256012
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_2
+ok 8 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_2 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.139522
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_3
+ok 9 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_3 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.294737
+  ...
+# Subtest: N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_4
+ok 10 - N1 every original canonical durable write, actual worker interruption: AFTER_DURABLE_WRITE_4 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.27848
+  ...
+# Subtest: N3 unsigned planted request retained by signed reconciliation and cannot take over
+ok 11 - N3 unsigned planted request retained by signed reconciliation and cannot take over # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.13892
+  ...
+# Subtest: N3 malformed planted request retained by signed reconciliation and cannot take over
+ok 12 - N3 malformed planted request retained by signed reconciliation and cannot take over # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.107101
+  ...
+# Subtest: N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_1
+ok 13 - N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_1 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.091073
+  ...
+# Subtest: N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_2
+ok 14 - N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_2 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.158118
+  ...
+# Subtest: N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_3
+ok 15 - N3 quarantine interruption/retry after each durable write AFTER_DURABLE_WRITE_3 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.125214
+  ...
+# Subtest: N3 changed planted file, forged signature and old token are not reconciliation authority
+ok 16 - N3 changed planted file, forged signature and old token are not reconciliation authority # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.171577
+  ...
+# Subtest: N2 marker authority refused before a real namespace is created; neutral names are explicitly unauthenticated
+ok 17 - N2 marker authority refused before a real namespace is created; neutral names are explicitly unauthenticated # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.091582
+  ...
+# Subtest: N4 readonly export preserves every legacy byte and pending unknown; copy-out never restores outcomes as new
+ok 18 - N4 readonly export preserves every legacy byte and pending unknown; copy-out never restores outcomes as new # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.185333
+  ...
+# Subtest: N4 non-root readable-but-not-writable source supports read-only export; symlink copy-out refuses
+ok 19 - N4 non-root readable-but-not-writable source supports read-only export; symlink copy-out refuses # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.092753
+  ...
+# Subtest: N4 near-cap source export/readback stays within explicit16MiB raw /32MiB copy envelope, no limit inflation
+ok 20 - N4 near-cap source export/readback stays within explicit16MiB raw /32MiB copy envelope, no limit inflation # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.236594
+  ...
+# Subtest: N1 inline replay capacity is charged up front; insufficient total cap leaves no new pending intent
+ok 21 - N1 inline replay capacity is charged up front; insufficient total cap leaves no new pending intent # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.167268
+  ...
+# Subtest: N3 exact reviewed unsigned planted claim cannot take over and can be signed-quarantined without deletion
+ok 22 - N3 exact reviewed unsigned planted claim cannot take over and can be signed-quarantined without deletion # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.085824
+  ...
+# Subtest: N3 changed unreferenced planted bytes require a new authorization; all prior bytes/receipts retained
+ok 23 - N3 changed unreferenced planted bytes require a new authorization; all prior bytes/receipts retained # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.049283
+  ...
+# Subtest: N2 fixed public test-vector key rejected by fingerprint even under a neutral authority ID
+ok 24 - N2 fixed public test-vector key rejected by fingerprint even under a neutral authority ID # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.047327
+  ...
+# Subtest: N3 a fully valid unreferenced signed takeover is protected; quarantine cannot choose a replacement owner
+ok 25 - N3 a fully valid unreferenced signed takeover is protected; quarantine cannot choose a replacement owner # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.081435
+  ...
+# Subtest: N2 actual importer refuses relabelled fixture at retained store boundary before originals or cards
+ok 26 - N2 actual importer refuses relabelled fixture at retained store boundary before originals or cards
+  ---
+  duration_ms: 517.140967
+  ...
+# Subtest: B frozen proposed rules -> synthetic source/identity/quote -> separate paper card/outcome/control ledger
+ok 27 - B frozen proposed rules -> synthetic source/identity/quote -> separate paper card/outcome/control ledger # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.877914
+  ...
+# Subtest: C frozen proposed rules -> synthetic source/identity/quote -> separate paper card/outcome/control ledger
+ok 28 - C frozen proposed rules -> synthetic source/identity/quote -> separate paper card/outcome/control ledger # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.132492
+  ...
+# Subtest: B losses retained and same whole shares/costs at stress; stop never assumed filled
+ok 29 - B losses retained and same whole shares/costs at stress; stop never assumed filled # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.106417
+  ...
+# Subtest: C losses retained and same whole shares/costs at stress; stop never assumed filled
+ok 30 - C losses retained and same whole shares/costs at stress; stop never assumed filled # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.067963
+  ...
+# Subtest: B unresolved boundary identity
+ok 31 - B unresolved boundary identity # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.123161
+  ...
+# Subtest: B unresolved boundary quote
+ok 32 - B unresolved boundary quote # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.066102
+  ...
+# Subtest: B unresolved boundary owner
+ok 33 - B unresolved boundary owner # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.054077
+  ...
+# Subtest: B unresolved boundary coverage
+ok 34 - B unresolved boundary coverage # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.060108
+  ...
+# Subtest: B unresolved boundary expiry
+ok 35 - B unresolved boundary expiry # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.095074
+  ...
+# Subtest: B unresolved boundary capacity
+ok 36 - B unresolved boundary capacity # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.176615
+  ...
+# Subtest: B unresolved boundary future
+ok 37 - B unresolved boundary future # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.086623
+  ...
+# Subtest: C unresolved boundary identity
+ok 38 - C unresolved boundary identity # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.064451
+  ...
+# Subtest: C unresolved boundary quote
+ok 39 - C unresolved boundary quote # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.053781
+  ...
+# Subtest: C unresolved boundary owner
+ok 40 - C unresolved boundary owner # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.087125
+  ...
+# Subtest: C unresolved boundary coverage
+ok 41 - C unresolved boundary coverage # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.055787
+  ...
+# Subtest: C unresolved boundary expiry
+ok 42 - C unresolved boundary expiry # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.107494
+  ...
+# Subtest: C unresolved boundary capacity
+ok 43 - C unresolved boundary capacity # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.061622
+  ...
+# Subtest: C unresolved boundary future
+ok 44 - C unresolved boundary future # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.123036
+  ...
+# Subtest: B control symmetry, no same issuer, same clock, and fixed membership before exit evidence
+ok 45 - B control symmetry, no same issuer, same clock, and fixed membership before exit evidence # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.062795
+  ...
+# Subtest: C control symmetry, no same issuer, same clock, and fixed membership before exit evidence
+ok 46 - C control symmetry, no same issuer, same clock, and fixed membership before exit evidence # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.144961
+  ...
+# Subtest: B missing/late/contradictory followups never become zero or a favorable replacement
+ok 47 - B missing/late/contradictory followups never become zero or a favorable replacement # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.050698
+  ...
+# Subtest: C missing/late/contradictory followups never become zero or a favorable replacement
+ok 48 - C missing/late/contradictory followups never become zero or a favorable replacement # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.042797
+  ...
+# Subtest: C reuses PB12 signal, no rejected21session rule or invented stop/target; B remains one session
+ok 49 - C reuses PB12 signal, no rejected21session rule or invented stop/target; B remains one session # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.036671
+  ...
+# Subtest: B/C reject real retained input; no name/flag can activate authenticated collection
+ok 50 - B/C reject real retained input; no name/flag can activate authenticated collection # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.038033
+  ...
+# Subtest: duplicate/conflict and malformed rows retained; valid neighboring case preserved
+ok 51 - duplicate/conflict and malformed rows retained; valid neighboring case preserved # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.035806
+  ...
+# Subtest: shared fenced infrastructure keeps B and C namespaces distinct; report is not an A evaluation or an admitted result
+ok 52 - shared fenced infrastructure keeps B and C namespaces distinct; report is not an A evaluation or an admitted result # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.035266
+  ...
+# Subtest: NYSE DST/halfday bounds used by proposals without changing A calendar contracts
+ok 53 - NYSE DST/halfday bounds used by proposals without changing A calendar contracts # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.033521
+  ...
+# Subtest: paired statistics include losses/censored cases and never manufacture full drawdown or a PASS
+ok 54 - paired statistics include losses/censored cases and never manufacture full drawdown or a PASS # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.034652
+  ...
+# Subtest: allocation counts cash and real known exit clocks; missing exits do not free slots or use future gains
+ok 55 - allocation counts cash and real known exit clocks; missing exits do not free slots or use future gains # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.035172
+  ...
+# Subtest: C cannot count trading rows as independent blocks or omit zero-event enrollment months
+ok 56 - C cannot count trading rows as independent blocks or omit zero-event enrollment months # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.037858
+  ...
+# Subtest: actual offline command accepts only synthetic input and never performs live bindings
+ok 57 - actual offline command accepts only synthetic input and never performs live bindings # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.03509
+  ...
+# Subtest: C missing formation price/share/CIK evidence is UNKNOWN rather than a strategy rejection
+ok 58 - C missing formation price/share/CIK evidence is UNKNOWN rather than a strategy rejection # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.075354
+  ...
+# Subtest: allocator collapses two share classes of the same issuer before using another slot
+not ok 59 - allocator collapses two share classes of the same issuer before using another slot
+  ---
+  duration_ms: 294.596308
+  location: '/workspace/stock2-a-n-bc-20261105/test/bc-research-rehearsal.test.mjs:19:1'
+  failureType: 'testCodeFailure'
+  error: 'allocateBCModels is not defined'
+  code: 'ERR_TEST_FAILURE'
+  name: 'ReferenceError'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/stock2-a-n-bc-20261105/test/bc-research-rehearsal.test.mjs:19:332)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+1..59
+# tests 59
+# suites 0
+# pass 1
+# fail 1
+# cancelled 0
+# skipped 57
+# todo 0
+# duration_ms 694.822252

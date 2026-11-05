@@ -1010,19 +1010,20 @@
     ]
   },
   "a-fenced-store.mjs": {
-    "sha256": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
-    "reviewer": "Codex L1-L4 integration source review, 2026-11-05",
+    "sha256": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+    "reviewer": "Codex source and synthetic actual-caller review,5November2026",
     "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
-    "inputs": "Explicit origin/cohort/contract, public recovery root for every non-test INIT, exact private signed source for non-test transition; existing tokens and pinned originals.",
-    "outputs": "Local durable generation/append/evaluation receipts or fixed refusal/UNKNOWN; retained origin cannot use synthetic evaluator bypass.",
-    "sideEffects": "Kernel flock, anchored private writes/fsync, permanent original intents/fragments/request bytes; no key creation/signing or provider calls.",
-    "failure": "Source/hash/symlink/signature/context/transition/inventory conflicts refuse; first-record exact source replay; old tokens fenced; unresolved stays permanent.",
-    "timing": "15s worker;16MiB/2000 files; <=1MiB signed source flushed before transition; no stale-lock aging.",
-    "researchBoundary": "Inactive A only; optional root/inline auth exclusively SYNTHETIC; no genuine admission or live policy adoption.",
-    "remainingVerification": "Independent focused review, authenticated host/provider/custody and policy dependencies remain; not deployed or genuine market evidence.",
+    "inputs": "Explicit store path/origin/cohort/contract/authority/enrollment; exact token and signed private source; scoped import and read-only export operations.",
+    "outputs": "Durable immutable receipts/UNKNOWN, read-only HEAD/export; no BUY/admission.",
+    "sideEffects": "Anchored private store writes under flock, no network, no deletion of evidence. Signed quarantine archives bytes without takeover.",
+    "failure": "Foreign scope/missing/tampered/partial/cap/contending/stale refuse; exact tagged/legacy scoped replay only.",
+    "timing": "15sec bounded worker,16MiB/2000files; canonical durable matrix, not physical power-loss proof.",
+    "researchBoundary": "Inactive conditional research. Non-test roots enrolled and test fingerprints rejected; enrollment is not authentication; real recovery/migration still unapproved.",
+    "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
     "evidence": [
-      "docs/a-native-importer/README.md",
-      "docs/a-native-importer/verification.json"
+      "docs/a-n-bc-integration/README.md",
+      "docs/a-n-bc-integration/verification.json",
+      "docs/research-bc/README.md"
     ]
   },
   "a-authenticated-collector.mjs": {
@@ -1126,19 +1127,20 @@
     ]
   },
   "a-native-evidence-importer.mjs": {
-    "sha256": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
-    "reviewer": "Codex L1-L4 integration source review, 2026-11-05",
+    "sha256": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
+    "reviewer": "Codex source and synthetic actual-caller review,5November2026",
     "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
-    "inputs": "Explicit pinned dataset/contract/native-run configs and signed originals in anchored private directory; already-enrolled fenced store/token.",
-    "outputs": "Private original/report refs, strict evaluator results and existing research card/outcome; failures UNKNOWN and reportSaved false.",
-    "sideEffects": "Bounded local immutable original/derived/evaluation/report writes under existing kernel-fenced store; no acquisition/key/signing/BUY.",
-    "failure": "Missing/hash-conflicting originals, stale generation, source revisions and partial writes keep UNKNOWN; exact pinned retries idempotent.",
-    "timing": "<=400 source originals,16MiB,100 observations; actual receipt clocks preserved; no backdating from retained reads.",
-    "researchBoundary": "All results NOT PROVEN;0 genuine admissions; conditional supplied trust; no cohort, ZAD or protocol adoption.",
-    "remainingVerification": "Independent focused review, authenticated host/provider/custody and policy dependencies remain; not deployed or genuine market evidence.",
+    "inputs": "Pinned exact retained originals/request/native archive/token; actual namespace root/identity/hosts.",
+    "outputs": "Strict evaluated research-only card/outcome/report or UNKNOWN; synthetic true or retained null, zero genuine admissions.",
+    "sideEffects": "Scoped original/native/evaluation/report writes into fenced local store; no provider/signing/credentials.",
+    "failure": "Same-import pending repaired using exact raw replay; legacy exact pins only; foreign/ambiguous/tampered fragments remain unresolved.",
+    "timing": "400original/16MiB import cap,100observations; 296canonical write fault boundaries; old clocks unchanged.",
+    "researchBoundary": "No source authentication inferred, A rules/policy unadopted, no production route.",
+    "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
     "evidence": [
-      "docs/a-native-importer/README.md",
-      "docs/a-native-importer/verification.json"
+      "docs/a-n-bc-integration/README.md",
+      "docs/a-n-bc-integration/verification.json",
+      "docs/research-bc/README.md"
     ]
   },
   "a-native-quotes.mjs": {
@@ -1171,6 +1173,108 @@
     "evidence": [
       "docs/a-native-importer/README.md",
       "docs/a-native-importer/verification.json"
+    ]
+  },
+  "a-origin-contract.mjs": {
+    "sha256": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
+    "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit store enrollment, authority and four role public keys; optional supplied IDs,hosts,fingerprints.",
+    "outputs": "SYNTHETIC_ONLY or ENROLLED_DECLARATION_NOT_AUTHENTICATED; throws fixed refusals.",
+    "sideEffects": "Pure checks/public-key hash; no file/network/key generation.",
+    "failure": "Known test namespace/security/key and mismatch refused; absence of test names never grants authentication.",
+    "timing": "No clock-based validity invented; enrollment bound to immutable source context.",
+    "researchBoundary": "Guard only; authentic host/root/source approval and A ZAD-validity policy unresolved.",
+    "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+    "evidence": [
+      "docs/a-n-bc-integration/README.md",
+      "docs/a-n-bc-integration/verification.json",
+      "docs/research-bc/README.md"
+    ]
+  },
+  "a-legacy-store-export.mjs": {
+    "sha256": "381156166fd9416a545a2fcd4906a8e724bdf52fc48c08ad888695edf0d84b02",
+    "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Read-only store snapshot and optional exact manifest-pinned explicit private output directory/new filename.",
+    "outputs": "Byte-verified snapshot/copy receipt, migration plan only; no admission eligibility.",
+    "sideEffects": "Source read-only flock; optional new private copy with fsync/full readback, no source writes or overwrite.",
+    "failure": "Symlink/link/mode/cap/hash/partial/conflict refusal; leftover destination retained; no automatic recovery.",
+    "timing": "16MiB raw/32MiB JSON envelope,2000files; current full snapshot, no reconstructed past.",
+    "researchBoundary": "Actual private export/migration separately authorized; copied legacy outcomes are context not new evidence.",
+    "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+    "evidence": [
+      "docs/a-n-bc-integration/README.md",
+      "docs/a-n-bc-integration/verification.json",
+      "docs/research-bc/README.md"
+    ]
+  },
+  "bc-research-rehearsal.mjs": {
+    "sha256": "b08874e01921bcef56de6a53c1c1cdbf9a66314e39d2b092d72e8668ccc15146",
+    "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Pinned unadopted B/C JSON proposals and bounded synthetic source/quote/identity/population/control inputs.",
+    "outputs": "Separate NOT PROVEN synthetic cards, outcomes and every rejection; never BUY or genuine admission.",
+    "sideEffects": "Local proposal reads; optional fenced synthetic ORIGINAL receipts; no network or credential binding.",
+    "failure": "Missing/late/conflicting/formations/controls/outcomes remain UNKNOWN; whole-share cost/gap modeling, no desired stop fills.",
+    "timing": "NYSE DST/early close,1or126sessions,entry expiry; declared receipt clocks, no backdating.",
+    "researchBoundary": "B new hypothesis, C original PB12 entry with unadopted quote execution; authenticated collector/first-trigger/marks absent. No strategy result.",
+    "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+    "evidence": [
+      "docs/a-n-bc-integration/README.md",
+      "docs/a-n-bc-integration/verification.json",
+      "docs/research-bc/README.md"
+    ]
+  },
+  "bc-research-summary.mjs": {
+    "sha256": "2ffb5ca02f7949c48a607d732cc01498820411ce5d5d53d3c25b6d3a37805a0a",
+    "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Synthetic case rows with outcomes/controls; C complete predeclared month grid including zero-event months.",
+    "outputs": "Paired cost/sensitivity/missingness stats and causal allocation; drawdown null, NOT PROVEN.",
+    "sideEffects": "Pure in-memory calculation; no providers/keys/real evidence.",
+    "failure": "Missing exits retain reserved slots; absent month grid unknown, few blocks not proof; losers/censored retained.",
+    "timing": "B session and C6month moving blocks; future gains cannot fund earlier entries.",
+    "researchBoundary": "Descriptive software rehearsal; proposed gates not adopted and no formal pass from these metrics.",
+    "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+    "evidence": [
+      "docs/a-n-bc-integration/README.md",
+      "docs/a-n-bc-integration/verification.json",
+      "docs/research-bc/README.md"
+    ]
+  },
+  "tools/a-legacy-store-export.mjs": {
+    "sha256": "8267e10c3cb0ddf3a6a27fca5950a54af4869e8abdccbbb1e7d5a7adb2c4bc6f",
+    "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "One explicit local store directory; no environment or provider inputs.",
+    "outputs": "Aggregate read-only inspection hashes/counts or ERROR/exit1.",
+    "sideEffects": "Calls read-only export only; no copy-out/financial mutation/source write.",
+    "failure": "Missing/malformed/private mode/lock/cap conflict fails without altering store.",
+    "timing": "One bounded15sec worker, no automatic retries.",
+    "researchBoundary": "Real export approval remains required; rootless store not enrolled by inspection.",
+    "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+    "evidence": [
+      "docs/a-n-bc-integration/README.md",
+      "docs/a-n-bc-integration/verification.json",
+      "docs/research-bc/README.md"
+    ]
+  },
+  "tools/bc-research-rehearsal.mjs": {
+    "sha256": "7cacb8947f4430c7d6b1bf752c74080cc6899280b4fc8102cbe5903c90722862",
+    "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit B|C and synthetic JSON regular no-follow file bounded8MiB; no env.",
+    "outputs": "Aggregate track/status/count/NOT PROVEN/0admission or ERROR/exit1.",
+    "sideEffects": "Local reads/calculations only; no output files/key/provider/client.",
+    "failure": "Retained origin, malformed/cap/symlink/moving input refused.",
+    "timing": "Declared frozen clocks only, no live runtime or new capture.",
+    "researchBoundary": "Synthetic implementation exercise only, no activation, production caller or strategy promotion.",
+    "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+    "evidence": [
+      "docs/a-n-bc-integration/README.md",
+      "docs/a-n-bc-integration/verification.json",
+      "docs/research-bc/README.md"
     ]
   }
 }

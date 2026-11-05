@@ -1,8 +1,8 @@
 {
  "summary": {
-  "files": 331,
-  "pairs": 458,
-  "providerPairs": 317,
+  "files": 337,
+  "pairs": 459,
+  "providerPairs": 318,
   "decisionPathPairs": 97,
   "reviewedDecisionPairs": 31,
   "fullyCoveredDecisionPairs": 3,
@@ -486,6 +486,24 @@
    "file": "autolab.mjs",
    "host": "api.telegram.org",
    "kind": "OPS"
+  },
+  {
+   "file": "bc-research-rehearsal.mjs",
+   "host": "data.alpaca.markets",
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "Y",
+    "session": "Y",
+    "adjustment": "P",
+    "revision": "P",
+    "status": "Y",
+    "by": "Codex B/C synthetic rehearsal",
+    "note": "no network/capture or retained admissions; conditional supplied quote profile/identity/source coverage; native parser reused; full authenticated collector and portfolio marks unimplemented"
+   }
   },
   {
    "file": "c0-diagnostic.mjs",

@@ -1,0 +1,542 @@
+[
+  {
+    "track": "B",
+    "origin": "SYNTHETIC",
+    "notMarketEvidence": true,
+    "chronology": {
+      "id": "SYNTHETIC_B_CASE",
+      "symbol": "TEST",
+      "securityId": "SYNTHETIC_BC_B",
+      "asOf": "2026-11-05T14:45:01.100Z",
+      "entrySession": "2026-11-05",
+      "earnings": {
+        "coverageComplete": true,
+        "isEarnings": true,
+        "knownAt": "2026-11-05T13:00:01Z",
+        "primaryHash": "dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd",
+        "publishedAt": "2026-11-05T13:00:00Z",
+        "receivedAt": "2026-11-05T13:00:01Z"
+      },
+      "first15": {
+        "complete": true,
+        "endAt": "2026-11-05T14:45:00Z",
+        "receivedAt": "2026-11-05T14:45:00.100Z",
+        "high": 10.34,
+        "low": 10.1,
+        "close": 10.32
+      },
+      "quoteAt": "2026-11-05T14:45:01Z",
+      "fixture": "test/helper-bc-research.mjs"
+    },
+    "report": {
+      "track": "B",
+      "proposalHash": "f1fc00dd58e9eab1fcf73039ec64ec86c91d5ba66e695e7d1e59ad6f19a919cf",
+      "status": "SYNTHETIC_SOFTWARE_REHEARSAL_ONLY",
+      "rows": [
+        {
+          "id": "SYNTHETIC_B_CASE",
+          "track": "B",
+          "status": "SIMULATED_RULE_QUALIFIED",
+          "category": "SYNTHETIC_CALCULATION",
+          "proposalHash": "f1fc00dd58e9eab1fcf73039ec64ec86c91d5ba66e695e7d1e59ad6f19a919cf",
+          "inputHash": "92d8a6b6da1be6b2007e5adb40fec6724f982553e30000f63168b7f813430410",
+          "securityId": "SYNTHETIC_BC_B",
+          "issuerId": "SYNTHETIC_ISSUER_B",
+          "sic3": "357",
+          "symbol": "TEST",
+          "decisionAt": "2026-11-05T14:45:01.100Z",
+          "entryStart": "2026-11-05T14:45:00.000Z",
+          "entryExpiry": "2026-11-05T15:00:00.000Z",
+          "entryQuote": {
+            "symbol": "TEST",
+            "securityId": "SYNTHETIC_BC_B",
+            "source": "ALPACA_SIP",
+            "evidenceId": "ALPACA_NATIVE_f885c6134811c835da9333b4e2665c020b77e4056096e2a0036a17a907f5f61d",
+            "at": "2026-11-05T14:45:01.000Z",
+            "nativeTimestamp": "2026-11-05T14:45:01Z",
+            "nativeTimestampNs": "1793889901000000000",
+            "observedAt": "2026-11-05T14:45:01.100Z",
+            "sourceDelayMs": 0,
+            "sizeUnits": "SHARES",
+            "bid": 10.35,
+            "ask": 10.36,
+            "bidSize": 1000,
+            "askSize": 1000,
+            "conditions": [
+              "R"
+            ],
+            "bidExchange": "V",
+            "askExchange": "V",
+            "tape": "C"
+          },
+          "exitAt": "2026-11-05T20:59:30.000Z",
+          "stop": 10.1,
+          "target": null,
+          "holdSessions": 1,
+          "size": {
+            "shares": 71,
+            "entryAsk": 10.36,
+            "entryModeled": 10.362072,
+            "allocationUsd": 1000,
+            "commissionsUsd": 6,
+            "nominalStop": 10.1,
+            "nominalRiskUsd": 24.750531999999986,
+            "gapRisk": "CAN_EXCEED_NOMINAL_STOP_RISK",
+            "maxLossExposure": "Full allocation can be lost; no guaranteed fill"
+          },
+          "sourceReadiness": "SYNTHETIC_ONLY_AUTHENTICATED_COLLECTOR_NOT_IMPLEMENTED",
+          "allowBuy": false,
+          "prospectiveAdmissions": 0,
+          "controls": {
+            "status": "SIMULATED_MATCHED_CONTROLS",
+            "reason": null,
+            "selected": [
+              {
+                "id": "SYNTHETIC_CONTROL_1",
+                "securityId": "SYNTHETIC_CTRL_1",
+                "rank": "461d7d55ec54f5857a59c8346623de7234f30965baf743d9ccd23956880a82f6"
+              },
+              {
+                "id": "SYNTHETIC_CONTROL_2",
+                "securityId": "SYNTHETIC_CTRL_2",
+                "rank": "950202403267a6c953dbfd540982d77d9ee71cd58fa4fd416408794f35a045c2"
+              },
+              {
+                "id": "SYNTHETIC_CONTROL_3",
+                "securityId": "SYNTHETIC_CTRL_3",
+                "rank": "eb4974d005bd7dc3c7eebaddf17414cb877c8a80155d780b519a1f5ceb9cb2d5"
+              }
+            ],
+            "rejections": [],
+            "sourceAuthentication": "NOT_ESTABLISHED",
+            "allowBuy": false
+          },
+          "controlOutcomes": [
+            {
+              "status": "SYNTHETIC_MODELED_ECONOMICS_ONLY",
+              "exitKind": "TIME_WINDOW_FIRST_BBO",
+              "exitAt": "2026-11-05T20:59:30.000Z",
+              "exitObservedAt": "2026-11-05T20:59:30.100Z",
+              "base": {
+                "shares": 71,
+                "entryAsk": 10.36,
+                "exitBid": 10.5,
+                "commissionsUsd": 6,
+                "extraSlippageUsd": 0.29621200000000003,
+                "spreadAddedSeparately": 0,
+                "netUsd": 3.643788000000086,
+                "netOnAllocated": 0.003643788000000086,
+                "netOnDeployed": 0.004932655907609681,
+                "stressCapacityBreach": false
+              },
+              "stress": {
+                "shares": 71,
+                "entryAsk": 10.36,
+                "exitBid": 10.5,
+                "commissionsUsd": 9,
+                "extraSlippageUsd": 0.44431800000000005,
+                "spreadAddedSeparately": 0,
+                "netUsd": 0.49568200000010165,
+                "netOnAllocated": 0.0004956820000001017,
+                "netOnDeployed": 0.0006695865790191102,
+                "stressCapacityBreach": false
+              },
+              "allObservedQuotes": 1,
+              "fullPortfolioDrawdown": null,
+              "drawdownReason": "FULL_PORTFOLIO_MARKS_NOT_IMPLEMENTED_NOT_INFERRED",
+              "allowBuy": false,
+              "prospectiveAdmissions": 0
+            },
+            {
+              "status": "SYNTHETIC_MODELED_ECONOMICS_ONLY",
+              "exitKind": "TIME_WINDOW_FIRST_BBO",
+              "exitAt": "2026-11-05T20:59:30.000Z",
+              "exitObservedAt": "2026-11-05T20:59:30.100Z",
+              "base": {
+                "shares": 71,
+                "entryAsk": 10.36,
+                "exitBid": 10.5,
+                "commissionsUsd": 6,
+                "extraSlippageUsd": 0.29621200000000003,
+                "spreadAddedSeparately": 0,
+                "netUsd": 3.643788000000086,
+                "netOnAllocated": 0.003643788000000086,
+                "netOnDeployed": 0.004932655907609681,
+                "stressCapacityBreach": false
+              },
+              "stress": {
+                "shares": 71,
+                "entryAsk": 10.36,
+                "exitBid": 10.5,
+                "commissionsUsd": 9,
+                "extraSlippageUsd": 0.44431800000000005,
+                "spreadAddedSeparately": 0,
+                "netUsd": 0.49568200000010165,
+                "netOnAllocated": 0.0004956820000001017,
+                "netOnDeployed": 0.0006695865790191102,
+                "stressCapacityBreach": false
+              },
+              "allObservedQuotes": 1,
+              "fullPortfolioDrawdown": null,
+              "drawdownReason": "FULL_PORTFOLIO_MARKS_NOT_IMPLEMENTED_NOT_INFERRED",
+              "allowBuy": false,
+              "prospectiveAdmissions": 0
+            },
+            {
+              "status": "SYNTHETIC_MODELED_ECONOMICS_ONLY",
+              "exitKind": "TIME_WINDOW_FIRST_BBO",
+              "exitAt": "2026-11-05T20:59:30.000Z",
+              "exitObservedAt": "2026-11-05T20:59:30.100Z",
+              "base": {
+                "shares": 71,
+                "entryAsk": 10.36,
+                "exitBid": 10.5,
+                "commissionsUsd": 6,
+                "extraSlippageUsd": 0.29621200000000003,
+                "spreadAddedSeparately": 0,
+                "netUsd": 3.643788000000086,
+                "netOnAllocated": 0.003643788000000086,
+                "netOnDeployed": 0.004932655907609681,
+                "stressCapacityBreach": false
+              },
+              "stress": {
+                "shares": 71,
+                "entryAsk": 10.36,
+                "exitBid": 10.5,
+                "commissionsUsd": 9,
+                "extraSlippageUsd": 0.44431800000000005,
+                "spreadAddedSeparately": 0,
+                "netUsd": 0.49568200000010165,
+                "netOnAllocated": 0.0004956820000001017,
+                "netOnDeployed": 0.0006695865790191102,
+                "stressCapacityBreach": false
+              },
+              "allObservedQuotes": 1,
+              "fullPortfolioDrawdown": null,
+              "drawdownReason": "FULL_PORTFOLIO_MARKS_NOT_IMPLEMENTED_NOT_INFERRED",
+              "allowBuy": false,
+              "prospectiveAdmissions": 0
+            }
+          ],
+          "outcome": {
+            "status": "SYNTHETIC_MODELED_ECONOMICS_ONLY",
+            "exitKind": "TIME_WINDOW_FIRST_BBO",
+            "exitAt": "2026-11-05T20:59:30.000Z",
+            "exitObservedAt": "2026-11-05T20:59:30.100Z",
+            "base": {
+              "shares": 71,
+              "entryAsk": 10.36,
+              "exitBid": 10.5,
+              "commissionsUsd": 6,
+              "extraSlippageUsd": 0.29621200000000003,
+              "spreadAddedSeparately": 0,
+              "netUsd": 3.643788000000086,
+              "netOnAllocated": 0.003643788000000086,
+              "netOnDeployed": 0.004932655907609681,
+              "stressCapacityBreach": false
+            },
+            "stress": {
+              "shares": 71,
+              "entryAsk": 10.36,
+              "exitBid": 10.5,
+              "commissionsUsd": 9,
+              "extraSlippageUsd": 0.44431800000000005,
+              "spreadAddedSeparately": 0,
+              "netUsd": 0.49568200000010165,
+              "netOnAllocated": 0.0004956820000001017,
+              "netOnDeployed": 0.0006695865790191102,
+              "stressCapacityBreach": false
+            },
+            "allObservedQuotes": 1,
+            "fullPortfolioDrawdown": null,
+            "drawdownReason": "FULL_PORTFOLIO_MARKS_NOT_IMPLEMENTED_NOT_INFERRED",
+            "allowBuy": false,
+            "prospectiveAdmissions": 0
+          },
+          "card": "TEST: B SYNTHETIC REHEARSAL / NOT PROVEN. 71 whole shares; modeled ask 10.36; allocation $1000, $3 each side plus extra slippage. Entry expires 2026-11-05T15:00:00.000Z. Stop 10.1 trigger, use observed bid (no guaranteed fill). No target. Hold up to 1 session(s); first exit BBO at/after 2026-11-05T20:59:30.000Z. SYNTHETIC_MODELED_ECONOMICS_ONLY. Not an instruction to buy."
+        }
+      ],
+      "rejectionLog": [
+        {
+          "id": "SYNTHETIC_B_CASE",
+          "status": "SIMULATED_RULE_QUALIFIED",
+          "category": "SYNTHETIC_CALCULATION",
+          "reason": null,
+          "controlStatus": "SIMULATED_MATCHED_CONTROLS",
+          "outcomeStatus": "SYNTHETIC_MODELED_ECONOMICS_ONLY"
+        }
+      ],
+      "sourceReadiness": "AUTHENTICATED_BC_COLLECTOR_AND_PORTFOLIO_VALIDATION_NOT_IMPLEMENTED",
+      "strategyVerdict": "NOT_PROVEN",
+      "allowBuy": false,
+      "prospectiveAdmissions": 0
+    }
+  },
+  {
+    "track": "C",
+    "origin": "SYNTHETIC",
+    "notMarketEvidence": true,
+    "chronology": {
+      "id": "SYNTHETIC_C_CASE",
+      "symbol": "TEST",
+      "securityId": "SYNTHETIC_BC_C",
+      "asOf": "2026-11-05T14:30:01.100Z",
+      "entrySession": "2026-11-05",
+      "signalSession": "2026-11-04",
+      "signalAvailableAt": "2026-11-04T21:00:01Z",
+      "quoteAt": "2026-11-05T14:30:01Z",
+      "fixture": "test/helper-bc-research.mjs"
+    },
+    "report": {
+      "track": "C",
+      "proposalHash": "f0fb025d6610ebb6f890a4ff5e95d2d770412040eda521771e7d755881f5ffda",
+      "status": "SYNTHETIC_SOFTWARE_REHEARSAL_ONLY",
+      "rows": [
+        {
+          "id": "SYNTHETIC_C_CASE",
+          "track": "C",
+          "status": "SIMULATED_RULE_QUALIFIED",
+          "category": "SYNTHETIC_CALCULATION",
+          "proposalHash": "f0fb025d6610ebb6f890a4ff5e95d2d770412040eda521771e7d755881f5ffda",
+          "inputHash": "79a375e67e843bb30dc083ab10dc2e539339863ee7f187b7d5075acb5ff01dd2",
+          "securityId": "SYNTHETIC_BC_C",
+          "issuerId": "SYNTHETIC_ISSUER_C",
+          "sic3": "357",
+          "symbol": "TEST",
+          "decisionAt": "2026-11-05T14:30:01.100Z",
+          "entryStart": "2026-11-05T14:30:00.000Z",
+          "entryExpiry": "2026-11-05T14:30:30.000Z",
+          "entryQuote": {
+            "symbol": "TEST",
+            "securityId": "SYNTHETIC_BC_C",
+            "source": "ALPACA_SIP",
+            "evidenceId": "ALPACA_NATIVE_d62a18425c74a9ea8bdbbd45d48eaa5cbe235dac2a7bbda48cc91fd5c20983c3",
+            "at": "2026-11-05T14:30:01.000Z",
+            "nativeTimestamp": "2026-11-05T14:30:01Z",
+            "nativeTimestampNs": "1793889001000000000",
+            "observedAt": "2026-11-05T14:30:01.100Z",
+            "sourceDelayMs": 0,
+            "sizeUnits": "SHARES",
+            "bid": 89.99,
+            "ask": 90,
+            "bidSize": 1000,
+            "askSize": 1000,
+            "conditions": [
+              "R"
+            ],
+            "bidExchange": "V",
+            "askExchange": "V",
+            "tape": "C"
+          },
+          "exitAt": "2027-05-07T19:59:30.000Z",
+          "stop": null,
+          "target": null,
+          "holdSessions": 126,
+          "size": {
+            "shares": 11,
+            "entryAsk": 90,
+            "entryModeled": 90.018,
+            "allocationUsd": 1000,
+            "commissionsUsd": 6,
+            "nominalStop": null,
+            "nominalRiskUsd": null,
+            "gapRisk": "CAN_EXCEED_NOMINAL_STOP_RISK",
+            "maxLossExposure": "Full allocation can be lost; no guaranteed fill"
+          },
+          "formationAudit": {
+            "rawRows": 300,
+            "companies": 300,
+            "topCount": 300,
+            "leaders": 60,
+            "exclusions": [],
+            "sourceAuthentication": "SYNTHETIC_DECLARATIONS_NOT_AUTHENTICATED"
+          },
+          "sourceReadiness": "SYNTHETIC_ONLY_AUTHENTICATED_COLLECTOR_NOT_IMPLEMENTED",
+          "allowBuy": false,
+          "prospectiveAdmissions": 0,
+          "controls": {
+            "status": "SIMULATED_MATCHED_CONTROLS",
+            "reason": null,
+            "selected": [
+              {
+                "id": "SYNTHETIC_CONTROL_3",
+                "securityId": "SYNTHETIC_LEADER_003",
+                "rank": "467170719ae79233c11b650993a2a68e7986292d621195b526226df844e3cd79"
+              },
+              {
+                "id": "SYNTHETIC_CONTROL_2",
+                "securityId": "SYNTHETIC_LEADER_002",
+                "rank": "583249929b927a10976c0e93c67c9af1fc2a10a22007ee5c64889683ff2f1392"
+              },
+              {
+                "id": "SYNTHETIC_CONTROL_1",
+                "securityId": "SYNTHETIC_LEADER_001",
+                "rank": "d4ba30e67a42676a0b85ada0bf4a581586837866118fbbb14f97bb1f0f7ca344"
+              }
+            ],
+            "rejections": [],
+            "sourceAuthentication": "NOT_ESTABLISHED",
+            "allowBuy": false
+          },
+          "controlOutcomes": [
+            {
+              "status": "SYNTHETIC_MODELED_ECONOMICS_ONLY",
+              "exitKind": "TIME_WINDOW_FIRST_BBO",
+              "exitAt": "2027-05-07T19:59:30.000Z",
+              "exitObservedAt": "2027-05-07T19:59:30.100Z",
+              "base": {
+                "shares": 11,
+                "entryAsk": 90,
+                "exitBid": 95,
+                "commissionsUsd": 6,
+                "extraSlippageUsd": 0.40700000000000003,
+                "spreadAddedSeparately": 0,
+                "netUsd": 48.59299999999996,
+                "netOnAllocated": 0.04859299999999996,
+                "netOnDeployed": 0.04892579324565692,
+                "stressCapacityBreach": false
+              },
+              "stress": {
+                "shares": 11,
+                "entryAsk": 90,
+                "exitBid": 95,
+                "commissionsUsd": 9,
+                "extraSlippageUsd": 0.6105,
+                "spreadAddedSeparately": 0,
+                "netUsd": 45.38950000000011,
+                "netOnAllocated": 0.04538950000000011,
+                "netOnDeployed": 0.04562689674375789,
+                "stressCapacityBreach": false
+              },
+              "allObservedQuotes": 1,
+              "fullPortfolioDrawdown": null,
+              "drawdownReason": "FULL_PORTFOLIO_MARKS_NOT_IMPLEMENTED_NOT_INFERRED",
+              "allowBuy": false,
+              "prospectiveAdmissions": 0
+            },
+            {
+              "status": "SYNTHETIC_MODELED_ECONOMICS_ONLY",
+              "exitKind": "TIME_WINDOW_FIRST_BBO",
+              "exitAt": "2027-05-07T19:59:30.000Z",
+              "exitObservedAt": "2027-05-07T19:59:30.100Z",
+              "base": {
+                "shares": 11,
+                "entryAsk": 90,
+                "exitBid": 95,
+                "commissionsUsd": 6,
+                "extraSlippageUsd": 0.40700000000000003,
+                "spreadAddedSeparately": 0,
+                "netUsd": 48.59299999999996,
+                "netOnAllocated": 0.04859299999999996,
+                "netOnDeployed": 0.04892579324565692,
+                "stressCapacityBreach": false
+              },
+              "stress": {
+                "shares": 11,
+                "entryAsk": 90,
+                "exitBid": 95,
+                "commissionsUsd": 9,
+                "extraSlippageUsd": 0.6105,
+                "spreadAddedSeparately": 0,
+                "netUsd": 45.38950000000011,
+                "netOnAllocated": 0.04538950000000011,
+                "netOnDeployed": 0.04562689674375789,
+                "stressCapacityBreach": false
+              },
+              "allObservedQuotes": 1,
+              "fullPortfolioDrawdown": null,
+              "drawdownReason": "FULL_PORTFOLIO_MARKS_NOT_IMPLEMENTED_NOT_INFERRED",
+              "allowBuy": false,
+              "prospectiveAdmissions": 0
+            },
+            {
+              "status": "SYNTHETIC_MODELED_ECONOMICS_ONLY",
+              "exitKind": "TIME_WINDOW_FIRST_BBO",
+              "exitAt": "2027-05-07T19:59:30.000Z",
+              "exitObservedAt": "2027-05-07T19:59:30.100Z",
+              "base": {
+                "shares": 11,
+                "entryAsk": 90,
+                "exitBid": 95,
+                "commissionsUsd": 6,
+                "extraSlippageUsd": 0.40700000000000003,
+                "spreadAddedSeparately": 0,
+                "netUsd": 48.59299999999996,
+                "netOnAllocated": 0.04859299999999996,
+                "netOnDeployed": 0.04892579324565692,
+                "stressCapacityBreach": false
+              },
+              "stress": {
+                "shares": 11,
+                "entryAsk": 90,
+                "exitBid": 95,
+                "commissionsUsd": 9,
+                "extraSlippageUsd": 0.6105,
+                "spreadAddedSeparately": 0,
+                "netUsd": 45.38950000000011,
+                "netOnAllocated": 0.04538950000000011,
+                "netOnDeployed": 0.04562689674375789,
+                "stressCapacityBreach": false
+              },
+              "allObservedQuotes": 1,
+              "fullPortfolioDrawdown": null,
+              "drawdownReason": "FULL_PORTFOLIO_MARKS_NOT_IMPLEMENTED_NOT_INFERRED",
+              "allowBuy": false,
+              "prospectiveAdmissions": 0
+            }
+          ],
+          "outcome": {
+            "status": "SYNTHETIC_MODELED_ECONOMICS_ONLY",
+            "exitKind": "TIME_WINDOW_FIRST_BBO",
+            "exitAt": "2027-05-07T19:59:30.000Z",
+            "exitObservedAt": "2027-05-07T19:59:30.100Z",
+            "base": {
+              "shares": 11,
+              "entryAsk": 90,
+              "exitBid": 95,
+              "commissionsUsd": 6,
+              "extraSlippageUsd": 0.40700000000000003,
+              "spreadAddedSeparately": 0,
+              "netUsd": 48.59299999999996,
+              "netOnAllocated": 0.04859299999999996,
+              "netOnDeployed": 0.04892579324565692,
+              "stressCapacityBreach": false
+            },
+            "stress": {
+              "shares": 11,
+              "entryAsk": 90,
+              "exitBid": 95,
+              "commissionsUsd": 9,
+              "extraSlippageUsd": 0.6105,
+              "spreadAddedSeparately": 0,
+              "netUsd": 45.38950000000011,
+              "netOnAllocated": 0.04538950000000011,
+              "netOnDeployed": 0.04562689674375789,
+              "stressCapacityBreach": false
+            },
+            "allObservedQuotes": 1,
+            "fullPortfolioDrawdown": null,
+            "drawdownReason": "FULL_PORTFOLIO_MARKS_NOT_IMPLEMENTED_NOT_INFERRED",
+            "allowBuy": false,
+            "prospectiveAdmissions": 0
+          },
+          "card": "TEST: C SYNTHETIC REHEARSAL / NOT PROVEN. 11 whole shares; modeled ask 90; allocation $1000, $3 each side plus extra slippage. Entry expires 2026-11-05T14:30:30.000Z. Stop none; full-notional/gap risk. No target. Hold up to 126 session(s); first exit BBO at/after 2027-05-07T19:59:30.000Z. SYNTHETIC_MODELED_ECONOMICS_ONLY. Not an instruction to buy."
+        }
+      ],
+      "rejectionLog": [
+        {
+          "id": "SYNTHETIC_C_CASE",
+          "status": "SIMULATED_RULE_QUALIFIED",
+          "category": "SYNTHETIC_CALCULATION",
+          "reason": null,
+          "controlStatus": "SIMULATED_MATCHED_CONTROLS",
+          "outcomeStatus": "SYNTHETIC_MODELED_ECONOMICS_ONLY"
+        }
+      ],
+      "sourceReadiness": "AUTHENTICATED_BC_COLLECTOR_AND_PORTFOLIO_VALIDATION_NOT_IMPLEMENTED",
+      "strategyVerdict": "NOT_PROVEN",
+      "allowBuy": false,
+      "prospectiveAdmissions": 0
+    }
+  }
+]
