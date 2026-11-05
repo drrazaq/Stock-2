@@ -1,3 +1,5 @@
+> **K1/K2 composition follow-up:** [Recovery implementation and exact procedure](../a-fence-recovery/README.md) changes the store and adds native/close UNKNOWN guards for terminal unresolved evidence. The consumed manifest explicitly repins these authorized changes. Statements below that all572 store bytes were unchanged describe the original native checkpoint at7ee; its code/evidence remain preserved there. No real authority, collection or live binding is installed. Independent composition confirmation is requested.
+
 # Native primary-response join and retained close — inactive checkpoint, 5 November 2026
 
 CATALYST-03 / MARKET-03 / EXEC-03 development only. Base **572dc5aeacb1f10d4590123432e4203cd0d347e2** is preserved. Claude is independently reviewing that earlier collector/fence package. Ownership coordination: PR1 comment6661909569. Its modules, native producer, scanner, watcher, policies and workflows remain byte-identical; this package composes their existing APIs. No provider request, credential, collection, installation or production change is authorized or performed.

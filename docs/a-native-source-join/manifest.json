@@ -6,8 +6,8 @@
   "allowBuy": false,
   "genuineAdmissions": 0,
   "files": {
-    "a-native-source-join.mjs": "908704230288814aa9a8dd7c316f798490cbaa9daf79f716aadfd9fe1cbc1230",
-    "a-close-source.mjs": "bb36962e415c33fd0c134f1798d5343236d919c531881e5f1bb3f24339d2971d",
+    "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
+    "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
     "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
     "test/a-native-source-package.test.mjs": "a80c6fb4dc9e44f93324b7363faf1ffb1d607e1df2de2ef66a2567d937cc5293"
@@ -15,7 +15,7 @@
   "inheritedDependencies": {
     "a-authenticated-collector.mjs": "6625653dc3fbbd328ba0a2996a57b9c7483c6f6f407681886847421b88109f84",
     "a-evidence-contract.mjs": "9bcad99ee1db29591790830dfbe9702c6706bc5968907a4e4a238be424772504",
-    "a-fenced-store.mjs": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
+    "a-fenced-store.mjs": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
     "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
     "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
     "capture-json.mjs": "b73a5a9239b6866ad06f915bb1657373aab4c63d216d27483e3f6b7edf858475",
@@ -35,7 +35,6 @@
   },
   "protectedFilesUnchangedFromBase": [
     "a-authenticated-collector.mjs",
-    "a-fenced-store.mjs",
     "a-sip-window-client.mjs",
     "a-evidence-contract.mjs",
     "a-independent-coverage.mjs",
@@ -56,5 +55,14 @@
   ],
   "productionOrWorkflowChanges": false,
   "providerCalls": 0,
-  "storageLimitUnchangedBytes": 16777216
+  "storageLimitUnchangedBytes": 16777216,
+  "dependencyRevisions": {
+    "a-fenced-store.mjs": {
+      "base": "7ee150f854b23c0f6066a6407e3d52e3a3b774ac",
+      "before": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
+      "after": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
+      "reason": "Explicitly authorized K1/K2 recovery/claim follow-up",
+      "evidence": "docs/a-fence-recovery/README.md"
+    }
+  }
 }

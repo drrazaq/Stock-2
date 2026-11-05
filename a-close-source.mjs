@@ -56,6 +56,7 @@ export function retainClose({store,token,response,context}){
  }
  const conflict=store.lookup(token,'ACQUISITION',id+':FIRST_CONFLICT');
  retain();
- if(store.head().pending!==0)throw Error('PENDING_INTENT_REQUIRES_RECOVERY');
+ const state=store.head();if(state.pending!==0)throw Error('PENDING_INTENT_REQUIRES_RECOVERY');if(state.transition)throw Error('GENERATION_TRANSITION_PENDING');if(state.token!==token)throw Error('STALE_FENCE');
+ if(state.unresolved>0)return {...normalized,status:'UNKNOWN',reasons:[...normalized.reasons,'STORE_EVIDENCE_UNRESOLVED'],...(conflict.status==='FOUND'?{firstConflict:conflict.record.payload}:{})};
  return conflict.status==='FOUND'?{...normalized,status:'UNKNOWN',reasons:['REVISION_CONFLICT_PERSISTENT'],firstConflict:conflict.record.payload}:normalized;
 }

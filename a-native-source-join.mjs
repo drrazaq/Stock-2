@@ -123,7 +123,9 @@ export function joinNativePrimary({native,primaryResponses=[],store,token}){
  for(const p of primaryResponses)retain(store,token,'SEC_PRIMARY',p);
  for(const p of submissions)retain(store,token,'SEC_SUBMISSIONS',{...p,bodySha256:p.sha256,bodyReceivedAt:p.receivedAt});
  for(const r of archive.responses)retain(store,token,'SEC_NATIVE',r.payload);
+ const state=store.head();need(!state.transition,'GENERATION_TRANSITION_PENDING');
+ if(state.unresolved>0)for(const result of results){result.joinStatus='UNKNOWN';result.reasons=[...new Set([...result.reasons,'STORE_EVIDENCE_UNRESOLVED'])].sort();}
  for(const result of results)keep(store,token,'SEC_JOIN:'+result.eventId+':'+sourceHash(JSON.stringify(result)),result);
- need(store.head().pending===0,'PENDING_INTENT_REQUIRES_RECOVERY');
+ const end=store.head();need(end.pending===0,'PENDING_INTENT_REQUIRES_RECOVERY');need(!end.transition,'GENERATION_TRANSITION_PENDING');need(end.token===token,'STALE_FENCE');
  return {status:archive.status,results,genuineAdmissions:0,allowBuy:false};
 }

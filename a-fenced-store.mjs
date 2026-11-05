@@ -3,7 +3,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {spawnSync} from 'node:child_process';
-import {randomUUID,createHash} from 'node:crypto';
+import {randomUUID,createHash,createPublicKey,verify} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import {evidenceHash,evidenceTime} from './reclaim-research-workflow.mjs';
 import {runAEvidenceDataset} from './a-evidence-contract.mjs';
@@ -22,20 +22,140 @@ function safeRead(p){const f=fs.openSync(p,fs.constants.O_RDONLY|fs.constants.O_
 function json(p){return JSON.parse(safeRead(p).toString());}
 function names(d){const n=fs.readdirSync(d.anchor);need(n.length<=MAX_FILES,'STORE_FILE_CAP');return n;}
 function capacity(d,extra){let total=0;for(const n of names(d)){const s=fs.lstatSync(d.anchor+'/'+n);need(s.isFile()&&!s.isSymbolicLink()&&s.nlink===1&&!(s.mode&0o077),'UNSAFE_STORE_FILE');total+=s.size;}need(total+extra<=MAX,'STORE_BYTE_CAP');}
-function immutable(d,name,bytes){
+function immutable(d,name,bytes,control){
  need(/^[a-zA-Z0-9_.-]+$/.test(name),'STORE_NAME_INVALID');
  if(fs.existsSync(d.anchor+'/'+name)){need(safeRead(d.anchor+'/'+name).equals(bytes),'IMMUTABLE_RECORD_CONFLICT');return;}
- capacity(d,bytes.length);const tmp='.partial-'+randomUUID(),f=fs.openSync(d.anchor+'/'+tmp,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);
- try{fs.writeFileSync(f,bytes);fs.fsyncSync(f);}finally{fs.closeSync(f);}
+ capacity(d,bytes.length);const tmp=control?`.control-${control.generation}-${control.requestHash}-${control.stage}-${randomUUID()}`:'.partial-'+randomUUID(),f=fs.openSync(d.anchor+'/'+tmp,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);
+ try{if(control&&control.request.fault==='DURING_'+control.stage+'_WRITE'){fs.writeFileSync(f,bytes.subarray(0,Math.max(1,Math.floor(bytes.length/2))));fs.fsyncSync(f);fault(d,control.request,'DURING_'+control.stage+'_WRITE');}fs.writeFileSync(f,bytes);fs.fsyncSync(f);}finally{fs.closeSync(f);}
  // A failed/interrupted temp stays visible; no truncation or replacement of original evidence.
- fs.linkSync(d.anchor+'/'+tmp,d.anchor+'/'+name);fs.unlinkSync(d.anchor+'/'+tmp);fs.fsyncSync(d.fd);
+ if(control){
+  // Every control publisher holds the same kernel lock. Never replace an existing attempt.
+  // Rename avoids a crash window with an extra hard link to authoritative control bytes.
+  if(fs.existsSync(d.anchor+'/'+name)){need(safeRead(d.anchor+'/'+name).equals(bytes),'IMMUTABLE_RECORD_CONFLICT');return;}
+  fs.renameSync(d.anchor+'/'+tmp,d.anchor+'/'+name);
+ }else{fs.linkSync(d.anchor+'/'+tmp,d.anchor+'/'+name);fs.unlinkSync(d.anchor+'/'+tmp);}
+ fs.fsyncSync(d.fd);
 }
 const encoded=o=>Buffer.from(JSON.stringify(o)+'\n');
 function head(d){return fs.existsSync(d.anchor+'/HEAD.json')?json(d.anchor+'/HEAD.json'):null;}
-function current(d,token){const h=head(d);need(h&&evidenceHash(h)===token,'STALE_FENCE');const g=json(d.anchor+`/generation-${h.generation}.json`);need(evidenceHash(g)===h.generationHash,'CONTROL_CHAIN_INVALID');return h;}
+function current(d,token,readOnly=false){
+ const h=head(d);need(h&&evidenceHash(h)===token,'STALE_FENCE');const store=json(d.anchor+'/STORE.json');let cursor=h;
+ while(cursor){need(Number.isSafeInteger(cursor.generation)&&cursor.generation>0,'CONTROL_CHAIN_INVALID');const g=json(d.anchor+`/generation-${cursor.generation}.json`);need(evidenceHash(g)===cursor.generationHash&&g.generation===cursor.generation&&(g.previous?.generation||0)===cursor.generation-1,'CONTROL_CHAIN_INVALID');if(fs.existsSync(d.anchor+'/'+attemptName(cursor.generation))){const a=readAttempt(d,store,cursor.generation);need(evidenceHash(a.generationRecord)===cursor.generationHash,'CONTROL_CHAIN_INVALID');}cursor=g.previous;}
+ if(!readOnly)need(!transition(d),'GENERATION_TRANSITION_PENDING');return h;
+}
 function validateLock(d){const a=fs.fstatSync(3),b=fs.lstatSync(d.anchor+'/.a-writer.lock'),r=fs.lstatSync(d.root);need(a.ino===b.ino&&a.dev===b.dev&&!b.isSymbolicLink()&&r.ino===d.initial.ino&&r.dev===d.initial.dev&&!r.isSymbolicLink(),'STORE_OR_LOCK_REPLACED');}
-function pending(d){return names(d).filter(n=>/^intent-[a-f0-9]{64}\.json$/.test(n)&&!fs.existsSync(d.anchor+'/'+n.replace('intent-','commit-')));}
+function pending(d){return names(d).filter(n=>/^intent-[a-f0-9]{64}\.json$/.test(n)&&!fs.existsSync(d.anchor+'/'+n.replace('intent-','commit-'))&&!fs.existsSync(d.anchor+'/'+n.replace('intent-','unresolved-')));}
 function fault(d,r,at){if(r.fault===at){need(json(d.anchor+'/STORE.json').origin==='SYNTHETIC','FAULT_INJECTION_REFUSED');process.kill(process.pid,'SIGKILL');}}
+const attemptName=n=>`generation-attempt-${n}.json`,completeName=n=>`generation-complete-${n}.json`;
+function controlTemps(d,n){return names(d).filter(x=>new RegExp('^\\.control-'+n+'-[a-f0-9]{64}-[A-Z_]+-').test(x));}
+function transition(d){
+ const h=head(d),n=h?.generation||0;
+ if(n&&fs.existsSync(d.anchor+'/'+attemptName(n))){
+  if(!fs.existsSync(d.anchor+'/'+completeName(n)))return n;
+  const receipt=json(d.anchor+'/'+completeName(n)),a=json(d.anchor+'/'+attemptName(n));need(receipt.requestHash===a.requestHash&&evidenceHash(receipt.head)===evidenceHash(h),'CONTROL_CHAIN_INVALID');
+ }
+ if(fs.existsSync(d.anchor+'/'+attemptName(n+1))||fs.existsSync(d.anchor+`/generation-${n+1}.json`)||controlTemps(d,n+1).length)return n+1;
+ return null;
+}
+function recoveryRoot(input){
+ need(input&&typeof input.id==='string'&&/^[A-Za-z0-9_-]{1,80}$/.test(input.id)&&typeof input.publicKey==='string'&&input.publicKey.startsWith('-----BEGIN PUBLIC KEY-----'),'RECOVERY_AUTHORITY_INVALID');
+ const key=createPublicKey(input.publicKey);need(key.asymmetricKeyType==='ed25519','RECOVERY_AUTHORITY_INVALID');
+ const publicKey=key.export({type:'spki',format:'pem'});need(publicKey===input.publicKey,'RECOVERY_AUTHORITY_NONCANONICAL');
+ return {id:input.id,publicKey,fingerprint:hash(key.export({type:'spki',format:'der'}))};
+}
+function intentDescriptor(d,name){
+ const bytes=safeRead(d.anchor+'/'+name),i=JSON.parse(bytes),key=name.slice(7,-5);
+ need(i.schema===1&&i.key===key&&evidenceHash({kind:i.record.kind,logicalId:i.record.logicalId})===key&&evidenceHash(i.record)===i.recordHash,'PENDING_INTENT_CORRUPT');
+ return {key,intentHash:hash(bytes),recordHash:i.recordHash,kind:i.record.kind,logicalId:i.record.logicalId};
+}
+function view(d,store){
+ const h=head(d);if(h)current(d,evidenceHash(h),true);
+ const count=unresolved(d,store).length;
+ return {storeId:store.storeId??null,cohortHash:store.cohortHash,contractHash:store.contractHash,expectedHeadHash:h?evidenceHash(h):null,pending:pending(d).sort().map(n=>intentDescriptor(d,n)),residues:residueDescriptors(d),unresolved:count,transition:transition(d)};
+}
+function residueDescriptors(d,requestHash){return names(d).filter(n=>n.startsWith('.partial-')).sort().filter(file=>{const f=d.anchor+'/unresolved-'+evidenceHash({residue:file})+'.json';return !fs.existsSync(f)||(requestHash&&json(f).requestHash===requestHash);}).map(file=>({file,sha256:hash(safeRead(d.anchor+'/'+file))}));}
+function authorization(d,store,a,action){
+ need(store.recoveryAuthority&&store.storeId,'RECOVERY_AUTHORITY_NOT_CONFIGURED');
+ const root=recoveryRoot(store.recoveryAuthority),b=a?.body;
+ need(a&&Object.keys(a).sort().join(',')==='body,keyId,signature','RECOVERY_AUTH_CONTEXT_MISMATCH');
+ need(a&&a.keyId===root.id&&b?.schema===1&&b.action===action&&b.storeId===store.storeId&&b.cohortHash===store.cohortHash&&b.contractHash===store.contractHash,'RECOVERY_AUTH_CONTEXT_MISMATCH');
+ need(Object.keys(b).sort().join(',')==='action,at,boundaryEvidenceHash,cohortHash,contractHash,expectedHeadHash,nextOwner,pending,residues,schema,storeId','RECOVERY_AUTH_CONTEXT_MISMATCH');
+ need(typeof a.signature==='string'&&/^[A-Za-z0-9+/]{86}==$/.test(a.signature)&&verify(null,Buffer.from(evidenceHash(b)),root.publicKey,Buffer.from(a.signature,'base64')),'RECOVERY_AUTH_SIGNATURE_INVALID');
+ need(Array.isArray(b.pending)&&b.pending.length<=MAX_FILES&&Array.isArray(b.residues)&&b.residues.length<=MAX_FILES,'RECOVERY_AUTH_CONTEXT_MISMATCH');
+ return b;
+}
+function readAttempt(d,store,n){
+ const a=json(d.anchor+'/'+attemptName(n));need(a.schema===1&&a.generation===n&&a.requestHash===evidenceHash(a.request)&&a.generationRecord.generation===n&&a.generationRecord.cohortHash===store.cohortHash&&a.generationRecord.contractHash===store.contractHash,'GENERATION_ATTEMPT_CORRUPT');
+ need(evidenceHash(a.generationRecord.previous)===evidenceHash(a.previous)&&a.request.expectedToken===(a.previous?evidenceHash(a.previous):null),'GENERATION_ATTEMPT_CORRUPT');
+ need(n===(a.previous?.generation||0)+1&&a.generationRecord.owner===a.request.owner&&a.generationRecord.at===a.request.at&&a.generationRecord.boundaryEvidenceHash===a.request.boundaryEvidenceHash,'GENERATION_ATTEMPT_CORRUPT');
+ if(a.legacyGenerationHash)need(hash(safeRead(d.anchor+`/generation-${n}.json`))===a.legacyGenerationHash,'GENERATION_ATTEMPT_CORRUPT');else need(a.generationRecord.claimRequestHash===a.requestHash,'GENERATION_ATTEMPT_CORRUPT');
+ let b;
+ if(a.request.mode==='RECOVERY')b=authorization(d,store,a.request.authorization,'DISPOSE_INCOMPLETE_AND_ADVANCE');
+ else{need(a.request.mode==='CLAIM','GENERATION_ATTEMPT_CORRUPT');if(store.recoveryAuthority&&a.previous)b=authorization(d,store,a.request.authorization,'CLAIM_GENERATION');}
+ if(b)need(b.expectedHeadHash===a.request.expectedToken&&b.nextOwner===a.request.owner&&b.at===a.request.at&&b.boundaryEvidenceHash===a.request.boundaryEvidenceHash,'RECOVERY_AUTH_CONTEXT_MISMATCH');
+ return a;
+}
+function unresolved(d,store){
+ return names(d).filter(n=>/^unresolved-[a-f0-9]{64}\.json$/.test(n)).map(n=>{
+  const u=json(d.anchor+'/'+n),a=readAttempt(d,store,u.generation),b=authorization(d,store,a.request.authorization,'DISPOSE_INCOMPLETE_AND_ADVANCE');
+  need(u.status==='UNRESOLVED'&&u.allowBuy===false&&u.requestHash===a.requestHash&&u.storeId===store.storeId,'UNRESOLVED_RECORD_CORRUPT');
+  if(u.target.type==='INTENT'){need(n==='unresolved-'+u.target.key+'.json'&&u.target.descriptor.key===u.target.key,'UNRESOLVED_RECORD_CORRUPT');need(!fs.existsSync(d.anchor+'/commit-'+u.target.key+'.json'),'DISPOSITION_COMMIT_CONFLICT');need(b.pending.some(x=>evidenceHash(x)===evidenceHash(u.target.descriptor))&&evidenceHash(intentDescriptor(d,'intent-'+u.target.key+'.json'))===evidenceHash(u.target.descriptor),'UNRESOLVED_RECORD_CORRUPT');}
+  else need(u.target.type==='RESIDUE'&&n==='unresolved-'+evidenceHash({residue:u.target.descriptor.file})+'.json'&&b.residues.some(x=>evidenceHash(x)===evidenceHash(u.target.descriptor))&&hash(safeRead(d.anchor+'/'+u.target.descriptor.file))===u.target.descriptor.sha256,'UNRESOLVED_RECORD_CORRUPT');
+  return u;
+ });
+}
+function finishGeneration(d,store,a,r){
+ const checked=readAttempt(d,store,a.generation);need(evidenceHash(checked)===evidenceHash(a),'GENERATION_ATTEMPT_CORRUPT');
+ const next={generation:a.generation,generationHash:evidenceHash(a.generationRecord)},now=head(d);
+ need(evidenceHash(now)===evidenceHash(a.previous)||evidenceHash(now)===evidenceHash(next),'CONTROL_CAS_FAILED');
+ const put=(name,value,stage)=>immutable(d,name,encoded(value),{generation:a.generation,requestHash:a.requestHash,stage,request:r});
+ if(a.request.mode==='RECOVERY'){
+  const b=authorization(d,store,a.request.authorization,'DISPOSE_INCOMPLETE_AND_ADVANCE');
+  const relevant=names(d).filter(n=>/^intent-[a-f0-9]{64}\.json$/.test(n)&&!fs.existsSync(d.anchor+'/'+n.replace('intent-','commit-'))).filter(n=>{const f=d.anchor+'/'+n.replace('intent-','unresolved-');return !fs.existsSync(f)||json(f).requestHash===a.requestHash;}).sort().map(n=>intentDescriptor(d,n));
+  const residues=residueDescriptors(d,a.requestHash);
+  need(evidenceHash(b.pending)===evidenceHash(relevant)&&evidenceHash(b.residues)===evidenceHash(residues),'RECOVERY_INVENTORY_CHANGED');
+
+ }
+ const gf=d.anchor+`/generation-${a.generation}.json`;
+ if(fs.existsSync(gf))need(evidenceHash(json(gf))===evidenceHash(a.generationRecord),'GENERATION_ATTEMPT_CONFLICT');else put(`generation-${a.generation}.json`,a.generationRecord,'GENERATION');
+ fault(d,r,'AFTER_GENERATION');validateLock(d);
+ if(evidenceHash(head(d))===evidenceHash(a.previous)){
+  const tmp=`.head-${a.requestHash}`;put(tmp,next,'HEAD');fault(d,r,'BEFORE_HEAD');need(evidenceHash(head(d))===evidenceHash(a.previous),'CONTROL_CAS_FAILED');
+  // Retain the staged control bytes as part of the attempt; use a fresh derived pointer copy.
+  const swap='.head-switch-'+randomUUID();put(swap,next,'SWITCH');fault(d,r,'AFTER_SWITCH_WRITE');
+  fs.renameSync(d.anchor+'/'+swap,d.anchor+'/HEAD.json');fs.fsyncSync(d.fd);
+ }
+ fault(d,r,'AFTER_HEAD');validateLock(d);need(evidenceHash(head(d))===evidenceHash(next),'CONTROL_CAS_FAILED');
+ if(a.request.mode==='RECOVERY'){const b=a.request.authorization.body;
+  for(const desc of b.pending){const u={schema:1,status:'UNRESOLVED',allowBuy:false,storeId:store.storeId,generation:a.generation,requestHash:a.requestHash,at:b.at,target:{type:'INTENT',key:desc.key,descriptor:desc}};put('unresolved-'+desc.key+'.json',u,'DISPOSITION');fault(d,r,'AFTER_DISPOSITION');}
+  for(const desc of b.residues){const key=evidenceHash({residue:desc.file}),u={schema:1,status:'UNRESOLVED',allowBuy:false,storeId:store.storeId,generation:a.generation,requestHash:a.requestHash,at:b.at,target:{type:'RESIDUE',descriptor:desc}};put('unresolved-'+key+'.json',u,'DISPOSITION');fault(d,r,'AFTER_DISPOSITION');}
+ }
+ put(completeName(a.generation),{schema:1,requestHash:a.requestHash,head:next},'RECEIPT');fault(d,r,'AFTER_CLAIM_RECEIPT');
+ return {head:next,token:evidenceHash(next),status:'GENERATION_READY',unresolved:unresolved(d,store).length};
+}
+function beginGeneration(d,store,r,mode){
+ const old=head(d),expected=old?evidenceHash(old):null;
+ let b=null;if(mode==='RECOVERY')b=authorization(d,store,r.authorization,'DISPOSE_INCOMPLETE_AND_ADVANCE');
+ else if(store.recoveryAuthority&&old)b=authorization(d,store,r.authorization,'CLAIM_GENERATION');
+ if(b){need(b.expectedHeadHash===expected,'CONTROL_CAS_FAILED');r={...r,expectedToken:b.expectedHeadHash,owner:b.nextOwner,at:b.at,boundaryEvidenceHash:b.boundaryEvidenceHash};}
+ need(expected===r.expectedToken,'CONTROL_CAS_FAILED');
+ need(typeof r.owner==='string'&&r.owner.length>0&&r.owner.length<=100&&Number.isFinite(evidenceTime(r.at))&&hex(r.boundaryEvidenceHash),'BOUNDARY_CONTEXT_REQUIRED');
+ if(old){current(d,expected,true);need(evidenceTime(r.at)>=evidenceTime(json(d.anchor+`/generation-${old.generation}.json`).at),'BOUNDARY_CLOCK_REGRESSION');}
+ const request={mode,expectedToken:r.expectedToken,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,authorization:b?r.authorization:null},requestHash=evidenceHash(request),n=(old?.generation||0)+1;
+ const reservation=transition(d);need(!reservation||reservation===n,'GENERATION_TRANSITION_PENDING');
+ if(fs.existsSync(d.anchor+'/'+attemptName(n))){const a=readAttempt(d,store,n);need(a.requestHash===requestHash,'GENERATION_ATTEMPT_CONFLICT');return finishGeneration(d,store,a,r);}
+ need(controlTemps(d,n).every(name=>name.split('-')[2]===requestHash),'GENERATION_ATTEMPT_CONFLICT');
+ const currentView=view(d,store);
+ if(mode==='RECOVERY'){
+  need(b.pending.length||b.residues.length,'NO_UNRESOLVED_EVIDENCE');need(evidenceHash(b.pending)===evidenceHash(currentView.pending)&&evidenceHash(b.residues)===evidenceHash(currentView.residues),'RECOVERY_INVENTORY_CHANGED');
+ }else{need(!currentView.pending.length,'PENDING_INTENT_REQUIRES_RECOVERY');need(!currentView.residues.length,'UNRESOLVED_PARTIAL_ARTIFACTS');if(b)need(!b.pending.length&&!b.residues.length,'RECOVERY_AUTH_CONTEXT_MISMATCH');}
+ const gf=d.anchor+`/generation-${n}.json`;let legacyGenerationHash;
+ let generationRecord={schema:1,generation:n,previous:old,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,cohortHash:store.cohortHash,contractHash:store.contractHash,claimRequestHash:requestHash};
+ if(fs.existsSync(gf)){const g=json(gf),{claimRequestHash:unused,...expectedGeneration}=generationRecord;need(mode==='CLAIM'&&evidenceHash(g)===evidenceHash(expectedGeneration),'GENERATION_ATTEMPT_CONFLICT');legacyGenerationHash=hash(safeRead(gf));generationRecord=g;}
+ const a={schema:1,generation:n,previous:old,request,requestHash,generationRecord,...(legacyGenerationHash?{legacyGenerationHash}:{})};
+ immutable(d,attemptName(n),encoded(a),{generation:n,requestHash,stage:'ATTEMPT',request:r});fault(d,r,'AFTER_CLAIM_ATTEMPT');
+ return finishGeneration(d,store,a,r);
+}
 function transact(d,r,kind,logicalId,payload,original){
  need(typeof logicalId==='string'&&logicalId.length>0&&logicalId.length<=300,'LOGICAL_ID_REQUIRED');
  const key=evidenceHash({kind,logicalId}),record={kind,logicalId,payload,original:original?{file:'raw-'+hash(original)+'.bin',sha256:hash(original)}:null},recordHash=evidenceHash(record);
@@ -59,27 +179,32 @@ function worker(root,r){
  validateLock(d);
  if(r.op==='INIT'){
   need(!head(d)&&['SYNTHETIC','RETAINED_RESEARCH'].includes(r.origin)&&hex(r.cohortHash)&&hex(r.contractHash),'STORE_CONTEXT_REQUIRED');
-  immutable(d,'STORE.json',encoded({kind:'A_FENCED_INACTIVE_RESEARCH_V1',origin:r.origin,cohortHash:r.cohortHash,contractHash:r.contractHash,allowBuy:false}));return {status:'INITIALIZED'};
+  immutable(d,'STORE.json',encoded({kind:'A_FENCED_INACTIVE_RESEARCH_V1',storeId:randomUUID(),origin:r.origin,cohortHash:r.cohortHash,contractHash:r.contractHash,...(r.recoveryAuthority?{recoveryAuthority:recoveryRoot(r.recoveryAuthority)}:{}),allowBuy:false}));return {status:'INITIALIZED'};
  }
- const store=json(d.anchor+'/STORE.json');need(store.kind==='A_FENCED_INACTIVE_RESEARCH_V1','NOT_A_FENCED_STORE');
- if(r.op==='HEAD')return {head:head(d),token:head(d)?evidenceHash(head(d)):null,pending:pending(d).length};
- if(r.op==='CLAIM'){
-  const old=head(d);need((old?evidenceHash(old):null)===r.expectedToken,'CONTROL_CAS_FAILED');need(pending(d).length===0,'PENDING_INTENT_REQUIRES_RECOVERY');
-  need(typeof r.owner==='string'&&r.owner.length>0&&r.owner.length<=100&&Number.isFinite(evidenceTime(r.at))&&hex(r.boundaryEvidenceHash),'BOUNDARY_CONTEXT_REQUIRED');
-  const g={schema:1,generation:(old?.generation||0)+1,previous:old,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,cohortHash:store.cohortHash,contractHash:store.contractHash};
-  immutable(d,`generation-${g.generation}.json`,encoded(g));validateLock(d);
-  const h={generation:g.generation,generationHash:evidenceHash(g)},tmp='.head-'+randomUUID();immutable(d,tmp,encoded(h));
-  // Only the mutable control pointer changes; every generation/original/intent/commit remains retained.
-  if(old)need(evidenceHash(head(d))===r.expectedToken,'CONTROL_CAS_FAILED');
-  fs.renameSync(d.anchor+'/'+tmp,d.anchor+'/HEAD.json');fs.fsyncSync(d.fd);return {head:h,token:evidenceHash(h)};
+ const store=json(d.anchor+'/STORE.json');need(store.kind==='A_FENCED_INACTIVE_RESEARCH_V1','NOT_A_FENCED_STORE');if(r.fault)need(store.origin==='SYNTHETIC','FAULT_INJECTION_REFUSED');
+ if(r.op==='HEAD'){const h=head(d);if(h)current(d,evidenceHash(h),true);return {head:h,token:h?evidenceHash(h):null,pending:pending(d).length,unresolved:unresolved(d,store).length,transition:transition(d)};}
+ if(r.op==='RECOVERY_VIEW')return view(d,store);
+ if(r.op==='CLAIM')return beginGeneration(d,store,r,'CLAIM');
+ if(r.op==='DISPOSE')return beginGeneration(d,store,r,'RECOVERY');
+ if(r.op==='GENERATION_ATTEMPT'){
+  const n=r.generation??transition(d)??(head(d)?.generation||1);need(Number.isSafeInteger(n)&&n>0,'GENERATION_REQUIRED');
+  if(fs.existsSync(d.anchor+'/'+attemptName(n))){const a=readAttempt(d,store,n);return {status:'RECORDED',generation:n,attemptHash:a.requestHash,request:a.request};}
+  if(fs.existsSync(d.anchor+`/generation-${n}.json`))return {status:'LEGACY_GENERATION',generation:n,attemptHash:hash(safeRead(d.anchor+`/generation-${n}.json`)),original:json(d.anchor+`/generation-${n}.json`)};
+  const hashes=[...new Set(controlTemps(d,n).map(name=>name.split('-')[2]))];return {status:hashes.length?'ORIGINAL_REQUEST_REQUIRED':'NONE',generation:n,attemptHashes:hashes};
  }
- current(d,r.token);validateLock(d);
+ if(r.op==='RESUME_CLAIM'){
+  need(Number.isSafeInteger(r.generation)&&r.generation>0&&hex(r.attemptHash),'GENERATION_ATTEMPT_PIN_REQUIRED');
+  if(!fs.existsSync(d.anchor+'/'+attemptName(r.generation))){const f=d.anchor+`/generation-${r.generation}.json`;need(fs.existsSync(f),'ORIGINAL_REQUEST_REQUIRED');need(hash(safeRead(f))===r.attemptHash,'GENERATION_ATTEMPT_PIN_MISMATCH');const g=json(f);return beginGeneration(d,store,{...r,expectedToken:g.previous?evidenceHash(g.previous):null,owner:g.owner,at:g.at,boundaryEvidenceHash:g.boundaryEvidenceHash},'CLAIM');}
+  const a=readAttempt(d,store,r.generation);need(a.requestHash===r.attemptHash,'GENERATION_ATTEMPT_PIN_MISMATCH');return finishGeneration(d,store,a,r);
+ }
+ current(d,r.token);validateLock(d);const unresolvedRecords=unresolved(d,store);
  if(r.op==='LOOKUP'){
-  const key=evidenceHash({kind:r.kind,logicalId:r.logicalId}),file=d.anchor+'/commit-'+key+'.json';if(!fs.existsSync(file))return {status:'NOT_COMMITTED'};
+  const key=evidenceHash({kind:r.kind,logicalId:r.logicalId}),file=d.anchor+'/commit-'+key+'.json';const u=unresolvedRecords.find(u=>u.target.type==='INTENT'&&u.target.key===key);if(u)return {status:'UNRESOLVED',allowBuy:false,disposition:u,originalIntent:json(d.anchor+'/intent-'+key+'.json')};if(r.kind==='EVALUATION'&&unresolvedRecords.length)return {status:'UNRESOLVED_STORE_EVIDENCE',allowBuy:false};if(!fs.existsSync(file))return {status:'NOT_COMMITTED'};
   const c=json(file),record=json(d.anchor+'/record-'+key+'.json');need(evidenceHash(record)===c.recordHash,'COMMITTED_RECORD_CORRUPT');return {status:'FOUND',record,receipt:c};
  }
  if(r.op==='APPEND'){
   need(['TRANSPORT','ORIGINAL','ACQUISITION'].includes(r.kind),'STRICT_EVALUATOR_REQUIRED');
+  const key=evidenceHash({kind:r.kind,logicalId:r.logicalId});need(!unresolvedRecords.some(u=>u.target.type==='INTENT'&&u.target.key===key),'INTENT_PERMANENTLY_UNRESOLVED');need(pending(d).every(n=>n==='intent-'+key+'.json'),'PENDING_INTENT_REQUIRES_RECOVERY');
   const original=r.bytes===undefined?null:Buffer.from(r.bytes,'base64');return transact(d,r,r.kind,r.logicalId,r.payload,original);
  }
  if(r.op==='RECOVER'){
@@ -93,6 +218,8 @@ function worker(root,r){
   }return {status:'LOCAL_RECOVERY_COMPLETE',recovered};
  }
  if(r.op==='EVALUATE'){
+  if(unresolvedRecords.length)return {status:'UNRESOLVED_STORE_EVIDENCE',allowBuy:false,result:{status:'UNRESOLVED_STORE_EVIDENCE',allowBuy:false,prospectiveAdmissions:0,unresolvedRecords:unresolvedRecords.length}};
+  need(pending(d).length===0||pending(d).every(n=>n==='intent-'+evidenceHash({kind:'EVALUATION',logicalId:r.logicalId})+'.json'),'PENDING_INTENT_REQUIRES_RECOVERY');
   const result=strictEvaluation(d,store,r.dataset,r.contract);
   return {...transact(d,r,'EVALUATION',r.logicalId,{dataset:r.dataset,contract:r.contract,result}),result};
  }
@@ -114,6 +241,6 @@ export function createAFencedStore(root,context){
   }finally{if(f!==undefined)fs.closeSync(f);fs.closeSync(d.fd);}
  }
  if(context)invoke({op:'INIT',...context});
- return {head:()=>invoke({op:'HEAD'}),claim:r=>invoke({op:'CLAIM',...r}),lookup:(token,kind,logicalId)=>invoke({op:'LOOKUP',token,kind,logicalId}),append:(token,kind,logicalId,payload,bytes,fault)=>invoke({op:'APPEND',token,kind,logicalId,payload,...(bytes?{bytes:Buffer.from(bytes).toString('base64')}:{}),fault}),recover:token=>invoke({op:'RECOVER',token}),evaluate:(token,logicalId,dataset,contract,fault)=>invoke({op:'EVALUATE',token,logicalId,dataset,contract,fault})};
+ return {head:()=>invoke({op:'HEAD'}),recoveryView:()=>invoke({op:'RECOVERY_VIEW'}),generationAttempt:generation=>invoke({op:'GENERATION_ATTEMPT',generation}),claim:r=>invoke({...r,op:'CLAIM'}),recoverUnresolved:r=>invoke({...r,op:'DISPOSE'}),resumeClaim:r=>invoke({...r,op:'RESUME_CLAIM'}),lookup:(token,kind,logicalId)=>invoke({op:'LOOKUP',token,kind,logicalId}),append:(token,kind,logicalId,payload,bytes,fault)=>invoke({op:'APPEND',token,kind,logicalId,payload,...(bytes?{bytes:Buffer.from(bytes).toString('base64')}:{}),fault}),recover:token=>invoke({op:'RECOVER',token}),evaluate:(token,logicalId,dataset,contract,fault)=>invoke({op:'EVALUATE',token,logicalId,dataset,contract,fault})};
 }
 if(process.argv[2]==='--fenced-worker'&&import.meta.url===pathToFileURL(process.argv[1]).href){try{const input=fs.readFileSync(0);need(input.length<=MAX,'REQUEST_CAP');const value=worker(process.argv[3],JSON.parse(input));process.stdout.write(JSON.stringify({ok:true,value}));}catch(e){process.stdout.write(JSON.stringify({ok:false,code:/^[A-Z_]+$/.test(e.message)?e.message:'STORE_IO_ERROR'}));process.exitCode=2;}}

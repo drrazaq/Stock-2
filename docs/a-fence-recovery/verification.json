@@ -1,0 +1,77 @@
+{
+  "base": "7ee150f854b23c0f6066a6407e3d52e3a3b774ac",
+  "authorship": "Codex implementation/independent-process execution; Claude focused confirmation requested, not yet received",
+  "node20": "20.20.2",
+  "node24": "24.19.0",
+  "focusedCommand": "node --test test/a-fenced-recovery.test.mjs test/a-fenced-store.test.mjs test/a-authenticated-collector.test.mjs test/a-native-source-join.test.mjs test/a-close-source.test.mjs test/a-native-source-package.test.mjs",
+  "focusedEachRuntime": {
+    "pass": 144,
+    "fail": 0,
+    "skipped": 0,
+    "newRecoveryCases": 48,
+    "preservedPriorCases": 96
+  },
+  "priorACommand": "node --test test/a-evidence-contract.test.mjs test/a-independent-coverage.test.mjs test/a-recovery-copy.test.mjs test/a-pathway-review-regressions.test.mjs test/catalyst-reclaim-prototype.test.mjs test/reclaim-research-workflow.test.mjs test/a-catalyst-reclaim-store.test.mjs",
+  "priorA": {
+    "pass": 190,
+    "fail": 0,
+    "skipped": 0
+  },
+  "matrix": 4,
+  "python": 39,
+  "baselineControl": {
+    "fixture": "fixtures/a-fenced-store-7ee.source",
+    "sha256": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
+    "K1": "Original worker accepts unrelated append while missing-body intent exists",
+    "K2": "Original worker rejects conflicting claim after generation residue with IMMUTABLE_RECORD_CONFLICT",
+    "currentBehavior": "New worker blocks unrelated pending writes; explicit signed unresolved transition and exact replay pass",
+    "scope": "Expected defects only in pinned immutable baseline; corrected current-source assertions preserved."
+  },
+  "failureBoundaries": [
+    "DURING_ATTEMPT_WRITE",
+    "AFTER_CLAIM_ATTEMPT",
+    "DURING_GENERATION_WRITE",
+    "AFTER_GENERATION",
+    "DURING_HEAD_WRITE",
+    "BEFORE_HEAD",
+    "DURING_SWITCH_WRITE",
+    "AFTER_SWITCH_WRITE",
+    "AFTER_HEAD",
+    "DURING_DISPOSITION_WRITE",
+    "AFTER_DISPOSITION",
+    "DURING_RECEIPT_WRITE",
+    "AFTER_CLAIM_RECEIPT"
+  ],
+  "failureTesting": "Actual child SIGKILL and independent reopened workers; snapshots of intents, attempts, partials and controls; old-version worker tested after HEAD; concurrent signed owners and stale/altered/rootless contexts; completed durable receipt readback distinguished from unknown client outcome.",
+  "initialDevelopmentFailures": "Unverified implementation startup dereference fixed; post-receipt readback expectations corrected to require actual durable completion rather than falsely assuming not applied; staged HEAD bytes now retained with separate atomic pointer copy. Earlier original12/38 assertions unchanged. Initial local logs preserved in /workspace/milestones; final complete executed TAP retained here.",
+  "static": [
+    "node --check each changed runtime module",
+    "git diff --check",
+    "provider-ingress matrix matches sources",
+    "all protected hashes equal pinned7ee"
+  ],
+  "logs": {
+    "evidence/focused-node20.tap": {
+      "bytes": 31812,
+      "sha256": "478fdd19e761d0701202afeca5fa4df5ce80ca2e86cb3dd1e8f92f4c956a2872"
+    },
+    "evidence/focused-node24.tap": {
+      "bytes": 14564,
+      "sha256": "46591ab0cebdcb103c7109f99212a06787e1d25411d01dd8ae999b72a49a5ac7"
+    },
+    "evidence/prior-a-node20.tap": {
+      "bytes": 30334,
+      "sha256": "0d30b29617a527cf8cc9e9dcc1e29eb9fd037aa22ffd49bdf111d29a48e4507a"
+    },
+    "evidence/python.log": {
+      "bytes": 138,
+      "sha256": "dd2665215168f4ed0d3cc69d54fd037093c21b3a10be5f18b6e099b98ecbc5f9"
+    }
+  },
+  "hostedCI": "Pending at publication; terminal exact-commit full-log receipt to PR1 (not inferred from local tests)",
+  "realAuthorityEnrolled": false,
+  "providerCalls": 0,
+  "productionChanges": false,
+  "rowsClosed": 0,
+  "prospectiveAdmissions": 0
+}

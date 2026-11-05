@@ -1,0 +1,730 @@
+TAP version 13
+# Subtest: actual SIP protocol → original-byte artifact → independent frame through fenced writer; full real 30-second window
+ok 1 - actual SIP protocol → original-byte artifact → independent frame through fenced writer; full real 30-second window
+  ---
+  duration_ms: 901.045917
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: late
+ok 2 - actual SIP failure preserves prefix and incomplete/empty distinction: late
+  ---
+  duration_ms: 604.431737
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: close
+ok 3 - actual SIP failure preserves prefix and incomplete/empty distinction: close
+  ---
+  duration_ms: 1083.925001
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: error
+ok 4 - actual SIP failure preserves prefix and incomplete/empty distinction: error
+  ---
+  duration_ms: 935.592226
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: malformed
+ok 5 - actual SIP failure preserves prefix and incomplete/empty distinction: malformed
+  ---
+  duration_ms: 1231.730051
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: wrong-symbol
+ok 6 - actual SIP failure preserves prefix and incomplete/empty distinction: wrong-symbol
+  ---
+  duration_ms: 1331.574166
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: refused
+ok 7 - actual SIP failure preserves prefix and incomplete/empty distinction: refused
+  ---
+  duration_ms: 1111.84208
+  ...
+# Subtest: actual SIP failure preserves prefix and incomplete/empty distinction: empty
+ok 8 - actual SIP failure preserves prefix and incomplete/empty distinction: empty
+  ---
+  duration_ms: 1105.299792
+  ...
+# Subtest: native nanoseconds just outside end cannot be rounded into an eligible window
+ok 9 - native nanoseconds just outside end cannot be rounded into an eligible window
+  ---
+  duration_ms: 0.736019
+  ...
+# Subtest: bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":null,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["R"]}
+ok 10 - bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":null,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["R"]}
+  ---
+  duration_ms: 0.275963
+  ...
+# Subtest: bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":0,"bx":"V","ax":"V","z":"C","c":["R"]}
+ok 11 - bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":0,"bx":"V","ax":"V","z":"C","c":["R"]}
+  ---
+  duration_ms: 0.148749
+  ...
+# Subtest: bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["UNVERIFIED"]}
+ok 12 - bad values/size/conditions stay unknown: {"T":"q","S":"TEST","t":"2026-11-05T14:30:01.123456789Z","bp":10,"ap":10.01,"bs":500,"as":500,"bx":"V","ax":"V","z":"C","c":["UNVERIFIED"]}
+  ---
+  duration_ms: 0.149953
+  ...
+# Subtest: HTTP historical response retained but late receipt cannot become contemporaneous outcome evidence
+ok 13 - HTTP historical response retained but late receipt cannot become contemporaneous outcome evidence
+  ---
+  duration_ms: 1089.679599
+  ...
+# Subtest: malformed/missing/page-limited HTTP bodies fail closed
+ok 14 - malformed/missing/page-limited HTTP bodies fail closed
+  ---
+  duration_ms: 708.272071
+  ...
+# Subtest: malformed/missing/page-limited HTTP bodies fail closed
+ok 15 - malformed/missing/page-limited HTTP bodies fail closed
+  ---
+  duration_ms: 699.354056
+  ...
+# Subtest: malformed/missing/page-limited HTTP bodies fail closed
+ok 16 - malformed/missing/page-limited HTTP bodies fail closed
+  ---
+  duration_ms: 708.236838
+  ...
+# Subtest: hung transport deadline aborts without retry and retains auditable incomplete frame
+ok 17 - hung transport deadline aborts without retry and retains auditable incomplete frame
+  ---
+  duration_ms: 644.435568
+  ...
+# Subtest: oversized streamed response stops at cap with no retry
+ok 18 - oversized streamed response stops at cap with no retry
+  ---
+  duration_ms: 831.391389
+  ...
+# Subtest: supplied signer cannot use wrong role; absent client and unverified semantics refuse before transport
+ok 19 - supplied signer cannot use wrong role; absent client and unverified semantics refuse before transport
+  ---
+  duration_ms: 304.068359
+  ...
+# Subtest: primary original → signed receipt → fenced strict evaluator succeeds, with no invented provenance/BUY
+ok 20 - primary original → signed receipt → fenced strict evaluator succeeds, with no invented provenance/BUY
+  ---
+  duration_ms: 896.909993
+  ...
+# Subtest: restart reuses exact original ingestion; a source revision is retained and conflict survives a revert
+ok 21 - restart reuses exact original ingestion; a source revision is retained and conflict survives a revert
+  ---
+  duration_ms: 1057.110903
+  ...
+# Subtest: request reserved before interruption cannot be retried by a new collector
+ok 22 - request reserved before interruption cannot be retried by a new collector
+  ---
+  duration_ms: 576.009266
+  ...
+# Subtest: actual client interruption and startup refusal clean timers and never leak outgoing authentication into incoming artifacts
+ok 23 - actual client interruption and startup refusal clean timers and never leak outgoing authentication into incoming artifacts
+  ---
+  duration_ms: 0.631358
+  ...
+# Subtest: backward original receipt clocks, excess early waiting and missing bindings refuse
+ok 24 - backward original receipt clocks, excess early waiting and missing bindings refuse
+  ---
+  duration_ms: 0.551175
+  ...
+# Subtest: body-cap refusal retains labelled original prefix without truncating previous evidence
+ok 25 - body-cap refusal retains labelled original prefix without truncating previous evidence
+  ---
+  duration_ms: 856.78321
+  ...
+# Subtest: strict evaluation recovery revalidates originals at AFTER_INTENT
+ok 26 - strict evaluation recovery revalidates originals at AFTER_INTENT
+  ---
+  duration_ms: 939.079621
+  ...
+# Subtest: strict evaluation recovery revalidates originals at AFTER_RECORD
+ok 27 - strict evaluation recovery revalidates originals at AFTER_RECORD
+  ---
+  duration_ms: 905.902102
+  ...
+# Subtest: strict evaluation recovery revalidates originals at AFTER_COMMIT
+ok 28 - strict evaluation recovery revalidates originals at AFTER_COMMIT
+  ---
+  duration_ms: 880.665541
+  ...
+# Subtest: changed evidence prevents pending evaluation recovery; no old result silently blessed
+ok 29 - changed evidence prevents pending evaluation recovery; no old result silently blessed
+  ---
+  duration_ms: 741.454582
+  ...
+# Subtest: real protocol rejects impossible handshake without extra requests: auth-before-connected
+ok 30 - real protocol rejects impossible handshake without extra requests: auth-before-connected
+  ---
+  duration_ms: 0.395123
+  ...
+# Subtest: real protocol rejects impossible handshake without extra requests: duplicate-connected
+ok 31 - real protocol rejects impossible handshake without extra requests: duplicate-connected
+  ---
+  duration_ms: 0.123614
+  ...
+# Subtest: real protocol rejects impossible handshake without extra requests: subscription-before-auth
+ok 32 - real protocol rejects impossible handshake without extra requests: subscription-before-auth
+  ---
+  duration_ms: 0.074591
+  ...
+# Subtest: actual wall-clock primary receipt is captured before blocking store work, with no caller backdating
+ok 33 - actual wall-clock primary receipt is captured before blocking store work, with no caller backdating
+  ---
+  duration_ms: 521.663313
+  ...
+# Subtest: early subscription retains pre-window quotes as research context without invalidating full frozen-window capture
+ok 34 - early subscription retains pre-window quotes as research context without invalidating full frozen-window capture
+  ---
+  duration_ms: 1252.965864
+  ...
+# Subtest: repeated identical SIP observation preserves its first receipt while both wire originals remain retained
+ok 35 - repeated identical SIP observation preserves its first receipt while both wire originals remain retained
+  ---
+  duration_ms: 1261.621911
+  ...
+# Subtest: provider-supplied text cannot become a status reason or success: SYNTHETIC_PRIVATE_PROVIDER_DETAIL
+ok 36 - provider-supplied text cannot become a status reason or success: SYNTHETIC_PRIVATE_PROVIDER_DETAIL
+  ---
+  duration_ms: 670.019215
+  ...
+# Subtest: provider-supplied text cannot become a status reason or success: COMPLETE
+ok 37 - provider-supplied text cannot become a status reason or success: COMPLETE
+  ---
+  duration_ms: 718.943747
+  ...
+# Subtest: socket exceptions cannot expose provider text through the client reason
+ok 38 - socket exceptions cannot expose provider text through the client reason
+  ---
+  duration_ms: 0.37437
+  ...
+# Subtest: actual single-symbol daily bar shape normalizes close with independent feed/finality/execution limitations
+ok 39 - actual single-symbol daily bar shape normalizes close with independent feed/finality/execution limitations
+  ---
+  duration_ms: 4.261915
+  ...
+# Subtest: NY calendar close across DST and half day: 2026-10-30
+ok 40 - NY calendar close across DST and half day: 2026-10-30
+  ---
+  duration_ms: 0.710347
+  ...
+# Subtest: NY calendar close across DST and half day: 2026-11-27
+ok 41 - NY calendar close across DST and half day: 2026-11-27
+  ---
+  duration_ms: 0.543344
+  ...
+# Subtest: truthful close refusal GENUINELY_EMPTY_RESPONSE
+ok 42 - truthful close refusal GENUINELY_EMPTY_RESPONSE
+  ---
+  duration_ms: 1.057277
+  ...
+# Subtest: truthful close refusal MALFORMED_OR_WRONG_SYMBOL
+ok 43 - truthful close refusal MALFORMED_OR_WRONG_SYMBOL
+  ---
+  duration_ms: 0.360548
+  ...
+# Subtest: truthful close refusal SOURCE_FAILURE
+ok 44 - truthful close refusal SOURCE_FAILURE
+  ---
+  duration_ms: 0.434553
+  ...
+# Subtest: truthful close refusal PAGINATION_INCOMPLETE
+ok 45 - truthful close refusal PAGINATION_INCOMPLETE
+  ---
+  duration_ms: 0.371093
+  ...
+# Subtest: truthful close refusal CLOSE_PRICE_INVALID
+ok 46 - truthful close refusal CLOSE_PRICE_INVALID
+  ---
+  duration_ms: 0.73155
+  ...
+# Subtest: truthful close refusal BAR_TIMESTAMP_INVALID
+ok 47 - truthful close refusal BAR_TIMESTAMP_INVALID
+  ---
+  duration_ms: 1.389792
+  ...
+# Subtest: truthful close refusal SESSION_NOT_COMPLETED_AT_RECEIPT
+ok 48 - truthful close refusal SESSION_NOT_COMPLETED_AT_RECEIPT
+  ---
+  duration_ms: 0.733407
+  ...
+# Subtest: truthful close refusal SESSION_BAR_MISSING
+ok 49 - truthful close refusal SESSION_BAR_MISSING
+  ---
+  duration_ms: 0.527831
+  ...
+# Subtest: truthful close refusal ADJUSTMENT_BASIS_UNRESOLVED
+ok 50 - truthful close refusal ADJUSTMENT_BASIS_UNRESOLVED
+  ---
+  duration_ms: 0.269439
+  ...
+# Subtest: truthful close refusal SOURCE_ROUTE_UNVERIFIED
+ok 51 - truthful close refusal SOURCE_ROUTE_UNVERIFIED
+  ---
+  duration_ms: 0.229097
+  ...
+# Subtest: unknown/closed/impossible session and unfinished bar do not become completed close
+ok 52 - unknown/closed/impossible session and unfinished bar do not become completed close
+  ---
+  duration_ms: 0.475178
+  ...
+# Subtest: duplicate rows distinct from conflicting values; price never coerced
+ok 53 - duplicate rows distinct from conflicting values; price never coerced
+  ---
+  duration_ms: 1.261975
+  ...
+# Subtest: close revisions survive restart and reversion without changing any original bytes
+ok 54 - close revisions survive restart and reversion without changing any original bytes
+  ---
+  duration_ms: 1293.622467
+  ...
+# Subtest: close conflict interrupted at AFTER_INTENT stays unresolved through revert/recovery
+ok 55 - close conflict interrupted at AFTER_INTENT stays unresolved through revert/recovery
+  ---
+  duration_ms: 2152.475479
+  ...
+# Subtest: close conflict interrupted at AFTER_RECORD stays unresolved through revert/recovery
+ok 56 - close conflict interrupted at AFTER_RECORD stays unresolved through revert/recovery
+  ---
+  duration_ms: 2214.460067
+  ...
+# Subtest: close conflict interrupted at AFTER_COMMIT stays unresolved through revert/recovery
+ok 57 - close conflict interrupted at AFTER_COMMIT stays unresolved through revert/recovery
+  ---
+  duration_ms: 2121.766097
+  ...
+# Subtest: unchanged target bar with reordered fields and unrelated added sessions is not a close revision
+ok 58 - unchanged target bar with reordered fields and unrelated added sessions is not a close revision
+  ---
+  duration_ms: 1441.433847
+  ...
+# Subtest: baseline K1/K2 independently reproduce through unmodified published worker
+ok 59 - baseline K1/K2 independently reproduce through unmodified published worker
+  ---
+  duration_ms: 637.720534
+  ...
+# Subtest: K1 owner-signed unresolved transition preserves original intent, invents no body and permanently fences old token
+ok 60 - K1 owner-signed unresolved transition preserves original intent, invents no body and permanently fences old token
+  ---
+  duration_ms: 1358.698361
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: forged-signature
+ok 61 - K1 refuses unauthorized/context-changing disposal: forged-signature
+  ---
+  duration_ms: 623.002857
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: wrong-store
+ok 62 - K1 refuses unauthorized/context-changing disposal: wrong-store
+  ---
+  duration_ms: 800.167254
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: changed-owner
+ok 63 - K1 refuses unauthorized/context-changing disposal: changed-owner
+  ---
+  duration_ms: 666.379778
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: omitted-intent
+ok 64 - K1 refuses unauthorized/context-changing disposal: omitted-intent
+  ---
+  duration_ms: 921.978681
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: wrong-key-id
+ok 65 - K1 refuses unauthorized/context-changing disposal: wrong-key-id
+  ---
+  duration_ms: 671.516406
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: old-token-signature
+ok 66 - K1 refuses unauthorized/context-changing disposal: old-token-signature
+  ---
+  duration_ms: 683.179543
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: extra-field
+ok 67 - K1 refuses unauthorized/context-changing disposal: extra-field
+  ---
+  duration_ms: 649.06845
+  ...
+# Subtest: legacy store cannot add its own recovery root or use old token as recovery authority
+ok 68 - legacy store cannot add its own recovery root or use old token as recovery authority
+  ---
+  duration_ms: 748.872448
+  ...
+# Subtest: inventory changed after authorization refuses without disposing a different intent
+ok 69 - inventory changed after authorization refuses without disposing a different intent
+  ---
+  duration_ms: 889.497317
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_ATTEMPT_WRITE
+ok 70 - K1 actual child SIGKILL/restart at DURING_ATTEMPT_WRITE
+  ---
+  duration_ms: 1424.1673
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_CLAIM_ATTEMPT
+ok 71 - K1 actual child SIGKILL/restart at AFTER_CLAIM_ATTEMPT
+  ---
+  duration_ms: 1295.751279
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_GENERATION_WRITE
+ok 72 - K1 actual child SIGKILL/restart at DURING_GENERATION_WRITE
+  ---
+  duration_ms: 1401.000347
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_GENERATION
+ok 73 - K1 actual child SIGKILL/restart at AFTER_GENERATION
+  ---
+  duration_ms: 1434.303078
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_HEAD_WRITE
+ok 74 - K1 actual child SIGKILL/restart at DURING_HEAD_WRITE
+  ---
+  duration_ms: 1411.898055
+  ...
+# Subtest: K1 actual child SIGKILL/restart at BEFORE_HEAD
+ok 75 - K1 actual child SIGKILL/restart at BEFORE_HEAD
+  ---
+  duration_ms: 1435.653926
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_SWITCH_WRITE
+ok 76 - K1 actual child SIGKILL/restart at DURING_SWITCH_WRITE
+  ---
+  duration_ms: 1256.791978
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_SWITCH_WRITE
+ok 77 - K1 actual child SIGKILL/restart at AFTER_SWITCH_WRITE
+  ---
+  duration_ms: 1504.764316
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_HEAD
+ok 78 - K1 actual child SIGKILL/restart at AFTER_HEAD
+  ---
+  duration_ms: 1209.225265
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_DISPOSITION_WRITE
+ok 79 - K1 actual child SIGKILL/restart at DURING_DISPOSITION_WRITE
+  ---
+  duration_ms: 1298.776393
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_DISPOSITION
+ok 80 - K1 actual child SIGKILL/restart at AFTER_DISPOSITION
+  ---
+  duration_ms: 1423.019817
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_RECEIPT_WRITE
+ok 81 - K1 actual child SIGKILL/restart at DURING_RECEIPT_WRITE
+  ---
+  duration_ms: 1170.996069
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_CLAIM_RECEIPT
+ok 82 - K1 actual child SIGKILL/restart at AFTER_CLAIM_RECEIPT
+  ---
+  duration_ms: 950.127135
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_ATTEMPT_WRITE
+ok 83 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_ATTEMPT_WRITE
+  ---
+  duration_ms: 393.456117
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_ATTEMPT
+ok 84 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_ATTEMPT
+  ---
+  duration_ms: 394.553259
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_GENERATION_WRITE
+ok 85 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_GENERATION_WRITE
+  ---
+  duration_ms: 407.010192
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_GENERATION
+ok 86 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_GENERATION
+  ---
+  duration_ms: 369.548804
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_HEAD_WRITE
+ok 87 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_HEAD_WRITE
+  ---
+  duration_ms: 416.530947
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: BEFORE_HEAD
+ok 88 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: BEFORE_HEAD
+  ---
+  duration_ms: 388.905749
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_SWITCH_WRITE
+ok 89 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_SWITCH_WRITE
+  ---
+  duration_ms: 390.113353
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_SWITCH_WRITE
+ok 90 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_SWITCH_WRITE
+  ---
+  duration_ms: 389.692727
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_HEAD
+ok 91 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_HEAD
+  ---
+  duration_ms: 387.842815
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_RECEIPT_WRITE
+ok 92 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_RECEIPT_WRITE
+  ---
+  duration_ms: 393.595732
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_RECEIPT
+ok 93 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_RECEIPT
+  ---
+  duration_ms: 377.042651
+  ...
+# Subtest: K2 recovers genuine legacy generation residue from exact recorded values without rewriting it
+ok 94 - K2 recovers genuine legacy generation residue from exact recorded values without rewriting it
+  ---
+  duration_ms: 412.512085
+  ...
+# Subtest: actual old-version worker is fenced after recovery HEAD even if disposition is interrupted
+ok 95 - actual old-version worker is fenced after recovery HEAD even if disposition is interrupted
+  ---
+  duration_ms: 733.917679
+  ...
+# Subtest: unresolved sticky state prevents reusing a previously valid evaluation, not only arbitrary new outputs
+ok 96 - unresolved sticky state prevents reusing a previously valid evaluation, not only arbitrary new outputs
+  ---
+  duration_ms: 770.511324
+  ...
+# Subtest: orphan partial original is retained as explicitly authorized unresolved context, never deleted to clear a claim
+ok 97 - orphan partial original is retained as explicitly authorized unresolved context, never deleted to clear a claim
+  ---
+  duration_ms: 453.851705
+  ...
+# Subtest: corrupt signed attempt or intent refuses resumption without altering original bytes
+ok 98 - corrupt signed attempt or intent refuses resumption without altering original bytes
+  ---
+  duration_ms: 406.208617
+  ...
+# Subtest: competing independent recovery processes choose one authorized owner; loser cannot take over or silently dispose again
+ok 99 - competing independent recovery processes choose one authorized owner; loser cannot take over or silently dispose again
+  ---
+  duration_ms: 780.664467
+  ...
+# Subtest: an owner signature for conflicting takeover cannot replace a recorded unfinished recovery
+ok 100 - an owner signature for conflicting takeover cannot replace a recorded unfinished recovery
+  ---
+  duration_ms: 955.674173
+  ...
+# Subtest: actual collector cannot redial a terminally unresolved request under the new generation
+ok 101 - actual collector cannot redial a terminally unresolved request under the new generation
+  ---
+  duration_ms: 616.100553
+  ...
+# Subtest: native and close actual adapters keep research context but expose permanent unresolved store evidence
+ok 102 - native and close actual adapters keep research context but expose permanent unresolved store evidence
+  ---
+  duration_ms: 3384.908353
+  ...
+# Subtest: completed generation authorization corruption is not silently ignored by later writes or HEAD verification
+ok 103 - completed generation authorization corruption is not silently ignored by later writes or HEAD verification
+  ---
+  duration_ms: 490.436948
+  ...
+# Subtest: fault injection is refused before mutation for non-synthetic origins
+ok 104 - fault injection is refused before mutation for non-synthetic origins
+  ---
+  duration_ms: 310.936871
+  ...
+# Subtest: an unresolved marker cannot be renamed to stand in for a different signed intent
+ok 105 - an unresolved marker cannot be renamed to stand in for a different signed intent
+  ---
+  duration_ms: 433.104207
+  ...
+# Subtest: exact recovery package and protected strategy/producer dependency hashes remain pinned
+ok 106 - exact recovery package and protected strategy/producer dependency hashes remain pinned
+  ---
+  duration_ms: 3.91277
+  ...
+# Subtest: kernel-serialized append is durable/idempotent, conflicting original never replaces first evidence
+ok 107 - kernel-serialized append is durable/idempotent, conflicting original never replaces first evidence
+  ---
+  duration_ms: 361.692654
+  ...
+# Subtest: generation CAS fences old writer before any append/commit/retry/publication
+ok 108 - generation CAS fences old writer before any append/commit/retry/publication
+  ---
+  duration_ms: 378.060937
+  ...
+# Subtest: actual child interruption AFTER_INTENT preserves evidence and losing result exactly once
+ok 109 - actual child interruption AFTER_INTENT preserves evidence and losing result exactly once
+  ---
+  duration_ms: 343.48474
+  ...
+# Subtest: actual child interruption AFTER_RECORD preserves evidence and losing result exactly once
+ok 110 - actual child interruption AFTER_RECORD preserves evidence and losing result exactly once
+  ---
+  duration_ms: 350.447411
+  ...
+# Subtest: actual child interruption AFTER_COMMIT preserves evidence and losing result exactly once
+ok 111 - actual child interruption AFTER_COMMIT preserves evidence and losing result exactly once
+  ---
+  duration_ms: 570.088819
+  ...
+# Subtest: missing original after intent is unresolved; only exact retained body retry can finish
+ok 112 - missing original after intent is unresolved; only exact retained body retry can finish
+  ---
+  duration_ms: 849.009244
+  ...
+# Subtest: held kernel lock refuses competing process; no stale-lock deletion or truncation
+ok 113 - held kernel lock refuses competing process; no stale-lock deletion or truncation
+  ---
+  duration_ms: 412.43462
+  ...
+# Subtest: symlinked store/lock/original refuses without touching target
+ok 114 - symlinked store/lock/original refuses without touching target
+  ---
+  duration_ms: 282.00471
+  ...
+# Subtest: generic outcome append refused; actual strict evaluator is mandatory and retains unresolved cases
+ok 115 - generic outcome append refused; actual strict evaluator is mandatory and retains unresolved cases
+  ---
+  duration_ms: 2813.437854
+  ...
+# Subtest: corrupt pending evidence refuses recovery without replacing bytes
+ok 116 - corrupt pending evidence refuses recovery without replacing bytes
+  ---
+  duration_ms: 394.518354
+  ...
+# Subtest: fenced writer checks run after successful commit too: stale token cannot obtain idempotent success
+ok 117 - fenced writer checks run after successful commit too: stale token cannot obtain idempotent success
+  ---
+  duration_ms: 640.854827
+  ...
+# Subtest: simultaneous real processes cannot commit duplicate logical observations
+ok 118 - simultaneous real processes cannot commit duplicate logical observations
+  ---
+  duration_ms: 581.622068
+  ...
+# Subtest: actual native archive joins official identifiers, primary bytes and original acceptance separately from Atom updated
+ok 119 - actual native archive joins official identifiers, primary bytes and original acceptance separately from Atom updated
+  ---
+  duration_ms: 1975.979355
+  ...
+# Subtest: missing primary and late acceptance do not manufacture timely evidence
+ok 120 - missing primary and late acceptance do not manufacture timely evidence
+  ---
+  duration_ms: 1455.245483
+  ...
+# Subtest: missing acceptance is not Atom updated; no nominal completion
+ok 121 - missing acceptance is not Atom updated; no nominal completion
+  ---
+  duration_ms: 1238.448749
+  ...
+# Subtest: exact repeats/restart preserve first ingestion; distinct originals retained; first conflict survives reverted bytes
+ok 122 - exact repeats/restart preserve first ingestion; distinct originals retained; first conflict survives reverted bytes
+  ---
+  duration_ms: 5976.126851
+  ...
+# Subtest: primary first arriving after an incomplete join still acquires a durable revision baseline
+ok 123 - primary first arriving after an incomplete join still acquires a durable revision baseline
+  ---
+  duration_ms: 5950.31257
+  ...
+# Subtest: acceptance conflicts and reverts across pinned parents retain first conflict
+ok 124 - acceptance conflicts and reverts across pinned parents retain first conflict
+  ---
+  duration_ms: 3492.889286
+  ...
+# Subtest: unverified primary response remains UNKNOWN: responseUrl
+ok 125 - unverified primary response remains UNKNOWN: responseUrl
+  ---
+  duration_ms: 1051.597149
+  ...
+# Subtest: unverified primary response remains UNKNOWN: httpStatus
+ok 126 - unverified primary response remains UNKNOWN: httpStatus
+  ---
+  duration_ms: 1093.093229
+  ...
+# Subtest: unverified primary response remains UNKNOWN: bodySha256
+ok 127 - unverified primary response remains UNKNOWN: bodySha256
+  ---
+  duration_ms: 1137.075101
+  ...
+# Subtest: unverified primary response remains UNKNOWN: bodyReceivedAt
+ok 128 - unverified primary response remains UNKNOWN: bodyReceivedAt
+  ---
+  duration_ms: 1124.943073
+  ...
+# Subtest: unverified primary response remains UNKNOWN: headersReceivedAt
+ok 129 - unverified primary response remains UNKNOWN: headersReceivedAt
+  ---
+  duration_ms: 1184.629294
+  ...
+# Subtest: empty primary, traversal document, and malformed matching rows remain unresolved
+ok 130 - empty primary, traversal document, and malformed matching rows remain unresolved
+  ---
+  duration_ms: 1886.2666
+  ...
+# Subtest: partial native archive remains intact and UNKNOWN
+ok 131 - partial native archive remains intact and UNKNOWN
+  ---
+  duration_ms: 996.891453
+  ...
+# Subtest: actual response callback port captures original clocks, retries uncertain publication without consuming body
+ok 132 - actual response callback port captures original clocks, retries uncertain publication without consuming body
+  ---
+  duration_ms: 241.589658
+  ...
+# Subtest: port refuses out-of-order clocks, foreign URL, changed retry bytes and bounded excess
+ok 133 - port refuses out-of-order clocks, foreign URL, changed retry bytes and bounded excess
+  ---
+  duration_ms: 217.903535
+  ...
+# Subtest: strict source clocks preserve nanoseconds and reject overflow dates/times
+ok 134 - strict source clocks preserve nanoseconds and reject overflow dates/times
+  ---
+  duration_ms: 0.182174
+  ...
+# Subtest: actual production-capsule watcher → native reader → primary callback → fenced join, unchanged legacy/provider paths
+ok 135 - actual production-capsule watcher → native reader → primary callback → fenced join, unchanged legacy/provider paths
+  ---
+  duration_ms: 3929.707525
+  ...
+# Subtest: actual SIGKILL at original intent boundary: retain body/clocks and resume exact port write without truncation
+ok 136 - actual SIGKILL at original intent boundary: retain body/clocks and resume exact port write without truncation
+  ---
+  duration_ms: 303.578525
+  ...
+# Subtest: competing actual join processes retain one first record; terminal busy refusal is retried only after competing process ends
+ok 137 - competing actual join processes retain one first record; terminal busy refusal is retried only after competing process ends
+  ---
+  duration_ms: 2580.453649
+  ...
+# Subtest: valid matching submission row survives malformed neighboring row and exact original archive/parent bytes are copied
+ok 138 - valid matching submission row survives malformed neighboring row and exact original archive/parent bytes are copied
+  ---
+  duration_ms: 931.575426
+  ...
+# Subtest: actual interrupted conflict AFTER_INTENT cannot be hidden by reverting primary bytes
+ok 139 - actual interrupted conflict AFTER_INTENT cannot be hidden by reverting primary bytes
+  ---
+  duration_ms: 2162.884359
+  ...
+# Subtest: actual interrupted conflict AFTER_RECORD cannot be hidden by reverting primary bytes
+ok 140 - actual interrupted conflict AFTER_RECORD cannot be hidden by reverting primary bytes
+  ---
+  duration_ms: 2172.58861
+  ...
+# Subtest: actual interrupted conflict AFTER_COMMIT cannot be hidden by reverting primary bytes
+ok 141 - actual interrupted conflict AFTER_COMMIT cannot be hidden by reverting primary bytes
+  ---
+  duration_ms: 2127.91895
+  ...
+# Subtest: retained primary response input order cannot choose a later revision as the first original
+ok 142 - retained primary response input order cannot choose a later revision as the first original
+  ---
+  duration_ms: 1243.436642
+  ...
+# Subtest: exact new package and inherited dependency hashes, including reviewed 572 producer/collector/policy bytes
+ok 143 - exact new package and inherited dependency hashes, including reviewed 572 producer/collector/policy bytes
+  ---
+  duration_ms: 7.493351
+  ...
+# Subtest: native join and close adapters have no production imports or default network/credential access
+ok 144 - native join and close adapters have no production imports or default network/credential access
+  ---
+  duration_ms: 3.709664
+  ...
+1..144
+# tests 144
+# suites 0
+# pass 144
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 52830.769035

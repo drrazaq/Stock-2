@@ -1,0 +1,960 @@
+TAP version 13
+# Subtest: actual evaluator produces one durable card, observation and linked costed outcome
+ok 1 - actual evaluator produces one durable card, observation and linked costed outcome
+  ---
+  duration_ms: 89.069403
+  ...
+# Subtest: every rejected assessment is retained and never gets a card
+ok 2 - every rejected assessment is retained and never gets a card
+  ---
+  duration_ms: 52.588919
+  ...
+# Subtest: identical repeated observation and outcome are byte-idempotent
+ok 3 - identical repeated observation and outcome are byte-idempotent
+  ---
+  duration_ms: 46.447274
+  ...
+# Subtest: same candidate later assessment appends observation but cannot create another entry/card
+ok 4 - same candidate later assessment appends observation but cannot create another entry/card
+  ---
+  duration_ms: 25.485595
+  ...
+# Subtest: observation retains rejected quote/source/owner evidence without inventing delivery
+ok 5 - observation retains rejected quote/source/owner evidence without inventing delivery
+  ---
+  duration_ms: 9.4159
+  ...
+# Subtest: missing issuer mapping remains logged UNKNOWN without creating a paper entry
+ok 6 - missing issuer mapping remains logged UNKNOWN without creating a paper entry
+  ---
+  duration_ms: 10.850825
+  ...
+# Subtest: same issuer different security/class cannot produce two entries in one session
+ok 7 - same issuer different security/class cannot produce two entries in one session
+  ---
+  duration_ms: 28.000684
+  ...
+# Subtest: outcome preserves original evidence links and explicitly missing controls
+ok 8 - outcome preserves original evidence links and explicitly missing controls
+  ---
+  duration_ms: 24.921026
+  ...
+# Subtest: changed observation with reused ID is refused, old records preserved
+ok 9 - changed observation with reused ID is refused, old records preserved
+  ---
+  duration_ms: 9.067458
+  ...
+# Subtest: new unresolved outcome may be followed by one resolution without rewriting history
+ok 10 - new unresolved outcome may be followed by one resolution without rewriting history
+  ---
+  duration_ms: 27.725364
+  ...
+# Subtest: resolved outcome cannot be replaced by a different later price
+ok 11 - resolved outcome cannot be replaced by a different later price
+  ---
+  duration_ms: 22.947868
+  ...
+# Subtest: correction review note appends without replacing the original or becoming another trade
+ok 12 - correction review note appends without replacing the original or becoming another trade
+  ---
+  duration_ms: 33.861529
+  ...
+# Subtest: outcome without an original qualifying card is refused
+ok 13 - outcome without an original qualifying card is refused
+  ---
+  duration_ms: 7.571529
+  ...
+# Subtest: interruption AFTER_INTENT requires explicit verified recovery, then remains exactly one entry
+ok 14 - interruption AFTER_INTENT requires explicit verified recovery, then remains exactly one entry
+  ---
+  duration_ms: 16.009918
+  ...
+# Subtest: interruption AFTER_CARD requires explicit verified recovery, then remains exactly one entry
+ok 15 - interruption AFTER_CARD requires explicit verified recovery, then remains exactly one entry
+  ---
+  duration_ms: 16.003422
+  ...
+# Subtest: interruption AFTER_LOG requires explicit verified recovery, then remains exactly one entry
+ok 16 - interruption AFTER_LOG requires explicit verified recovery, then remains exactly one entry
+  ---
+  duration_ms: 20.429118
+  ...
+# Subtest: interruption after durable commit is recognized on reopen without duplicate
+ok 17 - interruption after durable commit is recognized on reopen without duplicate
+  ---
+  duration_ms: 16.092488
+  ...
+# Subtest: exclusive lock blocks a concurrent writer
+ok 18 - exclusive lock blocks a concurrent writer
+  ---
+  duration_ms: 1.345892
+  ...
+# Subtest: a changed card is detected and never overwritten
+ok 19 - a changed card is detected and never overwritten
+  ---
+  duration_ms: 8.606039
+  ...
+# Subtest: truncated log tail blocks writes/recovery and is not silently truncated
+ok 20 - truncated log tail blocks writes/recovery and is not silently truncated
+  ---
+  duration_ms: 11.632645
+  ...
+# Subtest: log content tampering fails hash verification
+ok 21 - log content tampering fails hash verification
+  ---
+  duration_ms: 8.145386
+  ...
+# Subtest: origin and policy cannot change when reopening existing logs
+ok 22 - origin and policy cannot change when reopening existing logs
+  ---
+  duration_ms: 1.065235
+  ...
+# Subtest: prospective/live origin cannot be created by this offline writer
+ok 23 - prospective/live origin cannot be created by this offline writer
+  ---
+  duration_ms: 0.596525
+  ...
+# Subtest: symlink output directory and log files are refused
+ok 24 - symlink output directory and log files are refused
+  ---
+  duration_ms: 0.908737
+  ...
+# Subtest: retired store CLI refuses even synthetic inputs before any output mutation
+ok 25 - retired store CLI refuses even synthetic inputs before any output mutation
+  ---
+  duration_ms: 90.114034
+  ...
+# Subtest: hard process exit leaves a lock and pending intent, never grants automatic recovery
+ok 26 - hard process exit leaves a lock and pending intent, never grants automatic recovery
+  ---
+  duration_ms: 121.322235
+  ...
+# Subtest: actual CLI redacts malformed input and filesystem paths from errors
+ok 27 - actual CLI redacts malformed input and filesystem paths from errors
+  ---
+  duration_ms: 95.22077
+  ...
+# Subtest: actual offline runner joins original bytes, owner interval and complete signed tape; no promotion
+ok 28 - actual offline runner joins original bytes, owner interval and complete signed tape; no promotion
+  ---
+  duration_ms: 454.164012
+  ...
+# Subtest: expired explicit ZAD
+ok 29 - expired explicit ZAD
+  ---
+  duration_ms: 36.147818
+  ...
+# Subtest: no owner evidence
+ok 30 - no owner evidence
+  ---
+  duration_ms: 31.530592
+  ...
+# Subtest: later revocation does not resurrect old yes
+ok 31 - later revocation does not resurrect old yes
+  ---
+  duration_ms: 27.018366
+  ...
+# Subtest: equal-time conflicting owner records
+ok 32 - equal-time conflicting owner records
+  ---
+  duration_ms: 19.458094
+  ...
+# Subtest: later owner evidence is not backdated
+ok 33 - later owner evidence is not backdated
+  ---
+  duration_ms: 16.585063
+  ...
+# Subtest: different owner mark cannot be inferred
+ok 34 - different owner mark cannot be inferred
+  ---
+  duration_ms: 19.894656
+  ...
+# Subtest: snapshot acquired after decision
+ok 35 - snapshot acquired after decision
+  ---
+  duration_ms: 14.662653
+  ...
+# Subtest: tampered decision snapshot
+ok 36 - tampered decision snapshot
+  ---
+  duration_ms: 17.472385
+  ...
+# Subtest: fake retained document hash
+ok 37 - fake retained document hash
+  ---
+  duration_ms: 16.174047
+  ...
+# Subtest: source URL mismatch
+ok 38 - source URL mismatch
+  ---
+  duration_ms: 13.926577
+  ...
+# Subtest: unsupported materiality assertion
+ok 39 - unsupported materiality assertion
+  ---
+  duration_ms: 15.545472
+  ...
+# Subtest: postdecision source review
+ok 40 - postdecision source review
+  ---
+  duration_ms: 12.328186
+  ...
+# Subtest: unsigned content
+ok 41 - unsigned content
+  ---
+  duration_ms: 16.899183
+  ...
+# Subtest: untrusted root
+ok 42 - untrusted root
+  ---
+  duration_ms: 16.958389
+  ...
+# Subtest: missing tape coverage
+ok 43 - missing tape coverage
+  ---
+  duration_ms: 15.517424
+  ...
+# Subtest: input/tape mismatch
+ok 44 - input/tape mismatch
+  ---
+  duration_ms: 17.132215
+  ...
+# Subtest: missing close
+ok 45 - missing close
+  ---
+  duration_ms: 15.892543
+  ...
+# Subtest: duplicate close
+ok 46 - duplicate close
+  ---
+  duration_ms: 22.626616
+  ...
+# Subtest: chain reorder
+ok 47 - chain reorder
+  ---
+  duration_ms: 16.94147
+  ...
+# Subtest: quote raw original tamper
+ok 48 - quote raw original tamper
+  ---
+  duration_ms: 10.877967
+  ...
+# Subtest: equal-time conflicting exit quotes cannot choose winner
+ok 49 - equal-time conflicting exit quotes cannot choose winner
+  ---
+  duration_ms: 12.838645
+  ...
+# Subtest: missing exit quote
+ok 50 - missing exit quote
+  ---
+  duration_ms: 11.012347
+  ...
+# Subtest: latest pre-close quote chosen by clock not profit; invalid chosen quote is not skipped
+ok 51 - latest pre-close quote chosen by clock not profit; invalid chosen quote is not skipped
+  ---
+  duration_ms: 15.704464
+  ...
+# Subtest: close invalidation derives next-open first quote, never models a stop fill
+ok 52 - close invalidation derives next-open first quote, never models a stop fill
+  ---
+  duration_ms: 23.363063
+  ...
+# Subtest: caller-picked exits rejected before processing
+ok 53 - caller-picked exits rejected before processing
+  ---
+  duration_ms: 6.446733
+  ...
+# Subtest: read originals reject symlinks including request.json
+ok 54 - read originals reject symlinks including request.json
+  ---
+  duration_ms: 4.952263
+  ...
+# Subtest: unknown roots cannot establish truth
+ok 55 - unknown roots cannot establish truth
+  ---
+  duration_ms: 10.215172
+  ...
+# Subtest: legacy supplied source/economics remains explicitly separate and byte immutable
+ok 56 - legacy supplied source/economics remains explicitly separate and byte immutable
+  ---
+  duration_ms: 24.4654
+  ...
+# Subtest: a retained outcome revision/reversion cannot replace first evidence
+ok 57 - a retained outcome revision/reversion cannot replace first evidence
+  ---
+  duration_ms: 17.464556
+  ...
+# Subtest: all dependency byte reads are revalidated after callback, including replacement by symlink
+ok 58 - all dependency byte reads are revalidated after callback, including replacement by symlink
+  ---
+  duration_ms: 5.548283
+  ...
+# Subtest: strategy rules cannot be chosen after outcomes under a previously signed entry
+ok 59 - strategy rules cannot be chosen after outcomes under a previously signed entry
+  ---
+  duration_ms: 6.337714
+  ...
+# Subtest: decision signature must commit the strategy policy at original observation
+ok 60 - decision signature must commit the strategy policy at original observation
+  ---
+  duration_ms: 10.979504
+  ...
+# Subtest: a historical next-open quote received after its rule window is not contemporaneous exit evidence
+ok 61 - a historical next-open quote received after its rule window is not contemporaneous exit evidence
+  ---
+  duration_ms: 10.474438
+  ...
+# Subtest: late received invalidation close cannot justify a next-open exit already passed
+ok 62 - late received invalidation close cannot justify a next-open exit already passed
+  ---
+  duration_ms: 10.579547
+  ...
+# Subtest: F1 Claude omission counterexample: independent capture retains worse quote; omission cannot flip loser to verified winner
+ok 63 - F1 Claude omission counterexample: independent capture retains worse quote; omission cannot flip loser to verified winner
+  ---
+  duration_ms: 88.095233
+  ...
+# Subtest: coverage plan pins every possible rule window before outcomes; prices cannot select a smaller plan
+ok 64 - coverage plan pins every possible rule window before outcomes; prices cannot select a smaller plan
+  ---
+  duration_ms: 20.167056
+  ...
+# Subtest: F1 missing independent capture
+ok 65 - F1 missing independent capture
+  ---
+  duration_ms: 25.343598
+  ...
+# Subtest: F1 CAPTURE cannot serve as witness
+ok 66 - F1 CAPTURE cannot serve as witness
+  ---
+  duration_ms: 16.194542
+  ...
+# Subtest: F1 missing slot
+ok 67 - F1 missing slot
+  ---
+  duration_ms: 16.148182
+  ...
+# Subtest: F1 duplicate slot
+ok 68 - F1 duplicate slot
+  ---
+  duration_ms: 16.661182
+  ...
+# Subtest: F1 partial response
+ok 69 - F1 partial response
+  ---
+  duration_ms: 23.736523
+  ...
+# Subtest: F1 unread next page
+ok 70 - F1 unread next page
+  ---
+  duration_ms: 16.378476
+  ...
+# Subtest: F1 transport incomplete
+ok 71 - F1 transport incomplete
+  ---
+  duration_ms: 20.172812
+  ...
+# Subtest: F1 incorrect record count
+ok 72 - F1 incorrect record count
+  ---
+  duration_ms: 16.956255
+  ...
+# Subtest: F1 window trimmed
+ok 73 - F1 window trimmed
+  ---
+  duration_ms: 21.723415
+  ...
+# Subtest: F1 unverifiable completeness
+ok 74 - F1 unverifiable completeness
+  ---
+  duration_ms: 29.803975
+  ...
+# Subtest: independent receipt clocks may differ; native values/identity must match and both receipts must be timely
+ok 75 - independent receipt clocks may differ; native values/identity must match and both receipts must be timely
+  ---
+  duration_ms: 34.182861
+  ...
+# Subtest: independent original tampering and missing bytes cannot become completeness
+ok 76 - independent original tampering and missing bytes cannot become completeness
+  ---
+  duration_ms: 17.016411
+  ...
+# Subtest: F2 same DER key under distinct role IDs refused: OWNER/CAPTURE
+ok 77 - F2 same DER key under distinct role IDs refused: OWNER/CAPTURE
+  ---
+  duration_ms: 3.752648
+  ...
+# Subtest: F2 same DER key under distinct role IDs refused: REVIEW/CAPTURE
+ok 78 - F2 same DER key under distinct role IDs refused: REVIEW/CAPTURE
+  ---
+  duration_ms: 4.500346
+  ...
+# Subtest: F2 same DER key under distinct role IDs refused: WITNESS/CAPTURE
+ok 79 - F2 same DER key under distinct role IDs refused: WITNESS/CAPTURE
+  ---
+  duration_ms: 3.344282
+  ...
+# Subtest: F2 same DER key under distinct role IDs refused: OWNER/REVIEW
+ok 80 - F2 same DER key under distinct role IDs refused: OWNER/REVIEW
+  ---
+  duration_ms: 3.485356
+  ...
+# Subtest: F2 one key cannot hold multiple roles
+ok 81 - F2 one key cannot hold multiple roles
+  ---
+  duration_ms: 3.622928
+  ...
+# Subtest: F3 invalid delay refused during tape parse: -1
+ok 82 - F3 invalid delay refused during tape parse: -1
+  ---
+  duration_ms: 10.777204
+  ...
+# Subtest: F3 invalid delay refused during tape parse: null
+ok 83 - F3 invalid delay refused during tape parse: null
+  ---
+  duration_ms: 16.864121
+  ...
+# Subtest: F3 invalid delay refused during tape parse: 0
+ok 84 - F3 invalid delay refused during tape parse: 0
+  ---
+  duration_ms: 10.591828
+  ...
+# Subtest: F3 invalid delay refused during tape parse: undefined
+ok 85 - F3 invalid delay refused during tape parse: undefined
+  ---
+  duration_ms: 11.170509
+  ...
+# Subtest: F3 actual serialized nonfinite number (1e400) rejected at first tape boundary
+ok 86 - F3 actual serialized nonfinite number (1e400) rejected at first tape boundary
+  ---
+  duration_ms: 9.673048
+  ...
+# Subtest: legacy evaluator, calculator, runner and writer cannot promote a2024 mark or write retained records
+ok 87 - legacy evaluator, calculator, runner and writer cannot promote a2024 mark or write retained records
+  ---
+  duration_ms: 4.662312
+  ...
+# Subtest: actual strict CLI refuses omitted quote while retaining raw witness and a private unresolved report
+ok 88 - actual strict CLI refuses omitted quote while retaining raw witness and a private unresolved report
+  ---
+  duration_ms: 136.117197
+  ...
+# Subtest: rehearsal batch cannot masquerade retained data as authenticated evaluation
+ok 89 - rehearsal batch cannot masquerade retained data as authenticated evaluation
+  ---
+  duration_ms: 7.969709
+  ...
+# Subtest: recovery replay mode cannot record new observations, outcomes or arbitrary transactions
+ok 90 - recovery replay mode cannot record new observations, outcomes or arbitrary transactions
+  ---
+  duration_ms: 14.278681
+  ...
+# Subtest: F3 entry delay refused before snapshot hashing: -1
+ok 91 - F3 entry delay refused before snapshot hashing: -1
+  ---
+  duration_ms: 4.006056
+  ...
+# Subtest: F3 entry delay refused before snapshot hashing: Infinity
+ok 92 - F3 entry delay refused before snapshot hashing: Infinity
+  ---
+  duration_ms: 4.562404
+  ...
+# Subtest: F3 entry delay refused before snapshot hashing: NaN
+ok 93 - F3 entry delay refused before snapshot hashing: NaN
+  ---
+  duration_ms: 2.833898
+  ...
+# Subtest: F3 entry delay refused before snapshot hashing: undefined
+ok 94 - F3 entry delay refused before snapshot hashing: undefined
+  ---
+  duration_ms: 3.354998
+  ...
+# Subtest: A1 repeated issuer/session under a second observation ID is retained but counted once
+ok 95 - A1 repeated issuer/session under a second observation ID is retained but counted once
+  ---
+  duration_ms: 34.669956
+  ...
+# Subtest: A1 same issuer second class/symbol cannot become a second unit
+ok 96 - A1 same issuer second class/symbol cannot become a second unit
+  ---
+  duration_ms: 9.827778
+  ...
+# Subtest: A1 chronological admission does not choose the larger later supplied outcome
+ok 97 - A1 chronological admission does not choose the larger later supplied outcome
+  ---
+  duration_ms: 19.000092
+  ...
+# Subtest: A1 absent issuer mapping cannot be replaced with a security-ID fallback
+ok 98 - A1 absent issuer mapping cannot be replaced with a security-ID fallback
+  ---
+  duration_ms: 4.506502
+  ...
+# Subtest: A2 ask5 card and outcome both size198 shares after slippage and entry fee
+ok 99 - A2 ask5 card and outcome both size198 shares after slippage and entry fee
+  ---
+  duration_ms: 13.888268
+  ...
+# Subtest: A2 share counts match across boundary asks and permitted slippage assumptions
+ok 100 - A2 share counts match across boundary asks and permitted slippage assumptions
+  ---
+  duration_ms: 246.217615
+  ...
+# Subtest: only qualifying admitted entries produce cards; rejection messages stay separate
+ok 101 - only qualifying admitted entries produce cards; rejection messages stay separate
+  ---
+  duration_ms: 28.926132
+  ...
+# Subtest: summary refuses a duplicated issuer/session admission even under another observation ID
+ok 102 - summary refuses a duplicated issuer/session admission even under another observation ID
+  ---
+  duration_ms: 11.990208
+  ...
+# Subtest: A6 missing cohort outcome suppresses headline averages while preserving resolved-only diagnostics
+ok 103 - A6 missing cohort outcome suppresses headline averages while preserving resolved-only diagnostics
+  ---
+  duration_ms: 16.067786
+  ...
+# Subtest: A1 batch storage and runner admit the same original observation despite reversed input order
+ok 104 - A1 batch storage and runner admit the same original observation despite reversed input order
+  ---
+  duration_ms: 77.424703
+  ...
+# Subtest: A1 completely rejected exits are disclosed and cannot manufacture outcomes
+ok 105 - A1 completely rejected exits are disclosed and cannot manufacture outcomes
+  ---
+  duration_ms: 4.403744
+  ...
+# Subtest: A2 summary independently refuses an outcome with a different share count than the original card
+ok 106 - A2 summary independently refuses an outcome with a different share count than the original card
+  ---
+  duration_ms: 15.636739
+  ...
+# Subtest: A1 summary cannot silently collapse duplicated ledger IDs or mix event policies
+ok 107 - A1 summary cannot silently collapse duplicated ledger IDs or mix event policies
+  ---
+  duration_ms: 10.671754
+  ...
+# Subtest: real process interruption observation AFTER_INTENT: original lock/bytes kept; exact-once secondary replay
+ok 108 - real process interruption observation AFTER_INTENT: original lock/bytes kept; exact-once secondary replay
+  ---
+  duration_ms: 129.297228
+  ...
+# Subtest: real process interruption observation AFTER_CARD: original lock/bytes kept; exact-once secondary replay
+ok 109 - real process interruption observation AFTER_CARD: original lock/bytes kept; exact-once secondary replay
+  ---
+  duration_ms: 165.123373
+  ...
+# Subtest: real process interruption observation AFTER_LOG: original lock/bytes kept; exact-once secondary replay
+ok 110 - real process interruption observation AFTER_LOG: original lock/bytes kept; exact-once secondary replay
+  ---
+  duration_ms: 154.529018
+  ...
+# Subtest: real process interruption observation AFTER_COMMIT: original lock/bytes kept; exact-once secondary replay
+ok 111 - real process interruption observation AFTER_COMMIT: original lock/bytes kept; exact-once secondary replay
+  ---
+  duration_ms: 114.962906
+  ...
+# Subtest: real process interruption outcome AFTER_INTENT: original lock/bytes kept; exact-once secondary replay
+ok 112 - real process interruption outcome AFTER_INTENT: original lock/bytes kept; exact-once secondary replay
+  ---
+  duration_ms: 126.93645
+  ...
+# Subtest: real process interruption outcome AFTER_CARD: original lock/bytes kept; exact-once secondary replay
+ok 113 - real process interruption outcome AFTER_CARD: original lock/bytes kept; exact-once secondary replay
+  ---
+  duration_ms: 117.156696
+  ...
+# Subtest: real process interruption outcome AFTER_LOG: original lock/bytes kept; exact-once secondary replay
+ok 114 - real process interruption outcome AFTER_LOG: original lock/bytes kept; exact-once secondary replay
+  ---
+  duration_ms: 103.61901
+  ...
+# Subtest: real process interruption outcome AFTER_COMMIT: original lock/bytes kept; exact-once secondary replay
+ok 115 - real process interruption outcome AFTER_COMMIT: original lock/bytes kept; exact-once secondary replay
+  ---
+  duration_ms: 100.276113
+  ...
+# Subtest: truncated final line is retained in original; labelled prefix only in secondary
+ok 116 - truncated final line is retained in original; labelled prefix only in secondary
+  ---
+  duration_ms: 84.869776
+  ...
+# Subtest: pending intent can reconstruct a torn card without replacing original
+ok 117 - pending intent can reconstruct a torn card without replacing original
+  ---
+  duration_ms: 81.460526
+  ...
+# Subtest: committed damaged card fails; no invented missing logs or complete receipt
+ok 118 - committed damaged card fails; no invented missing logs or complete receipt
+  ---
+  duration_ms: 87.819701
+  ...
+# Subtest: middle-chain corruption preserved and refused, never skipped
+ok 119 - middle-chain corruption preserved and refused, never skipped
+  ---
+  duration_ms: 75.795494
+  ...
+# Subtest: missing original log refuses rather than constructor creating a substitute
+ok 120 - missing original log refuses rather than constructor creating a substitute
+  ---
+  duration_ms: 73.71189
+  ...
+# Subtest: source changed by another writer leaves incomplete secondary attempt
+ok 121 - source changed by another writer leaves incomplete secondary attempt
+  ---
+  duration_ms: 79.571791
+  ...
+# Subtest: interrupted recovery remains clearly incomplete; retry uses new destination
+ok 122 - interrupted recovery remains clearly incomplete; retry uses new destination
+  ---
+  duration_ms: 82.444697
+  ...
+# Subtest: symlink source entry refused with target bytes unchanged
+ok 123 - symlink source entry refused with target bytes unchanged
+  ---
+  duration_ms: 73.810604
+  ...
+# Subtest: two real recovery processes cannot overwrite one destination
+ok 124 - two real recovery processes cannot overwrite one destination
+  ---
+  duration_ms: 165.281759
+  ...
+# Subtest: valid synthetic sequence yields paper-only card, whole shares and no mutation
+ok 125 - valid synthetic sequence yields paper-only card, whole shares and no mutation
+  ---
+  duration_ms: 3.005037
+  ...
+# Subtest: options excluded
+ok 126 - options excluded
+  ---
+  duration_ms: 0.257791
+  ...
+# Subtest: impossible session date
+ok 127 - impossible session date
+  ---
+  duration_ms: 0.24308
+  ...
+# Subtest: ZAD required
+ok 128 - ZAD required
+  ---
+  duration_ms: 0.105924
+  ...
+# Subtest: stale quote
+ok 129 - stale quote
+  ---
+  duration_ms: 0.260442
+  ...
+# Subtest: future quote
+ok 130 - future quote
+  ---
+  duration_ms: 0.113932
+  ...
+# Subtest: wrong ticker
+ok 131 - wrong ticker
+  ---
+  duration_ms: 0.139482
+  ...
+# Subtest: insufficient ask size
+ok 132 - insufficient ask size
+  ---
+  duration_ms: 0.152388
+  ...
+# Subtest: wide spread
+ok 133 - wide spread
+  ---
+  duration_ms: 0.166383
+  ...
+# Subtest: unknown catalyst
+ok 134 - unknown catalyst
+  ---
+  duration_ms: 0.181717
+  ...
+# Subtest: future observation
+ok 135 - future observation
+  ---
+  duration_ms: 0.10962
+  ...
+# Subtest: market cap hindsight
+ok 136 - market cap hindsight
+  ---
+  duration_ms: 0.094991
+  ...
+# Subtest: missing first-session binding
+ok 137 - missing first-session binding
+  ---
+  duration_ms: 0.159376
+  ...
+# Subtest: low breached
+ok 138 - low breached
+  ---
+  duration_ms: 0.166856
+  ...
+# Subtest: no reclaim
+ok 139 - no reclaim
+  ---
+  duration_ms: 0.505466
+  ...
+# Subtest: bar gaps
+ok 140 - bar gaps
+  ---
+  duration_ms: 0.24707
+  ...
+# Subtest: future completed bar
+ok 141 - future completed bar
+  ---
+  duration_ms: 0.370188
+  ...
+# Subtest: expired session
+ok 142 - expired session
+  ---
+  duration_ms: 0.210222
+  ...
+# Subtest: quote before trigger
+ok 143 - quote before trigger
+  ---
+  duration_ms: 0.442536
+  ...
+# Subtest: missing policy
+ok 144 - missing policy
+  ---
+  duration_ms: 0.114771
+  ...
+# Subtest: end-to-end supplied evidence becomes paper card and costed outcome, never BUY
+ok 145 - end-to-end supplied evidence becomes paper card and costed outcome, never BUY
+  ---
+  duration_ms: 35.991273
+  ...
+# Subtest: impossible date
+ok 146 - impossible date
+  ---
+  duration_ms: 0.407324
+  ...
+# Subtest: ambiguous date
+ok 147 - ambiguous date
+  ---
+  duration_ms: 0.271294
+  ...
+# Subtest: no security identity
+ok 148 - no security identity
+  ---
+  duration_ms: 0.326036
+  ...
+# Subtest: wrong quote security
+ok 149 - wrong quote security
+  ---
+  duration_ms: 7.240451
+  ...
+# Subtest: unconverted quote lots
+ok 150 - unconverted quote lots
+  ---
+  duration_ms: 5.630277
+  ...
+# Subtest: wrong catalyst security
+ok 151 - wrong catalyst security
+  ---
+  duration_ms: 5.680183
+  ...
+# Subtest: quote capture in future
+ok 152 - quote capture in future
+  ---
+  duration_ms: 8.36317
+  ...
+# Subtest: delayed quote not observable
+ok 153 - delayed quote not observable
+  ---
+  duration_ms: 2.841884
+  ...
+# Subtest: bar unavailable at decision
+ok 154 - bar unavailable at decision
+  ---
+  duration_ms: 3.902756
+  ...
+# Subtest: bar published before completion
+ok 155 - bar published before completion
+  ---
+  duration_ms: 2.211794
+  ...
+# Subtest: wrong bar security
+ok 156 - wrong bar security
+  ---
+  duration_ms: 2.519423
+  ...
+# Subtest: missing panel provenance
+ok 157 - missing panel provenance
+  ---
+  duration_ms: 2.754801
+  ...
+# Subtest: low opening volume
+ok 158 - low opening volume
+  ---
+  duration_ms: 2.590199
+  ...
+# Subtest: unknown contract currency
+ok 159 - unknown contract currency
+  ---
+  duration_ms: 5.806297
+  ...
+# Subtest: award ceiling not booked commitment
+ok 160 - award ceiling not booked commitment
+  ---
+  duration_ms: 2.595497
+  ...
+# Subtest: missing document hash
+ok 161 - missing document hash
+  ---
+  duration_ms: 5.215789
+  ...
+# Subtest: missing supplied calendar
+ok 162 - missing supplied calendar
+  ---
+  duration_ms: 2.166617
+  ...
+# Subtest: wrong session
+ok 163 - wrong session
+  ---
+  duration_ms: 2.357574
+  ...
+# Subtest: old catalyst not first session
+ok 164 - old catalyst not first session
+  ---
+  duration_ms: 3.698957
+  ...
+# Subtest: quote stale
+ok 165 - quote stale
+  ---
+  duration_ms: 2.223386
+  ...
+# Subtest: ZAD no
+ok 166 - ZAD no
+  ---
+  duration_ms: 2.185637
+  ...
+# Subtest: options never admitted
+ok 167 - options never admitted
+  ---
+  duration_ms: 2.0688
+  ...
+# Subtest: expired trigger even with fresh quote
+ok 168 - expired trigger even with fresh quote
+  ---
+  duration_ms: 2.096559
+  ...
+# Subtest: calendar supports supplied early close
+ok 169 - calendar supports supplied early close
+  ---
+  duration_ms: 2.529676
+  ...
+# Subtest: date parsing rejects impossible month/day/time
+ok 170 - date parsing rejects impossible month/day/time
+  ---
+  duration_ms: 0.143658
+  ...
+# Subtest: proposed exit must be internally consistent, not two conflicting stops
+ok 171 - proposed exit must be internally consistent, not two conflicting stops
+  ---
+  duration_ms: 2.205005
+  ...
+# Subtest: no real-mode or adoption switch
+ok 172 - no real-mode or adoption switch
+  ---
+  duration_ms: 0.125578
+  ...
+# Subtest: stable hash is key-order independent and rejects non-JSON evidence
+ok 173 - stable hash is key-order independent and rejects non-JSON evidence
+  ---
+  duration_ms: 0.14153
+  ...
+# Subtest: ledger retains rejection, is idempotent and detects changed input
+ok 174 - ledger retains rejection, is idempotent and detects changed input
+  ---
+  duration_ms: 9.615623
+  ...
+# Subtest: ledger detects tampering and prevents silent policy changes
+ok 175 - ledger detects tampering and prevents silent policy changes
+  ---
+  duration_ms: 10.794704
+  ...
+# Subtest: invalidated daily close selects next-open exit and permits gap loss
+ok 176 - invalidated daily close selects next-open exit and permits gap loss
+  ---
+  duration_ms: 4.031172
+  ...
+# Subtest: maximum holding exit wins over last-day invalidation, never silently extends to session six
+ok 177 - maximum holding exit wins over last-day invalidation, never silently extends to session six
+  ---
+  duration_ms: 4.045037
+  ...
+# Subtest: unobserved close
+ok 178 - unobserved close
+  ---
+  duration_ms: 3.930369
+  ...
+# Subtest: missing close
+ok 179 - missing close
+  ---
+  duration_ms: 5.557985
+  ...
+# Subtest: duplicate close
+ok 180 - duplicate close
+  ---
+  duration_ms: 4.564772
+  ...
+# Subtest: exit too early
+ok 181 - exit too early
+  ---
+  duration_ms: 5.710455
+  ...
+# Subtest: exit wrong identity
+ok 182 - exit wrong identity
+  ---
+  duration_ms: 6.206703
+  ...
+# Subtest: exit future capture
+ok 183 - exit future capture
+  ---
+  duration_ms: 7.979525
+  ...
+# Subtest: exit insufficient size
+ok 184 - exit insufficient size
+  ---
+  duration_ms: 11.501654
+  ...
+# Subtest: exit outcome not yet due
+ok 185 - exit outcome not yet due
+  ---
+  duration_ms: 11.230359
+  ...
+# Subtest: batch retains both success and failure without promoting a positive result
+ok 186 - batch retains both success and failure without promoting a positive result
+  ---
+  duration_ms: 18.754039
+  ...
+# Subtest: missing outcomes remain counted
+ok 187 - missing outcomes remain counted
+  ---
+  duration_ms: 4.331892
+  ...
+# Subtest: positive synthetic returns are descriptive, never proof or account return
+ok 188 - positive synthetic returns are descriptive, never proof or account return
+  ---
+  duration_ms: 8.513798
+  ...
+# Subtest: summary detects duplicate, orphan and wrong-policy outcomes
+ok 189 - summary detects duplicate, orphan and wrong-policy outcomes
+  ---
+  duration_ms: 29.126645
+  ...
+# Subtest: retired runner CLI cannot evaluate unauthenticated input or edit it
+ok 190 - retired runner CLI cannot evaluate unauthenticated input or edit it
+  ---
+  duration_ms: 82.571224
+  ...
+1..190
+# tests 190
+# suites 0
+# pass 190
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2531.505757
