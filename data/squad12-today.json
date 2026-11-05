@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-04T01:17:52.789Z",
- "lastClose": "2026-11-03",
+ "generatedAt": "2026-11-05T06:47:57.737Z",
+ "lastClose": "2026-11-04",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Squad 12: events in the 300 largest US companies (SQ12-*). newSignals = signals on the last close (buy at the next open, hold 63 sessions). Nothing here is a buy by itself: a rule needs a frozen 5-year verdict that qualifies (data/squad12-lab.json firstRun). Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
@@ -8,13 +8,78 @@
    "name": "Big company: earnings gap-up of 3%+ that closes in the upper half of the day",
    "hold": 63,
    "tier": "NOT PROVEN",
-   "newSignals": []
+   "newSignals": [
+    {
+     "sym": "BKNG",
+     "close": 170.97,
+     "halal": "unknown",
+     "rank": 94,
+     "ev": "2026-11-03 16:03 NY 0001075531-26-000044"
+    },
+    {
+     "sym": "GWW",
+     "close": 1489.39,
+     "halal": "unknown",
+     "rank": 179,
+     "ev": "2026-11-04 08:03 NY 0000277135-26-000088"
+    },
+    {
+     "sym": "AMGN",
+     "close": 478.48,
+     "halal": "unknown",
+     "rank": 45,
+     "ev": "2026-11-03 16:05 NY 0000318154-26-000153"
+    },
+    {
+     "sym": "PRU",
+     "close": 126.63,
+     "halal": "unknown",
+     "rank": 256,
+     "ev": "2026-11-03 16:20 NY 0001137774-26-000219"
+    },
+    {
+     "sym": "XYZ",
+     "close": 87.63,
+     "halal": "unknown",
+     "rank": 235,
+     "ev": "2026-11-03 16:12 NY 0001628280-26-069513"
+    }
+   ]
   },
   "SQ12-EARN52H": {
    "name": "Big company closes at a new 52-week high on its earnings reaction day",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": []
+   "newSignals": [
+    {
+     "sym": "GWW",
+     "close": 1489.39,
+     "halal": "unknown",
+     "rank": 179,
+     "ev": "2026-11-04 08:03 NY 0000277135-26-000088"
+    },
+    {
+     "sym": "AMGN",
+     "close": 478.48,
+     "halal": "unknown",
+     "rank": 45,
+     "ev": "2026-11-03 16:05 NY 0000318154-26-000153"
+    },
+    {
+     "sym": "PRU",
+     "close": 126.63,
+     "halal": "unknown",
+     "rank": 256,
+     "ev": "2026-11-03 16:20 NY 0001137774-26-000219"
+    },
+    {
+     "sym": "XYZ",
+     "close": 87.63,
+     "halal": "unknown",
+     "rank": 235,
+     "ev": "2026-11-03 16:12 NY 0001628280-26-069513"
+    }
+   ]
   },
   "SQ12-REVEPS": {
    "name": "Big company 10-Q: revenue AND diluted EPS both up 10%+ on the same quarter last year",
@@ -22,60 +87,88 @@
    "tier": "NOT PROVEN",
    "newSignals": [
     {
-     "sym": "PNC",
-     "close": 229.41,
+     "sym": "BLK",
+     "close": 1224.37,
      "halal": "unknown",
-     "rank": 124,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +10.9% eps +14.3%"
+     "rank": 61,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +19.1% eps +25.4%"
     },
     {
-     "sym": "AME",
-     "close": 248.58,
+     "sym": "ODFL",
+     "close": 179.39,
      "halal": "unknown",
-     "rank": 201,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +17.3% eps +15.6%"
+     "rank": 275,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +13.1% eps +28.9%"
     },
     {
-     "sym": "LITE",
-     "close": 680.16,
+     "sym": "DDOG",
+     "close": 188.72,
      "halal": "unknown",
-     "rank": 188,
-     "ev": "10-Q 2026-11-03 q 2026-09-26 rev +136.5% eps +6980.0%"
+     "rank": 152,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +35.2% eps +220.0%"
     },
     {
-     "sym": "MPC",
-     "close": 427.34,
-     "halal": "fail",
-     "rank": 88,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +61.0% eps +489.6%"
-    },
-    {
-     "sym": "MPWR",
-     "close": 1328.3,
+     "sym": "FANG",
+     "close": 182.88,
      "halal": "unknown",
-     "rank": 189,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +63.1% eps +47.3%"
+     "rank": 200,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +38.4% eps +62.1%"
     },
     {
-     "sym": "PLTR",
-     "close": 175.4,
-     "halal": "fail",
-     "rank": 21,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +95.9% eps +144.4%"
+     "sym": "GWW",
+     "close": 1489.39,
+     "halal": "unknown",
+     "rank": 179,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +11.3% eps +102.9%"
     },
     {
-     "sym": "ABBV",
-     "close": 286,
+     "sym": "ANET",
+     "close": 178.48,
+     "halal": "unknown",
+     "rank": 52,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +58.5% eps +82.1%"
+    },
+    {
+     "sym": "AIG",
+     "close": 81.71,
+     "halal": "unknown",
+     "rank": 246,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +17.2% eps +72.0%"
+    },
+    {
+     "sym": "COHR",
+     "close": 195.09,
      "halal": "ok",
-     "rank": 19,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +10.3% eps +2270.0%"
+     "rank": 265,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +49.9% eps +59.7%"
     },
     {
-     "sym": "O",
-     "close": 57.5,
+     "sym": "CAT",
+     "close": 591.3,
      "halal": "unknown",
-     "rank": 204,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 rev +10.3% eps +22.9%"
+     "rank": 38,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +17.3% eps +46.1%"
+    },
+    {
+     "sym": "APP",
+     "close": 271.75,
+     "halal": "ok",
+     "rank": 159,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +55.5% eps +75.5%"
+    },
+    {
+     "sym": "AMD",
+     "close": 488.78,
+     "halal": "ok",
+     "rank": 15,
+     "ev": "10-Q 2026-11-04 q 2026-09-26 rev +44.7% eps +94.7%"
+    },
+    {
+     "sym": "ALAB",
+     "close": 223.27,
+     "halal": "unknown",
+     "rank": 262,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 rev +153.7% eps +98.0%"
     }
    ]
   },
@@ -85,46 +178,46 @@
    "tier": "REJECTED",
    "newSignals": [
     {
-     "sym": "AME",
-     "close": 248.58,
+     "sym": "ODFL",
+     "close": 179.39,
      "halal": "unknown",
-     "rank": 201,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +17.3% > +15.0% > +11.3%"
+     "rank": 275,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 growth +13.1% > +10.4% > -2.9%"
     },
     {
-     "sym": "MPC",
-     "close": 427.34,
-     "halal": "fail",
-     "rank": 88,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +61.0% > +53.8% > +8.5%"
-    },
-    {
-     "sym": "MPWR",
-     "close": 1328.3,
+     "sym": "GWW",
+     "close": 1489.39,
      "halal": "unknown",
-     "rank": 189,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +63.1% > +47.6% > +26.1%"
+     "rank": 179,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 growth +11.3% > +10.3% > +10.1%"
     },
     {
-     "sym": "PLTR",
-     "close": 175.4,
-     "halal": "fail",
-     "rank": 21,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +95.9% > +92.8% > +84.7%"
-    },
-    {
-     "sym": "ADM",
-     "close": 70.6,
+     "sym": "ANET",
+     "close": 178.48,
      "halal": "unknown",
-     "rank": 276,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +9.6% > +7.2% > +1.6%"
+     "rank": 52,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 growth +58.5% > +37.7% > +35.1%"
     },
     {
-     "sym": "XYZ",
-     "close": 76,
+     "sym": "AIG",
+     "close": 81.71,
      "halal": "unknown",
-     "rank": 235,
-     "ev": "10-Q 2026-11-03 q 2026-09-30 growth +9.9% > +9.3% > +4.9%"
+     "rank": 246,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 growth +17.2% > -0.1% > -2.0%"
+    },
+    {
+     "sym": "ABT",
+     "close": 115.51,
+     "halal": "unknown",
+     "rank": 57,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 growth +14.5% > +13.0% > +7.8%"
+    },
+    {
+     "sym": "ALAB",
+     "close": 223.27,
+     "halal": "unknown",
+     "rank": 262,
+     "ev": "10-Q 2026-11-04 q 2026-09-30 growth +153.7% > +104.5% > +93.4%"
     }
    ]
   },
@@ -132,7 +225,15 @@
    "name": "Big company raises its guidance (8-K) and the market confirms with a higher close",
    "hold": 63,
    "tier": "NOT PROVEN",
-   "newSignals": []
+   "newSignals": [
+    {
+     "sym": "PFE",
+     "close": 30.79,
+     "halal": "unknown",
+     "rank": 65,
+     "ev": "8-K 2026-11-03 0000078003-26-000125"
+    }
+   ]
   },
   "SQ12-INVDAY": {
    "name": "Big company investor / analyst day (8-K) followed by a higher close",
