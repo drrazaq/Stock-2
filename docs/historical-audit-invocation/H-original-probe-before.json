@@ -1,0 +1,27 @@
+{
+ "splitsPath": "/v3/reference/splits?ticker=BBCI&execution_date.lte=2026-10-15",
+ "dividendsPath": "/v3/reference/dividends?ticker=BBCI&ex_dividend_date.lte=2026-10-15",
+ "identityPath": "/v3/reference/tickers/BBCI?date=2026-10-15",
+ "elevenDividendsRun": [
+  "identity:OK",
+  "splits:OK",
+  "dividends:UNEXPECTED_PAGINATION_INCOMPLETE",
+  "daily:BATCH_STOPPED_NO_RETRY"
+ ],
+ "status": {
+  "status": "INCOMPLETE_STOPPED",
+  "requests": 3,
+  "byProvider": {
+   "ALPACA": 0,
+   "MASSIVE": 3
+  },
+  "rawBytes": 351,
+  "scopeHash": "9751a2a0db8bf41a1788a61270be927a983da28170e51c72d68ee8f8759e2772",
+  "allowBuy": false,
+  "automaticResume": false
+ },
+ "base64OfRawCap": 178956972,
+ "sealedCap": 167772160,
+ "rawCapReachable": false,
+ "maxRawBeforeSealedLimitMiB": 119.9
+}

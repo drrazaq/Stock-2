@@ -1,0 +1,45 @@
+TAP version 13
+# Subtest: H1 actual client obtains11 actions in one explicitly1000-row page, not deprecated default10
+ok 1 - H1 actual client obtains11 actions in one explicitly1000-row page, not deprecated default10
+  ---
+  duration_ms: 8.576813
+  ...
+# Subtest: H1 a next_url despite1000 still seals response and stops without following or retrying
+ok 2 - H1 a next_url despite1000 still seals response and stops without following or retrying
+  ---
+  duration_ms: 2.081881
+  ...
+# Subtest: H2 effective112MiB is below frozen128MiB and capacity stops before spending request
+ok 3 - H2 effective112MiB is below frozen128MiB and capacity stops before spending request
+  ---
+  duration_ms: 2.101654
+  ...
+# Subtest: H3/H5 actual near-cap synthetic archive full readback and independent fresh recovery produce matching receipts
+ok 4 - H3/H5 actual near-cap synthetic archive full readback and independent fresh recovery produce matching receipts
+  ---
+  duration_ms: 32075.258213
+  ...
+# Subtest: H5 producer refuses mismatched acknowledgement or approval, and receipt writer never follows a symlink
+ok 5 - H5 producer refuses mismatched acknowledgement or approval, and receipt writer never follows a symlink
+  ---
+  duration_ms: 1.446712
+  ...
+# Subtest: H5 actual receipt CLI derives fields from authenticated original archive and approved input, rejects wrong run
+ok 6 - H5 actual receipt CLI derives fields from authenticated original archive and approved input, rejects wrong run
+  ---
+  duration_ms: 268.043868
+  ...
+# Subtest: H3 actual rehearsal action refuses absent approval before any service or provider binding
+ok 7 - H3 actual rehearsal action refuses absent approval before any service or provider binding
+  ---
+  duration_ms: 85.038435
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 7
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 32551.516634

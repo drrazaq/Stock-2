@@ -1,3 +1,5 @@
+> **Current H1–H6 correction/rehearsal package:** [Exact dispositions, one provider-free custody scope and remaining official questions](H-review-disposition.md). This supersedes earlier unchanged-client/source/workflow and128MiB-reachable wording. Original twelve-case scope stays frozen; effective raw ceiling112MiB. All setup/rehearsal/data execution remain unapproved.
+
 > **5 November current consolidated setup proposal:** [One private arrangement, official evidence, quota limits and separate W/C control pins](setup-decision-20261105.md). This supersedes the earlier setup wording and workflow8087ed87. Core code/source manifest and twelve-case scope remain unchanged. No setup or execution is approved.
 
 # Bounded historical audit: inactive protected invocation

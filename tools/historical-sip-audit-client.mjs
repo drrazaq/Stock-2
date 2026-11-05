@@ -5,6 +5,7 @@ import {createCipheriv,createDecipheriv,createHash,randomBytes} from 'node:crypt
 import fs from 'node:fs';
 import path from 'node:path';
 
+export const EFFECTIVE_RAW_BYTES=112*1024*1024; // Below frozen128MiB ceiling; base64, metadata and terminal reserves fit160MiB.
 const HOSTS=Object.freeze({ALPACA:'https://data.alpaca.markets',MASSIVE:'https://api.massive.com'});
 const digest=b=>createHash('sha256').update(b).digest('hex');
 export const PINNED_SCOPE_SHA256='9751a2a0db8bf41a1788a61270be927a983da28170e51c72d68ee8f8759e2772';
@@ -27,7 +28,7 @@ export function planPage(scope,{caseIndex,kind,page=1,pageToken=null}){
  const provider=['identity','splits','dividends'].includes(kind)?'MASSIVE':'ALPACA';
  const query=new URLSearchParams();let endpoint;
  if(kind==='identity'){endpoint='/v3/reference/tickers/'+encodeURIComponent(c.symbol);query.set('date',c.day);}
- if(kind==='splits'||kind==='dividends'){endpoint='/v3/reference/'+kind;query.set('ticker',c.symbol);query.set('execution_date.lte',c.day);if(kind==='dividends'){query.delete('execution_date.lte');query.set('ex_dividend_date.lte',c.day);}}
+ if(kind==='splits'||kind==='dividends'){endpoint='/v3/reference/'+kind;query.set('limit','1000');query.set('ticker',c.symbol);query.set('execution_date.lte',c.day);if(kind==='dividends'){query.delete('execution_date.lte');query.set('ex_dividend_date.lte',c.day);}}
  if(provider==='ALPACA'){
    endpoint='/v2/stocks/'+encodeURIComponent(c.symbol)+'/'+(kind==='quotes'?'quotes':'bars');query.set('feed','sip');query.set('asof',c.day);
    // Fixed October cases precede US winter time; New York was UTC-4.
@@ -121,17 +122,18 @@ export class HistoricalAuditClient {
      if(this.used.has(request.requestId))fail('DUPLICATE_REQUEST_NO_RETRY');
      if(request.page>1){const previous=this.completed.get(`${request.caseIndex}:quotes:${request.page-1}`);if(!previous||previous.nextPageToken!==spec.pageToken)fail('PAGE_TOKEN_NOT_FROM_PREVIOUS_RESPONSE');}
      if(this.requests>=156||this.counts[request.provider]>=(request.provider==='ALPACA'?120:36))fail('REQUEST_BUDGET_EXHAUSTED');
-     if(this.rawBytes>=134217728)fail('RAW_STORAGE_LIMIT');
+     if(this.rawBytes>=EFFECTIVE_RAW_BYTES)fail('RAW_STORAGE_LIMIT');
      const wait=Math.max(0,1000-(this.clock()-this.lastStart));if(wait)await this.sleep(wait);
      const remaining=600000-(this.clock()-this.started);if(remaining<=0)fail('PROVIDER_DEADLINE');
+     this.journal.prepareResponseCapacity?.(Math.min(4194304,EFFECTIVE_RAW_BYTES-this.rawBytes));
      this.journal.append({type:'REQUEST_INTENT',requestId:request.requestId,provider:request.provider,caseIndex:request.caseIndex,path:request.path,at:this.clock()});
      this.used.add(request.requestId);this.requests++;this.counts[request.provider]++;this.lastStart=this.clock();
      const controller=new AbortController();let timer;
      try{
-       const response=await Promise.race([this.transport({...request,signal:controller.signal,maxBodyBytes:Math.min(4194304,134217728-this.rawBytes)}),new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(new Error('FULL_RESPONSE_TIMEOUT'));},Math.min(20000,remaining));})]);
+       const response=await Promise.race([this.transport({...request,signal:controller.signal,maxBodyBytes:Math.min(4194304,EFFECTIVE_RAW_BYTES-this.rawBytes)}),new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(new Error('FULL_RESPONSE_TIMEOUT'));},Math.min(20000,remaining));})]);
        if(this.clock()-this.started>600000)fail('PROVIDER_DEADLINE');
        if(!response||!Number.isInteger(response.status)||!Buffer.isBuffer(response.body))fail('INVALID_TRANSPORT_RESULT');
-       if(response.body.length>4194304||this.rawBytes+response.body.length>134217728)fail('RAW_STORAGE_LIMIT');
+       if(response.body.length>4194304||this.rawBytes+response.body.length>EFFECTIVE_RAW_BYTES)fail('RAW_STORAGE_LIMIT');
        this.rawBytes+=response.body.length;
        // Persist raw response before interpretation; no API body is printed publicly.
        this.journal.append({type:'RESPONSE',requestId:request.requestId,status:response.status,rawBase64:response.body.toString('base64'),rawHash:digest(response.body),at:this.clock()});

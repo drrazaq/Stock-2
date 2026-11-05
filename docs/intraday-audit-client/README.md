@@ -1,3 +1,5 @@
+> **Superseded source pin:** H1/H2 corrections and receipt/custody preparation are recorded in [H review disposition](../historical-audit-invocation/H-review-disposition.md). Current pins are in the companion package.json. The original twelve-case scope is unchanged; old client-byte-identical and128MiB-reachable statements below describe the earlier build.
+
 # Fixed historical page client — implementation, not execution approval
 
 Implements the small offline-client task in the decision package at f33447aa,

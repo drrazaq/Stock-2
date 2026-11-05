@@ -1,3 +1,5 @@
+> **Current consolidated H6 question list:** see [H-review disposition](H-review-disposition.md#exact-unanswered-provider-questions-one-list), including single-symbol quotes `asof`, empty/null distinctions and deprecated v3 serving/support. The older questions/evidence below are retained historically. No answer or endpoint access is inferred.
+
 # Exact non-secret provider evidence still needed
 
 These are preparation questions, not permission to make data requests. Alpaca Algo Trader Plus and Massive Stocks Starter ownership is confirmed. Advertised history/feed rights are not observed endpoint access or quote quality.

@@ -1,0 +1,75 @@
+# INACTIVE: separate setup + one rehearsal approval required. Zero provider/owner-key bindings.
+name: Provider-free private custody rehearsal
+on:
+  workflow_dispatch:
+    inputs:
+      control_commit:
+        type: string
+        required: true
+      approval_sha256:
+        type: string
+        required: true
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: custody-rehearsal-once-4923b443
+  cancel-in-progress: false
+jobs:
+  custody:
+    if: github.event.repository.private == true && github.actor == 'drrazaq' && github.ref == 'refs/heads/custody-rehearsal-once-4923b443' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      REHEARSAL_APPROVAL_FILE: ${{ github.workspace }}/control/rehearsal-approval.json
+      REHEARSAL_APPROVAL_SHA256: ${{ inputs.approval_sha256 }}
+      REHEARSAL_SOURCE_SHA: NEW_H_CODE_SOURCE_PIN_PENDING
+      REHEARSAL_CONTROL_SHA: ${{ inputs.control_commit }}
+      REHEARSAL_MANIFEST_SHA256: ac8be83db16f01fcf3e49545ab0f6260640cabe5cb999a2e2b97ca0a04a9aa62
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.control_commit }}
+          persist-credentials: false
+          path: control
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          repository: drrazaq/Stock-2
+          ref: ${{ env.REHEARSAL_SOURCE_SHA }}
+          persist-credentials: false
+          path: source
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 24.19.0
+      - name: Verify immutable source and controls without research bindings
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os,re,json,pathlib,hashlib,subprocess
+          assert re.fullmatch('[0-9a-f]{40}',os.environ['REHEARSAL_CONTROL_SHA'])
+          assert subprocess.check_output(['git','-C','control','rev-parse','HEAD'],text=True).strip()==os.environ['REHEARSAL_CONTROL_SHA']
+          assert subprocess.check_output(['git','-C','source','rev-parse','HEAD'],text=True).strip()==os.environ['REHEARSAL_SOURCE_SHA']
+          root=pathlib.Path('source');raw=(root/'docs/historical-audit-invocation/rehearsal-manifest.json').read_bytes()
+          assert hashlib.sha256(raw).hexdigest()==os.environ['REHEARSAL_MANIFEST_SHA256']
+          for name,digest in json.loads(raw)['files'].items():
+            file=root/name
+            assert file.resolve()==file.absolute() and hashlib.sha256(file.read_bytes()).hexdigest()==digest
+          PY
+      - name: Prove actual native ten-second body deadline locally
+        working-directory: source
+        run: node tools/rehearsal-timeout-proof.mjs
+      - name: One synthetic near-cap upload, full readback and fresh recovery
+        uses: ./source/tools/historical-custody-action
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+      - name: Remove only synthetic ephemeral working files
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import os,pathlib,shutil
+          p=pathlib.Path(os.environ['RUNNER_TEMP'])/('custody-rehearsal-'+os.environ['GITHUB_RUN_ID'])
+          if p.is_symlink(): p.unlink()
+          elif p.exists(): shutil.rmtree(p)
+          PY
