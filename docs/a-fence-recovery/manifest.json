@@ -4,17 +4,21 @@
   "reviewSource": "446cd250bfe1aba6e8e5b949223d5fe4732cb9d2",
   "status": "INACTIVE_OFFLINE_IMPLEMENTED_CONFIRMATION_PENDING",
   "files": {
-    "a-fenced-store.mjs": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
+    "a-fenced-store.mjs": "eac4925554188cd603f032ebd3dbce2727553a75813e26cc2728405878e374cc",
     "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
-    "test/a-fenced-recovery.test.mjs": "3ee2cee25978affecea3cb1b9a619cdd42b5318530857197c6239dc300013c0a",
+    "test/a-fenced-recovery.test.mjs": "906bcda56c837664d196c52f933c2b64f6c34a87ad1fb412a0e1114b1be444c9",
     "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
-    "docs/a-native-source-join/manifest.json": "58b549a3854dabdfcbcf71e56621aec4207a540a69abe1546a10650cf31019f5"
+    "docs/a-native-source-join/manifest.json": "59cbeabaedfeabf7a6e71ed887f76adfdba1a16c6df2e134b5d0d1e6cf4981b8",
+    "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
+    "a-evidence-contract.mjs": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
+    "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
+    "a-native-evidence-contract.mjs": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
+    "a-native-evidence-importer.mjs": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+    "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920"
   },
   "protectedUnchanged": {
-    "a-authenticated-collector.mjs": "6625653dc3fbbd328ba0a2996a57b9c7483c6f6f407681886847421b88109f84",
     "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
-    "a-evidence-contract.mjs": "9bcad99ee1db29591790830dfbe9702c6706bc5968907a4e4a238be424772504",
     "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
     "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
     "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
@@ -29,7 +33,6 @@
     "test/a-authenticated-collector.test.mjs": "e4fd8e652260dcf288874d2183b86c67ce3a900e73e389f1d59050e3657f63dd",
     "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
     "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
-    "test/a-native-source-package.test.mjs": "a80c6fb4dc9e44f93324b7363faf1ffb1d607e1df2de2ef66a2567d937cc5293",
     "docs/engineering-acceptance-checks.json": "e684f906ec454d7d02db3a1fbad8e89de306709785be3533fe98a1f0602af165",
     ".github/workflows/tests.yml": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97"
   },
@@ -42,5 +45,42 @@
   "fileCap": 2000,
   "workerTimeoutMs": 15000,
   "acceptanceRowsClosed": 0,
-  "prospectiveAdmissions": 0
+  "prospectiveAdmissions": 0,
+  "revisionHistory": [
+    {
+      "base": "2c9f418634e05adad5ead5b7fc85de6d1f3eedee",
+      "previousFiles": {
+        "a-fenced-store.mjs": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
+        "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
+        "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+        "test/a-fenced-recovery.test.mjs": "3ee2cee25978affecea3cb1b9a619cdd42b5318530857197c6239dc300013c0a",
+        "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
+        "docs/a-native-source-join/manifest.json": "58b549a3854dabdfcbcf71e56621aec4207a540a69abe1546a10650cf31019f5"
+      },
+      "previousProtected": {
+        "a-authenticated-collector.mjs": "6625653dc3fbbd328ba0a2996a57b9c7483c6f6f407681886847421b88109f84",
+        "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
+        "a-evidence-contract.mjs": "9bcad99ee1db29591790830dfbe9702c6706bc5968907a4e4a238be424772504",
+        "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
+        "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
+        "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
+        "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+        "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
+        "ignition-watch.mjs": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
+        "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
+        "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+        "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+        "capture-json.mjs": "b73a5a9239b6866ad06f915bb1657373aab4c63d216d27483e3f6b7edf858475",
+        "test/a-fenced-store.test.mjs": "dc691681ca265ff298ae18279cdbb554c098eef497896716e7ea710aeb1afe8d",
+        "test/a-authenticated-collector.test.mjs": "e4fd8e652260dcf288874d2183b86c67ce3a900e73e389f1d59050e3657f63dd",
+        "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
+        "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
+        "test/a-native-source-package.test.mjs": "a80c6fb4dc9e44f93324b7363faf1ffb1d607e1df2de2ef66a2567d937cc5293",
+        "docs/engineering-acceptance-checks.json": "e684f906ec454d7d02db3a1fbad8e89de306709785be3533fe98a1f0602af165",
+        ".github/workflows/tests.yml": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97"
+      },
+      "previousDependencyRevisions": {},
+      "reason": "L1-L4 authorized strict importer/enrollment/durable exact-request integration; prior review unchanged for original scope."
+    }
+  ]
 }

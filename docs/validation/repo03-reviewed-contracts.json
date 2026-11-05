@@ -1010,23 +1010,23 @@
     ]
   },
   "a-fenced-store.mjs": {
-    "sha256": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
-    "reviewer": "Codex K1/K2 implementation/source-interface review, 2026-11-05; Claude confirmation pending",
+    "sha256": "eac4925554188cd603f032ebd3dbce2727553a75813e26cc2728405878e374cc",
+    "reviewer": "Codex L1-L4 integration source review, 2026-11-05",
     "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
-    "inputs": "Explicit private store/context, fencing token, fixed-schema owner signature under public verification root pinned only at fresh creation; exact pending inventory and generation-attempt hash. No environment key lookup.",
-    "outputs": "Immutable local records and receipts; signed new-generation transitions; permanent UNRESOLVED intent lookup/store taint; explicit recorded-attempt inspection and deterministic resumption.",
-    "sideEffects": "Kernel-flock serialized private original/intent/control/disposition writes. Only HEAD pointer changes; no data or old intent/attempt cleanup, no providers/messages/setup.",
-    "failure": "Root/head/context/signature/inventory mismatch refuses. Only exact pending replay allowed without disposition. Interrupted transitions block normal writes; conflicting takeover rejected. Permanent missingness blocks strict/historical evaluations; capacity/corruption/key/boundary failures remain unresolved.",
-    "timing": "15sec worker timeout;16MiB/2000file caps unchanged; actual SIGKILL during/after control writes; current generation chain/auth revalidation under same lock. No physical boundary inferred from metadata.",
-    "researchBoundary": "Inactive only; signatures establish supplied authorization, not owner identity or independent source truth. No real root installed. No protocol, strategy, ZAD/90day exclusion, cost or frozen-results change.",
-    "remainingVerification": "Exact new package independent confirmation and real approved authority/host/writer boundary remain pending. No whole-row acceptance or authenticated capture claimed.",
+    "inputs": "Explicit origin/cohort/contract, public recovery root for every non-test INIT, exact private signed source for non-test transition; existing tokens and pinned originals.",
+    "outputs": "Local durable generation/append/evaluation receipts or fixed refusal/UNKNOWN; retained origin cannot use synthetic evaluator bypass.",
+    "sideEffects": "Kernel flock, anchored private writes/fsync, permanent original intents/fragments/request bytes; no key creation/signing or provider calls.",
+    "failure": "Source/hash/symlink/signature/context/transition/inventory conflicts refuse; first-record exact source replay; old tokens fenced; unresolved stays permanent.",
+    "timing": "15s worker;16MiB/2000 files; <=1MiB signed source flushed before transition; no stale-lock aging.",
+    "researchBoundary": "Inactive A only; optional root/inline auth exclusively SYNTHETIC; no genuine admission or live policy adoption.",
+    "remainingVerification": "Independent focused review, authenticated host/provider/custody and policy dependencies remain; not deployed or genuine market evidence.",
     "evidence": [
-      "docs/a-fence-recovery/README.md",
-      "test/a-fenced-recovery.test.mjs"
+      "docs/a-native-importer/README.md",
+      "docs/a-native-importer/verification.json"
     ]
   },
   "a-authenticated-collector.mjs": {
-    "sha256": "6625653dc3fbbd328ba0a2996a57b9c7483c6f6f407681886847421b88109f84",
+    "sha256": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "reviewer": "Codex authored implementation/source contract, independent Claude review pending",
     "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
     "inputs": "Explicit mock/reviewed transport/client, role signer, trust contract, semantics/profile, fixed window and limits.",
@@ -1039,7 +1039,8 @@
     "evidence": [
       "docs/a-collector-fenced/README.md",
       "test/a-authenticated-collector.test.mjs",
-      "test/a-fenced-store.test.mjs"
+      "test/a-fenced-store.test.mjs",
+      "docs/a-native-importer/README.md"
     ]
   },
   "a-sip-window-client.mjs": {
@@ -1060,7 +1061,7 @@
     ]
   },
   "tools/market03-ingress-matrix.mjs": {
-    "sha256": "eade93177ba268e7668599ef1e51de9ba8d636d884be1a836a37efa8b18fc139",
+    "sha256": "9755dfee45a0f27570ea550fd4f810ae11fb3c0296a7e419b30f408bea7948dd",
     "reviewer": "Codex A provider-registration extension; original Claude matrix retained",
     "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
     "inputs": "Tracked repository source and explicit provider/role contracts.",
@@ -1072,7 +1073,8 @@
     "remainingVerification": "Independent focused review of new A registrations; whole-provider audit remains open.",
     "evidence": [
       "tests/market03-ingress-matrix.test.mjs",
-      "docs/a-collector-fenced/README.md"
+      "docs/a-collector-fenced/README.md",
+      "docs/a-native-importer/README.md"
     ]
   },
   "a-native-source-join.mjs": {
@@ -1105,6 +1107,70 @@
     "evidence": [
       "docs/a-fence-recovery/README.md",
       "test/a-fenced-recovery.test.mjs"
+    ]
+  },
+  "a-native-evidence-contract.mjs": {
+    "sha256": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
+    "reviewer": "Codex L1-L4 integration source review, 2026-11-05",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Signed original references, explicit FIGI/CIK/asset identity review, native prefix, primary response, quote semantics, raw close/finality evidence.",
+    "outputs": "Conditional native input/outcome binding or fixed UNKNOWN error; no independently authenticated source claim.",
+    "sideEffects": "Private retained-original reads and store conflict reads only; no fetching, signing or mutation.",
+    "failure": "Missing/revised/late/tainted/source-identity conflicting evidence and omitted BBOs refuse.",
+    "timing": "Original acceptance separate from Atom updated; prefix/reviews before entry; calendar-completed closes and deterministic quote-window ordering.",
+    "researchBoundary": "Unadopted aggregate trigger versus independent BBO execution; ticker agreement insufficient; signatures do not establish physical truth.",
+    "remainingVerification": "Independent focused review, authenticated host/provider/custody and policy dependencies remain; not deployed or genuine market evidence.",
+    "evidence": [
+      "docs/a-native-importer/README.md",
+      "docs/a-native-importer/verification.json"
+    ]
+  },
+  "a-native-evidence-importer.mjs": {
+    "sha256": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+    "reviewer": "Codex L1-L4 integration source review, 2026-11-05",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit pinned dataset/contract/native-run configs and signed originals in anchored private directory; already-enrolled fenced store/token.",
+    "outputs": "Private original/report refs, strict evaluator results and existing research card/outcome; failures UNKNOWN and reportSaved false.",
+    "sideEffects": "Bounded local immutable original/derived/evaluation/report writes under existing kernel-fenced store; no acquisition/key/signing/BUY.",
+    "failure": "Missing/hash-conflicting originals, stale generation, source revisions and partial writes keep UNKNOWN; exact pinned retries idempotent.",
+    "timing": "<=400 source originals,16MiB,100 observations; actual receipt clocks preserved; no backdating from retained reads.",
+    "researchBoundary": "All results NOT PROVEN;0 genuine admissions; conditional supplied trust; no cohort, ZAD or protocol adoption.",
+    "remainingVerification": "Independent focused review, authenticated host/provider/custody and policy dependencies remain; not deployed or genuine market evidence.",
+    "evidence": [
+      "docs/a-native-importer/README.md",
+      "docs/a-native-importer/verification.json"
+    ]
+  },
+  "a-native-quotes.mjs": {
+    "sha256": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920",
+    "reviewer": "Codex L1-L4 integration source review, 2026-11-05",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Actual-format Alpaca quote payload, explicit reviewed size/condition semantics, symbol/security, window and original receipt clock.",
+    "outputs": "Sorted/deduplicated native BBO events preserving nanoseconds, sizes, exchange/tape and original receipt.",
+    "sideEffects": "Pure normalization, no file/network/provider operation.",
+    "failure": "Unconfirmed units/conditions, pagination, malformed/nonpositive/future/out-of-window values refuse.",
+    "timing": "Exact nanosecond source clocks; unchanged reviewed collector algorithm.",
+    "researchBoundary": "BBO model not executable-fill/coverage guarantee; no entitlement inferred.",
+    "remainingVerification": "Independent focused review, authenticated host/provider/custody and policy dependencies remain; not deployed or genuine market evidence.",
+    "evidence": [
+      "docs/a-native-importer/README.md",
+      "docs/a-native-importer/verification.json"
+    ]
+  },
+  "tools/a-native-evidence-runner.mjs": {
+    "sha256": "c2ba3517764837130bba27544ddaa551ecfe4fff9bc80d3c0155bed8e09bdeeb",
+    "reviewer": "Codex L1-L4 integration source review, 2026-11-05",
+    "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+    "inputs": "Explicit private-originals directory plus request filename/SHA; existing store/token and retained signed inputs only.",
+    "outputs": "JSON bounded OFFLINE_RESEARCH_ONLY/UNKNOWN,BUYfalse/admissions0; fixed ERROR/exit1.",
+    "sideEffects": "Calls inactive importer/local store; no create/store enrollment,credentials,network or messages.",
+    "failure": "Pinned input and private-file refusal fail closed; import failures emit UNKNOWN.",
+    "timing": "Existing store15s subprocess bounds/import source budgets; no live scheduling.",
+    "researchBoundary": "Offline retained research only; no authentication/approval/prospective claim.",
+    "remainingVerification": "Independent focused review, authenticated host/provider/custody and policy dependencies remain; not deployed or genuine market evidence.",
+    "evidence": [
+      "docs/a-native-importer/README.md",
+      "docs/a-native-importer/verification.json"
     ]
   }
 }

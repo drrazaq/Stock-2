@@ -1,0 +1,90 @@
+{
+  "kind": "A_NATIVE_IMPORTER_L1_L4_OFFLINE_EXECUTION_V1",
+  "base": "2c9f418634e05adad5ead5b7fc85de6d1f3eedee",
+  "review": "80df36fe13fe94634cdd90b1589783be8c4bba16",
+  "operator": "Codex",
+  "node20": "20.20.2",
+  "node24": "24.19.0",
+  "fullLogs": [
+    {
+      "scope": "Node20 combined A/native suite before final archived-reservation and malformed-root controls; complete log,0fail",
+      "passed": 367,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "docs/a-native-importer/evidence/a-L1-L4-focused20.log.gz",
+      "sha256": "d37927cbbd74852073b5cb65538c3a7771e488f216f28dc89d2fcf38c10a8438"
+    },
+    {
+      "scope": "Node20 final frozen store/package and61recovery controls",
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "docs/a-native-importer/evidence/a-L1-L4-recovery-final-frozen20.log.gz",
+      "sha256": "0863b4bea65fbcbd8c43bee0cfa335af742a49dfb14713223ccaeda018eefa5d"
+    },
+    {
+      "scope": "Node24 collector/store/importer/package/recovery before final two controls",
+      "passed": 133,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "docs/a-native-importer/evidence/a-L1-L4-focused24.log.gz",
+      "sha256": "3681310b154fd678ca6a8be2e9ee40067ac8b6724750d3a71e332b80436fabc3"
+    },
+    {
+      "scope": "Node24 final frozen store/package and61recovery controls",
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0,
+      "evidence": "docs/a-native-importer/evidence/a-L1-L4-recovery-final-frozen24.log.gz",
+      "sha256": "377c615a99b66c0826bf902467ece46073a4df0be69831737a1a1328ad80ec3e"
+    },
+    {
+      "evidence": "docs/a-native-importer/evidence/a-L1-L4-python.log",
+      "sha256": "3b405a3918ac49f644682ef0515195ebc7d0626a95889c6edc797fd021d698b7"
+    },
+    {
+      "evidence": "docs/a-native-importer/evidence/a-L1-L4-matrix.log",
+      "sha256": "c36fb49bdee24ec070d6a72b2a52e877691d1b3f16e40b9eba5e087bd24d0a87"
+    },
+    {
+      "evidence": "docs/a-native-importer/evidence/a-L1-L4-static.log",
+      "sha256": "9ca70d27fca364c7c75070b2a04ffbe1c6e366f931108f26c6c0ff2c80fe5b5f"
+    }
+  ],
+  "distinctFinalFocusedCases": 369,
+  "countsExplanation": "367combined cases before2final controls; final65-case command retests all61recovery+4package controls. These overlaps must not be added as distinct tests. Node24 similarly133before2final controls plus final65overlap. Final exact-commit hosted291-file evidence is separate.",
+  "commands": [
+    "node20 --test --test-concurrency=2 test/a-native-evidence-importer.test.mjs test/a-native-importer-package.test.mjs test/a-fenced-recovery.test.mjs test/a-fenced-store.test.mjs test/a-native-source-package.test.mjs test/a-native-source-join.test.mjs test/a-close-source.test.mjs test/a-authenticated-collector.test.mjs test/a-evidence-contract.test.mjs test/a-independent-coverage.test.mjs test/a-recovery-copy.test.mjs test/a-pathway-review-regressions.test.mjs test/catalyst-reclaim-prototype.test.mjs test/reclaim-research-workflow.test.mjs test/a-catalyst-reclaim-store.test.mjs",
+    "node20 --test test/a-fenced-recovery.test.mjs test/a-native-importer-package.test.mjs test/a-native-source-package.test.mjs",
+    "node24 --test --test-concurrency=2 test/a-fenced-recovery.test.mjs test/a-native-evidence-importer.test.mjs test/a-native-importer-package.test.mjs test/a-native-source-package.test.mjs test/a-authenticated-collector.test.mjs test/a-fenced-store.test.mjs",
+    "node24 --test test/a-fenced-recovery.test.mjs test/a-native-importer-package.test.mjs test/a-native-source-package.test.mjs",
+    "python3 -m unittest discover -s tests -p test_*.py",
+    "node --test tests/market03-ingress-matrix.test.mjs",
+    "python3 tools/repository-audit.py --root . --syntax --output NEW_UNUSED_PATH",
+    "git diff --check"
+  ],
+  "pythonPassed": 39,
+  "providerMatrixPassed": 4,
+  "static": {
+    "modules": 288,
+    "workflows": 86,
+    "datasetsChecked": 335,
+    "datasetFailures": 0,
+    "missingImports": 0
+  },
+  "developmentFailuresPreserved": {
+    "fixtureUndefinedVariable": "first7 importer cases failed on sourceCodeSha typo; fixed before first7pass",
+    "collectorExtraction": "3of117old-control cases failed due missing nativeNs import; corrected,38unchangedcollector cases pass subsequently",
+    "manifests": "old package hashes correctly refused until explicit L1-L4 repinning"
+  },
+  "independentReview": "REQUEST_ON_PR1_AFTER_PUBLICATION_NOT_YET_APPROVAL",
+  "hostedExactCommit": "PENDING_AT_PUBLICATION; terminal receipt will be posted on PR1 without changing source SHA",
+  "expectedHostedFiles": 291,
+  "productionChanged": false,
+  "providerCalls": 0,
+  "realKeys": false,
+  "setup": false,
+  "adoption": false,
+  "prospectiveAdmissions": 0,
+  "rowsClosed": 0
+}

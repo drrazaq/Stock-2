@@ -7,6 +7,7 @@ import {randomUUID,createHash,createPublicKey,verify} from 'node:crypto';
 import {pathToFileURL} from 'node:url';
 import {evidenceHash,evidenceTime} from './reclaim-research-workflow.mjs';
 import {runAEvidenceDataset} from './a-evidence-contract.mjs';
+import {captureJson} from './capture-json.mjs';
 const need=(ok,code)=>{if(!ok)throw Error(code);};
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const hex=s=>typeof s==='string'&&/^[a-f0-9]{64}$/.test(s);
@@ -48,13 +49,20 @@ function pending(d){return names(d).filter(n=>/^intent-[a-f0-9]{64}\.json$/.test
 function fault(d,r,at){if(r.fault===at){need(json(d.anchor+'/STORE.json').origin==='SYNTHETIC','FAULT_INJECTION_REFUSED');process.kill(process.pid,'SIGKILL');}}
 const attemptName=n=>`generation-attempt-${n}.json`,completeName=n=>`generation-complete-${n}.json`;
 function controlTemps(d,n){return names(d).filter(x=>new RegExp('^\\.control-'+n+'-[a-f0-9]{64}-[A-Z_]+-').test(x));}
+function archivedRequests(d,n){
+ const expected=head(d);if(n!==(expected?.generation||0)+1)return [];
+ return names(d).filter(x=>/^(?:takeover|claim)-request-[a-f0-9]{64}\.json$/.test(x)).filter(name=>{
+  const value=json(d.anchor+'/'+name),request=value.body||value;
+  return (request.expectedHeadHash??request.expectedToken??null)===(expected?evidenceHash(expected):null);
+ }).map(name=>name.slice(name.lastIndexOf('-')+1,-5));
+}
 function transition(d){
  const h=head(d),n=h?.generation||0;
  if(n&&fs.existsSync(d.anchor+'/'+attemptName(n))){
   if(!fs.existsSync(d.anchor+'/'+completeName(n)))return n;
   const receipt=json(d.anchor+'/'+completeName(n)),a=json(d.anchor+'/'+attemptName(n));need(receipt.requestHash===a.requestHash&&evidenceHash(receipt.head)===evidenceHash(h),'CONTROL_CHAIN_INVALID');
  }
- if(fs.existsSync(d.anchor+'/'+attemptName(n+1))||fs.existsSync(d.anchor+`/generation-${n+1}.json`)||controlTemps(d,n+1).length)return n+1;
+ if(fs.existsSync(d.anchor+'/'+attemptName(n+1))||fs.existsSync(d.anchor+`/generation-${n+1}.json`)||controlTemps(d,n+1).length||archivedRequests(d,n+1).length)return n+1;
  return null;
 }
 function recoveryRoot(input){
@@ -84,6 +92,27 @@ function authorization(d,store,a,action){
  need(Array.isArray(b.pending)&&b.pending.length<=MAX_FILES&&Array.isArray(b.residues)&&b.residues.length<=MAX_FILES,'RECOVERY_AUTH_CONTEXT_MISMATCH');
  return b;
 }
+function signedRequestSource(store,r,retainedBytes){
+ let bytes;
+ if(retainedBytes)bytes=retainedBytes;
+ else if(r.authorizationSource){
+  const s=r.authorizationSource;need(typeof s.file==='string'&&/^[A-Za-z0-9][A-Za-z0-9_.-]{0,159}$/.test(s.file)&&hex(s.sha256),'SIGNED_REQUEST_SOURCE_REQUIRED');
+  const d=directory(s.directory);let f;try{f=fs.openSync(d.anchor+'/'+s.file,fs.constants.O_RDONLY|fs.constants.O_NOFOLLOW);const stat=fs.fstatSync(f);need(stat.isFile()&&stat.nlink===1&&!(stat.mode&0o077)&&stat.size<=1048576,'UNSAFE_SIGNED_REQUEST_SOURCE');bytes=fs.readFileSync(f);need(hash(bytes)===s.sha256,'SIGNED_REQUEST_SOURCE_CHANGED');fs.fsyncSync(f);fs.fsyncSync(d.fd);const end=fs.lstatSync(d.anchor+'/'+s.file);need(end.ino===stat.ino&&end.dev===stat.dev&&end.size===bytes.length&&end.mtimeMs===stat.mtimeMs&&!end.isSymbolicLink(),'SIGNED_REQUEST_SOURCE_CHANGED');}finally{if(f!==undefined)fs.closeSync(f);fs.closeSync(d.fd);}
+ }else{need(store.origin==='SYNTHETIC','DURABLE_SIGNED_REQUEST_REQUIRED');need(r.authorization,'RECOVERY_AUTH_CONTEXT_MISMATCH');bytes=encoded(r.authorization);}
+ need(bytes.length<=1048576,'SIGNED_REQUEST_SOURCE_CAP');const a=captureJson(new TextDecoder('utf-8',{fatal:true}).decode(bytes));
+ if(r.authorization!==undefined)need(evidenceHash(a)===evidenceHash(r.authorization),'SIGNED_REQUEST_SOURCE_CONFLICT');return {bytes,authorization:a};
+}
+function retainedGenerationRequest(d,store,n,requestHash){
+ const signed=d.anchor+'/takeover-request-'+requestHash+'.json',plain=d.anchor+'/claim-request-'+requestHash+'.json';
+ if(fs.existsSync(signed)){
+  const bytes=safeRead(signed),a=captureJson(bytes.toString()),b=authorization(d,store,a,a.body?.action);
+  need(['DISPOSE_INCOMPLETE_AND_ADVANCE','CLAIM_GENERATION'].includes(b.action),'RECOVERY_AUTH_CONTEXT_MISMATCH');
+  const mode=b.action==='CLAIM_GENERATION'?'CLAIM':'RECOVERY',request={mode,expectedToken:b.expectedHeadHash,owner:b.nextOwner,at:b.at,boundaryEvidenceHash:b.boundaryEvidenceHash,authorization:a,authorizationRawHash:hash(bytes)};
+  need(evidenceHash(request)===requestHash,'SIGNED_REQUEST_SOURCE_CHANGED');return {request,bytes};
+ }
+ if(fs.existsSync(plain)){const request=json(plain);need(request.mode==='CLAIM'&&request.authorization===null&&evidenceHash(request)===requestHash,'GENERATION_ATTEMPT_CORRUPT');return {request,bytes:null};}
+ return null;
+}
 function readAttempt(d,store,n){
  const a=json(d.anchor+'/'+attemptName(n));need(a.schema===1&&a.generation===n&&a.requestHash===evidenceHash(a.request)&&a.generationRecord.generation===n&&a.generationRecord.cohortHash===store.cohortHash&&a.generationRecord.contractHash===store.contractHash,'GENERATION_ATTEMPT_CORRUPT');
  need(evidenceHash(a.generationRecord.previous)===evidenceHash(a.previous)&&a.request.expectedToken===(a.previous?evidenceHash(a.previous):null),'GENERATION_ATTEMPT_CORRUPT');
@@ -93,6 +122,7 @@ function readAttempt(d,store,n){
  if(a.request.mode==='RECOVERY')b=authorization(d,store,a.request.authorization,'DISPOSE_INCOMPLETE_AND_ADVANCE');
  else{need(a.request.mode==='CLAIM','GENERATION_ATTEMPT_CORRUPT');if(store.recoveryAuthority&&a.previous)b=authorization(d,store,a.request.authorization,'CLAIM_GENERATION');}
  if(b)need(b.expectedHeadHash===a.request.expectedToken&&b.nextOwner===a.request.owner&&b.at===a.request.at&&b.boundaryEvidenceHash===a.request.boundaryEvidenceHash,'RECOVERY_AUTH_CONTEXT_MISMATCH');
+ if(a.request.authorizationRawHash){const bytes=safeRead(d.anchor+'/takeover-request-'+a.requestHash+'.json');need(hash(bytes)===a.request.authorizationRawHash&&evidenceHash(captureJson(bytes.toString()))===evidenceHash(a.request.authorization),'SIGNED_REQUEST_SOURCE_CHANGED');}
  return a;
 }
 function unresolved(d,store){
@@ -133,18 +163,18 @@ function finishGeneration(d,store,a,r){
  put(completeName(a.generation),{schema:1,requestHash:a.requestHash,head:next},'RECEIPT');fault(d,r,'AFTER_CLAIM_RECEIPT');
  return {head:next,token:evidenceHash(next),status:'GENERATION_READY',unresolved:unresolved(d,store).length};
 }
-function beginGeneration(d,store,r,mode){
+function beginGeneration(d,store,r,mode,retainedBytes=null){
  const old=head(d),expected=old?evidenceHash(old):null;
- let b=null;if(mode==='RECOVERY')b=authorization(d,store,r.authorization,'DISPOSE_INCOMPLETE_AND_ADVANCE');
- else if(store.recoveryAuthority&&old)b=authorization(d,store,r.authorization,'CLAIM_GENERATION');
+ let b=null,source=null;if(mode==='RECOVERY'){source=signedRequestSource(store,r,retainedBytes);b=authorization(d,store,source.authorization,'DISPOSE_INCOMPLETE_AND_ADVANCE');}
+ else if(store.recoveryAuthority&&old){source=signedRequestSource(store,r,retainedBytes);b=authorization(d,store,source.authorization,'CLAIM_GENERATION');}
  if(b){need(b.expectedHeadHash===expected,'CONTROL_CAS_FAILED');r={...r,expectedToken:b.expectedHeadHash,owner:b.nextOwner,at:b.at,boundaryEvidenceHash:b.boundaryEvidenceHash};}
  need(expected===r.expectedToken,'CONTROL_CAS_FAILED');
  need(typeof r.owner==='string'&&r.owner.length>0&&r.owner.length<=100&&Number.isFinite(evidenceTime(r.at))&&hex(r.boundaryEvidenceHash),'BOUNDARY_CONTEXT_REQUIRED');
  if(old){current(d,expected,true);need(evidenceTime(r.at)>=evidenceTime(json(d.anchor+`/generation-${old.generation}.json`).at),'BOUNDARY_CLOCK_REGRESSION');}
- const request={mode,expectedToken:r.expectedToken,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,authorization:b?r.authorization:null},requestHash=evidenceHash(request),n=(old?.generation||0)+1;
+ const request={mode,expectedToken:r.expectedToken,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,authorization:b?source.authorization:null,authorizationRawHash:source?hash(source.bytes):null},requestHash=evidenceHash(request),n=(old?.generation||0)+1;
  const reservation=transition(d);need(!reservation||reservation===n,'GENERATION_TRANSITION_PENDING');
  if(fs.existsSync(d.anchor+'/'+attemptName(n))){const a=readAttempt(d,store,n);need(a.requestHash===requestHash,'GENERATION_ATTEMPT_CONFLICT');return finishGeneration(d,store,a,r);}
- need(controlTemps(d,n).every(name=>name.split('-')[2]===requestHash),'GENERATION_ATTEMPT_CONFLICT');
+ need(controlTemps(d,n).every(name=>name.split('-')[2]===requestHash)&&archivedRequests(d,n).every(hash=>hash===requestHash),'GENERATION_ATTEMPT_CONFLICT');
  const currentView=view(d,store);
  if(mode==='RECOVERY'){
   need(b.pending.length||b.residues.length,'NO_UNRESOLVED_EVIDENCE');need(evidenceHash(b.pending)===evidenceHash(currentView.pending)&&evidenceHash(b.residues)===evidenceHash(currentView.residues),'RECOVERY_INVENTORY_CHANGED');
@@ -153,6 +183,8 @@ function beginGeneration(d,store,r,mode){
  let generationRecord={schema:1,generation:n,previous:old,owner:r.owner,at:r.at,boundaryEvidenceHash:r.boundaryEvidenceHash,cohortHash:store.cohortHash,contractHash:store.contractHash,claimRequestHash:requestHash};
  if(fs.existsSync(gf)){const g=json(gf),{claimRequestHash:unused,...expectedGeneration}=generationRecord;need(mode==='CLAIM'&&evidenceHash(g)===evidenceHash(expectedGeneration),'GENERATION_ATTEMPT_CONFLICT');legacyGenerationHash=hash(safeRead(gf));generationRecord=g;}
  const a={schema:1,generation:n,previous:old,request,requestHash,generationRecord,...(legacyGenerationHash?{legacyGenerationHash}:{})};
+ // The complete original request is durable before the first generation-attempt mutation.
+ immutable(d,(source?'takeover-request-':'claim-request-')+requestHash+'.json',source?source.bytes:encoded(request),{generation:n,requestHash,stage:'REQUEST_ARCHIVE',request:r});fault(d,r,'AFTER_REQUEST_ARCHIVE');
  immutable(d,attemptName(n),encoded(a),{generation:n,requestHash,stage:'ATTEMPT',request:r});fault(d,r,'AFTER_CLAIM_ATTEMPT');
  return finishGeneration(d,store,a,r);
 }
@@ -171,7 +203,7 @@ function transact(d,r,kind,logicalId,payload,original){
 }
 function strictEvaluation(d,store,datasetRef,contractRef){
  const read=ref=>{need(/^raw-[a-f0-9]{64}\.bin$/.test(ref?.file||'')&&hex(ref.sha256),'ORIGINAL_REFERENCE_REQUIRED');const b=safeRead(d.anchor+'/'+ref.file);need(hash(b)===ref.sha256,'ORIGINAL_BYTES_CHANGED');return JSON.parse(b);};
- const dataset=read(datasetRef),contract=read(contractRef);need(evidenceHash(contract)===store.contractHash,'STORE_CONTRACT_MISMATCH');
+ const dataset=read(datasetRef),contract=read(contractRef);need(dataset.origin===store.origin,'STORE_ORIGIN_MISMATCH');need(evidenceHash(contract)===store.contractHash,'STORE_CONTRACT_MISMATCH');
  return runAEvidenceDataset(dataset,contract,d.root);
 }
 function worker(root,r){
@@ -179,10 +211,12 @@ function worker(root,r){
  validateLock(d);
  if(r.op==='INIT'){
   need(!head(d)&&['SYNTHETIC','RETAINED_RESEARCH'].includes(r.origin)&&hex(r.cohortHash)&&hex(r.contractHash),'STORE_CONTEXT_REQUIRED');
+  need(r.origin==='SYNTHETIC'||r.recoveryAuthority,'RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED');
   immutable(d,'STORE.json',encoded({kind:'A_FENCED_INACTIVE_RESEARCH_V1',storeId:randomUUID(),origin:r.origin,cohortHash:r.cohortHash,contractHash:r.contractHash,...(r.recoveryAuthority?{recoveryAuthority:recoveryRoot(r.recoveryAuthority)}:{}),allowBuy:false}));return {status:'INITIALIZED'};
  }
  const store=json(d.anchor+'/STORE.json');need(store.kind==='A_FENCED_INACTIVE_RESEARCH_V1','NOT_A_FENCED_STORE');if(r.fault)need(store.origin==='SYNTHETIC','FAULT_INJECTION_REFUSED');
- if(r.op==='HEAD'){const h=head(d);if(h)current(d,evidenceHash(h),true);return {head:h,token:h?evidenceHash(h):null,pending:pending(d).length,unresolved:unresolved(d,store).length,transition:transition(d)};}
+ if(store.origin!=='SYNTHETIC'&&!store.recoveryAuthority)need(['HEAD','RECOVERY_VIEW','GENERATION_ATTEMPT'].includes(r.op),'RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED');
+ if(r.op==='HEAD'){const h=head(d);if(h)current(d,evidenceHash(h),true);return {head:h,token:h?evidenceHash(h):null,pending:pending(d).length,unresolved:unresolved(d,store).length,transition:transition(d),origin:store.origin,authorityEnrolled:!!store.recoveryAuthority};}
  if(r.op==='RECOVERY_VIEW')return view(d,store);
  if(r.op==='CLAIM')return beginGeneration(d,store,r,'CLAIM');
  if(r.op==='DISPOSE')return beginGeneration(d,store,r,'RECOVERY');
@@ -190,11 +224,11 @@ function worker(root,r){
   const n=r.generation??transition(d)??(head(d)?.generation||1);need(Number.isSafeInteger(n)&&n>0,'GENERATION_REQUIRED');
   if(fs.existsSync(d.anchor+'/'+attemptName(n))){const a=readAttempt(d,store,n);return {status:'RECORDED',generation:n,attemptHash:a.requestHash,request:a.request};}
   if(fs.existsSync(d.anchor+`/generation-${n}.json`))return {status:'LEGACY_GENERATION',generation:n,attemptHash:hash(safeRead(d.anchor+`/generation-${n}.json`)),original:json(d.anchor+`/generation-${n}.json`)};
-  const hashes=[...new Set(controlTemps(d,n).map(name=>name.split('-')[2]))];return {status:hashes.length?'ORIGINAL_REQUEST_REQUIRED':'NONE',generation:n,attemptHashes:hashes};
+  const hashes=[...new Set([...controlTemps(d,n).map(name=>name.split('-')[2]),...archivedRequests(d,n)])];if(hashes.length===1&&retainedGenerationRequest(d,store,n,hashes[0]))return {status:'RECORDED_REQUEST',generation:n,attemptHash:hashes[0]};return {status:hashes.length?'ORIGINAL_REQUEST_REQUIRED':'NONE',generation:n,attemptHashes:hashes};
  }
  if(r.op==='RESUME_CLAIM'){
   need(Number.isSafeInteger(r.generation)&&r.generation>0&&hex(r.attemptHash),'GENERATION_ATTEMPT_PIN_REQUIRED');
-  if(!fs.existsSync(d.anchor+'/'+attemptName(r.generation))){const f=d.anchor+`/generation-${r.generation}.json`;need(fs.existsSync(f),'ORIGINAL_REQUEST_REQUIRED');need(hash(safeRead(f))===r.attemptHash,'GENERATION_ATTEMPT_PIN_MISMATCH');const g=json(f);return beginGeneration(d,store,{...r,expectedToken:g.previous?evidenceHash(g.previous):null,owner:g.owner,at:g.at,boundaryEvidenceHash:g.boundaryEvidenceHash},'CLAIM');}
+  if(!fs.existsSync(d.anchor+'/'+attemptName(r.generation))){const saved=retainedGenerationRequest(d,store,r.generation,r.attemptHash);if(saved){const q=saved.request;return beginGeneration(d,store,{...r,expectedToken:q.expectedToken,owner:q.owner,at:q.at,boundaryEvidenceHash:q.boundaryEvidenceHash},q.mode,saved.bytes);}const f=d.anchor+`/generation-${r.generation}.json`;need(fs.existsSync(f),'ORIGINAL_REQUEST_REQUIRED');need(hash(safeRead(f))===r.attemptHash,'GENERATION_ATTEMPT_PIN_MISMATCH');const g=json(f);return beginGeneration(d,store,{...r,expectedToken:g.previous?evidenceHash(g.previous):null,owner:g.owner,at:g.at,boundaryEvidenceHash:g.boundaryEvidenceHash},'CLAIM');}
   const a=readAttempt(d,store,r.generation);need(a.requestHash===r.attemptHash,'GENERATION_ATTEMPT_PIN_MISMATCH');return finishGeneration(d,store,a,r);
  }
  current(d,r.token);validateLock(d);const unresolvedRecords=unresolved(d,store);
@@ -227,6 +261,8 @@ function worker(root,r){
  }finally{fs.closeSync(d.fd);}
 }
 export function createAFencedStore(root,context){
+ if(context&&context.origin!=='SYNTHETIC')need(context.recoveryAuthority,'RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED');
+ if(context?.recoveryAuthority)recoveryRoot(context.recoveryAuthority);
  if(context){fs.mkdirSync(root,{mode:0o700});const d=directory(root);try{const f=fs.openSync(d.anchor+'/.a-writer.lock',fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);fs.fsyncSync(f);fs.closeSync(f);fs.fsyncSync(d.fd);}finally{fs.closeSync(d.fd);}}
  function invoke(request){
   const d=directory(root);let f;try{

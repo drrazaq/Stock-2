@@ -1,5 +1,7 @@
 // Inactive A acquisition adapters: callers must supply reviewed transports/signers. No network default, environment keys or live mode.
 import {createHash,verify} from 'node:crypto';
+import {nativeNs,normalizeAlpacaAQuotes} from './a-native-quotes.mjs';
+export {normalizeAlpacaAQuotes} from './a-native-quotes.mjs';
 import {validateTrustContract} from './a-evidence-contract.mjs';
 import {evidenceHash,evidenceTime} from './reclaim-research-workflow.mjs';
 const need=(v,c)=>{if(!v)throw Error(c);};
@@ -14,26 +16,6 @@ const reason=e=>REASONS.has(e?.message)?e.message:'SOURCE_SCHEMA_OR_IO_ERROR';
 function checkedSignature(receipt,role,contract,body){
  const root=contract.roots.find(r=>r.id===receipt?.keyId&&r.roles[0]===role);
  need(root&&receipt?.body&&Object.entries(body).every(([k,v])=>evidenceHash(receipt.body[k])===evidenceHash(v))&&typeof receipt.signature==='string'&&verify(null,Buffer.from(evidenceHash(receipt.body)),root.publicKey,Buffer.from(receipt.signature,'base64')),'SIGNER_OR_RECEIPT_INVALID');return receipt;
-}
-function nativeNs(s){
- need(typeof s==='string'&&/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d{1,9})?Z$/.test(s),'NATIVE_QUOTE_CLOCK_INVALID');
- const [main,fraction='']=s.slice(0,-1).split('.');return BigInt(time(main+'Z'))*1000000n+BigInt(fraction.padEnd(9,'0'));
-}
-export function normalizeAlpacaAQuotes(payload,{symbol,securityId,slot,receivedAt,profile}){
- need(payload&&Object.getPrototypeOf(payload)===Object.prototype&&Array.isArray(payload.quotes)&&payload.next_page_token===null&&(!payload.symbol||payload.symbol===symbol),'QUOTE_ENVELOPE_OR_PAGINATION_UNKNOWN');
- need(profile?.sizeUnits==='SHARES'&&Array.isArray(profile.firmConditions)&&profile.firmConditions.length>0,'QUOTE_SEMANTICS_UNVERIFIED');
- need(payload.quotes.length<=10000,'QUOTE_COUNT_CAP');need(payload.quotes.length||profile.emptyMeansNoEvents===true,'EMPTY_RESPONSE_UNVERIFIED');
- const seen=new Map(),events=[];
- for(const q of payload.quotes){
-  const n=nativeNs(q?.t),start=BigInt(time(slot.start))*1000000n,end=BigInt(time(slot.end))*1000000n;
-  need(n>=start&&(slot.atEndInclusive?n<=end:n<end)&&n<=BigInt(time(receivedAt))*1000000n,'QUOTE_OUTSIDE_WINDOW_OR_FUTURE');
-  need(['bp','ap','bs','as'].every(k=>typeof q[k]==='number'&&Number.isFinite(q[k])&&q[k]>0)&&q.ap>=q.bp&&Number.isInteger(q.bs)&&Number.isInteger(q.as),'QUOTE_VALUES_UNKNOWN');
-  need(Array.isArray(q.c)&&q.c.length>0&&q.c.every(c=>profile.firmConditions.includes(c))&&typeof q.bx==='string'&&typeof q.ax==='string'&&typeof q.z==='string','QUOTE_FIRMNESS_UNKNOWN');
-  const id=evidenceHash({symbol,native:q});if(seen.has(id))continue;seen.set(id,true);
-  events.push({type:'BBO',record:{symbol,securityId,source:'ALPACA_SIP',evidenceId:'ALPACA_NATIVE_'+id,at:iso(Number(n/1000000n)),nativeTimestamp:q.t,nativeTimestampNs:n.toString(),observedAt:receivedAt,sourceDelayMs:0,sizeUnits:'SHARES',bid:q.bp,ask:q.ap,bidSize:q.bs,askSize:q.as,conditions:q.c,bidExchange:q.bx,askExchange:q.ax,tape:q.z}});
- }
- events.sort((a,b)=>BigInt(a.record.nativeTimestampNs)<BigInt(b.record.nativeTimestampNs)?-1:BigInt(a.record.nativeTimestampNs)>BigInt(b.record.nativeTimestampNs)?1:0);
- return events;
 }
 export function createACollector({store,token,contract,role,collectorId,signReceipt,transport,clock=Date.now,limits}){
  validateTrustContract(contract);need(['CAPTURE','WITNESS'].includes(role)&&typeof signReceipt==='function'&&typeof transport==='function','COLLECTOR_BINDINGS_REQUIRED');
