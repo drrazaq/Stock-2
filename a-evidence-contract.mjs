@@ -71,9 +71,11 @@ export function deriveAExit(input,policy,reference,contract,read){
  }
  need(closes.length===holding.length&&holding.every(s=>closes.filter(c=>c.sessionDate===s.date&&c.at===s.close).length===1),'MISSING_OR_DUPLICATE_CLOSES');
  let target=time(holding.at(-1).close),kind='MAX_SESSION_CLOSE';
- for(let i=0;i<holding.length-1;i++){const close=closes.find(c=>c.sessionDate===holding[i].date);need(typeof close.close==='number'&&Number.isFinite(close.close)&&close.close>0,'INVALID_SESSION_CLOSE');if(close.close<input.bars[0].low){target=time(holding[i+1].open);kind='CLOSE_INVALIDATION_NEXT_OPEN';break;}}
+ for(let i=0;i<holding.length-1;i++){const close=closes.find(c=>c.sessionDate===holding[i].date);need(typeof close.close==='number'&&Number.isFinite(close.close)&&close.close>0,'INVALID_SESSION_CLOSE');need(time(close.availableAt)<=time(holding[i+1].open),'CLOSE_NOT_KNOWN_BY_NEXT_OPEN');if(close.close<input.bars[0].low){target=time(holding[i+1].open);kind='CLOSE_INVALIDATION_NEXT_OPEN';break;}}
  const eligible=quotes.filter(q=>kind==='MAX_SESSION_CLOSE'?time(q.at)>=target-policy.maxExitQuoteAgeMs&&time(q.at)<target:time(q.at)>=target&&time(q.at)<=target+policy.maxExitQuoteAgeMs).sort((a,b)=>kind==='MAX_SESSION_CLOSE'?time(b.at)-time(a.at):time(a.at)-time(b.at));
  need(eligible.length,'RULE_EXIT_QUOTE_MISSING');const quote=eligible[0];need(eligible.filter(q=>q.at===quote.at).every(q=>evidenceHash(q)===evidenceHash(quote)),'RULE_EXIT_QUOTE_CONFLICT');
+ const receiptDeadline=kind==='MAX_SESSION_CLOSE'?target:target+policy.maxExitQuoteAgeMs;
+ need(time(quote.observedAt)<=receiptDeadline&&time(quote.at)+quote.sourceDelayMs<=receiptDeadline,'RULE_EXIT_RECEIPT_LATE');
  // Never skip a selected invalid/undersized quote for a more favourable one.
  const exitEvidence={asOf:body.recordedAt,sessionCloses:closes,quote},outcome=measurePaperExit(input,policy,exitEvidence);
  return {outcome,exitEvidence,tapeHash:hash(bytes),selectedQuoteHash:evidenceHash(quote),sampling:contract.exitSampling};

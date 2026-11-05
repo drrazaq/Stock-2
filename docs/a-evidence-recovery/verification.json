@@ -4,24 +4,25 @@
   "independentReview": "REQUESTED_NOT_RECEIVED",
   "newTests": {
     "Node20.20.2": {
-      "pass": 50,
+      "pass": 52,
       "fail": 0
     },
     "Node24.19.0": {
-      "pass": 50,
+      "pass": 52,
       "fail": 0
     }
   },
   "allAFocusedNode20": {
-    "pass": 158,
+    "pass": 160,
     "fail": 0
   },
   "fullSuite": "RUNNING; use exact-commit hosted receipt for terminal result",
   "logs": {
-    "a-final.tap": "d38f93e337f1a3e27af2ae1afc0e84f944c935a89fe5b5bd2d88eba3ca1a3754",
-    "node24-final.tap": "e975a21885f8a6b50b7d2ba92cbc0c98bd2ca47ec889d9312923b8dbefe7a83c",
+    "a-final.tap": "21442c3f50ea5164b16ccb44005cee73dd6798aeb98e414f760196d1aff8b5c8",
+    "node24-final.tap": "f3ca41674a36af23c9b0c7de5f31ca0ae9ff6f67532b7b89c47b4be6e7b4565e",
     "matrix-baseline.tap": "3a2cf334f684664a8b7e8523537548884846b1ffcd645c99369be0c8f926f2ef",
-    "matrix-final.tap": "de54b4408757900948da8eabe272dbb72793445d3a048a518f70d7409c2a6609"
+    "matrix-final.tap": "de54b4408757900948da8eabe272dbb72793445d3a048a518f70d7409c2a6609",
+    "late-clock-red.tap": "692d6354c6dbe169b60bba2c26f04cdb123c7b2e7e7d3ff3f4580cb1b208ff62"
   },
   "historicalManifestsVerified": {
     "source": 13,
@@ -38,5 +39,13 @@
     "baselineTestsPass": 3,
     "candidateTestsPass": 3,
     "assertionsUnchanged": true
+  },
+  "lateClockControls": {
+    "before": {
+      "pass": 0,
+      "fail": 2,
+      "skipped": 33
+    },
+    "after": "PASS; late receipt cannot become contemporaneous evidence"
   }
 }
