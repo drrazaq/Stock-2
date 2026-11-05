@@ -25,7 +25,7 @@
   "staticChecks": [
     "node --check a-native-source-join.mjs",
     "node --check a-close-source.mjs",
-    "git diff --cached --check",
+    "git diff 572dc5ae..HEAD --check -- . ':!docs/a-native-source-join/evidence/*.tap' (byte-preserved raw TAP has diagnostic whitespace)",
     "All manifest protected files byte-identical to base"
   ],
   "actualWatcher": {
@@ -51,19 +51,23 @@
   "logs": {
     "evidence/all-python.log": {
       "bytes": 138,
-      "sha256": "e7e39ce5027c27c88e03ffc58897c93742a0708e98c804e995fb6ac42fa9de54"
+      "sha256": "fd95af9d4041fbede41b1e079522cbdf9488395d4757d42db92b531c31aec6c3"
     },
     "evidence/close-unrelated-session-red.tap": {
       "bytes": 5377,
       "sha256": "219a15fd39c5c1faf04ab51d46c40b4663a5e234b55bf4f871b131ea80b893ab"
     },
     "evidence/focused-node20.tap": {
-      "bytes": 21494,
-      "sha256": "ebd0669e2db22435ef91800ade602d4b58f4e8ae4da2736976ff8067d7b7caf9"
+      "bytes": 21489,
+      "sha256": "e628fffe41342eb2c9df8f220c85971dc3b47eb222936cd3b14ea5dfec548282"
     },
     "evidence/focused-node24.tap": {
-      "bytes": 9867,
-      "sha256": "6c2e3035b4bbcac8d2a2831f1533036cb9d5d104699bf86ed595db967b21b76b"
+      "bytes": 9868,
+      "sha256": "98cbad8a9e2073b781bdc5848a52bb8914034cfc732a8c9ca9ebfbcedcd94aea"
+    },
+    "evidence/primary-clock-retention-red.tap": {
+      "bytes": 7318,
+      "sha256": "75bca90defca34112d6fe9aa9de17191e816c7836df0c9694779540bb669d7f2"
     },
     "evidence/python.log": {
       "bytes": 205,
@@ -92,5 +96,14 @@
     "redEvidence": "evidence/close-unrelated-session-red.tap",
     "finalRegression": "PASS on Node20 and24; actual target-bar changes still persistent conflict",
     "manifestCorrection": "Guard caught a stale duplicate new-file pin in inheritedDependencies; new files now pinned once under files, inherited protected dependencies remain byte-identical. No assertion relaxed."
+  },
+  "followupClockPreservation": {
+    "reproducedAt": "6f003e880bad6e21aac6a7f86fc6d2feb9a61a92",
+    "red": "evidence/primary-clock-retention-red.tap",
+    "reason": "Out-of-order port clock raised UNKNOWN before storing original body; strengthened regression reproduced ENOENT.",
+    "repair": "Commit exact envelope/body first, then refuse invalid original clock with unchanged RESPONSE_CLOCKS_UNKNOWN. No clock repair/backdating or transport request.",
+    "finalFocusedEachRuntime": 96,
+    "pass": 96,
+    "assertionsRelaxed": false
   }
 }

@@ -33,6 +33,8 @@ A matched structural join is labelled `MATCHED_RESEARCH_ONLY`, never authenticat
 
 The follow-up close regression is retained red against1e629bc7: changing response field order/adding an unrelated day falsely created a close revision. The corrected fingerprint uses the requested session's actual bar values, while keeping all original body bytes. A changed target-day value still creates a permanent conflict. Primary response lists are ordered by their original nanosecond receipt clocks before selecting the first retained baseline; input array order cannot pick a later revision as first.
 
+A second strengthened regression reproduced lost body retention when the local callback clock moved backwards. The port now persists the exact original body and invalid clocks before refusing with `RESPONSE_CLOCKS_UNKNOWN`; it never repairs/backdates them or makes the evidence eligible. The red control and final96/96 Node20/24 runs are retained. This additive inactive correction does not modify the reviewed collector or generic store.
+
 ## Failure/recovery contract
 
 Original response bodies and envelope clocks are immutable. Exact duplicate body arrivals retain distinct envelopes when their clocks differ; event joins preserve the first context, not the restart time. Nanosecond comparisons do not round a future acceptance into the observation window. Malformed neighboring submissions rows do not suppress a valid matching row; a malformed matching row remains unresolved.

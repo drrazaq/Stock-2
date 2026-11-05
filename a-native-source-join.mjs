@@ -38,10 +38,12 @@ export function createPrimaryResponsePort({store,token,runId,clock=Date.now,maxR
  return {
   begin(url){const requestStartedAt=now();need(count<maxResponses,'PORT_REQUEST_CAP');const u=new URL(url);need(u.origin==='https://www.sec.gov'&&!u.username&&!u.password&&!u.search&&!u.hash&&/^\/Archives\/edgar\/data\/\d+\/\d{18}\/[A-Za-z0-9_.-]+$/.test(u.pathname)&&!u.pathname.includes('..'),'PRIMARY_URL_UNSUPPORTED');const id=runId+':'+instance+':'+count++;active.set(id,{url,requestStartedAt});return id;},
   headers(id,{httpStatus,responseUrl,redirected}){const headersReceivedAt=now(),r=active.get(id);need(r&&!r.headersReceivedAt,'PORT_PHASE');Object.assign(r,{headersReceivedAt,httpStatus,responseUrl,redirected});},
-  complete(id,body){const bodyReceivedAt=now(),r=active.get(id);need(r?.headersReceivedAt,'PORT_PHASE');need(Buffer.isBuffer(body)&&body.length<=maxBytes,'BODY_HASH_OR_BUDGET');const p={...r,bodyReceivedAt,observedAt:bodyReceivedAt,bodyBase64:body.toString('base64'),bodySha256:sourceHash(body)};need([r.requestStartedAt,r.headersReceivedAt,bodyReceivedAt].map(sourceInstant).every((x,i,a)=>x!==null&&(!i||x>=a[i-1])),'RESPONSE_CLOCKS_UNKNOWN');
+  complete(id,body){const bodyReceivedAt=now(),r=active.get(id);need(r?.headersReceivedAt,'PORT_PHASE');need(Buffer.isBuffer(body)&&body.length<=maxBytes,'BODY_HASH_OR_BUDGET');const p={...r,bodyReceivedAt,observedAt:bodyReceivedAt,bodyBase64:body.toString('base64'),bodySha256:sourceHash(body)};
    // Exact retry of an uncertain local write is possible with the same id/body/clocks. Never consume first.
    const pending=r.pending??p;need(pending.bodySha256===p.bodySha256,'PORT_RETRY_BODY_CONFLICT');r.pending=pending;
-   store.append(token,'ORIGINAL','PRIMARY_RESPONSE:'+id,pending,body);active.delete(id);return pending;
+   store.append(token,'ORIGINAL','PRIMARY_RESPONSE:'+id,pending,body);active.delete(id);
+   // Unverifiable clocks must not discard the original body or become valid source evidence.
+   need([pending.requestStartedAt,pending.headersReceivedAt,pending.bodyReceivedAt].map(sourceInstant).every((x,i,a)=>x!==null&&(!i||x>=a[i-1])),'RESPONSE_CLOCKS_UNKNOWN');return pending;
   },
   stats:()=>({started:count,incomplete:active.size})
  };

@@ -1,0 +1,144 @@
+TAP version 13
+# Subtest: actual native archive joins official identifiers, primary bytes and original acceptance separately from Atom updated
+ok 1 - actual native archive joins official identifiers, primary bytes and original acceptance separately from Atom updated # SKIP test name does not match pattern
+  ---
+  duration_ms: 1.059204
+  ...
+# Subtest: missing primary and late acceptance do not manufacture timely evidence
+ok 2 - missing primary and late acceptance do not manufacture timely evidence # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.101286
+  ...
+# Subtest: missing acceptance is not Atom updated; no nominal completion
+ok 3 - missing acceptance is not Atom updated; no nominal completion # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.069482
+  ...
+# Subtest: exact repeats/restart preserve first ingestion; distinct originals retained; first conflict survives reverted bytes
+ok 4 - exact repeats/restart preserve first ingestion; distinct originals retained; first conflict survives reverted bytes # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.081543
+  ...
+# Subtest: primary first arriving after an incomplete join still acquires a durable revision baseline
+ok 5 - primary first arriving after an incomplete join still acquires a durable revision baseline # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.117568
+  ...
+# Subtest: acceptance conflicts and reverts across pinned parents retain first conflict
+ok 6 - acceptance conflicts and reverts across pinned parents retain first conflict # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.060323
+  ...
+# Subtest: unverified primary response remains UNKNOWN: responseUrl
+ok 7 - unverified primary response remains UNKNOWN: responseUrl # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.986474
+  ...
+# Subtest: unverified primary response remains UNKNOWN: httpStatus
+ok 8 - unverified primary response remains UNKNOWN: httpStatus # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.100337
+  ...
+# Subtest: unverified primary response remains UNKNOWN: bodySha256
+ok 9 - unverified primary response remains UNKNOWN: bodySha256 # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.11032
+  ...
+# Subtest: unverified primary response remains UNKNOWN: bodyReceivedAt
+ok 10 - unverified primary response remains UNKNOWN: bodyReceivedAt # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.113038
+  ...
+# Subtest: unverified primary response remains UNKNOWN: headersReceivedAt
+ok 11 - unverified primary response remains UNKNOWN: headersReceivedAt # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.068253
+  ...
+# Subtest: empty primary, traversal document, and malformed matching rows remain unresolved
+ok 12 - empty primary, traversal document, and malformed matching rows remain unresolved # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.055358
+  ...
+# Subtest: partial native archive remains intact and UNKNOWN
+ok 13 - partial native archive remains intact and UNKNOWN # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.045429
+  ...
+# Subtest: actual response callback port captures original clocks, retries uncertain publication without consuming body
+ok 14 - actual response callback port captures original clocks, retries uncertain publication without consuming body # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.179855
+  ...
+# Subtest: port refuses out-of-order clocks, foreign URL, changed retry bytes and bounded excess
+not ok 15 - port refuses out-of-order clocks, foreign URL, changed retry bytes and bounded excess
+  ---
+  duration_ms: 91.492274
+  location: '/workspace/stock2-a-native-join-20261105/test/a-native-source-join.test.mjs:31:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, open '/tmp/a-native-jokKMl/evidence/raw-2d711642b726b04401627ca9fbac32f5c8530fb1903cc4db02258717921a4881.bin'"
+  code: 'ENOENT'
+  stack: |-
+    Object.openSync (node:fs:573:18)
+    Object.readFileSync (node:fs:452:35)
+    TestContext.<anonymous> (file:///workspace/stock2-a-native-join-20261105/test/a-native-source-join.test.mjs:31:579)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: strict source clocks preserve nanoseconds and reject overflow dates/times
+ok 16 - strict source clocks preserve nanoseconds and reject overflow dates/times # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.091485
+  ...
+# Subtest: actual production-capsule watcher → native reader → primary callback → fenced join, unchanged legacy/provider paths
+ok 17 - actual production-capsule watcher → native reader → primary callback → fenced join, unchanged legacy/provider paths # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.292893
+  ...
+# Subtest: actual SIGKILL at original intent boundary: retain body/clocks and resume exact port write without truncation
+ok 18 - actual SIGKILL at original intent boundary: retain body/clocks and resume exact port write without truncation # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.089615
+  ...
+# Subtest: competing actual join processes retain one first record; terminal busy refusal is retried only after competing process ends
+ok 19 - competing actual join processes retain one first record; terminal busy refusal is retried only after competing process ends # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.072993
+  ...
+# Subtest: valid matching submission row survives malformed neighboring row and exact original archive/parent bytes are copied
+ok 20 - valid matching submission row survives malformed neighboring row and exact original archive/parent bytes are copied # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.089166
+  ...
+# Subtest: actual interrupted conflict AFTER_INTENT cannot be hidden by reverting primary bytes
+ok 21 - actual interrupted conflict AFTER_INTENT cannot be hidden by reverting primary bytes # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.064848
+  ...
+# Subtest: actual interrupted conflict AFTER_RECORD cannot be hidden by reverting primary bytes
+ok 22 - actual interrupted conflict AFTER_RECORD cannot be hidden by reverting primary bytes # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.036464
+  ...
+# Subtest: actual interrupted conflict AFTER_COMMIT cannot be hidden by reverting primary bytes
+ok 23 - actual interrupted conflict AFTER_COMMIT cannot be hidden by reverting primary bytes # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.031266
+  ...
+# Subtest: retained primary response input order cannot choose a later revision as the first original
+ok 24 - retained primary response input order cannot choose a later revision as the first original # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.031217
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 23
+# todo 0
+# duration_ms 203.385185
