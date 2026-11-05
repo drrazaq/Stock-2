@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-11-04T01:44:04.427Z",
+ "generatedAt": "2026-11-05T07:25:45.016Z",
  "squad": 20,
  "philosophy": "use the jump differently: as an AVOID filter and an EXIT on the rules that work, as a second setup after the spike is digested, and one-month momentum among high-turnover large caps (Medhat & Schmeling 2022)",
  "preRegistered": "squad20-core.mjs header + RULES (25 Oct 2026, before any run) + data/strategy-library.json SQ20-*",
  "window": [
   "2021-10-12",
-  "2026-11-03"
+  "2026-11-04"
  ],
  "bar": 4.09,
  "split": "2024-01-01",
@@ -13,9 +13,9 @@
  "data": {
   "price": {
    "ok": true,
-   "sessions": 1271,
+   "sessions": 1272,
    "from": "2021-10-12",
-   "to": "2026-11-03",
+   "to": "2026-11-04",
    "stocks": 8602,
    "rowsWithHighLow": 1
   },
@@ -39,20 +39,20 @@
   },
   "splits": {
    "ok": true,
-   "rows": 7395,
-   "tickers": 4788,
+   "rows": 7417,
+   "tickers": 4796,
    "pagesNow": 8
   },
   "altShares": {
    "ok": true,
-   "wanted": 1,
-   "fetchedNow": 1,
+   "wanted": 0,
+   "fetchedNow": 0,
    "known": 2091
   },
   "domicile": {
    "ok": true,
-   "wantedNow": 1,
-   "fetchedNow": 1,
+   "wantedNow": 0,
+   "fetchedNow": 0,
    "failed": 0,
    "missing": 0,
    "known": 1758,
@@ -63,8 +63,8 @@
     "ok": true,
     "rule": "SQ11-PB12",
     "frozenTrades": 355,
-    "rebuilt": 355,
-    "signals": 355,
+    "rebuilt": 357,
+    "signals": 357,
     "noPrice": 0,
     "open": 0,
     "artifacts": 0,
@@ -161,10 +161,10 @@
   },
   "spike": {
    "ok": true,
-   "stocksWithSpikes": 2401,
-   "spikes": 7060,
+   "stocksWithSpikes": 2402,
+   "spikes": 7064,
    "signals": 90,
-   "controls": 2647,
+   "controls": 2648,
    "controlsHeld": 831
   },
   "stmom": {
@@ -24200,7 +24200,7 @@
    "name": "Leader 12% pullback (SQ11-PB12) (rebuilt base, reference only)",
    "rule": "SQ11-PB12",
    "verdict": "NOT PROVEN",
-   "why": "not better than the same stocks held as long on their other days in the older half; block t 1.24 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.44 under 2.5 in the newer half",
+   "why": "not better than the same stocks held as long on their other days in the older half; block t 1.24 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.6 under 2.5 in the newer half",
    "hold": 126,
    "block": 63,
    "cost": 0.008,
@@ -24227,42 +24227,42 @@
      "win": 0.6667
     },
     "newer": {
-     "n": 256,
-     "days": 160,
-     "stocks": 179,
-     "avg": 0.1633,
+     "n": 258,
+     "days": 161,
+     "stocks": 181,
+     "avg": 0.1628,
      "median": 0.074,
-     "avgStress": 0.1593,
-     "ctrl": 0.0773,
-     "edge": 0.0481,
-     "tDay": 1.59,
+     "avgStress": 0.1588,
+     "ctrl": 0.0767,
+     "edge": 0.0484,
+     "tDay": 1.61,
      "blocks": 11,
-     "tBlock": 0.44,
-     "vsOwn": -0.1072,
-     "ownCovered": 154,
-     "noTop2": 0.141,
+     "tBlock": 0.6,
+     "vsOwn": -0.1058,
+     "ownCovered": 155,
+     "noTop2": 0.1407,
      "best": 2.992,
      "worst": -0.5606,
-     "win": 0.6367
+     "win": 0.6395
     },
     "all": {
-     "n": 355,
-     "days": 229,
+     "n": 357,
+     "days": 230,
      "stocks": 221,
-     "avg": 0.1575,
+     "avg": 0.1572,
      "median": 0.0855,
-     "avgStress": 0.1535,
-     "ctrl": 0.0695,
-     "edge": 0.0596,
-     "tDay": 2.65,
+     "avgStress": 0.1532,
+     "ctrl": 0.0691,
+     "edge": 0.0598,
+     "tDay": 2.67,
      "blocks": 15,
-     "tBlock": 0.81,
-     "vsOwn": -0.1062,
-     "ownCovered": 216,
-     "noTop2": 0.1415,
+     "tBlock": 0.96,
+     "vsOwn": -0.1053,
+     "ownCovered": 217,
+     "noTop2": 0.1412,
      "best": 2.992,
      "worst": -0.5606,
-     "win": 0.6451
+     "win": 0.6471
     }
    },
    "perYear": {
@@ -24272,9 +24272,9 @@
      "avgStock": 0.1157
     },
     "newer": {
-     "rule": 0.3276,
-     "spy": 0.2011,
-     "avgStock": 0.1712
+     "rule": 0.3266,
+     "spy": 0.2002,
+     "avgStock": 0.17
     }
    },
    "byYear": {
@@ -24315,12 +24315,12 @@
      "beatsSpy": true
     },
     "2026": {
-     "n": 44,
-     "avg": 0.206,
-     "avgStock": 0.0859,
-     "spy": 0.1227,
-     "perYear": 0.4121,
-     "spyPerYear": 0.2455,
+     "n": 46,
+     "avg": 0.2014,
+     "avgStock": 0.0821,
+     "spy": 0.1193,
+     "perYear": 0.4029,
+     "spyPerYear": 0.2385,
      "beatsSpy": true
     }
    }
@@ -25912,7 +25912,7 @@
  ],
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-04T01:44:04.427Z",
+  "at": "2026-11-05T07:25:45.016Z",
   "results": {}
  },
  "trades": {}
