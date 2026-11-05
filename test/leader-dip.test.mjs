@@ -40,7 +40,9 @@ test('a fresh pick is a BUY of 1,000 USD with the +20% sell limit, no stop and t
 test('a stale list explains UNKNOWN or expired entry and never offers late entries', async () => {
   const S = await loadScan({ files: sig(['AAA'], OLD) });
   assert.match(S.fn('ldipLines')({}, {}, null, LAST).join('\n'), /source session or clock UNKNOWN/);
-  assert.match(S.fn('ldipLines')({}, {}).join('\n'), /next-open entry expired/);
+  // R2 (5 Nov): this fixture's list was generated after its own entry window while still claiming the 9-session-old close, which is
+  // inconsistent evidence, so it is UNKNOWN rather than merely expired. Either way it is never a BUY (next line).
+  assert.match(S.fn('ldipLines')({}, {}).join('\n'), /source session or clock UNKNOWN/);
   assert.doesNotMatch(S.fn('ldipLines')({}, {}).join('\n'), /- BUY/);
   const S2 = await loadScan({ files: sig(['AAA'], sessAgo(2)) });
   assert.match(S2.fn('ldipLines')({}, {}, null, LAST).join('\n'), /source session or clock UNKNOWN/);   // the scan knows a newer session than the list's close
@@ -50,7 +52,7 @@ test('halal: unknown -> MARK HALAL FIRST; NOT halal (your mark or the ZAD list) 
   const S = await loadScan({ files: sig(['UNK', 'BAD', 'ZZL', 'AAA'], LAST, { 'data/halal.json': { ...HAL, BAD: fail }, 'data/zad-list.json': { effective: '2026-10-22', notHalal: ['ZZL'] } }) });
   const t = S.fn('ldipLines')({}, {}, null, LAST).join('\n');
   assert.match(t, /- BUY AAA/); assert.doesNotMatch(t, /BUY (UNK|BAD|ZZL)/);
-  assert.match(t, /MARK HALAL FIRST \(leader dip picks, no ZAD mark of yours yet: not a buy until you mark them\): UNK \(signal from the \d{4}-\d{2}-\d{2} close; entry only at the \d{4}-\d{2}-\d{2} open, \d+:\d\d [ap]m Kuwait; no late entry\)\./);   // D4: source close and entry instant named assert.match(t, /\nhalal UNK yes   or   halal UNK no/); assert.doesNotMatch(t, /halal SYM/);   // (28 Oct) the exact command, never a generic one assert.doesNotMatch(t, /BAD|ZZL/);
+  assert.match(t, /MARK HALAL FIRST \(leader dip picks, no ZAD mark of yours yet: not a buy until you mark them\): UNK \(signal from the \d{4}-\d{2}-\d{2} close; entry only at the \d{4}-\d{2}-\d{2} open, \d+:\d\d [ap]m Kuwait; no late entry\)\./);   /* D4: source close and entry instant named */ assert.match(t, /\nhalal UNK yes   or   halal UNK no/); assert.doesNotMatch(t, /halal SYM/);   // (28 Oct) the exact command, never a generic one assert.doesNotMatch(t, /BAD|ZZL/);
   const S2 = await loadScan({ files: sig(['AAA'], LAST, { 'data/squad29-flags-today.json': { flags: [{ sym: 'AAA', verdict: 'SELL-WARNING', flag: 'F4', form: 'NT 10-K', filed: new Date(Date.now()).toISOString().slice(0, 10), url: 'x' }] } }) });
   assert.match(S2.fn('dangerFlag')('AAA'), /late-filing notice/);
   assert.deepEqual(S2.fn('ldipLines')({}, {}, null, LAST), []);

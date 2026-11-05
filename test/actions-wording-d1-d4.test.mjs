@@ -9,11 +9,13 @@ import { loadScan, blocked } from './load-scan.mjs';
 const CLOSE = '2026-11-04', GEN = '2026-11-05T05:26:00Z';   // previous-close signal list, generated before the open (shape of 5 Nov)
 const OPEN = '2026-11-05T14:30:00.000Z';                      // 9:30 New York (EST) = 5:30 pm Kuwait
 async function at(iso, fn) { const real = Date.now; Date.now = () => Date.parse(iso); try { return await fn(); } finally { Date.now = real; } }
-async function setup(files = {}) {
-  const server = http.createServer((req, res) => { const values = []; for (let i = 0; i < 290; i++) values.push({ datetime: new Date(Date.UTC(2025, 0, 1 + i)).toISOString().slice(0, 10), open: 75, high: 76, low: 74, close: 75, volume: 1e6 });
+const CAL = (await import('node:fs')).readFileSync(new URL('../market-session.mjs', import.meta.url), 'utf8');   // reviewed NYSE calendar
+let onRequest = null;
+async function setup(files = {}, { calendar = true } = {}) {
+  const server = http.createServer((req, res) => { if (onRequest) onRequest(req.url); const values = []; for (let i = 0; i < 290; i++) values.push({ datetime: new Date(Date.UTC(2025, 0, 1 + i)).toISOString().slice(0, 10), open: 75, high: 76, low: 74, close: 75, volume: 1e6 });
     res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(req.url.includes('time_series') ? { status: 'ok', values: values.reverse() } : {})); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); const base = 'http://127.0.0.1:' + server.address().port;
-  const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/names.json': { ZZP: 'Synthetic' }, ...files }, env: { TD_BASE: base, FH_BASE: base, SEC_BASE: base } });
+  const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/names.json': { ZZP: 'Synthetic' }, ...(calendar ? { 'market-session.mjs': CAL } : {}), ...files }, env: { TD_BASE: base, FH_BASE: base, SEC_BASE: base } });
   return { S, close: () => server.close() };
 }
 const ld = (marked) => ({ 'data/halal.json': marked ? { ZZP: { s: 'ok', d: CLOSE, by: 'you' } } : {},
@@ -67,7 +69,7 @@ test('D2 previous-session intraday reading, no permitted buy: dated, not "today"
   } finally { close(); } }));
 test('D2 same-day reading with a permitted buy keeps the original advice; big down without buys says so', async () => {
   await at('2026-11-05T09:00:00Z', async () => { const { S, close } = await setup({ ...shock('2026-11-05T08:30:00Z'), ...ld(true) }); try {
-    const t = await actions(S); assert.match(t, /MARKET SHOCK TODAY \(S&P 500 \+1\.9% today at 3:30 am New York\): HOLD; do not chase; buy only inside the ranges below\./); assert.match(t, /- BUY ZZP\b/); } finally { close(); } });
+    const t = await actions(S); assert.match(t, /MARKET SHOCK TODAY \(S&P 500 \+1\.9% today at 3:30 am New York, before the open\): HOLD; do not chase; buy only inside the ranges below\./); assert.match(t, /- BUY ZZP\b/); } finally { close(); } });
   await at('2026-11-05T09:03:00Z', async () => { const { S, close } = await setup(shock('2026-11-04T18:22:54Z', -2.1, 'bigDown')); try {
     const t = await actions(S); assert.match(t, /HOLD everything, keep every stop; no panic-selling\. No permitted buy today\./); assert.doesNotMatch(t, /buys below stay valid/); } finally { close(); } });
 });
@@ -105,5 +107,47 @@ test('D4 SELL header names the source close; an invalid session is UNKNOWN, not 
   } finally { close(); } }));
 test('D4 leader-dip BUY block names its signal close', () => at('2026-11-05T09:00:00Z', async () => {
   const { S, close } = await setup(ld(true)); try { assert.match(await actions(S), /LEADER DIP \(your trading lane[^\n]*\| signal from the 2026-11-04 close; entry at the next open only \| horizon/); } finally { close(); } }));
+
+// ---------- Codex review of c670d626 (R1–R4): each reproduced counterexample
+async function ticking(startIso, fn) { const real = Date.now; let now = Date.parse(startIso); Date.now = () => now; try { return await fn(iso => { now = Date.parse(iso); }); } finally { Date.now = real; onRequest = null; } }
+test('R1 the clock crossing 09:30:00.000 New York during ACTIONS async work removes the leader-dip BUY before output', () => ticking('2026-11-05T14:29:59.900Z', async (set) => {
+  const { S, close } = await setup({ ...ld(true), 'data/names.json': {} }); try {   // unknown name -> the caller awaits a (loopback) name lookup after the lane is computed
+    onRequest = (url) => { if (/company_tickers/.test(url)) set('2026-11-05T14:30:00.001Z'); };
+    const t = await actions(S);
+    assert.doesNotMatch(t, /- BUY ZZP/); assert.doesNotMatch(t, /LEADER DIP \(your trading lane/); assert.match(t, /LEADER DIP: no qualifying trade — next-open entry expired on 2026-11-05/);
+  } finally { close(); } }));
+test('R1 the cutoff stays inclusive: crossing exactly to 09:30:00.000 during async work keeps the BUY', () => ticking('2026-11-05T14:29:59.900Z', async (set) => {
+  const { S, close } = await setup({ ...ld(true), 'data/names.json': {} }); try {
+    onRequest = (url) => { if (/company_tickers/.test(url)) set(OPEN); };
+    assert.match(await actions(S), /- BUY ZZP\b/);
+  } finally { close(); } }));
+test('R1 an unmarked pick whose window closes during the calendar read (last async step) loses its MARK HALAL request too', () => ticking('2026-11-05T14:29:59.900Z', async (set) => {
+  const { S, close } = await setup({ ...ld(false), ...shock('2026-11-05T14:00:00Z'), 'market-session.mjs': CAL + '\nglobalThis.__onCalendar && globalThis.__onCalendar();\n' }); try {
+    globalThis.__onCalendar = () => set('2026-11-05T14:30:00.001Z');
+    const t = await actions(S);
+    assert.doesNotMatch(t, /MARK HALAL FIRST \(leader dip/); assert.doesNotMatch(t, /halal ZZP yes/); assert.match(t, /entry expired on 2026-11-05/);
+  } finally { delete globalThis.__onCalendar; close(); } }));
+const ldGen = (gen, signalDay = CLOSE, lastClose = CLOSE) => ({ 'data/halal.json': { ZZP: { s: 'ok', d: CLOSE, by: 'you' } }, 'data/squad11-today.json': { generatedAt: gen, lastClose, methods: { 'SQ11-PB12': { newSignals: [{ sym: 'ZZP', close: 100, d: signalDay }] } } } });
+test('R2 a generation clock without an explicit zone, or inconsistent with the claimed close, is UNKNOWN', async () => {
+  for (const [files, iso, why] of [
+    [ldGen('2026-11-05T05:26:00'), '2026-11-05T09:00:00Z', 'no zone'],
+    [ldGen('2026-11-05 05:26:00Z'), '2026-11-05T09:00:00Z', 'space separator'],
+    [ldGen('2026-11-04T20:00:00Z'), '2026-11-05T09:00:00Z', 'generated 3 pm New York, before the claimed 2026-11-04 close'],
+    [ldGen('2026-11-05T14:45:00Z'), '2026-11-05T15:00:00Z', 'generated after its own next open'],
+    [ldGen(GEN, '2026-11-03'), '2026-11-05T09:00:00Z', 'signal day disagrees with the list close'],
+    [ldGen('2026-11-05T09:30:00+03:00'), '2026-11-05T05:00:00Z', 'future by offset']]) await at(iso, async () => {
+    const { S, close } = await setup(files); try { const t = await actions(S); assert.doesNotMatch(t, /- BUY ZZP/, why); assert.match(t, /source session or clock UNKNOWN/, why); } finally { close(); } });
+  await at('2026-11-05T09:00:00Z', async () => { const { S, close } = await setup(ldGen('2026-11-05T08:26:00+03:00')); try { assert.match(await actions(S), /- BUY ZZP\b/, 'explicit +03:00 offset accepted'); } finally { close(); } });
+});
+test('R3 "during the session" uses the actual close: early close 27 Nov, holiday 26 Nov, normal day, calendar missing', async () => {
+  for (const [atIso, nowIso, re] of [
+    ['2026-11-27T18:30:00Z', '2026-11-27T20:00:00Z', /at 1:30 pm New York, after the close\)/],          // 1 pm early close
+    ['2026-11-27T17:30:00Z', '2026-11-27T20:00:00Z', /at 12:30 pm New York, during the session, not a close\)/],
+    ['2026-11-26T18:30:00Z', '2026-11-26T20:00:00Z', /at 1:30 pm New York, market closed that day\)/],     // Thanksgiving
+    ['2026-11-30T18:30:00Z', '2026-11-30T20:00:00Z', /at 1:30 pm New York, during the session, not a close\)/],
+    ['2026-11-30T13:30:00Z', '2026-11-30T20:00:00Z', /at 8:30 am New York, before the open\)/]]) await at(nowIso, async () => {
+    const { S, close } = await setup(shock(atIso)); try { assert.match(await actions(S), re, atIso); } finally { close(); } });
+  await at('2026-11-27T20:00:00Z', async () => { const { S, close } = await setup(shock('2026-11-27T18:30:00Z'), { calendar: false }); try { const t = await actions(S); assert.match(t, /session status UNKNOWN\)/); assert.doesNotMatch(t, /during the session/); } finally { close(); } });
+});
 
 test('all requests stayed on loopback', () => assert.deepEqual(blocked, []));
