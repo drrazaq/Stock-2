@@ -1,10 +1,10 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {researchFixture} from './helper-reclaim-fixture.mjs';
-import {evaluateObservation,measurePaperExit} from '../reclaim-research-workflow.mjs';
-import {runResearchDataset} from '../reclaim-research-runner.mjs';
+import {evaluateStructuralRehearsal as evaluateObservation,measureStructuralExitRehearsal as measurePaperExit} from '../reclaim-research-workflow.mjs';
+import {runStructuralRehearsal as runResearchDataset} from '../reclaim-research-runner.mjs';
 import {summarizeResearchRun} from '../reclaim-research-summary.mjs';
-import {persistResearchDataset} from '../tools/a-catalyst-reclaim-store.mjs';
+import {persistStructuralRehearsal as persistResearchDataset} from '../tools/a-catalyst-reclaim-store.mjs';
 import {mkdtempSync,readFileSync,rmSync} from 'node:fs';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';

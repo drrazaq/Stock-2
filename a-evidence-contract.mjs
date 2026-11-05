@@ -2,19 +2,30 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {createHash,createPublicKey,verify} from 'node:crypto';
-import {evidenceHash,evidenceTime,measurePaperExit,freezeProposal} from './reclaim-research-workflow.mjs';
-import {runResearchDataset} from './reclaim-research-runner.mjs';
+import {evidenceHash,evidenceTime,measureStructuralExitRehearsal,freezeProposal} from './reclaim-research-workflow.mjs';
+import {runStructuralRehearsal} from './reclaim-research-runner.mjs';
+import {aCoveragePlan,verifyIndependentCoverage} from './a-independent-coverage.mjs';
 const fail = code => {throw Error(code);};
 const need = (ok,code) => {if(!ok)fail(code);};
 const time = value => {const t=evidenceTime(value);need(Number.isFinite(t),'INVALID_EVIDENCE_CLOCK');return t;};
+const validDelay=q=>typeof q?.sourceDelayMs==='number'&&Number.isFinite(q.sourceDelayMs)&&q.sourceDelayMs>=0;
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 export function validateTrustContract(contract){
- need(contract?.id==='A_EVIDENCE_PROPOSAL_V1'&&contract.version===1&&contract.adopted===false,'UNADOPTED_CONTRACT_REQUIRED');
+ need(contract?.id==='A_EVIDENCE_PROPOSAL_V2'&&contract.version===2&&contract.adopted===false,'UNADOPTED_CONTRACT_REQUIRED');
  need(contract.zadValidity==='EXPLICIT_OWNER_INTERVAL_LATEST_KNOWN'&&contract.exitSampling==='FIRST_POST_OPEN_OR_LAST_PRE_CLOSE_BBO'&&contract.originalsMaxBytes===16*1024*1024,'UNSUPPORTED_EVIDENCE_CONTRACT');
  need(/^[a-f0-9]{64}$/.test(contract.strategyPolicyHash||''),'STRATEGY_POLICY_PIN_REQUIRED');
  need(Array.isArray(contract.roots)&&contract.roots.length<=20,'TRUST_ROOTS_REQUIRED');
- const ids=new Set();
- for(const root of contract.roots){need(typeof root.id==='string'&&!ids.has(root.id)&&Array.isArray(root.roles)&&root.roles.length&&root.roles.every(x=>['OWNER','CAPTURE','REVIEW'].includes(x)),'INVALID_TRUST_ROOT');ids.add(root.id);need(createPublicKey(root.publicKey).asymmetricKeyType==='ed25519','ED25519_REQUIRED');}
+ need(contract.coverage==='INDEPENDENT_EXIT_WINDOW_FRAMES_V1','INDEPENDENT_COVERAGE_CONTRACT_REQUIRED');
+ const ids=new Set(),keys=new Set();
+ for(const root of contract.roots){
+  need(typeof root.id==='string'&&!ids.has(root.id)&&Array.isArray(root.roles)&&root.roles.length===1&&['OWNER','CAPTURE','REVIEW','WITNESS'].includes(root.roles[0]),'ONE_ROLE_PER_KEY_REQUIRED');ids.add(root.id);
+  const key=createPublicKey(root.publicKey);need(key.asymmetricKeyType==='ed25519','ED25519_REQUIRED');
+  const fingerprint=hash(key.export({type:'spki',format:'der'}));need(!keys.has(fingerprint),'UNDERLYING_KEY_REUSED');keys.add(fingerprint);
+ }
+ need(Array.isArray(contract.collectors)&&contract.collectors.length<=10,'COLLECTOR_PROVENANCE_REQUIRED');
+ const collectors=new Set();
+ for(const c of contract.collectors){need(typeof c.id==='string'&&c.id&&!collectors.has(c.id)&&['CAPTURE','WITNESS'].includes(c.role)&&contract.roots.some(r=>r.id===c.keyId&&r.roles[0]===c.role)&&typeof c.provenanceReference==='string'&&c.provenanceReference,'COLLECTOR_PROVENANCE_REQUIRED');collectors.add(c.id);}
+
  return evidenceHash(contract);
 }
 // Directory fd anchors all reads: no symlink traversal, mutable path re-opening or network.
@@ -34,13 +45,16 @@ function signedOriginal(ref,role,contract,read,securityId){
  const receipt=ref?.receipt,body=receipt?.body,root=contract.roots.find(k=>k.id===receipt?.keyId&&k.roles.includes(role));
  need(root&&body?.role===role&&body.contractHash===evidenceHash(contract)&&body.securityId===securityId&&body.sha256===ref.sha256,'UNTRUSTED_RECEIPT');
  need(typeof receipt.signature==='string'&&/^[A-Za-z0-9+/]{86}==$/.test(receipt.signature)&&verify(null,Buffer.from(evidenceHash(body)),root.publicKey,Buffer.from(receipt.signature,'base64')),'RECEIPT_SIGNATURE_INVALID');
+ if(['CAPTURE','WITNESS'].includes(role))need(contract.collectors.some(c=>c.keyId===root.id&&c.role===role&&c.id===body.collectorId),'COLLECTOR_PROVENANCE_REQUIRED');
  time(body.recordedAt);const bytes=read(ref);return {body,bytes};
 }
 function parse(bytes){try{return JSON.parse(bytes.toString('utf8'));}catch{fail('INVALID_ORIGINAL_JSON');}}
-export function verifyAObservation(input,bundle,contract,read){
+export function verifyAObservation(input,bundle,contract,read,policy){
+ need(validDelay(input.quote),'INVALID_SOURCE_DELAY');
  const contractHash=validateTrustContract(contract),decision=time(input.asOf),securityId=input.securityId;
  const decisionOriginal=signedOriginal(bundle?.decision,'CAPTURE',contract,read,securityId);
  need(evidenceHash(parse(decisionOriginal.bytes))===evidenceHash(input)&&time(decisionOriginal.body.recordedAt)===decision&&decisionOriginal.body.strategyPolicyHash===contract.strategyPolicyHash,'DECISION_SNAPSHOT_NOT_CONTEMPORANEOUS');
+ need(decisionOriginal.body.outcomeCoveragePlanHash===evidenceHash(aCoveragePlan(input,policy)),'COVERAGE_PLAN_NOT_PINNED_AT_ENTRY');
  // Explicit intervals replace arbitrary mark-age guesses only in this unadopted path.
  need(Array.isArray(bundle.zad)&&bundle.zad.length>0&&bundle.zad.length<=100,'ZAD_HISTORY_REQUIRED');
  const known=bundle.zad.map(ref=>{const {body,bytes}=signedOriginal(ref,'OWNER',contract,read,securityId),r=parse(bytes);need(r.securityId===securityId&&r.issuerId===input.issuerId&&typeof r.evidenceId==='string'&&['YES','NO','UNKNOWN'].includes(r.decision),'INVALID_OWNER_ATTESTATION');need(time(r.decidedAt)<=time(body.recordedAt)&&time(r.validFrom)>=time(r.decidedAt)&&time(r.validUntil)>time(r.validFrom),'INVALID_OWNER_VALIDITY');return {...r,recordedAt:body.recordedAt};}).filter(r=>time(r.recordedAt)<=decision).sort((a,b)=>time(b.decidedAt)-time(a.decidedAt));
@@ -54,7 +68,7 @@ export function verifyAObservation(input,bundle,contract,read){
  need(time(source.body.recordedAt)<=time(review.body.recordedAt)&&time(review.body.recordedAt)<=decision&&r.sourceSha256===c.documentHash&&evidenceHash(r.claims)===evidenceHash(c),'SOURCE_CLAIMS_NOT_REVIEWED');
  return {status:'VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT',contractHash,inputHash:evidenceHash(input),sourceHash:hash(source.bytes),ownerEvidenceId:last.evidenceId,independentTruth:'NOT_ESTABLISHED_BY_SIGNATURE_ALONE'};
 }
-export function deriveAExit(input,policy,reference,contract,read){
+export function deriveAExit(input,policy,reference,contract,read,coverageReference){
  const {body,bytes}=signedOriginal(reference,'CAPTURE',contract,read,input.securityId),tape=parse(bytes);
  const policyHash=freezeProposal(policy).policyHash;
  const holding=input.calendar.sessions.filter(s=>time(s.open)>=time(input.sessionOpen)).slice(0,policy.maxHoldSessions);
@@ -63,7 +77,7 @@ export function deriveAExit(input,policy,reference,contract,read){
  need(tape.schema===1&&tape.complete===true&&tape.inputHash===evidenceHash(input)&&tape.policyHash===policyHash&&tape.securityId===input.securityId&&tape.startAt===input.asOf&&time(tape.endAt)===end&&time(body.recordedAt)>=end,'COMPLETE_BOUND_TAPE_REQUIRED');
  need(Array.isArray(tape.events)&&tape.events.length<=10000,'OUTCOME_EVENT_CAP');
  let previous='GENESIS',lastSeen=time(input.asOf);const ids=new Set(),sourceIds=new Set(),closes=[],quotes=[];
- for(const e of tape.events){const {hash:eventHash,...content}=e;need(typeof e.id==='string'&&e.id.length>0&&e.sequence===ids.size&&e.previousHash===previous&&evidenceHash(content)===eventHash&&!ids.has(e.id),'OUTCOME_CHAIN_CONFLICT');ids.add(e.id);previous=eventHash;
+ for(const e of tape.events){if(e.type==='BBO')need(validDelay(e.record),'INVALID_SOURCE_DELAY');const {hash:eventHash,...content}=e;need(typeof e.id==='string'&&e.id.length>0&&e.sequence===ids.size&&e.previousHash===previous&&evidenceHash(content)===eventHash&&!ids.has(e.id),'OUTCOME_CHAIN_CONFLICT');ids.add(e.id);previous=eventHash;
   need(['CLOSE','BBO'].includes(e.type)&&e.record.securityId===input.securityId&&evidenceHash(parse(read(e.original)))===evidenceHash(e.record),'OUTCOME_ORIGINAL_MISMATCH');
   const sourceId=e.type+':'+e.record.evidenceId;need(typeof e.record.evidenceId==='string'&&e.record.evidenceId&&!sourceIds.has(sourceId)&&!e.record.revisionOf,'OUTCOME_REVISION_CONFLICT');sourceIds.add(sourceId);
   const at=time(e.record.at),seen=time(e.type==='CLOSE'?e.record.availableAt:e.record.observedAt);need(at<=seen&&seen>=lastSeen&&at>=time(input.asOf)&&seen<=end,'OUTCOME_CLOCK_ORDER');lastSeen=seen;
@@ -77,14 +91,17 @@ export function deriveAExit(input,policy,reference,contract,read){
  const receiptDeadline=kind==='MAX_SESSION_CLOSE'?target:target+policy.maxExitQuoteAgeMs;
  need(time(quote.observedAt)<=receiptDeadline&&time(quote.at)+quote.sourceDelayMs<=receiptDeadline,'RULE_EXIT_RECEIPT_LATE');
  // Never skip a selected invalid/undersized quote for a more favourable one.
- const exitEvidence={asOf:body.recordedAt,sessionCloses:closes,quote},outcome=measurePaperExit(input,policy,exitEvidence);
- return {outcome,exitEvidence,tapeHash:hash(bytes),selectedQuoteHash:evidenceHash(quote),sampling:contract.exitSampling};
+ const exitEvidence={asOf:body.recordedAt,sessionCloses:closes,quote},outcome=measureStructuralExitRehearsal(input,policy,exitEvidence);
+ const coverage=outcome.status==='MODELED_PAPER_ECONOMICS_ONLY'?verifyIndependentCoverage({input,policy,tape,reference:coverageReference,contract,read,signedOriginal}):{status:'UNRESOLVED_INPUT_NOT_COVERAGE_VERIFIED'};
+ return {outcome,exitEvidence,coverage,tapeHash:hash(bytes),selectedQuoteHash:evidenceHash(quote),sampling:contract.exitSampling};
 }
 export function runAEvidenceDataset(dataset,contract,directory){
+ if(Array.isArray(dataset?.observations))for(const input of dataset.observations)need(validDelay(input?.quote),'INVALID_SOURCE_DELAY');
  validateTrustContract(contract);need(freezeProposal(dataset.policy).policyHash===contract.strategyPolicyHash,'STRATEGY_POLICY_PIN_MISMATCH');need(!Object.hasOwn(dataset,'exits'),'CALLER_SELECTED_EXITS_FORBIDDEN');
- const structural=runResearchDataset({...dataset,exits:{}}),results=[];
+ need(['SYNTHETIC','RETAINED_RESEARCH'].includes(dataset.origin),'OFFLINE_ORIGIN_REQUIRED');
+ const structural={...runStructuralRehearsal({...dataset,origin:'SYNTHETIC',exits:{}}),inputOrigin:dataset.origin,calculationOnly:true},results=[];
  return withOriginals(directory,read=>{
-  for(const input of dataset.observations){let evidence,derived;try{evidence=verifyAObservation(input,dataset.evidence?.[input.observationId],contract,read);if(structural.admissions.some(a=>a.observationId===input.observationId))derived=deriveAExit(input,dataset.policy,dataset.evidence[input.observationId].outcomes,contract,read);results.push({observationId:input.observationId,status:derived&&derived.outcome.status!=='MODELED_PAPER_ECONOMICS_ONLY'?'OUTCOME_UNRESOLVED':'VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT',evidence,derived:derived||null});}catch(e){results.push({observationId:input.observationId,status:'UNRESOLVED',reason:/^[A-Z_]+$/.test(e.message)?e.message:'EVIDENCE_IO_OR_SCHEMA_ERROR'});}}
+  for(const input of dataset.observations){let evidence,derived;try{evidence=verifyAObservation(input,dataset.evidence?.[input.observationId],contract,read,dataset.policy);if(structural.admissions.some(a=>a.observationId===input.observationId))derived=deriveAExit(input,dataset.policy,dataset.evidence[input.observationId].outcomes,contract,read,dataset.evidence[input.observationId].coverage);results.push({observationId:input.observationId,status:derived&&derived.outcome.status!=='MODELED_PAPER_ECONOMICS_ONLY'?'OUTCOME_UNRESOLVED':'VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT',evidence,derived:derived||null});}catch(e){results.push({observationId:input.observationId,status:'UNRESOLVED',reason:/^[A-Z_]+$/.test(e.message)?e.message:'EVIDENCE_IO_OR_SCHEMA_ERROR'});}}
   return {schema:1,status:'INACTIVE_UNADOPTED_EVIDENCE_RESEARCH',origin:dataset.origin,synthetic:dataset.origin==='SYNTHETIC',allowBuy:false,realDollars:0,prospectiveAdmissions:0,contractHash:evidenceHash(contract),structuralNotAuthenticated:structural,results,limitations:['Trusted signer honesty and complete acquisition require separately reviewed live integration','Retained originals and signatures do not establish independent source truth','No controls, representative population or trading edge established','No current ZAD policy or frozen cohort changed']};
  });
 }

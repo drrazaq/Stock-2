@@ -1,3 +1,5 @@
+> **Current V2 revision following Claude1aaf1ddc:** [F1–F3 disposition and legacy gates](F1-F3-review-disposition.md), [unadopted ZAD proposal](zad-validity-policy.proposed.md), [A7 recovery/resumption conditions](A7-resumption-procedure.md).192 A-focused Node20 and84 affected Node24 checks pass locally; exact hosted results are recorded separately on PR1. Actual independently authenticated collection and primary resumption are NOT IMPLEMENTED/NOT AUTHORIZED. The legacy evaluator/writer/CLIs now fail closed; explicitly named structural rehearsals are synthetic/unauthenticated. All original strategy numbers and frozen artifacts remain unchanged. Earlier V1 statements below that the legacy APIs are unchanged are historical, superseded by this deliberate gate.0acceptance closures/0prospective admissions.
+
 # A: retained-original evidence and secondary recovery — 5 November 2026
 
 **Inactive / unadopted / independent review requested. No real A evidence or admissions.**

@@ -1,51 +1,27 @@
 {
-  "schema": 1,
   "author": "Codex",
   "independentReview": "REQUESTED_NOT_RECEIVED",
-  "newTests": {
-    "Node20.20.2": {
-      "pass": 52,
-      "fail": 0
-    },
-    "Node24.19.0": {
-      "pass": 52,
-      "fail": 0
-    }
-  },
+  "reviewSource": "1aaf1ddcecdefb1e17bfc3fe364a61981b44588f",
   "allAFocusedNode20": {
-    "pass": 160,
+    "pass": 192,
     "fail": 0
   },
-  "fullSuite": "RUNNING; use exact-commit hosted receipt for terminal result",
+  "affectedNode24": {
+    "pass": 84,
+    "fail": 0
+  },
+  "python": 39,
+  "fullSuite": "RUNNING; use final exact-commit hosted receipt on PR1",
+  "baselineProbe": "Claudeoriginalprobeindependentlyreproducedbeforechanges;0externalrequests",
   "logs": {
-    "a-final.tap": "21442c3f50ea5164b16ccb44005cee73dd6798aeb98e414f760196d1aff8b5c8",
-    "node24-final.tap": "f3ca41674a36af23c9b0c7de5f31ca0ae9ff6f67532b7b89c47b4be6e7b4565e",
-    "matrix-baseline.tap": "3a2cf334f684664a8b7e8523537548884846b1ffcd645c99369be0c8f926f2ef",
-    "matrix-final.tap": "de54b4408757900948da8eabe272dbb72793445d3a048a518f70d7409c2a6609",
-    "late-clock-red.tap": "692d6354c6dbe169b60bba2c26f04cdb123c7b2e7e7d3ff3f4580cb1b208ff62"
+    "before-probes.json": "0506368d3dfd34038da216ada8bdf61e44ec6c7e103e474b139ceeeb5000c057",
+    "focused.tap": "f2da54e8a1c46c7c98bc7e789144a2cd20084057887cc7ba1e3387ff7242b868",
+    "node24.tap": "4923618e3b053416d403d2d375b85741311a27ccd082e7df1de140f76448a436",
+    "python.log": "fc2ab141029c41130d391765a15b745b42b0794e2a849a815fa4891f50e00f17",
+    "matrix.tap": "5d818e3c48011cff847834c3307147e519a1bffdc814a2123e441a631412e1d2"
   },
-  "historicalManifestsVerified": {
-    "source": 13,
-    "rehearsal": 17
-  },
-  "originalCriteriaChanged": false,
-  "closures": 0,
+  "rowsClosed": 0,
+  "prospectiveAdmissions": 0,
   "productionActions": 0,
-  "providerRequests": 0,
-  "secondaryManifestWriterFence": "PASS_AT_ALL_EIGHT_SIGKILL_BOUNDARIES",
-  "inventoryCompanion": {
-    "reason": "three new offline modules require source-file inventory count318->321",
-    "providerPairsUnchanged": 447,
-    "baselineTestsPass": 3,
-    "candidateTestsPass": 3,
-    "assertionsUnchanged": true
-  },
-  "lateClockControls": {
-    "before": {
-      "pass": 0,
-      "fail": 2,
-      "skipped": 33
-    },
-    "after": "PASS; late receipt cannot become contemporaneous evidence"
-  }
+  "providerRequests": 0
 }

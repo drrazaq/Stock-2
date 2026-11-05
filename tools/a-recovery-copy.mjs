@@ -57,7 +57,7 @@ export function recoverSecondaryCopy({source,destination,policy,fault=()=>{}}){
   const intents=txRows.filter(r=>r.type==='INTENT'&&r.card&&`cards/${r.card.cardId}.json`===note.file&&!commits.has(r.operationId));
   if(intents.length!==1)fail('DAMAGED_CARD_WITHOUT_UNIQUE_PENDING_INTENT');
  }
- const store=new ReclaimResearchStore({directory:secondary,policy,origin:manifest.origin,implementationId:manifest.implementationId,fault});
+ const store=new ReclaimResearchStore({mode:'RECOVERY_REPLAY_ONLY',directory:secondary,policy,origin:manifest.origin,implementationId:manifest.implementationId,fault});
  try{store.recoverPending();}finally{store.close();}
  fault('AFTER_REPLAY');
  const state=ReclaimResearchStore.inspect(secondary);if(state.pendingOperationIds.length)fail('RECOVERY_PENDING');

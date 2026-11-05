@@ -3,8 +3,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {randomBytes} from 'node:crypto';
 import {pathToFileURL,fileURLToPath} from 'node:url';
-import {compareAssessmentOrder,evidenceHash,evaluateObservation,freezeProposal,measurePaperExit,renderDecisionCard} from '../reclaim-research-workflow.mjs';
-import {runResearchDataset} from '../reclaim-research-runner.mjs';
+import {compareAssessmentOrder,evidenceHash,evaluateStructuralRehearsal,freezeProposal,measureStructuralExitRehearsal,renderDecisionCard} from '../reclaim-research-workflow.mjs';
+import {runStructuralRehearsal} from '../reclaim-research-runner.mjs';
 
 const NAMES=Object.freeze({observations:'a-catalyst-reclaim-observations.jsonl',outcomes:'a-catalyst-reclaim-outcomes.jsonl',transactions:'a-catalyst-reclaim-transactions.jsonl'});
 const LIMIT=64*1024*1024;
@@ -53,8 +53,10 @@ function stateOf(directory){
  return {manifest,logs,cards,pending};
 }
 export class ReclaimResearchStore {
- constructor({directory,policy,origin,implementationId,fault=()=>{}}){
-   privateDirectory(directory);if(!['SYNTHETIC','RETAINED_RESEARCH'].includes(origin)||typeof implementationId!=='string'||!implementationId)error('OFFLINE_ORIGIN_AND_IMPLEMENTATION_PIN_REQUIRED');
+ #recoveryActive=false;
+ constructor({directory,policy,origin,implementationId,fault=()=>{},mode}){
+   if(!['SYNTHETIC_REHEARSAL','RECOVERY_REPLAY_ONLY'].includes(mode)||mode==='SYNTHETIC_REHEARSAL'&&origin!=='SYNTHETIC')error('LEGACY_A_WRITER_DISABLED');this.mode=mode;
+   privateDirectory(directory);if(mode==='RECOVERY_REPLAY_ONLY'&&['manifest.json','cards',...Object.values(NAMES)].some(n=>!fs.existsSync(path.join(directory,n))))error('RECOVERY_EXISTING_SNAPSHOT_REQUIRED');if(!['SYNTHETIC','RETAINED_RESEARCH'].includes(origin)||typeof implementationId!=='string'||!implementationId)error('OFFLINE_ORIGIN_AND_IMPLEMENTATION_PIN_REQUIRED');
    this.directory=directory;this.policy=structuredClone(policy);this.policyHash=freezeProposal(policy).policyHash;this.origin=origin;this.fault=fault;this.closed=false;this.token=randomBytes(16).toString('hex');this.lock=path.join(directory,'.a-reclaim-writer.lock');
    exclusive(this.lock,this.token+'\n');
    try{
@@ -70,8 +72,8 @@ export class ReclaimResearchStore {
  }
  check(){if(this.closed)error('STORE_CLOSED');if(readSafe(this.lock)!==this.token+'\n')error('WRITER_LOCK_CHANGED');if(freezeProposal(this.policy).policyHash!==this.policyHash)error('POLICY_CHANGED');this.state=stateOf(this.directory);}
  totalBytes(){let n=0;for(const f of ['manifest.json',...Object.values(NAMES)])n+=fs.lstatSync(path.join(this.directory,f)).size;for(const f of fs.readdirSync(path.join(this.directory,'cards')))n+=fs.lstatSync(path.join(this.directory,'cards',f)).size;return n;}
- append(log,record){const file=path.join(this.directory,NAMES[log]),rows=readLog(file),body={sequence:rows.length,previousHash:rows.at(-1)?.hash||'GENESIS',record},line=json({...body,hash:evidenceHash(body)});if(Buffer.byteLength(line)>1024*1024||this.totalBytes()+Buffer.byteLength(line)>LIMIT)error('STORE_SIZE_CAP');const fd=fs.openSync(file,fs.constants.O_WRONLY|fs.constants.O_APPEND|fs.constants.O_NOFOLLOW);try{fs.writeFileSync(fd,line);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}return rows.length;}
- materialize(tx){
+ append(log,record){if(this.mode==='RECOVERY_REPLAY_ONLY'&&!this.#recoveryActive)error('RECOVERY_REPLAY_ONLY');const file=path.join(this.directory,NAMES[log]),rows=readLog(file),body={sequence:rows.length,previousHash:rows.at(-1)?.hash||'GENESIS',record},line=json({...body,hash:evidenceHash(body)});if(Buffer.byteLength(line)>1024*1024||this.totalBytes()+Buffer.byteLength(line)>LIMIT)error('STORE_SIZE_CAP');const fd=fs.openSync(file,fs.constants.O_WRONLY|fs.constants.O_APPEND|fs.constants.O_NOFOLLOW);try{fs.writeFileSync(fd,line);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}return rows.length;}
+ materialize(tx){if(this.mode==='RECOVERY_REPLAY_ONLY'&&!this.#recoveryActive)error('RECOVERY_REPLAY_ONLY');
    if(tx.card){const file=cardPath(this.directory,tx.card.cardId);if(fs.existsSync(file)){if(evidenceHash(JSON.parse(readSafe(file)))!==evidenceHash(tx.card))error('IMMUTABLE_CARD_CONFLICT');}else{const content=json(tx.card);if(this.totalBytes()+Buffer.byteLength(content)>LIMIT)error('STORE_SIZE_CAP');exclusive(file,content);}}
    this.fault('AFTER_CARD');
    const rows=readLog(path.join(this.directory,NAMES[tx.log])),existing=rows.find(r=>r.record.id===tx.id);
@@ -79,15 +81,16 @@ export class ReclaimResearchStore {
    else this.append(tx.log,{id:tx.id,operationId:tx.operationId,payload:tx.payload});
    this.fault('AFTER_LOG');this.append('transactions',{type:'COMMIT',operationId:tx.operationId});this.fault('AFTER_COMMIT');
  }
- transact(log,id,payload,card=null){
+ transact(log,id,payload,card=null){if(this.mode!=='SYNTHETIC_REHEARSAL')error('RECOVERY_REPLAY_ONLY');
    this.check();if(this.state.pending.length)error('PENDING_TRANSACTION_RECOVERY_REQUIRED');
    const old=this.state.logs[log].find(r=>r.record.id===id);if(old){if(evidenceHash(old.record.payload)!==evidenceHash(payload))error('IMMUTABLE_LOG_CONFLICT');return old.record.payload;}
    const tx={type:'INTENT',operationId:evidenceHash({log,id,payload}),log,id,payload,card};
    this.append('transactions',tx);this.fault('AFTER_INTENT');this.materialize(tx);this.state=stateOf(this.directory);return payload;
  }
  recordObservation(input){
+   if(this.mode!=='SYNTHETIC_REHEARSAL'||this.origin!=='SYNTHETIC')error('AUTHENTICATED_A_EVIDENCE_REQUIRED');
    this.check();if(this.state.pending.length)error('PENDING_TRANSACTION_RECOVERY_REQUIRED');
-   let event=evaluateObservation(input,this.policy);if(event.result.status==='PAPER_SETUP_ONLY'&&(typeof input.issuerId!=='string'||!input.issuerId.trim()||input.issuerId!==input.issuerId.trim()||typeof input.issuerEvidenceId!=='string'||!input.issuerEvidenceId.trim()))event={...event,result:{status:'UNKNOWN',reason:'ISSUER_MAPPING_REQUIRED',actionable:false,realDollars:0}};if(!event.observationId)error('OBSERVATION_ID_REQUIRED');
+   let event=evaluateStructuralRehearsal(input,this.policy);if(event.result.status==='PAPER_SETUP_ONLY'&&(typeof input.issuerId!=='string'||!input.issuerId.trim()||input.issuerId!==input.issuerId.trim()||typeof input.issuerEvidenceId!=='string'||!input.issuerEvidenceId.trim()))event={...event,result:{status:'UNKNOWN',reason:'ISSUER_MAPPING_REQUIRED',actionable:false,realDollars:0}};if(!event.observationId)error('OBSERVATION_ID_REQUIRED');
    const prior=this.state.logs.observations.find(r=>r.record.id===event.observationId);
    if(prior){if(prior.record.payload.inputHash!==event.inputHash)error('OBSERVATION_ID_CONFLICT');return prior.record.payload;}
    const candidateId=input.issuerId?evidenceHash({issuerId:input.issuerId,sessionOpen:input.sessionOpen,policyHash:this.policyHash}):null;
@@ -100,11 +103,12 @@ export class ReclaimResearchStore {
    return this.transact('observations',event.observationId,payload,card);
  }
  recordOutcome(input,exitEvidence){
+   if(this.mode!=='SYNTHETIC_REHEARSAL'||this.origin!=='SYNTHETIC')error('AUTHENTICATED_A_EVIDENCE_REQUIRED');
    this.check();if(this.state.pending.length)error('PENDING_TRANSACTION_RECOVERY_REQUIRED');
    const observation=this.state.logs.observations.find(r=>r.record.id===input?.observationId)?.record.payload;
    if(!observation?.cardId)error('ORIGINAL_PAPER_CARD_REQUIRED');const card=this.state.cards.get(observation.cardId);
    if(evidenceHash(input)!==card.inputHash||input.observationId!==card.observationId)error('OUTCOME_ORIGINAL_INPUT_MISMATCH');
-   const outcome=measurePaperExit(input,this.policy,exitEvidence),exitHash=evidenceHash(exitEvidence),id=evidenceHash({cardId:card.cardId,exitHash});
+   const outcome=measureStructuralExitRehearsal(input,this.policy,exitEvidence),exitHash=evidenceHash(exitEvidence),id=evidenceHash({cardId:card.cardId,exitHash});
    const old=this.state.logs.outcomes.find(r=>r.record.id===id);if(old)return old.record.payload;
    if(this.state.logs.outcomes.some(r=>r.record.payload.cardId===card.cardId&&r.record.payload.outcome.status==='MODELED_PAPER_ECONOMICS_ONLY'))error('RESOLVED_OUTCOME_IMMUTABLE');
    const payload={schema:1,origin:this.origin,policyHash:this.policyHash,observationId:card.observationId,inputHash:card.inputHash,cardId:card.cardId,cardHash:evidenceHash(card),exitEvidenceHash:exitHash,exitEvidence:{asOf:exitEvidence.asOf??null,quote:pick(exitEvidence.quote,['symbol','securityId','source','evidenceId','at','observedAt','sourceDelayMs','bid','ask','bidSize','askSize','sizeUnits']),sessionCloses:exitEvidence.sessionCloses??null},controls:{status:'NOT_IMPLEMENTED',sameStockOtherDays:null,eligibleStocksSamePeriod:null},outcome};
@@ -118,14 +122,15 @@ export class ReclaimResearchStore {
    const payload={schema:1,origin:this.origin,policyHash:this.policyHash,observationId:target.observationId,inputHash:target.inputHash,cardId:target.cardId,cardHash:target.cardHash,outcome:{status:'REVIEW_NOTE_NOT_AN_OUTCOME',allowBuy:false,targetOutcomeId,reason,correctedRunReference}};
    return this.transact('outcomes',evidenceHash(payload),payload);
  }
- recoverPending(){this.check();for(const tx of this.state.pending){this.materialize(tx);}this.state=stateOf(this.directory);return{pending:this.state.pending.length,allowBuy:false};}
+ recoverPending(){this.check();this.#recoveryActive=true;try{for(const tx of this.state.pending){this.materialize(tx);}this.state=stateOf(this.directory);return{pending:this.state.pending.length,allowBuy:false};}finally{this.#recoveryActive=false;}}
  close(){if(this.closed)return;if(fs.existsSync(this.lock)){if(readSafe(this.lock)!==this.token+'\n')error('WRITER_LOCK_CHANGED');fs.unlinkSync(this.lock);syncDir(this.directory);}this.closed=true;}
  static inspect(directory){const s=stateOf(directory),notes=s.logs.outcomes.filter(r=>r.record.payload.outcome.status==='REVIEW_NOTE_NOT_AN_OUTCOME').length;return{origin:s.manifest.origin,observations:s.logs.observations.length,outcomes:s.logs.outcomes.length-notes,reviewNotes:notes,requiresReview:notes>0,cards:s.cards.size,pendingOperationIds:s.pending.map(t=>t.operationId),lockPresent:fs.existsSync(path.join(directory,'.a-reclaim-writer.lock')),automaticRecovery:false,allowBuy:false};}
 }
-export function persistResearchDataset(dataset,directory){
- const report=runResearchDataset(dataset); // Validate the entire explicit dataset before any write.
+export function persistStructuralRehearsal(dataset,directory){
+ if(dataset.origin!=='SYNTHETIC')error('AUTHENTICATED_A_EVIDENCE_REQUIRED');
+ const report=runStructuralRehearsal(dataset); // Validate the entire explicit dataset before any write.
  const implementationId=evidenceHash({format:'A_PRIVATE_OFFLINE_STORE_V1',files:[fs.readFileSync(fileURLToPath(import.meta.url),'utf8'),fs.readFileSync(new URL('../reclaim-research-workflow.mjs',import.meta.url),'utf8'),fs.readFileSync(new URL('../catalyst-reclaim-prototype.mjs',import.meta.url),'utf8')]});
- const store=new ReclaimResearchStore({directory,policy:dataset.policy,origin:dataset.origin,implementationId});
+ const store=new ReclaimResearchStore({directory,policy:dataset.policy,origin:dataset.origin,implementationId,mode:'SYNTHETIC_REHEARSAL'});
  const byId=new Map(dataset.observations.map(input=>[input.observationId,input]));
  try{for(const input of [...dataset.observations].sort(compareAssessmentOrder))store.recordObservation(input);for(const a of report.admissions)if(dataset.exits?.[a.observationId])store.recordOutcome(byId.get(a.observationId),dataset.exits[a.observationId]);}finally{store.close();}
  return {...ReclaimResearchStore.inspect(directory),unappliedExitEvidence:report.unappliedExitEvidence};
@@ -133,3 +138,5 @@ export function persistResearchDataset(dataset,directory){
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
  try{if(process.argv.length!==6||process.argv[2]!=='--input'||process.argv[4]!=='--output')error('Usage: node tools/a-catalyst-reclaim-store.mjs --input explicit-dataset.json --output existing-private-0700-directory');if(fs.statSync(process.argv[3]).size>25*1024*1024)error('INPUT_SIZE_CAP');const result=persistResearchDataset(JSON.parse(fs.readFileSync(process.argv[3],'utf8')),process.argv[5]);process.stdout.write(JSON.stringify(result)+'\n');}catch(e){const code=/^[A-Z][A-Z0-9_]{0,79}$/.test(e.message)?e.message:e.code==='EEXIST'?'WRITER_OR_TARGET_EXISTS':e instanceof SyntaxError?'INVALID_JSON_OR_LOG_RECORD':'STORAGE_IO_OR_VALIDATION_ERROR';process.stderr.write('OFFLINE STORE FAILED: '+code+'\n');process.exitCode=1;}
 }
+
+export function persistResearchDataset(){throw Error('AUTHENTICATED_A_EVIDENCE_REQUIRED_USE_A_EVIDENCE_RUNNER');}

@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {assessReclaim} from '../catalyst-reclaim-prototype.mjs';
+import {assessStructuralReclaim as assessReclaim} from '../catalyst-reclaim-prototype.mjs';
 const policy = {id:'UNAPPROVED-RECLAIM-PROTOTYPE-1', minPrice:2, minDollarVolume:500000, maxSpreadPct:3, maxQuoteAgeMs:30000, materialityRatio:0.1, openingBarMs:300000, invalidationContract:'PROPOSED ONLY: exit next open after close below opening low', exitContract:'PROPOSED ONLY: close of session 5; execution evaluation required'};
 function fixture() {
   const bar = (start,end,open,high,low,close,n) => ({symbol:'TEST',start,end,open,high,low,close,evidenceId:`synthetic-bar-${n}`});

@@ -1,7 +1,7 @@
 // Offline evidence adapter, immutable paper ledger and economic measurement.
 // No I/O, production imports, provider calls, notifications or BUY promotion.
 import {createHash} from 'node:crypto';
-import {assessReclaim,paperPositionSize} from './catalyst-reclaim-prototype.mjs';
+import {assessStructuralReclaim,paperPositionSize} from './catalyst-reclaim-prototype.mjs';
 
 const fail = message => { throw new Error(message); };
 const positive = n => typeof n === 'number' && Number.isFinite(n) && n > 0;
@@ -67,10 +67,10 @@ function validationReason(input,policy) {
     return null;
   } catch(error) { return error.message; }
 }
-export function evaluateObservation(input,policy) {
+export function evaluateStructuralRehearsal(input,policy) {
   const frozen=freezeProposal(policy),reason=validationReason(input,policy);
-  const result=reason?{status:'UNKNOWN',reason,actionable:false,realDollars:0}:assessReclaim(input,policy);
-  return {schemaVersion:1,type:'OBSERVATION',observationId:input?.observationId||null,symbol:input?.symbol||null,securityId:input?.securityId||null,issuerId:input?.issuerId||null,issuerEvidenceId:input?.issuerEvidenceId||null,sessionOpen:input?.sessionOpen||null,asOf:input?.asOf||null,policyHash:frozen.policyHash,inputHash:evidenceHash(input),result};
+  const result=reason?{status:'UNKNOWN',reason,actionable:false,realDollars:0}:assessStructuralReclaim(input,policy);
+  return {schemaVersion:1,evidenceAuthenticated:false,prospectiveAdmissions:0,rehearsal:'UNAUTHENTICATED_STRUCTURAL_REHEARSAL',type:'OBSERVATION',observationId:input?.observationId||null,symbol:input?.symbol||null,securityId:input?.securityId||null,issuerId:input?.issuerId||null,issuerEvidenceId:input?.issuerEvidenceId||null,sessionOpen:input?.sessionOpen||null,asOf:input?.asOf||null,policyHash:frozen.policyHash,inputHash:evidenceHash(input),result};
 }
 export function issuerSessionCandidate(event){
   if(typeof event?.issuerId!=='string'||!event.issuerId.trim()||event.issuerId!==event.issuerId.trim()||typeof event.issuerEvidenceId!=='string'||!event.issuerEvidenceId.trim()||!Number.isFinite(evidenceTime(event.sessionOpen))||!event.policyHash)return null;
@@ -80,8 +80,8 @@ export function compareAssessmentOrder(a,b){
   const at=evidenceTime(a?.asOf),bt=evidenceTime(b?.asOf),ta=Number.isFinite(at)?at:Infinity,tb=Number.isFinite(bt)?bt:Infinity;
   return (ta===tb?0:ta<tb?-1:1)||(String(a?.securityId)<String(b?.securityId)?-1:String(a?.securityId)>String(b?.securityId)?1:0)||(String(a?.observationId)<String(b?.observationId)?-1:String(a?.observationId)>String(b?.observationId)?1:0);
 }
-export function appendObservation(ledger,input,policy) {
-  const frozen=freezeProposal(policy),event=evaluateObservation(input,policy);
+export function appendStructuralObservationRehearsal(ledger,input,policy) {
+  const frozen=freezeProposal(policy),event=evaluateStructuralRehearsal(input,policy);
   if(!event.observationId)fail('OBSERVATION_ID_REQUIRED');
   const old=ledger||{schemaVersion:1,status:'OFFLINE_RESEARCH_ONLY',allowBuy:false,policyHash:frozen.policyHash,events:[]};
   if(old.schemaVersion!==1||old.status!=='OFFLINE_RESEARCH_ONLY'||old.allowBuy!==false||old.policyHash!==frozen.policyHash||!Array.isArray(old.events))fail('LEDGER_POLICY_OR_SCHEMA_CONFLICT');
@@ -98,8 +98,8 @@ export function renderDecisionCard(event) {
   const c=event.result.card;
   return [`${clean(event.symbol)} — RESEARCH / PAPER ONLY — $0 REAL`,c.reason,`Reference ask ${c.entryReferenceAsk}; ${c.paperShares} hypothetical shares. No fill established.`,`Sizing price ${c.sizingEntryPrice} includes ${c.entrySlippagePct}% proposed entry slippage.`,`Entry expires ${c.expiry}.`,`Invalidation: ${c.invalidation}`,`Exit: ${c.exit}`,`Source ${clean(c.quoteSource)}, quote ${clean(c.quoteAt)}.`,`Commission $3 per side; spread included by ask/bid; exit slippage additional.`,`Policy ${event.policyHash}; evidence ${event.inputHash}.`,`NOT PROVEN. No automatic promotion.`].join('\n');
 }
-export function measurePaperExit(input,policy,exitEvidence) {
-  const event=evaluateObservation(input,policy);
+export function measureStructuralExitRehearsal(input,policy,exitEvidence) {
+  const event=evaluateStructuralRehearsal(input,policy);
   const unresolved=reason=>({status:'UNRESOLVED',reason,allowBuy:false});
   if(event.result.status!=='PAPER_SETUP_ONLY')return unresolved('NO_VALID_PAPER_SETUP');
   try {
@@ -125,6 +125,11 @@ export function measurePaperExit(input,policy,exitEvidence) {
     const slip=policy.slippagePerSidePct/100,entry=sizing.sizingEntryPrice,exit=q.bid*(1-slip),budget=input.paperBudgetUsd,shares=sizing.shares;
     if(shares<1||input.quote.askSize<shares||q.bidSize<shares)return unresolved('INSUFFICIENT_DISPLAYED_EXECUTION_SIZE');
     const netUsd=shares*(exit-entry)-6;
-    return {status:'MODELED_PAPER_ECONOMICS_ONLY',allowBuy:false,realDollars:0,policyHash:event.policyHash,inputHash:event.inputHash,exitEvidenceHash:evidenceHash(exitEvidence),exitKind:kind,ruleExitAt:new Date(target).toISOString(),shares,entryAsk:input.quote.ask,exitBid:q.bid,modeledEntry:entry,modeledExit:exit,commissionsUsd:6,netUsd,returnOnBudgetPct:netUsd/budget*100,uninvestedCashUsd:budget-shares*entry-3,limits:['Quote-based model, not actual fills','Cash-inclusive independent unit, not account return','Full failed/rejected cohort and matched controls still required','No proof or live BUY promotion']};
+    return {status:'MODELED_PAPER_ECONOMICS_ONLY',evidenceAuthenticated:false,prospectiveAdmissions:0,rehearsal:'UNAUTHENTICATED_STRUCTURAL_REHEARSAL',allowBuy:false,realDollars:0,policyHash:event.policyHash,inputHash:event.inputHash,exitEvidenceHash:evidenceHash(exitEvidence),exitKind:kind,ruleExitAt:new Date(target).toISOString(),shares,entryAsk:input.quote.ask,exitBid:q.bid,modeledEntry:entry,modeledExit:exit,commissionsUsd:6,netUsd,returnOnBudgetPct:netUsd/budget*100,uninvestedCashUsd:budget-shares*entry-3,limits:['Quote-based model, not actual fills','Cash-inclusive independent unit, not account return','Full failed/rejected cohort and matched controls still required','No proof or live BUY promotion']};
   }catch(error){return unresolved(error.message);}
 }
+
+// Retired entrypoints cannot produce an A eligibility/economic result without the strict runner.
+export function evaluateObservation(input,policy){return {schemaVersion:1,observationId:input?.observationId||null,inputHash:evidenceHash(input),policyHash:freezeProposal(policy).policyHash,result:{status:'UNKNOWN',reason:'AUTHENTICATED_A_EVIDENCE_REQUIRED',actionable:false,realDollars:0}};}
+export function measurePaperExit(){return {status:'UNRESOLVED',reason:'AUTHENTICATED_A_EVIDENCE_REQUIRED',allowBuy:false};}
+export function appendObservation(){throw Error('AUTHENTICATED_A_EVIDENCE_REQUIRED');}

@@ -5,7 +5,7 @@ export function paperPositionSize(budget,ask,slippagePct=0) {
   const sizingEntryPrice=ask*(1+slippagePct/100);
   return {shares:Math.floor((budget-3)/sizingEntryPrice),sizingEntryPrice,entryCommissionUsd:3,slippagePct};
 }
-export function assessReclaim(input, policy) {
+function assessStructuralCore(input, policy) {
   const reject = reason => ({status: 'NO_PAPER_SETUP', reason, actionable: false, realDollars: 0});
   const unknown = reason => ({...reject(reason), status: 'UNKNOWN'});
   const time = value => {
@@ -75,3 +75,6 @@ export function assessReclaim(input, policy) {
     evidence: {catalyst: c.sourceId, documentHash: c.documentHash, quote: q.evidenceId, bars: bars.map(b => b.evidenceId)}
   };
 }
+
+export function assessStructuralReclaim(input,policy){return {...assessStructuralCore(input,policy),evidenceAuthenticated:false,prospectiveAdmissions:0,rehearsal:'UNAUTHENTICATED_STRUCTURAL_REHEARSAL'};}
+export function assessReclaim(){return {status:'UNKNOWN',reason:'AUTHENTICATED_A_EVIDENCE_REQUIRED',actionable:false,realDollars:0};}
