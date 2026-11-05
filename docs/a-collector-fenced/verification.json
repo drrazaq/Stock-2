@@ -42,5 +42,16 @@
     "legitimate early subscription retains pre-window packets without changing frozen windows",
     "exact native duplicate retains earliest receipt and both wire-arrival references"
   ],
-  "reasonContract": "PASS: fixed collector/client error allowlists; arbitrary uppercase text and thrown COMPLETE cannot become a refusal reason or success; reproduced red1pass/1fail retained"
+  "reasonContract": "PASS: fixed collector/client error allowlists; arbitrary uppercase text and thrown COMPLETE cannot become a refusal reason or success; reproduced red1pass/1fail retained",
+  "completeHosted8e": {
+    "all285FilesPassed": true,
+    "jobConcluded": "CANCELLED",
+    "acceptedAsGreen": false,
+    "receipt": "evidence/hosted-8e-cancelled-receipt.json"
+  },
+  "developmentCiBudgetCorrection": {
+    "fromMinutes": 20,
+    "toMinutes": 25,
+    "unchanged": "all cases, steps, assertions, per-test deadlines, read-only permissions; no main workflow change"
+  }
 }
