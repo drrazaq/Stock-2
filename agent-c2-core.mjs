@@ -34,6 +34,11 @@
 //   offering, proceeds, underwrit, at-the-market / at the market, sales agent, securities, shares, stock, warrant, equity, investor,
 //   convertible, preferred, principal, interest rate, covenant, indenture, bond, revolv, merger, acquisition, acquire. No threshold,
 //   hold, gate or date changed; the stop rule still counts figures BEFORE any exclusion.
+//   PARSER FIX v3 (6 Nov 2026, after DIAG 2, still NO return computed): DIAG 2 samples still counted corporate deals that are not customer
+//   contracts (asset purchases / divestitures with a "purchase price", termination fees, settlements, escrow, equity-line put notices,
+//   lender fees, property sale prices) and filer typos such as "$9,600,000 million". v3 also excludes sentences containing: purchase
+//   price, asset purchase, purchased assets, divest, termination fee, settlement, escrow, put notice, lender, sales price. A figure written
+//   with thousands commas AND a unit whose number is 100,000+ ("$9,600,000 million") is read as plain dollars (the unit is a typo).
 //   REACTION SESSION R: the filing's EDGAR acceptance time (the .hdr.sgml ACCEPTANCE-DATETIME, EDGAR's Eastern clock): on a trading day
 //   before 16:00 -> that day's session; 16:00 or later, or a non-trading day -> the next session. Header unreadable -> the first session
 //   strictly after the filing date (the conservative choice). MARKET CAP = close of R x the SEC share count known 30 days before R
@@ -73,8 +78,8 @@ export function item101Section(text) { const t = String(text || ''), a = /Item\s
   const rest = t.slice(a.index + a[0].length), re = /Item\s*(\d)\.(\d\d)\b/gi; let m, end = rest.length;
   while ((m = re.exec(rest))) { if (m[1] + '.' + m[2] !== '1.01') { end = m.index; break; } }
   return rest.slice(0, end); }
-export const PARSER_V = 2;
-const FIN = /credit\s+facilit|\bloans?\b|\bnotes?\b|\bdebts?\b|\bleases?\b|credit\s+agreement|\bfacilit(y|ies)\b|\bborrow|\bofferings?\b|\bproceeds\b|underwrit|at[\s-]the[\s-]market|sales\s+agent|\bsecurities\b|\bshares?\b|\bstock\b|\bwarrants?\b|\bequity\b|\binvestors?\b|\bconvertible\b|\bpreferred\b|\bprincipal\b|interest\s+rate|\bcovenants?\b|\bindenture\b|\bbonds?\b|\brevolv|\bmergers?\b|\bacquisitions?\b|\bacquir/i;
+export const PARSER_V = 3;
+const FIN = /credit\s+facilit|\bloans?\b|\bnotes?\b|\bdebts?\b|\bleases?\b|credit\s+agreement|\bfacilit(y|ies)\b|\bborrow|\bofferings?\b|\bproceeds\b|underwrit|at[\s-]the[\s-]market|sales\s+agent|\bsecurities\b|\bshares?\b|\bstock\b|\bwarrants?\b|\bequity\b|\binvestors?\b|\bconvertible\b|\bpreferred\b|\bprincipal\b|interest\s+rate|\bcovenants?\b|\bindenture\b|\bbonds?\b|\brevolv|\bmergers?\b|\bacquisitions?\b|\bacquir|purchase\s+price|asset\s+purchase|purchased\s+assets|\bdivest|termination\s+fee|\bsettlement|\bescrow|put\s+notice|\blenders?\b|sales?\s+price/i;
 const ABBR = /(?:^|\s)(?:Inc|Corp|Co|Ltd|L\.P|LP|LLC|N\.A|S\.A|N\.V|B\.V|U\.S|U\.K|Jr|Sr|Mr|Ms|Mrs|Dr|No|St|Nos|approx|e\.g|i\.e|[A-Z])\.$/;
 // the sentence around position at (same rule as squad21-core sentenceAt; a decimal point inside a number is not a stop)
 export function sentenceAt(t, at) { const isEnd = (i) => /[.;!?]/.test(t[i]) && /\s/.test(t[i + 1] || '') && /[A-Z0-9"“(]/.test(t[i + 2] || '') && !(t[i] === '.' && ABBR.test(t.slice(Math.max(0, i - 8), i + 1)));
@@ -83,7 +88,7 @@ export function sentenceAt(t, at) { const isEnd = (i) => /[.;!?]/.test(t[i]) && 
 export function contractAmount(section) { const s = String(section || ''); let figures = 0, counted = 0, amount = null, snippet = null;
   for (const m of s.matchAll(/\$\s?(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)(?:\s*(billion|million|bn|mm)\b)?/gi)) {
     const n = +m[1].replace(/,/g, ''), u = (m[2] || '').toLowerCase(); if (!isFinite(n)) continue;
-    const x = u === 'billion' || u === 'bn' ? n * 1e9 : u === 'million' || u === 'mm' ? n * 1e6 : n; if (!(x >= CT.minFigure)) continue; figures++;
+    const typo = /,/.test(m[1]) && n >= 1e5, x = typo || !u ? n : u === 'billion' || u === 'bn' ? n * 1e9 : n * 1e6; if (!(x >= CT.minFigure)) continue; figures++;
     const sen = sentenceAt(s, m.index); if (FIN.test(sen)) continue; counted++; if (amount === null || x > amount) { amount = Math.round(x); snippet = sen.slice(0, 300); } }
   return { figures, counted, amount, snippet }; }
 // EDGAR header ACCEPTANCE-DATETIME (YYYYMMDDHHMMSS, Eastern clock) -> { d, hm } or null

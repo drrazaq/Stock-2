@@ -25,6 +25,13 @@ test('parser v2: equity, credit-agreement and merger figures are financing/corpo
   assert.equal(contractAmount('The Company received a purchase order from the U.S. Army valued at $48 million for radios.').amount, 48e6);
 });
 
+test('parser v3: corporate deals out, comma+unit typo read as dollars', () => {
+  for (const x of ['Hubbell agreed to pay an aggregate purchase price of $3.0 billion in cash.', 'The Company will pay a termination fee of $20 million.', 'Under the Settlement Agreement the Company pays $10.5 million.'])
+    assert.equal(contractAmount(x).amount, null, x);
+  assert.equal(contractAmount('The Company received $9,600,000 million at closing.').amount, 9.6e6);
+  assert.equal(contractAmount('Milestones total $1,500 million.').amount, 1.5e9);
+});
+
 test('acceptance time and reaction session', () => {
   assert.deepEqual(acceptance('<ACCEPTANCE-DATETIME>20240305163012\n'), { d: '2024-03-05', hm: '16:30' });
   assert.equal(acceptance('nothing'), null);
