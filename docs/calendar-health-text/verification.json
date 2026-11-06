@@ -1,0 +1,69 @@
+{
+ "package": "calendar-health-text",
+ "status": "DEVELOPMENT_ONLY_NOT_DEPLOYED",
+ "base": "6cba0806",
+ "preparedBy": "Claude",
+ "date": "2026-11-06",
+ "productionPatch": "1abd67e568f05f1f689153bc142b3c7bffb9e5e243ddffb5f47a45b33b8f75a5",
+ "rollbackPatch": "b47eddef546ae9a38525f069530606d14da8727cc23c90b1c5b1fbf19d3ede6b",
+ "files": {
+  "scan.mjs": {
+   "before": "19a5368bff6e14d4d114d9a3c9b52d395ee3b4dad8164a0a8a01762f16f5799f",
+   "after": "2b16d4715c0449f62dd3ac4adc60a63476540d1461734f74d778d20aa9fffcd0"
+  },
+  "calendar.mjs": {
+   "before": "6bc0b508f72b3a64e660ea1df0efa6cf7490c690d09cdf1652b545c7b248bbeb",
+   "after": "d7292622257481d2d745e54ff6022a33d7309c758692af7a9738a152f2554dce"
+  },
+  "discover.mjs": {
+   "before": "8b3093b7346884ce4f85caf009ec6dcae3ba5900804e05d73e36a88d44660880",
+   "after": "10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4"
+  },
+  "econ-series.mjs": {
+   "before": "absent",
+   "after": "24d837106c4ce5735772bee197198379a2d2ea32d73491559609a74f9cb6adef"
+  },
+  "test/econ-calendar-exact-series.test.mjs": {
+   "before": "absent",
+   "after": "50a7b05ac1f5bf47f1f68785fb9bdf93db1039d3f6c36b464293e6d1c4c6a1a8"
+  },
+  "test/health-text-watcher-qualification.test.mjs": {
+   "before": "absent",
+   "after": "28f16479ec6e5ccf5332496d8c5816d691e6db328a5511b67c5ecb40be4e0310"
+  },
+  "test/discover-sec-note.test.mjs": {
+   "before": "absent",
+   "after": "2561908a8afd7181b7d51b5451574b9e0c53f581c397d38ae1ef165bb22041d5"
+  }
+ },
+ "deployOrder": "AFTER Saturday STOP R2 and D1-D4 (STOP pins scan.mjs 19a5368b...); own owner approval and Codex review required",
+ "tests": {
+  "newFiles": {
+   "test/econ-calendar-exact-series.test.mjs": "7/7 (main code: 4 behaviour tests fail)",
+   "test/health-text-watcher-qualification.test.mjs": "7/7 (main code: 4 fail)",
+   "test/discover-sec-note.test.mjs": "4/4 (main code: 3 fail)"
+  },
+  "fullSuiteBranch": "140/140 files PASS (Node 20, sequential node \"$f\", external connections blocked; 0 attempted)",
+  "fullSuiteWithSTOPandD": "143/143 files PASS on main 6cba0806 + STOP R2 production.patch c1de39fd... + D1-D4 production.patch 6889504c... + this patch; scan.mjs after all three c0d4908b...",
+  "patchRoundTrip": "applies to main 128e7b02 (no package file changed since base); rollback restores exactly"
+ },
+ "notChanged": [
+  "calendar study MODE=study and C.hist inputs (kindOf, fillAct)",
+  "fallback/retry behaviour in discover.mjs",
+  "workflows",
+  "data files",
+  "Saturday packages"
+ ],
+ "sources": {
+  "DOL weekly claims 5 Nov 2026": "https://www.dol.gov/ui/data.pdf",
+  "BLS productivity Q3 2026 preliminary": "https://www.bls.gov/news.release/prod2.nr0.htm",
+  "BLS employment situation Sep 2026": "https://www.bls.gov/news.release/empsit.nr0.htm",
+  "BLS schedules": [
+   "https://www.bls.gov/schedule/news_release/empsit.htm",
+   "https://www.bls.gov/schedule/news_release/cpi.htm",
+   "https://www.bls.gov/schedule/news_release/ppi.htm",
+   "https://www.bls.gov/schedule/news_release/prod2.htm"
+  ],
+  "retrievedAt": "2026-11-06T09:5x Z (read-only)"
+ }
+}

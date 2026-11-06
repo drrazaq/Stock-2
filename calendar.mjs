@@ -14,6 +14,7 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
 import crypto from 'node:crypto';
+import { RELEASES, mergeEconRows, fillOfficialActual } from './econ-series.mjs';
 const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch', local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const MCP = (local(env.TR_BASE) || 'https://mcp.tipranks.com') + '/mcp/?apikey=' + encodeURIComponent(env.TIPRANKS_KEY || ''), PX = local(env.PX_BASE) || 'https://api.massive.com';
 const AVB = local(env.AV_BASE) || 'https://www.alphavantage.co', BLS = local(env.BLS_BASE) || 'https://www.bls.gov', FED = local(env.FED_BASE) || 'https://www.federalreserve.gov';
@@ -42,16 +43,18 @@ if (MODE === 'fetch') {
   const ampm = (s) => { const m = /(\d{1,2}):(\d{2})\s*([AP])\.?M/i.exec(s); if (!m) return null; let h = +m[1] % 12; if (/p/i.test(m[3])) h += 12; return String(h).padStart(2, '0') + ':' + m[2]; };
   // ---- 0. FREE OFFICIAL release dates: BLS schedules (reference month | release date | time) and the Fed's FOMC calendar (statement days, 14:00 ET)
   const official = [], seenO = new Set(); status.official = {};
-  const BLS_PAGES = [['cpi', 'Consumer Price Index (CPI)'], ['ppi', 'Producer Price Index (PPI)'], ['empsit', 'Employment Situation (nonfarm payrolls, unemployment rate)'], ['realer', 'Real Earnings']];
+  const BLS_PAGES = [['cpi', 'Consumer Price Index (CPI)'], ['ppi', 'Producer Price Index (PPI)'], ['empsit', 'Employment Situation (nonfarm payrolls, unemployment rate)'], ['realer', 'Real Earnings'], ['prod2', 'Productivity and Costs']];
+  // (6 Nov) each official date keeps its release id, the schedule's own reference period and the retrieval time (public pages: publishable)
+  const REF = /((?:January|February|March|April|May|June|July|August|September|October|November|December) \d{4}|(?:First|Second|Third|Fourth) Quarter \d{4}(?: \([PR]\))?)\s+$/; status.officialSources = [];
   for (const [pg, name] of BLS_PAGES) try { const r = await fetch(BLS + '/schedule/news_release/' + pg + '.htm', { headers: { 'User-Agent': UA, Accept: 'text/html' } }); if (!r.ok) { status.official[pg] = 'HTTP ' + r.status; continue; } const html = (await r.text()).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' '); let n = 0;
     const re = /([A-Z][a-z]{2,8}\.?\s+\d{1,2},\s+\d{4})\s+(\d{1,2}:\d{2}\s*[AP]\.?M)/g; let m; while ((m = re.exec(html))) { const d = mdy(m[1]), hm = ampm(m[2]); if (!d || !hm) continue; const t = nyUtc(d, hm), k = name + t; if (seenO.has(k)) continue; seenO.add(k); n++;
-      official.push({ t, name, key: nameKey(name), kind: kindOf(name), country: 'US', imp: 'High', fc: null, prev: null, act: null, unit: '', src: 'BLS' }); }
-    status.official[pg] = n ? n + ' release dates' : 'no dates parsed'; await sleep(500); } catch (e) { status.official[pg] = 'failed: ' + String(e.message || e).slice(0, 80); }
+      const rm = REF.exec(html.slice(Math.max(0, m.index - 60), m.index)); official.push({ t, name, key: nameKey(name), kind: pg === 'prod2' ? null : kindOf(name), country: 'US', imp: 'High', fc: null, prev: null, act: null, unit: '', src: 'BLS', release: pg, ref: rm ? rm[1] : null, retrievedAt: new Date().toISOString() }); }
+    status.official[pg] = n ? n + ' release dates' : 'no dates parsed'; if (n) status.officialSources.push({ release: pg, url: RELEASES[pg].url, retrievedAt: new Date().toISOString(), dates: n }); await sleep(500); } catch (e) { status.official[pg] = 'failed: ' + String(e.message || e).slice(0, 80); }
   try { const r = await fetch(FED + '/monetarypolicy/fomccalendars.htm', { headers: { 'User-Agent': UA, Accept: 'text/html' } }); if (!r.ok) status.official.fomc = 'HTTP ' + r.status; else { const html = (await r.text()).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' '); let n = 0;
       const yr = /(\d{4}) FOMC Meetings/g; let y; const years = []; while ((y = yr.exec(html))) years.push([+y[1], y.index]);
       for (let i = 0; i < years.length; i++) { const seg = html.slice(years[i][1], years[i + 1] ? years[i + 1][1] : years[i][1] + 4000), re = /([A-Z][a-z]{2,8})\.?\s+(\d{1,2})-(\d{1,2})\*?/g; let m; while ((m = re.exec(seg))) { const mo = MONTHS[m[1].slice(0, 3).toLowerCase()]; if (!mo) continue; const d = years[i][0] + '-' + mo + '-' + m[3].padStart(2, '0'), t = nyUtc(d, '14:00'), k = 'FOMC' + t; if (seenO.has(k)) continue; seenO.add(k); n++;
-        official.push({ t, name: 'FOMC Interest Rate Decision', key: nameKey('FOMC Interest Rate Decision'), kind: 'FED', country: 'US', imp: 'High', fc: null, prev: null, act: null, unit: '%', src: 'Federal Reserve' }); } }
-      status.official.fomc = n ? n + ' meeting dates' : 'no dates parsed'; } } catch (e) { status.official.fomc = 'failed: ' + String(e.message || e).slice(0, 80); }
+        official.push({ t, name: 'FOMC Interest Rate Decision', key: nameKey('FOMC Interest Rate Decision'), kind: 'FED', country: 'US', imp: 'High', fc: null, prev: null, act: null, unit: '%', src: 'Federal Reserve', release: 'fomc', ref: null, retrievedAt: new Date().toISOString() }); } }
+      status.official.fomc = n ? n + ' meeting dates' : 'no dates parsed'; if (n) status.officialSources.push({ release: 'fomc', url: RELEASES.fomc.url, retrievedAt: new Date().toISOString(), dates: n }); } } catch (e) { status.official.fomc = 'failed: ' + String(e.message || e).slice(0, 80); }
   const nowIso = new Date().toISOString(), soon = new Date(Date.now() + 10 * 864e5).toISOString();
   out.official = official.filter(e => e.t >= nowIso.slice(0, 10) && e.t <= soon); out.officialAll = official.filter(e => e.t >= new Date(Date.now() - 400 * 864e5).toISOString()).slice(0, 400);
   status.officialUpcoming = out.official.length;
@@ -68,9 +71,10 @@ if (MODE === 'fetch') {
     if (v !== null && isFinite(v)) { e.act = v; e.actSrc = 'AV'; } };
   // ---- 1. TipRanks economic calendar: FALLBACK ONLY, gated by its monthly call budget
   const oldStatus = readJson(STATUS, {}), trLeft = typeof oldStatus.tipranksCallsLeft === 'number' ? oldStatus.tipranksCallsLeft : null, wd = new Date().getUTCDay();
+  const oldProvider = Array.isArray(old.trRows) ? old.trRows : (old.econ || []).filter(e => !e.src && e.schema !== 2);   // pre-repair files: only pure provider rows
   const trDue = !old.trAt || Date.now() - Date.parse(old.trAt) > 6 * 864e5, trOk = trLeft === null || trLeft >= 20;
-  if (!env.TIPRANKS_KEY) status.tipranks = 'no key'; else if (!trDue) { status.tipranks = 'kept (fetched ' + String(old.trAt).slice(0, 10) + ', refreshed every 6 days to save calls)'; out.econ = old.econ || []; }
-  else if (!trOk) { status.tipranks = 'skipped: only ' + trLeft + ' calls left this month (official sources carry the dates)'; out.econ = old.econ || []; }
+  if (!env.TIPRANKS_KEY) status.tipranks = 'no key'; else if (!trDue) { status.tipranks = 'kept (fetched ' + String(old.trAt).slice(0, 10) + ', refreshed every 6 days to save calls)'; out.trRows = oldProvider; }
+  else if (!trOk) { status.tipranks = 'skipped: only ' + trLeft + ' calls left this month (official sources carry the dates)'; out.trRows = oldProvider; }
   else try {
     let session = null, id = 0;
     const rpc = async (method, params, notify) => { const h = { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream' }; if (session) h['Mcp-Session-Id'] = session;
@@ -98,11 +102,11 @@ if (MODE === 'fetch') {
     const rowsOf = (data, acc = []) => { if (Array.isArray(data)) data.forEach(x => rowsOf(x, acc)); else if (data && typeof data === 'object') { const ks = Object.keys(data);
         const nk = ks.find(k => /^(event|eventName|name|title|indicator|eventTitle|description)$/i.test(k)), dk = ks.find(k => /^(date|dateTime|datetime|time|releaseDate|eventDate|timestamp|eventTime|dateUtc|releaseTime)$/i.test(k));
         if (nk && dk && typeof data[nk] === 'string') acc.push(data); else for (const v of Object.values(data)) if (v && typeof v === 'object') rowsOf(v, acc); } return acc; };
-    const pickK = (o, re) => { const k = Object.keys(o).find(x => re.test(x)); return k ? o[k] : null; };
+    const pickK = (o, re) => { const k = Object.keys(o).find(x => re.test(x)); return k ? o[k] : null; }, rawOf = (v) => v === null || v === undefined || typeof v === 'object' ? null : String(v).slice(0, 24);
     const norm = (o) => { const name = String(pickK(o, /^(event|eventName|name|title|indicator|eventTitle|description)$/i)), when = pickK(o, /^(date|dateTime|datetime|time|releaseDate|eventDate|timestamp|eventTime|dateUtc|releaseTime)$/i), country = String(pickK(o, /country|region|currency/i) || 'US');
       const t = typeof when === 'number' ? new Date(when > 1e12 ? when : when * 1000).toISOString() : String(when || '');
       return { t: t.slice(0, 19), name: name.slice(0, 80), key: nameKey(name), kind: kindOf(name), country: country.slice(0, 20), imp: String(pickK(o, /impact|importance|volatility|priority/i) || '').slice(0, 10),
-        fc: num(pickK(o, /forecast|consensus|estimate|expected/i)), prev: num(pickK(o, /^prev|previous|prior/i)), act: num(pickK(o, /^actual$|^act$|^value$/i)), unit: String(pickK(o, /unit/i) || (/%/.test(String(pickK(o, /forecast|consensus|estimate|expected|^actual$|^prev|previous/i) || '')) ? '%' : '')).slice(0, 6) }; };
+        fc: num(pickK(o, /forecast|consensus|estimate|expected/i)), prev: num(pickK(o, /^prev|previous|prior/i)), act: num(pickK(o, /^actual$|^act$|^value$/i)), fcRaw: rawOf(pickK(o, /forecast|consensus|estimate|expected/i)), prevRaw: rawOf(pickK(o, /^prev|previous|prior/i)), actRaw: rawOf(pickK(o, /^actual$|^act$|^value$/i)), unitRaw: rawOf(pickK(o, /unit/i)), unit: String(pickK(o, /unit/i) || (/%/.test(String(pickK(o, /forecast|consensus|estimate|expected|^actual$|^prev|previous/i) || '')) ? '%' : '')).slice(0, 6) }; };
     const isUS = (e) => /^(us|usa|united states|usd)$/i.test(e.country) || /^us/i.test(e.country);
     const call = async (from, to) => { const res = await rpc('tools/call', { name: tool.name, arguments: argsFor(from, to) }); if (res.isError) throw new Error('tool error');
       let d = res.structuredContent, raw = ''; if (!d) { const tx = (res.content || []).find(c => c.type === 'text'); raw = tx ? String(tx.text) : ''; try { d = JSON.parse(raw); } catch { d = null; } }
@@ -112,7 +116,7 @@ if (MODE === 'fetch') {
       status.replyShape = d ? keysOf(d) : (raw ? 'text, not JSON: ' + raw.length + ' characters' : 'empty'); status.rowsFound = rows.length; status.countriesSeen = [...new Set(rows.map(norm).map(e => e.country))].slice(0, 15);
       return us; };
     const now = Date.now(), week = await call(iso(now - 3 * 864e5), iso(now + 10 * 864e5));
-    out.econ = week; status.tipranks = 'ok: ' + week.length + ' US events read (all sizes), ' + week.filter(e => e.kind).length + ' major';
+    out.trRows = week; status.tipranks = 'ok: ' + week.length + ' US events read (all sizes), ' + week.filter(e => e.kind).length + ' major';
     // history for the study: keep EVERY past US release with an actual and a forecast or a previous value (grows every week);
     // a one-time backfill of up to 5 years (the price history), 2 to 8 months a run depending on the TipRanks calls left this month
     const seen = new Set(out.hist.map(e => e.t + e.name)), add = (L) => { for (const e of L) if (e.act !== null && (e.fc !== null || e.prev !== null) && e.t < new Date().toISOString() && !seen.has(e.t + e.name)) { seen.add(e.t + e.name); out.hist.push(e); } };
@@ -122,13 +126,15 @@ if (MODE === 'fetch') {
     const back = old.backTo || iso(now - 10 * 864e5); let bt = back;
     for (let k = 0; k < perRun && bt > iso(now - 1830 * 864e5); k++) { const to = bt, from = iso(Date.parse(bt) - 31 * 864e5); try { add(await call(from, to)); bt = from; await sleep(800); } catch (e) { break; } }
     out.backTo = bt; out.hist.sort((a, b) => a.t < b.t ? -1 : 1); status.history = out.hist.length + ' past releases (all sizes) with an actual, back to ' + (out.hist[0] ? out.hist[0].t.slice(0, 10) : 'n/a');
-  } catch (e) { status.tipranks = 'failed: ' + String(e.message || e).slice(0, 120); out.econ = old.econ || []; }
+  } catch (e) { status.tipranks = 'failed: ' + String(e.message || e).slice(0, 120); if (!out.trRows) out.trRows = oldProvider; }
   if (!out.trAt) out.trAt = old.trAt || null; if (old.backTo && !out.backTo) out.backTo = old.backTo;
-  // merge: official dates first (they are the ground truth for WHEN), TipRanks rows add forecasts and the smaller events; one row per kind and day
-  { const seen = new Set(out.official.map(e => (e.kind || e.key) + '|' + e.t.slice(0, 10))), keep = (out.econ || []).filter(e => e.t >= new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10));
-    for (const e of keep) { const k = (e.kind || e.key) + '|' + e.t.slice(0, 10); if (e.kind && seen.has(k)) { const o = out.official.find(x => (x.kind || x.key) + '|' + x.t.slice(0, 10) === k); if (o) { if (o.fc === null) o.fc = e.fc; if (o.prev === null) o.prev = e.prev; if (o.act === null) o.act = e.act; o.name = e.name; o.key = e.key; } continue; } seen.add(k); out.official.push(e); }
-    out.econ = out.official.sort((a, b) => a.t < b.t ? -1 : 1); delete out.official; }
-  for (const e of out.econ) fillAct(e); for (const e of out.hist) fillAct(e);
+  // merge (6 Nov repair): official schedules are the authority for WHEN; each provider row is attached only to its EXACT series (econ-series.mjs).
+  // A subsidiary series (private payrolls, claims averages, continuing claims, unit labor costs) never renames or replaces a release headline,
+  // a consensus forecast stays apart from released/previous values, and an unmapped or unverifiable figure is UNKNOWN.
+  if (!env.TIPRANKS_KEY) out.trRows = [];
+  out.econ = mergeEconRows(out.official, (out.trRows || []).filter(e => e.t >= new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10)), { providerAt: out.trAt || old.trAt || null });
+  delete out.official;
+  for (const e of out.econ) fillOfficialActual(e, out.av, out.avAt); for (const e of out.hist) fillAct(e);   // the study history keeps its original fill rule
   // ---- 2. Massive: market holidays, and ex-dividend dates of the stocks you hold
   if (env.MASSIVE_KEY) try {
     const get = async (p) => { const r = await fetch(PX + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY)); return r.ok ? r.json() : null; };
