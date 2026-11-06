@@ -1,0 +1,215 @@
+diff --git b/scan.mjs a/scan.mjs
+index 88054d83..14a28526 100644
+--- b/scan.mjs
++++ a/scan.mjs
+@@ -9,7 +9,7 @@ import crypto from 'node:crypto';
+ import zlib from 'node:zlib';
+ import { createRequire } from 'node:module';
+ import { execSync } from 'node:child_process';
+-import { priceEvidence, stopText, stopMessageKey, validStop, nyStamp } from './stop-watch.mjs';
++import { priceEvidence, stopText, stopMessageKey, validStop } from './stop-watch.mjs';
+ 
+ const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
+ const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;   // test hooks: localhost only
+@@ -4228,45 +4228,6 @@ async function daily() {
+   console.log('daily scan done:', stocks.length, 'stocks,', buys.length, 'buy watch,', fresh.length, 'journal entries');
+ }
+ 
+-// (6 Nov) ONE HOLDING ACTION for the market-hours summary, in the order ACTIONS (planText) uses: a stop reached, a filing (event) sell,
+-// target 2, last night's exit rule (sig.posVerdict: every kind, a trend exit included), the holding review's SELL, then target 1. A
+-// price-based claim (stop reached, targets, % from entry) needs ticker-bound, dated, fresh evidence: stop-watch.mjs priceEvidence(), the
+-// live watcher's rule. Without it the stop status is UNKNOWN, never HOLD. Holdings, stops and rules are only read, never changed.
+-const quoteEvidence = (sym, q, nowMs, maxAgeMin) => priceEvidence(sym, q && typeof q === 'object' ? { sym, price: +q.price, t: q.t, provider: q.src || 'unknown source', kind: 'TRADE' } : null, nowMs, maxAgeMin);
+-const evidenceText = (ev) => ev.state === 'OK' ? 'last price ' + money(ev.price) + ' (' + ev.src + ', ' + nyStamp(ev.t) + ', ' + (ev.ageSec < 90 ? Math.round(ev.ageSec) + ' s' : Math.round(ev.ageSec / 60) + ' min') + ' old)' : 'current price UNKNOWN (' + ev.why + ')';
+-function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
+-  const ev = quoteEvidence(sym, q, nowMs), ok = ev.state === 'OK', px = ok ? ev.price : null, num = (x) => typeof x === 'number' && Number.isFinite(x) && x > 0;
+-  const pv = sig && sig.posVerdict ? sig.posVerdict[sym] : null, es = eventSell(sym), hasStop = P.stop !== undefined && P.stop !== null, stopOk = validStop(P.stop);
+-  let act, text;
+-  if (ok && stopOk && px <= P.stop) { act = 'SELL'; text = 'STOP LEVEL REACHED: at or below your stop ' + money(P.stop) + '. If your broker stop order has filled, you are already out: do not sell again.'; }
+-  else if (es) { act = 'SELL'; text = es; }
+-  else if (ok && num(P.t2) && px >= P.t2) { act = 'SELL'; text = 'SELL. Target 2 (' + money(P.t2) + ') reached.'; }
+-  else if (pv) { act = 'SELL'; text = "SELL: last night's exit rule, " + String(pv).replace(/\.?$/, '.') + ' Timing as in ACTIONS (close-based exits: next regular-session open).'; }
+-  else if (P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '')) { act = 'SELL'; text = P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ').'; }
+-  else if (ok && num(P.t1) && px >= P.t1 && !P.trail) { act = 'TARGET 1'; text = t1Text(sym, P); }
+-  else if (hasStop && (!stopOk || !ok)) { act = 'UNKNOWN'; text = 'STOP STATUS UNKNOWN: no exit rule is active, but whether your stop ' + (stopOk ? money(P.stop) : '(not a valid number)') + ' was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.'; }
+-  else { act = 'HOLD'; text = 'HOLD: no exit rule is active' + (hasStop ? '; above your stop ' + money(P.stop) : P.src === 'leader dip' ? '; leader dip, no stop by design' + (num(P.target) ? ', sell limit ' + money(P.target) : '') : '; NO STOP SET') + '.'; }
+-  const chg = ok && num(P.entry) ? ' (' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' : '';
+-  return { act, ev, line: sym + ': ' + text + ' ' + evidenceText(ev).replace(/^\w/, c => c.toUpperCase()) + chg + '.' };
+-}
+-// (6 Nov) the day's first market-hours check: its ACTUAL time (a late first run says it did not observe the open), the buy list labelled
+-// for what it is (last night's scan; the rules are NOT PROVEN), and the real schedule and close times instead of timing promises.
+-async function firstCheckText(myPos, planBuys, quotes, sig, nowMs = Date.now()) {
+-  const n = ny(nowMs), sess = await marketSessionOf(n.d), kt = new Date(nowMs).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' });
+-  const open = sess && !sess.closed ? sess.open : 570, close = sess && !sess.closed ? sess.close : null, lateBy = n.mins - open;
+-  const out = ["TODAY'S FIRST MARKET-HOURS CHECK, run at " + nyClockText(n.mins) + ' New York (' + kt + ' Kuwait). The system is running.'];
+-  if (lateBy > 30) out.push('LATE: this is the first check that reached this point today, so it did NOT observe the open. The market opened at ' + nyClockText(open) + ' New York (' + kwt(open, n.d) + ' Kuwait), ' + Math.floor(lateBy / 60) + ' h ' + (lateBy % 60) + ' min before this check.');
+-  out.push('', 'YOUR POSITIONS (one action each, the same rules as ACTIONS)');
+-  const pos = Object.entries(myPos || {}).map(([k, P]) => holdingAction(k, P, quotes[k], sig, nowMs).line);
+-  out.push(...(pos.length ? pos : ['none recorded']));
+-  const buys = (planBuys || []).filter(x => !(myPos || {})[x.sym]).map(x => { const ev = quoteEvidence(x.sym, quotes[x.sym], nowMs, 20);
+-    return x.sym + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (ev.state !== 'OK' ? 'price UNKNOWN (' + ev.why + '), no buy from this line' : evidenceText(ev) + ', ' + (ev.price > x.hi ? 'ABOVE the range, do not chase' : ev.price < x.lo ? 'below the range, wait' : 'INSIDE the range')); });
+-  out.push('', "BUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)", ...(buys.length ? buys : ["none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day."]));
+-  out.push('', 'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.');
+-  out.push(close == null ? 'Regular session hours today: UNKNOWN (the NYSE calendar could not be read).'
+-    : 'Regular NYSE session today: ' + nyClockText(open) + ' to ' + nyClockText(close) + ' New York (' + kwt(open, n.d) + ' to ' + kwt(close, n.d) + ' Kuwait). The live watcher’s configured window ends at 3:00 pm New York' + (close > 900 ? ', ' + (close - 900) + ' minutes before the close; the last part of the session is not watched live.' : '.'));
+-  return out.join('\n');
+-}
+ async function intraday(onlyMine) {
+   const now = Date.now();
+   const sig = readJson('data/signals.json', null);
+@@ -4285,7 +4246,7 @@ async function intraday(onlyMine) {
+   const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
+   const buyNowCards = [];
+   const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
+-  const seen = {}, stopAlerts = [], quotesSeen = {};
++  const seen = {}, stopAlerts = [];
+   // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
+   // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
+   // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
+@@ -4297,7 +4258,7 @@ async function intraday(onlyMine) {
+     if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
+     st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
+   for (const sym of watch) {
+-    const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = j; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
++    const j = (await liveQ((sym))) || {}, p = +j.price; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
+     const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
+     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
+     if (mp) {   // you told the bot you bought this one
+@@ -4331,13 +4292,15 @@ async function intraday(onlyMine) {
+       if (o.target && p >= o.target) say('tg' + o.since, 'paper trade from ' + o.since + ' reached its target ' + money(o.target) + '.');
+     }
+   }
+-  // ONE FIRST MARKET-HOURS CHECK a day, so you know the system is running and where each holding stands, even when no alert fires.
+-  // (6 Nov repair) Every holding is listed through holdingAction() (the ACTIONS order; a nightly exit is never shown as HOLD; price claims
+-  // only on valid evidence), the buy list says what it is, and the message gives its actual time and the real schedule and close times.
++  // ONE MARKET-OPEN CHECK a day, so you always know the system is running and where each holding stands, even when no alert fires.
+   let openMsg = null;
+   if (!onlyMine && !st.sent.__open && Object.keys(seen).length) {
+     st.sent.__open = 1;
+-    openMsg = await firstCheckText(myPos, planBuys, quotesSeen, sig, Date.now());
++    const kt = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' });
++    const posL = Object.entries(myPos).filter(([k]) => seen[k]).map(([k, P]) => { const p = seen[k], g = p / P.entry - 1;
++      return k + ' ' + money(p) + ' (' + (g >= 0 ? '+' : '') + (g * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' + (P.stop ? ' | stop ' + money(P.stop) + ' (' + ((P.stop / p - 1) * 100).toFixed(1) + '%)' : P.src === 'leader dip' ? ' | leader dip: sell limit ' + money(P.target) + ', no stop by design' : ' | NO STOP SET') + (P.t1 ? ' | target ' + money(P.t1) + ' (+' + ((P.t1 / p - 1) * 100).toFixed(1) + '%)' : '') + ': ' + (P.stop && p <= P.stop ? 'SELL NOW: the stop is reached' : P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '') ? P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ')' : 'HOLD'); });
++    const buyL = planBuys.filter(x => seen[x.sym] && !myPos[x.sym]).map(x => { const p = seen[x.sym]; return x.sym + ' ' + money(p) + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (p > x.hi ? 'ABOVE the range, do not chase' : p < x.lo ? 'below the range, wait' : 'INSIDE the range'); });
++    openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PROVEN BUYS TODAY', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.'].join('\n');
+   }
+   fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
+   if (openMsg) await telegram(openMsg + '\n' + FOOT);
+diff --git b/test/open-check-repair.test.mjs a/test/open-check-repair.test.mjs
+deleted file mode 100644
+index 1eff7fd5..00000000
+--- b/test/open-check-repair.test.mjs
++++ /dev/null
+@@ -1,112 +0,0 @@
+-// Open-check repair (6 Nov 2026). Synthetic fixtures only: invented tickers and prices, loopback services, no owner records,
+-// credentials, provider requests or real messages. Every case runs the ACTUAL intraday() caller (the scanner's market-hours check).
+-// 1 one holding action: a nightly exit (posVerdict, a trend exit included) is never shown as HOLD, and agrees with ACTIONS (planText)
+-// 2 a price-based stop claim needs ticker-bound, dated, fresh evidence; stale, undated or missing prices are UNKNOWN, never HOLD
+-// 3 no "PROVEN BUYS" label and no timing promise; a late first run shows its actual time and says it did not observe the open
+-// 4 the regular NYSE close (4:00 pm, 1:00 pm on early-close days) is kept apart from the watcher's configured 3:00 pm cutoff
+-import test from 'node:test';
+-import assert from 'node:assert/strict';
+-import http from 'node:http';
+-import fs from 'node:fs';
+-import { loadScan, blocked } from './load-scan.mjs';
+-
+-const AT = (iso) => Date.parse(iso);
+-const ON_TIME = AT('2026-11-05T14:40:00Z');   // Thu 9:40 am New York (winter time)
+-const LATE = AT('2026-11-06T19:57:00Z');      // Fri 2:57 pm New York, the 6 Nov pattern
+-const EARLY_CLOSE = AT('2026-11-27T15:00:00Z');   // Fri 27 Nov 10:00 am New York, NYSE early close 1:00 pm
+-const SIG = { session: '2026-11-04', stocks: [], quick: [], leaders: [], posVerdict: { ZZG: 'it closed under its 50 day average, the trend is broken.' } };
+-
+-// quotes: { SYM: { c, ageSec } | { c, t: 0 } | null }, served as Finnhub /quote responses
+-// the reviewed NYSE calendar is loaded by scan.mjs at run time (dynamic import), so the fixture folder gets the repository's copy
+-const SESSION_SRC = fs.readFileSync(new URL('../market-session.mjs', import.meta.url), 'utf8');
+-async function run(t, { now = ON_TIME, pos, quotes, sig = SIG, calendar = true }) {
+-  const sent = [];
+-  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
+-    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
+-    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: 1 } })); }
+-    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol'), q = quotes[sym];
+-      if (!q) return res.end(JSON.stringify({ c: 0, t: 0 }));
+-      return res.end(JSON.stringify({ c: q.c, t: 't' in q ? q.t : Math.floor((now - q.ageSec * 1000) / 1000) })); }
+-    res.statusCode = 404; res.end('{}'); }); });
+-  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
+-  const base = 'http://127.0.0.1:' + server.address().port;
+-  const files = { 'data/my-positions.json': pos, 'data/signals.json': sig, 'data/tg-state.json': { offset: 42 } }; if (calendar) files['market-session.mjs'] = SESSION_SRC;
+-  const S = await loadScan({ files,
+-    env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
+-  const real = Date.now; Date.now = () => now;
+-  try { await S.fn('intraday')(false); } finally { Date.now = real; }
+-  const first = sent.find(x => /FIRST MARKET-HOURS CHECK|MARKET OPEN CHECK/.test(x)) || '';
+-  return { sent, first, S, line: (sym) => first.split('\n').find(l => l.startsWith(sym + ' ') || l.startsWith(sym + ':')) || '' };
+-}
+-
+-test('conflicting exits: last night\'s trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS', async t => {
+-  const pos = { ZZG: { entry: 6, stop: 1.98, kind: 'leader', since: '2026-10-20' } };
+-  const r = await run(t, { pos, quotes: { ZZG: { c: 3.77, ageSec: 20 } } });
+-  const l = r.line('ZZG');
+-  assert.match(l, /^ZZG: SELL: last night's exit rule, it closed under its 50 day average, the trend is broken\./);
+-  assert.doesNotMatch(l, /HOLD/);
+-  assert.match(l, /Last price 3\.77 \(FINNHUB, Nov 5 09:39 New York, 20 s old\) \(-37\.2% from your 6\.00\)/);
+-  // the same holding in ACTIONS (planText, unchanged) is a SELL from the same nightly verdict
+-  const actions = r.S.fn('planText')(SIG, pos, { ZZG: 3.77 });
+-  assert.match(actions, /ZZG: SELL at the close or next open\. It closed under its 50 day average, the trend is broken\./);
+-  assert.equal(r.S.readJson('data/my-positions.json').ZZG.stop, 1.98, 'stop unchanged');
+-});
+-
+-test('stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS', async t => {
+-  const r = await run(t, { pos: { ZZG: { entry: 6, stop: 4, kind: 'leader', since: '2026-10-20' } }, quotes: { ZZG: { c: 3.77, ageSec: 20 } } });
+-  assert.match(r.line('ZZG'), /^ZZG: STOP LEVEL REACHED: at or below your stop 4\.00\. If your broker stop order has filled, you are already out: do not sell again\./);
+-});
+-
+-test('stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route', async t => {
+-  const r = await run(t, { pos: { ZZS: { entry: 100, stop: 80 } }, quotes: { ZZS: { c: 70, ageSec: 30 * 60 } } });
+-  const l = r.line('ZZS');
+-  assert.match(l, /^ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80\.00 was reached cannot be confirmed right now/);
+-  assert.match(l, /Current price UNKNOWN \(the latest price is 30 min old \(limit 5 min\)\)/);
+-  assert.doesNotMatch(l, /REACHED|HOLD|% from your/);
+-  assert.match(r.sent.find(x => /STOP CHECK UNKNOWN/.test(x)) || '', /ZZS: the latest price is 30 min old/);
+-  assert.equal(r.sent.filter(x => /STOP LEVEL REACHED|STOP LOSS REACHED/.test(x)).length, 0);
+-});
+-
+-test('undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)', async t => {
+-  const r = await run(t, { pos: { ZZU: { entry: 50, stop: 40 }, ZZN: { entry: 20, stop: 15 }, ZZF: { entry: 10, stop: 8 } },
+-    quotes: { ZZU: { c: 39, t: 0 }, ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(r.line('ZZU'), /^ZZU: STOP STATUS UNKNOWN.*Current price UNKNOWN \(the price has no source timestamp\)/);
+-  assert.match(r.line('ZZN'), /^ZZN: STOP STATUS UNKNOWN.*Current price UNKNOWN \(no valid price\)/);
+-  assert.match(r.line('ZZF'), /^ZZF: HOLD: no exit rule is active; above your stop 8\.00\. Last price 12\.00 \(FINNHUB, Nov 5 09:39 New York, 30 s old\)/);
+-});
+-
+-test('delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open', async t => {
+-  const r = await run(t, { now: LATE, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(r.first, /^TODAY'S FIRST MARKET-HOURS CHECK, run at 2:57 pm New York \(22:57 Kuwait\)\. The system is running\./);
+-  assert.match(r.first, /LATE: this is the first check that reached this point today, so it did NOT observe the open\. The market opened at 9:30 am New York \(5:30 pm Kuwait\), 5 h 27 min before this check\./);
+-  assert.doesNotMatch(r.first, /MARKET OPEN CHECK/);
+-  const ok = await run(t, { now: ON_TIME, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(ok.first, /run at 9:40 am New York \(17:40 Kuwait\)/); assert.doesNotMatch(ok.first, /LATE|did NOT observe/);
+-});
+-
+-test('labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence', async t => {
+-  const r = await run(t, { pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.doesNotMatch(r.first, /PROVEN BUYS|the moment|I check every 30 minutes/);
+-  assert.match(r.first, /BUY LIST FROM LAST NIGHT'S SCAN \(the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range\)/);
+-  assert.match(r.first, /none\. Nothing qualified in last night's scan\. New buy candidates are chosen only by the nightly scan, never during the day\./);
+-  assert.match(r.first, /scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised/);
+-});
+-
+-test('close statement: the regular 4:00 pm NYSE close is kept apart from the watcher\'s 3:00 pm cutoff; early-close days use 1:00 pm', async t => {
+-  const r = await run(t, { pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(r.first, /Regular NYSE session today: 9:30 am to 4:00 pm New York \(5:30 pm to 12 am Kuwait\)\. The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live\./);
+-  const e = await run(t, { now: EARLY_CLOSE, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(e.first, /Regular NYSE session today: 9:30 am to 1:00 pm New York \(5:30 pm to 9 pm Kuwait\)\. The live watcher’s configured window ends at 3:00 pm New York\./);
+-  const u = await run(t, { calendar: false, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(u.first, /Regular session hours today: UNKNOWN \(the NYSE calendar could not be read\)\./); assert.doesNotMatch(u.first, /4:00 pm/);
+-});
+-
+-test('records untouched: positions and Telegram offset unchanged; one first check a day', async t => {
+-  const pos = { ZZF: { entry: 10, stop: 8 } };
+-  const r = await run(t, { pos, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.deepEqual(r.S.readJson('data/my-positions.json'), pos); assert.equal(r.S.readJson('data/tg-state.json').offset, 42);
+-  assert.equal(r.S.readJson('data/alert-state.json').sent.__open, 1);
+-  assert.equal(r.sent.filter(x => /FIRST MARKET-HOURS CHECK/.test(x)).length, 1);
+-});
+-
+-test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));

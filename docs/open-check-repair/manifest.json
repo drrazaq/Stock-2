@@ -1,0 +1,37 @@
+{
+ "package": "open-check-repair",
+ "status": "development only; branch-only publication for independent review; not deployment approval; not applicable to current production main",
+ "expectedBase": {
+  "main": "6c61057839bd018322110175e84e0faf5c843997",
+  "plus": {
+   "STOP_R2": "c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b",
+   "T": "fefe0ecfd862729b276db82433ae58ea351901e41939dc80f61eeb5b381dd969",
+   "D1_D4": "6889504c6ef67130193b9be0a070a76347bbaec24f83c9b116736c74e2d45bba"
+  },
+  "syntheticBaseCommitPublished": false
+ },
+ "dependencies": [
+  "STOP R2 (stop-watch.mjs priceEvidence, validStop, nyStamp)",
+  "D1-D4 (scan.mjs marketSessionOf, nyClockText; market-session.mjs)"
+ ],
+ "paths": {
+  "scan.mjs": {
+   "before": "73ad4853340ee5f562618155df92371ab1ff87e62584bf507157d9c84cd276c3",
+   "after": "c7250b0c9897d46c3d3d52562cda1eda0c054025f07a1c1acd15e6d167c3e40c"
+  },
+  "test/open-check-repair.test.mjs": {
+   "before": null,
+   "after": "d0b63606392ce16403831deae4cdc518438f88ad9c75e3863519a23ca404e4cb"
+  }
+ },
+ "patch": "03d2d25424b8b4dc938dc234cea7fe9c041d71fe56d427628cbc74bcefd81291",
+ "inverse": "0b2567f023882223e24f183a6bd5ff5fec15f283004045d02a7fbd4a3c24ac3d",
+ "tests": {
+  "newFile": "9/9",
+  "preRepair": "8/9 fail",
+  "fullSerial": "141/141",
+  "gatedWatcher": "11/11, 9/9",
+  "roundtrip": "exact"
+ },
+ "outsideSaturdayScope": true
+}
