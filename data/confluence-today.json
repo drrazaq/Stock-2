@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-11-05T09:45:32.924Z",
- "lastClose": "2026-11-04",
+ "generatedAt": "2026-11-06T03:42:51.470Z",
+ "lastClose": "2026-11-05",
  "paperStart": "2026-10-23",
- "inputsSeen": 710,
+ "inputsSeen": 730,
  "note": "PAPER ONLY. A stock picked by 2+ (CONF-3: 3+) different rule families within 5 sessions. Nothing here is a buy by itself: a version needs a TRADABLE SMALL / PROVEN frozen 5-year verdict (data/confluence-lab.json firstRun), or the TRY SMALL gates, or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
   "CONF-2": {
@@ -12,10 +12,10 @@
    "holdNote": "each signal carries its own hold (sessions) and stopPct",
    "newSignals": [
     {
-     "sym": "AAPL",
-     "close": 349.51,
-     "halal": "ok",
-     "d": "2026-11-04",
+     "sym": "CBOE",
+     "close": 353.07,
+     "halal": "unknown",
+     "d": "2026-11-05",
      "hold": 10,
      "stopPct": 0.15,
      "families": [
@@ -26,13 +26,13 @@
       "DEC2-MINTT",
       "DEC2-TPS"
      ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+     "plan": "buy at the open of 2026-11-06 (the next session after 2026-11-05), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
     },
     {
-     "sym": "APA",
-     "close": 44.49,
-     "halal": "unknown",
-     "d": "2026-11-04",
+     "sym": "ILMN",
+     "close": 208,
+     "halal": "ok",
+     "d": "2026-11-05",
      "hold": 10,
      "stopPct": 0.15,
      "families": [
@@ -43,13 +43,13 @@
       "ANOM-RESMOM",
       "DEC2-TPS"
      ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+     "plan": "buy at the open of 2026-11-06 (the next session after 2026-11-05), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
     },
     {
-     "sym": "ASX",
-     "close": 37.51,
+     "sym": "NTAP",
+     "close": 169.38,
      "halal": "unknown",
-     "d": "2026-11-04",
+     "d": "2026-11-05",
      "hold": 10,
      "stopPct": 0.15,
      "families": [
@@ -57,17 +57,35 @@
       "PULLBACK"
      ],
      "rules": [
+      "ANOM-RESMOM",
+      "DEC2-TPS"
+     ],
+     "plan": "buy at the open of 2026-11-06 (the next session after 2026-11-05), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+    },
+    {
+     "sym": "NUE",
+     "close": 245.68,
+     "halal": "unknown",
+     "d": "2026-11-05",
+     "hold": 10,
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ],
+     "rules": [
+      "ANOM-52WH",
       "ANOM-RESMOM",
       "DEC-FROG",
       "DEC2-TPS"
      ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+     "plan": "buy at the open of 2026-11-06 (the next session after 2026-11-05), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
     },
     {
-     "sym": "CNQ",
-     "close": 49.64,
+     "sym": "PSX",
+     "close": 247.04,
      "halal": "unknown",
-     "d": "2026-11-04",
+     "d": "2026-11-05",
      "hold": 10,
      "stopPct": 0.15,
      "families": [
@@ -78,13 +96,13 @@
       "ANOM-RESMOM",
       "DEC2-TPS"
      ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+     "plan": "buy at the open of 2026-11-06 (the next session after 2026-11-05), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
     },
     {
-     "sym": "COP",
-     "close": 136.94,
+     "sym": "URI",
+     "close": 1043.78,
      "halal": "unknown",
-     "d": "2026-11-04",
+     "d": "2026-11-05",
      "hold": 10,
      "stopPct": 0.15,
      "families": [
@@ -92,78 +110,10 @@
       "PULLBACK"
      ],
      "rules": [
-      "ANOM-RESMOM",
+      "ANOM-52WH",
       "DEC2-TPS"
      ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
-    },
-    {
-     "sym": "CVX",
-     "close": 216.96,
-     "halal": "unknown",
-     "d": "2026-11-04",
-     "hold": 10,
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK"
-     ],
-     "rules": [
-      "ANOM-RESMOM",
-      "DEC2-TPS"
-     ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
-    },
-    {
-     "sym": "EOG",
-     "close": 147.06,
-     "halal": "unknown",
-     "d": "2026-11-04",
-     "hold": 10,
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK"
-     ],
-     "rules": [
-      "ANOM-RESMOM",
-      "DEC2-TPS"
-     ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
-    },
-    {
-     "sym": "MPC",
-     "close": 392.68,
-     "halal": "fail",
-     "d": "2026-11-04",
-     "hold": 10,
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK"
-     ],
-     "rules": [
-      "ANOM-RESMOM",
-      "DEC2-TPS"
-     ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
-    },
-    {
-     "sym": "SU",
-     "close": 72.04,
-     "halal": "unknown",
-     "d": "2026-11-04",
-     "hold": 10,
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK"
-     ],
-     "rules": [
-      "ANOM-RESMOM",
-      "DEC2-TPS"
-     ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+     "plan": "buy at the open of 2026-11-06 (the next session after 2026-11-05), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
     }
    ],
    "open": [
@@ -172,7 +122,7 @@
      "halal": "unknown",
      "signal": "2026-10-27",
      "buy": "2026-10-28",
-     "sinceBuy": -0.0749,
+     "sinceBuy": -0.131,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -185,7 +135,7 @@
      "halal": "ok",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": 0.0471,
+     "sinceBuy": 0.021,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -198,7 +148,7 @@
      "halal": "unknown",
      "signal": "2026-10-29",
      "buy": "2026-10-30",
-     "sinceBuy": -0.0017,
+     "sinceBuy": -0.0072,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -211,7 +161,7 @@
      "halal": "unknown",
      "signal": "2026-10-30",
      "buy": "2026-11-02",
-     "sinceBuy": 0.0331,
+     "sinceBuy": 0.0453,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -224,20 +174,7 @@
      "halal": "unknown",
      "signal": "2026-10-30",
      "buy": "2026-11-02",
-     "sinceBuy": 0.0103,
-     "exitAfter": "10 sessions",
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK"
-     ]
-    },
-    {
-     "sym": "MRVL",
-     "halal": "unknown",
-     "signal": "2026-10-30",
-     "buy": "2026-11-02",
-     "sinceBuy": -0.1658,
+     "sinceBuy": -0.0126,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -250,7 +187,7 @@
      "halal": "unknown",
      "signal": "2026-10-30",
      "buy": "2026-11-02",
-     "sinceBuy": -0.0919,
+     "sinceBuy": -0.1294,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -263,7 +200,7 @@
      "halal": "unknown",
      "signal": "2026-10-30",
      "buy": "2026-11-02",
-     "sinceBuy": -0.0696,
+     "sinceBuy": -0.1056,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -276,7 +213,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0318,
+     "sinceBuy": -0.0047,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -289,7 +226,7 @@
      "halal": "ok",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0183,
+     "sinceBuy": -0.1575,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -303,7 +240,7 @@
      "halal": "ok",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0162,
+     "sinceBuy": -0.0612,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -316,7 +253,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": -0.0697,
+     "sinceBuy": -0.2082,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -329,7 +266,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0175,
+     "sinceBuy": -0.038,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -342,7 +279,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0093,
+     "sinceBuy": -0.0444,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -355,7 +292,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": -0.0415,
+     "sinceBuy": -0.155,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -368,7 +305,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0219,
+     "sinceBuy": 0.0165,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -381,7 +318,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0252,
+     "sinceBuy": 0.0167,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -394,7 +331,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.1638,
+     "sinceBuy": 0.0876,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -407,7 +344,7 @@
      "halal": "ok",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0919,
+     "sinceBuy": 0.0529,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -420,7 +357,7 @@
      "halal": "ok",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": -0.0752,
+     "sinceBuy": -0.2367,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -433,7 +370,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0397,
+     "sinceBuy": -0.0685,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -446,7 +383,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0204,
+     "sinceBuy": -0.0536,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -459,7 +396,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.031,
+     "sinceBuy": -0.0015,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -472,7 +409,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0289,
+     "sinceBuy": -0.0315,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -485,7 +422,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0335,
+     "sinceBuy": 0.0004,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -498,7 +435,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0414,
+     "sinceBuy": 0.0307,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -511,7 +448,7 @@
      "halal": "ok",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": -0.049,
+     "sinceBuy": -0.0713,
      "exitAfter": "63 sessions",
      "stopPct": 0.15,
      "families": [
@@ -524,7 +461,7 @@
      "halal": "unknown",
      "signal": "2026-11-03",
      "buy": "2026-11-04",
-     "sinceBuy": -0.0573,
+     "sinceBuy": -0.0838,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -537,7 +474,7 @@
      "halal": "unknown",
      "signal": "2026-11-03",
      "buy": "2026-11-04",
-     "sinceBuy": -0.034,
+     "sinceBuy": -0.0504,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -550,7 +487,7 @@
      "halal": "unknown",
      "signal": "2026-11-03",
      "buy": "2026-11-04",
-     "sinceBuy": -0.0122,
+     "sinceBuy": -0.049,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -563,7 +500,124 @@
      "halal": "unknown",
      "signal": "2026-11-03",
      "buy": "2026-11-04",
-     "sinceBuy": 0.0322,
+     "sinceBuy": -0.0022,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "AAPL",
+     "halal": "ok",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.0275,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "APA",
+     "halal": "unknown",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.0404,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "ASX",
+     "halal": "unknown",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.1233,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "CNQ",
+     "halal": "unknown",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.0276,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "COP",
+     "halal": "unknown",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.0305,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "CVX",
+     "halal": "unknown",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.0322,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "EOG",
+     "halal": "unknown",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.0231,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "MPC",
+     "halal": "fail",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.0403,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ]
+    },
+    {
+     "sym": "SU",
+     "halal": "unknown",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.044,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -578,53 +632,14 @@
    "hold": 63,
    "tier": "REJECTED",
    "holdNote": "each signal carries its own hold (sessions) and stopPct",
-   "newSignals": [
-    {
-     "sym": "MSFT",
-     "close": 555.8,
-     "halal": "ok",
-     "d": "2026-11-04",
-     "hold": 10,
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK",
-      "SMART MONEY"
-     ],
-     "rules": [
-      "DEC2-MINTT",
-      "DEC2-TPS",
-      "EXP-13F2"
-     ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
-    },
-    {
-     "sym": "XOM",
-     "close": 169.27,
-     "halal": "ok",
-     "d": "2026-11-04",
-     "hold": 10,
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK",
-      "SMART MONEY"
-     ],
-     "rules": [
-      "ANOM-RESMOM",
-      "DEC2-TPS",
-      "EXP-13F2"
-     ],
-     "plan": "buy at the open of 2026-11-05 (the next session after 2026-11-04), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
-    }
-   ],
+   "newSignals": [],
    "open": [
     {
      "sym": "AMD",
      "halal": "ok",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0183,
+     "sinceBuy": -0.1575,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -638,7 +653,35 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": -0.0831,
+     "sinceBuy": -0.2337,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK",
+      "SMART MONEY"
+     ]
+    },
+    {
+     "sym": "MSFT",
+     "halal": "ok",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.0342,
+     "exitAfter": "10 sessions",
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK",
+      "SMART MONEY"
+     ]
+    },
+    {
+     "sym": "XOM",
+     "halal": "ok",
+     "signal": "2026-11-04",
+     "buy": "2026-11-05",
+     "sinceBuy": -0.0337,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
