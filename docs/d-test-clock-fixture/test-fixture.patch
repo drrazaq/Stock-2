@@ -1,0 +1,27 @@
+diff --git a/test/actions-reconciliation.test.mjs b/test/actions-reconciliation.test.mjs
+index 07bb71a8..3ac86440 100644
+--- a/test/actions-reconciliation.test.mjs
++++ b/test/actions-reconciliation.test.mjs
+@@ -39,11 +39,19 @@ test('same-day notice has unresolved order, never a new compulsory SELL or execu
+  const p={ZZQ:{...P(),since:'2025-09-05',lastAct:undefined}};S.write('data/sell-notices.jsonl',[{sym:'ZZQ',d:'2025-09-05',why:'synthetic notice'}]);
+  const t=await S.fn('actionsText')(sig,p,null,'SYNTHETIC');assert.match(t,/same-day order unknown/);assert.doesNotMatch(t,/tested rule says sell/);
+ }));
+-test('pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence',()=>run({},true,async({S,sig})=>{
++// Deterministic clocks (6 Nov 2026 fixture correction): the scenario is a list generated after the previous session's close and evaluated
++// BEFORE the next open, so the unmarked signal is pending its ZAD mark. Before this correction the list was stamped with the machine's
++// current time, so after D1-D4 (a list generated after its own next open is UNKNOWN) the case failed on weekdays from 09:30 New York.
++// Both clocks are now frozen inside the case; the assertions and the production code are unchanged.
++const EVAL_AT='2026-11-04T13:00:00.000Z', GENERATED_AT='2026-11-03T21:30:00.000Z';   // Wed 4 Nov 08:00 New York (pre-open); Tue 3 Nov 16:30 New York (after the close)
++async function atClock(iso,fn){const Real=globalThis.Date,fixed=Real.parse(iso);class Frozen extends Real{constructor(...a){super(...(a.length?a:[fixed]));}static now(){return fixed;}}
++ globalThis.Date=Frozen;try{return await fn();}finally{globalThis.Date=Real;}}
++test('pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence',()=>run({},true,async({S,sig})=>atClock(EVAL_AT,async()=>{
+  const today=S.fn('ny')(Date.now()).d;let day=today;do{day=new Date(Date.parse(day)-864e5).toISOString().slice(0,10);}while(!S.fn('isSession')(day));
+- S.write('data/halal.json',{});S.write('data/squad11-today.json',{generatedAt:new Date().toISOString(),lastClose:day,methods:{'SQ11-PB12':{newSignals:[{sym:'ZZR',close:75,d:day}]}}});
++ assert.equal(today,'2026-11-04');assert.equal(day,'2026-11-03');   // the frozen scenario: previous session = Tue 3 Nov
++ S.write('data/halal.json',{});S.write('data/squad11-today.json',{generatedAt:GENERATED_AT,lastClose:day,methods:{'SQ11-PB12':{newSignals:[{sym:'ZZR',close:75,d:day}]}}});
+  const t=await S.fn('actionsText')({...sig,session:day}, {},null,'SYNTHETIC');assert.match(t,/LEADER DIP: no permitted buy; 1 signal waiting for your ZAD mark/);assert.match(t,/no late entries/);assert.match(t,/LEADER DIP[^\n]*NOT PROVEN/);assert.doesNotMatch(t,/- BUY ZZR/);
+-}));
++})));
+ test('frozen research verdict leads over optimistic subset/live labels',()=>run({'data/leaders-study.json':{verdict:'NOT PROVEN',liveVerdict:'PROVISIONALLY PROMISING'},'data/smart-money-study.json':{verdict:'NOT PROVEN',rising:{older:{n:40,avg:.01,spy:.02},newer:{n:40,avg:.03,spy:.04}}}},true,async({S,sig})=>{
+  const t=await S.fn('actionsText')(sig,{},null,'SYNTHETIC');assert.match(t,/LEADERS[^;\n]*NOT PROVEN/);assert.doesNotMatch(t,/insider buying works|LEADERS provisionally promising/i);assert.match(t,/not prospective evidence/);
+ }));
