@@ -7,6 +7,9 @@ import {inspectSourceResponse,sourceInstant} from './a-native-source-join.mjs';
 import {importNativeAEvidence} from './a-native-evidence-importer.mjs';
 import {captureJson} from './capture-json.mjs';
 import {publicFingerprint} from './a-origin-contract.mjs';
+import fs from 'node:fs';import path from 'node:path';
+import {colocatedPrefixPort} from './native-sec-colocated-prefix.mjs';
+import {validateNativeEvidenceAsset} from './native-sec-handoff.mjs';
 const need=(v,c)=>{if(!v)throw Error(c);},hash=b=>createHash('sha256').update(b).digest('hex'),iso=t=>new Date(t).toISOString();
 const time=v=>{const t=evidenceTime(v);need(Number.isFinite(t),'ACQUISITION_CLOCK_UNKNOWN');return t;};
 const REASONS=new Set(['ACQUIRED_HTTP_FAILURE', 'ACQUIRED_ORIGINAL_OR_CLOCK_MISMATCH', 'ACQUIRED_RESPONSE_UNKNOWN', 'ACQUISITION_ARCHIVE_UNKNOWN', 'ACQUISITION_BODY_CAP', 'ACQUISITION_CLOCK_UNKNOWN', 'ACQUISITION_CONTEXT_REQUIRED', 'ACQUISITION_DATASET_CAP', 'ACQUISITION_EVALUATOR_CONTEXT_UNKNOWN', 'ACQUISITION_HOST_OR_PROVENANCE_MISMATCH', 'ACQUISITION_IO_UNKNOWN', 'ACQUISITION_LIMITS_REQUIRED', 'ACQUISITION_ORIGINAL_UNKNOWN', 'ACQUISITION_PLAN_CAP', 'ACQUISITION_PLAN_INCOMPLETE', 'ACQUISITION_PLAN_SCOPE_OR_ORDER_UNKNOWN', 'ACQUISITION_RAW_CONTEXT_UNKNOWN', 'ACQUISITION_RECEIPT_CLOCK_UNKNOWN', 'ACQUISITION_RECEIPT_LATE', 'ACQUISITION_RECEIPT_UNKNOWN', 'ACQUISITION_REFERENCE_REQUIRED', 'ACQUISITION_REHEARSAL_STORE_REQUIRED', 'ACQUISITION_REQUEST_OUTCOME_UNKNOWN', 'ACQUISITION_RESPONSE_CONTEXT_UNKNOWN', 'ACQUISITION_ROLES_REQUIRED', 'ACQUISITION_ROUTE_REFUSED', 'ACQUISITION_SIGNER_CONTEXT_UNKNOWN', 'ACQUISITION_SOURCE_CALENDAR_UNKNOWN', 'ACQUISITION_START_OR_BUDGET_REFUSED', 'ACQUISITION_TIMEOUT', 'BOUNDED_BODY_REQUIRED', 'EXPLICIT_TRANSPORT_REQUIRED', 'FOREIGN_OR_LEGACY_PENDING_REQUIRES_REVIEW', 'INACTIVE_SYNTHETIC_REHEARSAL_REQUIRED', 'INDEPENDENT_RESPONSE_CONFLICT', 'SEPARATE_CLIENTS_AND_SIGNERS_REQUIRED', 'SEPARATE_EXECUTION_AND_WRITE_AUTHORITY_REQUIRED', 'SEPARATE_WRITE_STORES_REQUIRED', 'STALE_FENCE', 'UNDERLYING_KEY_REUSED', 'WRITER_BUSY', 'WRITE_OUTCOME_UNKNOWN']);
@@ -67,4 +70,118 @@ export async function runAResponseBoundImport({store,token,request,originalsDire
   }
   const imported=importNativeAEvidence({store,token,request,originalsDirectory});return {...imported,acquisition:{status:'TWO_FETCH_REQUEST_SET_BOUND_UNDER_SUPPLIED_CONTEXT',boundResponseRecords:captured.length,plannedMaximum:plan.items.length*2,captured,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',captureCompleteness:'REQUEST_SET_ONLY_NOT_MARKET_OR_STREAM_COMPLETENESS',nativeFirstIngestion:'NOT_ESTABLISHED_BY_HTTP_REFETCH',planPreRegistration:'NOT_ESTABLISHED_BY_METADATA',mode:'SYNTHETIC_RETAINED_RESPONSE_REHEARSAL',hardwareAttestationRequired:false},activation:false};
  }catch(e){return {status:'UNKNOWN',reason:reason(e),captured,reportSaved:false,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',captureCompleteness:'UNKNOWN',allowBuy:false,prospectiveAdmissions:0,activation:false};}
+}
+
+// First receipt continuation of the SAME host/importer path. Inactive synthetic origins only.
+// Unlike runAResponseBoundImport, this plan contains routes/windows, never expected response hashes.
+const FIRST_REASONS=['FIRST_PLAN_REQUIRED','FIRST_PLAN_CLOCK_UNKNOWN','FIRST_PLAN_ITEM_UNKNOWN','FIRST_PLAN_CONFLICT','FIRST_CONTEXT_CHANGED','FIRST_STEP_REQUIRED','FIRST_ENTRY_NOT_COMPLETE','FIRST_DECISION_REQUIRED','FIRST_DECISION_LATE','FIRST_DECISION_CHANGED','FIRST_RESPONSE_NOT_CAPTURED','FIRST_RESPONSE_SET_MISMATCH','FIRST_CAPTURE_CLOCK_UNKNOWN','FIRST_FOLLOWUP_BEFORE_DECISION','FIRST_ENTRY_ALREADY_FROZEN','FIRST_CAPTURE_NOT_COMPLETE','FIRST_NATIVE_PREFIX_REQUIRED','FIRST_NATIVE_PREFIX_CHANGED','FIRST_NATIVE_PREFIX_UNKNOWN','FIRST_NATIVE_OUTPUT_UNSAFE','FIRST_DISCOVERY_UNKNOWN'];
+for(const c of FIRST_REASONS)REASONS.add(c);
+const FIRST_ACTIVE='A_FIRST_CAPTURE_ACTIVE_V1',FIRST_DECISION='A_FIRST_CAPTURE_DECISION_V1',FIRST_PREFIX='A_FIRST_CAPTURE_NATIVE_PREFIX_V1',FIRST_DISCOVERY='A_FIRST_CAPTURE_DISCOVERY_PREFIX_V1';
+const exactKeys=(value,keys)=>value&&Object.keys(value).sort().join('|')===[...keys].sort().join('|');
+export function validateAFirstCapturePlan(plan,contract){
+ validateTrustContract(contract);
+ need(exactKeys(plan,['kind','version','origin','adopted','cohortHash','contractHash','policyHash','observationId','securityId','createdAt','startsAt','decisionDeadline','endsAt','items'])&&plan.kind==='A_FIRST_CAPTURE_SCHEDULE_PROPOSED_V1'&&plan.version===1&&plan.origin==='SYNTHETIC'&&plan.adopted===false&&plan.contractHash===evidenceHash(contract)&&/^[a-f0-9]{64}$/.test(plan.cohortHash||'')&&plan.policyHash===contract.strategyPolicyHash&&typeof plan.observationId==='string'&&plan.observationId.length>0&&typeof plan.securityId==='string'&&plan.securityId.length>0&&Array.isArray(plan.items)&&plan.items.length>1&&plan.items.length<=32,'FIRST_PLAN_REQUIRED');
+ need([plan.createdAt,plan.startsAt,plan.endsAt,plan.decisionDeadline].every(v=>sourceInstant(v)!==null),'FIRST_PLAN_CLOCK_UNKNOWN');const start=time(plan.startsAt),end=time(plan.endsAt),decision=time(plan.decisionDeadline);need(time(plan.createdAt)<=start&&start<decision&&decision<end&&end-start<=14*86400000,'FIRST_PLAN_CLOCK_UNKNOWN');
+ const ids=new Set(),slots=new Set();for(const item of plan.items){need(exactKeys(item,['id','phase','url','notBefore','deadline'])&&/^[A-Za-z0-9_-]{1,64}$/.test(item.id||'')&&!ids.has(item.id)&&['ENTRY','FOLLOWUP'].includes(item.phase),'FIRST_PLAN_ITEM_UNKNOWN');official(item.url);need([item.notBefore,item.deadline].every(v=>sourceInstant(v)!==null),'FIRST_PLAN_CLOCK_UNKNOWN');const a=time(item.notBefore),b=time(item.deadline),slot=item.url+':'+a;need(a>=start&&b>=a&&b<=end&&!slots.has(slot)&&(item.phase==='ENTRY'?b<=decision:a>decision),'FIRST_PLAN_ITEM_UNKNOWN');ids.add(item.id);slots.add(slot);}
+ need(plan.items.some(i=>i.phase==='ENTRY')&&plan.items.some(i=>i.phase==='FOLLOWUP'),'FIRST_PLAN_ITEM_UNKNOWN');return {planHash:evidenceHash(plan),maximumRequests:2*plan.items.length,sourceCompleteness:'FINITE_REQUEST_SET_ONLY',activation:false};
+}
+const firstContext=contexts=>contexts.map(c=>({role:c.role,collectorId:c.collectorId,executionContextId:c.executionContextId,writeAuthorityId:c.writeAuthorityId,transportReference:c.transportReference,sourceCodeSha:c.sourceCodeSha})).sort((a,b)=>a.role.localeCompare(b.role));
+function firstRecover(store,token,scope,allowForeign=false){if(!store.head().pending)return;const rows=store.inspectImportPending(token);if(rows.every(r=>r.importHash===scope))store.recoverImport(token,scope);else need(allowForeign,'FOREIGN_OR_LEGACY_PENDING_REQUIRES_REVIEW');}
+function firstRecords(contexts,scope,item){return contexts.map(c=>{const r=readAcquired(c,scope,'A_SOURCE_PAIR:'+scope+':'+item.id,c.firstContract);need(r,'FIRST_CAPTURE_NOT_COMPLETE');return r;});}
+function firstPair(pair,item,now){const [a,b]=pair.map(x=>x.envelope);for(const e of [a,b])need(inspectSourceResponse(e).status!=='UNKNOWN'&&e.url===item.url&&time(e.requestStartedAt)>=time(item.notBefore)&&time(e.bodyReceivedAt)<=time(item.deadline)&&time(e.observedAt)<=now,'FIRST_CAPTURE_CLOCK_UNKNOWN');need(a.httpStatus===200&&b.httpStatus===200&&a.bodySha256===b.bodySha256&&a.bodyBase64===b.bodyBase64,'INDEPENDENT_RESPONSE_CONFLICT');}
+const firstResult=extra=>({origin:'SYNTHETIC',sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',captureCompleteness:'FINITE_REQUEST_SET_NOT_STREAM_OR_UNIVERSE_COMPLETENESS',globalFirstIngestionEstablished:false,policyAdopted:false,allowBuy:false,prospectiveAdmissions:0,activation:false,...extra});
+// One bounded, restartable host transition per call; no sleeping across sessions and no live CLI.
+export async function runAFirstCaptureStep({action,store,token,contract,plan,contexts,clock=Date.now,itemId,decision,request,originalsDirectory,native,nativeOutputDirectory}){
+ try{
+  const {planHash:scope}=validateAFirstCapturePlan(plan,contract),now=clock();need(Number.isFinite(now),'FIRST_PLAN_CLOCK_UNKNOWN');
+  need(store.head().origin==='SYNTHETIC'&&store.head().token===token&&store.head().cohortHash===plan.cohortHash&&store.head().contractHash===plan.contractHash,'ACQUISITION_EVALUATOR_CONTEXT_UNKNOWN');
+  contextsChecked(contexts,contract,store,[]);const contextHash=evidenceHash(firstContext(contexts)),roles=contexts.map(c=>({...c,firstContract:contract}));
+  firstRecover(store,token,scope,action==='evaluate');for(const c of roles)firstRecover(c.store,c.token,scope);
+  const active=store.lookup(token,'TRANSPORT',FIRST_ACTIVE);
+  if(action==='prepare'){
+   if(active.status==='FOUND')need(active.record.payload.scope===scope&&active.record.payload.contextHash===contextHash,'FIRST_PLAN_CONFLICT');
+   const complete=active.status==='FOUND'&&roles.every(c=>{const p=c.store.lookup(c.token,'TRANSPORT',FIRST_ACTIVE);return p.status==='FOUND'&&evidenceHash(p.record.payload)===evidenceHash(active.record.payload);});
+   if(complete)need(now>=time(active.record.payload.preparedAt),'FIRST_PLAN_CLOCK_UNKNOWN');if(complete)return firstResult({status:'FIRST_PLAN_ALREADY_DURABLE',planHash:scope,preparedAt:active.record.payload.preparedAt});
+   need(now>=time(plan.createdAt)&&now<=time(plan.startsAt)&&roles.every(c=>c.client.now()>=time(plan.createdAt)&&c.client.now()<=time(plan.startsAt)),'FIRST_PLAN_CLOCK_UNKNOWN');
+   let discovery=store.lookup(token,'ORIGINAL',FIRST_DISCOVERY);
+   if(discovery.status!=='FOUND'){
+    need(native?.directory&&native.expectedRunId&&native.expectedSourceSha,'FIRST_NATIVE_PREFIX_REQUIRED');
+    const response=await colocatedPrefixPort(native)({at:iso(now),identities:[]}),asset=response.evidenceAssets[0],archive=validateNativeEvidenceAsset(asset);
+    const primary=plan.items.filter(i=>new URL(i.url).hostname==='www.sec.gov');need(primary.length===1&&!archive.issues.length&&time(archive.lastObservedAt)<=now,'FIRST_DISCOVERY_UNKNOWN');
+    const matches=[];for(const event of archive.observations){if(event.nativeEvidenceStatus!=='COMPLETE_ORIGINAL_EVIDENCE'||event.revisionCount!==1||time(event.observations[0].observedAt)>time(plan.createdAt))continue;for(const proof of archive.acceptanceResponses){const rows=captureJson(Buffer.from(proof.bodyBase64,'base64').toString()).filings?.recent,index=rows?.accessionNumber?.indexOf(event.accession),doc=index>=0?rows.primaryDocument?.[index]:null;if(typeof doc==='string'&&/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,199}$/.test(doc)&&!doc.includes('..')&&primary[0].url==='https://www.sec.gov/Archives/edgar/data/'+Number(event.issuerCik)+'/'+event.accession.replaceAll('-','')+'/'+doc)matches.push(event);}}
+    const ids=[...new Set(matches.map(e=>'SEC_FILING_V1:'+e.issuerCik+':'+e.accession))];need(ids.length===1,'FIRST_DISCOVERY_UNKNOWN');
+    store.appendImport(scope,token,'ORIGINAL',FIRST_DISCOVERY,{scope,sha256:asset.sha256,sourceId:ids[0],frozenAt:iso(clock())},Buffer.from(JSON.stringify(asset)));discovery=store.lookup(token,'ORIGINAL',FIRST_DISCOVERY);
+   }
+   const payload=active.status==='FOUND'?active.record.payload:{scope,contextHash,preparedAt:iso(clock()),planHash:scope,discoveryPrefixHash:discovery.record.payload.sha256,discoveredSourceId:discovery.record.payload.sourceId};
+   need(time(payload.preparedAt)<=time(plan.startsAt),'FIRST_PLAN_CLOCK_UNKNOWN');
+   // Each namespace retains the same exact pre-response plan. Fences/append locks reject competing plans.
+   store.appendImport(scope,token,'TRANSPORT',FIRST_ACTIVE,payload,Buffer.from(JSON.stringify(plan)));
+   for(const c of roles)c.store.appendImport(scope,c.token,'TRANSPORT',FIRST_ACTIVE,payload,Buffer.from(JSON.stringify(plan)));
+   return firstResult({status:'FIRST_PLAN_DURABLE',planHash:scope,preparedAt:payload.preparedAt});
+  }
+  need(active.status==='FOUND'&&active.record.payload.scope===scope,'FIRST_PLAN_REQUIRED');need(active.record.payload.contextHash===contextHash,'FIRST_CONTEXT_CHANGED');
+  for(const c of roles){const p=c.store.lookup(c.token,'TRANSPORT',FIRST_ACTIVE);need(p.status==='FOUND'&&evidenceHash(p.record.payload)===evidenceHash(active.record.payload),'FIRST_PLAN_REQUIRED');}
+  need(now>=time(active.record.payload.preparedAt),'FIRST_PLAN_CLOCK_UNKNOWN');const sealed=store.lookup(token,'ORIGINAL',FIRST_DECISION);if(sealed.status==='FOUND')need(now>=time(sealed.record.payload.sealedAt),'FIRST_PLAN_CLOCK_UNKNOWN');
+  if(action==='capture'){
+   const item=plan.items.find(i=>i.id===itemId);need(item,'FIRST_PLAN_ITEM_UNKNOWN');
+   if(item.phase==='FOLLOWUP')need(sealed.status==='FOUND','FIRST_FOLLOWUP_BEFORE_DECISION');
+   else if(sealed.status==='FOUND')need(roles.every(c=>c.store.lookup(c.token,'ACQUISITION','A_SOURCE_PAIR:'+scope+':'+item.id+':RESPONSE').status==='FOUND'),'FIRST_ENTRY_ALREADY_FROZEN');
+   // Reuse is read-only and keeps the original receipt, even after this request's window has ended.
+   const pair=[];for(const c of roles){const old=readAcquired(c,scope,'A_SOURCE_PAIR:'+scope+':'+item.id,contract);if(!old)need(now>=time(item.notBefore)&&now<=time(item.deadline)&&c.client.now()>=now,'FIRST_CAPTURE_CLOCK_UNKNOWN');const r=old||await acquire(c,scope,item,contract);need(r.envelope.httpStatus===200,'ACQUIRED_HTTP_FAILURE');pair.push(r);}
+   firstPair(pair,item,clock());return firstResult({status:'FIRST_RESPONSE_DURABLE',itemId:item.id,localFirstReceipts:pair.map(r=>({role:r.receipt.body.role,observedAt:r.envelope.observedAt,bodySha256:r.envelope.bodySha256,reused:r.reused}))});
+  }
+  if(action==='freeze-decision'){
+   need(decision&&decision.observationId===plan.observationId&&decision.securityId===plan.securityId&&decision.catalyst?.sourceId===active.record.payload.discoveredSourceId,'FIRST_DECISION_REQUIRED');
+   const inputHash=evidenceHash(decision);if(sealed.status==='FOUND'){need(sealed.record.payload.inputHash===inputHash,'FIRST_DECISION_CHANGED');return firstResult({status:'FIRST_DECISION_ALREADY_DURABLE',inputHash,sealedAt:sealed.record.payload.sealedAt});}
+   need(now>=time(decision.asOf)&&now<=time(plan.decisionDeadline),'FIRST_DECISION_LATE');
+   const bound=[];for(const item of plan.items.filter(i=>i.phase==='ENTRY')){const pair=firstRecords(roles,scope,item);firstPair(pair,item,now);need(pair.every(r=>time(r.envelope.bodyReceivedAt)<=time(decision.asOf)),'FIRST_DECISION_LATE');bound.push({itemId:item.id,roles:pair.map(r=>({role:r.receipt.body.role,bodySha256:r.envelope.bodySha256,observedAt:r.envelope.observedAt}))});}
+   let kept=store.lookup(token,'ORIGINAL',FIRST_PREFIX);
+   if(kept.status!=='FOUND'){
+    need(native?.directory&&native.expectedRunId&&native.expectedSourceSha,'FIRST_NATIVE_PREFIX_REQUIRED');
+    const response=await colocatedPrefixPort(native)({at:iso(now),identities:[]}),asset=response.evidenceAssets[0],archive=validateNativeEvidenceAsset(asset);
+    const event=archive.observations.find(e=>'SEC_FILING_V1:'+e.issuerCik+':'+e.accession===decision.catalyst?.sourceId);
+    need(!archive.issues.length&&event&&event.nativeEvidenceStatus==='COMPLETE_ORIGINAL_EVIDENCE'&&event.revisionCount===1&&time(archive.lastObservedAt)<=now,'FIRST_NATIVE_PREFIX_UNKNOWN');
+    const frozenAt=clock();need(frozenAt>=now&&frozenAt<=time(plan.decisionDeadline),'FIRST_DECISION_LATE');
+    store.appendImport(scope,token,'ORIGINAL',FIRST_PREFIX,{scope,sha256:asset.sha256,runId:asset.runId,sourceSha:asset.sourceSha,frozenAt:iso(frozenAt)},Buffer.from(JSON.stringify(asset)));kept=store.lookup(token,'ORIGINAL',FIRST_PREFIX);
+   }
+   const payload={scope,inputHash,policyHash:plan.policyHash,sealedAt:iso(clock()),declaredDecisionAt:decision.asOf,entryEvidence:bound,nativePrefixHash:kept.record.payload.sha256};
+   need(time(payload.sealedAt)<=time(plan.decisionDeadline),'FIRST_DECISION_LATE');
+   store.appendImport(scope,token,'ORIGINAL',FIRST_DECISION,payload,Buffer.from(JSON.stringify(decision)));return firstResult({status:'FIRST_DECISION_DURABLE',inputHash,sealedAt:payload.sealedAt});
+  }
+  need(action==='evaluate','FIRST_STEP_REQUIRED');need(sealed.status==='FOUND','FIRST_DECISION_REQUIRED');
+  const required=nativeResponseRequirements({request,originalsDirectory});need(required.origin==='SYNTHETIC'&&required.dataset.observations.length===1&&evidenceHash(required.dataset.observations[0])===sealed.record.payload.inputHash&&evidenceHash(required.dataset.policy)===plan.policyHash&&request.fenceToken===token&&required.items.length===plan.items.length,'FIRST_RESPONSE_SET_MISMATCH');
+  contextsChecked(contexts,contract,store,required.hosts);need(evidenceHash(required.contract)===plan.contractHash,'FIRST_CONTEXT_CHANGED');const used=new Set();
+  for(const item of plan.items){const pair=firstRecords(roles,scope,item);firstPair(pair,item,now);const cap=pair.find(r=>r.receipt.body.role==='CAPTURE').envelope;
+   const matches=required.items.filter(r=>!used.has(r.id)&&r.envelope.url===cap.url&&r.envelope.bodySha256===cap.bodySha256&&r.envelope.bodyBase64===cap.bodyBase64&&['requestStartedAt','headersReceivedAt','bodyReceivedAt','observedAt'].every(k=>sameClock(r.envelope[k],cap[k])));need(matches.length===1,'FIRST_RESPONSE_NOT_CAPTURED');used.add(matches[0].id);
+  }
+  const prefix=store.lookup(token,'ORIGINAL',FIRST_PREFIX);need(prefix.status==='FOUND'&&prefix.record.payload.sha256===sealed.record.payload.nativePrefixHash,'FIRST_NATIVE_PREFIX_REQUIRED');
+  const file=store.exportSnapshot().files.find(f=>f.file===prefix.record.original?.file);need(file&&hash(Buffer.from(file.base64,'base64'))===prefix.record.original.sha256,'FIRST_NATIVE_PREFIX_CHANGED');
+  const asset=captureJson(Buffer.from(file.base64,'base64').toString()),archive=validateNativeEvidenceAsset(asset),binding=required.dataset.evidence?.[plan.observationId]?.nativeBinding;
+  const declared=withOriginals(originalsDirectory,read=>captureJson(read(binding.archive).toString()));
+  need(!archive.issues.length&&asset.sha256===sealed.record.payload.nativePrefixHash&&declared.sha256===asset.sha256&&declared.runId===asset.runId&&declared.sourceSha===asset.sourceSha,'FIRST_NATIVE_PREFIX_CHANGED');
+  const config=request.nativeRuns?.[plan.observationId];need(config?.expectedRunId===asset.runId&&config.expectedSourceSha===asset.sourceSha,'FIRST_NATIVE_PREFIX_CHANGED');
+  const directory=firstNativeView(nativeOutputDirectory,asset),effectiveRequest={...request,nativeRuns:{[plan.observationId]:{directory,expectedRunId:asset.runId,expectedSourceSha:asset.sourceSha}}};
+  const result=importNativeAEvidence({store,token,request:effectiveRequest,originalsDirectory});
+  const audit={planHash:scope,discoveryPrefixHash:active.record.payload.discoveryPrefixHash,discoveredSourceId:active.record.payload.discoveredSourceId,preparedAt:active.record.payload.preparedAt,decisionSealedAt:sealed.record.payload.sealedAt,nativePrefixHash:asset.sha256,nativePrefixFrozenAt:prefix.record.payload.frozenAt,inputHash:sealed.record.payload.inputHash,requestPairs:used.size,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',completeness:'FINITE_REQUEST_SET_ONLY',originalIngestion:'LOCAL_RECEIPT_ONLY_NOT_GLOBAL_HISTORY'};
+  if(result.reportRef){const logicalId='A_FIRST_CAPTURE_EVALUATION:'+result.reportRef.sha256,prior=store.lookup(token,'TRANSPORT',logicalId);if(prior.status==='FOUND')need(evidenceHash(prior.record.payload.audit)===evidenceHash(audit),'FIRST_CONTEXT_CHANGED');else store.appendImport(scope,token,'TRANSPORT',logicalId,{scope,audit,nativeReportRef:result.reportRef,evaluatedAt:iso(clock())});}
+  return {...result,firstCapture:audit,activation:false};
+ }catch(e){return firstResult({status:'UNKNOWN',reason:reason(e),reportSaved:false});}
+}
+
+// Local read-only importer view of the exact decision-time producer prefix. Never edits producer bytes.
+// Existing private root is explicit. Descriptor-relative writes cannot follow a replaced pathname/link.
+function firstNativeView(outputRoot,asset){
+ need(typeof outputRoot==='string'&&path.isAbsolute(outputRoot)&&path.resolve(outputRoot)===outputRoot,'FIRST_NATIVE_OUTPUT_UNSAFE');
+ for(let p=outputRoot;;p=path.dirname(p)){need(!fs.lstatSync(p).isSymbolicLink(),'FIRST_NATIVE_OUTPUT_UNSAFE');if(path.dirname(p)===p)break;}
+ const root=fs.openSync(outputRoot,fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);let dir;
+ try{
+  const initial=fs.fstatSync(root),check=()=>{const s=fs.lstatSync(outputRoot);need(s.ino===initial.ino&&s.dev===initial.dev&&!s.isSymbolicLink()&&s.isDirectory()&&!(s.mode&0o077),'FIRST_NATIVE_OUTPUT_UNSAFE');};check();
+  const leaf='prefix-'+asset.sha256,anchored='/proc/self/fd/'+root+'/'+leaf;try{fs.mkdirSync(anchored,{mode:0o700});fs.fsyncSync(root);}catch(e){if(e.code!=='EEXIST')throw e;}
+  dir=fs.openSync(anchored,fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);const stat=fs.fstatSync(dir);need(stat.isDirectory()&&!(stat.mode&0o077),'FIRST_NATIVE_OUTPUT_UNSAFE');
+  const target='/proc/self/fd/'+dir,expected=new Set(asset.files.map(f=>f.name));need(fs.readdirSync(target).every(n=>expected.has(n)),'FIRST_NATIVE_PREFIX_CHANGED');
+  for(const file of asset.files){check();need(file.name==='run.json'||file.name==='lineage.json'||/^response-\d{6}\.json$/.test(file.name),'FIRST_NATIVE_PREFIX_UNKNOWN');const bytes=Buffer.from(file.bodyBase64,'base64');let fd;
+   try{fd=fs.openSync(target+'/'+file.name,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);fs.writeFileSync(fd,bytes);fs.fsyncSync(fd);}catch(e){if(e.code!=='EEXIST')throw e;const read=fs.openSync(target+'/'+file.name,fs.constants.O_RDONLY|fs.constants.O_NOFOLLOW);try{const s=fs.fstatSync(read);need(s.isFile()&&s.nlink===1&&!(s.mode&0o077)&&s.size===bytes.length&&fs.readFileSync(read).equals(bytes),'FIRST_NATIVE_PREFIX_CHANGED');fs.fsyncSync(read);}finally{fs.closeSync(read);}}finally{if(fd!==undefined)fs.closeSync(fd);}
+  }
+  fs.fsyncSync(dir);check();const final=fs.lstatSync(anchored);need(final.ino===stat.ino&&final.dev===stat.dev&&!final.isSymbolicLink(),'FIRST_NATIVE_OUTPUT_UNSAFE');return outputRoot+'/'+leaf;
+ }finally{if(dir!==undefined)fs.closeSync(dir);fs.closeSync(root);}
 }

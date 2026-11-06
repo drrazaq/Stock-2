@@ -14,7 +14,7 @@
     "tools/bc-research-rehearsal.mjs": "d5f78fcf1da1a6bc7670ea7b17b12cfa35c80b9490e56a5702507d7cc93cb258",
     "bc-research-rehearsal.mjs": "70ae5bf10ac15f6544e547dff5eeb7c0ef4e3401c98e8bcc1db742c5c1c1f706",
     "bc-research-summary.mjs": "cd2aa6c42430922c869bc35b01a79c03c87b329a968e16b2729a01efa6c87e19",
-    ".github/workflows/tests.yml": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4",
+    ".github/workflows/tests.yml": "84331ec3e35f94c3b0b6b52c49160df663b8ffc7e39f4b1d403ef4bee2f96252",
     "tools/market03-ingress-matrix.mjs": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7",
     "docs/research-bc/README.md": "053e433c12833b6a6f343e2802dc29c77931cd7d4e6903909cdd5c9f20c93bf1",
     "docs/research-bc/synthetic-examples.json": "fd6ffc9034bd576dbc8c691152bf7521c430b53d799316524e09faf8252df810",
@@ -32,7 +32,7 @@
     "docs/a-n-bc-integration/README.md": "b1b0d92e9626235fc3d2bb35b6c562948d669bd7f9d60563c7b7da837155bffb",
     "docs/a-n-bc-integration/recovery-and-export.md": "e80becbabb23fb13d2d63354f7f6824e2acc563555374b03cf69aeb0f914e641",
     "docs/a-native-importer/resumption-procedure.md": "8387c601f7ae85c186fddb04efe8d0a9f9643fb47572b971da9b028f93f9dfd8",
-    "docs/a-n-bc-integration/activation-dependencies.md": "6fb7d970beeca94a86dc00dc8ab42036e5b1e02d91ce5553b12d383cd4496c5c",
+    "docs/a-n-bc-integration/activation-dependencies.md": "de01bf7836207f944de3acbe0ff9ff4b68256d28ec1dcbf3e2154ad7de10127f",
     "docs/a-n-bc-integration/verification.json": "b297cd46fe66083c13ceca6798e364e8e261779a6e6d457f1b273b61c2f404c4",
     "docs/a-n-bc-integration/n1-original-reproduction.json": "e66596a7b6141b3da41b76210f70a518110ac9c5c6e85ebbb3cfdf57cb0642f9",
     "docs/a-n-bc-integration/n2-original-reproduction.json": "01831856b2871b0356157e5dc3f6f80d25f81d63d4054c30de495389f8edecc7",
@@ -137,6 +137,23 @@
           "file": "docs/a-n-bc-integration/recovery-and-export.md",
           "previousSha256": "b55306ac0393c7370c20b000c66ef415eb823e9b544782871c0dc429085cbb67",
           "sha256": "e80becbabb23fb13d2d63354f7f6824e2acc563555374b03cf69aeb0f914e641"
+        }
+      ]
+    },
+    {
+      "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+      "reason": "Additive inactive first-capture host continuation; older execution evidence belongs to its pinned prior commit, never reassigned by refreshed pins. No old N1-N3/export/importer/evaluator or strategy behavior changed. Development test bound35->40min for measured new~3m13s file plus prior30m52s suite.",
+      "evidence": "docs/a-first-capture-continuation/README.md",
+      "changes": [
+        {
+          "file": ".github/workflows/tests.yml",
+          "priorSha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4",
+          "sha256": "84331ec3e35f94c3b0b6b52c49160df663b8ffc7e39f4b1d403ef4bee2f96252"
+        },
+        {
+          "file": "docs/a-n-bc-integration/activation-dependencies.md",
+          "priorSha256": "6fb7d970beeca94a86dc00dc8ab42036e5b1e02d91ce5553b12d383cd4496c5c",
+          "sha256": "de01bf7836207f944de3acbe0ff9ff4b68256d28ec1dcbf3e2154ad7de10127f"
         }
       ]
     }

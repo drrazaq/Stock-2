@@ -1,0 +1,52 @@
+# First-capture continuation through the actual A host — inactive
+
+Base118ed4c5a5c1db11ebb154afa0b326a1b9200d7f,6November2026. This continues the existing host and strict importer; it is not another detached evaluator. Claude's118ed review remains pinned. [Ranked alternatives](ranked-alternatives.md) and [retained earnings-input inventory](earnings-input-inventory.json), [plain-language decisions](policy-decisions.md), [exact dependencies](dependencies.json), [manifest](manifest.json), [verification](verification.json).
+
+No production change, real credential, provider call, collection, key, installation or activation. B RETIRED/C STOP and all old strategy data/rules remain unchanged. Saturday maintenance unchanged.
+
+## Implemented caller path
+
+```
+actual advanceASourceFirstCaptureBindings / runASourceFirstCaptureBindings
+ → pinned response-independent plan + existing contract
+ → durable plan in evaluation/CAPTURE/WITNESS stores before transport
+ → bounded clients → exact first response bytes, receipt clocks and signed records
+ → actual colocatedPrefixPort → immutable decision-time SEC prefix
+ → frozen input hash before any follow-up request
+ → finite remaining scheduled responses, retaining every failed/unknown attempt
+ → compare assembled native references to the exact captured request set and input
+ → materialize only the frozen producer bytes in an explicit private local view
+ → unchanged importNativeAEvidence → unchanged strict A evaluator/card/outcome
+```
+
+`advanceASourceFirstCaptureBindings` is the actual tick-driven orchestrator: returns WAIT before a declared window or while pinned input/review artifacts are missing; refuses missed deadlines; never waits across days, silently retries a source, creates a client or sleeps away observation time. Its finite synchronous store work must run in a dedicated capture worker, not the watcher event loop; no such live binding is installed. Repeated clock ticks resume existing durable evidence. The lower phase interface is used for precise crash tests. The existing CLI remains inspection-only: adding credentials or an execution flag cannot activate this code.
+
+The new plan contains routes, explicit windows and stable slot IDs, **not expected response hashes or a future outcome**. Preparation must complete before its start. It reads the actual native producer prefix and requires the planned primary filing and original acceptance/document evidence to have been observed before plan creation. A future accession/URL cannot be predeclared as already discovered. Identity rechecks happen after this known discovery, inside the same existing request cap. Durable request reservations precede each GET. A request whose response is missing remains UNKNOWN; a restart does not authorize another GET. Raw responses survive signing/publication failures. Distinct supplied contexts/keys/stores are enforced but do not prove physical independence or source truth.
+
+An entry cannot freeze until every planned ENTRY response is present, timely and mutually consistent. The existing producer prefix must contain the original filing evidence at decision time. Its original Atom bytes, acceptance responses, receipt clocks, revisions and lineage are preserved; no `updated` value becomes acceptance and no restarted run becomes original global ingestion. The native prefix is frozen durably **before** the decision; the producer may continue appending independently.
+
+No FOLLOWUP request can run before that immutable decision hash. Final input/policy/request set must match; missing/replaced native prefixes, omitted responses, revised source bodies/clocks or changed decisions remain UNKNOWN. The original importer runs on an exact immutable local view, so later producer responses cannot repair the old entry. A partial view is retained; complete identical files may be reused, incomplete/conflicting files are not truncated or overwritten. A private-output symlink/replacement is refused, never followed. Linux descriptor anchoring matches the existing fenced-store runtime.
+
+Limits remain32requests/role,64combined **engineering ceilings per finite synthetic plan**, no retries/fallback,≤1MiBresponse/8MiBclient aggregate/20sec request. Three existing16MiB stores remain48MiB combined; the single immutable local prefix view adds at most the existing4MiB handoff cap, before pinned inputs. No approved raw/sealed/custody quota is increased. One observation and a maximum14-calendar-day schedule are technical guards for this inactive case host, not adoption of a new pilot/session/holding rule. No provider scope is approved by those ceilings. The historical12-case156-request cap is separate and unchanged.
+
+## What this does not establish
+
+Successful software flow means a **synthetic local first-receipt lifecycle**, not authenticated collection. Supplied input/review documents still need actual authoritative producers/independent reviewers; the driver does not invent material-agreement claims, owner confirmations, quote semantics, population/control coverage or close finality. Paired HTTP bodies establish only finite request correspondence, not a full quote stream, universe, original global history or a realistic fill. The old complete-window verifier still runs; forged/omitted frames cannot be blessed by this host. No genuine admission, live BUY or strategy promotion.
+
+All fixtures are labelled SYNTHETIC. Full real dates are retained under a controllable clock; the local-service replay is not proof that a real zero-duration receipt deadline is feasible. Separate existing real-clock timeout and late-response cases remain mandatory. [Exact implementation versus external versus policy gaps](dependencies.json) prevents calling missing source adapters “just credentials.”
+
+## Test failures retained and diagnosed
+
+The initial positive assertion compared `Z` with the canonical `.000Z` spelling of the same instant; the stability assertion now compares the original stored timestamp correctly. A second failure was a reproducible local `ECONNRESET` after long synchronous persistence work and idle HTTP connection reuse. The positive synthetic service explicitly closes each response connection; an independent reset test preserves UNKNOWN/no-retry behavior. Production clients are not changed to retry. A third counterexample initially mutated only an in-memory fixture while retaining the old request hash; the regression now supplies the changed dataset pin and verifies omission rejection. None is treated as market readiness or silently waived.
+
+## Bounded development checks
+
+The prior complete hosted job on118ed took30m52s. The new actual-host file alone takes about3minutes locally before the added private-view failure controls and hosted variability. The development full-suite timeout is explicitly35→40minutes; Node20, all assertions, triggers/read-only permissions and the separate15minute stress bound remain unchanged. This is not a production workflow installation or a capture/request/storage extension. Node24 compatibility is additional evidence, not a new Node22 requirement.
+
+A local incomplete derived view is preserved, never truncated/deleted. Tests explicitly supply a second private synthetic view root to reconstruct only the same frozen source bytes; they check the original partial file remains unchanged and no new provider request occurs. This does not authorize a real private migration or financial-state recovery.
+
+## Chronological synthetic example (not collected evidence)
+
+Explicit SEC acceptance13:00:00Z; original submissions response13:00:20Z; original Atom first observation13:00:30Z; pre-capture case plan13:00:35Z; identity rechecks13:00:40Z; synthetic independent identity review13:00:41Z; primary response13:01Z; completed reclaim/entry evidence14:45Z and decision14:45:05Z. Only after that frozen decision can followups run. The loss control exits using the first available next-open BBO, not the stop price. Full dates/calendar/receipts remain in the fixtures; the one-second synthetic review interval is not a human-service latency promise. Real publication, review, quote clocks/rights and capacity remain unproved.
+
+The initial synthetic plan put reference capture on the preceding day while already naming a future filing URL. That is not a viable discovery-to-capture plan. The guard now requires genuine *available original producer evidence* at preparation; the final fixture rechecks references after known discovery and before primary/entry capture. It does not rewrite an old artifact or claim prospective evidence.

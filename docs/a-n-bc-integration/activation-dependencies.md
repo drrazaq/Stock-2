@@ -1,3 +1,5 @@
+> **6November current disposition:** B is RETIRED and C STOP; the B/C implementation rows below are historical withdrawn requirements, not an active acquisition queue. [Current first-capture dependencies](../a-first-capture-continuation/dependencies.json) and [plain-language decisions](../a-first-capture-continuation/policy-decisions.md) supersede this checkpoint for current preparation. No old scope is activated.
+
 # Exact remaining dependencies — no activation request bundled
 
 Completed software is distinct from permission to use it and from authenticated evidence. Subscription ownership (Alpaca Algo Trader Plus; Massive Stocks Starter) is confirmed. No new protected access check was run. Massive's15-minute delay remains; a SIP subscription is not proof of sampled endpoint access, quote semantics, continuous coverage or fills.

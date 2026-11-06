@@ -1,0 +1,151 @@
+{
+  "kind": "A_FIRST_CAPTURE_OFFLINE_EXECUTION_V1",
+  "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+  "attribution": "Codex local synthetic/local-service execution. Prior Claude N1-N3/export passes preserved; new revision independent review PENDING. Hosted exact-commit receipt follows on PR1 after ordinary push.",
+  "finalNode20Host": {
+    "tests": 12,
+    "pass": 12,
+    "fail": 0,
+    "skip": 0,
+    "milliseconds": 215030
+  },
+  "finalNode24Host": {
+    "tests": 12,
+    "pass": 12,
+    "fail": 0,
+    "skip": 0,
+    "milliseconds": 216428
+  },
+  "earlierExecutions": [
+    {
+      "scope": "before known-discovery guard, actual orchestrator/private-view checks",
+      "tests": 11,
+      "pass": 11,
+      "fail": 0,
+      "skip": 0
+    },
+    {
+      "scope": "legacy bridge/host/manifest regressions before known-discovery guard",
+      "tests": 46,
+      "pass": 46,
+      "fail": 0,
+      "skip": 0
+    }
+  ],
+  "python": {
+    "tests": 39,
+    "pass": 39
+  },
+  "static": {
+    "modules": 294,
+    "workflows": 86,
+    "datasetsChecked": 335,
+    "failures": 0,
+    "missingImports": 0
+  },
+  "runtime": {
+    "target": "Node20.20.2 Linux",
+    "additionalCompatibility": "Node24; not new Node22 acceptance gate",
+    "uid": 1000,
+    "nonRootPrivatePermissionsTest": true
+  },
+  "regressions": [
+    "ISO spelling stability assertion corrected; same original stored instant retained",
+    "Local idle reuse ECONNRESET independently reproduced; positive synthetic HTTP service closes connections, real reset remains UNKNOWN/no retry",
+    "Negative omission fixture now repins actual modified dataset instead of retaining old snapshot",
+    "Foreknowledge defect removed: actual native observation/proof must precede plan creation; per-case reference recheck follows discovery",
+    "Original producer appends after decision; importer consumes earlier frozen exact bytes",
+    "Partial derived view preserved with no truncation/deletion; separate explicit synthetic output root uses same captured evidence, no additional requests"
+  ],
+  "logs": {
+    "a-first-capture-initial.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-initial.log.gz",
+      "sha256": "ed157d868bfc1f830cd227f678ec4107f57cfef2d8b5583c2313bf3d57fc5987",
+      "originalSha256": "38de14b565b80eda5071d36439d597a9c9f2eac8b599289ac0bd93ef79cea6ec",
+      "originalBytes": 3474
+    },
+    "a-first-capture-socket-cause.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-socket-cause.log.gz",
+      "sha256": "62c574ca51fb2bb1f3e6580e4e87d1b2662c7ccfd50b12dea82a393b0a00612e",
+      "originalSha256": "41874559f1fd6b226084ebe294fd09efa278f185193efe5da60f9b255e5677ae",
+      "originalBytes": 4101
+    },
+    "a-first-capture-native-closed-connections.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-native-closed-connections.log.gz",
+      "sha256": "e9da9505799e9954126865c6fa99facff596cf2738e78ca90d7b4e0181fadef5",
+      "originalSha256": "998e3d695de8c9cd7a69a383bf22d4523e4c2161405c4cd6954087ca685fb492",
+      "originalBytes": 3739
+    },
+    "a-first-capture-final-host20.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-final-host20.log.gz",
+      "sha256": "f991087663a384e50e902903c070eaea36d6d7b97301bc6f10243c87806ec121",
+      "originalSha256": "fc6860ab2217818ebc4a09526acd64d9bbc00cf24ab4cc96564a1825bb881007",
+      "originalBytes": 2893
+    },
+    "a-first-capture-sealed20.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-sealed20.log.gz",
+      "sha256": "9119b3ce9a7f851daa8c63b00aa42e905e303b4d8a363be7e11a0f9bb830d2cb",
+      "originalSha256": "21cc6e42790894dc2917d02f63c89cb1a4d2253308fa591911396f4a5c0536d2",
+      "originalBytes": 2894
+    },
+    "a-first-capture-causal20.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-causal20.log.gz",
+      "sha256": "46b9bf43d5abd1e21fd2710c2cb635a0d85080b6a08df0ee5b89827f17aaaf0c",
+      "originalSha256": "5e3a784fe7d07e15f34a1df00d84c0a038c4b0c245f82bc795c7e79d9c4278cb",
+      "originalBytes": 3071
+    },
+    "a-first-capture-previous-paths20.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-previous-paths20.log.gz",
+      "sha256": "2c9aa72b604915e62a479d19709b7d04b0c8e8e4f65972fca72a7c3fc0421555",
+      "originalSha256": "b4edd95bffc4e0a47b1d1b2f0d283d837784927d434f5a5f646f28e825ff3adc",
+      "originalBytes": 9987
+    },
+    "a-first-capture-python.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-python.log.gz",
+      "sha256": "144fd6435aa29443ba5a71b8dac8e6efbaa9a1aa381dab1f1a62b9bc1292bd40",
+      "originalSha256": "b4200c34f252a2ca17c52ceb73f93bb747817159ec61cda51121973504b20761",
+      "originalBytes": 138
+    },
+    "a-first-capture-causal24.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-causal24.log.gz",
+      "sha256": "1634f1b9b5499cbd274040f7a72d143c475a6f54af20cd5c5d621d90ac56b15e",
+      "originalSha256": "77ecc3370c85be492ec4a8cbe4edb268d5283e0e21fff01e57b8b75090b9bd63",
+      "originalBytes": 1492
+    },
+    "a-first-capture-final-pins20.log": {
+      "archive": "docs/a-first-capture-continuation/evidence/a-first-capture-final-pins20.log.gz",
+      "sha256": "e0f6d23f1558bf726ec87af1b36ae06ee49552267d9ab97aeadbfc09ea8ad4b0",
+      "originalSha256": "506bf36fd9d4a23af07c1207ad435235c164bee6725eae1ca63c8384cfe438e3",
+      "originalBytes": 2554
+    }
+  },
+  "requests": {
+    "perRoleMaximum": 32,
+    "combinedMaximum": 64,
+    "actualPositiveFixture": 22,
+    "realProviders": 0,
+    "retries": 0,
+    "fallbacks": 0
+  },
+  "sourceAuthentication": "NOT_ESTABLISHED",
+  "globalFirstIngestion": false,
+  "newProductionModules": 0,
+  "productionChanges": false,
+  "realKeys": false,
+  "policyAdopted": false,
+  "genuineAdmissions": 0,
+  "rowsClosed": 0,
+  "rowsAdvanced": [
+    "CATALYST-03",
+    "EXEC-03",
+    "REPO-03",
+    "HISTORY-04"
+  ],
+  "nextImplementation": "Native opening/reclaim/liquidity/market-cap original bindings and full stream/control assembly remain engineering gaps; source semantics/trust/custody/policy remain distinct dependencies.",
+  "finalPinGuards": {
+    "tests": 10,
+    "pass": 10,
+    "fail": 0,
+    "skip": 0
+  }
+}
