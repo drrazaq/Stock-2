@@ -3,22 +3,23 @@
   "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
   "sourceHashes": {
     "a-source-acquisition-bridge.mjs": "22bf268652521c799f5ad8d99ab8fe105a83ce3e8451f7f1666cb0b3a386f3d5",
-    "a-native-source-join.mjs": "33895909b49588e482de118c75bc24d2263e4b56cf301b4ed9eced520d2dc065",
-    "a-native-evidence-contract.mjs": "b11e2b6dd0851800ee369ef3c8b4643f7e9c630e9f01c165435d8b4f7d6ed75b",
+    "a-native-source-join.mjs": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89",
+    "a-native-evidence-contract.mjs": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
     "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
     "test/a-first-entry-panels.test.mjs": "9349167748156131c248dec8567fa957ae3edc123e2740834d0d6d1c37cd5dfc",
-    "test/a-first-original-inputs.test.mjs": "2c102ba8b9626a21920d73dfaeb7e6f0bb2066b2900910bf654f13f70913d016",
+    "test/a-first-original-inputs.test.mjs": "b1818c48545be369e88ddfc6a51386134f810d766fac78975967f33a90587f57",
     "test/helper-a-entry-panels.mjs": "50a1af0d4ab7b7435aba84df5556486c97d5ec2bb13bf86f47108a5f51fc7be3",
-    "test/helper-a-original-inputs.mjs": "817f49f2fecb4be83a3099309b4ee155212691c44e4058a602c56da54b89519e",
+    "test/helper-a-original-inputs.mjs": "87659161414c69b31fce0a5f706b8ecb8408ce720a9e5332f49bc24183bf8331",
     "test/helper-a-first-capture.mjs": "1a5d1bfd0ec8fbe4d23b6e56a590d774c91e0d38e475731c980a76c061f213e1"
   },
-  "currentFullInputRecheck": "PASS Node20 2/2, no skip/cancel/TODO: final actual caller and strict evaluator; includes pre-freeze capture-clock concordance",
+  "currentFullInputRecheck": "PASS Node20 2/2 final independent-clock correction through actual caller, frozen provenance, strict evaluator, synthetic loss, substitution/direct-import refusal and adverse matrix",
   "completedChecks": {
     "G2_before_final_clock_guard": "30/30 Node20 PASS; final guard separately rechecked in current 2/2 full-input caller cases; no skipped/cancelled cases",
     "coreNativeCurrentSources": "79/79 Node20 PASS, no skipped/cancelled cases",
     "repositoryPython": "7/7 PASS",
     "verifierPython": "2/2 PASS",
-    "currentPackagePinsAndIngress": "14/14 Node24 PASS"
+    "currentPackagePinsAndIngress": "14/14 Node24 PASS",
+    "independentClockPackagePins": "14/14 Node24 PASS"
   },
   "localWorkerControl": {
     "status": "FAIL_RETAINED_NOT_WAIVED",
@@ -200,6 +201,30 @@
       "compressedSha256": "cbd29db0fa2361a10e4a378f23d166fd328e39f032f6e1a57268475fcdf24216",
       "rawBytes": 1556,
       "summary": {}
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-full-inputs-independent-clocks-node20.log.gz",
+      "rawSha256": "85491211fd28f3d01444316fc2abfd2622d87e5eca7ff7e8ff1052bf0535f90e",
+      "compressedSha256": "5c6f4d92e02e88fcc5bbccb9639766fe61e22c4bd9584fd83127da5ec9cd2564",
+      "rawBytes": 2497
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-full-inputs-independent-clocks-node20-v2.log.gz",
+      "rawSha256": "0b3208c11d49fa2d2291667662ace89b92c3179a28b04afcfd16605d0b7fb405",
+      "compressedSha256": "9d020df48b78732b74220b0fe3303080d3cf7a5c48047c159a671b56bdd5edc0",
+      "rawBytes": 849
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-full-inputs-independent-clocks-node20-final.log.gz",
+      "rawSha256": "5bb2af6e8bb86cb3877faf8aeb3432f12de86fb0b160537558f78fbe28c1f9c7",
+      "compressedSha256": "1a5573ecebe88c8a74f811428bef19025238cb5f699dc7f835454f999ed87414",
+      "rawBytes": 850
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-clock-correction-packages-node24.log.gz",
+      "rawSha256": "8fe098355f495b6679825256903df8cc6a98444526c5834fc8dd9c24b8fdec24",
+      "compressedSha256": "f9255e0ee9881aa9ebb5b34f1d8b7aad960d17d01ac3f68b395ec135369dfcb5",
+      "rawBytes": 1555
     }
   ],
   "hostedExactCommit": "PENDING_AFTER_PUBLICATION; final receipt belongs on PR1, not a circular self-commit claim",
@@ -214,5 +239,19 @@
   "policyAdopted": false,
   "genuineAdmissions": 0,
   "acceptanceRowsClosed": 0,
-  "g2TestBoundary": "28 panel cases include actual caller success/adverse/conflict/restart paths and explicitly named native-parser-only adversarial cases. The 2 full-input cases cover actual caller, strict evaluator, loss, substitution/tamper controls and a shared adverse matrix. Counts are not independent market cases."
+  "g2TestBoundary": "28 panel cases include actual caller success/adverse/conflict/restart paths and explicitly named native-parser-only adversarial cases. The 2 full-input cases cover actual caller, strict evaluator, loss, substitution/tamper controls and a shared adverse matrix. Counts are not independent market cases.",
+  "independentClockCorrection": {
+    "parent": "09fb491194d75b94fe62233dd4e4dc16bf6da32a",
+    "status": "PASS Node20 2/2 actual full-input caller/strict evaluator, distinct role clocks and late/future witness negatives, no skips/cancels/TODO",
+    "scope": "Whole-envelope equality corrected to exact URL/body equality plus independently ordered/timely role clocks. Reviews follow both originals; both prior-cap observations precede publication. No G4 body relaxation.",
+    "intermediate": "The first follow-up run had an incorrect witness envelope member reference; its failed run is retained, not a PASS."
+  },
+  "hostedPriorCheckpoint": {
+    "head": "09fb491194d75b94fe62233dd4e4dc16bf6da32a",
+    "run": 42309264704,
+    "stressJob": 128206370695,
+    "stress": "Complete log verified:30/30 consecutive controls, no retry, exact checkout and cleanup",
+    "stressLogSha256": "affdd92e44c6b995727bd3e7b1dd72c9b80f8099e67c462725ca55b27d55c16f",
+    "note": "Prior source only, not relabelled as hosted evidence for the independent-clock correction"
+  }
 }

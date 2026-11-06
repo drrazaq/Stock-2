@@ -153,7 +153,7 @@ export function deriveNativeAEntryPanels(input,entries){
   need([...u.searchParams.keys()].every(k=>['feed','adjustment','timeframe','start','end','limit','sort'].includes(k))&&[...u.searchParams.keys()].every(k=>u.searchParams.getAll(k).length===1)&&(!u.searchParams.has('sort')||u.searchParams.get('sort')==='asc'),'FIRST_ENTRY_BARS_UNKNOWN');
   const frame=u.searchParams.get('timeframe');need(frame===timeframe||frame==='1Day','FIRST_ENTRY_BARS_UNKNOWN');
   const a=panelTime(u.searchParams.get('start')),b=panelTime(u.searchParams.get('end')),received=panelTime(e.bodyReceivedAt);
-  need(a<b&&b<=now&&received<=now,'FIRST_ENTRY_BARS_UNKNOWN');
+  need(a<b&&b<=now&&received<=now&&sourceInstant(e.observedAt)<=BigInt(now)*1000000n,'FIRST_ENTRY_BARS_UNKNOWN');
   const body=captureJson(checked.bytes.toString());
   need(body.symbol===input.symbol&&Array.isArray(body.bars)&&body.bars.length>0&&body.bars.length<=10000&&body.next_page_token===null,'FIRST_ENTRY_BARS_UNKNOWN');
   const rows=[];let previous=-Infinity;
