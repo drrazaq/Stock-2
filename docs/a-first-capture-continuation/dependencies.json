@@ -102,7 +102,7 @@
     "G2": {
       "status": "PARTIAL_IMPLEMENTATION",
       "remaining": "New host no longer predeclares body hashes, but actual event/bar/reference/review inputs and final native dataset still need production-source assembly from acquired originals. Pinned fixture data are not a completed assembler.",
-      "completedSubstep": "Actual host pre-freeze identity/primary/acceptance/entry-quote field concordance from acquired originals, durable entry-facts hash and interruption recovery. Not full native bars/panels/market-cap assembler or source authentication."
+      "completedSubstep": "Actual host pre-freeze identity/primary/acceptance/entry-quote field concordance from acquired originals, durable entry-facts hash and interruption recovery. Not full native bars/panels/market-cap assembler or source authentication. Older synthetic decisions without contemporaneous original facts block followups/evaluation; never retrofilled."
     },
     "G3": {
       "status": "PARTIAL_IMPLEMENTATION",
@@ -110,7 +110,8 @@
     },
     "G4": {
       "status": "IMPLEMENTATION_OPEN",
-      "remaining": "Per-resource witness comparison for mutable submissions/Atom/asset responses. Exact byte equality is conservative UNKNOWN, not a feasible universal live comparison rule. Retain both originals/revisions and require reviewed semantic correspondence."
+      "remaining": "Per-resource witness comparison for mutable submissions/Atom/asset responses. Exact byte equality is conservative UNKNOWN, not a feasible universal live comparison rule. Retain both originals/revisions and require reviewed semantic correspondence.",
+      "disposition": "DEFERRED_CONDITIONAL_NOT_MINIMUM_PATH: strict equality/UNKNOWN stays in force; implement semantic correspondence only if source-feasibility evidence demonstrates need and review approves it."
     },
     "G5": {
       "status": "IMPLEMENTATION_OPEN",
@@ -132,13 +133,21 @@
   "finiteIntegrationPlan": "finite-integration-plan.md",
   "separateWarningScope": "F6 cannot validate A, provide a replacement BUY or count as an A integration dependency.",
   "remainingEngineeringEstimate": {
-    "focusedHoursMin": 54,
-    "focusedHoursMax": 84,
+    "focusedHoursMin": 48,
+    "focusedHoursMax": 74,
     "independentReviewWorkingDays": [
       2,
       5
     ],
     "externalWaiting": "UNBOUNDED_NOT_ESTIMATED",
-    "firstGate": "G2 native required-input source feasibility; stop rather than fabricate originals"
+    "firstGate": "G2 native required-input source feasibility; stop rather than fabricate originals",
+    "conditionalG4Hours": [
+      6,
+      10
+    ],
+    "fullQueueHours": [
+      54,
+      84
+    ]
   }
 }

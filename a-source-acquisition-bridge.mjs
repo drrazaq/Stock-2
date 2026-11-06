@@ -146,7 +146,7 @@ export async function runAFirstCaptureStep({action,store,token,contract,plan,con
   }
   need(active.status==='FOUND'&&active.record.payload.scope===scope,'FIRST_PLAN_REQUIRED');need(active.record.payload.contextHash===contextHash,'FIRST_CONTEXT_CHANGED');
   for(const c of roles){const p=c.store.lookup(c.token,'TRANSPORT',FIRST_ACTIVE);need(p.status==='FOUND'&&evidenceHash(p.record.payload)===evidenceHash(active.record.payload),'FIRST_PLAN_REQUIRED');}
-  need(now>=time(active.record.payload.preparedAt),'FIRST_PLAN_CLOCK_UNKNOWN');const sealed=store.lookup(token,'ORIGINAL',FIRST_DECISION);if(sealed.status==='FOUND')need(now>=time(sealed.record.payload.sealedAt),'FIRST_PLAN_CLOCK_UNKNOWN');
+  need(now>=time(active.record.payload.preparedAt),'FIRST_PLAN_CLOCK_UNKNOWN');const sealed=store.lookup(token,'ORIGINAL',FIRST_DECISION);if(sealed.status==='FOUND'){need(now>=time(sealed.record.payload.sealedAt),'FIRST_PLAN_CLOCK_UNKNOWN');const facts=store.lookup(token,'ORIGINAL',FIRST_FACTS),saved=facts.status==='FOUND'?firstSavedOriginal(store,facts.record,'FIRST_ENTRY_FACTS_REQUIRED'):null;need(saved&&saved.inputHash===sealed.record.payload.inputHash&&evidenceHash(saved)===sealed.record.payload.entryFactsHash,'FIRST_ENTRY_FACTS_REQUIRED');}
   if(action==='capture'){
    const item=plan.items.find(i=>i.id===itemId);need(item,'FIRST_PLAN_ITEM_UNKNOWN');
    if(item.phase==='FOLLOWUP')need(sealed.status==='FOUND','FIRST_FOLLOWUP_BEFORE_DECISION');
@@ -157,7 +157,7 @@ export async function runAFirstCaptureStep({action,store,token,contract,plan,con
   }
   if(action==='freeze-decision'){
    need(decision&&decision.observationId===plan.observationId&&decision.securityId===plan.securityId&&decision.catalyst?.sourceId===active.record.payload.discoveredSourceId,'FIRST_DECISION_REQUIRED');
-   const inputHash=evidenceHash(decision);if(sealed.status==='FOUND'){need(sealed.record.payload.inputHash===inputHash,'FIRST_DECISION_CHANGED');const facts=store.lookup(token,'ORIGINAL',FIRST_FACTS);need(facts.status==='FOUND'&&evidenceHash(firstSavedOriginal(store,facts.record,'FIRST_ENTRY_FACTS_REQUIRED'))===sealed.record.payload.entryFactsHash,'FIRST_ENTRY_FACTS_REQUIRED');return firstResult({status:'FIRST_DECISION_ALREADY_DURABLE',inputHash,sealedAt:sealed.record.payload.sealedAt});}
+   const inputHash=evidenceHash(decision);if(sealed.status==='FOUND'){need(sealed.record.payload.inputHash===inputHash,'FIRST_DECISION_CHANGED');return firstResult({status:'FIRST_DECISION_ALREADY_DURABLE',inputHash,sealedAt:sealed.record.payload.sealedAt});}
    need(now>=time(decision.asOf)&&now<=time(plan.decisionDeadline),'FIRST_DECISION_LATE');
    const bound=[],entries=[];for(const item of plan.items.filter(i=>i.phase==='ENTRY')){const pair=firstRecords(roles,scope,item);firstPair(pair,item,now);need(pair.every(r=>time(r.envelope.bodyReceivedAt)<=time(decision.asOf)),'FIRST_DECISION_LATE');entries.push({itemId:item.id,envelope:pair.find(r=>r.receipt.body.role==='CAPTURE').envelope});bound.push({itemId:item.id,roles:pair.map(r=>({role:r.receipt.body.role,bodySha256:r.envelope.bodySha256,observedAt:r.envelope.observedAt}))});}
    let kept=store.lookup(token,'ORIGINAL',FIRST_PREFIX);
@@ -176,7 +176,6 @@ export async function runAFirstCaptureStep({action,store,token,contract,plan,con
    store.appendImport(scope,token,'ORIGINAL',FIRST_DECISION,payload,Buffer.from(JSON.stringify(decision)));return firstResult({status:'FIRST_DECISION_DURABLE',inputHash,sealedAt:payload.sealedAt});
   }
   need(action==='evaluate','FIRST_STEP_REQUIRED');need(sealed.status==='FOUND','FIRST_DECISION_REQUIRED');
-  const facts=store.lookup(token,'ORIGINAL',FIRST_FACTS);need(facts.status==='FOUND'&&evidenceHash(firstSavedOriginal(store,facts.record,'FIRST_ENTRY_FACTS_REQUIRED'))===sealed.record.payload.entryFactsHash,'FIRST_ENTRY_FACTS_REQUIRED');
   const required=nativeResponseRequirements({request,originalsDirectory});need(required.origin==='SYNTHETIC'&&required.dataset.observations.length===1&&evidenceHash(required.dataset.observations[0])===sealed.record.payload.inputHash&&evidenceHash(required.dataset.policy)===plan.policyHash&&request.fenceToken===token&&required.items.length===plan.items.length,'FIRST_RESPONSE_SET_MISMATCH');
   contextsChecked(contexts,contract,store,required.hosts);need(evidenceHash(required.contract)===plan.contractHash,'FIRST_CONTEXT_CHANGED');const used=new Set();
   for(const item of plan.items){const pair=firstRecords(roles,scope,item);firstPair(pair,item,now);const cap=pair.find(r=>r.receipt.body.role==='CAPTURE').envelope;

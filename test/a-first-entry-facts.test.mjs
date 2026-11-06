@@ -33,3 +33,10 @@ for(const point of ['AFTER_INTENT','AFTER_ORIGINAL','AFTER_RECORD','AFTER_COMMIT
  x.f.store.appendImport=(scope,token,kind,id,payload,bytes)=>{if(!hit&&id===facts){hit=true;return append(scope,token,kind,id,payload,bytes,point);}return append(scope,token,kind,id,payload,bytes);};
  assert.equal((await x.step('freeze-decision',{decisionRef:x.f.raw(x.f.input)})).status,'UNKNOWN');assert.equal(hit,true);const partial=x.snapshot(x.f.root+'/store');x.f.store=createAFencedStore(x.f.root+'/store');assert.equal((await x.step('freeze-decision',{decisionRef:x.f.raw(x.f.input)})).status,'FIRST_DECISION_DURABLE');for(const [file,bytes]of Object.entries({...before,...partial}))assert.deepEqual(fs.readFileSync(x.f.root+'/store/'+file),bytes,file);assert.equal(x.calls.length,count);assert.equal(x.f.store.head().pending,0);
 });
+
+test('old synthetic decisions without original entry facts block followups and evaluation, never retrofill history',async t=>{
+ const x=firstCaptureFixture(t);await entrySources(x);const scope=evidenceHash(x.firstPlan);x.f.store.appendImport(scope,x.f.token,'ORIGINAL',decision,{scope,inputHash:evidenceHash(x.f.input),policyHash:x.firstPlan.policyHash,sealedAt:x.f.input.asOf,nativePrefixHash:'a'.repeat(64)},Buffer.from(JSON.stringify(x.f.input)));
+ const before=x.snapshot(x.f.root+'/store'),calls=x.calls.length,next=x.firstPlan.items.find(i=>i.phase==='FOLLOWUP');x.at(next.notBefore);
+ for(const result of [await x.step('capture',{itemId:next.id}),await x.advance({decisionRef:x.f.raw(x.f.input),requestRef:x.requestRef()}),await x.step('evaluate',{requestRef:x.requestRef()})]){assert.equal(result.status,'UNKNOWN');assert.equal(result.reason,'FIRST_ENTRY_FACTS_REQUIRED');}
+ assert.equal(x.calls.length,calls);assert.equal(x.f.store.lookup(x.f.token,'ORIGINAL',facts).status,'NOT_COMMITTED');for(const [file,bytes]of Object.entries(before))assert.deepEqual(fs.readFileSync(x.f.root+'/store/'+file),bytes,file);
+});
