@@ -6,6 +6,7 @@ import {withOriginals,validateTrustContract} from './a-evidence-contract.mjs';
 import {inspectSourceResponse,sourceInstant} from './a-native-source-join.mjs';
 import {importNativeAEvidence} from './a-native-evidence-importer.mjs';
 import {captureJson} from './capture-json.mjs';
+import {nativeNs} from './a-native-quotes.mjs';
 import {publicFingerprint} from './a-origin-contract.mjs';
 import fs from 'node:fs';import path from 'node:path';
 import {colocatedPrefixPort} from './native-sec-colocated-prefix.mjs';
@@ -78,9 +79,9 @@ export async function runAResponseBoundImport({store,token,request,originalsDire
 
 // First receipt continuation of the SAME host/importer path. Inactive synthetic origins only.
 // Unlike runAResponseBoundImport, this plan contains routes/windows, never expected response hashes.
-const FIRST_REASONS=['FIRST_PLAN_REQUIRED','FIRST_PLAN_CLOCK_UNKNOWN','FIRST_PLAN_ITEM_UNKNOWN','FIRST_PLAN_CONFLICT','FIRST_CONTEXT_CHANGED','FIRST_STEP_REQUIRED','FIRST_ENTRY_NOT_COMPLETE','FIRST_DECISION_REQUIRED','FIRST_DECISION_LATE','FIRST_DECISION_CHANGED','FIRST_RESPONSE_NOT_CAPTURED','FIRST_RESPONSE_SET_MISMATCH','FIRST_CAPTURE_CLOCK_UNKNOWN','FIRST_FOLLOWUP_BEFORE_DECISION','FIRST_ENTRY_ALREADY_FROZEN','FIRST_CAPTURE_NOT_COMPLETE','FIRST_NATIVE_PREFIX_REQUIRED','FIRST_NATIVE_PREFIX_CHANGED','FIRST_NATIVE_PREFIX_UNKNOWN','FIRST_NATIVE_OUTPUT_UNSAFE','FIRST_DISCOVERY_UNKNOWN'];
+const FIRST_REASONS=['FIRST_PLAN_REQUIRED','FIRST_PLAN_CLOCK_UNKNOWN','FIRST_PLAN_ITEM_UNKNOWN','FIRST_PLAN_CONFLICT','FIRST_CONTEXT_CHANGED','FIRST_STEP_REQUIRED','FIRST_ENTRY_NOT_COMPLETE','FIRST_DECISION_REQUIRED','FIRST_DECISION_LATE','FIRST_DECISION_CHANGED','FIRST_RESPONSE_NOT_CAPTURED','FIRST_RESPONSE_SET_MISMATCH','FIRST_CAPTURE_CLOCK_UNKNOWN','FIRST_FOLLOWUP_BEFORE_DECISION','FIRST_ENTRY_ALREADY_FROZEN','FIRST_CAPTURE_NOT_COMPLETE','FIRST_NATIVE_PREFIX_REQUIRED','FIRST_NATIVE_PREFIX_CHANGED','FIRST_NATIVE_PREFIX_UNKNOWN','FIRST_NATIVE_OUTPUT_UNSAFE','FIRST_DISCOVERY_UNKNOWN','FIRST_ENTRY_IDENTITY_UNKNOWN','FIRST_ENTRY_PRIMARY_UNKNOWN','FIRST_ENTRY_QUOTE_UNKNOWN','FIRST_ENTRY_FACTS_REQUIRED'];
 for(const c of FIRST_REASONS)REASONS.add(c);
-const FIRST_ACTIVE='A_FIRST_CAPTURE_ACTIVE_V1',FIRST_DECISION='A_FIRST_CAPTURE_DECISION_V1',FIRST_PREFIX='A_FIRST_CAPTURE_NATIVE_PREFIX_V1',FIRST_DISCOVERY='A_FIRST_CAPTURE_DISCOVERY_PREFIX_V1';
+const FIRST_ACTIVE='A_FIRST_CAPTURE_ACTIVE_V1',FIRST_DECISION='A_FIRST_CAPTURE_DECISION_V1',FIRST_PREFIX='A_FIRST_CAPTURE_NATIVE_PREFIX_V1',FIRST_DISCOVERY='A_FIRST_CAPTURE_DISCOVERY_PREFIX_V1',FIRST_FACTS='A_FIRST_CAPTURE_ENTRY_FACTS_V1';
 const exactKeys=(value,keys)=>value&&Object.keys(value).sort().join('|')===[...keys].sort().join('|');
 export function validateAFirstCapturePlan(plan,contract){
  validateTrustContract(contract);
@@ -93,6 +94,26 @@ const firstContext=contexts=>contexts.map(c=>({role:c.role,collectorId:c.collect
 function firstRecover(store,token,scope,allowForeign=false){if(!store.head().pending)return;const rows=store.inspectImportPending(token);if(rows.every(r=>r.importHash===scope))store.recoverImport(token,scope);else need(allowForeign,'FOREIGN_OR_LEGACY_PENDING_REQUIRES_REVIEW');}
 function firstRecords(contexts,scope,item){return contexts.map(c=>{const r=readAcquired(c,scope,'A_SOURCE_PAIR:'+scope+':'+item.id,c.firstContract);need(r,'FIRST_CAPTURE_NOT_COMPLETE');return r;});}
 function firstPair(pair,item,now){const [a,b]=pair.map(x=>x.envelope);for(const e of [a,b])need(inspectSourceResponse(e).status!=='UNKNOWN'&&e.url===item.url&&time(e.requestStartedAt)>=time(item.notBefore)&&time(e.bodyReceivedAt)<=time(item.deadline)&&time(e.observedAt)<=now,'FIRST_CAPTURE_CLOCK_UNKNOWN');need(a.httpStatus===200&&b.httpStatus===200&&a.bodySha256===b.bodySha256&&a.bodyBase64===b.bodyBase64,'INDEPENDENT_RESPONSE_CONFLICT');}
+// Source-field concordance before entry freeze, using actual retained role responses only.
+// Does not authenticate the network, infer units/firmness, choose a strategy trigger or replace REVIEW.
+function firstEntryFacts(input,entries,archive){
+ const select=(predicate,code)=>{const rows=entries.filter(x=>predicate(new URL(x.envelope.url)));need(rows.length===1,code);return rows[0];};
+ const json=x=>captureJson(Buffer.from(x.envelope.bodyBase64,'base64').toString());
+ const mr=select(u=>u.origin==='https://api.massive.com'&&u.pathname==='/v3/reference/tickers/'+input.symbol,'FIRST_ENTRY_IDENTITY_UNKNOWN'),ar=select(u=>u.origin==='https://paper-api.alpaca.markets'&&u.pathname==='/v2/assets/'+input.symbol,'FIRST_ENTRY_IDENTITY_UNKNOWN');
+ const m=json(mr).results,a=json(ar),cik=String(m?.cik||'').padStart(10,'0'),sr=select(u=>u.href==='https://data.sec.gov/submissions/CIK'+cik+'.json','FIRST_ENTRY_IDENTITY_UNKNOWN'),sec=json(sr),exchanges={XNAS:'NASDAQ',XNYS:'NYSE',XASE:'AMEX',ARCX:'ARCA',BATS:'BATS'};
+ need(m?.ticker===input.symbol&&a.symbol===input.symbol&&/^BBG[A-Z0-9]{9}$/.test(m.share_class_figi||'')&&m.share_class_figi===input.securityId&&/^\d{10}$/.test(cik)&&Number(cik)>0&&Number(sec.cik)===Number(cik)&&input.issuerId==='CIK'+cik,'FIRST_ENTRY_IDENTITY_UNKNOWN');
+ need(input.instrument==='US_COMMON_STOCK'&&m.type==='CS'&&m.active===true&&a.class==='us_equity'&&a.status==='active'&&a.tradable===true&&Object.hasOwn(exchanges,m.primary_exchange)&&exchanges[m.primary_exchange]===a.exchange&&/^[a-f0-9]{8}-[a-f0-9]{4}-[1-5][a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/i.test(a.id||''),'FIRST_ENTRY_IDENTITY_UNKNOWN');
+ const c=input.catalyst,event=archive.observations.find(e=>'SEC_FILING_V1:'+e.issuerCik+':'+e.accession===c.sourceId),pr=select(u=>u.href===c.sourceUrl,'FIRST_ENTRY_PRIMARY_UNKNOWN'),primary=pr.envelope;
+ need(event&&event.issuerCik===cik&&event.nativeEvidenceStatus==='COMPLETE_ORIGINAL_EVIDENCE'&&event.revisionCount===1&&sameClock(event.acceptance.at,c.publishedAt)&&primary.bodySha256===c.documentHash&&sameClock(primary.observedAt,c.observedAt)&&sameClock(primary.bodyReceivedAt,c.observedAt),'FIRST_ENTRY_PRIMARY_UNKNOWN');
+ const proof=archive.acceptanceResponses.find(p=>p.sha256===event.acceptance.sha256),rows=proof&&captureJson(Buffer.from(proof.bodyBase64,'base64').toString()).filings?.recent,ix=rows?.accessionNumber?.indexOf(event.accession),document=ix>=0?rows.primaryDocument?.[ix]:null;
+ need(typeof document==='string'&&/^[A-Za-z0-9_][A-Za-z0-9_.-]{0,199}$/.test(document)&&!document.includes('..')&&rows.form?.[ix]===event.form&&c.sourceUrl==='https://www.sec.gov/Archives/edgar/data/'+Number(cik)+'/'+event.accession.replaceAll('-','')+'/'+document,'FIRST_ENTRY_PRIMARY_UNKNOWN');
+ const qr=select(u=>u.origin==='https://data.alpaca.markets'&&u.pathname==='/v2/stocks/'+input.symbol+'/quotes'&&u.searchParams.get('feed')==='sip','FIRST_ENTRY_QUOTE_UNKNOWN'),payload=json(qr),q=input.quote;
+ need(payload&&Array.isArray(payload.quotes)&&payload.quotes.length<=10000&&payload.next_page_token===null&&(!payload.symbol||payload.symbol===input.symbol),'FIRST_ENTRY_QUOTE_UNKNOWN');
+ let match;try{match=payload.quotes.find(r=>r.t===q.nativeTimestamp&&nativeNs(r.t).toString()===q.nativeTimestampNs&&new Date(Number(nativeNs(r.t)/1000000n)).toISOString()===q.at&&r.bp===q.bid&&r.ap===q.ask&&r.bs===q.bidSize&&r.as===q.askSize&&evidenceHash(r.c)===evidenceHash(q.conditions)&&r.bx===q.bidExchange&&r.ax===q.askExchange&&r.z===q.tape);}catch{throw Error('FIRST_ENTRY_QUOTE_UNKNOWN');}
+ need(match&&q.symbol===input.symbol&&q.securityId===input.securityId&&q.source==='ALPACA_SIP'&&sameClock(q.observedAt,qr.envelope.bodyReceivedAt)&&q.sourceDelayMs===0&&q.evidenceId==='ALPACA_NATIVE_'+evidenceHash({symbol:input.symbol,native:match}),'FIRST_ENTRY_QUOTE_UNKNOWN');
+ return {kind:FIRST_FACTS,version:1,inputHash:evidenceHash(input),sourceFields:{symbol:input.symbol,securityId:m.share_class_figi,issuerCik:cik,providerAssetId:a.id,instrumentType:m.type,eventId:c.sourceId,acceptanceAt:event.acceptance.at,primaryBodySha256:primary.bodySha256,primaryObservedAt:primary.observedAt,quoteNativeTimestamp:match.t,quoteObservedAt:qr.envelope.bodyReceivedAt,quoteNativeHash:evidenceHash(match),requestedFeed:'sip',responseFeedAuthentication:'NOT_ESTABLISHED_BY_REQUEST_PARAMETER'},originals:entries.map(x=>({itemId:x.itemId,envelopeHash:evidenceHash(x.envelope),bodySha256:x.envelope.bodySha256})),unresolved:['SOURCE_AUTHENTICITY','IDENTITY_REVIEW','MATERIALITY_REVIEW_AND_PRIOR_MARKET_CAP','QUOTE_UNITS_AND_FIRMNESS','NATIVE_BARS_AND_PRIOR_PANELS','CALENDAR_AND_OWNER_PROVENANCE','COMPLETE_RISK_SET_AND_CONTROLS'],allowBuy:false,prospectiveAdmissions:0};
+}
+function firstSavedOriginal(store,record,code){const f=store.exportSnapshot().files.find(x=>x.file===record?.original?.file);need(f&&hash(Buffer.from(f.base64,'base64'))===record.original.sha256,code);return captureJson(Buffer.from(f.base64,'base64').toString());}
 const firstResult=extra=>({origin:'SYNTHETIC',sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',captureCompleteness:'FINITE_REQUEST_SET_NOT_STREAM_OR_UNIVERSE_COMPLETENESS',globalFirstIngestionEstablished:false,policyAdopted:false,allowBuy:false,prospectiveAdmissions:0,activation:false,...extra});
 // One bounded, restartable host transition per call; no sleeping across sessions and no live CLI.
 export async function runAFirstCaptureStep({action,store,token,contract,plan,contexts,clock=Date.now,itemId,decision,request,originalsDirectory,native,nativeOutputDirectory}){
@@ -136,9 +157,9 @@ export async function runAFirstCaptureStep({action,store,token,contract,plan,con
   }
   if(action==='freeze-decision'){
    need(decision&&decision.observationId===plan.observationId&&decision.securityId===plan.securityId&&decision.catalyst?.sourceId===active.record.payload.discoveredSourceId,'FIRST_DECISION_REQUIRED');
-   const inputHash=evidenceHash(decision);if(sealed.status==='FOUND'){need(sealed.record.payload.inputHash===inputHash,'FIRST_DECISION_CHANGED');return firstResult({status:'FIRST_DECISION_ALREADY_DURABLE',inputHash,sealedAt:sealed.record.payload.sealedAt});}
+   const inputHash=evidenceHash(decision);if(sealed.status==='FOUND'){need(sealed.record.payload.inputHash===inputHash,'FIRST_DECISION_CHANGED');const facts=store.lookup(token,'ORIGINAL',FIRST_FACTS);need(facts.status==='FOUND'&&evidenceHash(firstSavedOriginal(store,facts.record,'FIRST_ENTRY_FACTS_REQUIRED'))===sealed.record.payload.entryFactsHash,'FIRST_ENTRY_FACTS_REQUIRED');return firstResult({status:'FIRST_DECISION_ALREADY_DURABLE',inputHash,sealedAt:sealed.record.payload.sealedAt});}
    need(now>=time(decision.asOf)&&now<=time(plan.decisionDeadline),'FIRST_DECISION_LATE');
-   const bound=[];for(const item of plan.items.filter(i=>i.phase==='ENTRY')){const pair=firstRecords(roles,scope,item);firstPair(pair,item,now);need(pair.every(r=>time(r.envelope.bodyReceivedAt)<=time(decision.asOf)),'FIRST_DECISION_LATE');bound.push({itemId:item.id,roles:pair.map(r=>({role:r.receipt.body.role,bodySha256:r.envelope.bodySha256,observedAt:r.envelope.observedAt}))});}
+   const bound=[],entries=[];for(const item of plan.items.filter(i=>i.phase==='ENTRY')){const pair=firstRecords(roles,scope,item);firstPair(pair,item,now);need(pair.every(r=>time(r.envelope.bodyReceivedAt)<=time(decision.asOf)),'FIRST_DECISION_LATE');entries.push({itemId:item.id,envelope:pair.find(r=>r.receipt.body.role==='CAPTURE').envelope});bound.push({itemId:item.id,roles:pair.map(r=>({role:r.receipt.body.role,bodySha256:r.envelope.bodySha256,observedAt:r.envelope.observedAt}))});}
    let kept=store.lookup(token,'ORIGINAL',FIRST_PREFIX);
    if(kept.status!=='FOUND'){
     need(native?.directory&&native.expectedRunId&&native.expectedSourceSha,'FIRST_NATIVE_PREFIX_REQUIRED');
@@ -148,11 +169,14 @@ export async function runAFirstCaptureStep({action,store,token,contract,plan,con
     const frozenAt=clock();need(frozenAt>=now&&frozenAt<=time(plan.decisionDeadline),'FIRST_DECISION_LATE');
     store.appendImport(scope,token,'ORIGINAL',FIRST_PREFIX,{scope,sha256:asset.sha256,runId:asset.runId,sourceSha:asset.sourceSha,frozenAt:iso(frozenAt)},Buffer.from(JSON.stringify(asset)));kept=store.lookup(token,'ORIGINAL',FIRST_PREFIX);
    }
-   const payload={scope,inputHash,policyHash:plan.policyHash,sealedAt:iso(clock()),declaredDecisionAt:decision.asOf,entryEvidence:bound,nativePrefixHash:kept.record.payload.sha256};
+   const snapshot=firstSavedOriginal(store,kept.record,'FIRST_NATIVE_PREFIX_CHANGED'),facts=firstEntryFacts(decision,entries,validateNativeEvidenceAsset(snapshot)),entryFactsHash=evidenceHash(facts);
+   store.appendImport(scope,token,'ORIGINAL',FIRST_FACTS,{scope,inputHash,entryFactsHash},Buffer.from(JSON.stringify(facts)));
+   const payload={scope,inputHash,entryFactsHash,policyHash:plan.policyHash,sealedAt:iso(clock()),declaredDecisionAt:decision.asOf,entryEvidence:bound,nativePrefixHash:kept.record.payload.sha256};
    need(time(payload.sealedAt)<=time(plan.decisionDeadline),'FIRST_DECISION_LATE');
    store.appendImport(scope,token,'ORIGINAL',FIRST_DECISION,payload,Buffer.from(JSON.stringify(decision)));return firstResult({status:'FIRST_DECISION_DURABLE',inputHash,sealedAt:payload.sealedAt});
   }
   need(action==='evaluate','FIRST_STEP_REQUIRED');need(sealed.status==='FOUND','FIRST_DECISION_REQUIRED');
+  const facts=store.lookup(token,'ORIGINAL',FIRST_FACTS);need(facts.status==='FOUND'&&evidenceHash(firstSavedOriginal(store,facts.record,'FIRST_ENTRY_FACTS_REQUIRED'))===sealed.record.payload.entryFactsHash,'FIRST_ENTRY_FACTS_REQUIRED');
   const required=nativeResponseRequirements({request,originalsDirectory});need(required.origin==='SYNTHETIC'&&required.dataset.observations.length===1&&evidenceHash(required.dataset.observations[0])===sealed.record.payload.inputHash&&evidenceHash(required.dataset.policy)===plan.policyHash&&request.fenceToken===token&&required.items.length===plan.items.length,'FIRST_RESPONSE_SET_MISMATCH');
   contextsChecked(contexts,contract,store,required.hosts);need(evidenceHash(required.contract)===plan.contractHash,'FIRST_CONTEXT_CHANGED');const used=new Set();
   for(const item of plan.items){const pair=firstRecords(roles,scope,item);firstPair(pair,item,now);const cap=pair.find(r=>r.receipt.body.role==='CAPTURE').envelope;
@@ -166,7 +190,7 @@ export async function runAFirstCaptureStep({action,store,token,contract,plan,con
   const config=request.nativeRuns?.[plan.observationId];need(config?.expectedRunId===asset.runId&&config.expectedSourceSha===asset.sourceSha,'FIRST_NATIVE_PREFIX_CHANGED');
   const directory=firstNativeView(nativeOutputDirectory,asset),effectiveRequest={...request,nativeRuns:{[plan.observationId]:{directory,expectedRunId:asset.runId,expectedSourceSha:asset.sourceSha}}};
   const result=importNativeAEvidence({store,token,request:effectiveRequest,originalsDirectory});
-  const audit={planHash:scope,discoveryPrefixHash:active.record.payload.discoveryPrefixHash,discoveredSourceId:active.record.payload.discoveredSourceId,preparedAt:active.record.payload.preparedAt,decisionSealedAt:sealed.record.payload.sealedAt,nativePrefixHash:asset.sha256,nativePrefixFrozenAt:prefix.record.payload.frozenAt,inputHash:sealed.record.payload.inputHash,requestPairs:used.size,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',completeness:'FINITE_REQUEST_SET_ONLY',originalIngestion:'LOCAL_RECEIPT_ONLY_NOT_GLOBAL_HISTORY'};
+  const audit={planHash:scope,discoveryPrefixHash:active.record.payload.discoveryPrefixHash,discoveredSourceId:active.record.payload.discoveredSourceId,preparedAt:active.record.payload.preparedAt,decisionSealedAt:sealed.record.payload.sealedAt,nativePrefixHash:asset.sha256,nativePrefixFrozenAt:prefix.record.payload.frozenAt,inputHash:sealed.record.payload.inputHash,entryFactsHash:sealed.record.payload.entryFactsHash,requestPairs:used.size,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',completeness:'FINITE_REQUEST_SET_ONLY',originalIngestion:'LOCAL_RECEIPT_ONLY_NOT_GLOBAL_HISTORY'};
   if(result.reportRef){const logicalId='A_FIRST_CAPTURE_EVALUATION:'+result.reportRef.sha256,prior=store.lookup(token,'TRANSPORT',logicalId);if(prior.status==='FOUND')need(evidenceHash(prior.record.payload.audit)===evidenceHash(audit),'FIRST_CONTEXT_CHANGED');else store.appendImport(scope,token,'TRANSPORT',logicalId,{scope,audit,nativeReportRef:result.reportRef,evaluatedAt:iso(clock())});}
   return {...result,firstCapture:audit,activation:false};
  }catch(e){return firstResult({status:'UNKNOWN',reason:reason(e),reportSaved:false});}
