@@ -52,6 +52,11 @@
       "dependency": "Private custody and end-to-end recovered originals",
       "needed": "Supported dedicated private location, actual quota/headroom and reviewed upload/readback/recovery execution",
       "notSufficient": "Financial mirror references or an unverified encryption key binding"
+    },
+    {
+      "dependency": "Raw local spool protection",
+      "needed": "Explicitly reviewed private-host encryption-at-rest/retention and capacity for plaintext0600 local packets. Not an encrypted upload; no historical custody allocation automatically covers it.",
+      "notSufficient": "Private POSIX mode alone as a licence/at-rest encryption claim"
     }
   ],
   "ownerDecisions": "policy-decisions.md; none adopted; no decision needed for ongoing offline engineering",
@@ -76,6 +81,51 @@
     "additionalNativeViewMaxBytes": 4194304,
     "technicalPlanHorizonDays": 14,
     "observationsPerPlan": 1,
-    "approvedAcquisitionScope": false
+    "approvedAcquisitionScope": false,
+    "privateSpoolLogicalFilesPerRole": 33,
+    "privateSpoolFileMaxBytes": 2097152,
+    "privateSpoolMaxBytesPerRole": 69206016,
+    "combinedPrivateSpoolMaxBytes": 138412032,
+    "engineeringMaximumStoresSpoolsAndNativeViewBeforeInputsBytes": 192937984,
+    "quotaNote": "184MiB engineering worst-case before pinned inputs, not approved collection/custody allowance. Does not change historical12case/156request/raw-sealed caps; future A quota must explicitly include private spools."
+  },
+  "claudeReview": {
+    "commit": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+    "source": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+    "priorPasses": "Bounded client/strict replay/two-process budget PASS; B retired/C stop supported; not an independent PASS on current follow-up."
+  },
+  "reviewFindings": {
+    "P1": {
+      "status": "IMPLEMENTED_OFFLINE_REVIEW_PENDING",
+      "repair": "Private0600 response spool with fsync/readback before contended publication/signing. Only definitive WRITER_BUSY retries, max6attempts/backoff25+50+100+200+400ms/2s scheduling budget between calls, existing15s store-worker bound still applies. No GET/uncertain-write retry. Full/partial/receipt and separate-process crash paths tested."
+    },
+    "G2": {
+      "status": "PARTIAL_IMPLEMENTATION",
+      "remaining": "New host no longer predeclares body hashes, but actual event/bar/reference/review inputs and final native dataset still need production-source assembly from acquired originals. Pinned fixture data are not a completed assembler."
+    },
+    "G3": {
+      "status": "PARTIAL_IMPLEMENTATION",
+      "remaining": "Per-case clocks/discovery-before-plan and pre-entry durable input are enforced; protocol-derived global risk set/template/clock publication before events remains unfrozen/unimplemented."
+    },
+    "G4": {
+      "status": "IMPLEMENTATION_OPEN",
+      "remaining": "Per-resource witness comparison for mutable submissions/Atom/asset responses. Exact byte equality is conservative UNKNOWN, not a feasible universal live comparison rule. Retain both originals/revisions and require reviewed semantic correspondence."
+    },
+    "G5": {
+      "status": "IMPLEMENTATION_OPEN",
+      "remaining": "Wire existing SIP streaming collector/native frame originals into actual importer for all possible exit/close windows. REST after slot.end cannot meet unchanged timely-frame rules; do not backdate or relax them."
+    },
+    "G6": {
+      "status": "IMPLEMENTATION_OPEN",
+      "remaining": "Separate actual CAPTURE/WITNESS role workers plus authenticated immutable merge. Current host invokes both ports in one process; process-race/crash tests do not demonstrate deployed role independence."
+    },
+    "G7": {
+      "status": "PARTIAL_IMPLEMENTATION_AND_EXTERNAL",
+      "remaining": "Actual native discovery/readiness exists; live candidate dispatch, independent REVIEW claims and authoritative existing OWNER/ZAD state must arrive before expiry. No fabricated confirmations or forced real commands."
+    },
+    "G8": {
+      "status": "IMPLEMENTATION_OPEN",
+      "remaining": "Global fenced per-session/day budget across plans/runs/role clients, parameterized by a separately reviewed exact whole-pilot limit. Per-plan64 is not that global limit."
+    }
   }
 }

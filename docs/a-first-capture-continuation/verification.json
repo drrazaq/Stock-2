@@ -147,5 +147,156 @@
     "pass": 10,
     "fail": 0,
     "skip": 0
+  },
+  "followupP1": {
+    "priorSource": "3c0ec3fd3e33b7b2fa19f59d777ba8f8e8dff2f3",
+    "independentReview": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+    "priorPassesPreserved": true,
+    "independentCurrentReview": "PENDING",
+    "reproducedOriginal": "External flock after successful GET loses raw body; desired regression FAILS on unmodified3c control",
+    "finalTargetedNode20": {
+      "tests": 18,
+      "pass": 18,
+      "fail": 0,
+      "skip": 0
+    },
+    "finalTargetedNode24": {
+      "tests": 18,
+      "pass": 18,
+      "fail": 0,
+      "skip": 0
+    },
+    "legacyBridgeNode20": {
+      "tests": 32,
+      "pass": 32,
+      "fail": 0,
+      "skip": 0
+    },
+    "finalBoundedSpoolNode20": {
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skip": 0
+    },
+    "requestRacePreserved": {
+      "selectedPass": 1,
+      "otherSkipped": 31
+    },
+    "finalPositiveAfterBoundedDirectoryHelper": {
+      "executed": 1,
+      "pass": 1,
+      "fail": 0,
+      "otherScenariosExplicitlySkipped": 11,
+      "milliseconds": 119642
+    },
+    "ingressCorrection": {
+      "tests": 4,
+      "pass": 4,
+      "priorHosted": "3c0ec3fd5/6PASS; only tests/market03-ingress-matrix failed (stale generated SEC route). Assertion retained; actual generated matrix repaired."
+    },
+    "limitsNote": "2s retry scheduling between definitive WRITER_BUSY calls, up to6attempts/775ms planned waits; each existing store worker still bounded15s. No GET/uncertain-write retry.184MiB worst technical stores/spools/view before inputs, not an approved custody quota.",
+    "spoolPrivacy": "Plaintext local0600 inside0700 roots, not encrypted upload; future host encryption/retention/private custody must be reviewed. No real data/keys used.",
+    "G2_G8": "Explicit PARTIAL/OPEN in dependencies.json, not falsely closed",
+    "logs": {
+      "a-first-p1-claude-reproduced.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-claude-reproduced.log.gz",
+        "sha256": "7bfb5d9f8015879ecff201f9bbd99088f00edd2135556a587198957d5f32e410",
+        "uncompressedSha256": "aac53a8ccf4de7e9ee8d2c655f38d97044a1d3725fd3a8677425d5d6ca6e4d18",
+        "uncompressedBytes": 268
+      },
+      "a-first-p1-desired-control-fails.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-desired-control-fails.log.gz",
+        "sha256": "4c29299fa68b69fd16ae2c245eab683aaf67859746205a93393594e2e54ee55b",
+        "uncompressedSha256": "c01dadc355d77b16a4de4fed0f1466018069174bc50b5fc073f7e6cba1365e62",
+        "uncompressedBytes": 2834
+      },
+      "a-first-p1-host-final20.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-host-final20.log.gz",
+        "sha256": "7ee687847e36965b6c2e66b4f42c0f36858566cffa9e3382162d939ff71fcca3",
+        "uncompressedSha256": "34acf25ef3acda75bd1aa9bb32481f1641f74075168c9d81cdae7fd46e46444c",
+        "uncompressedBytes": 4555
+      },
+      "a-first-p1-final24.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-final24.log.gz",
+        "sha256": "eaa1111685f17c61077753216ad777ec426ab2f9b4138e51c3994f1147e1af4a",
+        "uncompressedSha256": "ffc4287a38b09b4da6cef46ec23876fc469a9a411dd41c1ae7f756bc4ec49b99",
+        "uncompressedBytes": 2177
+      },
+      "a-first-p1-legacy-final20.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-legacy-final20.log.gz",
+        "sha256": "c27a1b253586ce33482fc55e1ff2c4c9d37bcee2f6749fd844acc45c41c30b7d",
+        "uncompressedSha256": "5bd1313ece324810e3f6894b3edbe0e22f33e5ea72aba670eb9ab88141870bd0",
+        "uncompressedBytes": 6475
+      },
+      "a-first-p1-final-bounded20.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-final-bounded20.log.gz",
+        "sha256": "76589f3c1f2534875b671f6dfbdefb5a3513aac2bec1b4a2a7c999172793b8df",
+        "uncompressedSha256": "858b838798fc8efa4fd7d1e8d82df853136a281bff3f9515401849838750bafa",
+        "uncompressedBytes": 1599
+      },
+      "a-first-p1-preserved-race20.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-preserved-race20.log.gz",
+        "sha256": "93f8b414da4e3dbcf79033ea7ecdc34a6b851654836558e4ecdb4a8c6ddd8bea",
+        "uncompressedSha256": "af35ed723cf73134d3c739fda5a9c15e6138cc545a2b029eaea12266cda276e0",
+        "uncompressedBytes": 7637
+      },
+      "a-first-p1-ingress-check.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-ingress-check.log.gz",
+        "sha256": "f61a93c0764565ddcc61f041ad02e291773b132e54ea4b3fd08774192b2d2b76",
+        "uncompressedSha256": "45228c06d5cedd66cb98e414e8255c36067ee4846d4ff48c25c9737ea033a2fd",
+        "uncompressedBytes": 844
+      },
+      "a-first-3c-hosted-failed-complete.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-3c-hosted-failed-complete.log.gz",
+        "sha256": "42884f6ed06854146987acae305bef2da8e1221bbf23f19db34e54321fc27fd4",
+        "uncompressedSha256": "bbcb820d9c4768417b99874c4f0dc0bdad711b4adf9c5a39eb1dd4b34716c4ed",
+        "uncompressedBytes": 1746123
+      },
+      "a-first-p1-final-positive20.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-final-positive20.log.gz",
+        "sha256": "70fe7a0e96eb979e1855a0eb72a0cc4ea45dd982acda8ce82520ca70ae6b2fca",
+        "uncompressedSha256": "0b1eebc95b679e03d64b476cfca4caf99161ad2a0626d92635e2c734a97bed57",
+        "uncompressedBytes": 3478
+      },
+      "a-first-p1-python-final.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-python-final.log.gz",
+        "sha256": "40f80a2342e58a894215e7b07a572936625494eaae9fc798ae26adca66e3e281",
+        "uncompressedSha256": "75bb3e89fc87a2004d77e6da4c1d85aaeb5bf550505c842e7e3303d55b31684c",
+        "uncompressedBytes": 138
+      },
+      "a-first-p1-spool-link20.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-spool-link20.log.gz",
+        "sha256": "dc995cb7dd805087b9cda3a3745ab141e176784c270c89e9a3bc5191b163a7ad",
+        "uncompressedSha256": "07d1126d0dc9bcce198bda5875dc61165dfe5bbdf0306de776ac6a72462ea291",
+        "uncompressedBytes": 1783
+      },
+      "a-first-p1-final-spool24.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-final-spool24.log.gz",
+        "sha256": "c338918f3dcc029f18c3e592b8e95b595050ba60f0211fa972b9d752b31419f9",
+        "uncompressedSha256": "29217cd05ab4c11afa52f659a7439180a0f99f96f89be239bd48b662c2319c96",
+        "uncompressedBytes": 805
+      },
+      "a-first-p1-pins-sealed20.log": {
+        "archive": "docs/a-first-capture-continuation/evidence/a-first-p1-pins-sealed20.log.gz",
+        "sha256": "2936ab97a61e5d5a32d7bf4e56049b2b784bb3a9720da35783dd1dcee1385195",
+        "uncompressedSha256": "6c3b64e6aad5bbb3a28c626f382d739ef6c9a934b881a125c4bcb6361a85c2ae",
+        "uncompressedBytes": 3283
+      }
+    },
+    "fullNode24Stage": "18/18 before bounded metadata-reader helper; current6spool checks run separately before publication.",
+    "finalNode24Spool": {
+      "tests": 6,
+      "pass": 6,
+      "fail": 0,
+      "skip": 0
+    },
+    "finalPackageAndMatrixNode20": {
+      "tests": 14,
+      "pass": 14,
+      "fail": 0,
+      "skip": 0
+    },
+    "privateSpoolBoundedDirectoryEnumeration": true,
+    "avoidanceEvidence": "Original gross F6/F4 warning results inspected, no performance rerun; source/code hashes pinned. Not an executable BUY/SELL-profit result."
   }
 }

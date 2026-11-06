@@ -1,0 +1,227 @@
+{
+  "source": "data/squad29-lab.json",
+  "sha256": "bec398e769170ecdbcbf5b0067ccf31db523a794eac13086c9cacd583924b925",
+  "core": "squad29-core.mjs",
+  "coreSha256": "ca2d3b75ec2ff143a29302e47f3a874a66fe539eaa2c826f8f3f67baec98ae06",
+  "frozenWindow": [
+    "2021-10-12",
+    "2026-10-26"
+  ],
+  "sourceInspectionOnly": true,
+  "newExperiment": false,
+  "economicType": "HISTORICAL_GROSS_AVOIDANCE_ASSOCIATION_NOT_TRADING_PROFIT",
+  "executionLimit": "Open-to-close gross paths, positive cap300%, stopped trading modeled as -100%; no fresh BBO or feasible exit/fill proof.",
+  "families": {
+    "SQ29-F4-LATEFILE": {
+      "verdict": "SELL-WARNING",
+      "qualifiedWarningHorizons": [
+        60
+      ],
+      "why": "underperformed the average stock by 3%+ with block t <= -2.5 and n >= 20 in both halves over 60 sessions",
+      "results": {
+        "5": {
+          "older": {
+            "n": 335,
+            "mean": -0.0357,
+            "median": -0.0391,
+            "avgStock": -0.016,
+            "excess": -0.0197,
+            "medianExcess": -0.0198,
+            "pctUnder": 0.606,
+            "blockT": -1.6884,
+            "blocks": 24,
+            "stopped": 0,
+            "vsOwn": -0.0232,
+            "nOwn": 318
+          },
+          "newer": {
+            "n": 382,
+            "mean": -0.0403,
+            "median": -0.0244,
+            "avgStock": -0.0082,
+            "excess": -0.0321,
+            "medianExcess": -0.017,
+            "pctUnder": 0.5942,
+            "blockT": -1.7261,
+            "blocks": 32,
+            "stopped": 0.0052,
+            "vsOwn": -0.0177,
+            "nOwn": 368
+          }
+        },
+        "20": {
+          "older": {
+            "n": 333,
+            "mean": -0.0766,
+            "median": -0.0594,
+            "avgStock": -0.0246,
+            "excess": -0.052,
+            "medianExcess": -0.0371,
+            "pctUnder": 0.6066,
+            "blockT": -2.2085,
+            "blocks": 24,
+            "stopped": 0.003,
+            "vsOwn": -0.0154,
+            "nOwn": 300
+          },
+          "newer": {
+            "n": 380,
+            "mean": -0.1071,
+            "median": -0.0884,
+            "avgStock": -0.0022,
+            "excess": -0.1049,
+            "medianExcess": -0.0745,
+            "pctUnder": 0.6316,
+            "blockT": -3.7836,
+            "blocks": 32,
+            "stopped": 0.0105,
+            "vsOwn": -0.0345,
+            "nOwn": 327
+          }
+        },
+        "60": {
+          "older": {
+            "n": 332,
+            "mean": -0.1897,
+            "median": -0.1953,
+            "avgStock": -0.0645,
+            "excess": -0.1252,
+            "medianExcess": -0.1027,
+            "pctUnder": 0.6867,
+            "blockT": -5.7897,
+            "blocks": 9,
+            "stopped": 0.006,
+            "vsOwn": -0.0873,
+            "nOwn": 230
+          },
+          "newer": {
+            "n": 363,
+            "mean": -0.1475,
+            "median": -0.1171,
+            "avgStock": 0.0157,
+            "excess": -0.1632,
+            "medianExcess": -0.13,
+            "pctUnder": 0.6887,
+            "blockT": -6.2229,
+            "blocks": 10,
+            "stopped": 0.022,
+            "vsOwn": 0.0097,
+            "nOwn": 242
+          }
+        }
+      },
+      "excluded": {
+        "artifact": 7,
+        "noReturn": 0,
+        "noYardstick": 0
+      },
+      "sample20Count": 400
+    },
+    "SQ29-F6-DELISTNOTICE": {
+      "verdict": "SELL-WARNING",
+      "qualifiedWarningHorizons": [
+        20,
+        60
+      ],
+      "why": "underperformed the average stock by 3%+ with block t <= -2.5 and n >= 20 in both halves over 20 and 60 sessions",
+      "results": {
+        "5": {
+          "older": {
+            "n": 445,
+            "mean": -0.2959,
+            "median": -0.0763,
+            "avgStock": -0.0043,
+            "excess": -0.2916,
+            "medianExcess": -0.0573,
+            "pctUnder": 0.7079,
+            "blockT": -16.3753,
+            "blocks": 26,
+            "stopped": 0.2764,
+            "vsOwn": -0.2673,
+            "nOwn": 414
+          },
+          "newer": {
+            "n": 657,
+            "mean": -0.3186,
+            "median": -0.1056,
+            "avgStock": -0.0013,
+            "excess": -0.3173,
+            "medianExcess": -0.1014,
+            "pctUnder": 0.7184,
+            "blockT": -13.8729,
+            "blocks": 35,
+            "stopped": 0.2953,
+            "vsOwn": -0.3055,
+            "nOwn": 626
+          }
+        },
+        "20": {
+          "older": {
+            "n": 445,
+            "mean": -0.3376,
+            "median": -0.1791,
+            "avgStock": -0.007,
+            "excess": -0.3306,
+            "medianExcess": -0.1425,
+            "pctUnder": 0.7551,
+            "blockT": -18.0832,
+            "blocks": 26,
+            "stopped": 0.2899,
+            "vsOwn": -0.2696,
+            "nOwn": 371
+          },
+          "newer": {
+            "n": 641,
+            "mean": -0.4089,
+            "median": -0.2924,
+            "avgStock": -0.0023,
+            "excess": -0.4066,
+            "medianExcess": -0.2877,
+            "pctUnder": 0.805,
+            "blockT": -20.3951,
+            "blocks": 34,
+            "stopped": 0.3105,
+            "vsOwn": -0.3554,
+            "nOwn": 558
+          }
+        },
+        "60": {
+          "older": {
+            "n": 441,
+            "mean": -0.4115,
+            "median": -0.343,
+            "avgStock": -0.0264,
+            "excess": -0.3852,
+            "medianExcess": -0.3296,
+            "pctUnder": 0.7664,
+            "blockT": -12.417,
+            "blocks": 9,
+            "stopped": 0.3197,
+            "vsOwn": -0.3123,
+            "nOwn": 276
+          },
+          "newer": {
+            "n": 598,
+            "mean": -0.4981,
+            "median": -0.5562,
+            "avgStock": 0.005,
+            "excess": -0.5031,
+            "medianExcess": -0.5489,
+            "pctUnder": 0.8445,
+            "blockT": -20.0186,
+            "blocks": 12,
+            "stopped": 0.3395,
+            "vsOwn": -0.4155,
+            "nOwn": 418
+          }
+        }
+      },
+      "excluded": {
+        "artifact": 19,
+        "noReturn": 0,
+        "noYardstick": 0
+      },
+      "sample20Count": 400
+    }
+  }
+}

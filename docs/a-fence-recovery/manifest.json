@@ -9,7 +9,7 @@
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
-    "docs/a-native-source-join/manifest.json": "71bf6703e44c910706da629738d3164962de22299e8df20f7b2fbfdd38a42608",
+    "docs/a-native-source-join/manifest.json": "7b4f701ab4c01d47bdcc99dc96762061a1391acf9c2d8acb8bfce553f9971354",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
     "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
@@ -158,6 +158,18 @@
           "file": ".github/workflows/tests.yml",
           "priorSha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4",
           "sha256": "84331ec3e35f94c3b0b6b52c49160df663b8ffc7e39f4b1d403ef4bee2f96252"
+        }
+      ]
+    },
+    {
+      "base": "3c0ec3fd3e33b7b2fa19f59d777ba8f8e8dff2f3",
+      "review": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+      "reason": "P1 private response durability and bounded definitive-busy retry; generated ingress metadata correction. Prior execution evidence remains attributed to its original commit.",
+      "changes": [
+        {
+          "file": "docs/a-native-source-join/manifest.json",
+          "previousSha256": "71bf6703e44c910706da629738d3164962de22299e8df20f7b2fbfdd38a42608",
+          "sha256": "7b4f701ab4c01d47bdcc99dc96762061a1391acf9c2d8acb8bfce553f9971354"
         }
       ]
     }
