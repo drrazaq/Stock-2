@@ -6,7 +6,8 @@
 //   - a value is shown only if its unit is known and matches the series, and the number lies in a conservative plausible band for that
 //     series; otherwise the figure is UNKNOWN (never shown under a series it may not belong to).
 //   - consensus forecasts (a market estimate) are kept apart from released/previous values, each with its source and retrieval time.
-//   - a provider "previous" value is labelled with its vintage: it is the value published BEFORE this release and may be revised in it.
+//   - (r2) provider values are labelled AS RETRIEVED, with their real retrieval time versus the release time (before / after / UNKNOWN);
+//     a field name never certifies a pre-release vintage. A missing or invalid retrieval time is UNKNOWN and is shown as such (r3).
 //   - headline and subsidiary series of one release are separate entries; a subsidiary never renames or replaces the headline.
 // The pre-registered calendar STUDY (MODE=study, C.hist) is not changed by this module.
 
@@ -164,7 +165,8 @@ export function mergeEconRows(official, provider, { providerAt = null } = {}) {
 const monthShift = (ym, k) => { const d = new Date(Date.UTC(+ym.slice(0, 4), +ym.slice(5, 7) - 1 + k, 1)); return d.toISOString().slice(0, 10); };
 export function fillOfficialActual(r, av, avAtBy) {
   if (!r || r.schema !== 2 || !r.ref || !av) return; const m = /^(January|February|March|April|May|June|July|August|September|October|November|December) (\d{4})$/.exec(r.ref); if (!m) return;
-  const rm = m[2] + '-' + String(FULLM.indexOf(m[1].toLowerCase()) + 1).padStart(2, '0') + '-01', at = (ser) => (avAtBy && typeof avAtBy === 'object' ? avAtBy[ser] : avAtBy) || null;
+  // (r3, Codex 68c4bf45 R4) only a parseable retrieval time is kept; a missing or invalid one stays null (shown as UNKNOWN), never fabricated or backfilled
+  const rm = m[2] + '-' + String(FULLM.indexOf(m[1].toLowerCase()) + 1).padStart(2, '0') + '-01', at = (ser) => { const v = avAtBy && typeof avAtBy === 'object' ? avAtBy[ser] : avAtBy; return typeof v === 'string' && Number.isFinite(Date.parse(v)) ? v : null; };
   const level = (ser, date) => { const a = av[ser]; if (!Array.isArray(a)) return null; const hits = a.filter(x => Array.isArray(x) && x[0] === date); if (hits.length !== 1) return null; const v = hits[0][1]; return typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null; };
   const both = (ser, k, f) => { const x = level(ser, rm), y = level(ser, monthShift(rm, k)); return x === null || y === null ? null : f(x, y); };
   const want = { PAYROLLS_TOTAL: ['NFP', () => both('NFP', -1, (x, y) => Math.round(x - y))], UNEMPLOYMENT_RATE: ['UNEMP', () => level('UNEMP', rm)],

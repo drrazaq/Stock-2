@@ -174,4 +174,26 @@ test('production reader macroNow: a headline surprise keeps its exact study key;
     const M = S.fn('macroNow')(); assert.equal(M.filter(m => /nonfarm payrolls/.test(m.key)).length, want, JSON.stringify(M)); }
 });
 
+
+// ---- r3: Codex review 68c4bf45, remaining R4 (unknown retrieval clock), through the actual job and the actual "calendar" reply
+const nfpLevels = () => { const [y, mo] = [refOf(D2).split(' ')[1], FULL.indexOf(refOf(D2).split(' ')[0])]; return [[y + '-' + String(mo + 1).padStart(2, '0') + '-01', 150050], [new Date(Date.UTC(+y, mo - 1, 1)).toISOString().slice(0, 10), 150000]]; };
+const nfpLine = (text) => text.split('\n').find(l => l.includes('Nonfarm payrolls (monthly change)') && l.includes('Alpha Vantage'));
+for (const [label, seedClock] of [['missing', {}], ['invalid', { avAt: 'not-a-date', avAtBy: { NFP: 'not-a-date' } }]])
+  test('R4 (r3): a cached actual with a ' + label + ' retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim', async () => {
+    const { C, text } = await show({ rows: [], seed: { hist: [], holidays: [], div: {}, av: { NFP: nfpLevels() }, ...seedClock } }), a = C.econ.find(x => x.release === 'empsit').series.find(x => x.id === 'PAYROLLS_TOTAL').actual;
+    assert.equal(a.v, 50); assert.equal(a.retrievedAt, null);
+    const l = nfpLine(text); assert.ok(l, text); assert.match(l, /\[actual Alpha Vantage \(BLS series NFP\), retrieval time UNKNOWN\]/); assert.doesNotMatch(l, /\d{4}-\d\d-\d\d\]|before the release|after the release|not-a-date/);
+  });
+test('R4 (r3) control: a timestamped cached actual keeps its real retrieval date', async () => {
+  const at = new Date(Date.now() - 864e5).toISOString(), { C, text } = await show({ rows: [], seed: { hist: [], holidays: [], div: {}, av: { NFP: nfpLevels() }, avAt: at, avAtBy: { NFP: at } } });
+  assert.equal(C.econ.find(x => x.release === 'empsit').series.find(x => x.id === 'PAYROLLS_TOTAL').actual.retrievedAt, at);
+  assert.match(nfpLine(text), new RegExp('\\[actual Alpha Vantage \\(BLS series NFP\\) ' + at.slice(0, 10) + '\\]')); assert.doesNotMatch(nfpLine(text), /UNKNOWN/);
+});
+test('R4 (r3): provider figures with an unknown retrieval time make no release-timing claim; footnote cites no fetch date', async () => {
+  const rows = mergeEconRows([], [{ t: D1 + 'T13:30:00Z', name: 'Initial Jobless Claims', fcRaw: '195K', prevRaw: '190K' }], { providerAt: null }), S = await scanWith(seal({ updated: new Date().toISOString(), econ: rows, hist: [], holidays: [], div: {} }));
+  const full = S.fn('calendarText')(false), short = S.fn('calendarText')(true);
+  assert.match(full, /\[consensus TipRanks, retrieval time UNKNOWN; previous TipRanks, retrieval time UNKNOWN\]/); assert.doesNotMatch(full, /retrieved (before|after) the release/);
+  assert.doesNotMatch(short, /Consensus and previous figures: TipRanks, as retrieved/);
+});
+
 test('all requests stayed synthetic and offline', () => assert.deepEqual(blocked, []));

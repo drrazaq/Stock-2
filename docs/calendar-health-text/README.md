@@ -1,4 +1,15 @@
-# Calendar exact series, health-text qualification and SEC 404 wording (revision 2): development only, not deployed
+# Calendar exact series, health-text qualification and SEC 404 wording (revision 3): development only, not deployed
+
+## Revision 3: Codex review `68c4bf45` (remaining part of R4) repaired
+
+Codex closed R1, R2, R3, R5 and R6 on r2, and found one remaining R4 case: a cached actual with no retrieval time showed **no** clock at all.
+- **Producer** (`econ-series.mjs`): only a parseable retrieval time is kept. A missing or invalid one stays `null`; it is never fabricated or backfilled.
+- **Formatter** (`scan.mjs`): any value whose retrieval time is missing or invalid now reads **"retrieval time UNKNOWN"**, with no date, no freshness claim and no before/after-release claim. The "as retrieved" footnote cites only valid fetch dates.
+- **Timestamped control:** keeps its real date.
+- **Tests:** Codex's harness (`docs/reviews/calendar-health-768883ea/r4-unknown-clock.test.mjs` @ `68c4bf45`) gives **10/10** on r3 (9/10 on r2). The package's own tests add missing-clock, invalid-clock, timestamped-control and provider-unknown-clock cases through the actual job and the `calendar` reply.
+
+The sections below describe r2 and the original r1. Where r1 wording was superseded, it is corrected or marked historical.
+
 
 ## Revision 2: Codex review `046877af` (CHANGES REQUIRED), all six findings repaired
 
@@ -47,7 +58,7 @@ All 5 release **dates and times** in the message were correct. Consensus forecas
 1. **`econ-series.mjs` (new, pure):**
    - an exact series registry with id, unit, conservative plausible band, reference-period rule and headline/subsidiary role, plus the official release list with its public schedule URL;
    - each provider row maps by **exact name** to one series, or to nothing (UNKNOWN). A value is shown only when its unit is stated and matches the series and the number is inside the band; otherwise it is UNKNOWN with the reason;
-   - consensus, previous and actual are separate fields, each with source and retrieval time. Previous carries the vintage `PUBLISHED_BEFORE_THIS_RELEASE_MAY_BE_REVISED`;
+   - consensus, previous and actual are separate fields, each with source and retrieval time. (r2/r3) Each value is labelled `PROVIDER_*_AS_RETRIEVED`, with its real retrieval timing versus the release (before / after / UNKNOWN); a missing or invalid retrieval time is shown as UNKNOWN. (r1 used a fixed `PUBLISHED_BEFORE_THIS_RELEASE_MAY_BE_REVISED` label; withdrawn, Codex R4.)
    - conflicting duplicate provider rows become UNKNOWN, never a silent pick;
    - reference periods come from the official schedule's own reference column, the DOL weekly convention for claims (labelled "derived"), or the provider's period suffix. None is invented.
 2. **`calendar.mjs`:**
@@ -58,7 +69,7 @@ All 5 release **dates and times** in the message were correct. Consensus forecas
    - the public `calendar-status.json` gains `officialSources` (public BLS/Fed URLs, retrieval time, number of dates). Provider values stay only in the encrypted file (TipRanks licence);
    - **the pre-registered calendar study (`MODE=study`, `C.hist`) and its `kindOf`/`fillAct` rules are unchanged.**
 3. **`scan.mjs` (renderers only):**
-   - ACTIONS "THIS WEEK" shows each release with its **headline** series, reference period and units, plus one source line ("Consensus and previous figures: TipRanks (fetched …); a previous figure is the one published before the release and may be revised in it");
+   - ACTIONS "THIS WEEK" shows each release with its **headline** series, reference period and units, plus one source line ("Consensus and previous figures: TipRanks, as retrieved …; a previous figure can differ from the one finally published and may be revised in the release"; r1 wording withdrawn);
    - the `calendar` command lists every series separately, with UNKNOWN reasons, sources, retrieval dates and vintage;
    - rows saved before the repair show "figures UNKNOWN" until the next calendar run;
    - the health line rebuilds the watcher problem from the saved structured report. It keeps missing minutes **inside** the configured window apart from time **outside** it, and never cuts the qualification. Other long problems end at a clause boundary, with "send health for the full text".
@@ -86,10 +97,16 @@ A fix (anchoring the wait to the pass start, and budgeting from the 09:25 start)
 
 ## Tests (Node 20, external connections blocked; 0 attempted)
 
-| File | Result | On the main code |
-|---|---|---|
-| `test/econ-calendar-exact-series.test.mjs` (actual `calendar.mjs` job against local stand-ins, then the actual `actionsText` and `calendar` command) | 7/7 | 4 behaviour tests fail |
-| `test/health-text-watcher-qualification.test.mjs` (actual `watcherReport`, `healthLine` and `actionsText`) | 7/7 | 4 fail |
-| `test/discover-sec-note.test.mjs` (the verbatim `sec()` source against a local server) | 4/4 | 3 fail |
+**Current (r3):**
+
+| File | Result |
+|---|---|
+| `test/econ-calendar-exact-series.test.mjs` (actual `calendar.mjs` job against local stand-ins, then the actual `actionsText`, `calendar` command and `macroNow`) | 19/19 |
+| `test/health-text-watcher-qualification.test.mjs` (actual `watcherReport`, `healthLine` and `actionsText`) | 7/7 |
+| `test/discover-sec-note.test.mjs` (the verbatim `sec()` source against a local server) | 4/4 |
+
+Codex harnesses: `046877af` regressions 8/8; `68c4bf45` R4 harness 10/10.
+
+*Historical (r1, kept for the record):* 7/7, 7/7 and 4/4; on the main code 4, 4 and 3 behaviour tests failed.
 
 Full-suite and compatibility results are in `verification.json`.

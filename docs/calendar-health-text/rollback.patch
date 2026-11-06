@@ -126,10 +126,10 @@ index 93d5bc2a..d2b04bed 100644
  async function frame(taxonomy, tag, unit, period) {
 diff --git b/econ-series.mjs a/econ-series.mjs
 deleted file mode 100644
-index 4be8bdfd..00000000
+index d1b24bb9..00000000
 --- b/econ-series.mjs
 +++ /dev/null
-@@ -1,176 +0,0 @@
+@@ -1,178 +0,0 @@
 -// EXACT ECONOMIC SERIES (6 Nov 2026 repair). Pure functions: no network, no files, no keys.
 -// Problem fixed: the calendar kept ONE row per broad kind and day, so a subsidiary provider row (continuing claims, private payrolls,
 -// productivity) could replace the headline of an official release, and a provider number could appear under the wrong series name.
@@ -138,7 +138,8 @@ index 4be8bdfd..00000000
 -//   - a value is shown only if its unit is known and matches the series, and the number lies in a conservative plausible band for that
 -//     series; otherwise the figure is UNKNOWN (never shown under a series it may not belong to).
 -//   - consensus forecasts (a market estimate) are kept apart from released/previous values, each with its source and retrieval time.
--//   - a provider "previous" value is labelled with its vintage: it is the value published BEFORE this release and may be revised in it.
+-//   - (r2) provider values are labelled AS RETRIEVED, with their real retrieval time versus the release time (before / after / UNKNOWN);
+-//     a field name never certifies a pre-release vintage. A missing or invalid retrieval time is UNKNOWN and is shown as such (r3).
 -//   - headline and subsidiary series of one release are separate entries; a subsidiary never renames or replaces the headline.
 -// The pre-registered calendar STUDY (MODE=study, C.hist) is not changed by this module.
 -
@@ -296,7 +297,8 @@ index 4be8bdfd..00000000
 -const monthShift = (ym, k) => { const d = new Date(Date.UTC(+ym.slice(0, 4), +ym.slice(5, 7) - 1 + k, 1)); return d.toISOString().slice(0, 10); };
 -export function fillOfficialActual(r, av, avAtBy) {
 -  if (!r || r.schema !== 2 || !r.ref || !av) return; const m = /^(January|February|March|April|May|June|July|August|September|October|November|December) (\d{4})$/.exec(r.ref); if (!m) return;
--  const rm = m[2] + '-' + String(FULLM.indexOf(m[1].toLowerCase()) + 1).padStart(2, '0') + '-01', at = (ser) => (avAtBy && typeof avAtBy === 'object' ? avAtBy[ser] : avAtBy) || null;
+-  // (r3, Codex 68c4bf45 R4) only a parseable retrieval time is kept; a missing or invalid one stays null (shown as UNKNOWN), never fabricated or backfilled
+-  const rm = m[2] + '-' + String(FULLM.indexOf(m[1].toLowerCase()) + 1).padStart(2, '0') + '-01', at = (ser) => { const v = avAtBy && typeof avAtBy === 'object' ? avAtBy[ser] : avAtBy; return typeof v === 'string' && Number.isFinite(Date.parse(v)) ? v : null; };
 -  const level = (ser, date) => { const a = av[ser]; if (!Array.isArray(a)) return null; const hits = a.filter(x => Array.isArray(x) && x[0] === date); if (hits.length !== 1) return null; const v = hits[0][1]; return typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null; };
 -  const both = (ser, k, f) => { const x = level(ser, rm), y = level(ser, monthShift(rm, k)); return x === null || y === null ? null : f(x, y); };
 -  const want = { PAYROLLS_TOTAL: ['NFP', () => both('NFP', -1, (x, y) => Math.round(x - y))], UNEMPLOYMENT_RATE: ['UNEMP', () => level('UNEMP', rm)],
@@ -307,10 +309,10 @@ index 4be8bdfd..00000000
 -  r.series.sort((a, b) => (b.headline ? 1 : 0) - (a.headline ? 1 : 0)); const h = r.series.find(x => x.headline && x.status === 'MAPPED'); r.act = h && h.actual && h.actual.v !== undefined ? h.actual.v : null;
 -}
 diff --git b/scan.mjs a/scan.mjs
-index a3d7a570..5197cfb5 100644
+index 88ed63aa..5197cfb5 100644
 --- b/scan.mjs
 +++ a/scan.mjs
-@@ -79,23 +79,11 @@ function calendarText(short) {
+@@ -79,26 +79,11 @@ function calendarText(short) {
    const today = new Date().toISOString().slice(0, 10), wk = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10), St = C.study && C.study.bySurprise;
    const INDX = (C.study && C.study.industry) || {}, hasFind = (e) => { const k = e.key || calKey(e.name); return ['_HOT', '_COOL'].some(z => INDX[k + z] && ((INDX[k + z].up || []).length || (INDX[k + z].down || []).length)); };
    const evAll = (C.econ || []).filter(e => e.t.slice(0, 10) >= new Date(Date.now() - 864e5).toISOString().slice(0, 10) && e.t.slice(0, 10) <= wk).sort((a, b) => a.t < b.t ? -1 : 1);
@@ -331,17 +333,20 @@ index a3d7a570..5197cfb5 100644
 -    const bs = e.fc !== null && e.fc !== undefined ? e.fc : e.prev, sg = done && bs !== null && bs !== undefined ? Math.sign((e.act - bs) * (/claims|unemployment/i.test(h.title) ? -1 : 1)) : 0, tr = done && sg ? tested(e, sg) : null;
 -    return (done ? '' : kw(e.t) + ': ') + e.title + ': ' + (e.release === null ? 'figures UNKNOWN (series not verified)' : h ? sline(h) + (tr ? '; ' + tr : '') : 'figures UNKNOWN (headline not provided or not verified)'); };
 -  const lineFull = (e) => e.schema !== 2 ? line(e) : [kw(e.t) + ': ' + e.title + (e.ref ? ' (' + e.ref + ')' : '') + ' [date: ' + ((e.dateSource && e.dateSource.by) || 'unknown') + ']', ...(e.series || []).map(x => '    ' + (x.status === 'MAPPED' ? sline(x) + srcNote(x) : (x.providerName || 'item') + ': figures UNKNOWN (series not verified)'))].join('\n');
--  const srcNote = (x) => { const parts = [['consensus', x.consensus], ['previous', x.previous], ['actual', x.actual]].filter(([, z]) => z).map(([k, z]) => k + ' ' + (z.v === undefined ? 'UNKNOWN: ' + z.why : (z.source || '?') + (z.retrievedAt ? ' ' + String(z.retrievedAt).slice(0, 10) : '') + (z.timing === 'RETRIEVED_AFTER_RELEASE' ? ', retrieved after the release (may already be revised)' : z.timing === 'RETRIEVED_BEFORE_RELEASE' ? ', retrieved before the release' : k === 'actual' ? '' : ', retrieval time vs release UNKNOWN'))); return parts.length ? ' [' + parts.join('; ') + ']' : ''; };
+-  // (r3, Codex 68c4bf45 R4) a value with a missing or invalid retrieval time says 'retrieval time UNKNOWN' and makes NO freshness or before/after-release claim
+-  const srcNote = (x) => { const parts = [['consensus', x.consensus], ['previous', x.previous], ['actual', x.actual]].filter(([, z]) => z).map(([k, z]) => { const clockOk = typeof z.retrievedAt === 'string' && Number.isFinite(Date.parse(z.retrievedAt));
+-      return k + ' ' + (z.v === undefined ? 'UNKNOWN: ' + z.why : (z.source || '?') + (clockOk ? ' ' + z.retrievedAt.slice(0, 10) + (z.timing === 'RETRIEVED_AFTER_RELEASE' ? ', retrieved after the release (may already be revised)' : z.timing === 'RETRIEVED_BEFORE_RELEASE' ? ', retrieved before the release' : k === 'actual' ? '' : ', retrieval time vs release UNKNOWN') : ', retrieval time UNKNOWN')); });
+-    return parts.length ? ' [' + parts.join('; ') + ']' : ''; };
 +  const line = (e) => { const done = e.act !== null && e.act !== undefined, bs = e.fc !== null && e.fc !== undefined ? e.fc : e.prev, s = done && bs !== null && bs !== undefined ? Math.sign((e.act - bs) * (/claims|unemployment|jobless/i.test(e.name) ? -1 : 1)) : 0, nm = CAL_NAME[e.kind] || e.name;
 +    return (done ? '' : kw(e.t) + ': ') + nm + (e.name && e.name.toLowerCase() !== nm.toLowerCase() ? ' (' + e.name + ')' : '') + ': ' + (done ? 'came in ' + v(e.act, e.unit) + (e.fc !== null && e.fc !== undefined ? ' vs forecast ' + v(e.fc, e.unit) : ' vs previous ' + v(e.prev, e.unit)) + (s === 0 ? ' = as expected' : !e.kind ? (s > 0 ? ' = ABOVE' : ' = BELOW') : /CPI|PPI|PCE/.test(e.kind) ? (s > 0 ? ' = HOTTER inflation' : ' = COOLER inflation') : (s > 0 ? ' = STRONGER economy' : ' = WEAKER economy')) + (tested(e, s) ? '; ' + tested(e, s) : '') : 'forecast ' + v(e.fc, e.unit) + ', previous ' + v(e.prev, e.unit)); };
    const hol = (C.holidays || []).filter(h => h.d >= today && h.d <= new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10)).map(h => h.d + ' ' + h.name + (h.status === 'early-close' ? ' (HALF DAY, closes early)' : ' (MARKET CLOSED)'));
    const div = Object.entries(C.div || {}).flatMap(([s, a]) => a.filter(x => x.ex >= today && x.ex <= wk).map(x => s + ' ex-dividend ' + x.ex + (x.amt ? ' (' + x.amt + ' a share: the price drops by about that much that morning; not a sell signal)' : '')));
    const IND = C.study && C.study.industry, GRP = { CPI: 'INFLATION', CORE_CPI: 'INFLATION', PPI: 'INFLATION', PCE: 'INFLATION', RETAIL: 'GROWTH', JOBS: 'GROWTH', GDP: 'GROWTH', ISM: 'GROWTH', SENTIMENT: 'GROWTH', FED: 'FED' };
-@@ -106,10 +94,8 @@ function calendarText(short) {
+@@ -109,10 +94,8 @@ function calendarText(short) {
    const anyPass = St && Object.values(St).some(x => /both halves/.test(x.verdict));
    const indPass = IND && Object.values(IND).some(L => (L.up || []).length || (L.down || []).length);
    const decision = anyPass || indPass ? 'DECISION: only tested reactions change ACTIONS (hunt / avoid industries after a surprise, below); everything else follows the normal rules.' : 'DECISION: no release has a tested effect yet (' + (C.study ? C.study.releases + ' past releases studied' : 'the study runs on Sunday') + '), so normal rules apply. Big moves are covered by the market-shock alert and your stops.';
--  const shown = ev.slice(0, 5), provAt = shown.flatMap(e => e.schema === 2 ? e.series.filter(x => x.headline).flatMap(x => [x.consensus, x.previous].filter(z => z && z.v !== undefined).map(z => z.retrievedAt)) : []).filter(Boolean).sort()[0];
+-  const shown = ev.slice(0, 5), provAt = shown.flatMap(e => e.schema === 2 ? e.series.filter(x => x.headline).flatMap(x => [x.consensus, x.previous].filter(z => z && z.v !== undefined).map(z => z.retrievedAt)) : []).filter(v => typeof v === 'string' && Number.isFinite(Date.parse(v))).sort()[0];
 -  const srcLine = provAt ? 'Consensus and previous figures: TipRanks, as retrieved ' + String(provAt).slice(0, 10) + '; a previous figure can differ from the one finally published and may be revised in the release. Dates: official schedules (BLS, Fed), claims dates from TipRanks.' : null;
 -  if (short) { if (!ev.length && !hol.length && !div.length) return ''; return ['THIS WEEK: ' + [...shown.map(line), ...hol, ...div].join(' | '), ...(srcLine ? [srcLine] : []), ...(IND ? [...prep, ...prepNames] : []), decision].join('\n'); }
 -  return ['ECONOMIC CALENDAR (US, next 7 days, every release big and small; TipRanks, private)', '', ...(ev.length ? ev.map(e => '- ' + lineFull(e) + (hasFind(e) ? '  [tested reaction on file]' : '')) : ['- no important release found']), '',
@@ -350,7 +355,7 @@ index a3d7a570..5197cfb5 100644
      ...(IND ? [...prep, ...prepNames, ''] : ['What goes up or down after each kind of surprise: the study runs on Sunday.', '']), 'MARKET HOLIDAYS (2 weeks): ' + (hol.length ? hol.join(' | ') : 'none'), 'YOUR STOCKS, EX-DIVIDEND (7 days): ' + (div.length ? div.join(' | ') : 'none'), '', decision,
      'Updated ' + String(C.updated || '').slice(0, 16).replace('T', ' ') + ' UTC. Not financial advice.'].join('\n'); }
  // MACRO REACTION (calendar study): after a release surprise (hot / cool inflation, strong / weak economy, Fed), the industries that
-@@ -2580,26 +2566,13 @@ function healthLine(nowMs = Date.now()) { const out = [];
+@@ -2583,26 +2566,13 @@ function healthLine(nowMs = Date.now()) { const out = [];
    // (4 Nov) the saved check (health.json) is a snapshot from its own run; it is shown with its time, and the sources are re-checked live with
    // the watchdog's rule, so a stale source can never sit next to an unqualified "checks OK". A missing or unreadable snapshot is UNKNOWN.
    const kw = (ms) => { const d = new Date(ms + 3 * 3600e3).toISOString(); return d.slice(11, 16) + ' Kuwait ' + d.slice(0, 10); };
@@ -426,10 +431,10 @@ index 954504b3..00000000
 -});
 diff --git b/test/econ-calendar-exact-series.test.mjs a/test/econ-calendar-exact-series.test.mjs
 deleted file mode 100644
-index ef53cd7e..00000000
+index ba31296f..00000000
 --- b/test/econ-calendar-exact-series.test.mjs
 +++ /dev/null
-@@ -1,177 +0,0 @@
+@@ -1,199 +0,0 @@
 -// Economic calendar exact series (6 Nov 2026 repair). Synthetic fixtures only: local stand-ins for the BLS/Fed schedule pages and a
 -// provider calendar; no credentials, provider requests or real messages. The actual calendar.mjs job writes the encrypted calendar,
 -// then the actual Telegram formatters (ACTIONS and the "calendar" command) read it.
@@ -604,6 +609,28 @@ index ef53cd7e..00000000
 -  const sub = mergeEconRows(off, [{ t: now.slice(0, 19), name: 'Nonfarm Payrolls Private', key: 'nonfarm payrolls private', fcRaw: '40K', actRaw: '90K' }], { providerAt: now });
 -  for (const [rows, want] of [[head, 1], [sub, 0]]) { const S = await scanWith(seal({ updated: now, econ: rows, hist: [], holidays: [], div: {}, study: { industry: ind, labels: {} } }));
 -    const M = S.fn('macroNow')(); assert.equal(M.filter(m => /nonfarm payrolls/.test(m.key)).length, want, JSON.stringify(M)); }
+-});
+-
+-
+-// ---- r3: Codex review 68c4bf45, remaining R4 (unknown retrieval clock), through the actual job and the actual "calendar" reply
+-const nfpLevels = () => { const [y, mo] = [refOf(D2).split(' ')[1], FULL.indexOf(refOf(D2).split(' ')[0])]; return [[y + '-' + String(mo + 1).padStart(2, '0') + '-01', 150050], [new Date(Date.UTC(+y, mo - 1, 1)).toISOString().slice(0, 10), 150000]]; };
+-const nfpLine = (text) => text.split('\n').find(l => l.includes('Nonfarm payrolls (monthly change)') && l.includes('Alpha Vantage'));
+-for (const [label, seedClock] of [['missing', {}], ['invalid', { avAt: 'not-a-date', avAtBy: { NFP: 'not-a-date' } }]])
+-  test('R4 (r3): a cached actual with a ' + label + ' retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim', async () => {
+-    const { C, text } = await show({ rows: [], seed: { hist: [], holidays: [], div: {}, av: { NFP: nfpLevels() }, ...seedClock } }), a = C.econ.find(x => x.release === 'empsit').series.find(x => x.id === 'PAYROLLS_TOTAL').actual;
+-    assert.equal(a.v, 50); assert.equal(a.retrievedAt, null);
+-    const l = nfpLine(text); assert.ok(l, text); assert.match(l, /\[actual Alpha Vantage \(BLS series NFP\), retrieval time UNKNOWN\]/); assert.doesNotMatch(l, /\d{4}-\d\d-\d\d\]|before the release|after the release|not-a-date/);
+-  });
+-test('R4 (r3) control: a timestamped cached actual keeps its real retrieval date', async () => {
+-  const at = new Date(Date.now() - 864e5).toISOString(), { C, text } = await show({ rows: [], seed: { hist: [], holidays: [], div: {}, av: { NFP: nfpLevels() }, avAt: at, avAtBy: { NFP: at } } });
+-  assert.equal(C.econ.find(x => x.release === 'empsit').series.find(x => x.id === 'PAYROLLS_TOTAL').actual.retrievedAt, at);
+-  assert.match(nfpLine(text), new RegExp('\\[actual Alpha Vantage \\(BLS series NFP\\) ' + at.slice(0, 10) + '\\]')); assert.doesNotMatch(nfpLine(text), /UNKNOWN/);
+-});
+-test('R4 (r3): provider figures with an unknown retrieval time make no release-timing claim; footnote cites no fetch date', async () => {
+-  const rows = mergeEconRows([], [{ t: D1 + 'T13:30:00Z', name: 'Initial Jobless Claims', fcRaw: '195K', prevRaw: '190K' }], { providerAt: null }), S = await scanWith(seal({ updated: new Date().toISOString(), econ: rows, hist: [], holidays: [], div: {} }));
+-  const full = S.fn('calendarText')(false), short = S.fn('calendarText')(true);
+-  assert.match(full, /\[consensus TipRanks, retrieval time UNKNOWN; previous TipRanks, retrieval time UNKNOWN\]/); assert.doesNotMatch(full, /retrieved (before|after) the release/);
+-  assert.doesNotMatch(short, /Consensus and previous figures: TipRanks, as retrieved/);
 -});
 -
 -test('all requests stayed synthetic and offline', () => assert.deepEqual(blocked, []));

@@ -4,12 +4,12 @@
  "base": "6cba0806",
  "preparedBy": "Claude",
  "date": "2026-11-06",
- "productionPatch": "55bb6c0ff2a3d4e38e087c44a682b98eddef64aa62c9c6885b533d622c55c314",
- "rollbackPatch": "59304ea7fe09839cae0a47402e620fd2d8910f123c6694cc6f73c7e6ec87511f",
+ "productionPatch": "015148a6789b84b0c7f127ba4677516f847158dabd1fdb6890bceb3b9c1eb5c9",
+ "rollbackPatch": "a01068ea739e4888da335e2d16f1fddc1cca68ccf933a8340436c2f00958777d",
  "files": {
   "scan.mjs": {
    "before": "19a5368bff6e14d4d114d9a3c9b52d395ee3b4dad8164a0a8a01762f16f5799f",
-   "after": "134c4689ac7bdf27fe51d8fa28f4c1f114d236401ff382f5a8578ddee2eaebe4"
+   "after": "f074ecaf5885aef32f222597118780d4b508f50086404d628e327ff2f40fa8bb"
   },
   "calendar.mjs": {
    "before": "6bc0b508f72b3a64e660ea1df0efa6cf7490c690d09cdf1652b545c7b248bbeb",
@@ -21,11 +21,11 @@
   },
   "econ-series.mjs": {
    "before": "absent",
-   "after": "28b80def79ac066821fb2edd5a445dd97e0aa94c72b1618798ec76c9943985d5"
+   "after": "bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58"
   },
   "test/econ-calendar-exact-series.test.mjs": {
    "before": "absent",
-   "after": "9237560670d43335121c0c92e1ef930842128c0a79e2b980efe60b0d524c21b1"
+   "after": "aa9e0177cff2753ff459e89d712d1098e77716c91731e784c7a016198a0b9e03"
   },
   "test/health-text-watcher-qualification.test.mjs": {
    "before": "absent",
@@ -38,15 +38,18 @@
  },
  "deployOrder": "AFTER Saturday STOP R2 and D1-D4 (STOP pins scan.mjs 19a5368b...); own owner approval and Codex review required",
  "tests": {
-  "newFiles": {
-   "test/econ-calendar-exact-series.test.mjs": "15/15 (r1 code: Codex harness 7 failures)",
+  "packageFiles": {
+   "test/econ-calendar-exact-series.test.mjs": "19/19",
    "test/health-text-watcher-qualification.test.mjs": "7/7",
-   "test/discover-sec-note.test.mjs": "4/4 (discover.mjs unchanged from r1)"
+   "test/discover-sec-note.test.mjs": "4/4 (discover.mjs unchanged since r1)"
   },
-  "codexHarness": "docs/reviews/calendar-health-166051d4/regressions.test.mjs @046877af: 8/8 PASS on r2 (7 FAIL on r1)",
+  "codexHarnesses": {
+   "046877af regressions": "8/8",
+   "68c4bf45 r4-unknown-clock": "10/10 (r2: 9/10)"
+  },
   "fullSuiteBranch": "140/140 files PASS (Node 20, external connections blocked)",
-  "fullSuiteWithSTOPandD": "143/143 files PASS on main ed057c2d + STOP c1de39fd + D 6889504c + this patch",
-  "patchRoundTrip": "applies to main ed057c2d; rollback restores exactly"
+  "fullSuiteWithSTOPandD": "main 756eca07 + STOP c1de39fd + D 6889504c + this patch: 142/143 at 14:31Z; the one failure (test/actions-reconciliation.test.mjs case 6) reproduces on main+STOP+D WITHOUT this patch and is a D1 time-of-day dependency (weekdays 09:30 NY to NY midnight); with a weekend clock it passes 13/13. Not caused by this package.",
+  "patchRoundTrip": "applies to main 756eca07; rollback restores exactly"
  },
  "notChanged": [
   "calendar study MODE=study and C.hist inputs (kindOf, fillAct)",
@@ -67,6 +70,6 @@
   ],
   "retrievedAt": "2026-11-06T09:5x Z (read-only)"
  },
- "revision": 2,
- "reviewAddressed": "Codex 046877af (PR #1 comment 6685420722): R1-R6 + R4b + Fed alias + macroNow caller"
+ "revision": 3,
+ "reviewAddressed": "Codex 046877af (R1-R6) and 68c4bf45 (remaining R4: unknown retrieval clock)"
 }
