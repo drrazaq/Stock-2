@@ -1,0 +1,44 @@
+diff --git a/ignition-watch.mjs b/ignition-watch.mjs
+index 0ff23e9e..4a3aed1a 100644
+--- a/ignition-watch.mjs
++++ b/ignition-watch.mjs
+@@ -287,6 +287,7 @@ const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mk
+ process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
+ saveObservationProgress();
+ while (Date.now() - RUN_START < MAXMS) {
++  const passStartedAt = Date.now(); // Include snapshot/stop-watch work in this pass, without inventing catch-up observations.
+   MESSAGE_STATE.maintain();
+   const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
+   const rows = await snap(); loops++; const tStart = triggers.length;
+@@ -353,7 +354,7 @@ while (Date.now() - RUN_START < MAXMS) {
+   if (m >= 675 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
+   else if(m>=675&&RADAR.done&&MESSAGE_STATE.has('midday-radar')&&MESSAGE_STATE.state('midday-radar')==='UNSENT'){await sendRadarOnce();}
+   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
+-  const wait = 60000 - (Date.now() - nowMs); if (wait > 0) await sleep(wait);
++  const wait = 60000 - (Date.now() - passStartedAt); if (wait > 0) await sleep(wait);
+ }
+ const movers = Object.values(vis).filter(v => v.maxC >= 0.15), missed = buildMissed();
+ const tally = {}; for (const x of missed) tally[x.code] = (tally[x.code] || 0) + 1;
+diff --git a/test/watcher-cadence-review.test.mjs b/test/watcher-cadence-review.test.mjs
+new file mode 100644
+index 00000000..0510d285
+--- /dev/null
++++ b/test/watcher-cadence-review.test.mjs
+@@ -0,0 +1,2 @@
++import test from 'node:test';import assert from 'node:assert/strict';import {nov2Fixture} from './watcher-nov2-fixture.mjs';
++for(const [date,start] of [['2026-10-30','2026-10-30T13:10:00Z'],['2026-11-02','2026-11-02T14:10:00Z']])test('actual watcher covers each configured minute with 2.5second snapshot work '+date,async()=>{const f=await nov2Fixture();try{f.state.slowMs=2500;const r=await f.workflow({start,event:'schedule',schedule:'CURRENT_CRON'});assert.equal(r.code,0,r.output);const j=f.read('data/ignition-runs/'+date+'/101-1.json'),observed=new Set(j.heartbeat.map(x=>x.m)),missing=Array.from({length:331},(_,i)=>570+i).filter(m=>!observed.has(m));assert.deepEqual(missing,[],'work shorter than a minute must not accumulate drift');assert.equal(observed.has(900),true);assert.ok(r.trace.ended-Date.parse(start)<=360*60000);assert.equal(f.state.dispatches,0);console.log(JSON.stringify({date,retained:j.heartbeat.length,configuredObserved:331-missing.length,missing}));}finally{f.close();}});
+diff --git a/test/watcher-nov2-clock.test.mjs b/test/watcher-nov2-clock.test.mjs
+index efdf3ca1..44ba095b 100644
+--- a/test/watcher-nov2-clock.test.mjs
++++ b/test/watcher-nov2-clock.test.mjs
+@@ -16,8 +16,8 @@ test('correct-season setup too early for the single-job envelope is explicitly r
+ test('correct-season late start remains labelled partial, archives both attempts and preserves richer canonical/delivery state',()=>scenario(async f=>{
+  f.write('data/my-positions.json',{ZZQ:{entry:12,stop:11}});
+  let r=await f.workflow({start:'2026-11-02T14:10:00Z',id:'101',IG_RUN_MIN:'313'});assert.equal(r.code,0,r.output);const first=f.read('data/ignition-runs/2026-11-02/101-1.json');assert.ok(Math.max(...first.heartbeat.map(x=>x.m))<900);
+- const canonical=fs.readFileSync(path.join(f.dir,'data/ignition-live.json')),sent=f.state.messages.filter(x=>/STOP HIT NOW/.test(x)).length;assert.equal(sent,1);
+- r=await f.workflow({start:'2026-11-02T19:39:00Z',id:'202',event:'workflow_dispatch'});assert.equal(r.code,0,r.output);const second=f.read('data/ignition-runs/2026-11-02/202-1.json');assert.equal(second.processStart,'14:39');assert.equal(Math.max(...second.heartbeat.map(x=>x.m)),f.expectedLastMinute);assert.ok(second.heartbeat.length<first.heartbeat.length);assert.deepEqual(fs.readFileSync(path.join(f.dir,'data/ignition-live.json')),canonical);assert.equal(f.state.messages.filter(x=>/STOP HIT NOW/.test(x)).length,sent);
++ const canonical=fs.readFileSync(path.join(f.dir,'data/ignition-live.json')),sent=f.state.messages.filter(x=>/STOP LEVEL REACHED/.test(x)).length;assert.equal(sent,1);assert.match(f.state.messages.find(x=>/STOP LEVEL REACHED/.test(x)),/do not sell again/);
++ r=await f.workflow({start:'2026-11-02T19:39:00Z',id:'202',event:'workflow_dispatch'});assert.equal(r.code,0,r.output);const second=f.read('data/ignition-runs/2026-11-02/202-1.json');assert.equal(second.processStart,'14:39');assert.equal(Math.max(...second.heartbeat.map(x=>x.m)),f.expectedLastMinute);assert.ok(second.heartbeat.length<first.heartbeat.length);assert.deepEqual(fs.readFileSync(path.join(f.dir,'data/ignition-live.json')),canonical);assert.equal(f.state.messages.filter(x=>/STOP LEVEL REACHED/.test(x)).length,sent);
+  f.state.runs=[{id:101,status:'completed',created_at:'2026-11-02T14:10:00Z',updated_at:'2026-11-02T19:38:10Z'},{id:202,status:'in_progress',created_at:'2026-11-02T14:38:21Z',run_started_at:'2026-11-02T14:38:21Z'}];
+  f.state.jobs={101:[{name:'watch',status:'completed',started_at:'2026-11-02T14:10:00Z',completed_at:'2026-11-02T19:38:10Z'}],202:[{name:'watch',status:'in_progress',started_at:'2026-11-02T19:39:17Z'}]};
+  const guard=await f.run('watcher-guard.mjs',{start:'2026-11-02T19:50:00Z'});assert.equal(guard.code,0,guard.output);assert.match(guard.output+'\n'+f.state.messages.join('\n'),/STOPPED EARLY/);assert.doesNotMatch(guard.output,/WATCHER STARTED LATE/);assert.equal(f.read('data/watcher-guard.json').started,550);assert.equal(f.state.dispatches,0);

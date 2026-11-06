@@ -1,0 +1,13 @@
+# Separate A G2 next executable regression — NOT a completed source adapter
+
+First-capture code stays at **5713011e426f21e283dccad286af096519f741e9**,6/6CI with the previously verified302-file log. Its [finite plan](https://github.com/drrazaq/Stock-2/blob/5713011e426f21e283dccad286af096519f741e9/docs/a-first-capture-continuation/finite-integration-plan.md) remains the implementation queue; calendar/watcher review is not an A prerequisite or substitute.
+
+Codex continued G2 offline while the production-repair suites ran: the actual first-capture host can currently freeze/import a changed, signature-consistent **synthetic opening-volume input** without a provider-native bar original. The first-capture source-facts hash preserves that input; it does not establish its source. This reproduces the **already-declared G2 assembly gap**, not a new deployed BUY path. The result is OFFLINE_RESEARCH_ONLY under supplied synthetic trust, source authentication remains unestablished and genuine admissions0.
+
+[Desired-behavior actual-caller regression](required-native-bar-binding.test.mjs) changes only a synthetic supplied bar value, rebinds the fixture input/outcome metadata and runs plan→capture→freeze→followups→strict importer. It expects UNKNOWN until bar-source binding exists; it currently FAILS on571. The fixture contains no original provider bar to backfill. [Retained failure](reproduction.log.gz), Codex Node20.20.2,1case/1expected counterexample failure,0real provider calls. Do not register this as a passing test that requires the defect.
+
+Run from the A checkout: `A_REVIEW_TREE="$PWD" node /path/to/required-native-bar-binding.test.mjs`. This review publication branch intentionally does not include or merge A implementation history; fetch/check out the exact A source separately.
+
+Next executable: derive opening/reclaim OHLCV and comparable prior20-session volume/liquidity from pinned source originals through the same host; bind identity, raw adjustment, intervals, availability clocks, coverage/revision state and exact field provenance. Add absent, wrong-security, gap, revised and late-original controls. Corrected source-derived cases must pass; supplied/unverifiable numbers remain UNKNOWN. Point-in-time cap, actual materiality/owner/calendar provenance remain separate G2 requirements. No signatures-alone authentication, new filters, policy adoption or real bindings.
+
+No source, gate, experiment, production, collection, key or setup change was made by this reproduction. A remains NOT PROVEN. Its local resume is preserved independently under /workspace/milestones/a-first-capture-resume.json and /workspace/milestones/a-g2-native-input-20261106/.
