@@ -1,0 +1,352 @@
+diff --git a/ignition-watch.mjs b/ignition-watch.mjs
+index 7cda237..f946277 100644
+--- a/ignition-watch.mjs
++++ b/ignition-watch.mjs
+@@ -1,3 +1,4 @@
++import {createContractObserver} from './watcher-contract-observer.mjs';
+ import {publishWatcherReservation} from './watcher-message-publish.mjs';
+ import {createWatcherMessages} from './watcher-messages.mjs';
+ import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
+@@ -47,6 +48,7 @@ const clock = () => env.IG_FAKE_MIN ? +env.IG_FAKE_MIN + (env.IG_FAKE_STEP ? loo
+ PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
+ const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
+ const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
++const CONTRACT_OBSERVER=createContractObserver({enabled:env.CONTRACT_OBSERVER==='research',day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA});
+ const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
+ if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExclusive:901})){MESSAGE_STATE.maintain();const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(dir+'/'+INCIDENT_RUN_ID+'-delivery-recovery.json',JSON.stringify({day,runId:INCIDENT_RUN_ID,messageDelivery:MESSAGE_STATE.report()}),{flag:'wx'});console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
+ if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
+@@ -107,7 +109,7 @@ async function snap() {
+   // Field set unchanged (price/prevC/open/volume, no quote fields). Every field passes the normal per-field clock validation: a future
+   // clock never vouches for its value, and between this response and Massive the newer valid clock wins (as in the main merge).
+   const at = Date.now();
+-  for (const r of a) { const x = byM.get(r.sym); validateClocks(r, at); delete r.bid; delete r.ask; delete r.qt; delete r.quoteProvider; delete r.quoteFeed;
++  for (const r of a) { const x = byM.get(r.sym); validateClocks(r, at); delete r.bid; delete r.ask; delete r.qt; delete r.quoteProvider; delete r.quoteFeed; delete r.quoteBidSizeRaw; delete r.quoteAskSizeRaw; delete r.quoteSizeUnit;
+     if (x) { const m0 = validateClocks({ sym: r.sym, price: x.price, t: x.t, open: 0, vol: x.vol, vt: x.vt, priceProvider: x.priceProvider, priceKind: x.priceKind, volumeProvider: x.volumeProvider, volumeFeed: x.volumeFeed || null }, at), own = { ...r };
+       mergeLiveSnapshot(m0, own, at);
+       if (!(m0.t > 0) && own.price > 0) { m0.price = own.price; m0.t = own.t; m0.priceProvider = own.priceProvider; m0.priceFeed = own.priceFeed; m0.priceKind = own.priceKind; }   // neither clock valid: this response's own price, still unclocked
+@@ -284,7 +286,7 @@ saveObservationProgress();
+ while (Date.now() - START < MAXMS) {
+   MESSAGE_STATE.maintain();
+   const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
+-  const rows = await snap(); loops++; const tStart = triggers.length;
++  const rows = await snap(); CONTRACT_OBSERVER.record({minute:m,rows,nowMs:Date.now()}); loops++; const tStart = triggers.length;
+   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
+   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
+     const pxNow = {}, tNow = Date.now(); for (const r of rows) if (HELD.pos[r.sym] && r.price > 0 && isFreshPriceAge(r.t > 0 ? (tNow - r.t) / 60000 : null)) pxNow[r.sym] = r.price;
+@@ -388,3 +390,5 @@ try { if (RADAR.done) { const L = fs.existsSync('data/radar-v3-ledger.jsonl') ?
+   const rows = [...new Set(L.filter(r => r.type === 'list' && r.d === day).map(r => r.sym))].filter(s => !have.has(s) && vis[s] && vis[s].last > 0).map(s => JSON.stringify({ type: 'close', d: day, sym: s, px: vis[s].last, mkt }));
+   if (rows.length) fs.appendFileSync('data/radar-v3-ledger.jsonl', rows.join('\n') + '\n'); } } catch (e) { console.log('radar close rows: ' + e.message); }
+ console.log('ignition watcher: ' + loops + ' minutes, modes ' + JSON.stringify(modes) + (note ? ' [' + note + ']' : '') + ', ' + triggers.length + ' ignitions, ' + alerts + ' alerts, ' + missed.length + ' movers of 15%+ audited ' + JSON.stringify(tally));
++
++if(env.CONTRACT_OBSERVER==='research')console.log('contract observer: '+JSON.stringify(CONTRACT_OBSERVER.health()));
+diff --git a/market-data-contracts.mjs b/market-data-contracts.mjs
+new file mode 100644
+index 0000000..7bcabcb
+--- /dev/null
++++ b/market-data-contracts.mjs
+@@ -0,0 +1,208 @@
++// Market-data contracts (1 Nov 2026). INACTIVE: no production file imports this module, it makes no request and changes no rule.
++// Pure functions that define what a timestamped volume, a pre-market informational price, a prior-close exit instruction and an
++// entry-quote evidence check must satisfy, from Alpaca's official documentation (cited per rule; see docs/market-data-contracts-2026-11-01.md).
++//
++// Doc facts used (docs.alpaca.markets, read 1 Nov 2026):
++//  D1 Market Data FAQ "How are bars aggregated?": minute bars hold trades in [t, t+60s), stamped at the LEFT edge; daily bars truncate
++//     the trade time to the New York day. A bar is emitted only if none of o,h,l,c,v is 0: a minute with no trades, or with only
++//     volume-only trades (e.g. a single odd-lot 'I'), produces NO bar. Extended-hours trades ('T') update minute volume and daily volume.
++//  D2 Historical bars reference (/v2/stocks/bars): start/end inclusive; end defaults to now with real-time access; limit <= 10000 data
++//     points per page in total (not per symbol); results sorted by symbol then time; follow next_page_token.
++//  D3 Subscription table: Algo Trader Plus = all US exchanges real time, no 15-minute historical restriction, 10,000 historical calls/min.
++//  D4 Real-time stock stream: minute bars emitted right after each minute mark; updatedBars emitted after the half-minute mark when a
++//     late trade arrives for the previous minute; dailyBars emitted after each minute mark, holding all trades until emission.
++//  D5 Latest quotes reference: best bid/ask with sizes "in shares (round lots prior to November 3, 2025)", exchanges, condition flags
++//     and an RFC-3339 timestamp; 0 price means no active bid/ask. Feed sip = all US exchanges (NBBO); iex = one exchange.
++//  D6 Snapshot reference: latest trade, latest quote, latest minute bar, current daily bar, previous daily bar; no as-of time for the
++//     daily bar's cumulative volume (its t is the session start).
++
++const need = (v, code) => { if (!v) throw Error(code); };
++const MIN = 60000;
++// Calendar-exact timestamp checks. Date.parse silently normalises impossible dates (2026-02-30 -> 2026-03-02), so every field is
++// checked against the real calendar first. Supported formats (RFC 3339 profile used by Alpaca): YYYY-MM-DDTHH:MM:SS, optional
++// fraction of 1-9 digits, then 'Z' or a +HH:MM / -HH:MM offset. Uppercase 'T' and 'Z' only; no leap second (60); no offset without colon.
++const daysInMonth = (y, m) => [31, (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0 ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m - 1];
++export const isCalendarDay = (x) => { if (typeof x !== 'string') return false; const m = /^(\d{4})-(\d\d)-(\d\d)$/.exec(x); if (!m) return false; const y = +m[1], mo = +m[2], d = +m[3]; return mo >= 1 && mo <= 12 && d >= 1 && d <= daysInMonth(y, mo); };
++export const isIso = (x) => {
++  if (typeof x !== 'string') return false;
++  const m = /^(\d{4}-\d\d-\d\d)T(\d\d):(\d\d):(\d\d)(\.\d{1,9})?(Z|([+-])(\d\d):(\d\d))$/.exec(x);
++  if (!m || !isCalendarDay(m[1]) || +m[2] > 23 || +m[3] > 59 || +m[4] > 59) return false;
++  if (m[6] !== 'Z' && (+m[8] > 23 || +m[9] > 59)) return false;
++  return Number.isFinite(Date.parse(x));
++};
++const NY = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
++const nyParts = (ms) => { const p = Object.fromEntries(NY.formatToParts(new Date(ms)).map(x => [x.type, x.value])); return { day: p.year + '-' + p.month + '-' + p.day, min: +p.hour * 60 + +p.minute }; };
++export const nyDay = (ms) => nyParts(ms).day;
++
++// New York wall-clock minute of a session day -> UTC ms (DST-correct, including the 1 Nov / 2 Nov 2026 change).
++export function nyLocalToUtc(day, minuteOfDay) {
++  need(isCalendarDay(day) && Number.isInteger(minuteOfDay) && minuteOfDay >= 0 && minuteOfDay < 1440, 'NY_LOCAL_ARGS');
++  for (const offsetH of [4, 5]) { const ms = Date.parse(day + 'T00:00:00Z') + minuteOfDay * MIN + offsetH * 3600000, p = nyParts(ms); if (p.day === day && p.min === minuteOfDay) return ms; }
++  throw Error('NY_LOCAL_UNRESOLVED');
++}
++
++// Session scopes in New York local minutes. Extended hours per D1 condition 'T'; the regular session is 09:30-16:00.
++export const SCOPES = Object.freeze({ PRE: [240, 570], REGULAR: [570, 960], POST: [960, 1200], PRE_AND_REGULAR: [240, 960], ALL_EXTENDED: [240, 1200] });
++
++// Argument checks: a missing, non-finite or out-of-range limit is a caller error, never a silent pass.
++const finite = (x) => typeof x === 'number' && Number.isFinite(x);
++const argCheck = (ok, what) => { if (!ok) throw Error('INVALID_ARGUMENT_' + what); };
++const positivePrice = (x) => finite(x) && x > 0;
++
++// Volume classes. Only RETURNED_BAR_SUM with an explicit evidence boundary may be offered to a time-sensitive gate.
++export const VOLUME_CLASS = Object.freeze({
++  UNTIMED_DAILY: 'UNTIMED_DAILY',        // snapshot dailyBar.v (D6), Massive totals without a usable as-of: informational or daily rules only
++  RETURNED_BAR_SUM: 'RETURNED_BAR_SUM',  // sum of the SIP 1-minute bars the API returned, over a stated scope, through a stated closed minute
++});
++
++// Revision grace: minutes whose interval ended less than graceMs before retrieval are reported separately (INSIDE_GRACE): the stream
++// re-emits a minute after the next half-minute mark when a late trade arrives (D4). 60 s = that plus margin. The REST behaviour is NOT
++// documented; this is an assumption until the bounded protected verification measures it. It is not a guarantee that a minute is final:
++// trade corrections and cancels (D4) can change a bar later.
++export const DEFAULT_REVISION_GRACE_MS = 60000;
++export const MAX_REVISION_GRACE_MS = 15 * MIN;
++export const SIZE_UNIT_CHANGE = Date.parse('2025-11-03T00:00:00-05:00');   // D5
++export const COVERAGE_LIMITS = Object.freeze([
++  'Only returned bars are summed. A minute with no qualifying trade, or with only volume-only trades, returns no bar (D1); its volume is not counted.',
++  'Bars can change after retrieval: late trades (D4 updatedBars) and trade corrections or cancels (D4). A second retrieval is the only evidence of change.',
++  'The revision grace is an unverified assumption about the REST endpoint (no documented settlement time).',
++  'The condition rules of D1 decide which trades a bar counts; the sum is that, not every reported share.',
++]);
++
++const BAR_FIELDS = ['o', 'h', 'l', 'c', 'v', 'n', 'vw'];
++function barProblem(b) {
++  if (!b || typeof b !== 'object' || Array.isArray(b)) return 'NOT_AN_OBJECT';
++  if (!isIso(b.t)) return 'BAD_TIMESTAMP';
++  if (Date.parse(b.t) % MIN !== 0) return 'NOT_MINUTE_ALIGNED';
++  if (!['o', 'h', 'l', 'c', 'vw'].every(k => positivePrice(b[k]))) return 'BAD_PRICE';
++  if (!(Number.isSafeInteger(b.v) && b.v > 0 && Number.isSafeInteger(b.n) && b.n > 0)) return 'BAD_VOLUME_OR_COUNT';
++  if (!(b.h >= Math.max(b.o, b.c) && b.l <= Math.min(b.o, b.c) && b.l <= b.h && b.vw >= b.l && b.vw <= b.h)) return 'INCONSISTENT_OHLC';
++  return null;
++}
++
++// Sum of the returned qualifying SIP 1-minute bars for one symbol, one New York session day and one scope.
++//   bars        array from /v2/stocks/bars?timeframe=1Min&feed=sip for that symbol (all pages merged), unmodified
++//   asOf        closed minute boundary (ms, minute-aligned): only bars whose interval ENDS at or before it are summed
++//   retrievedAt when the response was received (ms)
++//   graceMs     integer 0..15 min; bars ending later than retrievedAt - graceMs are counted separately as INSIDE_GRACE
++//   dailyVolume optional, a later-retrieved daily total for the same session (safe integer >= 0), for a consistency check only
++export function aggregateTimedVolume(bars, { day, scope = 'REGULAR', asOf, retrievedAt, feed, graceMs = DEFAULT_REVISION_GRACE_MS, dailyVolume = null } = {}) {
++  argCheck(feed === 'sip', 'FEED_MUST_BE_SIP');                                   // iex is one exchange, about 2.5% of volume (D8)
++  argCheck(Array.isArray(bars), 'BARS');
++  argCheck(typeof scope === 'string' && Object.hasOwn(SCOPES, scope), 'SCOPE');
++  argCheck(isCalendarDay(day), 'DAY');
++  argCheck(finite(asOf) && asOf % MIN === 0, 'AS_OF');
++  argCheck(finite(retrievedAt) && asOf <= retrievedAt, 'RETRIEVED_AT');
++  argCheck(Number.isSafeInteger(graceMs) && graceMs >= 0 && graceMs <= MAX_REVISION_GRACE_MS, 'GRACE_MS');
++  argCheck(dailyVolume === null || (Number.isSafeInteger(dailyVolume) && dailyVolume >= 0), 'DAILY_VOLUME');
++  const [s0, s1] = SCOPES[scope], start = nyLocalToUtc(day, s0), end = Math.min(nyLocalToUtc(day, s1), asOf), graceBoundary = Math.min(end, Math.floor((retrievedAt - graceMs) / MIN) * MIN);
++  const issues = [], seen = new Set(); let outside = 0, inside = 0, trades = 0, prev = -Infinity; const minutes = [];
++  bars.forEach((b, i) => {
++    const problem = barProblem(b); if (problem) { issues.push({ code: 'MALFORMED_BAR', problem, index: i }); return; }
++    const t = Date.parse(b.t);
++    if (seen.has(t)) { issues.push({ code: 'DUPLICATE_MINUTE', index: i, t: b.t }); return; }
++    if (t < prev) issues.push({ code: 'OUT_OF_ORDER', index: i, t: b.t });
++    prev = Math.max(prev, t); seen.add(t);
++    if (nyDay(t) !== day) { issues.push({ code: 'OTHER_SESSION', index: i, t: b.t }); return; }
++    if (t + MIN > retrievedAt) { issues.push({ code: 'BAR_NOT_CLOSED_AT_RETRIEVAL', index: i, t: b.t }); return; }   // never counted
++    if (t < start || t + MIN > end) return;                                                                         // outside scope / after asOf
++    if (t + MIN <= graceBoundary) outside += b.v; else inside += b.v;
++    trades += b.n; minutes.push(t);
++  });
++  const expected = Math.max(0, (end - start) / MIN), have = new Set(minutes), gaps = [];
++  for (let t = start; t < end; t += MIN) if (!have.has(t)) { const g = gaps[gaps.length - 1]; if (g && g.to === t) g.to = t + MIN; else gaps.push({ from: t, to: t + MIN }); }
++  const blocking = issues.filter(x => x.code !== 'BAR_NOT_CLOSED_AT_RETRIEVAL');
++  let consistency = null;
++  if (dailyVolume !== null) consistency = outside + inside > dailyVolume ? { status: 'CONTRADICTION', returnedBarSum: outside + inside, dailyVolume } : { status: 'NOT_CONTRADICTED', returnedBarSum: outside + inside, dailyVolume, notInReturnedBars: dailyVolume - outside - inside };
++  const status = blocking.length || (consistency && consistency.status === 'CONTRADICTION') ? 'INVALID_EVIDENCE' : expected === 0 ? 'EMPTY_WINDOW' : 'COMPUTED';
++  return {
++    volumeClass: status === 'COMPUTED' ? VOLUME_CLASS.RETURNED_BAR_SUM : null, status, evidence: 'SUM_OF_RETURNED_QUALIFYING_SIP_MINUTE_BARS', feed, day, scope,
++    windowStart: new Date(start).toISOString(), asOf: new Date(end).toISOString(), graceBoundary: new Date(Math.max(start, graceBoundary)).toISOString(), graceMs, retrievedAt: new Date(retrievedAt).toISOString(),
++    volumeOutsideGrace: outside, volumeInsideGrace: inside, returnedBarSum: outside + inside, trades,
++    coverage: { minutesInWindow: expected, minutesWithReturnedBar: minutes.length, minutesWithoutReturnedBar: expected - minutes.length,
++      minutesWithoutBar: gaps.map(g => ({ from: new Date(g.from).toISOString(), to: new Date(g.to).toISOString() })),
++      label: expected - minutes.length ? 'SOME_MINUTES_RETURNED_NO_BAR' : 'EVERY_MINUTE_RETURNED_A_BAR', limits: COVERAGE_LIMITS },
++    consistency, issues,
++  };
++}
++
++// Revisions between two retrievals of the same symbol and session. Every field of every minute is compared; malformed or duplicate
++// evidence on either side is reported, and the comparison is marked not comparable rather than silently cleaned.
++export function reconcileRevisions(before, after) {
++  argCheck(Array.isArray(before) && Array.isArray(after), 'REVISION_INPUTS');
++  const evidenceIssues = [], index = (bars, side) => { const map = new Map(); bars.forEach((b, i) => { const problem = barProblem(b); if (problem) { evidenceIssues.push({ side, index: i, code: 'MALFORMED_BAR', problem }); return; } const t = Date.parse(b.t); if (map.has(t)) { evidenceIssues.push({ side, index: i, code: 'DUPLICATE_MINUTE', t: b.t }); return; } map.set(t, b); }); return map; };
++  const a = index(before, 'before'), b = index(after, 'after'), changes = [];
++  for (const [t, x] of b) { const y = a.get(t); if (!y) { changes.push({ t: new Date(t).toISOString(), kind: 'ADDED', dv: x.v, dn: x.n }); continue; } const fields = BAR_FIELDS.filter(k => y[k] !== x[k]); if (fields.length) changes.push({ t: new Date(t).toISOString(), kind: 'CHANGED', fields, dv: x.v - y.v, dn: x.n - y.n }); }
++  for (const [t, y] of a) if (!b.has(t)) changes.push({ t: new Date(t).toISOString(), kind: 'REMOVED', dv: -y.v, dn: -y.n });
++  return { comparable: evidenceIssues.length === 0, changes: changes.sort((x, y) => x.t < y.t ? -1 : 1), evidenceIssues };
++}
++
++// Evidence check for a time-sensitive gate. Untimed daily volume never qualifies; the grace boundary must be within maxAgeMs.
++// Passing means "the evidence meets the stated requirements", not that the volume is complete or final (see COVERAGE_LIMITS).
++export function volumeMeetsGateEvidence(v, { nowMs, maxAgeMs, allowMinutesWithoutBar = true } = {}) {
++  argCheck(finite(nowMs), 'NOW_MS'); argCheck(finite(maxAgeMs) && maxAgeMs >= 0, 'MAX_AGE_MS'); argCheck(typeof allowMinutesWithoutBar === 'boolean', 'ALLOW_MINUTES_WITHOUT_BAR');
++  if (!v || v.volumeClass !== VOLUME_CLASS.RETURNED_BAR_SUM || v.status !== 'COMPUTED') return { meets: false, reason: 'NOT_A_COMPUTED_RETURNED_BAR_SUM' };
++  const age = nowMs - Date.parse(v.graceBoundary);
++  if (!(age >= 0)) return { meets: false, reason: 'BOUNDARY_AFTER_NOW' };
++  if (age > maxAgeMs) return { meets: false, reason: 'BOUNDARY_TOO_OLD', ageMs: age };
++  if (!allowMinutesWithoutBar && v.coverage.minutesWithoutReturnedBar) return { meets: false, reason: 'MINUTES_WITHOUT_BAR_NOT_ALLOWED' };
++  return { meets: true, ageMs: age, volume: v.volumeOutsideGrace, evidence: v.evidence, minutesWithoutReturnedBar: v.coverage.minutesWithoutReturnedBar, limits: COVERAGE_LIMITS };
++}
++
++// ---- Three separate price roles (never interchangeable) ----
++const PHASES = ['PRE', 'REGULAR', 'POST'];
++const phaseOf = (t) => { const p = nyParts(t); return p.min < 240 || p.min >= 1200 ? 'OVERNIGHT' : p.min < 570 ? 'PRE' : p.min < 960 ? 'REGULAR' : 'POST'; };
++
++// 1) Pre-market INFORMATIONAL price: a reported trade with its time and age. Information only; it says nothing about fills.
++export function premarketInfo(trade, { nowMs, day, feed } = {}) {
++  argCheck(finite(nowMs), 'NOW_MS'); argCheck(isCalendarDay(day), 'DAY');
++  const base = { role: 'PREMARKET_INFORMATION', informationOnly: true, feed: feed || null };
++  if (!trade || !positivePrice(trade.p) || !isIso(trade.t)) return { ...base, status: 'MISSING_OR_MALFORMED' };
++  const t = Date.parse(trade.t);
++  if (t > nowMs) return { ...base, status: 'TRADE_CLOCK_AFTER_NOW', tradeAt: trade.t };
++  if (nyDay(t) !== day) return { ...base, status: 'NOT_THIS_SESSION_DAY', tradeAt: trade.t };
++  return { ...base, status: 'REPORTED_TRADE', price: trade.p, tradeAt: trade.t, ageMs: nowMs - t, phase: phaseOf(t) };
++}
++
++// 2) PRIOR-CLOSE exit instruction: the previous session's daily close compared with the owner's stop, for action at the open.
++//    It is an instruction, not a price at which an order would fill. stop: a positive finite number, or null for "no stop set".
++export function priorCloseExit(prevDailyBar, { stop, day } = {}) {
++  argCheck(stop === null || positivePrice(stop), 'STOP'); argCheck(isCalendarDay(day), 'DAY');
++  const base = { role: 'PRIOR_CLOSE_INSTRUCTION', instructionForTheOpen: true };
++  if (!prevDailyBar || !positivePrice(prevDailyBar.c) || !isIso(prevDailyBar.t)) return { ...base, status: 'MISSING_OR_MALFORMED' };
++  const session = nyDay(Date.parse(prevDailyBar.t));
++  if (!(session < day)) return { ...base, status: 'NOT_A_PRIOR_SESSION', session };
++  return { ...base, status: 'PRIOR_CLOSE_REPORTED', session, close: prevDailyBar.c, stopHit: stop === null ? null : prevDailyBar.c <= stop };
++}
++
++// 3) ENTRY QUOTE evidence: whether a consolidated best bid/offer meets a strategy's stated quote checks. Passing is evidence about the
++//    quote at its timestamp only: not a fill, not a guarantee of execution, size or price. Every limit is required and validated.
++export function entryQuoteEvidence(q, { nowMs, feed, maxAgeMs, maxSpreadPct, minAskShares, phase } = {}) {
++  argCheck(finite(nowMs), 'NOW_MS'); argCheck(finite(maxAgeMs) && maxAgeMs > 0, 'MAX_AGE_MS'); argCheck(finite(maxSpreadPct) && maxSpreadPct > 0 && maxSpreadPct < 1, 'MAX_SPREAD_PCT');
++  argCheck(Number.isSafeInteger(minAskShares) && minAskShares > 0, 'MIN_ASK_SHARES'); argCheck(phase === undefined || PHASES.includes(phase), 'PHASE');
++  const fail = (reason) => ({ role: 'ENTRY_QUOTE_EVIDENCE', passesQuoteChecks: false, reason });
++  if (feed !== 'sip') return fail('NOT_CONSOLIDATED_FEED');                       // iex is one exchange (D5, D8)
++  if (!q || !isIso(q.t)) return fail('NO_VALID_QUOTE_CLOCK');
++  const t = Date.parse(q.t), age = nowMs - t;
++  if (age < 0) return fail('QUOTE_CLOCK_AFTER_NOW');
++  if (age > maxAgeMs) return fail('QUOTE_OLDER_THAN_LIMIT');
++  if (!finite(q.bp) || !finite(q.ap)) return fail('NON_FINITE_PRICE');
++  if (!(q.bp > 0) || !(q.ap > 0)) return fail('ONE_SIDED_OR_NO_MARKET');           // 0 = no active bid/ask (D5)
++  if (q.ap < q.bp) return fail('CROSSED');
++  const spread = (q.ap - q.bp) / ((q.ap + q.bp) / 2);
++  if (!(spread <= maxSpreadPct)) return fail('SPREAD_ABOVE_LIMIT');
++  if (t < SIZE_UNIT_CHANGE) return fail('SIZE_UNIT_ROUND_LOTS_BEFORE_2025_11_03'); // D5
++  if (!(Number.isSafeInteger(q.as) && q.as >= minAskShares)) return fail('ASK_SIZE_BELOW_LIMIT_OR_MALFORMED');
++  const quotePhase = phaseOf(t);
++  if (phase && quotePhase !== phase) return fail('OTHER_SESSION_PHASE');
++  return { role: 'ENTRY_QUOTE_EVIDENCE', passesQuoteChecks: true, evidenceLabel: 'QUOTE_CHECKS_PASSED_AT_QUOTE_TIME_NOT_A_FILL_GUARANTEE', ask: q.ap, bid: q.bp, askShares: q.as, spread, ageMs: age, quoteAt: q.t, phase: quotePhase, conditions: Array.isArray(q.c) ? q.c : [] };
++}
++
++// Request budget for timed volume by REST polling (D2/D3). Each poll asks only for the newly closed minute(s). The maximum number of
++// symbols per request is NOT documented; production already chunks snapshot requests at 200, so that is the default here.
++export function planBarRequests({ symbols, symbolsPerRequest = 200, minutesPerPoll = 1, pollsPerMinute = 1, pageLimit = 10000, callsPerMinuteLimit = 10000 } = {}) {
++  argCheck([symbols, symbolsPerRequest, minutesPerPoll, pollsPerMinute, pageLimit, callsPerMinuteLimit].every(x => Number.isSafeInteger(x) && x > 0) && pageLimit <= 10000, 'PLAN');
++  const chunks = Math.ceil(symbols / symbolsPerRequest), pagesPerChunk = Math.ceil(Math.min(symbols, symbolsPerRequest) * minutesPerPoll / pageLimit);
++  const callsPerPoll = chunks * pagesPerChunk, callsPerMinute = callsPerPoll * pollsPerMinute;
++  return { chunks, pagesPerChunk, callsPerPoll, callsPerMinute, shareOfLimit: callsPerMinute / callsPerMinuteLimit, withinLimit: callsPerMinute <= callsPerMinuteLimit };
++}
+diff --git a/snapshot-fields.mjs b/snapshot-fields.mjs
+index cbfbb09..5f9dbb2 100644
+--- a/snapshot-fields.mjs
++++ b/snapshot-fields.mjs
+@@ -17,7 +17,7 @@ export function massiveSnapshot(x) {
+     vol:minuteVolume?mn.av:number(dy.v),vt:minuteVolume?number(mn.t):number(dy.t),
+     bid:number(q.p),ask:number(q.P),qt:nsTime(q.t),
+     priceProvider:'MASSIVE',priceKind:trade?'TRADE':minute?'MINUTE_BAR':'DAILY_BAR',
+-    quoteProvider:'MASSIVE',quoteFeed:'PLAN_DEPENDENT',volumeProvider:'MASSIVE'};
++    quoteProvider:'MASSIVE',quoteFeed:'PLAN_DEPENDENT',quoteBidSizeRaw:q.s??null,quoteAskSizeRaw:q.S??null,quoteSizeUnit:'UNKNOWN',volumeProvider:'MASSIVE'};
+ }
+ // Alpaca snapshot volume contract (official docs, read 1 Nov 2026):
+ //  - Snapshot reference (docs.alpaca.markets/us/reference/stocksnapshotsingle): "A snapshot provides the latest trade, latest quote,
+@@ -54,7 +54,7 @@ export function alpacaSnapshot(symbol,x={},sip=false,nowMs=Date.now()) {
+     volumeRejected:dv.ok?null:dv.reason,
+     bid:number(q.bp),ask:number(q.ap),qt:isoTime(q.t),
+     priceProvider:'ALPACA',priceFeed:sip?'sip':'iex',priceKind:trade?'TRADE':'DAILY_BAR',
+-    quoteProvider:'ALPACA',quoteFeed:sip?'sip':'iex',volumeProvider:dv.ok?'ALPACA':null,volumeFeed:dv.ok?'sip':null};
++    quoteProvider:'ALPACA',quoteFeed:sip?'sip':'iex',quoteBidSizeRaw:q.bs??null,quoteAskSizeRaw:q.as??null,quoteSizeUnit:isoTime(q.t)>=Date.parse('2025-11-03T00:00:00-05:00')?'SHARES':'ROUND_LOTS_OR_UNKNOWN',volumeProvider:dv.ok?'ALPACA':null,volumeFeed:dv.ok?'sip':null};
+ }
+ // Per-field clock validation for rows that are used without a merge (top-50 fallback): a future or missing clock never vouches for its value.
+ export function validateClocks(row, nowMs = Date.now()) {
+@@ -88,7 +88,7 @@ export function mergeLiveSnapshot(row, live, nowMs = Date.now()) {
+   // Equal-clock conflicts are not resolved by choosing the last arriving quote.
+   if (positive(live.bid) && positive(live.ask) && live.ask>=live.bid && positive(live.qt) && live.qt<=nowMs &&
+       (live.qt>row.qt || row.qt>nowMs || !positive(row.qt))) {
+-    row.bid=live.bid;row.ask=live.ask;row.qt=live.qt;row.quoteProvider=live.quoteProvider||'UNKNOWN';row.quoteFeed=live.quoteFeed||null;
++    row.bid=live.bid;row.ask=live.ask;row.qt=live.qt;row.quoteProvider=live.quoteProvider||'UNKNOWN';row.quoteFeed=live.quoteFeed||null;row.quoteBidSizeRaw=live.quoteBidSizeRaw??null;row.quoteAskSizeRaw=live.quoteAskSizeRaw??null;row.quoteSizeUnit=live.quoteSizeUnit||'UNKNOWN';
+   }
+   return refreshed;
+ }
+diff --git a/watcher-contract-observer.mjs b/watcher-contract-observer.mjs
+new file mode 100644
+index 0000000..1f69b45
+--- /dev/null
++++ b/watcher-contract-observer.mjs
+@@ -0,0 +1,60 @@
++// Passive MARKET-03 evidence only. No network, messages, orders, strategy threshold or eligibility decision.
++import fs from 'node:fs';import path from 'node:path';import {createHash} from 'node:crypto';
++import {isCalendarDay,nyDay} from './market-data-contracts.mjs';
++export const OBSERVER_LIMITS=Object.freeze({open:570,endExclusive:901,records:331,recordBytes:6144,rows:20000,maxBytes:2033664});
++const hash=b=>createHash('sha256').update(b).digest('hex'),finite=x=>typeof x==='number'&&Number.isFinite(x),positive=x=>finite(x)&&x>0;
++function summary(rows,now){
++ if(!Array.isArray(rows)||rows.length>OBSERVER_LIMITS.rows||!finite(now))throw Error('OBSERVER_INPUT');
++ const count={rows:rows.length,priceClockMissing:0,priceClockFuture:0,quoteClockMissing:0,quoteClockFuture:0,oneSided:0,crossed:0,sizeUnknown:0,volumeAsOfUnknown:0,volumeClockFuture:0},providers={},feeds={};
++ for(const r of rows){
++  if(!r||typeof r!=='object')throw Error('OBSERVER_INPUT');
++  const p=['ALPACA','MASSIVE'].includes(r.quoteProvider)?r.quoteProvider:'UNKNOWN',f=['sip','iex'].includes(r.quoteFeed)?r.quoteFeed:'UNKNOWN';
++  providers[p]=(providers[p]||0)+1;feeds[f]=(feeds[f]||0)+1;
++  if(!positive(r.t))count.priceClockMissing++;else if(r.t>now)count.priceClockFuture++;
++  if(!positive(r.qt))count.quoteClockMissing++;else if(r.qt>now)count.quoteClockFuture++;
++  if(!positive(r.bid)||!positive(r.ask))count.oneSided++;else if(r.ask<r.bid)count.crossed++;
++  if(r.quoteSizeUnit!=='SHARES'||!Number.isSafeInteger(r.quoteAskSizeRaw)||r.quoteAskSizeRaw<0||!Number.isSafeInteger(r.quoteBidSizeRaw)||r.quoteBidSizeRaw<0)count.sizeUnknown++;
++  if(!positive(r.vt))count.volumeAsOfUnknown++;else if(r.vt>now)count.volumeClockFuture++;
++ }
++ return {counts:count,quoteProviders:providers,quoteFeeds:feeds,entryPolicy:'NOT_ADOPTED_NOT_EVALUATED',volumeMeaning:'PROVIDER_FIELD_AS_REPORTED_NOT_TOTAL_TRADED_OR_FRESHNESS_PROOF',fillGuarantee:false};
++}
++// Linux Actions runtime: walk user path components with O_NOFOLLOW, then use
++// the verified directory descriptor for every write. O_NOFOLLOW on the leaf
++// alone cannot protect against replacement of an ancestor by a symlink.
++function safeDirectory(dir,io,create=false){
++ let fd=io.openSync('/',fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);
++ try{for(const part of path.resolve(dir).split(path.sep).filter(Boolean)){
++  const name='/proc/self/fd/'+fd+'/'+part;
++  if(create)try{io.mkdirSync(name,{mode:0o700});}catch(e){if(e.code!=='EEXIST')throw e;}
++  const next=io.openSync(name,fs.constants.O_RDONLY|fs.constants.O_DIRECTORY|fs.constants.O_NOFOLLOW);io.closeSync(fd);fd=next;
++ }return fd;}catch(e){io.closeSync(fd);throw e;}
++}
++function readRecord(file,io){const fd=io.openSync(file,fs.constants.O_RDONLY|fs.constants.O_NOFOLLOW);try{const s=io.fstatSync(fd);if(!s.isFile()||s.size>6144)throw Error('OBSERVER_FILE');return io.readFileSync(fd);}finally{io.closeSync(fd);}}
++function sameDirectory(root,fd,io){const current=safeDirectory(root,io);try{const a=io.fstatSync(fd),b=io.fstatSync(current);if(a.dev!==b.dev||a.ino!==b.ino)throw Error('OBSERVER_DIRECTORY_CHANGED');}finally{io.closeSync(current);}}
++export function createContractObserver({enabled=false,directory='data/ignition-runs',day,runId,sourceSha,io=fs}={}){
++ let state=enabled?'ACTIVE':'OFF',records=0,root=null;
++ const health=()=>({state,records,configuredWindow:{open:570,endExclusive:901},fullSession:false,sourceCoverageVerified:false,policyApproved:false});
++ const quarantine=()=>{state='QUARANTINED';let dir,fd;try{if(root){dir=safeDirectory(root,io);fd=io.openSync('/proc/self/fd/'+dir+'/QUARANTINED',fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);io.writeFileSync(fd,'OBSERVER_PERSISTENCE_OR_CONFLICT\n');io.fsyncSync(fd);io.fsyncSync(dir);}}catch{}finally{if(fd!==undefined)try{io.closeSync(fd);}catch{}if(dir!==undefined)try{io.closeSync(dir);}catch{}}};
++ const validate=(raw,name)=>{const e=JSON.parse(raw),s=JSON.stringify(e.record);if(e.sha256!==hash(s)||e.record.kind!=='PASSIVE_CONTRACT_OBSERVATION_V1'||e.record.day!==day||e.record.runId!==runId||e.record.sourceSha!==sourceSha||name!=='beat-'+String(e.record.minute).padStart(4,'0')+'.json'||e.record.minute<570||e.record.minute>900)throw Error('OBSERVER_RECORD');};
++ let opening;
++ if(enabled)try{
++  if(!isCalendarDay(day)||!/^[A-Za-z0-9][A-Za-z0-9_-]{0,79}$/.test(runId||'')||!/^[a-f0-9]{40}$/.test(sourceSha||''))throw Error('OBSERVER_SCOPE');
++  root=path.join(directory,day,runId+'.contracts');opening=safeDirectory(root,io,true);const anchored='/proc/self/fd/'+opening;
++  const names=io.readdirSync(anchored);if(names.includes('QUARANTINED')||names.length>331)throw Error('OBSERVER_QUARANTINE');
++  for(const name of names){if(!/^beat-0[5-9][0-9]{2}\.json$/.test(name))throw Error('OBSERVER_FILE');const file=path.join(anchored,name),s=io.lstatSync(file);if(!s.isFile()||s.isSymbolicLink()||s.size>6144)throw Error('OBSERVER_FILE');validate(readRecord(file,io).toString(),name);records++;}
++ }catch{quarantine();}finally{if(opening!==undefined)try{io.closeSync(opening);}catch{}}
++ return {health,record({minute,rows,nowMs}){
++  if(state!=='ACTIVE')return false;
++  if(!Number.isInteger(minute)||minute<570||minute>900)return false;
++  let directoryFd;try{
++   directoryFd=safeDirectory(root,io);const anchored='/proc/self/fd/'+directoryFd;if(io.existsSync(path.join(anchored,'QUARANTINED')))throw Error('OBSERVER_QUARANTINE');
++   if(!finite(nowMs)||nyDay(nowMs)!==day)throw Error('OBSERVER_CLOCK');
++   const record={kind:'PASSIVE_CONTRACT_OBSERVATION_V1',day,runId,sourceSha,minute,observedAt:new Date(nowMs).toISOString(),...summary(rows,nowMs)},s=JSON.stringify(record),payload=Buffer.from(JSON.stringify({record,sha256:hash(s)})+'\n');
++   if(payload.length>6144)throw Error('OBSERVER_BUDGET');
++   const name='beat-'+String(minute).padStart(4,'0')+'.json',file=path.join(anchored,name);
++   if(io.existsSync(file)){const st=io.lstatSync(file);if(!st.isFile()||st.isSymbolicLink()||st.size>6144)throw Error('OBSERVER_CONFLICT');const old=readRecord(file,io);validate(old.toString(),name);if(!old.equals(payload))throw Error('OBSERVER_CONFLICT');return true;}
++   const fd=io.openSync(file,fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_EXCL|fs.constants.O_NOFOLLOW,0o600);try{let n=0;while(n<payload.length){const wrote=io.writeSync(fd,payload,n,payload.length-n);if(!(wrote>0))throw Error('OBSERVER_SHORT_WRITE');n+=wrote;}io.fsyncSync(fd);}finally{io.closeSync(fd);}
++   io.fsyncSync(directoryFd);sameDirectory(root,directoryFd,io);records++;return true;
++  }catch{quarantine();return false;}finally{if(directoryFd!==undefined)try{io.closeSync(directoryFd);}catch{}}
++ }};
++}

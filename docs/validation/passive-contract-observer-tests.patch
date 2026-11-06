@@ -1,0 +1,358 @@
+diff --git a/test/market-data-contracts.test.mjs b/test/market-data-contracts.test.mjs
+new file mode 100644
+index 0000000..0d0cd66
+--- /dev/null
++++ b/test/market-data-contracts.test.mjs
+@@ -0,0 +1,182 @@
++// Market-data contracts (inactive module): sum of returned qualifying SIP minute bars, revisions, gate evidence and the three price roles.
++// Synthetic bars and quotes shaped like the documented Alpaca responses; no network. Run: node --test test/market-data-contracts.test.mjs
++// The "regression" tests each reproduce a defect found in d3bf78ba (see docs/market-data-contracts-2026-11-01.md, section 9).
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import path from 'node:path';
++import { isIso, isCalendarDay, nyLocalToUtc, aggregateTimedVolume, reconcileRevisions, volumeMeetsGateEvidence, premarketInfo, priorCloseExit, entryQuoteEvidence, planBarRequests, VOLUME_CLASS, COVERAGE_LIMITS } from '../market-data-contracts.mjs';
++
++const MIN = 60000, day = '2026-10-30', open = nyLocalToUtc(day, 570);   // 13:30Z (EDT)
++const bar = (ms, v = 100, extra = {}) => ({ t: new Date(ms).toISOString().replace('.000', ''), o: 10, h: 10.2, l: 9.9, c: 10.1, v, n: 3, vw: 10.05, ...extra });
++const minutes = (from, count, v = 100) => Array.from({ length: count }, (_, i) => bar(from + i * MIN, v));
++const agg = (bars, o = {}) => { const asOf = o.asOf ?? open + 10 * MIN; return aggregateTimedVolume(bars, { day, asOf, retrievedAt: asOf + 120000, feed: 'sip', ...o }); };
++const Q = { bp: 10, ap: 10.02, bs: 300, as: 200, t: '2026-11-02T14:35:00Z', c: ['R'], bx: 'Q', ax: 'P', z: 'C' }, QAT = Date.parse('2026-11-02T14:35:30Z');
++const QOPT = { nowMs: QAT, feed: 'sip', maxAgeMs: 60000, maxSpreadPct: 0.01, minAskShares: 100, phase: 'REGULAR' };
++
++test('New York session boundaries follow daylight saving (EDT 30 Oct, EST 2 Nov 2026)', () => {
++  assert.equal(new Date(nyLocalToUtc('2026-10-30', 570)).toISOString(), '2026-10-30T13:30:00.000Z');
++  assert.equal(new Date(nyLocalToUtc('2026-11-02', 570)).toISOString(), '2026-11-02T14:30:00.000Z');
++  assert.equal(new Date(nyLocalToUtc('2026-11-02', 240)).toISOString(), '2026-11-02T09:00:00.000Z');
++});
++
++test('sum of returned bars through the as-of boundary; inside-grace volume reported separately; open minute never counted', () => {
++  const asOf = open + 10 * MIN, v = aggregateTimedVolume([...minutes(open, 10), bar(asOf, 999)], { day, asOf, retrievedAt: asOf + 20000, feed: 'sip' });
++  assert.equal(v.volumeClass, VOLUME_CLASS.RETURNED_BAR_SUM); assert.equal(v.status, 'COMPUTED'); assert.equal(v.evidence, 'SUM_OF_RETURNED_QUALIFYING_SIP_MINUTE_BARS');
++  assert.equal(v.returnedBarSum, 1000); assert.equal(v.volumeInsideGrace, 100); assert.equal(v.volumeOutsideGrace, 900);
++  assert.equal(v.graceBoundary, new Date(asOf - MIN).toISOString());
++  assert.ok(v.issues.some(i => i.code === 'BAR_NOT_CLOSED_AT_RETRIEVAL'));
++  assert.deepEqual(v.coverage.limits, COVERAGE_LIMITS); assert.ok(!('settledVolume' in v) && !('settledThrough' in v), 'no "settled" claim');
++});
++
++test('minutes without a returned bar are listed; the label says so; a gate may refuse them', () => {
++  const v = agg(minutes(open, 10).filter((_, i) => i !== 3 && i !== 4));
++  assert.equal(v.coverage.minutesWithoutReturnedBar, 2); assert.equal(v.coverage.label, 'SOME_MINUTES_RETURNED_NO_BAR');
++  assert.deepEqual(v.coverage.minutesWithoutBar, [{ from: new Date(open + 3 * MIN).toISOString(), to: new Date(open + 5 * MIN).toISOString() }]);
++  assert.equal(volumeMeetsGateEvidence(v, { nowMs: open + 12 * MIN, maxAgeMs: 300000, allowMinutesWithoutBar: false }).reason, 'MINUTES_WITHOUT_BAR_NOT_ALLOWED');
++  assert.equal(volumeMeetsGateEvidence(v, { nowMs: open + 12 * MIN, maxAgeMs: 300000 }).minutesWithoutReturnedBar, 2);
++});
++
++test('scope: pre-market minutes count only in an extended scope', () => {
++  const pre = nyLocalToUtc(day, 540), asOf = open + 2 * MIN, bars = [bar(pre, 50), ...minutes(open, 2)];
++  assert.equal(agg(bars, { asOf, scope: 'REGULAR' }).returnedBarSum, 200);
++  assert.equal(agg(bars, { asOf, scope: 'PRE_AND_REGULAR' }).returnedBarSum, 250);
++});
++
++test('malformed, duplicate, other-session and inconsistent bars make the evidence invalid', () => {
++  const asOf = open + 2 * MIN;
++  for (const bars of [[...minutes(open, 2), bar(open, 5)], [bar(open - 86400000), ...minutes(open, 2)], [bar(open, 0), bar(open + MIN)], [bar(open, 100, { h: 9 })],
++    [null, bar(open)], [bar(open, 100, { vw: 11 })], [bar(open, 100, { c: NaN })], [bar(open, 100, { t: 'yesterday' })], [bar(open + 1000)]])
++    assert.equal(agg(bars, { asOf }).status, 'INVALID_EVIDENCE', JSON.stringify(bars).slice(0, 80));
++});
++
++test('consistency with a later daily total: the returned-bar sum may be lower, never higher', () => {
++  const asOf = open + 3 * MIN;
++  assert.deepEqual(agg(minutes(open, 3), { asOf, dailyVolume: 450 }).consistency, { status: 'NOT_CONTRADICTED', returnedBarSum: 300, dailyVolume: 450, notInReturnedBars: 150 });
++  assert.equal(agg(minutes(open, 3), { asOf, dailyVolume: 250 }).status, 'INVALID_EVIDENCE');
++});
++
++test('revisions: every field of every minute is compared; added and removed minutes are listed', () => {
++  const r = reconcileRevisions(minutes(open, 3), [bar(open, 100), bar(open + MIN, 130, { n: 4 }), bar(open + 3 * MIN, 70)]);
++  assert.equal(r.comparable, true); assert.deepEqual(r.changes.map(c => [c.kind, c.dv]), [['CHANGED', 30], ['REMOVED', -100], ['ADDED', 70]]);
++  assert.deepEqual(r.changes[0].fields, ['v', 'n']);
++});
++
++test('price roles carry evidence labels, not execution claims', () => {
++  const now = Date.parse('2026-11-02T13:40:00Z');
++  const info = premarketInfo({ p: 9.9, t: '2026-11-02T13:35:00Z' }, { nowMs: now, day: '2026-11-02', feed: 'sip' });
++  assert.equal(info.status, 'REPORTED_TRADE'); assert.equal(info.informationOnly, true); assert.equal(info.phase, 'PRE'); assert.equal(info.ageMs, 300000); assert.ok(!('executable' in info));
++  assert.equal(premarketInfo({ p: 9, t: '2026-11-02T00:30:00Z' }, { nowMs: now, day: '2026-11-02' }).status, 'NOT_THIS_SESSION_DAY');
++  const exit = priorCloseExit({ c: 8.8, t: '2026-10-30T04:00:00Z' }, { stop: 9, day: '2026-11-02' });
++  assert.equal(exit.status, 'PRIOR_CLOSE_REPORTED'); assert.equal(exit.stopHit, true); assert.equal(exit.instructionForTheOpen, true); assert.ok(!('executable' in exit));
++  assert.equal(priorCloseExit({ c: 8.8, t: '2026-10-30T04:00:00Z' }, { stop: null, day: '2026-11-02' }).stopHit, null);
++  const e = entryQuoteEvidence(Q, QOPT);
++  assert.equal(e.passesQuoteChecks, true); assert.equal(e.evidenceLabel, 'QUOTE_CHECKS_PASSED_AT_QUOTE_TIME_NOT_A_FILL_GUARANTEE'); assert.ok(!('executable' in e));
++  for (const [why, over, opts] of [['NOT_CONSOLIDATED_FEED', {}, { feed: 'iex' }], ['QUOTE_OLDER_THAN_LIMIT', {}, { nowMs: QAT + 120000 }], ['ONE_SIDED_OR_NO_MARKET', { bp: 0 }, {}], ['CROSSED', { ap: 9.9 }, {}],
++    ['SPREAD_ABOVE_LIMIT', { ap: 10.5 }, {}], ['ASK_SIZE_BELOW_LIMIT_OR_MALFORMED', { as: 50 }, {}], ['QUOTE_CLOCK_AFTER_NOW', {}, { nowMs: QAT - 60000 }], ['OTHER_SESSION_PHASE', { t: '2026-11-02T13:35:00Z' }, { nowMs: Date.parse('2026-11-02T13:35:30Z') }],
++    ['SIZE_UNIT_ROUND_LOTS_BEFORE_2025_11_03', { t: '2025-10-31T14:35:00Z' }, { nowMs: Date.parse('2025-10-31T14:35:30Z') }]])
++    assert.equal(entryQuoteEvidence({ ...Q, ...over }, { ...QOPT, ...opts }).reason, why);
++});
++
++test('request budget: per-minute polling of a few hundred symbols uses a tiny share of the documented 10,000 calls/min', () => {
++  assert.deepEqual(planBarRequests({ symbols: 300 }), { chunks: 2, pagesPerChunk: 1, callsPerPoll: 2, callsPerMinute: 2, shareOfLimit: 0.0002, withinLimit: true });
++  assert.equal(planBarRequests({ symbols: 300, minutesPerPoll: 390 }).callsPerPoll, 16);
++  assert.throws(() => planBarRequests({ symbols: NaN }), /INVALID_ARGUMENT_PLAN/);
++});
++
++// ---- regressions: each reproduced in d3bf78ba ----
++test('regression: entry quote checks reject missing, NaN, infinite or out-of-range limits instead of passing', () => {
++  for (const [opt, val] of [['maxSpreadPct', undefined], ['maxSpreadPct', NaN], ['maxSpreadPct', Infinity], ['maxSpreadPct', 0], ['maxAgeMs', undefined], ['maxAgeMs', NaN], ['maxAgeMs', -1],
++    ['minAskShares', undefined], ['minAskShares', 0], ['minAskShares', -1], ['minAskShares', 1.5], ['nowMs', NaN], ['nowMs', undefined], ['phase', 'LUNCH']])
++    assert.throws(() => entryQuoteEvidence(Q, { ...QOPT, [opt]: val }), /INVALID_ARGUMENT_/, opt + '=' + val);
++});
++test('regression: non-finite quote prices never pass (Infinity ask with an infinite spread limit used to pass)', () => {
++  assert.equal(entryQuoteEvidence({ ...Q, ap: Infinity }, QOPT).reason, 'NON_FINITE_PRICE');
++  assert.equal(entryQuoteEvidence({ ...Q, bp: NaN }, QOPT).reason, 'NON_FINITE_PRICE');
++});
++test('regression: NaN clock is an argument error, not a "future quote" reason', () => {
++  assert.throws(() => entryQuoteEvidence(Q, { ...QOPT, nowMs: NaN }), /INVALID_ARGUMENT_NOW_MS/);
++});
++test('regression: pre-market information rejects infinite prices and NaN clocks', () => {
++  assert.equal(premarketInfo({ p: Infinity, t: '2026-11-02T13:35:00Z' }, { nowMs: Date.parse('2026-11-02T13:40:00Z'), day: '2026-11-02' }).status, 'MISSING_OR_MALFORMED');
++  assert.throws(() => premarketInfo({ p: 9, t: '2026-11-02T13:35:00Z' }, { nowMs: NaN, day: '2026-11-02' }), /INVALID_ARGUMENT_NOW_MS/);
++  assert.throws(() => premarketInfo({ p: 9, t: '2026-11-02T13:35:00Z' }, { nowMs: 1, day: 'today' }), /INVALID_ARGUMENT_DAY/);
++});
++test('regression: prior-close instruction rejects an infinite close and an invalid stop', () => {
++  assert.equal(priorCloseExit({ c: Infinity, t: '2026-10-30T04:00:00Z' }, { stop: 9, day: '2026-11-02' }).status, 'MISSING_OR_MALFORMED');
++  for (const stop of [NaN, Infinity, 0, -1, undefined, '9']) assert.throws(() => priorCloseExit({ c: 8, t: '2026-10-30T04:00:00Z' }, { stop, day: '2026-11-02' }), /INVALID_ARGUMENT_STOP/, String(stop));
++});
++test('regression: graceMs must be an integer between 0 and 15 minutes', () => {
++  for (const graceMs of [NaN, -60000, Infinity, 1.5, 16 * MIN, '60000']) assert.throws(() => agg(minutes(open, 2), { graceMs }), /INVALID_ARGUMENT_GRACE_MS/, String(graceMs));
++  assert.equal(agg(minutes(open, 2), { graceMs: 0 }).status, 'COMPUTED');
++});
++test('regression: an infinite or non-integer daily total is an argument error, not a silent "consistent"', () => {
++  for (const dailyVolume of [Infinity, NaN, -1, 1.5]) assert.throws(() => agg(minutes(open, 2), { dailyVolume }), /INVALID_ARGUMENT_DAILY_VOLUME/, String(dailyVolume));
++});
++test('regression: other aggregate arguments are validated (feed, bars, scope, day, as-of, retrieval)', () => {
++  assert.throws(() => agg(minutes(open, 2), { feed: 'iex' }), /FEED_MUST_BE_SIP/);
++  assert.throws(() => aggregateTimedVolume('bars', { day, asOf: open, retrievedAt: open, feed: 'sip' }), /INVALID_ARGUMENT_BARS/);
++  assert.throws(() => agg([], { scope: 'toString' }), /INVALID_ARGUMENT_SCOPE/);
++  assert.throws(() => agg([], { asOf: open + 1 }), /INVALID_ARGUMENT_AS_OF/);
++  assert.throws(() => aggregateTimedVolume([], { day, asOf: open, retrievedAt: open - 1, feed: 'sip' }), /INVALID_ARGUMENT_RETRIEVED_AT/);
++});
++test('regression: revisions in open, high, low or VWAP are detected (only v/n/c were compared)', () => {
++  const r = reconcileRevisions([bar(open)], [bar(open, 100, { h: 10.5, l: 9.5, o: 9.95, vw: 10.2 })]);
++  assert.equal(r.changes.length, 1); assert.deepEqual(r.changes[0].fields, ['o', 'h', 'l', 'vw']); assert.equal(r.changes[0].dv, 0);
++});
++test('regression: malformed and duplicate revision evidence is reported, never silently dropped', () => {
++  const m = reconcileRevisions([bar(open), { t: 'x' }], [bar(open)]);
++  assert.equal(m.comparable, false); assert.deepEqual(m.evidenceIssues.map(i => [i.side, i.code, i.problem]), [['before', 'MALFORMED_BAR', 'BAD_TIMESTAMP']]);
++  const d = reconcileRevisions([bar(open, 100), bar(open, 50)], [bar(open, 50)]);
++  assert.equal(d.comparable, false); assert.deepEqual(d.evidenceIssues.map(i => [i.side, i.code]), [['before', 'DUPLICATE_MINUTE']]);
++  assert.throws(() => reconcileRevisions(null, []), /INVALID_ARGUMENT_REVISION_INPUTS/);
++});
++test('regression: gate evidence requires a finite clock and a stated age limit (a missing limit used to accept any age)', () => {
++  const v = agg(minutes(open, 2));
++  assert.throws(() => volumeMeetsGateEvidence(v, { nowMs: open + 86400000 }), /INVALID_ARGUMENT_MAX_AGE_MS/);
++  assert.throws(() => volumeMeetsGateEvidence(v, { nowMs: NaN, maxAgeMs: 1 }), /INVALID_ARGUMENT_NOW_MS/);
++  assert.equal(volumeMeetsGateEvidence(v, { nowMs: open + 86400000, maxAgeMs: 180000 }).reason, 'BOUNDARY_TOO_OLD');
++  assert.equal(volumeMeetsGateEvidence({ volumeClass: VOLUME_CLASS.UNTIMED_DAILY }, { nowMs: open, maxAgeMs: 1e9 }).reason, 'NOT_A_COMPUTED_RETURNED_BAR_SUM');
++});
++test('regression: no "settled" or "executable" wording in outputs or exports', async () => {
++  const mod = await import('../market-data-contracts.mjs'), outputs = JSON.stringify([agg(minutes(open, 2)), entryQuoteEvidence(Q, QOPT), premarketInfo({ p: 9, t: '2026-10-30T13:00:00Z' }, { nowMs: open, day }), priorCloseExit({ c: 8, t: '2026-10-29T04:00:00Z' }, { stop: 9, day })]);
++  assert.doesNotMatch(outputs, /settled|executable/i); assert.equal(Object.keys(mod).some(k => /executable|eligible/i.test(k)), false);
++});
++
++// ---- regression: impossible calendar dates were normalised by Date.parse (2026-02-30T14:35:00Z read as 2 March and passed) ----
++test('regression: impossible dates are rejected, never normalised into another day', () => {
++  for (const t of ['2026-02-30T14:35:00Z', '2026-02-29T14:35:00Z', '2025-02-29T00:00:00Z', '1900-02-29T00:00:00Z', '2026-04-31T13:00:00Z', '2026-06-31T13:00:00Z',
++    '2026-09-31T13:00:00Z', '2026-11-31T13:00:00Z', '2026-13-01T00:00:00Z', '2026-00-10T00:00:00Z', '2026-01-00T00:00:00Z', '2026-01-32T00:00:00Z'])
++    assert.equal(isIso(t), false, t);
++  for (const d of ['2026-02-30', '2025-02-29', '1900-02-29', '2026-04-31', '2026-13-01', '2026-00-01', '2026-1-01', '26-01-01']) assert.equal(isCalendarDay(d), false, d);
++});
++test('regression: valid leap days and month boundaries are accepted', () => {
++  for (const t of ['2024-02-29T12:00:00Z', '2000-02-29T00:00:00Z', '2028-02-29T23:59:59Z', '2026-01-31T23:59:59Z', '2026-02-28T23:59:59Z', '2026-03-01T00:00:00Z',
++    '2026-04-30T00:00:00Z', '2026-12-31T23:59:59.999999999Z', '2027-01-01T00:00:00Z']) assert.equal(isIso(t), true, t);
++  for (const d of ['2024-02-29', '2000-02-29', '2026-02-28', '2026-12-31']) assert.equal(isCalendarDay(d), true, d);
++});
++test('regression: supported timezone formats are exactly Z and +HH:MM / -HH:MM; out-of-range clock fields are rejected', () => {
++  for (const t of ['2026-11-02T14:35:00Z', '2026-11-02T09:35:00-05:00', '2026-11-02T20:05:00+05:30', '2026-11-02T14:35:00+00:00', '2026-11-02T14:35:00.5Z', '2026-11-02T14:35:00.123456789-04:00'])
++    assert.equal(isIso(t), true, t);
++  for (const t of ['2026-11-02T14:35:00', '2026-11-02T14:35:00z', '2026-11-02t14:35:00Z', '2026-11-02T14:35:00+0530', '2026-11-02T14:35:00+05', '2026-11-02T14:35:00+24:00',
++    '2026-11-02T14:35:00+05:60', '2026-11-02T24:00:00Z', '2026-11-02T14:60:00Z', '2026-11-02T14:35:60Z', '2026-11-02T14:35:00.1234567890Z', '2026-11-02 14:35:00Z', 20261102, null])
++    assert.equal(isIso(t), false, String(t));
++  assert.equal(Date.parse('2026-11-02T09:35:00-05:00'), Date.parse('2026-11-02T14:35:00Z'), 'offsets resolve to the same instant');
++});
++test('regression: every consumer refuses impossible dates (quote, pre-market trade, prior close, bars, session day)', () => {
++  const quote = entryQuoteEvidence({ ...Q, t: '2026-02-30T14:35:00Z' }, { ...QOPT, nowMs: Date.parse('2026-03-02T14:35:30Z'), phase: undefined });
++  assert.equal(quote.passesQuoteChecks, false); assert.equal(quote.reason, 'NO_VALID_QUOTE_CLOCK');
++  assert.equal(premarketInfo({ p: 9, t: '2026-04-31T13:00:00Z' }, { nowMs: Date.parse('2026-05-01T13:05:00Z'), day: '2026-05-01' }).status, 'MISSING_OR_MALFORMED');
++  assert.equal(priorCloseExit({ c: 8, t: '2026-02-30T05:00:00Z' }, { stop: 9, day: '2026-03-03' }).status, 'MISSING_OR_MALFORMED');
++  assert.equal(agg([bar(open), { ...bar(open + MIN), t: '2026-10-32T13:31:00Z' }], { asOf: open + 2 * MIN }).status, 'INVALID_EVIDENCE');
++  assert.throws(() => premarketInfo({ p: 9, t: '2026-03-02T13:00:00Z' }, { nowMs: Date.parse('2026-03-02T13:05:00Z'), day: '2026-02-30' }), /INVALID_ARGUMENT_DAY/);
++  assert.throws(() => priorCloseExit({ c: 8, t: '2026-02-27T05:00:00Z' }, { stop: 9, day: '2026-02-30' }), /INVALID_ARGUMENT_DAY/);
++  assert.throws(() => aggregateTimedVolume([], { day: '2026-02-30', asOf: open, retrievedAt: open, feed: 'sip' }), /INVALID_ARGUMENT_DAY/);
++  assert.throws(() => nyLocalToUtc('2026-02-30', 570), /NY_LOCAL_ARGS/);
++});
++
++test('integration: only the reviewed passive observer imports the contracts module', () => {
++  const root = path.resolve(import.meta.dirname, '..');
++  const users = fs.readdirSync(root).filter(f => f.endsWith('.mjs') && f !== 'market-data-contracts.mjs').filter(f => fs.readFileSync(path.join(root, f), 'utf8').includes('market-data-contracts'));
++  assert.deepEqual(users, ['watcher-contract-observer.mjs']);
++});
+diff --git a/test/passive-observer-package.test.mjs b/test/passive-observer-package.test.mjs
+new file mode 100644
+index 0000000..aab3f47
+--- /dev/null
++++ b/test/passive-observer-package.test.mjs
+@@ -0,0 +1,14 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {spawnSync} from 'node:child_process';import {createHash} from 'node:crypto';
++const root=path.resolve(import.meta.dirname,'..'),read=p=>fs.readFileSync(path.join(root,p)),hash=b=>createHash('sha256').update(b).digest('hex');
++test('exact runtime patch applies to pinned production source and yields all reviewed hashes; activation stays separate',t=>{
++ const m=JSON.parse(read('docs/validation/passive-contract-observer-manifest.json')),saved=JSON.parse(read('docs/validation/observer-baseline-source.json')),dir=fs.mkdtempSync(path.join(os.tmpdir(),'observer-patch-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
++ const git=(...args)=>{const x=spawnSync('git',args,{cwd:dir,encoding:'utf8',env:{PATH:process.env.PATH}});assert.equal(x.status,0,x.stderr);};
++ git('init','-q');for(const [name,source]of Object.entries(saved.files))fs.writeFileSync(path.join(dir,name),source);
++ const runtime=path.join(root,'docs/validation/passive-contract-observer-runtime.patch');assert.equal(hash(fs.readFileSync(runtime)),m.runtimePatchSha256);
++ git('apply','--check',runtime);git('apply',runtime);for(const [name,digest]of Object.entries(m.runtimeFiles))assert.equal(hash(fs.readFileSync(path.join(dir,name))),digest,name);
++ assert.equal(hash(fs.readFileSync(path.join(dir,'market-data-contracts.mjs'))),'269626fa8da5c2a12234a0baf028b560bb7838f468a9e52a428208574a091cbe');
++ const testsPatch=path.join(root,'docs/validation/passive-contract-observer-tests.patch');assert.equal(hash(fs.readFileSync(testsPatch)),m.testsPatchSha256);git('apply','--check',testsPatch);git('apply',testsPatch);for(const file of ['test/watcher-contract-observer.test.mjs','test/watcher-contract-parity.test.mjs','test/passive-observer-package.test.mjs','test/market-data-contracts.test.mjs'])assert.ok(fs.readFileSync(path.join(dir,file)).equals(read(file)),file);
++ fs.mkdirSync(path.join(dir,'.github/workflows'),{recursive:true});fs.writeFileSync(path.join(dir,'.github/workflows/ignition.yml'),read('.github/workflows/ignition.yml'));
++ const activation=path.join(root,'docs/validation/passive-contract-observer-activation.patch.proposed');assert.equal(hash(fs.readFileSync(activation)),m.activationPatchSha256);git('apply','--check',activation);
++ assert.doesNotMatch(read('.github/workflows/ignition.yml').toString(),/CONTRACT_OBSERVER:/);assert.equal(m.activationApproved,false);
++});
+diff --git a/test/watcher-contract-observer.test.mjs b/test/watcher-contract-observer.test.mjs
+new file mode 100644
+index 0000000..6700580
+--- /dev/null
++++ b/test/watcher-contract-observer.test.mjs
+@@ -0,0 +1,68 @@
++import {spawn} from 'node:child_process';
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';
++import {createContractObserver,OBSERVER_LIMITS} from '../watcher-contract-observer.mjs';
++import {alpacaSnapshot,mergeLiveSnapshot} from '../snapshot-fields.mjs';
++const day='2026-10-30',now=Date.parse(day+'T13:40:00Z'),sourceSha='a'.repeat(40),runId='synthetic-1';
++const fixture=t=>{const directory=fs.mkdtempSync(path.join(os.tmpdir(),'contract-observer-'));t.after(()=>fs.rmSync(directory,{recursive:true,force:true}));return {directory,day,runId,sourceSha,enabled:true};};
++const row=()=>alpacaSnapshot('ZZQ',{latestTrade:{p:10,t:new Date(now-1000).toISOString()},latestQuote:{bp:9.99,ap:10.01,bs:100,as:200,t:new Date(now-2000).toISOString()},dailyBar:{v:100,t:day+'T04:00:00Z'}},true,now);
++test('same-response sizes and units follow accepted quote only; no price/rule mutation',()=>{
++ const live=row(),old={price:9,t:now-60000,bid:8,ask:10,qt:now-60000};mergeLiveSnapshot(old,live,now);
++ assert.equal(old.quoteAskSizeRaw,200);assert.equal(old.quoteBidSizeRaw,100);assert.equal(old.quoteSizeUnit,'SHARES');
++ mergeLiveSnapshot(old,{...live,qt:now-10000,quoteAskSizeRaw:99999},now);assert.equal(old.quoteAskSizeRaw,200);
++ const historical=alpacaSnapshot('ZZQ',{latestQuote:{as:2,bs:3,t:'2025-10-31T14:00:00Z'}},true,now);assert.equal(historical.quoteSizeUnit,'ROUND_LOTS_OR_UNKNOWN');
++});
++test('default off performs no filesystem writes',t=>{const x=fixture(t);fs.rmSync(x.directory,{recursive:true});const a=createContractObserver({...x,enabled:false});assert.equal(a.record({minute:580,rows:[row()],nowMs:now}),false);assert.equal(fs.existsSync(x.directory),false);});
++test('read-only summary, idempotency, restart and exact retained bytes',t=>{
++ const x=fixture(t),rows=[row()],original=JSON.stringify(rows),a=createContractObserver(x);
++ assert.equal(a.record({minute:580,rows,nowMs:now}),true);const f=path.join(x.directory,day,runId+'.contracts','beat-0580.json'),bytes=fs.readFileSync(f);
++ assert.equal(a.record({minute:580,rows,nowMs:now}),true);assert.equal(a.health().records,1);assert.equal(JSON.stringify(rows),original);
++ const b=createContractObserver(x);assert.equal(b.health().records,1);assert.equal(b.record({minute:580,rows,nowMs:now}),true);assert.ok(fs.readFileSync(f).equals(bytes));
++ const r=JSON.parse(bytes).record;assert.equal(r.volumeMeaning,'PROVIDER_FIELD_AS_REPORTED_NOT_TOTAL_TRADED_OR_FRESHNESS_PROOF');assert.equal(r.entryPolicy,'NOT_ADOPTED_NOT_EVALUATED');assert.doesNotMatch(bytes.toString(),/ZZQ|10\.01|securityId/);
++});
++test('conflicting repeat and partial writes quarantine across restart, preserving original bytes',t=>{
++ for(const partial of [false,true]){const x=fixture(t),a=createContractObserver(x);a.record({minute:580,rows:[row()],nowMs:now});const f=path.join(x.directory,day,runId+'.contracts','beat-0580.json');
++ if(partial)fs.writeFileSync(f,'{"partial":');const old=fs.readFileSync(f);
++ const b=createContractObserver(x);assert.equal(b.record({minute:580,rows:[{...row(),bid:0}],nowMs:now}),false);assert.equal(b.health().state,'QUARANTINED');assert.ok(fs.readFileSync(f).equals(old));assert.equal(createContractObserver(x).health().state,'QUARANTINED');}
++});
++test('short-write crash preserves incomplete evidence and never throws into watcher',t=>{
++ const x=fixture(t);let once=true;const io={...fs,writeSync:(fd,b,o,n)=>{if(once){once=false;fs.writeSync(fd,b,o,Math.min(n,20));throw Error('synthetic interruption');}return fs.writeSync(fd,b,o,n);}};
++ const a=createContractObserver({...x,io});assert.doesNotThrow(()=>a.record({minute:580,rows:[row()],nowMs:now}));assert.equal(a.health().state,'QUARANTINED');
++ const f=path.join(x.directory,day,runId+'.contracts','beat-0580.json');assert.equal(fs.statSync(f).size,20);assert.equal(createContractObserver(x).health().state,'QUARANTINED');
++});
++test('known window and file-size arithmetic bound storage; future/missing fields are uncertainty',t=>{
++ const x=fixture(t),a=createContractObserver(x);assert.equal(a.record({minute:901,rows:[row()],nowMs:now}),false);
++ const rows=[{...row(),t:now+1,qt:now+1,vt:now+1,quoteAskSizeRaw:'200'}];a.record({minute:580,rows,nowMs:now});
++ const r=JSON.parse(fs.readFileSync(path.join(x.directory,day,runId+'.contracts','beat-0580.json'))).record;
++ assert.equal(r.counts.priceClockFuture,1);assert.equal(r.counts.quoteClockFuture,1);assert.equal(r.counts.sizeUnknown,1);assert.equal(OBSERVER_LIMITS.records*OBSERVER_LIMITS.recordBytes,OBSERVER_LIMITS.maxBytes);assert.ok(OBSERVER_LIMITS.maxBytes<2*1024*1024);
++});
++
++test('independent competing processes preserve one immutable heartbeat and fail closed on a race',async t=>{
++ const x=fixture(t),source=new URL('../watcher-contract-observer.mjs',import.meta.url).href;
++ const script="import {createContractObserver} from "+JSON.stringify(source)+";const a=createContractObserver("+JSON.stringify(x)+");a.record({minute:580,rows:[],nowMs:"+now+"});";
++ const run=()=>new Promise((resolve,reject)=>{const p=spawn(process.execPath,['--input-type=module','-e',script],{stdio:'ignore',env:{PATH:process.env.PATH}});p.once('error',reject);p.once('close',resolve);});
++ assert.deepEqual(await Promise.all([run(),run()]),[0,0]);const root=path.join(x.directory,day,runId+'.contracts'),names=fs.readdirSync(root).filter(x=>x.endsWith('.json'));assert.equal(names.length,1);
++ const raw=fs.readFileSync(path.join(root,names[0]));assert.doesNotThrow(()=>JSON.parse(raw));const before=Buffer.from(raw);createContractObserver(x).record({minute:580,rows:[],nowMs:now});assert.ok(fs.readFileSync(path.join(root,names[0])).equals(before));
++});
++
++test('O1 root, ancestor, dangling and leaf symlinks never receive records or quarantine writes',t=>{
++ for(const variant of ['root','ancestor','dangling','after-open','marker','record']){
++  const x=fixture(t),target=fs.mkdtempSync(path.join(os.tmpdir(),'observer-outside-'));t.after(()=>fs.rmSync(target,{recursive:true,force:true}));const sentinel=path.join(target,'sentinel');fs.writeFileSync(sentinel,'UNCHANGED');const dir=path.join(x.directory,day),root=path.join(dir,runId+'.contracts');fs.mkdirSync(dir,{recursive:true});let a;
++  if(variant==='ancestor'){fs.rmdirSync(dir);fs.symlinkSync(target,dir);}
++  else if(variant==='root'||variant==='dangling')fs.symlinkSync(variant==='root'?target:path.join(target,'missing'),root);
++  else{fs.mkdirSync(root);if(variant==='marker')fs.symlinkSync(sentinel,path.join(root,'QUARANTINED'));if(variant==='record')fs.symlinkSync(sentinel,path.join(root,'beat-0580.json'));if(variant==='after-open'){a=createContractObserver(x);fs.rmdirSync(root);fs.symlinkSync(target,root);}}
++  a??=createContractObserver(x);assert.equal(a.record({minute:580,rows:[],nowMs:now}),false);assert.equal(a.health().state,'QUARANTINED');assert.deepEqual(fs.readdirSync(target),['sentinel'],variant);assert.equal(fs.readFileSync(sentinel,'utf8'),'UNCHANGED');
++ }
++});
++test('O1 ancestor replacement at record open and at error handling cannot redirect any write',t=>{
++ for(const fail of [false,true]){const x=fixture(t),root=path.join(x.directory,day,runId+'.contracts'),saved=root+'.original',target=fs.mkdtempSync(path.join(os.tmpdir(),'observer-race-'));t.after(()=>fs.rmSync(target,{recursive:true,force:true}));let swapped=false;
++  const swap=()=>{fs.renameSync(root,saved);fs.symlinkSync(target,root);swapped=true;};
++  const io={...fs,openSync:(file,...args)=>{if(!fail&&!swapped&&String(file).endsWith('/beat-0580.json'))swap();return fs.openSync(file,...args);},writeSync:(...args)=>{if(fail&&!swapped){swap();throw Error('SYNTHETIC_WRITE_FAILURE');}return fs.writeSync(...args);}};
++  const a=createContractObserver({...x,io});assert.equal(a.record({minute:580,rows:[],nowMs:now}),false);assert.ok(swapped);assert.equal(a.health().state,'QUARANTINED');assert.deepEqual(fs.readdirSync(target),[]);assert.ok(fs.existsSync(path.join(saved,'beat-0580.json')));
++ }
++});
++test('O1 real read-only directory under a verified non-root uid fails without writes',async t=>{
++ const x=fixture(t),root=path.join(x.directory,day,runId+'.contracts');fs.mkdirSync(root,{recursive:true});for(const p of [x.directory,path.dirname(root)])fs.chmodSync(p,0o755);fs.chmodSync(root,0o555);
++ if(process.getuid()!==0){try{assert.throws(()=>fs.accessSync(root,fs.constants.W_OK));const a=createContractObserver(x);assert.equal(a.record({minute:580,rows:[],nowMs:now}),false);assert.equal(a.health().state,'QUARANTINED');assert.deepEqual(fs.readdirSync(root),[]);}finally{fs.chmodSync(root,0o755);}return;}
++ const script="import fs from 'node:fs';import {createContractObserver} from "+JSON.stringify(new URL('../watcher-contract-observer.mjs',import.meta.url).href)+";if(process.getuid()===0)throw Error('INVALID_ROOT_TEST');let denied=false;try{fs.accessSync("+JSON.stringify(root)+",fs.constants.W_OK);}catch{denied=true;}if(!denied)throw Error('PERMISSION_NOT_ENFORCED');const a=createContractObserver("+JSON.stringify(x)+");const written=a.record({minute:580,rows:[],nowMs:"+now+"});console.log(JSON.stringify({uid:process.getuid(),denied,written,health:a.health().state}));";
++ const opts={env:{PATH:process.env.PATH},stdio:['ignore','pipe','pipe'],...(process.getuid()===0?{uid:65534,gid:65534}:{})};let out='',err='';const p=spawn(process.execPath,['--input-type=module','-e',script],opts);p.stdout.on('data',b=>out+=b);p.stderr.on('data',b=>err+=b);const code=await new Promise((resolve,reject)=>{p.once('error',reject);p.once('close',resolve);});fs.chmodSync(root,0o755);assert.equal(code,0,err);const r=JSON.parse(out);assert.notEqual(r.uid,0);assert.equal(r.denied,true);assert.equal(r.written,false);assert.equal(r.health,'QUARANTINED');assert.deepEqual(fs.readdirSync(root),[]);
++});
+diff --git a/test/watcher-contract-parity.test.mjs b/test/watcher-contract-parity.test.mjs
+new file mode 100644
+index 0000000..bffe50f
+--- /dev/null
++++ b/test/watcher-contract-parity.test.mjs
+@@ -0,0 +1,70 @@
++// Full production watcher (ignition-watch.mjs) against synthetic local Massive + Alpaca services: SIP/IEX attribution,
++// 403/422/429 handling, quote clocks and archive output. No credentials, provider, message or order; external fetch is refused.
++// FEED_INTEGRITY_ROOT can point at another tree's modules (used to show the defects on unpatched production).
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import http from 'node:http';
++import zlib from 'node:zlib';
++import { spawn, execFileSync } from 'node:child_process';
++const root = path.resolve(process.env.FEED_INTEGRITY_ROOT || path.join(import.meta.dirname, '..'));
++const day = '2026-10-30', epoch = Date.parse(day + 'T13:40:00Z'), late = epoch - 20 * 60000, L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
++const sleep = (ms) => new Promise(r => setTimeout(r, ms));
++
++async function run(t, scenario, {baseline=false,enabled=false,badPath=false}={}) {
++  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'feed-integrity-watcher-')); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
++  for (const f of fs.readdirSync(root).filter(p => p.endsWith('.mjs'))) fs.copyFileSync(path.join(root, f), path.join(dir, f));
++  if(baseline){const saved=JSON.parse(fs.readFileSync(new URL('../docs/validation/observer-baseline-source.json',import.meta.url)));for(const [file,source]of Object.entries(saved.files))fs.writeFileSync(path.join(dir,file),source);}
++  fs.mkdirSync(path.join(dir, 'data'));
++  if(badPath){const p=path.join(dir,'data/ignition-runs',day);fs.mkdirSync(p,{recursive:true});fs.writeFileSync(path.join(p,'synthetic-'+scenario+'-1.contracts'),'synthetic unavailable directory');}
++  execFileSync('git', ['init', '-q'], { cwd: dir, stdio: 'ignore' }); execFileSync('git', ['-c', 'user.name=Synthetic', '-c', 'user.email=synthetic@example.invalid', 'commit', '--allow-empty', '-qm', 'fixture'], { cwd: dir, stdio: 'ignore',env:{PATH:process.env.PATH,GIT_AUTHOR_DATE:'2026-10-30T13:40:00Z',GIT_COMMITTER_DATE:'2026-10-30T13:40:00Z'} });
++  const SYMS = scenario === 'race' ? Array.from({ length: 250 }, (_, i) => 'Z' + L[Math.floor(i / 26) % 26] + L[i % 26]) : ['ZZQ'];
++  const minT = scenario.startsWith('top50-future') ? epoch + 10 * 60000 : late;   // a future-dated Massive volume clock
++  const mrow = (s) => ({ ticker: s, lastTrade: { p: 10, t: late * 1e6 }, lastQuote: { p: 9.98, P: 10.02, t: late * 1e6 }, prevDay: { c: 9.5, v: 2e6 }, min: { c: 10, t: minT, av: 1e5 }, day: { c: 10, o: 9.6, v: 1e5 } });
++  let snapshotRequests = 0;
++  const calls = [], sockets = new Set();
++  const server = http.createServer(async (req, res) => { const u = new URL(req.url, 'http://localhost'), feed = u.searchParams.get('feed'); calls.push(u.pathname + (feed ? '?feed=' + feed : '')); res.setHeader('Content-Type', 'application/json');
++    if (u.pathname.includes('/v2/snapshot/locale')) return res.end(JSON.stringify({ tickers: SYMS.map(mrow) }));
++    if (u.pathname.includes('/screener/')) return res.end(JSON.stringify({ gainers: [{ symbol: 'ZZQ' }] }));
++    if (u.pathname === '/v2/stocks/snapshots') { const syms = (u.searchParams.get('symbols') || '').split(','); snapshotRequests++;
++      // top50-future*: the targeted refresh fails (non-403), so the watcher takes the top-50 fallback, whose snapshot succeeds
++      if (scenario.startsWith('top50-future') && snapshotRequests === 1) { res.statusCode = 500; return res.end('{}'); }
++      const minuteT = scenario === 'top50-future-sip-minute' ? epoch + 5 * 60000 : epoch - 60000;
++      if (scenario === 'race') { if (feed === 'sip' && syms[0] === SYMS[0]) { await sleep(50); res.statusCode = 403; return res.end('{}'); } await sleep(feed === 'iex' ? 300 : 150); }
++      if (feed === 'sip' && scenario === 'sip-403') { res.statusCode = 403; return res.end('{"message":"subscription does not permit"}'); }
++      if (feed === 'sip' && scenario === 'sip-422') { res.statusCode = 422; return res.end('{"message":"invalid"}'); }
++      if (scenario === 'sip-429') { res.statusCode = 429; res.setHeader('retry-after', '86400'); return res.end('{}'); }
++      const tt = new Date(epoch - 30000).toISOString();
++      return res.end(JSON.stringify(Object.fromEntries(syms.map(s => [s, { latestTrade: { p: 11, t: tt }, latestQuote: { bp: 10.99, ap: 11.01, bs:200,as:300,t: tt }, minuteBar: { t: new Date(minuteT).toISOString(), c: 11, v: 1000 }, dailyBar: { t: day + 'T04:00:00Z', o: 9.6, c: 11, v: feed === 'sip' ? 3e6 : 5e4 }, prevDailyBar: { c: 9.5, v: 2e6 } }])))); }
++    res.statusCode = 404; res.end('{}'); });
++  server.on('connection', s => { sockets.add(s); s.on('close', () => sockets.delete(s)); }); await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => { for (const s of sockets) s.destroy(); server.close(); });
++  const base = 'http://127.0.0.1:' + server.address().port, preload = path.join(dir, 'local-only.mjs');
++  fs.writeFileSync(preload, `const D=Date,start=D.now(),at=${epoch};globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[at]));}static now(){return at;}};const f=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(base + '/')}))throw Error('NO_EXTERNAL_ACCESS');return f(u,o);};`);
++  const env = { PATH: process.env.PATH, IG_DAY: day, IG_FAKE_MIN: '580', IG_FAKE_STEP: '400', IG_RUN_MIN: '1', IG_NO_RADAR: '1', MASSIVE_BASE: base, ALPACA_DATA: base, ALPACA_KEY: 'synthetic', ALPACA_SECRET: 'synthetic', SEC_BASE: base, SEC_UA: 'synthetic fixture', GITHUB_RUN_ID: 'synthetic-' + scenario, GITHUB_RUN_ATTEMPT: '1' };
++  if(enabled)env.CONTRACT_OBSERVER='research';
++  if (scenario !== 'top50') env.MASSIVE_KEY = 'synthetic';
++  const child = spawn(process.execPath, ['--import', preload, 'ignition-watch.mjs'], { cwd: dir, env, stdio: ['ignore', 'pipe', 'pipe'] }); t.after(() => { if (child.exitCode === null) child.kill('SIGKILL'); });
++  let output = ''; child.stdout.on('data', x => output += x); child.stderr.on('data', x => output += x);
++  const timer = setTimeout(() => child.kill('SIGKILL'), 60000); const code = await new Promise((resolve, reject) => { child.on('error', reject); child.on('close', resolve); }); clearTimeout(timer);
++  assert.equal(code, 0, output);
++  const live = JSON.parse(fs.readFileSync(path.join(dir, 'data/ignition-live.json'))), rd = path.join(dir, 'data/ignition-runs', day);
++  const shadow = fs.readdirSync(rd).filter(n => n.endsWith('.shadow.jsonl.gz')).flatMap(n => zlib.gunzipSync(fs.readFileSync(path.join(rd, n))).toString().trim().split('\n').filter(Boolean).map(JSON.parse));
++  assert.equal(calls.some(p => /sendMessage|orders/.test(p)), false, 'no message or order endpoint');
++  const legacy={};const walk=(base,rel='')=>{for(const name of fs.readdirSync(base)){if(name.endsWith('.contracts'))continue;const p=path.join(base,name),r=path.join(rel,name);if(fs.statSync(p).isDirectory())walk(p,r);else legacy[r]=fs.readFileSync(p).toString('base64');}};walk(path.join(dir,'data'));
++  return { dir,output,legacy,calls, live, shadow, SYMS, snaps: calls.filter(c => c.startsWith('/v2/stocks/snapshots')) };
++}
++
++
++for(const scenario of ['sip-ok','sip-403','top50'])test('actual production watcher before/off/on parity: '+scenario,async t=>{
++ const before=await run(t,scenario,{baseline:true}),off=await run(t,scenario),on=await run(t,scenario,{enabled:true});
++ assert.deepEqual(off.calls,before.calls);assert.deepEqual(on.calls,before.calls);assert.deepEqual(off.legacy,before.legacy);assert.deepEqual(on.legacy,before.legacy,'all original archive and ledger bytes unchanged');
++ assert.match(on.output,/"state":"ACTIVE"/);assert.equal(on.calls.some(p=>/sendMessage|orders/.test(p)),false);
++ const dir=path.join(on.dir,'data/ignition-runs',day,'synthetic-'+scenario+'-1.contracts');assert.equal(fs.readdirSync(dir).length,1);
++ const r=JSON.parse(fs.readFileSync(path.join(dir,'beat-0580.json'))).record;assert.equal(r.counts.sizeUnknown,scenario==='top50'?1:0);assert.equal(r.fillGuarantee,false);assert.equal(r.entryPolicy,'NOT_ADOPTED_NOT_EVALUATED');
++});
++test('actual watcher survives observer persistence refusal with unchanged decisions and requests',async t=>{
++ const before=await run(t,'sip-ok',{baseline:true}),bad=await run(t,'sip-ok',{enabled:true,badPath:true});
++ assert.deepEqual(bad.calls,before.calls);assert.deepEqual(bad.legacy,before.legacy);assert.match(bad.output,/"state":"QUARANTINED"/);
++});
