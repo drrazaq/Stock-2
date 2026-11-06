@@ -39,10 +39,10 @@
     "docs/review-ad3837-response/evidence/ad3837-final-exact20-corrected.log.gz": "10d32972406cc3b39113a4c586aae5c1993be01c1857044ad470c8bd5c76599e",
     "docs/review-ad3837-response/evidence/ad3837-final-all-A20.log.gz": "34cefad6c854d75889e391c9aa1cca96fa70cc3e067fff3301e4733069cb3f3e",
     "docs/review-ad3837-response/evidence/ad3837-request-race-before-fix2.log.gz": "d9d2f12e13293a82f59ce556daad45eb01a4e77790abc745dcbf309c3a7f4617",
-    "docs/review-ad3837-response/evidence/ad3837-final-new24-v2.log.gz": "46aa8d46b65e67673dda28960d9fd748bd61c3ac0de0193de2327cad461470f2"
+    "docs/review-ad3837-response/evidence/ad3837-final-new24-v2.log.gz": "46aa8d46b65e67673dda28960d9fd748bd61c3ac0de0193de2327cad461470f2",
+    "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45"
   },
   "independentPassedUnchanged": {
-    "a-fenced-store.mjs": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
     "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
     "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
     "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
@@ -156,5 +156,13 @@
       ]
     },
     "Current first-capture host source-field concordance; not a new PASS on original118ed, see docs/a-first-capture-continuation/finite-verification.json"
-  ]
+  ],
+  "workerLifetimeFollowup": {
+    "base": "5713011e426f21e283dccad286af096519f741e9",
+    "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+    "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+    "independentReview": "PENDING",
+    "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+  }
 }

@@ -4,12 +4,12 @@
   "reviewSource": "446cd250bfe1aba6e8e5b949223d5fe4732cb9d2",
   "status": "INACTIVE_OFFLINE_IMPLEMENTED_CONFIRMATION_PENDING",
   "files": {
-    "a-fenced-store.mjs": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+    "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
     "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
-    "docs/a-native-source-join/manifest.json": "7b4f701ab4c01d47bdcc99dc96762061a1391acf9c2d8acb8bfce553f9971354",
+    "docs/a-native-source-join/manifest.json": "ac764c579c8ecb1df8806b580af885858df800f5e10706dedf4a7a7fc774eee2",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
     "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
@@ -173,5 +173,13 @@
         }
       ]
     }
-  ]
+  ],
+  "workerLifetimeFollowup": {
+    "base": "5713011e426f21e283dccad286af096519f741e9",
+    "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+    "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+    "independentReview": "PENDING",
+    "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+  }
 }

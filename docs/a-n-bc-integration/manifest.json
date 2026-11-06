@@ -4,7 +4,7 @@
   "reviewSource": "eb234b307258eafb028f36e0f7fcb9c090ed6dae",
   "status": "OFFLINE_TESTED_INDEPENDENT_REVIEW_PENDING",
   "files": {
-    "a-fenced-store.mjs": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+    "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
     "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
     "a-legacy-store-export.mjs": "e81f17bd2ba9f641a72a3f9f7137d76dffb41dd08a76779ef1b25597020dcb13",
     "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
@@ -163,5 +163,13 @@
       "reason": "P1 private response durability and bounded definitive-busy retry; generated ingress metadata correction. Prior execution evidence remains attributed to its original commit.",
       "changes": []
     }
-  ]
+  ],
+  "workerLifetimeFollowup": {
+    "base": "5713011e426f21e283dccad286af096519f741e9",
+    "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+    "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+    "independentReview": "PENDING",
+    "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+  }
 }

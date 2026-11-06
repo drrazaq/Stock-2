@@ -47,7 +47,7 @@ function current(d,token,readOnly=false){
 }
 function validateLock(d){const a=fs.fstatSync(3),b=fs.lstatSync(d.anchor+'/.a-writer.lock'),r=fs.lstatSync(d.root);need(a.ino===b.ino&&a.dev===b.dev&&!b.isSymbolicLink()&&r.ino===d.initial.ino&&r.dev===d.initial.dev&&!r.isSymbolicLink(),'STORE_OR_LOCK_REPLACED');}
 function pending(d){return names(d).filter(n=>/^intent-[a-f0-9]{64}\.json$/.test(n)&&!fs.existsSync(d.anchor+'/'+n.replace('intent-','commit-'))&&!fs.existsSync(d.anchor+'/'+n.replace('intent-','unresolved-')));}
-function fault(d,r,at){if(r.fault===at){need(json(d.anchor+'/STORE.json').origin==='SYNTHETIC','FAULT_INJECTION_REFUSED');process.kill(process.pid,'SIGKILL');}}
+function fault(d,r,at){const pause=r.fault==='PAUSE_'+at;if(r.fault===at||pause){need(json(d.anchor+'/STORE.json').origin==='SYNTHETIC','FAULT_INJECTION_REFUSED');process.kill(process.pid,pause?'SIGSTOP':'SIGKILL');}}
 const attemptName=n=>`generation-attempt-${n}.json`,completeName=n=>`generation-complete-${n}.json`;
 function controlTemps(d,n){return names(d).filter(x=>new RegExp('^\\.control-'+n+'-[a-f0-9]{64}-[A-Z_]+-').test(x));}
 function quarantineBody(store,a){
@@ -330,7 +330,9 @@ export function createAFencedStore(root,context){
   const d=directory(root);let f;try{
    f=fs.openSync(d.anchor+'/.a-writer.lock',(request.op==='EXPORT'?fs.constants.O_RDONLY:fs.constants.O_RDWR)|fs.constants.O_NOFOLLOW);const st=fs.fstatSync(f);need(st.isFile()&&st.nlink===1&&!(st.mode&0o077),'UNSAFE_LOCK');
    const input=encoded(request);need(input.length<=MAX,'REQUEST_CAP');
-   const child=spawnSync('flock',['--exclusive','--nonblock','--conflict-exit-code','73','/proc/self/fd/3',process.execPath,moduleFile,'--fenced-worker',d.root],{input,stdio:['pipe','pipe','pipe',f],timeout:15000,maxBuffer:['EXPORT','IMPORT_PENDING'].includes(request.op)?MAX*2:MAX,env:{PATH:process.env.PATH}});
+   // Exec the worker in the waited PID: timeout must not leave a forking flock's child alive.
+   // SIGKILL also bounds a stopped worker; UNKNOWN preserves every durable partial for explicit recovery.
+   const child=spawnSync('flock',['--no-fork','--exclusive','--nonblock','--conflict-exit-code','73','/proc/self/fd/3',process.execPath,moduleFile,'--fenced-worker',d.root],{input,stdio:['pipe','pipe','pipe',f],timeout:15000,killSignal:'SIGKILL',maxBuffer:['EXPORT','IMPORT_PENDING'].includes(request.op)?MAX*2:MAX,env:{PATH:process.env.PATH}});
    // flock's dedicated refusal is terminal NOT STARTED even if the unused stdin pipe reports EPIPE.
    if(child.status===73&&!child.signal&&!child.stdout.length)throw Error('WRITER_BUSY');
    if(child.signal||child.error)throw Object.assign(Error('WRITE_OUTCOME_UNKNOWN'),{cause:{status:child.status,signal:child.signal,errorCode:child.error?.code||null,stdoutBytes:child.stdout?.length||0}});

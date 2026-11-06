@@ -57,10 +57,21 @@
     "docs/a-first-capture-continuation/evidence/a-finite-pin-guards20.log.gz": "7f1bb09f852fa3c61d97a14d4a7cd8a1ad9bd667fb8baaff227912b7d99c39c1",
     "docs/a-first-capture-continuation/evidence/a-finite-final-current20.log.gz": "bdeef41717caee7706b0ac030bf6d0789519f8b8c623609525c9b78c4cb36b6c",
     "docs/a-first-capture-continuation/evidence/a-finite-final-current24.log.gz": "a3e3dd4bf75563a73796510e023a6ff843555ad9f35ce8e16487879ad5c41cae",
-    "docs/a-first-capture-continuation/evidence/a-finite-upgrade-original-control20.log.gz": "04e29cd29ebdb6253edbf14f1cc3cfccba3d54055b680c5afa2adbeacb311caf"
+    "docs/a-first-capture-continuation/evidence/a-finite-upgrade-original-control20.log.gz": "04e29cd29ebdb6253edbf14f1cc3cfccba3d54055b680c5afa2adbeacb311caf",
+    "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "test/a-worker-lifetime.test.mjs": "6895fcd4dfb09f02a3a8f71ed470451d22e4c2b0673f045b1380963743603d15",
+    "test/helper-a-worker-lifetime.py": "b95c8afd6e2fc37ec45f06920e35478b9c654d5b51fbcac76b4e77d61147487c",
+    "docs/a-first-capture-continuation/worker-runtime-followup.md": "8ec84ef432d34bf9bef3e61c07ce0355625e8f2cb78c950455fa172fd248b014",
+    "docs/a-first-capture-continuation/evidence/a-worker-entry-facts-low-thread-diagnostic.log.gz": "7b3bbccb54abeac9112f287097bb6b2d8d7110f6fdbd98996c2bf280879ebd19",
+    "docs/a-first-capture-continuation/evidence/a-worker-serial-probes.json.gz": "161e8361648782f476f3308a03dbf9d5116d168de73db6426f1708f69d002832",
+    "docs/a-first-capture-continuation/evidence/a-worker-serial-probes.py.gz": "8024c8e9b2548794c7111e44a675ebbae7121bd1917d2f51f6cb721fc105e0f8",
+    "docs/a-first-capture-continuation/evidence/a-worker-flock-orphan-reproduction-v2.py.gz": "ab8f53f9495a488a658a94128674a8b0170aec13083e849f5d24dfefb2888da9",
+    "docs/a-first-capture-continuation/evidence/a-worker-flock-orphan-reproduction.py.gz": "0f37cef89851f54cfa9759ac0fb47635b22dd3abe02327960c97972c6bdf0b03",
+    "docs/a-first-capture-continuation/evidence/a-worker-candidate-node-syntax.json.gz": "bacdd65a980c3485b37bac9d5892ed2237edc81189dd399f17a613c757f30258",
+    "docs/a-first-capture-continuation/evidence/a-worker-flock-orphan-reproduction.json.gz": "786dec9bebc0dd86623908ed06c77139d1206ea6b6405a59b784bab1122a0d07",
+    "docs/a-first-capture-continuation/evidence/a-worker-flock-orphan-reproduction-v2.json.gz": "f0c44cd871ea411d8347d550d5b37cf677653d650ddb897ef4b03c308df1ba83"
   },
   "inheritedUnchanged": {
-    "a-fenced-store.mjs": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
     "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
     "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
     "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
@@ -147,5 +158,13 @@
     "plan": "finite-integration-plan.md",
     "verification": "finite-verification.json",
     "notComplete": "G2-G8 and authentic source/host/custody/policy readiness"
+  },
+  "workerLifetimeFollowup": {
+    "base": "5713011e426f21e283dccad286af096519f741e9",
+    "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+    "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+    "independentReview": "PENDING",
+    "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
   }
 }

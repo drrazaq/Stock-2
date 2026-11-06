@@ -1010,20 +1010,21 @@
     ]
   },
   "a-fenced-store.mjs": {
-    "sha256": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
-    "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+    "sha256": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "reviewer": "Codex source review and Linux primitive reproduction,6November2026; exact current actual-worker hosted verification pending",
     "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
     "inputs": "Explicit store path/origin/cohort/contract/authority/enrollment; exact token and signed private source; scoped import and read-only export operations.",
     "outputs": "Durable immutable receipts/UNKNOWN, read-only HEAD/export; no BUY/admission.",
     "sideEffects": "Anchored private store writes under flock, no network, no deletion of evidence. Signed quarantine archives bytes without takeover.",
     "failure": "Foreign scope/missing/tampered/partial/cap/contending/stale refuse; exact tagged/legacy scoped replay only.",
-    "timing": "15sec bounded worker,16MiB/2000files; canonical durable matrix, not physical power-loss proof.",
+    "timing": "Existing15sec worker bound, now no-fork/SIGKILL;16MiB/2000files unchanged. Current actual-worker test pending clean execution; resource-limited local failure preserved.",
     "researchBoundary": "Inactive conditional research. Non-test roots enrolled and test fingerprints rejected; enrollment is not authentication; real recovery/migration still unapproved.",
-    "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+    "remainingVerification": "Current actual-worker timeout/recovery and existing host regression verification, then independent review. Authentic host/source/custody/policy remain separate.",
     "evidence": [
       "docs/a-n-bc-integration/README.md",
       "docs/a-n-bc-integration/verification.json",
-      "docs/research-bc/README.md"
+      "docs/research-bc/README.md",
+      "docs/a-first-capture-continuation/worker-runtime-followup.md"
     ]
   },
   "a-authenticated-collector.mjs": {

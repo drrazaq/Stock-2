@@ -15,7 +15,7 @@
   "inheritedDependencies": {
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
-    "a-fenced-store.mjs": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+    "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
     "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
     "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
     "capture-json.mjs": "b73a5a9239b6866ad06f915bb1657373aab4c63d216d27483e3f6b7edf858475",
@@ -155,5 +155,13 @@
       "reason": "P1 private response durability and bounded definitive-busy retry; generated ingress metadata correction. Prior execution evidence remains attributed to its original commit.",
       "changes": []
     }
-  ]
+  ],
+  "workerLifetimeFollowup": {
+    "base": "5713011e426f21e283dccad286af096519f741e9",
+    "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+    "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+    "independentReview": "PENDING",
+    "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+  }
 }
