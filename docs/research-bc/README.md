@@ -1,3 +1,5 @@
+> **6November — superseding disposition:** [Claude ad3837 response](../review-ad3837-response/README.md): B RETIRED AS DESIGNED; C STOP/NO PROSPECTIVE COLLECTION with failed same-stock comparison retained as PRIMARY. Original JSONs, examples and prior evidence below are historical/unadopted. No replacement selected; no cost/gate relaxation or activation. N1–N3/export independent PASS preserved; scoped N4 inventory added.
+
 # B earnings reaction and C leader pullback — frozen proposals, not adopted
 
 5 November 2026. [B exact proposal](B.proposed.json), [C exact proposal](C.proposed.json), [read-only prior verdict reconciliation](prior-verdicts.json), [synthetic examples](synthetic-examples.json). No market experiment, new collection, provider request, real keys, alerts or production change. A rules/protocol/results are unchanged. All new thresholds and protocols await independent review and owner adoption; software tests do not adopt them.

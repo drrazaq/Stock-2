@@ -593,6 +593,7 @@
       },
       "testReferences": [
         "test/a-close-source.test.mjs",
+        "test/a-source-acquisition-bridge.test.mjs",
         "test/a-native-source-join.test.mjs",
         "test/bc-research-rehearsal.test.mjs",
         "test/a-native-evidence-importer.test.mjs",
@@ -600,8 +601,10 @@
         "test/helper-a-native-import.mjs",
         "test/a-fenced-recovery.test.mjs",
         "test/a-importer-recovery-matrix.test.mjs",
+        "test/helper-a-bridge-competitor.mjs",
         "test/a-authenticated-collector.test.mjs",
-        "test/a-fenced-store.test.mjs"
+        "test/a-fenced-store.test.mjs",
+        "test/helper-a-source-bridge.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -1155,6 +1158,100 @@
       "testReferences": [
         "test/a-authenticated-collector.test.mjs",
         "tests/market03-ingress-matrix.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "a-source-acquisition-bridge.mjs",
+      "sha256": "e4ba23610200364221480ca6ac205341979726b49ef47c2a643805ff19687f30",
+      "bytes": 17944,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            15,
+            29,
+            36,
+            62
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            22
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            10,
+            15,
+            17,
+            19,
+            25,
+            26,
+            55,
+            69
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            10,
+            15,
+            17,
+            20,
+            24,
+            25,
+            31,
+            32,
+            36,
+            54,
+            58,
+            66
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            4,
+            12,
+            14,
+            36,
+            40,
+            63,
+            68
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "sha256": "e4ba23610200364221480ca6ac205341979726b49ef47c2a643805ff19687f30",
+        "reviewer": "Codex ad3837 response source/actual-caller review,6November2026",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Pinned native request/original directory and finite SYNTHETIC-only response plan; explicit separate source clients/signers/stores/context declarations.",
+        "outputs": "Two-fetch request-set correspondence plus actual strict importer/card/outcome or UNKNOWN; source authenticity/completeness/preregistration never inferred.",
+        "sideEffects": "Bounded injected GETs; original request/raw-before-signature/receipt journals under existing fences. No network default, env, keys or production consumer.",
+        "failure": "Missing/stale/incorrect context, source disagreement, refused HTTP, partial bytes, late clock, unknown request outcome and invalid signatures remain UNKNOWN. Exact pending raw writes replay; no automatic retry/disposal.",
+        "timing": "32GETs/role64combined,1MiBbody8MiB/role20sec/request; clock/deadline and real-timer tests;16MiB/2000file/15sec original store cap per namespace.",
+        "researchBoundary": "Inactive retained-response synthetic rehearsal only. Actual first-capture scheduler/preregistration, genuine independent hosts/custody/rights/complete streams remain missing.",
+        "remainingVerification": "New revision awaits independent Claude review; genuine first-capture/authenticated host/source/custody and policy evidence absent.",
+        "evidence": [
+          "docs/review-ad3837-response/README.md",
+          "docs/review-ad3837-response/source-bridge.md",
+          "docs/review-ad3837-response/verification.json"
+        ]
+      },
+      "testReferences": [
+        "test/a-source-acquisition-bridge.test.mjs",
+        "test/review-ad3837-package.test.mjs",
+        "test/helper-a-bridge-competitor.mjs",
+        "test/helper-a-source-bridge.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -3008,148 +3105,69 @@
     },
     {
       "path": "bc-research-rehearsal.mjs",
-      "sha256": "b08874e01921bcef56de6a53c1c1cdbf9a66314e39d2b092d72e8668ccc15146",
-      "bytes": 19796,
+      "sha256": "70ae5bf10ac15f6544e547dff5eeb7c0ef4e3401c98e8bcc1db742c5c1c1f706",
+      "bytes": 20220,
       "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
-            9
+            10
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "outputs": {
           "matchingLines": [
-            9,
-            11,
-            38,
-            51,
-            54,
-            57,
+            10,
+            12,
+            39,
+            52,
+            55,
             58,
-            59
+            60,
+            61
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "sideEffects": {
           "matchingLines": [
-            13
+            14
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "failure": {
           "matchingLines": [
-            7,
-            39,
-            44,
-            46,
-            48,
+            8,
+            40,
+            45,
+            47,
             49,
-            53,
-            55,
-            57,
-            58
+            50,
+            54,
+            56,
+            59,
+            60
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "timing": {
-          "matchingLines": [
-            3,
-            8,
-            10,
-            11,
-            12,
-            21,
-            22,
-            27,
-            32,
-            39,
-            43,
-            44,
-            46,
-            48,
-            51,
-            57,
-            58
-          ],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "researchBoundary": {
-          "matchingLines": [
-            1,
-            3,
-            9,
-            16,
-            19,
-            36,
-            39,
-            48,
-            49,
-            51,
-            55,
-            57,
-            58,
-            59
-          ],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        }
-      },
-      "contract": {
-        "sha256": "b08874e01921bcef56de6a53c1c1cdbf9a66314e39d2b092d72e8668ccc15146",
-        "reviewer": "Codex source and synthetic actual-caller review,5November2026",
-        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
-        "inputs": "Pinned unadopted B/C JSON proposals and bounded synthetic source/quote/identity/population/control inputs.",
-        "outputs": "Separate NOT PROVEN synthetic cards, outcomes and every rejection; never BUY or genuine admission.",
-        "sideEffects": "Local proposal reads; optional fenced synthetic ORIGINAL receipts; no network or credential binding.",
-        "failure": "Missing/late/conflicting/formations/controls/outcomes remain UNKNOWN; whole-share cost/gap modeling, no desired stop fills.",
-        "timing": "NYSE DST/early close,1or126sessions,entry expiry; declared receipt clocks, no backdating.",
-        "researchBoundary": "B new hypothesis, C original PB12 entry with unadopted quote execution; authenticated collector/first-trigger/marks absent. No strategy result.",
-        "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
-        "evidence": [
-          "docs/a-n-bc-integration/README.md",
-          "docs/a-n-bc-integration/verification.json",
-          "docs/research-bc/README.md"
-        ]
-      },
-      "testReferences": [
-        "test/helper-bc-research.mjs",
-        "test/bc-research-rehearsal.test.mjs"
-      ],
-      "workflowReferences": [],
-      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
-    },
-    {
-      "path": "bc-research-summary.mjs",
-      "sha256": "2ffb5ca02f7949c48a607d732cc01498820411ce5d5d53d3c25b6d3a37805a0a",
-      "bytes": 6597,
-      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
-      "facts": {
-        "inputs": {
-          "matchingLines": [],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "outputs": {
           "matchingLines": [
             4,
-            15
-          ],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "sideEffects": {
-          "matchingLines": [],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "failure": {
-          "matchingLines": [],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "timing": {
-          "matchingLines": [
-            7,
-            8,
             9,
-            21,
-            27
+            11,
+            12,
+            13,
+            22,
+            23,
+            28,
+            33,
+            40,
+            44,
+            45,
+            47,
+            49,
+            52,
+            59,
+            60
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -3157,37 +3175,120 @@
           "matchingLines": [
             1,
             2,
-            5,
-            8,
+            4,
             10,
-            12,
-            13,
-            16,
-            26,
-            27
+            17,
+            20,
+            37,
+            40,
+            49,
+            50,
+            52,
+            56,
+            59,
+            60,
+            61
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
       "contract": {
-        "sha256": "2ffb5ca02f7949c48a607d732cc01498820411ce5d5d53d3c25b6d3a37805a0a",
-        "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+        "sha256": "70ae5bf10ac15f6544e547dff5eeb7c0ef4e3401c98e8bcc1db742c5c1c1f706",
+        "reviewer": "Codex ad3837 response source/actual-caller review,6November2026",
         "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
-        "inputs": "Synthetic case rows with outcomes/controls; C complete predeclared month grid including zero-event months.",
-        "outputs": "Paired cost/sensitivity/missingness stats and causal allocation; drawdown null, NOT PROVEN.",
-        "sideEffects": "Pure in-memory calculation; no providers/keys/real evidence.",
-        "failure": "Missing exits retain reserved slots; absent month grid unknown, few blocks not proof; losers/censored retained.",
-        "timing": "B session and C6month moving blocks; future gains cannot fund earlier entries.",
-        "researchBoundary": "Descriptive software rehearsal; proposed gates not adopted and no formal pass from these metrics.",
-        "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+        "inputs": "Archived original B/C proposals with pinned current disposition, synthetic fixture inputs only.",
+        "outputs": "ARCHIVED/RETIRED or STOP-labelled regression math/cards; enrollmentAllowedfalse.",
+        "sideEffects": "Local reads/calculation; study persistence now refuses before writing an input/report.",
+        "failure": "Real origin/invalid inputs unknown; current disposition pins refuse B/C study execution. Existing math/namespace assertions preserved apart from requested stop behavior.",
+        "timing": "Old1/126session schedules retained only as historical synthetic regression.",
+        "researchBoundary": "No active B/C proposal/capture; C same-stock control restored in current primary disposition, no trade/gate changes.",
+        "remainingVerification": "New revision awaits independent Claude review; genuine first-capture/authenticated host/source/custody and policy evidence absent.",
         "evidence": [
-          "docs/a-n-bc-integration/README.md",
-          "docs/a-n-bc-integration/verification.json",
-          "docs/research-bc/README.md"
+          "docs/review-ad3837-response/README.md",
+          "docs/review-ad3837-response/source-bridge.md",
+          "docs/review-ad3837-response/verification.json"
         ]
       },
       "testReferences": [
-        "test/bc-research-rehearsal.test.mjs"
+        "test/helper-bc-research.mjs",
+        "test/bc-research-rehearsal.test.mjs",
+        "test/review-ad3837-disposition.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "bc-research-summary.mjs",
+      "sha256": "cd2aa6c42430922c869bc35b01a79c03c87b329a968e16b2729a01efa6c87e19",
+      "bytes": 6854,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            5,
+            16
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            8,
+            9,
+            10,
+            22,
+            28
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            1,
+            2,
+            3,
+            6,
+            9,
+            11,
+            13,
+            14,
+            17,
+            27,
+            28
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "sha256": "cd2aa6c42430922c869bc35b01a79c03c87b329a968e16b2729a01efa6c87e19",
+        "reviewer": "Codex ad3837 response source/actual-caller review,6November2026",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Archived synthetic rows/controls and month grid.",
+        "outputs": "Historical regression metrics with NOT PROVEN and current STOP/retired disposition; allowContinuationfalse, C primary FAILED.",
+        "sideEffects": "Pure calculations; no data/strategy study or providers.",
+        "failure": "Missingness/unsupported grid remains UNKNOWN; matched controls cannot clear failed primary.",
+        "timing": "No new evaluation start or multi-year schedule adopted.",
+        "researchBoundary": "Past performance/regression is not edge; old frozen results unchanged; original \u00a74 costs/gates not replaced.",
+        "remainingVerification": "New revision awaits independent Claude review; genuine first-capture/authenticated host/source/custody and policy evidence absent.",
+        "evidence": [
+          "docs/review-ad3837-response/README.md",
+          "docs/review-ad3837-response/source-bridge.md",
+          "docs/review-ad3837-response/verification.json"
+        ]
+      },
+      "testReferences": [
+        "test/bc-research-rehearsal.test.mjs",
+        "test/review-ad3837-disposition.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -6551,6 +6652,7 @@
         "test/native-sec-events.test.mjs",
         "test/rank-models.test.mjs",
         "test/a-n-bc-package.test.mjs",
+        "test/review-ad3837-package.test.mjs",
         "test/a-native-source-package.test.mjs",
         "test/native-sec-shadow-package.test.mjs"
       ],
@@ -10221,6 +10323,7 @@
         "test/history03-attribution.test.mjs",
         "test/a-n-bc-package.test.mjs",
         "test/watcher-incident-revision.test.mjs",
+        "test/review-ad3837-package.test.mjs",
         "test/native-sec-colocated-host.test.mjs",
         "test/github-history-fixture.mjs",
         "test/github-history-contract.test.mjs",
@@ -16067,6 +16170,7 @@
       "testReferences": [
         "test/a-pathway-review-regressions.test.mjs",
         "test/a-evidence-contract.test.mjs",
+        "test/a-source-acquisition-bridge.test.mjs",
         "test/helper-a-evidence.mjs",
         "test/a-native-evidence-importer.test.mjs",
         "test/a-n-review-regressions.test.mjs",
@@ -16074,8 +16178,10 @@
         "test/a-fenced-recovery.test.mjs",
         "test/a-independent-coverage.test.mjs",
         "test/a-recovery-copy.test.mjs",
+        "test/helper-a-bridge-competitor.mjs",
         "test/a-authenticated-collector.test.mjs",
         "test/a-fenced-store.test.mjs",
+        "test/helper-a-source-bridge.mjs",
         "test/reclaim-research-workflow.test.mjs"
       ],
       "workflowReferences": [],
@@ -16714,6 +16820,71 @@
       "workflowReferences": [
         ".github/workflows/research-lab.yml"
       ],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "research-proposal-disposition.mjs",
+      "sha256": "bdcd2e32195680f46cf40a768648a28fe32ab87a08f3d99de6563d2a1a73a4b7",
+      "bytes": 817,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [
+            4
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            4,
+            5
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            4,
+            5
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            3
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "sha256": "bdcd2e32195680f46cf40a768648a28fe32ab87a08f3d99de6563d2a1a73a4b7",
+        "reviewer": "Codex ad3837 response source/actual-caller review,6November2026",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Pinned current B/C disposition JSON and exact B|C track.",
+        "outputs": "B retired/C STOP and fixed refusal for enrollment/persistence.",
+        "sideEffects": "Read-only local JSON hash check; no provider/keys/state writes.",
+        "failure": "Hash/unknown-track fail closed; no flag to activate retired study.",
+        "timing": "No collection/date timers; archived proposal versions remain immutable.",
+        "researchBoundary": "No cost/gate/owner-policy adoption. C failed same-stock comparison remains primary; no replacement selected.",
+        "remainingVerification": "New revision awaits independent Claude review; genuine first-capture/authenticated host/source/custody and policy evidence absent.",
+        "evidence": [
+          "docs/review-ad3837-response/README.md",
+          "docs/review-ad3837-response/source-bridge.md",
+          "docs/review-ad3837-response/verification.json"
+        ]
+      },
+      "testReferences": [
+        "test/review-ad3837-package.test.mjs",
+        "test/review-ad3837-disposition.test.mjs"
+      ],
+      "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
     },
     {
@@ -18606,6 +18777,7 @@
         "test/load-scan.mjs",
         "test/history03-env.mjs",
         "test/history03-source-anchors.test.mjs",
+        "test/review-ad3837-package.test.mjs",
         "test/settings-writes.test.mjs",
         "test/actions-reconciliation.test.mjs",
         "test/history03-claims.test.mjs",
@@ -30772,6 +30944,72 @@
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
     },
     {
+      "path": "tools/a-acquisition-rehearsal.mjs",
+      "sha256": "9e12017f2167e166f408897397240f23458d5791004d12edb0bfaf2cc5dfad88",
+      "bytes": 1626,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [
+            9
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            7,
+            8,
+            9
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            9
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            8
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "sha256": "9e12017f2167e166f408897397240f23458d5791004d12edb0bfaf2cc5dfad88",
+        "reviewer": "Codex ad3837 response source/actual-caller review,6November2026",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Exact private request/plan file hashes and explicitly supplied programmatic store/contexts; CLI inspect-plan args only.",
+        "outputs": "Aggregate plan inspection/providerCalls0/runAuthorizedfalse or fixed ERROR; programmatic actual importer result.",
+        "sideEffects": "CLI reads only; programmatic entry invokes bounded source bridge with explicit injected clients. No environment credential/default network or live CLI flag.",
+        "failure": "Changed/symlink/malformed/out-of-scope/unadopted inputs refuse. Real-store mode blocked; signs no defaults.",
+        "timing": "Bounded existing original reader; source client deadlines/aggregate/request caps delegated to implementation.",
+        "researchBoundary": "SYNTHETIC rehearsal only; no live first-capture/custody/cohort or provider-rights proof.",
+        "remainingVerification": "New revision awaits independent Claude review; genuine first-capture/authenticated host/source/custody and policy evidence absent.",
+        "evidence": [
+          "docs/review-ad3837-response/README.md",
+          "docs/review-ad3837-response/source-bridge.md",
+          "docs/review-ad3837-response/verification.json"
+        ]
+      },
+      "testReferences": [
+        "test/review-ad3837-package.test.mjs",
+        "test/review-ad3837-disposition.test.mjs",
+        "test/helper-a-source-bridge.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
       "path": "tools/a-catalyst-reclaim-store.mjs",
       "sha256": "ca4080e0e3636dd77a24f0ebaff7884073e371dd699a74f0df75e791d0a1563d",
       "bytes": 19311,
@@ -31562,21 +31800,21 @@
     },
     {
       "path": "tools/bc-research-rehearsal.mjs",
-      "sha256": "7cacb8947f4430c7d6b1bf752c74080cc6899280b4fc8102cbe5903c90722862",
-      "bytes": 1608,
+      "sha256": "d5f78fcf1da1a6bc7670ea7b17b12cfa35c80b9490e56a5702507d7cc93cb258",
+      "bytes": 1896,
       "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
-            3,
-            4
+            4,
+            5
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "outputs": {
           "matchingLines": [
-            3,
-            4
+            4,
+            5
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -31586,8 +31824,8 @@
         },
         "failure": {
           "matchingLines": [
-            3,
-            4
+            4,
+            5
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -31599,31 +31837,33 @@
           "matchingLines": [
             1,
             2,
-            3
+            3,
+            4
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
       "contract": {
-        "sha256": "7cacb8947f4430c7d6b1bf752c74080cc6899280b4fc8102cbe5903c90722862",
-        "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+        "sha256": "d5f78fcf1da1a6bc7670ea7b17b12cfa35c80b9490e56a5702507d7cc93cb258",
+        "reviewer": "Codex ad3837 response source/actual-caller review,6November2026",
         "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
-        "inputs": "Explicit B|C and synthetic JSON regular no-follow file bounded8MiB; no env.",
-        "outputs": "Aggregate track/status/count/NOT PROVEN/0admission or ERROR/exit1.",
-        "sideEffects": "Local reads/calculations only; no output files/key/provider/client.",
-        "failure": "Retained origin, malformed/cap/symlink/moving input refused.",
-        "timing": "Declared frozen clocks only, no live runtime or new capture.",
-        "researchBoundary": "Synthetic implementation exercise only, no activation, production caller or strategy promotion.",
-        "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+        "inputs": "Local8MiB bounded no-follow synthetic input and B|C track.",
+        "outputs": "Fixed BC_DESIGN_RETIRED_OR_STOPPED JSON/exit2, invalid input ERROR/exit1.",
+        "sideEffects": "No provider, keys, store creation or study writes.",
+        "failure": "Current disposition stops actual CLI; no adoption/override flag.",
+        "timing": "No collection or timers; old proposed timing archived.",
+        "researchBoundary": "Retired B and stopped C cannot silently start another paper study.",
+        "remainingVerification": "New revision awaits independent Claude review; genuine first-capture/authenticated host/source/custody and policy evidence absent.",
         "evidence": [
-          "docs/a-n-bc-integration/README.md",
-          "docs/a-n-bc-integration/verification.json",
-          "docs/research-bc/README.md"
+          "docs/review-ad3837-response/README.md",
+          "docs/review-ad3837-response/source-bridge.md",
+          "docs/review-ad3837-response/verification.json"
         ]
       },
       "testReferences": [
         "test/helper-bc-research.mjs",
-        "test/bc-research-rehearsal.test.mjs"
+        "test/bc-research-rehearsal.test.mjs",
+        "test/review-ad3837-disposition.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -32620,15 +32860,15 @@
     },
     {
       "path": "tools/market03-ingress-matrix.mjs",
-      "sha256": "d37b06e1524f87cec5c312c9850c8e2f8705b9e608921093c699a31695e5b089",
-      "bytes": 15306,
+      "sha256": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7",
+      "bytes": 16638,
       "status": "STALE_OR_INVALID_REVIEW",
       "facts": {
         "inputs": {
           "matchingLines": [
-            82,
-            100,
-            102
+            87,
+            105,
+            107
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -32636,17 +32876,17 @@
           "matchingLines": [
             28,
             37,
-            79,
-            102,
-            103
+            84,
+            107,
+            108
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "sideEffects": {
           "matchingLines": [
             7,
-            80,
-            102
+            85,
+            107
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -32658,18 +32898,18 @@
           "matchingLines": [
             34,
             36,
-            44,
-            47,
-            58,
-            62,
-            64,
-            66,
+            49,
+            52,
+            63,
             67,
-            68,
             69,
-            70,
             71,
-            94
+            72,
+            73,
+            74,
+            75,
+            76,
+            99
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -32684,10 +32924,14 @@
             29,
             31,
             38,
+            39,
+            40,
             41,
-            51,
-            87,
-            97
+            43,
+            46,
+            56,
+            92,
+            102
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
@@ -36730,10 +36974,10 @@
     }
   ],
   "totals": {
-    "scripts": 350,
-    "sourceReviewed": 77,
+    "scripts": 353,
+    "sourceReviewed": 80,
     "pending": 273,
-    "reviewedWithOpenFindings": 44
+    "reviewedWithOpenFindings": 47
   },
   "accepted": false,
   "note": "An explicit hash-matched review is required. Empty axes, source changes and inventories cannot silently count as reviewed; review is distinct from all-path runtime verification."

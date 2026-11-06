@@ -1,0 +1,28 @@
+{
+  "dateUtc": "2026-11-06T05:53:38.475588+00:00",
+  "operator": "Codex",
+  "scope": "Accessible non-symlink /workspace namespace; .git internals excluded; only bounded STORE.json control metadata, never financial contents/private keys",
+  "matchingFiles": 0,
+  "metadata": [],
+  "enumerationErrors": [],
+  "skippedStoreSymlinks": 0,
+  "verifiedAbsenceScope": "No recognized real rootless A fenced store metadata found in the inspected namespace",
+  "notInspected": [
+    "/tmp and other filesystem roots",
+    "production runners and private collector hosts",
+    "private financial mirror repository/state",
+    "private research repositories/artifacts and remote object storage",
+    "symlink targets outside the enumerated namespace"
+  ],
+  "globalAbsence": "NOT_ESTABLISHED",
+  "realMigrationNeed": "NONE_VERIFIED; no migration/export operation authorized or performed",
+  "notAccessibleFromThisExecutor": [
+    "Production/collector host filesystems are not mounted; no protected runtime access established",
+    "External private object storage is not mounted; access not established"
+  ],
+  "accessibleButNotInspected": [
+    "/tmp and other local filesystem roots",
+    "Financial/private contents (outside bounded fenced STORE metadata)",
+    "External repositories, artifacts and symlink targets; no availability inference"
+  ]
+}

@@ -24,7 +24,7 @@ const LIVE=new Set(['scan.mjs','ignition-watch.mjs','alpaca-feed.mjs','intraday-
 const CATALYST=new Set(['events-study.mjs','earnings-study.mjs','insider-study.mjs','chain-ripple.mjs','share-supply.mjs','share-supply-source.mjs','discovery2.mjs','comeback-lab.mjs','news-watch.mjs','research-collector.mjs']);
 const SHARED_INPUT=new Set(['leaders-study.mjs']);       // builds the shared daily price cache other producers read
 const DIAGNOSTIC=/^(tools\/|sip-access-|c0-diagnostic|options-survey|expert-probe)/;
-const INACTIVE_A=new Set(['bc-research-rehearsal.mjs','a-authenticated-collector.mjs','a-sip-window-client.mjs','a-native-source-join.mjs','a-close-source.mjs','a-native-evidence-contract.mjs','a-native-evidence-importer.mjs','a-native-quotes.mjs']);
+const INACTIVE_A=new Set(['a-source-acquisition-bridge.mjs','bc-research-rehearsal.mjs','a-authenticated-collector.mjs','a-sip-window-client.mjs','a-native-source-join.mjs','a-close-source.mjs','a-native-evidence-contract.mjs','a-native-evidence-importer.mjs','a-native-quotes.mjs']);
 export function roleOf(file){
  if(INACTIVE_A.has(file))return 'INACTIVE_RESEARCH_ADAPTER';
  if(CATALYST.has(file))return 'CATALYST_LANE_PRODUCER';if(LIVE.has(file))return 'LIVE_DELIVERY_PATH';if(SHARED_INPUT.has(file))return 'SHARED_PRICE_INPUT';
@@ -35,6 +35,11 @@ export function roleOf(file){
 // Y = covered by actual-caller tests; P = partial (stated); N = open; NA = not applicable. `by` names the package.
 const C=(identity,units,clock,session,adjustment,revision,status,by,note)=>({identity,units,clock,session,adjustment,revision,status,by,note});
 export const CONTRACTS={
+ 'a-source-acquisition-bridge.mjs|SEC':C('P','P','Y','P','P','P','Y','Codex ad3837 offline response bridge','two declared source clients, separately journaled request/body/receipt; actual strict-importer caller, matching raw responses not authentication or market/stream completeness; SYNTHETIC only/no live binding'),
+ 'a-source-acquisition-bridge.mjs|MASSIVE':C('P','P','Y','P','P','P','Y','Codex ad3837 offline response bridge','two declared source clients, separately journaled request/body/receipt; actual strict-importer caller, matching raw responses not authentication or market/stream completeness; SYNTHETIC only/no live binding'),
+ 'a-source-acquisition-bridge.mjs|ALPACA_DATA':C('P','P','Y','P','P','P','Y','Codex ad3837 offline response bridge','two declared source clients, separately journaled request/body/receipt; actual strict-importer caller, matching raw responses not authentication or market/stream completeness; SYNTHETIC only/no live binding'),
+ 'a-source-acquisition-bridge.mjs|ALPACA_PAPER':C('P','P','Y','P','P','P','Y','Codex ad3837 offline response bridge','two declared source clients, separately journaled request/body/receipt; actual strict-importer caller, matching raw responses not authentication or market/stream completeness; SYNTHETIC only/no live binding'),
+
  'bc-research-rehearsal.mjs|ALPACA_DATA':C('P','P','Y','Y','P','P','Y','Codex B/C synthetic rehearsal','no network/capture or retained admissions; conditional supplied quote profile/identity/source coverage; native parser reused; full authenticated collector and portfolio marks unimplemented'),
  'a-native-evidence-contract.mjs|SEC':C('P','P','Y','P','P','Y','Y','Codex inactive L1-L4 strict importer','retained originals/explicit identity review/receipt clocks and native full quote set; signatures conditional on supplied trust; no live source truth, policy adoption or reference acquisition'),
  'a-native-evidence-contract.mjs|MASSIVE':C('P','P','Y','P','P','Y','Y','Codex inactive L1-L4 strict importer','retained originals/explicit identity review/receipt clocks and native full quote set; signatures conditional on supplied trust; no live source truth, policy adoption or reference acquisition'),

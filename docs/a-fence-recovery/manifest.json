@@ -9,14 +9,14 @@
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
-    "docs/a-native-source-join/manifest.json": "243d001fc46036b0e51616dc1bdf388d34c805fe32cb97b6e63c8df6c44b90bc",
+    "docs/a-native-source-join/manifest.json": "b3b1c50a1095b3d3941c7b44fa18c1ac9d7cfb5a7af8051d9908f11c46577c19",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
     "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
     "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
     "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
     "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920",
-    ".github/workflows/tests.yml": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4"
+    ".github/workflows/tests.yml": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4"
   },
   "protectedUnchanged": {
     "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
@@ -124,6 +124,23 @@
           "priorSha256": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97",
           "sha256": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4",
           "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+        }
+      ]
+    },
+    {
+      "base": "3641a8e806b72e65add1ce6a90b82fdad7707a98",
+      "review": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
+      "reason": "Scoped N4 inventory; B retirement/C stop and gate labels; additive inactive source bridge; measured bounded development CI margin30\u219235minutes. N1-N3/export/producer/A rules byte-identical.",
+      "changes": [
+        {
+          "file": "docs/a-native-source-join/manifest.json",
+          "previousSha256": "243d001fc46036b0e51616dc1bdf388d34c805fe32cb97b6e63c8df6c44b90bc",
+          "sha256": "b3b1c50a1095b3d3941c7b44fa18c1ac9d7cfb5a7af8051d9908f11c46577c19"
+        },
+        {
+          "file": ".github/workflows/tests.yml",
+          "previousSha256": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4",
+          "sha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4"
         }
       ]
     }

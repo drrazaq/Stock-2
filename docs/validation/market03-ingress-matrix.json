@@ -1,8 +1,8 @@
 {
  "summary": {
-  "files": 337,
-  "pairs": 459,
-  "providerPairs": 318,
+  "files": 340,
+  "pairs": 463,
+  "providerPairs": 322,
   "decisionPathPairs": 97,
   "reviewedDecisionPairs": 31,
   "fullyCoveredDecisionPairs": 3,
@@ -260,6 +260,82 @@
     "status": "Y",
     "by": "Codex inactive A collector/fence",
     "note": "explicit injected wss://stream.data.alpaca.markets/v2/sip client; local handshake/receipt/window continuity only; no real feed access or provider-wide completeness proof"
+   },
+   "via": "shared cache or injected transport"
+  },
+  {
+   "file": "a-source-acquisition-bridge.mjs",
+   "host": null,
+   "kind": "PROVIDER",
+   "provider": "SEC",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "P",
+    "revision": "P",
+    "status": "Y",
+    "by": "Codex ad3837 offline response bridge",
+    "note": "two declared source clients, separately journaled request/body/receipt; actual strict-importer caller, matching raw responses not authentication or market/stream completeness; SYNTHETIC only/no live binding"
+   },
+   "via": "shared cache or injected transport"
+  },
+  {
+   "file": "a-source-acquisition-bridge.mjs",
+   "host": null,
+   "kind": "PROVIDER",
+   "provider": "MASSIVE",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "P",
+    "revision": "P",
+    "status": "Y",
+    "by": "Codex ad3837 offline response bridge",
+    "note": "two declared source clients, separately journaled request/body/receipt; actual strict-importer caller, matching raw responses not authentication or market/stream completeness; SYNTHETIC only/no live binding"
+   },
+   "via": "shared cache or injected transport"
+  },
+  {
+   "file": "a-source-acquisition-bridge.mjs",
+   "host": null,
+   "kind": "PROVIDER",
+   "provider": "ALPACA_DATA",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "P",
+    "revision": "P",
+    "status": "Y",
+    "by": "Codex ad3837 offline response bridge",
+    "note": "two declared source clients, separately journaled request/body/receipt; actual strict-importer caller, matching raw responses not authentication or market/stream completeness; SYNTHETIC only/no live binding"
+   },
+   "via": "shared cache or injected transport"
+  },
+  {
+   "file": "a-source-acquisition-bridge.mjs",
+   "host": null,
+   "kind": "PROVIDER",
+   "provider": "ALPACA_PAPER",
+   "role": "INACTIVE_RESEARCH_ADAPTER",
+   "contract": {
+    "identity": "P",
+    "units": "P",
+    "clock": "Y",
+    "session": "P",
+    "adjustment": "P",
+    "revision": "P",
+    "status": "Y",
+    "by": "Codex ad3837 offline response bridge",
+    "note": "two declared source clients, separately journaled request/body/receipt; actual strict-importer caller, matching raw responses not authentication or market/stream completeness; SYNTHETIC only/no live binding"
    },
    "via": "shared cache or injected transport"
   },

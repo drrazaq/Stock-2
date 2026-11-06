@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "review": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
+  "B": {
+    "id": "B_EARNINGS_REACTION_1_V1_PROPOSED",
+    "status": "RETIRED_AS_DESIGNED",
+    "reason": "No supported substantive economic/executable distinction from rejected A-ORB1 and EVENT_ORB_RETEST; earnings/reaction thresholds alone do not supply one.",
+    "enrollmentAllowed": false,
+    "persistenceAllowed": false,
+    "costOrGateRelaxation": false
+  },
+  "C": {
+    "id": "C_SQ11_PB12_QUOTE126_V1_PROPOSED",
+    "status": "STOP_NO_PROSPECTIVE_COLLECTION",
+    "reason": "Same-stock deficit in both historical halves and inadequate block evidence; quote execution does not repair the signal's failure.",
+    "requiredPrimaryComparisons": ["SAME_STOCK_NON_SIGNAL_SAME_HORIZON", "SAME_DAY_ELIGIBLE_UNIVERSE", "SPY_ANNUALIZED_SAME_DATES"],
+    "sameStockStatus": "FAILED_OLDER_AND_NEWER",
+    "retainedOwnStockExcess": {"older": -0.1039, "newer": -0.1102},
+    "enrollmentAllowed": false,
+    "persistenceAllowed": false,
+    "costOrGateRelaxation": false,
+    "boundedNextStep": "No study run now. Only re-open a retrospective bug audit if original price/universe/action/control archives and a concrete defect that could explain the original failure are recovered. Keep the355-row ceiling and old rules; otherwise STOP.",
+    "notAuthorized": ["3.5-year collection", "new cohort", "substitute newly downloaded prices for original archives", "change LEADER DIP", "activation"]
+  },
+  "archivedSyntheticMath": "Retained for software regression only; cannot enroll, persist a new study, become a strategy result or override this disposition.",
+  "replacement": "NONE_SELECTED",
+  "ownerPolicyAdopted": false,
+  "prospectiveAdmissions": 0
+}

@@ -1,0 +1,209 @@
+{
+  "kind": "AD3837_LOCAL_VERIFICATION_V1",
+  "dateUtc": "2026-11-06",
+  "base": "3641a8e806b72e65add1ce6a90b82fdad7707a98",
+  "independentPriorReview": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
+  "currentRevisionIndependentReview": "PENDING",
+  "hostedExactCommit": "PENDING_AFTER_PUBLICATION",
+  "completedExecutions": [
+    {
+      "scope": "A and B/C local Node20 intermediate source",
+      "tests": 416,
+      "pass": 416,
+      "fail": 0,
+      "skipped": 0,
+      "note": "Before fixed diagnostic-code and two-process request-race additions; unchanged N1-N3/export code. Final exact revision tested separately."
+    },
+    {
+      "scope": "Final feature regressions Node20 before boundResponseRecords output-only rename",
+      "tests": 71,
+      "pass": 71,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "scope": "Final feature regressions Node24 before same output-only rename",
+      "tests": 71,
+      "pass": 71,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "scope": "Final output-label restart assertion Node20",
+      "tests": 32,
+      "pass": 1,
+      "fail": 0,
+      "skipped": 31
+    },
+    {
+      "scope": "Python repository/incident tests",
+      "tests": 39,
+      "pass": 39,
+      "fail": 0
+    },
+    {
+      "scope": "Exact final source Node20 bridge + disposition + four package files",
+      "tests": 44,
+      "pass": 44,
+      "fail": 0,
+      "skipped": 0
+    },
+    {
+      "scope": "Exact final source Node24 bridge",
+      "tests": 32,
+      "pass": 32,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "finalExactExecution": "PASS Node20 44/44, Node24 32/32; no skipped scenarios; exact new bridge source",
+  "regressions": {
+    "concurrentRequestRace": {
+      "beforeActualGets": 23,
+      "afterActualGets": 22,
+      "plannedMaximum": 22,
+      "competingHost": "BLOCKED",
+      "attribution": "Two independent actual-host subprocesses against localhost synthetic service, forced stale-read interleaving"
+    },
+    "clockFixture": {
+      "initial": "Real local service failed zero-duration inherited synthetic response deadline",
+      "correction": "Explicit controlled-clock full-date replay with independent watchdog; separate real-clock timeout and late-response tests; no production deadline relaxed"
+    },
+    "staleEvaluatorFixture": {
+      "initial": "Claim predating original generation correctly rejected BOUNDARY_CLOCK_REGRESSION",
+      "correction": "Only test claim moved after original generation; guard unchanged"
+    },
+    "failedCommand": "Final-exact runner initially named nonexistent a-fence-recovery-package test. Node refused before running; corrected explicit registered file list, retained command error."
+  },
+  "logs": {
+    "ad3837-final-all-A20.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-final-all-A20.log.gz",
+      "archiveSha256": "34cefad6c854d75889e391c9aa1cca96fa70cc3e067fff3301e4733069cb3f3e",
+      "uncompressedSha256": "45dd9d7be8f9d47a8f279be1d8c0e93a140027699d9371b4c2bb008fee6b8e93",
+      "uncompressedBytes": 86909,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-final-new20.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-final-new20.log.gz",
+      "archiveSha256": "4adf6b126c0bd0c654b8458becbc05bd4d71cb3aa8ea8e5b94ce76a1e8c206f8",
+      "uncompressedSha256": "0db03a5b7db939cc6df993fba77b885f3ae00ba89c4ade9104e0842dd29f807f",
+      "uncompressedBytes": 14099,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-final-new24-v2.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-final-new24-v2.log.gz",
+      "archiveSha256": "46aa8d46b65e67673dda28960d9fd748bd61c3ac0de0193de2327cad461470f2",
+      "uncompressedSha256": "a1827f6c122c304a3e31962a4c7e59843ebc58dd6162e5b6124b8e7fef4666f9",
+      "uncompressedBytes": 6424,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-final-python.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-final-python.log.gz",
+      "archiveSha256": "4fa3d6a61ff811411fd7fee6cd9e198fae2b7466e7463f7e11f359323a20d256",
+      "uncompressedSha256": "8dab5d16725d97f79b82098b34d9102761b9beff1891184efc77b76405d5e7d7",
+      "uncompressedBytes": 138,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-request-race-before-fix2.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-request-race-before-fix2.log.gz",
+      "archiveSha256": "d9d2f12e13293a82f59ce556daad45eb01a4e77790abc745dcbf309c3a7f4617",
+      "uncompressedSha256": "2cf5a40bafb122c13e0c6c70e30f77fe0da9c5044b71399698b1b2c006dd9912",
+      "uncompressedBytes": 8498,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-request-race-after-fix.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-request-race-after-fix.log.gz",
+      "archiveSha256": "e26667661382a5cb5a2734728e46b2b6712457583c3cf8fcb2fdb2a4c1b69911",
+      "uncompressedSha256": "15f5879ccbb001cf7f1d2a3570e3cc2a9e5c8ac08a898218ce892877c5c91150",
+      "uncompressedBytes": 7639,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-bridge-first.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-bridge-first.log.gz",
+      "archiveSha256": "75c472a4240e18ad48510d2ade7b21d4f9bffaea1d2f10fb2db82ef282d19095",
+      "uncompressedSha256": "bb0fd6da45993fdd06013826822e7e951420a911356fce589d5bb656e780e140",
+      "uncompressedBytes": 6664,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-provenance-context-target2.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-provenance-context-target2.log.gz",
+      "archiveSha256": "787e74b6220676561436bea52e7f817a9e30a082d02478f62752d263021ba059",
+      "uncompressedSha256": "656833f0ddf3ade4337bccbc26b1191af33c59b4fb9c74dd8ac606aa13f81255",
+      "uncompressedBytes": 7466,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-stale-fixture-correction.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-stale-fixture-correction.log.gz",
+      "archiveSha256": "483cf06796099c239b2eff9fb0aab6a4ec6a7026b5ce33bddb0d86d6f93d323c",
+      "uncompressedSha256": "ff6635b22c18df97e8add9b373ccda05e6515d88ef2597b7739c9c1fd6c1a654",
+      "uncompressedBytes": 7085,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-final-restart-attribution20.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-final-restart-attribution20.log.gz",
+      "archiveSha256": "3da5f560166d943027f914df6b7cf44c2e26403f7bc572d6f54397e870b3fdc9",
+      "uncompressedSha256": "c4e8f0ea4d0c7cc5418e0c008a4bd0613393b4fca66158a07b7fdffdd73f6561",
+      "uncompressedBytes": 7633,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-final-exact20.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-final-exact20.log.gz",
+      "archiveSha256": "b92c762d2cd4784a9b91edf537f1180bf17499c7ced1d74deca4c057075eeb77",
+      "uncompressedSha256": "01c827f283285737f8a43c0e26912e43b7ae1781adeb9cd9f37c6d19519ec3e5",
+      "uncompressedBytes": 102,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-final-exact20-corrected.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-final-exact20-corrected.log.gz",
+      "archiveSha256": "10d32972406cc3b39113a4c586aae5c1993be01c1857044ad470c8bd5c76599e",
+      "uncompressedSha256": "52f2a61eac626c7162b6232db1655c06ada1acf6671f5413cfd0f0847b46fb56",
+      "uncompressedBytes": 9509,
+      "attribution": "Codex local execution; synthetic/local services only"
+    },
+    "ad3837-final-exact24.log": {
+      "archive": "docs/review-ad3837-response/evidence/ad3837-final-exact24.log.gz",
+      "archiveSha256": "032b4bd48aa61e1f1e177382f5f9547232784dc70bc7d43276cf15b57b9f72e9",
+      "uncompressedSha256": "6b3520be9039961f0957e186118720e33b87a3d52d101b10d7b8f5495511b4f3",
+      "uncompressedBytes": 3007,
+      "attribution": "Codex local execution; synthetic/local services only"
+    }
+  },
+  "static": {
+    "modules": 294,
+    "workflows": 86,
+    "datasetsChecked": 335,
+    "datasetFailures": 0,
+    "missingImportModules": 0
+  },
+  "baselinePreservation": {
+    "independentlyPassedSourceFiles": 17,
+    "productionAndFrozenProtectedFiles": 24,
+    "checks": "Manifest hashes plus exact-byte base comparison; no claims based on syntax alone"
+  },
+  "inventory": {
+    "recognizedStoresInInspectedWorkspace": 0,
+    "enumerationErrors": 0,
+    "globalAbsence": "NOT_ESTABLISHED"
+  },
+  "B": "RETIRED_AS_DESIGNED",
+  "C": "STOP_NO_PROSPECTIVE_COLLECTION",
+  "sameStockPrimary": "FAILED_BOTH_ORIGINAL_HALVES",
+  "replacement": null,
+  "realProviderCalls": 0,
+  "realKeys": false,
+  "productionChanges": false,
+  "genuineAdmissions": 0,
+  "acceptanceRowsClosed": 0,
+  "acceptanceRowsAdvanced": [
+    "REPO-03",
+    "ACTIONS-04",
+    "CATALYST-03",
+    "EXEC-03",
+    "HISTORY-04"
+  ],
+  "limitations": [
+    "Retained-response synthetic replay is not live first-capture implementation.",
+    "Declared independent clients, matching bodies and signatures are not source authenticity, original first ingestion or stream completeness.",
+    "No new owner policy, population, data budget, execution scope or live bindings authorized."
+  ]
+}

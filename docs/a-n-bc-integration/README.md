@@ -1,3 +1,5 @@
+> **6November — superseding disposition:** [Claude ad3837 response](../review-ad3837-response/README.md): B RETIRED AS DESIGNED; C STOP/NO PROSPECTIVE COLLECTION with failed same-stock comparison retained as PRIMARY. Original JSONs, examples and prior evidence below are historical/unadopted. No replacement selected; no cost/gate relaxation or activation. N1–N3/export independent PASS preserved; scoped N4 inventory added.
+
 # N1–N4 and separate B/C offline checkpoint
 
 5 November 2026. Development only; no production, provider, credential, collection or activation action. Base a32539f533b89d789822c0896a7ea3dfa2ef410f. [Exact manifest](manifest.json), [verification](verification.json), [recovery procedure](recovery-and-export.md), [exact activation dependencies](activation-dependencies.md), [B/C proposals](../research-bc/README.md).

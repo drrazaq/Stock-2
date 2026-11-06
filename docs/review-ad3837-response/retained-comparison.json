@@ -1,0 +1,243 @@
+{
+  "sourceBase": "3641a8e806b72e65add1ce6a90b82fdad7707a98",
+  "execution": "Retained JSON/source inspection only; no study execution or new prices",
+  "pins": {
+    "CLAUDE.md": "ef35678e0b79026ddc7f4d0fb14c84404d5bf5d16f8d683dcb2de53c3dade510",
+    "data/earnings-study.json": "a46ec6700fc7dbb8a38c7489a77197b4a2d7aada07e0f30b9cc0625ba3fbbb1c",
+    "earnings-study.mjs": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+    "data/orb-study.json": "1d624c2e55e7d4a6ddb292767155897405aed8852c639e3ecd51fb1f688030c5",
+    "orb-study.mjs": "a9ed7dca072df5776df188db0a1ecfbc94be77a9b62c67c15facc81e75b08c51",
+    "event-orb-retest-core.mjs": "6c47bd988b5a13b1245a279c165ee723fc908467839d4776d5437e3cf1ff83c0",
+    "data/event-orb-retest-15d-gates.json": "c2d4aeb0641dcb30975f31f4c69aec3e9149f0cd781d02877bc279483615fceb",
+    "data/events-study.json": "c147422c452bfd055d3ad63ce21a66c73d0ef1371df9b3b3e17d714a038ad5df",
+    "events-study.mjs": "2a003c7f39ba8e13b8e5546bc4bf6d58cfc98da0e49c923040c5425f8cbc9d49",
+    "data/squad28-lab.json": "7b230116f85cf6a20a8a8e3c3169bf9e8ee9b5fcb52e0fd4ab4851aa96afb140",
+    "squad28-core.mjs": "b0f7d9ac12d56eb3ee758f9161385db49cc1f6f565a21dd95938d2028fed6239",
+    "data/squad11-lab.json": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a",
+    "squad11-core.mjs": "29044a5bfe27e60d47f7373963fef80d9c06972cce7987026dea3d30f5676ba9"
+  },
+  "earningsInformationDrift": {
+    "verdict": "NOT PROVEN",
+    "why": "could be luck in the older half (date-clustered t -0.45, luck bar 3.95); not better than the average stock on the same days in the older half (-0.01%); not better than the S&P 500 over the same days in the older half (-0.46%); not clearly better than the same stocks on their non-earnings days in the older half (+0.21%, t 0.31); loses without its 2 best trades in the older half (-0.30%); loses at 1.2% cost in the older half (-0.30%); could be luck in the newer half (date-clustered t 1.41, luck bar 3.95); not clearly better than the same stocks on their non-earnings days in the newer half (+2.22%, t 1.28)",
+    "from": "2021-10-12",
+    "to": "2026-10-19",
+    "results": {
+      "older": {
+        "n": 183,
+        "avg": 0.0009985276055419188,
+        "pf": 1.0295199695392359
+      },
+      "newer": {
+        "n": 212,
+        "avg": 0.015395718330419427,
+        "pf": 1.3930460051522888
+      }
+    }
+  },
+  "regulatoryProxyBIO_NEWS": {
+    "verdict": "REJECTED",
+    "why": "lost money in the older half; lost money in the newer half; loses at 1.2% cost; profit factor 0.88; no better than the S&P 500 over the same days; lost money in the last 12 months; loses without its 2 best trades",
+    "category": "Mixed drug-maker8K news; not a pure official FDA-decision study",
+    "results": {
+      "older": {
+        "n": 216,
+        "avg": -0.010979613963347793,
+        "pf": 0.7482286577037234
+      },
+      "newer": {
+        "n": 239,
+        "avg": -0.006139703659170577,
+        "pf": 0.8764749435636536
+      }
+    },
+    "topLevelWindowContext": [
+      "2021-10-12",
+      "2026-10-19"
+    ],
+    "windowLimit": "Top-level retained file context; firstRun has no separate per-family complete-source chronology"
+  },
+  "customerSupplier": {
+    "firstRun": {
+      "SQ28-SUPDRIFT": {
+        "verdict": "TOO FEW CASES",
+        "why": "fewer than 20 cases or 3 blocks in a half (75 cases, 12 blocks / 11 cases, 10 blocks)",
+        "results": {
+          "older": {
+            "n": 75,
+            "avg": -0.0379,
+            "avgStress": -0.0419,
+            "vsOwn": 0.0331,
+            "tBlock": 1.67,
+            "tDay": 1.99
+          },
+          "newer": {
+            "n": 11,
+            "avg": 0.0535,
+            "avgStress": 0.0495,
+            "vsOwn": 0.0529,
+            "tBlock": 0.6,
+            "tDay": 0.6
+          }
+        }
+      },
+      "SQ28-SUPDRIFT-ANY": {
+        "verdict": "NOT PROVEN",
+        "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 1.83 under 2.5 in the older half; loses without its 2 best in the newer half; block t 0.28 under 2.5 in the newer half; return per year of capital tied up -28.1% not above the S&P 500 on the same days in the older half (-7.4%); return per year of capital tied up 16.7% not above the S&P 500 on the same days in the newer half (19.8%)",
+        "results": {
+          "older": {
+            "n": 126,
+            "avg": -0.022,
+            "avgStress": -0.026,
+            "vsOwn": 0.0202,
+            "tBlock": 1.83,
+            "tDay": 2.33
+          },
+          "newer": {
+            "n": 55,
+            "avg": 0.0128,
+            "avgStress": 0.0088,
+            "vsOwn": 0.0193,
+            "tBlock": 0.28,
+            "tDay": 0.41
+          }
+        }
+      }
+    },
+    "correctedRun": {
+      "SQ28-SUPDRIFT": {
+        "verdict": "REJECTED",
+        "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 1.29 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t 0.13 under 2.5 in the newer half; return per year of capital tied up -18.1% not above the S&P 500 on the same days in the older half (-4.9%); return per year of capital tied up -3.2% not above the S&P 500 on the same days in the newer half (21.3%)",
+        "results": {
+          "older": {
+            "n": 92,
+            "avg": -0.0142,
+            "avgStress": -0.0182,
+            "vsOwn": 0.0177,
+            "tBlock": 1.29,
+            "tDay": 2.07
+          },
+          "newer": {
+            "n": 39,
+            "avg": -0.0025,
+            "avgStress": -0.0065,
+            "vsOwn": -0.0032,
+            "tBlock": 0.13,
+            "tDay": -0.16
+          }
+        }
+      },
+      "SQ28-SUPDRIFT-ANY": {
+        "verdict": "REJECTED",
+        "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 1.84 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t 0.2 under 2.5 in the newer half; return per year of capital tied up -22.5% not above the S&P 500 on the same days in the older half (0.8%); return per year of capital tied up -1.3% not above the S&P 500 on the same days in the newer half (17.8%)",
+        "results": {
+          "older": {
+            "n": 121,
+            "avg": -0.0177,
+            "avgStress": -0.0217,
+            "vsOwn": 0.0179,
+            "tBlock": 1.84,
+            "tDay": 2.49
+          },
+          "newer": {
+            "n": 55,
+            "avg": -0.001,
+            "avgStress": -0.005,
+            "vsOwn": -0.004,
+            "tBlock": 0.2,
+            "tDay": -0.07
+          }
+        }
+      }
+    }
+  },
+  "A_ORB1": {
+    "verdict": "REJECTED",
+    "why": "not better than the average universe stock open-to-close in the older half (-0.9%); could be luck in the older half (t -9.36, 3.95 needed); lost money after costs in the older half (-0.9%); did not beat the S&P 500 open-to-close in the older half (-0.9%); not clearly better than the same stock open-to-close on its other days in the older half (-1.0%, t -18.43); loses without its 2 best trades in the older half; not better than the average universe stock open-to-close in the newer half (-0.8%); could be luck in the newer half (t -11.59, 3.95 needed); lost money after costs in the newer half (-0.8%); did not beat the S&P 500 open-to-close in the newer half (-0.9%); not clearly better than the same stock open-to-close on its other days in the newer half (-0.9%, t -25.78); loses without its 2 best trades in the newer half; loses at 1.2% costs; loses with 0.1% extra slippage",
+    "from": "2024-10-18",
+    "to": "2026-10-22",
+    "modelFills": 4007,
+    "mean": -0.0084
+  },
+  "EVENT_ORB_RETEST": {
+    "status": "REJECTED",
+    "results": {
+      "older": {
+        "n": 49,
+        "distinctDays": 19,
+        "distinctStocks": 42,
+        "meanNet": -0.0089,
+        "medianNet": -0.0061,
+        "winRate": 0.2857,
+        "totalNetUsd": -434.29,
+        "without2Best": -0.0106,
+        "medianDay": -0.0072,
+        "worstDay": -0.0451,
+        "bestDay": 0.0199,
+        "dayT": -2.3205,
+        "exits": {
+          "session_close": 31,
+          "stop": 4,
+          "target": 14
+        },
+        "vsSpySameMinutes": {
+          "n": 49,
+          "meanTradeNet": -0.0089,
+          "meanSpy": -0.0002,
+          "meanExcess": -0.0087,
+          "label": "S&P 500 (SPY) gross return over the same minutes, a proxy for the average stock over those minutes"
+        },
+        "vsSameStockControl": {
+          "n": 39,
+          "meanControlNet": -0.005,
+          "meanExcess": -0.0038,
+          "controlPlansResolved": 39,
+          "label": "same stock, same rule, same New York clock time, on a matched non-event day"
+        }
+      },
+      "newer": {
+        "n": 26,
+        "distinctDays": 20,
+        "distinctStocks": 22,
+        "meanNet": -0.0003,
+        "medianNet": -0.003,
+        "winRate": 0.3462,
+        "totalNetUsd": -7.07,
+        "without2Best": -0.0052,
+        "medianDay": -0.003,
+        "worstDay": -0.0675,
+        "bestDay": 0.038,
+        "dayT": -0.8189,
+        "exits": {
+          "session_close": 17,
+          "target": 8,
+          "stop": 1
+        },
+        "vsSpySameMinutes": {
+          "n": 26,
+          "meanTradeNet": -0.0003,
+          "meanSpy": -0.0003,
+          "meanExcess": 0,
+          "label": "S&P 500 (SPY) gross return over the same minutes, a proxy for the average stock over those minutes"
+        },
+        "vsSameStockControl": {
+          "n": 23,
+          "meanControlNet": -0.008,
+          "meanExcess": 0.0078,
+          "controlPlansResolved": 23,
+          "label": "same stock, same rule, same New York clock time, on a matched non-event day"
+        }
+      }
+    },
+    "notUntouched": true
+  },
+  "replacementSelected": null,
+  "newExperiments": 0,
+  "genuineAdmissions": 0,
+  "customerSupplierWindowContext": [
+    "2021-10-12",
+    "2026-10-27"
+  ],
+  "customerSupplierSplit": "2024-01-01",
+  "newProposalThresholdsAdopted": false,
+  "existingProtocolUnchanged": true
+}
