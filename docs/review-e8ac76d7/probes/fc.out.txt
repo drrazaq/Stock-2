@@ -1,0 +1,19 @@
+{
+ "followupBeforeDecision": {
+  "prepare": "FIRST_PLAN_DURABLE",
+  "result": "UNKNOWN/FIRST_FOLLOWUP_BEFORE_DECISION",
+  "gets": 0
+ },
+ "busyAtFreeze": {
+  "duringBusy": "UNKNOWN/WRITER_BUSY",
+  "retrySameClockAfterRelease": "FIRST_DECISION_DURABLE",
+  "retryAfterDeadline": "FIRST_DECISION_ALREADY_DURABLE"
+ },
+ "producerAppendAfterFreeze": {
+  "freeze": "FIRST_DECISION_DURABLE",
+  "appended": "yes",
+  "evaluate": "OFFLINE_RESEARCH_ONLY",
+  "card": "PAPER"
+ },
+ "changedDecisionAfterFreeze": "UNKNOWN/FIRST_DECISION_CHANGED"
+}

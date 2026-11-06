@@ -1,0 +1,30 @@
+{
+ "killAfterSpoolBeforeStore": {
+  "killed": "SIGKILL",
+  "getsBeforeKill": 5,
+  "captureSpool": 3,
+  "captureRaw": 2,
+  "restart": "{\"status\":\"OFFLINE_RESEARCH_ONLY\",\"reason\":null,\"capturedCount\":null,\"allowBuy\":false}",
+  "extraGets": 17,
+  "thirdItemRefetched": false
+ },
+ "killDuringGet": {
+  "killed": "SIGKILL",
+  "captureSpool": 2,
+  "restart": "{\"status\":\"UNKNOWN\",\"reason\":\"ACQUISITION_REQUEST_OUTCOME_UNKNOWN\",\"capturedCount\":4,\"allowBuy\":false}",
+  "redialOfHungItem": false,
+  "extraGets": 0
+ },
+ "truncatedSpool": {
+  "restart": "{\"status\":\"OFFLINE_RESEARCH_ONLY\",\"reason\":null,\"capturedCount\":null,\"allowBuy\":false}",
+  "extraGets": 17,
+  "spoolUnchanged": true
+ },
+ "unsafeSpool": {
+  "first": "{\"status\":\"UNKNOWN\",\"reason\":\"PRIVATE_SPOOL_UNSAFE\",\"capturedCount\":0,\"allowBuy\":false}",
+  "getsFirst": 0,
+  "firstItemRequestReserved": "NOT_COMMITTED",
+  "afterFix": "{\"status\":\"OFFLINE_RESEARCH_ONLY\",\"reason\":null,\"capturedCount\":null,\"allowBuy\":false}",
+  "extraGets": 22
+ }
+}
