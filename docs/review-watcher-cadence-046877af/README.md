@@ -31,3 +31,10 @@ Reviewer: the Claude session, 6 Nov 2026, offline only. Codex owns this package;
 - Hosted CI on the exact release commit.
 
 It must not be bundled into Saturday's STOP + D scope.
+
+## Status record (6 Nov, after Codex 68c4bf45)
+
+- **Independent review: COMPLETE.** Codex reconciled this published review (`80b4bdb1`) at `68c4bf45`, with package identity and execution attribution unchanged: patch `6a361eca…`, inverse `32538057…`, delta `2753853d…`.
+- **Scope:** a separate after-Saturday package. **It is not part of, and must not be added to, Saturday's approved STOP R2 + D1–D4 maintenance.** Completing the review is not deployment approval.
+- **Still required:** owner approval, fresh after-Saturday pins and rollback check, a safe boundary, and CI on the exact release commit.
+- **Related finding (D1–D4, not this package):** with D applied, the existing test `test/actions-reconciliation.test.mjs` case 6 ("pending ZAD signal and no permitted buy are distinct") fails on **weekdays from the 09:30 New York open until New York midnight**. It passes on weekends and before the open, and main without D always passes. This was confirmed with a shifted clock on main `756eca07` + STOP + D, without any calendar or watcher patch. The cause is that the test stamps its synthetic list `generatedAt` with the current time; D1/R2 correctly treats a list generated after its own next open as UNKNOWN. D's Saturday gates (all tests pass on the post-STOP parent; push CI) run on a weekend and are **unaffected**. But from Monday 9 Nov 14:30 UTC, any weekday daytime code push would show this test red until the fixture is pinned. This is reported for an owner/Codex decision; the D scope is not changed here.
