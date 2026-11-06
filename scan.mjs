@@ -1,3 +1,4 @@
+import {leaderDipMentorPlan,renderLeaderDipMentor,savedLeaderDipSignal} from './mentor-plan.mjs';
 const validPlanPrice=x=>typeof x==='number'&&Number.isFinite(x)&&x>0;
 // Cloud scanner for the US stock signal board. Runs on GitHub Actions (free), so it works while your phone is off.
 // It reuses the exact rules inside index.html, writes data/signals.json and an append-only journal, and sends Telegram alerts.
@@ -3166,6 +3167,12 @@ function waysText() { return ['YOUR WAYS TO TRADE (each one separate; you place 
   'a) THE BASKET (core): every month 65% of ~1,000 USD in ZAD Basket 2 = SPUS 54% / gold fund IAUM 46%, and 35% kept as cash; Basket 1 = the halal top 10 (whole-number %) is bought with that cash 3 times a year (first trading day of Jan, May, Sep) to keep ZAD fees low. Send  basket  (buy day:  basket buy AMOUNT )',
   'b) TRY SMALL: ' + usd0(TRY_USD) + ' USD buys from rules that made money in both test halves but did not pass the luck test; max ' + TRY_MAX + ' open, own stop and time exit. They appear in  actions',
   'c) OPTIONS PAPER LANE: long calls tested on paper only; a 1-contract ticket only if a rule earns it. Send  options lab'].join('\n'); }
+// Read-only mentor: existing positions never borrow a current signal as original evidence.
+function mentorText(sym,pos){
+ const P=pos?.[sym];let signal=P?savedLeaderDipSignal(P.mentorContract):null;
+ if(!P)try{const bytes=fs.readFileSync('data/squad11-today.json'),T=JSON.parse(bytes),row=T?.methods?.['SQ11-PB12']?.newSignals?.find(x=>x?.sym===sym);if(row&&(!row.d||!T.lastClose||row.d===T.lastClose))signal={rule:'SQ11-PB12',day:row.d||T.lastClose,close:row.close,generatedAt:T.generatedAt||null,sha256:crypto.createHash('sha256').update(bytes).digest('hex')};}catch{}
+ const at=Date.now();return renderLeaderDipMentor(leaderDipMentorPlan({symbol:sym,position:P||null,signal,quantity:privRead()?.shares?.[sym],asOfDay:ny(at).d,asOfMs:at,zadStatus:'UNKNOWN (not independently verified by this view)'}));
+}
 async function tgCommands(sig) {
   if (env.GITHUB_WORKFLOW && env.GITHUB_WORKFLOW !== 'Telegram bot replies') return;   // one reader of Telegram messages (audit 22 Oct): the bot workflow
   if (!env.TG_TOKEN || !env.TG_CHAT) return;
@@ -3174,7 +3181,7 @@ async function tgCommands(sig) {
   try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/getUpdates?timeout=' + Math.min(50, Math.max(0, parseInt(env.TG_WAIT || '0', 10) || 0)) + '&offset=' + state.offset); ups = ((await r.json()).result) || []; } catch (e) { console.log('could not read Telegram messages'); return; }
   // One message may carry several commands, one per line (for example four "follow" lines pasted together). Split those up.
   // A leading dash, bullet or backtick copied from a list is ignored. A multi-line tip message is left whole.
-  const CMD_LINE = /^(follow|unfollow|bought|i bought|sold|i sold|stop|target|check|add|remove)\b/i, clean = (x) => x.replace(/^[\s\-\u2022*`>]+/, '').replace(/`+$/, '').trim(), queue = [];
+  const CMD_LINE = /^(\/?mentor(?:@\w+)?|follow|unfollow|bought|i bought|sold|i sold|stop|target|check|add|remove)\b/i, clean = (x) => x.replace(/^[\s\-\u2022*`>]+/, '').replace(/`+$/, '').trim(), queue = [];
   for (const u of ups) {
     if (u.callback_query) {   // a tapped button: Bought / Sold / Skipped
       const cq = u.callback_query, chatId = cq.message && cq.message.chat ? cq.message.chat.id : (cq.from && cq.from.id); let txt = null, note = 'Recorded';
@@ -3203,6 +3210,7 @@ async function tgCommands(sig) {
     if (lines.length > 1 && lines.every(x => CMD_LINE.test(x))) lines.forEach(x => queue.push({ update_id: u.update_id, message: { ...m, text: x } }));
     else { if (m && m.text && lines.length === 1) m.text = lines[0]; queue.push(u); }
   }
+  const isMentor=u=>/^\/?mentor(?:@\w+)?(?:\s|$)/i.test(u.message?.text||''),owned=queue.filter(u=>String(u.message?.chat?.id)===String(env.TG_CHAT)),mentorOnly=queue.some(isMentor)&&owned.every(isMentor);
   if (state.menuV !== MENU_V) { await sendMenu(); state.menuV = MENU_V; }   // the one-tap menu appears by itself once (and after each change)
   for (const u of queue) {
     state.offset = u.update_id + 1;
@@ -3224,6 +3232,7 @@ async function tgCommands(sig) {
     }
     const text = tradeWords(m.text.trim().replace(/\$/g, '').replace(SHARE_TYPOS, 'shares')), num = (re) => { const x = text.match(re); return x ? +x[1] : null; };
     let k;
+    if (/^mentor(?:@\w+)?(?:\s|$)/i.test(text)) { k=text.match(/^mentor(?:@\w+)?\s+([a-z][a-z.\-]{0,5})\s*$/i); out.push(k?mentorText(k[1].toUpperCase(),mentorOnly?readJson0(POS_FILE):pos):'MENTOR — EXPLANATION ONLY. NOT PROVEN. Use mentor SYMBOL (one symbol per line). This request records no trade; no BUY or HOLD recommendation.'); continue; }
     { const tk = (text.match(/\b[A-Z]{2,5}\b/g) || []).filter(x => !NOT_TICKERS.has(x) && !COMMON_WORDS.has(x)), fwd = m.forward_origin || m.forward_from_chat;
       if (!tk.length && !/^\s*(?:tips?|log)\b/i.test(text) && (text.length >= 160 || (fwd && text.length >= 60))) {
         const src = (m.forward_origin && (m.forward_origin.sender_user_name || (m.forward_origin.sender_user && m.forward_origin.sender_user.first_name) || (m.forward_origin.chat && m.forward_origin.chat.title))) || (m.forward_from_chat && m.forward_from_chat.title) || null;
@@ -3511,7 +3520,7 @@ async function tgCommands(sig) {
     } else if (/^(help|commands?|\?)\s*$/i.test(text)) out.push(HELP);
     else out.push(await hotList(sig) + '\n\nYou do not need commands. Write anything, a ticker, or forward a post, and I will study it. Send  help  for the full list.');
   }
-  fs.writeFileSync('data/tg-state.json', JSON.stringify(state)); savePos(pos);
+  fs.writeFileSync('data/tg-state.json', JSON.stringify(state)); if(!mentorOnly)savePos(pos);
   if (out.length) await telegram(out.join('\n\n'));
   if (ups.length) console.log('Telegram: ' + ups.length + ' message(s) read');
 }
