@@ -60,8 +60,10 @@ if (MODE === 'fetch') {
   status.officialUpcoming = out.official.length;
   // ---- 0b. Alpha Vantage official actuals (weekly; 25 calls a day shared with the other jobs)
   out.av = old.av || {}; out.avAt = old.avAt || null;
+  // (r2) per-series retrieval clocks: a refresh of one series never freshens another; pre-repair files inherit their old global time
+  out.avAtBy = old.avAtBy && typeof old.avAtBy === 'object' ? { ...old.avAtBy } : Object.fromEntries(Object.keys(out.av).map(k => [k, old.avAt || null]));
   if (env.ALPHAVANTAGE_KEY && (!out.avAt || Date.now() - Date.parse(out.avAt) > 6 * 864e5)) { const AVS = [['CPI', 'CPI&interval=monthly'], ['NFP', 'NONFARM_PAYROLL'], ['UNEMP', 'UNEMPLOYMENT'], ['RETAIL', 'RETAIL_SALES'], ['FEDFUNDS', 'FEDERAL_FUNDS_RATE&interval=monthly'], ['GDP', 'REAL_GDP&interval=quarterly']]; let got = 0, stop = null;
-    for (const [k, q] of AVS) { try { const r = await fetch(AVB + '/query?function=' + q + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)), j = await r.json().catch(() => ({})); if (j.Information || j.Note) { stop = String(j.Information || j.Note).slice(0, 100); break; } const d = (j.data || []).filter(x => x && x.date && isFinite(+x.value)).slice(0, 40).map(x => [x.date, +x.value]); if (d.length) { out.av[k] = d; got++; } } catch (e) {} await sleep(local(env.AV_BASE) ? 0 : 1500); }
+    for (const [k, q] of AVS) { try { const r = await fetch(AVB + '/query?function=' + q + '&apikey=' + encodeURIComponent(env.ALPHAVANTAGE_KEY)), j = await r.json().catch(() => ({})); if (j.Information || j.Note) { stop = String(j.Information || j.Note).slice(0, 100); break; } const d = (j.data || []).filter(x => x && x.date && isFinite(+x.value)).slice(0, 40).map(x => [x.date, +x.value]); if (d.length) { out.av[k] = d; out.avAtBy[k] = new Date().toISOString(); got++; } } catch (e) {} await sleep(local(env.AV_BASE) ? 0 : 1500); }
     if (got) out.avAt = nowIso; status.alphaVantage = got + ' of ' + AVS.length + ' series' + (stop ? ' (stopped: ' + stop + ')' : ''); } else status.alphaVantage = env.ALPHAVANTAGE_KEY ? 'kept (refreshed weekly, last ' + String(out.avAt).slice(0, 10) + ')' : 'no ALPHAVANTAGE_KEY';
   // fill missing ACTUALS from the official series: month-on-month % for CPI / retail sales, change in thousands for payrolls, levels for the rest
   const refMonth = (e) => { const m = /\(([A-Za-z]{3})[a-z]*\)/.exec(e.name || ''); if (!m || !MONTHS[m[1].toLowerCase()]) return null; const mo = MONTHS[m[1].toLowerCase()], y = +e.t.slice(0, 4); return (mo > e.t.slice(5, 7) ? y - 1 : y) + '-' + mo + '-01'; };
@@ -134,7 +136,7 @@ if (MODE === 'fetch') {
   if (!env.TIPRANKS_KEY) out.trRows = [];
   out.econ = mergeEconRows(out.official, (out.trRows || []).filter(e => e.t >= new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10)), { providerAt: out.trAt || old.trAt || null });
   delete out.official;
-  for (const e of out.econ) fillOfficialActual(e, out.av, out.avAt); for (const e of out.hist) fillAct(e);   // the study history keeps its original fill rule
+  for (const e of out.econ) fillOfficialActual(e, out.av, out.avAtBy); for (const e of out.hist) fillAct(e);   // the study history keeps its original fill rule
   // ---- 2. Massive: market holidays, and ex-dividend dates of the stocks you hold
   if (env.MASSIVE_KEY) try {
     const get = async (p) => { const r = await fetch(PX + p + (p.includes('?') ? '&' : '?') + 'apiKey=' + encodeURIComponent(env.MASSIVE_KEY)); return r.ok ? r.json() : null; };

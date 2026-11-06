@@ -55,7 +55,7 @@ const NAMES = [
   [/^unit labou?r costs( qoq)?$/i, 'UNIT_LABOR_COSTS'],
   [/^cpi mom$/i, 'CPI_MOM'], [/^cpi yoy$/i, 'CPI_YOY'], [/^core cpi mom$/i, 'CORE_CPI_MOM'], [/^core cpi yoy$/i, 'CORE_CPI_YOY'],
   [/^ppi mom$/i, 'PPI_MOM'], [/^ppi yoy$/i, 'PPI_YOY'],
-  [/^(fed interest rate decision|fomc interest rate decision|fed funds rate( upper bound)?)$/i, 'FED_RATE']
+  [/^(fed interest rate decision|fomc interest rate decision|fed funds (target )?rate upper bound)$/i, 'FED_RATE']   // (r2) a bare 'Fed Funds Rate' may be the EFFECTIVE rate: not mapped (UNKNOWN)
 ];
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 export function seriesOf(providerName) {
@@ -95,9 +95,18 @@ export function verifyValue(seriesId, raw, unitField) {
 
 // reference period of a release on date d (YYYY-MM-DD, New York): official schedule text wins; weekly claims use the DOL convention
 // (initial claims: week ending the Saturday before the Thursday release; continuing claims: one week earlier), labelled as derived.
+// (r2, Codex R1) the provider's own period hint must AGREE with the official reference; a disagreement is a conflict, never relabelled.
+const FULLM = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'], QN = { first: 1, second: 2, third: 3, fourth: 4 };
+export function periodAgrees(officialRef, hint) {
+  if (!hint) return null;   // no hint: nothing to compare
+  const m = /^([A-Za-z]+) (\d{4})$/.exec(officialRef || ''), q = /^(First|Second|Third|Fourth) Quarter (\d{4})/i.exec(officialRef || ''), h = hint.toLowerCase();
+  if (m && FULLM.includes(m[1].toLowerCase())) return MONTHS.indexOf(h.slice(0, 3)) === FULLM.indexOf(m[1].toLowerCase());
+  if (q) return /^q[1-4]$/.test(h) && +h[1] === QN[q[1].toLowerCase()];
+  return false;
+}
 export function referencePeriod(seriesId, releaseDay, officialRef, providerName) {
-  const s = SERIES[seriesId]; if (!s) return null;
-  if (officialRef) return { period: officialRef, basis: 'official schedule' };
+  const s = SERIES[seriesId]; if (!s) return null; const hint = providerPeriod(providerName);
+  if (officialRef) { const ok = periodAgrees(officialRef, hint); return ok === false ? { period: officialRef, basis: 'official schedule', conflict: true, providerHint: hint } : { period: officialRef, basis: 'official schedule' + (hint ? ' (provider period agrees)' : ' (provider gave no period)'), providerHint: hint }; }
   if (s.ref === 'WEEK_INITIAL' || s.ref === 'WEEK_CONTINUED') {
     const d = new Date(releaseDay + 'T12:00:00Z'); if (isNaN(d)) return null;
     const back = ((d.getUTCDay() + 1) % 7) || 7, end = new Date(d.getTime() - (back + (s.ref === 'WEEK_CONTINUED' ? 7 : 0)) * 864e5);
@@ -110,15 +119,18 @@ export function referencePeriod(seriesId, releaseDay, officialRef, providerName)
 // a value the provider did not give at all is absent (null), not UNKNOWN; the raw string wins over a pre-parsed number
 const given = (raw, parsed) => raw !== null && raw !== undefined && raw !== '' ? raw : parsed !== null && parsed !== undefined && parsed !== '' ? parsed : null;
 // one provider row -> a series entry (consensus / previous / actual kept apart, each with source + retrieval time)
-export function seriesEntry(row, { source, retrievedAt, officialRef = null, releaseDay }) {
+export const retrievalTiming = (retrievedAt, releaseAt) => { const a = Date.parse(retrievedAt || ''), b = Date.parse(releaseAt && String(releaseAt).length <= 19 ? releaseAt + 'Z' : releaseAt || ''); return !Number.isFinite(a) || !Number.isFinite(b) ? 'UNKNOWN' : a < b ? 'RETRIEVED_BEFORE_RELEASE' : 'RETRIEVED_AFTER_RELEASE'; };
+export function seriesEntry(row, { source, retrievedAt, officialRef = null, releaseDay, releaseAt = null }) {
   const id = seriesOf(row.name); if (!id) return { id: null, providerName: String(row.name || '').slice(0, 80), status: 'UNKNOWN_MAPPING' };
-  const s = SERIES[id], pack = (raw, extra) => { const r = verifyValue(id, raw, row.unit); return r.unknown ? { status: 'UNKNOWN', why: r.unknown, source, retrievedAt } : { v: r.v, unit: r.unit, source, retrievedAt, ...extra }; };
+  const ref = referencePeriod(id, releaseDay, officialRef, row.name), timing = retrievalTiming(retrievedAt, releaseAt || row.t);
+  const s = SERIES[id], pack = (raw, extra) => { if (ref && ref.conflict) return { status: 'UNKNOWN', why: 'provider period ' + ref.providerHint + ' does not match the official reference ' + ref.period, source, retrievedAt };
+    const r = verifyValue(id, raw, row.unit); return r.unknown ? { status: 'UNKNOWN', why: r.unknown, source, retrievedAt } : { v: r.v, unit: r.unit, source, retrievedAt, ...extra }; };
   return {
-    id, title: s.title, headline: s.headline, providerName: String(row.name || '').slice(0, 80), status: 'MAPPED',
-    ref: referencePeriod(id, releaseDay, officialRef, row.name),
-    consensus: given(row.fcRaw, row.fc) === null ? null : pack(given(row.fcRaw, row.fc), { kind: 'CONSENSUS_FORECAST' }),
-    previous: given(row.prevRaw, row.prev) === null ? null : pack(given(row.prevRaw, row.prev), { vintage: 'PUBLISHED_BEFORE_THIS_RELEASE_MAY_BE_REVISED' }),
-    actual: given(row.actRaw, row.act) === null ? null : pack(given(row.actRaw, row.act), { vintage: 'AS_REPORTED_BY_SOURCE' })
+    id, title: s.title, headline: s.headline, providerName: String(row.name || '').slice(0, 80), providerKey: row.key || null, status: 'MAPPED',
+    ref, claim: JSON.stringify([given(row.fcRaw, row.fc), given(row.prevRaw, row.prev), given(row.actRaw, row.act), String(row.unit ?? row.unitRaw ?? ''), providerPeriod(row.name)]),
+    consensus: given(row.fcRaw, row.fc) === null ? null : pack(given(row.fcRaw, row.fc), { kind: 'CONSENSUS_FORECAST', timing }),
+    previous: given(row.prevRaw, row.prev) === null ? null : pack(given(row.prevRaw, row.prev), { vintage: 'PROVIDER_PREVIOUS_AS_RETRIEVED', timing }),
+    actual: given(row.actRaw, row.act) === null ? null : pack(given(row.actRaw, row.act), { vintage: 'PROVIDER_ACTUAL_AS_RETRIEVED', timing })
   };
 }
 
@@ -126,31 +138,39 @@ export function seriesEntry(row, { source, retrievedAt, officialRef = null, rele
 const nyDayOf = (t) => { const d = new Date(String(t).length <= 19 ? t + 'Z' : t); return isNaN(d) ? String(t).slice(0, 10) : new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d); };
 export function mergeEconRows(official, provider, { providerAt = null } = {}) {
   const rows = [], byRel = new Map(), legacy = (r) => { const h = r.series.find(x => x.headline && x.status === 'MAPPED'), ok = (z) => z && z.v !== undefined ? z.v : null;
-    r.fc = h ? ok(h.consensus) : null; r.prev = h ? ok(h.previous) : null; r.act = h ? ok(h.actual) : null; r.unit = h && SERIES[h.id] ? SERIES[h.id].unit : ''; };
+    r.fc = h ? ok(h.consensus) : null; r.prev = h ? ok(h.previous) : null; r.act = h ? ok(h.actual) : null; r.unit = h && SERIES[h.id] ? SERIES[h.id].unit : ''; if (h && h.providerKey) r.key = h.providerKey; };
   for (const o of official || []) { const rel = RELEASES[o.release] || null, day = nyDayOf(o.t), r = { schema: 2, t: o.t, day, release: o.release || null, title: rel ? rel.title : o.name, name: rel ? rel.title : o.name, key: o.key, kind: rel ? rel.kind : o.kind, country: 'US', imp: o.imp || 'High',
       dateSource: { by: rel ? rel.agency + ' schedule' : o.src, url: rel ? rel.url : null, retrievedAt: o.retrievedAt || null }, ref: o.ref || null, src: o.src, series: [] };
     rows.push(r); byRel.set(o.release + '|' + day, r); }
+  // (r2, Codex R2) every provider row is reconciled as a full typed claim (values, unit, provider period), order-independently:
+  // exact duplicates are one entry; any difference (including a unit or period difference) makes the affected figure UNKNOWN.
   const seen = new Set();
-  for (const p of provider || []) { const id = seriesOf(p.name), day = nyDayOf(p.t), dedup = (id || p.name) + '|' + day; if (seen.has(dedup + '|' + JSON.stringify([p.fcRaw ?? p.fc, p.prevRaw ?? p.prev, p.actRaw ?? p.act]))) continue; seen.add(dedup + '|' + JSON.stringify([p.fcRaw ?? p.fc, p.prevRaw ?? p.prev, p.actRaw ?? p.act]));
+  for (const p of provider || []) { const id = seriesOf(p.name), day = nyDayOf(p.t), exact = JSON.stringify([id || p.name, day, p.fcRaw ?? p.fc, p.prevRaw ?? p.prev, p.actRaw ?? p.act, String(p.unit ?? p.unitRaw ?? ''), providerPeriod(p.name)]); if (seen.has(exact)) continue; seen.add(exact);
     if (!id) { rows.push({ schema: 2, t: p.t, day, release: null, title: String(p.name || '').slice(0, 80), name: String(p.name || '').slice(0, 80), key: p.key, kind: null, country: 'US', imp: p.imp || '', dateSource: { by: 'TipRanks (date not officially verified)', url: null, retrievedAt: providerAt }, ref: null, series: [{ id: null, providerName: String(p.name || '').slice(0, 80), status: 'UNKNOWN_MAPPING' }], fc: null, prev: null, act: null, unit: '' }); continue; }
     const relId = SERIES[id].release; let r = byRel.get(relId + '|' + day);
     if (!r) { const rel = RELEASES[relId]; r = { schema: 2, t: p.t, day, release: relId, title: rel.title, name: rel.title, key: p.key, kind: rel.kind, country: 'US', imp: p.imp || '', dateSource: { by: 'TipRanks (date not officially verified' + (relId === 'claims' ? '; DOL publishes weekly on Thursdays' : '') + ')', url: null, retrievedAt: providerAt }, ref: null, series: [] }; rows.push(r); byRel.set(relId + '|' + day, r); }
-    const e = seriesEntry(p, { source: 'TipRanks', retrievedAt: providerAt, officialRef: r.ref, releaseDay: day }), prior = r.series.find(x => x.id === id);
-    if (prior) { // two provider rows for one exact series and day: identical values are one entry; any difference is a CONFLICT, never a silent pick
-      for (const f of ['consensus', 'previous', 'actual']) if (JSON.stringify(prior[f] && prior[f].v) !== JSON.stringify(e[f] && e[f].v)) prior[f] = { status: 'UNKNOWN', why: 'conflicting provider rows', source: 'TipRanks', retrievedAt: providerAt };
+    const e = seriesEntry(p, { source: 'TipRanks', retrievedAt: providerAt, officialRef: r.ref, releaseDay: day, releaseAt: r.t }), prior = r.series.find(x => x.id === id);
+    if (prior) { const typed = (z) => z ? JSON.stringify(z.v !== undefined ? [z.v, z.unit] : ['UNKNOWN', z.why]) : 'null';
+      for (const f of ['consensus', 'previous', 'actual']) if (typed(prior[f]) !== typed(e[f]) || JSON.stringify(prior.ref) !== JSON.stringify(e.ref)) prior[f] = { status: 'UNKNOWN', why: 'conflicting provider rows (value, unit or period differ)', source: 'TipRanks', retrievedAt: providerAt };
       continue; }
     r.series.push(e); }
   for (const r of rows) { r.series.sort((a, b) => (b.headline ? 1 : 0) - (a.headline ? 1 : 0)); legacy(r); }
   return rows.sort((a, b) => a.t < b.t ? -1 : a.t > b.t ? 1 : 0);
 }
-// official released values (Alpha Vantage mirrors BLS series) fill only the EXACT headline series of the official reference month
-export function fillOfficialActual(r, av, avAt) {
+// official released values (Alpha Vantage mirrors BLS series) fill only the EXACT headline series of the official reference month.
+// (r2, Codex R3/R4) every point used must be a finite, positive level for the EXACT required month (adjacent month / 12 months earlier
+// found by date, not by position); null, zero, missing or gapped inputs leave the actual UNKNOWN (absent). Each series carries its own
+// retrieval time (avAtBy[series]); refreshing one series never freshens another. A zero CHANGE stays a legitimate result.
+const monthShift = (ym, k) => { const d = new Date(Date.UTC(+ym.slice(0, 4), +ym.slice(5, 7) - 1 + k, 1)); return d.toISOString().slice(0, 10); };
+export function fillOfficialActual(r, av, avAtBy) {
   if (!r || r.schema !== 2 || !r.ref || !av) return; const m = /^(January|February|March|April|May|June|July|August|September|October|November|December) (\d{4})$/.exec(r.ref); if (!m) return;
-  const rm = m[2] + '-' + String(['January','February','March','April','May','June','July','August','September','October','November','December'].indexOf(m[1]) + 1).padStart(2, '0') + '-01';
-  const pick = (ser, f) => { const a = av[ser]; if (!a) return null; const i = a.findIndex(x => x[0] === rm); return i < 0 ? null : f(a, i); };
-  const want = { PAYROLLS_TOTAL: () => pick('NFP', (a, i) => a[i + 1] ? Math.round(a[i][1] - a[i + 1][1]) : null), UNEMPLOYMENT_RATE: () => pick('UNEMP', (a, i) => a[i][1]),
-    CPI_MOM: () => pick('CPI', (a, i) => a[i + 1] ? +((a[i][1] / a[i + 1][1] - 1) * 100).toFixed(2) : null), CPI_YOY: () => pick('CPI', (a, i) => a[i + 12] ? +((a[i][1] / a[i + 12][1] - 1) * 100).toFixed(2) : null) };
-  for (const s of r.series) { if (!want[s.id] || (s.actual && s.actual.v !== undefined)) continue; const v = want[s.id](); if (v !== null && Number.isFinite(v)) s.actual = { v, unit: SERIES[s.id].unit, source: 'Alpha Vantage (BLS series)', retrievedAt: avAt || null, vintage: 'LATEST_AT_RETRIEVAL' }; }
-  for (const id of Object.keys(want)) { if (SERIES[id].release !== r.release || r.series.some(s => s.id === id)) continue; const v = want[id](); if (v !== null && Number.isFinite(v)) r.series.push({ id, title: SERIES[id].title, headline: SERIES[id].headline, status: 'MAPPED', ref: { period: r.ref, basis: 'official schedule' }, consensus: null, previous: null, actual: { v, unit: SERIES[id].unit, source: 'Alpha Vantage (BLS series)', retrievedAt: avAt || null, vintage: 'LATEST_AT_RETRIEVAL' } }); }
+  const rm = m[2] + '-' + String(FULLM.indexOf(m[1].toLowerCase()) + 1).padStart(2, '0') + '-01', at = (ser) => (avAtBy && typeof avAtBy === 'object' ? avAtBy[ser] : avAtBy) || null;
+  const level = (ser, date) => { const a = av[ser]; if (!Array.isArray(a)) return null; const hits = a.filter(x => Array.isArray(x) && x[0] === date); if (hits.length !== 1) return null; const v = hits[0][1]; return typeof v === 'number' && Number.isFinite(v) && v > 0 ? v : null; };
+  const both = (ser, k, f) => { const x = level(ser, rm), y = level(ser, monthShift(rm, k)); return x === null || y === null ? null : f(x, y); };
+  const want = { PAYROLLS_TOTAL: ['NFP', () => both('NFP', -1, (x, y) => Math.round(x - y))], UNEMPLOYMENT_RATE: ['UNEMP', () => level('UNEMP', rm)],
+    CPI_MOM: ['CPI', () => both('CPI', -1, (x, y) => +((x / y - 1) * 100).toFixed(2))], CPI_YOY: ['CPI', () => both('CPI', -12, (x, y) => +((x / y - 1) * 100).toFixed(2))] };
+  const make = (id) => { const [ser, f] = want[id], v = f(); if (v === null || !Number.isFinite(v)) return null; const chk = verifyValue(id, String(v) + SERIES[id].unit); return chk.unknown ? null : { v: chk.v, unit: SERIES[id].unit, source: 'Alpha Vantage (BLS series ' + ser + ')', retrievedAt: at(ser), vintage: 'LATEST_AT_RETRIEVAL' }; };
+  for (const s of r.series) { if (!want[s.id] || (s.actual && s.actual.v !== undefined)) continue; const a = make(s.id); if (a) s.actual = a; }
+  for (const id of Object.keys(want)) { if (SERIES[id].release !== r.release || r.series.some(s => s.id === id)) continue; const a = make(id); if (a) r.series.push({ id, title: SERIES[id].title, headline: SERIES[id].headline, status: 'MAPPED', ref: { period: r.ref, basis: 'official schedule' }, consensus: null, previous: null, actual: a }); }
   r.series.sort((a, b) => (b.headline ? 1 : 0) - (a.headline ? 1 : 0)); const h = r.series.find(x => x.headline && x.status === 'MAPPED'); r.act = h && h.actual && h.actual.v !== undefined ? h.actual.v : null;
 }

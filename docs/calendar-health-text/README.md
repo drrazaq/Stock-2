@@ -1,4 +1,29 @@
-# Calendar exact series, health-text qualification and SEC 404 wording: development only, not deployed
+# Calendar exact series, health-text qualification and SEC 404 wording (revision 2): development only, not deployed
+
+## Revision 2: Codex review `046877af` (CHANGES REQUIRED), all six findings repaired
+
+Codex's portable harness (`docs/reviews/calendar-health-166051d4/regressions.test.mjs` on `codex/calendar-health-watcher-review-20261106`) ran against r1 with 7 failures. Against r2 it gives **8/8 PASS**. The same counterexamples are now in this package's own tests, through the actual `calendar.mjs` job and the actual Telegram callers.
+
+| ID | r1 defect | r2 repair |
+|---|---|---|
+| R1 | A provider September row was relabelled as official October. | The provider's own period hint must agree with the official reference (month or quarter). On disagreement the figures are UNKNOWN ("provider period … does not match the official reference …"). Agreeing hints and rows with no hint stay valid. |
+| R2 | Duplicate rows `40 K` / `40 M` kept the first value. | Duplicates are reconciled as full typed claims (value, unit, period), in either order; any difference is UNKNOWN. Equivalent units (`40K` = `0.04M`) are normalized deliberately. |
+| R3 | A null cached CPI index became 0, giving −100% CPI. | Actuals use only finite, positive levels for the **exact** required months (found by date, not position). Missing, null, zero or gapped inputs leave the actual absent. A legitimate zero payroll **change** still shows 0. The study's AV parse and `fillAct` are untouched. |
+| R4 | Every provider previous was certified "published before the release"; a partial AV refresh freshened other series. | Previous and actual values are labelled `PROVIDER_*_AS_RETRIEVED`, with timing (`RETRIEVED_BEFORE_RELEASE`, `RETRIEVED_AFTER_RELEASE` or `UNKNOWN`) from the actual retrieval time versus the release time. The text never certifies a pre-release vintage. AV now keeps per-series retrieval clocks (`avAtBy`); pre-repair files inherit their old global time. |
+| R5 | "189K vs 195K = ABOVE" for claims | ABOVE/BELOW describes the number. The job-market meaning is stated separately ("= BELOW (lower: a stronger job market)"). The strategy sign used for tested reactions is unchanged. |
+| R6 | Compaction dropped an actionable message-delivery fault. | The compact watcher line keeps "MESSAGE DELIVERY PROBLEM" and the message-recovery counts (waiting, exhausted, unpublished, uncertain). Complete configured coverage is never presented as healthy delivery. |
+
+**Also addressed (Codex limitation on production readers):** release rows keep the **headline series' provider key** in the legacy `key` field, so `macroNow()` (a production decision input) links a headline surprise to the same exact study key as before. A new caller test checks that a headline surprise reaches `macroNow` and a subsidiary series (private payrolls) never does.
+
+**Unchanged:** the SEC note wording and fallback (`discover.mjs` byte-identical to r1); the study inputs; the package boundary (same 7 files).
+
+**Known limits (from Codex, retained):**
+- The plausible bands are heuristics, not authentication; genuine extremes can show UNKNOWN.
+- A bare `Fed Funds Rate` name is no longer mapped, because it may be the effective rate. Only explicit decision or upper-bound names map to the target series.
+- A Git rollback restores the old behaviour, but does not clean values the old writer may already have saved.
+
+---
+
 
 - **Prepared:** 6 Nov 2026 by Claude on branch `claude/calendar-health-text`, from main `6cba0806`, at the owner's request.
 - **Not done:** no deployment, workflow action, dispatch, provider call, real message or data change.
