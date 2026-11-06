@@ -27,6 +27,13 @@
 //   "notes", "debt" or "lease" (any case, whole words for loan / note / notes / debt / lease, plural included) is financing and is NOT
 //   counted. AMOUNT = the largest counted figure. STOP RULE (data, before any return): if under 40% of the item 1.01 filings read state
 //   ANY figure (before the financing exclusion), the verdict is NEEDS DATA and no return is computed.
+//   PARSER FIX v2 (6 Nov 2026, after DIAG 1, which computed NO return): DIAG 1 showed the largest "counted" figure was mostly NOT a
+//   customer contract: equity offering proceeds, at-the-market sales agreements, credit agreements, securities purchase agreements and
+//   merger consideration. The 22 Oct rule says financing figures are not counted ("those are financing, not customer contracts"); the
+//   v1 word list read that too narrowly. v2 also excludes a figure whose sentence contains any of: credit agreement, facility, borrow,
+//   offering, proceeds, underwrit, at-the-market / at the market, sales agent, securities, shares, stock, warrant, equity, investor,
+//   convertible, preferred, principal, interest rate, covenant, indenture, bond, revolv, merger, acquisition, acquire. No threshold,
+//   hold, gate or date changed; the stop rule still counts figures BEFORE any exclusion.
 //   REACTION SESSION R: the filing's EDGAR acceptance time (the .hdr.sgml ACCEPTANCE-DATETIME, EDGAR's Eastern clock): on a trading day
 //   before 16:00 -> that day's session; 16:00 or later, or a non-trading day -> the next session. Header unreadable -> the first session
 //   strictly after the filing date (the conservative choice). MARKET CAP = close of R x the SEC share count known 30 days before R
@@ -66,7 +73,8 @@ export function item101Section(text) { const t = String(text || ''), a = /Item\s
   const rest = t.slice(a.index + a[0].length), re = /Item\s*(\d)\.(\d\d)\b/gi; let m, end = rest.length;
   while ((m = re.exec(rest))) { if (m[1] + '.' + m[2] !== '1.01') { end = m.index; break; } }
   return rest.slice(0, end); }
-const FIN = /credit\s+facilit|\bloans?\b|\bnotes?\b|\bdebts?\b|\bleases?\b/i;
+export const PARSER_V = 2;
+const FIN = /credit\s+facilit|\bloans?\b|\bnotes?\b|\bdebts?\b|\bleases?\b|credit\s+agreement|\bfacilit(y|ies)\b|\bborrow|\bofferings?\b|\bproceeds\b|underwrit|at[\s-]the[\s-]market|sales\s+agent|\bsecurities\b|\bshares?\b|\bstock\b|\bwarrants?\b|\bequity\b|\binvestors?\b|\bconvertible\b|\bpreferred\b|\bprincipal\b|interest\s+rate|\bcovenants?\b|\bindenture\b|\bbonds?\b|\brevolv|\bmergers?\b|\bacquisitions?\b|\bacquir/i;
 const ABBR = /(?:^|\s)(?:Inc|Corp|Co|Ltd|L\.P|LP|LLC|N\.A|S\.A|N\.V|B\.V|U\.S|U\.K|Jr|Sr|Mr|Ms|Mrs|Dr|No|St|Nos|approx|e\.g|i\.e|[A-Z])\.$/;
 // the sentence around position at (same rule as squad21-core sentenceAt; a decimal point inside a number is not a stop)
 export function sentenceAt(t, at) { const isEnd = (i) => /[.;!?]/.test(t[i]) && /\s/.test(t[i + 1] || '') && /[A-Z0-9"“(]/.test(t[i + 2] || '') && !(t[i] === '.' && ABBR.test(t.slice(Math.max(0, i - 8), i + 1)));

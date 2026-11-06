@@ -17,7 +17,7 @@ import { halfStat, judge, ttmAt, TIER2_T } from './value-core.mjs';
 import { ownAverage, relFlags, isInsider } from './squad1-core.mjs';
 import { insiderClusters } from './agent-c-core.mjs';
 import { eftsHits, mainDoc, hasItem, html2text, dealType } from './squad21-core.mjs';
-import { COST, CT, INS3, RULE_IDS, mean, r4, halfOf, capG, item101Section, contractAmount, acceptance, reactionSession, burnCovered, classify, trySmallBar, spyGate, preRegister } from './agent-c2-core.mjs';
+import { PARSER_V, COST, CT, INS3, RULE_IDS, mean, r4, halfOf, capG, item101Section, contractAmount, acceptance, reactionSession, burnCovered, classify, trySmallBar, spyGate, preRegister } from './agent-c2-core.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', SEC = local(env.SEC_BASE) || 'https://www.sec.gov', EFTS = local(env.EFTS_BASE) || 'https://efts.sec.gov';
 const UA = env.SEC_UA || 'stock-2 research admin@users.noreply.github.com', SC = env.AGC2_CACHE || 'agentc2-cache', SC21 = env.SQ21_CACHE || 'squad21-cache', SC4 = env.SQ4_CACHE || 'squad4-cache', VC = env.VALUE_CACHE || 'value-cache';
@@ -145,16 +145,19 @@ const EV = []; { const seen = new Set(); let noSym = 0, earn = 0;
     EV.push({ adsh: h[1], file: String(h[0]).split(':')[1], cik: String(+h[2]), d: h[3], sym, i: SY.get(sym) }); }
   STATUS.events = { filings: seen.size, earningsDay: earn, noStock: noSym, withStock: EV.length }; log('item 1.01 main documents: ' + JSON.stringify(STATUS.events)); }
 
-// ---- 2c. the primary documents (cached by accession: [section 0/1, figures, counted, amount, snippet, dealType]) ----
-const DOCS = J(SC + '/docs.json', {}); { let read = 0, miss = 0, ix = 0; const todo = EV.filter(e => !(e.adsh in DOCS));
-  log('documents cached ' + (EV.length - todo.length) + ', to read ' + todo.length);
+// ---- 2c. the primary documents. The item 1.01 section text is cached (agentc2-cache/sections.json.gz) so a parser change re-reads no
+// document; the parsed result is cached by accession with the parser version: [PARSER_V, section 0/1, figures, counted, amount, snippet, dealType]
+const SECT = JZ(SC + '/sections.json.gz', {}), DOCS0 = J(SC + '/docs2.json', {}), DOCS = {};
+{ let read = 0, miss = 0, reparsed = 0, ix = 0; const parse = (e, sec1) => { const a = contractAmount(sec1 || ''); DOCS[e.adsh] = [PARSER_V, sec1 ? 1 : 0, a.figures, a.counted, a.amount, a.snippet, a.snippet ? dealType('', a.snippet) : null].slice(1); DOCS0[e.adsh] = [PARSER_V, ...DOCS[e.adsh]]; };
+  const todo = []; for (const e of EV) { const c = DOCS0[e.adsh]; if (c && c[0] === PARSER_V) DOCS[e.adsh] = c.slice(1); else if (e.adsh in SECT) { parse(e, SECT[e.adsh]); reparsed++; } else todo.push(e); }
+  log('documents parsed already ' + (EV.length - todo.length - reparsed) + ', re-parsed from cached sections ' + reparsed + ', to read ' + todo.length);
+  const save = () => { WZ(SC + '/sections.json.gz', SECT); W(SC + '/docs2.json', DOCS0); };
   const work = async () => { while (ix < todo.length) { const e = todo[ix++]; if (left() < 45 * 60e3) { miss++; continue; }
       const html = await sec(SEC + '/Archives/edgar/data/' + e.cik + '/' + e.adsh.replace(/-/g, '') + '/' + e.file, 'text'); if (html === undefined) { miss++; continue; }
-      const txt = html2text(String(html).slice(0, 3000000)), sec1 = item101Section(txt), a = contractAmount(sec1 || '');
-      DOCS[e.adsh] = [sec1 ? 1 : 0, a.figures, a.counted, a.amount, a.snippet, a.snippet ? dealType('', a.snippet) : null];
-      read++; if (read % 1000 === 0) { W(SC + '/docs.json', DOCS); log('documents read now: ' + read); } } };
-  await Promise.all([work(), work(), work()]); W(SC + '/docs.json', DOCS);
-  const got = EV.filter(e => DOCS[e.adsh]); STATUS.docs = { ok: miss <= EV.length * 0.01, events: EV.length, readNow: read, notRead: miss, withSection: got.filter(e => DOCS[e.adsh][0]).length,
+      const sec1 = item101Section(html2text(String(html).slice(0, 3000000))); SECT[e.adsh] = sec1 ? sec1.slice(0, 40000) : ''; parse(e, SECT[e.adsh]);
+      read++; if (read % 2000 === 0) { save(); log('documents read now: ' + read); } } };
+  await Promise.all([work(), work(), work()]); save();
+  const got = EV.filter(e => DOCS[e.adsh]); STATUS.docs = { ok: miss <= EV.length * 0.01, parser: PARSER_V, events: EV.length, readNow: read, reparsed, notRead: miss, withSection: got.filter(e => DOCS[e.adsh][0]).length,
     withAnyFigure: got.filter(e => DOCS[e.adsh][1] > 0).length, withCounted: got.filter(e => DOCS[e.adsh][3] > 0).length };
   STATUS.docs.statedShare = r4(STATUS.docs.withAnyFigure / Math.max(1, got.length)); STATUS.docs.stopRule = STATUS.docs.statedShare >= CT.minStated ? 'passed' : 'NEEDS DATA (under 40% state an amount)';
   log('documents: ' + JSON.stringify(STATUS.docs)); }
@@ -186,7 +189,7 @@ const HIST = new Map(), BUYS3 = []; { const qs = quarters(INS3.fromYear), fail =
   const tsv = (zip, name) => { let txt; try { txt = execFileSync('unzip', ['-p', zip, name], { maxBuffer: 1.9e9 }).toString(); } catch (e) { return null; } const Ls = txt.split(/\r?\n/), H = Ls[0].split('\t'); return { H, rows: Ls.slice(1).filter(Boolean).map(l => l.split('\t')) }; };
   for (const q of qs) { const cf = SC + '/ins3/' + q + '.json.gz'; let x = JZ(cf, null);
     if (!x && !local(env.SEC_BASE) && left() > 100 * 60e3) { const zip = SC + '/ins3.zip';
-      if (download(SEC + '/files/structureddata/data/insider-transactions-data-sets/' + q + '_form345.zip', zip)) { const S = tsv(zip, 'SUBMISSION.tsv'), Nt = tsv(zip, 'NONDERIV_TRANS.tsv'), RO = tsv(zip, 'REPORTINGOWNER.tsv'); try { fs.unlinkSync(zip); } catch (e) {}
+      if (['/files/structureddata/data/insider-transactions-data-sets/', '/files/datastandardsinnovation/data/insider-transactions-data-sets/'].some(p => download(SEC + p + q + '_form345.zip', zip))) { const S = tsv(zip, 'SUBMISSION.tsv'), Nt = tsv(zip, 'NONDERIV_TRANS.tsv'), RO = tsv(zip, 'REPORTINGOWNER.tsv'); try { fs.unlinkSync(zip); } catch (e) {}
         if (S && Nt && RO) { const own = new Map(), ri = (n) => RO.H.indexOf(n); for (const r of RO.rows) if (!own.has(r[ri('ACCESSION_NUMBER')])) own.set(r[ri('ACCESSION_NUMBER')], [String(+r[ri('RPTOWNERCIK')] || ''), r[ri('RPTOWNER_RELATIONSHIP')] || '']);
           const si = (n) => S.H.indexOf(n), ni = (n) => Nt.H.indexOf(n), sub = new Map();
           for (const r of S.rows) { const dt = String(r[si('DOCUMENT_TYPE')] || ''); if (/^[45](\/A)?$/.test(dt)) sub.set(r[si('ACCESSION_NUMBER')], { d: isoD(r[si('FILING_DATE')]), dt, sym: String(r[si('ISSUERTRADINGSYMBOL')] || '').toUpperCase().trim().replace(/-/g, '.'), cik: String(+r[si('ISSUERCIK')] || '') }); }

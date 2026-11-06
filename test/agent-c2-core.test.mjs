@@ -18,6 +18,13 @@ test('amount: largest counted figure, financing sentences excluded, small figure
   assert.equal(contractAmount('A lease of office space at $3 million a year.').amount, null);
 });
 
+test('parser v2: equity, credit-agreement and merger figures are financing/corporate', () => {
+  for (const x of ['The net proceeds from the Offering will be approximately $530.2 million.', 'The Company may offer and sell shares of Common Stock having an aggregate offering price of up to $40.0 million.',
+    'The Secured Bridge Credit Agreement makes available borrowings of up to $2,086,713,188.', 'At the effective time of the Merger, the Purchaser shall pay $1.5 billion.', 'The investors agreed to purchase $13 million of preferred stock.'])
+    { const a = contractAmount(x); assert.equal(a.amount, null, x); assert.equal(a.figures, 1, x); }
+  assert.equal(contractAmount('The Company received a purchase order from the U.S. Army valued at $48 million for radios.').amount, 48e6);
+});
+
 test('acceptance time and reaction session', () => {
   assert.deepEqual(acceptance('<ACCEPTANCE-DATETIME>20240305163012\n'), { d: '2024-03-05', hm: '16:30' });
   assert.equal(acceptance('nothing'), null);

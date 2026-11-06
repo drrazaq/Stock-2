@@ -33534,7 +33534,8 @@
     "value-cache facts (SEC companyfacts)"
    ],
    "rule": "Plain 8-K listing item 1.01 (not 2.02); amount = largest $ figure (million/billion or 1M+) in the item 1.01 section of the primary document, figures in sentences naming credit facility/loan/note(s)/debt/lease excluded; amount >= 10% of market cap (close of the reaction session x share count known 30 days before); reaction session from the EDGAR acceptance time (before 16:00 ET that day, else next); buy the next open, liquid, hold 20, no stop; one event per stock per 60 sessions; stop rule: under 40% of filings with any figure -> NEEDS DATA. Gates + S&P 500 gate.",
-   "preRegistered": "2026-11-06"
+   "preRegistered": "2026-11-06",
+   "parserFix": "v2, 6 Nov 2026, after DIAG 1 (no returns computed): DIAG 1 showed the largest figure was mostly equity-offering proceeds, ATM agreements, credit agreements and merger consideration. Per the 22 Oct rule (financing figures are not customer contracts), v2 also excludes sentences naming credit agreement, facility, borrowing, offering, proceeds, underwriting, at-the-market, sales agent, securities, shares, stock, warrants, equity, investors, convertible, preferred, principal, interest rate, covenant, indenture, bonds, revolving, merger, acquisition. Thresholds, hold, gates unchanged."
   },
   {
    "id": "C-CT1b",
