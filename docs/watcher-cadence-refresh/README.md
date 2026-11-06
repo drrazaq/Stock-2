@@ -1,4 +1,4 @@
-# Inactive watcher cadence refresh — ready for independent review, NOT approved
+# Inactive watcher cadence refresh — independently reviewed PASS offline, NOT approved
 
 Codex,6November2026. This preserves the exact old reviewed ten-file artifact SHA256 **781f6644faf97b160451d3b455dfb12efb84679a5adcec9e69a5cafdee431d2e**. No production/workflow action or collection is performed. Saturday's approved STOP R2 and D1–D4 bytes are unchanged; this is a separate **after-Saturday** proposal requiring its own review and owner approval.
 
@@ -36,13 +36,13 @@ Original archive bytes are unchanged. Raw production bodies are kept private loc
 
 The correction restores the intended once-per-minute cadence. It can increase actual snapshot/poll counts relative to the buggy62.5second loop; it does not add endpoints, extend the configured window or silently activate new collection. Approval must acknowledge that operational effect. Provider work above one minute remains a limitation; source freshness/quality is independent.
 
-## Independent execution versus remaining review
+## Independent execution and completed review
 
 Codex Node20.20.2 Linux,UID1000:
 - **119/119 focused cases**, including STOP/D actual callers, DST/full-window, delayed setup, slow-source gaps, duplicate/canonical/delivery, publication/retry and radar-ledger controls.
 - Fresh main137/137files; main+STOP+D+this refresh143/143files; main+STOP+D+calendar166051d4+this refresh146/146files. The calendar's adversarial7failures remain; its normal suite pass is not a release endorsement.
 - Whole-tree apply/inverse restores the exact immediate parent, preserving data and STOP/D; combined overlay compatibility is separately verified. No historical research or original observation rows change.
 
-These are **Codex author tests**, not independent approval of this refresh. The old reviewer4de7635b's PASS WITH CONDITIONS covers only781f… and its disclosed limitation. Request Claude's focused independent review of this exact new scope before any deployment decision. No new approval text, operator readiness or maintenance window is implied here.
+These are **Codex author tests**. Independent review is now **COMPLETE: Claude PASS offline** at [80b4bdb1256f29e46551902b4ae5675ade86c2be](https://github.com/drrazaq/Stock-2/blob/80b4bdb1256f29e46551902b4ae5675ade86c2be/docs/review-watcher-cadence-046877af/README.md), separately attributed from those author runs. Claude verified old781+delta identity, actual workflow/guard/watcher cadence and overrun probes, and STOP/D compatibility. The published review is a results report, not complete retained command logs. The old reviewer4de7635b PASS WITH CONDITIONS still covers only781f…; the new review covers this exact refresh. No owner deployment approval, operator readiness or maintenance window is implied. [Current reconciliation](../reviews/calendar-health-768883ea/README.md).
 
 After review/approval, actual fresh-source compatibility, a separately authorized safe natural boundary, exact code-only rollback and ordinary push CI would still be required. No cancellation, pause, dispatch or production message is part of this preparation. The known configured09:30–15:00window is not the full16:00session; provider/SEC quality, original cohorts and all trading/ZAD/accounting rules remain separate and unchanged.

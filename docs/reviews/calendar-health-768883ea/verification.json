@@ -1,0 +1,61 @@
+{
+  "reviewedCalendarCommit": "768883ea9ca4a510899c1799fc46ddd3b29e6be5",
+  "main": "ee5e85eca9d575eeed4a9a1283788942039b5f70",
+  "calendarVerdict": "CHANGES_REQUIRED",
+  "findings": {
+    "R1": "CLOSED",
+    "R2": "CLOSED",
+    "R3": "CLOSED",
+    "R4": "PARTIAL: original vintage/partial-refresh cases pass; missing actual retrieval clock not visibly UNKNOWN",
+    "R5": "CLOSED",
+    "R6": "CLOSED"
+  },
+  "originalCounterexamples": {
+    "exact": {
+      "pass": 8,
+      "fail": 0
+    },
+    "composed": {
+      "pass": 8,
+      "fail": 0
+    }
+  },
+  "extendedCounterexamples": {
+    "pass": 9,
+    "fail": 1,
+    "skip": 0,
+    "exactAndComposed": true
+  },
+  "independentFullComposed": {
+    "root": "/workspace/stock2-calendar-health-r2-composed-20261106",
+    "uid": 1000,
+    "files": 143,
+    "passed": 143,
+    "failed": []
+  },
+  "calendarPatchSha256": "55bb6c0ff2a3d4e38e087c44a682b98eddef64aa62c9c6885b533d622c55c314",
+  "calendarInverseSha256": "59304ea7fe09839cae0a47402e620fd2d8910f123c6694cc6f73c7e6ec87511f",
+  "allManifestHashesMatch": true,
+  "sevenPathScope": true,
+  "composedTrees": {
+    "beforeCalendar": "904e7e6adfcf6870a78d28c6016cb0cf16259874",
+    "withCalendar": "fff5757cb17bdb91eeaeb386abd9101cca87c170",
+    "inverseRestoresImmediateParent": true,
+    "reapplyRestoresCandidate": true
+  },
+  "watcher": {
+    "reviewCommit": "80b4bdb1256f29e46551902b4ae5675ade86c2be",
+    "verdict": "PASS_OFFLINE_INDEPENDENT_REVIEW_COMPLETE",
+    "reviewer": "Claude",
+    "deploymentApproved": false,
+    "hashes": {
+      "production.patch": "6a361eca81204becf41bc2d731ad01343d774cfd2adf62ebc54db69d978df8b0",
+      "rollback.patch": "3253805799eb0554804c36aa6e2744004630e669b02f6faa681f3d36d7fafe9b",
+      "delta-from-781.patch": "2753853d0322b3e5e6edc1255d111a9a82881d8bc6b6db28e4ba6d0f7dc671f5",
+      "manifest.json": "055c1d88e98c3211caed72ce56caee04055d3ee2b8f44599615b91beff2532e4"
+    }
+  },
+  "SaturdayPackagesChanged": false,
+  "productionChanges": false,
+  "workflowActions": false
+}
