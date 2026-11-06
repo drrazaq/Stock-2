@@ -47,6 +47,10 @@ At projected E = 09:38 UTC, the window E−45…E+75 is **08:53–10:53 UTC on S
 - **The only other cron firing in 08:15–11:30 UTC Saturday is `squad26-lab.yml`** (`17 */2 * * *`: 08:17 and 10:17 UTC). It imports none of the patched files (`scan.mjs`, `early-alerts.mjs`, `ignition-watch.mjs`, `stop-watch.mjs` and the others in the STOP, T and D paths). So it is a data writer, not a blocker, and its commits are preserved by the fresh-parent checks.
 - **`squad26-watch.yml`:** weekday crons only. It imports no patched file.
 - **`movers.yml` 04:00 UTC and `discover.yml` 05:30 UTC:** these finish before the window, and are not blockers in any case.
+- **The owner's "Stock-2 daily researcher" scheduled task** fires at **11:37 Kuwait (08:37 UTC) on Saturday**, during readiness. It may push research files and code (for example `research-*.mjs` or a lab workflow) to main.
+  - It is not one of the four production consumers, and it is told never to edit `scan.mjs` or the owner files.
+  - **However, any non-data commit it makes breaks the readiness non-data identity proof (S1.2-TD §§2.2–2.3).** The suites must then be rerun on the actual parent (about 7 minutes serially), within the existing cutoffs. If that cannot finish in time, the affected unit is SKIPPED.
+  - Claude will neither pause nor change that task. The owner may choose to pause it for Saturday; this is listed as an owner option, not a requirement.
 
 **Result:** eligible under the reviewed weekend safeguards, subject to the fresh reads at readiness. Nothing in this amendment relaxes a writer, pin, test, CI or click rule.
 
