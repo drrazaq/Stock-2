@@ -4,7 +4,7 @@
   "review": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
   "status": "OFFLINE_COMPONENT_TESTED_INDEPENDENT_REVIEW_PENDING",
   "files": {
-    "a-source-acquisition-bridge.mjs": "cab376c5609bc30b760598b5c6318cc7034452dfe503b74bc498ab23b652e481",
+    "a-source-acquisition-bridge.mjs": "22bf268652521c799f5ad8d99ab8fe105a83ce3e8451f7f1666cb0b3a386f3d5",
     "research-proposal-disposition.mjs": "bdcd2e32195680f46cf40a768648a28fe32ab87a08f3d99de6563d2a1a73a4b7",
     "tools/a-acquisition-rehearsal.mjs": "6733bc609ad8b39fc3f56b5bcd268fb0e6dd0a1b4511547b910adeaacdfd788e",
     "bc-research-rehearsal.mjs": "70ae5bf10ac15f6544e547dff5eeb7c0ef4e3401c98e8bcc1db742c5c1c1f706",
@@ -40,15 +40,15 @@
     "docs/review-ad3837-response/evidence/ad3837-final-all-A20.log.gz": "34cefad6c854d75889e391c9aa1cca96fa70cc3e067fff3301e4733069cb3f3e",
     "docs/review-ad3837-response/evidence/ad3837-request-race-before-fix2.log.gz": "d9d2f12e13293a82f59ce556daad45eb01a4e77790abc745dcbf309c3a7f4617",
     "docs/review-ad3837-response/evidence/ad3837-final-new24-v2.log.gz": "46aa8d46b65e67673dda28960d9fd748bd61c3ac0de0193de2327cad461470f2",
-    "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45"
+    "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "a-native-source-join.mjs": "33895909b49588e482de118c75bc24d2263e4b56cf301b4ed9eced520d2dc065",
+    "a-native-evidence-contract.mjs": "b11e2b6dd0851800ee369ef3c8b4643f7e9c630e9f01c165435d8b4f7d6ed75b",
+    "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4"
   },
   "independentPassedUnchanged": {
     "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
     "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
-    "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
-    "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
     "a-legacy-store-export.mjs": "e81f17bd2ba9f641a72a3f9f7137d76dffb41dd08a76779ef1b25597020dcb13",
-    "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
@@ -164,5 +164,29 @@
     "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
     "independentReview": "PENDING",
     "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+  },
+  "g2PanelContinuation": {
+    "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+    "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+    "independentReview": "PENDING; historical reviews/results are not transferred to this increment",
+    "G2": "PARTIAL"
+  },
+  "g2OriginalInputFollowup": {
+    "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+    "changedInactiveDependencies": [
+      "a-evidence-contract.mjs",
+      "a-native-evidence-contract.mjs",
+      "a-native-source-join.mjs",
+      "a-source-acquisition-bridge.mjs"
+    ],
+    "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+    "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+    "productionChanges": false,
+    "providerCalls": 0
+  },
+  "historicalBaseDependencyHashes": {
+    "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
+    "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+    "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b"
   }
 }

@@ -6,7 +6,7 @@
   "allowBuy": false,
   "genuineAdmissions": 0,
   "files": {
-    "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
+    "a-native-source-join.mjs": "33895909b49588e482de118c75bc24d2263e4b56cf301b4ed9eced520d2dc065",
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
     "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
@@ -14,7 +14,7 @@
   },
   "inheritedDependencies": {
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
-    "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+    "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
     "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
     "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
     "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
@@ -32,7 +32,7 @@
     "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
     "test/native-sec-producer-fixture.mjs": "74e4ab2c3b9eac1f052f791df3bdc05d394d7402d8dd6831b08a49638a802de4",
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
-    "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+    "a-native-evidence-contract.mjs": "b11e2b6dd0851800ee369ef3c8b4643f7e9c630e9f01c165435d8b4f7d6ed75b",
     "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
     "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920"
   },
@@ -163,5 +163,16 @@
     "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
     "independentReview": "PENDING",
     "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+  },
+  "g2OriginalInputFollowup": {
+    "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+    "changedInactiveDependencies": [
+      "a-native-evidence-contract.mjs",
+      "a-native-source-join.mjs"
+    ],
+    "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+    "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+    "productionChanges": false,
+    "providerCalls": 0
   }
 }

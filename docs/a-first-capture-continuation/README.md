@@ -1,3 +1,7 @@
+> **Current full-input checkpoint:** [G2 report, external request and effort reconciliation](g2-checkpoint.md). Original source fields now derive through the actual caller and strict evaluator under supplied trust. Genuine turnover/source readiness remains UNKNOWN; no provider/setup/collection/production change.
+
+> **G2 raw-panel increment:** [Source-derived entry panels](g2-native-panels.md) now pass through the existing host with per-field originals and exact supplied-field checks. Every new record remains INCOMPLETE_G2; prior-cap/materiality/calendar/owner and authentic source semantics remain open. Independent review of this increment is pending.
+
 > **Current bounded continuation:** [Finite A integration plan](finite-integration-plan.md) justifies every remaining component, explicit caller completion tests,48–74hour essential estimate (G4 conditional +6–10h) and external/policy gates. Actual host now records source-field concordance before decision freeze; full native input assembly remains PARTIAL. F6 stays separate and cannot validate A or supply a BUY. Focused new independent review PENDING; no activation/approval request.
 
 > **Follow-up to Claude7d9ff2e0:** P1 independently reproduced and addressed with durable private spooling/bounded definitive-busy retry; see the exact G2–G8 dispositions in [dependencies](dependencies.json). The first-capture lifecycle is not a declaration that those engineering gaps are closed. [Review attribution](https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6680478155).

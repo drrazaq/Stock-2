@@ -1,6 +1,7 @@
 // Inactive retained-evidence adapter. No fetching, credentials, signatures or BUY route.
 import {createHash,randomUUID} from 'node:crypto';
 import {captureJson} from './capture-json.mjs';
+import {evidenceHash} from './reclaim-research-workflow.mjs';
 import {readNativeRun,nativeRunDigest} from './native-sec-events.mjs';
 
 export const sourceHash=b=>createHash('sha256').update(b).digest('hex');
@@ -128,4 +129,65 @@ export function joinNativePrimary({native,primaryResponses=[],store,token}){
  for(const result of results)keep(store,token,'SEC_JOIN:'+result.eventId+':'+sourceHash(JSON.stringify(result)),result);
  const end=store.head();need(end.pending===0,'PENDING_INTENT_REQUIRES_RECOVERY');need(!end.transition,'GENERATION_TRANSITION_PENDING');need(end.token===token,'STALE_FENCE');
  return {status:archive.status,results,genuineAdmissions:0,allowBuy:false};
+}
+
+// Raw aggregate concordance only: calendar/security continuity and correction/finality
+// semantics still require independent evidence. No provider route or strategy is added.
+const panelTime=v=>{const n=sourceInstant(v);need(n!==null&&n%1000000n===0n,'FIRST_ENTRY_BARS_UNKNOWN');return Number(n/1000000n);};
+const panelIso=t=>new Date(t).toISOString();
+export function deriveNativeAEntryPanels(input,entries){
+ const sources=entries.filter(x=>{const u=new URL(x.envelope.url);return u.origin==='https://data.alpaca.markets'&&u.pathname.endsWith('/bars');});
+ if(!sources.length)return {status:'UNKNOWN',reason:'NATIVE_BARS_AND_PRIOR_PANELS_MISSING',originTable:[]};
+ const now=panelTime(input.asOf),start=panelTime(input.sessionOpen),end=panelTime(input.sessionClose),calendar=input.calendar?.sessions;
+ need(Array.isArray(calendar)&&calendar.length<=300&&Array.isArray(input.bars)&&input.bars.length>=3&&input.bars.length<=390,'FIRST_ENTRY_PANEL_UNKNOWN');
+ const sessions=calendar.map(s=>({...s,openMs:panelTime(s.open),closeMs:panelTime(s.close)}));
+ need(sessions.every((s,i)=>s.openMs<s.closeMs&&(!i||s.openMs>sessions[i-1].closeMs)),'FIRST_ENTRY_PANEL_UNKNOWN');
+ const index=sessions.findIndex(s=>s.openMs===start&&s.closeMs===end),prior=sessions.slice(index-20,index);
+ need(index>=20&&prior.length===20&&new Set(prior.map(s=>s.date)).size===20,'FIRST_ENTRY_PANEL_UNKNOWN');
+ const interval=panelTime(input.bars[0].end)-panelTime(input.bars[0].start);
+ need(Number.isSafeInteger(interval)&&interval>=60000&&interval<=59*60000&&interval%60000===0,'FIRST_ENTRY_BARS_UNKNOWN');
+ const timeframe=(interval/60000)+'Min',groups=new Map(),originTable=[];
+ for(const source of sources){
+  const e=source.envelope,u=new URL(e.url),checked=inspectSourceResponse(e);
+  need(checked.status!=='UNKNOWN'&&u.pathname==='/v2/stocks/'+input.symbol+'/bars'&&u.searchParams.get('feed')==='sip'&&u.searchParams.get('adjustment')==='raw','FIRST_ENTRY_BARS_UNKNOWN');
+  need([...u.searchParams.keys()].every(k=>['feed','adjustment','timeframe','start','end','limit','sort'].includes(k))&&[...u.searchParams.keys()].every(k=>u.searchParams.getAll(k).length===1)&&(!u.searchParams.has('sort')||u.searchParams.get('sort')==='asc'),'FIRST_ENTRY_BARS_UNKNOWN');
+  const frame=u.searchParams.get('timeframe');need(frame===timeframe||frame==='1Day','FIRST_ENTRY_BARS_UNKNOWN');
+  const a=panelTime(u.searchParams.get('start')),b=panelTime(u.searchParams.get('end')),received=panelTime(e.bodyReceivedAt);
+  need(a<b&&b<=now&&received<=now,'FIRST_ENTRY_BARS_UNKNOWN');
+  const body=captureJson(checked.bytes.toString());
+  need(body.symbol===input.symbol&&Array.isArray(body.bars)&&body.bars.length>0&&body.bars.length<=10000&&body.next_page_token===null,'FIRST_ENTRY_BARS_UNKNOWN');
+  const rows=[];let previous=-Infinity;
+  for(const r of body.bars){
+   const instant=sourceInstant(r.t);need(instant!==null&&instant%1000000n===0n,'FIRST_ENTRY_BARS_UNKNOWN');const at=Number(instant/1000000n);need(at>previous&&at>=a&&at<=b&&['o','h','l','c','vw'].every(k=>Number.isFinite(r[k])&&r[k]>0)&&Number.isSafeInteger(r.v)&&r.v>=0&&r.l<=Math.min(r.o,r.c,r.vw)&&r.h>=Math.max(r.o,r.c,r.vw)&&Number.isFinite(r.v*r.vw),'FIRST_ENTRY_BARS_UNKNOWN');
+   previous=at;rows.push({raw:r,at});
+  }
+  const group={source,rows,start:a,end:b,received};if(!groups.has(frame))groups.set(frame,[]);groups.get(frame).push(group);
+ }
+ const minute=groups.get(timeframe)||[],daily=groups.get('1Day')||[],last=panelTime(input.bars.at(-1).end);
+ const current=minute.filter(g=>g.start===start&&g.end===last-1),history=minute.filter(g=>g.start===prior[0].openMs&&g.end===start-1);
+ need(current.length===1&&history.length===1&&minute.length===2&&daily.length===1&&sources.length===3,'FIRST_ENTRY_PANEL_UNKNOWN');
+ const live=current[0],past=history[0],day=daily[0];
+ need(live.received>=last&&live.rows.length===input.bars.length&&last<=end&&live.rows.every((r,i)=>r.at===start+i*interval&&r.at+interval<=last),'FIRST_ENTRY_BARS_UNKNOWN');
+ need(past.received<start&&day.received<start&&prior.every(s=>s.openMs+live.rows.length*interval<=past.received)&&day.start===day.rows[0].at&&day.start<=prior[0].openMs&&day.end===prior.at(-1).closeMs,'FIRST_ENTRY_PANEL_UNKNOWN');
+ // Compare the same offsets, never whole-day volume to an opening bar. No
+ // interpolation, forward-fill, duplicate/revision selection or missing-day drop.
+ const byTime=new Map(past.rows.map(r=>[r.at,r.raw]));
+ const expected=new Set(prior.flatMap(s=>live.rows.map((_,i)=>s.openMs+i*interval)));
+ need(past.rows.length>=expected.size&&[...expected].every(at=>byTime.has(at))&&prior.every(s=>s.openMs+live.rows.length*interval<=s.closeMs),'FIRST_ENTRY_PANEL_UNKNOWN');
+ const sourceOf=(field,g,extra={})=>({field,itemId:g.source.itemId,envelopeHash:evidenceHash(g.source.envelope),bodySha256:g.source.envelope.bodySha256,receivedAt:g.source.envelope.bodyReceivedAt,...extra});
+ const bars=live.rows.map(({raw:r,at},i)=>{
+  const panel=prior.map(s=>byTime.get(s.openMs+i*interval)),volumes=panel.map(r=>r.v).sort((a,b)=>a-b),median=(volumes[9]+volumes[10])/2;
+  need(median>0,'FIRST_ENTRY_PANEL_UNKNOWN');
+  const evidenceId='A_NATIVE_BAR_'+evidenceHash({symbol:input.symbol,securityId:input.securityId,native:r,body:live.source.envelope.bodySha256}),priorVolumeEvidenceId='A_NATIVE_PRIOR_VOLUME_'+evidenceHash({symbol:input.symbol,securityId:input.securityId,offsetMs:i*interval,native:panel,body:past.source.envelope.bodySha256});
+  originTable.push(sourceOf('bars['+i+']',live,{nativeTimestamp:r.t}),sourceOf('bars['+i+'].prior20SessionMedianVolume',past,{offsetMs:i*interval,sessionDates:prior.map(s=>s.date),calculation:'median of exactly 20 comparable raw bar volumes'}));
+  return {symbol:input.symbol,securityId:input.securityId,start:panelIso(at),end:panelIso(at+interval),availableAt:panelIso(live.received),open:r.o,high:r.h,low:r.l,close:r.c,volume:r.v,dollarVolume:r.v*r.vw,prior20SessionMedianVolume:median,priorVolumeEvidenceId,evidenceId};
+ });
+ // Native daily timestamps are local midnight, not an invented close timestamp.
+ const nyDate=at=>new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(at));
+ need(day.rows.length===20&&day.rows.every((r,i)=>nyDate(r.at)===prior[i].date&&r.at<=prior[i].openMs&&prior[i].closeMs<=day.received),'FIRST_ENTRY_LIQUIDITY_UNKNOWN');
+ const prior20DayDollarVolume=day.rows.reduce((sum,r)=>sum+r.raw.v*r.raw.vw,0)/20;
+ need(Number.isFinite(prior20DayDollarVolume)&&prior20DayDollarVolume>0,'FIRST_ENTRY_LIQUIDITY_UNKNOWN');
+ const liquidityAsOf=panelIso(day.received),liquidityEvidenceId='A_NATIVE_LIQUIDITY_'+evidenceHash({symbol:input.symbol,securityId:input.securityId,body:day.source.envelope.bodySha256,sessionDates:prior.map(s=>s.date)});
+ originTable.push(sourceOf('prior20DayDollarVolume',day,{calculation:'mean of 20 raw daily volume * VWAP aggregates; not all-trades dollar turnover',sessionDates:prior.map(s=>s.date)}));
+ return {status:'SOURCE_DERIVED_UNDER_SUPPLIED_CALENDAR',bars,prior20DayDollarVolume,liquidityAsOf,liquidityEvidenceId,originTable,unresolved:['SOURCE_AUTHENTICITY','HISTORICAL_SECURITY_CONTINUITY','CALENDAR_PROVENANCE','BAR_CORRECTION_AND_AVAILABILITY_SEMANTICS','AGGREGATE_VOLUME_COVERAGE']};
 }

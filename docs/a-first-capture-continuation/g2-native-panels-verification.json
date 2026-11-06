@@ -1,0 +1,218 @@
+{
+  "kind": "G2_ORIGINAL_INPUT_OFFLINE_CHECKPOINT_V1",
+  "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+  "sourceHashes": {
+    "a-source-acquisition-bridge.mjs": "22bf268652521c799f5ad8d99ab8fe105a83ce3e8451f7f1666cb0b3a386f3d5",
+    "a-native-source-join.mjs": "33895909b49588e482de118c75bc24d2263e4b56cf301b4ed9eced520d2dc065",
+    "a-native-evidence-contract.mjs": "b11e2b6dd0851800ee369ef3c8b4643f7e9c630e9f01c165435d8b4f7d6ed75b",
+    "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+    "test/a-first-entry-panels.test.mjs": "9349167748156131c248dec8567fa957ae3edc123e2740834d0d6d1c37cd5dfc",
+    "test/a-first-original-inputs.test.mjs": "2c102ba8b9626a21920d73dfaeb7e6f0bb2066b2900910bf654f13f70913d016",
+    "test/helper-a-entry-panels.mjs": "50a1af0d4ab7b7435aba84df5556486c97d5ec2bb13bf86f47108a5f51fc7be3",
+    "test/helper-a-original-inputs.mjs": "817f49f2fecb4be83a3099309b4ee155212691c44e4058a602c56da54b89519e",
+    "test/helper-a-first-capture.mjs": "1a5d1bfd0ec8fbe4d23b6e56a590d774c91e0d38e475731c980a76c061f213e1"
+  },
+  "currentFullInputRecheck": "PASS Node20 2/2, no skip/cancel/TODO: final actual caller and strict evaluator; includes pre-freeze capture-clock concordance",
+  "completedChecks": {
+    "G2_before_final_clock_guard": "30/30 Node20 PASS; final guard separately rechecked in current 2/2 full-input caller cases; no skipped/cancelled cases",
+    "coreNativeCurrentSources": "79/79 Node20 PASS, no skipped/cancelled cases",
+    "repositoryPython": "7/7 PASS",
+    "verifierPython": "2/2 PASS",
+    "currentPackagePinsAndIngress": "14/14 Node24 PASS"
+  },
+  "localWorkerControl": {
+    "status": "FAIL_RETAINED_NOT_WAIVED",
+    "Node24": "existing-paths 57/58; worker observation assertion fails",
+    "Node20": "same sawStoppedWorker assertion fails",
+    "controllerProbe": "actual unchanged 15s timeout/SIGKILL, retained intent, explicit exactly-once -42 loss recovery and stable original/lock identity observed, but child-stop observation missing",
+    "cause": "Local /proc child-tree readback was unavailable in the diagnostic; precise cause unresolved. Not attributed to G2 implementation and not counted PASS. Exact hosted worker gate required."
+  },
+  "earlierRuns": "Intermediate/aborted runs are retained as such. Initial missing-import and canonical-receipt mismatch corrections, renamed diagnostic expectation, stale-panel pre-plan fixture correction are not retrospectively PASS. Current canonical derived clocks preserve original raw clocks.",
+  "artifacts": [
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-g2-node20-final.log.gz",
+      "rawSha256": "65bd292bdfcd60492a36fbc7899e2238ebd972ef7d09500f705d50359ea4a603",
+      "compressedSha256": "ffaad5f0898ba2e47616695def597c6fc20a753dde67403943ace665ff1ef9ef",
+      "rawBytes": 6005,
+      "summary": {
+        "tests": 30,
+        "pass": 30,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-native-regressions-node20.log.gz",
+      "rawSha256": "0ac84b1670d62f811429ce9df40e4adeebf04e6083ec689f8e5a7dde1343290c",
+      "compressedSha256": "d1cb6eedef11052a12cb90d3a45a296b14e3d0b21629b6d02437a3174aa8bf29",
+      "rawBytes": 15120,
+      "summary": {
+        "tests": 79,
+        "pass": 79,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-existing-paths-node24.log.gz",
+      "rawSha256": "dacc6ef5239d7bb567f2e9586e750471e3e2cc4fe9243608c7c8498aaff30956",
+      "compressedSha256": "77d9708a3f0c8ff83bd7e5f3eb878bb93e8547ca1eebc2ddb0c26993a583081f",
+      "rawBytes": 6820,
+      "summary": {}
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-worker-node20.log.gz",
+      "rawSha256": "dbfed62603e163fe6d2721b2e9283c956cd999596b4ec07535d159633efbf9fb",
+      "compressedSha256": "33fa89c12a68bd2f3bc5b9906bf1f8bcfd87aaf5d0acad839412c0b79c165868",
+      "rawBytes": 1180,
+      "summary": {
+        "tests": 1,
+        "pass": 0,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-worker-controller-probe.json.gz",
+      "rawSha256": "4fd0465b954e66b636703dd33f86ec39707b631761a947b3d97b3caf2bfb492c",
+      "compressedSha256": "124afb2e9cc001d213e6c1c58e978c61f23309a0f6ab57c42298f8fade2dc824",
+      "rawBytes": 534,
+      "summary": {}
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-worker-task-probe.json.gz",
+      "rawSha256": "428d64d73a413f11f083894f3d820738495d123bc3847e2d12ad55ae7bc47653",
+      "compressedSha256": "a31ccebfac8a60de35878278a02ad28f53094ae76541021fa1bce5b2c71e237a",
+      "rawBytes": 554,
+      "summary": {}
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-initial.log.gz",
+      "rawSha256": "58f7e63e48d39026cc1223cbb5b9f3529a59b7ae70a536ea093f351201491074",
+      "compressedSha256": "a8b5938099da8482e4b2dac3c34e7de6b2b9e7d46b4f163c5dfba6be4534f517",
+      "rawBytes": 1820,
+      "summary": {
+        "tests": 2,
+        "pass": 1,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-final.log.gz",
+      "rawSha256": "be2ee5c04cc418d9c8790e1eae9a2b99d1df5f9b4cdf568b50b411500b676746",
+      "compressedSha256": "90a89ada5e83807b3ddd3d326c6f6f5752ab0c7d740ac1d1acf5bdbd01b800b5",
+      "rawBytes": 1801,
+      "summary": {
+        "tests": 2,
+        "pass": 1,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-positive-v2.log.gz",
+      "rawSha256": "27704e0bfdb4e3fee06f11b3a59fde52a69a01908fa48a32616e67c6449705ec",
+      "compressedSha256": "ac29a8a3f2c8537c266fe1e232d18d360e9a89e488703020be0ac6743075676c",
+      "rawBytes": 1570,
+      "summary": {
+        "tests": 2,
+        "pass": 0,
+        "fail": 1,
+        "skipped": 1,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-v3.log.gz",
+      "rawSha256": "2227f26282163ebed196c37bf65b51e75c52865bd73f9bc56ab08553434968e2",
+      "compressedSha256": "53c279e7547ade2e618d58759672e5ec91f4cc95184ad14d7e3278c226a72ba0",
+      "rawBytes": 850,
+      "summary": {
+        "tests": 2,
+        "pass": 2,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-panels-node20-final.log.gz",
+      "rawSha256": "25adf20e13dbe6bd1d7c596985e431d3777ead783ffd61e4f7acb06ff26359b8",
+      "compressedSha256": "25c5d55f28365015f6908f3876b25e06537e6e763e9b3ab16eb4f2ae6f0f48b9",
+      "rawBytes": 6762,
+      "summary": {
+        "tests": 28,
+        "pass": 27,
+        "fail": 1,
+        "skipped": 0,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-corrected-stale-panel-node20.log.gz",
+      "rawSha256": "ff6c9c7fdf26be9500ec36345f06e0b60ead6e3b679e8cdab312203d07dddb64",
+      "compressedSha256": "9d7423a331b9a91274f6f90bc7dee157b2e4c453aaf534749e3dfbb40ae5a07d",
+      "rawBytes": 7042,
+      "summary": {
+        "tests": 28,
+        "pass": 1,
+        "fail": 0,
+        "skipped": 27,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-python-repository.log.gz",
+      "rawSha256": "140b826611e5ec6f09047171ac5306448d829bc2b83b2a7cbee3d663b112f362",
+      "compressedSha256": "38f5b5396a98aea271477d05382edf9b678bcb529a5b6136aa300e7738a385c8",
+      "rawBytes": 105,
+      "summary": {}
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-python-verifier.log.gz",
+      "rawSha256": "5e396daf90a7475eab0fe91ccd09a5ac1d9792d772f1554bdf1f769d7ded86c6",
+      "compressedSha256": "b3f5681439b3ce7c0afaf4afca3826730ed53dd9b4ece14082ec7a0bbed10c6d",
+      "rawBytes": 100,
+      "summary": {}
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-v4.log.gz",
+      "rawSha256": "82dec98bbc482846aba4dd30fafeaa0d77ae0dc60e631d1588ca999c5af6fd2d",
+      "compressedSha256": "0003ffca38771594e8101a3cc599cd912f07213d76e51ad71129aeeef2c62e7d",
+      "rawBytes": 850,
+      "summary": {
+        "tests": 2,
+        "pass": 2,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-current-packages-node24.log.gz",
+      "rawSha256": "ba5540756e1b98929e649089f7eed25a4b65535aea95e7a62f1f886685f531f2",
+      "compressedSha256": "cbd29db0fa2361a10e4a378f23d166fd328e39f032f6e1a57268475fcdf24216",
+      "rawBytes": 1556,
+      "summary": {}
+    }
+  ],
+  "hostedExactCommit": "PENDING_AFTER_PUBLICATION; final receipt belongs on PR1, not a circular self-commit claim",
+  "independentReview": "PENDING: exact published checkpoint review requested on PR1",
+  "G2": "SOFTWARE_SOURCE_BINDING_IMPLEMENTED; AUTHENTIC_FEASIBILITY_OPEN",
+  "authenticTurnoverGate": "NATIVE_ENTRY_AGGREGATE_LIQUIDITY_UNRESOLVED blocks non-synthetic native input",
+  "realProviderCalls": 0,
+  "setup": false,
+  "realKeys": false,
+  "collection": false,
+  "productionChanges": false,
+  "policyAdopted": false,
+  "genuineAdmissions": 0,
+  "acceptanceRowsClosed": 0,
+  "g2TestBoundary": "28 panel cases include actual caller success/adverse/conflict/restart paths and explicitly named native-parser-only adversarial cases. The 2 full-input cases cover actual caller, strict evaluator, loss, substitution/tamper controls and a shared adverse matrix. Counts are not independent market cases."
+}

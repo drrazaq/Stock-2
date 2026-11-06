@@ -5,7 +5,7 @@ import {createHash,createPublicKey,verify} from 'node:crypto';
 import {evidenceHash,evidenceTime,measureStructuralExitRehearsal,freezeProposal} from './reclaim-research-workflow.mjs';
 import {runStructuralRehearsal} from './reclaim-research-runner.mjs';
 import {aCoveragePlan,verifyIndependentCoverage} from './a-independent-coverage.mjs';
-import {nativeAliasedRead,verifyNativeAInput,verifyNativeAOutcome} from './a-native-evidence-contract.mjs';
+import {nativeAliasedRead,verifyNativeAInput,verifyNativeAOutcome,deriveNativeAInputFields} from './a-native-evidence-contract.mjs';
 const fail = code => {throw Error(code);};
 const need = (ok,code) => {if(!ok)fail(code);};
 const time = value => {const t=evidenceTime(value);need(Number.isFinite(t),'INVALID_EVIDENCE_CLOCK');return t;};
@@ -106,4 +106,10 @@ export function runAEvidenceDataset(dataset,contract,directory,storeContext=null
   for(const input of dataset.observations){let evidence,derived,native,nativeOutcome;try{if(dataset.origin==='RETAINED_RESEARCH'||dataset.nativeImport||dataset.evidence?.[input.observationId]?.nativeBinding){need(dataset.nativeImport?.version===1,'NATIVE_IMPORT_REQUIRED');native=verifyNativeAInput({input,bundle:dataset.evidence[input.observationId],contract,read,signedOriginal,origin:dataset.origin,policy:dataset.policy,storeContext});}evidence=verifyAObservation(input,dataset.evidence?.[input.observationId],contract,read,dataset.policy);if(native&&structural.admissions.some(a=>a.observationId===input.observationId))nativeOutcome=verifyNativeAOutcome({input,bundle:dataset.evidence[input.observationId],contract,read,signedOriginal});if(structural.admissions.some(a=>a.observationId===input.observationId))derived=deriveAExit(input,dataset.policy,dataset.evidence[input.observationId].outcomes,contract,read,dataset.evidence[input.observationId].coverage);results.push({observationId:input.observationId,status:derived&&derived.outcome.status!=='MODELED_PAPER_ECONOMICS_ONLY'?'OUTCOME_UNRESOLVED':'VERIFIED_UNDER_SUPPLIED_TRUST_CONTRACT',evidence,derived:derived||null,...(native?{native}:{}),...(nativeOutcome?{nativeOutcome}:{})});}catch(e){results.push({observationId:input.observationId,status:'UNRESOLVED',reason:/^[A-Z_]+$/.test(e.message)?e.message:'EVIDENCE_IO_OR_SCHEMA_ERROR'});}}
   return {schema:1,status:'INACTIVE_UNADOPTED_EVIDENCE_RESEARCH',origin:dataset.origin,synthetic:dataset.origin==='SYNTHETIC',allowBuy:false,realDollars:0,prospectiveAdmissions:0,contractHash:evidenceHash(contract),structuralNotAuthenticated:structural,results,limitations:['Trusted signer honesty and complete acquisition require separately reviewed live integration','Retained originals and signatures do not establish independent source truth','No controls, representative population or trading edge established','No current ZAD policy or frozen cohort changed']};
  });
+}
+
+// Read-only G2 assembly through the same role verification used by strict evaluation.
+export function deriveAOriginalInput({input,bundle,contract,read,policy}){
+ validateTrustContract(contract);need(freezeProposal(policy).policyHash===contract.strategyPolicyHash,'STRATEGY_POLICY_PIN_MISMATCH');
+ return deriveNativeAInputFields({input,bundle,contract,read,signedOriginal,policy});
 }

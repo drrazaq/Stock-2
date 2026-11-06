@@ -8,8 +8,8 @@
     "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
     "a-legacy-store-export.mjs": "e81f17bd2ba9f641a72a3f9f7137d76dffb41dd08a76779ef1b25597020dcb13",
     "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
-    "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
-    "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+    "a-native-evidence-contract.mjs": "b11e2b6dd0851800ee369ef3c8b4643f7e9c630e9f01c165435d8b4f7d6ed75b",
+    "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
     "tools/a-legacy-store-export.mjs": "8267e10c3cb0ddf3a6a27fca5950a54af4869e8abdccbbb1e7d5a7adb2c4bc6f",
     "tools/bc-research-rehearsal.mjs": "d5f78fcf1da1a6bc7670ea7b17b12cfa35c80b9490e56a5702507d7cc93cb258",
     "bc-research-rehearsal.mjs": "70ae5bf10ac15f6544e547dff5eeb7c0ef4e3401c98e8bcc1db742c5c1c1f706",
@@ -48,7 +48,8 @@
     "docs/a-n-bc-integration/evidence/nested-manifest-correction.tap": "7cc9cac5e7470d3886bcd902899b085ec373aac9ff0f785725be301248f2545e",
     "docs/a-n-bc-integration/evidence/export-destination-original-failure.tap": "58446bc06251eb46041a1b5f2a23942e438689083b26045cd628916e5d999feb",
     "docs/a-n-bc-integration/evidence/export-anchor-node20.tap": "f2c7f4b2c6acc7b931812f94f9c4e3c7d2230fdc1bca5ab1dad071ee4492b721",
-    "docs/a-n-bc-integration/evidence/export-anchor-node24.log": "d546a4d45085bba39b71430f3e16a8d2e918b00990311bf724d13faf44395442"
+    "docs/a-n-bc-integration/evidence/export-anchor-node24.log": "d546a4d45085bba39b71430f3e16a8d2e918b00990311bf724d13faf44395442",
+    "a-native-source-join.mjs": "33895909b49588e482de118c75bc24d2263e4b56cf301b4ed9eced520d2dc065"
   },
   "protectedUnchanged": {
     "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
@@ -57,7 +58,6 @@
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
     "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
     "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
-    "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
@@ -171,5 +171,19 @@
     "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
     "independentReview": "PENDING",
     "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+  },
+  "g2OriginalInputFollowup": {
+    "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+    "changedInactiveDependencies": [
+      "a-native-evidence-contract.mjs",
+      "a-native-source-join.mjs"
+    ],
+    "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+    "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+    "productionChanges": false,
+    "providerCalls": 0
+  },
+  "historicalBaseDependencyHashes": {
+    "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49"
   }
 }
