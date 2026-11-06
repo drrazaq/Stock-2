@@ -1,0 +1,28 @@
+{
+ "plainUnsignedClaim": {
+  "inspect": "{\"storeId\":\"af6fae22-702f-42ae-82f8-a075de804b63\",\"cohortHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"contractHash\":\"aaaa",
+  "quarantineInlineOnly": "THROW:DURABLE_SIGNED_REQUEST_REQUIRED",
+  "quarantineWrongKey": "THROW:QUARANTINE_SIGNATURE_INVALID",
+  "quarantine": "{\"status\":\"QUARANTINED_UNTRUSTED_REQUEST\",\"preservedFile\":\"claim-request-7e52197eb83530e71c9a5b8a403ff6a8ee3749130beb771abe9dda1f799f0110.json\",\"sha25",
+  "originalRetained": true,
+  "headUnchanged": "1",
+  "appendOldTokenAfter": "LOCAL_DURABLE_COMMIT",
+  "resumePlanted": "THROW:REQUEST_QUARANTINED_NO_TAKEOVER",
+  "legitClaimAfter": "2"
+ },
+ "badSignatureTakeover": {
+  "inspect": "{\"storeId\":\"26cb9e5b-4d50-4fdb-8b84-a3f2885239b4\",\"cohortHash\":\"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\",\"contractHash\":\"aaaa",
+  "quarantineInlineOnly": "THROW:DURABLE_SIGNED_REQUEST_REQUIRED",
+  "quarantineWrongKey": "THROW:QUARANTINE_SIGNATURE_INVALID",
+  "quarantine": "{\"status\":\"QUARANTINED_UNTRUSTED_REQUEST\",\"preservedFile\":\"takeover-request-cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc.json\",\"sh",
+  "originalRetained": true,
+  "headUnchanged": "1",
+  "appendOldTokenAfter": "LOCAL_DURABLE_COMMIT",
+  "resumePlanted": "THROW:REQUEST_QUARANTINED_NO_TAKEOVER",
+  "legitClaimAfter": "2"
+ },
+ "validSignedReservation": {
+  "quarantineValid": "THROW:VALID_REQUEST_CANNOT_BE_QUARANTINED",
+  "stillResumable": "2"
+ }
+}

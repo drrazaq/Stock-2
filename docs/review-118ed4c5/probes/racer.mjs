@@ -1,0 +1,7 @@
+import fs from 'node:fs';
+const W='<WORKTREE_118ED4C5>';const {createAFencedStore}=await import(W+'/a-fenced-store.mjs');const {createABoundedResponseClient,runAResponseBoundImport}=await import(W+'/a-source-acquisition-bridge.mjs');const {evidenceHash}=await import(W+'/reclaim-research-workflow.mjs');
+const config=JSON.parse(fs.readFileSync(process.argv[2]));const go=Number(process.argv[3]);while(Date.now()<go){}
+const contexts=config.contexts.map(v=>{let active,now;const native=createABoundedResponseClient({clock:()=>now,timers:{set:fn=>setTimeout(fn,3000),clear:clearTimeout},fetcher:async(url,options)=>{const r=await fetch(config.local+'/'+v.role+'/'+active.id,options);return {url,status:r.status,redirected:false,body:r.body};},limits:{requests:32,bodyBytes:65536,totalBytes:1048576,timeoutMs:1000}});
+ return {...v,store:createAFencedStore(v.directory),client:{now:()=>now,stats:native.stats,get:item=>{active=item;now=Date.parse(item.notBefore);return native.get(item);}},signReceipt:body=>config.signatures[evidenceHash(body)]};});
+let r;const reasons=[];for(let i=0;i<4000;i++){r=await runAResponseBoundImport({store:createAFencedStore(config.evaluationDirectory),token:config.token,request:config.request,originalsDirectory:config.originalsDirectory,plan:config.plan,contexts});if(r.reason!=='WRITER_BUSY')break;await new Promise(z=>setTimeout(z,2+Math.random()*8));}
+console.log(JSON.stringify({status:r.status,reason:r.reason||null,gets:contexts.map(c=>c.client.stats().requests)}));

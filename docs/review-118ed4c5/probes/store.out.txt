@@ -1,0 +1,90 @@
+{
+ "L1_initRetainedNoAuthority": "THROW:RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED",
+ "L1_initRetainedWithAuthority": "true",
+ "L1_prev_oldModuleAppend": "LOCAL_DURABLE_COMMIT",
+ "L1_prev_head": "{\"gen\":1,\"authorityEnrolled\":false}",
+ "L1_prev_view": "storeId,cohortHash,contractHash,expectedHeadHash,pending,residues,unresolved,transition",
+ "L1_prev_attempt": "RECORDED",
+ "L1_prev_append": "THROW:RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED",
+ "L1_prev_lookup": "THROW:RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED",
+ "L1_prev_claim": "THROW:RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED",
+ "L1_prev_evaluate": "THROW:RECOVERY_AUTHORITY_ENROLLMENT_REQUIRED",
+ "L1_prev_addAuthorityByReinit": "THROW:RETAINED_ENROLLMENT_REQUIRED",
+ "L1_prev_storeJsonOverwrite": "WROTE",
+ "L2_inlineOnly": "THROW:DURABLE_SIGNED_REQUEST_REQUIRED",
+ "L2_sourceMode644": "THROW:UNSAFE_SIGNED_REQUEST_SOURCE",
+ "L2_sourceHashWrong": "THROW:SIGNED_REQUEST_SOURCE_CHANGED",
+ "L2_sourceInlineConflict": "THROW:SIGNED_REQUEST_SOURCE_CONFLICT",
+ "L2_unsignedClaim": "THROW:DURABLE_SIGNED_REQUEST_REQUIRED",
+ "L2_appendAfterTornFault": "THROW:FAULT_INJECTION_REFUSED",
+ "L2_validClaim": "{\"gen\":2}",
+ "L2_archiveFiles": 2,
+ "L2_staleAppend": "THROW:STALE_FENCE",
+ "L2_newAppend": "LOCAL_DURABLE_COMMIT",
+ "L2_replaySameAuth": "THROW:CONTROL_CAS_FAILED",
+ "L2_torn_AFTER_REQUEST_ARCHIVE": {
+  "fault": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED_REQUEST\",\"generation\":2,\"attemptHash\":\"87b22e47618d71d2d6737f26aae126c",
+  "oldTokenDuring": "THROW:GENERATION_TRANSITION_PENDING",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeWithoutOriginal": "2",
+  "oldTokenAfter": "THROW:STALE_FENCE"
+ },
+ "L2_torn_DURING_ATTEMPT_WRITE": {
+  "fault": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED_REQUEST\",\"generation\":2,\"attemptHash\":\"e4dfe1129adf35edcfaf4b48511f141",
+  "oldTokenDuring": "THROW:GENERATION_TRANSITION_PENDING",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeWithoutOriginal": "2",
+  "oldTokenAfter": "THROW:STALE_FENCE"
+ },
+ "L2_torn_AFTER_CLAIM_ATTEMPT": {
+  "fault": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED\",\"generation\":2,\"attemptHash\":\"bc7c37a97bf022ef3ebec2ca702afd0fff47b8a",
+  "oldTokenDuring": "THROW:GENERATION_TRANSITION_PENDING",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeWithoutOriginal": "2",
+  "oldTokenAfter": "THROW:STALE_FENCE"
+ },
+ "L2_torn_AFTER_GENERATION": {
+  "fault": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED\",\"generation\":2,\"attemptHash\":\"328a46496d571a7c7c01066a631c42b9373acfe",
+  "oldTokenDuring": "THROW:GENERATION_TRANSITION_PENDING",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeWithoutOriginal": "2",
+  "oldTokenAfter": "THROW:STALE_FENCE"
+ },
+ "L2_torn_BEFORE_HEAD": {
+  "fault": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED\",\"generation\":2,\"attemptHash\":\"de1c3c570d9e6633a16901a56f0b7263de80ce2",
+  "oldTokenDuring": "THROW:GENERATION_TRANSITION_PENDING",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeWithoutOriginal": "2",
+  "oldTokenAfter": "THROW:STALE_FENCE"
+ },
+ "L2_torn_AFTER_SWITCH_WRITE": {
+  "fault": "THROW:WRITE_OUTCOME_UNKNOWN",
+  "attempt": "{\"status\":\"RECORDED\",\"generation\":2,\"attemptHash\":\"01c01f4abb1ff177b0ae5567152e4b514a50871",
+  "oldTokenDuring": "THROW:GENERATION_TRANSITION_PENDING",
+  "conflictingTakeover": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "resumeWithoutOriginal": "2",
+  "oldTokenAfter": "THROW:STALE_FENCE"
+ },
+ "L2_dispose_torn": "THROW:WRITE_OUTCOME_UNKNOWN",
+ "L2_dispose_attempt": "RECORDED_REQUEST",
+ "L2_dispose_resume": "{\"gen\":2,\"unresolved\":1}",
+ "L2_tamperedArchive_attempt": "THROW:RECOVERY_AUTH_SIGNATURE_INVALID",
+ "L2_tamperedArchive_resume": "THROW:RECOVERY_AUTH_SIGNATURE_INVALID",
+ "plant_plainClaim": {
+  "append": "THROW:GENERATION_TRANSITION_PENDING",
+  "attempt": "{\"status\":\"RECORDED_REQUEST\",\"generation\":2,\"attemptHash\":\"7e52197eb83530e71c9a5b8a403ff6a8ee3749130beb771abe9dda1f799f0110\"}",
+  "legitClaim": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "dispose": "THROW:GENERATION_ATTEMPT_CONFLICT"
+ },
+ "plant_badSignature": {
+  "append": "THROW:GENERATION_TRANSITION_PENDING",
+  "attempt": "THROW:RECOVERY_AUTH_SIGNATURE_INVALID",
+  "legitClaim": "THROW:GENERATION_ATTEMPT_CONFLICT",
+  "dispose": "THROW:GENERATION_ATTEMPT_CONFLICT"
+ }
+}
