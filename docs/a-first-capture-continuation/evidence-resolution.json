@@ -123,7 +123,7 @@
       "input": "Real trade fills for historical paper recommendations",
       "classification": "U",
       "finding": "No historical actual order/fill record is supplied; a never-placed trade cannot be retroactively filled.",
-      "boundary": "Quoted capacity model may be supported by S, explicitly separate from fill proof."
+      "boundary": "Displayed top-of-book quote reference may be supported by S, not proven capacity, explicitly separate from fill proof."
     }
   ],
   "authoritativeResearch": [
@@ -170,7 +170,7 @@
     {
       "id": "massiveQuoteAccess",
       "url": "https://massive.com/docs/rest/stocks/trades-quotes/quotes",
-      "finding": "Starter historical quotes not included; proposed quote source is owned Alpaca Plus, no upgrade."
+      "finding": "Starter historical quotes not included; proposed quote source is historical Alpaca SIP older than15minutes; Plus not required, no upgrade."
     },
     {
       "id": "massivePersonalTerms",
@@ -253,5 +253,6 @@
     "node20LogSha256": "bf2b3eadd234ef3eba13f2fb567ce17465fc69e92eb0d5e353386d48ed3a2c89",
     "node24LogSha256": "f3442649a300b8f939038848b53e377fd96128c8cbbbcc1ff12654050c43064b",
     "cases": "Fixed first quote before price/size, adverse slippage and incomplete/ambiguous page handling; approval/expired window opens no context; refusal single attempt; three synthetic responses persist/recover through reused actual sealed journal. Not trading evidence."
-  }
+  },
+  "currentReviewDisposition": "CHANGES_REQUIRED6706547853; C1-C3/C5-C6 corrected for re-review; C4 private executor/credentials/recovery readiness BLOCKED; no approval or acquisition"
 }

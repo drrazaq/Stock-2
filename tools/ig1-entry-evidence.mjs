@@ -14,11 +14,11 @@ const reason=e=>/^[A-Z][A-Z0-9_]{1,80}$/.test(e?.message||'')?e.message:'INTERNA
 export function inspectIg1Entry(root=process.cwd()){
  const bytes=fs.readFileSync(path.join(root,BASE+'ig1-entry-resolution.proposed.json')),plan=JSON.parse(bytes);
  need(plan.id==='IG1_ONE_ENTRY_RESOLUTION_20261109_V1'&&plan.status==='PROPOSED_REVIEW_PENDING_NOT_AUTHORIZED','WRONG_PLAN');
- const paths=['/v3/reference/tickers/OPK?date=2026-10-15','/v2/stocks/meta/conditions/quote?tape=C','/v2/stocks/OPK/quotes?feed=sip&asof=2026-10-15&start=2026-10-15T13%3A49%3A00Z&end=2026-10-15T13%3A49%3A29.999999999Z&limit=10000&sort=asc'];
+ const paths=['/v3/reference/tickers/OPK?date=2026-10-15','/v2/stocks/meta/conditions/quote?tape=C','/v2/stocks/OPK/quotes?feed=sip&asof=2026-10-15&start=2026-10-15T13%3A49%3A00Z&end=2026-10-15T13%3A49%3A29.999999999Z&limit=8000&sort=asc'];
  need(plan.requests.length===3&&plan.requests.every((r,i)=>r.path===paths[i]&&r.provider===(i===0?'MASSIVE':'ALPACA')),'REQUEST_SCOPE_CHANGED');
- need(plan.bounds.providerRequests===3&&plan.bounds.perResponseBytes===1048576&&plan.bounds.allRawResponseBytes===3145728&&plan.bounds.sealedBytes===5242880&&plan.bounds.perFullResponseMs===10000&&plan.bounds.providerPhaseMs===60000&&plan.bounds.newSpendUsdMax===0,'BOUNDS_CHANGED');
+ need(plan.bounds.providerRequests===3&&plan.bounds.quoteObjectsMax===8000&&plan.bounds.perResponseBytes===1048576&&plan.bounds.allRawResponseBytes===3145728&&plan.bounds.sealedBytes===5242880&&plan.bounds.perFullResponseMs===10000&&plan.bounds.providerPhaseMs===60000&&plan.bounds.newSpendUsdMax===0,'BOUNDS_CHANGED');
  const signalBytes=fs.readFileSync(path.join(root,plan.selection.signalFile));need(sha(signalBytes)===plan.selection.signalFileSha256,'SIGNAL_INPUT_CHANGED');
- need(plan.selection.candidateKey==='2026-10-15|OPK|IG1'&&plan.selection.recordedMinuteNY===588&&plan.selection.recordedPrice===1.535&&plan.economics.adverseEntrySlippagePct===2&&plan.economics.budgetUsd===1000,'CASE_OR_COST_CHANGED');
+ need(plan.selection.candidateKey==='2026-10-15|OPK|IG1'&&plan.selection.priceAgeField==='delay'&&plan.selection.recordedPriceAgeMinutes===0.2&&plan.selection.recordedMinuteNY===588&&plan.selection.recordedPrice===1.535&&plan.economics.adverseEntrySlippagePct===2&&plan.economics.budgetUsd===1000,'CASE_OR_COST_CHANGED');
  return {plan,planSha256:sha(bytes),providerCalls:0,authorized:false};
 }
 function identity(x){const r=x?.results;need(r?.ticker==='OPK'&&r.type==='CS'&&r.primary_exchange==='XNAS'&&/^\d{1,10}$/.test(r.cik||'')&&/^BBG[A-Z0-9]{9}$/.test(r.share_class_figi||''),'IDENTITY_UNRESOLVED');return r;}
@@ -26,7 +26,7 @@ function conditions(x){need(x&&typeof x.R==='string'&&/^regular(?: quote)?$/i.te
 export function evaluateIg1Entry({reference,quoteConditions,quotePayload},plan){
  try{
   const id=identity(reference);conditions(quoteConditions);
-  need(quotePayload?.symbol==='OPK'&&Array.isArray(quotePayload.quotes)&&quotePayload.next_page_token===null&&quotePayload.quotes.length<=10000,'QUOTE_PAGE_INCOMPLETE');
+  need(quotePayload?.symbol==='OPK'&&Array.isArray(quotePayload.quotes)&&(quotePayload.next_page_token===null||typeof quotePayload.next_page_token==='string')&&quotePayload.quotes.length<=8000,'QUOTE_PAGE_INCOMPLETE');
   const a=nativeNs('2026-10-15T13:49:00Z'),b=nativeNs('2026-10-15T13:49:29.999999999Z');let previous=a,chosen=null,chosenNs;
   for(const q of quotePayload.quotes){const n=nativeNs(q.t);need(n>=a&&n<=b&&n>=previous&&q.z==='C'&&Array.isArray(q.c),'QUOTE_CLOCK_OR_TAPE_UNKNOWN');previous=n;
    if(q.c.length!==1||q.c[0]!=='R')continue;
@@ -34,10 +34,11 @@ export function evaluateIg1Entry({reference,quoteConditions,quotePayload},plan){
    if(!chosen){chosen=q;chosenNs=n;}
    else if(n===chosenNs)need(['bp','ap','bs','as'].every(k=>q[k]===chosen[k]),'FIRST_TIMESTAMP_AMBIGUOUS');
   }
-  need(chosen,'NO_USABLE_REGULAR_QUOTE');
+  need(chosen,quotePayload.next_page_token?'QUOTE_PAGE_NO_ELIGIBLE_QUOTE':'NO_USABLE_REGULAR_QUOTE');
+  need(quotePayload.next_page_token===null||previous>chosenNs,'FIRST_TIMESTAMP_PAGE_BOUNDARY_UNKNOWN');
   const modeledEntry=chosen.ap*1.02,shares=Math.floor((1000-3)/modeledEntry),limit=plan.economics.literalAskLimit;
-  const rawAskWithinLimit=chosen.ap<=limit,conservativeLimitPass=modeledEntry<=limit,displayedSizePass=shares>=1&&chosen.as>=shares;
-  return {status:conservativeLimitPass&&displayedSizePass?'QUOTED_ENTRY_REFERENCE_PASSES':'QUOTED_ENTRY_REFERENCE_FAILS',rawAskWithinLimit,conservativeLimitPass,displayedSizePass,shares,entryAsk:chosen.ap,modeledEntry,entryCommissionUsd:3,uninvestedCashUsd:1000-shares*modeledEntry-3,quoteAt:chosen.t,securityId:id.share_class_figi,
+  const rawAskWithinLimit=chosen.ap<=limit,displayedTopOfBookAskSizeSufficient=shares>=1&&chosen.as>=shares;
+  return {status:!rawAskWithinLimit?'QUOTED_ENTRY_REFERENCE_FAILS':displayedTopOfBookAskSizeSufficient?'QUOTED_ENTRY_REFERENCE_PASSES':'INCONCLUSIVE_FOR_CAPACITY',rawAskWithinLimit,displayedTopOfBookAskSizeSufficient,displayedTopOfBookAskShares:chosen.as,capacityEstablished:false,costModelAffectsPriceVerdict:false,lockedQuote:chosen.ap===chosen.bp,shares,entryAsk:chosen.ap,modeledEntry,entryCommissionUsd:3,uninvestedCashUsd:1000-shares*modeledEntry-3,quoteAt:chosen.t,securityId:id.share_class_figi,
    evidenceClass:'NEWLY_RETRIEVED_HISTORICAL_QUOTE_REFERENCE_ONLY',actualFillEstablished:false,firmOrProtectedExecutionGuaranteed:false,originalDetectionEstablished:false,outcomeChainComplete:false,profitability:'NOT_EVALUATED',strategyAdmission:false};
  }catch(e){return {status:'INCONCLUSIVE',reason:reason(e),actualFillEstablished:false,originalDetectionEstablished:false,outcomeChainComplete:false,profitability:'NOT_EVALUATED',strategyAdmission:false};}
 }

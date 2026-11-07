@@ -16,14 +16,18 @@ const evaluate=quotes=>evaluateIg1Entry({reference,quoteConditions:{R:'Regular'}
 test('first regular quote is fixed before size/price: later favorable quote cannot rescue tiny first size',()=>{
  assert.equal(evaluate([q()]).status,'QUOTED_ENTRY_REFERENCE_PASSES');
  const v=evaluate([q({as:1}),q({t:'2026-10-15T13:49:01Z',as:100000,ap:1.535})]);
- assert.equal(v.status,'QUOTED_ENTRY_REFERENCE_FAILS');assert.equal(v.entryAsk,1.54);assert.equal(v.displayedSizePass,false);
- const costly=evaluate([q({ap:1.57})]);assert.equal(costly.rawAskWithinLimit,true);assert.equal(costly.conservativeLimitPass,false);assert.equal(costly.strategyAdmission,false);assert.equal(costly.outcomeChainComplete,false);
+ assert.equal(v.status,'INCONCLUSIVE_FOR_CAPACITY');assert.equal(v.entryAsk,1.54);assert.equal(v.displayedTopOfBookAskSizeSufficient,false);
+ const costly=evaluate([q({ap:1.57})]);assert.equal(costly.rawAskWithinLimit,true);assert.equal(costly.status,'QUOTED_ENTRY_REFERENCE_PASSES');assert.ok(costly.modeledEntry>plan.economics.literalAskLimit);assert.equal(costly.costModelAffectsPriceVerdict,false);assert.equal(costly.strategyAdmission,false);assert.equal(costly.outcomeChainComplete,false);
 });
 test('unobserved/partial/ambiguous quotes are inconclusive, never negative trading proof',()=>{
  assert.equal(evaluate([]).status,'INCONCLUSIVE');
  assert.equal(evaluate([q(),q({ap:1.55})]).reason,'FIRST_TIMESTAMP_AMBIGUOUS');
  const x=evaluateIg1Entry({reference,quoteConditions:{R:'Regular'},quotePayload:{...payload([q()]),next_page_token:'more'}},plan);
- assert.equal(x.reason,'QUOTE_PAGE_INCOMPLETE');
+ assert.equal(x.reason,'FIRST_TIMESTAMP_PAGE_BOUNDARY_UNKNOWN');
+ const page=evaluateIg1Entry({reference,quoteConditions:{R:'Regular'},quotePayload:{...payload([q(),q({t:'2026-10-15T13:49:01Z'})]),next_page_token:'more'}},plan);assert.equal(page.status,'QUOTED_ENTRY_REFERENCE_PASSES');
+ const empty=evaluateIg1Entry({reference,quoteConditions:{R:'Regular'},quotePayload:{...payload([]),next_page_token:'more'}},plan);assert.equal(empty.reason,'QUOTE_PAGE_NO_ELIGIBLE_QUOTE');
+ assert.equal(evaluate([q({ap:1.59})]).status,'QUOTED_ENTRY_REFERENCE_FAILS');assert.equal(evaluate([q({bp:1.54})]).lockedQuote,true);
+ const oversized=evaluateIg1Entry({reference,quoteConditions:{R:'Regular'},quotePayload:payload(Array(8001).fill(q()))},plan);assert.equal(oversized.reason,'QUOTE_PAGE_INCOMPLETE');
  assert.equal(evaluate([q({t:'2026-10-15T13:49:30Z'})]).reason,'QUOTE_CLOCK_OR_TAPE_UNKNOWN');
 });
 test('no approval or expired window opens no private context; refusal stops without retry',async t=>{

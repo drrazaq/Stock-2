@@ -1,9 +1,9 @@
 {
   "id": "IG1_ONE_ENTRY_RESOLUTION_20261109_V1",
   "status": "PROPOSED_REVIEW_PENDING_NOT_AUTHORIZED",
-  "question": "Does the first chronological recorded age-eligible IG1 signal have a valid next-minute quoted entry within its existing3% limit and enough displayed shares for a USD1000 whole-share unit under the unchanged small-stock2% adverse-entry-slippage view? Conditional recorded-clock reconstruction only, not historical detection/fill or net-outcome proof.",
+  "question": "Does the first chronological IG1 signal with finite recorded delay 0..3 minutes have a first eligible raw ask within the literal 3% entry limit, and what displayed top-of-book ask size was reported? Capacity beyond that displayed quote, actual execution and profitability are not measured. Execution costs are reported separately.",
   "selection": {
-    "rule": "IG1; recorded finite price age0..3min inclusive; sort day, recorded minuteNY, symbol; no outcome/return criterion",
+    "rule": "IG1; finite delay in minutes 0..3 inclusive (NOT age, which is listing age in sessions); sort day, recorded minuteNY, symbol; no outcome/return criterion",
     "signalFile": "data/ignition-paper.jsonl",
     "signalFileSha256": "a4de490a80493a064cc0f05854e2f8681941a4546e9bb42cd57703624c41b0b4",
     "selectedRowSha256": "9f3850aca481c526c88af6bcc45e07a0e31aa1f7f38dada9d027e4636d68532e",
@@ -11,7 +11,9 @@
     "recordedMinuteNY": 588,
     "recordedPrice": 1.535,
     "historicalOwnerStatus": "UNVERIFIED_NOT_BUY",
-    "interpretation": "Recorded09:48 minute -> hypothetical next-minute09:49; original second-level decision/delivery time unavailable and not invented."
+    "interpretation": "Recorded09:48 minute -> hypothetical next-minute09:49; original second-level decision/delivery time unavailable and not invented.",
+    "priceAgeField": "delay",
+    "recordedPriceAgeMinutes": 0.2
   },
   "execution": {
     "notBefore": "2026-11-09T17:00:00.000Z",
@@ -19,7 +21,7 @@
     "providerDeadline": "2026-11-09T17:02:00.000Z",
     "privateFinishDeadline": "2026-11-09T17:03:00.000Z",
     "retentionUntil": "2026-11-12T17:03:00.000Z",
-    "operator": "CODEX_ON_DEMAND_ON_OWNER_APPROVED_PRIVATE_LOCAL_EXECUTOR",
+    "operator": "UNASSIGNED_NO_VERIFIED_PRIVATE_EXECUTOR",
     "attempts": 1,
     "rescheduleAllowed": false
   },
@@ -37,7 +39,7 @@
     {
       "id": "entryQuotes",
       "provider": "ALPACA",
-      "path": "/v2/stocks/OPK/quotes?feed=sip&asof=2026-10-15&start=2026-10-15T13%3A49%3A00Z&end=2026-10-15T13%3A49%3A29.999999999Z&limit=10000&sort=asc"
+      "path": "/v2/stocks/OPK/quotes?feed=sip&asof=2026-10-15&start=2026-10-15T13%3A49%3A00Z&end=2026-10-15T13%3A49%3A29.999999999Z&limit=8000&sort=asc"
     }
   ],
   "bounds": {
@@ -57,7 +59,8 @@
     "localProcessMs": 120000,
     "remoteUploads": 0,
     "rawRetentionHoursMax": 72,
-    "newSpendUsdMax": 0
+    "newSpendUsdMax": 0,
+    "quoteObjectsMax": 8000
   },
   "economics": {
     "budgetUsd": 1000,
@@ -65,23 +68,24 @@
     "literalAskLimit": 1.58105,
     "adverseEntrySlippagePct": 2,
     "quantity": "floor((1000-3)/(ask*1.02))",
-    "priceRule": "Report rawAsk<=literalLimit separately; require modeledAskWithSlippage<=literalLimit for conservative quoted-entry feasibility; displayed ask size>=quantity. No later price/size optimization.",
-    "quoteRule": "First regular noncrossed positive SIP quote in the fixed30s window chosen before price/size check; ambiguous first timestamp -> UNKNOWN. Conditions must be reviewed from quote-specific TapeC mapping, not trade conditions.",
+    "priceRule": "Only first eligible raw ask <= 1.58105 determines literal price-rule pass/fail. Modeled ask*1.02, whole-share quantity, idle cash and USD3 buy fee are separate cost numbers, never an additional price-limit trigger.",
+    "quoteRule": "First regular positive noncrossed SIP quote (ap>=bp, locked quotes included) selected before price/size checks; ambiguous first timestamp -> INCONCLUSIVE. Continuation page not fetched; first-page result requires a later timestamp on that page or a terminal page to close first-timestamp ambiguity.",
     "holdingExit": "NOT_ACQUIRED_NOT_EVALUATED; original IG1 close/8%stop rule remains untouched. No close-price inference or new exit rule.",
     "primaryHistoricalCostViews": "Original IG1 percentage-friction view and handbook0.8%/1.2% plus applicable2%-side/3%-extended-hours remain required for any later outcome claim; this entry-only task cannot pass those round-trip gates."
   },
   "terminal": {
-    "quotedEntryFeasible": "Complete retained source/identity/conditions/quote response; first eligible quote passes limit, whole-share budget and displayed capacity. Means only quoted-entry reference under assumptions.",
-    "quotedEntryFails": "Complete valid first quote fails modeled limit or displayed size; retain negative entry result for this recorded-clock case, no case replacement.",
-    "inconclusive": "Any refused/partial/truncated/nonterminal page, empty/unproved response, unidentified security, condition ambiguity, missing quote, time/storage/custody failure or unrecoverable original context. No retry.",
+    "quotedEntryFeasible": "QUOTED_ENTRY_REFERENCE_PASSES: literal raw-ask limit holds and displayed top-of-book ask shares >= modeled whole-share quantity >=1. Weak displayed-liquidity evidence only, never proof of executable capacity.",
+    "quotedEntryFails": "QUOTED_ENTRY_REFERENCE_FAILS only if the complete unambiguous first eligible raw ask exceeds the literal 3% limit. Modeled slippage and size do not reject the original strategy.",
+    "inconclusive": "INCONCLUSIVE_FOR_CAPACITY if literal price rule passes but displayed size is below modeled quantity or quantity<1. INCONCLUSIVE for missing/invalid/partial/oversized evidence, no eligible quote, ambiguous first timestamp, or unclosed first-timestamp group on a nonterminal page. No retry or pagination. A continuation token alone does not prevent first-quote evaluation if a later timestamp on page1 closes its tie group.",
     "always": "Original receipt/delivery, actual fill, whole outcome chain, BOTH controls and profitability remain UNKNOWN/NOT_EVALUATED; no admissions, paper validation or live promotion."
   },
   "minimumSetup": {
-    "location": "Owner-approved local private executor only; no new private GitHub repository/workflow or production installation",
+    "location": "BLOCKED: no currently evidenced owner-private executor. /workspace is an available managed development executor, not established encrypted owner-local storage, so it is excluded from raw-data execution. No invented owner device or remote access.",
     "directory": "New dedicated0700 directory on already encrypted owner-controlled disk, no financial mirror, no symlink, exclusive run claim",
-    "bindings": "Existing ALPACA_KEY, ALPACA_SECRET, MASSIVE_KEY and owner-held RESEARCH_ARTIFACT_KEY via approved local protected binding only after approval checks; no generation/read/binding now, no values in public/chat",
+    "bindings": "PROPOSED NOT AVAILABLE: separate Massive data key; preferred Alpaca data-scoped OAuth paper grant without trading/account:write, requiring separate reviewed setup/binding implementation and request budget. Isolated new/unused paper-account key is an alternative with paper-write authority, NOT read-only. No production key regeneration, extraction, rotation or reuse. No credentials held here or requested in chat.",
     "custody": "Reuse SealedAuditJournal and existing sealed-journal recovery; encrypt raw responses, hash/record actual retrieval clocks, no cloud upload or raw model ingestion/publication; exact decoded originals only on owner-local device",
-    "licence": "Provider personal/internal applicability must be established from the current accepted agreement version before execution. No owner technical guess or blanket paid-upgrade consent. Local personal use narrows the processor question; unresolved applicable terms -> no execution."
+    "licence": "Provider personal/internal applicability must be established from the current accepted agreement version before execution. No owner technical guess or blanket paid-upgrade consent. Local personal use narrows the processor question; unresolved applicable terms -> no execution. Historical SIP older than15minutes is documented without Plus; no paid subscription is required by this proposal. Actual account eligibility and accepted terms remain unverified.",
+    "recoveryKey": "NOT ESTABLISHED. A future separately approved private operator must create/store a dedicated recovery key only on the chosen encrypted device; no generation or setup now."
   },
   "approvalState": {
     "independentClaudeReview": "PENDING",
