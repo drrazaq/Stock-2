@@ -1,6 +1,6 @@
 # G2 original-input checkpoint and remaining A feasibility work
 
-Continuation base: `a95ab5f50329a4ed1e92e535851b71f1f527cf25`. Offline engineering, no provider API calls, setup, real keys, collection, production or maintenance changes. The checkpoint commit, exact logs and verdicts are recorded in `g2-native-panels-verification.json`. Independent Claude review is requested only for this exact increment; prior reviews keep their original commit scope.
+Continuation base: `a95ab5f50329a4ed1e92e535851b71f1f527cf25`. Offline engineering, no provider API calls, setup, real keys, collection, production or maintenance changes. Development CI schedules three isolated suites concurrently; its 40-minute ceiling and every required assertion remain unchanged. The checkpoint commit, exact logs and verdicts are recorded in `g2-native-panels-verification.json`. Independent Claude review is requested only for this exact increment; prior reviews keep their original commit scope.
 
 ## Delivered and independently testable
 
@@ -36,3 +36,9 @@ Please provide one reply covering these dependencies for the eventual authentic-
 5. **Later attempt scope:** after engineering/review and source feasibility pass, approve one exact dated A-only rehearsal with its finite whole-scope requests/rates/storage, roles, full exit runout and stopping rules. The smallest operational attempt is the first chronological eligible issuer-session, including rejection/zero eligible events; it is not the economic pilot. The unchanged proposed first30 entries/60-day comparison protocol still requires G3/G8 and separate adoption. No collection dates or budgets are granted here.
 
 If the genuine pre-event facts or unchanged comparisons cannot be supported, the terminal result must be **NOT FEASIBLE / INCOMPLETE**, naming the missing evidence. It must not be a new hypothesis, F6 survey, selected winner, software-test total or inferred fill at a stop price.
+
+## Hosted verification follow-up
+
+The initial checkpoint 09fb4911 did not pass the full hosted gate: its serial main job reached the unchanged 40-minute limit and exposed a stale transitive native-source manifest hash in the recovery package. Neither failure is waived. The subsequent da843f01 main job is not a completed PASS at this writing. Its independent 30-run host-monitor stress job passed, but that does not settle the worker-lifetime or full-suite gate.
+
+This follow-up repairs the current dependency hash and runs the two new G2 suites plus the existing colocated-host suite in parallel inside the same development job. Those suites use private temporary roots and loopback ephemeral ports. All 305 test files remain required exactly once, with complete buffered logs and explicit failure/missing-result propagation. The serial and parallel failure paths were checked separately with synthetic shell controls, which are not source-test executions. No retries, deadline extension, skipped assertions or production/maintenance workflow change is introduced. Exact fresh hosted completion remains required before claiming the full checkpoint verified.

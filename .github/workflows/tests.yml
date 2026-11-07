@@ -42,8 +42,24 @@ jobs:
         shell: bash
         run: |
           failed=0
+          # These suites use private mkdtemp roots and port-0 loopback servers.
+          # Buffer their logs, retain every exit status, and emit complete file
+          # groups after waiting. No retry, timeout extension or failure allowance.
+          isolated_files=(test/a-first-entry-panels.test.mjs test/a-first-original-inputs.test.mjs test/native-sec-colocated-host.test.mjs)
+          isolated_pids=()
+          isolated_logs=$(mktemp -d "$RUNNER_TEMP/isolated-tests.XXXXXX")
+          for i in "${!isolated_files[@]}"; do
+            (
+              if node "${isolated_files[$i]}" > "$isolated_logs/$i.log" 2>&1; then
+                printf '0\n' > "$isolated_logs/$i.status"
+              else
+                printf '1\n' > "$isolated_logs/$i.status"
+              fi
+            ) &
+            isolated_pids+=("$!")
+          done
           for f in test/*.test.mjs; do
-            case "$f" in test/repo03-host-storage.test.mjs|test/sec-v2-host-guard.test.mjs|test/sec-v2-host.test.mjs|test/repo03-host-monitor.test.mjs) continue ;; esac
+            case "$f" in test/repo03-host-storage.test.mjs|test/sec-v2-host-guard.test.mjs|test/sec-v2-host.test.mjs|test/repo03-host-monitor.test.mjs|test/a-first-entry-panels.test.mjs|test/a-first-original-inputs.test.mjs|test/native-sec-colocated-host.test.mjs) continue ;; esac
             echo "::group::$f"
             if node "$f"; then echo "PASS $f"; else echo "::error file=$f::test file failed"; failed=1; fi
             echo "::endgroup::"
@@ -51,6 +67,25 @@ jobs:
           for f in tests/*.test.mjs; do
             echo "::group::$f"
             if node "$f"; then echo "PASS $f"; else echo "::error file=$f::test file failed"; failed=1; fi
+            echo "::endgroup::"
+          done
+          for i in "${!isolated_files[@]}"; do
+            f=${isolated_files[$i]}
+            echo "::group::$f"
+            if ! wait "${isolated_pids[$i]}"; then
+              echo "::error file=$f::isolated test process did not complete"
+              failed=1
+            fi
+            if ! cat "$isolated_logs/$i.log"; then
+              echo "::error file=$f::isolated test log missing"
+              failed=1
+            fi
+            if [[ -f "$isolated_logs/$i.status" ]] && [[ "$(cat "$isolated_logs/$i.status")" == 0 ]]; then
+              echo "PASS $f"
+            else
+              echo "::error file=$f::test file failed or result missing"
+              failed=1
+            fi
             echo "::endgroup::"
           done
           exit $failed

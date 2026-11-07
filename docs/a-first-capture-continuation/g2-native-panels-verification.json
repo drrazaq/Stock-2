@@ -225,6 +225,69 @@
       "rawSha256": "8fe098355f495b6679825256903df8cc6a98444526c5834fc8dd9c24b8fdec24",
       "compressedSha256": "f9255e0ee9881aa9ebb5b34f1d8b7aad960d17d01ac3f68b395ec135369dfcb5",
       "rawBytes": 1555
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-recovery-full-ci-followup-node20.log.gz",
+      "rawSha256": "83cd3e6c98e49875dbfcee741b4bb5c83c613bbd33ec82dcd78a018945618d24",
+      "compressedSha256": "d341ead47524122f4854bc3d428bbf145b61ec3ed71ed943eb6aa00b86f3ab58",
+      "rawBytes": 14011,
+      "note": "Exact local follow-up log"
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-ci-followup-pins.log.gz",
+      "rawSha256": "1ec9d8a3c070c11c6c70976440b993c3437f649cbb37608acfb020f384b282a6",
+      "compressedSha256": "a00ef6bf6df5bb44d0429c905814ba65edb3c6749c98d3bdad6969d05e6a5048",
+      "rawBytes": 1557,
+      "note": "Exact local follow-up log"
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-ci-harness-controls.json.gz",
+      "rawSha256": "1110a4ec2701cdc5ce1cd48b00a8b1ead3057583a9a1f9562e01cb8ddc2cc3ab",
+      "compressedSha256": "0bd248fb6acf27656ceb4ba22c1037e74a99bcae2696bb37e2b837f1da54c3e3",
+      "rawBytes": 692,
+      "note": "Shell controls are not source tests"
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-parallel-actual-a-first-entry-panels.log.gz",
+      "rawSha256": "13cd3d19d97da4d8abe872e756741bc22864386a17e21f72454c681dc19f6f1a",
+      "compressedSha256": "28415ba3db4d3b1107c8dcca616cb1f5e1507aea6a0799f4e2045a3f3f9890d8",
+      "rawBytes": 5273,
+      "summary": {
+        "tests": 28,
+        "pass": 28,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-parallel-actual-a-first-original-inputs.log.gz",
+      "rawSha256": "90c77b743f24b458356878cebad9f3dd816e05c3a3401f267109053d1a35c628",
+      "compressedSha256": "b983e7fd81931c37ba41e24862a2c0a0695c7b9ef8ede273648d208266fda312",
+      "rawBytes": 850,
+      "summary": {
+        "tests": 2,
+        "pass": 2,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    },
+    {
+      "file": "docs/a-first-capture-continuation/evidence/g2-parallel-actual-native-sec-colocated-host.log.gz",
+      "rawSha256": "bedb0aaf64ee68e6602bac32d32b5f7463743c971ea0cd61dbb5c5152ff8ce4a",
+      "compressedSha256": "81ff003a73090ebd4f744b478554cf06035eccca09da6db7fbfbe9aa923bd57a",
+      "rawBytes": 3523,
+      "summary": {
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
     }
   ],
   "hostedExactCommit": "PENDING_AFTER_PUBLICATION; final receipt belongs on PR1, not a circular self-commit claim",
@@ -253,5 +316,69 @@
     "stress": "Complete log verified:30/30 consecutive controls, no retry, exact checkout and cleanup",
     "stressLogSha256": "affdd92e44c6b995727bd3e7b1dd72c9b80f8099e67c462725ca55b27d55c16f",
     "note": "Prior source only, not relabelled as hosted evidence for the independent-clock correction"
+  },
+  "hostedFollowup": {
+    "parent": "09fb491194d75b94fe62233dd4e4dc16bf6da32a",
+    "main": "CANCELLED at unchanged 40-minute job limit; earlier recovery manifest pin assertion failed; not waived",
+    "correction": "Current transitive dependency pins reconciled. Three private-root suites concurrent inside existing development job; all 305 files, assertions and 40-minute ceiling retained. Fresh full hosted gate pending.",
+    "da843fStress": "PASS complete exact log, 30/30; not full-suite or worker-lifetime PASS",
+    "da843fStressRawSha256": "11104ed495ed88d52a36d6d3c1fddf85fb34fc5c0cd1fbe6556142c17c6aa34d",
+    "shellControls": [
+      {
+        "scenario": "positive",
+        "exit": 0,
+        "groups": 301,
+        "uniqueResults": 301,
+        "missingOrDuplicateGroups": 0,
+        "note": "Synthetic shell-selection/status control only; not counted as repository tests"
+      },
+      {
+        "scenario": "parallel_failure",
+        "exit": 1,
+        "groups": 301,
+        "uniqueResults": 300,
+        "missingOrDuplicateGroups": 0,
+        "note": "Synthetic shell-selection/status control only; not counted as repository tests"
+      },
+      {
+        "scenario": "serial_failure",
+        "exit": 1,
+        "groups": 301,
+        "uniqueResults": 300,
+        "missingOrDuplicateGroups": 0,
+        "note": "Synthetic shell-selection/status control only; not counted as repository tests"
+      }
+    ],
+    "focusedRecoveryPin": "1 matching assertion PASS, 62 other cases intentionally unexecuted by name filter; not complete recovery-suite PASS",
+    "completeRecoveryRecheck": "PASS Node20 63/63, zero failures/skips/cancellations; source assertions unchanged",
+    "actualConcurrentNode20": [
+      {
+        "file": "a-first-entry-panels",
+        "tests": 28,
+        "pass": 28,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      {
+        "file": "a-first-original-inputs",
+        "tests": 2,
+        "pass": 2,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      },
+      {
+        "file": "native-sec-colocated-host",
+        "tests": 13,
+        "pass": 13,
+        "fail": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0
+      }
+    ]
   }
 }
