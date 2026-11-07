@@ -1,0 +1,19 @@
+<!doctype html><meta charset="utf-8"><title>Verify S1 source payload</title>
+<h1>Verify S1 source payload — local files only</h1><p>This checks public source files only. Do not select credentials or private data. Nothing is sent anywhere. A PASS authorizes no setup.</p>
+<p>Choose setup-payload.zip <input id="zip" type="file"></p><p>Choose setup-files.manifest.json <input id="manifest" type="file"></p><p>Choose the extracted payload folder <input id="folder" type="file" webkitdirectory multiple></p><button id="check">Verify</button><pre id="result">NOT CHECKED</pre>
+<script>
+'use strict';
+const expectedManifest='bb93f3985a9155e0d76a089acc98eeeee4ab9fe0f9427c256f0f126f54d9e18d',expectedZip='c2e6f2813f157261690a07ed473b8c96c2a0485e467022400470e509fe1b152b';
+const hash=async bytes=>Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes)),v=>v.toString(16).padStart(2,'0')).join('');
+document.getElementById('check').onclick=async()=>{const out=document.getElementById('result');out.textContent='CHECKING';try{
+ const z=document.getElementById('zip').files[0],m=document.getElementById('manifest').files[0],files=[...document.getElementById('folder').files];
+ if(!z||!m||!files.length)throw Error('Select ZIP, manifest and extracted folder.');
+ if(z.size>2097152||m.size>65536)throw Error('File size exceeds bound.');
+ if(await hash(await z.arrayBuffer())!==expectedZip)throw Error('ZIP fingerprint mismatch.');
+ const mb=await m.arrayBuffer();if(await hash(mb)!==expectedManifest)throw Error('Manifest fingerprint mismatch.');
+ const spec=JSON.parse(new TextDecoder().decode(mb));if(files.length!==spec.files.length)throw Error('Missing or extra extracted files.');
+ const indexed=new Map();for(const f of files){const name=f.webkitRelativePath.split('/').slice(1).join('/');if(indexed.has(name))throw Error('Duplicate path.');indexed.set(name,f);}
+ for(const item of spec.files){const f=indexed.get(item.path);if(!f||f.size!==item.bytes||await hash(await f.arrayBuffer())!==item.sha256)throw Error('Extracted file mismatch: '+item.path);}
+ out.textContent='PASS ZIP fingerprint\nPASS manifest fingerprint\nPASS all '+spec.files.length+' extracted files; no missing/extra paths.\nOwner may inspect proposed upload paths. No setup authorization inferred.';
+}catch(e){out.textContent='STOP: '+e.message;}};
+</script>
