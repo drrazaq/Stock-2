@@ -1,3 +1,5 @@
+> **Executed 7 November:** [Completed feasibility analyses, recommendation audit and actual timing](feasibility-executed-20261107.md). Current-input replay stopped at documented evidence gaps; no authentic net advantage established. Latest owner instruction caps ALL work at12h, including review/audit/publication; the earlier extra hour is withdrawn.
+
 # Five-mandate research map — 7 November 2026
 
 Owner objective: a long-only, halal-aware US-stock decision system across five separate mandates. Coverage is a research obligation, not a promise of an edge in every mandate. This supersedes the prior A-only research priority. No blended score, new strategy activation, acquisition, purchases or maintenance work. Six unique hypotheses below; A appears in two mandates and counts once. Every rule is existing/proposed research, not an adopted BUY.
@@ -78,7 +80,7 @@ These are documented route facts, not successful access/licence/coverage tests. 
 
 ## Three selected parallel workstreams and hard budget
 
-These are independently progressing offline queues, not blended strategies or agent delegation. **12 focused hours maximum from this map: A4h, R4h, D4h; review response1h separately, total ceiling13h.** Stop early when a mandatory input is absent; do not spend the cap building around it. No automatic rollover. Estimates are future effort ceilings, not hours claimed spent. This replaces no prior engineering estimate: A's42–66h remaining essential implementation queue is still an estimate and is not consumed wholesale by this research budget. No large R/D implementation until Claude challenges this map. Earnings and fundamental availability findings above are delivered now, not new open-ended tasks.
+These are independently progressing offline queues, not blended strategies or agent delegation. **12 focused hours maximum total: A4h, R4h, D4h, with recommendation audit/review/publication charged within these allowances; no separate extra hour.** Stop early when a mandatory input is absent; do not spend the cap building around it. No automatic rollover. Estimates are future effort ceilings, not hours claimed spent. This replaces no prior engineering estimate: A's42–66h remaining essential implementation queue is still an estimate and is not consumed wholesale by this research budget. No large R/D implementation until Claude challenges this map. Earnings and fundamental availability findings above are delivered now, not new open-ended tasks.
 
 | Selected task and why | Finite offline scope, terminal deliverable and stop |
 |---|---|

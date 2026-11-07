@@ -1,0 +1,77 @@
+{
+  "id": "EXTERNAL_RECOMMENDATION_AUDIT_V1_PROPOSED_20261107",
+  "status": "PROTOCOL_PREPARED_NOT_EXECUTED_OR_AUTHORIZED",
+  "approval": false,
+  "providerAcquisitionAuthorized": false,
+  "collectionAuthorized": false,
+  "coordinationComment": "https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6703019215",
+  "sourceSelectionBeforeScoring": {
+    "publisher": "CNBC",
+    "series": "Mad Money Lightning Round",
+    "canonicalSeriesLocation": "https://www.cnbc.com/mad-money/lightning-round/",
+    "publicationStartInclusiveNY": "2026-10-01",
+    "publicationEndExclusiveNY": "2026-11-01",
+    "denominator": "All episodes/official publisher text or clips first publicly published in the fixed interval, all named stock mentions including bullish, bearish, no-action, ambiguous and subsequently edited/deleted picks. Verify episode completeness before prices. No guest/show substitution, no source selected from reported winners.",
+    "currentAvailability": "NOT_VERIFIED; no episode/transcript/video corpus acquired. A series URL is a source locator, not proof of publication completeness or historical edit versions.",
+    "researchStatus": "Retrospective exploratory audit, not an untouched confirmation cohort; source and date range fixed now before any pick scoring. No prior performance claim."
+  },
+  "provenance": {
+    "required": [
+      "Original publisher episode/page/clip ID and full source link",
+      "First-public publication timestamp with timezone and independent archival evidence",
+      "Original recommendation wording/context, speaker and every named issuer",
+      "Original version/hash and all known edit/deletion/correction timestamps and content",
+      "Contemporaneous instrument/CIK/security mapping and share class",
+      "Extraction uncertainty, missing episodes/mentions and duplicates retained before outcome lookup"
+    ],
+    "fallback": "No publication time inferred from a page date, upload ordering, a current edited transcript or memory. No bulk video/transcript download, login, paid source or new acquisition under this protocol. Missing original time/version/completeness -> INCONCLUSIVE before score."
+  },
+  "classificationBeforePrices": {
+    "bullish": "Explicit affirmative buy/own/add recommendation; retain conditional language and price limits. If a stated condition cannot be verified with timely evidence, no model entry.",
+    "bearish": "Explicit sell/avoid; retained as an avoidance cohort, never converted into a short or added to long profit.",
+    "other": "Hold/no-action/ambiguous/unmapped/non-US/non-common/duplicate kept with exact disposition, no invented trade.",
+    "duplicates": "One first bullish issuer-session attempt; later mentions retained and linked, no repeated position or winner selection.",
+    "halal": "Historical owner YES/NO/unknown logged separately; do not infer past approval from current labels. Real-money usability requires valid affirmative owner evidence; the broader exploratory population itself needs a separately approved research scope."
+  },
+  "execution": {
+    "unitUsd": 1000,
+    "side": "LONG_ONLY_NO_MARGIN",
+    "entry": "First eligible regular-session SIP BBO at or after09:30 New York on the first session whose open follows the authenticated first-public publication. Quote age<=30s, noncrossed/firm with reviewed conditions and enough displayed shares. Entry deadline09:30:30. A missing/late/halted/undersized window is no feasible entry; never move to a favorable later quote.",
+    "decisionLatencyLimit": "This is hypothetical next-open availability after publication, not evidence that Stock-2 actually detected/delivered the external pick then. Actual receipt/decision/delivery clocks would be a separate prospective operational evaluation.",
+    "entryPrice": "Ask plus the applicable unchanged adverse-slippage contract, with historical0.8%/1.2% and small-stock/extended-hours stress views separately required; no cheaper-cost rescue. The source's explicit entry limit must also hold.",
+    "quantity": "floor((1000-3)/modeledEntryPrice); zero shares is no entry; no fractional shares, borrowed cash or assumed free orders.",
+    "primaryExit": "Predetermined20th regular-session close after entry, entry session counts as1. Last eligible firm BBO in final30s before that close, at executable bid less applicable adverse slippage; label intended-close quote model, not an auction fill. If halted/unpriced, retain unresolved liquidation and bound loss; do not carry until recovery or replace the case.",
+    "sourceExitInstruction": "Preserve the source's own exit/target/stop wording for a separately labeled descriptive audit, never select it instead of the fixed primary20-session view based on outcomes. No intraday target/stop price assumed filled.",
+    "secondaryHorizons": [],
+    "fees": "USD3 for each executed buy/sell order, including extra legs if any; spread embedded in ask/bid once, additional declared adverse slippage; preserve cash dividends, actions, cash conversions, delisting/terminal-value uncertainty, taxes/settlement fees if applicable and known.",
+    "account": "Independent-unit result is not funded portfolio performance. Overlap/capital/slot and whole-account cash replay required before reporting account drawdown/return; no sum of overlapping trade returns called portfolio performance."
+  },
+  "comparisons": {
+    "primary": [
+      "Same stock, non-recommendation regular-session dates, same20-session horizon and execution/cost assumptions",
+      "Same-date eligible US common-stock population, same entry/exit clocks, liquidity/halal-scope labels and cost assumptions"
+    ],
+    "selectionAlgorithmGate": "Exact outcome-blind date matching, eligible universe, weights, tie-breaks, no-lookahead exclusions and missing-control handling must be frozen and independently reviewed before any source extraction or price scoring. This protocol is NOT execution-ready while that algorithm/source population is unresolved. No easier comparator if unavailable.",
+    "benchmark": "SPY same windows and original annualized/capital views, separately labeled; SPY never substitutes for average-stock primary.",
+    "missingness": "All source mentions and failures retained. No positive conclusion with unbounded outcome/control/source omissions."
+  },
+  "outputs": [
+    "Full episode/mention denominator and original/edit provenance with per-field missingness",
+    "All accepted/rejected/unmapped/conditional/avoid/no-action candidates and deterministic IDs",
+    "Complete hypothetical entry-to-exit price/capacity/cost chains including wins and losses",
+    "Net expectancy, win/loss magnitudes, cash-inclusive returns, primary-control excess, concentration/remove-two-best and unchanged cost stresses",
+    "Account drawdown only if complete capital/mark paths exist; otherwise UNKNOWN, never worst-trade proxy",
+    "Uncertainty clustered by publication/issuer/overlap blocks with multiplicity/legacy-trial context; no claim of strategy validation from examples"
+  ],
+  "finiteDecision": {
+    "current": "PROTOCOL_PREPARATION_COMPLETE; EXTERNAL_RECOMMENDATION_AUDIT_NOT_EXECUTED",
+    "stop": "Source population/original edit history or mandatory execution/control evidence cannot be supported under an independently reviewed bounded approved scope; do not substitute another source/date or buy access automatically.",
+    "inconclusive": "Insufficient independent episodes, unbounded missingness, incomplete original recommendation/clock/price chain or controls. State exact denominator and unknown facts; no automatic range extension.",
+    "continue": "Only consider a separately approved feasibility execution if source/controls/entry-exit/cost contracts pass independent review. Finishing this protocol does not authorize a data run or imply positive source performance.",
+    "completeAdequateAudit": "Nonpositive net or either primary excess stops the evaluated source-rule claim. Positive means may justify further research only under all unchanged gates and independent review, never live promotion."
+  },
+  "budget": {
+    "preparationAndOldSystemAudit": "Included in the existing A/R/D12-hour aggregate; no extra hour or duplicate project.",
+    "externalExecution": "No execution time/data budget granted. A future request must specify episodes, requests, bytes, storage, rate, dates and holding runout; this retrospective protocol is not that approval."
+  }
+}

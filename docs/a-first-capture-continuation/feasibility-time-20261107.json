@@ -1,0 +1,85 @@
+{
+  "startUtc": "2026-11-07T05:57:11Z",
+  "totalCapSeconds": 43200,
+  "taskCapsSeconds": {
+    "A": 14400,
+    "R": 14400,
+    "D": 14400
+  },
+  "extraReviewHourAuthorized": false,
+  "sharedAuditAllocation": "Shared recommendation audit and publication charged to A/R/D, never in addition to12h. Nonoverlapping elapsed segments; idle/unattended waits recorded separately.",
+  "segments": [
+    {
+      "label": "A",
+      "activity": "Initial coordination, PR recommendation request, inherited evidence and original-source inspection",
+      "startUtc": "2026-11-07T05:57:11Z",
+      "endUtc": "2026-11-07T05:59:05.109017Z",
+      "elapsedSeconds": 114.109017
+    },
+    {
+      "label": "A",
+      "activity": "A original-candidate corpus and strict-source semantic blocker inspection",
+      "startUtc": "2026-11-07T05:59:05.109017Z",
+      "endUtc": "2026-11-07T05:59:37.039482Z",
+      "elapsedSeconds": 31.930465
+    },
+    {
+      "label": "SHARED",
+      "activity": "Shared read-only A/R/D analyzer, retained endpoint/source completeness and mathematical cost proofs, old-system recommendation linkage",
+      "startUtc": "2026-11-07T05:59:37.039482Z",
+      "endUtc": "2026-11-07T06:03:32.146444Z",
+      "allocation": {
+        "A": 0.3333333333333333,
+        "R": 0.3333333333333333,
+        "D": 0.3333333333333333
+      },
+      "elapsedSeconds": 235.106962
+    },
+    {
+      "label": "D",
+      "activity": "Executed issuer-tender versus third-party-deal classification, retained completion study, missing price/terms audit and deal-loss arithmetic; external recommendation protocol drafted within shared cap",
+      "startUtc": "2026-11-07T06:03:32.146444Z",
+      "endUtc": "2026-11-07T06:03:55.627764Z",
+      "elapsedSeconds": 23.48132
+    },
+    {
+      "label": "SHARED",
+      "activity": "Final recommendation timing/linkage analysis, deterministic reproduction, executed-results consolidation and protocol reconciliation",
+      "allocation": {
+        "A": 0.3333333333333333,
+        "R": 0.3333333333333333,
+        "D": 0.3333333333333333
+      },
+      "startUtc": "2026-11-07T06:03:55.627764Z",
+      "endUtc": "2026-11-07T06:06:41.763899Z",
+      "elapsedSeconds": 166.136135
+    }
+  ],
+  "note": "Elapsed session work, not CPU or hypothetical effort; prior planning excluded.",
+  "perTaskTimingLimit": "Direct elapsed intervals measured; shared analysis/publication elapsed time allocated equally and explicitly, not falsely claimed as independent per-task stopwatches.",
+  "analysisCheckpointUtc": "2026-11-07T06:06:41.763899Z",
+  "taskChargesAtCheckpoint": {
+    "A": {
+      "directSeconds": 146.039482,
+      "sharedAllocatedSeconds": 133.747699,
+      "chargedSeconds": 279.78718100000003,
+      "remainingTaskCapSecondsAtCheckpoint": 14120.212819
+    },
+    "R": {
+      "directSeconds": 0.0,
+      "sharedAllocatedSeconds": 133.747699,
+      "chargedSeconds": 133.747699,
+      "remainingTaskCapSecondsAtCheckpoint": 14266.252301
+    },
+    "D": {
+      "directSeconds": 23.48132,
+      "sharedAllocatedSeconds": 133.747699,
+      "chargedSeconds": 157.22901900000002,
+      "remainingTaskCapSecondsAtCheckpoint": 14242.770981
+    }
+  },
+  "analysisElapsedSeconds": 570.763899,
+  "chargedTotalSecondsAtCheckpoint": 570.763899,
+  "unusedAggregateSecondsAtCheckpoint": 42629.236101,
+  "publicationOverhead": "Not yet included at checkpoint timestamp; measured separately in completion comment and charged inside the same aggregate cap, shared equally."
+}

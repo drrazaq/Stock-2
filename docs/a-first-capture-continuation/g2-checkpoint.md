@@ -1,3 +1,5 @@
+> **Execution results, 7 November:** [A/R/D inspected evidence, reproducible analysis, verdicts and time](feasibility-executed-20261107.md). Shared recommendation-audit request reconciled inside the same12h cap.
+
 > **Five-mandate programme, 7 November:** [Research map, selected finite tasks and owner choices](research-programme.md). A continues alongside distinct crisis-risk and cash-deal feasibility work; no new data acquisition or strategy adoption.
 
 > **Parallel economic deliverable, 7 November:** [Exact A hypothesis, evidence, alternatives and finite decision](a-hypothesis-checkpoint.md). Plausibility is not demonstrated performance; authentic executable after-cost advantage remains INCONCLUSIVE.
