@@ -1,43 +1,41 @@
 {
- "generatedAt": "2026-10-31T12:34:28.872Z",
+ "generatedAt": "2026-11-07T12:33:23.987Z",
  "preRegistered": "2026-10-23",
  "status": "OK",
  "complete": true,
- "failedRequests": 4,
+ "failedRequests": 2,
  "window": [
   "2024-02-01",
-  "2026-10-30"
+  "2026-11-06"
  ],
- "proofBar": 4.07,
- "leagueBar": 4.07,
+ "proofBar": 4.09,
+ "leagueBar": 4.09,
  "coverage": {
   "alpaca": {
-   "requests": 1892,
+   "requests": 1076,
    "errors": {
-    "contracts HTTP 422": 4
+    "contracts HTTP 422": 2
    },
    "firstOptionBar": "2024-01-18",
-   "lastOptionBar": "2026-10-30",
-   "contractLists": 756,
-   "contractsSeen": 1146223,
-   "optionSeriesFetched": 6011,
-   "snapshotCalls": 256,
+   "lastOptionBar": "2026-11-06",
+   "contractLists": 656,
+   "contractsSeen": 740256,
+   "optionSeriesFetched": 443,
+   "snapshotCalls": 273,
    "failedSample": [
     "contracts HTTP 422 /v2/options/contracts?underlying_symbols=SAVA&type=call&status=inactive&expiration_date_gte=2024-01-01&limit=10000",
-    "contracts HTTP 422 /v2/options/contracts?underlying_symbols=SAVA&type=call&status=active&expiration_date_gte=2024-01-01&limit=10000",
-    "contracts HTTP 422 /v2/options/contracts?underlying_symbols=IRBT&type=call&status=inactive&expiration_date_gte=2024-01-01&limit=10000",
-    "contracts HTTP 422 /v2/options/contracts?underlying_symbols=IRBT&type=call&status=active&expiration_date_gte=2024-01-01&limit=10000"
+    "contracts HTTP 422 /v2/options/contracts?underlying_symbols=SAVA&type=call&status=active&expiration_date_gte=2024-01-01&limit=10000"
    ],
-   "optionSeriesCached": 6011,
-   "optionBarsCached": 101666,
-   "underlyingsWithContracts": 370,
+   "optionSeriesCached": 6304,
+   "optionBarsCached": 106478,
+   "underlyingsWithContracts": 387,
    "underlyingsWithoutContracts": 8,
-   "contractsCached": 1146223
+   "contractsCached": 1285510
   },
   "alphaVantage": null,
   "massive": null,
   "stockFeed": {
-   "sip": 404
+   "sip": 419
   },
   "note": "Option prices: Alpaca daily option bars (trade prices; no historical quotes, so the spread is measured today from snapshots and applied to the past). Alpha Vantage: free key (25 calls a day; HISTORICAL_OPTIONS refused as premium; the ratio endpoints answer). Massive: option reference answers, option aggregates 403 (not in plan)."
  },
@@ -79,57 +77,57 @@
  "latest": {
   "OPT-LH1": {
    "verdict": "REJECTED",
-   "why": "lost money after the spread and ZAD fees in the older half (-0.176); lost money at the 1.5x spread stress in the older half (-0.2514); did not beat buying the same stock with the same money in the older half (-0.176 vs 0.0065); lost money at the 1.5x spread stress in the newer half (-0.0643); loses without its 2 best trades (-0.2823); block t -0.68 over 10 non-overlapping 63-session blocks, under 2.5",
+   "why": "lost money after the spread and ZAD fees in the older half (-0.1732); lost money at the 1.5x spread stress in the older half (-0.2485); did not beat buying the same stock with the same money in the older half (-0.1732 vs 0.0065); lost money at the 1.5x spread stress in the newer half (-0.1189); did not beat buying the same stock with the same money in the newer half (0.0082 vs 0.0482); loses without its 2 best trades (-0.3109); block t -0.81 over 10 non-overlapping 63-session blocks, under 2.5",
    "n": 61,
    "days": 17,
-   "win": 0.2951,
-   "avg": -0.0753,
-   "median": -0.5527,
-   "avgStress": -0.1778,
+   "win": 0.2459,
+   "avg": -0.1019,
+   "median": -0.5317,
+   "avgStress": -0.1975,
    "stock": 0.0229,
-   "edge": -0.0981,
-   "noBest2": -0.2823,
+   "edge": -0.1248,
+   "noBest2": -0.3109,
    "worst": -1,
-   "best": 7.8481,
+   "best": 8.2842,
    "blocks": 10,
-   "tBlock": -0.68,
+   "tBlock": -0.81,
    "half": {
     "older": {
      "n": 37,
      "days": 8,
-     "win": 0.3243,
-     "avg": -0.176,
-     "median": -0.5285,
-     "avgStress": -0.2514,
+     "win": 0.2973,
+     "avg": -0.1732,
+     "median": -0.5279,
+     "avgStress": -0.2485,
      "stock": 0.0065,
-     "edge": -0.1825,
-     "noBest2": -0.3376,
+     "edge": -0.1797,
+     "noBest2": -0.3303,
      "worst": -1,
-     "best": 3.3405,
+     "best": 3.1014,
      "blocks": 4,
-     "tBlock": -1.33
+     "tBlock": -1.28
     },
     "newer": {
      "n": 24,
      "days": 9,
-     "win": 0.25,
-     "avg": 0.08,
-     "median": -0.6983,
-     "avgStress": -0.0643,
+     "win": 0.1667,
+     "avg": 0.0082,
+     "median": -0.704,
+     "avgStress": -0.1189,
      "stock": 0.0482,
-     "edge": 0.0319,
-     "noBest2": -0.4612,
+     "edge": -0.04,
+     "noBest2": -0.5425,
      "worst": -1,
-     "best": 7.8481,
+     "best": 8.2842,
      "blocks": 6,
-     "tBlock": -0.16
+     "tBlock": -0.29
     }
    },
    "B": 63,
-   "bar": 4.07,
+   "bar": 4.09,
    "counts": {
-    "signals": 294,
-    "beforeWindow": 113,
+    "signals": 293,
+    "beforeWindow": 112,
     "notFinished": 0,
     "noStockPrice": 0,
     "noContracts": 0,
@@ -143,27 +141,27 @@
    "spread": {
     "measured": 40,
     "of": 49,
-    "medianH": 0.0992,
-    "p75H": 0.1939,
+    "medianH": 0.1013,
+    "p75H": 0.1933,
     "window": "60-90 days"
    },
    "formations": 59,
    "picksFrom": "2021-11-10",
    "picksTo": "2026-10-19",
    "under300": {
-    "n": 19,
+    "n": 20,
     "days": 12,
-    "win": 0.1053,
-    "avg": -0.1799,
-    "median": -0.7785,
-    "avgStress": -0.2565,
-    "stock": -0.0171,
-    "edge": -0.1628,
-    "noBest2": -0.721,
+    "win": 0.15,
+    "avg": -0.1069,
+    "median": -0.761,
+    "avgStress": -0.1901,
+    "stock": -0.0078,
+    "edge": -0.0991,
+    "noBest2": -0.6525,
     "worst": -1,
-    "best": 7.8481,
+    "best": 8.2842,
     "blocks": 7,
-    "tBlock": -0.84
+    "tBlock": -0.74
    },
    "byExit": {
     "close": 38,
@@ -200,14 +198,14 @@
     "closeExitsOnly": {
      "wouldBe": "TOO FEW CASES",
      "n": 38,
-     "avg": -0.0591,
-     "median": -0.4908,
-     "win": 0.2368,
+     "avg": -0.0676,
+     "median": -0.4898,
+     "win": 0.2105,
      "stock": 0.0081,
-     "tBlock": -0.68,
+     "tBlock": -0.64,
      "halves": [
-      -0.0633,
-      -0.0512
+      -0.0939,
+      -0.017
      ]
     },
     "closeExitsOnlyHalfSpread2pct": {
@@ -227,150 +225,150 @@
   },
   "OPT-CAT1": {
    "verdict": "REJECTED",
-   "why": "lost money after the spread and ZAD fees in the older half (-0.6331); lost money at the 1.5x spread stress in the older half (-0.727); did not beat buying the same stock with the same money in the older half (-0.6331 vs -0.0206); lost money after the spread and ZAD fees in the newer half (-0.3447); lost money at the 1.5x spread stress in the newer half (-0.5263); did not beat buying the same stock with the same money in the newer half (-0.3447 vs 0.0748); loses without its 2 best trades (-0.5293); block t -5.13 over 22 non-overlapping 30-session blocks, under 2.5",
-   "n": 269,
+   "why": "lost money after the spread and ZAD fees in the older half (-0.6397); lost money at the 1.5x spread stress in the older half (-0.7329); did not beat buying the same stock with the same money in the older half (-0.6397 vs -0.0227); lost money after the spread and ZAD fees in the newer half (-0.3774); lost money at the 1.5x spread stress in the newer half (-0.5711); did not beat buying the same stock with the same money in the newer half (-0.3774 vs 0.0788); loses without its 2 best trades (-0.5477); block t -5.53 over 22 non-overlapping 30-session blocks, under 2.5",
+   "n": 264,
    "days": 90,
-   "win": 0.1413,
-   "avg": -0.4937,
-   "median": -0.8399,
-   "avgStress": -0.63,
-   "stock": 0.0255,
-   "edge": -0.5192,
-   "noBest2": -0.5293,
+   "win": 0.1364,
+   "avg": -0.5135,
+   "median": -0.8332,
+   "avgStress": -0.6551,
+   "stock": 0.0261,
+   "edge": -0.5396,
+   "noBest2": -0.5477,
    "worst": -1,
    "best": 4.3766,
    "blocks": 22,
-   "tBlock": -5.13,
+   "tBlock": -5.53,
    "half": {
     "older": {
-     "n": 139,
+     "n": 137,
      "days": 45,
-     "win": 0.0863,
-     "avg": -0.6331,
-     "median": -0.8895,
-     "avgStress": -0.727,
-     "stock": -0.0206,
-     "edge": -0.6125,
-     "noBest2": -0.6833,
+     "win": 0.0876,
+     "avg": -0.6397,
+     "median": -0.8891,
+     "avgStress": -0.7329,
+     "stock": -0.0227,
+     "edge": -0.617,
+     "noBest2": -0.687,
      "worst": -1,
-     "best": 3.0149,
+     "best": 2.6358,
      "blocks": 13,
-     "tBlock": -6.67
+     "tBlock": -6.63
     },
     "newer": {
-     "n": 130,
+     "n": 127,
      "days": 45,
-     "win": 0.2,
-     "avg": -0.3447,
-     "median": -0.7748,
-     "avgStress": -0.5263,
-     "stock": 0.0748,
-     "edge": -0.4195,
-     "noBest2": -0.4166,
+     "win": 0.189,
+     "avg": -0.3774,
+     "median": -0.7479,
+     "avgStress": -0.5711,
+     "stock": 0.0788,
+     "edge": -0.4562,
+     "noBest2": -0.4469,
      "worst": -1,
      "best": 4.3766,
      "blocks": 10,
-     "tBlock": -1.99
+     "tBlock": -2.27
     }
    },
    "B": 30,
-   "bar": 4.07,
+   "bar": 4.09,
    "counts": {
-    "signals": 834,
-    "beforeWindow": 327,
+    "signals": 824,
+    "beforeWindow": 325,
     "notFinished": 0,
     "noStockPrice": 5,
     "noContracts": 2,
     "noExpiry": 5,
-    "noPrice": 226,
+    "noPrice": 223,
     "split": 0,
-    "priced": 269,
-    "exitByClose": 145,
-    "exitByIntrinsic": 124
+    "priced": 264,
+    "exitByClose": 142,
+    "exitByIntrinsic": 122
    },
    "spread": {
-    "measured": 132,
-    "of": 148,
-    "medianH": 0.3713,
-    "p75H": 0.625,
+    "measured": 129,
+    "of": 147,
+    "medianH": 0.3866,
+    "p75H": 0.5346,
     "window": "30-90 days"
    },
    "catRun1Verdict": "REJECTED",
    "under300": {
-    "n": 125,
-    "days": 43,
-    "win": 0.096,
-    "avg": -0.6417,
-    "median": -0.8902,
-    "avgStress": -0.7649,
-    "stock": 0.0338,
-    "edge": -0.6755,
-    "noBest2": -0.7048,
+    "n": 124,
+    "days": 44,
+    "win": 0.0968,
+    "avg": -0.6602,
+    "median": -0.8858,
+    "avgStress": -0.7851,
+    "stock": 0.0344,
+    "edge": -0.6946,
+    "noBest2": -0.7161,
     "worst": -1,
-    "best": 3.4521,
+    "best": 3.022,
     "blocks": 20,
-    "tBlock": -7.91
+    "tBlock": -7.07
    },
    "byExit": {
-    "close": 145,
-    "intrinsic": 124
+    "close": 142,
+    "intrinsic": 122
    },
    "sensitivity": {
     "note": "information only; the verdict above is the registered one",
     "halfSpread2pct": {
      "wouldBe": "REJECTED",
-     "n": 269,
-     "avg": -0.0507,
-     "median": -0.47,
-     "win": 0.3048,
-     "stock": 0.0255,
+     "n": 264,
+     "avg": -0.0513,
+     "median": -0.467,
+     "win": 0.303,
+     "stock": 0.0261,
      "tBlock": -0.75,
      "halves": [
-      -0.3201,
-      0.2373
+      -0.3232,
+      0.242
      ]
     },
     "atMid": {
      "wouldBe": "REJECTED",
-     "n": 269,
-     "avg": -0.0121,
-     "median": -0.448,
-     "win": 0.3123,
-     "stock": 0.0255,
+     "n": 264,
+     "avg": -0.0127,
+     "median": -0.4448,
+     "win": 0.3106,
+     "stock": 0.0261,
      "tBlock": -0.43,
      "halves": [
-      -0.2923,
-      0.2876
+      -0.2956,
+      0.2924
      ]
     },
     "closeExitsOnly": {
      "wouldBe": "REJECTED",
-     "n": 145,
-     "avg": -0.5878,
-     "median": -0.8214,
-     "win": 0.1103,
-     "stock": 0.0159,
-     "tBlock": -5.72,
+     "n": 142,
+     "avg": -0.61,
+     "median": -0.8009,
+     "win": 0.0986,
+     "stock": 0.0164,
+     "tBlock": -6.11,
      "halves": [
-      -0.7242,
-      -0.42
+      -0.718,
+      -0.4747
      ]
     },
     "closeExitsOnlyHalfSpread2pct": {
      "wouldBe": "REJECTED",
-     "n": 145,
-     "avg": -0.1771,
-     "median": -0.4301,
-     "win": 0.269,
-     "stock": 0.0159,
-     "tBlock": -1.34,
+     "n": 142,
+     "avg": -0.1817,
+     "median": -0.4237,
+     "win": 0.2676,
+     "stock": 0.0164,
+     "tBlock": -1.33,
      "halves": [
-      -0.4146,
-      0.1152
+      -0.4072,
+      0.1011
      ]
     }
    },
-   "stockSameTrades": 0.0255
+   "stockSameTrades": 0.0261
   },
   "OPT-FOLLOW1": {
    "verdict": "TOO FEW CASES",
@@ -378,144 +376,144 @@
    "follow": [],
    "luckBar": 2.5,
    "judged": 0,
-   "optionsCallsFound": 208,
-   "afterDedupe": 176,
-   "traders": 71,
+   "optionsCallsFound": 251,
+   "afterDedupe": 210,
+   "traders": 86,
    "counts": {
-    "signals": 176,
+    "signals": 210,
     "beforeWindow": 0,
-    "notFinished": 44,
+    "notFinished": 47,
     "noStockPrice": 2,
     "noContracts": 6,
     "noExpiry": 1,
-    "noPrice": 20,
+    "noPrice": 23,
     "split": 0,
-    "priced": 103,
-    "exitByClose": 92,
-    "exitByIntrinsic": 11
+    "priced": 131,
+    "exitByClose": 116,
+    "exitByIntrinsic": 15
    },
    "spread": {
-    "measured": 58,
-    "of": 59,
-    "medianH": 0.1132,
-    "p75H": 0.2,
+    "measured": 76,
+    "of": 77,
+    "medianH": 0.092,
+    "p75H": 0.1833,
     "window": "30-60 days"
    },
    "pooledInfo": {
     "verdict": "REJECTED",
-    "why": "lost money after the spread and ZAD fees in the older half (-0.2274); lost money at the 1.5x spread stress in the older half (-0.3012); did not beat buying the same stock with the same money in the older half (-0.2274 vs 0.0022); lost money after the spread and ZAD fees in the newer half (-0.0947); lost money at the 1.5x spread stress in the newer half (-0.1576); did not beat buying the same stock with the same money in the newer half (-0.0947 vs -0.0005); loses without its 2 best trades (-0.2452); block t -3.03 over 33 non-overlapping 10-session blocks, under 2.5",
-    "n": 103,
-    "days": 76,
-    "avg": -0.1643,
-    "median": -0.4633,
-    "win": 0.301,
-    "stock": 0.0009,
-    "noBest2": -0.2452,
-    "tBlock": -3.03,
+    "why": "lost money after the spread and ZAD fees in the older half (-0.1749); lost money at the 1.5x spread stress in the older half (-0.2447); did not beat buying the same stock with the same money in the older half (-0.1749 vs 0.0048); lost money after the spread and ZAD fees in the newer half (-0.2844); lost money at the 1.5x spread stress in the newer half (-0.3388); did not beat buying the same stock with the same money in the newer half (-0.2844 vs -0.0277); loses without its 2 best trades (-0.2979); block t -3.39 over 35 non-overlapping 10-session blocks, under 2.5",
+    "n": 131,
+    "days": 84,
+    "avg": -0.2351,
+    "median": -0.5248,
+    "win": 0.2824,
+    "stock": -0.0131,
+    "noBest2": -0.2979,
+    "tBlock": -3.39,
     "half": {
      "older": {
-      "n": 54,
-      "days": 38,
-      "win": 0.3333,
-      "avg": -0.2274,
-      "median": -0.4645,
-      "avgStress": -0.3012,
-      "stock": 0.0022,
-      "edge": -0.2296,
-      "noBest2": -0.3164,
+      "n": 59,
+      "days": 42,
+      "win": 0.3898,
+      "avg": -0.1749,
+      "median": -0.3487,
+      "avgStress": -0.2447,
+      "stock": 0.0048,
+      "edge": -0.1797,
+      "noBest2": -0.2532,
       "worst": -1,
-      "best": 2.7235,
-      "blocks": 24,
-      "tBlock": -3.35
+      "best": 2.646,
+      "blocks": 28,
+      "tBlock": -2.64
      },
      "newer": {
-      "n": 49,
-      "days": 38,
-      "win": 0.2653,
-      "avg": -0.0947,
-      "median": -0.4633,
-      "avgStress": -0.1576,
-      "stock": -0.0005,
-      "edge": -0.0942,
-      "noBest2": -0.2657,
+      "n": 72,
+      "days": 42,
+      "win": 0.1944,
+      "avg": -0.2844,
+      "median": -0.5806,
+      "avgStress": -0.3388,
+      "stock": -0.0277,
+      "edge": -0.2567,
+      "noBest2": -0.4017,
       "worst": -1,
-      "best": 4.1877,
-      "blocks": 9,
-      "tBlock": -0.54
+      "best": 4.0796,
+      "blocks": 8,
+      "tBlock": -0.9
      }
     }
    },
    "under300": {
-    "n": 28,
-    "days": 24,
-    "win": 0.1071,
-    "avg": -0.5232,
-    "median": -0.6724,
-    "avgStress": -0.6099,
-    "stock": -0.043,
-    "edge": -0.4802,
-    "noBest2": -0.6652,
+    "n": 40,
+    "days": 31,
+    "win": 0.15,
+    "avg": -0.522,
+    "median": -0.6727,
+    "avgStress": -0.589,
+    "stock": -0.0507,
+    "edge": -0.4713,
+    "noBest2": -0.6348,
     "worst": -1,
-    "best": 1.3245,
-    "blocks": 16,
-    "tBlock": -3.03
+    "best": 1.854,
+    "blocks": 18,
+    "tBlock": -2.44
    },
    "byExit": {
-    "close": 92,
-    "intrinsic": 11
+    "close": 116,
+    "intrinsic": 15
    },
    "sensitivity": {
     "note": "information only; the verdict above is the registered one",
     "halfSpread2pct": {
      "wouldBe": "REJECTED",
-     "n": 103,
-     "avg": -0.0293,
-     "median": -0.2905,
-     "win": 0.3398,
-     "stock": 0.0009,
-     "tBlock": -1.39,
+     "n": 131,
+     "avg": -0.116,
+     "median": -0.3562,
+     "win": 0.3053,
+     "stock": -0.0131,
+     "tBlock": -1.43,
      "halves": [
-      -0.0761,
-      0.0222
+      -0.0357,
+      -0.1819
      ]
     },
     "atMid": {
      "wouldBe": "REJECTED",
-     "n": 103,
-     "avg": 0.0105,
-     "median": -0.2614,
-     "win": 0.3495,
-     "stock": 0.0009,
-     "tBlock": -0.95,
+     "n": 131,
+     "avg": -0.0798,
+     "median": -0.3295,
+     "win": 0.313,
+     "stock": -0.0131,
+     "tBlock": -0.98,
      "halves": [
-      -0.0382,
-      0.0641
+      0.0038,
+      -0.1484
      ]
     },
     "closeExitsOnly": {
      "wouldBe": "REJECTED",
-     "n": 92,
-     "avg": -0.2226,
-     "median": -0.4972,
-     "win": 0.2717,
-     "stock": -0.0054,
-     "tBlock": -4.65,
+     "n": 116,
+     "avg": -0.2608,
+     "median": -0.5285,
+     "win": 0.2586,
+     "stock": -0.0168,
+     "tBlock": -4.13,
      "halves": [
-      -0.247,
-      -0.1947
+      -0.2112,
+      -0.301
      ]
     },
     "closeExitsOnlyHalfSpread2pct": {
      "wouldBe": "REJECTED",
-     "n": 92,
-     "avg": -0.0909,
-     "median": -0.3203,
-     "win": 0.3152,
-     "stock": -0.0054,
-     "tBlock": -2.79,
+     "n": 116,
+     "avg": -0.1602,
+     "median": -0.3625,
+     "win": 0.2845,
+     "stock": -0.0168,
+     "tBlock": -2.77,
      "halves": [
-      -0.1098,
-      -0.0695
+      -0.1153,
+      -0.1968
      ]
     }
    }
@@ -533,10 +531,10 @@
    "optionsCalls": 11,
    "priced": 11,
    "days": 6,
-   "avg": 0.2935,
+   "avg": 0.2778,
    "stock": 0.0621,
    "win": 0.5455,
-   "tBlock": 0.84,
+   "tBlock": 0.86,
    "level": "WATCH",
    "why": "11 priced options calls on 6 days (30 on 10 needed)"
   },
@@ -544,13 +542,13 @@
    "tr": "st:Skumaroptions",
    "name": "StockTwits Skumaroptions",
    "src": "st",
-   "optionsCalls": 14,
+   "optionsCalls": 15,
    "priced": 10,
    "days": 10,
-   "avg": -0.2562,
+   "avg": -0.2447,
    "stock": -0.0254,
    "win": 0.2,
-   "tBlock": -2.25,
+   "tBlock": -1.89,
    "level": "WATCH",
    "why": "10 priced options calls on 10 days (30 on 10 needed)"
   },
@@ -561,10 +559,10 @@
    "optionsCalls": 7,
    "priced": 5,
    "days": 5,
-   "avg": -0.0017,
+   "avg": -0.0401,
    "stock": 0.0328,
    "win": 0.2,
-   "tBlock": -0.71,
+   "tBlock": -0.82,
    "level": "WATCH",
    "why": "5 priced options calls on 5 days (30 on 10 needed)"
   },
@@ -575,10 +573,10 @@
    "optionsCalls": 5,
    "priced": 5,
    "days": 4,
-   "avg": -0.2925,
+   "avg": -0.4348,
    "stock": -0.0101,
    "win": 0.2,
-   "tBlock": -0.17,
+   "tBlock": -1.17,
    "level": "WATCH",
    "why": "5 priced options calls on 4 days (30 on 10 needed)"
   },
@@ -589,12 +587,54 @@
    "optionsCalls": 5,
    "priced": 5,
    "days": 5,
-   "avg": -0.8223,
+   "avg": -0.8409,
    "stock": -0.0627,
    "win": 0,
-   "tBlock": -12.8,
+   "tBlock": -14.13,
    "level": "WATCH",
    "why": "5 priced options calls on 5 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:REDWIR",
+   "name": "StockTwits REDWIR",
+   "src": "st",
+   "optionsCalls": 4,
+   "priced": 4,
+   "days": 3,
+   "avg": -0.6051,
+   "stock": -0.1146,
+   "win": 0,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "4 priced options calls on 3 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:WeeklyOptionsTrading",
+   "name": "StockTwits WeeklyOptionsTrading",
+   "src": "st",
+   "optionsCalls": 5,
+   "priced": 4,
+   "days": 4,
+   "avg": -0.6908,
+   "stock": -0.0997,
+   "win": 0,
+   "tBlock": -5.38,
+   "level": "WATCH",
+   "why": "4 priced options calls on 4 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Csick",
+   "name": "StockTwits Csick",
+   "src": "st",
+   "optionsCalls": 7,
+   "priced": 4,
+   "days": 3,
+   "avg": -0.6946,
+   "stock": -0.0444,
+   "win": 0,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "4 priced options calls on 3 days (30 on 10 needed)"
   },
   {
    "tr": "st:Stockmarketmaker",
@@ -603,7 +643,7 @@
    "optionsCalls": 4,
    "priced": 3,
    "days": 3,
-   "avg": 1.0207,
+   "avg": 1.0115,
    "stock": 0.1718,
    "win": 0.3333,
    "tBlock": null,
@@ -617,10 +657,10 @@
    "optionsCalls": 3,
    "priced": 3,
    "days": 3,
-   "avg": -0.0944,
+   "avg": -0.0915,
    "stock": 0.0245,
    "win": 0.6667,
-   "tBlock": -0.41,
+   "tBlock": -0.39,
    "level": "WATCH",
    "why": "3 priced options calls on 3 days (30 on 10 needed)"
   },
@@ -631,10 +671,38 @@
    "optionsCalls": 3,
    "priced": 3,
    "days": 3,
-   "avg": -0.4278,
+   "avg": -0.2312,
    "stock": 0.0329,
+   "win": 0.3333,
+   "tBlock": -0.98,
+   "level": "WATCH",
+   "why": "3 priced options calls on 3 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:thefourwind",
+   "name": "StockTwits thefourwind",
+   "src": "st",
+   "optionsCalls": 5,
+   "priced": 3,
+   "days": 3,
+   "avg": -0.5742,
+   "stock": -0.0744,
+   "win": 0.3333,
+   "tBlock": -1.51,
+   "level": "WATCH",
+   "why": "3 priced options calls on 3 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Humbleflow",
+   "name": "StockTwits Humbleflow",
+   "src": "st",
+   "optionsCalls": 3,
+   "priced": 3,
+   "days": 3,
+   "avg": -0.7246,
+   "stock": -0.1006,
    "win": 0,
-   "tBlock": -2.13,
+   "tBlock": null,
    "level": "WATCH",
    "why": "3 priced options calls on 3 days (30 on 10 needed)"
   },
@@ -645,24 +713,10 @@
    "optionsCalls": 4,
    "priced": 3,
    "days": 3,
-   "avg": -0.7295,
+   "avg": -0.7381,
    "stock": -0.0662,
    "win": 0,
    "tBlock": null,
-   "level": "WATCH",
-   "why": "3 priced options calls on 3 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:WeeklyOptionsTrading",
-   "name": "StockTwits WeeklyOptionsTrading",
-   "src": "st",
-   "optionsCalls": 5,
-   "priced": 3,
-   "days": 3,
-   "avg": -0.7807,
-   "stock": -0.1129,
-   "win": 0,
-   "tBlock": -7.05,
    "level": "WATCH",
    "why": "3 priced options calls on 3 days (30 on 10 needed)"
   },
@@ -673,7 +727,7 @@
    "optionsCalls": 5,
    "priced": 3,
    "days": 1,
-   "avg": -0.8307,
+   "avg": -0.8105,
    "stock": -0.1953,
    "win": 0,
    "tBlock": null,
@@ -687,7 +741,7 @@
    "optionsCalls": 2,
    "priced": 2,
    "days": 2,
-   "avg": 1.3295,
+   "avg": 1.281,
    "stock": 0.1244,
    "win": 0.5,
    "tBlock": null,
@@ -701,8 +755,50 @@
    "optionsCalls": 2,
    "priced": 2,
    "days": 1,
-   "avg": 0.3464,
+   "avg": 0.3075,
    "stock": 0.0671,
+   "win": 0.5,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "2 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "bs:did:plc:glywww3rcwo3n2xisqx6ov57",
+   "name": "Bluesky finris-trading.bsky.social",
+   "src": "bs",
+   "optionsCalls": 2,
+   "priced": 2,
+   "days": 1,
+   "avg": 0.2305,
+   "stock": 0.029,
+   "win": 1,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "2 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "bs:did:plc:7m76hcfvibruqutvgqczumpl",
+   "name": "Bluesky unxcellent.bsky.social",
+   "src": "bs",
+   "optionsCalls": 2,
+   "priced": 2,
+   "days": 1,
+   "avg": 0.2296,
+   "stock": 0.1745,
+   "win": 0.5,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "2 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "yt:UCh__jlUcgxBnrU3C9x3V7JA",
+   "name": "Harry Boxer | Day & Swing Trading Charts",
+   "src": "yt",
+   "optionsCalls": 3,
+   "priced": 2,
+   "days": 1,
+   "avg": 0.1646,
+   "stock": 0.1512,
    "win": 0.5,
    "tBlock": null,
    "level": "WATCH",
@@ -715,7 +811,7 @@
    "optionsCalls": 2,
    "priced": 2,
    "days": 2,
-   "avg": 0.3054,
+   "avg": 0.1621,
    "stock": 0.0107,
    "win": 0.5,
    "tBlock": null,
@@ -723,46 +819,18 @@
    "why": "2 priced options calls on 2 days (30 on 10 needed)"
   },
   {
-   "tr": "bs:did:plc:glywww3rcwo3n2xisqx6ov57",
-   "name": "Bluesky finris-trading.bsky.social",
-   "src": "bs",
-   "optionsCalls": 2,
-   "priced": 2,
-   "days": 1,
-   "avg": 0.2379,
-   "stock": 0.029,
-   "win": 1,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "2 priced options calls on 1 days (30 on 10 needed)"
-  },
-  {
-   "tr": "yt:UCh__jlUcgxBnrU3C9x3V7JA",
-   "name": "Harry Boxer | Day & Swing Trading Charts",
+   "tr": "yt:UChtrqm08ApkoMA4IOy-XzCw",
+   "name": "Trading with Ashley",
    "src": "yt",
    "optionsCalls": 3,
    "priced": 2,
-   "days": 1,
-   "avg": 0.0286,
-   "stock": 0.1512,
+   "days": 2,
+   "avg": -0.0186,
+   "stock": 0.0204,
    "win": 0.5,
    "tBlock": null,
    "level": "WATCH",
-   "why": "2 priced options calls on 1 days (30 on 10 needed)"
-  },
-  {
-   "tr": "bs:did:plc:7m76hcfvibruqutvgqczumpl",
-   "name": "Bluesky unxcellent.bsky.social",
-   "src": "bs",
-   "optionsCalls": 2,
-   "priced": 2,
-   "days": 1,
-   "avg": -0.0584,
-   "stock": 0.1745,
-   "win": 0.5,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "2 priced options calls on 1 days (30 on 10 needed)"
+   "why": "2 priced options calls on 2 days (30 on 10 needed)"
   },
   {
    "tr": "yt:UCNttUtm9vloDjo-a2jqkoNQ",
@@ -771,36 +839,8 @@
    "optionsCalls": 3,
    "priced": 2,
    "days": 2,
-   "avg": -0.1557,
+   "avg": -0.1469,
    "stock": -0.0009,
-   "win": 0.5,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "2 priced options calls on 2 days (30 on 10 needed)"
-  },
-  {
-   "tr": "yt:UCubRfH0RBrtrlt3ePhGp7Bw",
-   "name": "The Stockfessor | The Small Cap Professor",
-   "src": "yt",
-   "optionsCalls": 3,
-   "priced": 2,
-   "days": 1,
-   "avg": -0.3504,
-   "stock": -0.0328,
-   "win": 0.5,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "2 priced options calls on 1 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:thefourwind",
-   "name": "StockTwits thefourwind",
-   "src": "st",
-   "optionsCalls": 4,
-   "priced": 2,
-   "days": 2,
-   "avg": -0.3877,
-   "stock": -0.0528,
    "win": 0.5,
    "tBlock": null,
    "level": "WATCH",
@@ -813,8 +853,64 @@
    "optionsCalls": 2,
    "priced": 2,
    "days": 2,
-   "avg": -0.5513,
+   "avg": -0.2756,
    "stock": -0.0282,
+   "win": 0.5,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "2 priced options calls on 2 days (30 on 10 needed)"
+  },
+  {
+   "tr": "yt:UCubRfH0RBrtrlt3ePhGp7Bw",
+   "name": "The Stockfessor | The Small Cap Professor",
+   "src": "yt",
+   "optionsCalls": 3,
+   "priced": 2,
+   "days": 1,
+   "avg": -0.339,
+   "stock": -0.0328,
+   "win": 0.5,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "2 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:missalyssa",
+   "name": "StockTwits missalyssa",
+   "src": "st",
+   "optionsCalls": 10,
+   "priced": 2,
+   "days": 2,
+   "avg": -0.3773,
+   "stock": -0.0493,
+   "win": 0,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "2 priced options calls on 2 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:AlphaBull_10M",
+   "name": "StockTwits AlphaBull_10M",
+   "src": "st",
+   "optionsCalls": 4,
+   "priced": 2,
+   "days": 1,
+   "avg": -0.5355,
+   "stock": -0.0565,
+   "win": 0,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "2 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Randhawa408",
+   "name": "StockTwits Randhawa408",
+   "src": "st",
+   "optionsCalls": 4,
+   "priced": 2,
+   "days": 2,
+   "avg": -0.6431,
+   "stock": -0.0874,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
@@ -827,7 +923,7 @@
    "optionsCalls": 2,
    "priced": 2,
    "days": 2,
-   "avg": -0.6682,
+   "avg": -0.6504,
    "stock": -0.0116,
    "win": 0,
    "tBlock": null,
@@ -835,14 +931,28 @@
    "why": "2 priced options calls on 2 days (30 on 10 needed)"
   },
   {
-   "tr": "st:Randhawa408",
-   "name": "StockTwits Randhawa408",
+   "tr": "st:WolverineVcapitalllc",
+   "name": "StockTwits WolverineVcapitalllc",
    "src": "st",
-   "optionsCalls": 4,
+   "optionsCalls": 2,
    "priced": 2,
    "days": 2,
-   "avg": -0.6809,
-   "stock": -0.0874,
+   "avg": -0.8043,
+   "stock": -0.0926,
+   "win": 0,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "2 priced options calls on 2 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:hoagied",
+   "name": "StockTwits hoagied",
+   "src": "st",
+   "optionsCalls": 2,
+   "priced": 2,
+   "days": 2,
+   "avg": -0.8302,
+   "stock": -0.1486,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
@@ -855,7 +965,7 @@
    "optionsCalls": 2,
    "priced": 2,
    "days": 2,
-   "avg": -0.8554,
+   "avg": -0.8441,
    "stock": -0.1353,
    "win": 0,
    "tBlock": null,
@@ -869,12 +979,26 @@
    "optionsCalls": 2,
    "priced": 2,
    "days": 1,
-   "avg": -0.8909,
+   "avg": -0.8924,
    "stock": -0.1054,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
    "why": "2 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Ladoga",
+   "name": "StockTwits Ladoga",
+   "src": "st",
+   "optionsCalls": 1,
+   "priced": 1,
+   "days": 1,
+   "avg": 1.854,
+   "stock": 0.1812,
+   "win": 1,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "1 priced options calls on 1 days (30 on 10 needed)"
   },
   {
    "tr": "bs:did:plc:zdltyqp2ruvsxh4fdovodldl",
@@ -883,7 +1007,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": 1.679,
+   "avg": 1.7104,
    "stock": 0.2057,
    "win": 1,
    "tBlock": null,
@@ -897,36 +1021,8 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": 1.3245,
+   "avg": 1.387,
    "stock": 0.1329,
-   "win": 1,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "1 priced options calls on 1 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:Ladoga",
-   "name": "StockTwits Ladoga",
-   "src": "st",
-   "optionsCalls": 1,
-   "priced": 1,
-   "days": 1,
-   "avg": 1.323,
-   "stock": 0.1812,
-   "win": 1,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "1 priced options calls on 1 days (30 on 10 needed)"
-  },
-  {
-   "tr": "yt:UC2XG6zLqQIyC1O8lbbzr4tQ",
-   "name": "Caesar Zane",
-   "src": "yt",
-   "optionsCalls": 1,
-   "priced": 1,
-   "days": 1,
-   "avg": 0.8933,
-   "stock": 0.0916,
    "win": 1,
    "tBlock": null,
    "level": "WATCH",
@@ -939,7 +1035,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": 0.8152,
+   "avg": 0.8965,
    "stock": 0.0983,
    "win": 1,
    "tBlock": null,
@@ -947,14 +1043,42 @@
    "why": "1 priced options calls on 1 days (30 on 10 needed)"
   },
   {
-   "tr": "st:akaLMoney",
-   "name": "StockTwits akaLMoney",
+   "tr": "yt:UC2XG6zLqQIyC1O8lbbzr4tQ",
+   "name": "Caesar Zane",
+   "src": "yt",
+   "optionsCalls": 1,
+   "priced": 1,
+   "days": 1,
+   "avg": 0.8538,
+   "stock": 0.0916,
+   "win": 1,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "1 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:HighRiskOptionsAlerts",
+   "name": "StockTwits HighRiskOptionsAlerts",
    "src": "st",
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": 0.6777,
-   "stock": 0.104,
+   "avg": 0.5621,
+   "stock": 0.065,
+   "win": 1,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "1 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "md:chris@socialbc.ca",
+   "name": "Mastodon chris@socialbc.ca",
+   "src": "md",
+   "optionsCalls": 1,
+   "priced": 1,
+   "days": 1,
+   "avg": 0.4667,
+   "stock": 0.1293,
    "win": 1,
    "tBlock": null,
    "level": "WATCH",
@@ -967,7 +1091,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": 0.2624,
+   "avg": 0.2772,
    "stock": 0.1,
    "win": 1,
    "tBlock": null,
@@ -981,7 +1105,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": 0.0615,
+   "avg": 0.0967,
    "stock": 0.1545,
    "win": 1,
    "tBlock": null,
@@ -989,14 +1113,42 @@
    "why": "1 priced options calls on 1 days (30 on 10 needed)"
   },
   {
-   "tr": "st:abubnic",
-   "name": "StockTwits abubnic",
+   "tr": "st:akaLMoney",
+   "name": "StockTwits akaLMoney",
    "src": "st",
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": -0.0758,
-   "stock": 0.0033,
+   "avg": 0.0565,
+   "stock": 0.104,
+   "win": 1,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "1 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Skimman",
+   "name": "StockTwits Skimman",
+   "src": "st",
+   "optionsCalls": 1,
+   "priced": 1,
+   "days": 1,
+   "avg": 0.0564,
+   "stock": 0.0411,
+   "win": 1,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "1 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Idvst8",
+   "name": "StockTwits Idvst8",
+   "src": "st",
+   "optionsCalls": 2,
+   "priced": 1,
+   "days": 1,
+   "avg": -0.299,
+   "stock": -0.0018,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
@@ -1009,7 +1161,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": -0.3235,
+   "avg": -0.3459,
    "stock": 0.0204,
    "win": 0,
    "tBlock": null,
@@ -1023,7 +1175,7 @@
    "optionsCalls": 2,
    "priced": 1,
    "days": 1,
-   "avg": -0.4633,
+   "avg": -0.3534,
    "stock": 0.0132,
    "win": 0,
    "tBlock": null,
@@ -1037,22 +1189,8 @@
    "optionsCalls": 3,
    "priced": 1,
    "days": 1,
-   "avg": -0.534,
+   "avg": -0.4467,
    "stock": -0.0198,
-   "win": 0,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "1 priced options calls on 1 days (30 on 10 needed)"
-  },
-  {
-   "tr": "yt:UClLyc3C2K3C-RAh7eEJAwyg",
-   "name": "Dividend Talks",
-   "src": "yt",
-   "optionsCalls": 1,
-   "priced": 1,
-   "days": 1,
-   "avg": -0.6269,
-   "stock": -0.0648,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
@@ -1065,8 +1203,22 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": -0.6456,
+   "avg": -0.5614,
    "stock": -0.02,
+   "win": 0,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "1 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "yt:UClLyc3C2K3C-RAh7eEJAwyg",
+   "name": "Dividend Talks",
+   "src": "yt",
+   "optionsCalls": 1,
+   "priced": 1,
+   "days": 1,
+   "avg": -0.608,
+   "stock": -0.0648,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
@@ -1079,7 +1231,7 @@
    "optionsCalls": 2,
    "priced": 1,
    "days": 1,
-   "avg": -0.6609,
+   "avg": -0.6569,
    "stock": -0.0326,
    "win": 0,
    "tBlock": null,
@@ -1093,8 +1245,22 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": -0.7532,
+   "avg": -0.7723,
    "stock": -0.0962,
+   "win": 0,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "1 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Carlos7144",
+   "name": "StockTwits Carlos7144",
+   "src": "st",
+   "optionsCalls": 1,
+   "priced": 1,
+   "days": 1,
+   "avg": -0.8372,
+   "stock": -0.088,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
@@ -1107,7 +1273,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": -0.8333,
+   "avg": -0.8455,
    "stock": -0.1116,
    "win": 0,
    "tBlock": null,
@@ -1121,7 +1287,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": -0.94,
+   "avg": -0.9393,
    "stock": -0.1113,
    "win": 0,
    "tBlock": null,
@@ -1135,7 +1301,7 @@
    "optionsCalls": 1,
    "priced": 1,
    "days": 1,
-   "avg": -0.9639,
+   "avg": -0.9768,
    "stock": -0.1343,
    "win": 0,
    "tBlock": null,
@@ -1157,14 +1323,28 @@
    "why": "1 priced options calls on 1 days (30 on 10 needed)"
   },
   {
-   "tr": "st:WolverineVcapitalllc",
-   "name": "StockTwits WolverineVcapitalllc",
+   "tr": "st:Rufus5508",
+   "name": "StockTwits Rufus5508",
    "src": "st",
-   "optionsCalls": 2,
+   "optionsCalls": 1,
+   "priced": 1,
+   "days": 1,
+   "avg": -0.9999,
+   "stock": -0.1886,
+   "win": 0,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "1 priced options calls on 1 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:AidenB",
+   "name": "StockTwits AidenB",
+   "src": "st",
+   "optionsCalls": 1,
    "priced": 1,
    "days": 1,
    "avg": -1,
-   "stock": -0.1548,
+   "stock": -0.1478,
    "win": 0,
    "tBlock": null,
    "level": "WATCH",
@@ -1297,78 +1477,8 @@
    "why": "0 priced options calls on 0 days (30 on 10 needed)"
   },
   {
-   "tr": "st:Humbleflow",
-   "name": "StockTwits Humbleflow",
-   "src": "st",
-   "optionsCalls": 3,
-   "priced": 0,
-   "days": 0,
-   "avg": null,
-   "stock": null,
-   "win": null,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "0 priced options calls on 0 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:Csick",
-   "name": "StockTwits Csick",
-   "src": "st",
-   "optionsCalls": 5,
-   "priced": 0,
-   "days": 0,
-   "avg": null,
-   "stock": null,
-   "win": null,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "0 priced options calls on 0 days (30 on 10 needed)"
-  },
-  {
-   "tr": "md:chris@socialbc.ca",
-   "name": "Mastodon chris@socialbc.ca",
-   "src": "md",
-   "optionsCalls": 1,
-   "priced": 0,
-   "days": 0,
-   "avg": null,
-   "stock": null,
-   "win": null,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "0 priced options calls on 0 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:REDWIR",
-   "name": "StockTwits REDWIR",
-   "src": "st",
-   "optionsCalls": 4,
-   "priced": 0,
-   "days": 0,
-   "avg": null,
-   "stock": null,
-   "win": null,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "0 priced options calls on 0 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:missalyssa",
-   "name": "StockTwits missalyssa",
-   "src": "st",
-   "optionsCalls": 9,
-   "priced": 0,
-   "days": 0,
-   "avg": null,
-   "stock": null,
-   "win": null,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "0 priced options calls on 0 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:HighRiskOptionsAlerts",
-   "name": "StockTwits HighRiskOptionsAlerts",
+   "tr": "st:abubnic",
+   "name": "StockTwits abubnic",
    "src": "st",
    "optionsCalls": 1,
    "priced": 0,
@@ -1381,36 +1491,8 @@
    "why": "0 priced options calls on 0 days (30 on 10 needed)"
   },
   {
-   "tr": "st:hoagied",
-   "name": "StockTwits hoagied",
-   "src": "st",
-   "optionsCalls": 2,
-   "priced": 0,
-   "days": 0,
-   "avg": null,
-   "stock": null,
-   "win": null,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "0 priced options calls on 0 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:AlphaBull_10M",
-   "name": "StockTwits AlphaBull_10M",
-   "src": "st",
-   "optionsCalls": 2,
-   "priced": 0,
-   "days": 0,
-   "avg": null,
-   "stock": null,
-   "win": null,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "0 priced options calls on 0 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:Rufus5508",
-   "name": "StockTwits Rufus5508",
+   "tr": "st:EmptyBag",
+   "name": "StockTwits EmptyBag",
    "src": "st",
    "optionsCalls": 1,
    "priced": 0,
@@ -1423,22 +1505,8 @@
    "why": "0 priced options calls on 0 days (30 on 10 needed)"
   },
   {
-   "tr": "st:Skimman",
-   "name": "StockTwits Skimman",
-   "src": "st",
-   "optionsCalls": 1,
-   "priced": 0,
-   "days": 0,
-   "avg": null,
-   "stock": null,
-   "win": null,
-   "tBlock": null,
-   "level": "WATCH",
-   "why": "0 priced options calls on 0 days (30 on 10 needed)"
-  },
-  {
-   "tr": "st:Carlos7144",
-   "name": "StockTwits Carlos7144",
+   "tr": "st:JaeBTrading",
+   "name": "StockTwits JaeBTrading",
    "src": "st",
    "optionsCalls": 1,
    "priced": 0,
@@ -1455,6 +1523,62 @@
    "name": "StockTwits MF__DOOM",
    "src": "st",
    "optionsCalls": 3,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Comicguy",
+   "name": "StockTwits Comicguy",
+   "src": "st",
+   "optionsCalls": 2,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Jimmyboy29",
+   "name": "StockTwits Jimmyboy29",
+   "src": "st",
+   "optionsCalls": 6,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:SellasgpsCurativeBAT11",
+   "name": "StockTwits SellasgpsCurativeBAT11",
+   "src": "st",
+   "optionsCalls": 1,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "yt:UClrWbNyfCW8br79Au32aluw",
+   "name": "Jon Erlichman",
+   "src": "yt",
+   "optionsCalls": 1,
    "priced": 0,
    "days": 0,
    "avg": null,
@@ -1482,7 +1606,7 @@
    "tr": "st:ezekeil",
    "name": "StockTwits ezekeil",
    "src": "st",
-   "optionsCalls": 1,
+   "optionsCalls": 3,
    "priced": 0,
    "days": 0,
    "avg": null,
@@ -1496,7 +1620,35 @@
    "tr": "st:PoundinBurgers",
    "name": "StockTwits PoundinBurgers",
    "src": "st",
-   "optionsCalls": 2,
+   "optionsCalls": 3,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Johnmtnb2018",
+   "name": "StockTwits Johnmtnb2018",
+   "src": "st",
+   "optionsCalls": 1,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:OffHisGame88",
+   "name": "StockTwits OffHisGame88",
+   "src": "st",
+   "optionsCalls": 1,
    "priced": 0,
    "days": 0,
    "avg": null,
@@ -1509,6 +1661,62 @@
   {
    "tr": "st:Canoo2",
    "name": "StockTwits Canoo2",
+   "src": "st",
+   "optionsCalls": 1,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:Ver13",
+   "name": "StockTwits Ver13",
+   "src": "st",
+   "optionsCalls": 1,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "md:byteseu@pubeurope.com",
+   "name": "Mastodon byteseu@pubeurope.com",
+   "src": "md",
+   "optionsCalls": 1,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:StrongArmor",
+   "name": "StockTwits StrongArmor",
+   "src": "st",
+   "optionsCalls": 1,
+   "priced": 0,
+   "days": 0,
+   "avg": null,
+   "stock": null,
+   "win": null,
+   "tBlock": null,
+   "level": "WATCH",
+   "why": "0 priced options calls on 0 days (30 on 10 needed)"
+  },
+  {
+   "tr": "st:_StockFox_",
+   "name": "StockTwits _StockFox_",
    "src": "st",
    "optionsCalls": 1,
    "priced": 0,
@@ -1533,8 +1741,8 @@
     "o": 0.5,
     "x": 0.15,
     "by": "close",
-    "h": 0.0377,
-    "net": -0.8341,
+    "h": 0.0516,
+    "net": -0.8398,
     "st": -0.0189
    },
    {
@@ -1547,8 +1755,8 @@
     "o": 5.18,
     "x": 6.08,
     "by": "close",
-    "h": 0.0644,
-    "net": 0.0134,
+    "h": 0.2268,
+    "net": -0.2738,
     "st": 0.0292
    },
    {
@@ -1561,8 +1769,8 @@
     "o": 15.65,
     "x": 0.25,
     "by": "close",
-    "h": 0.0369,
-    "net": -0.9883,
+    "h": 0.0439,
+    "net": -0.9885,
     "st": -0.1639
    },
    {
@@ -1575,8 +1783,8 @@
     "o": 37.53,
     "x": 19.9,
     "by": "close",
-    "h": 0.0828,
-    "net": -0.5527,
+    "h": 0.0601,
+    "net": -0.5317,
     "st": 0.0264
    },
    {
@@ -1589,7 +1797,7 @@
     "o": 2.1,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.1144,
+    "h": 0.0535,
     "net": -1,
     "st": -0.0246
    },
@@ -1603,8 +1811,8 @@
     "o": 5.5,
     "x": 12.3,
     "by": "close",
-    "h": 0.0868,
-    "net": 0.8551,
+    "h": 0.1281,
+    "net": 0.7066,
     "st": 0.1001
    },
    {
@@ -1617,8 +1825,8 @@
     "o": 2.71,
     "x": 2.35,
     "by": "close",
-    "h": 0.2063,
-    "net": -0.4531,
+    "h": 0.113,
+    "net": -0.3366,
     "st": 0.0504
    },
    {
@@ -1631,8 +1839,8 @@
     "o": 1.72,
     "x": 1.5,
     "by": "close",
-    "h": 0.1267,
-    "net": -0.3662,
+    "h": 0.1088,
+    "net": -0.3424,
     "st": 0.0438
    },
    {
@@ -1645,7 +1853,7 @@
     "o": 1.04,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3042,
+    "h": 0.1677,
     "net": -1,
     "st": -0.0528
    },
@@ -1659,8 +1867,8 @@
     "o": 1.85,
     "x": 4.56,
     "by": "close",
-    "h": 0.0884,
-    "net": 0.9902,
+    "h": 0.1933,
+    "net": 0.6071,
     "st": 0.0667
    },
    {
@@ -1673,8 +1881,8 @@
     "o": 15,
     "x": 24.910000000000025,
     "by": "intrinsic",
-    "h": 0.051,
-    "net": 0.4916,
+    "h": 0.0816,
+    "net": 0.4027,
     "st": 0.0584
    },
    {
@@ -1687,8 +1895,8 @@
     "o": 24.9,
     "x": 1.5,
     "by": "close",
-    "h": 0.0876,
-    "net": -0.9514,
+    "h": 0.0941,
+    "net": -0.952,
     "st": -0.0492
    },
    {
@@ -1701,8 +1909,8 @@
     "o": 21.85,
     "x": 1.57,
     "by": "close",
-    "h": 0.1939,
-    "net": -0.9535,
+    "h": 0.1933,
+    "net": -0.9534,
     "st": -0.0971
    },
    {
@@ -1715,8 +1923,8 @@
     "o": 11,
     "x": 52.01,
     "by": "close",
-    "h": 0.0401,
-    "net": 3.3405,
+    "h": 0.0684,
+    "net": 3.1014,
     "st": 0.46
    },
    {
@@ -1729,8 +1937,8 @@
     "o": 3.4,
     "x": 2,
     "by": "close",
-    "h": 0.1939,
-    "net": -0.6199,
+    "h": 0.1933,
+    "net": -0.6194,
     "st": 0.004
    },
    {
@@ -1743,8 +1951,8 @@
     "o": 3.2,
     "x": 7.549999999999997,
     "by": "intrinsic",
-    "h": 0.1939,
-    "net": 0.5594,
+    "h": 0.1933,
+    "net": 0.5613,
     "st": 0.1706
    },
    {
@@ -1757,8 +1965,8 @@
     "o": 4.75,
     "x": 0.15,
     "by": "close",
-    "h": 0.0681,
-    "net": -0.9825,
+    "h": 0.0472,
+    "net": -0.9815,
     "st": -0.0938
    },
    {
@@ -1771,8 +1979,8 @@
     "o": 8.9,
     "x": 0.4,
     "by": "close",
-    "h": 0.1939,
-    "net": -0.9745,
+    "h": 0.1933,
+    "net": -0.9744,
     "st": -0.088
    },
    {
@@ -1785,8 +1993,8 @@
     "o": 2.35,
     "x": 6.939999999999998,
     "by": "intrinsic",
-    "h": 0.2933,
-    "net": 0.5713,
+    "h": 0.1061,
+    "net": 1.3228,
     "st": 0.1692
    },
    {
@@ -1799,8 +2007,8 @@
     "o": 26.6,
     "x": 62.5,
     "by": "close",
-    "h": 0.1145,
-    "net": 0.8618,
+    "h": 0.0831,
+    "net": 0.984,
     "st": 0.1657
    },
    {
@@ -1813,8 +2021,8 @@
     "o": 6.8,
     "x": 21.79,
     "by": "close",
-    "h": 0.0343,
-    "net": 1.9634,
+    "h": 0.02,
+    "net": 2.0496,
     "st": 0.0978
    },
    {
@@ -1827,8 +2035,8 @@
     "o": 2.05,
     "x": 1.71,
     "by": "close",
-    "h": 0.1402,
-    "net": -0.4051,
+    "h": 0.1719,
+    "net": -0.443,
     "st": 0.0142
    },
    {
@@ -1841,8 +2049,8 @@
     "o": 1.62,
     "x": 1.57,
     "by": "close",
-    "h": 0.0391,
-    "net": -0.1585,
+    "h": 0.0483,
+    "net": -0.1739,
     "st": -0.0015
    },
    {
@@ -1855,8 +2063,8 @@
     "o": 4.42,
     "x": 0.13,
     "by": "close",
-    "h": 0.0679,
-    "net": -0.9851,
+    "h": 0.063,
+    "net": -0.9849,
     "st": -0.0898
    },
    {
@@ -1869,7 +2077,7 @@
     "o": 10,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.1543,
+    "h": 0.2077,
     "net": -1,
     "st": -0.2119
    },
@@ -1883,7 +2091,7 @@
     "o": 1.31,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3042,
+    "h": 0.1677,
     "net": -1,
     "st": -0.0415
    },
@@ -1897,7 +2105,7 @@
     "o": 9.7,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.0583,
+    "h": 0.0935,
     "net": -1,
     "st": -0.0366
    },
@@ -1911,8 +2119,8 @@
     "o": 3.96,
     "x": 3.65,
     "by": "close",
-    "h": 0.0679,
-    "net": -0.2166,
+    "h": 0.063,
+    "net": -0.2088,
     "st": 0.0167
    },
    {
@@ -1925,8 +2133,8 @@
     "o": 0.8,
     "x": 0.65,
     "by": "close",
-    "h": 0.1939,
-    "net": -0.5285,
+    "h": 0.1933,
+    "net": -0.5279,
     "st": 0.0192
    },
    {
@@ -1939,8 +2147,8 @@
     "o": 4.08,
     "x": 5.4,
     "by": "close",
-    "h": 0.0681,
-    "net": 0.1304,
+    "h": 0.0472,
+    "net": 0.1788,
     "st": 0.0493
    },
    {
@@ -1953,8 +2161,8 @@
     "o": 1.8,
     "x": 1.0399999999999991,
     "by": "intrinsic",
-    "h": 0.2575,
-    "net": -0.6878,
+    "h": 0.3778,
+    "net": -0.764,
     "st": -0.0199
    },
    {
@@ -1967,8 +2175,8 @@
     "o": 15.3,
     "x": 43.5,
     "by": "close",
-    "h": 0.0369,
-    "net": 1.6294,
+    "h": 0.0439,
+    "net": 1.593,
     "st": 0.1396
    },
    {
@@ -1981,8 +2189,8 @@
     "o": 10.4,
     "x": 28.129999999999995,
     "by": "intrinsic",
-    "h": 0.1144,
-    "net": 1.136,
+    "h": 0.0535,
+    "net": 1.4147,
     "st": 0.1308
    },
    {
@@ -1995,8 +2203,8 @@
     "o": 31.3,
     "x": 0.61,
     "by": "close",
-    "h": 0.0828,
-    "net": -0.985,
+    "h": 0.0601,
+    "net": -0.9843,
     "st": -0.1238
    },
    {
@@ -2009,7 +2217,7 @@
     "o": 0.3,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.2182,
+    "h": 0.3333,
     "net": -1,
     "st": -0.1824
    },
@@ -2023,8 +2231,8 @@
     "o": 10.8,
     "x": 7.23,
     "by": "close",
-    "h": 0.0583,
-    "net": -0.4113,
+    "h": 0.0935,
+    "net": -0.4516,
     "st": 0.0081
    },
    {
@@ -2037,7 +2245,7 @@
     "o": 1.15,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.2575,
+    "h": 0.3778,
     "net": -1,
     "st": -0.2844
    },
@@ -2051,7 +2259,7 @@
     "o": 1.6,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.1917,
+    "h": 0.1514,
     "net": -1,
     "st": -0.0717
    },
@@ -2065,8 +2273,8 @@
     "o": 12,
     "x": 26.5,
     "by": "intrinsic",
-    "h": 0.1887,
-    "net": 0.4985,
+    "h": 0.2871,
+    "net": 0.2159,
     "st": 0.0996
    },
    {
@@ -2079,7 +2287,7 @@
     "o": 5,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.2632,
+    "h": 0.1759,
     "net": -1,
     "st": -0.1673
    },
@@ -2093,8 +2301,8 @@
     "o": 10.35,
     "x": 11.389999999999986,
     "by": "intrinsic",
-    "h": 0.0933,
-    "net": -0.0957,
+    "h": 0.0897,
+    "net": -0.0892,
     "st": 0.0889
    },
    {
@@ -2107,7 +2315,7 @@
     "o": 3.2,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.1939,
+    "h": 0.1933,
     "net": -1,
     "st": -0.0684
    },
@@ -2121,8 +2329,8 @@
     "o": 8.2,
     "x": 5.64,
     "by": "close",
-    "h": 0.0992,
-    "net": -0.4449,
+    "h": 0.0801,
+    "net": -0.4231,
     "st": 0.0555
    },
    {
@@ -2135,8 +2343,8 @@
     "o": 1.35,
     "x": 0.1,
     "by": "close",
-    "h": 0.2575,
-    "net": -0.9861,
+    "h": 0.3778,
+    "net": -0.9936,
     "st": -0.1376
    },
    {
@@ -2149,8 +2357,8 @@
     "o": 9.5,
     "x": 0.37,
     "by": "close",
-    "h": 0.0541,
-    "net": -0.9702,
+    "h": 0.0723,
+    "net": -0.9714,
     "st": -0.0838
    },
    {
@@ -2163,7 +2371,7 @@
     "o": 16.18,
     "x": 0.35,
     "by": "close",
-    "h": 0.1939,
+    "h": 0.1933,
     "net": -0.988,
     "st": -0.1745
    },
@@ -2177,8 +2385,8 @@
     "o": 1.5,
     "x": 16.34,
     "by": "close",
-    "h": 0.087,
-    "net": 7.8481,
+    "h": 0.0628,
+    "net": 8.2842,
     "st": 0.5243
    },
    {
@@ -2191,8 +2399,8 @@
     "o": 1.65,
     "x": 0.35,
     "by": "close",
-    "h": 0.1302,
-    "net": -0.8671,
+    "h": 0.1661,
+    "net": -0.8775,
     "st": -0.1964
    },
    {
@@ -2205,8 +2413,8 @@
     "o": 1.85,
     "x": 1.76,
     "by": "close",
-    "h": 0.0594,
-    "net": -0.2013,
+    "h": 0.0552,
+    "net": -0.1944,
     "st": -0.0188
    },
    {
@@ -2219,8 +2427,8 @@
     "o": 12.83,
     "x": 0.22,
     "by": "close",
-    "h": 0.0369,
-    "net": -0.9879,
+    "h": 0.0439,
+    "net": -0.9881,
     "st": -0.1865
    },
    {
@@ -2233,8 +2441,8 @@
     "o": 12,
     "x": 5,
     "by": "close",
-    "h": 0.1939,
-    "net": -0.7231,
+    "h": 0.1933,
+    "net": -0.7228,
     "st": -0.1114
    },
    {
@@ -2247,8 +2455,8 @@
     "o": 8.6,
     "x": 3.200000000000003,
     "by": "intrinsic",
-    "h": 0.0541,
-    "net": -0.6734,
+    "h": 0.0723,
+    "net": -0.6852,
     "st": 0.0288
    },
    {
@@ -2261,8 +2469,8 @@
     "o": 2.3,
     "x": 1.67,
     "by": "close",
-    "h": 0.1059,
-    "net": -0.4435,
+    "h": 0.1013,
+    "net": -0.4383,
     "st": 0.0358
    },
    {
@@ -2275,8 +2483,8 @@
     "o": 1.3,
     "x": 0.5,
     "by": "close",
-    "h": 0.1917,
-    "net": -0.7785,
+    "h": 0.1514,
+    "net": -0.758,
     "st": 0.0212
    },
    {
@@ -2289,8 +2497,8 @@
     "o": 13.5,
     "x": 12.4,
     "by": "close",
-    "h": 0.0754,
-    "net": -0.2164,
+    "h": 0.0932,
+    "net": -0.244,
     "st": 0.0578
    },
    {
@@ -2303,8 +2511,8 @@
     "o": 3.1,
     "x": 17.11,
     "by": "intrinsic",
-    "h": 0.4797,
-    "net": 0.9088,
+    "h": 0.8197,
+    "net": -0.4668,
     "st": 0.7414
    },
    {
@@ -2317,7 +2525,7 @@
     "o": 4.1,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.4678,
+    "h": 0.4534,
     "net": -1,
     "st": -0.1667
    },
@@ -2331,8 +2539,8 @@
     "o": 36.6,
     "x": 147.95,
     "by": "intrinsic",
-    "h": 0.2015,
-    "net": 1.6821,
+    "h": 0.2141,
+    "net": 1.6125,
     "st": 0.4019
    },
    {
@@ -2345,8 +2553,8 @@
     "o": 6.44,
     "x": 37.44999999999999,
     "by": "intrinsic",
-    "h": 0.0497,
-    "net": 4.2186,
+    "h": 0.0867,
+    "net": 3.8458,
     "st": 0.3483
    },
    {
@@ -2359,8 +2567,8 @@
     "o": 8.2,
     "x": 12.850000000000001,
     "by": "intrinsic",
-    "h": 0.1939,
-    "net": 0.0475,
+    "h": 0.2236,
+    "net": -0.0155,
     "st": 0.1779
    },
    {
@@ -2373,8 +2581,8 @@
     "o": 13.25,
     "x": 1.9,
     "by": "close",
-    "h": 0.1939,
-    "net": -0.9066,
+    "h": 0.1933,
+    "net": -0.9065,
     "st": -0.0424
    }
   ],
@@ -2389,8 +2597,8 @@
     "o": 5.14,
     "x": 3.4,
     "by": "close",
-    "h": 0.0885,
-    "net": -0.4598,
+    "h": 0.2021,
+    "net": -0.5725,
     "st": -0.0172
    },
    {
@@ -2403,8 +2611,8 @@
     "o": 3.2,
     "x": 0.1,
     "by": "close",
-    "h": 0.0891,
-    "net": -0.9884,
+    "h": 0.1051,
+    "net": -0.989,
     "st": -0.1958
    },
    {
@@ -2417,7 +2625,7 @@
     "o": 2.95,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3412,
+    "h": 0.175,
     "net": -1,
     "st": -0.0644
    },
@@ -2431,7 +2639,7 @@
     "o": 0.5,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.384,
+    "h": 0.4749,
     "net": -1,
     "st": 0.0247
    },
@@ -2445,7 +2653,7 @@
     "o": 3.8,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3435,
+    "h": 0.3621,
     "net": -1,
     "st": -0.8187
    },
@@ -2459,8 +2667,8 @@
     "o": 5.86,
     "x": 1.73,
     "by": "close",
-    "h": 0.4318,
-    "net": -0.8895,
+    "h": 0.4304,
+    "net": -0.8891,
     "st": -0.0742
    },
    {
@@ -2473,8 +2681,8 @@
     "o": 0.45,
     "x": 0.1,
     "by": "close",
-    "h": 0.3314,
-    "net": -0.974,
+    "h": 0.2738,
+    "net": -0.9637,
     "st": -0.182
    },
    {
@@ -2487,8 +2695,8 @@
     "o": 0.71,
     "x": 1.8100000000000005,
     "by": "intrinsic",
-    "h": 0.6098,
-    "net": -0.4498,
+    "h": 0.903,
+    "net": -0.9104,
     "st": 0.3857
    },
    {
@@ -2515,8 +2723,8 @@
     "o": 8.85,
     "x": 2.8,
     "by": "close",
-    "h": 0.1956,
-    "net": -0.7928,
+    "h": 0.1232,
+    "net": -0.7593,
     "st": -0.0314
    },
    {
@@ -2543,8 +2751,8 @@
     "o": 8.15,
     "x": 19.33,
     "by": "close",
-    "h": 0.0679,
-    "net": 1.0528,
+    "h": 0.0537,
+    "net": 1.112,
     "st": 0.1463
    },
    {
@@ -2557,7 +2765,7 @@
     "o": 1.14,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.1059,
+    "h": 0.1517,
     "net": -1,
     "st": -0.1703
    },
@@ -2571,8 +2779,8 @@
     "o": 1.15,
     "x": 1.56,
     "by": "close",
-    "h": 0.625,
-    "net": -0.7212,
+    "h": 0.5346,
+    "net": -0.6275,
     "st": 0.0502
    },
    {
@@ -2585,8 +2793,8 @@
     "o": 1.1,
     "x": 2.1900000000000013,
     "by": "intrinsic",
-    "h": 0.7286,
-    "net": -0.721,
+    "h": 0.4155,
+    "net": -0.2347,
     "st": 0.2074
    },
    {
@@ -2599,8 +2807,8 @@
     "o": 0.4,
     "x": 1,
     "by": "close",
-    "h": 0.425,
-    "net": -0.1532,
+    "h": 0.64,
+    "net": -0.5609,
     "st": 0.212
    },
    {
@@ -2613,8 +2821,8 @@
     "o": 2.39,
     "x": 0.6,
     "by": "close",
-    "h": 0.0885,
-    "net": -0.8126,
+    "h": 0.2021,
+    "net": -0.8533,
     "st": 0.0026
    },
    {
@@ -2627,8 +2835,8 @@
     "o": 2.3,
     "x": 1.3400000000000034,
     "by": "intrinsic",
-    "h": 0.0855,
-    "net": -0.5384,
+    "h": 0.1117,
+    "net": -0.5626,
     "st": 0.0982
    },
    {
@@ -2641,7 +2849,7 @@
     "o": 2.05,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.5069,
+    "h": 0.5361,
     "net": -1,
     "st": -0.0808
    },
@@ -2669,8 +2877,8 @@
     "o": 5.55,
     "x": 6,
     "by": "close",
-    "h": 0.2032,
-    "net": -0.2969,
+    "h": 0.3064,
+    "net": -0.4368,
     "st": 0.0938
    },
    {
@@ -2683,7 +2891,7 @@
     "o": 2.6,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.2287,
+    "h": 0.2482,
     "net": -1,
     "st": -0.4121
    },
@@ -2697,7 +2905,7 @@
     "o": 1.24,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3496,
+    "h": 0.4209,
     "net": -1,
     "st": -0.0795
    },
@@ -2711,7 +2919,7 @@
     "o": 0.6,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.9612,
+    "h": 0.9834,
     "net": -1,
     "st": -0.6557
    },
@@ -2753,7 +2961,7 @@
     "o": 0.75,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.6903,
+    "h": 0.7769,
     "net": -1,
     "st": -0.245
    },
@@ -2767,8 +2975,8 @@
     "o": 8.4,
     "x": 36.95,
     "by": "intrinsic",
-    "h": 0.2323,
-    "net": 1.7223,
+    "h": 0.2272,
+    "net": 1.752,
     "st": 1.6949
    },
    {
@@ -2781,7 +2989,7 @@
     "o": 0.35,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.6391,
+    "h": 0.7017,
     "net": -1,
     "st": -0.1199
    },
@@ -2795,23 +3003,9 @@
     "o": 10.03,
     "x": 5.3,
     "by": "close",
-    "h": 0.0483,
-    "net": -0.5273,
+    "h": 0.0518,
+    "net": -0.5306,
     "st": 0.0229
-   },
-   {
-    "s": "OABI",
-    "in": "2024-05-16",
-    "out": "2024-06-27",
-    "occ": "OABI240719C00005000",
-    "k": 5,
-    "spot": 4.55,
-    "o": 0.1,
-    "x": 0.05,
-    "by": "close",
-    "h": 0.5466,
-    "net": -1,
-    "st": -0.1794
    },
    {
     "s": "NTLA",
@@ -2823,9 +3017,23 @@
     "o": 2,
     "x": 0.25,
     "by": "close",
-    "h": 0.44,
-    "net": -0.9693,
+    "h": 0.2838,
+    "net": -0.9507,
     "st": -0.1256
+   },
+   {
+    "s": "OABI",
+    "in": "2024-05-16",
+    "out": "2024-06-27",
+    "occ": "OABI240719C00005000",
+    "k": 5,
+    "spot": 4.55,
+    "o": 0.1,
+    "x": 0.05,
+    "by": "close",
+    "h": 0.4894,
+    "net": -1,
+    "st": -0.1794
    },
    {
     "s": "RYTM",
@@ -2837,8 +3045,8 @@
     "o": 1.25,
     "x": 0.57,
     "by": "close",
-    "h": 0.4031,
-    "net": -0.8391,
+    "h": 0.1306,
+    "net": -0.6955,
     "st": 0.0051
    },
    {
@@ -2851,8 +3059,8 @@
     "o": 3.37,
     "x": 0.45,
     "by": "close",
-    "h": 0.7371,
-    "net": -0.9884,
+    "h": 0.9218,
+    "net": -1,
     "st": -0.1717
    },
    {
@@ -2879,8 +3087,8 @@
     "o": 3.17,
     "x": 5.9,
     "by": "close",
-    "h": 0.2117,
-    "net": 0.1824,
+    "h": 0.194,
+    "net": 0.2269,
     "st": 0.0607
    },
    {
@@ -2893,8 +3101,8 @@
     "o": 53.89,
     "x": 132.23000000000002,
     "by": "intrinsic",
-    "h": 0.0914,
-    "net": 1.0403,
+    "h": 0.0865,
+    "net": 1.0605,
     "st": 0.1105
    },
    {
@@ -2907,8 +3115,8 @@
     "o": 1.66,
     "x": 1.65,
     "by": "close",
-    "h": 0.6391,
-    "net": -0.8032,
+    "h": 0.7017,
+    "net": -0.8462,
     "st": 0.0145
    },
    {
@@ -2921,8 +3129,8 @@
     "o": 3.07,
     "x": 2.8,
     "by": "close",
-    "h": 0.3005,
-    "net": -0.5279,
+    "h": 0.3318,
+    "net": -0.56,
     "st": -0.0111
    },
    {
@@ -2935,7 +3143,7 @@
     "o": 0.55,
     "x": 0.05,
     "by": "close",
-    "h": 0.625,
+    "h": 0.5346,
     "net": -1,
     "st": -0.1232
    },
@@ -2949,8 +3157,8 @@
     "o": 0.31,
     "x": 0.2,
     "by": "close",
-    "h": 0.3,
-    "net": -0.8013,
+    "h": 0.4054,
+    "net": -0.8581,
     "st": -0.0531
    },
    {
@@ -2963,8 +3171,8 @@
     "o": 1.89,
     "x": 2.33,
     "by": "close",
-    "h": 0.1059,
-    "net": -0.0499,
+    "h": 0.1517,
+    "net": -0.1348,
     "st": 0.0303
    },
    {
@@ -2977,8 +3185,8 @@
     "o": 0.6,
     "x": 1.9,
     "by": "close",
-    "h": 0.5405,
-    "net": -0.1553,
+    "h": 0.3283,
+    "net": 0.4478,
     "st": 0.0256
    },
    {
@@ -2991,8 +3199,8 @@
     "o": 4.04,
     "x": 4.130000000000003,
     "by": "intrinsic",
-    "h": 0.5069,
-    "net": -0.6763,
+    "h": 0.5361,
+    "net": -0.7018,
     "st": 0.1132
    },
    {
@@ -3005,7 +3213,7 @@
     "o": 0.33,
     "x": 0.17,
     "by": "close",
-    "h": 0.9333,
+    "h": 0.9091,
     "net": -1,
     "st": 0.0246
    },
@@ -3019,7 +3227,7 @@
     "o": 2,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.773,
+    "h": 0.9158,
     "net": -1,
     "st": -0.5951
    },
@@ -3033,7 +3241,7 @@
     "o": 2.6,
     "x": 0.05000000000000071,
     "by": "intrinsic",
-    "h": 0.8316,
+    "h": 0.8868,
     "net": -1,
     "st": -0.0487
    },
@@ -3047,8 +3255,8 @@
     "o": 3.45,
     "x": 3.81,
     "by": "close",
-    "h": 0.4318,
-    "net": -0.5762,
+    "h": 0.4304,
+    "net": -0.5747,
     "st": 0.1134
    },
    {
@@ -3061,7 +3269,7 @@
     "o": 1.4,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.6903,
+    "h": 0.7769,
     "net": -1,
     "st": -0.0132
    },
@@ -3075,8 +3283,8 @@
     "o": 0.5,
     "x": 2.6,
     "by": "close",
-    "h": 0.85,
-    "net": -0.6513,
+    "h": 0.8824,
+    "net": -0.7418,
     "st": 0.693
    },
    {
@@ -3089,8 +3297,8 @@
     "o": 6.6,
     "x": 5.83,
     "by": "close",
-    "h": 0.1295,
-    "net": -0.3304,
+    "h": 0.1703,
+    "net": -0.3842,
     "st": 0.0315
    },
    {
@@ -3103,8 +3311,8 @@
     "o": 0.72,
     "x": 0.5,
     "by": "close",
-    "h": 0.9542,
-    "net": -1,
+    "h": 0.4462,
+    "net": -0.792,
     "st": 0.0245
    },
    {
@@ -3117,8 +3325,8 @@
     "o": 0.44,
     "x": 0.16,
     "by": "close",
-    "h": 0.2364,
-    "net": -0.8785,
+    "h": 0.2747,
+    "net": -0.8919,
     "st": -0.0379
    },
    {
@@ -3131,7 +3339,7 @@
     "o": 2.1,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.7371,
+    "h": 0.9218,
     "net": -1,
     "st": -0.1398
    },
@@ -3145,8 +3353,8 @@
     "o": 11.88,
     "x": 1.05,
     "by": "close",
-    "h": 0.1063,
-    "net": -0.9327,
+    "h": 0.1142,
+    "net": -0.9338,
     "st": -0.0256
    },
    {
@@ -3159,7 +3367,7 @@
     "o": 0.15,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.7792,
+    "h": 0.6,
     "net": -1,
     "st": 0.0391
    },
@@ -3173,8 +3381,8 @@
     "o": 3.5,
     "x": 2.35,
     "by": "close",
-    "h": 0.229,
-    "net": -0.5951,
+    "h": 0.296,
+    "net": -0.6502,
     "st": 0.0085
    },
    {
@@ -3187,8 +3395,8 @@
     "o": 4.6,
     "x": 4.3,
     "by": "close",
-    "h": 0.1429,
-    "net": -0.3149,
+    "h": 0.1413,
+    "net": -0.3128,
     "st": 0.0537
    },
    {
@@ -3201,8 +3409,8 @@
     "o": 1.6,
     "x": 0.5,
     "by": "close",
-    "h": 0.1768,
-    "net": -0.8129,
+    "h": 0.4098,
+    "net": -0.8937,
     "st": -0.0648
    },
    {
@@ -3215,8 +3423,8 @@
     "o": 2.5,
     "x": 0.1,
     "by": "close",
-    "h": 0.384,
-    "net": -0.9967,
+    "h": 0.4749,
+    "net": -0.9993,
     "st": -0.1899
    },
    {
@@ -3243,8 +3451,8 @@
     "o": 1.44,
     "x": 1.1,
     "by": "close",
-    "h": 0.625,
-    "net": -0.8483,
+    "h": 0.5346,
+    "net": -0.7956,
     "st": -0.041
    },
    {
@@ -3257,8 +3465,8 @@
     "o": 5,
     "x": 1.65,
     "by": "close",
-    "h": 0.323,
-    "net": -0.8399,
+    "h": 0.3866,
+    "net": -0.8622,
     "st": -0.0539
    },
    {
@@ -3271,7 +3479,7 @@
     "o": 3.1,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.2958,
+    "h": 0.1942,
     "net": -1,
     "st": -0.1835
    },
@@ -3285,7 +3493,7 @@
     "o": 1.7,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.625,
+    "h": 0.5346,
     "net": -1,
     "st": -0.9141
    },
@@ -3299,8 +3507,8 @@
     "o": 11.3,
     "x": 0.6,
     "by": "close",
-    "h": 0.1295,
-    "net": -0.9631,
+    "h": 0.1703,
+    "net": -0.9663,
     "st": -0.0992
    },
    {
@@ -3313,8 +3521,8 @@
     "o": 0.65,
     "x": 0.6,
     "by": "close",
-    "h": 0.4639,
-    "net": -0.7287,
+    "h": 0.4645,
+    "net": -0.7292,
     "st": 0.0144
    },
    {
@@ -3327,7 +3535,7 @@
     "o": 8.2,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.2032,
+    "h": 0.3064,
     "net": -1,
     "st": -0.0601
    },
@@ -3341,8 +3549,8 @@
     "o": 2.2,
     "x": 0.55,
     "by": "close",
-    "h": 0.3927,
-    "net": -0.9088,
+    "h": 0.3011,
+    "net": -0.8852,
     "st": -0.1089
    },
    {
@@ -3369,7 +3577,7 @@
     "o": 0.95,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.6941,
+    "h": 0.6333,
     "net": -1,
     "st": -0.0957
    },
@@ -3383,8 +3591,8 @@
     "o": 0.85,
     "x": 0.6,
     "by": "close",
-    "h": 0.0583,
-    "net": -0.4577,
+    "h": 0.0636,
+    "net": -0.4636,
     "st": -0.0101
    },
    {
@@ -3397,8 +3605,8 @@
     "o": 6.89,
     "x": 5.49,
     "by": "close",
-    "h": 0.625,
-    "net": -0.8214,
+    "h": 0.5346,
+    "net": -0.7642,
     "st": -0.009
    },
    {
@@ -3411,8 +3619,8 @@
     "o": 2.1,
     "x": 1,
     "by": "close",
-    "h": 0.625,
-    "net": -0.9061,
+    "h": 0.5346,
+    "net": -0.8731,
     "st": -0.0345
    },
    {
@@ -3425,23 +3633,9 @@
     "o": 0.05,
     "x": 0.15,
     "by": "close",
-    "h": 0.6822,
-    "net": -1,
+    "h": 0.522,
+    "net": -0.8279,
     "st": -0.0849
-   },
-   {
-    "s": "IMNM",
-    "in": "2024-11-18",
-    "out": "2024-12-30",
-    "occ": "IMNM250117C00012500",
-    "k": 12.5,
-    "spot": 10.2,
-    "o": 0.45,
-    "x": 0.05,
-    "by": "close",
-    "h": 0.8538,
-    "net": -1,
-    "st": -0.0002
    },
    {
     "s": "NKTR",
@@ -3453,7 +3647,7 @@
     "o": 0.05,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3801,
+    "h": 0.4074,
     "net": -1,
     "st": -0.1258
    },
@@ -3467,8 +3661,8 @@
     "o": 0.75,
     "x": 0.14,
     "by": "close",
-    "h": 0.1345,
-    "net": -0.921,
+    "h": 0.4442,
+    "net": -0.9755,
     "st": -0.1711
    },
    {
@@ -3481,8 +3675,8 @@
     "o": 5.9,
     "x": 0.15,
     "by": "close",
-    "h": 0.1246,
-    "net": -0.9878,
+    "h": 0.1917,
+    "net": -0.9899,
     "st": -0.1968
    },
    {
@@ -3495,7 +3689,7 @@
     "o": 6,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.221,
+    "h": 0.2361,
     "net": -1,
     "st": -0.0683
    },
@@ -3509,8 +3703,8 @@
     "o": 3.4,
     "x": 0.57,
     "by": "close",
-    "h": 0.6903,
-    "net": -0.9782,
+    "h": 0.7769,
+    "net": -0.9873,
     "st": -0.1794
    },
    {
@@ -3523,8 +3717,8 @@
     "o": 4.3,
     "x": 17.909999999999997,
     "by": "intrinsic",
-    "h": 0.2287,
-    "net": 1.5805,
+    "h": 0.2482,
+    "net": 1.4765,
     "st": 0.6223
    },
    {
@@ -3537,8 +3731,8 @@
     "o": 5.16,
     "x": 5,
     "by": "close",
-    "h": 0.72,
-    "net": -0.8487,
+    "h": 0.8667,
+    "net": -0.9363,
     "st": 0.0123
    },
    {
@@ -3551,8 +3745,8 @@
     "o": 3.9,
     "x": 3.130000000000001,
     "by": "intrinsic",
-    "h": 0.236,
-    "net": -0.5193,
+    "h": 0.2505,
+    "net": -0.534,
     "st": 0.0075
    },
    {
@@ -3565,7 +3759,7 @@
     "o": 0.4,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.4037,
+    "h": 0.3143,
     "net": -1,
     "st": -0.217
    },
@@ -3579,7 +3773,7 @@
     "o": 2.8,
     "x": 0.2,
     "by": "close",
-    "h": 0.8316,
+    "h": 0.8868,
     "net": -1,
     "st": 0.0533
    },
@@ -3593,23 +3787,9 @@
     "o": 8.1,
     "x": 9.509999999999991,
     "by": "intrinsic",
-    "h": 0.0836,
-    "net": -0.0184,
+    "h": 0.0757,
+    "net": -0.0026,
     "st": 0.0676
-   },
-   {
-    "s": "ATXS",
-    "in": "2024-11-18",
-    "out": "2024-12-30",
-    "occ": "ATXS250117C00015000",
-    "k": 15,
-    "spot": 9.4,
-    "o": 0.1,
-    "x": 0,
-    "by": "intrinsic",
-    "h": 0.625,
-    "net": -1,
-    "st": -0.0633
    },
    {
     "s": "IGMS",
@@ -3621,8 +3801,8 @@
     "o": 1.1,
     "x": 0.15,
     "by": "close",
-    "h": 0.625,
-    "net": -0.9966,
+    "h": 0.5346,
+    "net": -0.9886,
     "st": -0.3705
    },
    {
@@ -3635,9 +3815,23 @@
     "o": 0.87,
     "x": 0.5899999999999999,
     "by": "intrinsic",
-    "h": 0.9519,
-    "net": -1,
+    "h": 0.5346,
+    "net": -0.8379,
     "st": -0.0186
+   },
+   {
+    "s": "ATXS",
+    "in": "2024-11-18",
+    "out": "2024-12-30",
+    "occ": "ATXS250117C00015000",
+    "k": 15,
+    "spot": 9.4,
+    "o": 0.1,
+    "x": 0,
+    "by": "intrinsic",
+    "h": 0.5346,
+    "net": -1,
+    "st": -0.0633
    },
    {
     "s": "HALO",
@@ -3649,8 +3843,8 @@
     "o": 3.64,
     "x": 3.6,
     "by": "close",
-    "h": 0.2958,
-    "net": -0.4787,
+    "h": 0.1942,
+    "net": -0.3516,
     "st": 0.0569
    },
    {
@@ -3663,8 +3857,8 @@
     "o": 6,
     "x": 19.14,
     "by": "intrinsic",
-    "h": 0.625,
-    "net": -0.2727,
+    "h": 0.5346,
+    "net": -0.0432,
     "st": 0.6594
    },
    {
@@ -3677,7 +3871,7 @@
     "o": 0.3,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.671,
+    "h": 0.6138,
     "net": -1,
     "st": -0.2283
    },
@@ -3691,8 +3885,8 @@
     "o": 1.45,
     "x": 0.9,
     "by": "close",
-    "h": 0.3733,
-    "net": -0.7482,
+    "h": 0.3731,
+    "net": -0.7481,
     "st": -0.04
    },
    {
@@ -3705,8 +3899,8 @@
     "o": 15.8,
     "x": 5.1,
     "by": "close",
-    "h": 0.1099,
-    "net": -0.7447,
+    "h": 0.0845,
+    "net": -0.7312,
     "st": -0.0924
    },
    {
@@ -3733,7 +3927,7 @@
     "o": 0.17,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.4639,
+    "h": 0.4645,
     "net": -1,
     "st": -0.008
    },
@@ -3747,8 +3941,8 @@
     "o": 3.85,
     "x": 0.45,
     "by": "close",
-    "h": 0.3927,
-    "net": -0.9587,
+    "h": 0.3011,
+    "net": -0.9477,
     "st": -0.068
    },
    {
@@ -3761,7 +3955,7 @@
     "o": 1.25,
     "x": 0.03,
     "by": "close",
-    "h": 0.444,
+    "h": 0.4898,
     "net": -1,
     "st": -0.1595
    },
@@ -3775,7 +3969,7 @@
     "o": 3,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.4875,
+    "h": 0.3979,
     "net": -1,
     "st": -0.1833
    },
@@ -3789,23 +3983,9 @@
     "o": 0.25,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.625,
+    "h": 0.5346,
     "net": -1,
     "st": -0.4561
-   },
-   {
-    "s": "KROS",
-    "in": "2025-02-18",
-    "out": "2025-03-28",
-    "occ": "KROS250417C00010000",
-    "k": 10,
-    "spot": 10.33,
-    "o": 1.55,
-    "x": 1.12,
-    "by": "close",
-    "h": 0.5636,
-    "net": -0.8226,
-    "st": 0.0365
    },
    {
     "s": "SGMT",
@@ -3817,9 +3997,23 @@
     "o": 0.65,
     "x": 0.1,
     "by": "close",
-    "h": 0.0583,
-    "net": -0.9401,
+    "h": 0.0636,
+    "net": -0.9411,
     "st": -0.1551
+   },
+   {
+    "s": "KROS",
+    "in": "2025-02-18",
+    "out": "2025-03-28",
+    "occ": "KROS250417C00010000",
+    "k": 10,
+    "spot": 10.33,
+    "o": 1.55,
+    "x": 1.12,
+    "by": "close",
+    "h": 0.4864,
+    "net": -0.7769,
+    "st": 0.0365
    },
    {
     "s": "ANIP",
@@ -3831,8 +4025,8 @@
     "o": 3.5,
     "x": 7.609999999999999,
     "by": "intrinsic",
-    "h": 0.3643,
-    "net": -0.0077,
+    "h": 0.4189,
+    "net": -0.1285,
     "st": 0.141
    },
    {
@@ -3845,7 +4039,7 @@
     "o": 0.3,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.4071,
+    "h": 0.6612,
     "net": -1,
     "st": -0.1667
    },
@@ -3859,7 +4053,7 @@
     "o": 0.5,
     "x": 0.05,
     "by": "close",
-    "h": 0.6941,
+    "h": 0.6333,
     "net": -1,
     "st": -0.3819
    },
@@ -3873,7 +4067,7 @@
     "o": 0.85,
     "x": 0.05,
     "by": "close",
-    "h": 0.2364,
+    "h": 0.2747,
     "net": -1,
     "st": -0.3771
    },
@@ -3887,7 +4081,7 @@
     "o": 1.01,
     "x": 0.05,
     "by": "close",
-    "h": 0.6,
+    "h": 0.4237,
     "net": -1,
     "st": -0.1832
    },
@@ -3901,8 +4095,8 @@
     "o": 1.4,
     "x": 0.64,
     "by": "close",
-    "h": 0.5405,
-    "net": -0.8894,
+    "h": 0.3283,
+    "net": -0.8011,
     "st": -0.0289
    },
    {
@@ -3915,8 +4109,8 @@
     "o": 2.7,
     "x": 2.25,
     "by": "close",
-    "h": 0.3402,
-    "net": -0.6089,
+    "h": 0.4142,
+    "net": -0.6722,
     "st": 0.0332
    },
    {
@@ -3929,7 +4123,7 @@
     "o": 49,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.0914,
+    "h": 0.0865,
     "net": -1,
     "st": -0.2218
    },
@@ -3943,8 +4137,8 @@
     "o": 4.15,
     "x": 0.07,
     "by": "close",
-    "h": 0.1059,
-    "net": -0.9973,
+    "h": 0.1517,
+    "net": -0.9981,
     "st": -0.1915
    },
    {
@@ -3957,8 +4151,8 @@
     "o": 2.42,
     "x": 2.4,
     "by": "close",
-    "h": 0.3946,
-    "net": -0.5903,
+    "h": 0.3711,
+    "net": -0.5667,
     "st": 0.1194
    },
    {
@@ -3971,8 +4165,8 @@
     "o": 4.97,
     "x": 12.35,
     "by": "close",
-    "h": 0.2117,
-    "net": 0.5951,
+    "h": 0.194,
+    "net": 0.6549,
     "st": 0.0955
    },
    {
@@ -3985,7 +4179,7 @@
     "o": 2.7,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3005,
+    "h": 0.3318,
     "net": -1,
     "st": -0.1879
    },
@@ -3999,8 +4193,8 @@
     "o": 3.48,
     "x": 0.72,
     "by": "close",
-    "h": 0.5069,
-    "net": -0.9424,
+    "h": 0.5361,
+    "net": -0.9474,
     "st": -0.0735
    },
    {
@@ -4013,23 +4207,9 @@
     "o": 21.88,
     "x": 42.829999999999984,
     "by": "intrinsic",
-    "h": 0.1099,
-    "net": 0.5645,
+    "h": 0.0845,
+    "net": 0.6469,
     "st": 0.1408
-   },
-   {
-    "s": "CYTK",
-    "in": "2025-05-16",
-    "out": "2025-06-27",
-    "occ": "CYTK250718C00035000",
-    "k": 35,
-    "spot": 29.93,
-    "o": 1.2,
-    "x": 0.94,
-    "by": "close",
-    "h": 0.2779,
-    "net": -0.603,
-    "st": 0.0999
    },
    {
     "s": "BHVN",
@@ -4041,9 +4221,23 @@
     "o": 9.55,
     "x": 6.59,
     "by": "intrinsic",
-    "h": 0.1246,
-    "net": -0.47,
+    "h": 0.1917,
+    "net": -0.5384,
     "st": -0.1246
+   },
+   {
+    "s": "CYTK",
+    "in": "2025-05-16",
+    "out": "2025-06-27",
+    "occ": "CYTK250718C00035000",
+    "k": 35,
+    "spot": 29.93,
+    "o": 1.2,
+    "x": 0.94,
+    "by": "close",
+    "h": 0.2431,
+    "net": -0.571,
+    "st": 0.0999
    },
    {
     "s": "DNTH",
@@ -4055,8 +4249,8 @@
     "o": 6,
     "x": 2.629999999999999,
     "by": "intrinsic",
-    "h": 0.2242,
-    "net": -0.7308,
+    "h": 0.2122,
+    "net": -0.7239,
     "st": -0.0801
    },
    {
@@ -4069,9 +4263,79 @@
     "o": 1.25,
     "x": 0.4,
     "by": "close",
-    "h": 0.305,
-    "net": -0.8644,
+    "h": 0.6777,
+    "net": -0.9632,
     "st": -0.1189
+   },
+   {
+    "s": "VRDN",
+    "in": "2025-05-16",
+    "out": "2025-06-27",
+    "occ": "VRDN250718C00015000",
+    "k": 15,
+    "spot": 12.63,
+    "o": 0.5,
+    "x": 0.7,
+    "by": "close",
+    "h": 0.7017,
+    "net": -0.8237,
+    "st": 0.1266
+   },
+   {
+    "s": "IMNM",
+    "in": "2025-05-16",
+    "out": "2025-06-27",
+    "occ": "IMNM250718C00012500",
+    "k": 12.5,
+    "spot": 7.99,
+    "o": 0.25,
+    "x": 0,
+    "by": "intrinsic",
+    "h": 0.8241,
+    "net": -1,
+    "st": 0.0896
+   },
+   {
+    "s": "ATYR",
+    "in": "2025-05-16",
+    "out": "2025-06-27",
+    "occ": "ATYR250718C00005000",
+    "k": 5,
+    "spot": 3.07,
+    "o": 0.75,
+    "x": 0.4,
+    "by": "close",
+    "h": 0.5346,
+    "net": -0.8866,
+    "st": 0.6304
+   },
+   {
+    "s": "PCVX",
+    "in": "2025-05-16",
+    "out": "2025-06-27",
+    "occ": "PCVX250718C00030000",
+    "k": 30,
+    "spot": 30.97,
+    "o": 5.28,
+    "x": 3.2,
+    "by": "close",
+    "h": 0.3064,
+    "net": -0.6877,
+    "st": 0.044
+   },
+   {
+    "s": "INSM",
+    "in": "2025-05-16",
+    "out": "2025-06-27",
+    "occ": "INSM250718C00075000",
+    "k": 75,
+    "spot": 67.53,
+    "o": 4.19,
+    "x": 24.489999999999995,
+    "by": "intrinsic",
+    "h": 0.2272,
+    "net": 2.6358,
+    "st": 0.4653
    },
    {
     "s": "APGE",
@@ -4088,76 +4352,6 @@
     "st": 0.0613
    },
    {
-    "s": "VRDN",
-    "in": "2025-05-16",
-    "out": "2025-06-27",
-    "occ": "VRDN250718C00015000",
-    "k": 15,
-    "spot": 12.63,
-    "o": 0.5,
-    "x": 0.7,
-    "by": "close",
-    "h": 0.6391,
-    "net": -0.767,
-    "st": 0.1266
-   },
-   {
-    "s": "IMNM",
-    "in": "2025-05-16",
-    "out": "2025-06-27",
-    "occ": "IMNM250718C00012500",
-    "k": 12.5,
-    "spot": 7.99,
-    "o": 0.25,
-    "x": 0,
-    "by": "intrinsic",
-    "h": 0.8538,
-    "net": -1,
-    "st": 0.0896
-   },
-   {
-    "s": "ATYR",
-    "in": "2025-05-16",
-    "out": "2025-06-27",
-    "occ": "ATYR250718C00005000",
-    "k": 5,
-    "spot": 3.07,
-    "o": 0.75,
-    "x": 0.4,
-    "by": "close",
-    "h": 0.625,
-    "net": -0.9212,
-    "st": 0.6304
-   },
-   {
-    "s": "PCVX",
-    "in": "2025-05-16",
-    "out": "2025-06-27",
-    "occ": "PCVX250718C00030000",
-    "k": 30,
-    "spot": 30.97,
-    "o": 5.28,
-    "x": 3.2,
-    "by": "close",
-    "h": 0.2032,
-    "net": -0.6096,
-    "st": 0.044
-   },
-   {
-    "s": "INSM",
-    "in": "2025-05-16",
-    "out": "2025-06-27",
-    "occ": "INSM250718C00075000",
-    "k": 75,
-    "spot": 67.53,
-    "o": 4.19,
-    "x": 24.489999999999995,
-    "by": "intrinsic",
-    "h": 0.2323,
-    "net": 2.5966,
-    "st": 0.4653
-   },
-   {
     "s": "ALKS",
     "in": "2025-05-16",
     "out": "2025-06-27",
@@ -4167,7 +4361,7 @@
     "o": 2.65,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3498,
+    "h": 0.5346,
     "net": -1,
     "st": -0.0822
    },
@@ -4181,23 +4375,9 @@
     "o": 1.49,
     "x": 9.86,
     "by": "intrinsic",
-    "h": 0.229,
-    "net": 3.0149,
+    "h": 0.296,
+    "net": 2.4787,
     "st": 0.3184
-   },
-   {
-    "s": "PTGX",
-    "in": "2025-05-16",
-    "out": "2025-06-27",
-    "occ": "PTGX250718C00035000",
-    "k": 35,
-    "spot": 44.35,
-    "o": 11,
-    "x": 20.689999999999998,
-    "by": "intrinsic",
-    "h": 0.221,
-    "net": 0.192,
-    "st": 0.2477
    },
    {
     "s": "RYTM",
@@ -4209,7 +4389,7 @@
     "o": 2.96,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.4031,
+    "h": 0.1306,
     "net": -1,
     "st": 0.0389
    },
@@ -4223,7 +4403,7 @@
     "o": 2.81,
     "x": 0.09,
     "by": "close",
-    "h": 0.8316,
+    "h": 0.8868,
     "net": -1,
     "st": -0.1019
    },
@@ -4237,8 +4417,8 @@
     "o": 0.43,
     "x": 0.25,
     "by": "close",
-    "h": 0.1587,
-    "net": -0.7076,
+    "h": 0.2632,
+    "net": -0.7737,
     "st": 0.017
    },
    {
@@ -4251,8 +4431,8 @@
     "o": 0.3,
     "x": 0.5,
     "by": "close",
-    "h": 0.7655,
-    "net": -0.884,
+    "h": 0.8191,
+    "net": -0.9321,
     "st": 0.2154
    },
    {
@@ -4265,8 +4445,8 @@
     "o": 7.7,
     "x": 6.670000000000002,
     "by": "intrinsic",
-    "h": 0.1429,
-    "net": -0.3596,
+    "h": 0.1413,
+    "net": -0.3576,
     "st": 0.0659
    },
    {
@@ -4279,8 +4459,8 @@
     "o": 44.6,
     "x": 50.40999999999997,
     "by": "intrinsic",
-    "h": 0.0914,
-    "net": -0.061,
+    "h": 0.0865,
+    "net": -0.0517,
     "st": 0.0691
    },
    {
@@ -4293,8 +4473,8 @@
     "o": 3,
     "x": 1.9,
     "by": "close",
-    "h": 0.1768,
-    "net": -0.5772,
+    "h": 0.4098,
+    "net": -0.7497,
     "st": -0.0183
    },
    {
@@ -4307,7 +4487,7 @@
     "o": 0.3,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3005,
+    "h": 0.3318,
     "net": -1,
     "st": 0.0388
    },
@@ -4321,8 +4501,8 @@
     "o": 5,
     "x": 19.75999999999999,
     "by": "intrinsic",
-    "h": 0.0855,
-    "net": 2.2902,
+    "h": 0.1117,
+    "net": 2.1205,
     "st": 0.226
    },
    {
@@ -4349,8 +4529,8 @@
     "o": 1.1,
     "x": 1.2300000000000004,
     "by": "intrinsic",
-    "h": 0.3971,
-    "net": -0.5642,
+    "h": 0.5032,
+    "net": -0.6707,
     "st": 0.2361
    },
    {
@@ -4363,8 +4543,8 @@
     "o": 0.1,
     "x": 0.1,
     "by": "close",
-    "h": 0.3022,
-    "net": -0.8902,
+    "h": 0.3087,
+    "net": -0.8943,
     "st": 0.4287
    },
    {
@@ -4377,8 +4557,8 @@
     "o": 0.49,
     "x": 0.65,
     "by": "close",
-    "h": 0.4639,
-    "net": -0.611,
+    "h": 0.4645,
+    "net": -0.6116,
     "st": 0.0321
    },
    {
@@ -4391,8 +4571,8 @@
     "o": 1.6,
     "x": 0.18,
     "by": "close",
-    "h": 0.2934,
-    "net": -0.9636,
+    "h": 0.388,
+    "net": -0.9735,
     "st": -0.0965
    },
    {
@@ -4405,8 +4585,8 @@
     "o": 0.85,
     "x": 0.2,
     "by": "close",
-    "h": 0.7329,
-    "net": -0.9978,
+    "h": 0.4545,
+    "net": -0.9541,
     "st": -0.033
    },
    {
@@ -4419,8 +4599,8 @@
     "o": 5.2,
     "x": 5.99,
     "by": "close",
-    "h": 0.2287,
-    "net": -0.2903,
+    "h": 0.2482,
+    "net": -0.3191,
     "st": 0.015
    },
    {
@@ -4433,23 +4613,9 @@
     "o": 5.5,
     "x": 0.12,
     "by": "close",
-    "h": 0.5069,
-    "net": -0.9989,
+    "h": 0.5361,
+    "net": -0.9993,
     "st": -0.2493
-   },
-   {
-    "s": "ARQT",
-    "in": "2025-08-19",
-    "out": "2025-09-29",
-    "occ": "ARQT251017C00015000",
-    "k": 15,
-    "spot": 16.7,
-    "o": 2.1,
-    "x": 4.1,
-    "by": "close",
-    "h": 0.3946,
-    "net": -0.1834,
-    "st": 0.107
    },
    {
     "s": "JAZZ",
@@ -4461,8 +4627,8 @@
     "o": 6.7,
     "x": 9.02000000000001,
     "by": "intrinsic",
-    "h": 0.1429,
-    "net": -0.0033,
+    "h": 0.1413,
+    "net": -0.0002,
     "st": 0.0849
    },
    {
@@ -4475,9 +4641,23 @@
     "o": 0.62,
     "x": 1.11,
     "by": "close",
-    "h": 0.6903,
-    "net": -0.7325,
+    "h": 0.7769,
+    "net": -0.8284,
     "st": 0.1784
+   },
+   {
+    "s": "ARQT",
+    "in": "2025-08-19",
+    "out": "2025-09-29",
+    "occ": "ARQT251017C00015000",
+    "k": 15,
+    "spot": 16.7,
+    "o": 2.1,
+    "x": 4.1,
+    "by": "close",
+    "h": 0.3711,
+    "net": -0.1368,
+    "st": 0.107
    },
    {
     "s": "OCUL",
@@ -4489,8 +4669,8 @@
     "o": 1.2,
     "x": 0.74,
     "by": "close",
-    "h": 0.6098,
-    "net": -0.8795,
+    "h": 0.903,
+    "net": -0.9907,
     "st": 0.019
    },
    {
@@ -4503,8 +4683,8 @@
     "o": 1.7,
     "x": 2.8000000000000007,
     "by": "intrinsic",
-    "h": 0.4318,
-    "net": -0.3796,
+    "h": 0.4304,
+    "net": -0.3775,
     "st": 0.1804
    },
    {
@@ -4517,8 +4697,8 @@
     "o": 2.95,
     "x": 30.92,
     "by": "intrinsic",
-    "h": 0.3801,
-    "net": 3.6388,
+    "h": 0.4074,
+    "net": 3.3488,
     "st": 1.1614
    },
    {
@@ -4531,8 +4711,8 @@
     "o": 0.88,
     "x": 2.2300000000000004,
     "by": "intrinsic",
-    "h": 0.4875,
-    "net": -0.1958,
+    "h": 0.3979,
+    "net": 0.0097,
     "st": 0.2227
    },
    {
@@ -4545,7 +4725,7 @@
     "o": 1,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3283,
+    "h": 0.4661,
     "net": -1,
     "st": 0.1549
    },
@@ -4573,8 +4753,8 @@
     "o": 4.85,
     "x": 8.54,
     "by": "close",
-    "h": 0.1063,
-    "net": 0.4,
+    "h": 0.1142,
+    "net": 0.378,
     "st": 0.0445
    },
    {
@@ -4587,8 +4767,8 @@
     "o": 0.25,
     "x": 0.44,
     "by": "close",
-    "h": 0.3022,
-    "net": -0.3156,
+    "h": 0.3087,
+    "net": -0.3262,
     "st": 0.3121
    },
    {
@@ -4601,8 +4781,8 @@
     "o": 1.4,
     "x": 1.17,
     "by": "intrinsic",
-    "h": 0.9109,
-    "net": -0.9801,
+    "h": 0.7848,
+    "net": -0.9208,
     "st": 0.1388
    },
    {
@@ -4615,8 +4795,8 @@
     "o": 4.1,
     "x": 4.259999999999998,
     "by": "intrinsic",
-    "h": 0.2336,
-    "net": -0.3706,
+    "h": 0.2643,
+    "net": -0.4108,
     "st": 0.0899
    },
    {
@@ -4629,8 +4809,8 @@
     "o": 2.3,
     "x": 2.35,
     "by": "close",
-    "h": 0.4071,
-    "net": -0.5913,
+    "h": 0.6612,
+    "net": -0.8072,
     "st": 0.2007
    },
    {
@@ -4643,8 +4823,8 @@
     "o": 0.85,
     "x": 0.73,
     "by": "close",
-    "h": 0.7329,
-    "net": -0.9048,
+    "h": 0.4545,
+    "net": -0.7293,
     "st": 0.0399
    },
    {
@@ -4657,8 +4837,8 @@
     "o": 16.15,
     "x": 27.379999999999995,
     "by": "intrinsic",
-    "h": 0.1063,
-    "net": 0.3629,
+    "h": 0.1142,
+    "net": 0.3414,
     "st": 0.0923
    },
    {
@@ -4671,8 +4851,8 @@
     "o": 1.35,
     "x": 1.25,
     "by": "close",
-    "h": 0.625,
-    "net": -0.8134,
+    "h": 0.5346,
+    "net": -0.7494,
     "st": -0.1125
    },
    {
@@ -4685,8 +4865,8 @@
     "o": 13.5,
     "x": 16.730000000000004,
     "by": "intrinsic",
-    "h": 0.4031,
-    "net": -0.4769,
+    "h": 0.1306,
+    "net": -0.0535,
     "st": 0.1492
    },
    {
@@ -4699,8 +4879,8 @@
     "o": 9.1,
     "x": 3.01,
     "by": "close",
-    "h": 0.2779,
-    "net": -0.8182,
+    "h": 0.2431,
+    "net": -0.8039,
     "st": -0.0564
    },
    {
@@ -4713,8 +4893,8 @@
     "o": 2,
     "x": 0.77,
     "by": "close",
-    "h": 0.5405,
-    "net": -0.903,
+    "h": 0.3283,
+    "net": -0.8274,
     "st": 0.0012
    },
    {
@@ -4727,8 +4907,8 @@
     "o": 12.8,
     "x": 7.650000000000006,
     "by": "intrinsic",
-    "h": 0.1197,
-    "net": -0.5353,
+    "h": 0.1795,
+    "net": -0.5889,
     "st": 0.1071
    },
    {
@@ -4741,8 +4921,8 @@
     "o": 0.5,
     "x": 2.15,
     "by": "close",
-    "h": 0.3,
-    "net": 1.0786,
+    "h": 0.4054,
+    "net": 0.632,
     "st": 0.6216
    },
    {
@@ -4755,8 +4935,8 @@
     "o": 1.3,
     "x": 1.5899999999999999,
     "by": "intrinsic",
-    "h": 0.9109,
-    "net": -0.9638,
+    "h": 0.7848,
+    "net": -0.8767,
     "st": 0.2717
    },
    {
@@ -4769,7 +4949,7 @@
     "o": 2.15,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.5882,
+    "h": 0.8883,
     "net": -1,
     "st": -0.3729
    },
@@ -4783,8 +4963,8 @@
     "o": 0.6,
     "x": 0.26,
     "by": "close",
-    "h": 0.625,
-    "net": -0.9537,
+    "h": 0.5346,
+    "net": -0.9269,
     "st": 0.0178
    },
    {
@@ -4797,8 +4977,8 @@
     "o": 1.2,
     "x": 5.2,
     "by": "close",
-    "h": 0.9077,
-    "net": -0.8162,
+    "h": 0.894,
+    "net": -0.7843,
     "st": 0.6525
    },
    {
@@ -4811,8 +4991,8 @@
     "o": 0.8,
     "x": 0.5500000000000007,
     "by": "intrinsic",
-    "h": 0.4739,
-    "net": -0.8053,
+    "h": 0.3801,
+    "net": -0.7479,
     "st": 0.2678
    },
    {
@@ -4825,7 +5005,7 @@
     "o": 1.5,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3435,
+    "h": 0.3621,
     "net": -1,
     "st": -0.1416
    },
@@ -4839,8 +5019,8 @@
     "o": 1.4,
     "x": 0.75,
     "by": "close",
-    "h": 0.6098,
-    "net": -0.8947,
+    "h": 0.903,
+    "net": -0.9916,
     "st": 0.0224
    },
    {
@@ -4853,8 +5033,8 @@
     "o": 1.15,
     "x": 0.7200000000000006,
     "by": "intrinsic",
-    "h": 0.7371,
-    "net": -0.932,
+    "h": 0.9218,
+    "net": -0.9972,
     "st": 0.1692
    },
    {
@@ -4867,8 +5047,8 @@
     "o": 3.6,
     "x": 4.04,
     "by": "close",
-    "h": 0.3402,
-    "net": -0.4634,
+    "h": 0.4142,
+    "net": -0.5494,
     "st": 0.0466
    },
    {
@@ -4881,8 +5061,8 @@
     "o": 0.18,
     "x": 0.5,
     "by": "close",
-    "h": 0.671,
-    "net": -0.6736,
+    "h": 0.6138,
+    "net": -0.5797,
     "st": 0.602
    },
    {
@@ -4895,8 +5075,8 @@
     "o": 3.3,
     "x": 3.990000000000002,
     "by": "intrinsic",
-    "h": 0.1693,
-    "net": -0.1649,
+    "h": 0.6219,
+    "net": -0.73,
     "st": 0.078
    },
    {
@@ -4909,8 +5089,8 @@
     "o": 7,
     "x": 6.469999999999999,
     "by": "intrinsic",
-    "h": 0.1768,
-    "net": -0.3634,
+    "h": 0.4098,
+    "net": -0.6201,
     "st": 0.0766
    },
    {
@@ -4923,8 +5103,8 @@
     "o": 1.9,
     "x": 1.75,
     "by": "close",
-    "h": 0.4639,
-    "net": -0.6863,
+    "h": 0.4645,
+    "net": -0.6868,
     "st": 0.0502
    },
    {
@@ -4951,8 +5131,8 @@
     "o": 2.8,
     "x": 3.38,
     "by": "intrinsic",
-    "h": 0.825,
-    "net": -0.8951,
+    "h": 0.5346,
+    "net": -0.6496,
     "st": 0.099
    },
    {
@@ -4965,8 +5145,8 @@
     "o": 3.36,
     "x": 13.229999999999997,
     "by": "intrinsic",
-    "h": 0.3283,
-    "net": 0.9581,
+    "h": 0.4661,
+    "net": 0.4095,
     "st": 0.3779
    },
    {
@@ -4979,8 +5159,8 @@
     "o": 1.2,
     "x": 0.44,
     "by": "close",
-    "h": 0.625,
-    "net": -0.9425,
+    "h": 0.5346,
+    "net": -0.9182,
     "st": -0.3432
    },
    {
@@ -4993,8 +5173,8 @@
     "o": 1.95,
     "x": 4.489999999999998,
     "by": "intrinsic",
-    "h": 0.4639,
-    "net": -0.1884,
+    "h": 0.4645,
+    "net": -0.1897,
     "st": 0.1911
    },
    {
@@ -5007,8 +5187,8 @@
     "o": 2.95,
     "x": 2.280000000000001,
     "by": "intrinsic",
-    "h": 0.3433,
-    "net": -0.6393,
+    "h": 0.2843,
+    "net": -0.5879,
     "st": 0.1193
    },
    {
@@ -5021,8 +5201,8 @@
     "o": 3.4,
     "x": 4.35,
     "by": "intrinsic",
-    "h": 0.6731,
-    "net": -0.7609,
+    "h": 0.5346,
+    "net": -0.6252,
     "st": 0.296
    },
    {
@@ -5035,8 +5215,8 @@
     "o": 7.85,
     "x": 12.840000000000003,
     "by": "intrinsic",
-    "h": 0.3713,
-    "net": -0.2582,
+    "h": 0.3339,
+    "net": -0.1919,
     "st": 0.1609
    },
    {
@@ -5049,8 +5229,8 @@
     "o": 1.95,
     "x": 1.59,
     "by": "close",
-    "h": 0.625,
-    "net": -0.8303,
+    "h": 0.5346,
+    "net": -0.7732,
     "st": -0.1511
    },
    {
@@ -5063,8 +5243,8 @@
     "o": 0.95,
     "x": 2.4,
     "by": "close",
-    "h": 0.3412,
-    "net": 0.1564,
+    "h": 0.175,
+    "net": 0.6549,
     "st": 0.4351
    },
    {
@@ -5077,8 +5257,8 @@
     "o": 8.8,
     "x": 5.3,
     "by": "close",
-    "h": 0.2779,
-    "net": -0.6656,
+    "h": 0.2431,
+    "net": -0.6395,
     "st": -0.0584
    },
    {
@@ -5091,8 +5271,8 @@
     "o": 10.7,
     "x": 1,
     "by": "close",
-    "h": 0.323,
-    "net": -0.9559,
+    "h": 0.3866,
+    "net": -0.9622,
     "st": -0.1643
    },
    {
@@ -5105,7 +5285,7 @@
     "o": 5.8,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3652,
+    "h": 0.3283,
     "net": -1,
     "st": -0.2298
    },
@@ -5119,7 +5299,7 @@
     "o": 2.9,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.8538,
+    "h": 0.8241,
     "net": -1,
     "st": -0.1498
    },
@@ -5133,7 +5313,7 @@
     "o": 0.45,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.625,
+    "h": 0.5102,
     "net": -1,
     "st": -0.1288
    },
@@ -5147,8 +5327,8 @@
     "o": 5.3,
     "x": 2.1799999999999997,
     "by": "intrinsic",
-    "h": 0.3878,
-    "net": -0.8266,
+    "h": 0.4588,
+    "net": -0.8548,
     "st": -0.024
    },
    {
@@ -5161,8 +5341,8 @@
     "o": 2.62,
     "x": 1.85,
     "by": "close",
-    "h": 0.3867,
-    "net": -0.7055,
+    "h": 0.7187,
+    "net": -0.8967,
     "st": -0.2868
    },
    {
@@ -5175,8 +5355,8 @@
     "o": 4.5,
     "x": 4.25,
     "by": "close",
-    "h": 0.3005,
-    "net": -0.5048,
+    "h": 0.3318,
+    "net": -0.5384,
     "st": 0.0732
    },
    {
@@ -5189,8 +5369,8 @@
     "o": 10.92,
     "x": 27,
     "by": "close",
-    "h": 0.1295,
-    "net": 0.8938,
+    "h": 0.1703,
+    "net": 0.7423,
     "st": 0.1431
    },
    {
@@ -5203,8 +5383,8 @@
     "o": 11,
     "x": 14.469999999999999,
     "by": "intrinsic",
-    "h": 0.1192,
-    "net": 0.027,
+    "h": 0.1195,
+    "net": 0.0265,
     "st": 0.0896
    },
    {
@@ -5217,23 +5397,9 @@
     "o": 4.5,
     "x": 4.3,
     "by": "close",
-    "h": 0.0885,
-    "net": -0.218,
+    "h": 0.2021,
+    "net": -0.3807,
     "st": 0.009
-   },
-   {
-    "s": "ARQT",
-    "in": "2026-05-14",
-    "out": "2026-06-25",
-    "occ": "ARQT260717C00022500",
-    "k": 22.5,
-    "spot": 21.75,
-    "o": 2.38,
-    "x": 4.190000000000001,
-    "by": "intrinsic",
-    "h": 0.3946,
-    "net": -0.2619,
-    "st": 0.2191
    },
    {
     "s": "UNCY",
@@ -5245,9 +5411,23 @@
     "o": 3,
     "x": 2.75,
     "by": "close",
-    "h": 0.9831,
-    "net": -1,
+    "h": 0.5535,
+    "net": -0.7499,
     "st": -0.0421
+   },
+   {
+    "s": "ARQT",
+    "in": "2026-05-14",
+    "out": "2026-06-25",
+    "occ": "ARQT260717C00022500",
+    "k": 22.5,
+    "spot": 21.75,
+    "o": 2.38,
+    "x": 4.190000000000001,
+    "by": "intrinsic",
+    "h": 0.3711,
+    "net": -0.2198,
+    "st": 0.2191
    },
    {
     "s": "IONS",
@@ -5259,8 +5439,8 @@
     "o": 4.5,
     "x": 7.3,
     "by": "close",
-    "h": 0.1768,
-    "net": 0.1147,
+    "h": 0.4098,
+    "net": -0.3341,
     "st": 0.0617
    },
    {
@@ -5273,8 +5453,8 @@
     "o": 3,
     "x": 0.41,
     "by": "close",
-    "h": 0.7576,
-    "net": -0.9907,
+    "h": 0.7666,
+    "net": -0.9915,
     "st": -0.2
    },
    {
@@ -5287,51 +5467,9 @@
     "o": 1.59,
     "x": 0.7800000000000011,
     "by": "intrinsic",
-    "h": 0.384,
-    "net": -0.8087,
+    "h": 0.4749,
+    "net": -0.8499,
     "st": 0.0681
-   },
-   {
-    "s": "HRMY",
-    "in": "2026-05-18",
-    "out": "2026-06-29",
-    "occ": "HRMY260717C00032500",
-    "k": 32.5,
-    "spot": 30.13,
-    "o": 1.7,
-    "x": 2.8400000000000034,
-    "by": "intrinsic",
-    "h": 0.5069,
-    "net": -0.4829,
-    "st": 0.1649
-   },
-   {
-    "s": "AGIO",
-    "in": "2026-05-18",
-    "out": "2026-06-29",
-    "occ": "AGIO260717C00035000",
-    "k": 35,
-    "spot": 28.16,
-    "o": 0.9,
-    "x": 4,
-    "by": "close",
-    "h": 0.2934,
-    "net": 1.287,
-    "st": 0.3429
-   },
-   {
-    "s": "AXSM",
-    "in": "2026-05-18",
-    "out": "2026-06-29",
-    "occ": "AXSM260717C00230000",
-    "k": 230,
-    "spot": 229.17,
-    "o": 12.93,
-    "x": 13,
-    "by": "close",
-    "h": 0.1295,
-    "net": -0.2312,
-    "st": 0.0441
    },
    {
     "s": "SRRK",
@@ -5343,9 +5481,23 @@
     "o": 1.95,
     "x": 3.3,
     "by": "close",
-    "h": 0.2287,
-    "net": 0.0201,
+    "h": 0.2482,
+    "net": -0.0213,
     "st": 0.1084
+   },
+   {
+    "s": "HRMY",
+    "in": "2026-05-18",
+    "out": "2026-06-29",
+    "occ": "HRMY260717C00032500",
+    "k": 32.5,
+    "spot": 30.13,
+    "o": 1.7,
+    "x": 2.8400000000000034,
+    "by": "intrinsic",
+    "h": 0.5361,
+    "net": -0.5238,
+    "st": 0.1649
    },
    {
     "s": "PTGX",
@@ -5357,8 +5509,8 @@
     "o": 8.5,
     "x": 21.629999999999995,
     "by": "intrinsic",
-    "h": 0.221,
-    "net": 0.6111,
+    "h": 0.2361,
+    "net": 0.5605,
     "st": 0.1704
    },
    {
@@ -5371,9 +5523,23 @@
     "o": 3.1,
     "x": 4.2,
     "by": "close",
-    "h": 0.229,
-    "net": -0.1739,
+    "h": 0.296,
+    "net": -0.2854,
     "st": 0.0796
+   },
+   {
+    "s": "AXSM",
+    "in": "2026-05-18",
+    "out": "2026-06-29",
+    "occ": "AXSM260717C00230000",
+    "k": 230,
+    "spot": 229.17,
+    "o": 12.93,
+    "x": 13,
+    "by": "close",
+    "h": 0.1703,
+    "net": -0.2928,
+    "st": 0.0441
    },
    {
     "s": "ANNX",
@@ -5385,7 +5551,7 @@
     "o": 0.3,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.1345,
+    "h": 0.4442,
     "net": -1,
     "st": 0.0632
    },
@@ -5399,8 +5565,8 @@
     "o": 0.35,
     "x": 0.5,
     "by": "close",
-    "h": 0.6941,
-    "net": -0.8399,
+    "h": 0.6333,
+    "net": -0.7855,
     "st": 0.5144
    },
    {
@@ -5427,23 +5593,9 @@
     "o": 3.49,
     "x": 25.549999999999997,
     "by": "intrinsic",
-    "h": 0.3116,
-    "net": 2.79,
+    "h": 0.4391,
+    "net": 1.8154,
     "st": 1.2066
-   },
-   {
-    "s": "ALMS",
-    "in": "2026-05-18",
-    "out": "2026-06-29",
-    "occ": "ALMS260717C00025000",
-    "k": 25,
-    "spot": 23.06,
-    "o": 2.4,
-    "x": 2.1400000000000006,
-    "by": "intrinsic",
-    "h": 0.9077,
-    "net": -0.9681,
-    "st": 0.1689
    },
    {
     "s": "TRVI",
@@ -5455,9 +5607,23 @@
     "o": 2.95,
     "x": 7.629999999999999,
     "by": "intrinsic",
-    "h": 0.1889,
-    "net": 0.7257,
+    "h": 0.1098,
+    "net": 1.0285,
     "st": 0.2971
+   },
+   {
+    "s": "ALMS",
+    "in": "2026-05-18",
+    "out": "2026-06-29",
+    "occ": "ALMS260717C00025000",
+    "k": 25,
+    "spot": 23.06,
+    "o": 2.4,
+    "x": 2.1400000000000006,
+    "by": "intrinsic",
+    "h": 0.894,
+    "net": -0.9615,
+    "st": 0.1689
    },
    {
     "s": "XOMA",
@@ -5483,8 +5649,8 @@
     "o": 2.45,
     "x": 6.729999999999997,
     "by": "intrinsic",
-    "h": 0.4639,
-    "net": -0.0215,
+    "h": 0.4645,
+    "net": -0.023,
     "st": 0.1773
    },
    {
@@ -5497,9 +5663,23 @@
     "o": 2.5,
     "x": 1,
     "by": "intrinsic",
-    "h": 0.625,
-    "net": -0.921,
+    "h": 0.44,
+    "net": -0.8603,
     "st": 0.117
+   },
+   {
+    "s": "AGIO",
+    "in": "2026-05-18",
+    "out": "2026-06-29",
+    "occ": "AGIO260717C00035000",
+    "k": 35,
+    "spot": 28.16,
+    "o": 0.9,
+    "x": 4,
+    "by": "close",
+    "h": 0.388,
+    "net": 0.8457,
+    "st": 0.3429
    },
    {
     "s": "AMLX",
@@ -5511,8 +5691,8 @@
     "o": 0.8,
     "x": 3.25,
     "by": "close",
-    "h": 0.3435,
-    "net": 0.8524,
+    "h": 0.3621,
+    "net": 0.7752,
     "st": 0.3865
    },
    {
@@ -5525,8 +5705,8 @@
     "o": 0.74,
     "x": 0.9,
     "by": "close",
-    "h": 0.4071,
-    "net": -0.5569,
+    "h": 0.6612,
+    "net": -0.8007,
     "st": 0.1818
    },
    {
@@ -5539,8 +5719,8 @@
     "o": 4.7,
     "x": 14.659999999999997,
     "by": "intrinsic",
-    "h": 0.1988,
-    "net": 1.0576,
+    "h": 0.2082,
+    "net": 1.0176,
     "st": 0.1929
    },
    {
@@ -5553,8 +5733,8 @@
     "o": 1.49,
     "x": 5.550000000000001,
     "by": "intrinsic",
-    "h": 0.3443,
-    "net": 0.7482,
+    "h": 0.3732,
+    "net": 0.6358,
     "st": 0.3836
    },
    {
@@ -5567,8 +5747,8 @@
     "o": 4.07,
     "x": 7.630000000000003,
     "by": "intrinsic",
-    "h": 0.3496,
-    "net": -0.1136,
+    "h": 0.4209,
+    "net": -0.2511,
     "st": 0.0931
    },
    {
@@ -5581,7 +5761,7 @@
     "o": 9.8,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.2323,
+    "h": 0.2272,
     "net": -1,
     "st": -0.0324
    },
@@ -5595,7 +5775,7 @@
     "o": 2.2,
     "x": 0.03,
     "by": "close",
-    "h": 0.5303,
+    "h": 0.4692,
     "net": -1,
     "st": -0.3418
    },
@@ -5609,23 +5789,9 @@
     "o": 2.4,
     "x": 7.75,
     "by": "intrinsic",
-    "h": 0.3433,
-    "net": 0.5393,
+    "h": 0.2843,
+    "net": 0.7549,
     "st": 0.2752
-   },
-   {
-    "s": "ZNTL",
-    "in": "2026-05-18",
-    "out": "2026-06-29",
-    "occ": "ZNTL260717C00005000",
-    "k": 5,
-    "spot": 4,
-    "o": 0.4,
-    "x": 0.4,
-    "by": "close",
-    "h": 0.9612,
-    "net": -1,
-    "st": 0.1445
    },
    {
     "s": "TECX",
@@ -5637,8 +5803,8 @@
     "o": 1.71,
     "x": 2.5,
     "by": "close",
-    "h": 0.4983,
-    "net": -0.539,
+    "h": 0.5144,
+    "net": -0.5591,
     "st": 0.184
    },
    {
@@ -5651,9 +5817,23 @@
     "o": 0.55,
     "x": 3.7,
     "by": "close",
-    "h": 0.1592,
-    "net": 3.4521,
+    "h": 0.2092,
+    "net": 3.022,
     "st": 0.9253
+   },
+   {
+    "s": "ZNTL",
+    "in": "2026-05-18",
+    "out": "2026-06-29",
+    "occ": "ZNTL260717C00005000",
+    "k": 5,
+    "spot": 4,
+    "o": 0.4,
+    "x": 0.4,
+    "by": "close",
+    "h": 0.9834,
+    "net": -1,
+    "st": 0.1445
    },
    {
     "s": "ZLAB",
@@ -5665,7 +5845,7 @@
     "o": 0.05,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.7286,
+    "h": 0.4155,
     "net": -1,
     "st": -0.0649
    },
@@ -5679,23 +5859,9 @@
     "o": 0.6,
     "x": 0.4,
     "by": "close",
-    "h": 0.4037,
-    "net": -0.7887,
+    "h": 0.3143,
+    "net": -0.7325,
     "st": -0.0104
-   },
-   {
-    "s": "DNTH",
-    "in": "2026-05-18",
-    "out": "2026-06-29",
-    "occ": "DNTH260717C00095000",
-    "k": 95,
-    "spot": 86.41,
-    "o": 7,
-    "x": 0.6800000000000068,
-    "by": "intrinsic",
-    "h": 0.2242,
-    "net": -0.9446,
-    "st": 0.0993
    },
    {
     "s": "UPB",
@@ -5707,9 +5873,23 @@
     "o": 0.3,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.625,
+    "h": 0.5346,
     "net": -1,
     "st": -0.2354
+   },
+   {
+    "s": "DNTH",
+    "in": "2026-05-18",
+    "out": "2026-06-29",
+    "occ": "DNTH260717C00095000",
+    "k": 95,
+    "spot": 86.41,
+    "o": 7,
+    "x": 0.6800000000000068,
+    "by": "intrinsic",
+    "h": 0.2122,
+    "net": -0.9431,
+    "st": 0.0993
    },
    {
     "s": "BIOA",
@@ -5735,8 +5915,8 @@
     "o": 3.23,
     "x": 5.6,
     "by": "close",
-    "h": 0.3097,
-    "net": -0.1086,
+    "h": 0.3351,
+    "net": -0.1579,
     "st": 0.1974
    },
    {
@@ -5749,8 +5929,8 @@
     "o": 3.5,
     "x": 23.25,
     "by": "intrinsic",
-    "h": 0.1197,
-    "net": 4.144,
+    "h": 0.1795,
+    "net": 3.5541,
     "st": 0.3895
    },
    {
@@ -5763,8 +5943,8 @@
     "o": 0.48,
     "x": 0.26,
     "by": "close",
-    "h": 0.9152,
-    "net": -1,
+    "h": 0.4144,
+    "net": -0.8597,
     "st": 0.0636
    },
    {
@@ -5777,7 +5957,7 @@
     "o": 9.35,
     "x": 0.05,
     "by": "close",
-    "h": 0.6342,
+    "h": 0.9276,
     "net": -1,
     "st": -0.5405
    },
@@ -5791,7 +5971,7 @@
     "o": 7.9,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3713,
+    "h": 0.3339,
     "net": -1,
     "st": -0.1066
    },
@@ -5805,23 +5985,9 @@
     "o": 0.71,
     "x": 2.75,
     "by": "close",
-    "h": 0.084,
-    "net": 2.0125,
+    "h": 0.0573,
+    "net": 2.1752,
     "st": 0.1015
-   },
-   {
-    "s": "BMY",
-    "in": "2026-07-06",
-    "out": "2026-08-13",
-    "occ": "BMY260821C00057500",
-    "k": 57.5,
-    "spot": 57.74,
-    "o": 2.21,
-    "x": 7.12,
-    "by": "close",
-    "h": 0.1059,
-    "net": 1.5325,
-    "st": 0.1117
    },
    {
     "s": "RARE",
@@ -5833,8 +5999,8 @@
     "o": 6.9,
     "x": 1.07,
     "by": "close",
-    "h": 0.5633,
-    "net": -0.9615,
+    "h": 0.9506,
+    "net": -0.9998,
     "st": -0.2422
    },
    {
@@ -5847,8 +6013,8 @@
     "o": 12.5,
     "x": 15.43,
     "by": "close",
-    "h": 0.1429,
-    "net": -0.0809,
+    "h": 0.1413,
+    "net": -0.078,
     "st": 0.0643
    },
    {
@@ -5861,8 +6027,8 @@
     "o": 6.55,
     "x": 16.77000000000001,
     "by": "intrinsic",
-    "h": 0.2117,
-    "net": 0.649,
+    "h": 0.194,
+    "net": 0.7109,
     "st": 0.1211
    },
    {
@@ -5875,8 +6041,8 @@
     "o": 2.8,
     "x": 2.3,
     "by": "close",
-    "h": 0.2287,
-    "net": -0.5061,
+    "h": 0.2482,
+    "net": -0.5263,
     "st": 0.137
    },
    {
@@ -5889,8 +6055,8 @@
     "o": 6.5,
     "x": 0.65,
     "by": "close",
-    "h": 0.1279,
-    "net": -0.93,
+    "h": 0.1331,
+    "net": -0.9308,
     "st": -0.0934
    },
    {
@@ -5903,7 +6069,7 @@
     "o": 4.7,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.1768,
+    "h": 0.4098,
     "net": -1,
     "st": -0.2158
    },
@@ -5917,7 +6083,7 @@
     "o": 2.9,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.9109,
+    "h": 0.7848,
     "net": -1,
     "st": -0.3602
    },
@@ -5931,23 +6097,9 @@
     "o": 3.7,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.2032,
+    "h": 0.3064,
     "net": -1,
     "st": -0.0871
-   },
-   {
-    "s": "CADL",
-    "in": "2026-08-19",
-    "out": "2026-09-29",
-    "occ": "CADL261016C00012000",
-    "k": 12,
-    "spot": 12.42,
-    "o": 2.83,
-    "x": 0.4,
-    "by": "close",
-    "h": 0.9518,
-    "net": -1,
-    "st": -0.132
    },
    {
     "s": "ANNX",
@@ -5959,7 +6111,7 @@
     "o": 0.6,
     "x": 0.05,
     "by": "close",
-    "h": 0.1345,
+    "h": 0.4442,
     "net": -1,
     "st": -0.2502
    },
@@ -5973,8 +6125,8 @@
     "o": 0.7,
     "x": 0.6500000000000004,
     "by": "intrinsic",
-    "h": 0.5125,
-    "net": -0.7593,
+    "h": 0.2797,
+    "net": -0.5579,
     "st": 0.0721
    },
    {
@@ -5987,8 +6139,8 @@
     "o": 2.25,
     "x": 0.4,
     "by": "close",
-    "h": 0.384,
-    "net": -0.9379,
+    "h": 0.4749,
+    "net": -0.9525,
     "st": -0.1258
    },
    {
@@ -6001,23 +6153,9 @@
     "o": 1.3,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.5312,
+    "h": 0.3238,
     "net": -1,
     "st": -0.0724
-   },
-   {
-    "s": "TRVI",
-    "in": "2026-08-19",
-    "out": "2026-09-29",
-    "occ": "TRVI261016C00020000",
-    "k": 20,
-    "spot": 19.29,
-    "o": 1,
-    "x": 0,
-    "by": "intrinsic",
-    "h": 0.1889,
-    "net": -1,
-    "st": -0.2605
    },
    {
     "s": "ALMS",
@@ -6029,7 +6167,7 @@
     "o": 7,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.9077,
+    "h": 0.894,
     "net": -1,
     "st": -0.7219
    },
@@ -6043,7 +6181,7 @@
     "o": 6,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.4318,
+    "h": 0.4304,
     "net": -1,
     "st": -0.406
    },
@@ -6057,7 +6195,7 @@
     "o": 3.8,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.7585,
+    "h": 0.4571,
     "net": -1,
     "st": -0.3485
    },
@@ -6071,8 +6209,8 @@
     "o": 2.85,
     "x": 0.1,
     "by": "close",
-    "h": 0.3504,
-    "net": -0.9962,
+    "h": 0.3221,
+    "net": -0.9953,
     "st": -0.1529
    },
    {
@@ -6085,7 +6223,7 @@
     "o": 0.41,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.6881,
+    "h": 0.5405,
     "net": -1,
     "st": -0.2283
    },
@@ -6099,8 +6237,8 @@
     "o": 1.81,
     "x": 0.45,
     "by": "close",
-    "h": 0.1246,
-    "net": -0.8351,
+    "h": 0.1917,
+    "net": -0.8579,
     "st": -0.0546
    },
    {
@@ -6113,7 +6251,7 @@
     "o": 4.46,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.5819,
+    "h": 0.6566,
     "net": -1,
     "st": -0.222
    },
@@ -6127,7 +6265,7 @@
     "o": 3.33,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.3643,
+    "h": 0.4189,
     "net": -1,
     "st": -0.0745
    },
@@ -6141,8 +6279,8 @@
     "o": 6.7,
     "x": 0.15,
     "by": "close",
-    "h": 0.229,
-    "net": -0.9921,
+    "h": 0.296,
+    "net": -0.9936,
     "st": -0.1684
    }
   ],
@@ -6157,8 +6295,8 @@
     "o": 11.6,
     "x": 0.97,
     "by": "close",
-    "h": 0.36,
-    "net": -0.9639,
+    "h": 0.5238,
+    "net": -0.9768,
     "st": -0.1343,
     "tr": "yt:UCbcB_-Hn75TrZUP4nZX4jow"
    },
@@ -6172,8 +6310,8 @@
     "o": 5.3,
     "x": 12,
     "by": "close",
-    "h": 0.3689,
-    "net": 0.0298,
+    "h": 0.165,
+    "net": 0.6019,
     "st": 0.3103,
     "tr": "bs:did:plc:7m76hcfvibruqutvgqczumpl"
    },
@@ -6187,8 +6325,8 @@
     "o": 25.65,
     "x": 23.55,
     "by": "close",
-    "h": 0.0345,
-    "net": -0.1466,
+    "h": 0.0322,
+    "net": -0.1426,
     "st": 0.0386,
     "tr": "bs:did:plc:7m76hcfvibruqutvgqczumpl"
    },
@@ -6202,8 +6340,8 @@
     "o": 4.64,
     "x": 10.420000000000002,
     "by": "intrinsic",
-    "h": 0.0985,
-    "net": 0.8152,
+    "h": 0.0768,
+    "net": 0.8965,
     "st": 0.0983,
     "tr": "bs:did:plc:cpzj62afbbildcifjkudowmd"
    },
@@ -6217,8 +6355,8 @@
     "o": 0.52,
     "x": 0.7,
     "by": "close",
-    "h": 0.1607,
-    "net": -0.1776,
+    "h": 0.1933,
+    "net": -0.2324,
     "st": 0.0566,
     "tr": "bs:did:plc:msuep4gcej5vl6wyxmhtnn6b"
    },
@@ -6232,7 +6370,7 @@
     "o": 10.05,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.0397,
+    "h": 0.0361,
     "net": -1,
     "st": -0.197,
     "tr": "bs:did:plc:msuep4gcej5vl6wyxmhtnn6b"
@@ -6247,7 +6385,7 @@
     "o": 3.45,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.106,
+    "h": 0.1218,
     "net": -1,
     "st": -0.1536,
     "tr": "yt:UClZhHR2yFly-mo_pmfdrJXA"
@@ -6262,8 +6400,8 @@
     "o": 3.6,
     "x": 2.13,
     "by": "close",
-    "h": 0.0397,
-    "net": -0.474,
+    "h": 0.0361,
+    "net": -0.47,
     "st": -0.0432,
     "tr": "bs:did:plc:msuep4gcej5vl6wyxmhtnn6b"
    },
@@ -6277,8 +6415,8 @@
     "o": 3.47,
     "x": 1.38,
     "by": "close",
-    "h": 0.2178,
-    "net": -0.7593,
+    "h": 0.1121,
+    "net": -0.6993,
     "st": -0.0525,
     "tr": "bs:did:plc:msuep4gcej5vl6wyxmhtnn6b"
    },
@@ -6292,8 +6430,8 @@
     "o": 5.2,
     "x": 0.55,
     "by": "close",
-    "h": 0.106,
-    "net": -0.9239,
+    "h": 0.1218,
+    "net": -0.9264,
     "st": -0.0832,
     "tr": "yt:UClZhHR2yFly-mo_pmfdrJXA"
    },
@@ -6307,8 +6445,8 @@
     "o": 3.4,
     "x": 3.1899999999999977,
     "by": "intrinsic",
-    "h": 0.106,
-    "net": -0.2647,
+    "h": 0.1218,
+    "net": -0.2879,
     "st": 0.0382,
     "tr": "yt:UClZhHR2yFly-mo_pmfdrJXA"
    },
@@ -6322,8 +6460,8 @@
     "o": 5.5,
     "x": 12.900000000000006,
     "by": "intrinsic",
-    "h": 0.0862,
-    "net": 0.9486,
+    "h": 0.3072,
+    "net": 0.2276,
     "st": 0.1856,
     "tr": "bs:did:plc:msuep4gcej5vl6wyxmhtnn6b"
    },
@@ -6337,8 +6475,8 @@
     "o": 5.53,
     "x": 4,
     "by": "close",
-    "h": 0.0589,
-    "net": -0.371,
+    "h": 0.0547,
+    "net": -0.3657,
     "st": -0.0237,
     "tr": "yt:UCNttUtm9vloDjo-a2jqkoNQ"
    },
@@ -6352,8 +6490,8 @@
     "o": 8.1,
     "x": 12.46,
     "by": "close",
-    "h": 0.02,
-    "net": 0.463,
+    "h": 0.0305,
+    "net": 0.4325,
     "st": 0.0989,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6367,8 +6505,8 @@
     "o": 24,
     "x": 22.75,
     "by": "close",
-    "h": 0.0345,
-    "net": -0.1191,
+    "h": 0.0322,
+    "net": -0.115,
     "st": 0.004,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6382,8 +6520,8 @@
     "o": 8.94,
     "x": 12,
     "by": "close",
-    "h": 0.0258,
-    "net": 0.2624,
+    "h": 0.02,
+    "net": 0.2772,
     "st": 0.1,
     "tr": "bs:did:plc:wvtd2fb6x4h2u2bipszgix2o"
    },
@@ -6397,8 +6535,8 @@
     "o": 66.85,
     "x": 170,
     "by": "close",
-    "h": 0.0554,
-    "net": 1.2736,
+    "h": 0.0739,
+    "net": 1.1907,
     "st": 0.1691,
     "tr": "bs:did:plc:som7l72szcieskq64hu6dspc"
    },
@@ -6412,8 +6550,8 @@
     "o": 7.65,
     "x": 3.45,
     "by": "close",
-    "h": 0.0258,
-    "net": -0.5808,
+    "h": 0.02,
+    "net": -0.5758,
     "st": -0.0349,
     "tr": "bs:did:plc:som7l72szcieskq64hu6dspc"
    },
@@ -6427,8 +6565,8 @@
     "o": 0.33,
     "x": 0.3,
     "by": "close",
-    "h": 0.28,
-    "net": -0.6486,
+    "h": 0.3176,
+    "net": -0.6809,
     "st": 0.0144,
     "tr": "yt:UCR6nLaa6ee2xJFi4e1wXOeA"
    },
@@ -6442,8 +6580,8 @@
     "o": 0.38,
     "x": 0.11,
     "by": "close",
-    "h": 0.28,
-    "net": -0.9456,
+    "h": 0.3176,
+    "net": -0.9545,
     "st": -0.1404,
     "tr": "yt:UCR6nLaa6ee2xJFi4e1wXOeA"
    },
@@ -6457,8 +6595,8 @@
     "o": 8.46,
     "x": 18.3,
     "by": "close",
-    "h": 0.1731,
-    "net": 0.5122,
+    "h": 0.0759,
+    "net": 0.8424,
     "st": 0.297,
     "tr": "yt:UCh__jlUcgxBnrU3C9x3V7JA"
    },
@@ -6472,8 +6610,8 @@
     "o": 2.3,
     "x": 1.9,
     "by": "close",
-    "h": 0.1805,
-    "net": -0.455,
+    "h": 0.2338,
+    "net": -0.5132,
     "st": 0.0054,
     "tr": "yt:UCh__jlUcgxBnrU3C9x3V7JA"
    },
@@ -6487,8 +6625,8 @@
     "o": 5.85,
     "x": 4.46,
     "by": "close",
-    "h": 0.1277,
-    "net": -0.4222,
+    "h": 0.0686,
+    "net": -0.3487,
     "st": 0.017,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6502,8 +6640,8 @@
     "o": 9.28,
     "x": 11.3,
     "by": "close",
-    "h": 0.0244,
-    "net": 0.1485,
+    "h": 0.02,
+    "net": 0.1585,
     "st": 0.0564,
     "tr": "yt:UCWt3Cx6RrHX86_yF4I7f1LA"
    },
@@ -6517,8 +6655,8 @@
     "o": 17.68,
     "x": 21.3,
     "by": "close",
-    "h": 0.0345,
-    "net": 0.1186,
+    "h": 0.0322,
+    "net": 0.1238,
     "st": 0.0358,
     "tr": "yt:UCWt3Cx6RrHX86_yF4I7f1LA"
    },
@@ -6532,10 +6670,40 @@
     "o": 15.4,
     "x": 7.72,
     "by": "close",
-    "h": 0.0493,
-    "net": -0.5503,
+    "h": 0.0565,
+    "net": -0.5568,
     "st": -0.0186,
     "tr": "yt:UCWt3Cx6RrHX86_yF4I7f1LA"
+   },
+   {
+    "s": "SOFI",
+    "in": "2025-10-01",
+    "out": "2025-10-14",
+    "occ": "SOFI251031C00026500",
+    "k": 26.5,
+    "spot": 26.73,
+    "o": 2.44,
+    "x": 2.93,
+    "by": "close",
+    "h": 0.0405,
+    "net": 0.0666,
+    "st": 0.0346,
+    "tr": "yt:UChtrqm08ApkoMA4IOy-XzCw"
+   },
+   {
+    "s": "TM",
+    "in": "2025-10-03",
+    "out": "2025-10-16",
+    "occ": "TM251121C00195000",
+    "k": 195,
+    "spot": 192.66,
+    "o": 7.25,
+    "x": 7.65,
+    "by": "close",
+    "h": 0.0748,
+    "net": -0.1038,
+    "st": 0.0063,
+    "tr": "yt:UChtrqm08ApkoMA4IOy-XzCw"
    },
    {
     "s": "WULF",
@@ -6547,8 +6715,8 @@
     "o": 1.76,
     "x": 2.7,
     "by": "close",
-    "h": 0.1595,
-    "net": 0.0615,
+    "h": 0.1436,
+    "net": 0.0967,
     "st": 0.1545,
     "tr": "yt:UCfn1ZbMpd79fuTQkLAffj2Q"
    },
@@ -6562,8 +6730,8 @@
     "o": 15.4,
     "x": 4.15,
     "by": "close",
-    "h": 0.0361,
-    "net": -0.7532,
+    "h": 0.0761,
+    "net": -0.7723,
     "st": -0.0962,
     "tr": "yt:UCUPZTWdGD7ilWy_dMuCcC-A"
    },
@@ -6577,8 +6745,8 @@
     "o": 2.85,
     "x": 5.829999999999998,
     "by": "intrinsic",
-    "h": 0.0862,
-    "net": 0.6777,
+    "h": 0.3072,
+    "net": 0.0565,
     "st": 0.104,
     "tr": "st:akaLMoney"
    },
@@ -6592,8 +6760,8 @@
     "o": 10.6,
     "x": 1.8,
     "by": "close",
-    "h": 0.02,
-    "net": -0.8422,
+    "h": 0.0305,
+    "net": -0.8455,
     "st": -0.0866,
     "tr": "yt:UCPlQypFWZzqQlQAPudV25SA"
    },
@@ -6607,8 +6775,8 @@
     "o": 27.3,
     "x": 1.82,
     "by": "close",
-    "h": 0.0345,
-    "net": -0.9397,
+    "h": 0.0322,
+    "net": -0.9394,
     "st": -0.1242,
     "tr": "yt:UCPlQypFWZzqQlQAPudV25SA"
    },
@@ -6622,8 +6790,8 @@
     "o": 4,
     "x": 1.85,
     "by": "close",
-    "h": 0.0864,
-    "net": -0.6269,
+    "h": 0.0621,
+    "net": -0.608,
     "st": -0.0648,
     "tr": "yt:UClLyc3C2K3C-RAh7eEJAwyg"
    },
@@ -6637,8 +6805,8 @@
     "o": 4.85,
     "x": 3.85,
     "by": "close",
-    "h": 0.2482,
-    "net": -0.534,
+    "h": 0.1667,
+    "net": -0.4467,
     "st": -0.0198,
     "tr": "yt:UC7fe2lxq_lP4--RBSP_CWMA"
    },
@@ -6652,8 +6820,8 @@
     "o": 0.51,
     "x": 0.24,
     "by": "close",
-    "h": 0.28,
-    "net": -0.8253,
+    "h": 0.3176,
+    "net": -0.8424,
     "st": -0.0888,
     "tr": "yt:UCR6nLaa6ee2xJFi4e1wXOeA"
    },
@@ -6667,8 +6835,8 @@
     "o": 2.59,
     "x": 0.19,
     "by": "close",
-    "h": 0.1568,
-    "net": -0.9638,
+    "h": 0.0659,
+    "net": -0.9546,
     "st": -0.283,
     "tr": "yt:UCubRfH0RBrtrlt3ePhGp7Bw"
    },
@@ -6682,8 +6850,8 @@
     "o": 32.16,
     "x": 53.10000000000002,
     "by": "intrinsic",
-    "h": 0.132,
-    "net": 0.2629,
+    "h": 0.1268,
+    "net": 0.2765,
     "st": 0.2174,
     "tr": "yt:UCubRfH0RBrtrlt3ePhGp7Bw"
    },
@@ -6697,8 +6865,8 @@
     "o": 2.45,
     "x": 0.14,
     "by": "close",
-    "h": 0.1632,
-    "net": -0.9768,
+    "h": 0.1765,
+    "net": -0.9777,
     "st": -0.1333,
     "tr": "yt:UCa5hPmX8-q03fxDYLi9XM7w"
    },
@@ -6712,8 +6880,8 @@
     "o": 0.45,
     "x": 0.32,
     "by": "close",
-    "h": 0.28,
-    "net": -0.7118,
+    "h": 0.3176,
+    "net": -0.7382,
     "st": -0.0228,
     "tr": "yt:UCR6nLaa6ee2xJFi4e1wXOeA"
    },
@@ -6727,8 +6895,8 @@
     "o": 6.35,
     "x": 16.5,
     "by": "close",
-    "h": 0.0244,
-    "net": 1.4483,
+    "h": 0.02,
+    "net": 1.4697,
     "st": 0.1858,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6742,8 +6910,8 @@
     "o": 7.8,
     "x": 30.47,
     "by": "close",
-    "h": 0.02,
-    "net": 2.7235,
+    "h": 0.0305,
+    "net": 2.646,
     "st": 0.2045,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6757,8 +6925,8 @@
     "o": 1.59,
     "x": 0.93,
     "by": "close",
-    "h": 0.2,
-    "net": -0.6456,
+    "h": 0.0987,
+    "net": -0.5614,
     "st": -0.02,
     "tr": "yt:UCpDIpBd3rAbPc2ZTPSEUgug"
    },
@@ -6772,8 +6940,8 @@
     "o": 8.38,
     "x": 17,
     "by": "close",
-    "h": 0.0713,
-    "net": 0.7433,
+    "h": 0.0537,
+    "net": 0.8061,
     "st": 0.0534,
     "tr": "st:Skumaroptions"
    },
@@ -6787,8 +6955,8 @@
     "o": 3.3,
     "x": 2.2,
     "by": "close",
-    "h": 0.3261,
-    "net": -0.6763,
+    "h": 0.0608,
+    "net": -0.4321,
     "st": 0.0347,
     "tr": "st:Skumaroptions"
    },
@@ -6802,8 +6970,8 @@
     "o": 6.8,
     "x": 11.8,
     "by": "close",
-    "h": 0.3247,
-    "net": -0.1257,
+    "h": 0.092,
+    "net": 0.4266,
     "st": 0.0769,
     "tr": "yt:UCa5hPmX8-q03fxDYLi9XM7w"
    },
@@ -6817,8 +6985,8 @@
     "o": 1.45,
     "x": 0.65,
     "by": "close",
-    "h": 0.6738,
-    "net": -0.9346,
+    "h": 0.9143,
+    "net": -0.998,
     "st": -0.2519,
     "tr": "yt:UCjpmA2LGMq0M0S2c3t9Y3fg"
    },
@@ -6832,8 +7000,8 @@
     "o": 0.26,
     "x": 0.2,
     "by": "close",
-    "h": 0.2,
-    "net": -0.6961,
+    "h": 0.1833,
+    "net": -0.6831,
     "st": -0.1408,
     "tr": "yt:UCjpmA2LGMq0M0S2c3t9Y3fg"
    },
@@ -6847,8 +7015,8 @@
     "o": 2,
     "x": 0.63,
     "by": "close",
-    "h": 0.3261,
-    "net": -0.8614,
+    "h": 0.0608,
+    "net": -0.7505,
     "st": -0.1931,
     "tr": "yt:UCjpmA2LGMq0M0S2c3t9Y3fg"
    },
@@ -6862,8 +7030,8 @@
     "o": 6.23,
     "x": 7.64,
     "by": "close",
-    "h": 0.0244,
-    "net": 0.1511,
+    "h": 0.02,
+    "net": 0.1612,
     "st": 0.0281,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6877,8 +7045,8 @@
     "o": 1.41,
     "x": 0.37,
     "by": "close",
-    "h": 0.0281,
-    "net": -0.7936,
+    "h": 0.0405,
+    "net": -0.7989,
     "st": -0.0945,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6892,8 +7060,8 @@
     "o": 9.44,
     "x": 0.35,
     "by": "close",
-    "h": 0.02,
-    "net": -0.9697,
+    "h": 0.0305,
+    "net": -0.9704,
     "st": -0.208,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6907,8 +7075,8 @@
     "o": 35.85,
     "x": 0.52,
     "by": "close",
-    "h": 0.0477,
-    "net": -0.9882,
+    "h": 0.0363,
+    "net": -0.9879,
     "st": -0.2021,
     "tr": "st:Randhawa408"
    },
@@ -6922,8 +7090,8 @@
     "o": 6.95,
     "x": 5,
     "by": "close",
-    "h": 0.0239,
-    "net": -0.3259,
+    "h": 0.02,
+    "net": -0.3206,
     "st": -0.0032,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6937,8 +7105,8 @@
     "o": 34.4,
     "x": 87.51999999999998,
     "by": "intrinsic",
-    "h": 0.1375,
-    "net": 0.9255,
+    "h": 0.1864,
+    "net": 0.7413,
     "st": 0.3849,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6952,8 +7120,8 @@
     "o": 9.2,
     "x": 11.2,
     "by": "close",
-    "h": 0.0244,
-    "net": 0.1481,
+    "h": 0.02,
+    "net": 0.1582,
     "st": 0.0654,
     "tr": "yt:UCQnIfbieTyf53CZBiyLAkjg"
    },
@@ -6967,8 +7135,8 @@
     "o": 15.74,
     "x": 20.58,
     "by": "close",
-    "h": 0.0327,
-    "net": 0.218,
+    "h": 0.0347,
+    "net": 0.2131,
     "st": 0.027,
     "tr": "bs:did:plc:glywww3rcwo3n2xisqx6ov57"
    },
@@ -6982,8 +7150,8 @@
     "o": 19.15,
     "x": 27.01,
     "by": "close",
-    "h": 0.055,
-    "net": 0.2577,
+    "h": 0.0589,
+    "net": 0.2479,
     "st": 0.0309,
     "tr": "bs:did:plc:glywww3rcwo3n2xisqx6ov57"
    },
@@ -6997,8 +7165,8 @@
     "o": 9.55,
     "x": 22.95,
     "by": "close",
-    "h": 0.0713,
-    "net": 1.0682,
+    "h": 0.0537,
+    "net": 1.1427,
     "st": 0.0627,
     "tr": "st:Skumaroptions"
    },
@@ -7012,8 +7180,8 @@
     "o": 4.5,
     "x": 1.34,
     "by": "close",
-    "h": 0.1731,
-    "net": -0.8014,
+    "h": 0.0759,
+    "net": -0.7571,
     "st": -0.1764,
     "tr": "st:Skumaroptions"
    },
@@ -7027,8 +7195,8 @@
     "o": 13.78,
     "x": 11.5,
     "by": "close",
-    "h": 0.1006,
-    "net": -0.3235,
+    "h": 0.1172,
+    "net": -0.3459,
     "st": 0.0204,
     "tr": "yt:UCp6aBHRM6ZS_kLeC57HV4kg"
    },
@@ -7042,8 +7210,8 @@
     "o": 1.47,
     "x": 1.19,
     "by": "close",
-    "h": 0.0658,
-    "net": -0.3433,
+    "h": 0.3216,
+    "net": -0.62,
     "st": 0.0004,
     "tr": "st:Skumaroptions"
    },
@@ -7057,8 +7225,8 @@
     "o": 10.15,
     "x": 11.43,
     "by": "close",
-    "h": 0.0258,
-    "net": 0.0596,
+    "h": 0.02,
+    "net": 0.0719,
     "st": 0.0218,
     "tr": "yt:UCNttUtm9vloDjo-a2jqkoNQ"
    },
@@ -7072,8 +7240,8 @@
     "o": 12.9,
     "x": 0.32,
     "by": "close",
-    "h": 0.0713,
-    "net": -0.9822,
+    "h": 0.0537,
+    "net": -0.9815,
     "st": -0.1014,
     "tr": "st:Skumaroptions"
    },
@@ -7087,8 +7255,8 @@
     "o": 10.53,
     "x": 51.35,
     "by": "close",
-    "h": 0.02,
-    "net": 3.659,
+    "h": 0.0305,
+    "net": 3.5619,
     "st": 0.4039,
     "tr": "st:MaesTechnicalAnalysis"
    },
@@ -7102,8 +7270,8 @@
     "o": 10.5,
     "x": 57.00999999999999,
     "by": "intrinsic",
-    "h": 0.02,
-    "net": 4.1877,
+    "h": 0.0305,
+    "net": 4.0796,
     "st": 0.4558,
     "tr": "st:Stockmarketmaker"
    },
@@ -7117,8 +7285,8 @@
     "o": 0.26,
     "x": 0.08,
     "by": "close",
-    "h": 0.28,
-    "net": -0.9801,
+    "h": 0.3176,
+    "net": -0.9883,
     "st": -0.076,
     "tr": "yt:UCR6nLaa6ee2xJFi4e1wXOeA"
    },
@@ -7132,8 +7300,8 @@
     "o": 3.2,
     "x": 2.78,
     "by": "close",
-    "h": 0.1451,
-    "net": -0.3736,
+    "h": 0.0895,
+    "net": -0.2984,
     "st": 0.0272,
     "tr": "st:Randhawa408"
    },
@@ -7147,8 +7315,8 @@
     "o": 8.92,
     "x": 6.86,
     "by": "close",
-    "h": 0.0713,
-    "net": -0.342,
+    "h": 0.0537,
+    "net": -0.3182,
     "st": 0.0015,
     "tr": "st:Skumaroptions"
    },
@@ -7162,8 +7330,8 @@
     "o": 3.16,
     "x": 0.68,
     "by": "close",
-    "h": 0.0787,
-    "net": -0.8333,
+    "h": 0.1146,
+    "net": -0.8455,
     "st": -0.1116,
     "tr": "st:ShortyMcShorterson"
    },
@@ -7177,8 +7345,8 @@
     "o": 0.24,
     "x": 0.22,
     "by": "close",
-    "h": 0.1765,
-    "net": -0.6053,
+    "h": 0.1389,
+    "net": -0.5687,
     "st": -0.0119,
     "tr": "st:Stockmarketmaker"
    },
@@ -7192,8 +7360,8 @@
     "o": 9.05,
     "x": 7.45,
     "by": "close",
-    "h": 0.0713,
-    "net": -0.2952,
+    "h": 0.0537,
+    "net": -0.2697,
     "st": 0.0004,
     "tr": "st:Skumaroptions"
    },
@@ -7207,8 +7375,8 @@
     "o": 176.7,
     "x": 28.55,
     "by": "close",
-    "h": 0.051,
-    "net": -0.8544,
+    "h": 0.0474,
+    "net": -0.8534,
     "st": -0.1349,
     "tr": "bs:did:plc:7mpygrasjbzavslfqrqjrf3k"
    },
@@ -7222,8 +7390,8 @@
     "o": 0.19,
     "x": 0.22,
     "by": "close",
-    "h": 0.1765,
-    "net": -0.5204,
+    "h": 0.1389,
+    "net": -0.4765,
     "st": 0.0715,
     "tr": "st:Stockmarketmaker"
    },
@@ -7237,10 +7405,25 @@
     "o": 1.71,
     "x": 1.35,
     "by": "close",
-    "h": 0.1568,
-    "net": -0.4633,
+    "h": 0.0659,
+    "net": -0.3534,
     "st": 0.0132,
     "tr": "yt:UCmh7afBz-uWwOSSNTqUBAhg"
+   },
+   {
+    "s": "CAPR",
+    "in": "2026-08-28",
+    "out": "2026-09-11",
+    "occ": "CAPR261002C00010000",
+    "k": 10,
+    "spot": 9.73,
+    "o": 2.4,
+    "x": 0,
+    "by": "intrinsic",
+    "h": 0.4701,
+    "net": -1,
+    "st": -0.1478,
+    "tr": "st:AidenB"
    },
    {
     "s": "TTWO",
@@ -7252,8 +7435,8 @@
     "o": 11.93,
     "x": 5.48,
     "by": "close",
-    "h": 0.1214,
-    "net": -0.6452,
+    "h": 0.0824,
+    "net": -0.616,
     "st": -0.0277,
     "tr": "st:WeeklyOptionsTrading"
    },
@@ -7267,8 +7450,8 @@
     "o": 22.68,
     "x": 23.35,
     "by": "close",
-    "h": 0.0537,
-    "net": -0.0794,
+    "h": 0.0602,
+    "net": -0.0913,
     "st": 0.0555,
     "tr": "bs:did:plc:7mpygrasjbzavslfqrqjrf3k"
    },
@@ -7282,8 +7465,8 @@
     "o": 9.05,
     "x": 3.3,
     "by": "close",
-    "h": 0.0258,
-    "net": -0.6609,
+    "h": 0.02,
+    "net": -0.6569,
     "st": -0.0326,
     "tr": "st:daxiongmao"
    },
@@ -7297,8 +7480,8 @@
     "o": 12.2,
     "x": 30.43,
     "by": "close",
-    "h": 0.0361,
-    "net": 1.3075,
+    "h": 0.0761,
+    "net": 1.1297,
     "st": 0.2164,
     "tr": "bs:did:plc:7mpygrasjbzavslfqrqjrf3k"
    },
@@ -7312,8 +7495,8 @@
     "o": 9.35,
     "x": 8.56,
     "by": "close",
-    "h": 0.0258,
-    "net": -0.1402,
+    "h": 0.02,
+    "net": -0.1302,
     "st": 0.008,
     "tr": "st:Skumaroptions"
    },
@@ -7327,8 +7510,8 @@
     "o": 9.15,
     "x": 8.75,
     "by": "close",
-    "h": 0.0244,
-    "net": -0.0993,
+    "h": 0.02,
+    "net": -0.0914,
     "st": 0.0208,
     "tr": "bs:did:plc:7mpygrasjbzavslfqrqjrf3k"
    },
@@ -7342,8 +7525,8 @@
     "o": 1.14,
     "x": 4.18,
     "by": "close",
-    "h": 0.2,
-    "net": 1.323,
+    "h": 0.0987,
+    "net": 1.854,
     "st": 0.1812,
     "tr": "st:Ladoga"
    },
@@ -7357,8 +7540,8 @@
     "o": 16.22,
     "x": 46.2,
     "by": "close",
-    "h": 0.0286,
-    "net": 1.679,
+    "h": 0.0228,
+    "net": 1.7104,
     "st": 0.2057,
     "tr": "bs:did:plc:zdltyqp2ruvsxh4fdovodldl"
    },
@@ -7372,8 +7555,8 @@
     "o": 10.12,
     "x": 20.09,
     "by": "close",
-    "h": 0.02,
-    "net": 0.8933,
+    "h": 0.0305,
+    "net": 0.8538,
     "st": 0.0916,
     "tr": "yt:UC2XG6zLqQIyC1O8lbbzr4tQ"
    },
@@ -7387,8 +7570,8 @@
     "o": 2.56,
     "x": 1.3,
     "by": "close",
-    "h": 0.4139,
-    "net": -0.806,
+    "h": 0.3551,
+    "net": -0.776,
     "st": 0.0049,
     "tr": "st:MKFin"
    },
@@ -7402,8 +7585,8 @@
     "o": 40.35,
     "x": 30.6,
     "by": "close",
-    "h": 0.0264,
-    "net": -0.2827,
+    "h": 0.0343,
+    "net": -0.2939,
     "st": 0.0064,
     "tr": "bs:did:plc:7mpygrasjbzavslfqrqjrf3k"
    },
@@ -7417,8 +7600,8 @@
     "o": 5.5,
     "x": 2.07,
     "by": "close",
-    "h": 0.1132,
-    "net": -0.7107,
+    "h": 0.0766,
+    "net": -0.6883,
     "st": -0.0493,
     "tr": "st:MomentumWins"
    },
@@ -7432,8 +7615,8 @@
     "o": 0.6,
     "x": 1,
     "by": "close",
-    "h": 0.2,
-    "net": -0.026,
+    "h": 0.0846,
+    "net": 0.2349,
     "st": 0.1142,
     "tr": "st:FatherofTrades"
    },
@@ -7447,8 +7630,8 @@
     "o": 3.85,
     "x": 1.25,
     "by": "close",
-    "h": 0.0958,
-    "net": -0.7469,
+    "h": 0.153,
+    "net": -0.7753,
     "st": -0.053,
     "tr": "yt:UCDVYQ4Zhbm3S2dlz7P1GBDg"
    },
@@ -7462,8 +7645,8 @@
     "o": 9.35,
     "x": 4.7,
     "by": "close",
-    "h": 0.0258,
-    "net": -0.5303,
+    "h": 0.02,
+    "net": -0.5248,
     "st": -0.0281,
     "tr": "st:MKFin"
    },
@@ -7477,8 +7660,8 @@
     "o": 40,
     "x": 51,
     "by": "close",
-    "h": 0.0264,
-    "net": 0.2068,
+    "h": 0.0343,
+    "net": 0.1879,
     "st": 0.0361,
     "tr": "st:thefourwind"
    },
@@ -7492,8 +7675,8 @@
     "o": 1.8,
     "x": 4.96,
     "by": "close",
-    "h": 0.0667,
-    "net": 1.3245,
+    "h": 0.0534,
+    "net": 1.387,
     "st": 0.1329,
     "tr": "st:H_hi"
    },
@@ -7507,7 +7690,7 @@
     "o": 122.5,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.051,
+    "h": 0.0474,
     "net": -1,
     "st": -0.2213,
     "tr": "st:MomentumWins"
@@ -7522,7 +7705,7 @@
     "o": 1.23,
     "x": 0.45,
     "by": "close",
-    "h": 0.958,
+    "h": 0.9632,
     "net": -1,
     "st": -0.1548,
     "tr": "st:WolverineVcapitalllc"
@@ -7537,8 +7720,8 @@
     "o": 1.04,
     "x": 0.31,
     "by": "close",
-    "h": 0.0658,
-    "net": -0.7932,
+    "h": 0.3216,
+    "net": -0.8875,
     "st": -0.137,
     "tr": "st:Skumaroptions"
    },
@@ -7552,8 +7735,8 @@
     "o": 9.75,
     "x": 0.67,
     "by": "close",
-    "h": 0.0258,
-    "net": -0.94,
+    "h": 0.02,
+    "net": -0.9393,
     "st": -0.1113,
     "tr": "yt:UCZ-J2m1AUSLnifUEKam5_dA"
    },
@@ -7567,7 +7750,7 @@
     "o": 0.53,
     "x": 0,
     "by": "intrinsic",
-    "h": 0.5,
+    "h": 0.2007,
     "net": -1,
     "st": -0.3169,
     "tr": "st:WeeklyOptionsTrading"
@@ -7582,8 +7765,8 @@
     "o": 0.58,
     "x": 0.4,
     "by": "close",
-    "h": 0.2,
-    "net": -0.6381,
+    "h": 0.0846,
+    "net": -0.5344,
     "st": -0.0218,
     "tr": "st:FatherofTrades"
    },
@@ -7597,8 +7780,8 @@
     "o": 3.61,
     "x": 10.5,
     "by": "close",
-    "h": 0.0958,
-    "net": 1.3578,
+    "h": 0.153,
+    "net": 1.0995,
     "st": 0.0744,
     "tr": "yt:UCDVYQ4Zhbm3S2dlz7P1GBDg"
    },
@@ -7612,7 +7795,7 @@
     "o": 0.09,
     "x": 0.04,
     "by": "close",
-    "h": 0.8909,
+    "h": 0.6,
     "net": -1,
     "st": -0.1551,
     "tr": "st:MaesTechnicalAnalysis"
@@ -7627,8 +7810,8 @@
     "o": 3.35,
     "x": 0.12,
     "by": "close",
-    "h": 0.0554,
-    "net": -0.9823,
+    "h": 0.0739,
+    "net": -0.9832,
     "st": -0.1416,
     "tr": "st:thefourwind"
    },
@@ -7642,8 +7825,8 @@
     "o": 1.05,
     "x": 1.02,
     "by": "close",
-    "h": 0.3881,
-    "net": -0.6192,
+    "h": 0.1833,
+    "net": -0.3942,
     "st": 0.0063,
     "tr": "st:FatherofTrades"
    },
@@ -7663,21 +7846,6 @@
     "tr": "st:stockWare"
    },
    {
-    "s": "AAPL",
-    "in": "2026-10-19",
-    "out": "2026-10-30",
-    "occ": "AAPL261120C00340000",
-    "k": 340,
-    "spot": 340.775,
-    "o": 12.35,
-    "x": 13.27,
-    "by": "close",
-    "h": 0.0713,
-    "net": -0.0758,
-    "st": 0.0033,
-    "tr": "st:abubnic"
-   },
-   {
     "s": "PCG",
     "in": "2026-10-19",
     "out": "2026-10-30",
@@ -7687,10 +7855,400 @@
     "o": 0.83,
     "x": 0.64,
     "by": "close",
-    "h": 0.3625,
-    "net": -0.6968,
+    "h": 0.2353,
+    "net": -0.5914,
     "st": 0.0058,
     "tr": "st:WeeklyOptionsTrading"
+   },
+   {
+    "s": "CRWV",
+    "in": "2026-10-20",
+    "out": "2026-11-02",
+    "occ": "CRWV261120C00059000",
+    "k": 59,
+    "spot": 59.265,
+    "o": 6.65,
+    "x": 2.79,
+    "by": "close",
+    "h": 0.0235,
+    "net": -0.6099,
+    "st": -0.1618,
+    "tr": "st:Humbleflow"
+   },
+   {
+    "s": "MSTR",
+    "in": "2026-10-20",
+    "out": "2026-11-02",
+    "occ": "MSTR261120C00134000",
+    "k": 134,
+    "spot": 133.75,
+    "o": 17.05,
+    "x": 7.85,
+    "by": "close",
+    "h": 0.0761,
+    "net": -0.6085,
+    "st": -0.0304,
+    "tr": "st:WolverineVcapitalllc"
+   },
+   {
+    "s": "RKLB",
+    "in": "2026-10-20",
+    "out": "2026-11-02",
+    "occ": "RKLB261120C00051000",
+    "k": 51,
+    "spot": 50.565,
+    "o": 5.35,
+    "x": 4.4,
+    "by": "close",
+    "h": 0.1844,
+    "net": -0.4459,
+    "st": 0.0218,
+    "tr": "st:Csick"
+   },
+   {
+    "s": "CBC",
+    "in": "2026-10-20",
+    "out": "2026-11-02",
+    "occ": "CBC261120C00035000",
+    "k": 35,
+    "spot": 32.4,
+    "o": 0.8,
+    "x": 1.8500000000000014,
+    "by": "intrinsic",
+    "h": 0.183,
+    "net": 0.4667,
+    "st": 0.1293,
+    "tr": "md:chris@socialbc.ca"
+   },
+   {
+    "s": "NIO",
+    "in": "2026-10-21",
+    "out": "2026-11-03",
+    "occ": "NIO261120C00003500",
+    "k": 3.5,
+    "spot": 3.37,
+    "o": 0.14,
+    "x": 0.04,
+    "by": "close",
+    "h": 0.3176,
+    "net": -1,
+    "st": -0.0614,
+    "tr": "st:Csick"
+   },
+   {
+    "s": "IREN",
+    "in": "2026-10-21",
+    "out": "2026-11-03",
+    "occ": "IREN261120C00027500",
+    "k": 27.5,
+    "spot": 27.575,
+    "o": 3.85,
+    "x": 1.95,
+    "by": "close",
+    "h": 0.02,
+    "net": -0.5321,
+    "st": -0.121,
+    "tr": "st:REDWIR"
+   },
+   {
+    "s": "HTZ",
+    "in": "2026-10-21",
+    "out": "2026-11-03",
+    "occ": "HTZ261120C00002000",
+    "k": 2,
+    "spot": 1.93,
+    "o": 0.21,
+    "x": 0.28,
+    "by": "close",
+    "h": 0.4074,
+    "net": -0.6645,
+    "st": 0.0645,
+    "tr": "st:Humbleflow"
+   },
+   {
+    "s": "RDW",
+    "in": "2026-10-21",
+    "out": "2026-11-03",
+    "occ": "RDW261120C00008500",
+    "k": 8.5,
+    "spot": 8.58,
+    "o": 0.9,
+    "x": 0.5,
+    "by": "close",
+    "h": 0.1263,
+    "net": -0.6363,
+    "st": -0.0616,
+    "tr": "st:Csick"
+   },
+   {
+    "s": "META",
+    "in": "2026-10-21",
+    "out": "2026-11-03",
+    "occ": "META261120C00697500",
+    "k": 697.5,
+    "spot": 697.595,
+    "o": 35.05,
+    "x": 2.79,
+    "by": "close",
+    "h": 0.0343,
+    "net": -0.9272,
+    "st": -0.1178,
+    "tr": "st:thefourwind"
+   },
+   {
+    "s": "NFLX",
+    "in": "2026-10-22",
+    "out": "2026-11-04",
+    "occ": "NFLX261127C00065000",
+    "k": 65,
+    "spot": 65.11,
+    "o": 3.26,
+    "x": 3.18,
+    "by": "close",
+    "h": 0.0739,
+    "net": -0.1848,
+    "st": 0.0117,
+    "tr": "st:missalyssa"
+   },
+   {
+    "s": "META",
+    "in": "2026-10-22",
+    "out": "2026-11-04",
+    "occ": "META261127C00675000",
+    "k": 675,
+    "spot": 676.35,
+    "o": 25.93,
+    "x": 8.5,
+    "by": "close",
+    "h": 0.0343,
+    "net": -0.6963,
+    "st": -0.0765,
+    "tr": "st:Csick"
+   },
+   {
+    "s": "CRCL",
+    "in": "2026-10-22",
+    "out": "2026-11-04",
+    "occ": "CRCL261127C00086000",
+    "k": 86,
+    "spot": 85.69,
+    "o": 8.3,
+    "x": 2.58,
+    "by": "close",
+    "h": 0.0794,
+    "net": -0.7419,
+    "st": -0.1197,
+    "tr": "st:REDWIR"
+   },
+   {
+    "s": "CDE",
+    "in": "2026-10-22",
+    "out": "2026-11-04",
+    "occ": "CDE261127C00014500",
+    "k": 14.5,
+    "spot": 14.49,
+    "o": 1.04,
+    "x": 1,
+    "by": "close",
+    "h": 0.1075,
+    "net": -0.299,
+    "st": -0.0018,
+    "tr": "st:Idvst8"
+   },
+   {
+    "s": "TGT",
+    "in": "2026-10-22",
+    "out": "2026-11-04",
+    "occ": "TGT261127C00150000",
+    "k": 150,
+    "spot": 152.01,
+    "o": 8.37,
+    "x": 14.75,
+    "by": "close",
+    "h": 0.0556,
+    "net": 0.5621,
+    "st": 0.065,
+    "tr": "st:HighRiskOptionsAlerts"
+   },
+   {
+    "s": "APP",
+    "in": "2026-10-22",
+    "out": "2026-11-04",
+    "occ": "APP261127C00265000",
+    "k": 265,
+    "spot": 265.25,
+    "o": 25.9,
+    "x": 29.3,
+    "by": "close",
+    "h": 0.1381,
+    "net": -0.1465,
+    "st": 0.0165,
+    "tr": "st:REDWIR"
+   },
+   {
+    "s": "CRWV",
+    "in": "2026-10-22",
+    "out": "2026-11-04",
+    "occ": "CRWV261127C00059000",
+    "k": 59,
+    "spot": 59.1,
+    "o": 7.45,
+    "x": 2.72,
+    "by": "close",
+    "h": 0.0235,
+    "net": -0.6604,
+    "st": -0.1887,
+    "tr": "st:hoagied"
+   },
+   {
+    "s": "META",
+    "in": "2026-10-23",
+    "out": "2026-11-05",
+    "occ": "META261127C00640000",
+    "k": 640,
+    "spot": 638.175,
+    "o": 27.9,
+    "x": 13.35,
+    "by": "close",
+    "h": 0.0343,
+    "net": -0.5557,
+    "st": -0.0599,
+    "tr": "st:WeeklyOptionsTrading"
+   },
+   {
+    "s": "ORCL",
+    "in": "2026-10-23",
+    "out": "2026-11-05",
+    "occ": "ORCL261127C00125000",
+    "k": 125,
+    "spot": 124.87,
+    "o": 9.35,
+    "x": 3.75,
+    "by": "close",
+    "h": 0.02,
+    "net": -0.6219,
+    "st": -0.0858,
+    "tr": "st:AlphaBull_10M"
+   },
+   {
+    "s": "BAC",
+    "in": "2026-10-23",
+    "out": "2026-11-05",
+    "occ": "BAC261127C00051000",
+    "k": 51,
+    "spot": 50.73,
+    "o": 1.47,
+    "x": 1.08,
+    "by": "close",
+    "h": 0.102,
+    "net": -0.4492,
+    "st": -0.0271,
+    "tr": "st:AlphaBull_10M"
+   },
+   {
+    "s": "BULL",
+    "in": "2026-10-23",
+    "out": "2026-11-05",
+    "occ": "BULL261127C00006000",
+    "k": 6,
+    "spot": 5.87,
+    "o": 0.34,
+    "x": 0.08,
+    "by": "close",
+    "h": 0.3741,
+    "net": -0.9999,
+    "st": -0.1886,
+    "tr": "st:Rufus5508"
+   },
+   {
+    "s": "RDW",
+    "in": "2026-10-23",
+    "out": "2026-11-05",
+    "occ": "RDW261127C00008500",
+    "k": 8.5,
+    "spot": 8,
+    "o": 0.75,
+    "x": 0,
+    "by": "intrinsic",
+    "h": 0.1263,
+    "net": -1,
+    "st": -0.2342,
+    "tr": "st:REDWIR"
+   },
+   {
+    "s": "SMCI",
+    "in": "2026-10-23",
+    "out": "2026-11-05",
+    "occ": "SMCI261127C00034000",
+    "k": 34,
+    "spot": 33.7,
+    "o": 3.38,
+    "x": 0.45,
+    "by": "close",
+    "h": 0.0699,
+    "net": -0.8995,
+    "st": -0.2044,
+    "tr": "st:Humbleflow"
+   },
+   {
+    "s": "WMT",
+    "in": "2026-10-26",
+    "out": "2026-11-06",
+    "occ": "WMT261127C00120000",
+    "k": 120,
+    "spot": 119.65,
+    "o": 5.4,
+    "x": 8.11,
+    "by": "close",
+    "h": 0.1667,
+    "net": 0.0564,
+    "st": 0.0411,
+    "tr": "st:Skimman"
+   },
+   {
+    "s": "PATH",
+    "in": "2026-10-26",
+    "out": "2026-11-06",
+    "occ": "PATH261127C00014000",
+    "k": 14,
+    "spot": 14.13,
+    "o": 0.96,
+    "x": 0.31,
+    "by": "close",
+    "h": 0.2049,
+    "net": -0.8372,
+    "st": -0.088,
+    "tr": "st:Carlos7144"
+   },
+   {
+    "s": "BE",
+    "in": "2026-10-26",
+    "out": "2026-11-06",
+    "occ": "BE261127C00195000",
+    "k": 195,
+    "spot": 193,
+    "o": 17.9,
+    "x": 8.5,
+    "by": "close",
+    "h": 0.045,
+    "net": -0.5699,
+    "st": -0.1104,
+    "tr": "st:missalyssa"
+   },
+   {
+    "s": "S",
+    "in": "2026-10-26",
+    "out": "2026-11-06",
+    "occ": "S261127C00024000",
+    "k": 24,
+    "spot": 24.2,
+    "o": 1.8,
+    "x": 0,
+    "by": "intrinsic",
+    "h": 0.1515,
+    "net": -1,
+    "st": -0.1084,
+    "tr": "st:hoagied"
    }
   ]
  },
