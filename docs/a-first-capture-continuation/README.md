@@ -1,3 +1,5 @@
+> **Parallel economic deliverable, 7 November:** [Exact A hypothesis, evidence, alternatives and finite decision](a-hypothesis-checkpoint.md). Plausibility is not demonstrated performance; authentic executable after-cost advantage remains INCONCLUSIVE.
+
 > **Current full-input checkpoint:** [G2 report, external request and effort reconciliation](g2-checkpoint.md). Original source fields now derive through the actual caller and strict evaluator under supplied trust. Genuine turnover/source readiness remains UNKNOWN; no provider/setup/collection/production change.
 
 > **G2 raw-panel increment:** [Source-derived entry panels](g2-native-panels.md) now pass through the existing host with per-field originals and exact supplied-field checks. Every new record remains INCOMPLETE_G2; prior-cap/materiality/calendar/owner and authentic source semantics remain open. Independent review of this increment is pending.

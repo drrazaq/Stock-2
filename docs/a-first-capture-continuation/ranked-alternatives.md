@@ -1,3 +1,5 @@
+> **7 November superseding priority:** [A economic checkpoint](a-hypothesis-checkpoint.md) now accompanies G2. Earlier F6 recommendations below are historical; F6 does not substitute for the trading deliverable. Rejected methods remain rejected.
+
 # Bounded search: ranked next evidence questions, not strategy endorsements
 
 6 November 2026. Retained-source inspection, not a new study. Source/code hashes and exact metrics remain in [the pinned prior comparison](../review-ad3837-response/retained-comparison.json). All old results are examined data, never an untouched holdout. B remains RETIRED; C remains STOP. No new hypothesis is selected for implementation or activation.
