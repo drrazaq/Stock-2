@@ -1,0 +1,461 @@
+{
+  "kind": "FIVE_MANDATE_RETAINED_FEASIBILITY_MAP_V1",
+  "base": "dfc49d5e04220893201fecc1245ed1b7b429efb1",
+  "scope": "Tracked repository study/result/source reads and public primary research/specification browsing only; no provider data API calls, no study entrypoints run, no private archive/global absence inference",
+  "pins": {
+    "CLAUDE.md": "ef35678e0b79026ddc7f4d0fb14c84404d5bf5d16f8d683dcb2de53c3dade510",
+    "data/strategy-library.json": "38e6f04e19071536e58caafeaedda97c4060ce363618f8a58493548feb67cbc4",
+    "data/earnings-study.json": "a46ec6700fc7dbb8a38c7489a77197b4a2d7aada07e0f30b9cc0625ba3fbbb1c",
+    "data/macro-lab.json": "93e3169bd082a7f6882c2b1b6007fb8907c065701443ff09155b71a807d5fbc1",
+    "data/squad6-lab.json": "75e2ab93d2f94164e146cebf0e66b55db27fcc03a97cf922b8a171338ed02e53",
+    "data/value-lab.json": "0d8dc5e9753c43aa17cb3c2369f4da2dd4f17756c5297093eb7ba6204304c1a5",
+    "data/squad23-lab.json": "c8bf28355631f7b35887b89abe7d0a1ec952b3557444fd5796750271ad374db3",
+    "data/squad27-lab.json": "b3ec9f04ad083a95783b2e39fdf95a6e249e0d98737cb621e57f85b2b635ad44",
+    "data/agent-a-lab.json": "777a56b2f2796454bd96b3e9fcf5b7bf4c7a725436d91851d044f9a15d37d922",
+    "data/deals.json": "2ece2a24533b61840da964e86e332d8b4cbff202bb1e0579a97326cb637f33d7",
+    "squad6-core.mjs": "8808727db42fd54d5bb138394209f3133ffc712e52a1ff7b2045c408944522af",
+    "squad20-lab.mjs": "47718a3593b8a17836e63cddc3bd871250bb7db594c0343b8ab30c03abcd3a9c",
+    "agent-a-tgt-lab.mjs": "0220cd0ee17958e2baad75f97257d232f9b19a69fb23bf104f51ecf5641c4519",
+    "events-study.mjs": "2a003c7f39ba8e13b8e5546bc4bf6d58cfc98da0e49c923040c5425f8cbc9d49",
+    "deals.mjs": "cf30c07645fd198b6b3c2542c2b259497cc59222c49211099299ac5244c09525",
+    "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920",
+    "docs/a-catalyst-reclaim-pilot/protocol.proposed.json": "d4d6418d332b6b380a549b1513184b9e93837c034f7161eba6572432a2e621fa",
+    "docs/review-ad3837-response/retained-comparison.json": "a8a78fdb24259bfe8365bc83245d37e178729d9da4c3a664c2c87b85d585a7d6",
+    "docs/a-first-capture-continuation/earnings-input-inventory.json": "4e420cdb28722ec25d207dcb3a5cb118bf7a0323ff020c378a874a1e4f39b054"
+  },
+  "priorRules": {
+    "A-RMOM1": {
+      "id": "A-RMOM1",
+      "agent": "A",
+      "family": "Momentum risk management (Agent A web scout)",
+      "name": "Risk-managed momentum (Barroso & Santa-Clara 2015): the SQ6-MTUM book sized to a 12% volatility target",
+      "status": "queued (Agent A)",
+      "registered": "2026-10-25",
+      "kind": "sizing",
+      "explain": "RULE (written 25 Oct 2026 before any test): hold the SQ6-MTUM book as now, but at each formation put min(1, 0.12 / sigma) of the money in it, sigma = the annualised standard deviation of the book's own daily returns over the previous 126 sessions (the previous formation's picks held equally; under 126 sessions of history: 1); the rest in cash at 0%. Yardsticks: the unscaled SQ6-MTUM book, SPY, the average stock; both halves; the worst month and the worst drawdown reported next to the return per year. Long-only version (the paper scales a long-short book).",
+      "data": "has it: the 5-year daily price cache and the SQ6-MTUM rebuild (squad20-lab.mjs / agent-a-tgt-lab.mjs).",
+      "sources": [
+        "https://ciencia.ucp.pt/en/publications/momentum-has-its-moments/",
+        "https://run.unl.pt/bitstream/10362/11836/1/Barroso_2012.pdf"
+      ],
+      "note": "Web scout 25 Oct 2026. Queue position: Agent A item after A-TGT1."
+    },
+    "C-SPEC1": {
+      "id": "C-SPEC1",
+      "family": "Company events",
+      "name": "Special situations: cash tender offers and index additions",
+      "explain": "(1) Announced all-cash tender offers / mergers for halal targets: buy at the next open after the 8-K/SC TO-T when the spread to the offer price is 3-15%, hold to close of the deal or 120 sessions, exit on deal break; report deal-break losses separately. (2) Additions to the S&P 500/400/600 announced by S&P (official press releases): buy at the next open after the announcement, sell at the close before the effective date. Halal of the target decided by ZAD.",
+      "status": "queued (Agent C)",
+      "agent": "C",
+      "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days."
+    },
+    "SQ6-MTUM": {
+      "id": "SQ6-MTUM",
+      "family": "Public-record traders and fund rulebooks (Squad 6)",
+      "name": "MSCI USA Momentum index method (iShares MTUM): risk-adjusted 6 and 12-month momentum, semi-annual",
+      "explain": "RULE: At the close of the last session of May and of November. Universe: the 600 most traded liquid stocks with 252+ sessions of history (MSCI USA proxy). 12-month momentum = close 21 sessions ago / close 252 sessions ago - 1; 6-month = close 21 ago / close 126 ago - 1; each divided by the annualised standard deviation of weekly returns over up to 3 years (156 weeks, 52 at least); each turned into a z-score across the universe, averaged 50/50, standardised again and winsorised at +-3. BUY the next open the 120 stocks (20% of the universe) with the highest positive combined z-score. SELL at the close of session 126 (the next review). DEVIATIONS from the published method: Market-cap x score weighting, the 50% buffer and the ad-hoc rebalance are not modelled; equal weight per trade; no risk-free rate (it is common to every stock); the first reviews have under 3 years of weekly returns; the universe is a traded-value proxy. Common (squad6-core.mjs header): liquid = close 5 USD+ and 20-session average traded value 5M USD+; whole market with dead stocks (5-year cache); large-cap universes = the most traded liquid stocks by 63-session traded value (survivor-free proxy for market-cap rank). Entries never before the next session (next open, or a resting limit / buy-stop filled at the level or the open if through it); close-based exits at the NEXT open; intraday stop and target on the same day = stop; a stock that stops trading = its last close. Cost 0.8% (1.2% stress). Judged once (first complete run frozen, data/squad6-lab.json firstRun) at the tier-2 standard on both halves (signal before / from 2024-01-01) with the yardstick and the rule both capped at +300% (AUD-1): > 0 after 0.8% and 1.2%, better than the average liquid stock bought and sold at the same moments, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5. Win rate, average win / loss and newer-vs-older reported.",
+      "status": "tested: not proven; forward paper lane from 26 Oct 2026",
+      "agent": "squad6",
+      "registered": "2026-10-24",
+      "who": "MSCI index rulebook tracked by iShares MTUM (public methodology, live since 2013)",
+      "replication": "proxy",
+      "sources": [
+        "https://www.msci.com/eqb/methodology/meth_docs/MSCI_Momentum_Indexes_Methodology_May2017.pdf"
+      ],
+      "cites": [
+        "MSCI Momentum Indexes Methodology (May 2017; current edition 2025)"
+      ],
+      "libraryCheck": "Not among DEC-* / DEC2-* (decoded lanes), ANOM-* (momentum deciles), T1-T23, A-SW*, SQ2-*. Nearest: ANOM-MOM12 (raw 12-1 decile of all liquid stocks) and SQ5-MOMBUF (plain 12-1 top 20 of the 500 largest).",
+      "note": "Pre-registered 2026-10-24 BEFORE any run (squad6-core.mjs = the exact rule; one version). 5-year one-shot by squad6-lab.mjs, first complete verdict frozen; forward paper lane (data/squad6-paper.jsonl) from 26 Oct 2026.",
+      "tested": "2026-10-23",
+      "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+      "result": {
+        "verdict": "NOT PROVEN",
+        "n": [
+          360,
+          479
+        ],
+        "avg": [
+          0.0728,
+          0.1929
+        ],
+        "stress": [
+          0.0688,
+          0.1889
+        ],
+        "edge": [
+          0.0313,
+          0.1215
+        ],
+        "vsOwn": [
+          -0.1571,
+          0.0128
+        ],
+        "noTop2": [
+          0.0609,
+          0.1812
+        ],
+        "tBlock": [
+          0.68,
+          1.52
+        ],
+        "win": [
+          0.5861,
+          0.6576
+        ],
+        "newerBetter": true,
+        "why": "not better than the same stocks on their other days in the older half; block t 0.68 under 2.5 in the older half; block t 1.52 under 2.5 in the newer half"
+      }
+    },
+    "B-FCF1": {
+      "id": "B-FCF1",
+      "family": "Quality and value",
+      "name": "Cash-rich, growing, low-debt companies (the measurable filters from the chain screener)",
+      "explain": "Monthly basket, point in time from SEC XBRL (10-Q/10-K as filed): free-cash-flow yield > 5% (trailing 4 quarters operating cash flow minus capex, over market cap), revenue growth >= 10% year on year, debt-to-equity < 0.5, and, for companies that hold inventory, days of inventory < 60; stock above its 200-day average. Equal weight, hold 3 months. Compared with the average stock, with V15 (F-score in an uptrend) on the same dates, and with the same stocks in months they did not qualify; both halves, 0.8%/1.2% cost, without the 2 best, t >= 2.5. Supplier diversification and on-time delivery are not public data and are left out.",
+      "status": "tested: not proven",
+      "agent": "B",
+      "note": "From the owner's Stock Chain Screener image and prompts of 23 Oct. Pre-registered before any run. Low debt also fits common halal screens, but halal stays ZAD's decision.",
+      "built": "Built 23 Oct 2026 before any result (value-lab.mjs + value-core.mjs fcfCheck): formation every 21 sessions (as quality.mjs), liquid stocks (5 USD+, 5M USD+ a day); SEC companyfacts point in time (a filing counts from the day after its filing date); TTM = 10-K year, or YTD + last year - YTD a year earlier; capex = PaymentsToAcquirePropertyPlantAndEquipment / ProductiveAssets (unknown -> left out); market value = split-adjusted share count known 30 days after its date x close; FCF yield 40%+ treated as a data error (quality.mjs bound); revenue growth = TTM vs TTM a year earlier, same tag; debt = LongTermDebt (incl. current) else the parts reported that date, none if the company never reported debt; filings 200+ days old = stale. Buy next open, sell the close 63 sessions later. Judged at the owner tier-2 standard (block t over 63-session blocks).",
+      "tested": "2026-10-19",
+      "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+      "result": {
+        "verdict": "NOT PROVEN",
+        "n": [
+          534,
+          486
+        ],
+        "avg": [
+          0.0387,
+          0.0572
+        ],
+        "median": [
+          0.0369,
+          0.0207
+        ],
+        "edge": [
+          0.0226,
+          0.0289
+        ],
+        "vsOwn": [
+          -0.0274,
+          -0.0046
+        ],
+        "noTop2": [
+          0.0362,
+          0.0474
+        ],
+        "stress": [
+          0.0347,
+          0.0532
+        ],
+        "tBlock": [
+          1.3,
+          1.79
+        ],
+        "why": "not better than the same stocks on their other days in the older half; block t 1.3 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.79 under 2.5 in the newer half"
+      }
+    },
+    "E11": {
+      "id": "E11",
+      "family": "Company events",
+      "name": "Merger arbitrage",
+      "explain": "Buy the target after a takeover offer.",
+      "status": "not for this system",
+      "note": "The price stops moving after the offer."
+    }
+  },
+  "actualStudyExcerpts": {
+    "data/squad6-lab.json": {
+      "SQ6-MTUM": {
+        "source": "firstRun",
+        "verdict": "NOT PROVEN",
+        "why": "not better than the same stocks on their other days in the older half; block t 0.68 under 2.5 in the older half; block t 1.52 under 2.5 in the newer half",
+        "hold": 126,
+        "block": 126,
+        "results": {
+          "older": {
+            "n": 360,
+            "days": 3,
+            "blocks": 3,
+            "avg": 0.0728,
+            "avgStress": 0.0688,
+            "vsOwn": -0.1571,
+            "tBlock": 0.68,
+            "noTop2": 0.0609
+          },
+          "newer": {
+            "n": 479,
+            "days": 4,
+            "blocks": 4,
+            "avg": 0.1929,
+            "avgStress": 0.1889,
+            "vsOwn": 0.0128,
+            "tBlock": 1.52,
+            "noTop2": 0.1812
+          }
+        }
+      },
+      "SQ6-QMOM": {
+        "source": "firstRun",
+        "verdict": "NOT PROVEN",
+        "why": "not better than the same stocks on their other days in the older half; block t 0.45 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.75 under 2.5 in the newer half",
+        "hold": 63,
+        "block": 63,
+        "results": {
+          "older": {
+            "n": 250,
+            "days": 5,
+            "blocks": 5,
+            "avg": 0.0458,
+            "avgStress": 0.0418,
+            "vsOwn": -0.118,
+            "tBlock": 0.45,
+            "noTop2": 0.0285
+          },
+          "newer": {
+            "n": 500,
+            "days": 10,
+            "blocks": 10,
+            "avg": 0.0536,
+            "avgStress": 0.0496,
+            "vsOwn": -0.1059,
+            "tBlock": 0.75,
+            "noTop2": 0.047
+          }
+        }
+      }
+    },
+    "data/value-lab.json": {
+      "B-FCF1": {
+        "source": "correctedRun",
+        "verdict": "NOT PROVEN",
+        "why": "not better than the same stocks on their other days in the older half; block t 1.32 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 1.75 under 2.5 in the newer half",
+        "hold": 63,
+        "results": {
+          "older": {
+            "n": 534,
+            "days": 25,
+            "blocks": 9,
+            "avg": 0.0387,
+            "avgStress": 0.0347,
+            "vsOwn": -0.0274,
+            "tBlock": 1.32,
+            "noTop2": 0.0362
+          },
+          "newer": {
+            "n": 486,
+            "days": 22,
+            "blocks": 8,
+            "avg": 0.0572,
+            "avgStress": 0.0532,
+            "vsOwn": -0.0046,
+            "tBlock": 1.75,
+            "noTop2": 0.0474
+          }
+        }
+      }
+    },
+    "data/macro-lab.json": {
+      "MACRO-VIX-E20": {
+        "source": "firstRun",
+        "verdict": "TOO FEW CASES",
+        "why": "fewer than 20 cases or 3 blocks in a half (1 cases, 1 blocks / 3 cases, 3 blocks)",
+        "hold": 20,
+        "results": {
+          "older": {
+            "n": 1,
+            "days": 1,
+            "blocks": 1,
+            "avg": 0.0144,
+            "avgStress": 0.0104,
+            "vsOwn": 0.0195,
+            "tBlock": null,
+            "noTop2": null
+          },
+          "newer": {
+            "n": 3,
+            "days": 3,
+            "blocks": 3,
+            "avg": 0.0559,
+            "avgStress": 0.0519,
+            "vsOwn": 0.05,
+            "tBlock": -0.36,
+            "noTop2": 0.0345
+          }
+        }
+      },
+      "MACRO-WAR-E20": {
+        "source": "firstRun",
+        "verdict": "TOO FEW CASES",
+        "why": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 7 cases, 7 blocks)",
+        "hold": 20,
+        "results": {
+          "older": {
+            "n": 2,
+            "days": 2,
+            "blocks": 2,
+            "avg": 0.0717,
+            "avgStress": 0.0677,
+            "vsOwn": 0.0735,
+            "tBlock": null,
+            "noTop2": null
+          },
+          "newer": {
+            "n": 7,
+            "days": 7,
+            "blocks": 7,
+            "avg": 0.017,
+            "avgStress": 0.013,
+            "vsOwn": 0.0101,
+            "tBlock": -0.25,
+            "noTop2": -0.0141
+          }
+        }
+      },
+      "MACRO-PEACE-E20": {
+        "source": "firstRun",
+        "verdict": "TOO FEW CASES",
+        "why": "fewer than 20 cases or 3 blocks in a half (1 cases, 1 blocks / 7 cases, 7 blocks)",
+        "hold": 20,
+        "results": {
+          "older": {
+            "n": 1,
+            "days": 1,
+            "blocks": 1,
+            "avg": 0.0097,
+            "avgStress": 0.0057,
+            "vsOwn": 0.0018,
+            "tBlock": null,
+            "noTop2": null
+          },
+          "newer": {
+            "n": 7,
+            "days": 7,
+            "blocks": 7,
+            "avg": 0.0002,
+            "avgStress": -0.0038,
+            "vsOwn": 0.0006,
+            "tBlock": -0.87,
+            "noTop2": -0.0209
+          }
+        }
+      }
+    },
+    "data/squad23-lab.json": {
+      "SQ23-MIDQ": {
+        "source": "firstRun",
+        "verdict": "DOES NOT EARN ITS PLACE",
+        "why": "70/30 not better than Basket 1 alone in the older half (return/maxDD 0.0613 vs 0.0865; CAGR +1.9% vs +2.9%, max fall -31.8% vs -33.1%); 70/30 not better than Basket 1 alone in the newer half (return/maxDD 0.9441 vs 1.0825; CAGR +22.0% vs +26.8%, max fall -23.3% vs -24.7%)",
+        "reviews": 20,
+        "results": {}
+      }
+    }
+  },
+  "primarySources": [
+    {
+      "name": "Bernard and Thomas1989",
+      "url": "https://doi.org/10.2307/2491062",
+      "readScope": "Publisher bibliographic/search record; JSTOR body not available; not a new full-paper replication"
+    },
+    {
+      "name": "Jegadeesh and Titman1993",
+      "url": "https://doi.org/10.1111/j.1540-6261.1993.tb04702.x",
+      "readScope": "Publisher abstract/search record; direct open403"
+    },
+    {
+      "name": "Barroso and Santa-Clara2015",
+      "url": "https://ciencia.ucp.pt/en/publications/momentum-has-its-moments/",
+      "readScope": "Author institution abstract read"
+    },
+    {
+      "name": "Daniel and Moskowitz2016",
+      "url": "https://business.columbia.edu/faculty/research/momentum-crashes",
+      "readScope": "Author institution abstract read; NBER direct403"
+    },
+    {
+      "name": "Mitchell and Pulvino2001",
+      "url": "https://www.aqr.com/Insights/Research/Journal-Article/Characteristics-of-Risk-and-Return-in-Risk-Arbitrage",
+      "readScope": "Author research page summary read"
+    },
+    {
+      "name": "Asness Frazzini Pedersen2019",
+      "url": "https://link.springer.com/article/10.1007/s11142-018-9470-2",
+      "readScope": "Publisher full HTML available; abstract/introduction inspected"
+    },
+    {
+      "name": "Novy-Marx2013",
+      "url": "https://doi.org/10.1016/j.jfineco.2013.01.003",
+      "readScope": "Primary paper bibliographic/abstract search; not fresh full-paper replication"
+    },
+    {
+      "name": "Frazzini Israel Moskowitz2012",
+      "url": "https://www.aqr.com/Insights/Research/Working-Paper/Trading-Costs-of-Asset-Pricing-Anomalies",
+      "readScope": "Authors working-paper summary read"
+    }
+  ],
+  "technicalSources": [
+    {
+      "name": "SEC API",
+      "url": "https://www.sec.gov/search-filings/edgar-application-programming-interfaces",
+      "finding": "Cross-submission facts/last-filed frames; accession/context/availability join required"
+    },
+    {
+      "name": "Massive financials",
+      "url": "https://massive.com/knowledge-base/article/does-massive-provide-the-filing-date-for-any-financial-reports",
+      "finding": "Latest version replaces original; no older-version parameter; first-filed dates do not recover original values"
+    },
+    {
+      "name": "Massive quotes",
+      "url": "https://massive.com/docs/rest/stocks/trades-quotes/quotes",
+      "finding": "Starter and Developer explicitly not included for historical quote route; no new purchase/access call"
+    },
+    {
+      "name": "Alpaca quotes",
+      "url": "https://docs.alpaca.markets/us/reference/stockquotesingle-1",
+      "finding": "SIP/asof/pagination specification; quote size era change surfaced by schema/search extraction, exact binding unresolved"
+    }
+  ],
+  "availability": {
+    "groupedPriceCacheExpectedPath": "study-cache/grouped.json.gz",
+    "groupedPriceCacheExists": false,
+    "MTUMModeledTradePopulation": 839,
+    "MTUMRetainedEndpointRows": 300,
+    "MTUMEndpointFields": [
+      "s",
+      "sig",
+      "buy",
+      "sell",
+      "kind",
+      "net",
+      "avgStock",
+      "sameStock"
+    ],
+    "dealHeadlinesRetained": 0,
+    "dealRiskSetCompleteness": "NOT ESTABLISHED; zero headlines does not mean zero deals",
+    "authenticExecutableAPopulation": "NOT ESTABLISHED",
+    "scopeLimit": "Accessible tracked workspace only; external private archives not mounted or searched"
+  },
+  "selection": {
+    "A": {
+      "hoursCap": 4,
+      "verdict": "PROCEED offline source feasibility; authentic result UNRESOLVED"
+    },
+    "R": {
+      "hoursCap": 4,
+      "verdict": "PROCEED archive/cost feasibility; replay blocked by missing daily cache"
+    },
+    "D": {
+      "hoursCap": 4,
+      "verdict": "PROCEED original terms/population feasibility; no complete deal population"
+    }
+  },
+  "reviewResponseHoursCap": 1,
+  "totalHoursCap": 13,
+  "hoursAlreadySpentClaim": null,
+  "uniqueHypotheses": 6,
+  "newReturnExperiments": 0,
+  "newDemonstratedAfterCostAdvantages": 0,
+  "newAuthenticMarketCases": 0,
+  "frozenRulesChanged": false,
+  "separateApprovalsUnchanged": true
+}

@@ -1,3 +1,5 @@
+> **Five-mandate programme, 7 November:** [Research map, selected finite tasks and owner choices](research-programme.md). A continues alongside distinct crisis-risk and cash-deal feasibility work; no new data acquisition or strategy adoption.
+
 > **Parallel economic deliverable, 7 November:** [Exact A hypothesis, evidence, alternatives and finite decision](a-hypothesis-checkpoint.md). Plausibility is not demonstrated performance; authentic executable after-cost advantage remains INCONCLUSIVE.
 
 > **Current full-input checkpoint:** [G2 report, external request and effort reconciliation](g2-checkpoint.md). Original source fields now derive through the actual caller and strict evaluator under supplied trust. Genuine turnover/source readiness remains UNKNOWN; no provider/setup/collection/production change.
