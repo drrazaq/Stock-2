@@ -33665,6 +33665,54 @@
    "explain": "Rule: model-predicted 12-month return from each analyst report, averaged over 12 months; buy the top decile, value weight, monthly.",
    "data": "needs data: full analyst report text (Thomson Investext, paid); not available free. Registered so it is not re-scouted",
    "queue": "not buildable"
+  },
+  {
+   "id": "RQ-DIVCUT-AV126",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: quarterly dividend per share cut 25%+ vs a year before (new 10-Q/10-K), 126 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-07 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: a 10-Q/10-K (filed within 120 days of the quarter end) reports a quarterly dividend per share (us-gaap CommonStockDividendsPerShareDeclared, else ...CashPaid) at most 75% of the same quarter a year before (including zero; split guard on total dividends); bought next open, 126 sessions; a valid AVOID / SELL filter if these stocks lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, tag order, year-ago match, split guard, thresholds and data rule fixed in research-core.mjs (IDEA 11) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1995.tb04796.x",
+    "https://www.nber.org/papers/w4778",
+    "https://doi.org/10.1111/j.1540-6261.1997.tb04817.x"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-DIVCUT-AV63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: dividend cut 25%+, 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-07 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-DIVCUT-AV126, 63 sessions. Never a buy. Measure, tag order, year-ago match, split guard, thresholds and data rule fixed in research-core.mjs (IDEA 11) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1995.tb04796.x",
+    "https://www.nber.org/papers/w4778",
+    "https://doi.org/10.1111/j.1540-6261.1997.tb04817.x"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-DIVCUT-BIG126",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: dividend cut 50%+ or omitted, 126 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-07 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-DIVCUT-AV126 with the dividend per share at most 50% of a year before (or zero). Never a buy. Measure, tag order, year-ago match, split guard, thresholds and data rule fixed in research-core.mjs (IDEA 11) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.1995.tb04796.x",
+    "https://www.nber.org/papers/w4778",
+    "https://doi.org/10.1111/j.1540-6261.1997.tb04817.x"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
   }
  ]
 }

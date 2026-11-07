@@ -157,6 +157,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'inv') { ch += preRegisterInv(LB); continue; }
     if (R.family === 'gwi') { ch += preRegisterGwi(LB); continue; }
     if (R.family === 'gpc') { ch += preRegisterGpc(LB); continue; }
+    if (R.family === 'dvc') { ch += preRegisterDvc(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -707,4 +708,75 @@ export function preRegisterGpc(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of GPC_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-05 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 10) before any run.', sources: GPC_SOURCES, hold: R.hold, note: GPC_NOTE }); ch++; }
+  return ch; }
+// ---------------- IDEA 11 (pre-registered 7 Nov 2026, before any run): DIVIDEND CUTS as a SELL / AVOID warning ----------------
+// Sources: Michaely, Thaler and Womack, "Price Reactions to Dividend Initiations and Omissions: Overreaction or Drift?", Journal of Finance
+// 50(2), 1995, 573-608 (omissions: about -7% at the news and a further drift of about -11% over the following year); Benartzi, Michaely and
+// Thaler, "Do Changes in Dividends Signal the Future or the Past?", Journal of Finance 52(3), 1997. NEW information line (dividend per share,
+// official SEC XBRL company facts); the library tested dividend hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT), never cuts.
+// Long only: AVOID / SELL-warning check, NEVER a buy (like Squad 29 and IDEA 9).
+// MEASURE (fixed now, no tuning): dividend per share of a DISCRETE quarter (start..end 80-100 days), unit USD/shares, forms 10-Q or 10-K (no
+// amendments), period end from 2019-06-01, tag us-gaap:CommonStockDividendsPerShareDeclared, else (when a company never uses it)
+// us-gaap:CommonStockDividendsPerShareCashPaid. A filing date F is an EVENT when the latest quarter end E it reports is later than every
+// quarter end reported before F and 0 <= F - E <= 120 days. CUR = that filing's value for E. PRIOR = the value for the quarter end closest
+// to E - 365 within E-385..E-345, taken FROM FILING F ITSELF when it reports it (its comparative is restated for splits), else the latest
+// filed before F. PRIOR must be > 0. ratio = CUR / PRIOR.
+// SPLIT GUARD (fixed now): total common dividends of the same two quarters (us-gaap DividendsCommonStock, else DividendsCommonStockCash, USD,
+// discrete quarters, latest filed on or before F). If both totals are known and the total fell less than 10% (total ratio > 0.90), the
+// event is dropped (a per-share fall without a cash fall = a split or a share-count change). If the totals are not known and the ratio is
+// within 2% of 1/2, 1/3, 1/4 or 1/5 with CUR > 0, the event is dropped (split-shaped; stated).
+//   RQ-DIVCUT-AV126  AVOID check: ratio <= 0.75 (cut 25%+, including to zero); bought next open; 126 sessions; judged GROSS vs GROSS.
+//   RQ-DIVCUT-AV63   the same, 63 sessions.
+//   RQ-DIVCUT-BIG126 AVOID check: ratio <= 0.50 (cut 50%+ or omitted); 126 sessions.
+// Public on the 'filed' date: entry at the OPEN of the first session strictly AFTER it. Most cuts are announced earlier in a press release or
+// 8-K, so this measures the drift AFTER the 10-Q/10-K, not the news day (stated; conservative). Liquid on the session before entry.
+// One open trade per stock per rule. A valid SELL reason only if AVOID CONFIRMED (lag the average stock in both halves before cost, block
+// t <= -2.5 in both).
+// DATA RULE (fixed now): no verdict until (a) 95%+ of universe companies looked up in the SEC bulk company facts file, (b) 85%+ of liquid
+// stock-months map to an SEC number, (c) 150+ cut events (ratio <= 0.75) from 2021-10-01 (fewer = the reader is broken or too few cuts).
+export const DVC = { dps: ['CommonStockDividendsPerShareDeclared', 'CommonStockDividendsPerShareCashPaid'], tot: ['DividendsCommonStock', 'DividendsCommonStockCash'], endFrom: '2019-06-01', qLo: 80, qHi: 100, maxLag: 120, prevLo: 345, prevHi: 385, cut: 0.75, big: 0.5, totKeep: 0.90, splitTol: 0.02, eventsFrom: '2021-10-01' };
+export const DVC_DATA = { looked: 0.95, map: 0.85, events: 150 };
+RULES['RQ-DIVCUT-AV126'] = { kind: 'avoid', hold: 126, max: DVC.cut, family: 'dvc', name: 'AVOID check: quarterly dividend per share cut 25%+ vs a year before (new 10-Q/10-K), 126 sessions',
+  rule: 'Information only: a 10-Q/10-K (filed within 120 days of the quarter end) reports a quarterly dividend per share (us-gaap CommonStockDividendsPerShareDeclared, else ...CashPaid) at most 75% of the same quarter a year before (including zero; split guard on total dividends); bought next open, 126 sessions; a valid AVOID / SELL filter if these stocks lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+RULES['RQ-DIVCUT-AV63'] = { kind: 'avoid', hold: 63, max: DVC.cut, family: 'dvc', name: 'AVOID check: dividend cut 25%+, 63 sessions', rule: 'As RQ-DIVCUT-AV126, 63 sessions. Never a buy.' };
+RULES['RQ-DIVCUT-BIG126'] = { kind: 'avoid', hold: 126, max: DVC.big, family: 'dvc', name: 'AVOID check: dividend cut 50%+ or omitted, 126 sessions', rule: 'As RQ-DIVCUT-AV126 with the dividend per share at most 50% of a year before (or zero). Never a buy.' };
+export const DVC_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'dvc');
+for (const id of DVC_IDS) { if (!IDS.includes(id)) IDS.push(id); ONE_OPEN.add(id); }
+const dvcForm = (x) => x.form === '10-Q' || x.form === '10-K';
+function dvcQuarters(g, tags, unit, allowZero) { for (const tag of tags) { const u = g && g[tag] && g[tag].units, arr = u && Array.isArray(u[unit]) ? u[unit] : null; if (!arr || !arr.length) continue;
+    const out = [], s = new Set();
+    for (const x of arr) { if (!x || !x.start || !x.end || !x.filed || !ok(x.val) || x.val < 0 || (!allowZero && x.val === 0) || !dvcForm(x) || x.end < '2018-03-01') continue;
+      const len = daysBetween(x.start, x.end); if (len < DVC.qLo || len > DVC.qHi) continue; const k = x.start + '|' + x.end + '|' + x.val + '|' + x.filed; if (s.has(k)) continue; s.add(k); out.push([x.start, x.end, x.val, x.filed, x.form]); }
+    if (out.length) return out.sort((p, r) => p[3] < r[3] ? -1 : p[3] > r[3] ? 1 : p[1] < r[1] ? -1 : p[1] > r[1] ? 1 : 0); }
+  return []; }
+// companyfacts JSON -> { q: [[start, end, dps, filed, form]] discrete quarters (first tag used), t: [[start, end, total, filed, form]] }
+export function dvcRows(j) { const g = j && j.facts && j.facts['us-gaap']; return { q: dvcQuarters(g, DVC.dps, 'USD/shares', true), t: dvcQuarters(g, DVC.tot, 'USD', true) }; }
+const dvcYearAgo = (list, E, F) => { const target = addDays(E, -365), win = list.filter(r => r[3] <= F && daysBetween(r[1], E) >= DVC.prevLo && daysBetween(r[1], E) <= DVC.prevHi);
+  const inF = win.filter(r => r[3] === F), pool = inF.length ? inF : win; let best = null;
+  for (const r of pool) { const d0 = Math.abs(daysBetween(r[1], target)), d1 = best ? Math.abs(daysBetween(best[1], target)) : 1e9; if (!best || d0 < d1 || (d0 === d1 && r[3] >= best[3])) best = r; }
+  return best; };
+const dvcAt = (list, end, F) => { let b = null; for (const r of list) { if (r[3] > F) continue; if (r[1] === end && (!b || r[3] >= b[3])) b = r; } return b; };
+export const splitShaped = (ratio) => ratio > 0 && [1 / 2, 1 / 3, 1 / 4, 1 / 5].some(k => Math.abs(ratio - k) <= DVC.splitTol * k * 1.0001 + 1e-12);
+// rows -> events [{ d (filed), end, cur, prior, ratio, form, tot (total ratio or null), guard (null | 'total' | 'shape') }]
+export function dvcEvents(rows) { const out = [], q = (rows && rows.q) || [], tt = (rows && rows.t) || []; let maxEnd = '';
+  const byF = new Map(); for (const r of q) (byF.get(r[3]) || byF.set(r[3], []).get(r[3])).push(r);
+  for (const F of [...byF.keys()].sort()) { const here = byF.get(F), E = here.reduce((m, r) => r[1] > m ? r[1] : m, '');
+    if (E > maxEnd && E >= DVC.endFrom && daysBetween(E, F) >= 0 && daysBetween(E, F) <= DVC.maxLag) { const cur = here.filter(r => r[1] === E).pop()[2], prev = dvcYearAgo(q, E, F);
+      if (prev && prev[2] > 0) { const ratio = +(cur / prev[2]).toFixed(6), t1 = dvcAt(tt, E, F), t0 = t1 ? dvcYearAgo(tt, E, F) : null;
+        const tot = t1 && t0 && t0[2] > 0 ? +(t1[2] / t0[2]).toFixed(6) : null;
+        const guard = ratio <= DVC.cut ? (tot !== null ? (tot > DVC.totKeep ? 'total' : null) : (cur > 0 && splitShaped(ratio) ? 'shape' : null)) : null;
+        out.push({ d: F, end: E, cur, prior: prev[2], ratio, form: here.find(r => r[1] === E)[4], tot, guard }); } }
+    if (E > maxEnd) maxEnd = E; }
+  return out; }
+export function dvcDataRule({ ciks, looked, liqMonths, liqMapped, events }) { const r = { looked: ciks ? looked / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.looked >= DVC_DATA.looked)) why.push('company facts looked up ' + (r.looked * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= DVC_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(events >= DVC_DATA.events)) why.push('dividend cut events ' + events + ' (150 needed)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+const DVC_SOURCES = ['https://doi.org/10.1111/j.1540-6261.1995.tb04796.x', 'https://www.nber.org/papers/w4778', 'https://doi.org/10.1111/j.1540-6261.1997.tb04817.x'];
+const DVC_NOTE = 'Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.';
+export function preRegisterDvc(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of DVC_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-07 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Measure, tag order, year-ago match, split guard, thresholds and data rule fixed in research-core.mjs (IDEA 11) before any run.', sources: DVC_SOURCES, hold: R.hold, note: DVC_NOTE }); ch++; }
   return ch; }
