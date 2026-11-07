@@ -34,3 +34,7 @@ This revision only corrects offline evaluator semantics, caps, documentation and
 ## Focused re-review requested
 
 Please review C1–C3 and C5/C6 against the revised code/plan, including price-with-cost separation, size inconclusiveness,8,000-object cap, first-page tie boundary and explicit delay. Separately confirm C4 is honestly BLOCKED and challenge the documented nonrotation/data-scope route. Do not issue overall execution/setup readiness or approve acquisition until the private executor and binding contract are concrete. Synthetic checks establish code behavior only; no trading result is produced.
+
+## Hosted alternative requested after this correction
+
+[Exact hosted revision](hosted-revision/README.md) and [separate stage/hosting budgets](hosted-revision/scope.proposed.json) propose an owner-only private GitHub repository with Actions disabled at setup. This is a new custody/location proposal, not activation of the local adapter. Account SIP eligibility, accepted hosted terms and effective zero-spend control remain unverified; no owner action requested before independent review.
