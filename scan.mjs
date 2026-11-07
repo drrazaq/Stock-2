@@ -9,6 +9,7 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
+import { priceEvidence, stopText, stopMessageKey, validStop } from './stop-watch.mjs';
 
 const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;   // test hooks: localhost only
@@ -4171,14 +4172,24 @@ async function intraday(onlyMine) {
   const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
   const buyNowCards = [];
   const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
-  const seen = {};
+  const seen = {}, stopAlerts = [];
+  // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
+  // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
+  // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
+  // was reached; otherwise one STOP CHECK UNKNOWN line a day. Stop levels and positions are only read.
+  const watcherDelivered = (sym, kind) => { try { return JSON.parse(fs.readFileSync('data/watcher-message-state/' + day + '/' + crypto.createHash('sha256').update(stopMessageKey(sym, kind)).digest('hex') + '.json', 'utf8')).state === 'ACKNOWLEDGED'; } catch (e) { return false; } };
+  const stopFallback = (sym, P, j) => { const ev = !validStop(P.stop) ? { state: 'UNKNOWN', why: 'the recorded stop is not a valid number' } : priceEvidence(sym, { sym, price: +j.price, t: j.t, provider: j.src || 'unknown source', kind: 'TRADE' }, Date.now());
+    if (ev.state !== 'OK') { if (st.sent[sym + 'myunk'] || st.sent[sym + 'myst'] || watcherDelivered(sym, 'unknown') || watcherDelivered(sym, 'hit')) return; st.sent[sym + 'myunk'] = 1; stopAlerts.push(stopText('unknown', sym, P, ev)); return; }
+    if (!(ev.price <= P.stop) || st.sent[sym + 'myst']) return;
+    if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
+    st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
   for (const sym of watch) {
-    const j = await liveQ((sym)), p = +j.price; if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
+    const j = (await liveQ((sym))) || {}, p = +j.price; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
     const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
     if (mp) {   // you told the bot you bought this one
       const chg = ' You bought at ' + money(mp.entry) + ' (' + (p >= mp.entry ? '+' : '') + ((p / mp.entry - 1) * 100).toFixed(1) + '%).';
-      if (mp.stop && p <= mp.stop) say('myst', 'YOUR POSITION: STOP LOSS REACHED (' + money(mp.stop) + '). Sell / reassess now.' + chg);
+      if (mp.stop && p <= mp.stop) { /* (4 Nov) stop crossings: stopFallback() above, one evidence rule and wording with the live watcher */ }
       else if (mp.t2 && p >= mp.t2) say('myt2', 'YOUR POSITION: TARGET 2 REACHED (' + money(mp.t2) + ').' + chg);
       else if (mp.t1 && p >= mp.t1 && !mp.trail) say('myt1', 'YOUR POSITION: ' + t1Text(sym, mp) + chg);
     }
@@ -4223,6 +4234,7 @@ async function intraday(onlyMine) {
   for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
     await telegram('BUY NOW: a proven setup is inside its buy range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
       [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
+  if (stopAlerts.length) await telegram('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
   if (alerts.length) await telegram('Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
   console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
 }

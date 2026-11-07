@@ -51,7 +51,7 @@ test('filter table: a gate is judged only on the candidates it alone rejects; ha
 test('catalyst classes: source, direction and freshness are separate; a failed source is UNAVAILABLE, never NONE; no reason is invented', () => {
   const now = Date.parse('2026-10-29T14:00:00Z'), ok = { known: true, filings: [] }, noNews = { ok: true, items: [] };
   let c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00.000Z' }] }, news: noNews, nowMs: now });
-  assert.equal(c.cls, 'VERIFIED'); assert.equal(c.source, 'SEC'); assert.equal(c.direction, 'AMBIGUOUS'); assert.equal(c.freshness, 'FRESH'); assert.match(c.text, /SEC 8-K item 8\.01 accepted 07:02 New York/);
+  assert.equal(c.cls, 'VERIFIED'); assert.equal(c.source, 'SEC'); assert.equal(c.direction, 'AMBIGUOUS'); assert.equal(c.freshness, 'FRESH'); assert.match(c.text, /SEC 8-K item 8\.01 accepted Oct 29 07:02 New York/);
   c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00Z' }] }, news: { ok: true, items: [{ at: now - 3e6, source: 'GlobeNewswire', headline: 'X wins $40M Army contract' }] }, nowMs: now });
   assert.equal(c.direction, 'POSITIVE'); assert.match(c.text, /headline wording, not verified/);   // positive only ever comes from wording, and says so
   c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '1.01,3.02', at: '2026-10-29T11:02:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
