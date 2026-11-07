@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-07T02:54:21.926Z",
+ "generatedAt": "2026-11-07T09:31:53.836Z",
  "lastClose": "2026-11-06",
  "paperStart": "2026-10-26",
  "cost": 0.008,
@@ -290,8 +290,8 @@
    "hold": 63,
    "family": "rpo",
    "dataOk": true,
-   "signals": 42,
-   "waiting": 11,
+   "signals": 50,
+   "waiting": 19,
    "open": 31,
    "closed": {
     "n": 0,
@@ -321,8 +321,8 @@
    "hold": 126,
    "family": "rpo",
    "dataOk": true,
-   "signals": 42,
-   "waiting": 11,
+   "signals": 50,
+   "waiting": 19,
    "open": 31,
    "closed": {
     "n": 0,
@@ -383,8 +383,8 @@
    "hold": 21,
    "family": "eat",
    "dataOk": true,
-   "signals": 17,
-   "waiting": 1,
+   "signals": 20,
+   "waiting": 4,
    "open": 16,
    "closed": {
     "n": 0,
@@ -414,8 +414,8 @@
    "hold": 63,
    "family": "eat",
    "dataOk": true,
-   "signals": 17,
-   "waiting": 1,
+   "signals": 20,
+   "waiting": 4,
    "open": 16,
    "closed": {
     "n": 0,
@@ -476,8 +476,8 @@
    "hold": 63,
    "family": "tax",
    "dataOk": true,
-   "signals": 211,
-   "waiting": 78,
+   "signals": 246,
+   "waiting": 113,
    "open": 133,
    "closed": {
     "n": 0,
@@ -507,8 +507,8 @@
    "hold": 126,
    "family": "tax",
    "dataOk": true,
-   "signals": 211,
-   "waiting": 78,
+   "signals": 246,
+   "waiting": 113,
    "open": 133,
    "closed": {
     "n": 0,
@@ -569,8 +569,8 @@
    "hold": 126,
    "family": "rdi",
    "dataOk": true,
-   "signals": 71,
-   "waiting": 31,
+   "signals": 79,
+   "waiting": 39,
    "open": 40,
    "closed": {
     "n": 0,
@@ -600,8 +600,8 @@
    "hold": 252,
    "family": "rdi",
    "dataOk": true,
-   "signals": 71,
-   "waiting": 31,
+   "signals": 79,
+   "waiting": 39,
    "open": 40,
    "closed": {
     "n": 0,
@@ -631,8 +631,8 @@
    "hold": 126,
    "family": "inv",
    "dataOk": true,
-   "signals": 50,
-   "waiting": 33,
+   "signals": 57,
+   "waiting": 40,
    "open": 17,
    "closed": {
     "n": 0,
@@ -662,8 +662,8 @@
    "hold": 252,
    "family": "inv",
    "dataOk": true,
-   "signals": 50,
-   "waiting": 33,
+   "signals": 57,
+   "waiting": 40,
    "open": 17,
    "closed": {
     "n": 0,
@@ -817,8 +817,8 @@
    "hold": 63,
    "family": "gpc",
    "dataOk": true,
-   "signals": 42,
-   "waiting": 42,
+   "signals": 62,
+   "waiting": 62,
    "open": 0,
    "closed": {
     "n": 0,
@@ -848,8 +848,8 @@
    "hold": 126,
    "family": "gpc",
    "dataOk": true,
-   "signals": 42,
-   "waiting": 42,
+   "signals": 62,
+   "waiting": 62,
    "open": 0,
    "closed": {
     "n": 0,
@@ -878,6 +878,99 @@
    "kind": "avoid",
    "hold": 63,
    "family": "gpc",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
+  },
+  "RQ-DIVCUT-AV126": {
+   "name": "AVOID check: quarterly dividend per share cut 25%+ vs a year before (new 10-Q/10-K), 126 sessions",
+   "kind": "avoid",
+   "hold": 126,
+   "family": "dvc",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
+  },
+  "RQ-DIVCUT-AV63": {
+   "name": "AVOID check: dividend cut 25%+, 63 sessions",
+   "kind": "avoid",
+   "hold": 63,
+   "family": "dvc",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
+  },
+  "RQ-DIVCUT-BIG126": {
+   "name": "AVOID check: dividend cut 50%+ or omitted, 126 sessions",
+   "kind": "avoid",
+   "hold": 126,
+   "family": "dvc",
    "dataOk": true,
    "signals": 0,
    "waiting": 0,

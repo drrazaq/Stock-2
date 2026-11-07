@@ -33672,7 +33672,7 @@
    "name": "AVOID check: quarterly dividend per share cut 25%+ vs a year before (new 10-Q/10-K), 126 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-07 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Information only: a 10-Q/10-K (filed within 120 days of the quarter end) reports a quarterly dividend per share (us-gaap CommonStockDividendsPerShareDeclared, else ...CashPaid) at most 75% of the same quarter a year before (including zero; split guard on total dividends); bought next open, 126 sessions; a valid AVOID / SELL filter if these stocks lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, tag order, year-ago match, split guard, thresholds and data rule fixed in research-core.mjs (IDEA 11) before any run.",
    "sources": [
     "https://doi.org/10.1111/j.1540-6261.1995.tb04796.x",
@@ -33680,7 +33680,45 @@
     "https://doi.org/10.1111/j.1540-6261.1997.tb04817.x"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-06",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "n": [
+     92,
+     144
+    ],
+    "avg": [
+     0.0149,
+     0.0141
+    ],
+    "stress": [
+     0.0109,
+     0.0101
+    ],
+    "edge": [
+     0.0112,
+     -0.0638
+    ],
+    "vsOwn": [
+     0.038,
+     0.0612
+    ],
+    "noTop2": [
+     0.0009,
+     -0.0046
+    ],
+    "tBlock": [
+     -0.11,
+     -1.97
+    ],
+    "win": [
+     0.4783,
+     0.4722
+    ],
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
   },
   {
    "id": "RQ-DIVCUT-AV63",
@@ -33688,7 +33726,7 @@
    "name": "AVOID check: dividend cut 25%+, 63 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-07 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "As RQ-DIVCUT-AV126, 63 sessions. Never a buy. Measure, tag order, year-ago match, split guard, thresholds and data rule fixed in research-core.mjs (IDEA 11) before any run.",
    "sources": [
     "https://doi.org/10.1111/j.1540-6261.1995.tb04796.x",
@@ -33696,7 +33734,45 @@
     "https://doi.org/10.1111/j.1540-6261.1997.tb04817.x"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-06",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "n": [
+     113,
+     190
+    ],
+    "avg": [
+     0.0127,
+     0.0055
+    ],
+    "stress": [
+     0.0087,
+     0.0015
+    ],
+    "edge": [
+     -0.0146,
+     -0.0355
+    ],
+    "vsOwn": [
+     0.0329,
+     0.029
+    ],
+    "noTop2": [
+     0.004,
+     -0.0054
+    ],
+    "tBlock": [
+     -1.03,
+     -1.44
+    ],
+    "win": [
+     0.5398,
+     0.4526
+    ],
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
   },
   {
    "id": "RQ-DIVCUT-BIG126",
@@ -33704,7 +33780,7 @@
    "name": "AVOID check: dividend cut 50%+ or omitted, 126 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-07 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "As RQ-DIVCUT-AV126 with the dividend per share at most 50% of a year before (or zero). Never a buy. Measure, tag order, year-ago match, split guard, thresholds and data rule fixed in research-core.mjs (IDEA 11) before any run.",
    "sources": [
     "https://doi.org/10.1111/j.1540-6261.1995.tb04796.x",
@@ -33712,7 +33788,45 @@
     "https://doi.org/10.1111/j.1540-6261.1997.tb04817.x"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-07: Michaely, Thaler and Womack (1995, Journal of Finance) found dividend omissions are followed by a further drift of about -11% over the next year; research queue item 3. New line (quarterly dividend per share, official SEC XBRL company facts); the library tested hikes (SQ1-DIVHIKE) and initiations (ANOM-DIVINIT) only. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-06",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "n": [
+     53,
+     90
+    ],
+    "avg": [
+     -0.009,
+     0.0507
+    ],
+    "stress": [
+     -0.013,
+     0.0467
+    ],
+    "edge": [
+     -0.028,
+     -0.0143
+    ],
+    "vsOwn": [
+     0.0573,
+     0.1241
+    ],
+    "noTop2": [
+     -0.0309,
+     0.0213
+    ],
+    "tBlock": [
+     -0.81,
+     -1.18
+    ],
+    "win": [
+     0.3962,
+     0.5444
+    ],
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
   }
  ]
 }
