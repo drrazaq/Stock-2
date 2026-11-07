@@ -1,0 +1,91 @@
+{
+  "id": "IG1_ONE_ENTRY_RESOLUTION_20261109_V1",
+  "status": "PROPOSED_REVIEW_PENDING_NOT_AUTHORIZED",
+  "question": "Does the first chronological recorded age-eligible IG1 signal have a valid next-minute quoted entry within its existing3% limit and enough displayed shares for a USD1000 whole-share unit under the unchanged small-stock2% adverse-entry-slippage view? Conditional recorded-clock reconstruction only, not historical detection/fill or net-outcome proof.",
+  "selection": {
+    "rule": "IG1; recorded finite price age0..3min inclusive; sort day, recorded minuteNY, symbol; no outcome/return criterion",
+    "signalFile": "data/ignition-paper.jsonl",
+    "signalFileSha256": "a4de490a80493a064cc0f05854e2f8681941a4546e9bb42cd57703624c41b0b4",
+    "selectedRowSha256": "9f3850aca481c526c88af6bcc45e07a0e31aa1f7f38dada9d027e4636d68532e",
+    "candidateKey": "2026-10-15|OPK|IG1",
+    "recordedMinuteNY": 588,
+    "recordedPrice": 1.535,
+    "historicalOwnerStatus": "UNVERIFIED_NOT_BUY",
+    "interpretation": "Recorded09:48 minute -> hypothetical next-minute09:49; original second-level decision/delivery time unavailable and not invented."
+  },
+  "execution": {
+    "notBefore": "2026-11-09T17:00:00.000Z",
+    "latestStart": "2026-11-09T17:01:00.000Z",
+    "providerDeadline": "2026-11-09T17:02:00.000Z",
+    "privateFinishDeadline": "2026-11-09T17:03:00.000Z",
+    "retentionUntil": "2026-11-12T17:03:00.000Z",
+    "operator": "CODEX_ON_DEMAND_ON_OWNER_APPROVED_PRIVATE_LOCAL_EXECUTOR",
+    "attempts": 1,
+    "rescheduleAllowed": false
+  },
+  "requests": [
+    {
+      "id": "identity",
+      "provider": "MASSIVE",
+      "path": "/v3/reference/tickers/OPK?date=2026-10-15"
+    },
+    {
+      "id": "conditions",
+      "provider": "ALPACA",
+      "path": "/v2/stocks/meta/conditions/quote?tape=C"
+    },
+    {
+      "id": "entryQuotes",
+      "provider": "ALPACA",
+      "path": "/v2/stocks/OPK/quotes?feed=sip&asof=2026-10-15&start=2026-10-15T13%3A49%3A00Z&end=2026-10-15T13%3A49%3A29.999999999Z&limit=10000&sort=asc"
+    }
+  ],
+  "bounds": {
+    "providerRequests": 3,
+    "massiveRequests": 1,
+    "alpacaRequests": 2,
+    "retries": 0,
+    "fallbacks": 0,
+    "paginationFollowups": 0,
+    "requestsPerSecondMax": 1,
+    "perResponseBytes": 1048576,
+    "allRawResponseBytes": 3145728,
+    "sealedBytes": 5242880,
+    "aggregateReportBytes": 16384,
+    "perFullResponseMs": 10000,
+    "providerPhaseMs": 60000,
+    "localProcessMs": 120000,
+    "remoteUploads": 0,
+    "rawRetentionHoursMax": 72,
+    "newSpendUsdMax": 0
+  },
+  "economics": {
+    "budgetUsd": 1000,
+    "commissionPerBuyUsd": 3,
+    "literalAskLimit": 1.58105,
+    "adverseEntrySlippagePct": 2,
+    "quantity": "floor((1000-3)/(ask*1.02))",
+    "priceRule": "Report rawAsk<=literalLimit separately; require modeledAskWithSlippage<=literalLimit for conservative quoted-entry feasibility; displayed ask size>=quantity. No later price/size optimization.",
+    "quoteRule": "First regular noncrossed positive SIP quote in the fixed30s window chosen before price/size check; ambiguous first timestamp -> UNKNOWN. Conditions must be reviewed from quote-specific TapeC mapping, not trade conditions.",
+    "holdingExit": "NOT_ACQUIRED_NOT_EVALUATED; original IG1 close/8%stop rule remains untouched. No close-price inference or new exit rule.",
+    "primaryHistoricalCostViews": "Original IG1 percentage-friction view and handbook0.8%/1.2% plus applicable2%-side/3%-extended-hours remain required for any later outcome claim; this entry-only task cannot pass those round-trip gates."
+  },
+  "terminal": {
+    "quotedEntryFeasible": "Complete retained source/identity/conditions/quote response; first eligible quote passes limit, whole-share budget and displayed capacity. Means only quoted-entry reference under assumptions.",
+    "quotedEntryFails": "Complete valid first quote fails modeled limit or displayed size; retain negative entry result for this recorded-clock case, no case replacement.",
+    "inconclusive": "Any refused/partial/truncated/nonterminal page, empty/unproved response, unidentified security, condition ambiguity, missing quote, time/storage/custody failure or unrecoverable original context. No retry.",
+    "always": "Original receipt/delivery, actual fill, whole outcome chain, BOTH controls and profitability remain UNKNOWN/NOT_EVALUATED; no admissions, paper validation or live promotion."
+  },
+  "minimumSetup": {
+    "location": "Owner-approved local private executor only; no new private GitHub repository/workflow or production installation",
+    "directory": "New dedicated0700 directory on already encrypted owner-controlled disk, no financial mirror, no symlink, exclusive run claim",
+    "bindings": "Existing ALPACA_KEY, ALPACA_SECRET, MASSIVE_KEY and owner-held RESEARCH_ARTIFACT_KEY via approved local protected binding only after approval checks; no generation/read/binding now, no values in public/chat",
+    "custody": "Reuse SealedAuditJournal and existing sealed-journal recovery; encrypt raw responses, hash/record actual retrieval clocks, no cloud upload or raw model ingestion/publication; exact decoded originals only on owner-local device",
+    "licence": "Provider personal/internal applicability must be established from the current accepted agreement version before execution. No owner technical guess or blanket paid-upgrade consent. Local personal use narrows the processor question; unresolved applicable terms -> no execution."
+  },
+  "approvalState": {
+    "independentClaudeReview": "PENDING",
+    "ownerExecutionApproval": false,
+    "approvalRequestMayBePresented": "Only after exact independent review and operator/source/private setup readiness are concrete; current document is for review, not an approval solicitation."
+  }
+}

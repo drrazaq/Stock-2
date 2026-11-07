@@ -1,3 +1,5 @@
+> **Evidence resolution, 7 November:** [One classified input package and bounded three-GET entry-reference proposal](evidence-resolution.md). Prior stops remain evidence failures, not economic rejections. Exact independent review pending; no approval requested or execution authorized.
+
 > **Execution results, 7 November:** [A/R/D inspected evidence, reproducible analysis, verdicts and time](feasibility-executed-20261107.md). Shared recommendation-audit request reconciled inside the same12h cap.
 
 > **Five-mandate programme, 7 November:** [Research map, selected finite tasks and owner choices](research-programme.md). A continues alongside distinct crisis-risk and cash-deal feasibility work; no new data acquisition or strategy adoption.
