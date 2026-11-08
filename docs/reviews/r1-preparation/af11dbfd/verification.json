@@ -1,0 +1,35 @@
+{
+  "candidate": "af11dbfd3c5a65a3c522d43bd0075e5deafc93a0",
+  "bindingCommit": "806ff5b4568b31d18bd33d1bacb7535e3148e771",
+  "bindingSha256": "2a4990300473d8f29cbd302021c750ff0c9461fe01fc622d37684fae0d1f62d7",
+  "verdict": "CHANGES_REQUIRED_EXACT_SOURCE_ATTESTATION",
+  "fingerprintsMatched": 68,
+  "originalStopPinsMatched": 17,
+  "changedStopPins": 7,
+  "internalManifestFingerprintsMatched": 67,
+  "focused": 84,
+  "gated": 20,
+  "node": "24.22.1",
+  "falsePositiveModeControl": {
+    "mode": "100644 -> 100755",
+    "path": "scan.mjs",
+    "treeDiffers": true,
+    "verify": {
+      "pass": true,
+      "bad": [],
+      "files": 68
+    },
+    "buildFromWrongCandidate": {
+      "ok": true,
+      "commit": "8424b4fe1d4b722eed451a6c65effde28d8faff5",
+      "tree": "aefc670d2a55c36888b6c7dd318e7644612b70ed"
+    }
+  },
+  "proposedFixRefusesCounterexamples": true,
+  "m0sVerified": [
+    "774273205e1c8ce3db30c59ca368dc107617ef73",
+    "6b3c49bca07ae584f8b6be4bea1c041a24d2ce1f"
+  ],
+  "devPortReview": "PENDING_NOT_POSTED_IN_AVAILABLE_TIMELINE",
+  "productionActions": false
+}

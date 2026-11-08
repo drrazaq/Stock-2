@@ -1,0 +1,31 @@
+--- a/r1-release-precheck.mjs
++++ b/r1-release-precheck.mjs
+@@ -37,11 +37,13 @@
+   for (const [f, v] of Object.entries(files)) {
+     if (!/^[0-9a-f]{64}$/.test(v && v.sha256 || '') || !Number.isInteger(v.bytes) || f.startsWith('/') || f.split('/').includes('..')) throw new Error('bad binding entry ' + f);
+   }
+-  return files;
++  if(b.candidate!==undefined&&!/^[0-9a-f]{40}$/.test(b.candidate))throw Error("invalid bound candidate");
++  return {files,candidate:b.candidate};
+ }
+ const mode = (ref, f) => { const l = git(['ls-tree', ref, '--', f]).trim(); return l ? l.split(/\s/)[0] : null; };
+ export function buildUnit(m0, cand, bindingFile) {
+-  const files = readBinding(bindingFile), M0 = commitOf(m0), C0 = commitOf(cand), bad = [];
++  const {files,candidate:boundCandidate} = readBinding(bindingFile), M0 = commitOf(m0), C0 = commitOf(cand), bad = [];
++  if(boundCandidate && C0!==commitOf(boundCandidate))bad.push("candidate identity differs from binding");
+   for (const [f, v] of Object.entries(files)) {
+     if (!blob(C0, f)) { bad.push('missing in candidate: ' + f); continue; }
+     const b = bytesOf(C0, f); if (sha(b) !== v.sha256 || b.length !== v.bytes) bad.push('candidate differs from binding: ' + f);
+@@ -58,10 +60,11 @@
+   } finally { fs.rmSync(path.dirname(idx), { recursive: true, force: true }); }
+ }
+ export function verifyUnit(m0, c, bindingFile) {
+-  const files = readBinding(bindingFile), M0 = commitOf(m0), C = commitOf(c), bad = [];
++  const {files,candidate:boundCandidate} = readBinding(bindingFile), M0 = commitOf(m0), C = commitOf(c), bad = [];
+   const parents = git(['rev-list', '--parents', '-n', '1', C]).trim().split(' ').slice(1);
+   if (parents.length !== 1 || parents[0] !== M0) bad.push('parent is not exactly M0');
+   for (const [f, v] of Object.entries(files)) {
++    if(boundCandidate && mode(C,f)!==mode(commitOf(boundCandidate),f))bad.push('mode: '+f);
+     if (!blob(C, f)) { bad.push('missing: ' + f); continue; }
+     const b = bytesOf(C, f); if (sha(b) !== v.sha256 || b.length !== v.bytes) bad.push('hash: ' + f);
+   }

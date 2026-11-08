@@ -1,0 +1,86 @@
+{
+  "candidate": "af11dbfd3c5a65a3c522d43bd0075e5deafc93a0",
+  "bindingCommit": "806ff5b4568b31d18bd33d1bacb7535e3148e771",
+  "bindingSha256": "2a4990300473d8f29cbd302021c750ff0c9461fe01fc622d37684fae0d1f62d7",
+  "base": "774273205e1c8ce3db30c59ca368dc107617ef73",
+  "fresh": "6b3c49bca07ae584f8b6be4bea1c041a24d2ce1f",
+  "fingerprintsMatched": 68,
+  "precheckFresh": {
+    "pass": true,
+    "changed": 68,
+    "drift": [],
+    "already": []
+  },
+  "builds": [
+    {
+      "m0": "774273205e1c8ce3db30c59ca368dc107617ef73",
+      "ok": true,
+      "commit": "c2eee6da39f29ae84862533fe344f9830386a7e1",
+      "tree": "dbfb746b80e98f9c00f3e1e6e49bea0d91a45a34",
+      "verify": {
+        "pass": true,
+        "bad": [],
+        "files": 68
+      },
+      "allDataAndUnboundSourcePreserved": true,
+      "patchEqualsBuild": true,
+      "exactInverse": true
+    },
+    {
+      "m0": "6b3c49bca07ae584f8b6be4bea1c041a24d2ce1f",
+      "ok": true,
+      "commit": "8b2fb13fecf05020cbe6df69896e94dbb74c0be2",
+      "tree": "b708d5c203834d7f33d067bf1e9251885a10e1bd",
+      "verify": {
+        "pass": true,
+        "bad": [],
+        "files": 68
+      },
+      "allDataAndUnboundSourcePreserved": true,
+      "patchEqualsBuild": true,
+      "exactInverse": true
+    }
+  ],
+  "localObjectsOnlyNoRefsChanged": true,
+  "priorPinFormat": [
+    "patchSHA256",
+    "files"
+  ],
+  "stopPinsMatched": 17,
+  "changedPins": [
+    "ignition-watch.mjs",
+    "scan.mjs",
+    "test/load-scan.mjs",
+    "test/watcher-resilience.test.mjs",
+    "test/watcher-incident-revision.test.mjs",
+    ".github/workflows/bot.yml",
+    ".github/workflows/ignition.yml"
+  ],
+  "wholeCandidateRejected": {
+    "pass": false,
+    "bad": [
+      "parent is not exactly M0",
+      "outside binding: data/calendar-status.json",
+      "outside binding: data/calendar.enc",
+      "outside binding: data/health.json",
+      "outside binding: data/shares.json.gz",
+      "outside binding: data/tg-state.json"
+    ],
+    "files": 68
+  },
+  "boundModeMutation": {
+    "mode": "100644 -> 100755",
+    "path": "scan.mjs",
+    "treeDiffers": true,
+    "verify": {
+      "pass": true,
+      "bad": [],
+      "files": 68
+    },
+    "buildFromWrongCandidate": {
+      "ok": true,
+      "commit": "8424b4fe1d4b722eed451a6c65effde28d8faff5",
+      "tree": "aefc670d2a55c36888b6c7dd318e7644612b70ed"
+    }
+  }
+}

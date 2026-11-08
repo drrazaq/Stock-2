@@ -1,0 +1,37 @@
+# R1 rev8 / combined binding independent review
+
+**CHANGES REQUIRED: one source-attestation boundary.** Runtime corrections remain previously accepted; this is a narrow defect in the newly added source-only build/check, not a new trading requirement. Candidate **af11dbfd3c5a65a3c522d43bd0075e5deafc93a0**, binding **806ff5b4568b31d18bd33d1bacb7535e3148e771** (`docs/r1-combined-binding/`). No operational READY or release approval.
+
+## Completed and verified
+
+- Authoritative binding SHA256 **2a4990300473d8f29cbd302021c750ff0c9461fe01fc622d37684fae0d1f62d7**. All4 SHA256SUMS entries match. Exact historical-base changed-path set68 equals binding.files; all68 file hashes/sizes match rev8. Internal table67 hashes plus its externally bound manifest make68; full-index internal diff96fff69e…71aae matches.
+- Original17 STOP pins independently cross-checked against retained `docs/stop-alert-independent-review-20261104/applied-hashes.json`. All17 original/main/unit values and flags match; exactly7 changed,10 unchanged. All17 current hashes still match on newly observed main6b3c49bc. The older scan STOP hash differs from main due to reviewed T/D changes, as declared. Gated actual watcher20/20 and R1 focused84/84 pass locally on exactrev8 (Node24.22.1). Earlier calendar/open-check/cadence runtime bytes are unchanged from reviewed1be8b683; no claim of independently rerunning full156/Node20.
+- Source-only build and verification pass on **both** bound main77427320 and newly observed main **6b3c49bca07ae584f8b6be4bea1c041a24d2ce1f**. Bound-base tree **dbfb746b80e98f9c00f3e1e6e49bea0d91a45a34** matches. Source.patch equals builder tree; inverse restores each M0 tree exactly. Every data path and all unbound source changes stay at their respective M0. Newer research source/workflow changes are preserved along with newer data. Only Git blob/tree metadata for unbound data was inspected, no decrypt/exposure.
+- Fresh precheck on6b3c49bc:68paths/0drift/0alreadysealed. Whole candidate branch fails verification, including old data/offset; never push/merge it. Offline builder created only unreferenced local Git objects: refs, HEAD, index and working tree unchanged; nothing pushed or executed in production.
+
+## Exact blocker: bytes alone do not bind the Git source tree
+
+`verifyUnit` checks each blob's SHA256/size and outside-path changes, but never its Git mode. In a disposable temporary index, take the correct built tree and change **scan.mjs100644→100755**, keeping all68 contents and sole parentM0 unchanged. The Git tree is different, yet rev8 reports **PASS,0problems**. The corresponding unreviewed source commit is also accepted by `buildUnit`: the binding's `candidate` identity is discarded, and modes are taken from the supplied candidate. This is a reproducible false-positive for the newly promised exact source-unit verification. No production files/refs were changed.
+
+Required correction: bind Git modes/the complete intended source tree as well as bytes, and validate the supplied source candidate against the immutable candidate named by the pinned binding. Equivalently compute the expected M0+bound-source tree from that trusted candidate and require exact equality, while preserving sole-parent/outside-path checks. Do not solve this by making mutable branch names authoritative or weakening existing binding checks. Regenerate/review the candidate-dependent binding/patch/inverse fingerprints after the source-tool correction.
+
+[Minimal proposed patch](mode-and-identity.proposed.patch) and [proposed tool copy](r1-release-precheck.proposed.mjs) use the already pinned candidate SHA to enforce candidate identity and each mode. The copied tool is only a tested proposal, not a replacement of Claude's exact candidate. [Before](original-results.json): mutant verifyPASS and wrong-candidate build accepted. [After](proposed-correction-results.json): mode refused; wrong candidate refused; both normal M0 builds/patch/inverse controls remain PASS. [Reproducer](reproduce-binding.mjs) documents the exact immutable roots/input binding; default source is exactrev8, REVIEW_UNIT_TOOL selects the proposed tool. Generic synthetic bindings in existing tests remain supported; the production binding has an immutable candidate.
+
+Claude focused request: apply/reconcile this narrow correction (or equivalent complete-tree check), add the negative mode/identity controls to the existing rehearsal, and publish the exact next candidate and regenerated binding for confirmation. No owner action needed for this correction. Normal84 focused tests passing does not override the independent counterexample.
+
+## Development-port review dependency
+
+The available PR #1 timeline, checked for comments after6719376168, has no posted review of **cf63a04ad12f82c011ab57c63e3d051b51bda6a5**. That author's focused challenge remains PENDING; no PASS inferred from silence. The independently prepared development port remains isolated; no integration/reset performed here. Its current stricter freshness, reported-price provenance, ACK/UNKNOWN safeguards, session-aware cadence and accepted-source preservation continue to need that focused review. Incorporate its findings when actually published, not speculative changes now.
+
+## Consolidated remaining release decisions and readiness gates
+
+No approval is requested while the exact build/check correction remains open. After it passes, present one bounded owner package covering:
+
+1. **Unit and attendance:** exact combined68-path candidate/binding, a separately approved window, Claude as sole release/rollback operator, owner control clicks and Codex read-only receipts with attended reconfirmation before each unit. No unconditional availability or silent reschedule.
+2. **Recovery custody/proof route:** owner chooses existing PRIVATE_KEY only if a usable off-GitHub copy is independently held, or separately authorizes a dedicated new enrollment. Select the reviewed backup-compare or genuinely available local proof route; private inputs remain owner-held. This review creates/reads/changes no key or secret. Failed/absent proof stays UNVERIFIED; no automatic new-key conclusion.
+3. **Residual exposure:** owner accepts explicitly enumerated residual public T2/derived/log/cache/artifact outputs for the bounded repair, or defers release. Existing public/history/copies are not removed by R1, and provider/legal terms are not established by ciphertext. No history/visibility action or provider message authorized.
+4. **Recovery resources:** author must finish a concrete bounded ref-count/storage/retention and exhausted-budget/failure-handling proposal for review; the owner should accept/defer an exact proposal, not invent technical limits. Existing unbounded/unspecified retention is not silently approved.
+
+Fresh writer census, no competing release, currentM0/precheck, independently verified source commit, complete hosted CI/migration/rollback receipts and restoration gates are execution prerequisites, not substitutes for those owner decisions and not actions performed now. Existing reviewed deadlines remain unchanged. Rollback UNVERIFIED/no Enable until complete required hosted receipt and every restoration gate pass. No operational READY.
+
+Original40 acceptance24carry-forward/16open,0newclosures; no new authentic trading evidence, scoring, acquisition or profitability result. No deployment, production/control/settings/key/access/spending/provider/history action.
