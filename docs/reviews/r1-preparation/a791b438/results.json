@@ -1,0 +1,83 @@
+{
+  "candidate": "a791b438f193cd8d368b46dcb3aa673eb2a30c21",
+  "retryAfterDirectoryEio": [
+    {
+      "code": "EIO",
+      "plaintextExists": true
+    },
+    {
+      "code": "EIO",
+      "plaintextExists": false
+    }
+  ],
+  "segmentedRecovery": {
+    "exportedFiles": 3,
+    "sourceLogicalRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ],
+    "exportedBaseRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ],
+    "restoredBasePlusSegmentsRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ]
+  },
+  "incompleteSelfConsistentManifest": {
+    "originalSourceCount": 2,
+    "result": {
+      "ref": "HEAD",
+      "problems": [],
+      "plaintextT1": [],
+      "sealedT1": 1,
+      "extra": [],
+      "manifestCount": 1
+    }
+  },
+  "writerGateIncompleteListing": {
+    "pass": true,
+    "active": [],
+    "unknown": 0,
+    "seen": 1
+  },
+  "writerGateUnknownStatus": {
+    "pass": true,
+    "active": [],
+    "unknown": 0,
+    "seen": 1
+  },
+  "manifest": {
+    "entries": 45,
+    "mismatches": [],
+    "diffSha256": "976b40d88b65251e2cfbb34d60d9662de517b067a711593e056dae78e2b8eab0"
+  }
+}

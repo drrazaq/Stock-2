@@ -1,0 +1,13 @@
+# RA-C1 independent-review cycle — explicit disposition
+
+8 November 2026. Contract at `fac44ccd4423fd2db81bfe648431ae54735f7289`, SHA256 as recorded in manifest.json. Original independent challenge requested in PR #1 comment [6717700936](https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6717700936); focused follow-up [6718099309](https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6718099309).
+
+**Our side completed:** comparison algorithm/weights/missingness/overlap specified; reproducible retained concentration, stress, attrition, saved-control and calendar analysis published; new rejection-gate history and matched-snapshot diagnostics executed; original evidence and contracts preserved. No source selection, entry limit, horizon or fee change.
+
+**Independent side not closed:** no Claude RA-C1 PASS or corrections was present in the inspected PR comments covering the request through this checkpoint. Claude's R1 rev3 handoff is an R1 response, not acceptance of the recommendation contract. The finite A package's separate hosted receipt is also not RA-C1 review. No reviewer identity is simulated and no silence is recorded as PASS. Exact external dependency is Claude's independent verdict on the already-published contract, specifically causal no-new-mention date controls, source coverage/overlap, full PIT/halal universe, identical costs and unknown members.
+
+No source extraction/scoring authority is inferred while review remains open. Offline analysis did not wait: [gate findings](rejection-gates.md), [machine results](rejection-gates-results.json), and the original [executed checkpoint](README.md) are complete within their defined input scope. After a verdict, address exact findings and pin the revised contract if necessary; do not restart the audit, invent an accepted scope or repeat archive searches without a new lead.
+
+The independent-review response is only one blocker. Even a contract PASS does not supply the missing original CNBC publication/edit corpus, stable PIT universe/security identities, historical halal scope facts, quote/action/terminal chains, exact execution-cost parameters or future final exits. Both controls remain unscored. Historical Stock-2 original clocks/fills are not created by recovering old percentage-model rows.
+
+Current terminal economic disposition remains INCONCLUSIVE for authentic system/external-source performance, with the favorable-but-incomplete freshness-gate saved-model finding reported separately. No additional provider acquisition, credentials, setup, production changes, spending, policy adoption or live promotion. Parked IG1 capture and R1 review are separate tracks, not a reason to withhold completed analysis.

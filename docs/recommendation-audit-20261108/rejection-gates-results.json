@@ -1,0 +1,628 @@
+{
+  "agePredicateFail": 31,
+  "asOf": "2026-11-08",
+  "crossTab": [
+    {
+      "agePredicate": "age_fail",
+      "n": 8,
+      "savedDisposition": "no_fill_label"
+    },
+    {
+      "agePredicate": "age_fail",
+      "n": 23,
+      "savedDisposition": "stale_label"
+    },
+    {
+      "agePredicate": "age_pass",
+      "n": 1,
+      "savedDisposition": "no_bars_label"
+    },
+    {
+      "agePredicate": "age_pass",
+      "n": 2,
+      "savedDisposition": "no_fill_label"
+    },
+    {
+      "agePredicate": "age_pass",
+      "n": 68,
+      "savedDisposition": "scored"
+    }
+  ],
+  "fixedCohort": 102,
+  "gateVerdicts": {
+    "freshness": "HELPED_RECOVERABLE_SAVED_MODEL_SUBSET; FULL_23_AND_AUTHENTIC_ECONOMIC_EFFECT_INCONCLUSIVE",
+    "literalThreePercent": "INCONCLUSIVE_ECONOMIC_EFFECT: 10 no-fill labels, eight also fail freshness; no scored counterfactuals retained for these ten. Never relax limit.",
+    "noBars": "DATA_UNAVAILABLE_NOT_ECONOMIC_REJECTION",
+    "otherGates": "NO_CASE_COMPLETE_COUNTERFACTUAL: the fixed signal rows do not contain complete halted/dilution/compliance/instrument/halal gate decisions or rejected-case paths."
+  },
+  "historyVersions": [
+    {
+      "blob": "8c82a38d77c78bd4fed26451dffbc3721bf662eb",
+      "bytes": 324681,
+      "commit": "894c6e9148735ba0403988df2cdf574901b00d47",
+      "sha256": "4c322747c66b159bee275c6e758b88e0a521a78985fa30b42bc351275d6287e4"
+    },
+    {
+      "blob": "1e6a233892c30e5731c836a73a1b2ed77ff6c404",
+      "bytes": 317823,
+      "commit": "ed057c2dbc8cbd1e579e1690cd0e56b8cced31ac",
+      "sha256": "cc66ce85d337e4a6faaa4fc71916529dd026b173f7b092a25b1ce2e646a27cdd"
+    },
+    {
+      "blob": "5ec05bc50c5155910fd1180a7e863495b35a4865",
+      "bytes": 305695,
+      "commit": "ef54233782cfaedfcbe1be61c382e78da202a336",
+      "sha256": "80b8fe5ee2923be91ab69b160cd9b07ade1709879540c963187f08cbf3612c22"
+    },
+    {
+      "blob": "9db915f80fad7f56b2b15bad9aa6d632fc5a8e0b",
+      "bytes": 287454,
+      "commit": "bba35ca0de33742c73b69d593ccfeca8756678f1",
+      "sha256": "86b177ee010043afaca22d8a70e106bfb51abda9384f32879f7e6dc54bda29eb"
+    },
+    {
+      "blob": "4af2618103991b6e251dd1cdde8f2aec288aee4a",
+      "bytes": 278585,
+      "commit": "5e951289899b34753a0aa3b87fd3875aa4dd3aec",
+      "sha256": "51f04c246bee785af38c86107395eab26aefa146309e4ac6d117cf03776fce4d"
+    },
+    {
+      "blob": "face48d27b98442c97b3b3e3b55036c397580588",
+      "bytes": 271581,
+      "commit": "d710db7e5a2f8bfcff84aa4aa124f3cc4e1d2a6f",
+      "sha256": "2dd9b31e58775de725c87a41a61a8337cfb4cb855494d49ac51e961f9bf8140e"
+    },
+    {
+      "blob": "596b8e5b940a696f63a200210787836f2aca618c",
+      "bytes": 249731,
+      "commit": "b77eac39b7cbdc652458b48256ed6731d728ed24",
+      "sha256": "e21d773b6c80676a9ae8c7e49ac94cbc379f8643f91de7ebf73dc7ace19a9eed"
+    },
+    {
+      "blob": "daa14f419a215657b2c5a0cfa9536726e30b3eed",
+      "bytes": 236407,
+      "commit": "b752c5bc3f68510d9d5f6aa51fe7d12939d5a86e",
+      "sha256": "a4b815429e49ef25a5420629a4de554a01486f3fee7f7778c28cc08928b52b01"
+    },
+    {
+      "blob": "9b42cc13881415df6e57f8654e86530bc304dd2e",
+      "bytes": 221072,
+      "commit": "2d6ccb92a8b2438c4aaf04eaa454e8dbf1548e4f",
+      "sha256": "e1130f86dfea135e99b11ebcee698a5c7dae7e153253fb18b0bfaf55458a770a"
+    },
+    {
+      "blob": "01a692176c34de967010c792be37e5c63dd408d0",
+      "bytes": 209280,
+      "commit": "2018f6ead6d55b534f674d55717d5f83bbee9ccb",
+      "sha256": "ac9a58e36b843f3a9074f1bc518671e6c32555904a24457300dad4dded9ed35c"
+    },
+    {
+      "blob": "06eee6ea7f818c9b22c901a3d0d1f1f41b98341f",
+      "bytes": 208693,
+      "commit": "f9faf2de346db86efcdd1a379d9520576ce136ab",
+      "sha256": "75f85c31b206062f9b463b315248c6196bf5218d0fb9ab8bd55949970c196612"
+    },
+    {
+      "blob": "730850bca821239d61278579be57ef3a7c375365",
+      "bytes": 150780,
+      "commit": "ac7398bb844e8711d480d4aed660d88a955afc3e",
+      "sha256": "ba5f1e82220a07f6355fd38470274afe06e2743d4fdf135921ea30c4c85ea069"
+    },
+    {
+      "blob": "3c15872ad7abac54fdf712e1e9af3dc57f2c35e3",
+      "bytes": 131715,
+      "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+      "sha256": "4a3969fa8989380922195b929f98cffbefdc375dfa83086ebd95ba506d0c8329"
+    },
+    {
+      "blob": "0ea4fa921560b3a40da6ad7ebd4d39caa0a5411f",
+      "bytes": 112719,
+      "commit": "311a65fce7037a131b97aa9eaee82da98f6ea016",
+      "sha256": "944d66914639f51cf8d3e17fc1e72ba59ac431a66eeb193e98ae2a8227fb74b6"
+    },
+    {
+      "blob": "ebf6044386c934ba491643e4df9560ba8f59def1",
+      "bytes": 78307,
+      "commit": "b810f700a45ae223e4f81d70a7aad97b01af110a",
+      "sha256": "4682cd3ae85ee31b3f3a0309a9e5b15310af7da0304c003585e4f8dc514fd53a"
+    },
+    {
+      "blob": "5f3d18ba1f1c18d75ba6d88fdde0a8e631aaed84",
+      "bytes": 28395,
+      "commit": "43b018188f1972c99bd85dfa8c47c52920c8dde7",
+      "sha256": "6b6855651a73081cb05eb3e2d5678b9444f933c8d04057a73457ef6a70b9beec"
+    },
+    {
+      "blob": "887d042eafeafe92168fc0f4ea532932bf123a28",
+      "bytes": 14797,
+      "commit": "623177534f53fbb8424241ac288921f86058f766",
+      "sha256": "f8416ca338b1839114aab7186afae5c2b5a3f4cd772e6771b6bac31dabd3f001"
+    }
+  ],
+  "interpretation": [
+    "21 rejected rows contain 17 modeled losses and four modeled wins: the gate did not perfectly select outcomes.",
+    "Paired51 is the recoverable pre-purge subset of the fixed102, not a new strategy, full102 experiment, funded account or authentic executable result.",
+    "The same-snapshot ungated and gated arithmetic uses saved minute-bar percentage friction, not $3 whole-share/BBO execution.",
+    "Freshness rejection protects valid known-then evidence; invalid/stale entries are not made tradable by their hypothetical subsequent gain.",
+    "Two missing stale outcomes can reverse the 23-row model sign; no finite upper bound supplied, no zero imputation.",
+    "A no-fill label conflates price above limit with absent next bar in the producer; raw bar/quote originals are needed to separate these ten cases.",
+    "The gate had eight overlaps with no-fill; reporting only exclusive saved reasons would undercount age predicate failures.",
+    "No attribution of historical public recommendation delivery, actual operator orders or filled shares is possible."
+  ],
+  "kind": "EXECUTED_FIXED_COHORT_REJECTION_GATE_DIAGNOSTICS_V1",
+  "missingTwoMeanForAll23ZeroBase": 0.269,
+  "missingTwoMeanForAll23ZeroStress": 0.35400000000000004,
+  "noAcquisition": true,
+  "noOriginalChanged": true,
+  "noRulesChanged": true,
+  "overlapAgeFailAndNoFill": 8,
+  "pinnedReceipt": {
+    "path": "docs/a-first-capture-continuation/feasibility-executed-20261107.json",
+    "sha256": "c53d9f23c62ee74256a588adec8962a95b4361250213a0ef0853e70f688ab0d4"
+  },
+  "recoveredRejectedRows": [
+    {
+      "candidateKey": "2026-10-15|ADBU|IG1",
+      "currentReason": "stale signal (price 16.3 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0177,
+          -0.0237
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0177,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "4e2c0b03cbfff96597e6e4c745092f2f454044526efbb09c61294aca9d72ce38",
+        "stress": -0.0237
+      },
+      "retainedNumericVersions": 3,
+      "signalPriceAgeMinutes": 16.3
+    },
+    {
+      "candidateKey": "2026-10-15|PTLE|IG1",
+      "currentReason": "stale signal (price 16.7 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          0.1008,
+          0.0938
+        ]
+      ],
+      "latestNumeric": {
+        "close": 0.1008,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "7023e66b52764748b8e232ac3fefeda79ff52da44498c5dec46f19dadd12cdfd",
+        "stress": 0.0938
+      },
+      "retainedNumericVersions": 5,
+      "signalPriceAgeMinutes": 16.7
+    },
+    {
+      "candidateKey": "2026-10-15|RIBBU|IG1",
+      "currentReason": "stale signal (price 16.2 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.094,
+          -0.101
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.094,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "ed3576d23ff24cf185ef3933c0ed03970226a90898a6a2951603cd35189f0bb5",
+        "stress": -0.101
+      },
+      "retainedNumericVersions": 3,
+      "signalPriceAgeMinutes": 16.2
+    },
+    {
+      "candidateKey": "2026-10-15|SPRC|IG1",
+      "currentReason": "stale signal (price 3.6 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.094,
+          -0.101
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.094,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "319c36fbd058a4d161d188ae3045e6fd1787f68ad0d368daf20f13933c807354",
+        "stress": -0.101
+      },
+      "retainedNumericVersions": 5,
+      "signalPriceAgeMinutes": 3.6
+    },
+    {
+      "candidateKey": "2026-10-15|THH|IG1",
+      "currentReason": "stale signal (price 16.1 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0202,
+          -0.0307
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0202,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "f0c3b4ad7ac69381c4804827699e3203a27f48aca50b9eed982a6e57890d5b2c",
+        "stress": -0.0307
+      },
+      "retainedNumericVersions": 3,
+      "signalPriceAgeMinutes": 16.1
+    },
+    {
+      "candidateKey": "2026-10-19|BTDL|IG1",
+      "currentReason": "stale signal (price 59.3 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.094,
+          -0.101
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.094,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "229b7c04f42983d22f463d6ca80aad5bab757b82f8e59b8df78569411b12d75c",
+        "stress": -0.101
+      },
+      "retainedNumericVersions": 3,
+      "signalPriceAgeMinutes": 59.3
+    },
+    {
+      "candidateKey": "2026-10-19|IBO|IG1",
+      "currentReason": "stale signal (price 16.2 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0404,
+          -0.0509
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0404,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "be16377e5bbb435d948fe5b1cdba552ab786346dea4f4de554a65b011ccdc065",
+        "stress": -0.0509
+      },
+      "retainedNumericVersions": 3,
+      "signalPriceAgeMinutes": 16.2
+    },
+    {
+      "candidateKey": "2026-10-19|LITC|IG1",
+      "currentReason": "stale signal (price 16.3 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0392,
+          -0.0452
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0392,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "786e03b297c4ec1a2a779eabd92df926b13127ee1c8f4fb34a2d5b08e3356284",
+        "stress": -0.0452
+      },
+      "retainedNumericVersions": 3,
+      "signalPriceAgeMinutes": 16.3
+    },
+    {
+      "candidateKey": "2026-10-19|PLUT|IG1",
+      "currentReason": "stale signal (price 16.2 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.1013,
+          -0.1118
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.1013,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "1b444faecdcfad2ba972c39e322df514b149fe290e414591d3058f6a4b357a82",
+        "stress": -0.1118
+      },
+      "retainedNumericVersions": 3,
+      "signalPriceAgeMinutes": 16.2
+    },
+    {
+      "candidateKey": "2026-10-20|CRT|IG1",
+      "currentReason": "stale signal (price 16.9 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0242,
+          -0.0312
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0242,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "9f203b1d29a9a0c70d1313ebb3518bdc5ca68468ada8f7cd0309c297594ce1dc",
+        "stress": -0.0312
+      },
+      "retainedNumericVersions": 2,
+      "signalPriceAgeMinutes": 16.9
+    },
+    {
+      "candidateKey": "2026-10-20|ELIL|IG1",
+      "currentReason": "stale signal (price 16.2 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.036,
+          -0.042
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.036,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "17af52cd66188d5e5f6c6e7d5b3ed69d0504edaeff8cd362cf89aac74c8f8ad0",
+        "stress": -0.042
+      },
+      "retainedNumericVersions": 2,
+      "signalPriceAgeMinutes": 16.2
+    },
+    {
+      "candidateKey": "2026-10-20|SUIL|IG1",
+      "currentReason": "stale signal (price 16.5 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0379,
+          -0.0449
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0379,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "44abda2ef8d9360eda8a7b91b21c0fa682674bd864152e9b2d6873352f12c65f",
+        "stress": -0.0449
+      },
+      "retainedNumericVersions": 2,
+      "signalPriceAgeMinutes": 16.5
+    },
+    {
+      "candidateKey": "2026-10-21|BBUL|IG1",
+      "currentReason": "stale signal (price 16.8 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0097,
+          -0.0167
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0097,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "965c89d00f2a2bd0a5bd4d04a4184ef9aaff4749f200d91547dfd5d0e5304e25",
+        "stress": -0.0167
+      },
+      "retainedNumericVersions": 1,
+      "signalPriceAgeMinutes": 16.8
+    },
+    {
+      "candidateKey": "2026-10-21|ECHX|IG1",
+      "currentReason": "stale signal (price 19.6 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          0.0111,
+          0.0041
+        ]
+      ],
+      "latestNumeric": {
+        "close": 0.0111,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "287fa9f873236d47a11d8b5899ca3659bff0b7bd568ed72d0a99d6cdaf0b4a26",
+        "stress": 0.0041
+      },
+      "retainedNumericVersions": 1,
+      "signalPriceAgeMinutes": 19.6
+    },
+    {
+      "candidateKey": "2026-10-21|EHGO|IG1",
+      "currentReason": "stale signal (price 16.9 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0259,
+          -0.0364
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0259,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "67de2a32668423354550bef2a01f71f31ca82b691e46c62c7b73f5784ae291b1",
+        "stress": -0.0364
+      },
+      "retainedNumericVersions": 1,
+      "signalPriceAgeMinutes": 16.9
+    },
+    {
+      "candidateKey": "2026-10-21|ENVB|IG1",
+      "currentReason": "stale signal (price 16.2 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0469,
+          -0.0574
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0469,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "1708a6c80d015f157fc09c7125211498a6c9e9e49128c85644f304c557ec7133",
+        "stress": -0.0574
+      },
+      "retainedNumericVersions": 1,
+      "signalPriceAgeMinutes": 16.2
+    },
+    {
+      "candidateKey": "2026-10-21|MB|IG1",
+      "currentReason": "stale signal (price 16.3 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0041,
+          -0.0146
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0041,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "542306026ebbeb85729f46011743b4201b1ee6c9b0afaa698c42191d4aa307df",
+        "stress": -0.0146
+      },
+      "retainedNumericVersions": 1,
+      "signalPriceAgeMinutes": 16.3
+    },
+    {
+      "candidateKey": "2026-10-21|TNMG|IG1",
+      "currentReason": "stale signal (price 16.2 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          0.0018,
+          -0.0087
+        ]
+      ],
+      "latestNumeric": {
+        "close": 0.0018,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "f75f88998d961a75af0a0eadc9ef2d1d2fa30bbb2e54c39dbebb23769f56ad8f",
+        "stress": -0.0087
+      },
+      "retainedNumericVersions": 1,
+      "signalPriceAgeMinutes": 16.2
+    },
+    {
+      "candidateKey": "2026-10-21|UPC|IG1",
+      "currentReason": "stale signal (price 16.9 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          0.0673,
+          0.0568
+        ]
+      ],
+      "latestNumeric": {
+        "close": 0.0673,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "9a41bf25da474b0c97fe4b5e8c7b603f338e96ca7deb7f97452dea1cc3213722",
+        "stress": 0.0568
+      },
+      "retainedNumericVersions": 1,
+      "signalPriceAgeMinutes": 16.9
+    },
+    {
+      "candidateKey": "2026-10-21|XVSP|IG1",
+      "currentReason": "stale signal (price 16.5 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0009,
+          -0.0069
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0009,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "1ff6f118f311a3036edb5107be817a77217702f473136895df045eed80e5a14a",
+        "stress": -0.0069
+      },
+      "retainedNumericVersions": 1,
+      "signalPriceAgeMinutes": 16.5
+    },
+    {
+      "candidateKey": "2026-10-21|YSPC|IG1",
+      "currentReason": "stale signal (price 16.4 min old): removed from the record because price age was not verified",
+      "distinctNumericPairs": [
+        [
+          -0.0326,
+          -0.0386
+        ]
+      ],
+      "latestNumeric": {
+        "close": -0.0326,
+        "commit": "d1213696833f442d26e29f08a966db3e05c3e4b5",
+        "rowSha256": "ce5c2960688b4a0479050eb9d24e2d1438d4d9f81714d33be537c5e0a37c7c1a",
+        "stress": -0.0386
+      },
+      "retainedNumericVersions": 1,
+      "signalPriceAgeMinutes": 16.4
+    }
+  ],
+  "rejected21Base": {
+    "losses": 17,
+    "mean": -0.025619047619047618,
+    "n": 21,
+    "sumOfIndependentUnitReturns": -0.538,
+    "wins": 4
+  },
+  "rejected21Stress": {
+    "losses": 18,
+    "mean": -0.03371428571428572,
+    "n": 21,
+    "sumOfIndependentUnitReturns": -0.7080000000000001,
+    "wins": 3
+  },
+  "sameSnapshotPairedModel": {
+    "allRecoveredDateDiagnostics": [
+      {
+        "date": "2026-10-15",
+        "fixedAttemptCashGateEffect": 0.012509999999999999,
+        "rejectedMean": -0.02502,
+        "rejectedN": 5,
+        "retainedMean": -0.00030000000000000024,
+        "retainedN": 5,
+        "ungatedMean": -0.01266
+      },
+      {
+        "date": "2026-10-19",
+        "fixedAttemptCashGateEffect": 0.024990909090909088,
+        "rejectedMean": -0.068725,
+        "rejectedN": 4,
+        "retainedMean": -0.0432,
+        "retainedN": 7,
+        "ungatedMean": -0.052481818181818185
+      },
+      {
+        "date": "2026-10-20",
+        "fixedAttemptCashGateEffect": 0.008918181818181818,
+        "rejectedMean": -0.0327,
+        "rejectedN": 3,
+        "retainedMean": 0.0432875,
+        "retainedN": 8,
+        "ungatedMean": 0.022563636363636366
+      },
+      {
+        "date": "2026-10-21",
+        "fixedAttemptCashGateEffect": 0.0023470588235294117,
+        "rejectedMean": -0.0044333333333333325,
+        "rejectedN": 9,
+        "retainedMean": -0.036125000000000004,
+        "retainedN": 8,
+        "ungatedMean": -0.01934705882352941
+      }
+    ],
+    "comparisons": {
+      "base": {
+        "all51UngatedMean": -0.010198039215686275,
+        "conditionalMeanDifference": 0.01079470588235294,
+        "fixed51GatedMeanWith21RuleNoOrdersCashZero": 0.0003509803921568622,
+        "fixed51ModelDifference": 0.010549019607843138,
+        "rejected21Mean": -0.025619047619047618,
+        "retained30Mean": 0.0005966666666666657
+      },
+      "stress": {
+        "all51UngatedMean": -0.01903137254901961,
+        "conditionalMeanDifference": 0.010278039215686274,
+        "fixed51GatedMeanWith21RuleNoOrdersCashZero": -0.005149019607843138,
+        "fixed51ModelDifference": 0.013882352941176472,
+        "rejected21Mean": -0.03371428571428572,
+        "retained30Mean": -0.008753333333333335
+      }
+    },
+    "coreBlobIdentical": "ee8279c93173d38eb5f5dc1544f5d64d5498dc0b",
+    "currentRetainedValuesIdentical": true,
+    "literalThreePercentLimitPresent": true,
+    "producerBlob": "d872acef4686d5f927093f2443aa82a03abcf340",
+    "rejectedScored": 21,
+    "retainedScored": 30,
+    "source": "d1213696833f442d26e29f08a966db3e05c3e4b5"
+  },
+  "savedStaleLabels": 23,
+  "uniqueRejectedOrUnpriced": 34,
+  "unrecoveredStaleKeys": [
+    "2026-10-22|MACIU|IG1",
+    "2026-10-22|XCUR|IG1"
+  ]
+}
