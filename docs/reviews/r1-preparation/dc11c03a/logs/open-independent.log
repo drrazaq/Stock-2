@@ -1,0 +1,47 @@
+intraday check done: 2 watched, 0 new alerts
+✖ review: missing quote without a stop cannot become a fresh HOLD (115.042058ms)
+intraday check done: 1 watched, 0 new alerts
+✖ review: all quotes missing still reports holdings as UNKNOWN in the first check (56.74327ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 277.649396
+
+✖ failing tests:
+
+test at ../engineering-a497/docs/engineering-continuation-20261108/open-check-extra-review.test.mjs:45:1
+✖ review: missing quote without a stop cannot become a fresh HOLD (115.042058ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /: HOLD:/. Input:
+  
+  'ZZN: HOLD: no exit rule is active; leader dip, no stop by design, sell limit 24.00. Current price UNKNOWN (no valid price).'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/docs/engineering-continuation-20261108/open-check-extra-review.test.mjs:47:105)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ZZN: HOLD: no exit rule is active; leader dip, no stop by design, sell limit 24.00. Current price UNKNOWN (no valid price).',
+    expected: /: HOLD:/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at ../engineering-a497/docs/engineering-continuation-20261108/open-check-extra-review.test.mjs:49:1
+✖ review: all quotes missing still reports holdings as UNKNOWN in the first check (56.74327ms)
+  AssertionError [ERR_ASSERTION]: first market-hours check must describe unavailable evidence
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/docs/engineering-continuation-20261108/open-check-extra-review.test.mjs:51:9)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: '',
+    expected: true,
+    operator: '==',
+    diff: 'simple'
+  }

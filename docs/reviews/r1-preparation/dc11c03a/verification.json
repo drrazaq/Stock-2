@@ -1,0 +1,49 @@
+{
+  "candidate": "dc11c03a3b5cadda159cb2cdeab855140be85b54",
+  "verdict": "CHANGES_REQUIRED_PROCEDURE_ONLY_OPEN_CHECK_SEPARATE",
+  "manifestFilesMatched": 51,
+  "unexpectedPaths": [],
+  "diffSha256Abbrev8": "85a89b3dabbbda1024d8cb862b2b90f3c9655f7aa5f61479abdb2209967f28ed",
+  "diffEncoding": "git diff --abbrev=8 b0d76987 HEAD -- <51 manifest paths>; automatic abbreviation differs with object population",
+  "localNode": "24.22.1",
+  "focused": {
+    "passed": 83,
+    "failed": 0
+  },
+  "exactCandidateGated": {
+    "passed": 20,
+    "failed": 0
+  },
+  "priorRecoveryCounterexamples": "closed in repeated cases; original scripts/results retained",
+  "full149Rerun": false,
+  "productionActions": false,
+  "composition": {
+    "source": "dc11c03a + open1968846d + calendar99e630df + watcher046877af",
+    "finalFocused": {
+      "pass": 162,
+      "fail": 0
+    },
+    "independentOpenChecks": {
+      "pass": 0,
+      "fail": 2
+    },
+    "initialCombined": {
+      "pass": 155,
+      "fail": 5,
+      "cause": "older watcher fixture omitted synthetic sealing key and expected plaintext"
+    },
+    "firstFixtureAdaptation": {
+      "pass": 25,
+      "fail": 1,
+      "cause": "direct canonical byte-comparison path still plaintext"
+    },
+    "finalCadence": {
+      "pass": 26,
+      "fail": 0
+    },
+    "fixtureAdaptation": "invented sealing key, sealed logical reads/writes, canonical byte comparison still exact against .sealed, expired-admission checks both plaintext and sealed absence; no runtime bypass/assertion waiver",
+    "releaseApproved": false,
+    "reproducedPatchTree": "b6dfcb2f082f45bf484decc718775bc4a021bb4a",
+    "temporaryIndexMatchesExecutedScratchSource": true
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "candidate": "dc11c03a3b5cadda159cb2cdeab855140be85b54",
+  "retryAfterDirectoryEio": [
+    {
+      "code": "EIO",
+      "plaintextExists": true
+    },
+    {
+      "code": "EIO",
+      "plaintextExists": true
+    }
+  ],
+  "segmentedRecovery": {
+    "exportedFiles": 1,
+    "sourceLogicalRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ],
+    "exportedBaseRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ],
+    "restoredBasePlusSegmentsRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ]
+  },
+  "incompleteSelfConsistentManifest": {
+    "originalSourceCount": 2,
+    "result": {
+      "ref": "HEAD",
+      "problems": [
+        "source file missing from the manifest: data/options-shadow.json",
+        "manifest count 1 != source T1 plaintext count 2"
+      ],
+      "plaintextT1": [],
+      "sealedT1": 1,
+      "extra": [],
+      "manifestCount": 1
+    }
+  },
+  "writerGateIncompleteListing": {
+    "pass": false,
+    "why": [
+      "not a capture v2 envelope (repository, captured_at, queries)"
+    ],
+    "notDone": [],
+    "seen": 0
+  },
+  "writerGateUnknownStatus": {
+    "pass": false,
+    "why": [
+      "not a capture v2 envelope (repository, captured_at, queries)"
+    ],
+    "notDone": [],
+    "seen": 0
+  },
+  "manifest": {
+    "entries": 51,
+    "mismatches": [],
+    "diffSha256": "24dc3cf49e1ffa1635fe89decb43b50f05329b6bdf6d82122c444bff35ec4c16"
+  },
+  "sourceScript": "previous d02cdfea reproducer invoked with explicit rev6 source argument; copied reproducer updates only candidate/default labels"
+}

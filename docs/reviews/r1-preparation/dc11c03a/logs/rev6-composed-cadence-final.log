@@ -1,0 +1,36 @@
+{"date":"2026-10-30","retained":333,"configuredObserved":331,"missing":[]}
+✔ actual watcher covers each configured minute with 2.5second snapshot work 2026-10-30 (2266.261297ms)
+{"date":"2026-11-02","retained":333,"configuredObserved":331,"missing":[]}
+✔ actual watcher covers each configured minute with 2.5second snapshot work 2026-11-02 (2218.481742ms)
+✔ actual workflow refuses opposite-DST queued start without source I/O 2026-10-30 (111.270446ms)
+✔ actual workflow refuses opposite-DST queued start without source I/O 2026-11-02 (84.579789ms)
+✔ actual workflow preserves configured virtual schedule and observation budget after early wait 2026-10-30 (2168.061029ms)
+✔ actual workflow preserves configured virtual schedule and observation budget after early wait 2026-11-02 (2159.225928ms)
+✔ correct-season setup too early for the single-job envelope is explicitly refused; existing09:10 guard path remains available (59.45623ms)
+✔ correct-season late start remains labelled partial, archives both attempts and preserves richer canonical/delivery state (2276.221675ms)
+✔ slow sources leave explicit missing slots and do not extend beyond configured end (1224.093156ms)
+✔ setup/cache delays preserve original chronological clocks and label the resulting late start (1796.775667ms)
+✔ setup/cache delays beyond the configured window never manufacture observations (104.849172ms)
+✔ first verified job and early stop survive later in_progress duplicate (18.679554ms)
+✔ first verified job and early stop survive later queued duplicate (1.094234ms)
+✔ verified no-op with long queue time is not observation and does not consume the start (0.425579ms)
+✔ unavailable job evidence never becomes a creation-time start (0.412059ms)
+✔ configured boundary15:00 is independent of16:00 exchange close (2.081076ms)
+✔ day query bounds follow New York across23/25-hour DST days (2.630251ms)
+✔ manual/guard admission is bounded; late legitimate collection stays explicitly partial (0.728164ms)
+✔ complete daily pagination is independent of lifetime runs and uses actual jobs (18.395332ms)
+✔ history request cap and failed jobs are UNKNOWN, never proof of an earlier observation or permission to dispatch (3.168049ms)
+✔ actual guard handles metadata failure without declaring a start or dispatching (157.126712ms)
+✔ a later completed duplicate reaching15:00 cannot erase the earlier stop (1.53123ms)
+✔ partial history does not mislabel a later job as the original late start (1.105861ms)
+✔ short attempts retain the existing bounded startup retry rule without claiming observation coverage (0.511519ms)
+✔ earliest actual watcher job remains recorded when a later job in the same run is active (0.626151ms)
+✔ malformed run identity/status never establishes an empty history or permits dispatch (2.277421ms)
+ℹ tests 26
+ℹ suites 0
+ℹ pass 26
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 10093.064712

@@ -1,0 +1,84 @@
+✔ pure mapping: exact names only; units and plausible bands checked; unmapped names are UNKNOWN (2.664423ms)
+✔ pure merge: a subsidiary series never renames or replaces the official headline; conflicting duplicates are UNKNOWN (19.378792ms)
+✔ actual job + actual ACTIONS: headline series with units, reference periods and source; no misplaced 1710K / private-payroll headline (266.374119ms)
+✔ actual "calendar" command: subsidiary series listed separately with UNKNOWN reasons, vintage and source (204.797864ms)
+✔ provider sends only the private-payrolls row: the jobs report headline is UNKNOWN, never filled by the subsidiary (223.95973ms)
+✔ a calendar saved before the repair is never re-shown with merged figures (30.683486ms)
+✔ R1: a provider period that disagrees with the official reference is UNKNOWN, never relabelled; agreeing and no-hint controls stay valid (337.415918ms)
+✔ R2: duplicate rows that differ only in unit are UNKNOWN in either order (521.807372ms)
+✔ R3: a null/zero cached CPI index never becomes a released value (no -100%); a valid zero payroll CHANGE stays (325.467741ms)
+✔ R4: a provider previous retrieved after the release is labelled as such, never as a pre-release vintage (155.80315ms)
+✔ R4b: a partial Alpha Vantage refresh does not freshen the unchanged payroll series clock (165.814995ms)
+✔ R5: claims numerically below consensus read BELOW, with the job-market meaning stated separately (23.229247ms)
+✔ R6 (health): an actionable delivery failure with complete configured coverage keeps its message-recovery counts (27.343227ms)
+✔ production reader macroNow: a headline surprise keeps its exact study key; a subsidiary series never triggers a reaction (47.964987ms)
+✔ R4 (r3): a cached actual with a missing retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim (163.886399ms)
+✔ R4 (r3): a cached actual with a invalid retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim (157.745964ms)
+✔ R4 (r3) control: a timestamped cached actual keeps its real retrieval date (159.838128ms)
+✔ R4 (r3): provider figures with an unknown retrieval time make no release-timing claim; footnote cites no fetch date (26.844598ms)
+✔ all requests stayed synthetic and offline (0.58596ms)
+✔ fixture reproduces the saved 5 Nov evidence exactly (16 missing configured minutes, longest 5, 315/390) (1.15187ms)
+✔ health line keeps the outside-window qualification and separates missing minutes from outside time (49.185576ms)
+✔ the same line reaches the actual ACTIONS message unchanged (58.244239ms)
+✔ the full health command still shows the complete original watcher text (34.335331ms)
+✔ a snapshot whose watcher text and structured report disagree is shown in full, never shortened from mismatched numbers (38.426237ms)
+✔ other long problems end at a clause boundary with a pointer to the full text, never mid-word (30.696595ms)
+✔ all requests stayed synthetic and offline (0.892731ms)
+intraday check done: 1 watched, 0 new alerts
+✔ conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS (103.354247ms)
+intraday check done: 1 watched, 0 new alerts
+✔ stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS (58.866729ms)
+intraday check done: 1 watched, 0 new alerts
+✔ stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route (49.593173ms)
+intraday check done: 3 watched, 0 new alerts
+✔ undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped) (57.274493ms)
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open (105.242153ms)
+intraday check done: 1 watched, 0 new alerts
+✔ labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence (53.07265ms)
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm (140.807803ms)
+intraday check done: 1 watched, 0 new alerts
+✔ records untouched: positions and Telegram offset unchanged; one first check a day (45.079567ms)
+✔ all requests stayed synthetic and on loopback (0.230036ms)
+R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+Telegram: 1 message(s) read
+R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+✔ bot: an options record sealed under another key -> "bought option" is NOT RECORDED and the record bytes stay identical (92.043656ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+R1 sealed read data/movers-state.json: SEALED_LEGACY_PLAINTEXT
+✔ bot: without the key the same command is NOT RECORDED (SEALED_KEY_MISSING); with it, recorded and still sealed (control) (124.29463ms)
+✔ nightly options lane: an unreadable options record stops the lane BEFORE any ticket, request or paper change (32.83676ms)
+✔ bot: an unmigrated plaintext movers file is UNKNOWN (SEALED_LEGACY_PLAINTEXT), not "not produced yet" (27.743839ms)
+✔ health: a tampered watcher live file is a named problem with state UNKNOWN; the watcher evidence line says UNKNOWN (209.336459ms)
+✔ missed-runner ledger: unmigrated plaintext history stops the job (exit 1) and is left untouched; sealed input appends sealed (256.429033ms)
+✔ shadow outcomes: a sealed day file under another key stops the step with its code; nothing is written (136.316235ms)
+✔ watcher evidence (watcher-reporting): an unmigrated plaintext run archive makes the evidence UNKNOWN and actionable (78.864587ms)
+✔ all requests stayed on loopback (0.564969ms)
+✔ no module reads or writes a T1 file with plain fs calls (only through sealed-store) (33.320878ms)
+✔ indirect writers: variables holding T1 paths are only written through sealed-store calls (0.471118ms)
+✔ public Actions logs: no per-stock option quotes, survey summary, or analyst/price message text is printed (0.296316ms)
+✔ the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed) (1.602838ms)
+✔ every workflow save that can carry T1 changes registers the sealed merge driver and runs the guard before committing (1.630765ms)
+✔ explicit stage lists use sealed_stage (addition + deletion) for T1 names; no plaintext T1 name is git-added directly (3.205225ms)
+✔ watcher artifact: the only T1 path uploaded is data/ignition-runs/, which now holds sealed files only (0.527001ms)
+✔ website: index.html fetches signals.json and discovery.json only (T2), and names no T1 file or sealed file (1.465291ms)
+✔ migration workflow: manual dispatch only, exact confirmation, approved source checkout, fast-forward push, tree receipt; no schedule (0.386521ms)
+✔ every push is preceded by the push-time guard on the reconciled tree (Codex re-review 5) (0.589676ms)
+✔ .gitattributes keeps sealed files out of text merge and diff (0.223085ms)
+✔ inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 same-family) all match the sealed patterns (0.312119ms)
+✔ rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored (0.536956ms)
+✔ rev5 recovery: no cherry-pick replay; producer refs are immutable (no force push); consumer is the data-only sealed-recover.mjs (0.257507ms)
+ℹ tests 58
+ℹ suites 0
+ℹ pass 58
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2977.026559

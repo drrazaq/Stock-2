@@ -1,0 +1,22 @@
+{
+  "candidate": "dc11c03a3b5cadda159cb2cdeab855140be85b54",
+  "simpleStaleState": {
+    "status": 1,
+    "offset": 9,
+    "positions": {
+      "NEW": {}
+    }
+  },
+  "returnedToBase": {
+    "status": 1,
+    "positionsBefore": {},
+    "positionsAfter": {},
+    "log": "save recovery: save-recovery/test REFUSED (data/my-positions.json changed on main since this save; a stale state is never replayed); kept"
+  },
+  "mergeCommitProvenance": {
+    "status": 1,
+    "codeAfter": "// reviewed code",
+    "log": "save recovery: save-recovery/test REFUSED (contains a merge commit; a checkpoint must be a linear chain of saves); kept"
+  },
+  "sourceScript": "previous d02cdfea reproducer invoked with explicit rev6 source argument; copied reproducer updates only candidate/default labels"
+}

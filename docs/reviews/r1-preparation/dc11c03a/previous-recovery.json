@@ -1,0 +1,28 @@
+{
+  "candidate": "dc11c03a3b5cadda159cb2cdeab855140be85b54",
+  "recovery": {
+    "status": 1,
+    "output": "save recovery: save-recovery/example REFUSED (not a data-only save; e.g. sentinel.mjs); kept",
+    "offsetBefore": 9,
+    "offsetAfter": 9,
+    "ownerStateAfter": {
+      "NEW": {
+        "entry": 2
+      }
+    },
+    "codeAfter": "// current reviewed code",
+    "mainChanged": false
+  },
+  "recoveryDeleteRace": {
+    "exitCode": 1,
+    "recoveryRefDeleted": false,
+    "mainVersion": 1,
+    "newerCheckpointIsAncestor": false
+  },
+  "failedRecoveryFetch": {
+    "exitCode": 2,
+    "stdout": "UNKNOWN: save-recovery listing/fetch failed; pending recovery state is not known (nothing assumed merged)",
+    "stderr": ""
+  },
+  "sourceScript": "previous d02cdfea reproducer invoked with explicit rev6 source argument; copied reproducer updates only candidate/default labels"
+}

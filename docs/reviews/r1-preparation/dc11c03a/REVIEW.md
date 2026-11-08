@@ -1,0 +1,29 @@
+# R1 rev6 independent review — one procedure correction remains
+
+Exact candidate **dc11c03a3b5cadda159cb2cdeab855140be85b54**, handoff6718991289. **CHANGES REQUIRED (release failure wording); reproduced runtime blockers closed in the tested cases.** All51 fingerprints and exact52-path allowlist match. Manifest diff matches85a89b3d…28ed with explicit `git diff --abbrev=8`; default abbreviation grows with local object population, so the otherwise different diff hash is not a source mismatch. Pin abbreviation or full-index for reproducible future manifests (optional).
+
+## Completed independent work
+
+83/83 supplied R1 cases and20/20 exact-candidate gated watcher cases pass, local Node24.22.1. Original149-file/Node20 results are Claude's, not independently rerun here. Copied original reproducers update only labels/default path; all synthetic git remotes are local disposable repositories.
+
+Both recovery blockers now refuse: main positions{}→NEW→{} retains{}, never OLD; a merge-only source insertion is refused and sentinel source stays unchanged. Isolated stale offset retains9, current NEW position retained, advanced checkpoint is kept, unreachable local fetch gives2/UNKNOWN. Durability EIO keeps plaintext on both attempts, segmented recovery emits rows once, incomplete migration fails recomputed expected-source verification. Complete-source manifest fingerprints51/51. `r1-release-precheck.mjs b0d76987 dc11c03a 77427320` PASS52paths/0drift/0preexistingsealed.
+
+G3b now chooses a route before the window and B5b performs proof after verified code/before migration; the default-branch circularity is removed. Capture v2 includes all six open statuses regardless of creation date and complete31-day writer coverage, plus cap, page, repository, freshness and unknown-status refusal. Supplied tests independently passed. No actual run census/controls performed.
+
+STOP watcher, stop-watch and website index bytes are unchanged from rev5; exact gated cases still pass. This preserves reviewed behavior in those fixtures, not a refreshed operational STOP-pin receipt. Prior publishing-path/website/privacy/cost assessments remain scoped: existing public copies are not removed; public T2/derived/summary/log/cache/artifact outputs remain explicitly residual; sealing is not a provider-terms or privacy certification. No new access, key action, acquisition, public-copy removal or cost commitment.
+
+## Specific remaining blocker
+
+RELEASE.md B5b says any FAIL **or no proof** means “The only way forward is then K2”. That conclusion does not follow: an absent receipt, wrong private input, wrong vector/source binding or temporary runner failure does not establish an unrecoverable key. This was an explicit rev5 review requirement and remains uncorrected. Keep STOP/R-0 safe rollback, writers/UNKNOWN safeguards and required restoration verification; privately diagnose proof identity first. Future reviewed K1 re-verification or a separately owner-chosen K2 can then be considered, without automatic retry or any credential action now. [Exact bounded replacement](release-wording-proposed.patch). Claude should apply/reconcile it and publish the exact revised candidate for focused confirmation. No owner approval request before that passes.
+
+Custody K1/K2 and genuinely available proof route, residual-public-output decision, bounded recovery-ref retention/storage, refreshed STOP pins and approved window/complete receipts remain separate future approval prerequisites. No current owner action requested. Existing deadlines and attended reconfirmation rules remain unchanged; rollback is UNVERIFIED/no Enable until complete required hosted receipts and all restoration gates pass.
+
+## Separate composition: no combined release PASS
+
+[Source-only review patch](composition-review-only.patch) applies to exactrev6. Three-way open-check conflict is the scan import block: retain nyStamp **and** sealed-store. Watcher conflicts also touch save gating/publication: retain R1 synthetic-key binding, guarded push and immutable recovery, together with ready/failure gating from cadence. Calendar full source subset applies. Existing production/development refs remain untouched. This is an inactive scratch composition, not a deployed or approved patch, nor a wholesale port into newer development.
+
+Initial combined run155pass/5fail exposed old watcher fixtures with no synthetic sealing key; first adaptation25/26 still read the canonical plaintext path directly. Final fixture changes use an invented key, sealed logical reads/writes and the exact ciphertext canonical-byte comparison; expired admission checks both plaintext and sealed absence. Runtime fail-closed key checks and cadence assertions stay unchanged. Final focused composition **162/162PASS**, including R1, supplied open9, calendar and watcher; cadence subset26/26 (overlapping).
+
+Despite those passes, the independent actual intraday caller **still fails both desired cases**: an unquoted no-stop leader-dip holding emits HOLD when another fresh holding triggers the report, and all-missing quotes suppress the first report. Exact independent reproducer is in engineering checkpoint81367bb0 `docs/engineering-continuation-20261108/open-check-extra-review.test.mjs`; run with REVIEW_TREE pointing at the scratch composition. Complete logs preserve failures. Claude must correct these open-check caller paths before a composed release review; passing the supplied9 is insufficient. No competing edit of Claude's open-check runtime region made.
+
+The development safe calendar port and40-row ledger remain separate on codex/engineering-continuation-20261108.24accepted/16open, zero closures. RA-C2 confirmation/K1-K3 pins and unchanged conditional saved-path outcomes are separate research work, not evidence of authentic executable profitability.

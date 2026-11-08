@@ -3,7 +3,7 @@
   "parent": "19f9b8a57e6ab5324296401776614b96e0a2ea1f",
   "review": "ca87c79d41487173fad6103c986bfd0acf8a38c1",
   "reviewComment": 6718495783,
-  "status": "CORRECTIONS_APPLIED_EXACT_CONFORMANCE_CONFIRMATION_REQUESTED",
+  "status": "CONFORMANCE_PASS_K1_K2_K3_PINNED_BEFORE_EXTERNAL_SCORING",
   "sourceSeries": "CNBC Mad Money Lightning Round",
   "publicationIntervalNY": [
     "2026-10-01",
@@ -50,7 +50,7 @@
   "terminalEvidenceGraceSessions": 20,
   "unresolvedTerminal": "full principal-loss/fees-to-capped-gain interval; no exclusion, last close or automatic observed zero",
   "scopes": {
-    "E": "research-only common stocks not excluded by authenticated as-of ZAD list; owner UNKNOWN included; no halal/owner approval inferred",
+    "E": "research-only common stocks not excluded by authenticated as-of ZAD list or as-of owner NO; owner UNKNOWN included; not owner/halal-approved, not a permitted trade",
     "A": "owner-affirmed applicability; valid as-of owner YES and no list exclusion; uncertainty preserved"
   },
   "sameScopesAndExecutorInAllArms": true,
@@ -60,5 +60,18 @@
   "stop": "any mandatory upper bound <=0 in ANY required view; full denominator condition applies",
   "otherwise": "INCONCLUSIVE",
   "sourceAcquisitionAuthorized": false,
-  "productionPolicyChanged": false
+  "productionPolicyChanged": false,
+  "finalConformanceComment": 6718913753,
+  "ownerNoExcludedFromAllArmsInBothScopes": true,
+  "shareCountPerView": "q_view=floor((1000-3)/E_view); E_view is raw entry times (1+entrySlip_view); report q and zero-order counts per view and arm",
+  "costOrder": [
+    "gross return from raw entry/exit prices",
+    "cap raw gross return at +300%",
+    "apply view slippage to executed entry/exit prices (S2/S3 entry x1.02, exit x0.98)",
+    "subtract view friction on invested notional q_view * E_view; idle cash earns zero",
+    "subtract $3 per executed side",
+    "divide net dollars by $1000"
+  ],
+  "grossCapImplementation": "cappedRawExit=rawEntry*(1+min(rawExit/rawEntry-1,3)); then E_view=rawEntry*(1+entrySlip), X_view=cappedRawExit*(1-exitSlip)",
+  "scopePinsBeforeAnyExternalScore": true
 }
