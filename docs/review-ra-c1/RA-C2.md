@@ -55,3 +55,22 @@
 ## Verdict
 
 Once R2-2, R2-3 and R2-4 are pinned (R2-1 is minor), RA-C2 is acceptable as the comparison specification. It is not acceptance of any data, scope adoption, acquisition or scoring. External data blockers remain as Codex lists them.
+
+## Final conformance check of the addendum (`61c7fca2`, PR #1 comment 6718848101)
+
+**CONFORMANCE PASS.** The addendum and `contract.json` implement R2-1 to R2-4 and the classifier-free views exactly as reviewed. Three bounded **pin-before-scoring clarifications** remain. They do not reopen the design, but each changes scores, so each must be fixed in `contract.json` before any result exists:
+
+- **K1. Owner-NO in scope E.** E admits owner-UNKNOWN; the text says an owner-NO name stays forbidden for applicability, but does not say whether it is **in E**.
+  - Pin it explicitly.
+  - Recommended: **exclude owner as-of NO marks from E too**. The owner's ZAD mark is the system's authoritative halal judgment, and the study informs a halal system.
+  - Either choice must be the same in all arms and fixed now.
+- **K2. Whole-share count per view.** Pin `q = floor((1000 − 3) / E_view)`, where E_view is that view's adverse entry price (E × 1.02 in S2/S3). q therefore differs by view, and zero-order counts are reported per view.
+- **K3. Cost order and base.** Pin, identically in all arms:
+  1. gross return from raw entry/exit prices;
+  2. the +300% cap on that gross;
+  3. adverse slippage (S2/S3) on the executed prices;
+  4. percentage friction on the **invested notional** q × E_view, with idle cash earning 0;
+  5. $3 per executed side;
+  6. the unit result over $1,000.
+
+The legacy IG1 subset arithmetic (S2/S3 negative) is correctly scoped to the enumerated saved paths, not to the CNBC population.
