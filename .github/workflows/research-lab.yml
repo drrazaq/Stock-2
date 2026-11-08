@@ -13,7 +13,9 @@ name: Research lab
 # research-cache/tax.json.gz; paper via companyconcept. Idea 7 (2 Nov 2026): R&D INCREASES (RQ-RDI-*; Eberhart, Maxwell and Siddique 2004):
 # quarterly R&D + Assets from the same bulk file, read once into research-cache/rdi.json.gz; paper via companyconcept. Idea 8 (3 Nov 2026): INVENTORY CHANGES (RQ-INV-*;
 # Thomas and Zhang 2002): InventoryNet + Assets instants from the same bulk file, read once into research-cache/inv.json.gz; paper via companyconcept. Idea 9 (4 Nov 2026): GOODWILL IMPAIRMENTS as an AVOID / SELL-warning check (RQ-GWI-*;
-# Hirschey and Richardson 2003): GoodwillImpairmentLoss + Assets from the same bulk file, read once into research-cache/gwi.json.gz; no paper buy lane. The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
+# Hirschey and Richardson 2003): GoodwillImpairmentLoss + Assets from the same bulk file, read once into research-cache/gwi.json.gz; no paper buy lane.
+# Idea 12 (8 Nov 2026): DISTRESS RISK as an AVOID / SELL-warning check (RQ-DIST-*; Campbell, Hilscher and Szilagyi 2008): net income, liabilities,
+# equity, cash from the same bulk file (research-cache/dst.json.gz) + prices + data/shares.json.gz; no paper buy lane. The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
 # research-cache is saved. Commits only its own output files and its own library entries. Never places an order.
 # Start by hand: change run-research-now.txt (or run the workflow).
 on:

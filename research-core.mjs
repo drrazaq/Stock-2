@@ -158,6 +158,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'gwi') { ch += preRegisterGwi(LB); continue; }
     if (R.family === 'gpc') { ch += preRegisterGpc(LB); continue; }
     if (R.family === 'dvc') { ch += preRegisterDvc(LB); continue; }
+    if (R.family === 'dst') { ch += preRegisterDst(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -779,4 +780,111 @@ export function preRegisterDvc(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of DVC_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-07 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Measure, tag order, year-ago match, split guard, thresholds and data rule fixed in research-core.mjs (IDEA 11) before any run.', sources: DVC_SOURCES, hold: R.hold, note: DVC_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 12 (pre-registered 8 Nov 2026, before any run): DISTRESS RISK (failure probability) as a SELL / AVOID warning ----------------
+// Source: Campbell, Hilscher and Szilagyi, "In Search of Distress Risk", Journal of Finance 63(6), 2008, 2899-2939 (NBER w12362): a logit
+// failure probability built from accounting and market data; the most distressed stocks (top 1-5%) earned anomalously LOW returns.
+// NEW information line in this library: Squad 29 tested danger FILINGS (NT 10-K/10-Q, 8-K 3.01), the F-score family tests quality; nothing
+// tests the market-based failure probability. Long only: AVOID / SELL-warning check, NEVER a buy (like Squad 29, IDEAS 9 and 11).
+// SCORE (fixed now; the paper's 12-month-ahead logit, Table IV): LPFD = -9.164 - 20.264 NIMTAAVG + 1.416 TLMTA - 7.129 EXRETAVG
+//   + 1.411 SIGMA - 0.045 RSIZE - 2.132 CASHMTA + 0.075 MB - 0.058 PRICE. Higher LPFD = higher failure probability.
+//   ME = close on the session before entry x shares outstanding (data/shares.json.gz split-adjusted cover counts, latest dated 30+ days
+//   before; an unadjusted split-shaped jump (x2,3,4,5,8,10,15,20,25,30,40,50 or 1/x, within 2%) between that count and today's = event
+//   dropped). TL = us-gaap Liabilities at the quarter end E (else LiabilitiesAndStockholdersEquity - StockholdersEquity incl. NCI, else
+//   - StockholdersEquity). MTA = ME + TL. BE = StockholdersEquity at E (else incl. NCI); MB = ME / max(BE + 0.1 (ME - BE), 1 USD).
+//   CASH = CashAndCashEquivalentsAtCarryingValue (else ...RestrictedCash...) + ShortTermInvestments at E (when tagged). Instants within
+//   5 days of E, latest filed on or before F.
+//   NIMTAAVG = sum w_k NI_k / MTA over the 4 quarters ending E, E-91, E-182, E-274 (+-12 days), w = 0.5333, 0.2667, 0.1333, 0.0667;
+//   NI = us-gaap NetIncomeLoss (else ProfitLoss), discrete quarter (80-100 days), else fiscal year (350-380) minus the 9 months (260-285)
+//   with the same start; quarter E required, 2+ of 4 needed, weights renormalised over those present. SIMPLIFICATION (stated): the
+//   current MTA divides all four quarters (the paper uses each quarter's MTA).
+//   EXRETAVG = weighted average of monthly (21-session) log excess returns vs SPY over the 6 months before entry, weight 2^(-(m-1)/3);
+//   4+ of 6 months needed. SIMPLIFICATION (stated): the paper uses 12 months; the price file starts Oct 2021, and months 1-6 carry 80% of
+//   the paper's weight. SIGMA = sd of daily log returns over the 63 sessions before entry x sqrt(252) (40+ returns needed).
+//   RSIZE = ln(ME / (SPY close x 8.6e10)) (S&P 500 total value approximated from SPY; a common shift for all stocks on a day).
+//   PRICE = ln(min(close, 15)). No winsorising (the test ranks; the paper winsorises at 5/95%).
+// EVENT: a filing date F whose latest quarter end E is new and 0-120 days old (as IDEA 11), period end from 2019-06-01, forms 10-Q/10-K.
+//   The stock must be liquid on the session before entry and have 126+ sessions of history (so scored events start about April 2022).
+// RANK (point in time, the lazy-prices ranker): LPFD percentile among the SCORED LIQUID events of the 365 days before F (300+ needed).
+//   RQ-DIST-AV126  AVOID check: percentile >= 0.95 (top 5% failure probability); bought next open; 126 sessions; judged GROSS vs GROSS.
+//   RQ-DIST-AV63   the same, 63 sessions.
+//   RQ-DIST-T10    AVOID check: percentile >= 0.90 (top 10%), 126 sessions.
+// A valid SELL reason only if AVOID CONFIRMED (lag the average stock in both halves before cost, block t <= -2.5 in both).
+// DATA RULE (fixed now): no verdict until (a) 95%+ of universe companies looked up in the SEC bulk company facts file, (b) 85%+ of liquid
+// stock-months map to an SEC number, (c) 8,000+ scored liquid events from 2021-10-01 and (d) 150+ top-5% events.
+export const DST = { coef: { c: -9.164, nimta: -20.264, tlmta: 1.416, exret: -7.129, sigma: 1.411, rsize: -0.045, cashmta: -2.132, mb: 0.075, price: -0.058 },
+  qw: [0.5333, 0.2667, 0.1333, 0.0667], qStep: [0, 91, 182, 274], qTol: 12, minQ: 2, iTol: 5, months: 6, mLen: 21, minM: 4, sigN: 63, minSig: 40, priceCap: 15, spxPerSpy: 8.6e10,
+  endFrom: '2019-06-01', maxLag: 120, shLag: 30, splitTol: 0.02, splitR: [2, 3, 4, 5, 8, 10, 15, 20, 25, 30, 40, 50], minHist: 126, eventsFrom: '2021-10-01',
+  ni: ['NetIncomeLoss', 'ProfitLoss'], inst: { L: 'Liabilities', LSE: 'LiabilitiesAndStockholdersEquity', SE: 'StockholdersEquity', SEN: 'StockholdersEquityIncludingPortionAttributableToNoncontrollingInterest',
+    C1: 'CashAndCashEquivalentsAtCarryingValue', C2: 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents', STI: 'ShortTermInvestments' } };
+export const DST_DATA = { looked: 0.95, map: 0.85, scored: 8000, top: 150 };
+RULES['RQ-DIST-AV126'] = { kind: 'avoid', hold: 126, min: 0.95, family: 'dst', name: 'AVOID check: failure probability (Campbell-Hilscher-Szilagyi) in the top 5%, 126 sessions',
+  rule: 'Information only: after a new 10-Q/10-K, the 12-month failure-probability logit of Campbell, Hilscher and Szilagyi (2008; SEC XBRL net income, liabilities, cash, equity + price, volatility, excess return, size) is in the top 5% of liquid filings of the prior 365 days; bought next open, 126 sessions; a valid AVOID / SELL filter if these stocks lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+RULES['RQ-DIST-AV63'] = { kind: 'avoid', hold: 63, min: 0.95, family: 'dst', name: 'AVOID check: failure probability top 5%, 63 sessions', rule: 'As RQ-DIST-AV126, 63 sessions. Never a buy.' };
+RULES['RQ-DIST-T10'] = { kind: 'avoid', hold: 126, min: 0.90, family: 'dst', name: 'AVOID check: failure probability top 10%, 126 sessions', rule: 'As RQ-DIST-AV126 with the top 10% (percentile >= 0.90). Never a buy.' };
+export const DST_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'dst');
+for (const id of DST_IDS) { if (!IDS.includes(id)) IDS.push(id); ONE_OPEN.add(id); }
+const dstForm = (x) => x.form === '10-Q' || x.form === '10-K';
+// companyfacts JSON -> { n: [[start, end, val, filed, form, days]] net income durations (quarter, 9 months, year), i: { key: [[end, val, filed]] } }
+export function dstRows(j) { const g = j && j.facts && j.facts['us-gaap'], out = { n: [], i: {} }; if (!g) return out;
+  for (const tag of DST.ni) { const u = g[tag] && g[tag].units, arr = u && Array.isArray(u.USD) ? u.USD : null; if (!arr || !arr.length) continue; const s = new Set();
+    for (const x of arr) { if (!x || !x.start || !x.end || !x.filed || !ok(x.val) || !dstForm(x) || x.end < '2018-03-01') continue; const len = daysBetween(x.start, x.end);
+      if (!((len >= 80 && len <= 100) || (len >= 260 && len <= 285) || (len >= 350 && len <= 380))) continue; const k = x.start + '|' + x.end + '|' + x.val + '|' + x.filed; if (s.has(k)) continue; s.add(k); out.n.push([x.start, x.end, x.val, x.filed, x.form, len]); }
+    if (out.n.length) break; }
+  out.n.sort((p, r) => p[3] < r[3] ? -1 : p[3] > r[3] ? 1 : p[1] < r[1] ? -1 : p[1] > r[1] ? 1 : 0);
+  for (const [key, tag] of Object.entries(DST.inst)) { const u = g[tag] && g[tag].units, arr = u && Array.isArray(u.USD) ? u.USD : null; if (!arr) continue; const rows = [], s = new Set();
+    for (const x of arr) { if (!x || x.start || !x.end || !x.filed || !ok(x.val) || !dstForm(x) || x.end < '2018-03-01') continue; const k = x.end + '|' + x.val + '|' + x.filed; if (s.has(k)) continue; s.add(k); rows.push([x.end, x.val, x.filed]); }
+    if (rows.length) out.i[key] = rows.sort((p, r) => p[2] < r[2] ? -1 : p[2] > r[2] ? 1 : 0); }
+  return out; }
+// latest-filed (on or before F) row whose date is closest to `end` within `tol` days
+const dstPick = (rows, end, F, tol, dateAt = 0, filedAt = 2) => { let b = null; for (const r of rows || []) { if (r[filedAt] > F) continue; const gap = Math.abs(daysBetween(r[dateAt], end)); if (gap > tol) continue;
+  const bg = b ? Math.abs(daysBetween(b[dateAt], end)) : 1e9; if (!b || gap < bg || (gap === bg && r[filedAt] >= b[filedAt])) b = r; } return b; };
+export function dstQuarterNI(n, end, F) { const known = n.filter(r => r[3] <= F), tol = DST.qTol;
+  const q = dstPick(known.filter(r => r[5] <= 100), end, F, tol, 1, 3); if (q) return q[2];
+  const fy = dstPick(known.filter(r => r[5] >= 350), end, F, tol, 1, 3); if (!fy) return null;
+  const nm = known.filter(r => r[5] >= 260 && r[5] <= 285 && r[0] === fy[0]).sort((p, r) => p[3] < r[3] ? -1 : 1).pop(); return nm ? fy[2] - nm[2] : null; }
+// rows -> events [{ d (filed), end, form, ni: [4 quarters or null], tl, be, cash }] (only events with NI for E, TL, BE and CASH)
+export function dstEvents(rows) { const out = [], n = (rows && rows.n) || [], I = (rows && rows.i) || {}; let maxEnd = '';
+  const byF = new Map(); for (const r of n) if (r[5] <= 100 || r[5] >= 350) (byF.get(r[3]) || byF.set(r[3], []).get(r[3])).push(r);
+  for (const F of [...byF.keys()].sort()) { const here = byF.get(F), E = here.reduce((m, r) => r[1] > m ? r[1] : m, '');
+    if (E > maxEnd && E >= DST.endFrom && daysBetween(E, F) >= 0 && daysBetween(E, F) <= DST.maxLag) {
+      const ni = DST.qStep.map(s => dstQuarterNI(n, addDays(E, -s), F)), at = (k) => { const r = dstPick(I[k], E, F, DST.iTol); return r ? r[1] : null; };
+      const L = at('L'), LSE = at('LSE'), SE = at('SE'), SEN = at('SEN'), C1 = at('C1'), C2 = at('C2'), STI = at('STI');
+      const tl = L !== null ? L : LSE !== null && (SEN !== null || SE !== null) ? LSE - (SEN !== null ? SEN : SE) : null, be = SE !== null ? SE : SEN, cash0 = C1 !== null ? C1 : C2;
+      if (ni[0] !== null && ni.filter(x => x !== null).length >= DST.minQ && tl !== null && tl >= 0 && be !== null && be !== undefined && cash0 !== null && cash0 !== undefined)
+        out.push({ d: F, end: E, form: here.find(r => r[1] === E).at(4), ni, tl, be, cash: cash0 + (STI !== null && STI > 0 ? STI : 0) }); }
+    if (E > maxEnd) maxEnd = E; }
+  return out; }
+// market inputs from closes c[0..t] and SPY closes s[0..t] (NaN / 0 = missing), at the session t before entry
+export function dstMarket(c, s, t) { const phi = Math.pow(2, -1 / 3); let sw = 0, sx = 0, m = 0;
+  for (let k = 1; k <= DST.months; k++) { const a = t - DST.mLen * k, b = t - DST.mLen * (k - 1); if (a < 0) break; if (!(c[a] > 0 && c[b] > 0 && s[a] > 0 && s[b] > 0)) continue;
+    const w = Math.pow(phi, k - 1); sx += w * (Math.log(c[b] / c[a]) - Math.log(s[b] / s[a])); sw += w; m++; }
+  const r = []; for (let k = Math.max(1, t - DST.sigN + 1); k <= t; k++) if (c[k] > 0 && c[k - 1] > 0) r.push(Math.log(c[k] / c[k - 1]));
+  const mu = r.length ? r.reduce((x, y) => x + y, 0) / r.length : 0, sig = r.length > 1 ? Math.sqrt(r.reduce((x, y) => x + (y - mu) ** 2, 0) / (r.length - 1) * 252) : null;
+  return { exret: m >= DST.minM ? sx / sw : null, sigma: r.length >= DST.minSig ? sig : null, months: m, rets: r.length }; }
+// accounting event + market inputs -> { lp, parts } or null
+export function dstScore({ ni, tl, be, cash, me, exret, sigma, price, spy }) {
+  if (!(me > 0) || !(price > 0) || !(spy > 0) || !ok(exret) || !ok(sigma) || !ok(tl) || !ok(be) || !ok(cash) || !Array.isArray(ni) || ni[0] === null) return null;
+  const mta = me + tl; let sw = 0, sn = 0; ni.forEach((x, k) => { if (x !== null && ok(x)) { sw += DST.qw[k]; sn += DST.qw[k] * x; } }); if (!(sw > 0)) return null;
+  const adjBE = Math.max(be + 0.1 * (me - be), 1), P = { nimta: sn / sw / mta, tlmta: tl / mta, exret, sigma, rsize: Math.log(me / (spy * DST.spxPerSpy)), cashmta: cash / mta, mb: me / adjBE, price: Math.log(Math.min(price, DST.priceCap)) };
+  let lp = DST.coef.c; for (const k of Object.keys(P)) lp += DST.coef[k] * P[k]; return { lp: +lp.toFixed(6), parts: Object.fromEntries(Object.entries(P).map(([k, v]) => [k, r4(v)])) }; }
+// split-adjusted cover counts [[date, shares]] -> the count usable at day d (dated d-30 or earlier) or null when a split-shaped jump follows it
+export function dstShares(rows, d) { if (!Array.isArray(rows) || !rows.length) return null; const lim = addDays(d, -DST.shLag); let ix = -1;
+  for (let k = 0; k < rows.length; k++) if (rows[k][0] <= lim && rows[k][1] > 0) ix = k; if (ix < 0) return null;
+  for (let k = ix + 1; k < rows.length; k++) { const a = rows[k - 1][1], b = rows[k][1]; if (!(a > 0) || !(b > 0)) continue; const r = b / a;
+    if (DST.splitR.some(x => Math.abs(r - x) <= DST.splitTol * x || Math.abs(r - 1 / x) <= DST.splitTol / x)) return { split: true }; }
+  return { sh: rows[ix][1], at: rows[ix][0] }; }
+export function dstDataRule({ ciks, looked, liqMonths, liqMapped, scored, top }) { const r = { looked: ciks ? looked / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.looked >= DST_DATA.looked)) why.push('company facts looked up ' + (r.looked * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= DST_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(scored >= DST_DATA.scored)) why.push('scored liquid events ' + scored + ' (8000 needed)');
+  if (!(top >= DST_DATA.top)) why.push('top-5% events ' + top + ' (150 needed)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), scored, top, why: why.join('; ') || null }; }
+const DST_SOURCES = ['https://doi.org/10.1111/j.1540-6261.2008.01416.x', 'https://www.nber.org/papers/w12362', 'https://econpapers.repec.org/RePEc:bla:jfinan:v:63:y:2008:i:6:p:2899-2939'];
+const DST_NOTE = 'Daily researcher 2026-11-08: Campbell, Hilscher and Szilagyi (2008, Journal of Finance) found that stocks with the highest failure probability earn anomalously low returns; research queue item 3. New line (market-based failure probability from SEC XBRL + prices); Squad 29 tested danger filings and the F-score family quality, not this. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.';
+export function preRegisterDst(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of DST_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-08 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Score coefficients, inputs, simplifications, ranking and data rule fixed in research-core.mjs (IDEA 12) before any run.', sources: DST_SOURCES, hold: R.hold, note: DST_NOTE }); ch++; }
   return ch; }

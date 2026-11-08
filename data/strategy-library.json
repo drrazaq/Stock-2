@@ -34067,6 +34067,54 @@
     "bar": 2.94,
     "why": "lost money after 0.8% costs; lost money after 1.2% costs; not better than the average stock bought the same day; loses without its 2 best trades; day t -2.42 under the luck bar 2.94; block t -2.96 under the luck bar 2.94"
    }
+  },
+  {
+   "id": "RQ-DIST-AV126",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: failure probability (Campbell-Hilscher-Szilagyi) in the top 5%, 126 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-08 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: after a new 10-Q/10-K, the 12-month failure-probability logit of Campbell, Hilscher and Szilagyi (2008; SEC XBRL net income, liabilities, cash, equity + price, volatility, excess return, size) is in the top 5% of liquid filings of the prior 365 days; bought next open, 126 sessions; a valid AVOID / SELL filter if these stocks lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Score coefficients, inputs, simplifications, ranking and data rule fixed in research-core.mjs (IDEA 12) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2008.01416.x",
+    "https://www.nber.org/papers/w12362",
+    "https://econpapers.repec.org/RePEc:bla:jfinan:v:63:y:2008:i:6:p:2899-2939"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-08: Campbell, Hilscher and Szilagyi (2008, Journal of Finance) found that stocks with the highest failure probability earn anomalously low returns; research queue item 3. New line (market-based failure probability from SEC XBRL + prices); Squad 29 tested danger filings and the F-score family quality, not this. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-DIST-AV63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: failure probability top 5%, 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-08 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-DIST-AV126, 63 sessions. Never a buy. Score coefficients, inputs, simplifications, ranking and data rule fixed in research-core.mjs (IDEA 12) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2008.01416.x",
+    "https://www.nber.org/papers/w12362",
+    "https://econpapers.repec.org/RePEc:bla:jfinan:v:63:y:2008:i:6:p:2899-2939"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-08: Campbell, Hilscher and Szilagyi (2008, Journal of Finance) found that stocks with the highest failure probability earn anomalously low returns; research queue item 3. New line (market-based failure probability from SEC XBRL + prices); Squad 29 tested danger filings and the F-score family quality, not this. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-DIST-T10",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: failure probability top 10%, 126 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-08 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-DIST-AV126 with the top 10% (percentile >= 0.90). Never a buy. Score coefficients, inputs, simplifications, ranking and data rule fixed in research-core.mjs (IDEA 12) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/j.1540-6261.2008.01416.x",
+    "https://www.nber.org/papers/w12362",
+    "https://econpapers.repec.org/RePEc:bla:jfinan:v:63:y:2008:i:6:p:2899-2939"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-08: Campbell, Hilscher and Szilagyi (2008, Journal of Finance) found that stocks with the highest failure probability earn anomalously low returns; research queue item 3. New line (market-based failure probability from SEC XBRL + prices); Squad 29 tested danger filings and the F-score family quality, not this. AVOID / SELL-warning check only (gross vs gross), never a buy. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
   }
  ]
 }
