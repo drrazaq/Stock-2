@@ -1,0 +1,10 @@
+{
+  "sourceCommit": "b0d76987",
+  "fixture": "Literal wildcard list with one synthetic dated source; local bare Git remote only; no provider/private-account access",
+  "helperExit": 0,
+  "datedFixtureCopied": false,
+  "zeroOfZeroCheckPassed": true,
+  "stdout": "private data: read OK\nprivate data: saved (connection check + copy of the private files 2026-11-08T04:28Z)\nprivate data: write OK\nprivate data: 0 of 0 private files copied and read back identical (checksum e3b0c44298fc1c14)\nprivate data: CHECK PASSED\n",
+  "meaning": "Simply adding a wildcard string does not implement recursive/private T1 routing; existing check can pass with zero matching files.",
+  "initialFixtureFailure": "First fixture used nonbare remote; Git rejected checked-out-branch push. Corrected to bare remote; not evidence about production."
+}

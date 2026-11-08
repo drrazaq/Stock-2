@@ -1,0 +1,9 @@
+{
+  "fixture": "Temporary local Git only; no real data/key/network",
+  "publishedTreeRetainsPlaintextAfterWorkingTreeUnlinkAndSealedOnlyStage": true,
+  "paths": [
+    "data/raw.json",
+    "data/raw.json.sealed"
+  ],
+  "finding": "Prospective workflow must stage the tracked plaintext deletion explicitly (and assess old other refs), not only new .sealed additions."
+}
