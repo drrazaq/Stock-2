@@ -1,0 +1,42 @@
+{
+  "candidate": "d02cdfea8a425dbe634514ba68b9a70c3156666a",
+  "localNode": "v24.22.1",
+  "verdict": "CHANGES_REQUIRED",
+  "manifestFilesMatched": 51,
+  "manifestMismatches": 0,
+  "diffSha256": "6abb26fae19d91ca1aef5309bbbf3ca872b990c2dc0fa4ad1e1ec5df514d1a8e",
+  "focused": {
+    "passed": 78,
+    "failed": 0
+  },
+  "initialWrongHarness": {
+    "passed": 11,
+    "failed": 9,
+    "disposition": "Mistaken pre-R1 research-worktree test harness, plaintext fixtures/no sealing key; not source verdict; original failures preserved."
+  },
+  "exactCandidateGated": {
+    "passed": 20,
+    "failed": 0,
+    "root": "/workspace/g2-verification/R1-d02cdfea",
+    "assertionsChanged": false
+  },
+  "logs": {
+    "focused": {
+      "path": "/workspace/g2-verification/r1-d02-focused.log",
+      "bytes": 10666,
+      "sha256": "8e3493087e4a5ed4c9d57fe648fc7f91eada5a31e27b0e1954a09b09fcc6af4c"
+    },
+    "initialWrongHarness": {
+      "path": "/workspace/g2-verification/r1-d02-stop.log",
+      "bytes": 16087,
+      "sha256": "936e0534a04158f4ec25588f54655eb06a3a0fe97446c4e34b8623ddba5734f5"
+    },
+    "exactCandidateGated": {
+      "path": "/workspace/g2-verification/r1-d02-stop-exact.log",
+      "bytes": 2009,
+      "sha256": "24a730e12c5180c717b240ebfac927cc3556a70c6feb6164f7c13fbbb1238835"
+    }
+  },
+  "full149Rerun": false,
+  "noProductionOrWorkflowActions": true
+}

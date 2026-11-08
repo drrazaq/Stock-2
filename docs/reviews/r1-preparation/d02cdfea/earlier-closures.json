@@ -1,0 +1,84 @@
+{
+  "candidate": "d02cdfea8a425dbe634514ba68b9a70c3156666a",
+  "retryAfterDirectoryEio": [
+    {
+      "code": "EIO",
+      "plaintextExists": true
+    },
+    {
+      "code": "EIO",
+      "plaintextExists": true
+    }
+  ],
+  "segmentedRecovery": {
+    "exportedFiles": 1,
+    "sourceLogicalRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ],
+    "exportedBaseRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ],
+    "restoredBasePlusSegmentsRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ]
+  },
+  "incompleteSelfConsistentManifest": {
+    "originalSourceCount": 2,
+    "result": {
+      "ref": "HEAD",
+      "problems": [
+        "source file missing from the manifest: data/options-shadow.json",
+        "manifest count 1 != source T1 plaintext count 2"
+      ],
+      "plaintextT1": [],
+      "sealedT1": 1,
+      "extra": [],
+      "manifestCount": 1
+    }
+  },
+  "writerGateIncompleteListing": {
+    "pass": false,
+    "why": [
+      "not a capture envelope (repository, captured_at, query, pages)"
+    ],
+    "notDone": [],
+    "seen": 0
+  },
+  "writerGateUnknownStatus": {
+    "pass": false,
+    "why": [
+      "not a capture envelope (repository, captured_at, query, pages)"
+    ],
+    "notDone": [],
+    "seen": 0
+  },
+  "manifest": {
+    "entries": 51,
+    "mismatches": [],
+    "diffSha256": "6abb26fae19d91ca1aef5309bbbf3ca872b990c2dc0fa4ad1e1ec5df514d1a8e"
+  }
+}
