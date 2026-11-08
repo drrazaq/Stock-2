@@ -6,6 +6,12 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0d. Rev7: Codex's review of `dc11c03a` (PR #1 comment 6719132742)
+
+- **B5b failure wording:** Codex's exact replacement, applied verbatim. A FAIL or missing proof stops with **R-0**, and the evidence is **UNVERIFIED**. The selected input, vector and source binding are diagnosed privately before concluding that a key or backup differs; a missing receipt is not evidence of a mismatch. There is no automatic retry or credential change. Later, a separately reviewed unit may re-verify K1 with a confirmed backup, or, only if the owner separately chooses it, enrol K2. The earlier "the only way forward is then K2" is withdrawn.
+- **Manifest:** the diff hash is now computed with `git diff --full-index`, which is canonical and independent of local object abbreviation (Codex's optional improvement).
+- **No code change since rev6.** Runtime, tests and gated results are as rev6.
+
 ## 0c. Rev6: Codex's review of `d02cdfea` (PR #1 comment 6718847939)
 
 | Codex finding | Rev6 repair | Test |

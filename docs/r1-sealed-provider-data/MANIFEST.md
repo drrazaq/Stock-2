@@ -1,9 +1,9 @@
-# R1 candidate manifest, rev6 (review only; not deployed)
+# R1 candidate manifest, rev7 (review only; not deployed)
 
-- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/r1-sealed-provider-data`. **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939).
+- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/r1-sealed-provider-data`. **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742).
 - **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
 - **Changed-file allowlist** (relative to the base; this manifest itself excluded): 51 files.
-- `git diff b0d76987 -- <allowlist>` sha256: `85a89b3dabbbda1024d8cb862b2b90f3c9655f7aa5f61479abdb2209967f28ed`
+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `a14b1ac44e118641bf35167b87dd7f10327b03a94b1e2a3124296860db8af24d`
 
 | Status | File | sha256 (candidate) |
 |---|---|---|
@@ -22,8 +22,8 @@
 | A | `.github/workflows/r1-migrate.yml` | `c12ae92aeeb40ba14a267715028c69d3fdfce61a2dcbf7162a974f8ac225459b` |
 | M | `.github/workflows/scorecard-1023.yml` | `9e5cc4f7342606f9f8775035a79658c0cb7803f1062e93b61df048c0aa6b3a33` |
 | A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
-| A | `docs/r1-sealed-provider-data/README.md` | `e610410960c467fa128569b3cc947483c9e766fcc12fde8dc37d75997868c6b7` |
-| A | `docs/r1-sealed-provider-data/RELEASE.md` | `21a2fe2c9517aa260919094bb87bfa32bf649ab2cbd0522e870e292d30d92eb2` |
+| A | `docs/r1-sealed-provider-data/README.md` | `3ea4aab61dc67a69aa6247b917941aae22140d3b8a10b1e44ff50916829cca85` |
+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `14f996276763d0f36e2e14c5540b406441545dfa06ec91950f120f34ba515b00` |
 | A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 | A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 | M | `fastmover-lab.mjs` | `a777ecc0d47fe9a08e9e2ca488af1b7a128b5764cd625a22271493e1f66de7ea` |
