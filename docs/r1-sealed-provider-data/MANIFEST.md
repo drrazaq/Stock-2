@@ -1,10 +1,10 @@
-# R1 combined-unit candidate manifest, rev16 (review only; not deployed)
+# R1 combined-unit candidate manifest, rev17 (review only; not deployed)
 
-- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821), `df5ee960` (rev14: B1-B5 closed; N1 and operative counts open, 6724620286), `09f58ca5` (rev15: CHANGES REQUIRED R1-R3, 6725294448).
+- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821), `df5ee960` (rev14: B1-B5 closed; N1 and operative counts open, 6724620286), `09f58ca5` (rev15: CHANGES REQUIRED R1-R3, 6725294448), `cdda3dc3` (rev16: multipart BUY NOW remainder unchecked, 6725877594).
 - **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
-- **Binding:** the authoritative path list (75 paths in rev16) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
-- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 74 files.
-- `git diff --full-index b0d76987 -- <allowlist>` sha256: `d4c6d4408b3c4d3e58408ed4e6a8fbb90c51510e0fcaca7854d6d838c5e68f26`
+- **Binding:** the authoritative path list (76 paths in rev17) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
+- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 75 files.
+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `9d56becfb022adcb9d0ec3b3e244a29f7558db6f92e9b52c45f978c13667aa17`
 
 | Status | File | sha256 (candidate) |
 |---|---|---|
@@ -25,8 +25,8 @@
 | A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 | M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 | M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-| A | `docs/r1-sealed-provider-data/README.md` | `a6da806211d0ba8d3966eb0282a63001b43c333a079e49deb4a672634db9d39a` |
-| A | `docs/r1-sealed-provider-data/RELEASE.md` | `45f3776e8f3c807c868b25939d9fc138ead23994a113cbd41c0be2a12fca78a7` |
+| A | `docs/r1-sealed-provider-data/README.md` | `7413419192e4de9f8df4f1c88725ef7c318d2f132d91b74cb2f7b9aaa39c85df` |
+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `98e415d8df7caff64c77b4bea644f2b40ae50816b1bffe72c07dd04a16adfbd0` |
 | A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 | A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 | A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
@@ -39,7 +39,7 @@
 | M | `options-survey.mjs` | `d3cea82f378e8e5afe287f56b80c29fef8cdefded5effb781c9022e0191e53c9` |
 | A | `r1-release-precheck.mjs` | `fd56115e0cd354314e962b793b7e9122dee16e8e79db10cd760b2876efb3f57c` |
 | A | `r1-writer-gate.mjs` | `7ff7a8456d8f693820719f81a70c7370dce9c1f4b7085ed19de7100fe43b6354` |
-| M | `scan.mjs` | `c9d69996ef14c980d1485550e1871e194258161c613d7fe7b7fdd25b3623c273` |
+| M | `scan.mjs` | `bf48e9bb6560811cd7836e31a01d125a6ad1add7a762b29d0630e3e4ecedd341` |
 | M | `scorecard-1023.mjs` | `a0f0a6a9f1bc9d41886996c76e8d20aa3d988b1ec148a3f7b9ce642bdd10b48a` |
 | A | `sealed-guard.mjs` | `b2dc4384e680e8f723951441ff5072487fc5b3a41f13aba7c507463e4e1d7fae` |
 | A | `sealed-merge.mjs` | `4182335911f74cf1ef4adf90da45b9dd071ab344e9e659e1506cf6a2c0fbb3a0` |
@@ -49,6 +49,7 @@
 | M | `shadow-outcomes.mjs` | `1dcf0a28d9511569cce0d493fc6f00debdc87bd40d966627e478467b10340bdc` |
 | M | `smart-money.mjs` | `3b3a937fbbc47aeafd97d5bf4ffaa53ba224d6c24490c5316424afae8b795bcd` |
 | A | `test/buynow-evidence.test.mjs` | `128a3af3da884af4c4a1919a14ad89557bc1c3a4374ffbbe2fe8d1c2c89ff842` |
+| A | `test/buynow-multipart.test.mjs` | `7f3984bb4a19fba4ce01c6cac6d64daca79ec95164df70b263f044ab633ca2d4` |
 | A | `test/discover-sec-note.test.mjs` | `2561908a8afd7181b7d51b5451574b9e0c53f581c397d38ae1ef165bb22041d5` |
 | A | `test/econ-calendar-exact-series.test.mjs` | `aa9e0177cff2753ff459e89d712d1098e77716c91731e784c7a016198a0b9e03` |
 | M | `test/feed-integrity-watcher.test.mjs` | `7144f713f3158671fe61feae52112b766d341f2685cc5a7c12a6a2baf02f4cfd` |
@@ -86,6 +87,6 @@
 ## Full serial suite on this tree
 
 - Node 20.20.0; preload refusing every non-loopback connection (0 attempted).
-- **161 of 161 files pass.**
+- **162 of 162 files pass.**
 - `premarket-feed` builds its fixture from the real New York date and clock. At one hour on 8 Nov it failed identically on this branch and on the unchanged base `b0d76987`; it passes in this run. R1 does not touch it.
 - **Gated actual-watcher scenarios** (`INCIDENT_WATCHER_SRC`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.

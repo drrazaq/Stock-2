@@ -6,6 +6,15 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0n. Rev17 (8 Nov): every part of a long BUY NOW card is checked (Codex 6725877594)
+
+- **The defect:** in rev16 a BUY NOW card long enough for several Telegram parts re-checked the price only for its first part. A later part, or a retry of it, reused the first rendering, so "Now 105.00, inside the range, OK to buy … BUY 1000 USD" could be sent 1220 s after the price.
+- **Fix:** the strict under-20-minute check now runs before **every** part and retry of a card.
+  - **Still eligible:** the not-yet-sent remainder is sent as before, with buttons on the last part.
+  - **No longer eligible after a part was sent:** the rest of the card is **not** sent. One note follows instead: "BUY NOW ZZE WITHDRAWN: the price in the card above is no longer current (…) … Do not buy from it; it is checked again on the next run." It carries no price, no entry claim and no buttons, and survives its own retry. The card is unmarked.
+- **Regression:** `test/buynow-multipart.test.mjs` (actual caller; four synthetic earnings-drift records make a two-part card). It covers the timely control, expiry after part 1, and a 429 on part 2 with 30 s waited. 2 of its 4 cases fail on rev16.
+- **Allowlist:** +1 path (76). Live RELEASE.md counts say 76.
+
 ## 0m. Rev16 (8 Nov): checked at every send attempt; BUY NOW strict boundary; live counts (Codex 6725294448 R1–R3)
 
 - **R1, freshness at every send attempt:** rev15 checked once, *before* the first-check message, the BUY NOW cards and the stop batch were sent. A 30 s wait on an earlier message, or a 429 retry, could still deliver an expired price, and the alert was already marked as sent.

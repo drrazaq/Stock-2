@@ -1065,9 +1065,10 @@ async function telegramLive(render, buttons) {
   const sent = [];
   if (!env.TG_TOKEN || !env.TG_CHAT) { const t = await render(Date.now(), sent); if (t) console.log('[no Telegram secrets, message not sent]\n' + t); return sent; }
   for (let n = 0, a = 0; n < 60; n++) {
-    const text = await render(Date.now(), sent); if (!text || !text.trim()) return sent;
+    const out = await render(Date.now(), sent), text = out && typeof out === 'object' ? out.text : out, noButtons = !!(out && typeof out === 'object' && out.noButtons);
+    if (!text || !text.trim()) return sent;
     const parts = tgParts(text), part = parts[0], last = parts.length === 1;
-    try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true, ...(buttons && buttons.length && last ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
+    try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true, ...(buttons && buttons.length && last && !noButtons ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
       if (r.status === 429 && a < 2) { a++; let w = 5; try { w = Math.min(30, +((await r.json()).parameters || {}).retry_after || 5); } catch (e) {} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }
       if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, part); }
       sent.push(part); a = 0; if (last) return sent; await sleep(FAST ? 0 : 700); }
@@ -4466,12 +4467,21 @@ async function intraday(onlyMine) {
   saveState();
   if (openMsg) await telegramLive(async (now, sent) => tgRemainder((await firstCheckText(myPos, planBuys, quotesSeen, sig, now)) + '\n' + FOOT, sent));
   for (const bc of buyNowCards) {
-    let shown = false;
+    let shown = false, withdrawn = false;
     await telegramLive((now, sent) => {
-      if (sent.length) return tgRemainder(shown, sent);
+      // (rev17, Codex 6725877594) EVERY part of a card, and every retry of a later part, is checked at its own attempt: a card whose price
+      // is no longer under 20 minutes old is never continued; if part of it was already sent, the rest is replaced by a WITHDRAWN note
+      // (no price claim, no buttons) and the card is unmarked, so the next run checks it again.
       const e = alertEvidence(bc.sym, quotesSeen[bc.sym], 'buynow', now);
-      if (e.state !== 'OK') { if (st.sent[bc.sym + 'buynow']) { delete st.sent[bc.sym + 'buynow']; saveState(); } return null; }
+      if (e.state !== 'OK') {
+        if (st.sent[bc.sym + 'buynow']) { delete st.sent[bc.sym + 'buynow']; saveState(); }
+        if (!sent.length || sent.some(p => p.startsWith('BUY NOW ' + bc.sym + ' WITHDRAWN:'))) return null;   // nothing sent yet, or the note is out
+        withdrawn = true;   // a retry of the note itself re-renders it (with the reason at that moment)
+        return { noButtons: true, text: 'BUY NOW ' + bc.sym + ' WITHDRAWN: the price in the card above is no longer current (' + e.why + '), so the rest of the card is not sent. Do not buy from it; it is checked again on the next run.' };
+      }
+      if (withdrawn) return null;   // once withdrawn, a card is never continued in this run
       if (!st.sent[bc.sym + 'buynow']) { st.sent[bc.sym + 'buynow'] = 1; saveState(); }
+      if (sent.length) return tgRemainder(shown, sent);   // the card as first shown, its not-yet-sent remainder (price still eligible now)
       shown = 'BUY NOW: a proven setup is inside its buy range (' + new Date(now).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT;
       return shown;
     }, [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]);   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
