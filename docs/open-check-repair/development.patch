@@ -1,5 +1,5 @@
 diff --git a/scan.mjs b/scan.mjs
-index 14a28526..88054d83 100644
+index 14a28526aed258e8063a14785a60c42b2a5ab6ca..36b6e0d7dac02ffbab87530078cb476a984779e9 100644
 --- a/scan.mjs
 +++ b/scan.mjs
 @@ -9,7 +9,7 @@ import crypto from 'node:crypto';
@@ -11,7 +11,7 @@ index 14a28526..88054d83 100644
  
  const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
  const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;   // test hooks: localhost only
-@@ -4228,6 +4228,45 @@ async function daily() {
+@@ -4228,6 +4228,48 @@ async function daily() {
    console.log('daily scan done:', stocks.length, 'stocks,', buys.length, 'buy watch,', fresh.length, 'journal entries');
  }
  
@@ -32,6 +32,9 @@ index 14a28526..88054d83 100644
 +  else if (P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '')) { act = 'SELL'; text = P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ').'; }
 +  else if (ok && num(P.t1) && px >= P.t1 && !P.trail) { act = 'TARGET 1'; text = t1Text(sym, P); }
 +  else if (hasStop && (!stopOk || !ok)) { act = 'UNKNOWN'; text = 'STOP STATUS UNKNOWN: no exit rule is active, but whether your stop ' + (stopOk ? money(P.stop) : '(not a valid number)') + ' was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.'; }
++  // (8 Nov review fix) no stop AND no valid price: the position's state cannot be confirmed (a leader-dip sell limit may have filled,
++  // targets may have been reached); never a fresh-looking HOLD without price evidence
++  else if (!ok) { act = 'UNKNOWN'; text = 'STATUS UNKNOWN: no exit rule is active from last night, but the current price cannot be confirmed right now' + (P.src === 'leader dip' ? ' (leader dip, no stop by design' + (num(P.target) ? '; check whether your sell limit ' + money(P.target) + ' has filled' : '') + ')' : '; NO STOP SET') + '; this is not a sign the position is safe. Check the price at your broker.'; }
 +  else { act = 'HOLD'; text = 'HOLD: no exit rule is active' + (hasStop ? '; above your stop ' + money(P.stop) : P.src === 'leader dip' ? '; leader dip, no stop by design' + (num(P.target) ? ', sell limit ' + money(P.target) : '') : '; NO STOP SET') + '.'; }
 +  const chg = ok && num(P.entry) ? ' (' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' : '';
 +  return { act, ev, line: sym + ': ' + text + ' ' + evidenceText(ev).replace(/^\w/, c => c.toUpperCase()) + chg + '.' };
@@ -57,7 +60,7 @@ index 14a28526..88054d83 100644
  async function intraday(onlyMine) {
    const now = Date.now();
    const sig = readJson('data/signals.json', null);
-@@ -4246,7 +4285,7 @@ async function intraday(onlyMine) {
+@@ -4246,7 +4288,7 @@ async function intraday(onlyMine) {
    const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
    const buyNowCards = [];
    const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
@@ -66,7 +69,7 @@ index 14a28526..88054d83 100644
    // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
    // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
    // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
-@@ -4258,7 +4297,7 @@ async function intraday(onlyMine) {
+@@ -4258,7 +4300,7 @@ async function intraday(onlyMine) {
      if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
      st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
    for (const sym of watch) {
@@ -75,7 +78,7 @@ index 14a28526..88054d83 100644
      const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
      const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
      if (mp) {   // you told the bot you bought this one
-@@ -4292,15 +4331,13 @@ async function intraday(onlyMine) {
+@@ -4292,15 +4334,15 @@ async function intraday(onlyMine) {
        if (o.target && p >= o.target) say('tg' + o.since, 'paper trade from ' + o.since + ' reached its target ' + money(o.target) + '.');
      }
    }
@@ -84,7 +87,10 @@ index 14a28526..88054d83 100644
 +  // (6 Nov repair) Every holding is listed through holdingAction() (the ACTIONS order; a nightly exit is never shown as HOLD; price claims
 +  // only on valid evidence), the buy list says what it is, and the message gives its actual time and the real schedule and close times.
    let openMsg = null;
-   if (!onlyMine && !st.sent.__open && Object.keys(seen).length) {
+-  if (!onlyMine && !st.sent.__open && Object.keys(seen).length) {
++  // (8 Nov review fix) also when EVERY quote failed but you hold positions: the check then lists each holding as UNKNOWN instead of
++  // staying silent (silence would look like a quiet, safe day)
++  if (!onlyMine && !st.sent.__open && (Object.keys(seen).length || Object.keys(myPos).length)) {
      st.sent.__open = 1;
 -    const kt = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' });
 -    const posL = Object.entries(myPos).filter(([k]) => seen[k]).map(([k, P]) => { const p = seen[k], g = p / P.entry - 1;
@@ -97,10 +103,10 @@ index 14a28526..88054d83 100644
    if (openMsg) await telegram(openMsg + '\n' + FOOT);
 diff --git a/test/open-check-repair.test.mjs b/test/open-check-repair.test.mjs
 new file mode 100644
-index 00000000..1eff7fd5
+index 0000000000000000000000000000000000000000..68a4194abd9f31e7bcd2a6a5741541d6c80fbb32
 --- /dev/null
 +++ b/test/open-check-repair.test.mjs
-@@ -0,0 +1,112 @@
+@@ -0,0 +1,132 @@
 +// Open-check repair (6 Nov 2026). Synthetic fixtures only: invented tickers and prices, loopback services, no owner records,
 +// credentials, provider requests or real messages. Every case runs the ACTUAL intraday() caller (the scanner's market-hours check).
 +// 1 one holding action: a nightly exit (posVerdict, a trend exit included) is never shown as HOLD, and agrees with ACTIONS (planText)
@@ -210,6 +216,26 @@ index 00000000..1eff7fd5
 +  assert.deepEqual(r.S.readJson('data/my-positions.json'), pos); assert.equal(r.S.readJson('data/tg-state.json').offset, 42);
 +  assert.equal(r.S.readJson('data/alert-state.json').sent.__open, 1);
 +  assert.equal(r.sent.filter(x => /FIRST MARKET-HOURS CHECK/.test(x)).length, 1);
++});
++
++test('8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check', async t => {
++  const r = await run(t, { pos: { ZZN: { entry: 20, src: 'leader dip', target: 24 }, ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
++  assert.match(r.line('ZZN'), /^ZZN: STATUS UNKNOWN: no exit rule is active from last night, but the current price cannot be confirmed right now \(leader dip, no stop by design; check whether your sell limit 24\.00 has filled\)/);
++  assert.doesNotMatch(r.line('ZZN'), /HOLD/);
++  assert.match(r.line('ZZF'), /^ZZF: HOLD: no exit rule is active; above your stop 8\.00/, 'the priced holding is unaffected');
++  const c = await run(t, { pos: { ZZN: { entry: 20, src: 'leader dip', target: 24 } }, quotes: { ZZN: { c: 21, ageSec: 30 } } });
++  assert.match(c.line('ZZN'), /^ZZN: HOLD: no exit rule is active; leader dip, no stop by design, sell limit 24\.00\. Last price 21\.00/, 'control: with fresh evidence it is still HOLD');
++  const ns = await run(t, { pos: { ZZM: { entry: 5 }, ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
++  assert.match(ns.line('ZZM'), /^ZZM: STATUS UNKNOWN: .*; NO STOP SET;/, 'an ordinary holding without a stop too');
++});
++
++test('8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN', async t => {
++  const r = await run(t, { pos: { ZZN: { entry: 20, stop: 15 }, ZZL: { entry: 30, src: 'leader dip', target: 36 } }, quotes: {} });
++  assert.match(r.first, /^TODAY'S FIRST MARKET-HOURS CHECK/);
++  assert.match(r.line('ZZN'), /^ZZN: STOP STATUS UNKNOWN/); assert.match(r.line('ZZL'), /^ZZL: STATUS UNKNOWN/);
++  assert.equal(r.sent.filter(x => /FIRST MARKET-HOURS CHECK/.test(x)).length, 1);
++  const none = await run(t, { pos: {}, quotes: {} });
++  assert.equal(none.first, '', 'no holdings and no prices: nothing to report (unchanged)');
 +});
 +
 +test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));

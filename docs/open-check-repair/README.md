@@ -1,6 +1,12 @@
 # Intraday first-check ("MARKET OPEN CHECK") repair: an isolated package for independent review
 
-**This is branch-only publication for review. It is not a deployment approval, and it is NOT applicable to current production `main`.**
+**This is branch-only publication for review. It is not a deployment approval.**
+
+> **Revision r2 (8 Nov 2026).** Fixes the two defects from Codex's review (PR #1 comments 6719058104 / 6719132742):
+> 1. A holding with **no stop and no valid price** (for example a leader dip) was shown as **HOLD**. It is now **STATUS UNKNOWN** ("no exit rule is active from last night, but the current price cannot be confirmed right now … this is not a sign the position is safe"); a leader dip names its sell limit, others say NO STOP SET.
+> 2. When **every** holding quote failed, the first check was **not sent at all**. It is now sent whenever there are holdings, listing each one as UNKNOWN. With no holdings and no buy list it stays silent, as before.
+>
+> Production `main` `774273205e…` now carries STOP R2 + T + D1–D4, and its `scan.mjs` is exactly the required before-hash, so r2 is built and tested directly on main.
 
 - **Prepared:** 6 Nov 2026 by Claude, at the owner's request.
 - **Not done:** no deployment, workflow action, dispatch, provider call, real message, rule change or trade-record change.
@@ -15,13 +21,15 @@ The patch applies only to the **expected post-release tree** in which STOP R2 an
 |---|---|
 | Built and tested on | current main `6c61057839bd018322110175e84e0faf5c843997` (non-data identical to `cccfc198`) + STOP R2 `c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b` + T `fefe0ecfd862729b276db82433ae58ea351901e41939dc80f61eeb5b381dd969` + D1–D4 `6889504c6ef67130193b9be0a070a76347bbaec24f83c9b116736c74e2d45bba`, applied verbatim in a local tree only. That synthetic base commit is **not published**. |
 | `scan.mjs` before-hash required | `73ad4853340ee5f562618155df92371ab1ff87e62584bf507157d9c84cd276c3` (STOP + D after-hash) |
-| `scan.mjs` after-hash | `c7250b0c9897d46c3d3d52562cda1eda0c054025f07a1c1acd15e6d167c3e40c` |
+| `scan.mjs` after-hash (r2) | `fc73992cfcc9f05255995116edb0220de5e56eef58b656d9027a0ea882f5f668` (r1 was `c7250b0c…`) |
+| r2 expected base | main `774273205e1c8ce3db30c59ca368dc107617ef73` (`scan.mjs` = the before-hash) |
+| `development.patch` / `rollback.patch` (r2) | `e3ae43db7dbee6ac7bd7456f6103c924b6b6da8afa103a50fb4b996208b4a198` / `cee07d60ff6476f3335f15f4c5e6d346d6f502c2027e933a307c6da0a12ca577` |
 | Depends on STOP R2 | `priceEvidence`, `validStop` and `nyStamp` from `stop-watch.mjs` |
 | Depends on D1–D4 | `marketSessionOf` and `nyClockText` in `scan.mjs`, and the reviewed `market-session.mjs` calendar |
-| New test (lives at `test/open-check-repair.test.mjs` when applied) | `d0b63606392ce16403831deae4cdc518438f88ad9c75e3863519a23ca404e4cb`. It is copied here as `open-check-repair.test.mjs` and is **not registered** on this branch. |
+| New test (lives at `test/open-check-repair.test.mjs` when applied) | r2 `c2fc1f287cec7b7f7153d9cbd78c8d66ce74519a669a76f8d1f61f4066228f45` (r1 `d0b63606…`). It is copied here as `open-check-repair.test.mjs` and is **not registered** on this branch. |
 
 **Applicability:**
-- **Current production `main` (`scan.mjs` `19a5368b…`):** the before-hash does not match, so the patch does not apply.
+- **Current production `main` `7742732`:** the before-hash matches; the patch applies exactly (r2).
 - **STOP-only main (D skipped):** the patch applies textually, but `marketSessionOf` would be missing at run time. **It must not be used there.** It would need rebasing and a fresh review.
 
 ## Defects (from the 6 Nov read-only reconciliation) and repairs
@@ -43,7 +51,17 @@ The patch applies only to the **expected post-release tree** in which STOP R2 an
 - **Also unchanged:** the rules and verdicts, the stops, STOP R2's stop route, BUY NOW cards, the "Market hours check" alert lines, the `main.yml` schedule, and the bot chat path.
 - **Known limit, for separate review:** ACTIONS' own nightly stop line still uses a price without evidence.
 
-## Tests (Node 20.20.0, non-loopback connections refused, 0 attempted; on the expected base tree)
+## Tests r2 (Node 20.20.0, non-loopback connections refused, 0 attempted; on main `7742732` + patch)
+
+| Run | Result |
+|---|---|
+| `open-check-repair.test.mjs` (9 original + 2 new review cases) | **11/11 PASS** |
+| The 2 new cases against r1 | **2/2 FAIL** (reproduce both defects); the original 9 pass |
+| Codex's `codex-open-check-extra-review.test.mjs` (copied here) | **2/2 PASS** |
+| Full serial suite | **142/142 PASS** |
+| Patch then `rollback.patch` | restores main exactly |
+
+## Tests r1 (historical; on the synthetic STOP+T+D base)
 
 | Run | Result |
 |---|---|
@@ -56,5 +74,5 @@ The patch applies only to the **expected post-release tree** in which STOP R2 an
 ## Before any use
 
 1. Codex's independent review.
-2. STOP R2 **and** D1–D4 deployed and verified, or a rebased, re-reviewed package.
+2. STOP R2 **and** D1–D4 deployed and verified (now true on main `7742732`; re-check the before-hash at use).
 3. Separate owner approval and its own maintenance boundary.

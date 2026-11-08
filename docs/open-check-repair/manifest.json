@@ -1,13 +1,9 @@
 {
  "package": "open-check-repair",
- "status": "development only; branch-only publication for independent review; not deployment approval; not applicable to current production main",
+ "status": "development only; branch-only publication for independent review; not deployment approval",
  "expectedBase": {
-  "main": "6c61057839bd018322110175e84e0faf5c843997",
-  "plus": {
-   "STOP_R2": "c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b",
-   "T": "fefe0ecfd862729b276db82433ae58ea351901e41939dc80f61eeb5b381dd969",
-   "D1_D4": "6889504c6ef67130193b9be0a070a76347bbaec24f83c9b116736c74e2d45bba"
-  },
+  "main": "774273205e1c8ce3db30c59ca368dc107617ef73",
+  "note": "production main now carries STOP R2 + T + D1-D4; its scan.mjs is exactly the required before-hash",
   "syntheticBaseCommitPublished": false
  },
  "dependencies": [
@@ -17,21 +13,26 @@
  "paths": {
   "scan.mjs": {
    "before": "73ad4853340ee5f562618155df92371ab1ff87e62584bf507157d9c84cd276c3",
-   "after": "c7250b0c9897d46c3d3d52562cda1eda0c054025f07a1c1acd15e6d167c3e40c"
+   "after": "fc73992cfcc9f05255995116edb0220de5e56eef58b656d9027a0ea882f5f668"
   },
   "test/open-check-repair.test.mjs": {
    "before": null,
-   "after": "d0b63606392ce16403831deae4cdc518438f88ad9c75e3863519a23ca404e4cb"
+   "after": "c2fc1f287cec7b7f7153d9cbd78c8d66ce74519a669a76f8d1f61f4066228f45"
   }
  },
- "patch": "03d2d25424b8b4dc938dc234cea7fe9c041d71fe56d427628cbc74bcefd81291",
- "inverse": "0b2567f023882223e24f183a6bd5ff5fec15f283004045d02a7fbd4a3c24ac3d",
+ "patch": "e3ae43db7dbee6ac7bd7456f6103c924b6b6da8afa103a50fb4b996208b4a198",
+ "inverse": "cee07d60ff6476f3335f15f4c5e6d346d6f502c2027e933a307c6da0a12ca577",
  "tests": {
-  "newFile": "9/9",
-  "preRepair": "8/9 fail",
-  "fullSerial": "141/141",
-  "gatedWatcher": "11/11, 9/9",
-  "roundtrip": "exact"
+  "packageTest": "11/11 on main 7742732 + patch (9 original + 2 new review cases)",
+  "newCasesOnPreviousRevision": "2/2 FAIL (reproductions), original 9 PASS",
+  "codexExtraReview": "2/2 PASS (REVIEW_TREE = main + r2 patch, and = composed candidate)",
+  "fullSerialSuiteMainPlusPatch": "142/142",
+  "patchThenRollback": "restores main exactly"
  },
- "outsideSaturdayScope": true
+ "outsideSaturdayScope": true,
+ "revision": "r2 (8 Nov 2026): Codex review 6719132742 / 6719058104 defects fixed",
+ "previousRevision": {
+  "scanAfter": "c7250b0c9897d46c3d3d52562cda1eda0c054025f07a1c1acd15e6d167c3e40c",
+  "patch": "03d2d25424b8b4dc938dc234cea7fe9c041d71fe56d427628cbc74bcefd81291"
+ }
 }

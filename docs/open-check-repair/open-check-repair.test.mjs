@@ -109,4 +109,24 @@ test('records untouched: positions and Telegram offset unchanged; one first chec
   assert.equal(r.sent.filter(x => /FIRST MARKET-HOURS CHECK/.test(x)).length, 1);
 });
 
+test('8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check', async t => {
+  const r = await run(t, { pos: { ZZN: { entry: 20, src: 'leader dip', target: 24 }, ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+  assert.match(r.line('ZZN'), /^ZZN: STATUS UNKNOWN: no exit rule is active from last night, but the current price cannot be confirmed right now \(leader dip, no stop by design; check whether your sell limit 24\.00 has filled\)/);
+  assert.doesNotMatch(r.line('ZZN'), /HOLD/);
+  assert.match(r.line('ZZF'), /^ZZF: HOLD: no exit rule is active; above your stop 8\.00/, 'the priced holding is unaffected');
+  const c = await run(t, { pos: { ZZN: { entry: 20, src: 'leader dip', target: 24 } }, quotes: { ZZN: { c: 21, ageSec: 30 } } });
+  assert.match(c.line('ZZN'), /^ZZN: HOLD: no exit rule is active; leader dip, no stop by design, sell limit 24\.00\. Last price 21\.00/, 'control: with fresh evidence it is still HOLD');
+  const ns = await run(t, { pos: { ZZM: { entry: 5 }, ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+  assert.match(ns.line('ZZM'), /^ZZM: STATUS UNKNOWN: .*; NO STOP SET;/, 'an ordinary holding without a stop too');
+});
+
+test('8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN', async t => {
+  const r = await run(t, { pos: { ZZN: { entry: 20, stop: 15 }, ZZL: { entry: 30, src: 'leader dip', target: 36 } }, quotes: {} });
+  assert.match(r.first, /^TODAY'S FIRST MARKET-HOURS CHECK/);
+  assert.match(r.line('ZZN'), /^ZZN: STOP STATUS UNKNOWN/); assert.match(r.line('ZZL'), /^ZZL: STATUS UNKNOWN/);
+  assert.equal(r.sent.filter(x => /FIRST MARKET-HOURS CHECK/.test(x)).length, 1);
+  const none = await run(t, { pos: {}, quotes: {} });
+  assert.equal(none.first, '', 'no holdings and no prices: nothing to report (unchanged)');
+});
+
 test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
