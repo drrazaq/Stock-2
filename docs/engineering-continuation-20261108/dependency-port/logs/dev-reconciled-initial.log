@@ -1,0 +1,176 @@
+intraday check done: 1 watched, 0 new alerts
+✔ conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS (114.008433ms)
+intraday check done: 1 watched, 0 new alerts
+✔ stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS (58.696129ms)
+intraday check done: 1 watched, 1 new alerts
+✖ stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route (52.626328ms)
+intraday check done: 3 watched, 2 new alerts
+✖ undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped) (77.899671ms)
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open (91.521817ms)
+intraday check done: 1 watched, 0 new alerts
+✖ labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence (53.294072ms)
+intraday check done: 1 watched, 0 new alerts
+✖ close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm (47.848621ms)
+intraday check done: 1 watched, 0 new alerts
+✔ records untouched: positions and Telegram offset unchanged; one first check a day (48.702053ms)
+intraday check done: 2 watched, 1 new alerts
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 2 watched, 1 new alerts
+✔ 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check (150.572789ms)
+intraday check done: 2 watched, 2 new alerts
+intraday check done: 0 watched, 0 new alerts
+✔ 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN (96.432815ms)
+✔ all requests stayed synthetic and on loopback (0.190216ms)
+file:///workspace/g2-verification/engineering-a497/early-alerts.mjs:58
+const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      ^
+
+SyntaxError: Identifier 'MON3' has already been declared
+    at compileSourceTextModule (node:internal/modules/esm/utils:319:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:89:18)
+    at #translate (node:internal/modules/esm/loader:438:20)
+    at afterLoad (node:internal/modules/esm/loader:506:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:511:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:564:36)
+    at afterResolve (node:internal/modules/esm/loader:611:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:617:12)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:276:33)
+    at ModuleJob.link (node:internal/modules/esm/module_job:381:17)
+
+Node.js v24.22.1
+✖ test/shadow.test.mjs (45.760743ms)
+file:///workspace/g2-verification/engineering-a497/early-alerts.mjs:58
+const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      ^
+
+SyntaxError: Identifier 'MON3' has already been declared
+    at compileSourceTextModule (node:internal/modules/esm/utils:319:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:89:18)
+    at #translate (node:internal/modules/esm/loader:438:20)
+    at afterLoad (node:internal/modules/esm/loader:506:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:511:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:564:36)
+    at afterResolve (node:internal/modules/esm/loader:611:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:617:12)
+    at ModuleJob.syncLink (node:internal/modules/esm/module_job:276:33)
+    at ModuleJob.link (node:internal/modules/esm/module_job:381:17)
+
+Node.js v24.22.1
+✖ test/stop-alert-validity.test.mjs (72.737665ms)
+✔ price at or below the stop: one STOP LEVEL REACHED message, not repeated (20.621573ms)
+✔ within 2% above the stop: one NEAR STOP warning, then the hit still comes (0.904639ms)
+✔ no stop: nothing; no positions: nothing (1.937461ms)
+ℹ tests 16
+ℹ suites 0
+ℹ pass 10
+ℹ fail 6
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 896.226366
+
+✖ failing tests:
+
+test at test/open-check-repair.test.mjs:60:1
+✖ stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route (52.626328ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Current price UNKNOWN \(the latest price is 30 min old \(limit 5 min\)\)/. Input:
+  
+  'ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (no valid price).'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/open-check-repair.test.mjs:64:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (no valid price).',
+    expected: /Current price UNKNOWN \(the latest price is 30 min old \(limit 5 min\)\)/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:70:1
+✖ undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped) (77.899671ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^ZZU: STOP STATUS UNKNOWN.*Current price UNKNOWN \(the price has no source timestamp\)/. Input:
+  
+  'ZZU: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 40.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (no valid price).'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/open-check-repair.test.mjs:73:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ZZU: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 40.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (no valid price).',
+    expected: /^ZZU: STOP STATUS UNKNOWN.*Current price UNKNOWN \(the price has no source timestamp\)/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:87:1
+✖ labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence (53.294072ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /BUY LIST FROM LAST NIGHT'S SCAN \(the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range\)/. Input:
+  
+  "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n" +
+    '\n' +
+    'YOUR POSITIONS (one action each, the same rules as ACTIONS)\n' +
+    'ZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 30 s old) (+20.0% from your 10.00).\n' +
+    '\n' +
+    "PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\n" +
+    "none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n" +
+    '\n' +
+    'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\n' +
+    'Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n' +
+    '\n' +
+    'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/open-check-repair.test.mjs:90:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\nZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 30 s old) (+20.0% from your 10.00).\n\nPLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+    expected: /BUY LIST FROM LAST NIGHT'S SCAN \(the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range\)/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:95:1
+✖ close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm (47.848621ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Regular NYSE session today: 9:30 am to 4:00 pm New York \(5:30 pm to 12 am Kuwait\)\. The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live\./. Input:
+  
+  "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n" +
+    '\n' +
+    'YOUR POSITIONS (one action each, the same rules as ACTIONS)\n' +
+    'ZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 30 s old) (+20.0% from your 10.00).\n' +
+    '\n' +
+    "PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\n" +
+    "none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n" +
+    '\n' +
+    'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\n' +
+    'Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n' +
+    '\n' +
+    'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/open-check-repair.test.mjs:97:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\nZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 30 s old) (+20.0% from your 10.00).\n\nPLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+    expected: /Regular NYSE session today: 9:30 am to 4:00 pm New York \(5:30 pm to 12 am Kuwait\)\. The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live\./,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/shadow.test.mjs:1:1
+✖ test/shadow.test.mjs (45.760743ms)
+  'test failed'
+
+test at test/stop-alert-validity.test.mjs:1:1
+✖ test/stop-alert-validity.test.mjs (72.737665ms)
+  'test failed'

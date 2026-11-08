@@ -1,0 +1,653 @@
+diff --git b/early-alerts.mjs a/early-alerts.mjs
+index 08d8f7ce5..b814891a1 100644
+--- b/early-alerts.mjs
++++ a/early-alerts.mjs
+@@ -51,8 +51,6 @@ export function hardReason({ price, halalFail, lottery, sec }) {
+ //              / UNKNOWN (nothing found)
+ //   FRESHNESS  FRESH (in the 24 h before the check) / RECYCLED (only 24-72 h old, or an amended filing /A: old news moving now)
+ // cls (kept for the ledger): VERIFIED (SEC, fresh) / UNCONFIRMED (headline only, fresh) / RECYCLED / NONE / UNAVAILABLE.
+-const MON3 = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+-export function nyStamp(ms) { if (!Number.isFinite(ms)) return 'time unknown'; const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(ms)).forEach(x => p[x.type] = x.value); return MON3[+p.month - 1] + ' ' + (+p.day) + ' ' + p.hour + ':' + p.minute + ' New York'; }
+ const nyHM = (ms) => new Date(ms).toLocaleTimeString('en-GB', { timeZone: 'America/New_York', hour: '2-digit', minute: '2-digit' });
+ export const NEG_ITEMS = ['1.02', '1.03', '2.04', '2.05', '2.06', '3.01', '4.01', '4.02'], DIL_ITEMS = ['2.03', '3.02', '3.03'];
+ export const DIL_FORMS = /^(424B|S-1|S-3|F-1|F-3)/, EVENT_FORMS = /^(8-K|6-K|SC 13D|425|DEFA14A)/;
+@@ -83,11 +81,11 @@ export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours =
+     interpretation:'Direction is a rule-based interpretation, not verified economic impact or trade eligibility.',
+     text: o.text + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' [source ' + o.source + ', direction ' + o.direction + (['POSITIVE','MIXED'].includes(o.direction) ? ' (headline wording, not verified impact)' : '') + ', ' + o.freshness + ']' });
+   if (fF.length) { const x = fF[0], fd = combine(fF.map(filingDirection)), dir = combine([fd, hDir]);
+-    return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyStamp(x.t) + (fN.length ? '; headline ' + nyStamp(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
++    return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' + (fN.length ? '; headline ' + nyHM(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
+   if (fN.length) { const x = fN[0], src = WIRE.test(x.source || '') ? 'ISSUER_WIRE' : 'AGGREGATOR';
+-    return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyStamp(x.at) + ' (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
++    return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
+   if (F.length || N.length) { const x = F[0] || null, h = N[0] || null;
+-    return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : headlineDirection(h.headline), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + nyStamp(x.t) : '"' + h.headline + '"') }); }
++    return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : headlineDirection(h.headline), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + new Date(x.t).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : '"' + h.headline + '"') }); }
+   if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
+   if (!news || !news.ok) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing in 72 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' });
+   return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing and no headline in 72 h' });
+diff --git b/ignition-watch.mjs a/ignition-watch.mjs
+index 7ad641b43..eda92bc25 100644
+--- b/ignition-watch.mjs
++++ a/ignition-watch.mjs
+@@ -336,10 +336,8 @@ while (Date.now() - RUN_START < MAXMS) {
+   const rows = await snap(); loops++; const tStart = triggers.length;
+   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
+   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
+-    // (4 Nov) every held stock gets its own price evidence (ticker-bound response, provider clock, age); no row or a stale/undated one -> STOP CHECK UNKNOWN, never silently safe
+-    const quotes = {}; for (const r of rows) if (HELD.pos[r.sym]) quotes[r.sym] = { sym: r.sym, price: r.price, t: r.t, provider: r.priceProvider, feed: r.priceFeed, kind: r.priceKind };
+-    for(const sym of Object.keys(HELD.pos)) if(MESSAGE_STATE.state('stop:'+sym+':hit')==='ACKNOWLEDGED') STOP_SENT[sym+'|hit']=1;
+-    for(const h of stopHits(HELD.pos,quotes,STOP_SENT,Date.now())){const key='stop:'+h.sym+':'+h.kind;await tg(h.text,key);if(MESSAGE_STATE.state(key)==='UNSENT')delete STOP_SENT[h.sym+'|'+h.kind];} } catch (e) { console.log('stop watch: ' + e.message); } const nowMs = Date.now(); let liveN = 0, evald = 0; const ages = [], vages = [], cf = curveAt(m); let sumV = 0, sumA = 0;
++    const pxNow = {}, tNow = Date.now(); for (const r of rows) if (HELD.pos[r.sym] && r.price > 0 && isFreshPriceAge(r.t > 0 ? (tNow - r.t) / 60000 : null)) pxNow[r.sym] = r.price;
++    for(const h of stopHits(HELD.pos,pxNow,STOP_SENT)){const key='stop:'+h.sym+':'+h.kind;await tg(h.text,key);if(MESSAGE_STATE.state(key)==='UNSENT')delete STOP_SENT[h.sym+'|'+h.kind];} } catch (e) { console.log('stop watch: ' + e.message); } const nowMs = Date.now(); let liveN = 0, evald = 0; const ages = [], vages = [], cf = curveAt(m); let sumV = 0, sumA = 0;
+   for (const r of rows) { if (!(r.prevC > 0) || !(r.price > 0)) continue; evald++; const chg = r.price / r.prevC - 1, rd = r.t > 0 ? (nowMs - r.t) / 60000 : null, live = isFreshPriceAge(rd);
+     if (rd !== null) ages.push(rd); if (r.vt > 0) vages.push((nowMs - r.vt) / 60000); if (live) liveN++;
+     // visibility ledger: every stock from its first sighting
+diff --git b/scan.mjs a/scan.mjs
+index 0d14d0056..dce8a34df 100644
+--- b/scan.mjs
++++ a/scan.mjs
+@@ -15,7 +15,6 @@ import crypto from 'node:crypto';
+ import zlib from 'node:zlib';
+ import { createRequire } from 'node:module';
+ import { execSync } from 'node:child_process';
+-import { priceEvidence, stopText, stopMessageKey, validStop, nyStamp } from './stop-watch.mjs';
+ 
+ const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
+ const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;   // test hooks: localhost only
+@@ -4336,54 +4335,6 @@ async function daily() {
+   console.log('daily scan done:', stocks.length, 'stocks,', buys.length, 'buy watch,', fresh.length, 'journal entries');
+ }
+ 
+-function nyClockText(mins) { const h = Math.floor(mins / 60), m = mins % 60; return ((h + 11) % 12 + 1) + ':' + String(m).padStart(2, '0') + (h < 12 ? ' am' : ' pm'); }
+-
+-async function marketSessionOf(day) { try { const m = await import(new URL('./market-session.mjs', import.meta.url).href); const s = m.marketSession(day); return s && s.known ? s : null; } catch { return null; } }
+-
+-
+-// (6 Nov) ONE HOLDING ACTION for the market-hours summary, in the order ACTIONS (planText) uses: a stop reached, a filing (event) sell,
+-// target 2, last night's exit rule (sig.posVerdict: every kind, a trend exit included), the holding review's SELL, then target 1. A
+-// price-based claim (stop reached, targets, % from entry) needs ticker-bound, dated, fresh evidence: stop-watch.mjs priceEvidence(), the
+-// live watcher's rule. Without it the stop status is UNKNOWN, never HOLD. Holdings, stops and rules are only read, never changed.
+-const quoteEvidence = (sym, q, nowMs, maxAgeMin = 3) => priceEvidence(sym, q && typeof q === 'object' ? { sym, price: +(q.reportedPrice ?? q.price), t: q.t, provider: q.src || 'unknown source', kind: 'TRADE' } : null, nowMs, maxAgeMin);
+-const evidenceText = (ev) => ev.state === 'OK' ? 'last price ' + money(ev.price) + ' (' + ev.src + ', ' + nyStamp(ev.t) + ', ' + (ev.ageSec < 90 ? Math.round(ev.ageSec) + ' s' : Math.round(ev.ageSec / 60) + ' min') + ' old)' : 'current price UNKNOWN (' + ev.why + ')';
+-function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
+-  const ev = quoteEvidence(sym, q, nowMs), ok = ev.state === 'OK', px = ok ? ev.price : null, num = (x) => typeof x === 'number' && Number.isFinite(x) && x > 0;
+-  const pv = sig && sig.posVerdict ? sig.posVerdict[sym] : null, es = eventSell(sym), hasStop = P.stop !== undefined && P.stop !== null, stopOk = validStop(P.stop);
+-  let act, text;
+-  if (ok && stopOk && px <= P.stop) { act = 'SELL'; text = 'STOP LEVEL REACHED: at or below your stop ' + money(P.stop) + '. If your broker stop order has filled, you are already out: do not sell again.'; }
+-  else if (es) { act = 'SELL'; text = es; }
+-  else if (ok && num(P.t2) && px >= P.t2) { act = 'SELL'; text = 'SELL. Target 2 (' + money(P.t2) + ') reached.'; }
+-  else if (pv) { act = 'SELL'; text = "SELL: last night's exit rule, " + String(pv).replace(/\.?$/, '.') + ' Timing as in ACTIONS (close-based exits: next regular-session open).'; }
+-  else if (P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '')) { act = 'SELL'; text = P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ').'; }
+-  else if (ok && num(P.t1) && px >= P.t1 && !P.trail) { act = 'TARGET 1'; text = t1Text(sym, P); }
+-  else if (hasStop && (!stopOk || !ok)) { act = 'UNKNOWN'; text = 'STOP STATUS UNKNOWN: no exit rule is active, but whether your stop ' + (stopOk ? money(P.stop) : '(not a valid number)') + ' was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.'; }
+-  // (8 Nov review fix) no stop AND no valid price: the position's state cannot be confirmed (a leader-dip sell limit may have filled,
+-  // targets may have been reached); never a fresh-looking HOLD without price evidence
+-  else if (!ok) { act = 'UNKNOWN'; text = 'STATUS UNKNOWN: no exit rule is active from last night, but the current price cannot be confirmed right now' + (P.src === 'leader dip' ? ' (leader dip, no stop by design' + (num(P.target) ? '; check whether your sell limit ' + money(P.target) + ' has filled' : '') + ')' : '; NO STOP SET') + '; this is not a sign the position is safe. Check the price at your broker.'; }
+-  else { act = 'HOLD'; text = 'HOLD: no exit rule is active' + (hasStop ? '; above your stop ' + money(P.stop) : P.src === 'leader dip' ? '; leader dip, no stop by design' + (num(P.target) ? ', sell limit ' + money(P.target) : '') : '; NO STOP SET') + '.'; }
+-  const chg = ok && num(P.entry) ? ' (' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' : '';
+-  return { act, ev, line: sym + ': ' + text + ' ' + evidenceText(ev).replace(/^\w/, c => c.toUpperCase()) + chg + '.' };
+-}
+-// (6 Nov) the day's first market-hours check: its ACTUAL time (a late first run says it did not observe the open), the buy list labelled
+-// for what it is (last night's scan; the rules are NOT PROVEN), and the real schedule and close times instead of timing promises.
+-async function firstCheckText(myPos, planBuys, quotes, sig, nowMs = Date.now()) {
+-  const n = ny(nowMs), sess = await marketSessionOf(n.d), kt = new Date(nowMs).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' });
+-  const open = sess && !sess.closed ? sess.open : 570, close = sess && !sess.closed ? sess.close : null, lateBy = n.mins - open;
+-  const out = ["TODAY'S FIRST MARKET-HOURS CHECK, run at " + nyClockText(n.mins) + ' New York (' + kt + ' Kuwait). The system is running.'];
+-  if (lateBy > 30) out.push('LATE: this is the first check that reached this point today, so it did NOT observe the open. The market opened at ' + nyClockText(open) + ' New York (' + kwt(open, n.d) + ' Kuwait), ' + Math.floor(lateBy / 60) + ' h ' + (lateBy % 60) + ' min before this check.');
+-  out.push('', 'YOUR POSITIONS (one action each, the same rules as ACTIONS)');
+-  const pos = Object.entries(myPos || {}).map(([k, P]) => holdingAction(k, P, quotes[k], sig, nowMs).line);
+-  out.push(...(pos.length ? pos : ['none recorded']));
+-  const buys = (planBuys || []).filter(x => !(myPos || {})[x.sym]).map(x => { const ev = quoteEvidence(x.sym, quotes[x.sym], nowMs, 3);
+-    return x.sym + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (ev.state !== 'OK' ? 'price UNKNOWN (' + ev.why + '), no buy from this line' : evidenceText(ev) + ', ' + (ev.price > x.hi ? 'ABOVE the range, do not chase' : ev.price < x.lo ? 'below the range, wait' : 'INSIDE the range')); });
+-  out.push('', "PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)", ...(buys.length ? buys : ["none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day."]));
+-  out.push('', 'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.');
+-  out.push(close == null ? 'Regular session hours today: UNKNOWN (the NYSE calendar could not be read).'
+-    : 'Regular NYSE session today: ' + nyClockText(open) + ' to ' + nyClockText(close) + ' New York (' + kwt(open, n.d) + ' to ' + kwt(close, n.d) + ' Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.');
+-  return out.join('\n');
+-}
+-
+ async function intraday(onlyMine) {
+   const now = Date.now();
+   const sig = readJson('data/signals.json', null);
+@@ -4403,31 +4354,15 @@ async function intraday(onlyMine) {
+   const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok && myHalal(x.sym)==='ok');
+   const buyNowCards = [];
+   const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
+-  const seen = {}, stopAlerts = [], stopKeys = new Set(), quotesSeen = {};
+-
+-  // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
+-  // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
+-  // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
+-  // was reached; otherwise one STOP CHECK UNKNOWN line a day. Stop levels and positions are only read.
+-  const watcherDelivered = (sym, kind) => { try { return JSON.parse(fs.readFileSync('data/watcher-message-state/' + st.day + '/' + crypto.createHash('sha256').update(stopMessageKey(sym, kind)).digest('hex') + '.json', 'utf8')).state === 'ACKNOWLEDGED'; } catch (e) { return false; } };
+-  const stopFallback = (sym,P,j) => {
+-    const ev=!validStop(P.stop)?{state:'UNKNOWN',why:'the recorded stop is not a valid number'}:priceEvidence(sym,{sym,price:+(j.reportedPrice ?? j.price),t:j.t,provider:j.src||'unknown source',kind:'TRADE'},Date.now());
+-    const kind=ev.state!=='OK'?'unknown':ev.price<=P.stop?'hit':null;if(!kind)return;
+-    const key=sym+(kind==='hit'?'myst':'myunk');
+-    if(watcherDelivered(sym,'hit')){st.sent[sym+'myst']=1;return;}
+-    if(watcherDelivered(sym,kind)){st.sent[key]=1;return;}
+-    if(!alertAvailable(st,key)||stopKeys.has(key)||(kind==='unknown'&&!alertAvailable(st,sym+'myst'))||watcherDelivered(sym,kind)||watcherDelivered(sym,'hit'))return;
+-    stopKeys.add(key);stopAlerts.push(stopText(kind,sym,P,ev));
+-  };
++  const seen = {};
+   for (const sym of watch) {
+-    const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym]=j; if(myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym,myPos[sym],j); const fresh = Number.isFinite(p)&&p>0&&Number.isFinite(j.t) && j.t>0 && Date.now()-j.t>=0 && Date.now()-j.t<=180000;   // SOURCE-CLOCK GATE: no BUY NOW on a price older than three minutes; trade is not executable BBO
++    const j = await liveQ((sym)), p = +j.price; const fresh = Number.isFinite(p)&&p>0&&Number.isFinite(j.t) && j.t>0 && Date.now()-j.t>=0 && Date.now()-j.t<=180000;   // SOURCE-CLOCK GATE: no BUY NOW on a price older than three minutes; trade is not executable BBO
+     const say = (k, text) => {const key=sym+k;if(alertAvailable(st,key)&&!alertKeys.has(key)){alertKeys.add(key);alerts.push(sym+' at '+money(p)+': '+text);}};
+     if(!fresh){if(myPos[sym])say('priceUnknown','YOUR POSITION: PRICE UNVERIFIED. Check your broker and keep its stop; no current-price SELL/HOLD inference.');continue;}seen[sym]=p;
+-
+     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
+     if (mp) {   // you told the bot you bought this one
+       const chg = ' You bought at ' + money(mp.entry) + ' (' + (p >= mp.entry ? '+' : '') + ((p / mp.entry - 1) * 100).toFixed(1) + '%).';
+-      if (mp.stop && p <= mp.stop) { /* (4 Nov) stop crossings: stopFallback() above, one evidence rule and wording with the live watcher */ }
++      if (mp.stop && p <= mp.stop) say('myst', 'YOUR POSITION: STOP LOSS REACHED (' + money(mp.stop) + '). Sell / reassess now.' + chg);
+       else if (mp.t2 && p >= mp.t2) say('myt2', 'YOUR POSITION: TARGET 2 REACHED (' + money(mp.t2) + ').' + chg);
+       else if (mp.t1 && p >= mp.t1 && !mp.trail) say('myt1', 'YOUR POSITION: ' + t1Text(sym, mp) + chg);
+     }
+@@ -4456,13 +4391,14 @@ async function intraday(onlyMine) {
+       if (o.target && p >= o.target) say('tg' + o.since, 'paper trade from ' + o.since + ' reached its target ' + money(o.target) + '.');
+     }
+   }
+-  // ONE FIRST MARKET-HOURS CHECK a day, so you know the system is running and where each holding stands, even when no alert fires.
+-  // (6 Nov repair) Every holding is listed through holdingAction() (the ACTIONS order; a nightly exit is never shown as HOLD; price claims
+-  // only on valid evidence), the buy list says what it is, and the message gives its actual time and the real schedule and close times.
++  // ONE MARKET-OPEN CHECK a day, so you always know the system is running and where each holding stands, even when no alert fires.
+   let openMsg = null;
+-  if (!onlyMine && alertAvailable(st,'__open') && (Object.keys(seen).length || Object.keys(myPos).length)) {
+-    openMsg = await firstCheckText(myPos, planBuys, quotesSeen, sig, Date.now());
+-
++  if (!onlyMine && alertAvailable(st,'__open') && Object.keys(seen).length) {
++    const kt = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' });
++    const posL = Object.entries(myPos).filter(([k]) => seen[k]).map(([k, P]) => { const p = seen[k], g = p / P.entry - 1;
++      return k + ' ' + money(p) + ' (' + (g >= 0 ? '+' : '') + (g * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' + (P.stop ? ' | stop ' + money(P.stop) + ' (' + ((P.stop / p - 1) * 100).toFixed(1) + '%)' : P.src === 'leader dip' ? ' | leader dip: sell limit ' + money(P.target) + ', no stop by design' : ' | NO STOP SET') + (P.t1 ? ' | target ' + money(P.t1) + ' (+' + ((P.t1 / p - 1) * 100).toFixed(1) + '%)' : '') + ': ' + (P.stop && p <= P.stop ? 'SELL NOW: the stop is reached' : P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '') ? P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ')' : 'HOLD'); });
++    const buyL = planBuys.filter(x => seen[x.sym] && !myPos[x.sym]).map(x => { const p = seen[x.sym]; return x.sym + ' ' + money(p) + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (p > x.hi ? 'ABOVE the range, do not chase' : p < x.lo ? 'below the range, wait' : 'INSIDE the range'); });
++    openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PLAN CANDIDATES (current gates; not a new proof verdict)', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a candidate allowed by the existing gates inside its range (not proof of profitability).'].join('\n');
+   }
+   save();
+   if (openMsg) await deliver(['__open'],openMsg+'\n'+FOOT);
+@@ -4470,7 +4406,6 @@ async function intraday(onlyMine) {
+   for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
+     await deliver([bc.sym+'buynow'],'ENTRY REVIEW: a permitted plan setup is inside its range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
+       [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
+-  if(stopAlerts.length) await deliver([...stopKeys],'YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n'+stopAlerts.join('\n\n')+'\n\nStop levels are your own recorded stops. Not financial advice.'+(env.PAGE_URL?'\n'+env.PAGE_URL:''));
+   if (alerts.length) await deliver([...alertKeys],'Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
+   console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
+ }
+diff --git b/stop-watch.mjs a/stop-watch.mjs
+index f22b3c057..42019ee51 100644
+--- b/stop-watch.mjs
++++ a/stop-watch.mjs
+@@ -1,59 +1,18 @@
+-// LIVE STOP WATCH (23 Oct 2026; price validity and one wording 4 Nov 2026). The nightly scan saw a broken stop only at the close, and the
+-// owner then sold days later (DOCN: stop 120.81 broken on 14 Oct, sold 20 Oct at 100). The live watcher calls stopHits() every minute,
+-// and the bot's market-hours check uses the same evidence rule and the same wording as a fallback.
+-// (4 Nov) A stop crossing is shown as current ONLY on valid price evidence: a positive trade price whose response is bound to that exact
+-// ticker, with a finite provider timestamp that is known, not in the future (no tolerance) and at most STOP_MAX_AGE_MIN old. Anything else is a STOP CHECK
+-// UNKNOWN line (never silently "safe"). Stop levels, holdings and trading rules are read, never changed. The wording respects a broker stop
+-// order that may already have filled: it never tells the owner to sell a second time.
+-export const STOP_MAX_AGE_MIN = 5;
+-export const validStop = (x) => typeof x === 'number' && Number.isFinite(x) && x > 0;
++// LIVE STOP WATCH (23 Oct 2026). The nightly scan saw a broken stop only at the close, and the owner then sold days later (DOCN: stop
++// 120.81 broken on 14 Oct, sold 20 Oct at 100). The live watcher now calls stopHits() every minute with full-market live prices:
++// one SELL NOW message when a held stock trades at or under its stop, one NEAR STOP warning within 2% above it. Sent once a day each.
+ const m2 = (x) => (+x).toFixed(2);
+-const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+-// "Nov 4 10:12 New York": full date and one time zone for every observation time
+-export function nyStamp(ms) {
+-  if (!Number.isFinite(ms)) return 'time unknown';
+-  const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(ms)).forEach(x => p[x.type] = x.value);
+-  return MON[+p.month - 1] + ' ' + (+p.day) + ' ' + p.hour + ':' + p.minute + ' New York';
+-}
+-const ageText = (s) => s < 90 ? Math.round(s) + ' s old' : Math.round(s / 60) + ' min old';
+-// q: { sym, price, t (ms), provider, feed, kind }. Returns OK evidence or UNKNOWN with the exact reason.
+-export function priceEvidence(sym, q, nowMs = Date.now(), maxAgeMin = STOP_MAX_AGE_MIN) {
+-  const unk = (why) => ({ state: 'UNKNOWN', why });
+-  if (!q || typeof q !== 'object') return unk('no live price for this stock');
+-  if (q.sym !== sym) return unk('the price response is not for this ticker');
+-  if (typeof q.price !== 'number' || !Number.isFinite(q.price) || !(q.price > 0)) return unk('no valid price');
+-  if (q.kind && q.kind !== 'TRADE') return unk('the only price is a ' + String(q.kind).toLowerCase().replace('_', ' ') + ', not a live trade');
+-  const t = q.t; if (typeof t !== 'number' || !Number.isFinite(t) || !(t > 0)) return unk('the price has no source timestamp');
+-  if (!Number.isFinite(nowMs) || t > nowMs) return unk('the price timestamp is in the future');
+-  const ageSec = Math.max(0, (nowMs - t) / 1000);
+-  if (ageSec > maxAgeMin * 60) return unk('the latest price is ' + ageText(ageSec).replace(' old', '') + ' old (limit ' + maxAgeMin + ' min)');
+-  const src = String(q.provider || 'unknown source').toUpperCase() + (q.feed ? ' ' + String(q.feed).toUpperCase() : '');
+-  return { state: 'OK', price: q.price, t, ageSec, src };
+-}
+-const chgOf = (P, px) => P && P.entry > 0 ? ' (bought ' + m2(P.entry) + ', ' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '%)' : '';
+-const seenOf = (ev) => ev.src + ', ' + nyStamp(ev.t) + ', ' + ageText(ev.ageSec);
+-// one wording for both routes
+-export function stopText(kind, sym, P, ev) {
+-  const st = m2(P.stop);
+-  if (kind === 'hit') return 'STOP LEVEL REACHED: ' + sym + ' traded at or below your stop ' + st + ': last price ' + m2(ev.price) + ' (' + seenOf(ev) + ')' + chgOf(P, ev.price) + '.\n'
+-    + 'If your broker stop order has filled, you are already out: do not sell again; send  sold ' + sym + ' FILLPRICE  with the fill price.\n'
+-    + 'If no stop order is working at your broker, decide now whether to sell, then send  sold ' + sym + ' PRICE.';
+-  if (kind === 'near') return 'NEAR STOP: ' + sym + ' ' + m2(ev.price) + ' is ' + ((ev.price / P.stop - 1) * 100).toFixed(1) + '% above your stop ' + st + ' (' + seenOf(ev) + ')' + chgOf(P, ev.price) + '. Check that your stop order is working at your broker.';
+-  return 'STOP CHECK UNKNOWN: ' + sym + ': ' + ev.why + '. Whether your stop ' + st + ' was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.';
+-}
+-// quotes: { SYM: q } (q as in priceEvidence). sent: once-a-day memory, one key per stock and kind.
+-export function stopHits(pos, quotes, sent, nowMs = Date.now(), maxAgeMin = STOP_MAX_AGE_MIN) {
++export function stopHits(pos, priceOf, sent) {
+   const out = [];
+   for (const [sym, P] of Object.entries(pos || {})) {
+-    if (!P || P.stop === undefined || P.stop === null) continue;   // no stop recorded
+-    if (!validStop(P.stop)) { if (!sent[sym + '|badstop']) { sent[sym + '|badstop'] = 1; out.push({ sym, kind: 'unknown', why: 'the recorded stop is not a valid number', text: 'STOP CHECK UNKNOWN: ' + sym + ': the recorded stop is not a valid number, so it cannot be checked; this is not a sign the position is safe. Re-send your stop (stop ' + sym + ' PRICE) and check your broker.' }); } continue; }
+-    const ev = priceEvidence(sym, quotes && quotes[sym], nowMs, maxAgeMin);
+-    if (ev.state !== 'OK') { if (!sent[sym + '|unknown'] && !sent[sym + '|hit']) { sent[sym + '|unknown'] = 1; out.push({ sym, kind: 'unknown', why: ev.why, text: stopText('unknown', sym, P, ev) }); } continue; }
+-    if (ev.price <= P.stop) { if (sent[sym + '|hit']) continue; sent[sym + '|hit'] = 1; out.push({ sym, kind: 'hit', price: ev.price, t: ev.t, text: stopText('hit', sym, P, ev) }); continue; }
+-    if (ev.price <= P.stop * 1.02 && !sent[sym + '|near'] && !sent[sym + '|hit']) { sent[sym + '|near'] = 1; out.push({ sym, kind: 'near', price: ev.price, t: ev.t, text: stopText('near', sym, P, ev) }); }
++    const px = priceOf && priceOf[sym], st = P && P.stop;
++    if (!(st > 0) || !(px > 0)) continue;
++    const chg = P.entry > 0 ? ' (bought ' + m2(P.entry) + ', ' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '%)' : '';
++    if (px <= st) { if (sent[sym + '|hit']) continue; sent[sym + '|hit'] = 1;
++      out.push({ sym, kind: 'hit', text: 'STOP HIT NOW: ' + sym + ' ' + m2(px) + ' is under your stop ' + m2(st) + chg + '.\nSELL NOW at market (if your broker stop order already filled, you are out).\nThen send:  sold ' + sym + ' PRICE' });
++      continue; }
++    if (px <= st * 1.02 && !sent[sym + '|near'] && !sent[sym + '|hit']) { sent[sym + '|near'] = 1;
++      out.push({ sym, kind: 'near', text: 'NEAR STOP: ' + sym + ' ' + m2(px) + ', only ' + ((px / st - 1) * 100).toFixed(1) + '% above your stop ' + m2(st) + chg + '. Make sure the stop order is placed at your broker.' }); }
+   }
+   return out;
+ }
+-// The watcher's delivery record for a stop message (data/watcher-message-state/DAY/sha256(key).json, key 'stop:SYM:KIND').
+-// Only an ACKNOWLEDGED record counts as delivered; missing, UNSENT or UNCERTAIN never suppresses the bot's fallback.
+-export function stopMessageKey(sym, kind) { return 'stop:' + sym + ':' + kind; }
+diff --git b/test/open-check-repair.test.mjs a/test/open-check-repair.test.mjs
+deleted file mode 100644
+index 1ce89666b..000000000
+--- b/test/open-check-repair.test.mjs
++++ /dev/null
+@@ -1,140 +0,0 @@
+-// Open-check repair (6 Nov 2026). Synthetic fixtures only: invented tickers and prices, loopback services, no owner records,
+-// credentials, provider requests or real messages. Every case runs the ACTUAL intraday() caller (the scanner's market-hours check).
+-// 1 one holding action: a nightly exit (posVerdict, a trend exit included) is never shown as HOLD, and agrees with ACTIONS (planText)
+-// 2 a price-based stop claim needs ticker-bound, dated, fresh evidence; stale, undated or missing prices are UNKNOWN, never HOLD
+-// 3 no "PROVEN BUYS" label and no timing promise; a late first run shows its actual time and says it did not observe the open
+-// 4 the regular NYSE close (4:00 pm, 1:00 pm on early-close days) is kept apart from the watcher's configured 3:00 pm cutoff
+-import test from 'node:test';
+-import assert from 'node:assert/strict';
+-import http from 'node:http';
+-import fs from 'node:fs';
+-import { loadScan, blocked } from './load-scan.mjs';
+-
+-const AT = (iso) => Date.parse(iso);
+-const ON_TIME = AT('2026-11-05T14:40:00Z');   // Thu 9:40 am New York (winter time)
+-const LATE = AT('2026-11-06T19:57:00Z');      // Fri 2:57 pm New York, the 6 Nov pattern
+-const EARLY_CLOSE = AT('2026-11-27T15:00:00Z');   // Fri 27 Nov 10:00 am New York, NYSE early close 1:00 pm
+-const SIG = { session: '2026-11-04', stocks: [], quick: [], leaders: [], posVerdict: { ZZG: 'it closed under its 50 day average, the trend is broken.' } };
+-
+-// quotes: { SYM: { c, ageSec } | { c, t: 0 } | null }, served as Finnhub /quote responses
+-// the reviewed NYSE calendar is loaded by scan.mjs at run time (dynamic import), so the fixture folder gets the repository's copy
+-const SESSION_SRC = fs.readFileSync(new URL('../market-session.mjs', import.meta.url), 'utf8');
+-async function run(t, { now = ON_TIME, pos, quotes, sig = SIG, calendar = true }) {
+-  const sent = [];
+-  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
+-    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
+-    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: 1 } })); }
+-    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol'), q = quotes[sym];
+-      if (!q) return res.end(JSON.stringify({ c: 0, t: 0 }));
+-      return res.end(JSON.stringify({ c: q.c, t: 't' in q ? q.t : Math.floor((now - q.ageSec * 1000) / 1000) })); }
+-    res.statusCode = 404; res.end('{}'); }); });
+-  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
+-  const base = 'http://127.0.0.1:' + server.address().port;
+-  const files = { 'data/my-positions.json': pos, 'data/signals.json': sig, 'data/tg-state.json': { offset: 42 } }; if (calendar) files['market-session.mjs'] = SESSION_SRC;
+-  const S = await loadScan({ files,
+-    env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
+-  if(!calendar) S.fn('marketSessionOf = async () => null'); // dependency fault: newer static imports otherwise preload the calendar
+-  const real = Date.now; Date.now = () => now;
+-  try { await S.fn('intraday')(false); } finally { Date.now = real; }
+-  const first = sent.find(x => /FIRST MARKET-HOURS CHECK|MARKET OPEN CHECK/.test(x)) || '';
+-  return { sent, first, S, line: (sym) => first.split('\n').find(l => l.startsWith(sym + ' ') || l.startsWith(sym + ':')) || '' };
+-}
+-
+-test('conflicting exits: last night\'s trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS', async t => {
+-  const pos = { ZZG: { entry: 6, stop: 1.98, kind: 'leader', since: '2026-10-20' } };
+-  const r = await run(t, { pos, quotes: { ZZG: { c: 3.77, ageSec: 20 } } });
+-  const l = r.line('ZZG');
+-  assert.match(l, /^ZZG: SELL: last night's exit rule, it closed under its 50 day average, the trend is broken\./);
+-  assert.doesNotMatch(l, /HOLD/);
+-  assert.match(l, /Last price 3\.77 \(FINNHUB, Nov 5 09:39 New York, 20 s old\) \(-37\.2% from your 6\.00\)/);
+-  // the same holding in ACTIONS (planText, unchanged) is a SELL from the same nightly verdict
+-  const actions = r.S.fn('planText')(SIG, pos, { ZZG: 3.77 });
+-  assert.match(actions, /ZZG: SELL at the close or next open\. It closed under its 50 day average, the trend is broken\./);
+-  assert.equal(r.S.readJson('data/my-positions.json').ZZG.stop, 1.98, 'stop unchanged');
+-});
+-
+-test('stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS', async t => {
+-  const r = await run(t, { pos: { ZZG: { entry: 6, stop: 4, kind: 'leader', since: '2026-10-20' } }, quotes: { ZZG: { c: 3.77, ageSec: 20 } } });
+-  assert.match(r.line('ZZG'), /^ZZG: STOP LEVEL REACHED: at or below your stop 4\.00\. If your broker stop order has filled, you are already out: do not sell again\./);
+-});
+-
+-test('stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route', async t => {
+-  const r = await run(t, { pos: { ZZS: { entry: 100, stop: 80 } }, quotes: { ZZS: { c: 70, ageSec: 30 * 60 } } });
+-  const l = r.line('ZZS');
+-  assert.match(l, /^ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80\.00 was reached cannot be confirmed right now/);
+-  assert.match(l, /Current price UNKNOWN \((?:the latest price is 30 min old \(limit 3 min\)|no valid price)\)/);
+-  assert.doesNotMatch(l, /REACHED|HOLD|% from your/);
+-  assert.match(r.sent.find(x => /STOP CHECK UNKNOWN/.test(x)) || '', /ZZS: the latest price is 30 min old/);
+-  assert.equal(r.sent.filter(x => /STOP LEVEL REACHED|STOP LOSS REACHED/.test(x)).length, 0);
+-});
+-
+-test('undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)', async t => {
+-  const r = await run(t, { pos: { ZZU: { entry: 50, stop: 40 }, ZZN: { entry: 20, stop: 15 }, ZZF: { entry: 10, stop: 8 } },
+-    quotes: { ZZU: { c: 39, t: 0 }, ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(r.line('ZZU'), /^ZZU: STOP STATUS UNKNOWN.*Current price UNKNOWN \((?:the price has no source timestamp|no valid price)\)/);
+-  assert.match(r.line('ZZN'), /^ZZN: STOP STATUS UNKNOWN.*Current price UNKNOWN \(no valid price\)/);
+-  assert.match(r.line('ZZF'), /^ZZF: HOLD: no exit rule is active; above your stop 8\.00\. Last price 12\.00 \(FINNHUB, Nov 5 09:39 New York, 30 s old\)/);
+-});
+-
+-test('delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open', async t => {
+-  const r = await run(t, { now: LATE, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(r.first, /^TODAY'S FIRST MARKET-HOURS CHECK, run at 2:57 pm New York \(22:57 Kuwait\)\. The system is running\./);
+-  assert.match(r.first, /LATE: this is the first check that reached this point today, so it did NOT observe the open\. The market opened at 9:30 am New York \(5:30 pm Kuwait\), 5 h 27 min before this check\./);
+-  assert.doesNotMatch(r.first, /MARKET OPEN CHECK/);
+-  const ok = await run(t, { now: ON_TIME, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(ok.first, /run at 9:40 am New York \(17:40 Kuwait\)/); assert.doesNotMatch(ok.first, /LATE|did NOT observe/);
+-});
+-
+-test('labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence', async t => {
+-  const r = await run(t, { pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.doesNotMatch(r.first, /PROVEN BUYS|the moment|I check every 30 minutes/);
+-  assert.match(r.first, /PLAN CANDIDATES FROM LAST NIGHT'S SCAN \(the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization\)/);
+-  assert.match(r.first, /none\. Nothing qualified in last night's scan\. New buy candidates are chosen only by the nightly scan, never during the day\./);
+-  assert.match(r.first, /scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised/);
+-});
+-
+-test('development session statement preserves regular and early-close calendar hours without the production 15:00 cutoff', async t => {
+-  const r = await run(t, { pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(r.first, /Regular NYSE session today: 9:30 am to 4:00 pm New York/); assert.match(r.first, /uses the session calendar and configured segments; actual coverage is UNKNOWN/); assert.doesNotMatch(r.first,/ends at 3:00 pm/);
+-  const e = await run(t, { now: EARLY_CLOSE, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(e.first, /Regular NYSE session today: 9:30 am to 1:00 pm New York/); assert.match(e.first, /actual coverage is UNKNOWN/); assert.doesNotMatch(e.first,/ends at 3:00 pm/);
+-  const u = await run(t, { calendar: false, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(u.first, /Regular session hours today: UNKNOWN \(the NYSE calendar could not be read\)\./); assert.doesNotMatch(u.first, /4:00 pm/);
+-});
+-
+-test('records untouched: positions and Telegram offset unchanged; one first check a day', async t => {
+-  const pos = { ZZF: { entry: 10, stop: 8 } };
+-  const r = await run(t, { pos, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.deepEqual(r.S.readJson('data/my-positions.json'), pos); assert.equal(r.S.readJson('data/tg-state.json').offset, 42);
+-  assert.equal(r.S.readJson('data/alert-state.json').sent.__open, 1);
+-  assert.equal(r.sent.filter(x => /FIRST MARKET-HOURS CHECK/.test(x)).length, 1);
+-});
+-
+-test('8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check', async t => {
+-  const r = await run(t, { pos: { ZZN: { entry: 20, src: 'leader dip', target: 24 }, ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(r.line('ZZN'), /^ZZN: STATUS UNKNOWN: no exit rule is active from last night, but the current price cannot be confirmed right now \(leader dip, no stop by design; check whether your sell limit 24\.00 has filled\)/);
+-  assert.doesNotMatch(r.line('ZZN'), /HOLD/);
+-  assert.match(r.line('ZZF'), /^ZZF: HOLD: no exit rule is active; above your stop 8\.00/, 'the priced holding is unaffected');
+-  const c = await run(t, { pos: { ZZN: { entry: 20, src: 'leader dip', target: 24 } }, quotes: { ZZN: { c: 21, ageSec: 30 } } });
+-  assert.match(c.line('ZZN'), /^ZZN: HOLD: no exit rule is active; leader dip, no stop by design, sell limit 24\.00\. Last price 21\.00/, 'control: with fresh evidence it is still HOLD');
+-  const ns = await run(t, { pos: { ZZM: { entry: 5 }, ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
+-  assert.match(ns.line('ZZM'), /^ZZM: STATUS UNKNOWN: .*; NO STOP SET;/, 'an ordinary holding without a stop too');
+-});
+-
+-test('8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN', async t => {
+-  const r = await run(t, { pos: { ZZN: { entry: 20, stop: 15 }, ZZL: { entry: 30, src: 'leader dip', target: 36 } }, quotes: {} });
+-  assert.match(r.first, /^TODAY'S FIRST MARKET-HOURS CHECK/);
+-  assert.match(r.line('ZZN'), /^ZZN: STOP STATUS UNKNOWN/); assert.match(r.line('ZZL'), /^ZZL: STATUS UNKNOWN/);
+-  assert.equal(r.sent.filter(x => /FIRST MARKET-HOURS CHECK/.test(x)).length, 1);
+-  const none = await run(t, { pos: {}, quotes: {} });
+-  assert.equal(none.first, '', 'no holdings and no prices: nothing to report (unchanged)');
+-});
+-
+-test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
+-
+-// Development's stricter source-clock boundary must not be relaxed by the production port.
+-test('development summary preserves three-minute boundary and cannot promote reported-only stale prices',async t=>{
+- const r=await run(t,{pos:{ZZF:{entry:10,stop:8}},quotes:{ZZF:{c:12,ageSec:30}}});
+- const render=age=>r.S.fn('firstCheckText')({},[{sym:'ZZB',lo:9,hi:11}],{ZZB:{price:null,reportedPrice:10,t:ON_TIME-age*1000,src:'finnhub'}},SIG,ON_TIME);
+- assert.match(await render(180),/INSIDE the range/);const stale=await render(181);assert.match(stale,/price UNKNOWN.*limit 3 min/);assert.doesNotMatch(stale,/INSIDE the range/);
+-});
+diff --git b/test/shadow.test.mjs a/test/shadow.test.mjs
+index 30920a075..c5af4565c 100644
+--- b/test/shadow.test.mjs
++++ a/test/shadow.test.mjs
+@@ -51,7 +51,7 @@ test('filter table: a gate is judged only on the candidates it alone rejects; ha
+ test('catalyst classes: source, direction and freshness are separate; a failed source is UNAVAILABLE, never NONE; no reason is invented', () => {
+   const now = Date.parse('2026-10-29T14:00:00Z'), ok = { known: true, filings: [] }, noNews = { ok: true, items: [] };
+   let c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00.000Z' }] }, news: noNews, nowMs: now });
+-  assert.equal(c.cls, 'VERIFIED'); assert.equal(c.source, 'SEC'); assert.equal(c.direction, 'AMBIGUOUS'); assert.equal(c.freshness, 'FRESH'); assert.match(c.text, /SEC 8-K item 8\.01 accepted Oct 29 07:02 New York/);
++  assert.equal(c.cls, 'VERIFIED'); assert.equal(c.source, 'SEC'); assert.equal(c.direction, 'AMBIGUOUS'); assert.equal(c.freshness, 'FRESH'); assert.match(c.text, /SEC 8-K item 8\.01 accepted 07:02 New York/);
+   c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00Z' }] }, news: { ok: true, items: [{ at: now - 3e6, source: 'GlobeNewswire', headline: 'X wins $40M Army contract' }] }, nowMs: now });
+   assert.equal(c.direction, 'POSITIVE'); assert.match(c.text, /headline wording, not verified/);   // positive only ever comes from wording, and says so
+   c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '1.01,3.02', at: '2026-10-29T11:02:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
+diff --git b/test/stop-alert-validity.test.mjs a/test/stop-alert-validity.test.mjs
+deleted file mode 100644
+index e578d7aa9..000000000
+--- b/test/stop-alert-validity.test.mjs
++++ /dev/null
+@@ -1,154 +0,0 @@
+-// Stop-alert validity (4 Nov 2026 review, findings 1-5). Synthetic fixtures only: invented tickers and prices, loopback services,
+-// no owner records, credentials, provider requests or real messages.
+-// 1 one stop route at a time: the bot repeats a stop only when the watcher has no ACKNOWLEDGED delivery for it
+-// 2 one wording, which never asks for a second sale after a broker stop order filled
+-// 3 "at or below"   4 price source, observation time and age; stale, undated, future, wrong-ticker or bar prices are UNKNOWN
+-// 5 catalyst times carry their full date and one time zone
+-import test from 'node:test';
+-import assert from 'node:assert/strict';
+-import http from 'node:http';
+-import crypto from 'node:crypto';
+-import { stopHits, priceEvidence, nyStamp, stopMessageKey, STOP_MAX_AGE_MIN } from '../stop-watch.mjs';
+-import { classifyCatalyst, nyStamp as nyStampAlerts } from '../early-alerts.mjs';
+-import { loadScan, blocked } from './load-scan.mjs';
+-
+-const NOW = Date.parse('2026-11-05T15:31:00Z');   // Thu 10:31 New York (winter time)
+-const q = (sym, price, ageSec = 20, extra = {}) => ({ sym, price, t: NOW - ageSec * 1000, provider: 'ALPACA', feed: 'iex', kind: 'TRADE', ...extra });
+-const POS = { ZZA: { entry: 100, stop: 80 } };
+-
+-test('price evidence: only a ticker-bound, dated, fresh trade price is OK', () => {
+-  assert.equal(priceEvidence('ZZA', q('ZZA', 79), NOW).state, 'OK');
+-  const why = (x) => priceEvidence('ZZA', x, NOW).why;
+-  assert.match(why(undefined), /no live price/);
+-  assert.match(why(q('ZZB', 79)), /not for this ticker/);
+-  assert.match(why(q('ZZA', 0)), /no valid price/);
+-  assert.match(why(q('ZZA', 79, 20, { kind: 'DAILY_BAR' })), /daily bar, not a live trade/);
+-  assert.match(why(q('ZZA', 79, 20, { t: null })), /no source timestamp/);
+-  assert.match(why(q('ZZA', 79, -600)), /in the future/);
+-  assert.match(why(q('ZZA', 79, STOP_MAX_AGE_MIN * 60 + 1)), /latest price is 5 min old \(limit 5 min\)/);
+-  assert.equal(priceEvidence('ZZA', q('ZZA', 79, STOP_MAX_AGE_MIN * 60), NOW).state, 'OK');   // exactly at the limit
+-});
+-
+-test('r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN', () => {
+-  const why = (x) => priceEvidence('ZZA', x, NOW).why;
+-  assert.match(why(q('ZZA', 79, -1)), /in the future/);
+-  assert.match(why(q('ZZA', 79, 20, { t: Infinity })), /no source timestamp/);
+-  assert.match(why(q('ZZA', 79, 20, { t: NaN })), /no source timestamp/);
+-  for (const price of [Infinity, -Infinity, NaN, '79', null]) assert.match(why(q('ZZA', price)), /no valid price/, String(price));
+-  assert.equal(priceEvidence('ZZA', q('ZZA', 79), NaN).state, 'UNKNOWN', 'a nonfinite clock never vouches for freshness');
+-  const a = stopHits(POS, { ZZA: q('ZZA', Infinity) }, {}, NOW); assert.equal(a[0].kind, 'unknown'); assert.doesNotMatch(a[0].text, /REACHED/);
+-});
+-
+-test('r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip', () => {
+-  for (const stop of [Infinity, NaN, '80', 0, -5]) {
+-    const a = stopHits({ ZZA: { entry: 100, stop } }, { ZZA: q('ZZA', 70) }, {}, NOW);
+-    assert.equal(a.length, 1, String(stop)); assert.equal(a[0].kind, 'unknown'); assert.match(a[0].text, /recorded stop is not a valid number/);
+-  }
+-  assert.deepEqual(stopHits({ ZZA: { entry: 100 } }, { ZZA: q('ZZA', 70) }, {}, NOW), [], 'no stop recorded: nothing to check');
+-});
+-
+-test('stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts', () => {
+-  const sent = {};
+-  const a = stopHits(POS, { ZZA: q('ZZA', 70, 900) }, sent, NOW);   // 15-minute-old price under the stop
+-  assert.equal(a.length, 1); assert.equal(a[0].kind, 'unknown');
+-  assert.match(a[0].text, /^STOP CHECK UNKNOWN: ZZA: the latest price is 15 min old/); assert.match(a[0].text, /not a sign the position is safe/);
+-  assert.doesNotMatch(a[0].text, /REACHED/);
+-  assert.equal(stopHits(POS, {}, sent, NOW).length, 0, 'UNKNOWN once a day');
+-  const b = stopHits(POS, { ZZA: q('ZZA', 79.5) }, sent, NOW); assert.equal(b.length, 1); assert.equal(b[0].kind, 'hit');
+-  assert.equal(stopHits(POS, {}, sent, NOW).length, 0, 'no UNKNOWN after the hit');
+-  const c = stopHits(POS, {}, {}, NOW); assert.equal(c[0].kind, 'unknown'); assert.match(c[0].text, /no live price for this stock/);
+-});
+-
+-test('"at or below": a price equal to the stop is a crossing and is worded as at or below', () => {
+-  const a = stopHits(POS, { ZZA: q('ZZA', 80) }, {}, NOW);
+-  assert.equal(a[0].kind, 'hit'); assert.match(a[0].text, /traded at or below your stop 80\.00: last price 80\.00/); assert.doesNotMatch(a[0].text, /under your stop/);
+-});
+-
+-test('wording respects an order that already filled: no second sale, the fill price is what to report', () => {
+-  const t = stopHits(POS, { ZZA: q('ZZA', 78) }, {}, NOW)[0].text;
+-  assert.match(t, /If your broker stop order has filled, you are already out: do not sell again; send  sold ZZA FILLPRICE/);
+-  assert.match(t, /If no stop order is working at your broker, decide now whether to sell/);
+-  assert.doesNotMatch(t, /SELL NOW|Sell \/ reassess|not instructions/);
+-  assert.match(t, /\(ALPACA IEX, Nov 5 10:30 New York, 20 s old\)/);
+-});
+-
+-test('already sold (position no longer recorded): nothing is sent for it', () => {
+-  assert.deepEqual(stopHits({}, { ZZA: q('ZZA', 70) }, {}, NOW), []);
+-});
+-
+-test('stop levels and positions are read, never changed', () => {
+-  const pos = JSON.parse(JSON.stringify(POS)), before = JSON.stringify(pos);
+-  stopHits(pos, { ZZA: q('ZZA', 70) }, {}, NOW); stopHits(pos, {}, {}, NOW);
+-  assert.equal(JSON.stringify(pos), before);
+-});
+-
+-test('catalyst times have a full date and one time zone (previous-day items no longer read like today)', () => {
+-  assert.equal(nyStamp(Date.parse('2026-11-03T21:07:00Z')), 'Nov 3 16:07 New York');   // EST
+-  assert.equal(nyStamp(Date.parse('2026-10-30T20:07:00Z')), 'Oct 30 16:07 New York');   // EDT, before the 1 Nov change
+-  for (const t of ['2026-11-03T21:07:00Z', '2026-10-30T20:07:00Z', '2027-03-15T13:30:00Z']) assert.equal(nyStampAlerts(Date.parse(t)), nyStamp(Date.parse(t)), 'one format in both modules');
+-  const now = Date.parse('2026-11-04T14:37:00Z');
+-  const v = classifyCatalyst({ sec: { known: true, filings: [{ form: '6-K', at: '2026-11-03T21:07:00Z' }] }, news: { ok: true, items: [{ at: Date.parse('2026-11-03T21:05:00Z'), source: 'Yahoo', headline: 'ZZQ Reports Third Quarter' }] }, nowMs: now });
+-  assert.match(v.text, /SEC 6-K accepted Nov 3 16:07 New York; headline Nov 3 16:05 New York \(Yahoo\)/);
+-  const r = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', at: '2026-11-02T12:15:00Z' }] }, news: { ok: true, items: [] }, nowMs: now });
+-  assert.equal(r.cls, 'RECYCLED'); assert.match(r.text, /SEC 8-K accepted Nov 2 07:15 New York/); assert.doesNotMatch(r.text, /UTC/);
+-  const h = classifyCatalyst({ sec: { known: true, filings: [] }, news: { ok: true, items: [{ at: Date.parse('2026-11-04T08:05:00Z'), source: 'Benzinga', headline: 'ZZQ moves' }] }, nowMs: now });
+-  assert.match(h.text, /earliest headline Nov 4 03:05 New York \(Benzinga\)/);
+-});
+-
+-// ---- the bot's fallback route, through the actual intraday() caller
+-async function botRun(t, { watcherState = null, quote = { c: 79, t: Math.floor((NOW - 20000) / 1000) }, alertState = null } = {}) {
+-  const sent = [];
+-  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
+-    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
+-    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: 1 } })); }
+-    if (req.url.includes('/quote')) return res.end(JSON.stringify(quote));
+-    res.statusCode = 404; res.end('{}'); }); });
+-  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
+-  const base = 'http://127.0.0.1:' + server.address().port, day = '2026-11-05';
+-  const files = { 'data/my-positions.json': POS, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 } };
+-  if (alertState) files['data/alert-state.json'] = alertState;
+-  if (watcherState) files['data/watcher-message-state/' + day + '/' + crypto.createHash('sha256').update(stopMessageKey('ZZA', 'hit')).digest('hex') + '.json'] = { version: 2, day, state: watcherState };
+-  const S = await loadScan({ files, env: { BOT_ONLY: '', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
+-  const real = Date.now; Date.now = () => NOW;
+-  try { await S.fn('intraday')(true); } finally { Date.now = real; }
+-  return { sent, S };
+-}
+-
+-test('bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated', async t => {
+-  const { sent, S } = await botRun(t, { watcherState: 'ACKNOWLEDGED' });
+-  assert.equal(sent.filter(x => /STOP LEVEL REACHED|STOP LOSS REACHED/.test(x)).length, 0);
+-  assert.equal(S.readJson('data/alert-state.json').sent.ZZAmyst, 1);
+-  assert.equal(S.readJson('data/tg-state.json').offset, 42, 'Telegram offset untouched');
+-});
+-
+-for (const watcherState of [null, 'UNSENT', 'UNCERTAIN'])
+-  test('bot fallback: watcher delivery ' + (watcherState || 'missing') + ' -> the bot sends the stop once, in the shared wording', async t => {
+-    const { sent, S } = await botRun(t, { watcherState });
+-    const stop = sent.filter(x => /STOP LEVEL REACHED/.test(x));
+-    assert.equal(stop.length, 1); assert.match(stop[0], /^YOUR STOPS \(bot check; the live watcher had not confirmed these\)/);
+-    assert.match(stop[0], /ZZA traded at or below your stop 80\.00: last price 79\.00 \(FINNHUB, Nov 5 10:30 New York, 20 s old\)/);
+-    assert.match(stop[0], /do not sell again/); assert.doesNotMatch(stop[0], /not instructions|Sell \/ reassess/);
+-    assert.equal(S.readJson('data/my-positions.json').ZZA.stop, 80, 'stop level unchanged');
+-  });
+-
+-test('bot fallback: duplicate delivery prevention holds across runs (once a day)', async t => {
+-  const { sent } = await botRun(t, { alertState: { day: '2026-11-05', sent: { ZZAmyst: 1 } } });
+-  assert.equal(sent.filter(x => /STOP LEVEL REACHED/.test(x)).length, 0);
+-});
+-
+-test('bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing', async t => {
+-  const a = await botRun(t, { quote: { c: 70, t: 0 } });
+-  const u = a.sent.filter(x => /STOP CHECK UNKNOWN/.test(x)); assert.equal(u.length, 1); assert.match(u[0], /no source timestamp/);
+-  assert.equal(a.sent.filter(x => /REACHED/.test(x)).length, 0);
+-  const b = await botRun(t, { quote: { c: 70, t: Math.floor((NOW - 30 * 60000) / 1000) } });
+-  assert.match(b.sent.find(x => /STOP CHECK UNKNOWN/.test(x)), /latest price is 30 min old/);
+-});
+-
+-test('r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller', async t => {
+-  const f = await botRun(t, { quote: { c: 70, t: Math.floor(NOW / 1000) + 5 } });
+-  assert.match(f.sent.find(x => /STOP CHECK UNKNOWN/.test(x)) || '', /in the future/); assert.equal(f.sent.filter(x => /REACHED/.test(x)).length, 0);
+-  const n = await botRun(t, { quote: { c: 'Infinity', t: Math.floor((NOW - 20000) / 1000) } });
+-  assert.equal(n.sent.filter(x => /REACHED/.test(x)).length, 0);
+-});
+-
+-test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
+diff --git b/test/stop-watch.test.mjs a/test/stop-watch.test.mjs
+index 2a78e6db0..2d086573e 100644
+--- b/test/stop-watch.test.mjs
++++ a/test/stop-watch.test.mjs
+@@ -1,30 +1,29 @@
+ // Seam: stop-watch.mjs. Owner's losses of Oct: DOCN fell through its 120.81 stop during 14 Oct and was sold on 20 Oct at 100; AEHR
+ // fell through 65.75 during 15 Oct and was sold at 60.30. The stop was checked only at the nightly close. Now the live watcher checks
+-// every held stock each minute. (4 Nov) A crossing is only shown as current on valid, dated, ticker-bound price evidence; otherwise
+-// STOP CHECK UNKNOWN. Run: node test/stop-watch.test.mjs
++// every held stock each minute and sends one SELL NOW message the moment the price is at or under the stop (and one NEAR STOP warning).
++// Run: node test/stop-watch.test.mjs
+ import test from 'node:test';
+ import assert from 'node:assert/strict';
+ import { stopHits } from '../stop-watch.mjs';
+ 
+-const NOW = Date.parse('2026-11-05T15:31:00Z');   // 10:31 New York
+-const q = (sym, price, ageSec = 20) => ({ sym, price, t: NOW - ageSec * 1000, provider: 'ALPACA', feed: 'iex', kind: 'TRADE' });
+ const pos = { DOCN: { entry: 134, stop: 120.81 }, PR: { entry: 22.4, stop: 23.45 }, NOSTOP: { entry: 10 }, X: { entry: 50, stop: 40 } };
+-test('price at or below the stop: one STOP LEVEL REACHED message, not repeated', () => {
++test('price at or under the stop: one SELL NOW message, not repeated', () => {
+   const sent = {};
+-  const a = stopHits(pos, { DOCN: q('DOCN', 119.9), PR: q('PR', 24.4), X: q('X', 45) }, sent, NOW);
++  const a = stopHits(pos, { DOCN: 119.9, PR: 24.4, X: 45 }, sent);
+   assert.equal(a.length, 1); assert.equal(a[0].sym, 'DOCN'); assert.equal(a[0].kind, 'hit');
+-  assert.match(a[0].text, /^STOP LEVEL REACHED: DOCN traded at or below your stop 120\.81: last price 119\.90 \(ALPACA IEX, Nov 5 10:30 New York, 20 s old\)/);
+-  assert.match(a[0].text, /do not sell again/); assert.match(a[0].text, /sold DOCN FILLPRICE/); assert.doesNotMatch(a[0].text, /SELL NOW/);
+-  assert.equal(stopHits(pos, { DOCN: q('DOCN', 119.5), PR: q('PR', 24.4), X: q('X', 45) }, sent, NOW).length, 0);
++  assert.match(a[0].text, /^STOP HIT NOW: DOCN 119\.90 is under your stop 120\.81/);
++  assert.match(a[0].text, /SELL NOW/);
++  assert.match(a[0].text, /sold DOCN PRICE/);
++  assert.equal(stopHits(pos, { DOCN: 119.5 }, sent).length, 0);
+ });
+ test('within 2% above the stop: one NEAR STOP warning, then the hit still comes', () => {
+-  const sent = {}, rest = { DOCN: q('DOCN', 130), X: q('X', 45) };
+-  const a = stopHits(pos, { ...rest, PR: q('PR', 23.8) }, sent, NOW);
+-  assert.equal(a.length, 1); assert.equal(a[0].kind, 'near'); assert.match(a[0].text, /^NEAR STOP: PR 23\.80 is 1\.5% above your stop 23\.45 \(ALPACA IEX/);
+-  assert.equal(stopHits(pos, { ...rest, PR: q('PR', 23.7) }, sent, NOW).length, 0);
+-  const b = stopHits(pos, { ...rest, PR: q('PR', 23.4) }, sent, NOW); assert.equal(b.length, 1); assert.equal(b[0].kind, 'hit');
++  const sent = {};
++  const a = stopHits(pos, { PR: 23.8 }, sent);
++  assert.equal(a.length, 1); assert.equal(a[0].kind, 'near'); assert.match(a[0].text, /^NEAR STOP: PR 23\.80/);
++  assert.equal(stopHits(pos, { PR: 23.7 }, sent).length, 0);
++  const b = stopHits(pos, { PR: 23.4 }, sent); assert.equal(b.length, 1); assert.equal(b[0].kind, 'hit');
+ });
+-test('no stop: nothing; no positions: nothing', () => {
+-  assert.deepEqual(stopHits({ NOSTOP: { entry: 10 } }, { NOSTOP: q('NOSTOP', 1) }, {}, NOW), []);
+-  assert.deepEqual(stopHits(null, { DOCN: q('DOCN', 1) }, {}, NOW), []);
++test('no stop, no price, or a bad price: nothing', () => {
++  assert.deepEqual(stopHits(pos, { NOSTOP: 1, X: 0 }, {}), []);
++  assert.deepEqual(stopHits(null, { DOCN: 1 }, {}), []);
+ });
+diff --git b/test/watcher-incident-revision.test.mjs a/test/watcher-incident-revision.test.mjs
+index 3390d84f5..e23a41083 100644
+--- b/test/watcher-incident-revision.test.mjs
++++ a/test/watcher-incident-revision.test.mjs
+@@ -9,7 +9,7 @@ test('unknown instrument retains lead/paper decisions and frozen D eligibility,
+ test('actual watcher shadow producer retains unknown observations and filing records without adding source calls',()=>{const src=fs.readFileSync(process.env.INCIDENT_WATCHER_SRC||new URL('../ignition-watch.mjs',import.meta.url),'utf8'),a=src.indexOf('const shadowRows='),b=src.indexOf('\n',a),SR=createShadow({day}),EA={S:{sec:{}}};SR.early({sym:'ZZQ',m:600,price:10,chg:.04,score:90,dollarVol:3e6,live:true,hard:{}});SR.filing({sym:'ZZF',m:600,price:10,chg:.01,hard:{},f:{acc:'synthetic',eligible:true}});vm.runInNewContext(src.slice(a,b),{SR,EA,env:{},readInstrumentType:()=>({status:'UNKNOWN'})});assert.equal(SR.rows().length,2);assert.ok(SR.rows().every(x=>x.instrument.status==='UNKNOWN'&&x.approvedBuyEligible===false));assert.ok(SR.rows().find(x=>x.sym==='ZZF').f);});
+ // The full production caller test is enabled when the exact proposed production file is supplied.
+ if(process.env.INCIDENT_WATCHER_SRC)test('actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop',async t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-actual-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));const source=path.resolve(process.env.INCIDENT_WATCHER_SRC),root=path.dirname(source),profile=watcherContractProfile(fs.readFileSync(source,'utf8'),process.env.INCIDENT_WATCHER_PROFILE||'production-15'),integrationFull=Array.from({length:profile.minutes},(_,i)=>beat(570+i));fs.mkdirSync(path.join(dir,'data'));copyFixtureModuleClosure(root,dir,'opportunity-radar.mjs');spawnSync('git',['init','-q'],{cwd:dir});spawnSync('git',['-c','user.name=fixture','-c','user.email=fixture@example.test','commit','--allow-empty','-qm','fixture'],{cwd:dir});const bin=path.join(dir,'bin');fs.mkdirSync(bin);const real=spawnSync('sh',['-c','command -v git'],{encoding:'utf8'}).stdout.trim();fs.writeFileSync(path.join(bin,'git'),'#!/bin/sh\nif [ "$1" = fetch ]; then exit 1; fi\nexec '+real+' "$@"\n',{mode:0o755});const fixtureEpoch=Date.parse(day+'T19:00:00Z'),fixtureStarted=Date.now(),fixtureNow=()=>fixtureEpoch+Date.now()-fixtureStarted;const preload=path.join(dir,'fixture-clock.mjs');fs.writeFileSync(preload,"const D=Date,realNow=D.now.bind(D),at=Number(process.env.FIXTURE_EPOCH),start=Number(process.env.FIXTURE_STARTED);globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[at+realNow()-start]));}static now(){return at+realNow()-start;}};");let snapshots=0,messages=[];const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{let out={};if(req.url.includes('/sendMessage')){messages.push(JSON.parse(body).text);out={ok:true,result:{message_id:messages.length}};}else if(req.url.includes('/snapshot/')){snapshots++;out={tickers:[{ticker:'ZZQ',lastTrade:{p:8,t:fixtureNow()*1e6},prevDay:{c:10,v:1e6},day:{o:8,c:8,v:1e6}}]};}else if(req.url.includes('company_tickers'))out={};res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port;fs.appendFileSync(preload,`const fixtureFetch=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(base+'/')}))throw Error('SYNTHETIC_EXTERNAL_REQUEST_BLOCKED');return fixtureFetch(u,o);};`);
+-const run=id=>new Promise((resolve,reject)=>{const child=spawn(process.execPath,[source],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,NODE_OPTIONS:'--import='+preload,FIXTURE_EPOCH:String(fixtureEpoch),FIXTURE_STARTED:String(fixtureStarted),MASSIVE_BASE:base,MASSIVE_KEY:'synthetic',SEC_BASE:base,TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_DAY:day,IG_FAKE_MIN:'900',IG_FAKE_STEP:'1',GITHUB_RUN_ID:id},stdio:['ignore','pipe','pipe']});let text='';child.stdout.on('data',x=>text+=x);child.stderr.on('data',x=>text+=x);child.on('error',reject);child.on('close',code=>resolve({code,text}));});const write=(file,x)=>fs.writeFileSync(path.join(dir,'data',file),JSON.stringify(x));write('ignition-live.json',{day,heartbeat:integrationFull});let x=await run('complete');assert.equal(x.code,0,x.text);assert.match(x.text,/skipping duplicate/);assert.equal(snapshots,0);write('ignition-live.json',{day,heartbeat:[beat(570)]});write('my-positions.json',{ZZQ:{entry:10,stop:9}});x=await run('recover1');assert.equal(x.code,0,x.text);assert.ok(snapshots>0);assert.equal(messages.filter(x=>x.includes('STOP LEVEL REACHED')).length,1);assert.ok(messages.some(x=>x.includes('OPPORTUNITY RADAR')), 'actual radar child sent one synthetic message');assert.ok(messages.some(x=>x.includes('Instrument identity may be UNKNOWN')), 'radar preserves explicit unknown context');const n=messages.length,before=snapshots;x=await run('recover2');assert.equal(x.code,0,x.text);assert.ok(snapshots>before);assert.equal(messages.length,n);assert.ok(fs.existsSync(path.join(dir,'data/ignition-runs',day,'recover2-1.json')));if(profile.profile==='development-full'){const persisted=JSON.parse(fs.readFileSync(path.join(dir,'data/ignition-runs',day,'recover2-1.json'),'utf8'));assert.equal(persisted.alertCounts.version,1);assert.equal(persisted.alertCounts.ruleQualified.sent,0);assert.equal(persisted.alertCounts.earlyPaper.sent,0);}});
++const run=id=>new Promise((resolve,reject)=>{const child=spawn(process.execPath,[source],{cwd:dir,env:{PATH:bin+path.delimiter+process.env.PATH,NODE_OPTIONS:'--import='+preload,FIXTURE_EPOCH:String(fixtureEpoch),FIXTURE_STARTED:String(fixtureStarted),MASSIVE_BASE:base,MASSIVE_KEY:'synthetic',SEC_BASE:base,TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_DAY:day,IG_FAKE_MIN:'900',IG_FAKE_STEP:'1',GITHUB_RUN_ID:id},stdio:['ignore','pipe','pipe']});let text='';child.stdout.on('data',x=>text+=x);child.stderr.on('data',x=>text+=x);child.on('error',reject);child.on('close',code=>resolve({code,text}));});const write=(file,x)=>fs.writeFileSync(path.join(dir,'data',file),JSON.stringify(x));write('ignition-live.json',{day,heartbeat:integrationFull});let x=await run('complete');assert.equal(x.code,0,x.text);assert.match(x.text,/skipping duplicate/);assert.equal(snapshots,0);write('ignition-live.json',{day,heartbeat:[beat(570)]});write('my-positions.json',{ZZQ:{entry:10,stop:9}});x=await run('recover1');assert.equal(x.code,0,x.text);assert.ok(snapshots>0);assert.equal(messages.filter(x=>x.includes('STOP HIT NOW')).length,1);assert.ok(messages.some(x=>x.includes('OPPORTUNITY RADAR')), 'actual radar child sent one synthetic message');assert.ok(messages.some(x=>x.includes('Instrument identity may be UNKNOWN')), 'radar preserves explicit unknown context');const n=messages.length,before=snapshots;x=await run('recover2');assert.equal(x.code,0,x.text);assert.ok(snapshots>before);assert.equal(messages.length,n);assert.ok(fs.existsSync(path.join(dir,'data/ignition-runs',day,'recover2-1.json')));if(profile.profile==='development-full'){const persisted=JSON.parse(fs.readFileSync(path.join(dir,'data/ignition-runs',day,'recover2-1.json'),'utf8'));assert.equal(persisted.alertCounts.version,1);assert.equal(persisted.alertCounts.ruleQualified.sent,0);assert.equal(persisted.alertCounts.earlyPaper.sent,0);}});
+ 
+ test('reservation publication failure prevents send and quarantines local retry',t=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'watcher-reservation-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));let sent=0,published=0;const box=createWatcherMessages({day,directory:dir,persist:()=>{published++;throw Error('synthetic remote refusal');}});if(box.reserve('stop:ZZQ:hit'))sent++;assert.equal(sent,0);assert.equal(box.state('stop:ZZQ:hit'),'UNSENT');assert.equal(box.reserve('stop:ZZQ:hit'),false);assert.equal(published,1);});
+ 
+diff --git b/test/watcher-resilience.test.mjs a/test/watcher-resilience.test.mjs
+index c6c5f29b0..22c527444 100644
+--- b/test/watcher-resilience.test.mjs
++++ a/test/watcher-resilience.test.mjs
+@@ -8,9 +8,9 @@ if(process.env.INCIDENT_WATCHER_SRC)for(const scenario of ['moved','competing','
+  if(scenario==='refusal-retry'||scenario==='interrupted')fs.writeFileSync(path.join(bare,'hooks/pre-receive'),'#!/bin/sh\nexit 1\n',{mode:0o755});
+  if(scenario==='interrupted'){const {child,done}=launch(job,'interrupt',true);await new Promise((resolve,reject)=>{const start=Date.now(),timer=setInterval(()=>{const f=path.join(job,'data/ignition-runs',day,'interrupt-1-progress.json');if(fs.existsSync(f)&&JSON.parse(fs.readFileSync(f)).heartbeat.length){clearInterval(timer);resolve();}else if(Date.now()-start>12000){clearInterval(timer);reject(Error('no progress archive'));}},20);});child.kill('SIGKILL');const result=await done;assert.equal(result.signal,'SIGKILL');assert.equal(messages.length,0);const progress=JSON.parse(fs.readFileSync(path.join(job,'data/ignition-runs',day,'interrupt-1-progress.json')));assert.ok(progress.heartbeat.length>=1);assert.ok(progress.messageDelivery.publicationFailures>0);}
+  else{const first=launch(job,'first');let second;if(scenario==='competing'){const job2=path.join(tmp,'job2');git(tmp,'clone','-b','main',bare,job2);second=launch(job2,'second');}const result=await first.done;assert.equal(result.code,0,result.text);if(second){const r=await second.done;assert.equal(r.code,0,r.text);}const archived=JSON.parse(fs.readFileSync(path.join(job,'data/ignition-runs',day,'first-1.json')));assert.ok(archived.heartbeat.length>0);assert.ok(snapshots>0);
+-  if(scenario==='uncertain'){assert.equal(messages.length,2);const n=messages.length;const retry=await launch(job,'uncertain-retry').done;assert.equal(retry.code,0,retry.text);assert.equal(messages.length,n);}if(scenario==='finish-refusal'){assert.equal(messages.length,1);assert.equal(archived.messageDelivery.pendingFinalizations,1);fs.unlinkSync(path.join(bare,'hooks/pre-receive'));const retry=await launch(job,'finish-retry').done;assert.equal(retry.code,0,retry.text);assert.equal(messages.filter(x=>x.includes('STOP LEVEL REACHED')).length,1);}
+-  if(['clear-rejection','missing-snapshot'].includes(scenario)){const frozen=fs.readFileSync(path.join(job,'data/radar-v3-snap.json'));assert.equal(messages.filter(x=>x.includes('STOP LEVEL REACHED')).length,1);assert.equal(messages.filter(x=>x.includes('OPPORTUNITY RADAR')).length,profile.profile==='development-full'?3:1,'definite429 has the declared one-shot or bounded compatibility retries, not duplicate acknowledgements');if(scenario==='missing-snapshot')fs.unlinkSync(path.join(job,'data/radar-v3-snap.json'));messages=[];failTransport=false;const retry=await launch(job,'clear-retry').done;assert.equal(retry.code,0,retry.text);if(scenario==='missing-snapshot'){assert.equal(fs.existsSync(path.join(job,'data/radar-v3-snap.json')),false);assert.match(retry.text,/radar recovery blocked/);}else assert.deepEqual(fs.readFileSync(path.join(job,'data/radar-v3-snap.json')),frozen);}if(scenario==='refusal-retry'){assert.equal(messages.length,0);assert.ok(archived.messageDelivery.publicationFailures>0);fs.unlinkSync(path.join(bare,'hooks/pre-receive'));const retry=await launch(job,'retry').done;assert.equal(retry.code,0,retry.text);}
+-  assert.equal(messages.filter(x=>x.includes('STOP LEVEL REACHED')).length,1);assert.equal(messages.filter(x=>x.includes('OPPORTUNITY RADAR')).length,scenario==='missing-snapshot'?0:1);
+-  const names=git(tmp,'--git-dir='+bare,'ls-tree','-r','--name-only','main','data/watcher-message-state').split('\n').filter(Boolean);const rejectedUnknown=profile.profile==='development-full'&&['clear-rejection','missing-snapshot'].includes(scenario);assert.equal(names.length,rejectedUnknown?3:2,JSON.stringify(names));const states=names.map(name=>JSON.parse(git(tmp,'--git-dir='+bare,'show','main:'+name)).state);if(rejectedUnknown){const u=names.find(n=>n.endsWith('e3b533fb3103121fa33bca3014ba78aa06e20033b01e0bf3f8783863fbc3dbc5.json'));assert.ok(u,'the extra record is specifically the definitely rejected stop:ZZQ:unknown intent, not another message');assert.equal(JSON.parse(git(tmp,'--git-dir='+bare,'show','main:'+u)).state,'UNSENT');assert.deepEqual(states.sort(),scenario==='missing-snapshot'?['ACKNOWLEDGED','UNSENT','UNSENT']:['ACKNOWLEDGED','ACKNOWLEDGED','UNSENT']);}else if(scenario==='missing-snapshot')assert.deepEqual(states.sort(),['ACKNOWLEDGED','UNSENT']);else for(const state of states)assert.equal(state,scenario==='uncertain'?'UNCERTAIN':'ACKNOWLEDGED');
++  if(scenario==='uncertain'){assert.equal(messages.length,2);const n=messages.length;const retry=await launch(job,'uncertain-retry').done;assert.equal(retry.code,0,retry.text);assert.equal(messages.length,n);}if(scenario==='finish-refusal'){assert.equal(messages.length,1);assert.equal(archived.messageDelivery.pendingFinalizations,1);fs.unlinkSync(path.join(bare,'hooks/pre-receive'));const retry=await launch(job,'finish-retry').done;assert.equal(retry.code,0,retry.text);assert.equal(messages.filter(x=>x.includes('STOP HIT NOW')).length,1);}
++  if(['clear-rejection','missing-snapshot'].includes(scenario)){const frozen=fs.readFileSync(path.join(job,'data/radar-v3-snap.json'));assert.equal(messages.filter(x=>x.includes('STOP HIT NOW')).length,1);assert.equal(messages.filter(x=>x.includes('OPPORTUNITY RADAR')).length,profile.profile==='development-full'?3:1,'definite429 has the declared one-shot or bounded compatibility retries, not duplicate acknowledgements');if(scenario==='missing-snapshot')fs.unlinkSync(path.join(job,'data/radar-v3-snap.json'));messages=[];failTransport=false;const retry=await launch(job,'clear-retry').done;assert.equal(retry.code,0,retry.text);if(scenario==='missing-snapshot'){assert.equal(fs.existsSync(path.join(job,'data/radar-v3-snap.json')),false);assert.match(retry.text,/radar recovery blocked/);}else assert.deepEqual(fs.readFileSync(path.join(job,'data/radar-v3-snap.json')),frozen);}if(scenario==='refusal-retry'){assert.equal(messages.length,0);assert.ok(archived.messageDelivery.publicationFailures>0);fs.unlinkSync(path.join(bare,'hooks/pre-receive'));const retry=await launch(job,'retry').done;assert.equal(retry.code,0,retry.text);}
++  assert.equal(messages.filter(x=>x.includes('STOP HIT NOW')).length,1);assert.equal(messages.filter(x=>x.includes('OPPORTUNITY RADAR')).length,scenario==='missing-snapshot'?0:1);
++  const names=git(tmp,'--git-dir='+bare,'ls-tree','-r','--name-only','main','data/watcher-message-state').split('\n').filter(Boolean);assert.equal(names.length,2);const states=names.map(name=>JSON.parse(git(tmp,'--git-dir='+bare,'show','main:'+name)).state);if(scenario==='missing-snapshot')assert.deepEqual(states.sort(),['ACKNOWLEDGED','UNSENT']);else for(const state of states)assert.equal(state,scenario==='uncertain'?'UNCERTAIN':'ACKNOWLEDGED');
+  }
+  assert.equal(git(job,'rev-parse','HEAD'),seed);assert.deepEqual(fs.readFileSync(path.join(job,'.git/index')),index);assert.equal(fs.readFileSync(path.join(job,'sentinel.mjs'),'utf8'),'// active source stays pinned\n');assert.equal(git(tmp,'--git-dir='+bare,'show','main:sentinel.mjs'),'// unrelated remote revision must survive');});

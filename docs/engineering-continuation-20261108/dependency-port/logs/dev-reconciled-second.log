@@ -1,0 +1,284 @@
+✔ actual ACTIONS preserves earlier SELL context when a fresh assessment becomes HOLD; repeat/restart does not imply execution (295.712466ms)
+✔ notices before current recorded purchase do not attach to a new position; malformed neighbors do not erase valid evidence (161.853568ms)
+✔ missing price history is UNKNOWN, preserves previous assessment and never produces a fresh HOLD (56.813566ms)
+✔ missing leader-dip prices does not erase prior SELL; a persisted explicit exit still applies (38.408525ms)
+✔ same-day notice has unresolved order, never a new compulsory SELL or execution claim (120.319047ms)
+✔ pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence (43.758693ms)
+✔ frozen research verdict leads over optimistic subset/live labels (39.425393ms)
+✔ focus OFF cannot turn an evidence-blocked engine candidate into an approved BUY (56.176349ms)
+✔ normalized journal and private cash goal label different populations and neither as account return (43.995178ms)
+✔ existing close-based sell timing uses the regular open; winter time conversion is explicit (92.301753ms)
+Telegram: 1 message(s) read
+✔ actual Telegram command caller renders UNKNOWN and preserves position economics under missing history (69.21652ms)
+✔ dated historical health input is not evidence of current watcher observation (27.791424ms)
+✔ all operations stayed synthetic and on loopback (0.814944ms)
+✔ absent bindings do not mark notice sent; later ACK is durable and restart does not resend (264.238144ms)
+✔ definite rejection permits a later retry but does not claim delivery (257.134643ms)
+✔ ambiguous transport is durable UNKNOWN across restart, never silently retried (171.785715ms)
+✔ failed intent save prevents send; failed ACK save retains pending state and blocks restart (223.900101ms)
+✔ recovery notice intent survives a rejected attempt without reintroducing stale problems (187.593709ms)
+intraday check done: 1 watched, 1 new alerts
+intraday check done: 1 watched, 1 new alerts
+✔ stale and unknown-clock holding quotes never produce current-price SELL or healthy open check (110.974528ms)
+Telegram error 403 {"ok":false,"description":"HTTP_403","parameters":{"retry_after":1}}
+Telegram error 403 {"ok":false,"description":"HTTP_403","parameters":{"retry_after":1}}
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ failed intraday sends never consume keys; ACK is durable and duplicate cycles do not resend (72.687344ms)
+Telegram error 502 {"ok":false,"description":"NETWORK_ERROR","parameters":{"retry_after":1}}
+Telegram error 502 {"ok":false,"description":"NETWORK_ERROR","parameters":{"retry_after":1}}
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ ambiguous intraday sends stay unknown across reloaded state and are never called ACK (53.237414ms)
+intraday check done: 1 watched, 0 new alerts
+✔ conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS (106.708008ms)
+intraday check done: 1 watched, 0 new alerts
+✔ stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS (82.40215ms)
+intraday check done: 1 watched, 1 new alerts
+✖ stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route (65.847408ms)
+intraday check done: 3 watched, 2 new alerts
+✔ undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped) (71.796657ms)
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open (100.762606ms)
+intraday check done: 1 watched, 0 new alerts
+✖ labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence (67.420061ms)
+intraday check done: 1 watched, 0 new alerts
+✖ close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm (59.523723ms)
+intraday check done: 1 watched, 0 new alerts
+✔ records untouched: positions and Telegram offset unchanged; one first check a day (47.698953ms)
+intraday check done: 2 watched, 1 new alerts
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 2 watched, 1 new alerts
+✔ 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check (139.752368ms)
+intraday check done: 2 watched, 2 new alerts
+intraday check done: 0 watched, 0 new alerts
+✔ 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN (98.685494ms)
+✔ all requests stayed synthetic and on loopback (0.269825ms)
+✔ variants: base needs every gate; each no_ variant drops exactly one gate (1.302396ms)
+✔ recorder: one row per stock, first entry per variant kept, next-minute / 30-minute prices and high / low followed (0.968144ms)
+✔ fills: ask when the quote is fresh and the spread sane; else last price plus an assumed half spread, flagged (1.096577ms)
+✔ score: every horizon after costs; excursions reported separately (0.397748ms)
+✔ stats: median, hit rate for +2%, without the 2 best, worst (0.342305ms)
+✔ filter table: a gate is judged only on the candidates it alone rejects; hard-ineligible rows never count; COLLECTING before 10 sessions (1.422718ms)
+✔ catalyst classes: source, direction and freshness are separate; a failed source is UNAVAILABLE, never NONE; no reason is invented (21.692321ms)
+✔ (owner item 6) spread counted once: ask entry pays half going in, half coming out; last-trade entry pays both halves; stress adds slippage (0.162845ms)
+✔ future or malformed quote ages never become observed executable research fills (0.233361ms)
+✔ shadow spread rejects nonfinite quotes and avoids midpoint overflow (0.319019ms)
+✔ price evidence: only a ticker-bound, dated, fresh trade price is OK (1.216918ms)
+✔ r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN (0.602665ms)
+✔ r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip (0.756617ms)
+✔ stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts (13.406741ms)
+✔ "at or below": a price equal to the stop is a crossing and is worded as at or below (0.45901ms)
+✔ wording respects an order that already filled: no second sale, the fill price is what to report (0.412129ms)
+✔ already sold (position no longer recorded): nothing is sent for it (0.177357ms)
+✔ stop levels and positions are read, never changed (0.301994ms)
+✖ catalyst times have a full date and one time zone (previous-day items no longer read like today) (4.171427ms)
+fast movers off today: no FMP key is passed to the bot
+watchdog: 2 warning(s) acknowledged
+intraday check done: 1 watched, 0 new alerts
+✖ bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated (89.41742ms)
+fast movers off today: no FMP key is passed to the bot
+watchdog: 2 warning(s) acknowledged
+intraday check done: 1 watched, 0 new alerts
+✔ bot fallback: watcher delivery missing -> the bot sends the stop once, in the shared wording (60.678964ms)
+fast movers off today: no FMP key is passed to the bot
+watchdog: 2 warning(s) acknowledged
+intraday check done: 1 watched, 0 new alerts
+✔ bot fallback: watcher delivery UNSENT -> the bot sends the stop once, in the shared wording (52.886426ms)
+fast movers off today: no FMP key is passed to the bot
+watchdog: 2 warning(s) acknowledged
+intraday check done: 1 watched, 0 new alerts
+✔ bot fallback: watcher delivery UNCERTAIN -> the bot sends the stop once, in the shared wording (45.212227ms)
+fast movers off today: no FMP key is passed to the bot
+watchdog: 2 warning(s) acknowledged
+intraday check done: 1 watched, 0 new alerts
+✔ bot fallback: duplicate delivery prevention holds across runs (once a day) (49.504295ms)
+fast movers off today: no FMP key is passed to the bot
+watchdog: 2 warning(s) acknowledged
+intraday check done: 1 watched, 1 new alerts
+✖ bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing (47.779534ms)
+fast movers off today: no FMP key is passed to the bot
+watchdog: 2 warning(s) acknowledged
+intraday check done: 1 watched, 1 new alerts
+✖ r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller (44.920267ms)
+✔ all requests stayed synthetic and on loopback (0.272259ms)
+✔ price at or below the stop: one STOP LEVEL REACHED message, not repeated (12.960512ms)
+✔ within 2% above the stop: one NEAR STOP warning, then the hit still comes (0.582896ms)
+✔ no stop: nothing; no positions: nothing (1.313223ms)
+ℹ tests 62
+ℹ suites 0
+ℹ pass 55
+ℹ fail 7
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1684.540007
+
+✖ failing tests:
+
+test at test/open-check-repair.test.mjs:60:1
+✖ stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route (65.847408ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /ZZS: the latest price is 30 min old/. Input:
+  
+  'YOUR STOPS (bot check; the live watcher had not confirmed these)\n' +
+    '\n' +
+    'STOP CHECK UNKNOWN: ZZS: no valid price. Whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.\n' +
+    '\n' +
+    'Stop levels are your own recorded stops. Not financial advice.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/open-check-repair.test.mjs:66:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'YOUR STOPS (bot check; the live watcher had not confirmed these)\n\nSTOP CHECK UNKNOWN: ZZS: no valid price. Whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.\n\nStop levels are your own recorded stops. Not financial advice.',
+    expected: /ZZS: the latest price is 30 min old/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:87:1
+✖ labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence (67.420061ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /BUY LIST FROM LAST NIGHT'S SCAN \(the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range\)/. Input:
+  
+  "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n" +
+    '\n' +
+    'YOUR POSITIONS (one action each, the same rules as ACTIONS)\n' +
+    'ZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 30 s old) (+20.0% from your 10.00).\n' +
+    '\n' +
+    "PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\n" +
+    "none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n" +
+    '\n' +
+    'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\n' +
+    'Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n' +
+    '\n' +
+    'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/open-check-repair.test.mjs:90:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\nZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 30 s old) (+20.0% from your 10.00).\n\nPLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+    expected: /BUY LIST FROM LAST NIGHT'S SCAN \(the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range\)/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:95:1
+✖ close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm (59.523723ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Regular NYSE session today: 9:30 am to 4:00 pm New York \(5:30 pm to 12 am Kuwait\)\. The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live\./. Input:
+  
+  "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n" +
+    '\n' +
+    'YOUR POSITIONS (one action each, the same rules as ACTIONS)\n' +
+    'ZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 30 s old) (+20.0% from your 10.00).\n' +
+    '\n' +
+    "PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\n" +
+    "none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n" +
+    '\n' +
+    'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\n' +
+    'Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n' +
+    '\n' +
+    'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/open-check-repair.test.mjs:97:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\nZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 30 s old) (+20.0% from your 10.00).\n\nPLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+    expected: /Regular NYSE session today: 9:30 am to 4:00 pm New York \(5:30 pm to 12 am Kuwait\)\. The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live\./,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/stop-alert-validity.test.mjs:85:1
+✖ catalyst times have a full date and one time zone (previous-day items no longer read like today) (4.171427ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /earliest headline Nov 4 03:05 New York \(Benzinga\)/. Input:
+  
+  'earliest headline Nov 4 03:05 New York New York (Benzinga): "ZZQ moves" [source AGGREGATOR, direction AMBIGUOUS, FRESH]'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/stop-alert-validity.test.mjs:95:10)
+      at Test.runInAsyncScope (node:async_hooks:227:14)
+      at Test.run (node:internal/test_runner/test:1402:25)
+      at Test.processPendingSubtests (node:internal/test_runner/test:974:18)
+      at Test.postRun (node:internal/test_runner/test:1542:19)
+      at Test.run (node:internal/test_runner/test:1467:12)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'earliest headline Nov 4 03:05 New York New York (Benzinga): "ZZQ moves" [source AGGREGATOR, direction AMBIGUOUS, FRESH]',
+    expected: /earliest headline Nov 4 03:05 New York \(Benzinga\)/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/stop-alert-validity.test.mjs:117:1
+✖ bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated (89.41742ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  + actual - expected
+  
+  + undefined
+  - 'watcher'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/stop-alert-validity.test.mjs:120:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: undefined,
+    expected: 'watcher',
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/stop-alert-validity.test.mjs:139:1
+✖ bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing (47.779534ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /no source timestamp/. Input:
+  
+  'YOUR STOPS (bot check; the live watcher had not confirmed these)\n' +
+    '\n' +
+    'STOP CHECK UNKNOWN: ZZA: no valid price. Whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.\n' +
+    '\n' +
+    'Stop levels are your own recorded stops. Not financial advice.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/stop-alert-validity.test.mjs:141:97)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'YOUR STOPS (bot check; the live watcher had not confirmed these)\n\nSTOP CHECK UNKNOWN: ZZA: no valid price. Whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.\n\nStop levels are your own recorded stops. Not financial advice.',
+    expected: /no source timestamp/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/stop-alert-validity.test.mjs:147:1
+✖ r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller (44.920267ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /in the future/. Input:
+  
+  'YOUR STOPS (bot check; the live watcher had not confirmed these)\n' +
+    '\n' +
+    'STOP CHECK UNKNOWN: ZZA: no valid price. Whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.\n' +
+    '\n' +
+    'Stop levels are your own recorded stops. Not financial advice.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/stop-alert-validity.test.mjs:149:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'YOUR STOPS (bot check; the live watcher had not confirmed these)\n\nSTOP CHECK UNKNOWN: ZZA: no valid price. Whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.\n\nStop levels are your own recorded stops. Not financial advice.',
+    expected: /in the future/,
+    operator: 'match',
+    diff: 'simple'
+  }

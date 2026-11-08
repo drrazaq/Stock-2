@@ -1,0 +1,64 @@
+✔ configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable (2.605203ms)
+✔ health reports configured gaps and known outside hour separately; explicit actionable thresholds (1.553173ms)
+✔ message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed (7.92855ms)
+✔ unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY (1.686444ms)
+✔ actual watcher shadow producer retains unknown observations and filing records without adding source calls (1.581295ms)
+✔ actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop (1062.162288ms)
+✔ reservation publication failure prevents send and quarantines local retry (3.258164ms)
+✔ actual watcher approved-alert caller blocks unknown identity before any send (1.007623ms)
+✔ actual filing decision caller records eligible unknown-type research, and preserves source failure (1.020653ms)
+✔ actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment (2.620115ms)
+✔ actual shadow caller captures identity once rather than retroactively reclassifying the first observation (1.089737ms)
+✔ publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct (29.480294ms)
+✔ actual Actions watcher survives moved (1611.951726ms)
+✔ actual Actions watcher survives competing (1580.589344ms)
+✔ actual Actions watcher survives refusal-retry (2204.549321ms)
+✔ actual Actions watcher survives interrupted (1063.761873ms)
+✔ actual Actions watcher survives uncertain (1841.463781ms)
+✖ actual Actions watcher survives clear-rejection (4357.911651ms)
+✔ actual Actions watcher survives finish-refusal (2055.452473ms)
+✖ actual Actions watcher survives missing-snapshot (4099.463498ms)
+ℹ tests 20
+ℹ suites 0
+ℹ pass 18
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 18929.432153
+
+✖ failing tests:
+
+test at test/watcher-resilience.test.mjs:4:177
+✖ actual Actions watcher survives clear-rejection (4357.911651ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/watcher-resilience.test.mjs:14:142)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
+
+test at test/watcher-resilience.test.mjs:4:177
+✖ actual Actions watcher survives missing-snapshot (4099.463498ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/watcher-resilience.test.mjs:14:142)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

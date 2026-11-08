@@ -1,6 +1,6 @@
 # Original40 acceptance reconciliation
 
-**24 complete /16 OPEN; zero new closures.** Original criteria and accepted evidence preserved. Carry-forward statuses are not claims every old proof was rerun. Full exact criteria/hashes and actor dependencies are in [acceptance.json](acceptance.json).
+**24 complete /16 OPEN; zero new closures.** Original criteria and evidence preserved. Accepted rows are carry-forward, not40 fresh proofs. Exact criteria/hashes and dependencies: [acceptance.json](acceptance.json).
 
 | Row | Status | Next concrete action / dependency |
 |---|---|---|
@@ -11,7 +11,7 @@
 | ACTIONS-01 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | ACTIONS-02 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | ACTIONS-03 | COMPLETE | Carry forward original accepted evidence; no new closure. |
-| ACTIONS-04 | OPEN | R1 rev6 closes the two reproduced recovery boundaries and circular order/old-writer census cases; obtain the corrected backup-proof failure wording and re-review the exact package, then finish remaining write/retry/retention workflow families. Exact passing R1 candidate and complete per-workflow evidence; no operational execution authorized. |
+| ACTIONS-04 | OPEN | R1 rev7 corrects remaining backup-proof wording; exact source focused checks pass. Complete combined68-path release binding/prerequisites and remaining write/retry/retention workflow families before any acceptance closure. Exact passing R1 candidate and complete per-workflow evidence; no operational execution authorized. |
 | MARKET-01 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | MARKET-02 | OPEN | Finish accepted-account/source terms and observed-permission evidence package for one bounded research task; retain subscription versus endpoint distinction. Actual account/rights and separately authorized observed responses absent; no key/provider actions now. |
 | MARKET-03 | OPEN | Review this calendar/typed-series port and its partial source matrix, then complete remaining actual provider symbol/unit/clock/session/action ingress contracts. Static matrix still has unreviewed/partial ingress; no all-provider actual-call evidence. |
@@ -30,7 +30,7 @@
 | ZAD-04 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | EXEC-01 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | EXEC-02 | COMPLETE | Carry forward original accepted evidence; no new closure. |
-| EXEC-03 | OPEN | Claude correct open-check UNKNOWN/visibility and prepare a STOP/D-aware development port; Codex rechecks every changed plan against registered entry/exit/cost semantics. Two reproduced missing-evidence failures; development lacks deployed STOP/D helpers; whole all-lane correspondence still partial. |
+| EXEC-03 | OPEN | Open-check r2 fixes both reproduced UNKNOWN/visibility paths; review the selective STOP/session-helper development port, then finish all-lane entry/exit/cost correspondence. Production composition fixes pass independently; development dependencies are now prepared with stricter freshness/durability preserved, focused author review pending; whole all-lane correspondence remains partial. |
 | EXEC-04 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | TELEGRAM-01 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | TELEGRAM-02 | COMPLETE | Carry forward original accepted evidence; no new closure. |

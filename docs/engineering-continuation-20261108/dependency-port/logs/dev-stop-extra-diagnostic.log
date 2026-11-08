@@ -1,0 +1,28 @@
+✖ actual Actions watcher survives clear-rejection (4440.250234ms)
+ℹ tests 1
+ℹ suites 0
+ℹ pass 0
+ℹ fail 1
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4524.629823
+
+✖ failing tests:
+
+test at test/watcher-resilience.test.mjs:4:177
+✖ actual Actions watcher survives clear-rejection (4440.250234ms)
+  AssertionError [ERR_ASSERTION]: ["data/watcher-message-state/2026-10-30/127a7878fb0211254da1840712b7cd5a30f946a99afb8a068cc3ddbb4a59b7ec.json","data/watcher-message-state/2026-10-30/2d712df3c3efeba2f9e2743bed74b2365dffde8b344b2cb39ddcf1a6449a2a6a.json","data/watcher-message-state/2026-10-30/e3b533fb3103121fa33bca3014ba78aa06e20033b01e0bf3f8783863fbc3dbc5.json"]
+  
+  3 !== 2
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/watcher-resilience.test.mjs:14:142)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: false,
+    code: 'ERR_ASSERTION',
+    actual: 3,
+    expected: 2,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }
