@@ -4293,6 +4293,13 @@ const quoteEvidence = (sym, q, nowMs, maxAgeMin) => {
   return priceEvidence(sym, quoteFields(sym, q), nowMs, maxAgeMin);
 };
 const stopObservation = (sym, q, nowMs) => fetchJudgement(sym, q, nowMs) || priceEvidence(sym, quoteFields(sym, q), nowMs);
+// (rev15, Codex 6724441072/6724603156 N1) ALERT EVIDENCE for the intraday alerts, each route keeping its EXISTING rule:
+//  - 'holding' (YOUR POSITION target lines): the holding rule of holdingAction()/quoteEvidence(), priceEvidence's default STOP_MAX_AGE_MIN;
+//  - 'plan' (BUY NOW cards, and the planned-entry review lines QUICK / LEADER / signal range / breakout trigger / paper trades, which had
+//    no age check before): the existing 20-minute BUY NOW gate.
+// The quote must be valid when it was fetched (observedAt; undated or future-dated never qualifies) and again at the moment asked.
+const ALERT_GATE = { holding: undefined, plan: 20 };
+const alertEvidence = (sym, q, route, atMs) => { const f = fetchJudgement(sym, q, atMs, ALERT_GATE[route]); if (f && f.state !== 'OK') return f; return priceEvidence(sym, quoteFields(sym, q), atMs, ALERT_GATE[route]); };
 const ageWords = (sec) => sec < 90 ? Math.round(sec) + ' s' : Math.round(sec / 60) + ' min';
 const evidenceText = (ev) => ev.state === 'OK' ? 'last price ' + money(ev.price) + ' (' + ev.src + ', ' + nyStamp(ev.t) + ', ' + (ev.ageSec < 90 ? Math.round(ev.ageSec) + ' s' : Math.round(ev.ageSec / 60) + ' min') + ' old)' : 'current price UNKNOWN (' + ev.why + ')';
 function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
@@ -4352,7 +4359,7 @@ async function intraday(onlyMine) {
   const st = readJson('data/alert-state.json', { day: '', sent: {} }), day = ny(now).d; if (st.day !== day) { st.day = day; st.sent = {}; }
   const OKI = new Set(planCands(sig, loadPos()).filter(x => x.ok).map(x => x.sym)), buys = sig.stocks.filter(s => s.state === 'Buy watch' && OKI.has(s.sym)), trig = sig.stocks.filter(s => s.state !== 'Buy watch' && s.proven && s.trigger && s.trigger / s.last < 1.03);
   const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
-  const buyNowCards = [];
+  const buyNowCards = [], queued = [];
   const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
   const seen = {}, stopAlerts = [], quotesSeen = {};
   // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
@@ -4376,18 +4383,21 @@ async function intraday(onlyMine) {
     return t;
   };
   for (const sym of watch) {
-    const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = { ...j, observedAt: Date.now() }; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
-    const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
+    const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = { ...j, observedAt: Date.now() }; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p;
+    // (rev15, Codex 6724441072/6724603156 N1) every price claim below is admitted only on evidence valid WHEN FETCHED under its route's
+    // existing rule (ALERT_GATE: undated or future-dated never qualifies), and is checked again just before sending (sendable() below).
+    const fresh = alertEvidence(sym, quotesSeen[sym], 'plan', quotesSeen[sym].observedAt).state === 'OK';   // BUY NOW: the existing 20-minute gate
+    const say = (k, text, route = 'plan') => { if (!st.sent[sym + k] && !queued.some(x => x.sym === sym && x.k === k) && alertEvidence(sym, quotesSeen[sym], route, quotesSeen[sym].observedAt).state === 'OK') queued.push({ sym, k, text, route }); };
     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
     if (mp) {   // you told the bot you bought this one
       const chg = ' You bought at ' + money(mp.entry) + ' (' + (p >= mp.entry ? '+' : '') + ((p / mp.entry - 1) * 100).toFixed(1) + '%).';
       if (mp.stop && p <= mp.stop) { /* (4 Nov) stop crossings: stopFallback() above, one evidence rule and wording with the live watcher */ }
-      else if (mp.t2 && p >= mp.t2) say('myt2', 'YOUR POSITION: TARGET 2 REACHED (' + money(mp.t2) + ').' + chg);
-      else if (mp.t1 && p >= mp.t1 && !mp.trail) say('myt1', 'YOUR POSITION: ' + t1Text(sym, mp) + chg);
+      else if (mp.t2 && p >= mp.t2) say('myt2', 'YOUR POSITION: TARGET 2 REACHED (' + money(mp.t2) + ').' + chg, 'holding');
+      else if (mp.t1 && p >= mp.t1 && !mp.trail) say('myt1', 'YOUR POSITION: ' + t1Text(sym, mp) + chg, 'holding');
     }
     const pb = mp ? null : planBuys.find(x => x.sym === sym);
-    if (pb && fresh && p >= pb.lo && p <= pb.hi && !st.sent[sym + 'buynow']) { st.sent[sym + 'buynow'] = 1; buyNowCards.push({ sym, p, text: planText(sig, myPos, { [sym]: p }, sym + ' is inside its buy range now', [sym]) }); }
-    const qs = mp || (pb && st.sent[sym + 'buynow']) ? null : qs0;
+    if (pb && fresh && p >= pb.lo && p <= pb.hi && !st.sent[sym + 'buynow']) buyNowCards.push({ sym, p, text: planText(sig, myPos, { [sym]: p }, sym + ' is inside its buy range now', [sym]) });
+    const qs = mp || (pb && (st.sent[sym + 'buynow'] || buyNowCards.some(c => c.sym === sym))) ? null : qs0;
     if (qs) {   // a quick trade setup from last night's close
       if (p > qs.buyHi) say('qhi', 'QUICK TRADE: above its entry range (' + money(qs.buyLo) + ' to ' + money(qs.buyHi) + '). The dip is gone. Skip it.');
       else if (p <= qs.stop) say('qlo', 'QUICK TRADE: already at its invalidation level ' + money(qs.stop) + '. The setup has failed.');
@@ -4420,6 +4430,16 @@ async function intraday(onlyMine) {
     st.sent.__open = 1;
     openMsg = await firstCheckText(myPos, planBuys, quotesSeen, sig, Date.now());
   }
+  // (rev15 N1) SEND-TIME CHECK: each queued alert and BUY NOW card is sent only if its price still passes its route's rule NOW, after every
+  // fetch of this run. Only sent alerts are marked in the once-a-day memory; one held back is re-checked on the next run, and a held-back
+  // holding alert is reported once a day as not confirmed (never as a current price).
+  { const nowSend = Date.now(), held = [];
+    for (const a of queued) { const e = alertEvidence(a.sym, quotesSeen[a.sym], a.route, nowSend);
+      if (e.state === 'OK') { st.sent[a.sym + a.k] = 1; alerts.push(a.sym + ' at ' + money(e.price) + ': ' + a.text); }
+      else if (a.route === 'holding' && !st.sent[a.sym + a.k + 'held']) { st.sent[a.sym + a.k + 'held'] = 1; held.push(a.sym + ' (' + e.why + ')'); } }
+    for (let i = buyNowCards.length - 1; i >= 0; i--) { const c = buyNowCards[i], e = alertEvidence(c.sym, quotesSeen[c.sym], 'plan', nowSend);
+      if (e.state === 'OK') st.sent[c.sym + 'buynow'] = 1; else buyNowCards.splice(i, 1); }
+    if (held.length) alerts.unshift('YOUR POSITION, NOT CONFIRMED: a target check on ' + held.join('; ') + ' used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.'); }
   fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
   if (openMsg) await telegram(openMsg + '\n' + FOOT);
   alerts.sort((a, b) => (b.includes('YOUR POSITION') ? 1 : 0) - (a.includes('YOUR POSITION') ? 1 : 0));

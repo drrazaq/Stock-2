@@ -6,6 +6,20 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0l. Rev15 (8 Nov): intraday alerts checked when fetched and when sent (Codex 6724441072 / 6724603156, N1)
+
+- **The defect:** the intraday "Market hours check" alerts were queued during the fetch loop and sent after it with no check, so they could claim a current price that had expired, or had been future-dated when fetched. The worst cases were "TARGET 2 REACHED (−10.0%)", QUICK, LEADER and paper-trade lines. The BUY NOW cards' 20-minute gate also accepted undated prices. That 20-minute gate applied to BUY NOW cards only, not to targets.
+- **Fix:** each alert keeps its route's **existing** rule, named in `ALERT_GATE`. The price must be valid when fetched (undated or future-dated never qualifies) **and** again just before sending.
+
+| Route | Alerts | Rule |
+|---|---|---|
+| holding | YOUR POSITION target lines | 5 minutes, the rule of `holdingAction`/`quoteEvidence` |
+| plan | BUY NOW cards; QUICK, LEADER, signal-range, breakout and paper-trade review lines (previously unchecked) | the 20-minute BUY NOW gate |
+
+- **Held back:** an alert that fails at sending time is not sent and not marked, so a later run with a current price can still send it. A held-back holding alert is reported once a day as "YOUR POSITION, NOT CONFIRMED …", never as a price. No rule levels, stops or filters changed.
+- **Regressions:** `test/intraday-alert-evidence.test.mjs` (actual caller) covers fresh, expired-at-send, future-dated and undated prices on both routes, plus re-sending after a hold. 3 of its 5 cases fail on rev14.
+- **Operative counts synced:** RELEASE.md G1/G4/G6/B5/R-0 now say 73 paths and 8 of 17 STOP-pinned files changed (they still said 68 and 7/10).
+
 ## 0k. Rev14 (8 Nov): five reproduced blockers from Codex's review 6723732821
 
 - **B1, warning unreachable under the real shell:** `bot.yml` runs `bash -e -o pipefail`, and a failed, FULL or UNKNOWN `sealed_recovery_push` exited the step before logging, SAVE NOT CONFIRMED and the loop continuing (also present in rev12). `bot-save.sh` now keeps the status (`|| rrc=$?`), logs it ("did not confirm a kept copy"), always warns and continues. Failure handling is not disabled anywhere else.
