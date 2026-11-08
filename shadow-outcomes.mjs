@@ -11,7 +11,8 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { filterTable, stats, entryOf, netExit } from './shadow-eval.mjs';
 import { evaluate } from './rank-models.mjs';
-import { readSealed, listSealed, readSealedLines, sealedCode } from './sealed-store.mjs';   // R1: the shadow stream and opp-ledger are sealed T1 files
+import { readSealed, listSealed, readSealedLines, sealedCode, keyMissing } from './sealed-store.mjs';
+if (keyMissing()) { console.error('shadow outcomes: SEALED_KEY_MISSING (no sealing key: stopped before any request or write)'); process.exit(1); }   // R1 (Codex re-review 3)   // R1: the shadow stream and opp-ledger are sealed T1 files
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const env = process.env, ALPD = local(process.env.ALPACA_DATA) || 'https://data.alpaca.markets', readJson = (f, d = null) => { try { return JSON.parse(/\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const readLines = (f) => { try { const t = /\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8'); return t.trim().split('\n').filter(Boolean).map(l => JSON.parse(l)); } catch (e) { return []; } };

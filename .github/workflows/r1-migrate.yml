@@ -1,14 +1,19 @@
 name: R1 sealed provider data migration (one-off, owner approval only)
-# R1 (review only; NOT run). Converts the tracked plaintext T1 provider-data files to sealed files in ONE verified commit:
-# seal + read-back, plaintext deletions staged with their sealed replacements, index verified (no T1 plaintext left, every sealed
-# blob decrypts to the original bytes). Nothing is committed unless every check passes. Runs only by hand, with the exact
-# confirmation text, inside the approved maintenance window while the T1 writer workflows are disabled (see the R1 deployment notes).
-# Git HISTORY is not changed: earlier commits keep their plaintext copies.
+# R1 (review only; NOT run). Converts the tracked plaintext T1 provider-data files of ONE approved source commit to sealed files in ONE
+# verified commit: clean checkout of exactly that commit; seal + read-back; plaintext deletions staged with their sealed replacements;
+# a manifest (.github/r1-migration-manifest.json: every source path, size, sha256) committed with them; the index verified (no T1
+# plaintext, the exact manifest set, every sealed file decrypts to its source hash). The push is FAST-FORWARD ONLY onto that same
+# commit (no rebase onto newer data, no retry): if main moved, nothing is published and the run fails. The pushed tree is then verified
+# again (complete set, parent = the approved source). Runs only by hand, with the exact confirmation text, inside an approved window
+# after the writer quiescence gate (r1-writer-gate.mjs) has passed. Git HISTORY is not changed: earlier commits keep their plaintext.
 on:
   workflow_dispatch:
     inputs:
       confirm:
         description: 'Type MIGRATE-R1 to seal the T1 files (owner-approved maintenance only)'
+        required: true
+      source_sha:
+        description: 'The approved source commit (full 40-character id of main at the start of the window)'
         required: true
 permissions:
   contents: write
@@ -21,22 +26,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event.inputs.source_sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - shell: bash
         env:
           SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
-          SEALED_MERGE_FAVOR: ''   # a concurrent sealed change during the migration is a conflict, never one side
+          SOURCE_SHA: ${{ github.event.inputs.source_sha }}
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           source .github/sealed-git.sh
+          git fetch -q origin main
+          [ "$(git rev-parse origin/main)" = "$SOURCE_SHA" ] || { echo "Error: main is no longer the approved source; nothing migrated"; exit 1; }
           node sealed-migrate.mjs --plan | tail -n 1
-          node sealed-migrate.mjs --apply
+          node sealed-migrate.mjs --apply "$SOURCE_SHA"
           node sealed-guard.mjs --all
           git commit -q -m "R1: seal T1 provider data (plaintext removed from the tip; history unchanged)"
-          ok=0; for i in 1 2 3; do if git pull -q --rebase && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
-          [ "$ok" = 1 ] || { echo "Error: migration commit not published"; exit 1; }
+          node sealed-migrate.mjs --verify-tree HEAD
+          git push -q origin HEAD:refs/heads/main   # fast-forward only; refused if main moved
+          git fetch -q origin main
           node sealed-migrate.mjs --verify-tree origin/main

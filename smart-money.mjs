@@ -10,7 +10,7 @@
 // Read-only. Never an order. Not a halal ruling.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
-import { readSealed, writeSealed, sealedCode } from './sealed-store.mjs';
+import { readSealed, writeSealed, sealedCode, keyMissing } from './sealed-store.mjs';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
 
 const env = process.env;
@@ -82,7 +82,7 @@ insiders.sort((p, q) => q.usd - p.usd); analysts.sort((p, q) => (q.now - q.was) 
 // revisions can be tested honestly in a few months (past values cannot be rebuilt: providers show only today's numbers).
 if (snap.length) { const F = 'data/analyst-archive-' + today.slice(0, 7) + '.jsonl.gz';   // one file a month keeps each daily save small
   // R1: the archive is a sealed T1 file; an unreadable one is reported and NOT replaced by a fresh month (that would drop its history)
-  let old = null; try { const b = readSealed(F); old = b === null ? '' : zlib.gunzipSync(b).toString(); } catch (e) { console.error('analyst archive: ' + sealedCode(e) + ' (not updated)'); }
+  let old = null; try { if (keyMissing()) throw Object.assign(new Error(), { code: 'SEALED_KEY_MISSING' }); const b = readSealed(F); old = b === null ? '' : zlib.gunzipSync(b).toString(); } catch (e) { console.error('analyst archive: ' + sealedCode(e) + ' (not updated)'); process.exitCode = 1; }
   if (old !== null && !old.includes('"at":"' + today)) writeSealed(F, zlib.gzipSync(old + JSON.stringify({ at: today, capturedAt: new Date().toISOString(), source: 'finnhub recommendation', rows: snap }) + '\n')); }
 
 // ---- 3: FMP upgrades (only if the FMP plan allows this endpoint; otherwise skipped quietly)

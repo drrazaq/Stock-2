@@ -77,7 +77,7 @@ jobs:
           git add data   # stages the sealed archive and the plaintext deletion together
           sealed_guard || { git reset -q; exit 1; }
           git diff --cached --quiet || git commit -m "smart money $(date -u +%FT%RZ)"
-          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          for i in 1 2 3 4 5; do if git pull --rebase -X theirs && sealed_push_guard && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

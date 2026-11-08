@@ -39,7 +39,14 @@ export const T1_PATTERNS = [
   /^data\/(?:ignition-live|fastmover-live|movers-state|options-shadow|options-spread-survey)\.json$/,
   /^data\/options-spread-survey\.md$/,
   /^data\/analyst-archive-\d{4}-\d{2}\.jsonl\.gz$/,
+  /^data\/(?:opp-ledger|premarket|early-wave-obs|ignition-missed-history|movers-journal)\.jsonl\.d\/\d{4}-\d{2}-\d{2}\.jsonl$/,   // daily segments (rev3)
 ];
+// SEGMENTED LEDGERS (rev3, cost): an append-only ledger is the sealed base file (as migrated) plus one sealed segment per UTC day,
+// data/x.jsonl.d/YYYY-MM-DD.jsonl.sealed. Appends rewrite only today's segment, so a save adds about one day of records to git history
+// instead of re-adding the whole ever-growing ledger (whole-file rewrites under fresh IVs would grow history quadratically).
+// Readers see base + segments in date order, exactly the bytes a single file would hold.
+export const SEGMENTED = /^data\/(?:opp-ledger|premarket|early-wave-obs|ignition-missed-history|movers-journal)\.jsonl$/;
+export const segmentPath = (p, day = new Date().toISOString().slice(0, 10)) => path.join(p + '.d', day + '.jsonl');
 export const isT1 = (rel) => T1_PATTERNS.some((r) => r.test(String(rel).replace(/\\/g, '/')));
 
 // the logical identity bound into every file: the path from its "data/" folder (repository-relative), whatever the working directory
@@ -82,9 +89,16 @@ export function unseal(bytes, key, id) {
 // read: Buffer, or null when NEITHER copy exists. Throws SEALED_KEY_MISSING / SEALED_UNREADABLE / SEALED_LEGACY_PLAINTEXT.
 export function readSealed(p, key = sealedKey()) {
   const sp = sealedPath(p);
-  if (fs.existsSync(sp)) return unseal(fs.readFileSync(sp), key, logicalId(p));
-  if (fs.existsSync(p)) throw err('SEALED_LEGACY_PLAINTEXT', logicalId(p));
-  return null;
+  let base = null;
+  if (fs.existsSync(sp)) base = unseal(fs.readFileSync(sp), key, logicalId(p));
+  else if (fs.existsSync(p)) throw err('SEALED_LEGACY_PLAINTEXT', logicalId(p));
+  if (!SEGMENTED.test(logicalId(p))) return base;
+  const segs = listSealed(p + '.d', /^\d{4}-\d{2}-\d{2}\.jsonl$/);
+  if (!segs.length) return base;
+  if (!key) throw err('SEALED_KEY_MISSING');
+  const parts = base && base.length ? [base] : [];
+  for (const n of segs) { const b = unseal(fs.readFileSync(sealedPath(path.join(p + '.d', n))), key, logicalId(path.join(p + '.d', n))); if (parts.length && parts[parts.length - 1].at(-1) !== 10) parts.push(Buffer.from('\n')); parts.push(b); }
+  return Buffer.concat(parts);
 }
 export const readSealedText = (p, key) => { const b = readSealed(p, key); return b === null ? null : b.toString('utf8'); };
 export function readSealedJson(p, fallback = null, key) {
@@ -96,9 +110,19 @@ export function readSealedLines(p, key) {
   return t.split('\n').filter(Boolean).map((l) => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);   // as the plaintext readers did
 }
 // for callers that must SHOW the failure: { ok:true, value } or { ok:false, code } (a code only; never content)
+// Codex re-review blocker 3: without the key, an ABSENT record is not "known empty": callers that may write must stop first
+export const keyMissing = (key = sealedKey()) => !key;
 export function trySealed(fn) { try { return { ok: true, value: fn() }; } catch (e) { return { ok: false, code: sealedCode(e) }; } }
 
-function fsyncDir(d) { let fd; try { fd = fs.openSync(d, 'r'); fs.fsyncSync(fd); } catch { /* not supported on every platform */ } finally { if (fd !== undefined) try { fs.closeSync(fd); } catch {} } }
+// I/O seam (tests inject faults here; production uses node:fs). Codex R1 re-review blocker 2: a directory fsync error is a REAL error
+// and propagates (only "fsync of a directory is not supported here", EINVAL/ENOTSUP, is tolerated); short writes are completed.
+export const sealedIO = { openSync: fs.openSync, writeSync: fs.writeSync, fsyncSync: fs.fsyncSync, closeSync: fs.closeSync, renameSync: fs.renameSync, linkSync: fs.linkSync };
+function fsyncDir(d) {
+  const fd = sealedIO.openSync(d, 'r');
+  try { sealedIO.fsyncSync(fd); } catch (e) { if (!['EINVAL', 'ENOTSUP'].includes(e && e.code)) throw e; }
+  finally { sealedIO.closeSync(fd); }
+}
+function writeAll(fd, buf) { let off = 0; while (off < buf.length) { const n = sealedIO.writeSync(fd, buf, off, buf.length - off); if (!(n > 0)) throw Object.assign(new Error('EIO: short write made no progress'), { code: 'EIO' }); off += n; } }
 
 // write: durable, verified, never plaintext. opts.exclusive: refuse to replace an existing sealed file (replaces {flag:'wx'}).
 export function writeSealed(p, data, key = sealedKey(), opts = {}) {
@@ -106,23 +130,30 @@ export function writeSealed(p, data, key = sealedKey(), opts = {}) {
   const out = seal(buf, key, id);   // throws before touching any file when the key is missing
   const sp = sealedPath(p);
   if (opts.exclusive && fs.existsSync(sp)) throw Object.assign(new Error('EEXIST: ' + id), { code: 'EEXIST' });
+  // unchanged content: no new file (a fresh IV would otherwise make an identical record a new git blob on every save; Codex cost note)
+  if (!opts.exclusive && fs.existsSync(sp)) { let same = false; try { same = unseal(fs.readFileSync(sp), key, id).equals(buf); } catch {} if (same) { if (fs.existsSync(p)) { fs.rmSync(p); fsyncDir(path.dirname(p)); } return false; } }
   fs.mkdirSync(path.dirname(p), { recursive: true });
   const tmp = sp + '.tmp-' + process.pid + '-' + crypto.randomBytes(4).toString('hex');
-  const fd = fs.openSync(tmp, 'wx');
-  try { fs.writeSync(fd, out); fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
-  if (opts.exclusive) { try { fs.linkSync(tmp, sp); } finally { fs.rmSync(tmp, { force: true }); } }
-  else fs.renameSync(tmp, sp);
-  fsyncDir(path.dirname(sp));
+  const fd = sealedIO.openSync(tmp, 'wx');
+  try { writeAll(fd, out); sealedIO.fsyncSync(fd); } catch (e) { try { sealedIO.closeSync(fd); } catch {} fs.rmSync(tmp, { force: true }); throw e; }
+  sealedIO.closeSync(fd);
+  try { if (opts.exclusive) sealedIO.linkSync(tmp, sp); else sealedIO.renameSync(tmp, sp); } finally { if (opts.exclusive) fs.rmSync(tmp, { force: true }); }
+  fsyncDir(path.dirname(sp));   // throws on a real I/O error: the plaintext copy below is then NOT removed
   if (!unseal(fs.readFileSync(sp), key, id).equals(buf)) throw err('SEALED_UNREADABLE', 'read-back mismatch');
-  if (fs.existsSync(p)) { fs.rmSync(p); fsyncDir(path.dirname(p)); }   // stale plaintext leaves the working tree only after a verified sealed copy exists
+  if (fs.existsSync(p)) { fs.rmSync(p); fsyncDir(path.dirname(p)); }   // stale plaintext leaves the working tree only after a durable, verified sealed copy
 }
 export const writeSealedJson = (p, obj, key, opts) => writeSealed(p, JSON.stringify(obj), key, opts);
 
 // jsonl append: read-modify-write of the whole sealed file. Concurrent appends from different runs are merged by sealed-merge.mjs.
-export function appendSealedLines(p, lines, key = sealedKey()) {
+export function appendSealedLines(p, lines, key = sealedKey(), opts = {}) {
   if (!key) throw err('SEALED_KEY_MISSING');
   const add = (Array.isArray(lines) ? lines : [lines]).map((l) => (typeof l === 'string' ? l.replace(/\n+$/, '') : JSON.stringify(l))).filter((l) => l.length);
   if (!add.length) return;
+  if (SEGMENTED.test(logicalId(p))) {
+    if (!fs.existsSync(sealedPath(p)) && fs.existsSync(p)) throw err('SEALED_LEGACY_PLAINTEXT', logicalId(p));   // never append beside unmigrated plaintext
+    const seg = segmentPath(p, opts.day), old = readSealedText(seg, key) || '';
+    return writeSealed(seg, old + (old && !old.endsWith('\n') ? '\n' : '') + add.join('\n') + '\n', key);
+  }
   const old = readSealedText(p, key) || '';
   writeSealed(p, old + (old && !old.endsWith('\n') ? '\n' : '') + add.join('\n') + '\n', key);
 }

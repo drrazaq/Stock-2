@@ -33,15 +33,7 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          source .github/sealed-git.sh   # R1: sealed merge driver + guard
-          save() {
-            git add data
-            sealed_guard || { git reset -q; echo "Error: refusing to publish T1 provider data in plaintext (save skipped; the bot keeps answering)" | tee -a run.log; return 0; }
-            git diff --cached --quiet && return 0
-            git commit -q -m "bot $(date -u +%FT%RZ)"
-            for i in 1 2 3 4 5; do if git pull -q --rebase -X theirs && git push -q; then return 0; fi; git rebase --abort 2>/dev/null || true; sleep 5; done
-            echo "Error: could not save the data folder to the repository" | tee -a run.log
-          }
+          source .github/bot-save.sh   # R1: save() with the sealed merge driver, guards, retry of unpublished commits, SAVE NOT CONFIRMED
           # privacy migration stage 1 (28 Oct): keep a copy of the owner's private files in the private repository. Does nothing
           # without the PRIVATE_DATA_TOKEN secret or before the connection check passed; never stops the bot.
           mirror() { bash .github/private-data.sh mirror >> run.log 2>&1 || true; }

@@ -2,7 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {marketSession} from './market-session.mjs';
-import {readSealedJson,listSealed,sealedCode} from './sealed-store.mjs';
+import {readSealedJson,listSealed,sealedCode,keyMissing} from './sealed-store.mjs';
 const day=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\d$/.test(x)&&Number.isFinite(Date.parse(x))&&new Date(x).toISOString().slice(0,10)===x;
 const minute=x=>typeof x==='string'&&/^\d\d:\d\d$/.test(x)&&+x.slice(0,2)<24&&+x.slice(3)<60?+x.slice(0,2)*60+ +x.slice(3):null;
 export const watchMinute=m=>m===null?'UNKNOWN':String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
@@ -36,7 +36,7 @@ export function watcherReport(summaries=[],snapshots=[]){
 }
 export function readWatcherReport(directory='data'){
  // R1: the live file and per-run archives are sealed T1 files; an unreadable one makes the evidence UNKNOWN (actionable), never "no data"
- let sealedFail=null;const read=p=>{try{return readSealedJson(p,null);}catch(e){sealedFail=sealedFail||sealedCode(e);return null;}}, rows=[];
+ let sealedFail=keyMissing()?'SEALED_KEY_MISSING':null;const read=p=>{try{return readSealedJson(p,null);}catch(e){sealedFail=sealedFail||sealedCode(e);return null;}}, rows=[];
  try{for(const l of fs.readFileSync(path.join(directory,'ignition-days.jsonl'),'utf8').split('\n')){try{rows.push(JSON.parse(l));}catch{}}}catch{}
  const snapshots=[read(path.join(directory,'ignition-live.json'))].filter(Boolean),date=uniqueWatcherDays(rows).rows.at(-1)?.day||snapshots[0]?.day;
  if(day(date)){const dir=path.join(directory,'ignition-runs',date);let names=[];try{names=listSealed(dir,/^[A-Za-z0-9_-]+\.json$/);}catch(e){sealedFail=sealedFail||sealedCode(e);}for(const f of names){const x=read(path.join(dir,f));if(x)snapshots.push(x);}}

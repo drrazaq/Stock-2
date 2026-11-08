@@ -30,7 +30,8 @@ import zlib from 'node:zlib';
 import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: dated on the New York calendar (fixed 22 Oct 2026)
 import { LIVE_RULES, IG_RULES, EXITS, simulate, toBars, costOf } from './ignition-core.mjs';
 import { blockedRunnerPolicy } from './blocked-runner-policy.mjs';
-import { readSealedLines, readSealedJson, appendSealedLines, sealedCode } from './sealed-store.mjs';   // R1: T1 history and live file are sealed (provider prices)   // (24 Oct, outside patch) KEEP / REVIEW / UNRESOLVED by a 30-case, 55% rule
+import { readSealedLines, readSealedJson, appendSealedLines, sealedCode, keyMissing } from './sealed-store.mjs';
+if (keyMissing()) { console.error('missed-runner ledger: SEALED_KEY_MISSING (no sealing key: stopped before any request or write)'); process.exit(1); }   // R1 (Codex re-review 3)   // R1: T1 history and live file are sealed (provider prices)   // (24 Oct, outside patch) KEEP / REVIEW / UNRESOLVED by a 30-case, 55% rule
 const env = process.env, OUT = env.OUT || 'data/missed-runners.json', CDIR = env.FM_CACHE_DIR || 'fm-cache', HIST = 'data/ignition-missed-history.jsonl', DAYS = 'data/ignition-days.jsonl';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TEST = local(env.MASSIVE_BASE), PX = TEST || 'https://api.massive.com';
 const sleep = (ms) => new Promise(r => setTimeout(r, TEST ? 0 : ms)), J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };

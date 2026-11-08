@@ -9,7 +9,8 @@
 //   (c) whether ANY such call exists (count), and the highest-delta one of them.
 // Writes data/options-spread-survey.json and data/options-spread-survey.md. Keys only from env (GitHub secrets), never printed.
 import fs from 'node:fs';
-import { writeSealed } from './sealed-store.mjs';
+import { writeSealed, keyMissing } from './sealed-store.mjs';
+if (keyMissing()) { console.error('options survey: SEALED_KEY_MISSING (no sealing key: stopped before any request or write)'); process.exit(1); }   // R1 (Codex re-review 3)
 const env = process.env, AD = 'https://data.alpaca.markets', AH = { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY || '', 'APCA-API-SECRET-KEY': env.ALPACA_SECRET || '' } };
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const sleep = (ms) => new Promise(r => setTimeout(r, ms)), TODAY = new Date().toISOString().slice(0, 10);

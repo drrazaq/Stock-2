@@ -484,19 +484,21 @@ jobs:
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
           # R1: a sealed file cannot be copied over fresh main (that drops what the watcher saved during this 2-hour run); keep this run's
           # starting version as the merge base, then merge sealed (decrypt, line union, re-encrypt) instead of copying
-          BASED="$RUNNER_TEMP/run-base"; mkdir -p "$BASED/data"; for f in $FILES; do case "$f" in *.sealed) git cat-file -e "HEAD:$f" 2>/dev/null && git show "HEAD:$f" > "$BASED/$f";; esac; done; true
+          # the missed-runner history appends to a daily sealed segment (data/ignition-missed-history.jsonl.d/DAY.jsonl.sealed): carry it too
+          SEG=$(git ls-files -m -o --exclude-standard -- data/ignition-missed-history.jsonl.d); for f in $SEG; do mkdir -p "$OUTD/$(dirname "$f")" && cp "$f" "$OUTD/$f"; done
+          BASED="$RUNNER_TEMP/run-base"; mkdir -p "$BASED/data"; for f in $FILES $SEG; do case "$f" in *.sealed) git cat-file -e "HEAD:$f" 2>/dev/null && mkdir -p "$BASED/$(dirname "$f")" && git show "HEAD:$f" > "$BASED/$f";; esac; done; true
           git reset -q --hard && git clean -fdq data && git pull -q --rebase
           rm -f "$RUNNER_TEMP/sealed-merge-failed"
           (cd "$OUTD" && find data -type f) | while read -r f; do
             if [[ "$f" == *.sealed ]] && [ -f "$BASED/$f" ] && [ -f "$f" ]; then node sealed-merge.mjs "$BASED/$f" "$f" "$OUTD/$f" "$f" || touch "$RUNNER_TEMP/sealed-merge-failed"
             else cp "$OUTD/$f" "$f"; fi; done
-          [ ! -f "$RUNNER_TEMP/sealed-merge-failed" ] || { echo "Error: sealed merge failed; the missed-runner history was not saved" | tee -a run.log; git checkout -q -- data/ignition-missed-history.jsonl.sealed 2>/dev/null || true; }
+          [ ! -f "$RUNNER_TEMP/sealed-merge-failed" ] || { echo "Error: sealed merge failed; the missed-runner history was not saved" | tee -a run.log; git checkout -q -- data/ignition-missed-history.jsonl.sealed data/ignition-missed-history.jsonl.d 2>/dev/null || true; }
           node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json 2>&1 | tee -a run.log || echo "Error: library merge failed; this run's library edits were not saved" | tee -a run.log
           for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
-          sealed_stage data/ignition-missed-history.jsonl   # R1: stage the plaintext deletion with its sealed replacement
+          sealed_stage data/ignition-missed-history.jsonl data/ignition-missed-history.jsonl.d   # R1: plaintext deletion + sealed segments
           sealed_guard || { echo "Error: refusing to publish T1 provider data in plaintext" | tee -a run.log; exit 1; }
           git diff --cached --quiet || git commit -m "leaders fair test $(date -u +%F)"
-          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && sealed_push_guard && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the study result" | tee -a run.log; exit 1; }
       # If anything above failed, tell the owner on Telegram straight away.
       - if: failure()

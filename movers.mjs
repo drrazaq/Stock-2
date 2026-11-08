@@ -4,7 +4,8 @@
 // news behind them, and watches small stocks whose trading volume is building before any big move.
 // Everything goes to your private Telegram. It gives evidence and watchlists, never buy signals.
 import fs from 'node:fs';
-import { readSealedJson, readSealedLines, appendSealedLines, writeSealed, sealedCode } from './sealed-store.mjs';
+import { readSealedJson, readSealedLines, appendSealedLines, writeSealed, sealedCode, keyMissing } from './sealed-store.mjs';
+if (keyMissing()) { console.error('movers: SEALED_KEY_MISSING (no sealing key: stopped before any request or write)'); process.exit(1); }   // R1 (Codex re-review 3)
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
 
 const env = process.env;

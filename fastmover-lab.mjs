@@ -17,7 +17,8 @@
 // MODE=study: Sunday (leaders-study workflow, paid Massive plan). MODE=live: weekdays 7 am Kuwait (movers workflow).
 import fs from 'node:fs';
 import zlib from 'node:zlib';
-import { writeSealed } from './sealed-store.mjs';   // R1: data/fastmover-live.json is a sealed T1 file
+import { writeSealed, keyMissing } from './sealed-store.mjs';   // R1: data/fastmover-live.json is a sealed T1 file
+if ((process.env.MODE || '') === 'live' && keyMissing()) { console.error('fast-mover live: SEALED_KEY_MISSING (no sealing key: stopped before any request or write)'); process.exit(1); }   // R1 (Codex re-review 3)
 const env = process.env, MODE = ['live', 'intraday'].includes(env.MODE) ? env.MODE : 'study';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const TEST = local(env.MASSIVE_BASE), PX = TEST || 'https://api.massive.com', TG = local(env.TG_BASE) || 'https://api.telegram.org';

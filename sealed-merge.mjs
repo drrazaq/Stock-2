@@ -26,6 +26,24 @@ export function unionLines(o, a, b) {
   const out = [...A, ...add]; return out.length ? out.join('\n') + '\n' : '';
 }
 
+// OWNER STATE (Codex re-review: the owner-state race). data/options-shadow.json holds the owner's REAL option trades (`real`, written
+// by the bot's commands) beside the paper lane (`open`, `done`, `labT`, `cc`, ... written by the nightly scan). It is merged by
+// TOP-LEVEL KEY: a key changed on one side only takes that side; the same change on both sides is kept once; a key changed
+// differently on both sides is a CONFLICT whatever SEALED_MERGE_FAVOR says (the save fails loudly and is retried; nothing is dropped).
+export const KEYED_STATE = new Set(['data/options-shadow.json']);
+export function mergeKeyed(o, a, b) {
+  const O = o.length ? JSON.parse(o) : {}, A = JSON.parse(a), B = JSON.parse(b), J = (x) => JSON.stringify(x);
+  for (const x of [O, A, B]) if (!x || typeof x !== 'object' || Array.isArray(x)) return { ok: false, why: 'not a JSON object' };
+  const out = {}, keys = [...new Set([...Object.keys(A), ...Object.keys(B), ...Object.keys(O)])];
+  for (const k of keys) {
+    const ok = J(O[k]), ak = J(A[k]), bk = J(B[k]);
+    const v = ak === bk ? A[k] : ak === ok ? B[k] : bk === ok ? A[k] : Symbol.for('conflict');
+    if (v === Symbol.for('conflict')) return { ok: false, why: 'both sides changed "' + k + '"' };
+    if (v !== undefined) out[k] = v;
+  }
+  return { ok: true, text: JSON.stringify(out) };
+}
+
 export function mergeSealed({ base, cur, other, id, key, favor = '' }) {
   const dec = (b) => (b.length ? unseal(b, key, id) : Buffer.alloc(0));
   const O = dec(base), A = dec(cur), B = dec(other);
@@ -33,6 +51,7 @@ export function mergeSealed({ base, cur, other, id, key, favor = '' }) {
   if (A.equals(O)) return { ok: true, out: other };
   if (B.equals(O)) return { ok: true, out: cur };
   if (/\.gz$/.test(id)) return { ok: false, why: 'binary changed on both sides' };
+  if (KEYED_STATE.has(id)) { let r; try { r = mergeKeyed(O.toString('utf8'), A.toString('utf8'), B.toString('utf8')); } catch { r = { ok: false, why: 'not JSON' }; } return r.ok ? { ok: true, out: seal(Buffer.from(r.text, 'utf8'), key, id) } : r; }
   if (/\.jsonl$/.test(id)) { const u = unionLines(O.toString('utf8'), A.toString('utf8'), B.toString('utf8')); if (u !== null) return { ok: true, out: seal(Buffer.from(u, 'utf8'), key, id) }; }
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'sealed-merge-')); fs.chmodSync(dir, 0o700);
   try {

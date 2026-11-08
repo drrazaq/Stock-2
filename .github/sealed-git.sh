@@ -9,3 +9,5 @@ git config merge.sealed.name "R1 sealed provider data"
 git config merge.sealed.driver "node '$R1_ROOT/sealed-merge.mjs' %O %A %B %P"
 sealed_stage() { local p; for p in "$@"; do if [ -e "$p" ] || [ -n "$(git ls-files -- "$p")" ]; then git add -A -- "$p"; fi; done; }
 sealed_guard() { node "$R1_ROOT/sealed-guard.mjs" --staged; }
+#  4. sealed_push_guard  runs AFTER pull/rebase, immediately before `git push`, on the exact tree being published (see sealed-guard.mjs --push)
+sealed_push_guard() { node "$R1_ROOT/sealed-guard.mjs" --push "${1:-origin/main}"; }

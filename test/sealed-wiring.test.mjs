@@ -54,7 +54,7 @@ test('the key reaches exactly the steps that read/write T1 or merge sealed files
   assert.doesNotMatch(wf('fastmover-intraday.yml'), /SEALED_SECRET/, 'intraday/study modes never touch T1');
 });
 
-const STAGERS = ['ignition.yml', 'options-survey.yml', 'Smart-money.yml', 'movers.yml', 'leaders-study.yml', 'bot.yml'];
+const STAGERS = ['ignition.yml', 'options-survey.yml', 'Smart-money.yml', 'movers.yml', 'leaders-study.yml'];
 test('every workflow save that can carry T1 changes registers the sealed merge driver and runs the guard before committing', () => {
   for (const f of STAGERS) {
     const s = wf(f); assert.match(s, /source \.github\/sealed-git\.sh/, f);
@@ -94,11 +94,22 @@ test('website: index.html fetches signals.json and discovery.json only (T2), and
   assert.match(wf('pages.yml'), /index\.html/);
 });
 
-test('migration workflow: manual dispatch only, exact confirmation, guard --all and tree verification; no schedule', () => {
+test('migration workflow: manual dispatch only, exact confirmation, approved source checkout, fast-forward push, tree receipt; no schedule', () => {
   const s = wf('r1-migrate.yml');
-  assert.doesNotMatch(s, /schedule:|push:/); assert.match(s, /github\.event\.inputs\.confirm == 'MIGRATE-R1'/);
+  assert.doesNotMatch(s, /schedule:|push:\n/); assert.match(s, /github\.event\.inputs\.confirm == 'MIGRATE-R1'/);
+  assert.match(s, /ref: \$\{\{ github\.event\.inputs\.source_sha \}\}/); assert.match(s, /--apply "\$SOURCE_SHA"/);
   assert.ok(s.indexOf('--apply') < s.indexOf('sealed-guard.mjs --all') && s.indexOf('sealed-guard.mjs --all') < s.indexOf('git commit'));
-  assert.match(s, /--verify-tree origin\/main/);
+  assert.doesNotMatch(s.split('\n').filter((l) => !/^\s*#/.test(l)).join('\n'), /git pull|rebase|for i in/, 'no rebase onto newer data and no retry');
+  assert.match(s, /git push -q origin HEAD:refs\/heads\/main/); assert.match(s, /--verify-tree origin\/main/);
+});
+
+test('every push is preceded by the push-time guard on the reconciled tree (Codex re-review 5)', () => {
+  for (const f of ['ignition.yml', 'options-survey.yml', 'Smart-money.yml', 'movers.yml', 'leaders-study.yml']) {
+    const s = wf(f); for (const line of s.split('\n').filter((l) => /git push/.test(l))) assert.match(line, /sealed_push_guard && git push/, f);
+  }
+  assert.match(R('.github/save-data.sh'), /pull && sealed_push_guard && git push -q/);
+  assert.match(R('.github/bot-save.sh'), /git pull -q --rebase -X theirs && sealed_push_guard && git push -q/);
+  assert.match(wf('bot.yml'), /source \.github\/bot-save\.sh/);
 });
 
 test('.gitattributes keeps sealed files out of text merge and diff', () => {

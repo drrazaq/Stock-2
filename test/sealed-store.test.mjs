@@ -111,3 +111,30 @@ test('T1 inventory patterns: the 45 tracked families match; neighbours that are 
   for (const p of ['data/opp-days.jsonl', 'data/signals.json', 'data/discovery.json', 'data/shadow-report.json', 'data/shadow-outcomes/2026-11-06.json.gz', 'data/ignition-days.jsonl',
     'data/radar-v3-ledger.jsonl', 'data/options-lab.json', 'data/smart-money.json', 'data/opp-ledger.jsonl.sealed', 'data/shadow/2026-11-06.jsonl.gz.sealed', 'index.html']) assert.ok(!isT1(p), p);
 });
+
+test('unchanged content is not rewritten (no fresh-IV blob for an identical record); changed content is', (t) => {
+  const d = tmp(t), p = path.join(d, 'data', 'options-shadow.json');
+  writeSealedJson(p, { real: [1] }, K); const a = fs.readFileSync(sealedPath(p));
+  assert.equal(writeSealedJson(p, { real: [1] }, K), false); assert.deepEqual(fs.readFileSync(sealedPath(p)), a, 'identical bytes kept');
+  writeSealedJson(p, { real: [1, 2] }, K); assert.notDeepEqual(fs.readFileSync(sealedPath(p)), a);
+});
+
+test('segmented ledgers: appends write only that day\'s sealed segment; reads return base + segments in date order', (t) => {
+  const d = tmp(t), p = path.join(d, 'data', 'opp-ledger.jsonl');
+  writeSealed(p, '{"n":0}\n', K);   // the migrated base
+  const base = fs.readFileSync(sealedPath(p));
+  appendSealedLines(p, [{ n: 2 }], K, { day: '2026-01-03' }); appendSealedLines(p, [{ n: 1 }], K, { day: '2026-01-02' }); appendSealedLines(p, [{ n: 3 }], K, { day: '2026-01-03' });
+  assert.deepEqual(fs.readFileSync(sealedPath(p)), base, 'the base file is never rewritten by appends');
+  assert.deepEqual(fs.readdirSync(p + '.d').sort(), ['2026-01-02.jsonl.sealed', '2026-01-03.jsonl.sealed']);
+  assert.deepEqual(readSealedLines(p, K), [{ n: 0 }, { n: 1 }, { n: 2 }, { n: 3 }]);
+  assert.ok(isT1('data/opp-ledger.jsonl.d/2026-01-02.jsonl') && !isT1('data/opp-ledger.jsonl.d/2026-01-02.jsonl.sealed'));
+  fs.writeFileSync(path.join(p + '.d', '2026-01-04.jsonl'), '{"leak":1}\n');
+  assert.throws(() => readSealedLines(p, K), code('SEALED_LEGACY_PLAINTEXT'), 'a plaintext segment is refused');
+  fs.rmSync(path.join(p + '.d', '2026-01-04.jsonl'));
+  assert.throws(() => readSealedLines(p, null), code('SEALED_KEY_MISSING'));
+  const q = path.join(d, 'data', 'premarket.jsonl'); fs.writeFileSync(q, '{"old":1}\n');
+  assert.throws(() => appendSealedLines(q, [{ n: 1 }], K), code('SEALED_LEGACY_PLAINTEXT'), 'no segment beside unmigrated plaintext');
+  assert.equal(fs.existsSync(q + '.d'), false);
+  const r = path.join(d, 'data', 'movers-journal.jsonl'); appendSealedLines(r, [{ a: 1 }], K, { day: '2026-01-05' });
+  assert.deepEqual(readSealedLines(r, K), [{ a: 1 }], 'segments without a base file');
+});

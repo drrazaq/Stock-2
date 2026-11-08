@@ -6,6 +6,28 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0. Rev3: Codex's re-review of `ae8cbb63` (PR #1 comment 6717623537) and the owner-state race
+
+Each blocker has a reproduction test. The tests were run against the corrected code (pass) and against `ae8cbb63` (fail), except where noted.
+
+| Blocker | Repair | Reproduction (rev3 pass / `ae8cbb63` fail) |
+|---|---|---|
+| **1. Recovery escape** | `--export-to` checks the **real path**, not the lexical one. It refuses the checkout and its ancestors and any symlink in the destination path, creates each component itself, writes files with `O_EXCL\|O_NOFOLLOW`, mode 0600, and only into a new or empty folder. | `sealed-migrate`: Codex's outside symlink into the checkout; symlink below the root; non-empty folder; second export. |
+| **2. Durability error swallowed** | A directory `fsync` error now propagates (only EINVAL/ENOTSUP, "unsupported", is tolerated). The plaintext copy is removed only after a durable, read-back-verified sealed copy exists. Short writes are completed; a zero-progress write fails. An I/O seam (`sealedIO`) is used for fault injection. | `sealed-blockers`: injected directory EIO (the write fails and the original plaintext is kept); 7-byte short writes; zero write. |
+| **3. Missing key + absent record** | Without the key an absent record is **not "known empty"**. `scan.mjs` marks every T1 read `SEALED_KEY_MISSING`, so the options lane returns **before any request or ticket**, and owner option commands reply NOT RECORDED. Every writer job (missed-runners, shadow-outcomes, scorecard, movers, options-survey, fast-mover live) exits 1 at start, before any request. Health and watcher evidence report it even when the files are absent. When the key is present, absent and unreadable stay distinct. | `sealed-blockers`: Codex's options-lane reproduction (0 requests); the command with and without the key; six writer jobs under a fetch tripwire (0 requests, 0 files); health. |
+| **4. Migration provenance and completeness** | `--apply <approved source sha>` requires HEAD = that commit and a **clean** checkout (no staged, unstaged or untracked change). Bytes come from the commit. It writes and commits `.github/r1-migration-manifest.json` (source id; every path, size, sha256). The index and the pushed tree must hold **exactly** that set, decrypting to the same hashes, with no plaintext. Zero files is refused. The receipt checks that the migration commit's **parent is the approved source**. The workflow checks out that sha, pushes **fast-forward only** (no rebase, no retry), and verifies `origin/main`. | `sealed-migrate`: Codex's staged synthetic addition; untracked file; dirty tree; HEAD ≠ source; zero files; missing, extra or changed sealed file; a commit rebased off the source. |
+| **5. Guard after reconciliation** | `sealed_push_guard` (`sealed-guard.mjs --push`) runs **after** pull/rebase, immediately before **every** push (5 workflows, `save-data.sh`, the bot). It checks the exact tree to be published. **Pre-migration policy:** it refuses T1 plaintext that is new or changed relative to `origin/main`, so offset-only bot saves still publish. **After migration** (manifest present): it refuses **any** T1 plaintext, so an old writer's plaintext arriving through the rebase is never re-published. **Writer quiescence:** `r1-writer-gate.mjs` decides offline, from saved GitHub run listings, and passes only when no T1 writer run is queued, waiting or in progress. | `sealed-blockers`: a pre-migration offset save publishes; after migration, an old writer's plaintext arriving through the rebase is refused at push with nothing published; gate cases. `sealed-wiring`: every push line is guarded. |
+| **Owner-state race** | `data/options-shadow.json` merges **by top-level key**: your `real` trades (bot) and the paper keys (scan) never overwrite each other. A key changed differently on both sides is a **conflict whatever `-X theirs` says**: refused, never one side. The bot's save moved to `.github/bot-save.sh`. It now retries **any unpublished commit** at the next save (before rev3, a refused push left the commit behind indefinitely unless something new changed), and on failure tells you **once per run**: "SAVE NOT CONFIRMED". A "recorded" reply means recorded in that run; it is published at the next successful save. | `sealed-blockers`: Codex's exact case (`ae8cbb63` result `real: []`; rev3 keeps both); a real clash refused, origin untouched, local commit kept, one warning; unpublished-commit retry*. |
+
+\* The retry test exercises the new `bot-save.sh`. The old inline bot save cannot be run as a file, so that case shows the fix, not a reproduction.
+
+**Cost (Codex: 0.49 MB/day was not a bound).** The calculation exposed a real problem. Whole-file rewrites of ever-growing ledgers grow history **quadratically**: about **1.78 GB in a year** at today's growth rates. Rev3 fixes it:
+- the five append-only ledgers append to **daily sealed segments** (`data/x.jsonl.d/DAY.jsonl.sealed`);
+- readers see base + segments unchanged;
+- an unchanged record is not rewritten, so a fresh IV no longer makes an identical record a new blob.
+
+Projected one-year growth is now about **25 MB**, against about **26 MB** for plaintext today (§8).
+
 ## 1. Codex's Stage 1 findings and how this candidate answers them
 
 | Finding | Repair in this candidate | Proof (tests) |
@@ -48,7 +70,7 @@
   - 5 append ledgers;
   - 5 state files;
   - the survey Markdown;
-  - the monthly analyst archives (`T1_PATTERNS` in `sealed-store.mjs`; 6 rules).
+  - the monthly analyst archives (`T1_PATTERNS` in `sealed-store.mjs`; 6 rules, plus a 7th in rev3 for the daily ledger segments).
 - **Correction:** Stage 1's phrase "35 paths/patterns" was imprecise. The exact figure is 45 files today, under 6 pattern rules covering 14 families.
 - **Not T1 (unchanged, residual):** `opp-days.jsonl`, `ignition-days.jsonl`, `ignition-paper.jsonl`, `radar-v3-*`, `shadow-outcomes/`, `shadow-report.json`, `missed-runners.json`, `smart-money.json`, the tips ledger, `signals.json`, `discovery.json`, and the other D2 T2 files.
 
@@ -83,22 +105,30 @@
 
 ## 6. Migration, deployment order and state-safe rollback
 
-**Migration (`sealed-migrate.mjs`, dispatch-only `r1-migrate.yml` with the confirmation text `MIGRATE-R1`; never run here):**
-1. Seals each tracked T1 file only if its working copy equals the committed blob.
-2. Reads each one back after writing.
-3. Stages the deletion and the addition together.
-4. Verifies from the **index** that no T1 plaintext remains and that each sealed blob decrypts to the original sha256.
-5. Commits only if every check passes. After the push it runs `--verify-tree origin/main`.
+**Migration (`sealed-migrate.mjs --apply <approved source sha>`, dispatch-only `r1-migrate.yml` with `MIGRATE-R1` and `source_sha`; never run here), rev3:**
+1. Checks out exactly the approved source. `main` must still equal it.
+2. Requires a clean checkout.
+3. Seals each T1 file from the commit's own bytes, with a durable read-back.
+4. Stages each deletion with its addition.
+5. Writes the manifest.
+6. Verifies the index (exact set, hashes, no plaintext).
+7. Commits.
+8. Verifies `HEAD` again.
+9. Pushes **fast-forward only** (no rebase, no retry).
+10. Verifies `origin/main`, including the parent = source check.
 
-The migration is idempotent. An interrupted run leaves nothing committed, and a fresh checkout restarts it (tested).
+An interrupted run leaves nothing committed. A clean checkout of the source restarts it (tested).
 
-**Deployment order (separate owner approval; STOP-style release discipline):**
+**Deployment order (separate owner approval; STOP-style release discipline; not yet an approved executable unit):**
 1. Owner key decision (§7).
-2. Disable the T1 writer workflows: ignition, movers, options-survey, Smart-money, leaders-study, main, bot.
-3. Push the code.
-4. Dispatch `r1-migrate.yml` once.
-5. Receipt: `--verify-tree`.
-6. Re-enable the workflows.
+2. Disable the T1 writer workflows: ignition, movers, options-survey, Smart-money, leaders-study, main, bot, opportunity-radar, scorecard, fastmover-intraday.
+3. **Writer gate:** save the run listings, then `node r1-writer-gate.mjs` must PASS (no writer run queued, waiting or running).
+4. Push the code. The parent is recorded.
+5. Dispatch `r1-migrate.yml` once with `source_sha` = main after step 4.
+6. Receipt: the job's `--verify-tree origin/main`, plus an independent re-check.
+7. Writer gate again, then re-enable.
+
+Any missing, partial or late receipt follows the reviewed rollback path: no re-enable, and the readers show UNKNOWN.
 
 Between steps 3 and 4 the readers would show `SEALED_LEGACY_PLAINTEXT` (fail-closed), which is why the writers are off. `ignition-watch.mjs` is in the STOP-pinned set: its pins need a refreshed review, not an automatic release.
 
@@ -121,17 +151,19 @@ Between steps 3 and 4 the readers would show `SEALED_LEGACY_PLAINTEXT` (fail-clo
   - The change is a one-word edit per step (`secrets.PRIVATE_KEY` → the new name).
 - **Recommended:** K2 if the owner can keep a backup; otherwise K1 with a written recovery requirement. Before deployment, either way, the owner should confirm that **a copy of the chosen secret exists outside GitHub**, because GitHub secrets cannot be read back.
 
-## 8. Cost (measured on the 45 public T1 files at `b0d76987`; aggregate sizes only)
+## 8. Cost (public T1 files at `b0d76987`; aggregate sizes only; reproducible with `node docs/r1-sealed-provider-data/cost-projection.mjs` from the base checkout)
 
 | Measure | Value |
 |---|---|
-| Plaintext | 8.21 MB |
-| As git stores it today (zlib) | 2.56 MB |
-| **Sealed v2** (compress-then-encrypt) | **2.53 MB** (Stage 1's base64 would have been 10.95 MB, about 33% over plaintext) |
-| CPU to seal all 45 files | about 0.4 s; seal + unseal about 0.3 s (one runner core) |
-| **Daily repository growth** | about **0.49 MB/day** of rewritten sealed blobs (fresh IV, so no git delta), against about 0.11 MB/day today. **About +8 MB a month** of extra history, growing as the append ledgers grow |
-| Actions minutes | negligible added CPU. No new jobs. Runners stay public (no paid private Actions) |
-| Unknowns | GitHub billing for repository and artifact storage beyond the public allowances. Clone and fetch time grow with history. Optional mitigation, not built: monthly segments for the append ledgers, to cap the rewritten size |
+| Plaintext / as git stores it (zlib) / **sealed v2** | 8.21 MB / 2.56 MB / **2.53 MB** (Stage 1 base64: 10.95 MB) |
+| CPU to seal all 45 files | about 0.4 s |
+| **Rewrites per weekday**, from the schedules | watcher 1 effective run (the second cron exits); movers 1; nightly scan 1 (the options lane runs in `daily()` only); bot only on your option commands; smart-money 1; leaders-study weekly; options-survey on dispatch. A retry adds no blob; each driver merge adds one. |
+| Ledger growth | about 52.7 KB/day sealed across the 5 append ledgers (their measured size divided by the days each has existed) |
+| State files rewritten whole (live, movers-state, fastmover-live, options-shadow) | about 47.7 KB per weekday, upper bound (an unchanged record is now skipped) |
+| **One year (250 weekdays), whole-file rewrites (`ae8cbb63`)** | **about 1.78 GB**: quadratic, because each day re-adds the whole grown ledger |
+| **One year, rev3 daily segments** | **about 25 MB**, against about 26 MB for plaintext today (same method) |
+| Per-run archives and shadow days | new files each day in both designs, so no difference |
+| Not established | GitHub's packing of these blobs (ciphertext has no deltas; the figures are object sizes); storage billing beyond the public allowances; clone and fetch time. Public runners do not prove zero spend. |
 
 ## 9. Existing public copies (separate assessment; unchanged by R1)
 
@@ -151,28 +183,28 @@ Between steps 3 and 4 the readers would show `SEALED_LEGACY_PLAINTEXT` (fail-clo
 
 | Run | Result |
 |---|---|
-| New: `sealed-store` 10, `sealed-git` 8, `sealed-migrate` 7, `sealed-readers` 9, `sealed-wiring` 11 | **45/45** |
+| R1 tests (rev3): `sealed-store` 12, `sealed-git` 8, `sealed-migrate` 7, `sealed-readers` 9, `sealed-wiring` 12, **`sealed-blockers` 12 (new)** | **60/60** |
+| Same reproduction files against `ae8cbb63` (imports shimmed only) | `sealed-blockers` 9 of 12 fail, `sealed-migrate` 6 of 7 fail (the passing ones are the writer gate, `bot-save.sh` itself and the loopback check, which are new rev3 files, plus `plan`) |
 | Updated fixtures (T1 fixtures now sealed with a synthetic key, as production writes them): `load-scan` harness, `feed-integrity-watcher` (+2 new end-to-end R1 cases), `sec-request-runtime`, `private-data`, `watcher-resilience`, `watcher-incident-revision` | pass |
 | Gated actual-watcher scenarios (`INCIDENT_WATCHER_SRC`) | `watcher-resilience` 9/9, `watcher-incident-revision` 11/11 |
-| Full serial suite (146 registered files) | **146/146** (details and the date-dependent `premarket-feed` note in `MANIFEST.md`) |
+| Full serial suite (147 registered files, rev3) | **147/147** (`premarket-feed` is wall-clock dependent; see `MANIFEST.md`) |
 
-## 11. Unresolved findings for the owner and Codex
+## 11. Remaining blockers and unresolved findings (rev3)
 
-1. **Key custody (K1/K2) and backup:** an owner decision, needed before deployment (§7).
-2. **Residual publication not closed by R1:**
-   - T2 and derived outputs (`signals.json`, `discovery.json`, `smart-money.json`, the tips ledger, `radar-v3-*`, `missed-runners.json`, `ignition-paper.jsonl`, `shadow-outcomes/`, `opp-days.jsonl`);
-   - other modules' public log lines;
-   - `fm-cache`;
-   - the watcher artifact's non-T1 files.
+**Release blockers, not code:**
+1. **Key custody:** K1 or K2, plus your backup verified outside GitHub (§7). An owner decision; no key was changed.
+2. **An approved executable deployment unit:** exact parent; writer gate evidence; the complete hosted receipt; restoration gates; refreshed STOP watcher pins and independent release review (`ignition-watch.mjs` is unchanged since `ae8cbb63` but changed from STOP's pins).
+3. **Residual public outputs need an explicit disposition** (R1 does not close them):
+   - T2 and derived files: `signals.json`, `discovery.json`, `smart-money.json`, the tips ledger, `radar-v3-*`, `missed-runners.json`, `ignition-paper.jsonl`, `shadow-outcomes/`, `opp-days.jsonl`;
+   - other alert and ACTIONS log echoes;
+   - `fm-cache` minute bars;
+   - the artifact's radar and message state.
 
-   Finnhub's "derived results" wording and Massive's "publish" wording may still apply to them.
-3. **Git history and earlier copies remain public** (§9). There is no licence closure, and actual contract acceptance is unknown.
-4. **Repository growth** of about +8 MB a month (§8); segmenting the ledgers is an option.
-5. **Found while reviewing, NOT caused by R1:**
-   - **Pre-existing loss:** `options-shadow.json` is single-line JSON written by both the nightly scan (paper lane) and the bot (the owner's option commands). A concurrent save keeps one side's whole line under `-X theirs`, before and after R1. A structured merge or a pretty-printed record is a separate fix.
-   - **Pre-existing:** `health.mjs` throws at its final save when `data/health.json` is missing (production has the file).
-6. **Deployment** needs:
-   - the writers off;
-   - a one-time migration dispatch;
-   - refreshed STOP watcher pins;
-   - its own approval.
+   There is no licence closure. Actual contract acceptance is unknown.
+4. **Existing copies:** history, raw SHA URLs, clones, caches, and artifact 13536188063 (expires 13 Nov 19:58 UTC) remain (§9).
+
+**Residual code limits (documented, not blockers in Codex's list):**
+- **Owner command acknowledgement:** "recorded" means recorded in this run. If publication keeps failing, the change is kept locally and retried, and you are told once per run (SAVE NOT CONFIRMED). If the runner ends before a later save succeeds, the unpublished commit is lost with the runner, as before R1. Making the reply wait for a durable push would be a larger bot change.
+- A **real clash** on the same options key (both sides changed `real`) is refused until it clears. The scan never writes `real`, so it needs two concurrent bot writers, which the bot's concurrency group prevents.
+- No replay detection for an older version of the same file.
+- Pre-existing, unchanged: `health.mjs` throws without `data/health.json`.

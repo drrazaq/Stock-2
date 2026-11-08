@@ -4,10 +4,10 @@ import {readWatcherReport} from './watcher-reporting.mjs';
 // Today's smart-money crash ran unnoticed for a day; this is what catches that. Read-only; sends a message only when something is wrong.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
-import { isT1, readSealedJson, sealedCode } from './sealed-store.mjs';   // R1: T1 provider-data files are sealed; unreadable = a named problem, never 'fine'
+import { isT1, readSealedJson, sealedCode, keyMissing } from './sealed-store.mjs';   // R1: T1 provider-data files are sealed; unreadable = a named problem, never 'fine'
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org';
 const sealedProblem = {};
-const readJson = (f) => { if (isT1(f)) { try { const v = readSealedJson(f, null); return v === null ? undefined : v; } catch (e) { sealedProblem[f] = sealedCode(e); return undefined; } } try { return JSON.parse(/\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8')); } catch (e) { return undefined; } };
+const readJson = (f) => { if (isT1(f)) { if (keyMissing()) { sealedProblem[f] = 'SEALED_KEY_MISSING'; return undefined; } try { const v = readSealedJson(f, null); return v === null ? undefined : v; } catch (e) { sealedProblem[f] = sealedCode(e); return undefined; } } try { return JSON.parse(/\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8')); } catch (e) { return undefined; } };
 const now = Date.now();
 // hours between t and now, not counting Saturdays and Sundays (US jobs do not run then)
 const bizHours = (t) => { let h = 0; for (let x = t; x < now; x += 3600e3) { const d = new Date(x).getUTCDay(); if (d !== 0 && d !== 6) h++; } return h; };

@@ -3,7 +3,8 @@
 // Massive grouped daily bars (22 and 23 Oct) + ticker types, and Alpaca SIP minute bars (Massive minute bars as fallback).
 // Writes data/scorecard-1023.json only.
 import fs from 'node:fs';
-import { readSealedJson, sealedCode } from './sealed-store.mjs';
+import { readSealedJson, sealedCode, keyMissing } from './sealed-store.mjs';
+if (keyMissing()) { console.error('scorecard: SEALED_KEY_MISSING (no sealing key: stopped before any request or write)'); process.exit(1); }   // R1 (Codex re-review 3)
 const env = process.env, D0 = '2026-10-22', D1 = '2026-10-23', OUT = 'data/scorecard-1023.json';
 const MV = 'https://api.massive.com', AD = 'https://data.alpaca.markets';
 const AH = { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY || '', 'APCA-API-SECRET-KEY': env.ALPACA_SECRET || '' } };

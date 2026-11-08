@@ -70,7 +70,7 @@ jobs:
           git add data
           sealed_guard || { git reset -q; exit 1; }
           git diff --cached --quiet || git commit -m "movers $(date -u +%FT%RZ)"
-          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && sealed_push_guard && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository" | tee -a run.log; exit 1; }
       # If anything above failed, tell the owner on Telegram straight away.
       - if: failure()

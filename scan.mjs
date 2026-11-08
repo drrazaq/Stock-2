@@ -10,7 +10,7 @@ import zlib from 'node:zlib';
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
 import { priceEvidence, stopText, stopMessageKey, validStop } from './stop-watch.mjs';
-import { isT1, readSealedJson, readSealedLines, writeSealedJson, sealedCode } from './sealed-store.mjs';   // R1: T1 provider-data files are sealed
+import { isT1, readSealedJson, readSealedLines, writeSealedJson, sealedCode, keyMissing } from './sealed-store.mjs';   // R1: T1 provider-data files are sealed
 
 const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;   // test hooks: localhost only
@@ -718,7 +718,8 @@ const L = createRequire(import.meta.url)(tmp);
 // R1: every T1 path is read through the sealed store. A failure is remembered per file (T1ERR) so the message can say UNKNOWN; it is
 // never written back over (an unreadable options record is not replaced by an empty one).
 const T1ERR = {};
-const readT1 = (f, d) => { try { const v = readSealedJson(f, null); delete T1ERR[f]; return v === null ? d : v; } catch (e) { T1ERR[f] = sealedCode(e); console.error('R1 sealed read ' + f + ': ' + T1ERR[f]); return d; } };
+const readT1 = (f, d) => { if (keyMissing()) { T1ERR[f] = 'SEALED_KEY_MISSING'; return d; }   // absent is not 'known empty' without the key (Codex re-review 3)
+  try { const v = readSealedJson(f, null); delete T1ERR[f]; return v === null ? d : v; } catch (e) { T1ERR[f] = sealedCode(e); console.error('R1 sealed read ' + f + ': ' + T1ERR[f]); return d; } };
 const t1Unknown = (f, what) => T1ERR[f] ? what + ': UNKNOWN (its sealed provider-data file cannot be read: ' + T1ERR[f] + ')' : null;
 const readJson0 = (f) => { if (isT1(f)) return readT1(f, null); try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
 // SETTINGS WRITES (review S-4, 22 Oct): every write was readJson(settings, {}) -> one key -> write, so a file that failed to parse was
@@ -2010,7 +2011,7 @@ async function whyMoved(sym, name) {     // the headline must be about THIS comp
 }
 const moverEvidence = () => { const m = readJson('data/movers-state.json', null); if (T1ERR['data/movers-state.json']) return '\n' + t1Unknown('data/movers-state.json', 'Movers radar study'); return m && m.study ? '\nWhat the last ' + m.sessions + ' sessions say about buying after a 20% jump: ' + m.study : '\nThe movers radar has not produced its study yet.'; };
 // OUTSIDE-IN: before the price, the situation. Its own runner history (the radar's journal) and the base rate for stocks like it.
-const moverSituation = (x) => { const out = [], M = readJson0('data/movers-state.json') || {}; let J = []; try { J = readSealedLines('data/movers-journal.jsonl'); } catch (e) { T1ERR['data/movers-journal.jsonl'] = sealedCode(e); out.push('history: UNKNOWN (the movers journal cannot be read: ' + sealedCode(e) + ')'); }
+const moverSituation = (x) => { const out = [], M = readJson0('data/movers-state.json') || {}; let J = []; try { if (keyMissing()) throw Object.assign(new Error(), { code: 'SEALED_KEY_MISSING' }); J = readSealedLines('data/movers-journal.jsonl'); } catch (e) { T1ERR['data/movers-journal.jsonl'] = sealedCode(e); out.push('history: UNKNOWN (the movers journal cannot be read: ' + sealedCode(e) + ')'); }
   const past = J.filter(e => e.sym === x.sym && e.d < ny(Date.now()).d).slice(-3); if (!T1ERR['data/movers-journal.jsonl']) out.push(past.length ? 'history: ran 20%+ before on ' + past.map(e => e.d + ' (' + (e.ret >= 0 ? '+' : '') + Math.round(e.ret * 100) + '%)').join(', ') + ': a repeat runner (repeat runs often come with share sales)' : 'history: first 20%+ run seen by the radar (45-session memory)');
   const base = x.price < 5 ? M.penny : M.study; if (base) out.push('stocks like it (' + (x.price < 5 ? 'under 5 USD' : 'all prices') + ') bought the next morning: ' + base.replace(/^three sessions after the next open they were typically (\S+), and/, 'typically $1 three sessions later, and'));
   return out.map(l => '\n  ' + l).join(''); };

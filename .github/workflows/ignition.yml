@@ -58,11 +58,11 @@ jobs:
           git config user.email "scanner@users.noreply.github.com"
           source .github/sealed-git.sh   # R1: sealed merge driver + staging that includes deletions + guard
           for f in data/ignition-paper.jsonl data/ignition-days.jsonl data/vol-curve.json data/radar-v3-ledger.jsonl data/radar-v3-snap.json data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; true
-          for f in data/ignition-live.json data/premarket.jsonl data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/opp-ledger.jsonl; do sealed_stage "$f" "$f.sealed"; done
+          for f in data/ignition-live.json data/premarket.jsonl data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/opp-ledger.jsonl; do sealed_stage "$f" "$f.sealed" "$f.d"; done   # "$f.d": daily sealed segments of the append ledgers
           sealed_stage data/shadow data/ignition-runs
           sealed_guard   # refuses a commit that adds or modifies any T1 path in plaintext
           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
-          ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          ok=0; for i in 1 2 3 4 5; do if git pull --rebase && sealed_push_guard && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }
       - if: failure()
         env:

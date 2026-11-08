@@ -134,12 +134,13 @@ test('save-data.sh (nightly scan save) end to end: sealed ledger merged with a c
   assert.ok(!tree(w.clone('check2')).includes('data/premarket.jsonl'));
 });
 
-test('leaders-study copy-back: the CLI three-way merge keeps the watcher\'s appends made during the 2-hour run', (t) => {
-  const w = world(t), r = w.a, H = 'data/ignition-missed-history.jsonl', base = path.join(w.d, 'base.sealed'), run = path.join(w.d, 'run.sealed');
-  appendSealedLines(w.at(r, H), [{ d: 1 }], K); fs.copyFileSync(w.at(r, H + '.sealed'), base);
-  appendSealedLines(w.at(r, H), [{ d: 'study' }], K); fs.copyFileSync(w.at(r, H + '.sealed'), run);
-  fs.copyFileSync(base, w.at(r, H + '.sealed')); appendSealedLines(w.at(r, H), [{ d: 'watcher' }], K);   // fresh main
-  const s = spawnSync('node', ['sealed-merge.mjs', base, H + '.sealed', run, H + '.sealed'], { cwd: r, env: { ...ENV, SEALED_MERGE_FAVOR: 'theirs' }, encoding: 'utf8' });
+test('leaders-study copy-back: the CLI three-way merge of a history segment keeps the watcher\'s appends made during the 2-hour run', (t) => {
+  const w = world(t), r = w.a, H = 'data/ignition-missed-history.jsonl', SEG = H + '.d/2026-01-04.jsonl', base = path.join(w.d, 'base.sealed'), run = path.join(w.d, 'run.sealed');
+  const app = (x) => appendSealedLines(w.at(r, H), [x], K, { day: '2026-01-04' });
+  app({ d: 1 }); fs.copyFileSync(w.at(r, SEG + '.sealed'), base);
+  app({ d: 'study' }); fs.copyFileSync(w.at(r, SEG + '.sealed'), run);
+  fs.copyFileSync(base, w.at(r, SEG + '.sealed')); app({ d: 'watcher' });   // fresh main
+  const s = spawnSync('node', ['sealed-merge.mjs', base, SEG + '.sealed', run, SEG + '.sealed'], { cwd: r, env: { ...ENV, SEALED_MERGE_FAVOR: 'theirs' }, encoding: 'utf8' });
   assert.equal(s.status, 0, s.stderr);
   assert.deepEqual(readSealedText(w.at(r, H), K).trim().split('\n'), ['{"d":1}', '{"d":"watcher"}', '{"d":"study"}']);
 });
