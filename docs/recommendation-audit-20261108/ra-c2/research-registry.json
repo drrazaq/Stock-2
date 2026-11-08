@@ -1,0 +1,50 @@
+{
+  "id": "EXT-CNBC-LR-202610-20S",
+  "status": "EXPLORATORY_REGISTERED_SPECIFICATION_UNDER_REVIEW_NO_SCORES",
+  "source": "CNBC Mad Money Lightning Round",
+  "publicationIntervalNY": [
+    "2026-10-01",
+    "2026-11-01"
+  ],
+  "horizonSessions": 20,
+  "originalProtocol": "docs/a-first-capture-continuation/external-recommendation-audit.proposed.json",
+  "firstComparisonCommit": "fac44ccd4423fd2db81bfe648431ae54735f7289",
+  "revisions": [
+    {
+      "contract": "RA-C1",
+      "status": "CORRECTIONS_REQUIRED",
+      "review": "d9ebfa4e676fb8f5ac4cbbd1546c506b371f2f16"
+    },
+    {
+      "contract": "RA-C2",
+      "status": "FOCUSED_REVIEW_REQUESTED",
+      "priceScores": 0
+    }
+  ],
+  "primaryControls": [
+    "disjoint 250-entry causal historical same-security exposure baseline",
+    "full PIT same-date eligible common-stock mean"
+  ],
+  "mandatoryViews": [
+    "base",
+    "unchanged stress",
+    "net and both excesses",
+    "remove-two-best gates",
+    "bounds and missingness",
+    "date and episode dependence",
+    "Tier B and Tier Q separately"
+  ],
+  "additionalResearchTrialsCounted": 1,
+  "leagueSnapshot": {
+    "path": "data/agent-league.json",
+    "sha256": "582adc819eecaec72d27ec6feeaf7f407fc7254b38879934c046684359674cef",
+    "trials": 2130,
+    "bar": 4.07,
+    "currentGlobalCount": null,
+    "snapshotPlusAuditMinimum": 2131
+  },
+  "productionRegistryChanged": false,
+  "noNewHypothesisFromSensitivity": true,
+  "maximumFavorableDisposition": "MAY_PROPOSE_SEPARATELY_REVIEWED_FORWARD_PAPER; no passed prospective record or activation",
+  "acquisitionAuthorized": false
+}
