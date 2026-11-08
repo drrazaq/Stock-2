@@ -1,0 +1,159 @@
+TAP version 13
+# intraday check done: 1 watched, 1 new alerts
+# {
+#   "case": "holding",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nZZT: SELL. Target 2 (110.00) reached. Last price 115.00 (FINNHUB, Nov 5 09:35 New York, 5 min old) (+15.0% from your 100.00).\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889630000,
+#       "text": "Market hours check\\n\\nZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1,
+#       "ZZTmyt2": 1
+#     }
+#   }
+# }
+# Subtest: holding target is checked after earlier Telegram awaits, not only before the batch
+not ok 1 - holding target is checked after earlier Telegram awaits, not only before the batch
+  ---
+  duration_ms: 106.373665
+  location: '/workspace/g2-verification/rev15-actual-send.test.mjs:41:1'
+  failureType: 'testCodeFailure'
+  error: 'age320s after the first-check Telegram await: no current holding target'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    Market hours check
+    
+    ZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).
+    
+    Tested signals, not instructions. Not financial advice, not a halal ruling.
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev15-actual-send.test.mjs:44:9)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# {
+#   "case": "plan",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nnone recorded\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889630000,
+#       "text": "Market hours check\\n\\nZZP at 21.00: paper trade from 2026-11-01 reached its target 20.00.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1,
+#       "ZZPtg2026-11-01": 1
+#     }
+#   }
+# }
+# Subtest: plan alert is checked after earlier Telegram awaits under the unchanged20min gate
+not ok 2 - plan alert is checked after earlier Telegram awaits under the unchanged20min gate
+  ---
+  duration_ms: 53.405781
+  location: '/workspace/g2-verification/rev15-actual-send.test.mjs:47:1'
+  failureType: 'testCodeFailure'
+  error: 'age1220s after first-check Telegram await: no current paper-target claim'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    Market hours check
+    
+    ZZP at 21.00: paper trade from 2026-11-01 reached its target 20.00.
+    
+    Tested signals, not instructions. Not financial advice, not a halal ruling.
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev15-actual-send.test.mjs:50:9)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Telegram rate limit, waiting 1 s
+# intraday check done: 1 watched, 1 new alerts
+# {
+#   "case": "429_retry",
+#   "attempts": [
+#     {
+#       "at": 1793889600000,
+#       "text": "Market hours check\\n\\nZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 429
+#     },
+#     {
+#       "at": 1793889620000,
+#       "text": "Market hours check\\n\\nZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1,
+#       "ZZTmyt2": 1
+#     }
+#   }
+# }
+# Subtest: rate-limited retry rechecks the holding quote at the next network attempt
+not ok 3 - rate-limited retry rechecks the holding quote at the next network attempt
+  ---
+  duration_ms: 62.991023
+  location: '/workspace/g2-verification/rev15-actual-send.test.mjs:53:1'
+  failureType: 'testCodeFailure'
+  error: 'current target payload must not survive retry at source age310s'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev15-actual-send.test.mjs:57:9)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: loopback only
+ok 4 - loopback only
+  ---
+  duration_ms: 0.646902
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 1
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 325.880333

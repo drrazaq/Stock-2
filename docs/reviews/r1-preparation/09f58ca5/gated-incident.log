@@ -1,0 +1,65 @@
+TAP version 13
+# Subtest: configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable
+ok 1 - configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable
+  ---
+  duration_ms: 2.778284
+  ...
+# Subtest: health reports configured gaps and known outside hour separately; explicit actionable thresholds
+ok 2 - health reports configured gaps and known outside hour separately; explicit actionable thresholds
+  ---
+  duration_ms: 2.309741
+  ...
+# Subtest: message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed
+ok 3 - message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed
+  ---
+  duration_ms: 10.843144
+  ...
+# Subtest: unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY
+ok 4 - unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY
+  ---
+  duration_ms: 2.236791
+  ...
+# Subtest: actual watcher shadow producer retains unknown observations and filing records without adding source calls
+ok 5 - actual watcher shadow producer retains unknown observations and filing records without adding source calls
+  ---
+  duration_ms: 1.961698
+  ...
+# Subtest: actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop
+ok 6 - actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop
+  ---
+  duration_ms: 711.493955
+  ...
+# Subtest: reservation publication failure prevents send and quarantines local retry
+ok 7 - reservation publication failure prevents send and quarantines local retry
+  ---
+  duration_ms: 5.076081
+  ...
+# Subtest: actual watcher approved-alert caller blocks unknown identity before any send
+ok 8 - actual watcher approved-alert caller blocks unknown identity before any send
+  ---
+  duration_ms: 1.069788
+  ...
+# Subtest: actual filing decision caller records eligible unknown-type research, and preserves source failure
+ok 9 - actual filing decision caller records eligible unknown-type research, and preserves source failure
+  ---
+  duration_ms: 1.772074
+  ...
+# Subtest: actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment
+ok 10 - actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment
+  ---
+  duration_ms: 3.023135
+  ...
+# Subtest: actual shadow caller captures identity once rather than retroactively reclassifying the first observation
+ok 11 - actual shadow caller captures identity once rather than retroactively reclassifying the first observation
+  ---
+  duration_ms: 1.302499
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 755.565652

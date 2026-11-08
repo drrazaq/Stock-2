@@ -1,0 +1,59 @@
+TAP version 13
+# {"case":"actual_shell_flags","status":0,"warningReached":true,"continued":true}
+# {"case":"accepted_replace_then_readback_loss","laterStateDurable":true,"stdout":"sealed guard: OK (--push: no T1 plaintext)\\nError: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner\\nfirst_rc=1\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T181409284074699Z-71d4031b70d9 (slot bot; confirmed after an unclear reply)\\nsealed guard: OK (--push: no T1 plaintext)\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T181409413340413Z-80d1f2b32dc0 (slot bot, replacing this run's earlier save-recovery/Telegram-bot-777-1-20261108T181409284074699Z-71d4031b70d9; merged into main by the bot's next recovery pass)\\nnext_rc=0\\n"}
+# {"case":"new_shell_same_run_final_save","sameRunId":"777","latestStateDurable":true,"stdout":"sealed guard: OK (--staged: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nError: could not save the data folder to the repository (kept in the local commit; retried at the next save)\\nsealed guard: OK (--push: no T1 plaintext)\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T181411856723619Z-4c5649c0a53d (slot bot, replacing this run's earlier save-recovery/Telegram-bot-777-1-20261108T181411283896310Z-4c240ff69fb4; merged into main by the bot's next recovery pass)\\nFINAL_ATTEMPT_COMPLETE\\n"}
+# Subtest: required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+ok 1 - required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+  ---
+  duration_ms: 804.757826
+  ...
+# Subtest: same-run later state progresses after an accepted replacement loses both reply and its first read-back
+ok 2 - same-run later state progresses after an accepted replacement loses both reply and its first read-back
+  ---
+  duration_ms: 463.525961
+  ...
+# Subtest: cleanup winning the old pair race allows this same run to readmit its later descendant
+ok 3 - cleanup winning the old pair race allows this same run to readmit its later descendant
+  ---
+  duration_ms: 883.748815
+  ...
+# Subtest: replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+ok 4 - replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+  ---
+  duration_ms: 798.741679
+  ...
+# Subtest: same GitHub run final always-save shell can advance its earlier loop checkpoint
+ok 5 - same GitHub run final always-save shell can advance its earlier loop checkpoint
+  ---
+  duration_ms: 775.78118
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# FIRST: ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (the latest price is 20 min old (limit 5 min)).
+# ALERT: 
+# Subtest: general target alert must not present an unqualified current price after batch delay leaves even the20-minute BUY NOW ceiling expired
+ok 6 - general target alert must not present an unqualified current price after batch delay leaves even the20-minute BUY NOW ceiling expired
+  ---
+  duration_ms: 173.279945
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# FIRST: ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (the price timestamp was in the future when fetched).
+# ALERT: 
+# Subtest: future-at-fetch target evidence must not become valid merely while other quotes are fetched
+ok 7 - future-at-fetch target evidence must not become valid merely while other quotes are fetched
+  ---
+  duration_ms: 76.522788
+  ...
+# Subtest: loopback only
+ok 8 - loopback only
+  ---
+  duration_ms: 0.680863
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3829.916094
