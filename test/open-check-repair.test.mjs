@@ -218,4 +218,32 @@ test('rev12: the 4 min 50 s stop observation stays REACHED in both messages, sho
   assert.doesNotMatch(r.zzs, /% from your/, 'no current-price claim from an observation that is no longer current');
 });
 
+// rev14 (Codex 6723732821 B4): the YOUR STOPS batch is sent after all fetches. Fetched 10 s old at 09:40, sent at 09:50: the stop observation
+// keeps its own time ("10 s old when checked at ...") and, no longer current, drops the entry % and says so. Sent promptly, it stays current.
+test('rev14: the dedicated stop batch states when the price was checked; after a long batch delay it is not presented as a current price', async t => {
+  const T = ON_TIME, sent = []; let clock = T;
+  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
+    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
+    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: sent.length } })); }
+    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol');
+      if (sym === 'ZZS') return res.end(JSON.stringify({ c: 70, t: (T - 10000) / 1000 }));
+      clock = T + 600000; return res.end(JSON.stringify({ c: 12, t: (T + 590000) / 1000 })); }
+    res.statusCode = 404; res.end('{}'); }); });
+  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
+  const base = 'http://127.0.0.1:' + server.address().port;
+  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
+    env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
+  const real = Date.now; Date.now = () => clock;
+  try { await S.fn('intraday')(false); } finally { Date.now = real; }
+  const stop = sent.find(x => /^YOUR STOPS/.test(x)) || '';
+  assert.match(stop, /STOP LEVEL REACHED: ZZS traded at or below your stop 80\.00: last price 70\.00 \(FINNHUB, [^)]*, 10 s old when checked at Nov 5 09:40 New York\)\. No current price now: the latest price is 10 min old \(limit 5 min\)\./, stop);
+  assert.doesNotMatch(stop, /ZZS[^\n]*bought 100\.00/, 'no entry % from an observation that is no longer current');
+});
+test('rev14: a stop batch sent promptly keeps the current price and entry %, with the time it was checked', async t => {
+  const r = await run(t, { pos: { ZZS: { entry: 100, stop: 80 } }, quotes: { ZZS: { c: 70, ageSec: 10 } } });
+  const stop = r.sent.find(x => /^YOUR STOPS/.test(x)) || '';
+  assert.match(stop, /last price 70\.00 \([^)]*10 s old when checked at Nov 5 09:40 New York\) \(bought 100\.00, -30\.0%\)\./, stop);
+  assert.doesNotMatch(stop, /No current price now/);
+});
+
 test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));

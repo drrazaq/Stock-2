@@ -6,6 +6,25 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0k. Rev14 (8 Nov): five reproduced blockers from Codex's review 6723732821
+
+- **B1, warning unreachable under the real shell:** `bot.yml` runs `bash -e -o pipefail`, and a failed, FULL or UNKNOWN `sealed_recovery_push` exited the step before logging, SAVE NOT CONFIRMED and the loop continuing (also present in rev12). `bot-save.sh` now keeps the status (`|| rrc=$?`), logs it ("did not confirm a kept copy"), always warns and continues. Failure handling is not disabled anywhere else.
+- **B2, lost reply or read-back:** every attempt is written as **pending** to a per-run state file *before* the push. The next save first reconciles it read-only: landed means adopted as this run's checkpoint; clearly not applied means cleared; an unexpected state or a failed read-back means UNKNOWN, kept pending, and no push. It then advances normally.
+- **B3, final `always()` step is a new shell:** confirmed ownership (LAST/REF/SLOT) and the pending attempt live in `$RUNNER_TEMP/r1-recovery-<this run's checkpoint prefix><checkout hash>.state`. Only this run's own names (`save-recovery/<workflow>-<run>-<attempt>-…`) and this role's slots are ever loaded; anything else is ignored. Every use is still checked by exact remote leases.
+- **B4, stop batch provenance:** a stop REACHED in YOUR STOPS is rendered when the batch is sent: "N s old **when checked at** <time>". If the price is no longer within the unchanged 5-minute stop gate at sending time, the entry % is dropped and "No current price now: <reason>" is added.
+- **B5, after-close radar silently missed the sealed live record:** `opportunity-radar.mjs` read `data/ignition-live.json` with a plain-file wrapper. It now uses `readSealedJson`.
+  - A valid record is scored.
+  - A missing key, a damaged file or a legacy plaintext copy gives "LIVE WATCHER RECORD UNKNOWN (SEALED_…)", never "no results". The rest of the message is still sent, and the ledger is still saved.
+  - An audit test requires every module that names a T1 path to import the sealed store.
+- **Lazy load:** the sealed store is loaded only in close mode, so the midday radar run started by the live watcher keeps its exact dependencies. The gated watcher fixture is unchanged.
+- **Allowlist:** +4 paths:
+  - `opportunity-radar.mjs`;
+  - `test/radar-sealed-reader.test.mjs`;
+  - `test/sealed-recovery-actual-paths.test.mjs` (adapted from Codex's fixture);
+  - `test/stop-alert-validity.test.mjs`.
+- **STOP-pinned test changed:** the last one is STOP-pinned. Its bot-fallback assertion now *requires* the "when checked at" qualification and the entry % (a tightening). The watcher-route assertions are unchanged. The refreshed STOP pins list it as changed (8 of 17).
+- **Proof:** every new regression fails on rev13. The two race controls pass on both revisions.
+
 ## 0j. Rev13 (8 Nov): bounded save recovery (four atomic reservation slots)
 
 - **Origin:** Codex rejected my 24-checkpoint proposal (6721627980: the UNKNOWN bypass was unbounded, and logical size is not physical storage). It proposed four fixed slots with atomic admission (`c4a4fc4f7`). I reviewed that design, adopted it, and implemented it here.

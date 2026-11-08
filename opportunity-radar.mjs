@@ -41,6 +41,20 @@ async function score5(ledger, today) {
   return out;
 }
 
+// (R1 rev14, Codex 6723732821 B5) the live watcher record is T1 provider data, stored SEALED (data/ignition-live.json.sealed). It is read
+// with the sealed store, never with the plain readJson above: a valid sealed record is scored; a missing key, a damaged file or a
+// legacy plaintext copy is reported as UNKNOWN with its code, never as "the watcher saved no results" and never silently empty.
+// The rest of the close message (ledger lines, scorecard, shadow tests) is still sent, and the run is not failed, so the ledger is saved.
+// The sealed store is loaded only here (close mode), so the midday run started by the live watcher keeps its exact dependencies.
+async function closeText(day, ledger, ctx) {
+  const { readSealedJson, sealedCode } = await import('./sealed-store.mjs');
+  let live = null, code = null;
+  try { live = readSealedJson('data/ignition-live.json', null); } catch (e) { code = sealedCode(e); console.error('Error: R1 ignition-live unreadable: ' + code + ' (radar close reports it as UNKNOWN, not as no results)'); }
+  const text = buildClose(day, code ? null : live, ledger, ctx);
+  if (!code) return text;
+  return text.replace('The live watcher saved no results for today (not run, or not saved yet). Nothing to score.',
+    "LIVE WATCHER RECORD UNKNOWN (" + code + "): today's watcher results could not be read, so they are not scored here. This is not a sign that the watcher found nothing.");
+}
 const ST = readJson('data/settings.json', {});
 if (!radarOn(ST)) { console.log('radar: off (radar on to switch it back)'); process.exit(0); }
 const today = nyDay(), ctx = context();
@@ -59,5 +73,5 @@ if (MODE === 'midday') {
   const rk = SRp && (SRp.ranking && SRp.ranking.models.A.picks ? SRp.ranking : SRp.rankingPilot), rkLine = rk ? 'RANKING SHADOW TEST (' + (rk === SRp.ranking ? 'counted from ' + rk.frozen.evalFrom : 'PILOT, not counted') + '; same-day net after costs, picks / avg / median): '
     + ['A', 'B', 'C', 'D', 'R', 'R0'].map(k => { const x = rk.models[k]; return k + ' ' + x.picks + ' / ' + pc(x.day.avg) + ' / ' + pc(x.day.median); }).join('; ') + '. '
     + (rk.capCost && rk.capCost.firstFive.picks ? 'First five ' + pc(rk.capCost.firstFive.day.avg) + ' vs after the cap ' + pc(rk.capCost.afterCap.day.avg) + '. ' : '') + 'Verdicts: B ' + rk.models.B.verdict + '; C ' + rk.models.C.verdict + '; D ' + rk.models.D.verdict + '. Live ranking is still first come (no change without your approval).' : '';
-  await telegram('Research ledger view '+view.version+': raw listed '+view.rawLists+', logical listed '+view.logicalLists+', exact repeats '+view.exactRepeats+', unknown identity retained '+view.unknownIdentity+'. Original ledger and frozen raw results preserved; corrected secondary view, not admitted prospective evidence.\n'+buildClose(today, readJson('data/ignition-live.json'), ledger, ctx) + '\n\n' + scorecardText(od) + (shadowLine ? '\n' + shadowLine : '') + (rkLine ? '\n' + rkLine : '')); console.log('radar close: ' + s5.length + ' 5-session scores added');
+  await telegram('Research ledger view '+view.version+': raw listed '+view.rawLists+', logical listed '+view.logicalLists+', exact repeats '+view.exactRepeats+', unknown identity retained '+view.unknownIdentity+'. Original ledger and frozen raw results preserved; corrected secondary view, not admitted prospective evidence.\n'+(await closeText(today, ledger, ctx)) + '\n\n' + scorecardText(od) + (shadowLine ? '\n' + shadowLine : '') + (rkLine ? '\n' + rkLine : '')); console.log('radar close: ' + s5.length + ' 5-session scores added');
 }

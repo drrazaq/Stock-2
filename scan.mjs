@@ -4364,7 +4364,17 @@ async function intraday(onlyMine) {
     if (ev.state !== 'OK') { if (st.sent[sym + 'myunk'] || st.sent[sym + 'myst'] || watcherDelivered(sym, 'unknown') || watcherDelivered(sym, 'hit')) return; st.sent[sym + 'myunk'] = 1; stopAlerts.push(stopText('unknown', sym, P, ev)); return; }
     if (!(ev.price <= P.stop) || st.sent[sym + 'myst']) return;
     if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
-    st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
+    st.sent[sym + 'myst'] = 1; stopAlerts.push({ kind: 'hit', sym, P, ev, at: Date.now() }); };
+  // (rev14, Codex 6723732821 B4) the stop batch is sent after every quote is fetched, possibly minutes later. A stop REACHED is an
+  // observation made when the quote was checked: its age is stated "when checked at <time>", and once the price is no longer within the
+  // 5-minute stop gate at sending time, the entry % is dropped and the line says there is no current price. No stop threshold changes.
+  const stopLine = (a, nowMs) => {
+    if (typeof a === 'string') return a;
+    const cur = priceEvidence(a.sym, { sym: a.sym, price: a.ev.price, t: a.ev.t, provider: a.ev.src, kind: 'TRADE' }, nowMs);
+    let t = stopText('hit', a.sym, a.P, a.ev).replace(/ old\)/, ' old when checked at ' + nyStamp(a.at) + ')');
+    if (cur.state !== 'OK') t = t.replace(/ \(bought [^)]*\)\./, '.').replace(/\.\n/, '. No current price now: ' + cur.why + '.\n');
+    return t;
+  };
   for (const sym of watch) {
     const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = { ...j, observedAt: Date.now() }; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
     const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
@@ -4416,7 +4426,7 @@ async function intraday(onlyMine) {
   for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
     await telegram('BUY NOW: a proven setup is inside its buy range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
       [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
-  if (stopAlerts.length) await telegram('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
+  if (stopAlerts.length) await telegram('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.map(a => stopLine(a, Date.now())).join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
   if (alerts.length) await telegram('Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
   console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
 }

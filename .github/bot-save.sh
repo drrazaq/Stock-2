@@ -29,7 +29,11 @@ save() {
   echo "Error: could not save the data folder to the repository (kept in the local commit; retried at the next save)" | tee -a run.log
   # (rev13) run in THIS shell, not in a pipeline subshell, so SEALED_RECOVERY_LAST/REF/SLOT persist across the run's later saves (a pipe
   # lost them: the next save could not see that its earlier state was already kept, or advance its own slot)
-  local out="${RUNNER_TEMP:-/tmp}/bot-recovery-out-$$"; sealed_recovery_push > "$out" 2>&1; cat "$out" | tee -a run.log; rm -f "$out"
+  # (rev14, Codex 6723732821 B1) bot.yml runs bash -e -o pipefail: a failed/FULL/UNKNOWN recovery must not exit the step before its
+  # output is logged, the owner is warned (SAVE NOT CONFIRMED) and the bot loop continues; the status is kept, never hidden.
+  local out="${RUNNER_TEMP:-/tmp}/bot-recovery-out-$$" rrc=0; sealed_recovery_push > "$out" 2>&1 || rrc=$?
+  cat "$out" | tee -a run.log || true; rm -f "$out"
+  [ "$rrc" = 0 ] || echo "Error: save recovery did not confirm a kept copy (status $rrc); the change may exist only on this runner" | tee -a run.log || true
   bot_save_warn
 }
 bot_recover() {

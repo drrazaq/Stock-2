@@ -129,11 +129,12 @@ test('Codex #1+#2: a stale recovery (offset 2, STALE positions, plus a code file
   assert.equal(fs.readFileSync(path.join(w.clone('c2'), 'data/tg-state.json'), 'utf8'), '{"offset":9}', 'the offset never rewinds');
 });
 
-test('a runner\'s successive checkpoints (immutable refs) merge in order: offset 2 then 3, never back', (t) => {
+test('successive checkpoints of two runs (immutable refs) merge in order: offset 2 then 3, never back', (t) => {
   const w = world(t), a = seedOwner(w), bot = w.clone('bot');
   w.hook(REFUSE_MAIN);
+  // (rev14) two RUNS of a shared-role writer: one run's own later saves now advance its own checkpoint instead (B3 regression below)
   fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":2}'); sh(bot, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save');
-  fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":3}'); sh(bot, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save');
+  fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":3}'); sh(bot, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save', { ...ENV, GITHUB_RUN_ID: '778' });
   assert.equal(w.remoteRefs().filter((x) => /save-recovery\//.test(x)).length, 2, 'two immutable checkpoints, nothing overwritten');
   w.hook(null);
   const r = recover(w.clone('next')); assert.match(r.stdout, /rc=0/, r.stdout);
