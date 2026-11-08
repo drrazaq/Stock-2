@@ -7,7 +7,9 @@
       "before": "a1d606591a1a58444678cbec27629ab389a667adfb9100fc90049aa0cc2bf3da",
       "after": "a15de89d3dcd3d1c60b605fd455850c78cb2348cd8e3d454549373b0e94ec254",
       "beforeManifestSha256": "6c3fd76710d3b27e0ff56ee7afcc97c4d6dfece2e17fc6073171ce19187592c1",
-      "afterManifestSha256": "47f6f3d020031f901d03bf9a0e8efef445010786d516a49ef971645033db2d2a"
+      "afterManifestSha256": "19c11471a7570b59843ed751a617c2fd7ad3405e30babd305a61ba76c499fefb",
+      "intermediateAfterScannerEdgeSha256": "47f6f3d020031f901d03bf9a0e8efef445010786d516a49ef971645033db2d2a",
+      "meaning": "Final committed manifest after scanner edge AND cascading native-source manifest edge; intermediate state retained separately."
     },
     {
       "path": "docs/a-first-capture-continuation/manifest.json",
@@ -58,5 +60,45 @@
   ],
   "assertionsRelaxed": false,
   "historicalHashesOrEvidenceRewritten": false,
-  "oldAAcceptanceTransferred": false
+  "oldAAcceptanceTransferred": false,
+  "alertDeliveryStateDisposition": {
+    "review": "https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6727798619",
+    "reviewCommit": "e72adb31",
+    "option": "D1b_EXPLICITLY_HISTORICAL",
+    "beforeSha256": "eb9a496ddade476b8db8148077467b13ca93d24b6165aeea27fbec46616c81f7",
+    "currentSha256": "1cfb0b891058c4f5b9e93b47fb254f5e845c17542fbe9ac3fd14836f25c1a29e",
+    "currentScopedReview": "Claude independently reviewed the complete current helper and guarded caller paths at3b7af847; no all-route acceptance is claimed.",
+    "historicalRecords": [
+      {
+        "path": "docs/validation/repo03-reviewed-contracts.json",
+        "recordSha256": "6e12d5cf3284fbb4e3376be62062e53712adb197b33485d89e9bb6aa54524e04",
+        "status": "HISTORICAL_SOURCE_SNAPSHOT_NOT_RETARGETED",
+        "meaning": "Names the older source version; not a current-hash certification. Original evidence and assertions preserved."
+      },
+      {
+        "path": "docs/validation/repo03-behavioral-matrix.json",
+        "recordSha256": "e32a00d5d6d9d882bc1a8205b75583a9e508b90d9f5da0c610a4edbf66c37264",
+        "status": "HISTORICAL_SOURCE_SNAPSHOT_NOT_RETARGETED",
+        "meaning": "Names the older source version; not a current-hash certification. Original evidence and assertions preserved."
+      },
+      {
+        "path": "docs/validation/repo03-critical-batch-evidence.json",
+        "recordSha256": "47edfac1dc3c6425848582dcb05b62be072f35657aeeeae89f48b415c1ccb7b9",
+        "status": "HISTORICAL_SOURCE_SNAPSHOT_NOT_RETARGETED",
+        "meaning": "Names the older source version; not a current-hash certification. Original evidence and assertions preserved."
+      },
+      {
+        "path": "docs/validation/repo03-critical-callers-manifest.json",
+        "recordSha256": "88498ccb9a7a0805d2f84c82a51c35fa87d0bd5d83c6dafe2ffb342310ab6e5c",
+        "status": "HISTORICAL_SOURCE_SNAPSHOT_NOT_RETARGETED",
+        "meaning": "Names the older source version; not a current-hash certification. Original evidence and assertions preserved."
+      },
+      {
+        "path": "docs/validation/discovery-coverage-current-reference-20261104.json",
+        "recordSha256": "c9de79279bacbb31adaac702f6f5af28b6976ea73193241c18a9b5e67cae4d3d",
+        "status": "HISTORICAL_SOURCE_SNAPSHOT_NOT_RETARGETED",
+        "meaning": "Names the older source version; not a current-hash certification. Original evidence and assertions preserved."
+      }
+    ]
+  }
 }

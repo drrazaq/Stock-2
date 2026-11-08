@@ -1,7 +1,21 @@
 {
   "parent": "037792b8aac39a1c82155220c56cabd77e1daba2",
-  "independentReview": "PENDING",
-  "fullValidation": "PENDING exact commit",
+  "independentReview": {
+    "verdict": "PASS_CODE_D1_RECORD_CORRECTION_APPLIED_D1b",
+    "source": "3b7af84728658b732f8876b1a98a8667acdf364b",
+    "comment": 6727798619,
+    "reviewCommit": "e72adb31",
+    "optionalD2": "DEFERRED_NO_CODE_CHANGE"
+  },
+  "fullValidation": {
+    "source": "3b7af84728658b732f8876b1a98a8667acdf364b",
+    "run": 42520064297,
+    "job": 128851393920,
+    "registeredFiles": 315,
+    "passedFiles": 315,
+    "verdict": "COMPLETE_HOSTED_PASS",
+    "decodedLogSha256": "34aec9462dbf8da59695e616fc2982811ae67dd862632de3168ff8f5fad9bdf0"
+  },
   "files": [
     {
       "path": "scan.mjs",
@@ -19,5 +33,6 @@
       "path": "tests/alert-delivery-state.test.mjs",
       "sha256": "ad06a8e5c370452161da2511ad2b1018407d013bd02eb4e3c0130a782afcc9d0"
     }
-  ]
+  ],
+  "D1RecordsOnly": "Runtime/tests/current dependency manifests unchanged; full hosted receipt remains exact to3b7af847. This later record-only commit does not inherit a new hosted-run identity."
 }
