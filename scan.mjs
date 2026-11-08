@@ -4273,25 +4273,34 @@ async function daily() {
 // target 2, last night's exit rule (sig.posVerdict: every kind, a trend exit included), the holding review's SELL, then target 1. A
 // price-based claim (stop reached, targets, % from entry) needs ticker-bound, dated, fresh evidence: stop-watch.mjs priceEvidence(), the
 // live watcher's rule. Without it the stop status is UNKNOWN, never HOLD. Holdings, stops and rules are only read, never changed.
-// (rev10/rev11) OBSERVATION-TIME LATCH: intraday() stamps each quote with observedAt when liveQ returns it, and the quote is judged ONCE, at
-// that moment, with the same 5-minute STOP_MAX_AGE_MIN rule the stop route (stopFallback) applies right after the fetch. So both messages of
-// one run reach the same verdict on the same quote: a quote future-dated when fetched stays UNKNOWN (rev10, Codex 6720355907), and a quote
-// that was valid when fetched is not re-aged past the limit by the time spent fetching later symbols (rev11, review of 3589faf5, R1).
-const quoteEvidence = (sym, q, nowMs, maxAgeMin) => {
-  const native = q && typeof q === 'object' ? { sym, price: +q.price, t: q.t, provider: q.src || 'unknown source', kind: 'TRADE' } : null;
-  if (q && typeof q === 'object' && Object.hasOwn(q, 'observedAt')) {
-    if (!Number.isFinite(q.observedAt) || !Number.isFinite(nowMs) || q.observedAt > nowMs) return { state: 'UNKNOWN', why: 'the observation clock is invalid or in the future' };
-    const atFetch = priceEvidence(sym, native, q.observedAt, maxAgeMin);
-    return atFetch.state === 'OK' ? atFetch : { state: 'UNKNOWN', why: atFetch.why.replace('the price timestamp is in the future', 'the price timestamp was in the future when fetched') };
-  }
-  return priceEvidence(sym, native, nowMs, maxAgeMin);
+// (rev10/rev12) TWO DISTINCT JUDGEMENTS of a quote that intraday() stamped with observedAt when liveQ returned it:
+//  - quoteEvidence(): CURRENT price status, for every current-price claim (HOLD, targets, % from entry, buy ranges). The quote must have been
+//    valid when fetched (a quote future-dated at fetch stays UNKNOWN: rev10, Codex 6720355907) AND still be within its age gate at report
+//    time (3/5/20-minute gates unchanged; rev12 restores this after Codex 6722848900 showed rev11 froze HOLD at fetch-time age).
+//  - stopObservation(): the STOP observation made when the quote was fetched, with the same 5-minute STOP_MAX_AGE_MIN rule the stop route
+//    (stopFallback) applies right after the fetch. Only a stop reached uses it, shown with its own times ("when checked at ..."), so the first
+//    check and the stop route agree on the same quote (rev11 case) without making any current-price claim timeless.
+const quoteFields = (sym, q) => q && typeof q === 'object' ? { sym, price: +q.price, t: q.t, provider: q.src || 'unknown source', kind: 'TRADE' } : null;
+const fetchJudgement = (sym, q, nowMs, maxAgeMin) => {
+  if (!(q && typeof q === 'object' && Object.hasOwn(q, 'observedAt'))) return null;
+  if (!Number.isFinite(q.observedAt) || !Number.isFinite(nowMs) || q.observedAt > nowMs) return { state: 'UNKNOWN', why: 'the observation clock is invalid or in the future' };
+  const atFetch = priceEvidence(sym, quoteFields(sym, q), q.observedAt, maxAgeMin);
+  return atFetch.state === 'OK' ? { ...atFetch, observedAt: q.observedAt } : { state: 'UNKNOWN', why: atFetch.why.replace('the price timestamp is in the future', 'the price timestamp was in the future when fetched') };
 };
+const quoteEvidence = (sym, q, nowMs, maxAgeMin) => {
+  const f = fetchJudgement(sym, q, nowMs, maxAgeMin);
+  if (f && f.state !== 'OK') return f;
+  return priceEvidence(sym, quoteFields(sym, q), nowMs, maxAgeMin);
+};
+const stopObservation = (sym, q, nowMs) => fetchJudgement(sym, q, nowMs) || priceEvidence(sym, quoteFields(sym, q), nowMs);
+const ageWords = (sec) => sec < 90 ? Math.round(sec) + ' s' : Math.round(sec / 60) + ' min';
 const evidenceText = (ev) => ev.state === 'OK' ? 'last price ' + money(ev.price) + ' (' + ev.src + ', ' + nyStamp(ev.t) + ', ' + (ev.ageSec < 90 ? Math.round(ev.ageSec) + ' s' : Math.round(ev.ageSec / 60) + ' min') + ' old)' : 'current price UNKNOWN (' + ev.why + ')';
 function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
   const ev = quoteEvidence(sym, q, nowMs), ok = ev.state === 'OK', px = ok ? ev.price : null, num = (x) => typeof x === 'number' && Number.isFinite(x) && x > 0;
+  const obs = stopObservation(sym, q, nowMs), stopSeen = obs.state === 'OK' && validStop(P.stop) && obs.price <= P.stop;
   const pv = sig && sig.posVerdict ? sig.posVerdict[sym] : null, es = eventSell(sym), hasStop = P.stop !== undefined && P.stop !== null, stopOk = validStop(P.stop);
   let act, text;
-  if (ok && stopOk && px <= P.stop) { act = 'SELL'; text = 'STOP LEVEL REACHED: at or below your stop ' + money(P.stop) + '. If your broker stop order has filled, you are already out: do not sell again.'; }
+  if (stopSeen) { act = 'SELL'; text = 'STOP LEVEL REACHED: at or below your stop ' + money(P.stop) + '. If your broker stop order has filled, you are already out: do not sell again.'; }
   else if (es) { act = 'SELL'; text = es; }
   else if (ok && num(P.t2) && px >= P.t2) { act = 'SELL'; text = 'SELL. Target 2 (' + money(P.t2) + ') reached.'; }
   else if (pv) { act = 'SELL'; text = "SELL: last night's exit rule, " + String(pv).replace(/\.?$/, '.') + ' Timing as in ACTIONS (close-based exits: next regular-session open).'; }
@@ -4303,7 +4312,11 @@ function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
   else if (!ok) { act = 'UNKNOWN'; text = 'STATUS UNKNOWN: no exit rule is active from last night, but the current price cannot be confirmed right now' + (P.src === 'leader dip' ? ' (leader dip, no stop by design' + (num(P.target) ? '; check whether your sell limit ' + money(P.target) + ' has filled' : '') + ')' : '; NO STOP SET') + '; this is not a sign the position is safe. Check the price at your broker.'; }
   else { act = 'HOLD'; text = 'HOLD: no exit rule is active' + (hasStop ? '; above your stop ' + money(P.stop) : P.src === 'leader dip' ? '; leader dip, no stop by design' + (num(P.target) ? ', sell limit ' + money(P.target) : '') : '; NO STOP SET') + '.'; }
   const chg = ok && num(P.entry) ? ' (' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' : '';
-  return { act, ev, line: sym + ': ' + text + ' ' + evidenceText(ev).replace(/^\w/, c => c.toUpperCase()) + chg + '.' };
+  // a stop reached is a timed observation: when it was checked, how old the price was then, and whether it is still current now
+  const evText = stopSeen && act === 'SELL' && /^STOP LEVEL REACHED/.test(text)
+    ? 'Last price ' + money(obs.price) + ' (' + obs.src + ', ' + nyStamp(obs.t) + ', ' + ageWords(obs.ageSec) + ' old when checked' + (obs.observedAt ? ' at ' + nyStamp(obs.observedAt) : '') + (ok ? '' : '; no current price now: ' + ev.why) + ')'
+    : evidenceText(ev).replace(/^\w/, c => c.toUpperCase());
+  return { act, ev, line: sym + ': ' + text + ' ' + evText + chg + '.' };
 }
 // (6 Nov) the day's first market-hours check: its ACTUAL time (a late first run says it did not observe the open), the buy list labelled
 // for what it is (last night's scan; the rules are NOT PROVEN), and the real schedule and close times instead of timing promises.

@@ -6,6 +6,14 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0i. Rev12 (8 Nov): current price versus a timed stop observation
+
+- Codex 6722848900 showed that rev11 froze every verdict at fetch time. A price 290 s old when fetched and 320 s old when the first check was written was shown as "HOLD … above your stop … 5 min old". The 5-minute gate was not applied at report time.
+- **Fix: two distinct judgements.**
+  - `quoteEvidence()` (current price) must be valid when fetched (rev10) **and** still within its age gate when the check is written. It governs HOLD, targets, % from entry and buy ranges. The 3/5/20-minute gates are unchanged.
+  - `stopObservation()` is the fetch-time stop check, using the same 5-minute rule as the stop route. Only "STOP LEVEL REACHED" uses it, and it is shown with its own times: "N min old when checked at <time>; no current price now: <reason>". It never supports % from entry.
+- **Regressions** (actual caller, `test/open-check-repair.test.mjs`): both rev12 cases fail on rev11. The rev10 future-at-fetch and rev11 near-limit cases still pass (15/15).
+
 ## 0h. Rev11 (8 Nov): one verdict per quote per run
 
 - My re-review of Codex's corrected development port (finding R1) showed a narrower form of the same problem, and rev10 had it too.

@@ -182,4 +182,40 @@ test('rev11: a stop quote near the 5-minute limit gets ONE verdict in both messa
   assert.doesNotMatch(first, /ZZS: STOP STATUS UNKNOWN/);
 });
 
+// rev12 (Codex 6722848900, reproduced on rev11 8567fd46): ZZS 90 with stop 80, 290 s old when fetched; the next fetch moves the clock 30 s,
+// so the price is 320 s old when the first check is written. Rev11 froze the fetch-time verdict and said "HOLD ... above your stop 80 ...
+// 5 min old". A current-price claim must still pass its gate at report time; only a stop REACHED is kept as a timed fetch-time observation.
+async function twoHoldingRun(t, zzs) {
+  const T = ON_TIME, sent = []; let clock = T;
+  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
+    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
+    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: sent.length } })); }
+    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol');
+      if (sym === 'ZZS') return res.end(JSON.stringify({ c: zzs.c, t: (T - zzs.ageSec * 1000) / 1000 }));
+      clock = T + 30000; return res.end(JSON.stringify({ c: 12, t: (T + 25000) / 1000 })); }
+    res.statusCode = 404; res.end('{}'); }); });
+  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
+  const base = 'http://127.0.0.1:' + server.address().port;
+  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80, t1: 85 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
+    env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
+  const real = Date.now; Date.now = () => clock;
+  try { await S.fn('intraday')(false); } finally { Date.now = real; }
+  const first = sent.find(x => /FIRST MARKET-HOURS CHECK/.test(x)) || '';
+  return { first, stop: sent.find(x => /^YOUR STOPS/.test(x)) || '', zzs: first.split('\n').find(l => l.startsWith('ZZS:')) || '' };
+}
+test('rev12: a price valid when fetched but past its gate when the check is written is never HOLD, a target or % from entry (actual caller)', async t => {
+  const r = await twoHoldingRun(t, { c: 90, ageSec: 290 });
+  assert.match(r.zzs, /^ZZS: STOP STATUS UNKNOWN/, r.zzs);
+  assert.match(r.zzs, /latest price is 5 min old \(limit 5 min\)/);
+  assert.doesNotMatch(r.first, /ZZS: HOLD|ZZS: TARGET|ZZS:.*Last price 90|ZZS:.*% from your/);
+  assert.equal(r.stop, '', 'above the stop at fetch: the stop route sends nothing, so nothing contradicts the UNKNOWN line');
+});
+test('rev12: the 4 min 50 s stop observation stays REACHED in both messages, shown with when it was checked and that no current price remains', async t => {
+  const r = await twoHoldingRun(t, { c: 70, ageSec: 290 });
+  assert.match(r.stop, /STOP LEVEL REACHED[\s\S]*ZZS|ZZS[\s\S]*STOP LEVEL REACHED/);
+  assert.match(r.zzs, /^ZZS: STOP LEVEL REACHED/, r.zzs);
+  assert.match(r.zzs, /5 min old when checked at Nov 5 09:40 New York; no current price now: the latest price is 5 min old \(limit 5 min\)/);
+  assert.doesNotMatch(r.zzs, /% from your/, 'no current-price claim from an observation that is no longer current');
+});
+
 test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
