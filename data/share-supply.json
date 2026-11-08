@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-01T06:50:12.851Z",
+ "generatedAt": "2026-11-08T07:38:56.485Z",
  "agent": "C",
  "ids": [
   "C-S8",
@@ -7,14 +7,14 @@
  ],
  "preRegistered": "2026-10-22",
  "window": [
-  "2022-01-06",
-  "2026-10-19"
+  "2022-01-27",
+  "2026-11-06"
  ],
  "indexQuarters": "28 of 28",
  "universe": "companies in today's SEC ticker list that are in the price cache (delisted companies are missing: their S-8 and lock-up events are not counted)",
  "status": "OK",
  "versions": 4,
- "bar": 4.07,
+ "bar": 4.09,
  "firstRun": {
   "at": "2026-10-23T08:37:59.461Z",
   "bar": 4,
@@ -150,285 +150,195 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-01T06:50:13.317Z",
-  "from": "2022-01-06",
-  "to": "2026-10-19",
-  "bar": 4.07,
+  "at": "2026-11-08T07:38:56.887Z",
+  "from": "2022-01-27",
+  "to": "2026-11-06",
+  "bar": 4.09,
   "results": {
    "S8A": {
     "name": "Any Form S-8 filed (avoid 20 sessions)",
-    "signals": 5543,
+    "signals": 5544,
     "info": false,
     "verdict": "NOT PROVEN",
     "level": "NONE",
-    "why": "could be luck in the older half (t -1.81, -4.07 needed); not clearly worse than the same stock on its other days in the older half (-0.6%, t -1.14); could be luck in the newer half (t -0.68, -4.07 needed); not clearly worse than the same stock on its other days in the newer half (+0.4%, t 0.54)",
-    "whyTier2": "older: t -1.81 not at or below -2.5; newer: t -0.68 not at or below -2.5",
+    "why": "could be luck in the older half (t -1.51, -4.09 needed); not clearly worse than the same stock on its other days in the older half (-0.6%, t -1.09); could be luck in the newer half (t -0.68, -4.09 needed); not clearly worse than the same stock on its other days in the newer half (+0.3%, t 0.45)",
+    "whyTier2": "older: t -1.51 not at or below -2.5; newer: t -0.68 not at or below -2.5",
     "results": {
      "older": {
-      "n": 2552,
-      "days": 524,
-      "stocks": 1612,
-      "avg": -0.0133,
-      "ctrl": -0.0073,
-      "edge": -0.008,
-      "t": -1.81,
-      "vsSpy": -0.0183,
-      "tSpy": -3.99,
-      "vsOwn": -0.0061,
-      "tOwn": -1.14,
-      "lagged": 0.538,
-      "noWorst2": -0.0052
+      "n": 2625,
+      "days": 525,
+      "stocks": 1637,
+      "avg": -0.0114,
+      "ctrl": -0.0065,
+      "edge": -0.0066,
+      "t": -1.51,
+      "vsSpy": -0.0174,
+      "tSpy": -3.88,
+      "vsOwn": -0.0058,
+      "tOwn": -1.09,
+      "lagged": 0.536,
+      "noWorst2": -0.0042
      },
      "newer": {
-      "n": 2886,
-      "days": 520,
-      "stocks": 1959,
-      "avg": 0.0027,
-      "ctrl": 0.0055,
-      "edge": -0.0047,
+      "n": 2796,
+      "days": 516,
+      "stocks": 1914,
+      "avg": 0.0019,
+      "ctrl": 0.0047,
+      "edge": -0.0049,
       "t": -0.68,
-      "vsSpy": -0.0088,
-      "tSpy": -1.24,
-      "vsOwn": 0.0039,
-      "tOwn": 0.54,
-      "lagged": 0.537,
-      "noWorst2": -0.0021
+      "vsSpy": -0.0091,
+      "tSpy": -1.26,
+      "vsOwn": 0.0034,
+      "tOwn": 0.45,
+      "lagged": 0.541,
+      "noWorst2": -0.0022
      }
     }
    },
    "S8B": {
     "name": "Form S-8 filed and share count up over 2% vs 90 days earlier (avoid 20 sessions) = C-S8",
-    "signals": 511,
+    "signals": 514,
     "info": false,
     "verdict": "REJECTED",
     "level": "NONE",
-    "why": "not worse than an average stock in the older half (+0.5%); could be luck in the older half (t 0.31, -4.07 needed); not clearly worse than the same stock on its other days in the older half (+2.3%, t 1.27); not worse without its 2 worst cases in the older half; could be luck in the newer half (t -0.47, -4.07 needed); not clearly worse than the same stock on its other days in the newer half (+1.1%, t 0.49)",
-    "whyTier2": "older: not worse than the average stock; older: t 0.31 not at or below -2.5; older: not worse without its 2 worst cases; newer: t -0.47 not at or below -2.5",
+    "why": "not worse than an average stock in the older half (+1.1%); could be luck in the older half (t 0.74, -4.09 needed); not clearly worse than the same stock on its other days in the older half (+2.6%, t 1.56); not worse without its 2 worst cases in the older half; could be luck in the newer half (t -0.72, -4.09 needed); not clearly worse than the same stock on its other days in the newer half (+0.7%, t 0.28)",
+    "whyTier2": "older: not worse than the average stock; older: t 0.74 not at or below -2.5; older: not worse without its 2 worst cases; newer: t -0.72 not at or below -2.5",
     "results": {
      "older": {
-      "n": 164,
-      "days": 122,
-      "stocks": 141,
-      "avg": -0.0014,
-      "ctrl": -0.0054,
-      "edge": 0.0046,
-      "t": 0.31,
-      "vsSpy": -0.0071,
-      "tSpy": -0.47,
-      "vsOwn": 0.0226,
-      "tOwn": 1.27,
-      "lagged": 0.567,
-      "noWorst2": 0.0107
+      "n": 176,
+      "days": 130,
+      "stocks": 153,
+      "avg": 0.0086,
+      "ctrl": -0.0023,
+      "edge": 0.0105,
+      "t": 0.74,
+      "vsSpy": -0.0029,
+      "tSpy": -0.2,
+      "vsOwn": 0.0264,
+      "tOwn": 1.56,
+      "lagged": 0.545,
+      "noWorst2": 0.0179
      },
      "newer": {
-      "n": 330,
-      "days": 219,
-      "stocks": 279,
-      "avg": 0.0046,
-      "ctrl": 0.0103,
-      "edge": -0.0095,
-      "t": -0.47,
-      "vsSpy": -0.0101,
-      "tSpy": -0.49,
-      "vsOwn": 0.0108,
-      "tOwn": 0.49,
-      "lagged": 0.536,
-      "noWorst2": -0.0007
+      "n": 317,
+      "days": 211,
+      "stocks": 273,
+      "avg": -0.0024,
+      "ctrl": 0.0087,
+      "edge": -0.0151,
+      "t": -0.72,
+      "vsSpy": -0.0156,
+      "tSpy": -0.73,
+      "vsOwn": 0.0065,
+      "tOwn": 0.28,
+      "lagged": 0.555,
+      "noWorst2": -0.0059
      }
     }
    },
    "L180": {
     "name": "IPO lock-up expiry (first 424B4 + 180 days), the 10 sessions after = C-LOCK",
-    "signals": 98,
+    "signals": 103,
     "info": false,
     "verdict": "TOO FEW CASES",
     "level": "NONE",
-    "why": "too few cases in the older half (17); could be luck in the newer half (t -1.3, -4.07 needed); not clearly worse than the same stock on its other days in the newer half (+0.6%, t 0.32)",
-    "whyTier2": "too few cases; newer: t -1.3 not at or below -2.5",
+    "why": "too few cases in the older half (15); could be luck in the newer half (t -0.89, -4.09 needed); not clearly worse than the same stock on its other days in the newer half (+1.5%, t 0.79)",
+    "whyTier2": "too few cases; newer: t -0.89 not at or below -2.5",
     "results": {
      "older": {
-      "n": 17
+      "n": 15
      },
      "newer": {
-      "n": 76,
-      "days": 63,
-      "stocks": 76,
-      "avg": -0.0339,
-      "ctrl": 0.0032,
-      "edge": -0.0349,
-      "t": -1.3,
-      "vsSpy": -0.0373,
-      "tSpy": -1.38,
-      "vsOwn": 0.006,
-      "tOwn": 0.32,
-      "lagged": 0.539,
-      "noWorst2": -0.0136
+      "n": 80,
+      "days": 66,
+      "stocks": 80,
+      "avg": -0.0206,
+      "ctrl": 0.0026,
+      "edge": -0.0235,
+      "t": -0.89,
+      "vsSpy": -0.0255,
+      "tSpy": -0.95,
+      "vsOwn": 0.0147,
+      "tOwn": 0.79,
+      "lagged": 0.5,
+      "noWorst2": -0.0004
      }
     }
    },
    "L180W": {
     "name": "IPO lock-up expiry window, 5 sessions before to 1 after (Field and Hanka 2001)",
-    "signals": 93,
+    "signals": 97,
     "info": false,
     "verdict": "TOO FEW CASES",
     "level": "NONE",
-    "why": "too few cases in the older half (16); not worse than an average stock in the newer half (+0.1%); could be luck in the newer half (t 0.07, -4.07 needed); not worse than the S&P 500 in the newer half; not clearly worse than the same stock on its other days in the newer half (+0.7%, t 0.41); not worse without its 2 worst cases in the newer half",
-    "whyTier2": "too few cases; newer: not worse than the average stock; newer: t 0.07 not at or below -2.5; newer: not worse without its 2 worst cases",
+    "why": "too few cases in the older half (13); not worse than an average stock in the newer half (+0.6%); could be luck in the newer half (t 0.32, -4.09 needed); not worse than the S&P 500 in the newer half; not clearly worse than the same stock on its other days in the newer half (+1.2%, t 0.71); not worse without its 2 worst cases in the newer half",
+    "whyTier2": "too few cases; newer: not worse than the average stock; newer: t 0.32 not at or below -2.5; newer: not worse without its 2 worst cases",
     "results": {
      "older": {
-      "n": 16
+      "n": 13
      },
      "newer": {
-      "n": 74,
-      "days": 62,
-      "stocks": 74,
-      "avg": -0.0018,
-      "ctrl": 0.0011,
-      "edge": 0.0014,
-      "t": 0.07,
-      "vsSpy": 0.0015,
-      "tSpy": 0.08,
-      "vsOwn": 0.0072,
-      "tOwn": 0.41,
-      "lagged": 0.459,
-      "noWorst2": 0.01
+      "n": 81,
+      "days": 67,
+      "stocks": 81,
+      "avg": 0.004,
+      "ctrl": 0.0015,
+      "edge": 0.0057,
+      "t": 0.32,
+      "vsSpy": 0.007,
+      "tSpy": 0.39,
+      "vsOwn": 0.0119,
+      "tOwn": 0.71,
+      "lagged": 0.42,
+      "noWorst2": 0.0144
      }
     }
    },
    "L90": {
     "name": "IPO + 90 days, 10 sessions after (information only)",
-    "signals": 134,
+    "signals": 138,
     "info": true,
     "verdict": "INFORMATION: NOT PROVEN",
     "level": "information only",
-    "why": "could be luck in the older half (t -1.23, -4.07 needed); not clearly worse than the same stock on its other days in the older half (+1.0%, t 0.38); not worse without its 2 worst cases in the older half; could be luck in the newer half (t -0.1, -4.07 needed); not clearly worse than the same stock on its other days in the newer half (-2.2%, t -1.13); not worse without its 2 worst cases in the newer half",
-    "whyTier2": "older: t -1.23 not at or below -2.5; older: not worse without its 2 worst cases; newer: t -0.1 not at or below -2.5; newer: not worse without its 2 worst cases",
+    "why": "could be luck in the older half (t -1.37, -4.09 needed); not clearly worse than the same stock on its other days in the older half (+1.1%, t 0.38); could be luck in the newer half (t -0.17, -4.09 needed); not clearly worse than the same stock on its other days in the newer half (-2.5%, t -1.32); not worse without its 2 worst cases in the newer half",
+    "whyTier2": "older: t -1.37 not at or below -2.5; newer: t -0.17 not at or below -2.5; newer: not worse without its 2 worst cases",
     "results": {
      "older": {
-      "n": 23,
-      "days": 22,
-      "stocks": 23,
-      "avg": -0.0153,
-      "ctrl": 0.0188,
-      "edge": -0.0382,
-      "t": -1.23,
-      "vsSpy": -0.0368,
-      "tSpy": -1.19,
-      "vsOwn": 0.0102,
+      "n": 21,
+      "days": 20,
+      "stocks": 21,
+      "avg": -0.0237,
+      "ctrl": 0.0176,
+      "edge": -0.0462,
+      "t": -1.37,
+      "vsSpy": -0.0439,
+      "tSpy": -1.3,
+      "vsOwn": 0.0109,
       "tOwn": 0.38,
-      "lagged": 0.478,
-      "noWorst2": 0.0015
+      "lagged": 0.524,
+      "noWorst2": -0.0028
      },
      "newer": {
-      "n": 100,
-      "days": 81,
-      "stocks": 100,
-      "avg": -0.0076,
-      "ctrl": 0.002,
-      "edge": -0.0044,
-      "t": -0.1,
-      "vsSpy": -0.0043,
-      "tSpy": -0.1,
-      "vsOwn": -0.0219,
-      "tOwn": -1.13,
-      "lagged": 0.64,
-      "noWorst2": 0.0051
+      "n": 104,
+      "days": 84,
+      "stocks": 104,
+      "avg": -0.0106,
+      "ctrl": 0.0008,
+      "edge": -0.0067,
+      "t": -0.17,
+      "vsSpy": -0.0072,
+      "tSpy": -0.18,
+      "vsOwn": -0.0248,
+      "tOwn": -1.32,
+      "lagged": 0.644,
+      "noWorst2": 0.0027
      }
     }
    }
   }
  },
  "now": [
-  {
-   "sym": "APUR",
-   "rule": "lock-up expiry about 2026-11-17",
-   "ipo": "2026-05-21"
-  },
-  {
-   "sym": "AIAI",
-   "rule": "lock-up expiry about 2026-11-10",
-   "ipo": "2026-05-14"
-  },
-  {
-   "sym": "TVIV",
-   "rule": "lock-up expiry about 2026-12-15",
-   "ipo": "2026-06-18"
-  },
-  {
-   "sym": "ELMT",
-   "rule": "lock-up expiry about 2026-10-20",
-   "ipo": "2026-04-23"
-  },
-  {
-   "sym": "KEYY",
-   "rule": "lock-up expiry about 2026-11-30",
-   "ipo": "2026-06-03"
-  },
-  {
-   "sym": "WENC",
-   "rule": "lock-up expiry about 2026-10-27",
-   "ipo": "2026-04-30"
-  },
-  {
-   "sym": "EROK",
-   "rule": "lock-up expiry about 2026-11-10",
-   "ipo": "2026-05-14"
-  },
-  {
-   "sym": "INIO",
-   "rule": "lock-up expiry about 2026-12-01",
-   "ipo": "2026-06-04"
-  },
-  {
-   "sym": "EROC",
-   "rule": "lock-up expiry about 2026-12-07",
-   "ipo": "2026-06-10"
-  },
-  {
-   "sym": "COAG",
-   "rule": "lock-up expiry about 2026-10-28",
-   "ipo": "2026-05-01"
-  },
-  {
-   "sym": "RACC",
-   "rule": "lock-up expiry about 2026-11-16",
-   "ipo": "2026-05-20"
-  },
-  {
-   "sym": "KARD",
-   "rule": "lock-up expiry about 2026-12-15",
-   "ipo": "2026-06-18"
-  },
-  {
-   "sym": "ALPX",
-   "rule": "lock-up expiry about 2026-12-22",
-   "ipo": "2026-06-25"
-  },
-  {
-   "sym": "CSIQ",
-   "rule": "S-8 filed",
-   "filed": "2026-09-21"
-  },
-  {
-   "sym": "APMD",
-   "rule": "lock-up expiry about 2027-01-27",
-   "ipo": "2026-07-31"
-  },
-  {
-   "sym": "REF",
-   "rule": "lock-up expiry about 2027-01-26",
-   "ipo": "2026-07-30"
-  },
-  {
-   "sym": "ADRX",
-   "rule": "S-8 filed",
-   "filed": "2026-09-28"
-  },
-  {
-   "sym": "BLSM",
-   "rule": "lock-up expiry about 2027-02-03",
-   "ipo": "2026-08-07"
-  },
   {
    "sym": "FBDT",
    "rule": "S-8 filed",
@@ -486,11 +396,6 @@
   },
   {
    "sym": "ETRA",
-   "rule": "S-8 filed",
-   "filed": "2026-09-21"
-  },
-  {
-   "sym": "ETRA",
    "rule": "lock-up expiry about 2027-03-17",
    "ipo": "2026-09-18"
   },
@@ -535,19 +440,9 @@
    "ipo": "2026-07-24"
   },
   {
-   "sym": "OIG",
-   "rule": "S-8 filed",
-   "filed": "2026-09-21"
-  },
-  {
    "sym": "BRVE",
    "rule": "lock-up expiry about 2027-02-02",
    "ipo": "2026-08-06"
-  },
-  {
-   "sym": "NWCL",
-   "rule": "S-8 filed",
-   "filed": "2026-09-22"
   },
   {
    "sym": "LYNX",
@@ -575,19 +470,44 @@
    "ipo": "2026-08-26"
   },
   {
+   "sym": "GBC",
+   "rule": "S-8 filed",
+   "filed": "2026-10-27"
+  },
+  {
+   "sym": "GBC",
+   "rule": "lock-up expiry about 2027-04-27",
+   "ipo": "2026-10-29"
+  },
+  {
    "sym": "GSK",
    "rule": "S-8 filed",
    "filed": "2026-10-13"
   },
   {
-   "sym": "SBLK",
+   "sym": "CZWI",
    "rule": "S-8 filed",
-   "filed": "2026-10-08"
+   "filed": "2026-10-30"
   },
   {
-   "sym": "BSEM",
+   "sym": "GIXI",
    "rule": "S-8 filed",
-   "filed": "2026-10-06"
+   "filed": "2026-10-23"
+  },
+  {
+   "sym": "SWRD",
+   "rule": "S-8 filed",
+   "filed": "2026-10-13"
+  },
+  {
+   "sym": "LYCA",
+   "rule": "S-8 filed",
+   "filed": "2026-10-23"
+  },
+  {
+   "sym": "LYCA",
+   "rule": "lock-up expiry about 2027-04-21",
+   "ipo": "2026-10-23"
   },
   {
    "sym": "IAM",
@@ -598,6 +518,41 @@
    "sym": "IAM",
    "rule": "lock-up expiry about 2027-04-13",
    "ipo": "2026-10-15"
+  },
+  {
+   "sym": "RTSN",
+   "rule": "S-8 filed",
+   "filed": "2026-10-13"
+  },
+  {
+   "sym": "RTSN",
+   "rule": "lock-up expiry about 2027-04-07",
+   "ipo": "2026-10-09"
+  },
+  {
+   "sym": "BGL",
+   "rule": "S-8 filed",
+   "filed": "2026-10-21"
+  },
+  {
+   "sym": "TREO",
+   "rule": "S-8 filed",
+   "filed": "2026-11-06"
+  },
+  {
+   "sym": "BBTX",
+   "rule": "S-8 filed",
+   "filed": "2026-10-30"
+  },
+  {
+   "sym": "BBTX",
+   "rule": "lock-up expiry about 2027-04-28",
+   "ipo": "2026-10-30"
+  },
+  {
+   "sym": "WSBK",
+   "rule": "S-8 filed",
+   "filed": "2026-11-04"
   },
   {
    "sym": "SLBT",
@@ -605,19 +560,49 @@
    "filed": "2026-10-09"
   },
   {
+   "sym": "PAXG",
+   "rule": "lock-up expiry about 2027-04-04",
+   "ipo": "2026-10-06"
+  },
+  {
    "sym": "CSHR",
    "rule": "S-8 filed",
    "filed": "2026-10-16"
   },
   {
-   "sym": "VYLR",
+   "sym": "PSQL",
    "rule": "S-8 filed",
-   "filed": "2026-10-01"
+   "filed": "2026-11-02"
   },
   {
-   "sym": "ACCV",
+   "sym": "ASPE",
    "rule": "S-8 filed",
-   "filed": "2026-10-01"
+   "filed": "2026-11-02"
+  },
+  {
+   "sym": "ASPE",
+   "rule": "lock-up expiry about 2027-04-28",
+   "ipo": "2026-10-30"
+  },
+  {
+   "sym": "MSGR",
+   "rule": "S-8 filed",
+   "filed": "2026-10-22"
+  },
+  {
+   "sym": "NARA",
+   "rule": "S-8 filed",
+   "filed": "2026-11-02"
+  },
+  {
+   "sym": "TRXB",
+   "rule": "S-8 filed",
+   "filed": "2026-10-09"
+  },
+  {
+   "sym": "TRXB",
+   "rule": "lock-up expiry about 2027-04-07",
+   "ipo": "2026-10-09"
   },
   {
    "sym": "AMRO",
@@ -630,9 +615,24 @@
    "ipo": "2026-10-15"
   },
   {
-   "sym": "AXR",
+   "sym": "CTY",
    "rule": "S-8 filed",
-   "filed": "2026-10-01"
+   "filed": "2026-10-16"
+  },
+  {
+   "sym": "CTY",
+   "rule": "lock-up expiry about 2027-04-14",
+   "ipo": "2026-10-16"
+  },
+  {
+   "sym": "TCXB",
+   "rule": "lock-up expiry about 2027-04-14",
+   "ipo": "2026-10-16"
+  },
+  {
+   "sym": "CVSA",
+   "rule": "S-8 filed",
+   "filed": "2026-11-04"
   },
   {
    "sym": "SMID",
@@ -643,40 +643,40 @@
  "examples": {
   "S8A": [
    {
-    "s": "REAX",
-    "d": "2026-08-24",
-    "ret": -0.29,
-    "avgStock": -0.034
-   },
-   {
     "s": "LCII",
     "d": "2026-08-05",
     "ret": -0.037,
-    "avgStock": -0.005
+    "avgStock": -0.004
    },
    {
     "s": "FAST",
     "d": "2026-07-16",
     "ret": 0.095,
-    "avgStock": 0.055
+    "avgStock": 0.048
    },
    {
     "s": "TTEK",
     "d": "2026-08-05",
     "ret": 0.044,
-    "avgStock": -0.005
+    "avgStock": -0.004
    },
    {
     "s": "DORM",
     "d": "2026-08-13",
     "ret": -0.044,
-    "avgStock": -0.044
+    "avgStock": -0.038
    },
    {
     "s": "CPT",
     "d": "2026-08-07",
     "ret": -0.052,
     "avgStock": -0.005
+   },
+   {
+    "s": "SBLK",
+    "d": "2026-10-08",
+    "ret": -0.124,
+    "avgStock": -0.026
    }
   ],
   "S8B": [
@@ -684,151 +684,151 @@
     "s": "VWAV",
     "d": "2026-05-29",
     "ret": -0.286,
-    "avgStock": 0.024
+    "avgStock": 0.02
    },
    {
     "s": "USAU",
     "d": "2025-11-13",
     "ret": 0.193,
-    "avgStock": 0.068
+    "avgStock": 0.07
    },
    {
     "s": "USAS",
     "d": "2026-03-30",
     "ret": 0.136,
-    "avgStock": 0.103
+    "avgStock": 0.097
    },
    {
     "s": "BWAY",
     "d": "2026-04-20",
     "ret": -0.062,
-    "avgStock": -0.029
+    "avgStock": -0.03
    },
    {
     "s": "IIPR",
     "d": "2026-06-09",
     "ret": 0.088,
-    "avgStock": 0.04
+    "avgStock": 0.036
    },
    {
     "s": "FISN",
     "d": "2026-07-20",
     "ret": -0.213,
-    "avgStock": 0.046
+    "avgStock": 0.041
    }
   ],
   "L180": [
    {
-    "s": "MWH",
-    "d": "2026-08-07",
-    "ret": -0.04,
-    "avgStock": 0.005
-   },
-   {
-    "s": "PAYP",
-    "d": "2026-09-04",
-    "ret": 0.049,
-    "avgStock": -0.03
-   },
-   {
-    "s": "BOBS",
-    "d": "2026-08-03",
-    "ret": 0.031,
-    "avgStock": 0.027
-   },
-   {
-    "s": "SWMR",
-    "d": "2026-09-11",
-    "ret": -0.474,
-    "avgStock": -0.014
-   },
-   {
     "s": "GENB",
     "d": "2026-08-25",
     "ret": -0.224,
-    "avgStock": -0.029
+    "avgStock": -0.026
    },
    {
     "s": "HMH",
     "d": "2026-09-25",
     "ret": -0.006,
     "avgStock": -0.007
+   },
+   {
+    "s": "ARXS",
+    "d": "2026-10-12",
+    "ret": 0.117,
+    "avgStock": -0.009
+   },
+   {
+    "s": "KLRA",
+    "d": "2026-10-13",
+    "ret": 0.234,
+    "avgStock": 0.014
+   },
+   {
+    "s": "ELMT",
+    "d": "2026-10-19",
+    "ret": 0.206,
+    "avgStock": 0.017
+   },
+   {
+    "s": "ALMR",
+    "d": "2026-10-13",
+    "ret": 0.377,
+    "avgStock": 0.014
    }
   ],
   "L180W": [
    {
-    "s": "SWMR",
-    "d": "2026-09-03",
-    "ret": -0.292,
-    "avgStock": -0.03
-   },
-   {
-    "s": "GENB",
-    "d": "2026-08-18",
-    "ret": -0.043,
-    "avgStock": -0.003
-   },
-   {
-    "s": "HMH",
-    "d": "2026-09-18",
-    "ret": -0.053,
-    "avgStock": -0.027
+    "s": "SPTX",
+    "d": "2026-10-20",
+    "ret": 0.095,
+    "avgStock": 0.016
    },
    {
     "s": "ARXS",
     "d": "2026-10-05",
     "ret": 0.017,
-    "avgStock": -0.04
+    "avgStock": -0.039
    },
    {
     "s": "KLRA",
     "d": "2026-10-06",
     "ret": 0.087,
-    "avgStock": -0.009
+    "avgStock": -0.007
+   },
+   {
+    "s": "ELMT",
+    "d": "2026-10-12",
+    "ret": 0.043,
+    "avgStock": -0.005
    },
    {
     "s": "ALMR",
     "d": "2026-10-06",
     "ret": -0.134,
-    "avgStock": -0.009
+    "avgStock": -0.007
+   },
+   {
+    "s": "COAG",
+    "d": "2026-10-20",
+    "ret": 0.183,
+    "avgStock": 0.016
    }
   ],
   "L90": [
    {
-    "s": "EROK",
-    "d": "2026-08-11",
-    "ret": -0.017,
-    "avgStock": -0.002
-   },
-   {
-    "s": "INIO",
-    "d": "2026-09-01",
-    "ret": -0.077,
-    "avgStock": -0.027
-   },
-   {
-    "s": "EROC",
-    "d": "2026-09-04",
-    "ret": 0.054,
-    "avgStock": -0.03
-   },
-   {
-    "s": "COAG",
-    "d": "2026-07-29",
-    "ret": 0.222,
-    "avgStock": 0.05
-   },
-   {
-    "s": "KARD",
-    "d": "2026-09-15",
-    "ret": -0.207,
-    "avgStock": -0.021
-   },
-   {
     "s": "BSP",
     "d": "2026-09-28",
     "ret": 0.099,
-    "avgStock": -0.012
+    "avgStock": -0.01
+   },
+   {
+    "s": "IOND",
+    "d": "2026-10-23",
+    "ret": -0.044,
+    "avgStock": -0.009
+   },
+   {
+    "s": "QMLS",
+    "d": "2026-10-12",
+    "ret": -0.278,
+    "avgStock": -0.009
+   },
+   {
+    "s": "STDN",
+    "d": "2026-10-13",
+    "ret": 0.059,
+    "avgStock": 0.014
+   },
+   {
+    "s": "CSQR",
+    "d": "2026-10-13",
+    "ret": -0.101,
+    "avgStock": 0.014
+   },
+   {
+    "s": "SKHY",
+    "d": "2026-10-07",
+    "ret": -0.188,
+    "avgStock": 0.002
    }
   ]
  }

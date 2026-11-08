@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-11-01T06:41:21.087Z",
+ "generatedAt": "2026-11-08T06:45:33.170Z",
  "status": "OK",
- "from": "2022-10-12",
- "to": "2026-10-19",
+ "from": "2022-11-01",
+ "to": "2026-11-06",
  "rules": {
   "K": 5,
   "HOLD": 10,
@@ -19,188 +19,188 @@
  "terms": 461,
  "unseenWeeks": 146,
  "verdict": "REJECTED",
- "why": "lost money in the older unseen half; not 0.5%+ better than an average stock in the older half; profit factor 1.18, under 1.2",
+ "why": "lost money in the older unseen half; not 0.5%+ better than an average stock in the older half; lost money in the newer unseen half; not 0.5%+ better than an average stock in the newer half; profit factor 0.77, under 1.2; loses at 1.2% cost; loses without its 2 best trades",
  "results": {
   "older": {
    "n": 365,
-   "win": 0.46301369863013697,
-   "avg": -0.005958410141760651,
-   "pf": 0.8043084244794818,
-   "spy": 0.006296177775222297,
-   "bestShare": 0.03876977903213724,
-   "noTop2": -0.0076293888721238835,
-   "worst": -0.4008523284937511,
+   "win": 0.4767123287671233,
+   "avg": -0.006725367669820669,
+   "pf": 0.7807929423660553,
+   "spy": 0.00791398013109068,
+   "bestShare": 0.033492419256555044,
+   "noTop2": -0.00829405104903498,
+   "worst": -0.22359417356531375,
    "days": 73
   },
   "olderStress": {
    "n": 365,
-   "win": 0.4383561643835616,
-   "avg": -0.009958410141760632,
-   "pf": 0.6950425802070145,
-   "spy": 0.006296177775222297,
-   "bestShare": 0.041349482075440376,
-   "noTop2": -0.011629388872123881,
-   "worst": -0.4048523284937511,
+   "win": 0.4575342465753425,
+   "avg": -0.010725367669820653,
+   "pf": 0.6730540738154077,
+   "spy": 0.00791398013109068,
+   "bestShare": 0.03584137874116885,
+   "noTop2": -0.012294051049034997,
+   "worst": -0.22759417356531375,
    "days": 73
   },
-  "olderAvg": -0.005812696605133219,
+  "olderAvg": -0.004406696883643326,
   "olderDeciles": [
-   -0.004204823401301301,
-   0.0010763796870724863,
-   0.0018848249981958303,
-   0.001967915972535517,
-   0.0030478929765767535,
-   0.003010580869146007,
-   0.0035653192182129164,
-   0.0032510724493496094,
-   0.003503253551519248,
-   0.004757873223122779
+   -0.0039960325838075085,
+   0.004110405590767746,
+   0.004228904655291449,
+   0.00361988418474594,
+   0.0041904215616628115,
+   0.004601993437214033,
+   0.004340849079535985,
+   0.004659439470709479,
+   0.00447663368942697,
+   0.005685437856009788
   ],
   "newer": {
    "n": 365,
-   "win": 0.5095890410958904,
-   "avg": 0.005177159948346586,
-   "pf": 1.1810167059315264,
-   "spy": 0.008752489553290908,
-   "bestShare": 0.031203299430897058,
-   "noTop2": 0.003319113547518389,
-   "worst": -0.28917645488065835,
+   "win": 0.4246575342465753,
+   "avg": -0.007462139908287148,
+   "pf": 0.7654881363999747,
+   "spy": 0.007692481783583102,
+   "bestShare": 0.042512777355186195,
+   "noTop2": -0.009242904568816976,
+   "worst": -0.308,
    "days": 73
   },
   "newerStress": {
    "n": 365,
-   "win": 0.4876712328767123,
-   "avg": 0.0011771599483465743,
-   "pf": 1.0384704094816228,
-   "spy": 0.008752489553290908,
-   "bestShare": 0.032823688510187785,
-   "noTop2": -0.0006808864524815803,
-   "worst": -0.29317645488065835,
+   "win": 0.3835616438356164,
+   "avg": -0.011462139908287127,
+   "pf": 0.6646756080109705,
+   "spy": 0.007692481783583102,
+   "bestShare": 0.04509470600178094,
+   "noTop2": -0.013242904568816955,
+   "worst": -0.312,
    "days": 73
   },
-  "newerAvg": -0.0008307457968732937,
+  "newerAvg": -0.0020922367436526945,
   "newerDeciles": [
-   0.005131787286317634,
-   0.00975952455266929,
-   0.008025481437251241,
-   0.0064088069569652305,
-   0.007280267523239486,
-   0.008123473346487917,
-   0.006040166579939592,
-   0.006498086881432311,
-   0.007447874046623635,
-   0.006982953726748937
+   0.003208166841312691,
+   0.006632354042626177,
+   0.006703486064874754,
+   0.007291737853555847,
+   0.006864900043082134,
+   0.005975757792590619,
+   0.006060088591508246,
+   0.006552166176386008,
+   0.0056495944440132125,
+   0.004148595082240577
   ]
  },
  "learned": [
   {
    "term": "1 month move + market rising",
-   "weight": 0.0431,
+   "weight": 0.0395,
    "helps": true
-  },
-  {
-   "term": "daily swing size",
-   "weight": -0.0338,
-   "helps": false
   },
   {
    "term": "1 month move",
-   "weight": -0.0323,
+   "weight": -0.0337,
    "helps": false
   },
   {
-   "term": "distance above the 1 year low",
-   "weight": 0.028,
-   "helps": true
-  },
-  {
-   "term": "distance from the 1 year high + market rising",
-   "weight": 0.0279,
-   "helps": true
-  },
-  {
    "term": "daily swing size + biggest 1-day jump this month",
-   "weight": -0.0275,
+   "weight": -0.0286,
    "helps": false
   },
   {
    "term": "daily swing size (extreme either way)",
-   "weight": -0.0243,
+   "weight": -0.0278,
    "helps": false
   },
   {
    "term": "above the 50 day average",
-   "weight": 0.0235,
+   "weight": 0.0277,
    "helps": true
+  },
+  {
+   "term": "daily swing size",
+   "weight": -0.0264,
+   "helps": false
   },
   {
    "term": "3 month move",
-   "weight": -0.0232,
+   "weight": -0.026,
    "helps": false
   },
   {
-   "term": "1 day move + market rising",
-   "weight": 0.0193,
+   "term": "distance above the 1 year low",
+   "weight": 0.0249,
    "helps": true
+  },
+  {
+   "term": "distance above the 1 year low + economy came in strong (vs weak)",
+   "weight": -0.0207,
+   "helps": false
+  },
+  {
+   "term": "opening gap today + inflation came in hot (vs cool)",
+   "weight": -0.0199,
+   "helps": false
   },
   {
    "term": "biggest 1-day jump this month (extreme either way)",
-   "weight": -0.0187,
+   "weight": -0.0185,
    "helps": false
   },
   {
-   "term": "money traded per day",
-   "weight": 0.0174,
-   "helps": true
+   "term": "1 day move + inflation came in hot (vs cool)",
+   "weight": -0.0185,
+   "helps": false
   }
  ],
  "now": [
   {
-   "sym": "WERN",
-   "score": 0.0801
+   "sym": "NET",
+   "score": 0.0975
   },
   {
-   "sym": "CTVA",
-   "score": 0.0676
+   "sym": "PLTR",
+   "score": 0.0914
   },
   {
-   "sym": "FMC",
-   "score": 0.0658
+   "sym": "SNOW",
+   "score": 0.0892
   },
   {
-   "sym": "MRP",
-   "score": 0.058
+   "sym": "NTAP",
+   "score": 0.0883
   },
   {
-   "sym": "LUV",
-   "score": 0.0568
+   "sym": "URI",
+   "score": 0.0853
   },
   {
-   "sym": "MAN",
-   "score": 0.0564
+   "sym": "SHOP",
+   "score": 0.0837
   },
   {
-   "sym": "TLK",
-   "score": 0.0553
+   "sym": "IRDM",
+   "score": 0.0815
   },
   {
-   "sym": "VRT",
-   "score": 0.0545
+   "sym": "HPE",
+   "score": 0.0811
   },
   {
-   "sym": "AGNC",
-   "score": 0.0545
+   "sym": "CRWD",
+   "score": 0.0797
   },
   {
-   "sym": "COGT",
-   "score": 0.0544
+   "sym": "S",
+   "score": 0.0789
   }
  ],
  "paper": {
-  "n": 0,
-  "avg": null,
-  "win": null
+  "n": 15,
+  "avg": 0.0445,
+  "win": 0.6
  },
  "version": 1,
- "seconds": 74
+ "seconds": 65
 }

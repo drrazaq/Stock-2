@@ -1,13 +1,13 @@
 {
- "generatedAt": "2026-11-01T06:38:25.938Z",
+ "generatedAt": "2026-11-08T06:42:47.040Z",
  "status": "OK",
- "from": "2021-10-12",
- "to": "2026-10-19",
- "splitAt": "2024-09-16",
- "stocks": 8487,
- "winners": 18016,
- "winnerRate": 0.005764005932933283,
- "gone": 2386,
+ "from": "2021-11-01",
+ "to": "2026-11-06",
+ "splitAt": "2024-10-04",
+ "stocks": 8475,
+ "winners": 18128,
+ "winnerRate": 0.005803156843054507,
+ "gone": 2394,
  "rules": {
   "hold": 10,
   "stopAtr": 2,
@@ -20,123 +20,99 @@
  },
  "base": {
   "older": {
-   "n": 140493,
-   "win": 0.41609902272711097,
-   "avg": -0.007592060449579906,
-   "t": -31.781831020374543,
-   "pf": 0.7822105363857123,
-   "spy": 0.006480954201799508,
-   "bestShare": 0.0006069935514501216
+   "n": 140440,
+   "win": 0.427435203645685,
+   "avg": -0.0056100609596297394,
+   "t": -23.99349611494773,
+   "pf": 0.830966199263653,
+   "spy": 0.006865627948478362,
+   "bestShare": 0.0007074607017429857
   },
   "newer": {
-   "n": 142546,
-   "win": 0.41006411965260336,
-   "avg": -0.006709822328052527,
-   "t": -21.218557122207823,
-   "pf": 0.8171105092693927,
-   "spy": 0.0048289444039273,
-   "bestShare": 0.005527792848793833
+   "n": 142773,
+   "win": 0.4283442947896311,
+   "avg": -0.0054522939221169795,
+   "t": -17.664245794998394,
+   "pf": 0.8479549502815751,
+   "spy": 0.005360417284208724,
+   "bestShare": 0.005441066339159966
   }
  },
  "lift": [
   {
    "name": "opened 3% or more above the previous close",
    "key": "gapUp",
-   "inWinners": 0.05450710479573712,
-   "inAll": 0.02463587837742721,
-   "lift": 2.2125090877896048
+   "inWinners": 0.05372903795233892,
+   "inAll": 0.024962409769842472,
+   "lift": 2.15239788336661
   },
   {
    "name": "volume at least twice its 50 day average",
    "key": "vol2x",
-   "inWinners": 0.10240896980461811,
-   "inAll": 0.05157563146195104,
-   "lift": 1.9856076775360167
+   "inWinners": 0.10199691085613416,
+   "inAll": 0.05207251257035864,
+   "lift": 1.9587476352004207
   },
   {
    "name": "up 50% or more in 6 months",
    "key": "mom50",
-   "inWinners": 0.14548179396092362,
-   "inAll": 0.08104897485414018,
-   "lift": 1.7949862317535783
+   "inWinners": 0.1455207413945278,
+   "inAll": 0.08141930209099957,
+   "lift": 1.7873002796300594
   },
   {
    "name": "quiet base: last 10 days’ moves under 75% of the 50 day norm",
    "key": "tight",
-   "inWinners": 0.148645648312611,
-   "inAll": 0.10979413898881624,
-   "lift": 1.3538577712946247
+   "inWinners": 0.1496028243601059,
+   "inAll": 0.10807675353581853,
+   "lift": 1.3842275925740581
   },
   {
    "name": "thinly followed: under 20M USD traded a day",
    "key": "smallDv",
-   "inWinners": 0.5306949378330373,
-   "inAll": 0.419028450181149,
-   "lift": 1.26648903577696
+   "inWinners": 0.5258164165931156,
+   "inAll": 0.4168419596922611,
+   "lift": 1.2614287126500083
   },
   {
    "name": "up 4% to 20% on the day",
    "key": "bigUp",
-   "inWinners": 0.05722690941385435,
-   "inAll": 0.059458587844141486,
-   "lift": 0.9624666761992898
+   "inWinners": 0.05599073256840247,
+   "inAll": 0.060028804504233126,
+   "lift": 0.93273109519371
   },
   {
    "name": "S&P 500 above its 50 day average",
    "key": "mktUp",
-   "inWinners": 0.677619893428064,
-   "inAll": 0.762730019541823,
-   "lift": 0.8884138241144812
+   "inWinners": 0.6812665489849956,
+   "inAll": 0.760325908976102,
+   "lift": 0.8960191162003512
   },
   {
    "name": "price above the 50 day average, which is above the 200 day average",
    "key": "trend",
-   "inWinners": 0.179895648312611,
-   "inAll": 0.3351006717421657,
-   "lift": 0.5368406078607534
+   "inWinners": 0.1813217122683142,
+   "inAll": 0.3374330186435377,
+   "lift": 0.5373561632978823
   },
   {
    "name": "closed in the top fifth of the day’s range",
    "key": "strongClose",
-   "inWinners": 0.09463809946714032,
-   "inAll": 0.21915220226234675,
-   "lift": 0.43183731895082306
+   "inWinners": 0.09532215357458076,
+   "inAll": 0.21920426196540962,
+   "lift": 0.4348553842882059
   },
   {
    "name": "within 5% of its 52 week high",
    "key": "high52",
-   "inWinners": 0.03297069271758437,
-   "inAll": 0.14421596593810349,
-   "lift": 0.22862026754884524
+   "inWinners": 0.033042806707855255,
+   "inAll": 0.144869241700138,
+   "lift": 0.22808711028010975
   }
  ],
  "chosen": [],
  "promising": [],
  "recentWinners": [
-  {
-   "sym": "CSW",
-   "d": "2026-07-07"
-  },
-  {
-   "sym": "AAUC",
-   "d": "2026-07-28"
-  },
-  {
-   "sym": "ASIC",
-   "d": "2026-06-03"
-  },
-  {
-   "sym": "VOYG",
-   "d": "2026-04-23"
-  },
-  {
-   "sym": "VOYG",
-   "d": "2026-07-10"
-  },
-  {
-   "sym": "CHYM",
-   "d": "2026-06-10"
-  },
   {
    "sym": "CHYM",
    "d": "2026-07-13"
@@ -158,6 +134,10 @@
    "d": "2026-06-03"
   },
   {
+   "sym": "SLDE",
+   "d": "2026-09-30"
+  },
+  {
    "sym": "RAL",
    "d": "2026-04-30"
   },
@@ -168,6 +148,10 @@
   {
    "sym": "VWAV",
    "d": "2026-08-03"
+  },
+  {
+   "sym": "GLIBK",
+   "d": "2026-10-09"
   },
   {
    "sym": "AUGO",
@@ -250,6 +234,10 @@
    "d": "2026-08-07"
   },
   {
+   "sym": "BRCB",
+   "d": "2026-09-24"
+  },
+  {
    "sym": "GEMI",
    "d": "2026-08-17"
   },
@@ -266,13 +254,25 @@
    "d": "2026-08-24"
   },
   {
+   "sym": "NTSK",
+   "d": "2026-09-25"
+  },
+  {
    "sym": "NUAI",
    "d": "2026-08-21"
+  },
+  {
+   "sym": "NAVN",
+   "d": "2026-09-23"
+  },
+  {
+   "sym": "BETA",
+   "d": "2026-10-09"
   },
   {
    "sym": "BLLN",
    "d": "2026-09-11"
   }
  ],
- "text": "WINNERS STUDY, 2026-10-19\nWhole US market 2021-10-12 to 2026-10-19, stocks that later collapsed included. 18016 times a stock rose 30%+ within 20 sessions.\n\nWHAT WINNERS LOOKED LIKE THE DAY BEFORE (how much more common than on an ordinary day)\n- opened 3% or more above the previous close: 5% of winners vs 2% of all days (2.2x)\n- volume at least twice its 50 day average: 10% of winners vs 5% of all days (2.0x)\n- up 50% or more in 6 months: 15% of winners vs 8% of all days (1.8x)\n- quiet base: last 10 days’ moves under 75% of the 50 day norm: 15% of winners vs 11% of all days (1.4x)\n- thinly followed: under 20M USD traded a day: 53% of winners vs 42% of all days (1.3x)\nCommon among winners is not the same as a buy signal: most stocks with these looks do not become winners. So each look was tested as a buy rule:\n\nTESTED AS BUY RULES (buy next open, stop 2 daily moves, sell after 10 sessions; chosen on the older half, judged on the newer half from 2024-09-16, 0.8% cost)\nNo look made money on the older half with enough trades.\nBuying a random stock the same way: 142546 trades, 41% won, average -0.7% a trade, profit factor 0.82.\n\nRESULT: no winner pattern passed the fair test. Nothing to act on. The study repeats every week as new days come in.\nAbout 5 years of data (first 210 sessions used only to warm up the averages), one market climate. Every pair of looks is tested, not only single looks. Daily prices only. Research, not an order. Not financial advice, not a halal ruling."
+ "text": "WINNERS STUDY, 2026-11-06\nWhole US market 2021-11-01 to 2026-11-06, stocks that later collapsed included. 18128 times a stock rose 30%+ within 20 sessions.\n\nWHAT WINNERS LOOKED LIKE THE DAY BEFORE (how much more common than on an ordinary day)\n- opened 3% or more above the previous close: 5% of winners vs 2% of all days (2.2x)\n- volume at least twice its 50 day average: 10% of winners vs 5% of all days (2.0x)\n- up 50% or more in 6 months: 15% of winners vs 8% of all days (1.8x)\n- quiet base: last 10 days’ moves under 75% of the 50 day norm: 15% of winners vs 11% of all days (1.4x)\n- thinly followed: under 20M USD traded a day: 53% of winners vs 42% of all days (1.3x)\nCommon among winners is not the same as a buy signal: most stocks with these looks do not become winners. So each look was tested as a buy rule:\n\nTESTED AS BUY RULES (buy next open, stop 2 daily moves, sell after 10 sessions; chosen on the older half, judged on the newer half from 2024-10-04, 0.8% cost)\nNo look made money on the older half with enough trades.\nBuying a random stock the same way: 142773 trades, 43% won, average -0.5% a trade, profit factor 0.85.\n\nRESULT: no winner pattern passed the fair test. Nothing to act on. The study repeats every week as new days come in.\nAbout 5 years of data (first 210 sessions used only to warm up the averages), one market climate. Every pair of looks is tested, not only single looks. Daily prices only. Research, not an order. Not financial advice, not a halal ruling."
 }

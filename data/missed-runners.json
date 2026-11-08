@@ -1,12 +1,12 @@
 {
- "generatedAt": "2026-11-01T06:42:40.972Z",
- "asOfDay": "2026-10-30",
+ "generatedAt": "2026-11-08T06:47:03.086Z",
+ "asOfDay": "2026-11-06",
  "staleRule": "stale if data/ignition-days.jsonl has a later day than asOfDay; re-run before using the decision",
  "agent": "A",
  "library": "A-MISS1",
  "preRegistered": "2026-10-21 (decision tree written before the numbers)",
  "window": {
-  "watchedDays": 14,
+  "watchedDays": 19,
   "days": [
    "2026-10-16",
    "2026-10-19",
@@ -21,30 +21,35 @@
    "2026-10-29",
    "2026-10-29",
    "2026-10-30",
-   "2026-10-30"
+   "2026-10-30",
+   "2026-11-02",
+   "2026-11-03",
+   "2026-11-04",
+   "2026-11-05",
+   "2026-11-06"
   ],
   "dailyCache": "2026-06-17 to 2026-10-23"
  },
  "ledger": {
-  "movers": 2473,
+  "movers": 3875,
   "alerted": 1,
-  "misses": 2472,
+  "misses": 3874,
   "tally": {
-   "UNDER_1_USD": 813,
+   "UNDER_1_USD": 1226,
    "NOT_VISIBLE_LIVE": 159,
-   "CAUGHT_RULE_NOT_PASSED": 228,
+   "CAUGHT_RULE_NOT_PASSED": 376,
    "VISIBLE_TOO_LATE": 25,
-   "LOW_VOLUME": 179,
-   "AFTER_11_00": 357,
+   "LOW_VOLUME": 370,
+   "AFTER_11_00": 468,
    "SEC_CHECK_UNAVAILABLE": 5,
-   "VOLUME_FIGURE_LATE": 488,
+   "VOLUME_FIGURE_LATE": 689,
    "CAUGHT_PAPER_GATE_NOT_MET": 55,
    "ALERTED": 1,
-   "GAPPED_AT_OPEN": 163
+   "GAPPED_AT_OPEN": 501
   },
-  "feedFix": 251,
-  "feedGapLike": 421,
-  "perStockRows": 1896,
+  "feedFix": 363,
+  "feedGapLike": 510,
+  "perStockRows": 3298,
   "rowsPerDay": {
    "2026-10-14": 150,
    "2026-10-15": 150,
@@ -58,16 +63,21 @@
    "2026-10-27": 150,
    "2026-10-28": 160,
    "2026-10-29": 151,
-   "2026-10-30": 148
+   "2026-10-30": 148,
+   "2026-11-02": 241,
+   "2026-11-03": 244,
+   "2026-11-04": 265,
+   "2026-11-05": 191,
+   "2026-11-06": 461
   },
   "note": "tallies cover every 15%+ intraday mover; per-stock rows the 150 biggest a day"
  },
  "diagnosis": {
   "allMovers": {
-   "eligibility": 1052,
+   "eligibility": 1656,
    "coverage": 159,
-   "prediction": 228,
-   "timing": 1033,
+   "prediction": 376,
+   "timing": 1683,
    "caught": 1
   },
   "runnerSample": {
@@ -79,11 +89,11 @@
   }
  },
  "groups": {
-  "blocked": 997,
-  "lateData": 672,
-  "ruleNotFired": 640,
+  "blocked": 1601,
+  "lateData": 873,
+  "ruleNotFired": 899,
   "alerted": 1,
-  "moveBeforeOpen": 163
+  "moveBeforeOpen": 501
  },
  "runners": {
   "n": 3243,
@@ -3200,8 +3210,8 @@
     "volRatioDayBefore": 1.6109350970981633,
     "chg5Before": -0.06878980891719744,
     "gapAtStart": 0.3659370725034199,
-    "secFilings10d": 0,
-    "secFamilies": "",
+    "secFilings10d": 1,
+    "secFamilies": "NEWS",
     "insiderBuys30d": 0,
     "sharesChg90d": 0.0031,
     "code": "DAY_NOT_WATCHED",
@@ -7654,8 +7664,8 @@
     "volRatioDayBefore": 0.7418712372467589,
     "chg5Before": -0.013293943870014813,
     "gapAtStart": -0.0119760479041916,
-    "secFilings10d": 0,
-    "secFamilies": "",
+    "secFilings10d": 1,
+    "secFamilies": "CONTRACT,BIO_NEWS",
     "insiderBuys30d": 0,
     "sharesChg90d": 0,
     "code": "DAY_NOT_WATCHED",
@@ -7676,8 +7686,8 @@
     "volRatioDayBefore": 0.7032521697957167,
     "chg5Before": 0.1373707533234858,
     "gapAtStart": 0.051948051948051965,
-    "secFilings10d": 0,
-    "secFamilies": "",
+    "secFilings10d": 1,
+    "secFamilies": "EARN",
     "insiderBuys30d": 0,
     "sharesChg90d": 0,
     "code": "DAY_NOT_WATCHED",
@@ -11369,7 +11379,7 @@
     "secFilings10d": 0,
     "secFamilies": "",
     "insiderBuys30d": 0,
-    "sharesChg90d": 0.0235
+    "sharesChg90d": null
    },
    {
     "sym": "PCRX",
@@ -11878,8 +11888,8 @@
     "volRatioDayBefore": 1.5474435916491285,
     "chg5Before": -0.029453412630982667,
     "gapAtStart": 0.010796615115260977,
-    "secFilings10d": 0,
-    "secFamilies": "",
+    "secFilings10d": 1,
+    "secFamilies": "NEWS",
     "insiderBuys30d": 0,
     "sharesChg90d": -0.005
    },
@@ -12393,7 +12403,7 @@
     "secFilings10d": 0,
     "secFamilies": "",
     "insiderBuys30d": 0,
-    "sharesChg90d": 0.0235
+    "sharesChg90d": null
    },
    {
     "sym": "OIS",
@@ -13862,8 +13872,8 @@
     "volRatioDayBefore": 0.7981260383373858,
     "chg5Before": 0.007313829787234161,
     "gapAtStart": 0.007260726072607193,
-    "secFilings10d": 0,
-    "secFamilies": "",
+    "secFilings10d": 1,
+    "secFamilies": "MGMT",
     "insiderBuys30d": 2,
     "sharesChg90d": -0.0008
    },
@@ -14054,8 +14064,8 @@
     "volRatioDayBefore": 1.2796436482455391,
     "chg5Before": -0.07088402270884031,
     "gapAtStart": 0.0027932960893854997,
-    "secFilings10d": 0,
-    "secFamilies": "",
+    "secFilings10d": 1,
+    "secFamilies": "NEWS",
     "insiderBuys30d": 0,
     "sharesChg90d": 0
    },
@@ -15394,15 +15404,15 @@
    "n": 3243,
    "anySecFiling10d": {
     "n": 3243,
-    "share": 0.1332
+    "share": 0.1388
    },
    "anyInsiderBuy30d": {
     "n": 3243,
     "share": 0.0685
    },
    "sharesUp5pctIn90d": {
-    "n": 2560,
-    "share": 0.1828
+    "n": 2556,
+    "share": 0.1839
    },
    "volRatioDayBefore": {
     "n": 3243,
@@ -15430,15 +15440,15 @@
    "n": 3212,
    "anySecFiling10d": {
     "n": 3212,
-    "share": 0.1345
+    "share": 0.142
    },
    "anyInsiderBuy30d": {
     "n": 3212,
     "share": 0.0672
    },
    "sharesUp5pctIn90d": {
-    "n": 2683,
-    "share": 0.0868
+    "n": 2670,
+    "share": 0.0876
    },
    "volRatioDayBefore": {
     "n": 3212,
@@ -15470,73 +15480,73 @@
  },
  "latency": {
   "ig8Unbiased": {
-   "n": 800,
+   "n": 974,
    "delays": {
     "0min": {
-     "n": 800,
-     "mean": -0.0067,
-     "median": -0.0088,
-     "win": 0.4025
+     "n": 974,
+     "mean": -0.0074,
+     "median": -0.0086,
+     "win": 0.4004
     },
     "1min": {
-     "n": 800,
-     "mean": -0.0065,
-     "median": -0.0096,
-     "win": 0.4063
+     "n": 974,
+     "mean": -0.0072,
+     "median": -0.0093,
+     "win": 0.4045
     },
     "5min": {
-     "n": 800,
-     "mean": -0.0057,
-     "median": -0.0097,
-     "win": 0.395
+     "n": 974,
+     "mean": -0.0067,
+     "median": -0.0089,
+     "win": 0.3953
     },
     "15min": {
-     "n": 800,
-     "mean": -0.006,
+     "n": 974,
+     "mean": -0.007,
      "median": -0.01,
      "win": 0.385
     },
     "30min": {
-     "n": 797,
-     "mean": -0.0102,
+     "n": 971,
+     "mean": -0.01,
      "median": -0.0126,
-     "win": 0.345
+     "win": 0.3532
     }
    },
    "note": "IG8 signals from the paper ledger, every signal, stop 8% then the close, fills delayed by minutes, after costs"
   },
   "moversHindsight": {
-   "n": 366,
+   "n": 492,
    "delays": {
     "0min": {
-     "n": 365,
-     "mean": -0.0013,
-     "median": 0.0092,
-     "win": 0.5397
+     "n": 491,
+     "mean": 0.0113,
+     "median": 0.0084,
+     "win": 0.5377
     },
     "1min": {
-     "n": 364,
-     "mean": -0.004,
+     "n": 490,
+     "mean": 0.0075,
      "median": 0.003,
-     "win": 0.5192
+     "win": 0.5224
     },
     "5min": {
-     "n": 362,
-     "mean": -0.004,
-     "median": 0.0056,
-     "win": 0.5276
+     "n": 485,
+     "mean": 0.002,
+     "median": 0.0027,
+     "win": 0.5155
     },
     "15min": {
-     "n": 348,
-     "mean": -0.0151,
-     "median": -0.0045,
-     "win": 0.4828
+     "n": 467,
+     "mean": -0.0097,
+     "median": -0.0051,
+     "win": 0.4797
     },
     "30min": {
-     "n": 330,
-     "mean": -0.0159,
+     "n": 447,
+     "mean": -0.0113,
      "median": -0.0084,
-     "win": 0.4485
+     "win": 0.4452
     }
    },
    "nextOpen": {
@@ -15549,54 +15559,54 @@
   "calls": 300,
   "refused": null,
   "budget": 300,
-  "cached": 1166
+  "cached": 1466
  },
  "breakEven": {
   "feedUsdPerMonth": 99,
   "tradeUsd": 1000,
-  "alertsPerMonthObserved": 9,
-  "feedFixableMissesPerMonth": 376.5,
-  "liveMinus15minPerTrade": -0.0007,
-  "incrementalUsdPerMonthOnAlerts": -6,
+  "alertsPerMonthObserved": 6.6,
+  "feedFixableMissesPerMonth": 401.2,
+  "liveMinus15minPerTrade": -0.0004,
+  "incrementalUsdPerMonthOnAlerts": -3,
   "note": "live minus 15-minute-delayed fill on the IG8 signals, after costs, times 1,000 USD, times the observed alerts a month; the feed-fixable misses are listed separately because nobody knows what a rule would have earned on stocks it never saw live",
   "verdict": "FEED DOES NOT PAY ON THE OBSERVED ALERTS"
  },
  "catchable": {
-  "perStockRows": 1896,
-  "over1usd": 1203,
-  "inSessionMove": 537,
-  "seenLiveBeforePlus10": 461,
-  "feedFixableNotSeen": 251,
-  "shareSeenLiveEarly": 0.2431,
-  "shareCatchableWithLivePrices": 0.3446,
+  "perStockRows": 3298,
+  "over1usd": 2192,
+  "inSessionMove": 1207,
+  "seenLiveBeforePlus10": 1082,
+  "feedFixableNotSeen": 363,
+  "shareSeenLiveEarly": 0.3281,
+  "shareCatchableWithLivePrices": 0.4218,
   "note": "catchable = seen live before +10% (per-stock rows, top 150 a day) plus the feed-fixable data misses (all movers); gap-ups and sub-1-USD stocks are not catchable by any feed"
  },
  "decision": {
   "branch": "BLOCKS_UNRESOLVED",
-  "why": "blocked is the biggest cause: 997 of 2472 (+40.3%); only 6 valid 5-session outcomes; need 30. Keep current protections; collect more matched outcomes.",
+  "why": "blocked is the biggest cause: 1601 of 3874 (+41.3%); only 6 valid 5-session outcomes; need 30. Keep current protections; collect more matched outcomes.",
   "caughtInTime": {
-   "rows": 224,
-   "share": 0.1181,
+   "rows": 347,
+   "share": 0.1052,
    "branch4": "under 20% caught in time: no sizing"
   },
   "groupsOfMisses": {
-   "lateDataFeedFixable": 251,
-   "lateDataAll": 672,
-   "ruleNotFired": 640,
-   "blocked": 997,
-   "moveBeforeOpen": 584,
-   "misses": 2472,
-   "movers": 2473,
+   "lateDataFeedFixable": 363,
+   "lateDataAll": 873,
+   "ruleNotFired": 899,
+   "blocked": 1601,
+   "moveBeforeOpen": 1011,
+   "misses": 3874,
+   "movers": 3875,
    "alerted": 1
   },
-  "orbFiredShare": 0.0216,
+  "orbFiredShare": 0.0127,
   "blockedFade5": {
    "dailySample": 0.5,
    "n": 6,
    "minimumN": 30,
    "fadeBar": 0.55,
-   "ledgerSameSessionNegative": 0.3145,
-   "nLedger": 795,
+   "ledgerSameSessionNegative": 0.2809,
+   "nLedger": 1399,
    "note": "Only dailySample is a 5-session outcome. ledgerSameSessionNegative is same-session and must not be interpreted as a 5-session fade."
   }
  },
@@ -15612,6 +15622,6 @@
   "stocks": 624,
   "pf": 0.6760217649224716
  },
- "actionsLine": "Missed runners (14 watched days, 2473 movers of 15%+): UNDER_1_USD 813, VOLUME_FIGURE_LATE 488, AFTER_11_00 357, CAUGHT_RULE_NOT_PASSED 228. Decision: BLOCKS_UNRESOLVED.",
+ "actionsLine": "Missed runners (19 watched days, 3875 movers of 15%+): UNDER_1_USD 1226, VOLUME_FIGURE_LATE 689, GAPPED_AT_OPEN 501, AFTER_11_00 468. Decision: BLOCKS_UNRESOLVED.",
  "noNewBuyRule": true
 }
