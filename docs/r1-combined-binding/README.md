@@ -1,16 +1,29 @@
-# R1 combined-unit binding, rev15 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev16 (review only; NOT approved, NOT deployed)
 
-This folder binds the **73-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
+This folder binds the **75-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `09f58ca51258e02c6950f8d528a3c4093d2963e9` on `claude/composed-r1-opencheck-calendar-watcher` |
-| Historical R1 base (allowlist = diff from it) | `b0d76987` → **73 paths** (rev14 added 4, rev15 adds 1; see below) |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `cdda3dc376d9bead23ae14fba24bd60db9ee53ee` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Historical R1 base (allowlist = diff from it) | `b0d76987` → **75 paths** (rev14 added 4, rev15 1, rev16 2; see below) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `7a67151af4b1d771e095fe2018a7036567e4ab50` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `00bd7963` | `dd3ab3b929ef33216c62fe4966edb20eb0b88c5f` |
+| Unit tree, `M0` = `7742732` | `10e3d8bce56e0476eaf0a281c6dea2599c197885` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `6e72a8d0` | `43e82ea7d9ce9cf9f477968efe0a92ddf67ced6e` |
 
-## Rev15: what changed (Codex 6724441072 / 6724603156, N1; counts 6724516752)
+## Rev16: what changed (Codex 6725294448 R1–R3)
+
+- **R1:** `telegramLive()` renders each price-bearing message again **immediately before every network attempt**: the first try, each 429 or connection retry, and each part. This covers the first market-hours check, BUY NOW cards, YOUR STOPS and the Market-hours alerts. Alerts and cards are marked only while eligible at that attempt, and unmarked when they expire. Parts already sent are never repeated.
+- **R2:** BUY NOW keeps its original strict **under 20 minutes** comparator; other routes are unchanged.
+- **R3:** RELEASE.md's live build and verify paragraph and G1/G6/B5 say 75 files.
+- **Allowlist:** +2 paths, Codex's reproducers adapted as `test/intraday-alert-send-time.test.mjs` and `test/buynow-evidence.test.mjs`. 5 of their cases fail on rev15.
+- **Checks:**
+  - Precheck against `6e72a8d0`: PASS (75/0/0).
+  - Build + verify: PASS on `7742732` (tree `10e3d8bc…`, equal to main + `source.patch`; the inverse restores main) and on `6e72a8d0` (tree `43e82ea7…`). Revert restores each `M0`.
+  - Refused: the mode mutant, the whole branch, the old candidate, and the rev15 binding.
+  - On the built unit: Codex's actual-send 4/4, BUY NOW 4/4, races 5/5; render-age, future-fetch, stop-provenance and radar-reader exit 0; the N1 test 5/5.
+  - Full suite **161/161**; gated watcher 9/9 and 11/11.
+
+## Rev15 (history): what changed (Codex 6724441072 / 6724603156, N1; counts 6724516752)
 
 - **N1:** the intraday "Market hours check" alerts each keep their route's existing rule (`ALERT_GATE`):
   - **holding** (YOUR POSITION target lines): the 5-minute `holdingAction`/`quoteEvidence` rule;

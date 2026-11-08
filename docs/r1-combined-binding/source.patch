@@ -818,17 +818,17 @@ index d2b04bed874820b4adcad78970b5bae7c0b738ca..93d5bc2aca08ee0f99be5144f09cd232
  async function frame(taxonomy, tag, unit, period) {
 diff --git a/docs/r1-sealed-provider-data/MANIFEST.md b/docs/r1-sealed-provider-data/MANIFEST.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..a770cadc28cf7152a4c1bd221e8ceda6c67191c6
+index 0000000000000000000000000000000000000000..fe25d5d767b6b1c541424c1b9db264146cab64f4
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/MANIFEST.md
-@@ -0,0 +1,89 @@
-+# R1 combined-unit candidate manifest, rev15 (review only; not deployed)
+@@ -0,0 +1,91 @@
++# R1 combined-unit candidate manifest, rev16 (review only; not deployed)
 +
-+- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821), `df5ee960` (rev14: B1-B5 closed; N1 and operative counts open, 6724620286).
++- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821), `df5ee960` (rev14: B1-B5 closed; N1 and operative counts open, 6724620286), `09f58ca5` (rev15: CHANGES REQUIRED R1-R3, 6725294448).
 +- **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
-+- **Binding:** the authoritative path list (73 paths in rev15) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
-+- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 72 files.
-+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `e0e5e5bfc23b8729e5a869299c018cd18e54f5f95ed22c977b4a36ab51dd1137`
++- **Binding:** the authoritative path list (75 paths in rev16) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
++- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 74 files.
++- `git diff --full-index b0d76987 -- <allowlist>` sha256: `d4c6d4408b3c4d3e58408ed4e6a8fbb90c51510e0fcaca7854d6d838c5e68f26`
 +
 +| Status | File | sha256 (candidate) |
 +|---|---|---|
@@ -849,8 +849,8 @@ index 0000000000000000000000000000000000000000..a770cadc28cf7152a4c1bd221e8ceda6
 +| A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 +| M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 +| M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-+| A | `docs/r1-sealed-provider-data/README.md` | `bfe531dee6071f2ac6f7351a03033d25bf01f56779048a23a4fb24e3a1dd3593` |
-+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `cd213929d9af9581c6a984e3674a4799af5d720df87f7c4aa08f015bc60202a8` |
++| A | `docs/r1-sealed-provider-data/README.md` | `a6da806211d0ba8d3966eb0282a63001b43c333a079e49deb4a672634db9d39a` |
++| A | `docs/r1-sealed-provider-data/RELEASE.md` | `45f3776e8f3c807c868b25939d9fc138ead23994a113cbd41c0be2a12fca78a7` |
 +| A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 +| A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 +| A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
@@ -863,7 +863,7 @@ index 0000000000000000000000000000000000000000..a770cadc28cf7152a4c1bd221e8ceda6
 +| M | `options-survey.mjs` | `d3cea82f378e8e5afe287f56b80c29fef8cdefded5effb781c9022e0191e53c9` |
 +| A | `r1-release-precheck.mjs` | `fd56115e0cd354314e962b793b7e9122dee16e8e79db10cd760b2876efb3f57c` |
 +| A | `r1-writer-gate.mjs` | `7ff7a8456d8f693820719f81a70c7370dce9c1f4b7085ed19de7100fe43b6354` |
-+| M | `scan.mjs` | `662587564523b3c39dfacddd86f5a08c9c81178f25fa587249d9c90c39b17bec` |
++| M | `scan.mjs` | `c9d69996ef14c980d1485550e1871e194258161c613d7fe7b7fdd25b3623c273` |
 +| M | `scorecard-1023.mjs` | `a0f0a6a9f1bc9d41886996c76e8d20aa3d988b1ec148a3f7b9ce642bdd10b48a` |
 +| A | `sealed-guard.mjs` | `b2dc4384e680e8f723951441ff5072487fc5b3a41f13aba7c507463e4e1d7fae` |
 +| A | `sealed-merge.mjs` | `4182335911f74cf1ef4adf90da45b9dd071ab344e9e659e1506cf6a2c0fbb3a0` |
@@ -872,11 +872,13 @@ index 0000000000000000000000000000000000000000..a770cadc28cf7152a4c1bd221e8ceda6
 +| A | `sealed-store.mjs` | `093665cc77014f34e15365bff378894062117ae322e8696bb58e2d043086cc31` |
 +| M | `shadow-outcomes.mjs` | `1dcf0a28d9511569cce0d493fc6f00debdc87bd40d966627e478467b10340bdc` |
 +| M | `smart-money.mjs` | `3b3a937fbbc47aeafd97d5bf4ffaa53ba224d6c24490c5316424afae8b795bcd` |
++| A | `test/buynow-evidence.test.mjs` | `128a3af3da884af4c4a1919a14ad89557bc1c3a4374ffbbe2fe8d1c2c89ff842` |
 +| A | `test/discover-sec-note.test.mjs` | `2561908a8afd7181b7d51b5451574b9e0c53f581c397d38ae1ef165bb22041d5` |
 +| A | `test/econ-calendar-exact-series.test.mjs` | `aa9e0177cff2753ff459e89d712d1098e77716c91731e784c7a016198a0b9e03` |
 +| M | `test/feed-integrity-watcher.test.mjs` | `7144f713f3158671fe61feae52112b766d341f2685cc5a7c12a6a2baf02f4cfd` |
 +| A | `test/health-text-watcher-qualification.test.mjs` | `28f16479ec6e5ccf5332496d8c5816d691e6db328a5511b67c5ecb40be4e0310` |
 +| A | `test/intraday-alert-evidence.test.mjs` | `6f40820604d323293914cd1be464e73a59b3fd98caa4a2ee58a63d3d97be9d17` |
++| A | `test/intraday-alert-send-time.test.mjs` | `97f4b803a932f4a76b462b1d4b7cf80353b794c08173645d1468af31cebe535a` |
 +| M | `test/load-scan.mjs` | `37bce00506cc2bb73d5707dc2f737fd3d7d8c1de08cbcfb2b86c32ffa726bdde` |
 +| A | `test/open-check-repair.test.mjs` | `9ace6e8370bf4df0cf07710c78daafd2ebaedfb0ed6b1b2e81cce9ea6195103d` |
 +| M | `test/private-data.test.mjs` | `2c43d3a0fd677fd1cad0404abeecf04b5b555b8fa020512e02ec42c80af0658c` |
@@ -908,15 +910,15 @@ index 0000000000000000000000000000000000000000..a770cadc28cf7152a4c1bd221e8ceda6
 +## Full serial suite on this tree
 +
 +- Node 20.20.0; preload refusing every non-loopback connection (0 attempted).
-+- **159 of 159 files pass.**
++- **161 of 161 files pass.**
 +- `premarket-feed` builds its fixture from the real New York date and clock. At one hour on 8 Nov it failed identically on this branch and on the unchanged base `b0d76987`; it passes in this run. R1 does not touch it.
 +- **Gated actual-watcher scenarios** (`INCIDENT_WATCHER_SRC`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.
 diff --git a/docs/r1-sealed-provider-data/README.md b/docs/r1-sealed-provider-data/README.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..fa25c41b84fca9ef49cb4e91f2816b94e976877f
+index 0000000000000000000000000000000000000000..6dbf5f8486ef0cb4d63122764cc129cd86b09054
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/README.md
-@@ -0,0 +1,372 @@
+@@ -0,0 +1,383 @@
 +# R1: stop publishing provider market data in the public `Stock-2` repository (complete candidate, review only)
 +
 +**Prepared by Claude on 8 Nov 2026 at the owner's request. Not deployed.**
@@ -924,6 +926,17 @@ index 0000000000000000000000000000000000000000..fa25c41b84fca9ef49cb4e91f2816b94
 +- **Base:** `origin/main` `b0d76987`. **Branch:** `claude/r1-sealed-provider-data`. The candidate commit and the exact file allowlist are in `MANIFEST.md`.
 +- **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 +- **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
++
++## 0m. Rev16 (8 Nov): checked at every send attempt; BUY NOW strict boundary; live counts (Codex 6725294448 R1–R3)
++
++- **R1, freshness at every send attempt:** rev15 checked once, *before* the first-check message, the BUY NOW cards and the stop batch were sent. A 30 s wait on an earlier message, or a 429 retry, could still deliver an expired price, and the alert was already marked as sent.
++  - **Fix:** `telegramLive()` renders each price-bearing message again **immediately before every network attempt**: the first try, every 429 or connection retry, and every part.
++  - **Which messages:** the first market-hours check, each BUY NOW card, the YOUR STOPS batch and the Market-hours alerts.
++  - **Marking:** an alert or card is marked in the once-a-day memory, and the memory saved, only while it is eligible at that attempt. One that expires before a retry is unmarked and left out, and a part already sent is never repeated. Delivery is otherwise as before: 3 tries, refusals recorded, no new acknowledgement system.
++- **R2, BUY NOW boundary:** BUY NOW again admits only a price **under** 20 minutes old (exactly 1200 s is too old), as the original `< 20 * 60000`. priceEvidence's boundary for every other route is unchanged.
++- **R3:** the live RELEASE.md build and verify paragraph now says 75 bound files; G1/G6/B5 and the unit sentence say 75 (rev16).
++- **Regressions:** Codex's actual-send and BUY NOW reproducers are adapted as `test/intraday-alert-send-time.test.mjs` and `test/buynow-evidence.test.mjs`. 5 of their cases fail on rev15, and all pass on rev16.
++- **Allowlist:** +2 paths (75).
 +
 +## 0l. Rev15 (8 Nov): intraday alerts checked when fetched and when sent (Codex 6724441072 / 6724603156, N1)
 +
@@ -1291,7 +1304,7 @@ index 0000000000000000000000000000000000000000..fa25c41b84fca9ef49cb4e91f2816b94
 +- Pre-existing, unchanged: `health.mjs` throws without `data/health.json`.
 diff --git a/docs/r1-sealed-provider-data/RELEASE.md b/docs/r1-sealed-provider-data/RELEASE.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..3da71153628a06ba7875fa5ffe5146aefd9ba355
+index 0000000000000000000000000000000000000000..2abe5883e42e6fffd4c0b66c99733ce10fb76cd5
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/RELEASE.md
 @@ -0,0 +1,94 @@
@@ -1306,21 +1319,21 @@ index 0000000000000000000000000000000000000000..3da71153628a06ba7875fa5ffe5146ae
 +
 +### Combined unit (rev8): what is released, and how it is built
 +
-+- **The unit** is R1 plus the reviewed calendar/watcher composition plus the open-check repair: **73 source paths** (rev15), all listed with sha256 and size in the external **binding** file `docs/r1-combined-binding/binding.json` on branch `claude/mentor-release-handoff` (its own sha256 is given in the PR #1 comment, since a file cannot pin itself). R1's older 51-file manifest does **not** cover this unit.
++- **The unit** is R1 plus the reviewed calendar/watcher composition plus the open-check repair: **75 source paths** (rev16), all listed with sha256 and size in the external **binding** file `docs/r1-combined-binding/binding.json` on branch `claude/mentor-release-handoff` (its own sha256 is given in the PR #1 comment, since a file cannot pin itself). R1's older 51-file manifest does **not** cover this unit.
 +- **The candidate branch must never be pushed or merged.** It was cut from `b0d76987` and still carries older copies of 5 data files (`calendar-status.json`, `calendar.enc`, `health.json`, `shares.json.gz`, `tg-state.json`); a whole-branch push would put back old data and an old Telegram offset.
-+- **C is built source-only** on the fresh main `M0`: `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` refuses unless `<candidate>` is exactly the commit the binding pins, and every bound file there matches the binding's sha256, size **and Git mode**. It then puts exactly the 68 bound files onto `M0` in a temporary index and creates commit `C` (parent `M0`) **without pushing**. `--verify-unit M0 C binding.json` then requires: sole parent `M0`; all 68 files byte-exact with the bound mode; no other path different from `M0`; and `C`'s **whole tree** equal to the tree rebuilt from `M0` plus the pinned candidate's bound entries. If the pinned candidate commit is not available locally, verify fails (fetch it; never skip). (rev9: Codex 6719707423 showed that rev8 ignored modes and the candidate identity.)
++- **C is built source-only** on the fresh main `M0`: `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` refuses unless `<candidate>` is exactly the commit the binding pins, and every bound file there matches the binding's sha256, size **and Git mode**. It then puts exactly the 75 bound files (rev16) onto `M0` in a temporary index and creates commit `C` (parent `M0`) **without pushing**. `--verify-unit M0 C binding.json` then requires: sole parent `M0`; all 75 bound files (rev16) byte-exact with the bound mode; no other path different from `M0`; and `C`'s **whole tree** equal to the tree rebuilt from `M0` plus the pinned candidate's bound entries. If the pinned candidate commit is not available locally, verify fails (fetch it; never skip). (rev9: Codex 6719707423 showed that rev8 ignored modes and the candidate identity.)
 +
 +## A. Entry gates (all required before the window opens)
 +
 +| Gate | Evidence |
 +|---|---|
-+| G1 Codex verdict PASS on the **exact** candidate commit, its manifest **and the combined binding** (73 paths in rev15, source patch and inverse hashes) | PR #1 comment |
++| G1 Codex verdict PASS on the **exact** candidate commit, its manifest **and the combined binding** (75 paths in rev16, source patch and inverse hashes) | PR #1 comment |
 +| G2 Owner approval of **this** unit, window and roles | owner message |
 +| G3 Key decision K1 (`PRIVATE_KEY`) or K2 (new dedicated secret, created by the owner) **and** the owner's statement that a copy exists outside GitHub. Claude never sees or asks for the value. | owner message |
 +| G3b (rev6) **Choose** the backup-proof route for stage B5b. The proof itself runs **inside the window**, because the workflow exists only after B4. (a) `backup-compare`: the owner adds a temporary secret `R1_BACKUP_CHECK`, pasted from the off-GitHub copy, in GitHub's secrets page before B5b, and deletes it after; Actions compares derived keys in constant time and prints PASS/FAIL only. (b) `key-check` vector verified on the owner's own computer, only if that route is set up and verified beforehand. Nothing is requested before the unit is approved. | owner message (route) |
 +| G4 Refreshed review of the STOP-pinned files the unit changes: `ignition-watch.mjs`, `scan.mjs`, `.github/workflows/ignition.yml`, `.github/workflows/bot.yml`, `test/load-scan.mjs`, `test/watcher-resilience.test.mjs`, `test/watcher-incident-revision.test.mjs`, `test/stop-alert-validity.test.mjs` (old pin, current main and unit hashes: `docs/r1-combined-binding/stop-pins-refresh.json`). 8 of the 17 STOP-pinned files change; the other 9 are unchanged by the unit. | Codex |
 +| G5 Owner acceptance of the residual public outputs (README §11 item 3) **or** a separate decision to defer them. R1 does not close them. | owner message |
-+| G6 `node r1-release-precheck.mjs b0d76987 <candidate> origin/main` = **PASS**, run at the start of the window (combined candidate on 8 Nov against main `7742732`: PASS, 68 files, 0 drift; rev15 against `a7c597b7`: PASS, 73 files, 0 drift). This proves the bound paths did not move on main; it does **not** replace the binding (G1). | operator log |
++| G6 `node r1-release-precheck.mjs b0d76987 <candidate> origin/main` = **PASS**, run at the start of the window (combined candidate on 8 Nov against main `7742732`: PASS, 68 files, 0 drift; rev15 against `a7c597b7`: PASS, 73 files, 0 drift; rev16 against current main: see the PR #1 handoff, 75 files). This proves the bound paths did not move on main; it does **not** replace the binding (G1). | operator log |
 +| G7 No other release in flight; Codex available for the whole window | both |
 +
 +**Suggested window:** a weekend, outside the market. Production writers on weekends:
@@ -1339,7 +1352,7 @@ index 0000000000000000000000000000000000000000..3da71153628a06ba7875fa5ffe5146ae
 +| B2 | Owner | Disable the 10 T1 writer/saver workflows: `ignition`, `bot`, `main`, `movers`, `options-survey`, `Smart-money`, `leaders-study`, `opportunity-radar`, `scorecard-1023`, `fastmover-intraday`. Reply "DONE DISABLE". | — | — |
 +| B3 | Claude | **Capture v2** (`r1-writer-gate.mjs` header). One complete query **per open status** (queued, in_progress, waiting, requested, pending, action_required), whatever the creation date: this catches old re-runs and environment waits. **Plus** `created` queries covering the **last 31 days** for every writer workflow (GitHub allows re-runs and waits up to 30 days), each split under the 1,000-result cap. All pages saved verbatim. Then `node r1-writer-gate.mjs capture.json`. | **PASS**: no writer run in any open-status query; every writer run in the 31-day coverage `completed`; every query complete (pages, unique ids = total, at most 1,000); right repository; capture at most 10 min old | wait for the run to finish, then capture again. **Never cancel** without a separate owner approval. |
 +| B4 | Claude | `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` (creates `C`, parent `M0`, nothing pushed), then `--verify-unit M0 C binding.json` = PASS. Push `C` to main as a **fast-forward only** (`git push origin C:refs/heads/main`, no force). **Never** push or merge the candidate branch. If main moved after `M0`, do not push: start again from B1. | verify PASS; push accepted; CI on `C` green with a complete hosted log | revert `C` (rollback **R-0**) |
-+| B5 | Codex | Independently run `--verify-unit M0 C binding.json` (binding sha256 as published) and check `git diff --name-only M0 C` lists only the bound paths (73 in rev15) and that the 5 data paths above equal `M0`. If `M0` = `7742732`, the expected tree is given in the PR #1 comment. | Codex receipt | R-0 |
++| B5 | Codex | Independently run `--verify-unit M0 C binding.json` (binding sha256 as published) and check `git diff --name-only M0 C` lists only the bound paths (75 in rev16) and that the 5 data paths above equal `M0`. If `M0` = `7742732`, the expected tree is given in the PR #1 comment. | Codex receipt | R-0 |
 +| B5b | Owner + Claude | **Backup-key proof** by the route chosen at G3b: (a) dispatch `r1-migrate.yml` with `mode=backup-compare`, then the owner deletes `R1_BACKUP_CHECK`; or (b) `mode=key-check`, verified on the owner's computer. Writers are still off and nothing is migrated yet. | **PASS** line from the job log, or from the owner's local check | **FAIL or no proof**: stop. **R-0** (revert `C`): safe, because nothing is sealed yet. Evidence remains UNVERIFIED. Privately diagnose the selected input, vector and source binding before concluding that the existing key or backup differs. A missing receipt is not evidence of a key mismatch. No automatic retry or credential change. After R-0 and restored-state verification, a separately reviewed unit may re-verify K1 with a confirmed backup or, only if the owner separately chooses it, enroll and back up K2. |
 +| B6 | Claude | Dispatch `r1-migrate.yml` once with `confirm=MIGRATE-R1`, `mode=migrate`, `source_sha=C`. | job green; log shows `--apply`, a fast-forward push and `--verify-tree origin/main` with problems 0; complete hosted log saved | **A red, missing, partial or late job does NOT mean nothing was published**: the push happens before the final verification, and a transport error can leave it uncertain. First **establish the remote state**: fetch main; is the head a migration commit (manifest present, parent = `C`)? Then run `--verify-structure` (B7) on it. Writers stay **off** and state is **UNKNOWN** until established. No automatic retry and no code inverse; follow R-1 if published, R-0 if not. |
 +| B7 | Codex | Clone main. `node sealed-migrate.mjs --verify-structure origin/main` (keyless; expected set, sizes and hashes recomputed from `C`, never from the manifest; no plaintext; parent = `C`). **Plus** an independent review of B6's complete keyed hosted log (`--apply` and `--verify-tree`, which decrypt every file). | Codex receipt. The keyless check **supplements** the keyed receipt, never replaces it. | R-1 |
@@ -2191,7 +2204,7 @@ index 0000000000000000000000000000000000000000..2070baaf96e0d39fdb7e2c216963cab6
 +  } catch (e) { console.error('R1 writer gate: FAIL (' + e.message + ')'); process.exit(1); }
 +}
 diff --git a/scan.mjs b/scan.mjs
-index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f43589f35c729 100644
+index 14a28526aed258e8063a14785a60c42b2a5ab6ca..97d146602256bcc6bf9cd7e34313d1e3f47da2a4 100644
 --- a/scan.mjs
 +++ b/scan.mjs
 @@ -9,7 +9,8 @@ import crypto from 'node:crypto';
@@ -2287,7 +2300,39 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
  const money = (x) => x.toFixed(2);
  fs.mkdirSync('data', { recursive: true });
  
-@@ -2000,10 +2026,10 @@ async function whyMoved(sym, name) {     // the headline must be about THIS comp
+@@ -1030,9 +1056,30 @@ async function loadWide(syms, loaded, now) {
+ // (28 Oct, owner item 6) a message Telegram refused (or that never got through after 3 tries) is recorded in data/tg-failures.jsonl; the
+ // SYSTEM HEALTH line of ACTIONS counts the last 24 hours, so a failed delivery is never silent.
+ function tgFailed(status, why, text) { try { fs.appendFileSync('data/tg-failures.jsonl', JSON.stringify({ at: new Date().toISOString(), status, why: String(why || '').slice(0, 200), head: String(text || '').split('\n')[0].slice(0, 80) }) + '\n'); } catch (e) {} }
++const tgParts = (text) => { const parts = []; let rest = text; while (rest.length > 3800) { let cut = rest.lastIndexOf('\n\n', 3800); if (cut < 1500) cut = rest.lastIndexOf('\n', 3800); if (cut < 1500) cut = 3800; parts.push(rest.slice(0, cut)); rest = rest.slice(cut).replace(/^\n+/, ''); } parts.push(rest); return parts; };   // split long messages between paragraphs, never mid-word
++// (R1 rev16, Codex 6725294448 R1) A PRICE-BEARING message is rendered again IMMEDIATELY BEFORE EVERY NETWORK ATTEMPT: the first try, each
++// rate-limit (429) or connection retry, and each part of a long message. render(nowMs, sentParts) returns the text still to send (or
++// nothing), judged at that moment; it owns any once-a-day marking. Only the first part of each rendering is sent, so a retry or a later
++// part never carries a claim judged before an earlier wait. Delivery semantics are otherwise those of telegram() (3 tries, recorded refusal).
++async function telegramLive(render, buttons) {
++  const sent = [];
++  if (!env.TG_TOKEN || !env.TG_CHAT) { const t = await render(Date.now(), sent); if (t) console.log('[no Telegram secrets, message not sent]\n' + t); return sent; }
++  for (let n = 0, a = 0; n < 60; n++) {
++    const text = await render(Date.now(), sent); if (!text || !text.trim()) return sent;
++    const parts = tgParts(text), part = parts[0], last = parts.length === 1;
++    try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true, ...(buttons && buttons.length && last ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
++      if (r.status === 429 && a < 2) { a++; let w = 5; try { w = Math.min(30, +((await r.json()).parameters || {}).retry_after || 5); } catch (e) {} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }
++      if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, part); }
++      sent.push(part); a = 0; if (last) return sent; await sleep(FAST ? 0 : 700); }
++    catch (e) { console.error('Telegram connection error, retrying', e.message); if (a === 2) { tgFailed('network', e.message, part); sent.push(part); a = 0; if (last) return sent; continue; } a++; await sleep(FAST ? 50 : 3000); }
++  }
++  return sent;
++}
++// the not-yet-sent remainder of a whole message rendered again: skip the lines of the parts already sent (parts end at line breaks)
++const tgRemainder = (full, sent) => { if (!full) return full; let lines = full.split('\n'); for (const p of sent) { lines = lines.slice(p.split('\n').length); while (lines.length && lines[0] === '') lines.shift(); } return lines.join('\n'); };
+ async function telegram(text, buttons) {   // buttons: optional rows of { text, data } shown under the last part
+   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent]\n' + text); return; }
+-  const parts = []; { let rest = text; while (rest.length > 3800) { let cut = rest.lastIndexOf('\n\n', 3800); if (cut < 1500) cut = rest.lastIndexOf('\n', 3800); if (cut < 1500) cut = 3800; parts.push(rest.slice(0, cut)); rest = rest.slice(cut).replace(/^\n+/, ''); } parts.push(rest); }   // split long messages between paragraphs, never mid-word
++  const parts = tgParts(text);
+   for (let i = 0; i < parts.length; i++) {
+     for (let a = 0; a < 3; a++) {   // a dropped connection is retried, so a message is not lost and the run does not stop
+       try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
+@@ -2000,10 +2047,10 @@ async function whyMoved(sym, name) {     // the headline must be about THIS comp
      if (!pick) return '\n  cause: UNRESOLVED (only general market round-ups, nothing about this company; SEC filings checked below).';
      return '\n  news: ' + (tagOf(pick) || 'Company news') + ' \u2014 ' + pick.slice(0, 120) + (tagOf(pick) === 'Deal' && /to be (acquired|bought|taken private)|acquired by|agrees? to be|buyout|takeover (bid|offer)|tender offer|to sell itself/i.test(pick) ? '\n  note: if this company is being bought, the price usually jumps to near the offer at once and then barely moves.' : tagOf(pick) === 'Deal' && /to acquire|acquires|acquisition of|to buy\b/i.test(pick) ? '\n  note: this company is the buyer. A buyer\u2019s share price often dips on the news.' : ''); } catch (e) { return ''; } finally { await sleep(FAST ? 0 : 1100); }
  }
@@ -2301,7 +2346,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
    const base = x.price < 5 ? M.penny : M.study; if (base) out.push('stocks like it (' + (x.price < 5 ? 'under 5 USD' : 'all prices') + ') bought the next morning: ' + base.replace(/^three sessions after the next open they were typically (\S+), and/, 'typically $1 three sessions later, and'));
    return out.map(l => '\n  ' + l).join(''); };
  // INDUSTRY (SEC industry code, official, one look-up per company, cached in data/sic-extra.json): is the runner moving alone, or with
-@@ -2164,7 +2190,7 @@ async function pennyReply(sig) {
+@@ -2164,7 +2211,7 @@ async function pennyReply(sig) {
    const pm = (g.list || []).filter(x => x.price < 5).slice(0, 5);
    if (pm.length) out.push('', 'MOVING NOW under 5 USD (investigation only, no prices given)', ...pm.map(x => x.sym + ' +' + Math.round(x.pct * 100) + '% at ' + money(x.price)));
    const m = readJson('data/movers-state.json', null);
@@ -2310,7 +2355,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
    return out.join('\n');
  }
  async function sellReply(sym, sig, pos) {
-@@ -2589,13 +2615,26 @@ function healthLine(nowMs = Date.now()) { const out = [];
+@@ -2589,13 +2636,26 @@ function healthLine(nowMs = Date.now()) { const out = [];
    // (4 Nov) the saved check (health.json) is a snapshot from its own run; it is shown with its time, and the sources are re-checked live with
    // the watchdog's rule, so a stale source can never sit next to an unqualified "checks OK". A missing or unreadable snapshot is UNKNOWN.
    const kw = (ms) => { const d = new Date(ms + 3 * 3600e3).toISOString(); return d.slice(11, 16) + ' Kuwait ' + d.slice(0, 10); };
@@ -2338,7 +2383,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
      else out.push(bad.length ? 'NOT CURRENT: ' + lateTxt + ' (the ' + snap + ' found no problems before this)' : 'checks OK (' + snap + ')');
      if (src) out.push(src);
    } catch (e) { out.push('health check UNKNOWN (could not be read)'); }
-@@ -2782,7 +2821,8 @@ async function actionsText(sig, pos, px, title) {
+@@ -2782,7 +2842,8 @@ async function actionsText(sig, pos, px, title) {
  // sold at the BID (the real cost of the spread), next to the stock's own result over the same days. Alpaca's free options data
  // (indicative feed). Nothing is bought; the result appears in the weekly report card. Options can lose 100%: this measures it.
  async function optionsShadow() { if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return 'Options paper test: off (no Alpaca key).';
@@ -2348,7 +2393,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
    const last = {}; for (const x of sg.stocks || []) if (x.last) last[x.sym] = x.last; let st = null;
    const get = async (path) => { try { const r = await fetch(AD + path, H); st = r.status; return r.ok ? await r.json() : null; } catch (e) { st = e.message; return null; } };
    // 1. close the paper calls that are 14+ days old, at the bid
-@@ -2847,11 +2887,11 @@ async function optionsShadow() { if (!env.ALPACA_KEY || !env.ALPACA_SECRET) retu
+@@ -2847,11 +2908,11 @@ async function optionsShadow() { if (!env.ALPACA_KEY || !env.ALPACA_SECRET) retu
          S.labT.push({ d: today, sym: tk.sym, rule, occ: tk.occ, exp: tk.exp, strike: tk.k, ask: tk.ask, sellBy: tk.sellBy }); S.labT = S.labT.slice(-200);
          tier2Log(tk.sym, 'option:' + rule, tk.ask, { occ: tk.occ, exp: tk.exp, strike: tk.k, sellBy: tk.sellBy, under: px });
          await telegram(optionsLabTicketText(tk, rule, optionsLabTier(rule), (LB.latest || {})[rule] || {})); } } } catch (e) { console.log('options lane ticket: ' + e.message); }
@@ -2362,7 +2407,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
    const d = (OS.done || []).filter(o => typeof o.ret === 'number'), av = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, days = new Set(d.map(o => o.d)).size, st = d.filter(o => o.stock !== null);
    return ['OPTIONS LAB (paper only, SEPARATE from your stock trading)', '',
      'Test: a call 30-60 days out on each tested stock BUY signal, bought at the ask, sold at the bid 14 days later, ZAD fee 5 USD a contract each way, next to the same stock over the same days.',
-@@ -3059,7 +3099,7 @@ function sourceFreshness(nowMs, haves) {
+@@ -3059,7 +3120,7 @@ function sourceFreshness(nowMs, haves) {
      return { key, what, name, dueText, due, have: ok ? have : null, state: !ok ? 'UNKNOWN' : have >= expected ? 'CURRENT' : due ? 'LATE' : 'PENDING' }; }) };
  }
  const freshHaves = (sig) => { const rd = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return null; } };
@@ -2371,7 +2416,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
    return { scan: s && s.session, disc: d && d.session, movers: m && m.session }; };
  // ---- Watchdog. The bot wakes every few minutes, so it can notice when one of the nightly programs did NOT do its job
  // (crashed, was cancelled, or never started) and tell you once, instead of you discovering a missing message days later.
-@@ -3503,11 +3543,12 @@ async function tgCommands(sig) {
+@@ -3503,11 +3564,12 @@ async function tgCommands(sig) {
      } else if (/^(ladder|size level|level)\s*\??\s*$/i.test(text)) { out.push(ladder().text + '\n\nThe ladder: 1,000 USD a trade, then 2,500 (30+ sales on 10+ days, positive, profit factor 1.2+), then 5,000 (80+ sales over 3+ months, profit factor 1.3+), then 10,000 (200+ sales over 6+ months). It steps down one level at once if your last 20 sales lost money. Report every sale ( sold SYM PRICE ) so the ladder can see it.');
      } else if ((k = text.match(/^(?:bought|sold)\s+option\s+([A-Za-z.]{1,6})\s+(\d+(?:\.\d+)?)\s+(\d{4}-\d{2}-\d{2})\s+(\d+(?:\.\d+)?)\s*$/i))) {   // OPTIONS TRIAL: 1 contract, kept apart from stocks
        const sold = /^sold/i.test(text), sym = k[1].toUpperCase(), strike = +k[2], exp = k[3], px = +k[4], OS = readJson('data/options-shadow.json', { open: [], done: [] }); OS.real = OS.real || [];
@@ -2388,7 +2433,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
            out.push('OPTIONS TRIAL: closed ' + sym + ' ' + strike + ' call: ' + (o.pnl >= 0 ? '+' : '') + o.pnl.toFixed(0) + ' USD after fees. Trial record: ' + all.length + ' trade' + (all.length === 1 ? '' : 's') + ', ' + all.filter(z => z.pnl > 0).length + ' won, ' + (tot >= 0 ? '+' : '') + tot.toFixed(0) + ' USD in total. Kept separate from your stock record.'); } }
      } else if (/^(scoreboard|score board)\s*\??\s*$/i.test(text)) { out.push(scoreboardText());
      } else if (/^(comeback|comebacks|come back|comeback board)\s*\??\s*$/i.test(text)) { out.push(comebackText());
-@@ -4209,7 +4250,7 @@ async function daily() {
+@@ -4209,7 +4271,7 @@ async function daily() {
    if (QUIET()) { const sg = readJson('data/signals.json', null);
      { const at = await actionsText(sg, loadPos(), null, 'ACTIONS FOR THE NEXT SESSION (' + session + ' close). Market opens ' + kwt(570, sessionPlus(session, 1)) + ' Kuwait on ' + sessionPlus(session, 1) + '.');   // (28 Oct) buttons only for this message's own TODAY'S ACTIONS buys
      await telegram(at + (healthBad ? '\n\nWARNING: over a fifth of the prices failed to load tonight. Treat this as incomplete.' : '') + ([2, 4, 5].includes(new Date(session + 'T12:00:00Z').getUTCDay()) ? '\n\n' + (new Date(session + 'T12:00:00Z').getUTCDay() === 5 ? 'WEEKLY ' : 'MID-WEEK ') + scorecardText() : '') + '\n\nAfter you act, tap a button: I ask you to confirm the shares and price before anything is recorded.', tradeButtons(sg, loadPos(), 5, at)); }
@@ -2397,7 +2442,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
    }
    else {
    // ---- The last message of the night: one short plan. Everything above it is background.
-@@ -4228,6 +4269,80 @@ async function daily() {
+@@ -4228,6 +4290,86 @@ async function daily() {
    console.log('daily scan done:', stocks.length, 'stocks,', buys.length, 'buy watch,', fresh.length, 'journal entries');
  }
  
@@ -2430,8 +2475,14 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
 +//  - 'plan' (BUY NOW cards, and the planned-entry review lines QUICK / LEADER / signal range / breakout trigger / paper trades, which had
 +//    no age check before): the existing 20-minute BUY NOW gate.
 +// The quote must be valid when it was fetched (observedAt; undated or future-dated never qualifies) and again at the moment asked.
-+const ALERT_GATE = { holding: undefined, plan: 20 };
-+const alertEvidence = (sym, q, route, atMs) => { const f = fetchJudgement(sym, q, atMs, ALERT_GATE[route]); if (f && f.state !== 'OK') return f; return priceEvidence(sym, quoteFields(sym, q), atMs, ALERT_GATE[route]); };
++const ALERT_GATE = { holding: undefined, plan: 20, buynow: 20 };
++// (rev16, Codex 6725294448 R2) BUY NOW keeps its original STRICT comparator: age < 20 minutes (exactly 1200 s is too old), as the old
++// `Date.now() - j.t < 20 * 60000`; priceEvidence's own boundary (<=) is unchanged for every other route.
++const alertEvidence = (sym, q, route, atMs) => { const f = fetchJudgement(sym, q, atMs, ALERT_GATE[route]); if (f && f.state !== 'OK') return f;
++  const ev = priceEvidence(sym, quoteFields(sym, q), atMs, ALERT_GATE[route]);
++  if (route === 'buynow' && ev.state === 'OK' && !(ev.ageSec < 20 * 60)) return { state: 'UNKNOWN', why: 'the latest price is 20 min old (limit: under 20 min)' };
++  if (route === 'buynow' && f && f.state === 'OK' && !(f.ageSec < 20 * 60)) return { state: 'UNKNOWN', why: 'the price was 20 min old when fetched (limit: under 20 min)' };
++  return ev; };
 +const ageWords = (sec) => sec < 90 ? Math.round(sec) + ' s' : Math.round(sec / 60) + ' min';
 +const evidenceText = (ev) => ev.state === 'OK' ? 'last price ' + money(ev.price) + ' (' + ev.src + ', ' + nyStamp(ev.t) + ', ' + (ev.ageSec < 90 ? Math.round(ev.ageSec) + ' s' : Math.round(ev.ageSec / 60) + ' min') + ' old)' : 'current price UNKNOWN (' + ev.why + ')';
 +function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
@@ -2478,7 +2529,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
  async function intraday(onlyMine) {
    const now = Date.now();
    const sig = readJson('data/signals.json', null);
-@@ -4244,9 +4359,9 @@ async function intraday(onlyMine) {
+@@ -4244,9 +4386,9 @@ async function intraday(onlyMine) {
    const st = readJson('data/alert-state.json', { day: '', sent: {} }), day = ny(now).d; if (st.day !== day) { st.day = day; st.sent = {}; }
    const OKI = new Set(planCands(sig, loadPos()).filter(x => x.ok).map(x => x.sym)), buys = sig.stocks.filter(s => s.state === 'Buy watch' && OKI.has(s.sym)), trig = sig.stocks.filter(s => s.state !== 'Buy watch' && s.proven && s.trigger && s.trigger / s.last < 1.03);
    const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
@@ -2490,7 +2541,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
    // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
    // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
    // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
-@@ -4256,20 +4371,33 @@ async function intraday(onlyMine) {
+@@ -4256,20 +4398,33 @@ async function intraday(onlyMine) {
      if (ev.state !== 'OK') { if (st.sent[sym + 'myunk'] || st.sent[sym + 'myst'] || watcherDelivered(sym, 'unknown') || watcherDelivered(sym, 'hit')) return; st.sent[sym + 'myunk'] = 1; stopAlerts.push(stopText('unknown', sym, P, ev)); return; }
      if (!(ev.price <= P.stop) || st.sent[sym + 'myst']) return;
      if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
@@ -2512,7 +2563,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
 +    const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = { ...j, observedAt: Date.now() }; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p;
 +    // (rev15, Codex 6724441072/6724603156 N1) every price claim below is admitted only on evidence valid WHEN FETCHED under its route's
 +    // existing rule (ALERT_GATE: undated or future-dated never qualifies), and is checked again just before sending (sendable() below).
-+    const fresh = alertEvidence(sym, quotesSeen[sym], 'plan', quotesSeen[sym].observedAt).state === 'OK';   // BUY NOW: the existing 20-minute gate
++    const fresh = alertEvidence(sym, quotesSeen[sym], 'buynow', quotesSeen[sym].observedAt).state === 'OK';   // BUY NOW: the existing strict < 20-minute gate
 +    const say = (k, text, route = 'plan') => { if (!st.sent[sym + k] && !queued.some(x => x.sym === sym && x.k === k) && alertEvidence(sym, quotesSeen[sym], route, quotesSeen[sym].observedAt).state === 'OK') queued.push({ sym, k, text, route }); };
      const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
      if (mp) {   // you told the bot you bought this one
@@ -2531,7 +2582,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
      if (qs) {   // a quick trade setup from last night's close
        if (p > qs.buyHi) say('qhi', 'QUICK TRADE: above its entry range (' + money(qs.buyLo) + ' to ' + money(qs.buyHi) + '). The dip is gone. Skip it.');
        else if (p <= qs.stop) say('qlo', 'QUICK TRADE: already at its invalidation level ' + money(qs.stop) + '. The setup has failed.');
-@@ -4292,23 +4420,33 @@ async function intraday(onlyMine) {
+@@ -4292,25 +4447,51 @@ async function intraday(onlyMine) {
        if (o.target && p >= o.target) say('tg' + o.since, 'paper trade from ' + o.since + ' reached its target ' + money(o.target) + '.');
      }
    }
@@ -2551,28 +2602,54 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..e818181fd2d5cfb4ec4070a62c0f4358
 -    const buyL = planBuys.filter(x => seen[x.sym] && !myPos[x.sym]).map(x => { const p = seen[x.sym]; return x.sym + ' ' + money(p) + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (p > x.hi ? 'ABOVE the range, do not chase' : p < x.lo ? 'below the range, wait' : 'INSIDE the range'); });
 -    openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PROVEN BUYS TODAY', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.'].join('\n');
 +    openMsg = await firstCheckText(myPos, planBuys, quotesSeen, sig, Date.now());
++  }
++  // (rev15/rev16 N1) SEND-TIME CHECK AT EVERY NETWORK ATTEMPT (Codex 6725294448 R1): each price-bearing message is rendered by
++  // telegramLive() immediately before each try, retry and part, so a wait for an earlier message, a 429 or a connection retry never lets
++  // an expired price through. A queued alert or BUY NOW card is marked in the once-a-day memory (and the memory saved) only while it is
++  // still eligible at that attempt; one that expires before a retry is unmarked and left out (re-checked on the next run). A held-back
++  // holding alert is reported once a day as NOT CONFIRMED (never as a price). Routes keep their existing rules (ALERT_GATE).
++  const saveState = () => fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
++  saveState();
++  if (openMsg) await telegramLive(async (now, sent) => tgRemainder((await firstCheckText(myPos, planBuys, quotesSeen, sig, now)) + '\n' + FOOT, sent));
++  for (const bc of buyNowCards) {
++    let shown = false;
++    await telegramLive((now, sent) => {
++      if (sent.length) return tgRemainder(shown, sent);
++      const e = alertEvidence(bc.sym, quotesSeen[bc.sym], 'buynow', now);
++      if (e.state !== 'OK') { if (st.sent[bc.sym + 'buynow']) { delete st.sent[bc.sym + 'buynow']; saveState(); } return null; }
++      if (!st.sent[bc.sym + 'buynow']) { st.sent[bc.sym + 'buynow'] = 1; saveState(); }
++      shown = 'BUY NOW: a proven setup is inside its buy range (' + new Date(now).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT;
++      return shown;
++    }, [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]);   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
++  }
++  if (stopAlerts.length) await telegramLive((now, sent) => tgRemainder('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.map(a => stopLine(a, now)).join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''), sent));
++  if (queued.length) {
++    const lineOf = (a) => a.sym + ' at ' + money(+quotesSeen[a.sym].price) + ': ' + a.text, delivered = new Set();
++    await telegramLive((now, sent) => {
++      for (const a of queued) if (!delivered.has(a) && sent.some(p => p.includes(lineOf(a)))) delivered.add(a);   // already in a sent part
++      const live = [], held = [];
++      for (const a of queued) { if (delivered.has(a)) continue; const e = alertEvidence(a.sym, quotesSeen[a.sym], a.route, now);
++        if (e.state === 'OK') { st.sent[a.sym + a.k] = 1; live.push(a); }
++        else { delete st.sent[a.sym + a.k]; if (a.route === 'holding' && !a.heldNoted && !st.sent[a.sym + a.k + 'held']) { a.heldNoted = true; st.sent[a.sym + a.k + 'held'] = 1; held.push(a.sym + ' (' + e.why + ')'); } } }
++      saveState();
++      live.sort((x, y) => (y.route === 'holding' ? 1 : 0) - (x.route === 'holding' ? 1 : 0));
++      const lines = [...(held.length ? ['YOUR POSITION, NOT CONFIRMED: a target check on ' + held.join('; ') + ' used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.'] : []), ...live.map(lineOf)];
++      return lines.length ? 'Market hours check\n\n' + lines.join('\n\n') + '\n' + FOOT : null;
++    });
    }
-+  // (rev15 N1) SEND-TIME CHECK: each queued alert and BUY NOW card is sent only if its price still passes its route's rule NOW, after every
-+  // fetch of this run. Only sent alerts are marked in the once-a-day memory; one held back is re-checked on the next run, and a held-back
-+  // holding alert is reported once a day as not confirmed (never as a current price).
-+  { const nowSend = Date.now(), held = [];
-+    for (const a of queued) { const e = alertEvidence(a.sym, quotesSeen[a.sym], a.route, nowSend);
-+      if (e.state === 'OK') { st.sent[a.sym + a.k] = 1; alerts.push(a.sym + ' at ' + money(e.price) + ': ' + a.text); }
-+      else if (a.route === 'holding' && !st.sent[a.sym + a.k + 'held']) { st.sent[a.sym + a.k + 'held'] = 1; held.push(a.sym + ' (' + e.why + ')'); } }
-+    for (let i = buyNowCards.length - 1; i >= 0; i--) { const c = buyNowCards[i], e = alertEvidence(c.sym, quotesSeen[c.sym], 'plan', nowSend);
-+      if (e.state === 'OK') st.sent[c.sym + 'buynow'] = 1; else buyNowCards.splice(i, 1); }
-+    if (held.length) alerts.unshift('YOUR POSITION, NOT CONFIRMED: a target check on ' + held.join('; ') + ' used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.'); }
-   fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
-   if (openMsg) await telegram(openMsg + '\n' + FOOT);
-   alerts.sort((a, b) => (b.includes('YOUR POSITION') ? 1 : 0) - (a.includes('YOUR POSITION') ? 1 : 0));
-   for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
-     await telegram('BUY NOW: a proven setup is inside its buy range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
-       [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
+-  fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
+-  if (openMsg) await telegram(openMsg + '\n' + FOOT);
+-  alerts.sort((a, b) => (b.includes('YOUR POSITION') ? 1 : 0) - (a.includes('YOUR POSITION') ? 1 : 0));
+-  for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
+-    await telegram('BUY NOW: a proven setup is inside its buy range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
+-      [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
 -  if (stopAlerts.length) await telegram('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
-+  if (stopAlerts.length) await telegram('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.map(a => stopLine(a, Date.now())).join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
-   if (alerts.length) await telegram('Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
-   console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
+-  if (alerts.length) await telegram('Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
+-  console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
++  console.log('intraday check done:', watch.length, 'watched,', queued.filter(a => st.sent[a.sym + a.k]).length, 'new alerts');
  }
+ 
+ await (MODE === 'chat' ? intraday(true) : MODE === 'intraday' ? intraday() : daily());
 diff --git a/scorecard-1023.mjs b/scorecard-1023.mjs
 index 5d9ab46beca82d9a8c5dca336fe1f4cdb390aaa5..4998c0a3dbb7b57499cfe2418920da3542b2d674 100644
 --- a/scorecard-1023.mjs
@@ -3278,6 +3355,68 @@ index cfc01ad672c5b86ca95e89e7ebd0030c93fddc40..601421f7b5a2f77c9b6eb3e10ee38ae9
  if (env.TG_TOKEN && env.TG_CHAT && !QUIET) for (let i = 0; i < text.length; i += 3800) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(i, i + 3800), disable_web_page_preview: true }) }).catch(() => {});
 -console.log(text);
 +console.log('smart money: message of ' + text.length + ' characters, ' + insiders.length + ' insider and ' + analysts.length + ' analyst lines (content not printed: Actions logs of this repository are public; R1)');
+diff --git a/test/buynow-evidence.test.mjs b/test/buynow-evidence.test.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..20a60a69c0a0b19f4fa294af8fcc2e094d00da45
+--- /dev/null
++++ b/test/buynow-evidence.test.mjs
+@@ -0,0 +1,56 @@
++// R1 rev16 (Codex 6725294448 R1/R2): BUY NOW cards are checked at the send attempt and keep the original strict < 20-minute admission boundary.
++// Adapted from Codex's reproducer docs/reviews/r1-preparation/09f58ca5/buy-now.test.mjs (cbc0d1662); only ROOT now points at this checkout.
++// R1 rev15 (Codex 6724441072 / 6724603156, N1): the intraday alerts ("Market hours check") make a price claim only on evidence that was
++// valid WHEN FETCHED and is still valid WHEN SENT, each route under its EXISTING rule:
++//   holding (YOUR POSITION target lines): the holding rule of holdingAction()/quoteEvidence() (5 minutes);
++//   plan (BUY NOW cards and the planned-entry review lines: QUICK, LEADER, signal range, breakout trigger, paper trades): the 20-minute
++//   BUY NOW gate. Undated or future-dated prices never qualify. A held-back holding alert is reported once as NOT CONFIRMED.
++// Synthetic only: the ACTUAL intraday() caller, invented tickers and prices, loopback services, no owner records or real messages.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import http from 'node:http';
++import fs from 'node:fs';
++import {pathToFileURL} from 'node:url';
++const ROOT=new URL('..', import.meta.url).pathname.replace(/\/$/, '');const {loadScan,blocked}=await import(pathToFileURL(ROOT+'/test/load-scan.mjs'));
++
++const T = Date.parse('2026-11-05T14:40:00Z');   // Thu 9:40 am New York
++const SESSION_SRC = fs.readFileSync(ROOT+'/market-session.mjs', 'utf8');
++// quotes: SYM -> { c, ageSec } | { c, t } ; advance: SYM -> ms added to the clock once that symbol is fetched (a slow fetch loop)
++async function run(t, { pos = {}, sig = {}, quotes, advance = {}, state, sendDelay=0, retryDelay=0, extraFiles={} }) {
++  const sent = [], transmissions=[]; let clock = T, retried=false;
++  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
++    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
++    if (req.url.includes('/sendMessage')) { const text=JSON.parse(b).text, limited=retryDelay && /^Market hours check/.test(text) && !retried;transmissions.push({at:clock,text,status:limited?429:200});if(limited){retried=true;clock+=retryDelay;res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:1}}));}sent.push(text);if(/FIRST MARKET-HOURS CHECK/.test(text))clock+=sendDelay;return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}})); }
++    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol'), q = quotes[sym];
++      const body = !q ? { c: 0, t: 0 } : { c: q.c, t: 't' in q ? q.t : (clock - q.ageSec * 1000) / 1000 };
++      if (advance[sym]) clock += advance[sym];
++      return res.end(JSON.stringify(body)); }
++    res.statusCode = 404; res.end('{}'); }); });
++  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
++  const base = 'http://127.0.0.1:' + server.address().port;
++  const files = { 'data/my-positions.json': pos, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [], ...sig }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC };
++  if (state) files['data/alert-state.json'] = state;
++  files['data/settings.json'] = { quiet: false };   // paper-trade lines are only sent outside quiet mode
++  Object.assign(files,extraFiles);
++  const S = await loadScan({ root:ROOT, files, env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
++  const real = Date.now; Date.now = () => clock;
++  try { await S.fn('intraday')(false); } finally { Date.now = real; }
++  const alerts = sent.find(x => /^Market hours check/.test(x)) || '';
++  return { sent, transmissions, alerts, finalClock:clock, state: JSON.parse(S.read('data/alert-state.json') || '{}') };
++}
++const HOLD = { ZZT: { entry: 100, t2: 110, stop: 50 } };
++
++
++
++const SIG_BUY={pead:[{sym:'ZZE',live:true,buyLo:100,buyHi:110,stop:90,hold:10,sma20:90,sur:0.2,up:0.1,test:{n:40,avg:0.02,win:0.6}}]};
++const EXTRA={'data/earnings-study.json':{verdict:'PROMISING'},'data/halal.json':{ZZE:{s:'ok'}}};
++test('actual BUY NOW fixture has an eligible existing planned-entry route when timely',async t=>{
++ const r=await run(t,{sig:SIG_BUY,quotes:{ZZE:{c:105,ageSec:10}},extraFiles:EXTRA});console.log('TIMELY:',r.sent.filter(x=>/^BUY NOW/.test(x)));assert.ok(r.sent.some(x=>/^BUY NOW/.test(x)),'fixture must really reach the BUY NOW route');
++});
++test('actual BUY NOW card cannot expire behind the first-check send and remain marked',async t=>{
++ const r=await run(t,{sig:SIG_BUY,quotes:{ZZE:{c:105,ageSec:1190}},extraFiles:EXTRA,sendDelay:30000});console.log(JSON.stringify({case:'buy_after_await',messages:r.transmissions,state:r.state},null,2));assert.equal(r.finalClock,T+30000);assert.ok(!r.sent.some(x=>/^BUY NOW/.test(x)),'age1220s at dispatch must withhold the card');assert.equal(r.state.sent.ZZEbuynow,undefined);
++});
++test('BUY NOW retains its original strictly-less-than20minute admission boundary',async t=>{
++ const r=await run(t,{sig:SIG_BUY,quotes:{ZZE:{c:105,ageSec:1200}},extraFiles:EXTRA});console.log(JSON.stringify({case:'buy_exact_boundary',messages:r.transmissions,state:r.state},null,2));assert.ok(!r.sent.some(x=>/^BUY NOW/.test(x)),'old fresh predicate was age<1200s, not age<=1200s');assert.equal(r.state.sent.ZZEbuynow,undefined);
++});
++test('loopback only',()=>assert.deepEqual(blocked,[]));
 diff --git a/test/discover-sec-note.test.mjs b/test/discover-sec-note.test.mjs
 new file mode 100644
 index 0000000000000000000000000000000000000000..954504b332678ff61d3f420fc8dc6d73231c0090
@@ -3735,6 +3874,73 @@ index 0000000000000000000000000000000000000000..d7e6d8266426deebe6c967ab60d7d852
 +  }
 +});
 +test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
+diff --git a/test/intraday-alert-send-time.test.mjs b/test/intraday-alert-send-time.test.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..443b987290c56a68e2e48c0a1e88d943db6bccc6
+--- /dev/null
++++ b/test/intraday-alert-send-time.test.mjs
+@@ -0,0 +1,61 @@
++// R1 rev16 (Codex 6725294448 R1): price-bearing alerts are checked at EVERY network attempt (after earlier Telegram awaits and on a 429 retry).
++// Adapted from Codex's reproducer docs/reviews/r1-preparation/09f58ca5/actual-send.test.mjs (cbc0d1662); only ROOT now points at this checkout.
++// R1 rev15 (Codex 6724441072 / 6724603156, N1): the intraday alerts ("Market hours check") make a price claim only on evidence that was
++// valid WHEN FETCHED and is still valid WHEN SENT, each route under its EXISTING rule:
++//   holding (YOUR POSITION target lines): the holding rule of holdingAction()/quoteEvidence() (5 minutes);
++//   plan (BUY NOW cards and the planned-entry review lines: QUICK, LEADER, signal range, breakout trigger, paper trades): the 20-minute
++//   BUY NOW gate. Undated or future-dated prices never qualify. A held-back holding alert is reported once as NOT CONFIRMED.
++// Synthetic only: the ACTUAL intraday() caller, invented tickers and prices, loopback services, no owner records or real messages.
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import http from 'node:http';
++import fs from 'node:fs';
++import {pathToFileURL} from 'node:url';
++const ROOT=new URL('..', import.meta.url).pathname.replace(/\/$/, '');const {loadScan,blocked}=await import(pathToFileURL(ROOT+'/test/load-scan.mjs'));
++
++const T = Date.parse('2026-11-05T14:40:00Z');   // Thu 9:40 am New York
++const SESSION_SRC = fs.readFileSync(ROOT+'/market-session.mjs', 'utf8');
++// quotes: SYM -> { c, ageSec } | { c, t } ; advance: SYM -> ms added to the clock once that symbol is fetched (a slow fetch loop)
++async function run(t, { pos = {}, sig = {}, quotes, advance = {}, state, sendDelay=0, retryDelay=0 }) {
++  const sent = [], transmissions=[]; let clock = T, retried=false;
++  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
++    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
++    if (req.url.includes('/sendMessage')) { const text=JSON.parse(b).text, limited=retryDelay && /^Market hours check/.test(text) && !retried;transmissions.push({at:clock,text,status:limited?429:200});if(limited){retried=true;clock+=retryDelay;res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:1}}));}sent.push(text);if(/FIRST MARKET-HOURS CHECK/.test(text))clock+=sendDelay;return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}})); }
++    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol'), q = quotes[sym];
++      const body = !q ? { c: 0, t: 0 } : { c: q.c, t: 't' in q ? q.t : (clock - q.ageSec * 1000) / 1000 };
++      if (advance[sym]) clock += advance[sym];
++      return res.end(JSON.stringify(body)); }
++    res.statusCode = 404; res.end('{}'); }); });
++  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
++  const base = 'http://127.0.0.1:' + server.address().port;
++  const files = { 'data/my-positions.json': pos, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [], ...sig }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC };
++  if (state) files['data/alert-state.json'] = state;
++  files['data/settings.json'] = { quiet: false };   // paper-trade lines are only sent outside quiet mode
++  const S = await loadScan({ root:ROOT, files, env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
++  const real = Date.now; Date.now = () => clock;
++  try { await S.fn('intraday')(false); } finally { Date.now = real; }
++  const alerts = sent.find(x => /^Market hours check/.test(x)) || '';
++  return { sent, transmissions, alerts, finalClock:clock, state: JSON.parse(S.read('data/alert-state.json') || '{}') };
++}
++const HOLD = { ZZT: { entry: 100, t2: 110, stop: 50 } };
++
++
++test('holding target is checked after earlier Telegram awaits, not only before the batch',async t=>{
++ const r=await run(t,{pos:HOLD,quotes:{ZZT:{c:115,ageSec:290}},sendDelay:30000});
++ console.log(JSON.stringify({case:'holding',messages:r.transmissions,state:r.state},null,2));assert.equal(r.finalClock,T+30000);assert.ok(r.transmissions.some(x=>/FIRST MARKET-HOURS CHECK/.test(x.text)&&x.at===T));
++ assert.doesNotMatch(r.alerts,/TARGET 2 REACHED|ZZT at 115/, 'age320s after the first-check Telegram await: no current holding target');
++ assert.equal(r.state.sent.ZZTmyt2,undefined,'an alert withheld at its actual send must remain eligible next run');
++});
++test('plan alert is checked after earlier Telegram awaits under the unchanged20min gate',async t=>{
++ const r=await run(t,{sig:{openTrades:[{sym:'ZZP',since:'2026-11-01',stop:5,target:20}]},quotes:{ZZP:{c:21,ageSec:1190}},sendDelay:30000});
++ console.log(JSON.stringify({case:'plan',messages:r.transmissions,state:r.state},null,2));assert.equal(r.finalClock,T+30000);assert.ok(r.transmissions.some(x=>/FIRST MARKET-HOURS CHECK/.test(x.text)&&x.at===T));
++ assert.doesNotMatch(r.alerts,/ZZP at 21/,'age1220s after first-check Telegram await: no current paper-target claim');
++ assert.equal(r.state.sent['ZZPtg2026-11-01'],undefined);
++});
++test('rate-limited retry rechecks the holding quote at the next network attempt',async t=>{
++ const r=await run(t,{pos:HOLD,quotes:{ZZT:{c:115,ageSec:290}},retryDelay:20000});
++ const attempts=r.transmissions.filter(x=>/^Market hours check/.test(x.text));console.log(JSON.stringify({case:'429_retry',attempts,state:r.state},null,2));
++ assert.equal(r.finalClock,T+20000);assert.ok(attempts.some(x=>x.status===429),'fixture must exercise the real retry loop');
++ assert.ok(!attempts.some(x=>x.at>T+10000 && x.status===200 && /ZZT at 115|TARGET 2 REACHED/.test(x.text)),'current target payload must not survive retry at source age310s');
++});
++test('loopback only',()=>assert.deepEqual(blocked,[]));
 diff --git a/test/load-scan.mjs b/test/load-scan.mjs
 index b13b1bc80eba8a874a237e4ee9a36d87fae56a26..e98e046ebf6125573387169fe9c55620aace7cdf 100644
 --- a/test/load-scan.mjs

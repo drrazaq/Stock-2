@@ -1,18 +1,18 @@
 {
  "status": "ADOPTED_FOR_REVIEW (candidate author); not approved, not deployed",
- "candidate": "09f58ca51258e02c6950f8d528a3c4093d2963e9",
- "candidateTree": "92f5bfc80e9abcb809224dd53bdd3b57b48523cb",
+ "candidate": "cdda3dc376d9bead23ae14fba24bd60db9ee53ee",
+ "candidateTree": "d04917faf68d3e7dd4c1977dee0b61ab7430f4ad",
  "historicalR1Base": "b0d769876a6ee76f23544850c959111f59d8ae7b",
  "mainAtBinding": "774273205e1c8ce3db30c59ca368dc107617ef73",
- "pathCount": 73,
+ "pathCount": 75,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "094cf908b290d78bf39fc1e920fc304620553d344008e39cac612251665eb4e1",
+  "sha256": "75bf4b6d96934739a65420d83004f097892f44d6225abf681a9ffdf5c25c17e1",
   "against": "774273205e1c8ce3db30c59ca368dc107617ef73"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "d6aaa672229ba92dbfabacc5b6f2960f849f23447f69a7914731f75215396c8f"
+  "sha256": "6ce17151d6b4d6979270e1e7066e27187d220e77bf002e251fb614cff38d8462"
  },
  "candidateBranchStaleDataPaths": [
   "data/calendar-status.json",
@@ -22,10 +22,10 @@
   "data/tg-state.json"
  ],
  "neverPushOrMergeCandidateBranch": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 09f58ca51258e02c6950f8d528a3c4093d2963e9 binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 cdda3dc376d9bead23ae14fba24bd60db9ee53ee binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "supersedes": {
-  "binding": "058d3aaf docs/r1-combined-binding/binding.json (rev14 df5ee960)",
+  "binding": "832fceea docs/r1-combined-binding/binding.json (rev15 09f58ca5)",
   "samePathSet": false,
   "filesChangedVsPrevious": [
    "docs/r1-sealed-provider-data/MANIFEST.md",
@@ -34,10 +34,11 @@
    "scan.mjs"
   ],
   "pathsAddedVsPrevious": [
-   "test/intraday-alert-evidence.test.mjs"
+   "test/buynow-evidence.test.mjs",
+   "test/intraday-alert-send-time.test.mjs"
   ],
   "pathsRemovedVsPrevious": [],
-  "reason": "rev15: N1 intraday alert evidence at fetch and send (scan.mjs) + regression test + operative count sync; allowlist +1 path"
+  "reason": "rev16: per-attempt send rendering (telegramLive), BUY NOW strict <20 min, live counts 75; allowlist +2 paths"
  },
  "files": {
   ".gitattributes": {
@@ -126,18 +127,18 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/MANIFEST.md": {
-   "sha256": "2f74cf76410e57f1c86b7c4351fa9740cb43651874fe0efabc303aabb39175f2",
-   "bytes": 9986,
+   "sha256": "772d979443c4f1de2218ea084ae387f98c3d60253308fb91bb7d773645310f12",
+   "bytes": 10269,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/README.md": {
-   "sha256": "bfe531dee6071f2ac6f7351a03033d25bf01f56779048a23a4fb24e3a1dd3593",
-   "bytes": 43948,
+   "sha256": "a6da806211d0ba8d3966eb0282a63001b43c333a079e49deb4a672634db9d39a",
+   "bytes": 45554,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/RELEASE.md": {
-   "sha256": "cd213929d9af9581c6a984e3674a4799af5d720df87f7c4aa08f015bc60202a8",
-   "bytes": 17058,
+   "sha256": "45f3776e8f3c807c868b25939d9fc138ead23994a113cbd41c0be2a12fca78a7",
+   "bytes": 17141,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/cost-projection.mjs": {
@@ -201,8 +202,8 @@
    "mode": "100644"
   },
   "scan.mjs": {
-   "sha256": "662587564523b3c39dfacddd86f5a08c9c81178f25fa587249d9c90c39b17bec",
-   "bytes": 708312,
+   "sha256": "c9d69996ef14c980d1485550e1871e194258161c613d7fe7b7fdd25b3623c273",
+   "bytes": 712475,
    "mode": "100644"
   },
   "scorecard-1023.mjs": {
@@ -245,6 +246,11 @@
    "bytes": 18391,
    "mode": "100644"
   },
+  "test/buynow-evidence.test.mjs": {
+   "sha256": "128a3af3da884af4c4a1919a14ad89557bc1c3a4374ffbbe2fe8d1c2c89ff842",
+   "bytes": 5592,
+   "mode": "100644"
+  },
   "test/discover-sec-note.test.mjs": {
    "sha256": "2561908a8afd7181b7d51b5451574b9e0c53f581c397d38ae1ef165bb22041d5",
    "bytes": 3291,
@@ -268,6 +274,11 @@
   "test/intraday-alert-evidence.test.mjs": {
    "sha256": "6f40820604d323293914cd1be464e73a59b3fd98caa4a2ee58a63d3d97be9d17",
    "bytes": 5964,
+   "mode": "100644"
+  },
+  "test/intraday-alert-send-time.test.mjs": {
+   "sha256": "97f4b803a932f4a76b462b1d4b7cf80353b794c08173645d1468af31cebe535a",
+   "bytes": 5985,
    "mode": "100644"
   },
   "test/load-scan.mjs": {
@@ -407,7 +418,7 @@
   }
  },
  "expectedUnitTrees": {
-  "774273205e1c8ce3db30c59ca368dc107617ef73": "7a67151af4b1d771e095fe2018a7036567e4ab50",
-  "00bd79634fdf51825f557668d427406103eb5758": "dd3ab3b929ef33216c62fe4966edb20eb0b88c5f"
+  "774273205e1c8ce3db30c59ca368dc107617ef73": "10e3d8bce56e0476eaf0a281c6dea2599c197885",
+  "6e72a8d0c46385f3c329157d627636875505a224": "43e82ea7d9ce9cf9f477968efe0a92ddf67ced6e"
  }
 }
