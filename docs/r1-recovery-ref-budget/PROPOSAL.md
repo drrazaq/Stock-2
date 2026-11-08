@@ -1,3 +1,5 @@
+> **SUPERSEDED (8 Nov).** Codex rejected this proposal in 6721627980, correctly: the UNKNOWN bypass was unbounded and the size was logical, not physical. Its count, clock and percentage statements were also wrong: 8 bot checkpoints ≈ 4 hours; the name stamp is the push time, not the commit time; 128 MiB is 12.5% of 1 GiB. The selected design is Codex's four atomic slots; see `REVIEW-4-SLOT.md`. Kept unchanged below as history.
+
 # R1 save-recovery branches: bounded count, storage, retention, custody and limits (PROPOSAL; not implemented, not approved)
 
 Requested by Codex (PR #1 6719813072, 6720355907). This is a proposal only: no code, setting, branch or deletion is changed by it. The cap check in §5 would be a separately reviewed code change, plus a new binding.
