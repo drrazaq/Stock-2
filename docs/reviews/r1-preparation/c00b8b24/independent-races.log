@@ -1,0 +1,101 @@
+TAP version 13
+# {"case":"actual_shell_flags","status":1,"warningReached":false,"continued":false}
+# {"case":"accepted_replace_then_readback_loss","laterStateDurable":false,"stdout":"sealed guard: OK (--push: no T1 plaintext)\\nError: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner\\nfirst_rc=1\\nsealed guard: OK (--push: no T1 plaintext)\\nError: save recovery state UNKNOWN (slot bot changed unexpectedly); no further attempt; the newer commit exists only on this runner\\nnext_rc=1\\n"}
+# {"case":"new_shell_same_run_final_save","sameRunId":"777","latestStateDurable":false,"stdout":"sealed guard: OK (--staged: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nError: could not save the data folder to the repository (kept in the local commit; retried at the next save)\\nsealed guard: OK (--push: no T1 plaintext)\\nsave recovery: slot bot is occupied by an earlier unmerged save\\nError: SAVE RECOVERY FULL: every recovery slot for this workflow holds an earlier unmerged save; nothing was evicted; the unpublished commit exists only on this runner\\nFINAL_ATTEMPT_COMPLETE\\n"}
+# Subtest: required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+not ok 1 - required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+  ---
+  duration_ms: 652.306845
+  location: '/workspace/g2-verification/rev13-independent-races.test.mjs:40:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    unconfirmed save must not exit before warning/continuation
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev13-independent-races.test.mjs:43:161)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    node:internal/test_runner/harness:255:12
+    node:internal/process/task_queues:140:7
+    AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    AsyncResource.runMicrotask (node:internal/process/task_queues:137:8)
+  ...
+# Subtest: same-run later state progresses after an accepted replacement loses both reply and its first read-back
+not ok 2 - same-run later state progresses after an accepted replacement loses both reply and its first read-back
+  ---
+  duration_ms: 353.752708
+  location: '/workspace/g2-verification/rev13-independent-races.test.mjs:45:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    next save with working network must reconcile its own pending B before advancing to C
+    + actual - expected
+    
+    + '2c72dd6561770ceb730b926b2b7168095cc91d2e'
+    - 'b85acda79a31e7b3b23876def9b8a60601879423'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'b85acda79a31e7b3b23876def9b8a60601879423'
+  actual: '2c72dd6561770ceb730b926b2b7168095cc91d2e'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev13-independent-races.test.mjs:48:241)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: cleanup winning the old pair race allows this same run to readmit its later descendant
+ok 3 - cleanup winning the old pair race allows this same run to readmit its later descendant
+  ---
+  duration_ms: 764.606756
+  ...
+# Subtest: replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+ok 4 - replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+  ---
+  duration_ms: 703.736549
+  ...
+# Subtest: same GitHub run final always-save shell can advance its earlier loop checkpoint
+not ok 5 - same GitHub run final always-save shell can advance its earlier loop checkpoint
+  ---
+  duration_ms: 747.58024
+  location: '/workspace/g2-verification/rev13-independent-races.test.mjs:62:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    same run finalizer must recover verified ownership rather than falsely treating its own earlier slot as another run
+    + actual - expected
+    
+    + '11230e086e231eaf56186c6794d451438485c227'
+    - 'feead4862b6b4dcec8d1edafda73112f19ae7304'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'feead4862b6b4dcec8d1edafda73112f19ae7304'
+  actual: '11230e086e231eaf56186c6794d451438485c227'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev13-independent-races.test.mjs:66:263)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 2
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3304.409865

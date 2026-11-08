@@ -1,0 +1,150 @@
+TAP version 13
+# Subtest: every autolab loop over library entries guards e.rule.b before using it
+ok 1 - every autolab loop over library entries guards e.rule.b before using it
+  ---
+  duration_ms: 1.327995
+  ...
+# Subtest: the guard skips text rules and keeps block rules
+ok 2 - the guard skips text rules and keeps block rules
+  ---
+  duration_ms: 0.182945
+  ...
+# Subtest: registry: two buy rules (63 / 126 sessions) and one avoid check; ids RQ-
+ok 3 - registry: two buy rules (63 / 126 sessions) and one avoid check; ids RQ-
+  ---
+  duration_ms: 2.147456
+  ...
+# Subtest: text: tags, scripts and the inline-XBRL header are removed; words are 2+ letters, lower case, numbers dropped
+ok 4 - text: tags, scripts and the inline-XBRL header are removed; words are 2+ letters, lower case, numbers dropped
+  ---
+  duration_ms: 1.144419
+  ...
+# Subtest: cosine: identical = 1, disjoint = 0, the paper example ordering holds
+ok 5 - cosine: identical = 1, disjoint = 0, the paper example ordering holds
+  ---
+  duration_ms: 0.624688
+  ...
+# Subtest: 10-K list: form 10-K only (no 10-K/A, 10-KT, 10-Q), from the fetch start, primary document required; URL built from the accession
+ok 6 - 10-K list: form 10-K only (no 10-K/A, 10-KT, 10-Q), from the fetch start, primary document required; URL built from the accession
+  ---
+  duration_ms: 0.412219
+  ...
+# Subtest: pairing: the previous 10-K only when filed 300-430 days earlier
+ok 7 - pairing: the previous 10-K only when filed 300-430 days earlier
+  ---
+  duration_ms: 0.316305
+  ...
+# Subtest: similarity needs 10,000+ words in both documents
+ok 8 - similarity needs 10,000+ words in both documents
+  ---
+  duration_ms: 0.245058
+  ...
+# Subtest: percentile: only the 365 days BEFORE the day count (not the day itself), 300+ refs, share strictly below; sides at 0.8 / 0.2
+ok 9 - percentile: only the 365 days BEFORE the day count (not the day itself), 300+ refs, share strictly below; sides at 0.8 / 0.2
+  ---
+  duration_ms: 2.819115
+  ...
+# Subtest: data rule: 98% filing lists, 95% documents, 85% mapped liquid stock-months; any miss = no verdict
+ok 10 - data rule: 98% filing lists, 95% documents, 85% mapped liquid stock-months; any miss = no verdict
+  ---
+  duration_ms: 0.4855
+  ...
+# Subtest: avoid verdict: never a buy; confirmed only with negative edge and block t <= -2.5 in both halves
+ok 11 - avoid verdict: never a buy; confirmed only with negative edge and block t <= -2.5 in both halves
+  ---
+  duration_ms: 0.45228
+  ...
+# Subtest: library pre-registration: adds every RQ entry once (3 lazy + 2 tender + 4 info-shock + 3 backlog + 3 earnings timing + 3 tax + 2 R&D increase + 3 inventory + 3 goodwill + 3 gross profit change + 3 dividend cut + 3 distress), never touches others
+ok 12 - library pre-registration: adds every RQ entry once (3 lazy + 2 tender + 4 info-shock + 3 backlog + 3 earnings timing + 3 tax + 2 R&D increase + 3 inventory + 3 goodwill + 3 gross profit change + 3 dividend cut + 3 distress), never touches others
+  ---
+  duration_ms: 1.155246
+  ...
+# Subtest: firstAfter: the entry is the first session strictly after the acceptance date
+ok 13 - firstAfter: the entry is the first session strictly after the acceptance date
+  ---
+  duration_ms: 0.245309
+  ...
+# Subtest: three DIST rules, all avoid checks (never buys), holds and thresholds fixed, one open trade per stock
+ok 14 - three DIST rules, all avoid checks (never buys), holds and thresholds fixed, one open trade per stock
+  ---
+  duration_ms: 2.157631
+  ...
+# Subtest: rows: quarter / 9-month / year durations of net income, originals only; instants by key
+ok 15 - rows: quarter / 9-month / year durations of net income, originals only; instants by key
+  ---
+  duration_ms: 0.705469
+  ...
+# Subtest: quarter net income: discrete first, else fiscal year minus the 9 months with the same start
+ok 16 - quarter net income: discrete first, else fiscal year minus the 9 months with the same start
+  ---
+  duration_ms: 0.389976
+  ...
+# Subtest: events: new timely quarter, NI for E plus 1+ earlier quarter, liabilities fallback, cash + short-term investments
+ok 17 - events: new timely quarter, NI for E plus 1+ earlier quarter, liabilities fallback, cash + short-term investments
+  ---
+  duration_ms: 1.342847
+  ...
+# Subtest: market inputs: excess return vs SPY (weights halve every 3 months), annualised volatility, minimum history
+ok 18 - market inputs: excess return vs SPY (weights halve every 3 months), annualised volatility, minimum history
+  ---
+  duration_ms: 0.643397
+  ...
+# Subtest: score: the published logit; worse finances -> higher failure probability
+ok 19 - score: the published logit; worse finances -> higher failure probability
+  ---
+  duration_ms: 1.205521
+  ...
+# Subtest: share counts: 30-day lag; a split-shaped jump after the count drops it
+ok 20 - share counts: 30-day lag; a split-shaped jump after the count drops it
+  ---
+  duration_ms: 0.489285
+  ...
+# Subtest: data rule and pre-registration
+ok 21 - data rule and pre-registration
+  ---
+  duration_ms: 2.499405
+  ...
+# Subtest: registry: two tender rules beside the three lazy rules; spreads 3-15% and >0-15%; max hold 120
+ok 22 - registry: two tender rules beside the three lazy rules; spreads 3-15% and >0-15%; max hold 120
+  ---
+  duration_ms: 5.375977
+  ...
+# Subtest: submission: subject company CIK (not the filer), NY acceptance date, only SC TO / EX-99 documents kept
+ok 23 - submission: subject company CIK (not the filer), NY acceptance date, only SC TO / EX-99 documents kept
+  ---
+  duration_ms: 7.983183
+  ...
+# Subtest: offer price: the most frequent cash amount; par value and graphics ignored; CVR flagged; stock offers give none
+ok 24 - offer price: the most frequent cash amount; par value and graphics ignored; CVR flagged; stock offers give none
+  ---
+  duration_ms: 6.608418
+  ...
+# Subtest: spread windows: 3-15% and >0-15%; sanity -50%..+100%
+ok 25 - spread windows: 3-15% and >0-15%; sanity -50%..+100%
+  ---
+  duration_ms: 0.277667
+  ...
+# Subtest: exits: deal closed (10-session gap), break (close 10% under the filing-day close), 120 sessions, not complete yet
+ok 26 - exits: deal closed (10-session gap), break (close 10% under the filing-day close), 120 sessions, not complete yet
+  ---
+  duration_ms: 0.486922
+  ...
+# Subtest: data rule: 95% index days, 95% filings read, 50% offer price found among priced targets
+ok 27 - data rule: 95% index days, 95% filings read, 50% offer price found among priced targets
+  ---
+  duration_ms: 0.385429
+  ...
+# Subtest: library: the tender entries are added once with their own note and sources; existing lazy entries untouched
+ok 28 - library: the tender entries are added once with their own note and sources; existing lazy entries untouched
+  ---
+  duration_ms: 1.886244
+  ...
+1..28
+# tests 28
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 114.824416

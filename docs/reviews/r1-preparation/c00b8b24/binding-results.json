@@ -1,0 +1,166 @@
+{
+  "candidate": "c00b8b24f17e42cc878b9ed5c6493a977a42c189",
+  "bindingCommit": "bd8627bd",
+  "bindingSha256": "9304b283abfb89de0c880d2a781ed7cc776be8966421a7f955c4eb3399f31d3d",
+  "base": "774273205e1c8ce3db30c59ca368dc107617ef73",
+  "fresh": "a8f22f842e85f6743ee498c47a2dee5908853157",
+  "fingerprintsMatched": 68,
+  "precheckFresh": {
+    "pass": true,
+    "changed": 68,
+    "drift": [],
+    "already": []
+  },
+  "builds": [
+    {
+      "m0": "774273205e1c8ce3db30c59ca368dc107617ef73",
+      "ok": true,
+      "commit": "8f18ca8689da6d3e5a217bde9c33a17af38c0e24",
+      "tree": "d4b60206e8605b8e403999d71005ed8974159abe",
+      "verify": {
+        "pass": true,
+        "bad": [],
+        "files": 68
+      },
+      "allDataAndUnboundSourcePreserved": true,
+      "patchEqualsBuild": true,
+      "exactInverse": true
+    },
+    {
+      "m0": "a8f22f842e85f6743ee498c47a2dee5908853157",
+      "ok": true,
+      "commit": "b9d16909e0564e8c8646382a49035cb52f9ed38e",
+      "tree": "abaecb0ded838b302403d032aa463410ea3b4b1e",
+      "verify": {
+        "pass": true,
+        "bad": [],
+        "files": 68
+      },
+      "allDataAndUnboundSourcePreserved": true,
+      "patchEqualsBuild": true,
+      "exactInverse": true
+    }
+  ],
+  "localObjectsOnlyNoRefsChanged": true,
+  "priorPinFormat": [
+    "patchSHA256",
+    "files"
+  ],
+  "stopPinsMatched": 17,
+  "changedPins": [
+    "ignition-watch.mjs",
+    "scan.mjs",
+    "test/load-scan.mjs",
+    "test/watcher-resilience.test.mjs",
+    "test/watcher-incident-revision.test.mjs",
+    ".github/workflows/bot.yml",
+    ".github/workflows/ignition.yml"
+  ],
+  "wholeCandidateRejected": {
+    "pass": false,
+    "bad": [
+      "parent is not exactly M0",
+      "outside binding: data/calendar-status.json",
+      "outside binding: data/calendar.enc",
+      "outside binding: data/health.json",
+      "outside binding: data/shares.json.gz",
+      "outside binding: data/tg-state.json",
+      "tree differs from M0 + pinned candidate"
+    ],
+    "files": 68
+  },
+  "boundModeMutation": {
+    "mode": "100644 -> 100755",
+    "path": "scan.mjs",
+    "treeDiffers": true,
+    "verify": {
+      "pass": false,
+      "bad": [
+        "mode: scan.mjs",
+        "tree differs from M0 + pinned candidate"
+      ],
+      "files": 68
+    },
+    "buildFromWrongCandidate": {
+      "ok": false,
+      "bad": [
+        "candidate 99725a818bf0a324ce6bcb082698167ce13d2a0c is not the binding's pinned candidate c00b8b24f17e42cc878b9ed5c6493a977a42c189"
+      ]
+    }
+  },
+  "mandatoryBindingControls": {
+    "missingCandidate": {
+      "build": {
+        "threw": true,
+        "error": "binding does not pin the exact candidate commit (40 hex)"
+      },
+      "verify": {
+        "threw": true,
+        "error": "binding does not pin the exact candidate commit (40 hex)"
+      }
+    },
+    "missingMode": {
+      "build": {
+        "threw": true,
+        "error": "bad binding entry scan.mjs"
+      },
+      "verify": {
+        "threw": true,
+        "error": "bad binding entry scan.mjs"
+      }
+    },
+    "candidateModeMismatch": {
+      "build": {
+        "threw": false,
+        "result": {
+          "ok": false,
+          "bad": [
+            "candidate mode differs from binding: scan.mjs"
+          ]
+        }
+      },
+      "verify": {
+        "threw": false,
+        "result": {
+          "pass": false,
+          "bad": [
+            "mode: scan.mjs",
+            "pinned candidate mode differs from binding: scan.mjs"
+          ],
+          "files": 68
+        }
+      }
+    },
+    "unavailableCandidate": {
+      "build": {
+        "threw": false,
+        "result": {
+          "ok": false,
+          "bad": [
+            "candidate c00b8b24f17e42cc878b9ed5c6493a977a42c189 is not the binding's pinned candidate ffffffffffffffffffffffffffffffffffffffff"
+          ]
+        }
+      },
+      "verify": {
+        "threw": false,
+        "result": {
+          "pass": false,
+          "bad": [
+            "pinned candidate ffffffffffffffffffffffffffffffffffffffff not available locally (fetch it; never skip)"
+          ],
+          "files": 68
+        }
+      }
+    },
+    "rev8Binding": {
+      "build": {
+        "threw": true,
+        "error": "bad binding entry .gitattributes"
+      },
+      "verify": {
+        "threw": true,
+        "error": "bad binding entry .gitattributes"
+      }
+    }
+  }
+}

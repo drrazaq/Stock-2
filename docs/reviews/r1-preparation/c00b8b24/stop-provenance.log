@@ -1,0 +1,23 @@
+intraday check done: 2 watched, 0 new alerts
+{
+  "root": "/workspace/g2-verification/combined-rev13",
+  "quoteCount": 2,
+  "firstLine": "ZZS: STOP LEVEL REACHED: at or below your stop 80.00. If your broker stop order has filled, you are already out: do not sell again. Last price 70.00 (FINNHUB, Nov 5 09:39 New York, 10 s old when checked at Nov 5 09:40 New York; no current price now: the latest price is 10 min old (limit 5 min)).",
+  "stopMessage": "YOUR STOPS (bot check; the live watcher had not confirmed these)\n\nSTOP LEVEL REACHED: ZZS traded at or below your stop 80.00: last price 70.00 (FINNHUB, Nov 5 09:39 New York, 10 s old) (bought 100.00, -30.0%).\nIf your broker stop order has filled, you are already out: do not sell again; send  sold ZZS FILLPRICE  with the fill price.\nIf no stop order is working at your broker, decide now whether to sell, then send  sold ZZS PRICE.\n\nSTOP CHECK UNKNOWN: ZZF: the latest price is 11 min old (limit 5 min). Whether your stop 8.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.\n\nStop levels are your own recorded stops. Not financial advice.",
+  "contradiction": false
+}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: dedicated stop must qualify age at its observation time or show actual later age; it must not say unqualified 10 seconds old after 10 minutes of batch delay
+    at file:///workspace/g2-verification/rev13-stop-provenance.mjs:8:8
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: false,
+  expected: true,
+  operator: '=='
+}
+
+Node.js v20.20.0

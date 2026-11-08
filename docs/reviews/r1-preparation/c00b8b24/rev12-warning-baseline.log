@@ -1,0 +1,57 @@
+TAP version 13
+# {"case":"actual_shell_flags","status":1,"warningReached":false,"continued":false}
+# Subtest: required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+not ok 1 - required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+  ---
+  duration_ms: 555.047353
+  location: '/workspace/g2-verification/rev13-independent-races.test.mjs:40:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    unconfirmed save must not exit before warning/continuation
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev13-independent-races.test.mjs:43:161)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    node:internal/test_runner/harness:255:12
+    node:internal/process/task_queues:140:7
+    AsyncResource.runInAsyncScope (node:async_hooks:206:9)
+    AsyncResource.runMicrotask (node:internal/process/task_queues:137:8)
+  ...
+# Subtest: same-run later state progresses after an accepted replacement loses both reply and its first read-back
+ok 2 - same-run later state progresses after an accepted replacement loses both reply and its first read-back # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.209475
+  ...
+# Subtest: cleanup winning the old pair race allows this same run to readmit its later descendant
+ok 3 - cleanup winning the old pair race allows this same run to readmit its later descendant # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.092309
+  ...
+# Subtest: replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+ok 4 - replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.072349
+  ...
+# Subtest: same GitHub run final always-save shell can advance its earlier loop checkpoint
+ok 5 - same GitHub run final always-save shell can advance its earlier loop checkpoint # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.066881
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 0
+# fail 1
+# cancelled 0
+# skipped 4
+# todo 0
+# duration_ms 630.636726
