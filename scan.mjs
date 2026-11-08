@@ -4273,15 +4273,16 @@ async function daily() {
 // target 2, last night's exit rule (sig.posVerdict: every kind, a trend exit included), the holding review's SELL, then target 1. A
 // price-based claim (stop reached, targets, % from entry) needs ticker-bound, dated, fresh evidence: stop-watch.mjs priceEvidence(), the
 // live watcher's rule. Without it the stop status is UNKNOWN, never HOLD. Holdings, stops and rules are only read, never changed.
-// (rev10, Codex 6720355907) OBSERVATION-TIME LATCH: intraday() stamps each quote with observedAt when liveQ returns it. A quote that was not
-// valid evidence at that moment (e.g. its source time was in the FUTURE when fetched) stays UNKNOWN; it never becomes valid just because the
-// clock moved on while later quotes were fetched. The same 5-minute STOP_MAX_AGE_MIN rule applies at fetch time and again at report time.
+// (rev10/rev11) OBSERVATION-TIME LATCH: intraday() stamps each quote with observedAt when liveQ returns it, and the quote is judged ONCE, at
+// that moment, with the same 5-minute STOP_MAX_AGE_MIN rule the stop route (stopFallback) applies right after the fetch. So both messages of
+// one run reach the same verdict on the same quote: a quote future-dated when fetched stays UNKNOWN (rev10, Codex 6720355907), and a quote
+// that was valid when fetched is not re-aged past the limit by the time spent fetching later symbols (rev11, review of 3589faf5, R1).
 const quoteEvidence = (sym, q, nowMs, maxAgeMin) => {
   const native = q && typeof q === 'object' ? { sym, price: +q.price, t: q.t, provider: q.src || 'unknown source', kind: 'TRADE' } : null;
   if (q && typeof q === 'object' && Object.hasOwn(q, 'observedAt')) {
     if (!Number.isFinite(q.observedAt) || !Number.isFinite(nowMs) || q.observedAt > nowMs) return { state: 'UNKNOWN', why: 'the observation clock is invalid or in the future' };
     const atFetch = priceEvidence(sym, native, q.observedAt, maxAgeMin);
-    if (atFetch.state !== 'OK') return { state: 'UNKNOWN', why: atFetch.why.replace('the price timestamp is in the future', 'the price timestamp was in the future when fetched') };
+    return atFetch.state === 'OK' ? atFetch : { state: 'UNKNOWN', why: atFetch.why.replace('the price timestamp is in the future', 'the price timestamp was in the future when fetched') };
   }
   return priceEvidence(sym, native, nowMs, maxAgeMin);
 };

@@ -6,6 +6,14 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0h. Rev11 (8 Nov): one verdict per quote per run
+
+- My re-review of Codex's corrected development port (finding R1) showed a narrower form of the same problem, and rev10 had it too.
+  - A stop quote 4 min 50 s old when fetched, under the stop, was REACHED in the stop route, which judges right after the fetch.
+  - Thirty seconds of later fetching, and the first check in the same run re-aged it past 5 minutes and said STOP STATUS UNKNOWN.
+- Fix: a quote stamped with `observedAt` is judged once, at that moment, with the same 5-minute rule as the stop route. Thresholds are unchanged.
+- Regression: `test/open-check-repair.test.mjs` "rev11 …" fails on rev10 and passes on rev11. The rev10 future-at-fetch case still passes.
+
 ## 0g. Rev10 (8 Nov): observation-time latch for the first market-hours check
 
 - Codex's review 6720355907 of rev9 reproduced, through the actual `liveQ` → `intraday()` → `firstCheckText()` → Telegram caller, the future-at-fetch defect I had reported on the development port (F2). A holding's quote stamped 20 s in the future when fetched became "STOP LEVEL REACHED … 10 s old" once fetching the next quote moved the clock 30 s, while the same run's stop route said STOP CHECK UNKNOWN.

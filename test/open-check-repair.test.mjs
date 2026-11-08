@@ -157,4 +157,29 @@ test('rev10: a quote future-dated when fetched stays UNKNOWN after the clock mov
   assert.match(first.split('\n').find(l => l.startsWith('ZZF:')) || '', /^ZZF: HOLD: no exit rule is active; above your stop 8\.00\. Last price 12\.00/);
 });
 
+// rev11 (review of Codex's corrected development port, R1): ZZS's quote is 4 min 50 s old when fetched and under the stop; fetching the
+// next holding moves the clock 30 s. The stop route judges at fetch (REACHED); the first check must reach the same verdict on the same
+// quote instead of re-ageing it past the 5-minute limit (which said STOP STATUS UNKNOWN in the same run).
+test('rev11: a stop quote near the 5-minute limit gets ONE verdict in both messages of the same run (judged at fetch time)', async t => {
+  const T = ON_TIME, sent = []; let clock = T;
+  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
+    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
+    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: sent.length } })); }
+    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol');
+      if (sym === 'ZZS') return res.end(JSON.stringify({ c: 70, t: (T - 290000) / 1000 }));
+      clock = T + 30000; return res.end(JSON.stringify({ c: 12, t: (T + 25000) / 1000 })); }
+    res.statusCode = 404; res.end('{}'); }); });
+  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
+  const base = 'http://127.0.0.1:' + server.address().port;
+  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
+    env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
+  const real = Date.now; Date.now = () => clock;
+  try { await S.fn('intraday')(false); } finally { Date.now = real; }
+  const first = sent.find(x => /FIRST MARKET-HOURS CHECK/.test(x)) || '', stop = sent.find(x => /^YOUR STOPS/.test(x)) || '';
+  assert.match(stop, /STOP LEVEL REACHED[\s\S]*ZZS|ZZS[\s\S]*STOP LEVEL REACHED/, 'the stop route judged the quote at fetch: reached');
+  const zzs = first.split('\n').find(l => l.startsWith('ZZS:')) || '';
+  assert.match(zzs, /^ZZS: STOP LEVEL REACHED/, 'the first check agrees with the stop route: ' + zzs);
+  assert.doesNotMatch(first, /ZZS: STOP STATUS UNKNOWN/);
+});
+
 test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
