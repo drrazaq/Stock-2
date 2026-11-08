@@ -6,6 +6,17 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0m. Rev16 (8 Nov): checked at every send attempt; BUY NOW strict boundary; live counts (Codex 6725294448 R1–R3)
+
+- **R1, freshness at every send attempt:** rev15 checked once, *before* the first-check message, the BUY NOW cards and the stop batch were sent. A 30 s wait on an earlier message, or a 429 retry, could still deliver an expired price, and the alert was already marked as sent.
+  - **Fix:** `telegramLive()` renders each price-bearing message again **immediately before every network attempt**: the first try, every 429 or connection retry, and every part.
+  - **Which messages:** the first market-hours check, each BUY NOW card, the YOUR STOPS batch and the Market-hours alerts.
+  - **Marking:** an alert or card is marked in the once-a-day memory, and the memory saved, only while it is eligible at that attempt. One that expires before a retry is unmarked and left out, and a part already sent is never repeated. Delivery is otherwise as before: 3 tries, refusals recorded, no new acknowledgement system.
+- **R2, BUY NOW boundary:** BUY NOW again admits only a price **under** 20 minutes old (exactly 1200 s is too old), as the original `< 20 * 60000`. priceEvidence's boundary for every other route is unchanged.
+- **R3:** the live RELEASE.md build and verify paragraph now says 75 bound files; G1/G6/B5 and the unit sentence say 75 (rev16).
+- **Regressions:** Codex's actual-send and BUY NOW reproducers are adapted as `test/intraday-alert-send-time.test.mjs` and `test/buynow-evidence.test.mjs`. 5 of their cases fail on rev15, and all pass on rev16.
+- **Allowlist:** +2 paths (75).
+
 ## 0l. Rev15 (8 Nov): intraday alerts checked when fetched and when sent (Codex 6724441072 / 6724603156, N1)
 
 - **The defect:** the intraday "Market hours check" alerts were queued during the fetch loop and sent after it with no check, so they could claim a current price that had expired, or had been future-dated when fetched. The worst cases were "TARGET 2 REACHED (−10.0%)", QUICK, LEADER and paper-trade lines. The BUY NOW cards' 20-minute gate also accepted undated prices. That 20-minute gate applied to BUY NOW cards only, not to targets.

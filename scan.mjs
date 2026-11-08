@@ -1056,9 +1056,30 @@ async function loadWide(syms, loaded, now) {
 // (28 Oct, owner item 6) a message Telegram refused (or that never got through after 3 tries) is recorded in data/tg-failures.jsonl; the
 // SYSTEM HEALTH line of ACTIONS counts the last 24 hours, so a failed delivery is never silent.
 function tgFailed(status, why, text) { try { fs.appendFileSync('data/tg-failures.jsonl', JSON.stringify({ at: new Date().toISOString(), status, why: String(why || '').slice(0, 200), head: String(text || '').split('\n')[0].slice(0, 80) }) + '\n'); } catch (e) {} }
+const tgParts = (text) => { const parts = []; let rest = text; while (rest.length > 3800) { let cut = rest.lastIndexOf('\n\n', 3800); if (cut < 1500) cut = rest.lastIndexOf('\n', 3800); if (cut < 1500) cut = 3800; parts.push(rest.slice(0, cut)); rest = rest.slice(cut).replace(/^\n+/, ''); } parts.push(rest); return parts; };   // split long messages between paragraphs, never mid-word
+// (R1 rev16, Codex 6725294448 R1) A PRICE-BEARING message is rendered again IMMEDIATELY BEFORE EVERY NETWORK ATTEMPT: the first try, each
+// rate-limit (429) or connection retry, and each part of a long message. render(nowMs, sentParts) returns the text still to send (or
+// nothing), judged at that moment; it owns any once-a-day marking. Only the first part of each rendering is sent, so a retry or a later
+// part never carries a claim judged before an earlier wait. Delivery semantics are otherwise those of telegram() (3 tries, recorded refusal).
+async function telegramLive(render, buttons) {
+  const sent = [];
+  if (!env.TG_TOKEN || !env.TG_CHAT) { const t = await render(Date.now(), sent); if (t) console.log('[no Telegram secrets, message not sent]\n' + t); return sent; }
+  for (let n = 0, a = 0; n < 60; n++) {
+    const text = await render(Date.now(), sent); if (!text || !text.trim()) return sent;
+    const parts = tgParts(text), part = parts[0], last = parts.length === 1;
+    try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true, ...(buttons && buttons.length && last ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
+      if (r.status === 429 && a < 2) { a++; let w = 5; try { w = Math.min(30, +((await r.json()).parameters || {}).retry_after || 5); } catch (e) {} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }
+      if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, part); }
+      sent.push(part); a = 0; if (last) return sent; await sleep(FAST ? 0 : 700); }
+    catch (e) { console.error('Telegram connection error, retrying', e.message); if (a === 2) { tgFailed('network', e.message, part); sent.push(part); a = 0; if (last) return sent; continue; } a++; await sleep(FAST ? 50 : 3000); }
+  }
+  return sent;
+}
+// the not-yet-sent remainder of a whole message rendered again: skip the lines of the parts already sent (parts end at line breaks)
+const tgRemainder = (full, sent) => { if (!full) return full; let lines = full.split('\n'); for (const p of sent) { lines = lines.slice(p.split('\n').length); while (lines.length && lines[0] === '') lines.shift(); } return lines.join('\n'); };
 async function telegram(text, buttons) {   // buttons: optional rows of { text, data } shown under the last part
   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent]\n' + text); return; }
-  const parts = []; { let rest = text; while (rest.length > 3800) { let cut = rest.lastIndexOf('\n\n', 3800); if (cut < 1500) cut = rest.lastIndexOf('\n', 3800); if (cut < 1500) cut = 3800; parts.push(rest.slice(0, cut)); rest = rest.slice(cut).replace(/^\n+/, ''); } parts.push(rest); }   // split long messages between paragraphs, never mid-word
+  const parts = tgParts(text);
   for (let i = 0; i < parts.length; i++) {
     for (let a = 0; a < 3; a++) {   // a dropped connection is retried, so a message is not lost and the run does not stop
       try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
@@ -4298,8 +4319,14 @@ const stopObservation = (sym, q, nowMs) => fetchJudgement(sym, q, nowMs) || pric
 //  - 'plan' (BUY NOW cards, and the planned-entry review lines QUICK / LEADER / signal range / breakout trigger / paper trades, which had
 //    no age check before): the existing 20-minute BUY NOW gate.
 // The quote must be valid when it was fetched (observedAt; undated or future-dated never qualifies) and again at the moment asked.
-const ALERT_GATE = { holding: undefined, plan: 20 };
-const alertEvidence = (sym, q, route, atMs) => { const f = fetchJudgement(sym, q, atMs, ALERT_GATE[route]); if (f && f.state !== 'OK') return f; return priceEvidence(sym, quoteFields(sym, q), atMs, ALERT_GATE[route]); };
+const ALERT_GATE = { holding: undefined, plan: 20, buynow: 20 };
+// (rev16, Codex 6725294448 R2) BUY NOW keeps its original STRICT comparator: age < 20 minutes (exactly 1200 s is too old), as the old
+// `Date.now() - j.t < 20 * 60000`; priceEvidence's own boundary (<=) is unchanged for every other route.
+const alertEvidence = (sym, q, route, atMs) => { const f = fetchJudgement(sym, q, atMs, ALERT_GATE[route]); if (f && f.state !== 'OK') return f;
+  const ev = priceEvidence(sym, quoteFields(sym, q), atMs, ALERT_GATE[route]);
+  if (route === 'buynow' && ev.state === 'OK' && !(ev.ageSec < 20 * 60)) return { state: 'UNKNOWN', why: 'the latest price is 20 min old (limit: under 20 min)' };
+  if (route === 'buynow' && f && f.state === 'OK' && !(f.ageSec < 20 * 60)) return { state: 'UNKNOWN', why: 'the price was 20 min old when fetched (limit: under 20 min)' };
+  return ev; };
 const ageWords = (sec) => sec < 90 ? Math.round(sec) + ' s' : Math.round(sec / 60) + ' min';
 const evidenceText = (ev) => ev.state === 'OK' ? 'last price ' + money(ev.price) + ' (' + ev.src + ', ' + nyStamp(ev.t) + ', ' + (ev.ageSec < 90 ? Math.round(ev.ageSec) + ' s' : Math.round(ev.ageSec / 60) + ' min') + ' old)' : 'current price UNKNOWN (' + ev.why + ')';
 function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
@@ -4386,7 +4413,7 @@ async function intraday(onlyMine) {
     const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = { ...j, observedAt: Date.now() }; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p;
     // (rev15, Codex 6724441072/6724603156 N1) every price claim below is admitted only on evidence valid WHEN FETCHED under its route's
     // existing rule (ALERT_GATE: undated or future-dated never qualifies), and is checked again just before sending (sendable() below).
-    const fresh = alertEvidence(sym, quotesSeen[sym], 'plan', quotesSeen[sym].observedAt).state === 'OK';   // BUY NOW: the existing 20-minute gate
+    const fresh = alertEvidence(sym, quotesSeen[sym], 'buynow', quotesSeen[sym].observedAt).state === 'OK';   // BUY NOW: the existing strict < 20-minute gate
     const say = (k, text, route = 'plan') => { if (!st.sent[sym + k] && !queued.some(x => x.sym === sym && x.k === k) && alertEvidence(sym, quotesSeen[sym], route, quotesSeen[sym].observedAt).state === 'OK') queued.push({ sym, k, text, route }); };
     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
     if (mp) {   // you told the bot you bought this one
@@ -4430,25 +4457,41 @@ async function intraday(onlyMine) {
     st.sent.__open = 1;
     openMsg = await firstCheckText(myPos, planBuys, quotesSeen, sig, Date.now());
   }
-  // (rev15 N1) SEND-TIME CHECK: each queued alert and BUY NOW card is sent only if its price still passes its route's rule NOW, after every
-  // fetch of this run. Only sent alerts are marked in the once-a-day memory; one held back is re-checked on the next run, and a held-back
-  // holding alert is reported once a day as not confirmed (never as a current price).
-  { const nowSend = Date.now(), held = [];
-    for (const a of queued) { const e = alertEvidence(a.sym, quotesSeen[a.sym], a.route, nowSend);
-      if (e.state === 'OK') { st.sent[a.sym + a.k] = 1; alerts.push(a.sym + ' at ' + money(e.price) + ': ' + a.text); }
-      else if (a.route === 'holding' && !st.sent[a.sym + a.k + 'held']) { st.sent[a.sym + a.k + 'held'] = 1; held.push(a.sym + ' (' + e.why + ')'); } }
-    for (let i = buyNowCards.length - 1; i >= 0; i--) { const c = buyNowCards[i], e = alertEvidence(c.sym, quotesSeen[c.sym], 'plan', nowSend);
-      if (e.state === 'OK') st.sent[c.sym + 'buynow'] = 1; else buyNowCards.splice(i, 1); }
-    if (held.length) alerts.unshift('YOUR POSITION, NOT CONFIRMED: a target check on ' + held.join('; ') + ' used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.'); }
-  fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
-  if (openMsg) await telegram(openMsg + '\n' + FOOT);
-  alerts.sort((a, b) => (b.includes('YOUR POSITION') ? 1 : 0) - (a.includes('YOUR POSITION') ? 1 : 0));
-  for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
-    await telegram('BUY NOW: a proven setup is inside its buy range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
-      [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
-  if (stopAlerts.length) await telegram('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.map(a => stopLine(a, Date.now())).join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
-  if (alerts.length) await telegram('Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
-  console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
+  // (rev15/rev16 N1) SEND-TIME CHECK AT EVERY NETWORK ATTEMPT (Codex 6725294448 R1): each price-bearing message is rendered by
+  // telegramLive() immediately before each try, retry and part, so a wait for an earlier message, a 429 or a connection retry never lets
+  // an expired price through. A queued alert or BUY NOW card is marked in the once-a-day memory (and the memory saved) only while it is
+  // still eligible at that attempt; one that expires before a retry is unmarked and left out (re-checked on the next run). A held-back
+  // holding alert is reported once a day as NOT CONFIRMED (never as a price). Routes keep their existing rules (ALERT_GATE).
+  const saveState = () => fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
+  saveState();
+  if (openMsg) await telegramLive(async (now, sent) => tgRemainder((await firstCheckText(myPos, planBuys, quotesSeen, sig, now)) + '\n' + FOOT, sent));
+  for (const bc of buyNowCards) {
+    let shown = false;
+    await telegramLive((now, sent) => {
+      if (sent.length) return tgRemainder(shown, sent);
+      const e = alertEvidence(bc.sym, quotesSeen[bc.sym], 'buynow', now);
+      if (e.state !== 'OK') { if (st.sent[bc.sym + 'buynow']) { delete st.sent[bc.sym + 'buynow']; saveState(); } return null; }
+      if (!st.sent[bc.sym + 'buynow']) { st.sent[bc.sym + 'buynow'] = 1; saveState(); }
+      shown = 'BUY NOW: a proven setup is inside its buy range (' + new Date(now).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT;
+      return shown;
+    }, [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]);   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
+  }
+  if (stopAlerts.length) await telegramLive((now, sent) => tgRemainder('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.map(a => stopLine(a, now)).join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''), sent));
+  if (queued.length) {
+    const lineOf = (a) => a.sym + ' at ' + money(+quotesSeen[a.sym].price) + ': ' + a.text, delivered = new Set();
+    await telegramLive((now, sent) => {
+      for (const a of queued) if (!delivered.has(a) && sent.some(p => p.includes(lineOf(a)))) delivered.add(a);   // already in a sent part
+      const live = [], held = [];
+      for (const a of queued) { if (delivered.has(a)) continue; const e = alertEvidence(a.sym, quotesSeen[a.sym], a.route, now);
+        if (e.state === 'OK') { st.sent[a.sym + a.k] = 1; live.push(a); }
+        else { delete st.sent[a.sym + a.k]; if (a.route === 'holding' && !a.heldNoted && !st.sent[a.sym + a.k + 'held']) { a.heldNoted = true; st.sent[a.sym + a.k + 'held'] = 1; held.push(a.sym + ' (' + e.why + ')'); } } }
+      saveState();
+      live.sort((x, y) => (y.route === 'holding' ? 1 : 0) - (x.route === 'holding' ? 1 : 0));
+      const lines = [...(held.length ? ['YOUR POSITION, NOT CONFIRMED: a target check on ' + held.join('; ') + ' used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.'] : []), ...live.map(lineOf)];
+      return lines.length ? 'Market hours check\n\n' + lines.join('\n\n') + '\n' + FOOT : null;
+    });
+  }
+  console.log('intraday check done:', watch.length, 'watched,', queued.filter(a => st.sent[a.sym + a.k]).length, 'new alerts');
 }
 
 await (MODE === 'chat' ? intraday(true) : MODE === 'intraday' ? intraday() : daily());
