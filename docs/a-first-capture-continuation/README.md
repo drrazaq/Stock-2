@@ -1,3 +1,5 @@
+> **Current finite milestone:** [First authentic A evaluation plan](first-authentic-evaluation-plan.md) and [proposed bounded scope](authentic-feasibility-scope.proposed.json). Completed G2 preserved; source facts first, no nominal capture READY. Independent review pending. No acquisition or setup approved.
+
 > **Evidence resolution, 7 November:** [One classified input package and bounded three-GET entry-reference proposal](evidence-resolution.md). Prior stops remain evidence failures, not economic rejections. Exact independent review pending; no approval requested or execution authorized.
 
 > **Execution results, 7 November:** [A/R/D inspected evidence, reproducible analysis, verdicts and time](feasibility-executed-20261107.md). Shared recommendation-audit request reconciled inside the same12h cap.

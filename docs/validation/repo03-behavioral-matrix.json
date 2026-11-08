@@ -423,9 +423,9 @@
     },
     {
       "path": "a-evidence-contract.mjs",
-      "sha256": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
-      "bytes": 14817,
-      "status": "PENDING_SOURCE_REVIEW",
+      "sha256": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+      "bytes": 15228,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
@@ -439,7 +439,8 @@
             33,
             53,
             72,
-            99
+            99,
+            112
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -485,7 +486,22 @@
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
-      "contract": null,
+      "contract": {
+        "inputs": "Existing bounded private originals, proposed contract/policy and native source bindings.",
+        "outputs": "Inactive strict research assessment and original-derived G2 candidate fields or UNKNOWN.",
+        "sideEffects": "Read-only bounded no-follow originals; evaluator uses existing supplied fenced store only, no network or credentials.",
+        "failure": "Missing/conflicting/mismatched/late originals or roles fail closed; no inferred source or owner truth.",
+        "timing": "Preserves original receipt/decision clocks and frozen entry/exit deadlines.",
+        "researchBoundary": "Source provenance is under supplied unadopted trust; no authenticity/admission/BUY or production claim.",
+        "evidence": [
+          "docs/a-first-capture-continuation/g2-native-panels.md",
+          "test/a-first-original-inputs.test.mjs"
+        ],
+        "sha256": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+        "reviewer": "Codex G2 original-input continuation,6November2026; independent increment review pending",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "remainingVerification": "G2 source/host truth, completeness/security continuity and revision/aggregate-turnover semantics; independent increment review and G3-G8 remain open. Prior reviews/results retain exact-snapshot scope."
+      },
       "testReferences": [
         "test/a-evidence-contract.test.mjs",
         "test/a-native-evidence-importer.test.mjs",
@@ -662,6 +678,7 @@
       },
       "contract": null,
       "testReferences": [
+        "test/a-authentic-feasibility-scope.test.mjs",
         "test/helper-a-evidence.mjs",
         "test/a-independent-coverage.test.mjs"
       ],
@@ -740,69 +757,8 @@
     },
     {
       "path": "a-native-evidence-contract.mjs",
-      "sha256": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
-      "bytes": 12618,
-      "status": "STALE_OR_INVALID_REVIEW",
-      "facts": {
-        "inputs": {
-          "matchingLines": [],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "outputs": {
-          "matchingLines": [
-            17,
-            42,
-            65
-          ],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "sideEffects": {
-          "matchingLines": [
-            28,
-            29,
-            39,
-            54
-          ],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "failure": {
-          "matchingLines": [
-            9,
-            13,
-            69
-          ],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "timing": {
-          "matchingLines": [
-            62,
-            68
-          ],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        },
-        "researchBoundary": {
-          "matchingLines": [
-            4,
-            29,
-            48,
-            55,
-            58,
-            68
-          ],
-          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
-        }
-      },
-      "contract": null,
-      "testReferences": [
-        "test/a-native-importer-package.test.mjs"
-      ],
-      "workflowReferences": [],
-      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
-    },
-    {
-      "path": "a-native-evidence-importer.mjs",
-      "sha256": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
-      "bytes": 9699,
+      "sha256": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
+      "bytes": 23299,
       "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
@@ -811,7 +767,100 @@
         },
         "outputs": {
           "matchingLines": [
-            19
+            17,
+            46,
+            76,
+            102
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            28,
+            29,
+            39,
+            52,
+            62,
+            88
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            9,
+            13,
+            106
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            45,
+            54,
+            55,
+            56,
+            57,
+            60,
+            64,
+            69,
+            70,
+            99,
+            105
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            4,
+            29,
+            52,
+            82,
+            89,
+            92,
+            96,
+            98,
+            105
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": {
+        "sha256": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
+        "reviewer": "Codex G2 original-input continuation,6November2026; independent increment review pending",
+        "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+        "inputs": "Signed original references, explicit FIGI/CIK/asset identity review, native prefix, primary response, quote semantics, raw close/finality evidence.",
+        "outputs": "Conditional native input/outcome binding or fixed UNKNOWN error; no independently authenticated source claim.",
+        "sideEffects": "Private retained-original reads and store conflict reads only; no fetching, signing or mutation.",
+        "failure": "Missing/revised/late/tainted/source-identity conflicting evidence and omitted BBOs refuse.",
+        "timing": "Original acceptance separate from Atom updated; prefix/reviews before entry; calendar-completed closes and deterministic quote-window ordering.",
+        "researchBoundary": "Unadopted aggregate trigger versus independent BBO execution; ticker agreement insufficient; signatures do not establish physical truth.",
+        "remainingVerification": "G2 source/host truth, completeness/security continuity and revision/aggregate-turnover semantics; independent increment review and G3-G8 remain open. Prior reviews/results retain exact-snapshot scope.",
+        "evidence": [
+          "docs/a-native-importer/README.md",
+          "docs/a-native-importer/verification.json",
+          "docs/a-first-capture-continuation/g2-native-panels.md",
+          "test/a-first-original-inputs.test.mjs"
+        ]
+      },
+      "testReferences": [
+        "test/a-native-importer-package.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "a-native-evidence-importer.mjs",
+      "sha256": "ca299bbe83abe6ea99a92ad8bf75cb807021100675868af4f93e1267dfa3a88e",
+      "bytes": 10274,
+      "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
+      "facts": {
+        "inputs": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            22
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -822,16 +871,18 @@
         "failure": {
           "matchingLines": [
             10,
-            24,
-            32,
-            54
+            16,
+            18,
+            27,
+            35,
+            57
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "timing": {
           "matchingLines": [
-            35,
-            49
+            38,
+            52
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -840,36 +891,38 @@
             1,
             9,
             14,
-            16,
-            17,
-            26,
-            41,
-            54
+            19,
+            20,
+            29,
+            44,
+            57
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
       "contract": {
-        "sha256": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
-        "reviewer": "Codex source and synthetic actual-caller review,5November2026",
+        "sha256": "ca299bbe83abe6ea99a92ad8bf75cb807021100675868af4f93e1267dfa3a88e",
+        "reviewer": "Codex A finite feasibility source/caller review,8November2026; independent review pending",
         "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
         "inputs": "Pinned exact retained originals/request/native archive/token; actual namespace root/identity/hosts.",
-        "outputs": "Strict evaluated research-only card/outcome/report or UNKNOWN; synthetic true or retained null, zero genuine admissions.",
+        "outputs": "Strict evaluated research-only card/outcome/report or UNKNOWN; synthetic true or retained null, zero genuine admissions. Added selected quote-reference and first-capture timing/cost/missingness view; current synthetic view always INCONCLUSIVE, no fill/pilot/BUY claim.",
         "sideEffects": "Scoped original/native/evaluation/report writes into fenced local store; no provider/signing/credentials.",
         "failure": "Same-import pending repaired using exact raw replay; legacy exact pins only; foreign/ambiguous/tampered fragments remain unresolved.",
         "timing": "400original/16MiB import cap,100observations; 296canonical write fault boundaries; old clocks unchanged.",
         "researchBoundary": "No source authentication inferred, A rules/policy unadopted, no production route.",
-        "remainingVerification": "Independent N1-N4/B-C review pending; authenticated custody/source/host/collector and proposal adoption separately required.",
+        "remainingVerification": "Exact current actual-caller/hosted checks and focused independent review; authentic source/concurrency/private-host gates remain unresolved.",
         "evidence": [
           "docs/a-n-bc-integration/README.md",
           "docs/a-n-bc-integration/verification.json",
-          "docs/research-bc/README.md"
+          "docs/research-bc/README.md",
+          "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
         ]
       },
       "testReferences": [
         "test/a-native-importer-package.test.mjs",
         "test/a-native-evidence-importer.test.mjs",
         "test/a-n-review-regressions.test.mjs",
+        "test/a-first-original-inputs.test.mjs",
         "test/a-importer-recovery-matrix.test.mjs"
       ],
       "workflowReferences": [],
@@ -940,8 +993,8 @@
     },
     {
       "path": "a-native-source-join.mjs",
-      "sha256": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
-      "bytes": 12059,
+      "sha256": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89",
+      "bytes": 19447,
       "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
@@ -950,56 +1003,73 @@
         },
         "outputs": {
           "matchingLines": [
-            6,
-            8,
-            18,
-            34,
-            65
+            7,
+            9,
+            19,
+            35,
+            66,
+            138
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "sideEffects": {
           "matchingLines": [
-            39,
-            82,
-            101
+            40,
+            83,
+            102,
+            139
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "failure": {
           "matchingLines": [
-            7,
-            29,
-            42,
-            56,
-            67,
-            83
+            8,
+            30,
+            43,
+            57,
+            68,
+            84
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "timing": {
           "matchingLines": [
-            11,
             12,
-            34,
-            37,
-            39,
+            13,
+            35,
+            38,
             40,
-            41
+            41,
+            42,
+            137,
+            141,
+            143,
+            144,
+            145,
+            166,
+            167,
+            168,
+            182,
+            183,
+            186,
+            187,
+            190,
+            191
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
         "researchBoundary": {
           "matchingLines": [
-            99,
-            117
+            4,
+            100,
+            118
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
       "contract": {
-        "sha256": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
-        "reviewer": "Codex K1/K2 implementation/source-interface review, 2026-11-05; Claude confirmation pending",
+        "sha256": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89",
+        "reviewer": "Codex G2 original-input continuation,6November2026; independent increment review pending",
         "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
         "inputs": "Pinned native run/parent bytes, exact primary response envelopes, explicit fenced store/token and callback clock.",
         "outputs": "Research-only official identifier/acceptance/primary join, preserved clocks/hashes/conflicts; authentication/global first/BUY remain UNKNOWN/false.",
@@ -1007,10 +1077,12 @@
         "failure": "Missing primary/late/conflicting/invalid evidence stays UNKNOWN; store refusal/interruption throws unresolved; pending generation/data intents require explicit recovery. Permanent store missingness propagates STORE_EVIDENCE_UNRESOLVED without dropping research originals.",
         "timing": "Callback phase clocks captured before persistence; nanosecond comparison; 100 primary responses, 2MiB each, existing 16MiB store/2000-file caps unchanged.",
         "researchBoundary": "Inactive research only; official identifier/clock/byte matching is not source authentication/global first ingestion. No acquisition, owner confirmation, adopted protocol or BUY; new-generation source evidence remains UNKNOWN when store is tainted.",
-        "remainingVerification": "Exact new package independent confirmation and real approved authority/host/writer boundary remain pending. No whole-row acceptance or authenticated capture claimed.",
+        "remainingVerification": "G2 source/host truth, completeness/security continuity and revision/aggregate-turnover semantics; independent increment review and G3-G8 remain open. Prior reviews/results retain exact-snapshot scope.",
         "evidence": [
           "docs/a-fence-recovery/README.md",
-          "test/a-fenced-recovery.test.mjs"
+          "test/a-fenced-recovery.test.mjs",
+          "docs/a-first-capture-continuation/g2-native-panels.md",
+          "test/a-first-original-inputs.test.mjs"
         ]
       },
       "testReferences": [
@@ -1021,7 +1093,8 @@
         "test/helper-a-native-import.mjs",
         "test/a-fenced-recovery.test.mjs",
         "test/a-native-source-package.test.mjs",
-        "test/a-importer-recovery-matrix.test.mjs"
+        "test/a-importer-recovery-matrix.test.mjs",
+        "test/a-first-entry-panels.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -1171,16 +1244,16 @@
     },
     {
       "path": "a-source-acquisition-bridge.mjs",
-      "sha256": "cab376c5609bc30b760598b5c6318cc7034452dfe503b74bc498ab23b652e481",
-      "bytes": 47719,
+      "sha256": "b024dc02213419f927eea2180ee9c5973935fc7f11e1243ed51c8254e0ac039b",
+      "bytes": 55529,
       "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
       "facts": {
         "inputs": {
           "matchingLines": [
             58,
-            210,
-            222,
-            229
+            253,
+            265,
+            272
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -1191,10 +1264,10 @@
             40,
             61,
             70,
-            86,
-            119,
-            210,
-            223
+            87,
+            145,
+            253,
+            266
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -1202,16 +1275,16 @@
           "matchingLines": [
             26,
             61,
-            102,
             103,
-            109,
+            104,
             110,
-            136,
-            206,
-            210,
-            212,
-            222,
-            223
+            111,
+            162,
+            249,
+            253,
+            255,
+            265,
+            266
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -1225,15 +1298,17 @@
             30,
             63,
             77,
-            112,
-            195,
-            206,
-            210,
-            216,
-            217,
-            222,
-            223,
-            226
+            113,
+            134,
+            138,
+            238,
+            249,
+            253,
+            259,
+            260,
+            265,
+            266,
+            269
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -1251,15 +1326,15 @@
             60,
             66,
             74,
-            90,
-            96,
-            112,
-            118,
-            119,
-            130,
-            155,
-            217,
-            226
+            91,
+            97,
+            113,
+            144,
+            145,
+            156,
+            181,
+            260,
+            269
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         },
@@ -1273,30 +1348,36 @@
             71,
             76,
             80,
-            88,
-            102,
-            117,
-            122,
-            138,
-            169,
-            170,
-            179,
-            192
+            89,
+            103,
+            124,
+            127,
+            129,
+            133,
+            136,
+            139,
+            142,
+            148,
+            164,
+            209,
+            210,
+            221,
+            235
           ],
           "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
         }
       },
       "contract": {
-        "sha256": "cab376c5609bc30b760598b5c6318cc7034452dfe503b74bc498ab23b652e481",
-        "reviewer": "Codex ad3837 response source/actual-caller review,6November2026",
+        "sha256": "b024dc02213419f927eea2180ee9c5973935fc7f11e1243ed51c8254e0ac039b",
+        "reviewer": "Codex A finite feasibility source/caller review,8November2026; independent review pending",
         "status": "SOURCE_REVIEWED_OPEN_FINDINGS",
         "inputs": "Pinned finite plans/contracts, actual native prefix and supplied distinct role clients/signers/fenced stores/private spool roots; current modes SYNTHETIC only.",
-        "outputs": "Bounded original responses/partials, durable pre-plan/native prefix, pre-entry source-field concordance and facts-hash-bound decision/final strict native report or UNKNOWN; no source-authentication/admission claim.",
+        "outputs": "Bounded original responses/partials, durable pre-plan/native prefix, pre-entry source-field concordance and facts-hash-bound decision/final strict native report or UNKNOWN; no source-authentication/admission claim. Optional raw entry-panel derivation and exact supplied-field matching retain per-field originals/receipt clocks; inputAssembly remains INCOMPLETE_G2. Added selected quote-reference and first-capture timing/cost/missingness view; current synthetic view always INCONCLUSIVE, no fill/pilot/BUY claim.",
         "sideEffects": "At most32GETs/role per plan, no retries/fallback. Writes supplied fenced stores, private0600 response spools before contended publication and explicit private immutable producer views. No defaults/environment keys/orders/messages.",
         "failure": "Existing request/spool/fence/busy gates plus missing or contradictory identity, primary/acceptance/entry-quote fields block decision/followups. Facts publication interruptions replay exact originals; no GET, evidence deletion or truncation.",
         "timing": "First receipt/acceptance clocks retained. Discovery-before-plan and input-before-followup enforced. Source request20s cap; local busy scheduling2s/max6attempts with existing15s worker bound. Tick driver returns WAIT; finite synchronous work requires a separate capture worker.",
         "researchBoundary": "Inactive synthetic first-receipt/replay paths; exact response pairs/signatures/declared hosts are not source truth, global first ingestion, stream/universe coverage or fills. G2-G8 remain PARTIAL/OPEN.",
-        "remainingVerification": "Full G2 bars/panels/cap/calendar/owner assembly, G3-G8 and authentic execution/semantics/custody remain open; current new review pending.",
+        "remainingVerification": "Exact current actual-caller/hosted checks and focused independent review; authentic source/concurrency/private-host gates remain unresolved.",
         "evidence": [
           "docs/review-ad3837-response/README.md",
           "docs/review-ad3837-response/source-bridge.md",
@@ -1305,7 +1386,11 @@
           "test/a-first-capture-host.test.mjs",
           "test/a-acquisition-spool.test.mjs",
           "test/a-first-entry-facts.test.mjs",
-          "docs/a-first-capture-continuation/finite-integration-plan.md"
+          "docs/a-first-capture-continuation/finite-integration-plan.md",
+          "docs/a-first-capture-continuation/g2-native-panels.md",
+          "test/a-first-entry-panels.test.mjs",
+          "test/a-first-original-inputs.test.mjs",
+          "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
         ]
       },
       "testReferences": [
@@ -16244,11 +16329,13 @@
         "test/a-n-review-regressions.test.mjs",
         "test/a-acquisition-spool.test.mjs",
         "test/helper-a-native-import.mjs",
+        "test/a-first-original-inputs.test.mjs",
         "test/a-fenced-recovery.test.mjs",
         "test/a-first-entry-facts.test.mjs",
         "test/a-independent-coverage.test.mjs",
         "test/a-recovery-copy.test.mjs",
         "test/helper-a-bridge-competitor.mjs",
+        "test/a-first-entry-panels.test.mjs",
         "test/helper-a-first-capture.mjs",
         "test/a-authenticated-collector.test.mjs",
         "test/a-fenced-store.test.mjs",
@@ -31817,6 +31904,84 @@
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
     },
     {
+      "path": "tools/audit-selected-feasibility.py",
+      "sha256": "6e171f51cddc38767f4a3288414a019e7976fe376bac481cc6193bb7b7e76ade",
+      "bytes": 18234,
+      "status": "PENDING_SOURCE_REVIEW",
+      "facts": {
+        "inputs": {
+          "matchingLines": [
+            8,
+            31,
+            36,
+            264,
+            270
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            24,
+            271,
+            273
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            4,
+            52
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            85,
+            254
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            10,
+            106,
+            177,
+            205,
+            219,
+            222,
+            234
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            48,
+            61,
+            79,
+            124,
+            131,
+            169,
+            178,
+            179,
+            181,
+            183,
+            185,
+            188,
+            213,
+            214,
+            232,
+            237,
+            260
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": null,
+      "testReferences": [],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
       "path": "tools/audit-trading-feasibility.py",
       "sha256": "7dfb875a60c0ad3dcc517d5d38957f403fc8bb82c41d5592f88ab3526c539adf",
       "bytes": 13424,
@@ -32871,7 +33036,8 @@
       "testReferences": [
         "test/historical-audit-invocation.test.mjs",
         "test/historical-sip-audit-client.test.mjs",
-        "test/historical-review-findings.test.mjs"
+        "test/historical-review-findings.test.mjs",
+        "test/ig1-entry-evidence.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -32940,6 +33106,84 @@
       "testReferences": [
         "tests/hybrid-research-fixture.test.mjs",
         "tests/hybrid-research-checkpoint.test.mjs"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "tools/ig1-entry-evidence.mjs",
+      "sha256": "e8db15fbd94f1858eb4bd0ddf5cd00a5af07475dad7fd8d3f2a6c95d2f4eb358",
+      "bytes": 9611,
+      "status": "PENDING_SOURCE_REVIEW",
+      "facts": {
+        "inputs": {
+          "matchingLines": [
+            15,
+            20,
+            52,
+            54
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            14,
+            26,
+            49
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            12,
+            43,
+            49,
+            66,
+            72,
+            76,
+            77
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [
+            21,
+            49,
+            56,
+            57,
+            60,
+            63,
+            66,
+            67,
+            69,
+            72,
+            75
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            42,
+            43,
+            45,
+            49,
+            53,
+            55,
+            58,
+            59,
+            60,
+            76
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": null,
+      "testReferences": [
+        "test/ig1-entry-evidence.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -33421,6 +33665,74 @@
           "docs/repo03-behavioral-review.md#source-interface-pass"
         ]
       },
+      "testReferences": [],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "tools/prepare-s1-root-bundle.py",
+      "sha256": "a66a94986a0beb2807994a6faa9c047b80d55735ee280ad59c6e050acd56b4f4",
+      "bytes": 4034,
+      "status": "PENDING_SOURCE_REVIEW",
+      "facts": {
+        "inputs": {
+          "matchingLines": [
+            5,
+            14,
+            17,
+            25,
+            29,
+            43,
+            46
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            27,
+            46
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            5,
+            8,
+            22,
+            24,
+            27,
+            39,
+            42
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            12,
+            13,
+            15,
+            22,
+            24,
+            26,
+            33,
+            35,
+            38,
+            42
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            30
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": null,
       "testReferences": [],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -35190,6 +35502,57 @@
       },
       "testReferences": [
         "tests/test_incident_verifier_evidence.py"
+      ],
+      "workflowReferences": [],
+      "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
+    },
+    {
+      "path": "tools/verify-s1-connector-snapshot.mjs",
+      "sha256": "d6b5afcc46956de9bbb4441f92cf765f869b97722dbe62e6e2fe7495567aea18",
+      "bytes": 4733,
+      "status": "PENDING_SOURCE_REVIEW",
+      "facts": {
+        "inputs": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "outputs": {
+          "matchingLines": [
+            5,
+            10,
+            16,
+            37,
+            54
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "sideEffects": {
+          "matchingLines": [
+            44
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "failure": {
+          "matchingLines": [
+            7,
+            48
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "timing": {
+          "matchingLines": [],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        },
+        "researchBoundary": {
+          "matchingLines": [
+            18
+          ],
+          "meaning": "LEXICAL_LOCATORS_ONLY_NOT_SEMANTIC_COVERAGE"
+        }
+      },
+      "contract": null,
+      "testReferences": [
+        "test/s1-connector-verifier.test.mjs"
       ],
       "workflowReferences": [],
       "referenceCaveat": "A filename match is navigation only, not proof of exercised behavior or production deployment."
@@ -37060,10 +37423,10 @@
     }
   ],
   "totals": {
-    "scripts": 353,
-    "sourceReviewed": 80,
-    "pending": 273,
-    "reviewedWithOpenFindings": 47
+    "scripts": 357,
+    "sourceReviewed": 82,
+    "pending": 275,
+    "reviewedWithOpenFindings": 49
   },
   "accepted": false,
   "note": "An explicit hash-matched review is required. Empty axes, source changes and inventories cannot silently count as reviewed; review is distinct from all-path runtime verification."

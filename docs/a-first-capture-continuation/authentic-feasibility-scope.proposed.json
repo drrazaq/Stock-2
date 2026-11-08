@@ -1,0 +1,253 @@
+{
+  "id": "A_ONE_ATTEMPT_AUTHENTIC_FEASIBILITY_PROPOSED_1",
+  "status": "REVIEW_ONLY_BLOCKED_NOT_EXECUTION_READY",
+  "basisCommit": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+  "approved": false,
+  "collectionAuthorized": false,
+  "setupAuthorized": false,
+  "policyAdopted": false,
+  "liveBuyAllowed": false,
+  "realDollars": 0,
+  "question": "Can one predeclared A issuer-session attempt be discovered/reviewed in time, source-bound, and priced through every unchanged possible exit with whole shares and frozen costs?",
+  "notAnswered": [
+    "Trading edge or profitability",
+    "Whole-market early surveillance",
+    "Validation of the30-entry A pilot",
+    "IG1 data usability as A validation"
+  ],
+  "frozenProtocol": {
+    "path": "docs/a-catalyst-reclaim-pilot/protocol.proposed.json",
+    "sha256": "d4d6418d332b6b380a549b1513184b9e93837c034f7161eba6572432a2e621fa",
+    "policy": {
+      "id": "UNAPPROVED_CONTRACT_RECLAIM_RESEARCH_1",
+      "version": 1,
+      "mode": "OFFLINE_RESEARCH_ONLY",
+      "adopted": false,
+      "minPrice": 2,
+      "minDollarVolume": 500000,
+      "maxSpreadPct": 3,
+      "maxQuoteAgeMs": 30000,
+      "materialityRatio": 0.1,
+      "openingBarMs": 300000,
+      "maxTriggerAgeMs": 30000,
+      "minOpeningVolumeRatio": 1.5,
+      "maxHoldSessions": 5,
+      "exitRule": "FIRST_CLOSE_BELOW_OPENING_LOW_ELSE_MAX_SESSION_CLOSE",
+      "exitContract": "PROPOSED ONLY: max 5 sessions; close below opening low exits next session open",
+      "invalidationContract": "PROPOSED ONLY: close below opening low; no intraday stop or target",
+      "commissionPerSideUsd": 3,
+      "slippagePerSidePct": 0.25,
+      "maxExitQuoteAgeMs": 30000
+    },
+    "adoption": false
+  },
+  "enrollment": {
+    "issuersMax": 1,
+    "entrySessionsMax": 1,
+    "holdSessionsMax": 5,
+    "selection": "Freeze one stable security/CIK from existing approved research universe before disclosure; preserve original valid owner decision; never choose by later gains. First chronological pre-open8-K observation in the declared window; primary inspection may reject it. No replacement document/candidate/session.",
+    "interpretation": "Operational calibration only; restricted issuer/window never becomes the economic-pilot population or untouched confirmation.",
+    "preparation": "One prior-close preparation boundary, before the selected disclosure; if original cap cannot actually precede disclosure, stop.",
+    "entryObservation": "Full declared regular entry session; no15:00 cutoff substituted for16:00/early close. Continuous bar discovery contract still requires implementation/review.",
+    "dates": null,
+    "datesRule": "Exact prior preparation, entry and every possible exit session must be filled from reviewed calendar after prerequisites/review; no automatic rescheduling.",
+    "noEvent": "INCONCLUSIVE; no extension, replacement, promoted research lead or forced signal."
+  },
+  "comparisons": {
+    "singleAttempt": "No edge/mean-excess claim. Report both comparison statuses NOT_EVALUATED unless genuine predeclared control evidence exists; never substitute SPY.",
+    "pilotRequired": [
+      "Outcome-blind same-stock non-event days",
+      "Outcome-blind same-day eligible-stock controls"
+    ],
+    "pilotAlgorithms": "NOT_YET_FROZEN",
+    "pilotBounds": {
+      "targetEligiblePaperEntries": 30,
+      "maximumCalendarDays": 60,
+      "minimumDistinctEntryDaysForContinueConsideration": 10,
+      "start": null,
+      "end": null,
+      "counting": "Count first 30 unique issuer-session eligible paper entries in chronological trigger order; stable security ID breaks timestamp ties. Missing outcomes count against the sample and are never replaced. Log all attempted candidates and rejections.",
+      "enrollmentEnd": "Whichever is earlier: thirtieth eligible entry, or the last entry session whose full five-session exit runout fits inside day60 using the reviewed authoritative exchange calendar.",
+      "hardFinish": "Day60 inclusive. Resolve remaining outcomes from already authorized observations; missing or unrecoverable outcomes remain UNKNOWN. No automatic extension.",
+      "capabilityCalibration": "Offline/synthetic and any separately approved calibration must precede final freeze and cannot be pooled with untouched pilot outcomes.",
+      "fixedCalendarAndRiskSet": "Exact dates, security universe, candidate source/risk set, data endpoints and mandatory request/storage/retention caps must be filled and independently reviewed before approval; 60 days alone is not a sufficient acquisition bound."
+    },
+    "operationalPassDoesNotAuthorizePilot": true
+  },
+  "proposedCeilingsNotPermissions": {
+    "providerGetPerRole": 32,
+    "providerGetTotal": 64,
+    "getAllocationsPerRole": {
+      "priorPreparation": 6,
+      "nativeDiscoveryAndAcceptance": 8,
+      "primaryDocument": 1,
+      "entryCanonicalBarsAndQuote": 2,
+      "dailyClose": 5,
+      "identityFollowups": 10
+    },
+    "discoveryAtomPollsPerRoleMax": 6,
+    "submissionsPerRoleMax": 2,
+    "websocketConnections": 12,
+    "websocketAllocation": {
+      "entryBarDiscoveryPerRole": 1,
+      "possibleExitQuoteWindowsPerRole": 5,
+      "roles": 2
+    },
+    "providerNetworkInitiationsIncludingWsUpgrade": 76,
+    "socketReconnects": 0,
+    "httpRetries": 0,
+    "fallbacks": 0,
+    "additionalPages": 0,
+    "responseBodyBytes": 1048576,
+    "httpClientTotalBytesPerRole": 8388608,
+    "requestTimeoutMs": 20000,
+    "exitWindowMs": 30000,
+    "barStreamBytesPerRole": 2097152,
+    "barStreamMessagesPerRole": 10000,
+    "quoteStreamBytesPerWindow": 1048576,
+    "quoteStreamMessagesPerWindow": 10000,
+    "allStreamBytes": 14680064,
+    "combinedRawBytes": 134217728,
+    "sealedArchiveBytes": 167772160,
+    "producerOrRecoveryDiskBytes": 301989888,
+    "aggregateOutputBytes": 16384,
+    "privateTransferPackets": 256,
+    "privateTransferBytes": 33554432,
+    "custodyAndControlPlaneHttp": 32,
+    "privateSealedArtifacts": 1,
+    "retentionDays": 3,
+    "paidIncrementalUsd": 0,
+    "notes": [
+      "These are ceilings for independent review, not implemented whole-scope enforcement or execution approval.",
+      "64GET includes reference preparation, discovery, identity, bars, quotes and closes; not64plus preparation.",
+      "Up to12WS upgrades are additional to64GET. Authentication/subscription wire frames and bytes must also be counted; no reconnect.",
+      "The32custody/control-plane HTTP pool is separate, not an unlimited SDK retry allowance.",
+      "The128MiB global raw ceiling is lower than existing184MiB engineering worst-case before inputs; quota exhaustion stops, never silently expands. Existing per-store16MiB/2000file caps remain.",
+      "New routes/stream mode and exact polling timestamps remain unimplemented/unreviewed; cannot issue execution request with blank schedule/identity/hosts.",
+      "No raw vendor data in public git, CI logs, model inputs or Telegram. Retention/licensing, encryption, deletion/backup limits require review.",
+      "No purchase/overage; no run without verified existing private capacity/quota and cost controls."
+    ],
+    "strictOriginalAndImportBytes": 16777216,
+    "importOriginalFileCount": 400,
+    "retentionAnchor": "3days after final recovery/report; collection/runout period additionally retained only under accepted terms",
+    "independentOutcomeEventCap": 10000,
+    "privatePeerConnectionAttempts": 2,
+    "allNetworkInitiationsIncludingPrivate": 110
+  },
+  "closeAndExit": "Same frozen five-session/earlier daily-close invalidation\u2192next-open rule. All5close slots and4next-open plus1final-preclose BBO slots retained, even following an earlier modeled exit. No presumed stop/auction fill; selected quote cannot be replaced by later better quote.",
+  "engineering": [
+    {
+      "id": "S1_SOURCE_GATE",
+      "hours": [
+        6,
+        12
+      ],
+      "why": "No genuine turnover/availability/independent feed evidence means no authentic admission regardless of plumbing.",
+      "test": "Applicable turnover constituents/corrections, actual pre-event cap route, quote conditions/units/feed rights, two independent SIP channels, private custody identified; original-based positive and adverse cases pass existing strict caller or gate ends NOT_FEASIBLE/INCONCLUSIVE.",
+      "stopBeforeOtherWork": true
+    },
+    {
+      "id": "S2_NATIVE_WINDOW_BINDING",
+      "hours": [
+        8,
+        12
+      ],
+      "why": "Timely bar trigger and every possible exit must reach strict importer before their deadlines.",
+      "test": "Existing actual host uses bounded native bar/quote/close ports; late/empty/adverse/missing/halt/disconnect/correction/early-close inputs remain visible and UNKNOWN where required; no REST backfill counted as timely stream."
+    },
+    {
+      "id": "S3_ROLES_TIMELY_REVIEW",
+      "hours": [
+        8,
+        12
+      ],
+      "why": "One in-process pair/signatures cannot establish independent source capture or timely review/owner state.",
+      "test": "Independent existing role contexts with immutable merge; original clocks; wrong/reused authority, late review, worker death and concurrent recovery tested through caller; producer continues while downstream waits."
+    },
+    {
+      "id": "S4_WHOLE_SCOPE_BUDGET",
+      "hours": [
+        4,
+        6
+      ],
+      "why": "Existing32/64HTTP and per-window caps do not include producer, stream, reference preparation, shared disk or custody transport.",
+      "test": "Extend existing fenced reservations/guards only; failed/unknown attempts count; restarts/roles cannot renew global budget; refuse before network or write on exhaustion/unsafe state."
+    },
+    {
+      "id": "S5_INTEGRATED_TERMINAL_GATE",
+      "hours": [
+        8,
+        12
+      ],
+      "why": "The question requires one original-bound chain and recoverable all-case report, not separately passing modules.",
+      "test": "Actual producer\u2192ports\u2192original stores\u2192source-derived decision\u2192strict card\u2192all possible exits\u2192selected quoted economics\u2192encrypted export/recovery; independent-process crashes at new boundaries; all originals/losses/missingness preserved. Exact independent review and full hosted logs."
+    }
+  ],
+  "effort": {
+    "firstAttemptRemainingHours": [
+      34,
+      54
+    ],
+    "originalEssentialScopeHours": [
+      48,
+      74
+    ],
+    "currentWholePilotRemainingHours": [
+      42,
+      66
+    ],
+    "deferredCohortG3Hours": [
+      8,
+      12
+    ],
+    "conditionalG4ExtraHours": [
+      6,
+      10
+    ],
+    "independentReviewWorkingDays": [
+      2,
+      5
+    ],
+    "providerOrOwnerWait": "UNBOUNDED_SEPARATE",
+    "condition": "S1 first, at most12focused hours; if no supported unchanged input/independent source exists, stop instead of building remaining28\u201342hours."
+  },
+  "readiness": {
+    "engineering": "PARTIAL",
+    "authenticInputs": "NOT_ESTABLISHED",
+    "privateHosts": "NOT_VERIFIED",
+    "sourceSemantics": "BLOCKED_TURNOVER_AND_OTHER_FACTS",
+    "independentSipConcurrency": "NOT_VERIFIED",
+    "review": "REQUESTED_AFTER_PUBLICATION",
+    "executionApprovalRequest": "NOT_ISSUABLE_UNTIL_ALL_GATES_AND_EXACT_PINS_FILLED"
+  },
+  "verdicts": {
+    "FEASIBLE": "Authentic original-bound timely case with all mandatory source/role/window/custody evidence and defensible whole-share quote model; means operational feasibility only, never profitability/edge/pilot adoption.",
+    "NOT_FEASIBLE": "A mandatory unchanged input/permission/contract demonstrably cannot be supported in the reviewed scope. Name the reason; not evidence of a losing strategy.",
+    "INCONCLUSIVE": "No eligible event/trigger, missing/unbounded evidence, unavailable exit/controls or technical interruption. No replacements/automatic extension."
+  },
+  "currentResult": {
+    "authenticCases": 0,
+    "economicVerdict": "INCONCLUSIVE",
+    "executionReady": false
+  },
+  "approvalPrerequisites": [
+    "Exact independent reviewed final code/manifest/workflow/fixture hashes",
+    "Verified source contracts and concurrency without buying/upgrading",
+    "Concrete existing private hosts/operators/bindings and custody/recovery evidence, no secret values",
+    "Owner policy decisions explicit,90dayNO unchanged",
+    "Fixed issuer/session/selection/calendar/schedule/all caps and cost controls",
+    "Named available operator; exact one-run action; recovery/shutdown/refusal rules"
+  ],
+  "excluded": [
+    "IG1threeGETproposal",
+    "IG1twelveCase156RequestAudit",
+    "F6",
+    "B/C/Qima",
+    "SaturdayMaintenance",
+    "ProductionIntegration",
+    "RealMessages",
+    "BrokerOrders",
+    "Purchases",
+    "SecretPermissionChanges"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "SYNTHETIC_WORKER_TEST_OBSERVATION_DIAGNOSIS",
+  "dateUtc": "2026-11-08",
+  "candidateAndUntouched58Baseline": "same stopped-worker observation assertion failed on localNode24",
+  "underlyingOperation": "both controllers reportedETIMEDOUT/SIGKILL at15014\u201315019ms; pending intent1\u21920, synthetic\u221242record exactly once, original bytes/permanent lock preserved",
+  "liveIndependentProcessReadback": {
+    "parentPid": 54335,
+    "workerPid": 54356,
+    "workerPPid": 54335,
+    "workerState": "T",
+    "taskDirectoryEntries": [],
+    "workerCmdlineMatched": "a-fenced-store.mjs --fenced-worker /tmp/synthetic-worker-live-iickig94/store"
+  },
+  "cause": "Managed proc view exposes status/PPid and stopped child but empty task directories; task/parent/children does not establish absence. Not evidence of a product timeout failure.",
+  "testOnlyRepair": "Fallbackbounded4096proc entries; read commandline only for PPid-matching direct children. Same stopped state, kernel contention,15s bound, exact-once loss recovery and original preservation assertions.",
+  "productWorkerChanged": false,
+  "providerCalls": 0,
+  "realKeys": false
+}

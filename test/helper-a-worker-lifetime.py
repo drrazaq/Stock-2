@@ -19,6 +19,17 @@ try:
   if not saw:
    try: children=(pathlib.Path('/proc')/str(p.pid)/'task'/str(p.pid)/'children').read_text().split()
    except FileNotFoundError: children=[]
+   # Some managed proc views expose PPid/status but an empty task tree. Inspect
+   # only direct children of our known parent; never relax stopped/lock assertions.
+   if not children:
+    entries=list(pathlib.Path('/proc').iterdir())
+    if len(entries)>4096:raise RuntimeError('bounded proc inspection unavailable')
+    for entry in entries:
+     if not entry.name.isdecimal():continue
+     try:
+      status=(entry/'status').read_text()
+      if int(status.split('PPid:',1)[1].splitlines()[0].strip())==p.pid:children.append(entry.name)
+     except (OSError,IndexError,ValueError):continue
    for pid in children:
     proc=pathlib.Path('/proc')/pid
     try:

@@ -3,13 +3,13 @@
   "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
   "status": "OFFLINE_ACTUAL_HOST_TESTED_INDEPENDENT_REVIEW_PENDING",
   "files": {
-    "a-source-acquisition-bridge.mjs": "22bf268652521c799f5ad8d99ab8fe105a83ce3e8451f7f1666cb0b3a386f3d5",
+    "a-source-acquisition-bridge.mjs": "b024dc02213419f927eea2180ee9c5973935fc7f11e1243ed51c8254e0ac039b",
     "tools/a-acquisition-rehearsal.mjs": "6733bc609ad8b39fc3f56b5bcd268fb0e6dd0a1b4511547b910adeaacdfd788e",
     "test/a-first-capture-host.test.mjs": "9113e18d0d1d216dde756010c42267ddbe24233b07f6bf672ab05614f335b778",
     "test/helper-a-first-capture.mjs": "1a5d1bfd0ec8fbe4d23b6e56a590d774c91e0d38e475731c980a76c061f213e1",
     "test/a-first-capture-package.test.mjs": "2cfddf6a5c39241b97e18098d2b44fecf2b2d2ebef97a011f33688f8c733e953",
     ".github/workflows/tests.yml": "b4dac395cc70301565fcdef737361de2c7dee4edae5df66a8ac09c145a1ed5e0",
-    "docs/a-first-capture-continuation/README.md": "7f9ac9b72e007a9192cdd064a2203b7a2e01923de0aae7be2897366c6d0dd2bc",
+    "docs/a-first-capture-continuation/README.md": "497b7bbffab4ba4b8f91532b8e5b63207bb8b12f552fc992322bb252b691fa52",
     "docs/a-first-capture-continuation/ranked-alternatives.md": "4ddceb1cb811c1dec12743ccd313d5fe981f24ce1bd95ea4cc3b602f68188790",
     "docs/a-first-capture-continuation/policy-decisions.md": "4bf0c84152d4cff16d3848913a3789165080c380db2e84b477462ba193937035",
     "docs/a-first-capture-continuation/dependencies.json": "d878bfbf015647c26564ac72c4020edc8717a62a97fb7fa11f42f97fbb8e1020",
@@ -60,7 +60,7 @@
     "docs/a-first-capture-continuation/evidence/a-finite-upgrade-original-control20.log.gz": "04e29cd29ebdb6253edbf14f1cc3cfccba3d54055b680c5afa2adbeacb311caf",
     "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
     "test/a-worker-lifetime.test.mjs": "6895fcd4dfb09f02a3a8f71ed470451d22e4c2b0673f045b1380963743603d15",
-    "test/helper-a-worker-lifetime.py": "b95c8afd6e2fc37ec45f06920e35478b9c654d5b51fbcac76b4e77d61147487c",
+    "test/helper-a-worker-lifetime.py": "d5be44edd8c40392e9967a1744a0e32c32e0c0b48d7fe106f620743faf5daa29",
     "docs/a-first-capture-continuation/worker-runtime-followup.md": "8ec84ef432d34bf9bef3e61c07ce0355625e8f2cb78c950455fa172fd248b014",
     "docs/a-first-capture-continuation/evidence/a-worker-entry-facts-low-thread-diagnostic.log.gz": "7b3bbccb54abeac9112f287097bb6b2d8d7110f6fdbd98996c2bf280879ebd19",
     "docs/a-first-capture-continuation/evidence/a-worker-serial-probes.json.gz": "161e8361648782f476f3308a03dbf9d5116d168de73db6426f1708f69d002832",
@@ -116,18 +116,35 @@
     "docs/a-first-capture-continuation/feasibility-time-20261107.json": "d46413533404c329484e5d8bd5a05ac377801b023315e8d044710f924a10cf64",
     "docs/a-first-capture-continuation/external-recommendation-audit.proposed.json": "3c32daa0a3febed38b10b464e519a54eb04b0234e64882d9e3fdaf1d4dba64c1",
     "tools/audit-selected-feasibility.py": "6e171f51cddc38767f4a3288414a019e7976fe376bac481cc6193bb7b7e76ade",
-    "docs/a-first-capture-continuation/evidence-resolution.md": "d356c61e1a692a47a67db975991e975ac7219f75203d4756b18f91966c1c1ed3",
-    "docs/a-first-capture-continuation/evidence-resolution.json": "cbca1a6b7d3286e8cee9223b117a711d016b219ac46208698239f42f7928904d",
+    "docs/a-first-capture-continuation/evidence-resolution.md": "948dc501990d20b4f067a7160d676dd26f6409eb7594ce1ca229b2ff43269b43",
+    "docs/a-first-capture-continuation/evidence-resolution.json": "15c3a7c33268eb372df1131df5ed86f025d72de6f469a01594089562a17b6caa",
     "docs/a-first-capture-continuation/external-audit-calendar-proof.json": "8b6a146379d89560098b5a8d1cf9c7dcd312dcecbec9dee2c86e966a7d9a35eb",
-    "docs/a-first-capture-continuation/ig1-entry-resolution.proposed.json": "7c9ac47bb8ebcb4d4e2406d3069f75527c5bc7511a89a2acda3fed5478bc56e4",
-    "docs/a-first-capture-continuation/ig1-entry-runtime.json": "b160d83f94f34044b6ac879de5bd42835af750ee09e49540d40ea12aaaa0941f",
-    "docs/a-first-capture-continuation/ig1-entry-approval.template.json": "cc595855c2588addebcd12a6491dbb552710658913450439058dcb4d9c5a6799",
-    "tools/ig1-entry-evidence.mjs": "08512088009560da4281c06aaabb3afe460dab3422e7296cfa4473346d5f4a15",
-    "test/ig1-entry-evidence.test.mjs": "8f723fc65c8231dcd6caad2bab9b0790231f9e14cfbe770214007a30a283b021"
+    "docs/a-first-capture-continuation/ig1-entry-resolution.proposed.json": "488f0cfeea1ac2b6a403866c1d791673f67a8b665532dd6b589272f59c0909b6",
+    "docs/a-first-capture-continuation/ig1-entry-runtime.json": "66b4196f5fc1ad7eb9910775e46e515f9f740d613d99d1ea6f236d2ebcdcdf2d",
+    "docs/a-first-capture-continuation/ig1-entry-approval.template.json": "8533366cf3458a8ae66de79f4f04ece72795ea88359c309f59364717c9b5d5a0",
+    "tools/ig1-entry-evidence.mjs": "e8db15fbd94f1858eb4bd0ddf5cd00a5af07475dad7fd8d3f2a6c95d2f4eb358",
+    "test/ig1-entry-evidence.test.mjs": "3d304f11f2f2ec7d2028308a1190c56cd8c393f7d6078cf84adf92d270e8a144",
+    "a-native-evidence-importer.mjs": "ca299bbe83abe6ea99a92ad8bf75cb807021100675868af4f93e1267dfa3a88e",
+    "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md": "0000998a1ef38bc699796c648136d20032f17af73da4d4b71c97956ea3df6c72",
+    "docs/a-first-capture-continuation/authentic-feasibility-scope.proposed.json": "97aae18119fc50506bdcc634b77d27debd6fe9903d791cfcbb69c2b580fb4f8c",
+    "docs/a-first-capture-continuation/authentic-feasibility-public-evidence.json": "5bc087107613ad103f25f35b90e796109271ddcb45deb959843fce70ddb4fdc3",
+    "docs/a-first-capture-continuation/authentic-feasibility-verification.json": "d3745b7a0a47aa77531a8e09e1e21b893431241ee76170dc543c93335887708b",
+    "test/a-authentic-feasibility-scope.test.mjs": "402d248bf8b4df3b8f8c64d1576bd34cbc03f05c485f9643adc1a0599ee9879c",
+    "test/a-first-feasibility-report.test.mjs": "a68d862b691ad5200c8deb5d3d339a9a776987ca2804d9b93eb35d4401f58759",
+    "docs/a-first-capture-continuation/evidence/a-authentic-streaming-public-spec.txt.gz": "4a8fdc1679a531150db11a9f2f40e4be694e4c8b766c4e86e7cc505955d8f18c",
+    "docs/a-first-capture-continuation/evidence/a-authentic-report-actual-caller-corrected.log.gz": "c34df757630c552d0764129de19455abd2f6d611d0d4b3d3c5c3e11a624298df",
+    "docs/a-first-capture-continuation/evidence/a-authentic-report-actual-caller.log.gz": "11a808291b962d6d23b78bf2c140ec410b64c569f0c24b6d5ddcf4a62ebdccfb",
+    "docs/a-first-capture-continuation/evidence/a-authentic-baseline-shared-pin-failure.log.gz": "7864200da55c60aa300d3a91fbe0cc1af09888ca1bc7f1b00130d3c4b27fecaf",
+    "docs/a-first-capture-continuation/evidence/a-authentic-importer-regressions.log.gz": "6f3a6045c0336a607782125c8e3a3e8e1d62b09732f3335d572ae7311a814b05",
+    "docs/a-first-capture-continuation/evidence/a-authentic-existing-host.log.gz": "ecf2d826fd8256ef0d360d52b83c250a7e1dab889ffc8a17cd6e3e7b4edb75ac",
+    "docs/a-first-capture-continuation/evidence/a-authentic-worker-lifetime.log.gz": "d473cef70ff771d7116a169f3efcdf2977bc98538d826478abf76b9301759337",
+    "docs/a-first-capture-continuation/authentic-worker-observation-diagnosis.json": "d79239e5f868cf0bb5c9f92665890ae3ed3413f6e5eb1fa3457b4a9d4d93939b",
+    "docs/a-first-capture-continuation/evidence/a-authentic-worker-lifetime-corrected.log.gz": "1d28d2698809ff5057e0c679b8b842111644a871579253aec4504d68bd4ff9f4",
+    "docs/a-first-capture-continuation/evidence/a-authentic-baseline-worker-lifetime.log.gz": "7a0fe0c675def05be2579ec5eae4175c4dc3f50970f32c9a4acc09ce8eda273b",
+    "docs/a-first-capture-continuation/evidence/a-authentic-worker-thread-diagnostic.json.gz": "bd990ca6587dbd7c32af9c6139905c09dfb91e2299c1b218e1e9428260b2f651"
   },
   "inheritedUnchanged": {
     "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
-    "a-native-evidence-importer.mjs": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
     "a-legacy-store-export.mjs": "e81f17bd2ba9f641a72a3f9f7137d76dffb41dd08a76779ef1b25597020dcb13",
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
@@ -258,5 +275,75 @@
     "bodyEquality": "UNCHANGED_EXACT",
     "independentReview": "PENDING",
     "hostedExactSource": "PENDING_AFTER_PUBLICATION"
+  },
+  "authenticFeasibilityReportFollowup": {
+    "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+    "scope": "Read-only terminal quotes/clocks/cost/missingness view in existing caller; no acquisition or policy gate change",
+    "review": "PENDING",
+    "report": "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
+  },
+  "authenticFeasibilityMilestone": {
+    "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+    "scope": "authentic-feasibility-scope.proposed.json",
+    "plan": "first-authentic-evaluation-plan.md",
+    "independentReview": "PENDING",
+    "sourceGateFirst": true,
+    "executionReady": false,
+    "providerDataCalls": 0,
+    "genuineAdmissions": 0
+  },
+  "baselinePinReconciliation": {
+    "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+    "actualBaselineTest": "1/2PASS,1FAIL on shared IG1 stale pins; assertions retained; no IG1 behavior edits",
+    "corrections": [
+      {
+        "file": "docs/a-first-capture-continuation/evidence-resolution.md",
+        "before": "d356c61e1a692a47a67db975991e975ac7219f75203d4756b18f91966c1c1ed3",
+        "after": "948dc501990d20b4f067a7160d676dd26f6409eb7594ce1ca229b2ff43269b43",
+        "sourceUnchangedFromBase": true
+      },
+      {
+        "file": "docs/a-first-capture-continuation/evidence-resolution.json",
+        "before": "cbca1a6b7d3286e8cee9223b117a711d016b219ac46208698239f42f7928904d",
+        "after": "15c3a7c33268eb372df1131df5ed86f025d72de6f469a01594089562a17b6caa",
+        "sourceUnchangedFromBase": true
+      },
+      {
+        "file": "docs/a-first-capture-continuation/ig1-entry-resolution.proposed.json",
+        "before": "7c9ac47bb8ebcb4d4e2406d3069f75527c5bc7511a89a2acda3fed5478bc56e4",
+        "after": "488f0cfeea1ac2b6a403866c1d791673f67a8b665532dd6b589272f59c0909b6",
+        "sourceUnchangedFromBase": true
+      },
+      {
+        "file": "docs/a-first-capture-continuation/ig1-entry-runtime.json",
+        "before": "b160d83f94f34044b6ac879de5bd42835af750ee09e49540d40ea12aaaa0941f",
+        "after": "66b4196f5fc1ad7eb9910775e46e515f9f740d613d99d1ea6f236d2ebcdcdf2d",
+        "sourceUnchangedFromBase": true
+      },
+      {
+        "file": "docs/a-first-capture-continuation/ig1-entry-approval.template.json",
+        "before": "cc595855c2588addebcd12a6491dbb552710658913450439058dcb4d9c5a6799",
+        "after": "8533366cf3458a8ae66de79f4f04ece72795ea88359c309f59364717c9b5d5a0",
+        "sourceUnchangedFromBase": true
+      },
+      {
+        "file": "tools/ig1-entry-evidence.mjs",
+        "before": "08512088009560da4281c06aaabb3afe460dab3422e7296cfa4473346d5f4a15",
+        "after": "e8db15fbd94f1858eb4bd0ddf5cd00a5af07475dad7fd8d3f2a6c95d2f4eb358",
+        "sourceUnchangedFromBase": true
+      },
+      {
+        "file": "test/ig1-entry-evidence.test.mjs",
+        "before": "8f723fc65c8231dcd6caad2bab9b0790231f9e14cfbe770214007a30a283b021",
+        "after": "3d304f11f2f2ec7d2028308a1190c56cd8c393f7d6078cf84adf92d270e8a144",
+        "sourceUnchangedFromBase": true
+      }
+    ]
+  },
+  "workerObservationTestCompanion": {
+    "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+    "reason": "Managed proc task tree empty despite actual stopped direct child; bounded PPid fallback preserves all assertions",
+    "productionWorkerSha256Unchanged": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "review": "PENDING"
   }
 }

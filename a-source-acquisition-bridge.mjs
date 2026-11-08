@@ -125,6 +125,22 @@ function firstOriginalInputs(request,directory,contract,plan){
 }
 function firstSavedOriginal(store,record,code){const f=store.exportSnapshot().files.find(x=>x.file===record?.original?.file);need(f&&hash(Buffer.from(f.base64,'base64'))===record.original.sha256,code);return captureJson(Buffer.from(f.base64,'base64').toString());}
 const firstResult=extra=>({origin:'SYNTHETIC',sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',captureCompleteness:'FINITE_REQUEST_SET_NOT_STREAM_OR_UNIVERSE_COMPLETENESS',globalFirstIngestionEstablished:false,policyAdopted:false,allowBuy:false,prospectiveAdmissions:0,activation:false,...extra});
+// Read-only terminal view from the same strict importer and decision-time original prefix.
+// Current host is synthetic-only: successful software arithmetic can never become authentic feasibility.
+function firstFeasibilityView(input,result,audit,facts,archive){
+ const event=archive.observations.find(e=>'SEC_FILING_V1:'+e.issuerCik+':'+e.accession===audit.discoveredSourceId),firstSeen=event?.observations?.[0]?.observedAt??null;
+ const elapsed=(a,b)=>{const x=evidenceTime(a),y=evidenceTime(b);return Number.isFinite(x)&&Number.isFinite(y)&&y>=x?y-x:null;};
+ const c=result.cases?.find(c=>c.observationId===input.observationId),o=c?.outcome,resolved=o?.status==='MODELED_PAPER_ECONOMICS_ONLY';
+ return {schema:1,verdict:'INCONCLUSIVE',question:'Can this original-bound A attempt be detected in time and priced through its unchanged whole-share exit?',origin:result.origin,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',genuineAdmissions:0,allowBuy:false,
+  softwareChain:resolved?'COSTED_SUPPLIED_EVIDENCE':'INCOMPLETE',observationId:input.observationId,inputHash:audit.inputHash,entryFactsHash:audit.entryFactsHash,reportRef:result.reportRef??null,
+  clocks:{secAcceptanceAt:facts.sourceFields.acceptanceAt,earliestPublicReleaseAt:null,firstObservationInPinnedRunAt:firstSeen,globalFirstIngestionEstablished:false,primaryReceiptAt:facts.sourceFields.primaryObservedAt,paperAssessmentAt:input.asOf,decisionCommittedAt:audit.decisionSealedAt,delivery:{status:'NOT_REQUESTED',sentAt:null,acknowledgedAt:null}},
+  timingMs:{secAcceptanceToPinnedObservation:elapsed(facts.sourceFields.acceptanceAt,firstSeen),earliestPublicReleaseToObservation:null,pinnedObservationToPaperAssessment:elapsed(firstSeen,input.asOf),entryQuoteToReceipt:elapsed(input.quote.at,input.quote.observedAt),entryQuoteToAssessment:elapsed(input.quote.at,input.asOf)},
+  quoteEvidence:c?.quoteEvidence??{status:'UNKNOWN',entry:null,exit:null,coverage:null,fillGuaranteed:false},
+  economics:resolved?{status:'QUOTED_WHOLE_SHARE_MODEL_NOT_ACTUAL_FILLS',budgetUsd:input.paperBudgetUsd,shares:o.shares,entryAsk:o.entryAsk,exitBid:o.exitBid,modeledEntry:o.modeledEntry,modeledExit:o.modeledExit,commissionsUsd:o.commissionsUsd,netUsd:o.netUsd,returnOnBudgetPct:o.returnOnBudgetPct,uninvestedCashUsd:o.uninvestedCashUsd,exitKind:o.exitKind,ruleExitAt:o.ruleExitAt,spreadCounted:'ONCE_IN_ASK_AND_BID'}:null,
+  missingness:{attempts:1,resolvedModeledOutcomes:resolved?1:0,unresolvedModeledOutcomes:resolved?0:1,reason:c?.reason??result.reason??null,candidateDenominator:'ONE_PINNED_ATTEMPT_NOT_COMPLETE_RISK_SET'},
+  comparisons:{sameStock:'NOT_EVALUATED',sameDayEligibleStock:'NOT_EVALUATED',pilotReady:false},
+  blockers:['SYNTHETIC_ONLY_HOST','SOURCE_AUTHENTICITY_NOT_ESTABLISHED','GENUINE_TURNOVER_UNRESOLVED','COMPLETE_POPULATION_AND_BOTH_CONTROLS_NOT_ESTABLISHED'],strategy:'NOT_PROVEN'};
+}
 // One bounded, restartable host transition per call; no sleeping across sessions and no live CLI.
 export async function runAFirstCaptureStep({action,store,token,contract,plan,contexts,clock=Date.now,itemId,decision,request,originalsDirectory,native,nativeOutputDirectory}){
  try{
@@ -218,7 +234,7 @@ export async function runAFirstCaptureStep({action,store,token,contract,plan,con
   const result=importNativeAEvidence({store,token,request:effectiveRequest,originalsDirectory});
   const audit={planHash:scope,discoveryPrefixHash:active.record.payload.discoveryPrefixHash,discoveredSourceId:active.record.payload.discoveredSourceId,preparedAt:active.record.payload.preparedAt,decisionSealedAt:sealed.record.payload.sealedAt,nativePrefixHash:asset.sha256,nativePrefixFrozenAt:prefix.record.payload.frozenAt,inputHash:sealed.record.payload.inputHash,entryFactsHash:sealed.record.payload.entryFactsHash,...(savedFacts.inputAssembly?{inputAssembly:savedFacts.inputAssembly}:{}),requestPairs:used.size,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',completeness:'FINITE_REQUEST_SET_ONLY',originalIngestion:'LOCAL_RECEIPT_ONLY_NOT_GLOBAL_HISTORY'};
   if(result.reportRef){const logicalId='A_FIRST_CAPTURE_EVALUATION:'+result.reportRef.sha256,prior=store.lookup(token,'TRANSPORT',logicalId);if(prior.status==='FOUND')need(evidenceHash(prior.record.payload.audit)===evidenceHash(audit),'FIRST_CONTEXT_CHANGED');else store.appendImport(scope,token,'TRANSPORT',logicalId,{scope,audit,nativeReportRef:result.reportRef,evaluatedAt:iso(clock())});}
-  return {...result,firstCapture:audit,activation:false};
+  return {...result,firstCapture:audit,feasibility:firstFeasibilityView(required.dataset.observations[0],result,audit,savedFacts,archive),activation:false};
  }catch(e){return firstResult({status:'UNKNOWN',reason:reason(e),reportSaved:false});}
 }
 
