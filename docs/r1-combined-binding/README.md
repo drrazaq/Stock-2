@@ -1,16 +1,28 @@
-# R1 combined-unit binding, rev9 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev10 (review only; NOT approved, NOT deployed)
 
 This folder binds the **68-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `0663f337fed9b92703bd3aa585b239e34b23dae4` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `b6ffea2f1b30a4fd45dd164ec5ee6cc75feb3c90` on `claude/composed-r1-opencheck-calendar-watcher` |
 | Historical R1 base (allowlist = diff from it) | `b0d76987` → **68 paths** (same set as rev8 and Codex's proposal) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `f7dc52f97a5e91c2c76a143c7fb30c6a02b920dd` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `6b3c49bc` | `f5a6a43ac0b4eaada004f04bb863e588f9021cad` |
+| Unit tree, `M0` = `7742732` | `de98bc31de3b7073e58fb35fe02a22aafeb553cb` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `b58a5caa` | `32fe58743d6a58163bd2c963e9c5a71868c72299` |
 
-## Rev9: what changed (Codex 6719707423)
+## Rev10: what changed (Codex 6720355907)
+
+- **The defect:** a holding's quote stamped in the future when fetched became "STOP LEVEL REACHED" in the first market-hours check once later fetches moved the clock, while the same run's stop route said UNKNOWN.
+- **The fix:** `intraday()` now stamps each quote with `observedAt`. `quoteEvidence()` keeps a quote UNKNOWN if it was not valid evidence at that moment ("the price timestamp was in the future when fetched"), then judges it again at report time. All thresholds are unchanged.
+- **Proof:** an actual-caller regression in `test/open-check-repair.test.mjs` fails on rev9 and passes on rev10. Codex's own probe, run on the **built unit tree**, now reports `contradiction: false`.
+- **Changed against rev9 (same 68 paths):** `scan.mjs`, `test/open-check-repair.test.mjs`, the R1 `README.md` and `MANIFEST.md`. The binding format and tool are unchanged.
+- **Rev10 checks:**
+  - Precheck against `b58a5caa`: PASS (68/0/0).
+  - Build + verify: PASS on `7742732` (tree `de98bc31…`, equal to main + `source.patch`; the inverse restores main) and on `b58a5caa` (tree `32fe5874…`). Revert restores each `M0`.
+  - Refused as before: the mode mutant, the whole branch, and the old candidate `0663f337`.
+  - Full suite **156/156**; gated watcher 9/9 and 11/11.
+
+## Rev9 (history): what changed (Codex 6719707423)
 
 Rev8's tool ignored Git modes and the binding's candidate: a unit with `scan.mjs` made executable verified as PASS, and a mode-mutated, unreviewed candidate could be built. Now:
 - `binding.json` must pin `candidate` (40 hex) and a `mode` for every file. Rev8's binding is refused.

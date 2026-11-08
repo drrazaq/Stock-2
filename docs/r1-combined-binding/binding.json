@@ -1,18 +1,18 @@
 {
  "status": "ADOPTED_FOR_REVIEW (candidate author); not approved, not deployed",
- "candidate": "0663f337fed9b92703bd3aa585b239e34b23dae4",
- "candidateTree": "7cb58009875c0d2cedd3be22aba13b91fd181524",
+ "candidate": "b6ffea2f1b30a4fd45dd164ec5ee6cc75feb3c90",
+ "candidateTree": "26a82aea91183c4462949f2ff1506e848147a41b",
  "historicalR1Base": "b0d769876a6ee76f23544850c959111f59d8ae7b",
  "mainAtBinding": "774273205e1c8ce3db30c59ca368dc107617ef73",
  "pathCount": 68,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "d7ce8e978c18d684f63e8012c587cdeacb9a3c455e0da2a7d9709be600ea507d",
+  "sha256": "a63230aaf420feeca343691955f1b10684c3209e7f197e0c3265bb80e04150e1",
   "against": "774273205e1c8ce3db30c59ca368dc107617ef73"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "9169c8897e59d30069a50adf27e4af3178375de89e4ec17a1b5d665994bcb4bf"
+  "sha256": "59f0a87dd188c5c4883de17b19c2ac2bd27f9567be4f05b5caf09c339b670b56"
  },
  "candidateBranchStaleDataPaths": [
   "data/calendar-status.json",
@@ -22,19 +22,18 @@
   "data/tg-state.json"
  ],
  "neverPushOrMergeCandidateBranch": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 0663f337fed9b92703bd3aa585b239e34b23dae4 binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 b6ffea2f1b30a4fd45dd164ec5ee6cc75feb3c90 binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "supersedes": {
-  "binding": "806ff5b4 docs/r1-combined-binding/binding.json (rev8 af11dbfd)",
+  "binding": "bdc3efa2 docs/r1-combined-binding/binding.json (rev9 0663f337)",
   "samePathSet": true,
-  "filesChangedVsRev8": [
+  "filesChangedVsPrevious": [
    "docs/r1-sealed-provider-data/MANIFEST.md",
    "docs/r1-sealed-provider-data/README.md",
-   "docs/r1-sealed-provider-data/RELEASE.md",
-   "r1-release-precheck.mjs",
-   "test/sealed-release-rehearsal.test.mjs"
+   "scan.mjs",
+   "test/open-check-repair.test.mjs"
   ],
-  "reason": "rev9: binding pins candidate and Git modes; tool checks them and the complete tree"
+  "reason": "rev10: observation-time latch (scan.mjs) + actual-caller regression; binding format unchanged"
  },
  "files": {
   ".gitattributes": {
@@ -123,13 +122,13 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/MANIFEST.md": {
-   "sha256": "88c6a66061e7f5b6830372553d5f41e2933fd046b184255d1e36ee3c8c5ba6b6",
-   "bytes": 8975,
+   "sha256": "1702882c91a785e663ced3b5222a8a70cd286bdb35095420960292dafa297241",
+   "bytes": 9063,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/README.md": {
-   "sha256": "948e3bc65703aefbd43c1471d1dc0311bc7d98086a8cc79e0aea7f842c8b9021",
-   "bytes": 34553,
+   "sha256": "52acda5b3e70c5010108bc20c7b25c348ce2833760d4da578fc7f234817dc92e",
+   "bytes": 35629,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/RELEASE.md": {
@@ -193,8 +192,8 @@
    "mode": "100644"
   },
   "scan.mjs": {
-   "sha256": "085fa42c71dc165a2d852e9d70542508c6232824e9ac8aa9e592d31fbdb24fe3",
-   "bytes": 702238,
+   "sha256": "8e3256b4bf3c9ea25981ac32899ec446e668c9218063f52b7fa22ff6cae22fa0",
+   "bytes": 703237,
    "mode": "100644"
   },
   "scorecard-1023.mjs": {
@@ -263,8 +262,8 @@
    "mode": "100644"
   },
   "test/open-check-repair.test.mjs": {
-   "sha256": "c2fc1f287cec7b7f7153d9cbd78c8d66ce74519a669a76f8d1f61f4066228f45",
-   "bytes": 11666,
+   "sha256": "051c07027244ee2e36adc5f2bda5f01920fc38eead730208003d86641b6a0f59",
+   "bytes": 14706,
    "mode": "100644"
   },
   "test/private-data.test.mjs": {
@@ -379,7 +378,7 @@
   }
  },
  "expectedUnitTrees": {
-  "774273205e1c8ce3db30c59ca368dc107617ef73": "f7dc52f97a5e91c2c76a143c7fb30c6a02b920dd",
-  "6b3c49bca07ae584f8b6be4bea1c041a24d2ce1f": "f5a6a43ac0b4eaada004f04bb863e588f9021cad"
+  "774273205e1c8ce3db30c59ca368dc107617ef73": "de98bc31de3b7073e58fb35fe02a22aafeb553cb",
+  "b58a5caac5a09a82fc36340ebaa6b41d91112c0b": "32fe58743d6a58163bd2c963e9c5a71868c72299"
  }
 }
