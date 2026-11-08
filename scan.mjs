@@ -9,7 +9,7 @@ import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
-import { priceEvidence, stopText, stopMessageKey, validStop } from './stop-watch.mjs';
+import { priceEvidence, stopText, stopMessageKey, validStop, nyStamp } from './stop-watch.mjs';
 import { isT1, readSealedJson, readSealedLines, writeSealedJson, sealedCode, keyMissing } from './sealed-store.mjs';   // R1: T1 provider-data files are sealed
 
 const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
@@ -82,11 +82,26 @@ function calendarText(short) {
   const today = new Date().toISOString().slice(0, 10), wk = new Date(Date.now() + 7 * 864e5).toISOString().slice(0, 10), St = C.study && C.study.bySurprise;
   const INDX = (C.study && C.study.industry) || {}, hasFind = (e) => { const k = e.key || calKey(e.name); return ['_HOT', '_COOL'].some(z => INDX[k + z] && ((INDX[k + z].up || []).length || (INDX[k + z].down || []).length)); };
   const evAll = (C.econ || []).filter(e => e.t.slice(0, 10) >= new Date(Date.now() - 864e5).toISOString().slice(0, 10) && e.t.slice(0, 10) <= wk).sort((a, b) => a.t < b.t ? -1 : 1);
-  const ev = evAll.filter(e => short ? (e.kind || hasFind(e)) : true);
+  const ev = evAll.filter(e => short ? (e.kind || hasFind(e) || (e.schema === 2 && e.release)) : true);
   const v = (x, u) => x === null || x === undefined ? 'n/a' : x + (u && u.length <= 2 && !(u === '%' && Math.abs(+x) >= 50) ? u : '');   // an index level (e.g. 338.9) is never shown as a percent
   const tested = (e, s) => { const r = St && St[e.kind + (s > 0 ? '_HOT' : '_COOL')]; return r && /both halves/.test(r.verdict) ? 'tested: the S&P 500 went ' + r.verdict.split(' ')[0] + ' that day in both halves (' + pcs(r.newer.r1) + ' newer half)' : null; };
-  const line = (e) => { const done = e.act !== null && e.act !== undefined, bs = e.fc !== null && e.fc !== undefined ? e.fc : e.prev, s = done && bs !== null && bs !== undefined ? Math.sign((e.act - bs) * (/claims|unemployment|jobless/i.test(e.name) ? -1 : 1)) : 0, nm = CAL_NAME[e.kind] || e.name;
-    return (done ? '' : kw(e.t) + ': ') + nm + (e.name && e.name.toLowerCase() !== nm.toLowerCase() ? ' (' + e.name + ')' : '') + ': ' + (done ? 'came in ' + v(e.act, e.unit) + (e.fc !== null && e.fc !== undefined ? ' vs forecast ' + v(e.fc, e.unit) : ' vs previous ' + v(e.prev, e.unit)) + (s === 0 ? ' = as expected' : !e.kind ? (s > 0 ? ' = ABOVE' : ' = BELOW') : /CPI|PPI|PCE/.test(e.kind) ? (s > 0 ? ' = HOTTER inflation' : ' = COOLER inflation') : (s > 0 ? ' = STRONGER economy' : ' = WEAKER economy')) + (tested(e, s) ? '; ' + tested(e, s) : '') : 'forecast ' + v(e.fc, e.unit) + ', previous ' + v(e.prev, e.unit)); };
+  // (6 Nov repair) schema-2 rows: one release, its EXACT series; consensus (a market estimate) and released/previous values never mixed,
+  // a figure without a verified series/unit is UNKNOWN, and a subsidiary series never stands in for the headline. Older rows: figures UNKNOWN.
+  const fig = (z) => !z ? 'n/a' : z.v === undefined ? 'UNKNOWN' : z.v + (z.unit === 'K' ? 'K' : z.unit === '%' ? '%' : '');
+  const sline = (x) => { const lower = /claims|unemployment/i.test(x.title || ''), a = x.actual && x.actual.v !== undefined ? x.actual.v : null, cmp = x.consensus && x.consensus.v !== undefined ? ['consensus', x.consensus] : x.previous && x.previous.v !== undefined ? ['previous', x.previous] : null, sg = a !== null && cmp ? Math.sign(a - cmp[1].v) : 0;
+    if (x.status !== 'MAPPED') return 'figures UNKNOWN (series not verified)';
+    // (r2, Codex R5) ABOVE/BELOW is the NUMBER versus consensus/previous; what it means for the economy is said separately (for claims and
+    // unemployment a lower number means a stronger job market). No strategy sign or rule changes.
+    return x.title + (x.ref && x.ref.period ? ', ' + x.ref.period : '') + ': ' + (a !== null ? 'came in ' + fig(x.actual) + (cmp ? ' vs ' + cmp[0] + ' ' + fig(cmp[1]) + (sg === 0 ? ' = as expected' : ' = ' + (sg > 0 ? 'ABOVE' : 'BELOW') + (lower ? (sg < 0 ? ' (lower: a stronger job market)' : ' (higher: a weaker job market)') : '')) : '') : 'consensus ' + fig(x.consensus) + ', previous ' + fig(x.previous)); };
+  const line = (e) => { if (e.schema !== 2) return kw(e.t) + ': ' + (CAL_NAME[e.kind] || e.name) + ': figures UNKNOWN (saved before the exact-series check; the next calendar run refreshes them)';
+    const h = e.series.find(x => x.headline && x.status === 'MAPPED'), done = !!(h && h.actual && h.actual.v !== undefined);
+    const bs = e.fc !== null && e.fc !== undefined ? e.fc : e.prev, sg = done && bs !== null && bs !== undefined ? Math.sign((e.act - bs) * (/claims|unemployment/i.test(h.title) ? -1 : 1)) : 0, tr = done && sg ? tested(e, sg) : null;
+    return (done ? '' : kw(e.t) + ': ') + e.title + ': ' + (e.release === null ? 'figures UNKNOWN (series not verified)' : h ? sline(h) + (tr ? '; ' + tr : '') : 'figures UNKNOWN (headline not provided or not verified)'); };
+  const lineFull = (e) => e.schema !== 2 ? line(e) : [kw(e.t) + ': ' + e.title + (e.ref ? ' (' + e.ref + ')' : '') + ' [date: ' + ((e.dateSource && e.dateSource.by) || 'unknown') + ']', ...(e.series || []).map(x => '    ' + (x.status === 'MAPPED' ? sline(x) + srcNote(x) : (x.providerName || 'item') + ': figures UNKNOWN (series not verified)'))].join('\n');
+  // (r3, Codex 68c4bf45 R4) a value with a missing or invalid retrieval time says 'retrieval time UNKNOWN' and makes NO freshness or before/after-release claim
+  const srcNote = (x) => { const parts = [['consensus', x.consensus], ['previous', x.previous], ['actual', x.actual]].filter(([, z]) => z).map(([k, z]) => { const clockOk = typeof z.retrievedAt === 'string' && Number.isFinite(Date.parse(z.retrievedAt));
+      return k + ' ' + (z.v === undefined ? 'UNKNOWN: ' + z.why : (z.source || '?') + (clockOk ? ' ' + z.retrievedAt.slice(0, 10) + (z.timing === 'RETRIEVED_AFTER_RELEASE' ? ', retrieved after the release (may already be revised)' : z.timing === 'RETRIEVED_BEFORE_RELEASE' ? ', retrieved before the release' : k === 'actual' ? '' : ', retrieval time vs release UNKNOWN') : ', retrieval time UNKNOWN')); });
+    return parts.length ? ' [' + parts.join('; ') + ']' : ''; };
   const hol = (C.holidays || []).filter(h => h.d >= today && h.d <= new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10)).map(h => h.d + ' ' + h.name + (h.status === 'early-close' ? ' (HALF DAY, closes early)' : ' (MARKET CLOSED)'));
   const div = Object.entries(C.div || {}).flatMap(([s, a]) => a.filter(x => x.ex >= today && x.ex <= wk).map(x => s + ' ex-dividend ' + x.ex + (x.amt ? ' (' + x.amt + ' a share: the price drops by about that much that morning; not a sell signal)' : '')));
   const IND = C.study && C.study.industry, GRP = { CPI: 'INFLATION', CORE_CPI: 'INFLATION', PPI: 'INFLATION', PCE: 'INFLATION', RETAIL: 'GROWTH', JOBS: 'GROWTH', GDP: 'GROWTH', ISM: 'GROWTH', SENTIMENT: 'GROWTH', FED: 'FED' };
@@ -97,8 +112,10 @@ function calendarText(short) {
   const anyPass = St && Object.values(St).some(x => /both halves/.test(x.verdict));
   const indPass = IND && Object.values(IND).some(L => (L.up || []).length || (L.down || []).length);
   const decision = anyPass || indPass ? 'DECISION: only tested reactions change ACTIONS (hunt / avoid industries after a surprise, below); everything else follows the normal rules.' : 'DECISION: no release has a tested effect yet (' + (C.study ? C.study.releases + ' past releases studied' : 'the study runs on Sunday') + '), so normal rules apply. Big moves are covered by the market-shock alert and your stops.';
-  if (short) { if (!ev.length && !hol.length && !div.length) return ''; return ['THIS WEEK: ' + [...ev.slice(0, 5).map(line), ...hol, ...div].join(' | '), ...(IND ? [...prep, ...prepNames] : []), decision].join('\n'); }
-  return ['ECONOMIC CALENDAR (US, next 7 days, every release big and small; TipRanks, private)', '', ...(ev.length ? ev.map(e => '- ' + line(e) + (hasFind(e) ? '  [tested reaction on file]' : '')) : ['- no important release found']), '',
+  const shown = ev.slice(0, 5), provAt = shown.flatMap(e => e.schema === 2 ? e.series.filter(x => x.headline).flatMap(x => [x.consensus, x.previous].filter(z => z && z.v !== undefined).map(z => z.retrievedAt)) : []).filter(v => typeof v === 'string' && Number.isFinite(Date.parse(v))).sort()[0];
+  const srcLine = provAt ? 'Consensus and previous figures: TipRanks, as retrieved ' + String(provAt).slice(0, 10) + '; a previous figure can differ from the one finally published and may be revised in the release. Dates: official schedules (BLS, Fed), claims dates from TipRanks.' : null;
+  if (short) { if (!ev.length && !hol.length && !div.length) return ''; return ['THIS WEEK: ' + [...shown.map(line), ...hol, ...div].join(' | '), ...(srcLine ? [srcLine] : []), ...(IND ? [...prep, ...prepNames] : []), decision].join('\n'); }
+  return ['ECONOMIC CALENDAR (US, next 7 days, every release big and small; TipRanks, private)', '', ...(ev.length ? ev.map(e => '- ' + lineFull(e) + (hasFind(e) ? '  [tested reaction on file]' : '')) : ['- no important release found']), '',
     ...(IND ? [...prep, ...prepNames, ''] : ['What goes up or down after each kind of surprise: the study runs on Sunday.', '']), 'MARKET HOLIDAYS (2 weeks): ' + (hol.length ? hol.join(' | ') : 'none'), 'YOUR STOCKS, EX-DIVIDEND (7 days): ' + (div.length ? div.join(' | ') : 'none'), '', decision,
     'Updated ' + String(C.updated || '').slice(0, 16).replace('T', ' ') + ' UTC. Not financial advice.'].join('\n'); }
 // MACRO REACTION (calendar study): after a release surprise (hot / cool inflation, strong / weak economy, Fed), the industries that
@@ -2598,13 +2615,26 @@ function healthLine(nowMs = Date.now()) { const out = [];
   // (4 Nov) the saved check (health.json) is a snapshot from its own run; it is shown with its time, and the sources are re-checked live with
   // the watchdog's rule, so a stale source can never sit next to an unqualified "checks OK". A missing or unreadable snapshot is UNKNOWN.
   const kw = (ms) => { const d = new Date(ms + 3 * 3600e3).toISOString(); return d.slice(11, 16) + ' Kuwait ' + d.slice(0, 10); };
+  // (6 Nov repair) the watcher problem is rebuilt from the saved structured report so the qualification "outside the watched window" is never cut
+  // away; missing minutes INSIDE the configured window and time OUTSIDE it stay separate. Other problems end at a clause boundary, never mid-word.
+  const compactProblem = (x, H) => { const t = String(x), w = H && H.watcher;
+    if (w && t === w.text) { const cw = /configured (\d\d:\d\d)–(\d\d:\d\d) inclusive/.exec(t), ow = /(\d\d:\d\d)–(\d\d:\d\d) outside configured window/.exec(t), n = (k) => Number.isFinite(w[k]);
+      if (cw && ow && Array.isArray(w.configuredMissing) && ['configuredMinutes', 'configuredExpected', 'longestGap', 'outside', 'outsideExpected', 'regularMinutes', 'expected'].every(n)) {
+        const runs = w.configuredMissing.reduce((a, m, i, L) => a + (i === 0 || m !== L[i - 1] + 1 ? 1 : 0), 0);
+        // (r2, Codex R6) complete coverage is not healthy delivery: the message-recovery clause (waiting / exhausted / unpublished / uncertain) is kept
+        const rec = /message recovery: [^;]*/.exec(t), md = w.messageDelivery, delivery = (md && md.unhealthy === true ? '; MESSAGE DELIVERY PROBLEM' : '') + (rec ? '; ' + rec[0] : md && md.unhealthy === true ? ' (details: send  health )' : '');
+        return 'watcher on ' + w.day + ': opening minute ' + w.opening + '; watched window ' + cw[1] + '–' + cw[2] + ': ' + w.configuredMinutes + '/' + w.configuredExpected + ' minutes (' + w.configuredMissing.length + ' missing in ' + runs + ' gap' + (runs === 1 ? '' : 's') + ', longest ' + w.longestGap + ' min); ' + ow[1] + '–' + ow[2] + ' is outside the watched window (' + w.outside + '/' + w.outsideExpected + ' observed: a known limit, not a fault); full session ' + w.regularMinutes + '/' + w.expected + ' minutes' + delivery; }
+      return t; }
+    if (/^watcher evidence on /.test(t)) return t;   // never shortened from a mismatched or missing structured report
+    const r = t.replace(/\. The job is probably failing\.?$/, ' (job probably failing)'); if (r.length <= 170) return r;
+    const cut = r.slice(0, 170), i = Math.max(cut.lastIndexOf('; '), cut.lastIndexOf('. ')); return (i > 60 ? cut.slice(0, i) : cut.replace(/\s+\S*$/, '')) + ' … (send  health  for the full text)'; };
   try { let H = null; try { H = readJson0('data/health.json'); } catch (e) {}
     const at = H ? Date.parse(H.at) : NaN, snap = 'saved check ' + (Number.isFinite(at) ? kw(at) : 'time unknown'), probs = H && Array.isArray(H.problems) ? H.problems : null;
     const F = sourceFreshness(nowMs, freshHaves()), bad = F.rows.filter(r => r.state === 'LATE' || r.state === 'UNKNOWN');
     const src = F.expected ? 'sources for the ' + F.expected + ' close: ' + F.rows.map(r => r.what + ' ' + (r.state === 'CURRENT' ? 'current' : r.state === 'PENDING' ? 'not due yet (due ' + r.dueText + ')' : r.state === 'LATE' ? 'LATE (latest ' + r.have + ')' : 'UNKNOWN (no valid session date)')).join(', ') : '';
     const lateTxt = bad.map(r => r.what + (r.state === 'LATE' ? ' LATE' : ' UNKNOWN')).join(', ');
     if (!probs) out.push('saved check UNKNOWN (no readable health snapshot)' + (bad.length ? '; NOT CURRENT: ' + lateTxt : ''));
-    else if (probs.length) out.push(probs.length + ' problem' + (probs.length > 1 ? 's' : '') + ' (' + snap + '): ' + probs.slice(0, 2).map(x => String(x).replace(/\. The job is probably failing\.?$/, ' (job probably failing)').slice(0, 170)).join(' | ') + (probs.length > 2 ? ' (send  health )' : '') + (bad.length ? '; also NOT CURRENT now: ' + lateTxt : ''));
+    else if (probs.length) out.push(probs.length + ' problem' + (probs.length > 1 ? 's' : '') + ' (' + snap + '): ' + probs.slice(0, 2).map(x => compactProblem(x, H)).join(' | ') + (probs.length > 2 ? ' (send  health )' : '') + (bad.length ? '; also NOT CURRENT now: ' + lateTxt : ''));
     else out.push(bad.length ? 'NOT CURRENT: ' + lateTxt + ' (the ' + snap + ' found no problems before this)' : 'checks OK (' + snap + ')');
     if (src) out.push(src);
   } catch (e) { out.push('health check UNKNOWN (could not be read)'); }
@@ -4239,6 +4269,48 @@ async function daily() {
   console.log('daily scan done:', stocks.length, 'stocks,', buys.length, 'buy watch,', fresh.length, 'journal entries');
 }
 
+// (6 Nov) ONE HOLDING ACTION for the market-hours summary, in the order ACTIONS (planText) uses: a stop reached, a filing (event) sell,
+// target 2, last night's exit rule (sig.posVerdict: every kind, a trend exit included), the holding review's SELL, then target 1. A
+// price-based claim (stop reached, targets, % from entry) needs ticker-bound, dated, fresh evidence: stop-watch.mjs priceEvidence(), the
+// live watcher's rule. Without it the stop status is UNKNOWN, never HOLD. Holdings, stops and rules are only read, never changed.
+const quoteEvidence = (sym, q, nowMs, maxAgeMin) => priceEvidence(sym, q && typeof q === 'object' ? { sym, price: +q.price, t: q.t, provider: q.src || 'unknown source', kind: 'TRADE' } : null, nowMs, maxAgeMin);
+const evidenceText = (ev) => ev.state === 'OK' ? 'last price ' + money(ev.price) + ' (' + ev.src + ', ' + nyStamp(ev.t) + ', ' + (ev.ageSec < 90 ? Math.round(ev.ageSec) + ' s' : Math.round(ev.ageSec / 60) + ' min') + ' old)' : 'current price UNKNOWN (' + ev.why + ')';
+function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
+  const ev = quoteEvidence(sym, q, nowMs), ok = ev.state === 'OK', px = ok ? ev.price : null, num = (x) => typeof x === 'number' && Number.isFinite(x) && x > 0;
+  const pv = sig && sig.posVerdict ? sig.posVerdict[sym] : null, es = eventSell(sym), hasStop = P.stop !== undefined && P.stop !== null, stopOk = validStop(P.stop);
+  let act, text;
+  if (ok && stopOk && px <= P.stop) { act = 'SELL'; text = 'STOP LEVEL REACHED: at or below your stop ' + money(P.stop) + '. If your broker stop order has filled, you are already out: do not sell again.'; }
+  else if (es) { act = 'SELL'; text = es; }
+  else if (ok && num(P.t2) && px >= P.t2) { act = 'SELL'; text = 'SELL. Target 2 (' + money(P.t2) + ') reached.'; }
+  else if (pv) { act = 'SELL'; text = "SELL: last night's exit rule, " + String(pv).replace(/\.?$/, '.') + ' Timing as in ACTIONS (close-based exits: next regular-session open).'; }
+  else if (P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '')) { act = 'SELL'; text = P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ').'; }
+  else if (ok && num(P.t1) && px >= P.t1 && !P.trail) { act = 'TARGET 1'; text = t1Text(sym, P); }
+  else if (hasStop && (!stopOk || !ok)) { act = 'UNKNOWN'; text = 'STOP STATUS UNKNOWN: no exit rule is active, but whether your stop ' + (stopOk ? money(P.stop) : '(not a valid number)') + ' was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.'; }
+  // (8 Nov review fix) no stop AND no valid price: the position's state cannot be confirmed (a leader-dip sell limit may have filled,
+  // targets may have been reached); never a fresh-looking HOLD without price evidence
+  else if (!ok) { act = 'UNKNOWN'; text = 'STATUS UNKNOWN: no exit rule is active from last night, but the current price cannot be confirmed right now' + (P.src === 'leader dip' ? ' (leader dip, no stop by design' + (num(P.target) ? '; check whether your sell limit ' + money(P.target) + ' has filled' : '') + ')' : '; NO STOP SET') + '; this is not a sign the position is safe. Check the price at your broker.'; }
+  else { act = 'HOLD'; text = 'HOLD: no exit rule is active' + (hasStop ? '; above your stop ' + money(P.stop) : P.src === 'leader dip' ? '; leader dip, no stop by design' + (num(P.target) ? ', sell limit ' + money(P.target) : '') : '; NO STOP SET') + '.'; }
+  const chg = ok && num(P.entry) ? ' (' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' : '';
+  return { act, ev, line: sym + ': ' + text + ' ' + evidenceText(ev).replace(/^\w/, c => c.toUpperCase()) + chg + '.' };
+}
+// (6 Nov) the day's first market-hours check: its ACTUAL time (a late first run says it did not observe the open), the buy list labelled
+// for what it is (last night's scan; the rules are NOT PROVEN), and the real schedule and close times instead of timing promises.
+async function firstCheckText(myPos, planBuys, quotes, sig, nowMs = Date.now()) {
+  const n = ny(nowMs), sess = await marketSessionOf(n.d), kt = new Date(nowMs).toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' });
+  const open = sess && !sess.closed ? sess.open : 570, close = sess && !sess.closed ? sess.close : null, lateBy = n.mins - open;
+  const out = ["TODAY'S FIRST MARKET-HOURS CHECK, run at " + nyClockText(n.mins) + ' New York (' + kt + ' Kuwait). The system is running.'];
+  if (lateBy > 30) out.push('LATE: this is the first check that reached this point today, so it did NOT observe the open. The market opened at ' + nyClockText(open) + ' New York (' + kwt(open, n.d) + ' Kuwait), ' + Math.floor(lateBy / 60) + ' h ' + (lateBy % 60) + ' min before this check.');
+  out.push('', 'YOUR POSITIONS (one action each, the same rules as ACTIONS)');
+  const pos = Object.entries(myPos || {}).map(([k, P]) => holdingAction(k, P, quotes[k], sig, nowMs).line);
+  out.push(...(pos.length ? pos : ['none recorded']));
+  const buys = (planBuys || []).filter(x => !(myPos || {})[x.sym]).map(x => { const ev = quoteEvidence(x.sym, quotes[x.sym], nowMs, 20);
+    return x.sym + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (ev.state !== 'OK' ? 'price UNKNOWN (' + ev.why + '), no buy from this line' : evidenceText(ev) + ', ' + (ev.price > x.hi ? 'ABOVE the range, do not chase' : ev.price < x.lo ? 'below the range, wait' : 'INSIDE the range')); });
+  out.push('', "BUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)", ...(buys.length ? buys : ["none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day."]));
+  out.push('', 'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.');
+  out.push(close == null ? 'Regular session hours today: UNKNOWN (the NYSE calendar could not be read).'
+    : 'Regular NYSE session today: ' + nyClockText(open) + ' to ' + nyClockText(close) + ' New York (' + kwt(open, n.d) + ' to ' + kwt(close, n.d) + ' Kuwait). The live watcher’s configured window ends at 3:00 pm New York' + (close > 900 ? ', ' + (close - 900) + ' minutes before the close; the last part of the session is not watched live.' : '.'));
+  return out.join('\n');
+}
 async function intraday(onlyMine) {
   const now = Date.now();
   const sig = readJson('data/signals.json', null);
@@ -4257,7 +4329,7 @@ async function intraday(onlyMine) {
   const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
   const buyNowCards = [];
   const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
-  const seen = {}, stopAlerts = [];
+  const seen = {}, stopAlerts = [], quotesSeen = {};
   // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
   // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
   // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
@@ -4269,7 +4341,7 @@ async function intraday(onlyMine) {
     if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
     st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
   for (const sym of watch) {
-    const j = (await liveQ((sym))) || {}, p = +j.price; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
+    const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = j; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
     const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
     if (mp) {   // you told the bot you bought this one
@@ -4303,15 +4375,15 @@ async function intraday(onlyMine) {
       if (o.target && p >= o.target) say('tg' + o.since, 'paper trade from ' + o.since + ' reached its target ' + money(o.target) + '.');
     }
   }
-  // ONE MARKET-OPEN CHECK a day, so you always know the system is running and where each holding stands, even when no alert fires.
+  // ONE FIRST MARKET-HOURS CHECK a day, so you know the system is running and where each holding stands, even when no alert fires.
+  // (6 Nov repair) Every holding is listed through holdingAction() (the ACTIONS order; a nightly exit is never shown as HOLD; price claims
+  // only on valid evidence), the buy list says what it is, and the message gives its actual time and the real schedule and close times.
   let openMsg = null;
-  if (!onlyMine && !st.sent.__open && Object.keys(seen).length) {
+  // (8 Nov review fix) also when EVERY quote failed but you hold positions: the check then lists each holding as UNKNOWN instead of
+  // staying silent (silence would look like a quiet, safe day)
+  if (!onlyMine && !st.sent.__open && (Object.keys(seen).length || Object.keys(myPos).length)) {
     st.sent.__open = 1;
-    const kt = new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' });
-    const posL = Object.entries(myPos).filter(([k]) => seen[k]).map(([k, P]) => { const p = seen[k], g = p / P.entry - 1;
-      return k + ' ' + money(p) + ' (' + (g >= 0 ? '+' : '') + (g * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' + (P.stop ? ' | stop ' + money(P.stop) + ' (' + ((P.stop / p - 1) * 100).toFixed(1) + '%)' : P.src === 'leader dip' ? ' | leader dip: sell limit ' + money(P.target) + ', no stop by design' : ' | NO STOP SET') + (P.t1 ? ' | target ' + money(P.t1) + ' (+' + ((P.t1 / p - 1) * 100).toFixed(1) + '%)' : '') + ': ' + (P.stop && p <= P.stop ? 'SELL NOW: the stop is reached' : P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '') ? P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ')' : 'HOLD'); });
-    const buyL = planBuys.filter(x => seen[x.sym] && !myPos[x.sym]).map(x => { const p = seen[x.sym]; return x.sym + ' ' + money(p) + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (p > x.hi ? 'ABOVE the range, do not chase' : p < x.lo ? 'below the range, wait' : 'INSIDE the range'); });
-    openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PROVEN BUYS TODAY', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.'].join('\n');
+    openMsg = await firstCheckText(myPos, planBuys, quotesSeen, sig, Date.now());
   }
   fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
   if (openMsg) await telegram(openMsg + '\n' + FOOT);
