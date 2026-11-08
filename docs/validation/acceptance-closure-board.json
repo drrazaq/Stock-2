@@ -1,6 +1,6 @@
 {
   "kind": "OPEN_ACCEPTANCE_CLOSURE_BOARD_V1",
-  "updated": "2026-11-01",
+  "updated": "2026-11-08",
   "reconciledDevelopmentSource": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30",
   "observedProductionMain": "31399de73752c7915857dab7865ddbdd1bcae070",
   "score": {
@@ -22,10 +22,10 @@
       "nextActionAndOwner": "Codex scanner plan/price/entry-confirmation callers; Claude workflow/concurrency/private-persistence/claim audit including health book publication. PR6 unchanged.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Complete behavioral matrix for every script; inventory and scoped tests do not cover every script.",
+        "exactUnmetRequirement": "Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this.",
         "newEvidence": [
-          "docs/validation/repo03-gap-disposition.json",
-          "docs/validation/repo03-critical-batch-evidence.json"
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
         ]
       },
       "latestEvidence": "Existing inventory and targeted script reviews.",
@@ -34,8 +34,9 @@
         "IMPLEMENTATION"
       ],
       "nextConcreteAction": "Claude completes assigned read-only audit; Codex repairs confirmed defects. No duplicate broad audit.",
-      "latestScopedEvidence": "docs/repo03-critical-contract-batch.md; docs/validation/repo03-critical-batch-evidence.json; no row closure.",
-      "latestEarlyAlertSourceReview": "docs/validation/repo03-early-alerts-review.json; no production code or acceptance closure."
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+      "latestEarlyAlertSourceReview": "docs/validation/repo03-early-alerts-review.json; no production code or acceptance closure.",
+      "currentCheckpointDependency": "Scoped source/actual-caller corrections and inventory validation are complete at037792b8. Development3b7af847 adds actual-send freshness; independent review/full CI pending. Complete every-script behavioral coverage remains missing."
     },
     {
       "id": "ACTIONS-04",
@@ -47,9 +48,10 @@
       "nextActionAndOwner": "Claude: assigned workflow audit; implementation owner fixes independently confirmed gaps.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Every remaining workflow/helper needs checkout/ref, writer/conflict/retry, failure-save and retention proof.",
+        "exactUnmetRequirement": "Per-workflow and helper review of checkout/ref, writes, retries, conflict handling, concurrency, secrets, failure saving and retention. Real disposable-Git conflict/retry tests for repaired publication paths. No production dispatch.",
         "newEvidence": [
-          "docs/validation/d3-session-history-verification.json"
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
         ]
       },
       "latestEvidence": "Accounting/watcher deployments and disposable-Git publication/conflict regressions retained.",
@@ -58,7 +60,9 @@
         "IMPLEMENTATION",
         "NATURAL_EVIDENCE"
       ],
-      "nextConcreteAction": "Claude workflow audit \u2192 targeted Codex repairs; natural save evidence stays separate."
+      "nextConcreteAction": "Claude workflow audit \u2192 targeted Codex repairs; natural save evidence stays separate.",
+      "currentCheckpointDependency": "Combined rev17 source/recovery/retention/binding review PASS; operator confirmation remains with Claude. Development037 exact full CI and calendar/watcher/open-check composition complete. All-workflow writer/cache/cancellation/retention review and authorized operational evidence remain incomplete.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "MARKET-02",
@@ -70,8 +74,11 @@
       "nextActionAndOwner": "Review corrected exact seven-request inactive diagnostic; only then owner may authorize installation/bindings/ONE dated run. Other product rights need official non-secret evidence.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Current binding/endpoint/feed/session permissions and relevant reference/retention rights; ownership of the two subscriptions is CONFIRMED.",
-        "newEvidence": []
+        "exactUnmetRequirement": "Official provider account/plan/endpoint coverage plus authorized observed permission/refusal responses. Distinguish IEX/SIP/extended-hours and missing subscriptions; no purchases or exposed credentials.",
+        "newEvidence": [
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
+        ]
       },
       "latestEvidence": "Sanitized official account UI: Alpaca Algo Trader Plus and Massive Stocks Starter; prior limited SIP/IEX observed responses. C1/C2 bounded diagnostic source b8e0fe8c hosted PASS.",
       "smallestRemainingGap": "Current binding/endpoint/feed/session permissions and relevant reference/retention rights; ownership of the two subscriptions is CONFIRMED.",
@@ -80,7 +87,9 @@
         "OWNER_DECISION"
       ],
       "nextConcreteAction": "Review corrected exact seven-request inactive diagnostic; only then owner may authorize installation/bindings/ONE dated run. Other product rights need official non-secret evidence.",
-      "latestSipDecision": "docs/validation/sip-diagnostic-decision-package.json; reviewed code unchanged, no approval/observations or threshold adoption."
+      "latestSipDecision": "docs/validation/sip-diagnostic-decision-package.json; reviewed code unchanged, no approval/observations or threshold adoption.",
+      "currentCheckpointDependency": "Account-specific actual entitlement, permitted hosted processing/storage and representative authorized endpoint evidence remain unverified. Official technical descriptions are not account proof.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "MARKET-03",
@@ -92,9 +101,10 @@
       "nextActionAndOwner": "Implementation owner: inventory actual ingress and test ambiguous aliases/DST/half-day controls.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Finish every-ingress symbol/unit/session/adjustment and corporate-action matrix; authoritative real-security mapping remains separate.",
+        "exactUnmetRequirement": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
         "newEvidence": [
-          "docs/d3-session-history-review.md"
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
         ]
       },
       "latestEvidence": "Feed b680 deployed; strict calendar/source-clock controls; accepted inactive contracts f61 unchanged. Separate default-off observer patch/parity/package tests hosted PASS at fbbd0e43, not deployed.",
@@ -104,7 +114,9 @@
         "EXTERNAL_EVIDENCE"
       ],
       "nextConcreteAction": "Review passive observer exact branch fbbd0e43; then finish remaining ingress contracts without adopting thresholds or changing inputs.",
-      "latestSipDecision": "docs/validation/sip-diagnostic-decision-package.json; reviewed code unchanged, no approval/observations or threshold adoption."
+      "latestSipDecision": "docs/validation/sip-diagnostic-decision-package.json; reviewed code unchanged, no approval/observations or threshold adoption.",
+      "currentCheckpointDependency": "Calendar, future-at-fetch and observation-clock scoped repairs validated at037;3b7 actual-dispatch correction pending independent/full validation. All-provider identity/actions/ticker-change/units ingress coverage remains incomplete.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "MARKET-04",
@@ -116,8 +128,11 @@
       "nextActionAndOwner": "Implementation owner: passively inspect next naturally scheduled post-DST watcher; owner separately approves broader measurement.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Actual full regular/premarket/half-day coverage, verified universe, clocks and p95/outages are absent. Configured09:30\u201315:00 omits final hour.",
-        "newEvidence": []
+        "exactUnmetRequirement": "Authorized observed full regular/premarket/half-day sessions with every intended minute, received/verified-universe denominators, BBO/trade/volume clocks, p95 latency, outages and last-success telemetry. Fixtures and job status cannot close this.",
+        "newEvidence": [
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
+        ]
       },
       "latestEvidence": "Watcher v5 deployed and configured-window health semantics retained; fixtures are not session observations.",
       "smallestRemainingGap": "Actual full regular/premarket/half-day coverage, verified universe, clocks and p95/outages are absent. Configured09:30\u201315:00 omits final hour.",
@@ -125,7 +140,9 @@
         "NATURAL_EVIDENCE",
         "OWNER_DECISION"
       ],
-      "nextConcreteAction": "Passively inspect Monday2November natural startup/DST, source access, archives/save/delivery. Broader measurement scope needs distinct approval."
+      "nextConcreteAction": "Passively inspect Monday2November natural startup/DST, source access, archives/save/delivery. Broader measurement scope needs distinct approval.",
+      "currentCheckpointDependency": "No complete observed regular/premarket/half-day intended-minute,universe,freshness,p95/outage evidence. No live observation authorized here; configured final-hour gap remains.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "DISCOVERY-03",
@@ -137,8 +154,11 @@
       "nextActionAndOwner": "Implementation owner: finish inactive live integration; owner reviews exact future collection scope.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Representative broad-universe SIP hybrid collector and measured scope remain distinct from the six-name calibration.",
-        "newEvidence": []
+        "exactUnmetRequirement": "Old Massive-delayed Phase A is not valid real-time proof. Separately review/implement/pin revised explicit-universe SIP hybrid collector, budget and encrypted recovery, then obtain exact dated approval and measure actual broad coverage. Offline330-minute fixtures are not live evidence.",
+        "newEvidence": [
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
+        ]
       },
       "latestEvidence": "Delayed Massive Phase A rejected as real-time proof; six-name offline host/clients and explicit source budgets retained.",
       "smallestRemainingGap": "Representative broad-universe SIP hybrid collector and measured scope remain distinct from the six-name calibration.",
@@ -147,7 +167,9 @@
         "EXTERNAL_EVIDENCE",
         "OWNER_DECISION"
       ],
-      "nextConcreteAction": "Finish exact broad-universe rights/request/storage/coverage scope only after current bounded V2 work; no activation."
+      "nextConcreteAction": "Finish exact broad-universe rights/request/storage/coverage scope only after current bounded V2 work; no activation.",
+      "currentCheckpointDependency": "Explicit-universe SIP rights, separately approved capture and observed broad premarket coverage are absent; offline fixtures are not live whole-market evidence.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "DISCOVERY-04",
@@ -159,9 +181,10 @@
       "nextActionAndOwner": "Implementation owner: V2 route/cache/no-proof telemetry and symmetric-control specification/implementation after required protocol review; owner/reviewer: evaluate exact separate enrollment/continuity proposal. No live activation.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "V1 normal proof order cannot enroll. V2 policy unadopted; offline encrypted transport/outcomes are under actual-caller tests. Trusted live V2 host/guard integration remains engineering.",
+        "exactUnmetRequirement": "Pre-registered period/hypotheses/end date and minimum independent cases/days; first detection before observed+5/+10/+20/+25, executable quotes/control/benchmark, unresolved misses, costs, displayed size, drawdowns and clustered uncertainty. Actual cases currently0; no tuning/optional stopping.",
         "newEvidence": [
-          "docs/d3-session-history-review.md"
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
         ]
       },
       "latestEvidence": "V1 unchanged; existing artifact zero admissions retained; D1\u2013D3 and inactive host/client/parent proofs preserved. V2 offline source/state/ACK recovery and paired30-minute exits/missingness actual-caller7/7 tests hosted PASS on243bf2f2; no live binding or admissions.",
@@ -172,7 +195,8 @@
         "OWNER_DECISION"
       ],
       "nextConcreteAction": "Verify proposed V2 encrypted frame/state/ACK recovery and paired exits/missingness; independent chronology/control review precedes owner adoption and dated capture approval.",
-      "latestScopedEvidence": "Inactive actual host/guard/ZIP recovery complete: source b4cebc98,235 hosted test files PASS; independent review pending. Live-mode guard/workflow/binding remains separate implementation, policy/approval and real evidence absent. Whole row OPEN."
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+      "currentCheckpointDependency": "Zero admitted authentic timing/execution cases; original source/receipt,common universe/controls and predeclared independent sample remain missing. Parked IG1 stays parked."
     },
     {
       "id": "CATALYST-03",
@@ -184,9 +208,10 @@
       "nextActionAndOwner": "Implementation owner: finish remaining all-source materiality/identity/revision/conflict/persistence matrix; native host/client/parent mechanism is already implemented offline.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Events-study/news full-body revisions, AV/FMP earnings and derived Discovery2/Comeback need complete identity/materiality/conflict/persistence evidence.",
+        "exactUnmetRequirement": "Source-by-source event identity, publication/ingestion clocks, stale/future/broken payloads, duplicate/revised stories, threat/materiality truthfulness and persistence across jobs. Include conflicting/missing source evidence.",
         "newEvidence": [
-          "docs/d3-session-history-review.md"
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
         ]
       },
       "latestEvidence": "Deployed SEC helper repair plus reconstructed\u2014not recovered\u2014source protections and actual native acceptance join/cross-run lineage tests preserved.",
@@ -194,7 +219,9 @@
       "gapType": [
         "IMPLEMENTATION"
       ],
-      "nextConcreteAction": "Codex completes remaining eight-lane source-contract matrix and actual-caller regressions. Native SEC lineage is already implemented offline; do not restart it."
+      "nextConcreteAction": "Codex completes remaining eight-lane source-contract matrix and actual-caller regressions. Native SEC lineage is already implemented offline; do not restart it.",
+      "currentCheckpointDependency": "Scoped original primary-source timing and quote handling evidence exists; all-source revision/conflict/materiality/persistence caller coverage is incomplete.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "CATALYST-04",
@@ -206,8 +233,11 @@
       "nextActionAndOwner": "Owner/data reviewer: choose licensed independent evidence; implementation owner prepares offline audit.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Independently authenticated contemporaneous sources/access clocks and missing-source denominators cannot be inferred from current caches.",
-        "newEvidence": []
+        "exactUnmetRequirement": "Independently sourced contemporaneous filings/news/events, economic publication versus access timestamps, missing-source denominators and late-ingestion/missed-runner attribution. Current caches cannot authenticate past availability.",
+        "newEvidence": [
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
+        ]
       },
       "latestEvidence": "Economic/source/access-clock and missing-source distinctions retained; no authenticated historical availability claim.",
       "smallestRemainingGap": "Independently authenticated contemporaneous sources/access clocks and missing-source denominators cannot be inferred from current caches.",
@@ -216,7 +246,9 @@
         "EXTERNAL_EVIDENCE",
         "OWNER_DECISION"
       ],
-      "nextConcreteAction": "Codex prepares source-audit input/rejection contract; owner/data reviewer selects exact licensed independent evidence."
+      "nextConcreteAction": "Codex prepares source-audit input/rejection contract; owner/data reviewer selects exact licensed independent evidence.",
+      "currentCheckpointDependency": "One original Micron standalone-quarter/acceptance chain is resolved; complete independent event denominator and historic bot ingestion/missed-runner attribution remain absent.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "EXEC-03",
@@ -228,10 +260,10 @@
       "nextActionAndOwner": "Implementation owner: extend actual lane/spec/holding/exit contract comparisons; keep unsupported timing, source, cost and execution plans unresolved.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Every delivered lane still needs its registered entry/stop/exit/hold/cost/size/liquidity comparison; unsupported execution assumptions remain unresolved.",
+        "exactUnmetRequirement": "Compare every delivered plan to its registered tested entry/stop/exit/hold/cost/risk specification. Explicitly separate changed safety variants from original results; validate finite prices, opening gaps, no-price cases, sizing, realistic fees/slippage and liquidity.",
         "newEvidence": [
-          "docs/mentor-entry-to-exit-workflow.md",
-          "test/mentor-lifecycle.test.mjs"
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
         ]
       },
       "latestEvidence": "Recorded numeric/gap/risk controls; one LEADER DIP guide distinguishes target not adopted and frozen close versus next-open mismatch; production proposal separate.",
@@ -250,7 +282,9 @@
         "productionNode20Files": 131,
         "productionCI": "PUSH_AND_PR_PASS",
         "acceptanceClosed": false
-      }
+      },
+      "currentCheckpointDependency": "Current actual-caller freshness correction is scoped to existing development contracts; every delivered plan versus its exact registered entry/exit/hold/cost/risk remains unverified. No original3%cap weakening or fill-capacity inference.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "TELEGRAM-03",
@@ -262,8 +296,11 @@
       "nextActionAndOwner": "Claude: assigned delivery audit; implementation owner repairs confirmed caller gaps.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Stable IDs/partial ACK/unknown quarantine/confirmed persistence across every route and independent job; journal remains opt-in.",
-        "newEvidence": []
+        "exactUnmetRequirement": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally.",
+        "newEvidence": [
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
+        ]
       },
       "latestEvidence": "Watcher B1/B2/F1/F2 and accounting transaction durability deployed; research idempotency separate from delivery retry.",
       "smallestRemainingGap": "Stable IDs/partial ACK/unknown quarantine/confirmed persistence across every route and independent job; journal remains opt-in.",
@@ -271,7 +308,9 @@
         "IMPLEMENTATION",
         "NATURAL_EVIDENCE"
       ],
-      "nextConcreteAction": "Claude delivery audit \u2192 Codex targeted caller integration. No live test message."
+      "nextConcreteAction": "Claude delivery audit \u2192 Codex targeted caller integration. No live test message.",
+      "currentCheckpointDependency": "3b7 guards each actual part/retry and preserves ACK/UNKNOWN/known-zero refusal semantics; full CI/review pending. All-route IDs,callbacks,cross-job integration and persistence are still incomplete.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "TELEGRAM-04",
@@ -283,8 +322,11 @@
       "nextActionAndOwner": "Owner: review bounded validation only after readiness; no dispatch now.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Explicitly authorized bounded non-BUY real ACK/recovery across independent runs has not occurred.",
-        "newEvidence": []
+        "exactUnmetRequirement": "After readiness review and explicit owner approval, prove a bounded non-sensitive non-BUY notification and independent run/recovery deduplication with real acknowledgments. No live BUY or trade permitted; mock contracts do not close this.",
+        "newEvidence": [
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
+        ]
       },
       "latestEvidence": "Synthetic ACK/refusal/retry controls only; no new real messages.",
       "smallestRemainingGap": "Explicitly authorized bounded non-BUY real ACK/recovery across independent runs has not occurred.",
@@ -292,7 +334,9 @@
         "OWNER_DECISION",
         "NATURAL_EVIDENCE"
       ],
-      "nextConcreteAction": "After delivery readiness, prepare exact non-sensitive validation scope for owner decision; mocks cannot close it."
+      "nextConcreteAction": "After delivery readiness, prepare exact non-sensitive validation scope for owner decision; mocks cannot close it.",
+      "currentCheckpointDependency": "No approved real non-BUY ACK/recovery experiment or independent live duplicate evidence. Offline fixtures cannot close this.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "STRATEGY-04",
@@ -304,8 +348,11 @@
       "nextActionAndOwner": "Owner/data reviewer: resolve licensed data; implementation owner retains offline admission checks.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Audited PIT/delisted universe, execution/cost/liquidity data and untouched holdout are unavailable.",
-        "newEvidence": []
+        "exactUnmetRequirement": "Source-audited point-in-time universe including delistings, registered untouched holdout, next executable entry/exit, fees/spreads/liquidity/stress and consistent price basis. Separate corrected evidence from frozen firstRun; rejected outcomes retained.",
+        "newEvidence": [
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
+        ]
       },
       "latestEvidence": "Frozen rejected/unproven findings preserved; no new endorsement or strategy activation.",
       "smallestRemainingGap": "Audited PIT/delisted universe, execution/cost/liquidity data and untouched holdout are unavailable.",
@@ -314,7 +361,9 @@
         "EXTERNAL_EVIDENCE",
         "OWNER_DECISION"
       ],
-      "nextConcreteAction": "Finish replay admission/input contract; owner/data reviewer selects defensible source and holdout scope."
+      "nextConcreteAction": "Finish replay admission/input contract; owner/data reviewer selects defensible source and holdout scope.",
+      "currentCheckpointDependency": "RA-C2 contract confirmed and retained four-view calculations reproduced. No authentic PIT executable whole-share chain or untouched sample; rejected methods remain rejected.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "HISTORY-02",
@@ -326,8 +375,11 @@
       "nextActionAndOwner": "Owner/data reviewer: choose authoritative reference scope; no calls yet.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Independent as-known security/class mappings, universe membership, ticker changes, delistings and terminal values.",
-        "newEvidence": []
+        "exactUnmetRequirement": "Independent security-level mappings at decision/entry/exit and as-known universe membership, ticker/class changes and documented terminal values. Admission shape/fixture checks do not authenticate sources or universe completeness.",
+        "newEvidence": [
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
+        ]
       },
       "latestEvidence": "Identity/class shape and ambiguous-identity rejection controls; fixtures do not authenticate mappings.",
       "smallestRemainingGap": "Independent as-known security/class mappings, universe membership, ticker changes, delistings and terminal values.",
@@ -336,7 +388,9 @@
         "EXTERNAL_EVIDENCE",
         "OWNER_DECISION"
       ],
-      "nextConcreteAction": "Finish selected-source PIT audit tooling; resolve exact authoritative reference scope without new calls."
+      "nextConcreteAction": "Finish selected-source PIT audit tooling; resolve exact authoritative reference scope without new calls.",
+      "currentCheckpointDependency": "Stable as-known universe/security/action/terminal provenance incomplete. All saved gone/delisting outcomes retained; no invented terminal values or dropped cases.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "HISTORY-03",
@@ -348,9 +402,10 @@
       "nextActionAndOwner": "Claude: assigned claims audit; implementation owner qualifies confirmed unsupported output.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Complete numerical claim/source/window/selection/cost/hold catalogue and authenticate or qualify each claim.",
+        "exactUnmetRequirement": "Catalogue each user-facing numerical/tested/proven/unseen claim, exact source/selection window, cost/hold basis and coverage. Authenticate/reproduce with separate audited evidence where possible; qualify unsupported claims without rewriting frozen results.",
         "newEvidence": [
-          "docs/mentor-entry-to-exit-workflow.md"
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
         ]
       },
       "latestEvidence": "Legacy paper versus zero admitted prospective cases explicit; mentor NOT PROVEN and unresolved exit assumptions visible.",
@@ -359,7 +414,9 @@
         "IMPLEMENTATION",
         "EXTERNAL_EVIDENCE"
       ],
-      "nextConcreteAction": "Claude claims audit \u2192 Codex targeted wording/claim repairs; preserve original frozen results."
+      "nextConcreteAction": "Claude claims audit \u2192 Codex targeted wording/claim repairs; preserve original frozen results.",
+      "currentCheckpointDependency": "New cost/headroom and control diagnostics explicitly distinguish model claims, frozen/current populations and primary-source facts. Full user-facing numerical claim catalogue/authentication remains incomplete.",
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
       "id": "HISTORY-04",
@@ -371,9 +428,10 @@
       "nextActionAndOwner": "Implementation owner: V2 route/cache/no-proof telemetry and symmetric-control specification/implementation after required protocol review; owner/reviewer: evaluate exact separate enrollment/continuity proposal. No live activation.",
       "closureAssessment": {
         "decision": "OPEN",
-        "exactUnmetRequirement": "Observed candidate/control/SPY quote/size paths, censored gaps, realistic costs/capacity/drawdowns and untouched clustered confirmation absent.",
+        "exactUnmetRequirement": "Observed candidate/control/SPY paths and realistic costs, quote sizes/liquidity, censored gaps, adverse selection/capacity and drawdowns; predeclared clustered uncertainty/multiple-comparison rules and untouched confirmation. Quote-model fixtures alone cannot establish profitability.",
         "newEvidence": [
-          "docs/validation/d3-session-history-verification.json"
+          "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+          "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
         ]
       },
       "latestEvidence": "Unchanged V1 evaluator/frozen results; offline control/cost/missingness and source recovery proofs only; genuine admissions0. V2 offline source/state/ACK recovery and paired30-minute exits/missingness actual-caller7/7 tests hosted PASS on243bf2f2; no live binding or admissions. Reporting-only followupfeba5acf exposes bid-mark/depth uncertainty, global quote-quality missingness and future-cutoff validation; final exact-SHA tests required.",
@@ -384,7 +442,8 @@
         "OWNER_DECISION"
       ],
       "nextConcreteAction": "Verify separate V2 paired30-minute exits, losing paths and missingness reports; finish trusted live binding then independently review protocol before adoption.",
-      "latestScopedEvidence": "Inactive actual host/guard/ZIP recovery complete: source b4cebc98,235 hosted test files PASS; independent review pending. Live-mode guard/workflow/binding remains separate implementation, policy/approval and real evidence absent. Whole row OPEN."
+      "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
+      "currentCheckpointDependency": "Recoverable matched freshness gate improves saved model but gated mean remains negative; PB8/PB12 trail same-stock controls. Authentic common price/liquidity/control paths,drawdown/dependence and untouched confirmation remain missing."
     }
   ],
   "currentSourceIntegrationCheckpoint": "04e70e257a9eacd656430261ebc3610a43670f5e",
@@ -443,5 +502,6 @@
     "manifest": "docs/validation/v2-host-guard-recovery-manifest.json",
     "scopedEngineering": "COMPLETE_REVIEW_PENDING",
     "acceptanceClosures": []
-  }
+  },
+  "latestRemainingWorkReconciliation": "docs/engineering-continuation-20261108/remaining-ledger-reconciliation.json"
 }

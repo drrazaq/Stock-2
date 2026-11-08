@@ -1,0 +1,438 @@
+{
+  "kind": "EXISTING_EVIDENCE_DESCRIPTIVE_DIAGNOSTICS",
+  "inputs": {
+    "docs/recommendation-audit-20261108/ra-c2/final/analysis.json": "e846ad00b7522cc8508f7df692336b93610d435b9445bcefb40d598ec1135f9e",
+    "data/squad11-lab.json": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a"
+  },
+  "intervalReproduction": {
+    "cases": 89,
+    "views": 4,
+    "maxAbsoluteError": 4.440892098500626e-16
+  },
+  "recommendation": {
+    "legacy_base": {
+      "retained68": {
+        "n": 68,
+        "mean": [
+          0.014656938696505147,
+          0.015330164828630146
+        ],
+        "definitelyPositive": 23,
+        "definitelyNegative": 45,
+        "crossesZero": 0
+      },
+      "matchedRetained30": {
+        "n": 30,
+        "mean": [
+          -0.005868428637500001,
+          -0.00520678538325
+        ],
+        "definitelyPositive": 9,
+        "definitelyNegative": 21,
+        "crossesZero": 0
+      },
+      "complementaryLater38": {
+        "n": 38,
+        "mean": [
+          0.030861176065456578,
+          0.03154354657485131
+        ],
+        "definitelyPositive": 14,
+        "definitelyNegative": 24,
+        "crossesZero": 0
+      },
+      "rejected21": {
+        "n": 21,
+        "mean": [
+          -0.0316501134702381,
+          -0.03106671695655238
+        ],
+        "definitelyPositive": 3,
+        "definitelyNegative": 18,
+        "crossesZero": 0
+      },
+      "avoidedLossContribution": [
+        0.015945353060541175,
+        0.01615591785245098
+      ],
+      "forgoneWinnerContribution": [
+        0.0031235181882352937,
+        0.0031531754901960784
+      ],
+      "uncertainRejected": 0,
+      "pairedGateEffectFixed51": [
+        0.012792177570345098,
+        0.013032399664215688
+      ],
+      "canonicalConservativeGateEffectUnchanged": {
+        "fixedDenominator": 51,
+        "lower": 0.012792177570345098,
+        "upper": 0.013032399664215688
+      }
+    },
+    "legacy_existing_stress": {
+      "retained68": {
+        "n": 68,
+        "mean": [
+          0.005551114685580883,
+          0.00625351845579559
+        ],
+        "definitelyPositive": 20,
+        "definitelyNegative": 48,
+        "crossesZero": 0
+      },
+      "matchedRetained30": {
+        "n": 30,
+        "mean": [
+          -0.015165558332666666,
+          -0.014490539876083331
+        ],
+        "definitelyPositive": 7,
+        "definitelyNegative": 23,
+        "crossesZero": 0
+      },
+      "complementaryLater38": {
+        "n": 38,
+        "mean": [
+          0.02190638285788158,
+          0.022630406612542106
+        ],
+        "definitelyPositive": 13,
+        "definitelyNegative": 25,
+        "crossesZero": 0
+      },
+      "rejected21": {
+        "n": 21,
+        "mean": [
+          -0.03971319922619048,
+          -0.03905548228755238
+        ],
+        "definitelyPositive": 2,
+        "definitelyNegative": 19,
+        "crossesZero": 0
+      },
+      "avoidedLossContribution": [
+        0.01879241231448235,
+        0.01903930009509804
+      ],
+      "forgoneWinnerContribution": [
+        0.0026868062960784317,
+        0.002710743137254902
+      ],
+      "uncertainRejected": 0,
+      "pairedGateEffectFixed51": [
+        0.01608166917722745,
+        0.01635249379901961
+      ],
+      "canonicalConservativeGateEffectUnchanged": {
+        "fixedDenominator": 51,
+        "lower": 0.01608166917722745,
+        "upper": 0.01635249379901961
+      }
+    },
+    "legacy_plus_2pct_each_way": {
+      "retained68": {
+        "n": 68,
+        "mean": [
+          -0.025879197908190228,
+          -0.02500306115525918
+        ],
+        "definitelyPositive": 14,
+        "definitelyNegative": 54,
+        "crossesZero": 0
+      },
+      "matchedRetained30": {
+        "n": 30,
+        "mean": [
+          -0.04558048597782085,
+          -0.04483603649394408
+        ],
+        "definitelyPositive": 5,
+        "definitelyNegative": 25,
+        "crossesZero": 0
+      },
+      "complementaryLater38": {
+        "n": 38,
+        "mean": [
+          -0.010325549432166051,
+          -0.009345449045771096
+        ],
+        "definitelyPositive": 9,
+        "definitelyNegative": 29,
+        "crossesZero": 0
+      },
+      "rejected21": {
+        "n": 21,
+        "mean": [
+          -0.07034767070621568,
+          -0.06929011282225288
+        ],
+        "definitelyPositive": 2,
+        "definitelyNegative": 19,
+        "crossesZero": 0
+      },
+      "avoidedLossContribution": [
+        0.029895038613084516,
+        0.030315141733948482
+      ],
+      "forgoneWinnerContribution": [
+        0.0013484537960949633,
+        0.0013638156862745097
+      ],
+      "uncertainRejected": 0,
+      "pairedGateEffectFixed51": [
+        0.028531222926810006,
+        0.02896668793785352
+      ],
+      "canonicalConservativeGateEffectUnchanged": {
+        "fixedDenominator": 51,
+        "lower": 0.028531222926810006,
+        "upper": 0.02896668793785352
+      }
+    },
+    "legacy_existing_stress_plus_2pct_each_way": {
+      "retained68": {
+        "n": 68,
+        "mean": [
+          -0.03499284213591192,
+          -0.03407040425910131
+        ],
+        "definitelyPositive": 13,
+        "definitelyNegative": 55,
+        "crossesZero": 0
+      },
+      "matchedRetained30": {
+        "n": 30,
+        "mean": [
+          -0.05488257009487085,
+          -0.054113518535694086
+        ],
+        "definitelyPositive": 5,
+        "definitelyNegative": 25,
+        "crossesZero": 0
+      },
+      "complementaryLater38": {
+        "n": 38,
+        "mean": [
+          -0.019290425326207502,
+          -0.018246892988107014
+        ],
+        "definitelyPositive": 8,
+        "definitelyNegative": 30,
+        "crossesZero": 0
+      },
+      "rejected21": {
+        "n": 21,
+        "mean": [
+          -0.07841366250416806,
+          -0.07727415407806812
+        ],
+        "definitelyPositive": 2,
+        "definitelyNegative": 19,
+        "crossesZero": 0
+      },
+      "avoidedLossContribution": [
+        0.0328404771694006,
+        0.03329636722414456
+      ],
+      "forgoneWinnerContribution": [
+        0.0010083885459577085,
+        0.0010217078431372548
+      ],
+      "uncertainRejected": 0,
+      "pairedGateEffectFixed51": [
+        0.03181876932626334,
+        0.03228797867818685
+      ],
+      "canonicalConservativeGateEffectUnchanged": {
+        "fixedDenominator": 51,
+        "lower": 0.03181876932626334,
+        "upper": 0.03228797867818685
+      }
+    }
+  },
+  "retained68CostHeadroom": {
+    "base": {
+      "extraPerSideBreakEvenInterval": [
+        0.00714311923745703,
+        0.0075048756203374145
+      ],
+      "maximumCornerDerivativeUpperBound": -1527.4839516374068,
+      "interpretation": "Saved fixed-path cost sensitivity only; not a fifth scoring arm or executable fill estimate."
+    },
+    "existingStress": {
+      "extraPerSideBreakEvenInterval": [
+        0.002692918402120159,
+        0.0030483799769501774
+      ],
+      "maximumCornerDerivativeUpperBound": -1526.3569050374067,
+      "interpretation": "Saved fixed-path cost sensitivity only; not a fifth scoring arm or executable fill estimate."
+    }
+  },
+  "recovery": {
+    "SQ11-PB8": {
+      "n": 400,
+      "meanStoredNet": 0.06374075,
+      "medianStoredNet": 0.02545,
+      "goneRows": [
+        {
+          "s": "VMW",
+          "sig": "2023-10-19",
+          "buy": "2023-10-20",
+          "sell": "2023-11-21",
+          "kind": "gone",
+          "net": -0.0676,
+          "avgStock": 0.0389,
+          "spy": 0.0641,
+          "sameStock": 0.0253,
+          "fixedDate": -0.1517
+        },
+        {
+          "s": "DFS",
+          "sig": "2025-03-04",
+          "buy": "2025-03-05",
+          "sell": "2025-05-16",
+          "kind": "gone",
+          "net": 0.1084,
+          "avgStock": 0.0134,
+          "spy": 0.0304,
+          "sameStock": 0.0819,
+          "fixedDate": 0.0121
+        }
+      ],
+      "pairedControls": {
+        "sameStock": {
+          "n": 400,
+          "missing": 0,
+          "meanDifference": -0.06555625,
+          "medianDifference": -0.06395,
+          "beat": 146,
+          "tie": 0,
+          "lose": 254
+        },
+        "fixedDate": {
+          "n": 400,
+          "missing": 0,
+          "meanDifference": 0.04003975,
+          "medianDifference": 0.04884999999999999,
+          "beat": 289,
+          "tie": 0,
+          "lose": 111
+        },
+        "avgStock": {
+          "n": 400,
+          "missing": 0,
+          "meanDifference": 0.036602499999999996,
+          "medianDifference": 0.004100000000000006,
+          "beat": 205,
+          "tie": 0,
+          "lose": 195
+        },
+        "spy": {
+          "n": 400,
+          "missing": 0,
+          "meanDifference": 0.01860975,
+          "medianDifference": -0.013750000000000002,
+          "beat": 186,
+          "tie": 0,
+          "lose": 214
+        }
+      },
+      "basis": "Current saved arrays, not frozen firstRun. net/stock controls subtract original COST; SPY is raw. No executable prices/whole-share fees recovered."
+    },
+    "SQ11-PB12": {
+      "n": 357,
+      "meanStoredNet": 0.1573607843137255,
+      "medianStoredNet": 0.0855,
+      "goneRows": [
+        {
+          "s": "VMW",
+          "sig": "2023-10-19",
+          "buy": "2023-10-20",
+          "sell": "2023-11-21",
+          "kind": "gone",
+          "net": -0.0676,
+          "avgStock": 0.0389,
+          "spy": 0.0641,
+          "sameStock": 0.0253,
+          "fixedDate": -0.1517
+        },
+        {
+          "s": "DFS",
+          "sig": "2025-03-04",
+          "buy": "2025-03-05",
+          "sell": "2025-05-16",
+          "kind": "gone",
+          "net": 0.1084,
+          "avgStock": 0.0134,
+          "spy": 0.0304,
+          "sameStock": 0.1189,
+          "fixedDate": 0.0121
+        },
+        {
+          "s": "PSTG",
+          "sig": "2025-11-13",
+          "buy": "2025-11-14",
+          "sell": "2026-04-16",
+          "kind": "gone",
+          "net": -0.1865,
+          "avgStock": 0.1197,
+          "spy": 0.0545,
+          "sameStock": 0.1665,
+          "fixedDate": -0.33
+        }
+      ],
+      "pairedControls": {
+        "sameStock": {
+          "n": 324,
+          "missing": 33,
+          "meanDifference": -0.07304845679012346,
+          "medianDifference": -0.06949999999999999,
+          "beat": 126,
+          "tie": 0,
+          "lose": 198
+        },
+        "fixedDate": {
+          "n": 357,
+          "missing": 0,
+          "meanDifference": 0.08868347338935574,
+          "medianDifference": 0.0887,
+          "beat": 294,
+          "tie": 1,
+          "lose": 62
+        },
+        "avgStock": {
+          "n": 357,
+          "missing": 0,
+          "meanDifference": 0.08755546218487395,
+          "medianDifference": 0.02250000000000002,
+          "beat": 199,
+          "tie": 0,
+          "lose": 158
+        },
+        "spy": {
+          "n": 357,
+          "missing": 0,
+          "meanDifference": 0.04899467787114846,
+          "medianDifference": -0.017700000000000007,
+          "beat": 165,
+          "tie": 0,
+          "lose": 192
+        }
+      },
+      "basis": "Current saved arrays, not frozen firstRun. net/stock controls subtract original COST; SPY is raw. No executable prices/whole-share fees recovered."
+    }
+  },
+  "disclosureArithmetic": {
+    "bloomContractedFractionOfUpperHeadline": 0.4285714285714286,
+    "bloomUncontractedUpperDifferenceGW": 1.5999999999999999,
+    "bloomMaximumConditionalWarrantExerciseCashUSD": 399999949.44,
+    "constellationInvestmentLowerBoundPerUprateMWUSD": 4831460.674157304
+  },
+  "limits": [
+    "No new authentic outcome chains; all 102 original attempts remain incomplete.",
+    "No unknown/no-fill outcome imputation, new filters, p-values, optimized dates or changed exits.",
+    "Dollar fees and original friction remain as approved; roots are fixed-path diagnostics only.",
+    "Primary-disclosure arithmetic is not trading performance, probability, margin or realized financing."
+  ]
+}

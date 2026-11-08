@@ -1,0 +1,29 @@
+# Completed retained-evidence diagnostics
+
+Reproduce from repository root: `python docs/recommendation-audit-20261108/ra-c2/final/retained-diagnostics.py`. Input fingerprints, arithmetic and complete results are in `retained-diagnostics.json`. All 89 cases × four approved cost views reproduce the frozen intervals within 1e−12; the original contract, outputs and comparison cutoffs are unchanged. No provider request, new sample, filter or exit search occurred.
+
+## Recommendation and rejection gates
+
+For the 21 recoverable stale rejects, the $1,000 whole-share interval model with original friction and $3 each executed side has **18 losses / 3 wins** at base costs. On the fixed 51-attempt comparison denominator, rejection avoids 1.595–1.616 percentage points of losses while forgoing 0.312–0.315 points of winners: net improvement **1.279–1.303 points**. Existing stress leaves 19 losses / 2 wins; the required additional 2% each way also leaves 19 / 2. Rejection helped this recoverable modeled subset, while losing some winners. It does not establish benefit across missing rejects, other gates or authentic fills. The matched gated portfolio remains negative even at base costs (−0.345% to −0.306% per fixed attempt).
+
+The retained 68 aggregate at base costs is +1.466% to +1.533%, with only 23 positive versus 45 negative cases under this conservative fixed-budget reconstruction. This differs from the original 27/41 percentage-model labels because the approved reconstruction retains friction, rounding, idle cash and fixed fees. It does not overwrite those labels.
+
+The already frozen matched-period retained 30 average −0.587% to −0.521%; their complementary later 38 average +3.086% to +3.154%. This is a descriptive decomposition of the existing cutoff, not evidence to trade a selected regime. Both parts are negative under the required extra 2% each way. The full retained 68 become −2.588% to −2.500%, or −3.499% to −3.407% with the existing stress also applied.
+
+A monotone fixed-path diagnostic puts the retained aggregate's extra per-side break-even at **0.714–0.750%** on top of original base friction, or **0.269–0.305%** on top of existing stress. This diagnoses cost fragility; it is not a new scoring arm, achievable slippage estimate, relaxed 2% stress, path resimulation or promise of returns. The literal 3% entry cap remains unchanged; execution costs are separate.
+
+There remain **0 complete / 102 incomplete authentic outcome chains**. Two stale outcomes, ten no-fill labels and one no-bars attempt are not filled with invented returns; overlaps remain in the canonical cohort accounting. Original recommendation publication/ingestion, exact entry/exit/quote conditions/actions, stable identities and missing external denominator prevent executable and full-population scoring. Delisting outcomes remain as retained, never replaced with last prices or dropped.
+
+## Recovery comparisons
+
+Current saved PB8 has 400 rows and mean stored net +6.374%; it trails its same-stock-other-dates control by **6.556 points** on average (146 beat / 254 lag). PB12 has 357 rows and +15.736%; the 324 available same-stock pairs trail by **7.305 points** (126 beat / 198 lag), with **33 missing pairs**, not zeros. Same-stock median differences are −6.395 and −6.950 points.
+
+Fixed-date control differences are positive (+4.004 / +8.868 points), as are average-stock differences (+3.660 / +8.756). The control conflict prevents calling absolute returns an incremental timing advantage. SPY comparisons retain the original raw benchmark basis rather than claiming equal after-cost execution. All 2 PB8 / 3 PB12 `gone` rows are preserved in the output. These arrays are not the original firstRun populations, have no exact entry prices or linked quarterly facts, and do not support authentic whole-share/$3-side P&L. Frozen rejection/NOT PROVEN verdicts and holding periods remain intact.
+
+One original-disclosure source predicate is now resolved for Micron; see [source result](../../../research-recovery-20261108/MU-SOURCE-PREDICATE.md). It exposes accounting-quality limitations rather than providing a scored trade. New dated-business-improvement economics remain INCONCLUSIVE.
+
+## AI-power assessment arithmetic
+
+Using only previously inspected primary disclosures: Bloom's 1.2 GW contracted/deploying is **42.86%** of the up-to-2.8 GW headline; the remaining 1.6 GW is potential scope, not contracted volume or a probability forecast. Full exercise of the disclosed maximum warrant would conditionally yield **$399,999,949.44**; this is not cash received, a share-count dilution percentage or guaranteed financing. Constellation's more-than-$4.3 billion planned investment divided by 890 MW of uprates is **more than $4.831 million per nameplate MW**, not ROI or a comparable project valuation. Talen's 1,920 MW full ramp by no later than 2032 is not immediate delivered capacity.
+
+These facts improve assessments now by separating signed scope, existing supply, financing obligations and realized milestones. The [primary-source review](../../../research-tech-primary-20261108/POWER.md) remains the provenance and caveat authority. These selected examples cannot establish profitable announcement drift, justify reviving rejected contract methods or supply an unbiased return sample. Trading economics remain INCONCLUSIVE; no new family or collection is started.

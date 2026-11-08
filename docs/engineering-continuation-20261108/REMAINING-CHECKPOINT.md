@@ -1,0 +1,24 @@
+# Remaining authorized work checkpoint
+
+The combined rev17 release source review is complete. Operator confirmation remains with Claude; this checkpoint neither reopens it nor performs deployment. The canonical acceptance total remains **24/40; zero full-row closures**. Previously accepted rows are carried forward, not claimed newly retested. `remaining-ledger-reconciliation.json` preserves all 40 criteria and records scoped dependency closures without converting them into row completion.
+
+## Completed engineering dependencies
+
+* Calendar/watcher/open-check development composition and the dependent-fingerprint correction have exact-source full hosted validation at `037792b8aac39a1c82155220c56cabd77e1daba2`: [retained complete receipt](completion-037792b8/README.md), [Claude's independent pin review](https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6724971083). The parent recovery-pin failure remains preserved; no baseline failure was waived.
+* Combined rev17 exact source, binding/inverse and previous reproductions passed [independent source review](../reviews/r1-preparation/73aa701f/REVIEW.md). This closes the source-review dependency; it does not establish live migration, permission, delivery or operational evidence. Operator/release confirmation is with Claude.
+* A separate development correction is committed as `3b7af84728658b732f8876b1a98a8667acdf364b`. It guards current claims at every actual part/retry while preserving development's existing 3-minute gate, 5-minute timed stop semantics, Unicode splitting, ACK journal and UNKNOWN quarantine. A proven zero-delivery local expiry frees only its own retryable reservation; partial/ambiguous delivery remains UNKNOWN. This is not wholesale copying of the production branch.
+
+The unchanged actual-caller reproductions fail four of six cases on immutable parent037792b8 and pass after the correction. Focused58, source/storage/recovery preflights88 and Python inventory/evidence7+2 pass locally. [Evidence and exact patch scope](https://github.com/drrazaq/Stock-2/blob/3b7af84728658b732f8876b1a98a8667acdf364b/docs/engineering-continuation-20261108/current-dispatch/README.md). Full exact-source [run42520064297](https://github.com/drrazaq/Stock-2/actions/runs/42520064297) is pending; [independent focused review requested](https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6726677555). Neither is recorded as PASS prematurely. No workflow, settings, data, secrets or production changes were made.
+
+## Completed research execution
+
+[Retained-evidence findings](../recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md) and reproducible diagnostics now quantify avoided rejected losses versus foregone winners, the already frozen period decomposition, cost headroom and paired recovery controls. They reproduce the original four views, preserve no-fills/missing cases/delistings and do not promote percentage-model results into executable performance. [One Micron original-filing predicate](../research-recovery-20261108/MU-SOURCE-PREDICATE.md) is resolved, including accounting-quality limitations, without claiming price/eligibility or inspecting outcomes. AI-power disclosure arithmetic distinguishes commitments, potential volume, conditional financing and realized milestones using the previously inspected primary sources.
+
+## Exact blockers and next actions
+
+1. Development3b7 full hosted completion and Claude's independent review; any reproduced failure requires correction and exact-source revalidation. Existing037 source validation is complete and does not transfer to3b7.
+2. Remaining broad all-script/all-workflow/all-provider/all-delivery-route acceptance coverage is incomplete. Scoped passing corrections do not certify every route. Full measured sessions, discovery coverage and real non-BUY ACK/recovery evidence require separate approval; none is activated here.
+3. Authentic trading scoring lacks original publication/ingestion and selection denominator, stable as-known identities/actions, executable prices/quote conditions, eligible whole shares and matched controls. There are0complete/102incomplete IG1 outcome chains. Additional purchased prices alone cannot recreate missing historical ingestion witnesses.
+4. Account entitlement, hosted-processing/storage terms, private operator/custody, recovery outside the executor and enforceable zero extra spend are not established. One [consolidated bounded evidence request for review](EVIDENCE-RESOLUTION.md) identifies recoverability and the smallest existing proposal without authorizing its execution. Parked IG1 remains parked.
+
+No deployment, provider acquisition/collection, keys, spending, live restrictions, trades, settings changes or production actions. Engineering validation totals above are software evidence only; trading conclusions are reported separately.
