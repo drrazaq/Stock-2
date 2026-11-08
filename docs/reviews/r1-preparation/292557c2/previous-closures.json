@@ -1,0 +1,88 @@
+{
+  "candidate": "292557c20267a1735e15ffb5cca6d412460d53ef",
+  "retryAfterDirectoryEio": [
+    {
+      "code": "EIO",
+      "plaintextExists": true
+    },
+    {
+      "code": "EIO",
+      "plaintextExists": true
+    }
+  ],
+  "segmentedRecovery": {
+    "exportedFiles": 1,
+    "sourceLogicalRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ],
+    "exportedBaseRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ],
+    "restoredBasePlusSegmentsRows": [
+      {
+        "id": "A"
+      },
+      {
+        "id": "B"
+      },
+      {
+        "id": "C"
+      }
+    ]
+  },
+  "incompleteSelfConsistentManifest": {
+    "originalSourceCount": 2,
+    "result": {
+      "ref": "HEAD",
+      "problems": [
+        "source file missing from the manifest: data/options-shadow.json",
+        "manifest count 1 != source T1 plaintext count 2"
+      ],
+      "plaintextT1": [],
+      "sealedT1": 1,
+      "extra": [],
+      "manifestCount": 1
+    }
+  },
+  "writerGateIncompleteListing": {
+    "pass": false,
+    "active": [],
+    "unknown": 0,
+    "incomplete": 1,
+    "seen": 1
+  },
+  "writerGateUnknownStatus": {
+    "pass": false,
+    "active": [
+      {
+        "id": 1,
+        "path": ".github/workflows/bot.yml",
+        "status": "future_unknown_status"
+      }
+    ],
+    "unknown": 0,
+    "incomplete": 0,
+    "seen": 1
+  },
+  "manifest": {
+    "entries": 50,
+    "mismatches": [],
+    "diffSha256": "ccc52bb0944f8dc438aa9b08fcf15239adc213745680b9fede5d41d43a718fc7"
+  }
+}

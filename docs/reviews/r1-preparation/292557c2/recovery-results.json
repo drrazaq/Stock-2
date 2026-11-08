@@ -1,0 +1,27 @@
+{
+  "candidate": "292557c20267a1735e15ffb5cca6d412460d53ef",
+  "recovery": {
+    "status": 0,
+    "output": "sealed guard: OK (--push: no T1 plaintext)\nsave recovery: save-recovery/example merged into main",
+    "offsetBefore": 9,
+    "offsetAfter": 2,
+    "ownerStateAfter": {
+      "STALE": {
+        "entry": 1
+      }
+    },
+    "codeAfter": "// stale unpublished code",
+    "mainChanged": true
+  },
+  "recoveryDeleteRace": {
+    "exitCode": 0,
+    "recoveryRefDeleted": true,
+    "mainVersion": 1,
+    "newerCheckpointIsAncestor": false
+  },
+  "failedRecoveryFetch": {
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": ""
+  }
+}
