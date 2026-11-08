@@ -6,6 +6,12 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0g. Rev10 (8 Nov): observation-time latch for the first market-hours check
+
+- Codex's review 6720355907 of rev9 reproduced, through the actual `liveQ` → `intraday()` → `firstCheckText()` → Telegram caller, the future-at-fetch defect I had reported on the development port (F2). A holding's quote stamped 20 s in the future when fetched became "STOP LEVEL REACHED … 10 s old" once fetching the next quote moved the clock 30 s, while the same run's stop route said STOP CHECK UNKNOWN.
+- Fix (narrow, composition side; no development code transplanted): `intraday()` stamps each quote with `observedAt` when `liveQ` returns it. `quoteEvidence()` first judges the quote at that moment and keeps it UNKNOWN if it was not valid then ("the price timestamp was in the future when fetched"), then judges it again at report time. The 5-minute `STOP_MAX_AGE_MIN` rule and every other threshold are unchanged; `stopFallback` already judged at fetch time.
+- Regression through the actual caller: `test/open-check-repair.test.mjs` "rev10 …" fails on rev9 and passes on rev10.
+
 ## 0f. Rev9 (8 Nov): exact source-unit attestation
 
 - Codex's review 6719707423 of rev8 `af11dbfd` reproduced two gaps in the new build/verify. (1) `--verify-unit` did not compare Git modes: a commit with `scan.mjs` made executable (same bytes, same parent) printed PASS. (2) `--build-unit` ignored the binding's candidate and took modes from whatever commit was supplied.

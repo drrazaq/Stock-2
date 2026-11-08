@@ -129,4 +129,32 @@ test('8 Nov review: when EVERY holding quote is missing the first check is still
   assert.equal(none.first, '', 'no holdings and no prices: nothing to report (unchanged)');
 });
 
+// rev10 (Codex 6720355907, reproduced on rev9 0663f337): ZZS's quote is stamped 20 s in the FUTURE when fetched; fetching the second
+// holding moves the clock 30 s on. Rev9's first check then said "STOP LEVEL REACHED ... 10 s old" while the same run's stop route said
+// STOP CHECK UNKNOWN. With the observation-time latch both stay UNKNOWN and the reason says when it was judged.
+test('rev10: a quote future-dated when fetched stays UNKNOWN after the clock moves on (actual intraday caller; no contradiction with the stop route)', async t => {
+  const T = ON_TIME, sent = []; let clock = T, quotes = 0;
+  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
+    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
+    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: sent.length } })); }
+    if (req.url.includes('/quote')) { quotes++; const sym = new URL(req.url, 'http://x').searchParams.get('symbol');
+      if (sym === 'ZZS') return res.end(JSON.stringify({ c: 70, t: (T + 20000) / 1000 }));
+      clock = T + 30000; return res.end(JSON.stringify({ c: 12, t: (T - 30000) / 1000 })); }
+    res.statusCode = 404; res.end('{}'); }); });
+  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
+  const base = 'http://127.0.0.1:' + server.address().port;
+  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
+    env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
+  const real = Date.now; Date.now = () => clock;
+  try { await S.fn('intraday')(false); } finally { Date.now = real; }
+  assert.equal(quotes, 2, 'both holdings were fetched, ZZS first');
+  const first = sent.find(x => /FIRST MARKET-HOURS CHECK/.test(x)) || '', stop = sent.find(x => /^YOUR STOPS/.test(x)) || '';
+  const zzs = first.split('\n').find(l => l.startsWith('ZZS:')) || '';
+  assert.match(zzs, /^ZZS: STOP STATUS UNKNOWN/, zzs); assert.match(zzs, /the price timestamp was in the future when fetched/);
+  assert.doesNotMatch(first, /STOP LEVEL REACHED|ZZS:.*Last price 70|ZZS:.*% from your/, 'no price claim and no stop reached from a future-at-fetch quote');
+  assert.match(stop, /STOP CHECK UNKNOWN: ZZS: the price timestamp is in the future/, 'the stop route says UNKNOWN in the same run');
+  // the other holding, fetched after the clock moved, is judged normally (30 s old at fetch, fresh)
+  assert.match(first.split('\n').find(l => l.startsWith('ZZF:')) || '', /^ZZF: HOLD: no exit rule is active; above your stop 8\.00\. Last price 12\.00/);
+});
+
 test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
