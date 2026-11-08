@@ -1,16 +1,32 @@
-# R1 combined-unit binding, rev14 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev15 (review only; NOT approved, NOT deployed)
 
-This folder binds the **68-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
+This folder binds the **73-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `df5ee960f5d118e5c5b638e22c3fe3788fe4598a` on `claude/composed-r1-opencheck-calendar-watcher` |
-| Historical R1 base (allowlist = diff from it) | `b0d76987` → **72 paths** (rev14 adds 4; see below) |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `09f58ca51258e02c6950f8d528a3c4093d2963e9` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Historical R1 base (allowlist = diff from it) | `b0d76987` → **73 paths** (rev14 added 4, rev15 adds 1; see below) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `0d2451b94466a63f93712157c6cf3b7f7d1ff445` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `a7c597b7` | `ae727b9c9f6e15dfcf79a5500d672c268163e329` |
+| Unit tree, `M0` = `7742732` | `7a67151af4b1d771e095fe2018a7036567e4ab50` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `00bd7963` | `dd3ab3b929ef33216c62fe4966edb20eb0b88c5f` |
 
-## Rev14: what changed (Codex review 6723732821, blockers B1–B5)
+## Rev15: what changed (Codex 6724441072 / 6724603156, N1; counts 6724516752)
+
+- **N1:** the intraday "Market hours check" alerts each keep their route's existing rule (`ALERT_GATE`):
+  - **holding** (YOUR POSITION target lines): the 5-minute `holdingAction`/`quoteEvidence` rule;
+  - **plan** (BUY NOW cards and the QUICK, LEADER, signal, breakout and paper-trade review lines, previously unchecked): the existing 20-minute BUY NOW gate.
+
+  The price must be valid when fetched (undated or future-dated never qualifies) and again just before sending. A held-back alert is not marked, so it is re-checked next run; a held-back holding alert is reported once as NOT CONFIRMED. No levels, stops or filters changed.
+- **Operative counts:** RELEASE.md G1/G4/G6/B5/R-0 now state 73 paths and 8 of 17 STOP-pinned files changed.
+- **Allowlist:** +1 path, `test/intraday-alert-evidence.test.mjs` (actual caller; 3 of 5 cases fail on rev14).
+- **Checks:**
+  - Precheck against `00bd7963`: PASS (73/0/0).
+  - Build + verify: PASS on `7742732` (tree `7a67151a…`, equal to main + `source.patch`; the inverse restores main) and on `00bd7963` (tree `dd3ab3b9…`). Revert restores each `M0`.
+  - Refused: the mode mutant, the whole branch, the old candidate, and the rev14 binding (72 paths).
+  - On the built unit: render-age, future-fetch, stop-provenance and radar-reader exit 0; races 5/5; the N1 test 5/5.
+  - Full suite **159/159**; gated watcher 9/9 and 11/11.
+
+## Rev14 (history): what changed (Codex review 6723732821, blockers B1–B5)
 
 **The fixes:**
 - **B1:** a failed, FULL or UNKNOWN recovery under bot.yml's `bash -e -o pipefail` is logged, SAVE NOT CONFIRMED is sent, and the loop continues.

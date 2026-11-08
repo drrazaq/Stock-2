@@ -818,17 +818,17 @@ index 93d5bc2aca08ee0f99be5144f09cd2327d4e156c..d2b04bed874820b4adcad78970b5bae7
  async function frame(taxonomy, tag, unit, period) {
 diff --git a/docs/r1-sealed-provider-data/MANIFEST.md b/docs/r1-sealed-provider-data/MANIFEST.md
 deleted file mode 100644
-index 2a8763d2a6e001fb918e961ae08f9333b9fc9c13..0000000000000000000000000000000000000000
+index a770cadc28cf7152a4c1bd221e8ceda6c67191c6..0000000000000000000000000000000000000000
 --- a/docs/r1-sealed-provider-data/MANIFEST.md
 +++ /dev/null
-@@ -1,88 +0,0 @@
--# R1 combined-unit candidate manifest, rev14 (review only; not deployed)
+@@ -1,89 +0,0 @@
+-# R1 combined-unit candidate manifest, rev15 (review only; not deployed)
 -
--- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821).
+-- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821), `df5ee960` (rev14: B1-B5 closed; N1 and operative counts open, 6724620286).
 -- **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
--- **Binding:** the authoritative path list (72 paths in rev14) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
--- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 71 files.
--- `git diff --full-index b0d76987 -- <allowlist>` sha256: `9dfa01ebd9d5a21ff42f7a687e32f13b993b1a11be66f94e47bc87f752e36800`
+-- **Binding:** the authoritative path list (73 paths in rev15) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
+-- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 72 files.
+-- `git diff --full-index b0d76987 -- <allowlist>` sha256: `e0e5e5bfc23b8729e5a869299c018cd18e54f5f95ed22c977b4a36ab51dd1137`
 -
 -| Status | File | sha256 (candidate) |
 -|---|---|---|
@@ -849,8 +849,8 @@ index 2a8763d2a6e001fb918e961ae08f9333b9fc9c13..00000000000000000000000000000000
 -| A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 -| M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 -| M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
--| A | `docs/r1-sealed-provider-data/README.md` | `9769e26b37fd30d24cf39341d99d2fd0bd6485b4bf7de700cc366868d5d36995` |
--| A | `docs/r1-sealed-provider-data/RELEASE.md` | `6e427807b843553962745302e1e93f5189b1180bdc34de291737501c20c2b1ee` |
+-| A | `docs/r1-sealed-provider-data/README.md` | `bfe531dee6071f2ac6f7351a03033d25bf01f56779048a23a4fb24e3a1dd3593` |
+-| A | `docs/r1-sealed-provider-data/RELEASE.md` | `cd213929d9af9581c6a984e3674a4799af5d720df87f7c4aa08f015bc60202a8` |
 -| A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 -| A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 -| A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
@@ -863,7 +863,7 @@ index 2a8763d2a6e001fb918e961ae08f9333b9fc9c13..00000000000000000000000000000000
 -| M | `options-survey.mjs` | `d3cea82f378e8e5afe287f56b80c29fef8cdefded5effb781c9022e0191e53c9` |
 -| A | `r1-release-precheck.mjs` | `fd56115e0cd354314e962b793b7e9122dee16e8e79db10cd760b2876efb3f57c` |
 -| A | `r1-writer-gate.mjs` | `7ff7a8456d8f693820719f81a70c7370dce9c1f4b7085ed19de7100fe43b6354` |
--| M | `scan.mjs` | `730647df0e49ef96b599e7a68e7bebd34690551ed99dc9eba7370f1728104c9c` |
+-| M | `scan.mjs` | `662587564523b3c39dfacddd86f5a08c9c81178f25fa587249d9c90c39b17bec` |
 -| M | `scorecard-1023.mjs` | `a0f0a6a9f1bc9d41886996c76e8d20aa3d988b1ec148a3f7b9ce642bdd10b48a` |
 -| A | `sealed-guard.mjs` | `b2dc4384e680e8f723951441ff5072487fc5b3a41f13aba7c507463e4e1d7fae` |
 -| A | `sealed-merge.mjs` | `4182335911f74cf1ef4adf90da45b9dd071ab344e9e659e1506cf6a2c0fbb3a0` |
@@ -876,6 +876,7 @@ index 2a8763d2a6e001fb918e961ae08f9333b9fc9c13..00000000000000000000000000000000
 -| A | `test/econ-calendar-exact-series.test.mjs` | `aa9e0177cff2753ff459e89d712d1098e77716c91731e784c7a016198a0b9e03` |
 -| M | `test/feed-integrity-watcher.test.mjs` | `7144f713f3158671fe61feae52112b766d341f2685cc5a7c12a6a2baf02f4cfd` |
 -| A | `test/health-text-watcher-qualification.test.mjs` | `28f16479ec6e5ccf5332496d8c5816d691e6db328a5511b67c5ecb40be4e0310` |
+-| A | `test/intraday-alert-evidence.test.mjs` | `6f40820604d323293914cd1be464e73a59b3fd98caa4a2ee58a63d3d97be9d17` |
 -| M | `test/load-scan.mjs` | `37bce00506cc2bb73d5707dc2f737fd3d7d8c1de08cbcfb2b86c32ffa726bdde` |
 -| A | `test/open-check-repair.test.mjs` | `9ace6e8370bf4df0cf07710c78daafd2ebaedfb0ed6b1b2e81cce9ea6195103d` |
 -| M | `test/private-data.test.mjs` | `2c43d3a0fd677fd1cad0404abeecf04b5b555b8fa020512e02ec42c80af0658c` |
@@ -907,15 +908,15 @@ index 2a8763d2a6e001fb918e961ae08f9333b9fc9c13..00000000000000000000000000000000
 -## Full serial suite on this tree
 -
 -- Node 20.20.0; preload refusing every non-loopback connection (0 attempted).
--- **158 of 158 files pass.**
+-- **159 of 159 files pass.**
 -- `premarket-feed` builds its fixture from the real New York date and clock. At one hour on 8 Nov it failed identically on this branch and on the unchanged base `b0d76987`; it passes in this run. R1 does not touch it.
 -- **Gated actual-watcher scenarios** (`INCIDENT_WATCHER_SRC`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.
 diff --git a/docs/r1-sealed-provider-data/README.md b/docs/r1-sealed-provider-data/README.md
 deleted file mode 100644
-index a7a79a0fbb9de4ab772e3401f1a50c6d2b2eee72..0000000000000000000000000000000000000000
+index fa25c41b84fca9ef49cb4e91f2816b94e976877f..0000000000000000000000000000000000000000
 --- a/docs/r1-sealed-provider-data/README.md
 +++ /dev/null
-@@ -1,358 +0,0 @@
+@@ -1,372 +0,0 @@
 -# R1: stop publishing provider market data in the public `Stock-2` repository (complete candidate, review only)
 -
 -**Prepared by Claude on 8 Nov 2026 at the owner's request. Not deployed.**
@@ -923,6 +924,20 @@ index a7a79a0fbb9de4ab772e3401f1a50c6d2b2eee72..00000000000000000000000000000000
 -- **Base:** `origin/main` `b0d76987`. **Branch:** `claude/r1-sealed-provider-data`. The candidate commit and the exact file allowlist are in `MANIFEST.md`.
 -- **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 -- **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
+-
+-## 0l. Rev15 (8 Nov): intraday alerts checked when fetched and when sent (Codex 6724441072 / 6724603156, N1)
+-
+-- **The defect:** the intraday "Market hours check" alerts were queued during the fetch loop and sent after it with no check, so they could claim a current price that had expired, or had been future-dated when fetched. The worst cases were "TARGET 2 REACHED (−10.0%)", QUICK, LEADER and paper-trade lines. The BUY NOW cards' 20-minute gate also accepted undated prices. That 20-minute gate applied to BUY NOW cards only, not to targets.
+-- **Fix:** each alert keeps its route's **existing** rule, named in `ALERT_GATE`. The price must be valid when fetched (undated or future-dated never qualifies) **and** again just before sending.
+-
+-| Route | Alerts | Rule |
+-|---|---|---|
+-| holding | YOUR POSITION target lines | 5 minutes, the rule of `holdingAction`/`quoteEvidence` |
+-| plan | BUY NOW cards; QUICK, LEADER, signal-range, breakout and paper-trade review lines (previously unchecked) | the 20-minute BUY NOW gate |
+-
+-- **Held back:** an alert that fails at sending time is not sent and not marked, so a later run with a current price can still send it. A held-back holding alert is reported once a day as "YOUR POSITION, NOT CONFIRMED …", never as a price. No rule levels, stops or filters changed.
+-- **Regressions:** `test/intraday-alert-evidence.test.mjs` (actual caller) covers fresh, expired-at-send, future-dated and undated prices on both routes, plus re-sending after a hold. 3 of its 5 cases fail on rev14.
+-- **Operative counts synced:** RELEASE.md G1/G4/G6/B5/R-0 now say 73 paths and 8 of 17 STOP-pinned files changed (they still said 68 and 7/10).
 -
 -## 0k. Rev14 (8 Nov): five reproduced blockers from Codex's review 6723732821
 -
@@ -1276,7 +1291,7 @@ index a7a79a0fbb9de4ab772e3401f1a50c6d2b2eee72..00000000000000000000000000000000
 -- Pre-existing, unchanged: `health.mjs` throws without `data/health.json`.
 diff --git a/docs/r1-sealed-provider-data/RELEASE.md b/docs/r1-sealed-provider-data/RELEASE.md
 deleted file mode 100644
-index add6a316e0e6406879a25f2fbd38898ef87fd4b2..0000000000000000000000000000000000000000
+index 3da71153628a06ba7875fa5ffe5146aefd9ba355..0000000000000000000000000000000000000000
 --- a/docs/r1-sealed-provider-data/RELEASE.md
 +++ /dev/null
 @@ -1,94 +0,0 @@
@@ -1291,7 +1306,7 @@ index add6a316e0e6406879a25f2fbd38898ef87fd4b2..00000000000000000000000000000000
 -
 -### Combined unit (rev8): what is released, and how it is built
 -
--- **The unit** is R1 plus the reviewed calendar/watcher composition plus the open-check repair: **68 source paths**, all listed with sha256 and size in the external **binding** file `docs/r1-combined-binding/binding.json` on branch `claude/mentor-release-handoff` (its own sha256 is given in the PR #1 comment, since a file cannot pin itself). R1's older 51-file manifest does **not** cover this unit.
+-- **The unit** is R1 plus the reviewed calendar/watcher composition plus the open-check repair: **73 source paths** (rev15), all listed with sha256 and size in the external **binding** file `docs/r1-combined-binding/binding.json` on branch `claude/mentor-release-handoff` (its own sha256 is given in the PR #1 comment, since a file cannot pin itself). R1's older 51-file manifest does **not** cover this unit.
 -- **The candidate branch must never be pushed or merged.** It was cut from `b0d76987` and still carries older copies of 5 data files (`calendar-status.json`, `calendar.enc`, `health.json`, `shares.json.gz`, `tg-state.json`); a whole-branch push would put back old data and an old Telegram offset.
 -- **C is built source-only** on the fresh main `M0`: `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` refuses unless `<candidate>` is exactly the commit the binding pins, and every bound file there matches the binding's sha256, size **and Git mode**. It then puts exactly the 68 bound files onto `M0` in a temporary index and creates commit `C` (parent `M0`) **without pushing**. `--verify-unit M0 C binding.json` then requires: sole parent `M0`; all 68 files byte-exact with the bound mode; no other path different from `M0`; and `C`'s **whole tree** equal to the tree rebuilt from `M0` plus the pinned candidate's bound entries. If the pinned candidate commit is not available locally, verify fails (fetch it; never skip). (rev9: Codex 6719707423 showed that rev8 ignored modes and the candidate identity.)
 -
@@ -1299,13 +1314,13 @@ index add6a316e0e6406879a25f2fbd38898ef87fd4b2..00000000000000000000000000000000
 -
 -| Gate | Evidence |
 -|---|---|
--| G1 Codex verdict PASS on the **exact** candidate commit, its manifest **and the combined binding** (68 paths, source patch and inverse hashes) | PR #1 comment |
+-| G1 Codex verdict PASS on the **exact** candidate commit, its manifest **and the combined binding** (73 paths in rev15, source patch and inverse hashes) | PR #1 comment |
 -| G2 Owner approval of **this** unit, window and roles | owner message |
 -| G3 Key decision K1 (`PRIVATE_KEY`) or K2 (new dedicated secret, created by the owner) **and** the owner's statement that a copy exists outside GitHub. Claude never sees or asks for the value. | owner message |
 -| G3b (rev6) **Choose** the backup-proof route for stage B5b. The proof itself runs **inside the window**, because the workflow exists only after B4. (a) `backup-compare`: the owner adds a temporary secret `R1_BACKUP_CHECK`, pasted from the off-GitHub copy, in GitHub's secrets page before B5b, and deletes it after; Actions compares derived keys in constant time and prints PASS/FAIL only. (b) `key-check` vector verified on the owner's own computer, only if that route is set up and verified beforehand. Nothing is requested before the unit is approved. | owner message (route) |
--| G4 Refreshed review of the STOP-pinned files the unit changes: `ignition-watch.mjs`, `scan.mjs`, `.github/workflows/ignition.yml`, `.github/workflows/bot.yml`, `test/load-scan.mjs`, `test/watcher-resilience.test.mjs`, `test/watcher-incident-revision.test.mjs` (old pin, current main and unit hashes: `docs/r1-combined-binding/stop-pins-refresh.json`). The other 10 STOP-pinned files are unchanged by the unit. | Codex |
+-| G4 Refreshed review of the STOP-pinned files the unit changes: `ignition-watch.mjs`, `scan.mjs`, `.github/workflows/ignition.yml`, `.github/workflows/bot.yml`, `test/load-scan.mjs`, `test/watcher-resilience.test.mjs`, `test/watcher-incident-revision.test.mjs`, `test/stop-alert-validity.test.mjs` (old pin, current main and unit hashes: `docs/r1-combined-binding/stop-pins-refresh.json`). 8 of the 17 STOP-pinned files change; the other 9 are unchanged by the unit. | Codex |
 -| G5 Owner acceptance of the residual public outputs (README §11 item 3) **or** a separate decision to defer them. R1 does not close them. | owner message |
--| G6 `node r1-release-precheck.mjs b0d76987 <candidate> origin/main` = **PASS**, run at the start of the window (combined candidate on 8 Nov against main `7742732`: PASS, 68 files, 0 drift). This proves the 68 paths did not move on main; it does **not** replace the binding (G1). | operator log |
+-| G6 `node r1-release-precheck.mjs b0d76987 <candidate> origin/main` = **PASS**, run at the start of the window (combined candidate on 8 Nov against main `7742732`: PASS, 68 files, 0 drift; rev15 against `a7c597b7`: PASS, 73 files, 0 drift). This proves the bound paths did not move on main; it does **not** replace the binding (G1). | operator log |
 -| G7 No other release in flight; Codex available for the whole window | both |
 -
 -**Suggested window:** a weekend, outside the market. Production writers on weekends:
@@ -1324,7 +1339,7 @@ index add6a316e0e6406879a25f2fbd38898ef87fd4b2..00000000000000000000000000000000
 -| B2 | Owner | Disable the 10 T1 writer/saver workflows: `ignition`, `bot`, `main`, `movers`, `options-survey`, `Smart-money`, `leaders-study`, `opportunity-radar`, `scorecard-1023`, `fastmover-intraday`. Reply "DONE DISABLE". | — | — |
 -| B3 | Claude | **Capture v2** (`r1-writer-gate.mjs` header). One complete query **per open status** (queued, in_progress, waiting, requested, pending, action_required), whatever the creation date: this catches old re-runs and environment waits. **Plus** `created` queries covering the **last 31 days** for every writer workflow (GitHub allows re-runs and waits up to 30 days), each split under the 1,000-result cap. All pages saved verbatim. Then `node r1-writer-gate.mjs capture.json`. | **PASS**: no writer run in any open-status query; every writer run in the 31-day coverage `completed`; every query complete (pages, unique ids = total, at most 1,000); right repository; capture at most 10 min old | wait for the run to finish, then capture again. **Never cancel** without a separate owner approval. |
 -| B4 | Claude | `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` (creates `C`, parent `M0`, nothing pushed), then `--verify-unit M0 C binding.json` = PASS. Push `C` to main as a **fast-forward only** (`git push origin C:refs/heads/main`, no force). **Never** push or merge the candidate branch. If main moved after `M0`, do not push: start again from B1. | verify PASS; push accepted; CI on `C` green with a complete hosted log | revert `C` (rollback **R-0**) |
--| B5 | Codex | Independently run `--verify-unit M0 C binding.json` (binding sha256 as published) and check `git diff --name-only M0 C` lists only the 68 bound paths and that the 5 data paths above equal `M0`. If `M0` = `7742732`, the expected tree is given in the PR #1 comment. | Codex receipt | R-0 |
+-| B5 | Codex | Independently run `--verify-unit M0 C binding.json` (binding sha256 as published) and check `git diff --name-only M0 C` lists only the bound paths (73 in rev15) and that the 5 data paths above equal `M0`. If `M0` = `7742732`, the expected tree is given in the PR #1 comment. | Codex receipt | R-0 |
 -| B5b | Owner + Claude | **Backup-key proof** by the route chosen at G3b: (a) dispatch `r1-migrate.yml` with `mode=backup-compare`, then the owner deletes `R1_BACKUP_CHECK`; or (b) `mode=key-check`, verified on the owner's computer. Writers are still off and nothing is migrated yet. | **PASS** line from the job log, or from the owner's local check | **FAIL or no proof**: stop. **R-0** (revert `C`): safe, because nothing is sealed yet. Evidence remains UNVERIFIED. Privately diagnose the selected input, vector and source binding before concluding that the existing key or backup differs. A missing receipt is not evidence of a key mismatch. No automatic retry or credential change. After R-0 and restored-state verification, a separately reviewed unit may re-verify K1 with a confirmed backup or, only if the owner separately chooses it, enroll and back up K2. |
 -| B6 | Claude | Dispatch `r1-migrate.yml` once with `confirm=MIGRATE-R1`, `mode=migrate`, `source_sha=C`. | job green; log shows `--apply`, a fast-forward push and `--verify-tree origin/main` with problems 0; complete hosted log saved | **A red, missing, partial or late job does NOT mean nothing was published**: the push happens before the final verification, and a transport error can leave it uncertain. First **establish the remote state**: fetch main; is the head a migration commit (manifest present, parent = `C`)? Then run `--verify-structure` (B7) on it. Writers stay **off** and state is **UNKNOWN** until established. No automatic retry and no code inverse; follow R-1 if published, R-0 if not. |
 -| B7 | Codex | Clone main. `node sealed-migrate.mjs --verify-structure origin/main` (keyless; expected set, sizes and hashes recomputed from `C`, never from the manifest; no plaintext; parent = `C`). **Plus** an independent review of B6's complete keyed hosted log (`--apply` and `--verify-tree`, which decrypt every file). | Codex receipt. The keyless check **supplements** the keyed receipt, never replaces it. | R-1 |
@@ -1336,7 +1351,7 @@ index add6a316e0e6406879a25f2fbd38898ef87fd4b2..00000000000000000000000000000000
 -
 -| Where it fails | Rollback |
 -|---|---|
--| **R-0**: before the migration (after B4 or B5) | `git revert C`. The tree returns **byte-identical** to `M0` on the 68 paths (rehearsed; the published inverse patch is the same change), and data saved after `M0` is kept. Plaintext was never removed, so nothing new is published. Re-enable the writers on the old code. |
+-| **R-0**: before the migration (after B4 or B5) | `git revert C`. The tree returns **byte-identical** to `M0` on the bound paths (rehearsed; the published inverse patch is the same change), and data saved after `M0` is kept. Plaintext was never removed, so nothing new is published. Re-enable the writers on the old code. |
 -| **R-1**: the migration is published but the receipt fails or is incomplete | **Do not revert the code** (pre-R1 code cannot read sealed files and would start new **plaintext** files). Keep writers off. Rollback status is **UNVERIFIED**, with **no re-enable**, until the complete required receipts and every restoration gate pass. Diagnose using the receipt problems; fix forward with a reviewed patch. The data is safe in the sealed files and in history. |
 -| **R-2**: after re-enable, a defect | Disable the affected writer only. Readers show UNKNOWN; the sealed data stays intact. Fix forward. |
 -| Returning to plaintext in this public repository | Not a rollback: it re-publishes. A separate explicit owner decision. |
@@ -2176,7 +2191,7 @@ index 2070baaf96e0d39fdb7e2c216963cab61af04471..00000000000000000000000000000000
 -  } catch (e) { console.error('R1 writer gate: FAIL (' + e.message + ')'); process.exit(1); }
 -}
 diff --git a/scan.mjs b/scan.mjs
-index 2ca94db475e51635e43da974fa1c5d15819040fd..14a28526aed258e8063a14785a60c42b2a5ab6ca 100644
+index e818181fd2d5cfb4ec4070a62c0f43589f35c729..14a28526aed258e8063a14785a60c42b2a5ab6ca 100644
 --- a/scan.mjs
 +++ b/scan.mjs
 @@ -9,8 +9,7 @@ import crypto from 'node:crypto';
@@ -2382,7 +2397,7 @@ index 2ca94db475e51635e43da974fa1c5d15819040fd..14a28526aed258e8063a14785a60c42b
    }
    else {
    // ---- The last message of the night: one short plan. Everything above it is background.
-@@ -4269,73 +4228,6 @@ async function daily() {
+@@ -4269,80 +4228,6 @@ async function daily() {
    console.log('daily scan done:', stocks.length, 'stocks,', buys.length, 'buy watch,', fresh.length, 'journal entries');
  }
  
@@ -2410,6 +2425,13 @@ index 2ca94db475e51635e43da974fa1c5d15819040fd..14a28526aed258e8063a14785a60c42b
 -  return priceEvidence(sym, quoteFields(sym, q), nowMs, maxAgeMin);
 -};
 -const stopObservation = (sym, q, nowMs) => fetchJudgement(sym, q, nowMs) || priceEvidence(sym, quoteFields(sym, q), nowMs);
+-// (rev15, Codex 6724441072/6724603156 N1) ALERT EVIDENCE for the intraday alerts, each route keeping its EXISTING rule:
+-//  - 'holding' (YOUR POSITION target lines): the holding rule of holdingAction()/quoteEvidence(), priceEvidence's default STOP_MAX_AGE_MIN;
+-//  - 'plan' (BUY NOW cards, and the planned-entry review lines QUICK / LEADER / signal range / breakout trigger / paper trades, which had
+-//    no age check before): the existing 20-minute BUY NOW gate.
+-// The quote must be valid when it was fetched (observedAt; undated or future-dated never qualifies) and again at the moment asked.
+-const ALERT_GATE = { holding: undefined, plan: 20 };
+-const alertEvidence = (sym, q, route, atMs) => { const f = fetchJudgement(sym, q, atMs, ALERT_GATE[route]); if (f && f.state !== 'OK') return f; return priceEvidence(sym, quoteFields(sym, q), atMs, ALERT_GATE[route]); };
 -const ageWords = (sec) => sec < 90 ? Math.round(sec) + ' s' : Math.round(sec / 60) + ' min';
 -const evidenceText = (ev) => ev.state === 'OK' ? 'last price ' + money(ev.price) + ' (' + ev.src + ', ' + nyStamp(ev.t) + ', ' + (ev.ageSec < 90 ? Math.round(ev.ageSec) + ' s' : Math.round(ev.ageSec / 60) + ' min') + ' old)' : 'current price UNKNOWN (' + ev.why + ')';
 -function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
@@ -2456,16 +2478,19 @@ index 2ca94db475e51635e43da974fa1c5d15819040fd..14a28526aed258e8063a14785a60c42b
  async function intraday(onlyMine) {
    const now = Date.now();
    const sig = readJson('data/signals.json', null);
-@@ -4354,7 +4246,7 @@ async function intraday(onlyMine) {
+@@ -4359,9 +4244,9 @@ async function intraday(onlyMine) {
+   const st = readJson('data/alert-state.json', { day: '', sent: {} }), day = ny(now).d; if (st.day !== day) { st.day = day; st.sent = {}; }
+   const OKI = new Set(planCands(sig, loadPos()).filter(x => x.ok).map(x => x.sym)), buys = sig.stocks.filter(s => s.state === 'Buy watch' && OKI.has(s.sym)), trig = sig.stocks.filter(s => s.state !== 'Buy watch' && s.proven && s.trigger && s.trigger / s.last < 1.03);
    const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
-   const buyNowCards = [];
+-  const buyNowCards = [], queued = [];
++  const buyNowCards = [];
    const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
 -  const seen = {}, stopAlerts = [], quotesSeen = {};
 +  const seen = {}, stopAlerts = [];
    // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
    // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
    // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
-@@ -4364,19 +4256,9 @@ async function intraday(onlyMine) {
+@@ -4371,33 +4256,20 @@ async function intraday(onlyMine) {
      if (ev.state !== 'OK') { if (st.sent[sym + 'myunk'] || st.sent[sym + 'myst'] || watcherDelivered(sym, 'unknown') || watcherDelivered(sym, 'hit')) return; st.sent[sym + 'myunk'] = 1; stopAlerts.push(stopText('unknown', sym, P, ev)); return; }
      if (!(ev.price <= P.stop) || st.sent[sym + 'myst']) return;
      if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
@@ -2482,12 +2507,31 @@ index 2ca94db475e51635e43da974fa1c5d15819040fd..14a28526aed258e8063a14785a60c42b
 -  };
 +    st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
    for (const sym of watch) {
--    const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = { ...j, observedAt: Date.now() }; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
+-    const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = { ...j, observedAt: Date.now() }; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p;
+-    // (rev15, Codex 6724441072/6724603156 N1) every price claim below is admitted only on evidence valid WHEN FETCHED under its route's
+-    // existing rule (ALERT_GATE: undated or future-dated never qualifies), and is checked again just before sending (sendable() below).
+-    const fresh = alertEvidence(sym, quotesSeen[sym], 'plan', quotesSeen[sym].observedAt).state === 'OK';   // BUY NOW: the existing 20-minute gate
+-    const say = (k, text, route = 'plan') => { if (!st.sent[sym + k] && !queued.some(x => x.sym === sym && x.k === k) && alertEvidence(sym, quotesSeen[sym], route, quotesSeen[sym].observedAt).state === 'OK') queued.push({ sym, k, text, route }); };
 +    const j = (await liveQ((sym))) || {}, p = +j.price; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
-     const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
++    const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
      const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
      if (mp) {   // you told the bot you bought this one
-@@ -4410,15 +4292,15 @@ async function intraday(onlyMine) {
+       const chg = ' You bought at ' + money(mp.entry) + ' (' + (p >= mp.entry ? '+' : '') + ((p / mp.entry - 1) * 100).toFixed(1) + '%).';
+       if (mp.stop && p <= mp.stop) { /* (4 Nov) stop crossings: stopFallback() above, one evidence rule and wording with the live watcher */ }
+-      else if (mp.t2 && p >= mp.t2) say('myt2', 'YOUR POSITION: TARGET 2 REACHED (' + money(mp.t2) + ').' + chg, 'holding');
+-      else if (mp.t1 && p >= mp.t1 && !mp.trail) say('myt1', 'YOUR POSITION: ' + t1Text(sym, mp) + chg, 'holding');
++      else if (mp.t2 && p >= mp.t2) say('myt2', 'YOUR POSITION: TARGET 2 REACHED (' + money(mp.t2) + ').' + chg);
++      else if (mp.t1 && p >= mp.t1 && !mp.trail) say('myt1', 'YOUR POSITION: ' + t1Text(sym, mp) + chg);
+     }
+     const pb = mp ? null : planBuys.find(x => x.sym === sym);
+-    if (pb && fresh && p >= pb.lo && p <= pb.hi && !st.sent[sym + 'buynow']) buyNowCards.push({ sym, p, text: planText(sig, myPos, { [sym]: p }, sym + ' is inside its buy range now', [sym]) });
+-    const qs = mp || (pb && (st.sent[sym + 'buynow'] || buyNowCards.some(c => c.sym === sym))) ? null : qs0;
++    if (pb && fresh && p >= pb.lo && p <= pb.hi && !st.sent[sym + 'buynow']) { st.sent[sym + 'buynow'] = 1; buyNowCards.push({ sym, p, text: planText(sig, myPos, { [sym]: p }, sym + ' is inside its buy range now', [sym]) }); }
++    const qs = mp || (pb && st.sent[sym + 'buynow']) ? null : qs0;
+     if (qs) {   // a quick trade setup from last night's close
+       if (p > qs.buyHi) say('qhi', 'QUICK TRADE: above its entry range (' + money(qs.buyLo) + ' to ' + money(qs.buyHi) + '). The dip is gone. Skip it.');
+       else if (p <= qs.stop) say('qlo', 'QUICK TRADE: already at its invalidation level ' + money(qs.stop) + '. The setup has failed.');
+@@ -4420,33 +4292,23 @@ async function intraday(onlyMine) {
        if (o.target && p >= o.target) say('tg' + o.since, 'paper trade from ' + o.since + ' reached its target ' + money(o.target) + '.');
      }
    }
@@ -2508,9 +2552,19 @@ index 2ca94db475e51635e43da974fa1c5d15819040fd..14a28526aed258e8063a14785a60c42b
 +    const buyL = planBuys.filter(x => seen[x.sym] && !myPos[x.sym]).map(x => { const p = seen[x.sym]; return x.sym + ' ' + money(p) + ' | buy range ' + money(x.lo) + ' to ' + money(x.hi) + ': ' + (p > x.hi ? 'ABOVE the range, do not chase' : p < x.lo ? 'below the range, wait' : 'INSIDE the range'); });
 +    openMsg = ['MARKET OPEN CHECK (' + kt + ' Kuwait). The system is running.', '', 'YOUR POSITIONS', ...(posL.length ? posL : ['none recorded']), '', 'PROVEN BUYS TODAY', ...(buyL.length ? buyL : ['none. Nothing passed the test last night. I will message you the moment one does.']), '', 'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.'].join('\n');
    }
+-  // (rev15 N1) SEND-TIME CHECK: each queued alert and BUY NOW card is sent only if its price still passes its route's rule NOW, after every
+-  // fetch of this run. Only sent alerts are marked in the once-a-day memory; one held back is re-checked on the next run, and a held-back
+-  // holding alert is reported once a day as not confirmed (never as a current price).
+-  { const nowSend = Date.now(), held = [];
+-    for (const a of queued) { const e = alertEvidence(a.sym, quotesSeen[a.sym], a.route, nowSend);
+-      if (e.state === 'OK') { st.sent[a.sym + a.k] = 1; alerts.push(a.sym + ' at ' + money(e.price) + ': ' + a.text); }
+-      else if (a.route === 'holding' && !st.sent[a.sym + a.k + 'held']) { st.sent[a.sym + a.k + 'held'] = 1; held.push(a.sym + ' (' + e.why + ')'); } }
+-    for (let i = buyNowCards.length - 1; i >= 0; i--) { const c = buyNowCards[i], e = alertEvidence(c.sym, quotesSeen[c.sym], 'plan', nowSend);
+-      if (e.state === 'OK') st.sent[c.sym + 'buynow'] = 1; else buyNowCards.splice(i, 1); }
+-    if (held.length) alerts.unshift('YOUR POSITION, NOT CONFIRMED: a target check on ' + held.join('; ') + ' used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.'); }
    fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
    if (openMsg) await telegram(openMsg + '\n' + FOOT);
-@@ -4426,7 +4308,7 @@ async function intraday(onlyMine) {
+   alerts.sort((a, b) => (b.includes('YOUR POSITION') ? 1 : 0) - (a.includes('YOUR POSITION') ? 1 : 0));
    for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
      await telegram('BUY NOW: a proven setup is inside its buy range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
        [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
@@ -3605,6 +3659,82 @@ index bf1837f42e647dc2321c7e718e77bc9c00cdce82..00000000000000000000000000000000
 -});
 -
 -test('all requests stayed synthetic and offline', () => assert.deepEqual(blocked, []));
+diff --git a/test/intraday-alert-evidence.test.mjs b/test/intraday-alert-evidence.test.mjs
+deleted file mode 100644
+index d7e6d8266426deebe6c967ab60d7d852800e236d..0000000000000000000000000000000000000000
+--- a/test/intraday-alert-evidence.test.mjs
++++ /dev/null
+@@ -1,70 +0,0 @@
+-// R1 rev15 (Codex 6724441072 / 6724603156, N1): the intraday alerts ("Market hours check") make a price claim only on evidence that was
+-// valid WHEN FETCHED and is still valid WHEN SENT, each route under its EXISTING rule:
+-//   holding (YOUR POSITION target lines): the holding rule of holdingAction()/quoteEvidence() (5 minutes);
+-//   plan (BUY NOW cards and the planned-entry review lines: QUICK, LEADER, signal range, breakout trigger, paper trades): the 20-minute
+-//   BUY NOW gate. Undated or future-dated prices never qualify. A held-back holding alert is reported once as NOT CONFIRMED.
+-// Synthetic only: the ACTUAL intraday() caller, invented tickers and prices, loopback services, no owner records or real messages.
+-import test from 'node:test';
+-import assert from 'node:assert/strict';
+-import http from 'node:http';
+-import fs from 'node:fs';
+-import { loadScan, blocked } from './load-scan.mjs';
+-
+-const T = Date.parse('2026-11-05T14:40:00Z');   // Thu 9:40 am New York
+-const SESSION_SRC = fs.readFileSync(new URL('../market-session.mjs', import.meta.url), 'utf8');
+-// quotes: SYM -> { c, ageSec } | { c, t } ; advance: SYM -> ms added to the clock once that symbol is fetched (a slow fetch loop)
+-async function run(t, { pos = {}, sig = {}, quotes, advance = {}, state }) {
+-  const sent = []; let clock = T;
+-  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
+-    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
+-    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: sent.length } })); }
+-    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol'), q = quotes[sym];
+-      const body = !q ? { c: 0, t: 0 } : { c: q.c, t: 't' in q ? q.t : (clock - q.ageSec * 1000) / 1000 };
+-      if (advance[sym]) clock += advance[sym];
+-      return res.end(JSON.stringify(body)); }
+-    res.statusCode = 404; res.end('{}'); }); });
+-  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
+-  const base = 'http://127.0.0.1:' + server.address().port;
+-  const files = { 'data/my-positions.json': pos, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [], ...sig }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC };
+-  if (state) files['data/alert-state.json'] = state;
+-  files['data/settings.json'] = { quiet: false };   // paper-trade lines are only sent outside quiet mode
+-  const S = await loadScan({ files, env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
+-  const real = Date.now; Date.now = () => clock;
+-  try { await S.fn('intraday')(false); } finally { Date.now = real; }
+-  const alerts = sent.find(x => /^Market hours check/.test(x)) || '';
+-  return { sent, alerts, state: JSON.parse(S.read('data/alert-state.json') || '{}') };
+-}
+-const HOLD = { ZZT: { entry: 100, t2: 110, stop: 50 } };
+-
+-test('holding target: a fresh price is sent as TARGET 2 REACHED (timely, eligible)', async t => {
+-  const r = await run(t, { pos: HOLD, quotes: { ZZT: { c: 115, ageSec: 10 } } });
+-  assert.match(r.alerts, /ZZT at 115\.00: YOUR POSITION: TARGET 2 REACHED \(110\.00\)\. You bought at 100\.00 \(\+15\.0%\)\./, r.alerts);
+-});
+-test('holding target: valid when fetched (290 s) but past the 5-minute rule when sent (+30 s): no target claim, NOT CONFIRMED once, re-checked next run', async t => {
+-  const r = await run(t, { pos: { ...HOLD, ZZF: { entry: 10, stop: 5 } }, quotes: { ZZT: { c: 115, ageSec: 290 }, ZZF: { c: 12, ageSec: 5 } }, advance: { ZZF: 30000 } });
+-  assert.doesNotMatch(r.alerts, /TARGET 2 REACHED|ZZT at 115/, r.alerts);
+-  assert.match(r.alerts, /YOUR POSITION, NOT CONFIRMED: a target check on ZZT \(the latest price is 5 min old \(limit 5 min\)\) used a price that was no longer current/);
+-  assert.equal(r.state.sent.ZZTmyt2, undefined, 'not marked as sent: a later run with a current price can still send it');
+-  const again = await run(t, { pos: HOLD, quotes: { ZZT: { c: 115, ageSec: 10 } }, state: r.state });
+-  assert.match(again.alerts, /ZZT at 115\.00: YOUR POSITION: TARGET 2 REACHED/);
+-  assert.doesNotMatch(again.alerts, /NOT CONFIRMED/, 'the held-back note is not repeated the same day');
+-});
+-test('holding target: future-dated or undated at fetch never makes a target claim', async t => {
+-  for (const q of [{ c: 115, t: (T + 20000) / 1000 }, { c: 115, t: 0 }]) {
+-    const r = await run(t, { pos: HOLD, quotes: { ZZT: q } });
+-    assert.doesNotMatch(r.alerts, /TARGET 2 REACHED/, JSON.stringify(q) + ' ' + r.alerts);
+-  }
+-});
+-test('plan route (paper trade lines, previously unchecked): 20-minute rule at fetch AND at send; undated/future never; fresh is sent', async t => {
+-  const sig = { openTrades: [{ sym: 'ZZP', since: '2026-11-01', stop: 5, target: 20 }, { sym: 'ZZQ', since: '2026-11-01', stop: 1, target: 99 }] };
+-  const ok = await run(t, { sig, quotes: { ZZP: { c: 21, ageSec: 60 }, ZZQ: { c: 2, ageSec: 1 } } });
+-  assert.match(ok.alerts, /ZZP at 21\.00: paper trade from 2026-11-01 reached its target 20\.00\./);
+-  const late = await run(t, { sig, quotes: { ZZP: { c: 21, ageSec: 1190 }, ZZQ: { c: 2, ageSec: 1 } }, advance: { ZZQ: 30000 } });
+-  assert.doesNotMatch(late.alerts, /ZZP at 21/, 'valid at fetch (1190 s) but 1220 s when sent: not sent');
+-  assert.equal(late.state.sent['ZZPtg2026-11-01'], undefined, 'and not marked');
+-  for (const q of [{ c: 21, t: (T + 20000) / 1000 }, { c: 21, t: 0 }]) {
+-    const r = await run(t, { sig, quotes: { ZZP: q, ZZQ: { c: 2, ageSec: 1 } } });
+-    assert.doesNotMatch(r.alerts, /ZZP at 21/, JSON.stringify(q));
+-  }
+-});
+-test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
 diff --git a/test/load-scan.mjs b/test/load-scan.mjs
 index e98e046ebf6125573387169fe9c55620aace7cdf..b13b1bc80eba8a874a237e4ee9a36d87fae56a26 100644
 --- a/test/load-scan.mjs
