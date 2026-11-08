@@ -723,17 +723,17 @@ index d2b04bed874820b4adcad78970b5bae7c0b738ca..93d5bc2aca08ee0f99be5144f09cd232
  async function frame(taxonomy, tag, unit, period) {
 diff --git a/docs/r1-sealed-provider-data/MANIFEST.md b/docs/r1-sealed-provider-data/MANIFEST.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..ba662b93d6b95fad885ef764d04a476b47831980
+index 0000000000000000000000000000000000000000..74424d273f6ed107969fe7a4a3e3a77dab64a4e6
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/MANIFEST.md
 @@ -0,0 +1,84 @@
-+# R1 combined-unit candidate manifest, rev8 (review only; not deployed)
++# R1 combined-unit candidate manifest, rev9 (review only; not deployed)
 +
-+- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168).
++- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423).
 +- **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
 +- **Binding:** the authoritative 68-path list with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
 +- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 67 files.
-+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `96fff69e31b0f94aa6b5cdd0fa3478693d8c5df2e4badd31745a542d75771aae`
++- `git diff --full-index b0d76987 -- <allowlist>` sha256: `d904b7932198ea8953258f1735a9255c38f509a1b24c9a2772e563a46acde1df`
 +
 +| Status | File | sha256 (candidate) |
 +|---|---|---|
@@ -754,8 +754,8 @@ index 0000000000000000000000000000000000000000..ba662b93d6b95fad885ef764d04a476b
 +| A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 +| M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 +| M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-+| A | `docs/r1-sealed-provider-data/README.md` | `c508f2b8b3609812badd584b5c840cc9411f3c9f96f10e23e74acec4013d2218` |
-+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `bf8bb603f7864a3d6af1a8399f99f3d17dbe85aa57a54921855dce96426b54ff` |
++| A | `docs/r1-sealed-provider-data/README.md` | `948e3bc65703aefbd43c1471d1dc0311bc7d98086a8cc79e0aea7f842c8b9021` |
++| A | `docs/r1-sealed-provider-data/RELEASE.md` | `607d4001dae04af237c134b7a61e910b352da3c1741e90929758571f857ab7d6` |
 +| A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 +| A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 +| A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
@@ -765,7 +765,7 @@ index 0000000000000000000000000000000000000000..ba662b93d6b95fad885ef764d04a476b
 +| M | `missed-runners.mjs` | `067d900ec3c1b66ddfd7e754f58fcbef91641a79655eb13bde42d0a5ce3cfd92` |
 +| M | `movers.mjs` | `93472c5e0b3d151fd6d49c08c7404d2173f569f05b6ddfceb360e67e0bf545a3` |
 +| M | `options-survey.mjs` | `d3cea82f378e8e5afe287f56b80c29fef8cdefded5effb781c9022e0191e53c9` |
-+| A | `r1-release-precheck.mjs` | `1614aeda10729a52feda1b576a22f2b805f8408cecf584480a31ebf1f3c32806` |
++| A | `r1-release-precheck.mjs` | `fd56115e0cd354314e962b793b7e9122dee16e8e79db10cd760b2876efb3f57c` |
 +| A | `r1-writer-gate.mjs` | `7ff7a8456d8f693820719f81a70c7370dce9c1f4b7085ed19de7100fe43b6354` |
 +| M | `scan.mjs` | `085fa42c71dc165a2d852e9d70542508c6232824e9ac8aa9e592d31fbdb24fe3` |
 +| M | `scorecard-1023.mjs` | `a0f0a6a9f1bc9d41886996c76e8d20aa3d988b1ec148a3f7b9ce642bdd10b48a` |
@@ -788,7 +788,7 @@ index 0000000000000000000000000000000000000000..ba662b93d6b95fad885ef764d04a476b
 +| A | `test/sealed-migrate.test.mjs` | `ba4dff2cf6bfb25900758ef7d3ea0faab63aed04226a33b012eabc9e64cf9fb9` |
 +| A | `test/sealed-readers.test.mjs` | `83ddbf15fdf1875adf5fa4612518cede65fced6ca368445c33acc8779139fcfc` |
 +| A | `test/sealed-recovery.test.mjs` | `5b8599f3d18fc7deb3d7a76a0e5c5a7c27c813a19c737b53163b2c038094321b` |
-+| A | `test/sealed-release-rehearsal.test.mjs` | `ce140e01a9fa7881c346143d94aa0d5a519c716db9c732eae669eea169a1f21a` |
++| A | `test/sealed-release-rehearsal.test.mjs` | `205cc92cf35171056376974b30b498dfc814a8cefc9060c3129e99543ce5edb4` |
 +| A | `test/sealed-store.test.mjs` | `eef5c043965b0417c3c03ea90df5379672989328c2393aac21c579c07faa84e9` |
 +| A | `test/sealed-wiring.test.mjs` | `c36e1d80e249c3203fd3d9ade02346d637aecd62cd8d51365a953fda4eb4ccb9` |
 +| M | `test/sec-request-runtime.test.mjs` | `0de8866ec04bda4688a09612ac73c42d9c335a9eaada16f07a73068ce73f86fb` |
@@ -813,10 +813,10 @@ index 0000000000000000000000000000000000000000..ba662b93d6b95fad885ef764d04a476b
 +- **Gated actual-watcher scenarios** (`INCIDENT_WATCHER_SRC`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.
 diff --git a/docs/r1-sealed-provider-data/README.md b/docs/r1-sealed-provider-data/README.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..46d671ff9468d4ba294b1b266a1f8ab216ef2dbf
+index 0000000000000000000000000000000000000000..9255b6b12a70b328a01ebf69d9f8abe882d13074
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/README.md
-@@ -0,0 +1,296 @@
+@@ -0,0 +1,303 @@
 +# R1: stop publishing provider market data in the public `Stock-2` repository (complete candidate, review only)
 +
 +**Prepared by Claude on 8 Nov 2026 at the owner's request. Not deployed.**
@@ -824,6 +824,13 @@ index 0000000000000000000000000000000000000000..46d671ff9468d4ba294b1b266a1f8ab2
 +- **Base:** `origin/main` `b0d76987`. **Branch:** `claude/r1-sealed-provider-data`. The candidate commit and the exact file allowlist are in `MANIFEST.md`.
 +- **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 +- **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
++
++## 0f. Rev9 (8 Nov): exact source-unit attestation
++
++- Codex's review 6719707423 of rev8 `af11dbfd` reproduced two gaps in the new build/verify. (1) `--verify-unit` did not compare Git modes: a commit with `scan.mjs` made executable (same bytes, same parent) printed PASS. (2) `--build-unit` ignored the binding's candidate and took modes from whatever commit was supplied.
++- Fixed: the binding must pin `candidate` (40 hex) and a `mode` (`100644`/`100755`) for every file. Build refuses any other candidate commit and any byte or mode mismatch. Verify checks modes and also compares `C`'s complete tree with `M0` + the pinned candidate's bound entries, failing closed if that commit is missing. This is a stricter form of Codex's proposed patch, which skipped both checks when the binding had no `candidate`.
++- New negative controls in `test/sealed-release-rehearsal.test.mjs`: mode mutant, unpinned candidate, binding without candidate or mode, bound mode differing from the candidate, and pinned candidate unavailable. They fail on rev8's tool and pass on rev9.
++- Runtime code is unchanged.
 +
 +## 0e. Rev8 (8 Nov): combined-unit binding
 +
@@ -1115,7 +1122,7 @@ index 0000000000000000000000000000000000000000..46d671ff9468d4ba294b1b266a1f8ab2
 +- Pre-existing, unchanged: `health.mjs` throws without `data/health.json`.
 diff --git a/docs/r1-sealed-provider-data/RELEASE.md b/docs/r1-sealed-provider-data/RELEASE.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..303f3aeae9d5258d6e2bfaf2c8f78851b33de67f
+index 0000000000000000000000000000000000000000..db15ff8f863a36c8e676b0b424679b6f6b9760da
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/RELEASE.md
 @@ -0,0 +1,92 @@
@@ -1132,7 +1139,7 @@ index 0000000000000000000000000000000000000000..303f3aeae9d5258d6e2bfaf2c8f78851
 +
 +- **The unit** is R1 plus the reviewed calendar/watcher composition plus the open-check repair: **68 source paths**, all listed with sha256 and size in the external **binding** file `docs/r1-combined-binding/binding.json` on branch `claude/mentor-release-handoff` (its own sha256 is given in the PR #1 comment, since a file cannot pin itself). R1's older 51-file manifest does **not** cover this unit.
 +- **The candidate branch must never be pushed or merged.** It was cut from `b0d76987` and still carries older copies of 5 data files (`calendar-status.json`, `calendar.enc`, `health.json`, `shares.json.gz`, `tg-state.json`); a whole-branch push would put back old data and an old Telegram offset.
-+- **C is built source-only** on the fresh main `M0`: `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` takes exactly the 68 bound files from the candidate (refusing any that differ from the binding) onto `M0` in a temporary index, and creates commit `C` (parent `M0`) **without pushing**. `--verify-unit M0 C binding.json` then requires: sole parent `M0`, all 68 files byte-exact, and no other path different from `M0`.
++- **C is built source-only** on the fresh main `M0`: `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` refuses unless `<candidate>` is exactly the commit the binding pins, and every bound file there matches the binding's sha256, size **and Git mode**. It then puts exactly the 68 bound files onto `M0` in a temporary index and creates commit `C` (parent `M0`) **without pushing**. `--verify-unit M0 C binding.json` then requires: sole parent `M0`; all 68 files byte-exact with the bound mode; no other path different from `M0`; and `C`'s **whole tree** equal to the tree rebuilt from `M0` plus the pinned candidate's bound entries. If the pinned candidate commit is not available locally, verify fails (fetch it; never skip). (rev9: Codex 6719707423 showed that rev8 ignored modes and the candidate identity.)
 +
 +## A. Entry gates (all required before the window opens)
 +
@@ -1763,10 +1770,10 @@ index a6b355b1318b451571c8ff651ed7239f59253b49..fa2a6787480cc2f4b2eb4db23c5f7b2c
 +console.log('options survey: ' + rows.length + ' stocks surveyed, ' + Object.values(errs).reduce((a, b) => a + b, 0) + ' request errors; results sealed (quotes and summaries are not printed: Actions logs are public; R1)');
 diff --git a/r1-release-precheck.mjs b/r1-release-precheck.mjs
 new file mode 100644
-index 0000000000000000000000000000000000000000..d649f2d8e8928067a578b1845f710449ae168db3
+index 0000000000000000000000000000000000000000..9d76157b688dbca34f82e6a3b7775f6a3c9d3e8f
 --- /dev/null
 +++ b/r1-release-precheck.mjs
-@@ -0,0 +1,93 @@
+@@ -0,0 +1,120 @@
 +#!/usr/bin/env node
 +// R1 release precheck (review only; offline, read-only). The candidate was built and reviewed on BASE; production main has moved on
 +// since (data commits). Before the code push, every file the candidate changes must be byte-identical on TARGET (current main) to
@@ -1778,9 +1785,12 @@ index 0000000000000000000000000000000000000000..d649f2d8e8928067a578b1845f710449
 +// or merged: that would replace newer data and the Telegram offset. The release commit C is built source-only instead:
 +//   node r1-release-precheck.mjs --build-unit <M0> <candidate> <binding.json>
 +//     Creates (does not push) commit C with parent M0 and tree = M0 + exactly the binding's files taken from the candidate. Refuses
-+//     when a candidate file does not match the binding's sha256/bytes, or the binding lists a path the candidate lacks. Prints C.
++//     unless <candidate> is exactly the binding's pinned candidate commit and every bound file there matches the binding's sha256,
++//     bytes and Git mode. Prints C.
 +//   node r1-release-precheck.mjs --verify-unit <M0> <C> <binding.json>
-+//     PASS only if C's sole parent is M0, every binding file in C matches its sha256/bytes, and no other path differs from M0.
++//     PASS only if C's sole parent is M0, every bound file in C matches its sha256/bytes/mode, no other path differs from M0, AND
++//     C's whole tree equals the tree rebuilt from M0 + the pinned candidate's bound entries (so modes and every byte are exact).
++//     (rev9: Codex 6719707423 showed rev8 ignored modes and the candidate identity; both are now mandatory in the binding.)
 +// Both are local Git object operations only (temporary index; the working tree, HEAD and refs are untouched).
 +import { execFileSync } from 'node:child_process';
 +import crypto from 'node:crypto';
@@ -1804,50 +1814,74 @@ index 0000000000000000000000000000000000000000..d649f2d8e8928067a578b1845f710449
 +  const files = b && b.files && typeof b.files === 'object' ? b.files : null;
 +  if (!files || !Object.keys(files).length) throw new Error('binding has no files');
 +  for (const [f, v] of Object.entries(files)) {
-+    if (!/^[0-9a-f]{64}$/.test(v && v.sha256 || '') || !Number.isInteger(v.bytes) || f.startsWith('/') || f.split('/').includes('..')) throw new Error('bad binding entry ' + f);
++    if (!/^[0-9a-f]{64}$/.test(v && v.sha256 || '') || !Number.isInteger(v.bytes) || !MODES.has(v.mode) || f.startsWith('/') || f.split('/').includes('..')) throw new Error('bad binding entry ' + f);
 +  }
-+  return files;
++  if (!/^[0-9a-f]{40}$/.test(b.candidate || '')) throw new Error('binding does not pin the exact candidate commit (40 hex)');
++  return { files, candidate: b.candidate };
 +}
++const MODES = new Set(['100644', '100755']);
 +const mode = (ref, f) => { const l = git(['ls-tree', ref, '--', f]).trim(); return l ? l.split(/\s/)[0] : null; };
-+export function buildUnit(m0, cand, bindingFile) {
-+  const files = readBinding(bindingFile), M0 = commitOf(m0), C0 = commitOf(cand), bad = [];
++const tryCommit = (r) => { try { return commitOf(r); } catch { return null; } };
++// Check the pinned candidate's bound entries (bytes and mode) against the binding.
++function candidateProblems(files, C0) {
++  const bad = [];
 +  for (const [f, v] of Object.entries(files)) {
 +    if (!blob(C0, f)) { bad.push('missing in candidate: ' + f); continue; }
 +    const b = bytesOf(C0, f); if (sha(b) !== v.sha256 || b.length !== v.bytes) bad.push('candidate differs from binding: ' + f);
++    if (mode(C0, f) !== v.mode) bad.push('candidate mode differs from binding: ' + f);
 +  }
-+  if (bad.length) return { ok: false, bad };
++  return bad;
++}
++// M0 + the candidate's bound entries, in a temporary index (no ref, HEAD, index or working-tree change).
++function expectedTree(M0, C0, files) {
 +  const idx = path.join(fs.mkdtempSync(path.join(os.tmpdir(), 'r1unit-')), 'index'), env = { ...process.env, GIT_INDEX_FILE: idx };
 +  try {
 +    git(['read-tree', M0], { env });
-+    const info = Object.keys(files).map((f) => mode(C0, f) + ' ' + blob(C0, f) + '\t' + f).join('\n') + '\n';
++    const info = Object.keys(files).map((f) => files[f].mode + ' ' + blob(C0, f) + '\t' + f).join('\n') + '\n';
 +    git(['update-index', '--index-info'], { env, input: info });
-+    const tree = git(['write-tree'], { env }).trim();
-+    const c = git(['commit-tree', tree, '-p', M0, '-m', 'R1 combined unit: source-only, parent M0 (built by r1-release-precheck --build-unit)']).trim();
-+    return { ok: true, commit: c, tree };
++    return git(['write-tree'], { env }).trim();
 +  } finally { fs.rmSync(path.dirname(idx), { recursive: true, force: true }); }
 +}
++export function buildUnit(m0, cand, bindingFile) {
++  const { files, candidate } = readBinding(bindingFile), M0 = commitOf(m0), C0 = commitOf(cand), bad = [];
++  if (C0 !== candidate) bad.push('candidate ' + C0 + ' is not the binding\'s pinned candidate ' + candidate);
++  else bad.push(...candidateProblems(files, C0));
++  if (bad.length) return { ok: false, bad };
++  const tree = expectedTree(M0, C0, files);
++  const c = git(['commit-tree', tree, '-p', M0, '-m', 'R1 combined unit: source-only, parent M0 (built by r1-release-precheck --build-unit)']).trim();
++  return { ok: true, commit: c, tree };
++}
 +export function verifyUnit(m0, c, bindingFile) {
-+  const files = readBinding(bindingFile), M0 = commitOf(m0), C = commitOf(c), bad = [];
++  const { files, candidate } = readBinding(bindingFile), M0 = commitOf(m0), C = commitOf(c), bad = [];
 +  const parents = git(['rev-list', '--parents', '-n', '1', C]).trim().split(' ').slice(1);
 +  if (parents.length !== 1 || parents[0] !== M0) bad.push('parent is not exactly M0');
 +  for (const [f, v] of Object.entries(files)) {
 +    if (!blob(C, f)) { bad.push('missing: ' + f); continue; }
 +    const b = bytesOf(C, f); if (sha(b) !== v.sha256 || b.length !== v.bytes) bad.push('hash: ' + f);
++    if (mode(C, f) !== v.mode) bad.push('mode: ' + f);
 +  }
 +  for (const f of git(['diff', '--name-only', '--no-renames', M0, C]).split('\n').filter(Boolean)) if (!(f in files)) bad.push('outside binding: ' + f);
++  // Complete-tree attestation: C must equal M0 + the pinned candidate's bound entries exactly (fail closed if it is not available).
++  const C0 = tryCommit(candidate);
++  if (!C0) bad.push('pinned candidate ' + candidate + ' not available locally (fetch it; never skip)');
++  else {
++    const cp = candidateProblems(files, C0); bad.push(...cp.map((x) => 'pinned ' + x));
++    if (!cp.length && expectedTree(M0, C0, files) !== git(['rev-parse', C + '^{tree}']).trim()) bad.push('tree differs from M0 + pinned candidate');
++  }
 +  return { pass: !bad.length, bad, files: Object.keys(files).length };
 +}
 +if (import.meta.url === 'file://' + path.resolve(process.argv[1] || '')) {
 +  const a = process.argv.slice(2);
 +  if (a[0] === '--build-unit' || a[0] === '--verify-unit') {
 +    if (a.length !== 4) { console.error('usage: r1-release-precheck.mjs ' + a[0] + ' <M0> <candidate|C> <binding.json>'); process.exit(2); }
++    let r;
++    try { r = (a[0] === '--build-unit' ? buildUnit : verifyUnit)(a[1], a[2], a[3]); }
++    catch (e) { console.log('REFUSED ' + String(e && e.message || e).split('\n')[0]); console.log('R1 unit ' + (a[0] === '--build-unit' ? 'build: REFUSED' : 'verify: FAIL')); process.exit(1); }
 +    if (a[0] === '--build-unit') {
-+      const r = buildUnit(a[1], a[2], a[3]);
 +      for (const x of r.bad || []) console.log('REFUSED ' + x);
 +      console.log(r.ok ? 'R1 unit built (NOT pushed): commit ' + r.commit + ' tree ' + r.tree : 'R1 unit build: REFUSED');
 +      process.exit(r.ok ? 0 : 1);
 +    }
-+    const r = verifyUnit(a[1], a[2], a[3]);
 +    for (const x of r.bad) console.log('PROBLEM ' + x);
 +    console.log('R1 unit verify: ' + (r.pass ? 'PASS' : 'FAIL') + ' (' + r.files + ' bound files; ' + r.bad.length + ' problems)');
 +    process.exit(r.pass ? 0 : 1);
@@ -4440,10 +4474,10 @@ index 0000000000000000000000000000000000000000..28bc987835b260190e19f78b2ff677c0
 +});
 diff --git a/test/sealed-release-rehearsal.test.mjs b/test/sealed-release-rehearsal.test.mjs
 new file mode 100644
-index 0000000000000000000000000000000000000000..eb6847e98e95a170f5006dfb9141aa22ec5ff652
+index 0000000000000000000000000000000000000000..e729cc78eb3a7ee17fc91e7ac88168a72cc48849
 --- /dev/null
 +++ b/test/sealed-release-rehearsal.test.mjs
-@@ -0,0 +1,151 @@
+@@ -0,0 +1,172 @@
 +// R1 release rehearsal (offline, synthetic): the RELEASE.md sequence end to end against a throw-away "origin", using the real scripts.
 +// Stage 0 pre-R1 main -> writer gate -> code push -> (rollback before migration) -> approved-source migration with fast-forward push
 +// and tree receipt -> resumed writers -> old-writer plaintext refused -> recovery export byte-identical to the pre-R1 files.
@@ -4572,8 +4606,8 @@ index 0000000000000000000000000000000000000000..eb6847e98e95a170f5006dfb9141aa22
 +  // production main moved on: newer data and Telegram offset
 +  git(r, ['checkout', '-q', 'main']); fs.writeFileSync(path.join(r, 'data/tg-state.json'), '{"offset":9}'); fs.writeFileSync(path.join(r, 'data/health.json'), '{"new":1}'); git(r, ['commit', '-qam', 'newer data']);
 +  const M0 = git(r, ['rev-parse', 'HEAD']).trim();
-+  const h = (s) => ({ sha256: crypto.createHash('sha256').update(s).digest('hex'), bytes: Buffer.byteLength(s) });
-+  const bind = path.join(d, 'binding.json'); fs.writeFileSync(bind, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1\n'), 'sealed-new.mjs': h('new\n') } }));
++  const h = (s, mode = '100644') => ({ sha256: crypto.createHash('sha256').update(s).digest('hex'), bytes: Buffer.byteLength(s), mode });
++  const bind = path.join(d, 'binding.json'); fs.writeFileSync(bind, JSON.stringify({ candidate: cand, files: { 'scan.mjs': h('v1 + R1\n'), 'sealed-new.mjs': h('new\n') } }));
 +  const refsBefore = git(r, ['show-ref']), statusBefore = git(r, ['status', '--porcelain']);
 +  const b = node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, bind]); assert.equal(b.status, 0, b.stdout + b.stderr);
 +  const C = /commit ([0-9a-f]{40})/.exec(b.stdout)[1];
@@ -4588,12 +4622,33 @@ index 0000000000000000000000000000000000000000..eb6847e98e95a170f5006dfb9141aa22
 +  const W = git(wt, ['rev-parse', 'HEAD']).trim(); const fw = v(W); assert.notEqual(fw.status, 0); assert.match(fw.stdout, /outside binding: data\/tg-state\.json/);
 +  // wrong parent, wrong bound bytes, and a candidate that differs from the binding are all refused
 +  const P = git(r, ['commit-tree', git(r, ['rev-parse', C + '^{tree}']).trim(), '-p', cand, '-m', 'x']).trim(); assert.match(v(P).stdout, /parent is not exactly M0/);
-+  const bad = path.join(d, 'bad.json'); fs.writeFileSync(bad, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1 tampered\n'), 'sealed-new.mjs': h('new\n') } }));
++  const bad = path.join(d, 'bad.json'); fs.writeFileSync(bad, JSON.stringify({ candidate: cand, files: { 'scan.mjs': h('v1 + R1 tampered\n'), 'sealed-new.mjs': h('new\n') } }));
 +  assert.match(v(C, bad).stdout, /PROBLEM hash: scan\.mjs/);
 +  const br = node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, bad]); assert.notEqual(br.status, 0); assert.match(br.stdout, /REFUSED candidate differs from binding: scan\.mjs/);
-+  const miss = path.join(d, 'miss.json'); fs.writeFileSync(miss, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1\n'), 'absent.mjs': h('x\n') } }));
++  const miss = path.join(d, 'miss.json'); fs.writeFileSync(miss, JSON.stringify({ candidate: cand, files: { 'scan.mjs': h('v1 + R1\n'), 'absent.mjs': h('x\n') } }));
 +  assert.match(node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, miss]).stdout, /REFUSED missing in candidate: absent\.mjs/);
 +  assert.equal(node(r, ['r1-release-precheck.mjs', '--verify-unit', M0, C]).status, 2, 'usage error');
++
++  // rev9 (Codex 6719707423) negative controls. 1: same bytes and parent, but scan.mjs made executable -> verify FAIL (rev8 said PASS)
++  const modeTree = (base, f) => { const e = { ...ENV, GIT_INDEX_FILE: path.join(d, 'mi') }; git(r, ['read-tree', base], e);
++    execFileSync('git', ['update-index', '--index-info'], { cwd: r, env: e, input: '100755 ' + git(r, ['rev-parse', base + ':' + f]).trim() + '\t' + f + '\n' }); const t2 = git(r, ['write-tree'], e).trim(); fs.rmSync(path.join(d, 'mi')); return t2; };
++  const X = git(r, ['commit-tree', modeTree(C, 'scan.mjs'), '-p', M0, '-m', 'mode mutant']).trim();
++  assert.equal(git(r, ['show', X + ':scan.mjs']), 'v1 + R1\n', 'same bytes'); const fx = v(X);
++  assert.notEqual(fx.status, 0, 'mode mutant must not verify'); assert.match(fx.stdout, /PROBLEM mode: scan\.mjs/); assert.match(fx.stdout, /tree differs from M0 \+ pinned candidate/);
++  // 2: an unreviewed candidate commit (same bytes, executable mode) is not the pinned candidate -> build REFUSED (rev8 built it)
++  const XC = git(r, ['commit-tree', modeTree(cand, 'scan.mjs'), '-p', cand, '-m', 'unreviewed mode change']).trim();
++  const bx = node(r, ['r1-release-precheck.mjs', '--build-unit', M0, XC, bind]); assert.notEqual(bx.status, 0); assert.match(bx.stdout, /REFUSED candidate [0-9a-f]{40} is not the binding's pinned candidate/);
++  // 3: the binding must pin the candidate and every mode; 4: a bound mode that differs from the candidate is refused
++  const noCand = path.join(d, 'nocand.json'); fs.writeFileSync(noCand, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1\n'), 'sealed-new.mjs': h('new\n') } }));
++  for (const op of ['--build-unit', '--verify-unit']) { const o = node(r, ['r1-release-precheck.mjs', op, M0, op === '--build-unit' ? cand : C, noCand]); assert.equal(o.status, 1); assert.match(o.stdout, /REFUSED binding does not pin the exact candidate/); }
++  const noMode = path.join(d, 'nomode.json'); fs.writeFileSync(noMode, JSON.stringify({ candidate: cand, files: { 'scan.mjs': { sha256: h('v1 + R1\n').sha256, bytes: 8 } } }));
++  assert.match(node(r, ['r1-release-precheck.mjs', '--verify-unit', M0, C, noMode]).stdout, /REFUSED bad binding entry scan\.mjs/);
++  const exe = path.join(d, 'exe.json'); fs.writeFileSync(exe, JSON.stringify({ candidate: cand, files: { 'scan.mjs': h('v1 + R1\n', '100755'), 'sealed-new.mjs': h('new\n') } }));
++  assert.match(node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, exe]).stdout, /REFUSED candidate mode differs from binding: scan\.mjs/);
++  // 5: a pinned candidate that is not available locally fails closed
++  const gone = path.join(d, 'gone.json'); fs.writeFileSync(gone, JSON.stringify({ candidate: 'f'.repeat(40), files: { 'scan.mjs': h('v1 + R1\n'), 'sealed-new.mjs': h('new\n') } }));
++  assert.match(v(C, gone).stdout, /pinned candidate f{40} not available locally/);
++  assert.equal(v(C).status, 0, 'the correct unit still verifies');
 +});
 diff --git a/test/sealed-store.test.mjs b/test/sealed-store.test.mjs
 new file mode 100644
