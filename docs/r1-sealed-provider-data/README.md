@@ -6,6 +6,17 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0c. Rev6: Codex's review of `d02cdfea` (PR #1 comment 6718847939)
+
+| Codex finding | Rev6 repair | Test |
+|---|---|---|
+| 1. Main `{}`→NEW→`{}` let an OLD checkpoint resurrect OLD (blob equality treated as lineage) | **Causal provenance**: the tip may replace a file only if **no commit on main touched it** since the base, or every such commit is a recovery commit of this same lineage (`Recovered-From: <tip>` trailer, an ancestor of this tip). Otherwise only the append-only union or the keyed merge applies; anything else refuses and keeps the checkpoint. A checkpoint already contained in a newer recovered one is deleted as superseded. | `sealed-recovery`: Codex's case; foreign lineage refused; newer-first supersession |
+| 2. A merge commit introduced `sentinel.mjs`, which per-commit diffs do not show | Checkpoints must be **linear**: any merge commit is refused. The **final** base..tip path set is also checked against the data-only allowlist. | `sealed-recovery`: Codex's merge case |
+| G3b was circular (the workflow exists on main only after B4) | The proof becomes stage **B5b**, after the code is verified and before migration. FAIL → R-0 (safe: nothing sealed yet). Route chosen at G3b: (a) **`backup-compare`**, using GitHub's secrets page only (a temporary `R1_BACKUP_CHECK`; constant-time comparison of derived keys; PASS/FAIL only); or (b) the local key-check, only if verified beforehand. | `sealed-migrate` backup-compare test |
+| A 36 h `created` window is not a census (re-runs and waits up to 30 days) | **Capture v2**: one complete query per **open status**, whatever the creation date, **plus** `created` coverage of the **last 31 days** for every writer, each query complete and under the 1,000-result cap | `sealed-blockers` gate cases (old waiting run caught; missing status query; coverage gap; future status; cap) |
+
+Codex's `boundaries.mjs` against rev6: all three cases refused (offset 9 kept; positions stay `{}`; `sentinel.mjs` unchanged).
+
 ## 0b. Rev5: Codex's review of `292557c2` (PR #1 comment 6718423725)
 
 | Codex finding | Rev5 repair | Test |
@@ -243,11 +254,11 @@ Measured, not projected: the 45 files are 8.21 MB plaintext, 2.56 MB as git stor
 
 | Run | Result |
 |---|---|
-| R1 tests (rev5): `sealed-store` 12, `sealed-git` 8, `sealed-migrate` 10, `sealed-readers` 9, `sealed-wiring` 14, `sealed-blockers` 13, `sealed-recovery` 10, `sealed-release-rehearsal` 2 | **78/78** |
-| Codex's `recovery-check.mjs` (`344a0a31`) against rev5 | stale recovery refused (offset 9, NEW positions and current code kept); advanced checkpoint kept, not deleted. The fetch-failure probe cannot shadow the Node consumer's `git`; the equivalent test gives exit 2 / UNKNOWN. |
-| Codex rev3 counterexamples against `a791b438` | all 4 fail there; pass since rev4 |
+| R1 tests (rev6): `sealed-store` 12, `sealed-git` 8, `sealed-migrate` 11, `sealed-readers` 9, `sealed-wiring` 14, `sealed-blockers` 13, `sealed-recovery` 14, `sealed-release-rehearsal` 2 | **83/83** |
+| Codex's `boundaries.mjs` (`0d6237d0`) against rev6 | stale state refused (offset 9); returned-to-base refused (positions `{}`); merge-introduced code refused (code unchanged) |
+| Codex's `recovery-check.mjs` (`344a0a31`) against rev5/rev6 | closed (see §0b) |
 | Gated actual-watcher scenarios (`INCIDENT_WATCHER_SRC`) | `watcher-resilience` 9/9, `watcher-incident-revision` 11/11 |
-| Full serial suite (149 registered files, rev5) | **149/149** |
+| Full serial suite (149 registered files, rev6) | **149/149** |
 
 ## 11. Remaining blockers and unresolved findings (rev3)
 

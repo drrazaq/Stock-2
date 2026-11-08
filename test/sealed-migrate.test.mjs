@@ -9,7 +9,7 @@ import zlib from 'node:zlib';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { sealedKey, readSealedText, readSealed, writeSealed, appendSealedLines } from '../sealed-store.mjs';
-import { plan, apply, verifyTree, exportTo, MANIFEST, makeKeyCheck, checkKey } from '../sealed-migrate.mjs';
+import { plan, apply, verifyTree, exportTo, MANIFEST, makeKeyCheck, checkKey, backupCompare } from '../sealed-migrate.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const SECRET = 'synthetic-migrate-secret', K = sealedKey(SECRET);
@@ -168,4 +168,16 @@ test('backup-key check vector: reveals neither value nor key; the right backup p
   assert.equal(run('wrong-backup').status, 1); assert.match(run('wrong-backup').stdout, /key check: FAIL/);
   const mk = spawnSync(process.execPath, [path.join(ROOT, 'sealed-migrate.mjs'), '--key-check-make'], { env: ENV, encoding: 'utf8' });
   assert.match(mk.stdout, /^R1 KEY CHECK VECTOR \{/); assert.doesNotMatch(mk.stdout, new RegExp(SECRET));
+});
+
+test('backup compare (B5b route a): equal copies PASS, any difference FAILS, a missing backup is an error; output reveals nothing', () => {
+  assert.equal(backupCompare('prod-secret-x', 'prod-secret-x'), true);
+  assert.equal(backupCompare('prod-secret-x', 'prod-secret-y'), false);
+  assert.equal(backupCompare('prod-secret-x', 'prod-secret-x '), false, 'a trailing space is a different secret');
+  assert.throws(() => backupCompare('prod-secret-x', ''), { code: 'BACKUP_SECRET_MISSING' });
+  assert.throws(() => backupCompare('', 'x'), { code: 'SEALED_KEY_MISSING' });
+  const run = (b) => spawnSync(process.execPath, [path.join(ROOT, 'sealed-migrate.mjs'), '--backup-compare'], { env: { ...ENV, SEALED_SECRET: 'prod-secret-x', BACKUP_SECRET: b }, encoding: 'utf8' });
+  const ok = run('prod-secret-x'), bad = run('nope');
+  assert.equal(ok.status, 0); assert.match(ok.stdout, /backup compare: PASS/); assert.equal(bad.status, 1); assert.match(bad.stdout, /backup compare: FAIL/);
+  for (const r of [ok, bad]) assert.doesNotMatch(r.stdout + r.stderr, /prod-secret|nope/);
 });

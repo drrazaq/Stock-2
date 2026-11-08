@@ -111,6 +111,16 @@ export function checkKey(vector, key = sealedKey()) {
   try { return sha(unseal(Buffer.from(String(vector.sealed), 'base64'), key, KEY_CHECK_ID)) === vector.sha256; } catch { return false; }
 }
 
+// BACKUP COMPARE (rev6; Codex: the proof must not depend on a speculative owner computer setup). In Actions, with the production
+// secret in SEALED_SECRET and the owner's temporarily added off-GitHub copy in BACKUP_SECRET, compare the two DERIVED keys in constant
+// time. Prints only PASS/FAIL; never the secrets, their lengths or hashes.
+export function backupCompare(prod = process.env.SEALED_SECRET, backup = process.env.BACKUP_SECRET) {
+  const a = sealedKey(prod), b = sealedKey(backup);
+  if (!a) throw Object.assign(new Error('SEALED_KEY_MISSING'), { code: 'SEALED_KEY_MISSING' });
+  if (!b) throw Object.assign(new Error('BACKUP_SECRET_MISSING'), { code: 'BACKUP_SECRET_MISSING' });
+  return crypto.timingSafeEqual(a, b);
+}
+
 // Codex re-review blocker 1: the destination is checked by REAL path (symlinks resolved) against the repository's real path, every
 // component is created and checked one at a time (a symlink anywhere below the export root is refused), and nothing is overwritten
 // (files are opened with O_EXCL | O_NOFOLLOW). The export root itself must be a new or empty real directory outside the checkout.
@@ -154,6 +164,7 @@ if (import.meta.url === 'file://' + path.resolve(process.argv[1] || '')) {
     else if (cmd === '--verify-structure') { const r = verifyTree(arg || 'HEAD', { key: 'STRUCTURE_ONLY' }); console.log('R1 structure ' + r.ref + ' (no key; contents NOT decrypted): manifest ' + r.manifestCount + ', sealed T1 ' + r.sealedT1 + ', plaintext T1 ' + r.plaintextT1.length + ', problems ' + r.problems.length); if (r.problems.length) { console.error(r.problems.slice(0, 50).join('\n')); process.exit(1); } }
     else if (cmd === '--key-check-make') { console.log('R1 KEY CHECK VECTOR ' + JSON.stringify(makeKeyCheck())); }
     else if (cmd === '--key-check') { const ok = checkKey(JSON.parse(fs.readFileSync(arg, 'utf8'))); console.log('R1 key check: ' + (ok ? 'PASS (this secret is the one that seals the R1 data)' : 'FAIL (this secret does NOT match; do not rely on it as the backup)')); process.exit(ok ? 0 : 1); }
+    else if (cmd === '--backup-compare') { const ok = backupCompare(); console.log('R1 backup compare: ' + (ok ? 'PASS (the off-GitHub copy equals the production secret)' : 'FAIL (the off-GitHub copy does NOT match; do not rely on it)')); process.exit(ok ? 0 : 1); }
     else if (cmd === '--export-to') { console.log('R1 recovery export: ' + exportTo(arg) + ' file(s) written outside the repository'); }
     else fail('usage: --plan | --apply <approved source commit> | --verify-tree <ref> | --export-to <new empty dir outside the repository>');
   } catch (e) { fail((e.code ? e.code + ' ' : '') + e.message); }

@@ -16,7 +16,7 @@ on:
         description: 'The approved source commit (full 40-character id of main at the start of the window)'
         required: true
       mode:
-        description: 'key-check (print a backup-key check vector only; changes nothing) or migrate'
+        description: 'backup-compare (compare the R1_BACKUP_CHECK secret with the production secret; PASS/FAIL only), key-check (print a check vector only) or migrate'
         required: true
         default: key-check
 permissions:
@@ -40,6 +40,24 @@ jobs:
         env:
           SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
         run: node sealed-migrate.mjs --key-check-make
+  backup-compare:
+    # R1 rev6 (RELEASE.md B5b, route a): the owner adds a TEMPORARY secret R1_BACKUP_CHECK pasted from the off-GitHub backup, runs this,
+    # then deletes the secret. Compares derived keys in constant time; prints PASS/FAIL only. Changes nothing.
+    if: github.event.inputs.confirm == 'MIGRATE-R1' && github.event.inputs.mode == 'backup-compare'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.source_sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - shell: bash
+        env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
+          BACKUP_SECRET: ${{ secrets.R1_BACKUP_CHECK }}
+        run: node sealed-migrate.mjs --backup-compare
   migrate:
     if: github.event.inputs.confirm == 'MIGRATE-R1' && github.event.inputs.mode == 'migrate'
     runs-on: ubuntu-latest

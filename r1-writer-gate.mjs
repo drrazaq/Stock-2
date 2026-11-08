@@ -1,47 +1,81 @@
 #!/usr/bin/env node
-// R1 writer-quiescence gate (review only; an offline decision over a saved CAPTURE; it makes no request and changes nothing).
-// Codex: disabling schedules is not enough (a queued or running OLD writer can still push), and a listing must be proven complete.
-// Capture contract (rev5), one JSON envelope file:
-//   { "repository": "drrazaq/Stock-2", "captured_at": "<ISO>", "query": { "created_since": "<ISO>", "per_page": 100 },
-//     "pages": [ { "page": 1, "total_count": N, "workflow_runs": [...] }, { "page": 2, ... }, ... ] }
-// i.e. GET /repos/drrazaq/Stock-2/actions/runs?created=>=<created_since>&per_page=100&page=k for k = 1..ceil(N/100), saved verbatim.
-// PASS only if ALL hold:
-//   - repository is the expected one, and every run's repository.full_name is too;
-//   - created_since is at least 36 h before captured_at (a run can wait queued up to 24 h and run up to 6 h);
-//   - captured_at is fresh (default: at most 10 min before the decision) and not in the future;
-//   - pages are exactly 1..ceil(N/per_page) with one consistent total_count N, and the UNIQUE run ids across pages number exactly N;
-//   - every run of a T1 writer/saver workflow has status "completed" (any other or unknown status fails closed).
+// R1 writer-quiescence gate, capture v2 (rev6; review only; an offline decision over a saved capture; no request, no change).
+// Codex (d02cdfea review): a creation-time window of 36 h is not a census: GitHub allows re-runs of a run up to 30 days after it was
+// created and environment waits up to 30 days. Capture v2 therefore combines two complementary query families in ONE envelope:
+//
+// { "repository": "drrazaq/Stock-2", "captured_at": "<ISO>", "queries": [
+//     { "kind": "status", "status": "<s>", "per_page": 100, "pages": [ { "page": 1, "total_count": N, "workflow_runs": [...] }, ... ] },
+//     { "kind": "created", "workflow": "<.github/workflows/x.yml>" | "*", "from": "<ISO>", "to": "<ISO>", "per_page": 100, "pages": [...] } ] }
+//
+//  - STATUS queries (GET .../actions/runs?status=<s>): one complete query for EVERY documented non-completed status (queued, in_progress,
+//    waiting, requested, pending, action_required), whatever the creation date. Any writer run in them -> FAIL.
+//  - CREATED queries (GET .../actions/runs?created=<from>..<to>, or per workflow GET .../workflows/<id>/runs?created=...): the union of
+//    their [from, to] ranges must cover [captured_at - 31 days, captured_at] for EVERY writer workflow (or "*" for all). Every writer
+//    run in them must be "completed": this also catches a status GitHub may add later. A run created more than 31 days ago cannot be
+//    re-run or waiting under the documented 30-day limits, so it cannot still publish.
+//  - Every query is COMPLETE: pages exactly 1..ceil(N/per_page), one total_count, unique ids = N, and N <= 1000 (GitHub returns at most
+//    1,000 results for filtered run listings: split the created range until each query is under the cap).
+//  - Every run is from the expected repository; captured_at is fresh (<= 10 min old) and not in the future.
 // Prints workflow names, run ids and reasons only.
 import fs from 'node:fs';
 import path from 'node:path';
 export const WRITER_WORKFLOWS = ['.github/workflows/ignition.yml', '.github/workflows/movers.yml', '.github/workflows/options-survey.yml', '.github/workflows/Smart-money.yml',
   '.github/workflows/leaders-study.yml', '.github/workflows/main.yml', '.github/workflows/bot.yml', '.github/workflows/opportunity-radar.yml', '.github/workflows/scorecard-1023.yml',
   '.github/workflows/fastmover-intraday.yml', '.github/workflows/r1-migrate.yml'];
-export function gate(env, { repo = 'drrazaq/Stock-2', now = Date.now(), maxAgeMs = 10 * 60e3 } = {}) {
-  const why = [];
-  if (!env || typeof env !== 'object' || !Array.isArray(env.pages)) return { pass: false, why: ['not a capture envelope (repository, captured_at, query, pages)'], notDone: [], seen: 0 };
-  if (env.repository !== repo) why.push('repository is ' + env.repository + ', expected ' + repo);
-  const cap = Date.parse(env.captured_at), since = Date.parse(env.query && env.query.created_since), per = (env.query && env.query.per_page) || 0;
-  if (!Number.isFinite(cap)) why.push('captured_at missing or invalid');
-  else { if (cap > now + 60e3) why.push('captured_at is in the future'); if (now - cap > maxAgeMs) why.push('capture is stale (' + Math.round((now - cap) / 60e3) + ' min old)'); }
-  if (!Number.isFinite(since) || !(cap - since >= 36 * 3600e3)) why.push('created_since must be at least 36 h before captured_at');
-  if (!(per >= 1 && per <= 100)) why.push('query.per_page missing or invalid');
-  const totals = new Set(env.pages.map((p) => p && p.total_count)), N = env.pages[0] && env.pages[0].total_count;
-  if (totals.size !== 1 || !Number.isInteger(N)) why.push('pages disagree on total_count or it is missing');
-  else {
-    const want = Math.max(1, Math.ceil(N / per)), got = env.pages.map((p) => p.page).sort((a, b) => a - b);
-    if (got.length !== want || got.some((p, i) => p !== i + 1)) why.push('pages present ' + JSON.stringify(got) + ', expected 1..' + want);
-  }
+export const OPEN_STATUSES = ['queued', 'in_progress', 'waiting', 'requested', 'pending', 'action_required'];
+const DAY = 864e5, API_CAP = 1000;
+
+function complete(q, repo, why, label) {
+  const per = q.per_page, pages = Array.isArray(q.pages) ? q.pages : [];
+  if (!(per >= 1 && per <= 100)) { why.push(label + ': per_page missing or invalid'); return null; }
+  const totals = new Set(pages.map((p) => p && p.total_count)), N = pages[0] && pages[0].total_count;
+  if (!pages.length || totals.size !== 1 || !Number.isInteger(N)) { why.push(label + ': pages missing or disagree on total_count'); return null; }
+  if (N > API_CAP) why.push(label + ': total_count ' + N + ' exceeds the 1,000-result API cap (split the range)');
+  const want = Math.max(1, Math.ceil(N / per)), got = pages.map((p) => p.page).sort((a, b) => a - b);
+  if (got.length !== want || got.some((p, i) => p !== i + 1)) why.push(label + ': pages ' + JSON.stringify(got) + ', expected 1..' + want);
   const runs = new Map();
-  for (const p of env.pages) for (const r of (p && Array.isArray(p.workflow_runs) ? p.workflow_runs : [])) {
-    if (!r || r.id === undefined || !r.path || !r.status) { why.push('a run without id/path/status'); continue; }
-    if (!r.repository || r.repository.full_name !== repo) why.push('run ' + r.id + ' is not from ' + repo);
+  for (const p of pages) for (const r of (Array.isArray(p.workflow_runs) ? p.workflow_runs : [])) {
+    if (!r || r.id === undefined || !r.path || !r.status) { why.push(label + ': a run without id/path/status'); continue; }
+    if (!r.repository || r.repository.full_name !== repo) why.push(label + ': run ' + r.id + ' is not from ' + repo);
     runs.set(r.id, r);
   }
-  if (Number.isInteger(N) && runs.size !== N) why.push('unique run ids ' + runs.size + ' != total_count ' + N);
-  const notDone = [...runs.values()].filter((r) => WRITER_WORKFLOWS.includes(r.path) && r.status !== 'completed').map((r) => ({ id: r.id, path: r.path, status: r.status }));
-  for (const a of notDone) why.push('writer run not completed: ' + a.path + ' run ' + a.id + ' (' + a.status + ')');
-  return { pass: !why.length, why, notDone, seen: runs.size };
+  if (runs.size !== N) why.push(label + ': unique run ids ' + runs.size + ' != total_count ' + N);
+  return [...runs.values()];
+}
+
+export function gate(env, { repo = 'drrazaq/Stock-2', now = Date.now(), maxAgeMs = 10 * 60e3, windowDays = 31 } = {}) {
+  const why = [], notDone = [];
+  if (!env || typeof env !== 'object' || !Array.isArray(env.queries)) return { pass: false, why: ['not a capture v2 envelope (repository, captured_at, queries)'], notDone, seen: 0 };
+  if (env.repository !== repo) why.push('repository is ' + env.repository + ', expected ' + repo);
+  const cap = Date.parse(env.captured_at);
+  if (!Number.isFinite(cap)) why.push('captured_at missing or invalid');
+  else { if (cap > now + 60e3) why.push('captured_at is in the future'); if (now - cap > maxAgeMs) why.push('capture is stale (' + Math.round((now - cap) / 60e3) + ' min old)'); }
+  const seen = new Set();
+  // status family
+  for (const s of OPEN_STATUSES) {
+    const qs = env.queries.filter((q) => q && q.kind === 'status' && q.status === s);
+    if (qs.length !== 1) { why.push('status query "' + s + '": expected exactly one, found ' + qs.length); continue; }
+    for (const r of complete(qs[0], repo, why, 'status ' + s) || []) { seen.add(r.id); if (WRITER_WORKFLOWS.includes(r.path)) notDone.push({ id: r.id, path: r.path, status: r.status }); }
+  }
+  // created family: coverage per writer workflow (or "*")
+  const created = env.queries.filter((q) => q && q.kind === 'created');
+  const ranges = { '*': [] }; for (const w of WRITER_WORKFLOWS) ranges[w] = [];
+  for (const q of created) {
+    const f = Date.parse(q.from), t = Date.parse(q.to), label = 'created ' + (q.workflow || '?') + ' ' + q.from + '..' + q.to;
+    if (!Number.isFinite(f) || !Number.isFinite(t) || f > t || !(q.workflow === '*' || WRITER_WORKFLOWS.includes(q.workflow))) { why.push(label + ': invalid range or workflow'); continue; }
+    const runs = complete(q, repo, why, label); if (!runs) continue;
+    ranges[q.workflow].push([f, t]);
+    for (const r of runs) {
+      seen.add(r.id);
+      if (q.workflow !== '*' && r.path !== q.workflow) why.push(label + ': run ' + r.id + ' belongs to ' + r.path);
+      if (WRITER_WORKFLOWS.includes(r.path) && r.status !== 'completed') notDone.push({ id: r.id, path: r.path, status: r.status });
+    }
+  }
+  const covered = (rs) => { const need0 = cap - windowDays * DAY; let reach = need0; for (const [f, t] of rs.sort((a, b) => a[0] - b[0])) { if (f > reach + 1000) return false; reach = Math.max(reach, t); } return reach >= cap - 60e3; };
+  if (Number.isFinite(cap)) for (const w of WRITER_WORKFLOWS) if (!covered([...ranges['*'], ...ranges[w]])) why.push('created ranges do not cover the last ' + windowDays + ' days for ' + w);
+  const uniq = new Map(notDone.map((a) => [a.id, a]));
+  for (const a of uniq.values()) why.push('writer run not completed: ' + a.path + ' run ' + a.id + ' (' + a.status + ')');
+  return { pass: !why.length, why, notDone: [...uniq.values()], seen: seen.size };
 }
 if (import.meta.url === 'file://' + path.resolve(process.argv[1] || '')) {
   try {

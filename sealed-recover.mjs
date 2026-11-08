@@ -4,11 +4,13 @@
 // unmerged and reported a failed fetch as success).
 //
 // For each save-recovery/* ref, oldest first, ATOMICALLY (all files or none):
-//  1. PROVENANCE: every commit between the merge base with main and the ref tip may touch ONLY paths under data/ (data saves). Any
+//  1. PROVENANCE: the checkpoint must be a linear chain (merge commits refused, rev6); every commit AND the final base..tip path set
+//     may touch ONLY paths under data/ (data saves). Any
 //     other path (code, workflows, settings outside data/, release manifests, unknown) -> REFUSED, ref kept, exit 1.
 //  2. PER FILE, never a blind side:
-//     - main still holds a version produced in this ref's own lineage (the base or any commit of the ref) -> take the ref tip's version
-//       (it is the newer state of the same writer);
+//     - (rev6) NO commit on main touched the file since the merge base, or every such commit is a recovery commit of this same
+//       lineage (Recovered-From trailer names an ancestor of this tip) -> take the ref tip's version. Blob equality is NOT used: main
+//       {}->NEW->{} must not let an older checkpoint resurrect OLD;
 //     - append-only ledgers (*.jsonl, *.jsonl.sealed incl. daily segments) changed on both sides -> 3-way line union (both prefixes of
 //       the base, else refused);
 //     - the owner's options record (data/options-shadow.json.sealed) -> keyed merge (a clash on one key is refused);
@@ -55,21 +57,35 @@ function mergeOne({ g, gs, ok, cwd, key, guard, name, tip, log }) {
   const main = gs(['rev-parse', 'refs/remotes/origin/main']);
   if (ok(['merge-base', '--is-ancestor', tip, main])) return 'empty';
   const base = gs(['merge-base', main, tip]);
+  // superseded: main already holds a recovery of a NEWER checkpoint of this lineage (this tip is an ancestor of its Recovered-From)
+  for (const t of gs(['log', '--format=%(trailers:key=Recovered-From,valueonly)', base + '..' + main]).split('\n').map((x) => x.trim()).filter((x) => /^[0-9a-f]{40}$/.test(x)))
+    if (ok(['merge-base', '--is-ancestor', tip, t])) return 'empty';
+  // 1. provenance (rev6, Codex d02cdfea #2): a checkpoint is a LINEAR chain of data-only saves. Any merge commit is refused (a merge
+  //    can introduce paths its parents never changed, which per-commit diffs do not show); EVERY commit and the FINAL base..tip path set
+  //    must be data-only.
+  if (gs(['rev-list', '--merges', base + '..' + tip])) { log('save recovery: ' + name + ' REFUSED (contains a merge commit; a checkpoint must be a linear chain of saves); kept'); return 'refused'; }
   const commits = gs(['rev-list', '--reverse', base + '..' + tip]).split('\n').filter(Boolean);
-  // 1. provenance: data-only paths in EVERY commit
+  const finalPaths = gs(['diff', '--name-only', '-z', base, tip]).split('\0').filter(Boolean);
   for (const c of commits) {
     const bad = gs(['diff-tree', '--no-commit-id', '--name-only', '-r', '-z', c]).split('\0').filter(Boolean).filter((p) => !ALLOWED(p));
     if (bad.length) { log('save recovery: ' + name + ' REFUSED (not a data-only save; e.g. ' + bad[0] + '); kept'); return 'refused'; }
   }
+  const badFinal = finalPaths.filter((p) => !ALLOWED(p));
+  if (badFinal.length) { log('save recovery: ' + name + ' REFUSED (not a data-only save; e.g. ' + badFinal[0] + '); kept'); return 'refused'; }
   const blob = (ref, p) => { try { return gs(['rev-parse', ref + ':' + p]); } catch { return null; } };
   const show = (b) => (b ? g(['cat-file', 'blob', b]) : Buffer.alloc(0));
-  const paths = gs(['diff', '--name-only', '-z', base, tip]).split('\0').filter(Boolean);
+  const paths = finalPaths;
+  // 2. CAUSAL provenance per file (rev6, Codex d02cdfea #1): blob equality is not lineage (main {}->NEW->{} returned to the base bytes).
+  //    The tip may replace main's version only if NO commit on main touched the file since the base, or EVERY such commit is a recovery
+  //    commit of this same lineage (its Recovered-From trailer names an ancestor of, or this exact, tip). Otherwise only the append-only
+  //    union or the keyed merge may combine them; anything else is refused.
+  const ownLineage = (c) => { const m = /^Recovered-From: ([0-9a-f]{40})$/m.exec(gs(['log', '-1', '--format=%B', c])); return !!m && ok(['merge-base', '--is-ancestor', m[1], tip]); };
+  const mainUntouchedOrOurs = (p) => gs(['rev-list', '--full-history', base + '..' + main, '--', p]).split('\n').filter(Boolean).every(ownLineage);
   const out = new Map();   // path -> Buffer | null (delete)
   for (const p of paths) {
     const bTip = blob(tip, p), bMain = blob(main, p), bBase = blob(base, p);
-    const lineage = new Set([bBase, ...commits.map((c) => blob(c, p))]);
     if (bMain === bTip) continue;
-    if (lineage.has(bMain)) { out.set(p, bTip ? show(bTip) : null); continue; }   // main holds an older state of this same writer
+    if (mainUntouchedOrOurs(p)) { out.set(p, bTip ? show(bTip) : null); continue; }   // no foreign change on main since the base
     if (bTip === null || bMain === null) { log('save recovery: ' + name + ' REFUSED (' + p + ' deleted on one side and changed on the other); kept'); return 'refused'; }
     try {
       if (isKeyed(p) || (isUnion(p) && p.endsWith(SEALED_EXT))) {
@@ -96,7 +112,7 @@ function mergeOne({ g, gs, ok, cwd, key, guard, name, tip, log }) {
     const w = (args) => execFileSync('git', args, { cwd: wt, stdio: ['ignore', 'pipe', 'pipe'] });
     for (const [p, buf] of out) { const f = path.join(wt, p); if (buf === null) { fs.rmSync(f, { force: true }); continue; } fs.mkdirSync(path.dirname(f), { recursive: true }); fs.writeFileSync(f, buf); }
     w(['add', '-A', '--', ...out.keys()]);
-    w(['commit', '-q', '-m', 'save recovery: ' + name + ' @ ' + tip.slice(0, 12)]);
+    w(['commit', '-q', '-m', 'save recovery: ' + name + ' @ ' + tip.slice(0, 12) + '\n\nRecovered-From: ' + tip]);
     if (!guard(wt)) { log('save recovery: ' + name + ' REFUSED by the sealed push guard; kept'); return 'refused'; }
     if (spawnSync('git', ['push', '-q', 'origin', 'HEAD:refs/heads/main'], { cwd: wt, stdio: 'ignore' }).status !== 0) { log('save recovery: ' + name + ' not pushed (main moved or refused); kept for the next pass'); return 'retry'; }
     return 'merged';

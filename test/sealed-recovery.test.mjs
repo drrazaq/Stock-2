@@ -35,7 +35,7 @@ test('a bot save that cannot reach main is kept on a recovery branch, then merge
   w.hook(REFUSE_MAIN);
   writeSealedJson(P(bot), { real: [{ sym: 'ZZR', paid: 2.4 }], open: [] }, K); fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":2}');
   const s = sh(bot, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save; cat run.log');
-  assert.match(s.stdout, /save recovery: the unpublished commit is kept on branch save-recovery\/Telegram-bot-777-1-\d{8}T\d{6}Z-[0-9a-f]{12}/);
+  assert.match(s.stdout, /save recovery: the unpublished commit is kept on branch save-recovery\/Telegram-bot-777-1-\d{8}T\d{15}Z-[0-9a-f]{12}/);
   assert.equal(w.remoteRefs().filter((x) => /save-recovery\/Telegram-bot-777-1-/.test(x)).length, 1);
   assert.deepEqual(readSealedJson(P(w.clone('c1')), null, K).real, [], 'main unchanged while it refuses');
   // meanwhile the nightly scan saves paper calls to main (from another runner, after main accepts again)
@@ -161,4 +161,50 @@ test('Codex #4: a failed recovery fetch is UNKNOWN (exit 2), visible, and the bo
   assert.match(r.stdout, /UNKNOWN: save-recovery listing\/fetch failed/); assert.match(r.stdout, /rc=2/);
   const b = sh(a, 'source .github/bot-save.sh; git remote set-url origin /nonexistent/origin.git; : > run.log; bot_recover; cat run.log', { ...ENV, RUNNER_TEMP: w.d });
   assert.match(b.stdout, /save recovery state UNKNOWN/);
+});
+
+// ---------- rev6: Codex review of d02cdfea (boundaries.mjs) ----------
+test('Codex d02cdfea #1: main positions {} -> NEW -> {} after the checkpoint base: the OLD checkpoint is REFUSED (causal history, not blob equality)', (t) => {
+  const w = world(t), a = seedOwner(w), br = w.clone('save');
+  fs.writeFileSync(path.join(br, 'data/my-positions.json'), '{"OLD":{}}'); git(br, ['commit', '-qam', 'unpublished old position']); git(br, ['push', '-q', 'origin', 'HEAD:refs/heads/save-recovery/test']);
+  fs.writeFileSync(path.join(a, 'data/my-positions.json'), '{"NEW":{}}'); git(a, ['commit', '-qam', 'new position']);
+  fs.writeFileSync(path.join(a, 'data/my-positions.json'), '{}'); git(a, ['commit', '-qam', 'new position closed']); git(a, ['push', '-q']);
+  const r = recover(a);
+  assert.match(r.stdout, /save-recovery\/test REFUSED \(data\/my-positions\.json changed on main since this save; a stale state is never replayed\); kept/); assert.match(r.stdout, /rc=1/);
+  assert.equal(fs.readFileSync(path.join(w.clone('c'), 'data/my-positions.json'), 'utf8'), '{}', 'the closed position is not resurrected');
+});
+
+test('Codex d02cdfea #2: a merge commit (data-only parents, code introduced by the merge) is REFUSED; code on main unchanged', (t) => {
+  const w = world(t), a = seedOwner(w), p = w.clone('save'), base = git(p, ['rev-parse', 'HEAD']).trim();
+  git(p, ['checkout', '-qb', 'left']); fs.writeFileSync(path.join(p, 'data/left.json'), '{}'); git(p, ['add', '-A']); git(p, ['commit', '-qm', 'left data']);
+  git(p, ['checkout', '-qb', 'right', base]); fs.writeFileSync(path.join(p, 'data/right.json'), '{}'); git(p, ['add', '-A']); git(p, ['commit', '-qm', 'right data']);
+  git(p, ['checkout', '-q', 'left']); git(p, ['merge', '--no-ff', '--no-commit', 'right']);
+  fs.writeFileSync(path.join(p, 'sentinel.mjs'), '// code introduced only by merge\n'); git(p, ['add', '-A']); git(p, ['commit', '-qm', 'merge with non-data resolution']);
+  git(p, ['push', '-q', 'origin', 'HEAD:refs/heads/save-recovery/test']);
+  const r = recover(a);
+  assert.match(r.stdout, /REFUSED \(contains a merge commit; a checkpoint must be a linear chain of saves\); kept/); assert.match(r.stdout, /rc=1/);
+  assert.equal(fs.readFileSync(path.join(w.clone('c'), 'sentinel.mjs'), 'utf8'), '// current reviewed code\n');
+});
+
+test('a recovery commit records Recovered-From: <tip>; only that lineage counts as "ours" on a later pass', (t) => {
+  const w = world(t), a = seedOwner(w), race = w.clone('race');
+  fs.writeFileSync(path.join(race, 'data/x.json'), '{"v":1}'); git(race, ['add', '-A']); git(race, ['commit', '-qm', 'cp1']); git(race, ['push', '-q', 'origin', 'HEAD:refs/heads/save-recovery/a']);
+  assert.match(recover(a).stdout, /rc=0/);
+  const msg = git(w.clone('c'), ['log', '-1', '--format=%B']);
+  assert.match(msg, /^Recovered-From: [0-9a-f]{40}$/m);
+  // a DIFFERENT lineage changing the same file after that recovery is refused (not ours), not silently replayed
+  const other = w.clone('other'); git(other, ['reset', '-q', '--hard', 'HEAD~1']);
+  fs.writeFileSync(path.join(other, 'data/x.json'), '{"v":"other"}'); git(other, ['add', '-A']); git(other, ['commit', '-qm', 'other lineage']); git(other, ['push', '-q', 'origin', 'HEAD:refs/heads/save-recovery/b']);
+  assert.match(recover(a).stdout, /save-recovery\/b REFUSED \(data\/x\.json changed on main since this save/);
+});
+
+test('a newer checkpoint processed first supersedes its older ancestor (deleted as contained, not refused)', (t) => {
+  const w = world(t), a = seedOwner(w), bot = w.clone('bot');
+  fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":2}'); git(bot, ['commit', '-qam', 'c1']); const c1 = git(bot, ['rev-parse', 'HEAD']).trim();
+  fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":3}'); git(bot, ['commit', '-qam', 'c2']);
+  git(bot, ['push', '-q', 'origin', 'HEAD:refs/heads/save-recovery/a-newer']); git(bot, ['push', '-q', 'origin', c1 + ':refs/heads/save-recovery/b-older']);
+  const r = recover(a);
+  assert.match(r.stdout, /a-newer merged into main/); assert.match(r.stdout, /b-older already contained in main/); assert.match(r.stdout, /rc=0/);
+  assert.equal(fs.readFileSync(path.join(w.clone('c'), 'data/tg-state.json'), 'utf8'), '{"offset":3}');
+  assert.ok(!w.remoteRefs().some((x) => /save-recovery\//.test(x)));
 });

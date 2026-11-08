@@ -10,7 +10,7 @@ import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { sealedKey, writeSealed, writeSealedJson, readSealedJson, sealedPath, sealedIO } from '../sealed-store.mjs';
 import { mergeKeyed } from '../sealed-merge.mjs';
-import { gate } from '../r1-writer-gate.mjs';
+import { gate, OPEN_STATUSES } from '../r1-writer-gate.mjs';
 import { loadScan, blocked, TEST_SEALED_SECRET } from './load-scan.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -179,23 +179,33 @@ test('keyed merge unit: one-sided and identical changes merge, deletions respect
   assert.equal(mergeKeyed(O, '[1]', '{}').ok, false);
 });
 
-test('writer quiescence gate (rev5 capture envelope): repository, 36 h window, freshness, every page, unique ids, completed writers', () => {
-  const NOW = Date.parse('2026-11-14T08:00:00Z'), REPO = { full_name: 'drrazaq/Stock-2' };
+test('writer quiescence gate (rev6 capture v2): open-status census + 31-day created coverage, complete pages, cap, repository, freshness', () => {
+  const NOW = Date.parse('2026-11-14T08:00:00Z'), CAP = '2026-11-14T07:58:00Z', REPO = { full_name: 'drrazaq/Stock-2' };
   const run = (id, p, status) => ({ id, path: '.github/workflows/' + p, status, repository: REPO });
-  const env = (pages, over = {}) => ({ repository: 'drrazaq/Stock-2', captured_at: '2026-11-14T07:58:00Z', query: { created_since: '2026-11-12T19:00:00Z', per_page: 2 }, pages, ...over });
-  const ok2 = [{ page: 1, total_count: 3, workflow_runs: [run(1, 'ignition.yml', 'completed'), run(2, 'pages.yml', 'in_progress')] }, { page: 2, total_count: 3, workflow_runs: [run(3, 'bot.yml', 'completed')] }];
+  const page = (runs, total = runs.length) => [{ page: 1, total_count: total, workflow_runs: runs }];
+  const statusQ = (st, runs = []) => ({ kind: 'status', status: st, per_page: 100, pages: page(runs) });
+  const createdQ = (from, to, runs = [], wf = '*') => ({ kind: 'created', workflow: wf, from, to, per_page: 100, pages: page(runs) });
+  const base = () => ({ repository: 'drrazaq/Stock-2', captured_at: CAP, queries: [...OPEN_STATUSES.map((s) => statusQ(s)),
+    createdQ('2026-10-14T00:00:00Z', '2026-10-30T00:00:00Z', [run(1, 'bot.yml', 'completed')]), createdQ('2026-10-30T00:00:00Z', CAP, [run(2, 'ignition.yml', 'completed'), run(3, 'pages.yml', 'in_progress')])] });
   const G = (e) => gate(e, { now: NOW });
-  assert.equal(G(env(ok2)).pass, true, G(env(ok2)).why.join('; '));
-  assert.match(G(env([ok2[0]])).why.join(), /pages present \[1\], expected 1\.\.2/, 'Codex: one page of a multi-page listing');
-  assert.match(G(env([ok2[0], { ...ok2[1], workflow_runs: [run(2, 'pages.yml', 'in_progress')] }])).why.join(), /unique run ids 2 != total_count 3/, 'duplicate id across pages');
-  for (const st of ['queued', 'in_progress', 'waiting', 'requested', 'pending', 'action_required', 'some_new_status'])
-    assert.equal(G(env([{ page: 1, total_count: 1, workflow_runs: [run(9, 'bot.yml', st)] }])).pass, false, st);
-  assert.match(G(env(ok2, { repository: 'someone/Stock-2' })).why.join(), /expected drrazaq\/Stock-2/);
-  assert.match(G(env([{ page: 1, total_count: 1, workflow_runs: [{ ...run(5, 'bot.yml', 'completed'), repository: { full_name: 'x/y' } }] }])).why.join(), /run 5 is not from/);
-  assert.match(G(env(ok2, { query: { created_since: '2026-11-14T00:00:00Z', per_page: 2 } })).why.join(), /at least 36 h/);
-  assert.match(G(env(ok2, { captured_at: '2026-11-14T07:30:00Z' })).why.join(), /stale/);
-  assert.match(G(env(ok2, { captured_at: '2026-11-14T09:00:00Z' })).why.join(), /future/);
-  assert.equal(G({ total_count: 1, workflow_runs: [] }).pass, false, 'a bare listing is not a capture');
+  assert.equal(G(base()).pass, true, G(base()).why.join('; '));
+  // Codex: an OLD run (created weeks ago) re-run or waiting is caught by the status census, whatever its creation date
+  const old = base(); old.queries[OPEN_STATUSES.indexOf('waiting')] = statusQ('waiting', [run(9, 'main.yml', 'waiting')]);
+  assert.match(G(old).why.join(), /writer run not completed: \.github\/workflows\/main\.yml run 9 \(waiting\)/);
+  const miss = base(); miss.queries = miss.queries.filter((q) => q.status !== 'action_required');
+  assert.match(G(miss).why.join(), /status query "action_required": expected exactly one, found 0/);
+  const gap = base(); gap.queries[OPEN_STATUSES.length] = createdQ('2026-10-20T00:00:00Z', '2026-10-30T00:00:00Z');
+  assert.match(G(gap).why.join(), /do not cover the last 31 days/, 'only 25 days covered');
+  const unknown = base(); unknown.queries[OPEN_STATUSES.length + 1].pages = page([run(4, 'movers.yml', 'some_new_status')]);
+  assert.match(G(unknown).why.join(), /movers\.yml run 4 \(some_new_status\)/, 'a future status fails closed via the created family');
+  const capped = base(); capped.queries[OPEN_STATUSES.length].pages = [{ page: 1, total_count: 1200, workflow_runs: [] }];
+  assert.match(G(capped).why.join(), /exceeds the 1,000-result API cap/);
+  const partial = base(); partial.queries[0] = { kind: 'status', status: 'queued', per_page: 1, pages: [{ page: 1, total_count: 2, workflow_runs: [run(5, 'pages.yml', 'queued')] }] };
+  assert.match(G(partial).why.join(), /pages \[1\], expected 1\.\.2/);
+  const repo = base(); repo.queries[0].pages = page([{ ...run(6, 'pages.yml', 'queued'), repository: { full_name: 'x/y' } }]);
+  assert.match(G(repo).why.join(), /run 6 is not from/);
+  assert.match(G({ ...base(), captured_at: '2026-11-14T07:30:00Z' }).why.join(), /stale/);
+  assert.equal(G({ total_count: 0, workflow_runs: [] }).pass, false, 'a bare listing is not a capture');
 });
 
 test('Codex rev3 #1: an identical RETRY after a directory-fsync EIO keeps the plaintext (durability first, then removal)', (t) => {

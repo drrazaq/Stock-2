@@ -10,7 +10,7 @@ import zlib from 'node:zlib';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { sealedKey, appendSealedLines, readSealedLines } from '../sealed-store.mjs';
-import { gate } from '../r1-writer-gate.mjs';
+import { gate, OPEN_STATUSES } from '../r1-writer-gate.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const SECRET = 'synthetic-release-secret', K = sealedKey(SECRET);
@@ -37,8 +37,10 @@ test('release rehearsal: gate -> code -> rollback-before-migration -> migration 
   const pre = git(op, ['rev-parse', 'HEAD']).trim();
 
   // ---- stage 1: writer gate (saved listings): FAIL while a writer runs, PASS once quiet
-  const cap = (status) => ({ repository: 'drrazaq/Stock-2', captured_at: new Date().toISOString(), query: { created_since: new Date(Date.now() - 37 * 3600e3).toISOString(), per_page: 100 },
-    pages: [{ page: 1, total_count: 2, workflow_runs: [{ id: 1, path: '.github/workflows/ignition.yml', status, repository: { full_name: 'drrazaq/Stock-2' } }, { id: 2, path: '.github/workflows/pages.yml', status: 'in_progress', repository: { full_name: 'drrazaq/Stock-2' } }] }] });
+  const R = { full_name: 'drrazaq/Stock-2' }, nowIso = new Date().toISOString(), pg = (runs) => [{ page: 1, total_count: runs.length, workflow_runs: runs }];
+  const cap = (status) => ({ repository: 'drrazaq/Stock-2', captured_at: nowIso, queries: [
+    ...OPEN_STATUSES.map((st) => ({ kind: 'status', status: st, per_page: 100, pages: pg(st === status ? [{ id: 1, path: '.github/workflows/ignition.yml', status, repository: R }] : []) })),
+    { kind: 'created', workflow: '*', from: new Date(Date.now() - 32 * 864e5).toISOString(), to: nowIso, per_page: 100, pages: pg([{ id: 1, path: '.github/workflows/ignition.yml', status, repository: R }]) }] });
   assert.equal(gate(cap('in_progress')).pass, false); assert.equal(gate(cap('completed')).pass, true);
 
   // ---- stage 2: push the R1 code (writers off). Readers fail closed on the still-plaintext files

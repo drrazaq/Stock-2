@@ -20,7 +20,7 @@ sealed_recovery_push() {
   git rebase --abort 2>/dev/null || true
   local head; head=$(git rev-parse HEAD)
   [ "${SEALED_RECOVERY_LAST:-}" = "$head" ] && { echo "save recovery: this unpublished state is already kept on ${SEALED_RECOVERY_REF:-a recovery branch}"; return 0; }
-  local ref; ref="save-recovery/$(printf '%s' "${GITHUB_WORKFLOW:-local}" | tr -c 'A-Za-z0-9._-' '-')-${GITHUB_RUN_ID:-$$}-${GITHUB_RUN_ATTEMPT:-1}-$(date -u +%Y%m%dT%H%M%SZ)-${head:0:12}"
+  local ref; ref="save-recovery/$(printf '%s' "${GITHUB_WORKFLOW:-local}" | tr -c 'A-Za-z0-9._-' '-')-${GITHUB_RUN_ID:-$$}-${GITHUB_RUN_ATTEMPT:-1}-$(date -u +%Y%m%dT%H%M%S%NZ)-${head:0:12}"
   if ! sealed_push_guard; then echo "Error: save recovery refused by the sealed guard: the unpublished commit exists only on this runner"; return 1; fi
   if git push -q origin "HEAD:refs/heads/$ref"; then SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; echo "save recovery: the unpublished commit is kept on branch $ref (merged into main by the bot's next recovery pass)"; return 0; fi
   echo "Error: save recovery push failed too: the unpublished commit exists only on this runner"; return 1

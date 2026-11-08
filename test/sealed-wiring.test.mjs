@@ -43,7 +43,7 @@ test('public Actions logs: no per-stock option quotes, survey summary, or analys
   assert.match(sm, /content not printed: Actions logs of this repository are public/);
 });
 
-const KEYED = { 'ignition.yml': 3, 'opportunity-radar.yml': 1, 'options-survey.yml': 2, 'Smart-money.yml': 2, 'movers.yml': 3, 'leaders-study.yml': 2, 'main.yml': 2, 'bot.yml': 2, 'scorecard-1023.yml': 1, 'r1-migrate.yml': 2 };
+const KEYED = { 'ignition.yml': 3, 'opportunity-radar.yml': 1, 'options-survey.yml': 2, 'Smart-money.yml': 2, 'movers.yml': 3, 'leaders-study.yml': 2, 'main.yml': 2, 'bot.yml': 2, 'scorecard-1023.yml': 1, 'r1-migrate.yml': 3 };
 test('the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)', () => {
   for (const f of WF) {
     const s = wf(f), n = (s.match(/SEALED_SECRET: \$\{\{ secrets\.PRIVATE_KEY \}\}/g) || []).length;
