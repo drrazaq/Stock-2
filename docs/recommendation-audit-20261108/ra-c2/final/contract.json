@@ -1,0 +1,64 @@
+{
+  "id": "RA-C2-BOUNDED-CORRECTIONS-FINAL",
+  "parent": "19f9b8a57e6ab5324296401776614b96e0a2ea1f",
+  "review": "ca87c79d41487173fad6103c986bfd0acf8a38c1",
+  "reviewComment": 6718495783,
+  "status": "CORRECTIONS_APPLIED_EXACT_CONFORMANCE_CONFIRMATION_REQUESTED",
+  "sourceSeries": "CNBC Mad Money Lightning Round",
+  "publicationIntervalNY": [
+    "2026-10-01",
+    "2026-11-01"
+  ],
+  "holdingSessions": 20,
+  "sameStockCandidateEntryOffsets": [
+    -270,
+    -21
+  ],
+  "sameStockMinimumEligibleDates": 60,
+  "sameStockMinimumIsNotAnAvailablePriceFilter": true,
+  "completeAttemptDenominatorOrProvedFiniteMissingCountRequiredForEveryDecision": true,
+  "externalAttemptDenominatorKnown": false,
+  "mandatoryViews": [
+    {
+      "id": "B0",
+      "friction": 0.008,
+      "entrySlip": 0,
+      "exitSlip": 0
+    },
+    {
+      "id": "S1",
+      "friction": 0.012,
+      "entrySlip": 0,
+      "exitSlip": 0
+    },
+    {
+      "id": "S2",
+      "friction": 0.008,
+      "entrySlip": 0.02,
+      "exitSlip": 0.02
+    },
+    {
+      "id": "S3",
+      "friction": 0.012,
+      "entrySlip": 0.02,
+      "exitSlip": 0.02
+    }
+  ],
+  "unitUSD": 1000,
+  "feePerExecutedSideUSD": 3,
+  "capGross": 3,
+  "terminalEvidenceGraceSessions": 20,
+  "unresolvedTerminal": "full principal-loss/fees-to-capped-gain interval; no exclusion, last close or automatic observed zero",
+  "scopes": {
+    "E": "research-only common stocks not excluded by authenticated as-of ZAD list; owner UNKNOWN included; no halal/owner approval inferred",
+    "A": "owner-affirmed applicability; valid as-of owner YES and no list exclusion; uncertainty preserved"
+  },
+  "sameScopesAndExecutorInAllArms": true,
+  "scopeSwitchAfterResultsPermitted": false,
+  "zeroOrderCountsRequiredPerArm": true,
+  "continue": "all mandatory lower bounds >0 in every view with full denominator and other gates; scope-specific; no automatic paper/live authority",
+  "stop": "any mandatory upper bound <=0 in ANY required view; full denominator condition applies",
+  "otherwise": "INCONCLUSIVE",
+  "sourceAcquisitionAuthorized": false,
+  "productionPolicyChanged": false
+}
