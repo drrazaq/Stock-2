@@ -1,0 +1,310 @@
+{
+  "kind": "RECOVERY_RETAINED_EVIDENCE_RECONCILIATION",
+  "inputs": {
+    "data/squad7-lab.json": {
+      "bytes": 14352,
+      "sha256": "b20d999d918488923f17e701a9527edf08e105cec66276975a42e8fab69b2d18"
+    },
+    "data/squad11-lab.json": {
+      "bytes": 638980,
+      "sha256": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a"
+    },
+    "data/squad14-lab.json": {
+      "bytes": 464152,
+      "sha256": "28afa0bd12d6a4950c98647025e1e6258b9cfa0563b3d73834b14c54f297b0bb"
+    },
+    "squad7-core.mjs": {
+      "bytes": 32780,
+      "sha256": "33ca96d394cf4c18a1e6fee73209538043cd823acef6b8e4205088d3cb1aae34"
+    },
+    "squad11-core.mjs": {
+      "bytes": 17973,
+      "sha256": "29044a5bfe27e60d47f7373963fef80d9c06972cce7987026dea3d30f5676ba9"
+    },
+    "squad11-lab.mjs": {
+      "bytes": 43229,
+      "sha256": "6851886bfb72e9bb680f4c69a4f20b38f1e2f6b9fb3cd51d394213b7cb8b3b52"
+    }
+  },
+  "frozenStudies": [
+    {
+      "id": "SQ7-DEEPGAP",
+      "source": "data/squad7-lab.json",
+      "version": "firstRun_UNCHANGED",
+      "verdict": "REJECTED",
+      "reason": "block t 1.04 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.42 under 2.5 in the newer half",
+      "cost": 0.008,
+      "hold": 20,
+      "halves": {
+        "older": {
+          "n": 320,
+          "days": 202,
+          "avg": 0.0485,
+          "median": 0.0209,
+          "avgStress": 0.0445,
+          "edge": 0.0263,
+          "tBlock": 1.04,
+          "vsOwn": 0.0674,
+          "noTop2": 0.0417,
+          "worst": -0.7911
+        },
+        "newer": {
+          "n": 523,
+          "days": 366,
+          "avg": -0.006,
+          "median": -0.0224,
+          "avgStress": -0.01,
+          "edge": -0.0189,
+          "tBlock": -1.42,
+          "vsOwn": 0.0462,
+          "noTop2": -0.0138,
+          "worst": -0.9218
+        }
+      },
+      "exits": null,
+      "savedModelOnly": true
+    },
+    {
+      "id": "SQ7-DEEPEARN",
+      "source": "data/squad7-lab.json",
+      "version": "firstRun_UNCHANGED",
+      "verdict": "REJECTED",
+      "reason": "block t 1.07 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.8 under 2.5 in the newer half",
+      "cost": 0.008,
+      "hold": 20,
+      "halves": {
+        "older": {
+          "n": 343,
+          "days": 155,
+          "avg": 0.0476,
+          "median": 0.0059,
+          "avgStress": 0.0436,
+          "edge": 0.0248,
+          "tBlock": 1.07,
+          "vsOwn": 0.0808,
+          "noTop2": 0.0413,
+          "worst": -0.5978
+        },
+        "newer": {
+          "n": 541,
+          "days": 266,
+          "avg": 0.0014,
+          "median": -0.0049,
+          "avgStress": -0.0026,
+          "edge": -0.0209,
+          "tBlock": -1.8,
+          "vsOwn": 0.018,
+          "noTop2": -0.0016,
+          "worst": -0.781
+        }
+      },
+      "exits": null,
+      "savedModelOnly": true
+    },
+    {
+      "id": "SQ7-DEEPNODIL",
+      "source": "data/squad7-lab.json",
+      "version": "firstRun_UNCHANGED",
+      "verdict": "REJECTED",
+      "reason": "block t 0.48 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -3.16 under 2.5 in the newer half",
+      "cost": 0.008,
+      "hold": 20,
+      "halves": {
+        "older": {
+          "n": 313,
+          "days": 204,
+          "avg": 0.0161,
+          "median": 0.0025,
+          "avgStress": 0.0121,
+          "edge": 0.0124,
+          "tBlock": 0.48,
+          "vsOwn": 0.0313,
+          "noTop2": 0.0106,
+          "worst": -0.7419
+        },
+        "newer": {
+          "n": 589,
+          "days": 412,
+          "avg": -0.0171,
+          "median": -0.0227,
+          "avgStress": -0.0211,
+          "edge": -0.0295,
+          "tBlock": -3.16,
+          "vsOwn": 0.0262,
+          "noTop2": -0.0241,
+          "worst": -0.9218
+        }
+      },
+      "exits": null,
+      "savedModelOnly": true
+    },
+    {
+      "id": "SQ11-PB8",
+      "source": "data/squad11-lab.json",
+      "version": "firstRun_UNCHANGED",
+      "verdict": "NOT PROVEN",
+      "reason": "not better than the same stocks held as long on their other days in the older half; block t 0.39 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.85 under 2.5 in the newer half; return per year of capital tied up 8.1% not above the S&P 500 on the same days in the older half (19.5%)",
+      "cost": 0.008,
+      "hold": 63,
+      "halves": {
+        "older": {
+          "n": 184,
+          "days": 110,
+          "avg": 0.0201,
+          "median": 0.01,
+          "avgStress": 0.0161,
+          "edge": 0.0036,
+          "tBlock": 0.39,
+          "vsOwn": -0.0902,
+          "noTop2": 0.0123,
+          "worst": -0.3727
+        },
+        "newer": {
+          "n": 487,
+          "days": 261,
+          "avg": 0.061,
+          "median": 0.0261,
+          "avgStress": 0.057,
+          "edge": 0.0231,
+          "tBlock": 1.85,
+          "vsOwn": -0.061,
+          "noTop2": 0.0536,
+          "worst": -0.5521
+        }
+      },
+      "exits": {
+        "max": 668,
+        "gone": 3
+      },
+      "savedModelOnly": true
+    },
+    {
+      "id": "SQ11-PB12",
+      "source": "data/squad11-lab.json",
+      "version": "firstRun_UNCHANGED",
+      "verdict": "NOT PROVEN",
+      "reason": "not better than the same stocks held as long on their other days in the older half; block t 1.24 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.54 under 2.5 in the newer half",
+      "cost": 0.008,
+      "hold": 126,
+      "halves": {
+        "older": {
+          "n": 99,
+          "days": 69,
+          "avg": 0.1425,
+          "median": 0.0909,
+          "avgStress": 0.1385,
+          "edge": 0.0863,
+          "tBlock": 1.24,
+          "vsOwn": -0.1039,
+          "noTop2": 0.1299,
+          "worst": -0.4202
+        },
+        "newer": {
+          "n": 256,
+          "days": 159,
+          "avg": 0.166,
+          "median": 0.0758,
+          "avgStress": 0.162,
+          "edge": 0.0484,
+          "tBlock": 0.54,
+          "vsOwn": -0.1102,
+          "noTop2": 0.1437,
+          "worst": -0.5606
+        }
+      },
+      "exits": {
+        "max": 352,
+        "gone": 3
+      },
+      "savedModelOnly": true
+    },
+    {
+      "id": "SQ14-PB12M",
+      "source": "data/squad14-lab.json",
+      "version": "firstRun_UNCHANGED",
+      "verdict": "NOT PROVEN",
+      "reason": "not better than the same stocks held as long on their other days in the older half; block t 1.28 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.59 under 2.5 in the newer half",
+      "cost": 0.008,
+      "hold": 126,
+      "halves": {
+        "older": {
+          "n": 110,
+          "days": 73,
+          "avg": 0.1596,
+          "median": 0.1448,
+          "avgStress": 0.1556,
+          "edge": 0.0991,
+          "tBlock": 1.28,
+          "vsOwn": -0.0795,
+          "noTop2": 0.1466,
+          "worst": -0.4202
+        },
+        "newer": {
+          "n": 250,
+          "days": 143,
+          "avg": 0.1722,
+          "median": 0.0993,
+          "avgStress": 0.1682,
+          "edge": 0.0784,
+          "tBlock": 0.59,
+          "vsOwn": -0.0568,
+          "noTop2": 0.1495,
+          "worst": -0.5166
+        }
+      },
+      "exits": {
+        "max": 357,
+        "gone": 3
+      },
+      "savedModelOnly": true
+    }
+  ],
+  "currentRetainedPullbackRows": [
+    {
+      "id": "SQ11-PB8",
+      "retainedRows": 400,
+      "numericModelOutcomes": 400,
+      "positive": 221,
+      "negative": 179,
+      "zero": 0,
+      "meanOfRetainedNumericOnly": 0.06374075,
+      "exitKinds": {
+        "gone": 2,
+        "max": 398
+      },
+      "rowsWithExactEntryPrice": 0,
+      "rowsWithOperatingIncomeFilingEvidence": 0,
+      "rowsWithAuthenticWholeShareFeeChain": 0,
+      "notClaimedIdenticalToFirstRun": true
+    },
+    {
+      "id": "SQ11-PB12",
+      "retainedRows": 357,
+      "numericModelOutcomes": 357,
+      "positive": 230,
+      "negative": 127,
+      "zero": 0,
+      "meanOfRetainedNumericOnly": 0.1573607843137255,
+      "exitKinds": {
+        "gone": 3,
+        "max": 354
+      },
+      "rowsWithExactEntryPrice": 0,
+      "rowsWithOperatingIncomeFilingEvidence": 0,
+      "rowsWithAuthenticWholeShareFeeChain": 0,
+      "notClaimedIdenticalToFirstRun": true
+    }
+  ],
+  "sourceNamedRawInputs": {
+    "study-cache/grouped.json.gz": "ABSENT_IN_CURRENT_WORKSPACE",
+    "squad4-cache": "ABSENT_IN_CURRENT_WORKSPACE",
+    "squad5-cache": "ABSENT_IN_CURRENT_WORKSPACE",
+    "squad11-cache": "ABSENT_IN_CURRENT_WORKSPACE"
+  },
+  "newBusinessImprovementEconomicVerdict": "INCONCLUSIVE_MISSING_DATED_FACTS_AND_EXECUTION",
+  "newRuleScored": false,
+  "rulesOrExitsChanged": false,
+  "externalRequests": 0,
+  "scriptExecutionSeconds": 0.011966587990173139,
+  "timingMeaning": "Only this extraction, not total research/engineering time"
+}

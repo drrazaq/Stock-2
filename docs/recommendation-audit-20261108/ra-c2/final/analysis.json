@@ -6410,8 +6410,79 @@
       }
     }
   ],
+  "cohortAccounting": {
+    "fixedAttempts": 102,
+    "freshnessFailuresIncludingNoFillOverlap": 31,
+    "meaning": "Numeric saved outcomes are not authentic executable chains; no-fill labels do not prove cap exceedance; modeled cash for the fixed gate counterfactual is not imputation of unknown fills.",
+    "noBarsLabels": 1,
+    "noFillLabels": 10,
+    "noFillOverlappingAgeFailure": 8,
+    "recoveredStale21": {
+      "flat": 0,
+      "losses": 17,
+      "winners": 4
+    },
+    "retained68": {
+      "flat": 0,
+      "losses": 41,
+      "winners": 27
+    },
+    "savedDispositionCrossTab": [
+      {
+        "agePredicate": "age_fail",
+        "n": 8,
+        "savedDisposition": "no_fill_label"
+      },
+      {
+        "agePredicate": "age_fail",
+        "n": 23,
+        "savedDisposition": "stale_label"
+      },
+      {
+        "agePredicate": "age_pass",
+        "n": 1,
+        "savedDisposition": "no_bars_label"
+      },
+      {
+        "agePredicate": "age_pass",
+        "n": 2,
+        "savedDisposition": "no_fill_label"
+      },
+      {
+        "agePredicate": "age_pass",
+        "n": 68,
+        "savedDisposition": "scored"
+      }
+    ],
+    "uniqueRejectedOrUnpriced": 34,
+    "unrecoveredStaleKeys": [
+      "2026-10-22|MACIU|IG1",
+      "2026-10-22|XCUR|IG1"
+    ]
+  },
   "entryModelBasis": "IG1 simulate enters the next-minute open; saved guard requires it <=1.03*recorded signal reference. All89 recovered/scored modeled rows have positive quantities under the inferred upper entry. No actual fill/quantity inferred.",
   "evidenceClass": "CONDITIONAL_SAVED_PATH_COST_RECONSTRUCTION_NOT_AUTHENTIC_EXECUTABLE_PERFORMANCE",
+  "evidenceLayers": {
+    "economics": {
+      "externalPopulationVerdict": "INCONCLUSIVE",
+      "noMissingToZero": true,
+      "status": "CONDITIONAL_MODEL_RESULTS_ONLY"
+    },
+    "execution": {
+      "completeAuthenticChains": 0,
+      "incompleteChains": 102,
+      "missing": "Original entry/exit BBO and conditions, observed clocks, endpoint/date-effective quote-size units, displayed liquidity (not proven fills), actions/terminal entitlements, exact quantity and executed-side fees",
+      "status": "UNVERIFIED"
+    },
+    "pointInTime": {
+      "missing": "Original first-availability/receipt, stable instruments and as-of source/scope denominator; corporate-action process dates are not original availability",
+      "status": "UNVERIFIED"
+    },
+    "ruleImplementation": {
+      "notEstablished": "Full rule path or historical stops/targets resimulation",
+      "status": "BOUNDED_SAVED_PATH_ARITHMETIC_ONLY"
+    }
+  },
   "externalAttemptCountBound": null,
   "externalCorpusComplete": false,
   "externalDecision": "INCONCLUSIVE_ALL_VIEWS",

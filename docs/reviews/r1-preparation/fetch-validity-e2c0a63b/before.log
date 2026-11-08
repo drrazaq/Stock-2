@@ -1,0 +1,135 @@
+TAP version 13
+# Subtest: conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
+ok 1 - conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.831569
+  ...
+# Subtest: stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
+ok 2 - stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.119099
+  ...
+# Subtest: stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
+ok 3 - stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.059489
+  ...
+# Subtest: undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
+ok 4 - undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped) # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.062755
+  ...
+# Subtest: delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
+ok 5 - delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.059529
+  ...
+# Subtest: labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
+ok 6 - labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.051628
+  ...
+# Subtest: close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm
+ok 7 - close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.108743
+  ...
+# Subtest: records untouched: positions and Telegram offset unchanged; one first check a day
+ok 8 - records untouched: positions and Telegram offset unchanged; one first check a day # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.09312
+  ...
+# Subtest: 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
+ok 9 - 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.143786
+  ...
+# Subtest: 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
+ok 10 - 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.127912
+  ...
+# Subtest: all requests stayed synthetic and on loopback
+ok 11 - all requests stayed synthetic and on loopback # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.121233
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: future-at-fetch quote remains UNKNOWN after another holding request advances the rendering clock
+not ok 12 - future-at-fetch quote remains UNKNOWN after another holding request advances the rendering clock
+  ---
+  duration_ms: 108.726962
+  location: '/workspace/g2-verification/r1-future-repair/test/open-check-repair.test.mjs:134:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /ZZS: STOP STATUS UNKNOWN/. Input:
+    
+    "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n" +
+      '\n' +
+      'YOUR POSITIONS (one action each, the same rules as ACTIONS)\n' +
+      'ZZS: STOP LEVEL REACHED: at or below your stop 80.00. If your broker stop order has filled, you are already out: do not sell again. Last price 70.00 (FINNHUB, Nov 5 09:40 New York, 10 s old) (-30.0% from your 100.00).\n' +
+      'ZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 60 s old) (+20.0% from your 10.00).\n' +
+      '\n' +
+      "BUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\n" +
+      "none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n" +
+      '\n' +
+      'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\n' +
+      'Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\n' +
+      '\n' +
+      'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.
+    
+    YOUR POSITIONS (one action each, the same rules as ACTIONS)
+    ZZS: STOP LEVEL REACHED: at or below your stop 80.00. If your broker stop order has filled, you are already out: do not sell again. Last price 70.00 (FINNHUB, Nov 5 09:40 New York, 10 s old) (-30.0% from your 100.00).
+    ZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 60 s old) (+20.0% from your 10.00).
+    
+    BUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)
+    none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.
+    
+    Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.
+    Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.
+    
+    Tested signals, not instructions. Not financial advice, not a halal ruling.
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/r1-future-repair/test/open-check-repair.test.mjs:147:37)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: original observation-time validation preserves the existing five-minute default and explicit stricter gate
+not ok 13 - original observation-time validation preserves the existing five-minute default and explicit stricter gate
+  ---
+  duration_ms: 32.671145
+  location: '/workspace/g2-verification/r1-future-repair/test/open-check-repair.test.mjs:150:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    Expected values to be strictly equal:
+    + actual - expected
+    
+    + 'OK'
+    - 'UNKNOWN'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 'UNKNOWN'
+  actual: 'OK'
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/r1-future-repair/test/open-check-repair.test.mjs:154:9)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 0
+# fail 2
+# cancelled 0
+# skipped 11
+# todo 0
+# duration_ms 219.261751

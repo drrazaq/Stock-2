@@ -1,0 +1,501 @@
+TAP version 13
+# Subtest: no token and no address: every mode does nothing; check and pull report failure, mirror does not
+ok 1 - no token and no address: every mode does nothing; check and pull report failure, mirror does not
+  ---
+  duration_ms: 66.236933
+  ...
+# Subtest: mirror waits for the owner's connection check: nothing is copied before it
+ok 2 - mirror waits for the owner's connection check: nothing is copied before it
+  ---
+  duration_ms: 340.994058
+  ...
+# Subtest: check: reads, writes, copies every private file that exists, reads it back identical; prints names and counts, never contents
+ok 3 - check: reads, writes, copies every private file that exists, reads it back identical; prints names and counts, never contents
+  ---
+  duration_ms: 182.718516
+  ...
+# Subtest: mirror after the check: a change is copied once; an unchanged state makes no commit
+ok 4 - mirror after the check: a change is copied once; an unchanged state makes no commit
+  ---
+  duration_ms: 289.284682
+  ...
+# Subtest: the token never reaches the output or the disk (it travels in the environment only)
+ok 5 - the token never reaches the output or the disk (it travels in the environment only)
+  ---
+  duration_ms: 175.246915
+  ...
+# Subtest: pull: private copies replace the public ones; with no positions file in the private repository it stops (exit 1)
+ok 6 - pull: private copies replace the public ones; with no positions file in the private repository it stops (exit 1)
+  ---
+  duration_ms: 208.41083
+  ...
+# Subtest: push: a bought/sold/halal change is saved; on a conflict the bot's newer positions are kept (save-data.sh rule)
+ok 7 - push: a bought/sold/halal change is saved; on a conflict the bot's newer positions are kept (save-data.sh rule)
+  ---
+  duration_ms: 502.411386
+  ...
+# Subtest: the website workflow publishes index.html only (nothing from data/)
+ok 8 - the website workflow publishes index.html only (nothing from data/)
+  ---
+  duration_ms: 0.370316
+  ...
+# Subtest: every private file in the list exists today or is a ledger created later; the list holds no public research files
+not ok 9 - every private file in the list exists today or is a ledger created later; the list holds no public research files
+  ---
+  duration_ms: 0.950438
+  location: '/workspace/g2-verification/r1-future-repair/test/private-data.test.mjs:92:1'
+  failureType: 'testCodeFailure'
+  error: 'my-positions.json'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/r1-future-repair/test/private-data.test.mjs:93:33)
+    Test.runInAsyncScope (node:async_hooks:206:9)
+    Test.run (node:internal/test_runner/test:796:25)
+    Test.processPendingSubtests (node:internal/test_runner/test:526:18)
+    Test.postRun (node:internal/test_runner/test:889:19)
+    Test.run (node:internal/test_runner/test:835:12)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: blocker 2: a directory-fsync EIO fails the write and the original plaintext is KEPT (Codex injected EIO twice)
+ok 10 - blocker 2: a directory-fsync EIO fails the write and the original plaintext is KEPT (Codex injected EIO twice)
+  ---
+  duration_ms: 7.246316
+  ...
+# Subtest: blocker 2: EINVAL/ENOTSUP from a directory fsync (unsupported) is tolerated; short writes are completed, a zero write fails
+ok 11 - blocker 2: EINVAL/ENOTSUP from a directory fsync (unsupported) is tolerated; short writes are completed, a zero write fails
+  ---
+  duration_ms: 73.701762
+  ...
+# Subtest: blocker 3 (Codex reproduction): no key and NO options record -> the nightly options lane makes no request and sends nothing
+ok 12 - blocker 3 (Codex reproduction): no key and NO options record -> the nightly options lane makes no request and sends nothing
+  ---
+  duration_ms: 60.439993
+  ...
+# Telegram: 1 message(s) read
+# Telegram: 1 message(s) read
+# Subtest: blocker 3: no key and no record -> an owner option command is NOT RECORDED; with the key and no record it is recorded (absent != unreadable)
+ok 13 - blocker 3: no key and no record -> an owner option command is NOT RECORDED; with the key and no record it is recorded (absent != unreadable)
+  ---
+  duration_ms: 162.461999
+  ...
+# Subtest: blocker 3: every keyless writer job stops at once with SEALED_KEY_MISSING (before any request); readers report it even when files are absent
+ok 14 - blocker 3: every keyless writer job stops at once with SEALED_KEY_MISSING (before any request); readers report it even when files are absent
+  ---
+  duration_ms: 348.513269
+  ...
+# Subtest: blocker 5: pre-migration, offset-only bot saves still publish; plaintext T1 that an old writer added is refused at push only once migrated
+ok 15 - blocker 5: pre-migration, offset-only bot saves still publish; plaintext T1 that an old writer added is refused at push only once migrated
+  ---
+  duration_ms: 1069.889523
+  ...
+# Subtest: owner-state race (Codex reproduction): bot records a real trade while the scan saves paper calls -> both kept
+ok 16 - owner-state race (Codex reproduction): bot records a real trade while the scan saves paper calls -> both kept
+  ---
+  duration_ms: 580.752433
+  ...
+# Subtest: owner-state race: a real clash on the owner's trades is REFUSED (never one side), the bot keeps and retries its commit, the owner is warned once
+ok 17 - owner-state race: a real clash on the owner's trades is REFUSED (never one side), the bot keeps and retries its commit, the owner is warned once
+  ---
+  duration_ms: 46519.152711
+  ...
+# Subtest: an unpublished commit is retried by the next save even when nothing new is staged (before rev3 it stayed behind)
+ok 18 - an unpublished commit is retried by the next save even when nothing new is staged (before rev3 it stayed behind)
+  ---
+  duration_ms: 863.920971
+  ...
+# Subtest: keyed merge unit: one-sided and identical changes merge, deletions respected, clashes refused, non-objects refused
+ok 19 - keyed merge unit: one-sided and identical changes merge, deletions respected, clashes refused, non-objects refused
+  ---
+  duration_ms: 0.67251
+  ...
+# Subtest: writer quiescence gate (rev6 capture v2): open-status census + 31-day created coverage, complete pages, cap, repository, freshness
+ok 20 - writer quiescence gate (rev6 capture v2): open-status census + 31-day created coverage, complete pages, cap, repository, freshness
+  ---
+  duration_ms: 2.323771
+  ...
+# Subtest: Codex rev3 \#1: an identical RETRY after a directory-fsync EIO keeps the plaintext (durability first, then removal)
+ok 21 - Codex rev3 \#1: an identical RETRY after a directory-fsync EIO keeps the plaintext (durability first, then removal)
+  ---
+  duration_ms: 4.008062
+  ...
+# Subtest: all scan requests stayed on loopback
+ok 22 - all scan requests stayed on loopback
+  ---
+  duration_ms: 0.256035
+  ...
+# Subtest: R1-C2: staging only the .sealed name leaves plaintext in HEAD (the trap); sealed_stage + guard leave ciphertext only
+ok 23 - R1-C2: staging only the .sealed name leaves plaintext in HEAD (the trap); sealed_stage + guard leave ciphertext only
+  ---
+  duration_ms: 268.390491
+  ...
+# Subtest: guard --staged: refuses an added/modified plaintext T1 path or temp file; allows its deletion and unrelated saves
+ok 24 - guard --staged: refuses an added/modified plaintext T1 path or temp file; allows its deletion and unrelated saves
+  ---
+  duration_ms: 396.748111
+  ...
+# Subtest: R1-C5 reproduced: WITHOUT the driver, pull --rebase -X theirs silently keeps one side of a sealed ledger
+ok 25 - R1-C5 reproduced: WITHOUT the driver, pull --rebase -X theirs silently keeps one side of a sealed ledger
+  ---
+  duration_ms: 168.38772
+  ...
+# Subtest: R1-C5 closed: WITH sealed-git.sh, concurrent appends from two runs are both kept (decrypt, line union, re-encrypt)
+ok 26 - R1-C5 closed: WITH sealed-git.sh, concurrent appends from two runs are both kept (decrypt, line union, re-encrypt)
+  ---
+  duration_ms: 257.819019
+  ...
+# Subtest: JSON state: non-overlapping edits merge; an overlapping edit follows SEALED_MERGE_FAVOR; without it the save fails, nothing lost
+ok 27 - JSON state: non-overlapping edits merge; an overlapping edit follows SEALED_MERGE_FAVOR; without it the save fails, nothing lost
+  ---
+  duration_ms: 449.467851
+  ...
+# Subtest: binary (.gz) changed on both sides, or no key at merge time: conflict, never one side, never plaintext
+ok 28 - binary (.gz) changed on both sides, or no key at merge time: conflict, never one side, never plaintext
+  ---
+  duration_ms: 394.476143
+  ...
+# Subtest: save-data.sh (nightly scan save) end to end: sealed ledger merged with a concurrent bot save; guard blocks plaintext
+ok 29 - save-data.sh (nightly scan save) end to end: sealed ledger merged with a concurrent bot save; guard blocks plaintext
+  ---
+  duration_ms: 603.506187
+  ...
+# Subtest: leaders-study copy-back: the CLI three-way merge of a history segment keeps the watcher's appends made during the 2-hour run
+ok 30 - leaders-study copy-back: the CLI three-way merge of a history segment keeps the watcher's appends made during the 2-hour run
+  ---
+  duration_ms: 72.300252
+  ...
+# fatal: path '.github/r1-migration-manifest.json' does not exist in 'HEAD'
+# Subtest: plan: exactly the T1 plaintext paths of the given tree (no key needed); neighbours untouched
+ok 31 - plan: exactly the T1 plaintext paths of the given tree (no key needed); neighbours untouched
+  ---
+  duration_ms: 38.397898
+  ...
+# Subtest: apply + receipt: ciphertext only, manifest of every source path/size/hash, parent = approved source; history not rewritten
+ok 32 - apply + receipt: ciphertext only, manifest of every source path/size/hash, parent = approved source; history not rewritten
+  ---
+  duration_ms: 232.066479
+  ...
+# Subtest: Codex blocker 4: an unreviewed staged T1 addition, a dirty tree or HEAD != approved source are all refused; nothing changes
+ok 33 - Codex blocker 4: an unreviewed staged T1 addition, a dirty tree or HEAD != approved source are all refused; nothing changes
+  ---
+  duration_ms: 72.526782
+  ...
+# Subtest: Codex blocker 4: verification refuses zero files, a missing or extra sealed file, a changed one, and a commit rebased off the source
+ok 34 - Codex blocker 4: verification refuses zero files, a missing or extra sealed file, a changed one, and a commit rebased off the source
+  ---
+  duration_ms: 684.570496
+  ...
+# Subtest: interrupted migration: no commit, the guard refuses the partial state, a clean checkout of the source restarts
+ok 35 - interrupted migration: no commit, the guard refuses the partial state, a clean checkout of the source restarts
+  ---
+  duration_ms: 352.167876
+  ...
+# Subtest: Codex blocker 1: recovery export refuses the checkout by real path, symlink escapes, symlinks below it, and overwrites
+ok 36 - Codex blocker 1: recovery export refuses the checkout by real path, symlink escapes, symlinks below it, and overwrites
+  ---
+  duration_ms: 183.373524
+  ...
+# Subtest: CLI: --plan needs no key; --apply needs the key and the approved source; --verify-tree reports counts only
+ok 37 - CLI: --plan needs no key; --apply needs the key and the approved source; --verify-tree reports counts only
+  ---
+  duration_ms: 541.158188
+  ...
+# Subtest: Codex rev3 \#3: deleting a sealed file AND its manifest entry no longer yields a clean receipt (expected set recomputed from the source)
+ok 38 - Codex rev3 \#3: deleting a sealed file AND its manifest entry no longer yields a clean receipt (expected set recomputed from the source)
+  ---
+  duration_ms: 287.225644
+  ...
+# Subtest: Codex rev3 \#2: a segmented ledger is exported ONCE as its logical file (base + segments), never duplicated by its segments
+ok 39 - Codex rev3 \#2: a segmented ledger is exported ONCE as its logical file (base + segments), never duplicated by its segments
+  ---
+  duration_ms: 207.748384
+  ...
+# Subtest: backup-key check vector: reveals neither value nor key; the right backup passes, any other secret fails; CLI exit codes
+ok 40 - backup-key check vector: reveals neither value nor key; the right backup passes, any other secret fails; CLI exit codes
+  ---
+  duration_ms: 316.11495
+  ...
+# Subtest: backup compare (B5b route a): equal copies PASS, any difference FAILS, a missing backup is an error; output reveals nothing
+ok 41 - backup compare (B5b route a): equal copies PASS, any difference FAILS, a missing backup is an error; output reveals nothing
+  ---
+  duration_ms: 119.923124
+  ...
+# R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+# Telegram: 1 message(s) read
+# R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+# Subtest: bot: an options record sealed under another key -> "bought option" is NOT RECORDED and the record bytes stay identical
+ok 42 - bot: an options record sealed under another key -> "bought option" is NOT RECORDED and the record bytes stay identical
+  ---
+  duration_ms: 113.891327
+  ...
+# Telegram: 1 message(s) read
+# Telegram: 1 message(s) read
+# Subtest: bot: without the key the same command is NOT RECORDED (SEALED_KEY_MISSING); with it, recorded and still sealed (control)
+ok 43 - bot: without the key the same command is NOT RECORDED (SEALED_KEY_MISSING); with it, recorded and still sealed (control)
+  ---
+  duration_ms: 129.353016
+  ...
+# R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+# Subtest: nightly options lane: an unreadable options record stops the lane BEFORE any ticket, request or paper change
+ok 44 - nightly options lane: an unreadable options record stops the lane BEFORE any ticket, request or paper change
+  ---
+  duration_ms: 41.939528
+  ...
+# R1 sealed read data/movers-state.json: SEALED_LEGACY_PLAINTEXT
+# Subtest: bot: an unmigrated plaintext movers file is UNKNOWN (SEALED_LEGACY_PLAINTEXT), not "not produced yet"
+ok 45 - bot: an unmigrated plaintext movers file is UNKNOWN (SEALED_LEGACY_PLAINTEXT), not "not produced yet"
+  ---
+  duration_ms: 43.056576
+  ...
+# Subtest: health: a tampered watcher live file is a named problem with state UNKNOWN; the watcher evidence line says UNKNOWN
+ok 46 - health: a tampered watcher live file is a named problem with state UNKNOWN; the watcher evidence line says UNKNOWN
+  ---
+  duration_ms: 170.149647
+  ...
+# Subtest: missed-runner ledger: unmigrated plaintext history stops the job (exit 1) and is left untouched; sealed input appends sealed
+ok 47 - missed-runner ledger: unmigrated plaintext history stops the job (exit 1) and is left untouched; sealed input appends sealed
+  ---
+  duration_ms: 229.445452
+  ...
+# Subtest: shadow outcomes: a sealed day file under another key stops the step with its code; nothing is written
+ok 48 - shadow outcomes: a sealed day file under another key stops the step with its code; nothing is written
+  ---
+  duration_ms: 110.374553
+  ...
+# Subtest: watcher evidence (watcher-reporting): an unmigrated plaintext run archive makes the evidence UNKNOWN and actionable
+ok 49 - watcher evidence (watcher-reporting): an unmigrated plaintext run archive makes the evidence UNKNOWN and actionable
+  ---
+  duration_ms: 49.367547
+  ...
+# Subtest: all requests stayed on loopback
+ok 50 - all requests stayed on loopback
+  ---
+  duration_ms: 0.91137
+  ...
+# Subtest: a bot save that cannot reach main is kept on a recovery branch, then merged into main by the next recovery pass and deleted
+ok 51 - a bot save that cannot reach main is kept on a recovery branch, then merged into main by the next recovery pass and deleted
+  ---
+  duration_ms: 1235.644121
+  ...
+# Subtest: a recovery branch that clashes with main on the owner's trades is KEPT (not dropped) and reported; it merges once main allows
+ok 52 - a recovery branch that clashes with main on the owner's trades is KEPT (not dropped) and reported; it merges once main allows
+  ---
+  duration_ms: 890.355015
+  ...
+# Subtest: every save path uses recovery on final failure: nightly save-data.sh and append ledgers (segments) are recovered too
+ok 53 - every save path uses recovery on final failure: nightly save-data.sh and append ledgers (segments) are recovered too
+  ---
+  duration_ms: 912.619366
+  ...
+# Subtest: remaining limit, explicit: when the remote refuses BOTH main and recovery pushes, the commit exists only on that runner
+ok 54 - remaining limit, explicit: when the remote refuses BOTH main and recovery pushes, the commit exists only on that runner
+  ---
+  duration_ms: 654.541526
+  ...
+# Subtest: the recovery push is guarded: new T1 plaintext is never pushed to a recovery branch either
+ok 55 - the recovery push is guarded: new T1 plaintext is never pushed to a recovery branch either
+  ---
+  duration_ms: 144.715945
+  ...
+# Subtest: an interrupted sealed write leaves a temp file that is ignored by git (it can never block or join a save)
+ok 56 - an interrupted sealed write leaves a temp file that is ignored by git (it can never block or join a save)
+  ---
+  duration_ms: 248.753151
+  ...
+# Subtest: Codex \#1+\#2: a stale recovery (offset 2, STALE positions, plus a code file) is REFUSED: main keeps offset 9, NEW positions, current code
+ok 57 - Codex \#1+\#2: a stale recovery (offset 2, STALE positions, plus a code file) is REFUSED: main keeps offset 9, NEW positions, current code
+  ---
+  duration_ms: 498.769039
+  ...
+# Subtest: a runner's successive checkpoints (immutable refs) merge in order: offset 2 then 3, never back
+ok 58 - a runner's successive checkpoints (immutable refs) merge in order: offset 2 then 3, never back
+  ---
+  duration_ms: 1634.94388
+  ...
+# Subtest: Codex \#3 race: a ref advanced after its merge is NOT deleted (compare-and-delete); the newer checkpoint merges next pass
+ok 59 - Codex \#3 race: a ref advanced after its merge is NOT deleted (compare-and-delete); the newer checkpoint merges next pass
+  ---
+  duration_ms: 624.675296
+  ...
+# Subtest: Codex \#4: a failed recovery fetch is UNKNOWN (exit 2), visible, and the bot warns; nothing is assumed merged
+ok 60 - Codex \#4: a failed recovery fetch is UNKNOWN (exit 2), visible, and the bot warns; nothing is assumed merged
+  ---
+  duration_ms: 221.63821
+  ...
+# Subtest: Codex d02cdfea \#1: main positions {} -> NEW -> {} after the checkpoint base: the OLD checkpoint is REFUSED (causal history, not blob equality)
+ok 61 - Codex d02cdfea \#1: main positions {} -> NEW -> {} after the checkpoint base: the OLD checkpoint is REFUSED (causal history, not blob equality)
+  ---
+  duration_ms: 326.818258
+  ...
+# Subtest: Codex d02cdfea \#2: a merge commit (data-only parents, code introduced by the merge) is REFUSED; code on main unchanged
+ok 62 - Codex d02cdfea \#2: a merge commit (data-only parents, code introduced by the merge) is REFUSED; code on main unchanged
+  ---
+  duration_ms: 332.655107
+  ...
+# Subtest: a recovery commit records Recovered-From: <tip>; only that lineage counts as "ours" on a later pass
+ok 63 - a recovery commit records Recovered-From: <tip>; only that lineage counts as "ours" on a later pass
+  ---
+  duration_ms: 557.524872
+  ...
+# Subtest: a newer checkpoint processed first supersedes its older ancestor (deleted as contained, not refused)
+ok 64 - a newer checkpoint processed first supersedes its older ancestor (deleted as contained, not refused)
+  ---
+  duration_ms: 448.493908
+  ...
+# Subtest: release rehearsal: gate -> code -> rollback-before-migration -> migration -> receipt -> writers -> guard -> recovery export
+ok 65 - release rehearsal: gate -> code -> rollback-before-migration -> migration -> receipt -> writers -> guard -> recovery export
+  ---
+  duration_ms: 1992.035439
+  ...
+# Subtest: release precheck: PASS when no candidate file drifted on the target; FAIL on drift or an already-sealed target
+ok 66 - release precheck: PASS when no candidate file drifted on the target; FAIL on drift or an already-sealed target
+  ---
+  duration_ms: 170.306866
+  ...
+# Subtest: rev8 combined unit: built source-only on a fresh M0 (newer data and Telegram offset kept); verify refuses anything else
+ok 67 - rev8 combined unit: built source-only on a fresh M0 (newer data and Telegram offset kept); verify refuses anything else
+  ---
+  duration_ms: 1433.797351
+  ...
+# Subtest: round trip; ciphertext reveals no plaintext; fresh IV each time; binary, not base64
+ok 68 - round trip; ciphertext reveals no plaintext; fresh IV each time; binary, not base64
+  ---
+  duration_ms: 3.459417
+  ...
+# Subtest: key derivation: domain-separated from sha256(secret) (the private.enc key); read only from SEALED_SECRET
+ok 69 - key derivation: domain-separated from sha256(secret) (the private.enc key); read only from SEALED_SECRET
+  ---
+  duration_ms: 0.228884
+  ...
+# Subtest: Codex R1-C3 replay: a valid sealed file copied over another path is SEALED_UNREADABLE (path bound in the AAD)
+ok 70 - Codex R1-C3 replay: a valid sealed file copied over another path is SEALED_UNREADABLE (path bound in the AAD)
+  ---
+  duration_ms: 9.560744
+  ...
+# Subtest: wrong key, tampering (every byte region), truncation, other versions and malformed input: SEALED_UNREADABLE
+ok 71 - wrong key, tampering (every byte region), truncation, other versions and malformed input: SEALED_UNREADABLE
+  ---
+  duration_ms: 0.828915
+  ...
+# Subtest: Codex R1-C3 keyless legacy read: plaintext with no sealed copy is SEALED_LEGACY_PLAINTEXT with or without a key
+ok 72 - Codex R1-C3 keyless legacy read: plaintext with no sealed copy is SEALED_LEGACY_PLAINTEXT with or without a key
+  ---
+  duration_ms: 1.731642
+  ...
+# Subtest: no key: every write refuses BEFORE touching any file; a sealed file without the key is SEALED_KEY_MISSING (never absent)
+ok 73 - no key: every write refuses BEFORE touching any file; a sealed file without the key is SEALED_KEY_MISSING (never absent)
+  ---
+  duration_ms: 2.64285
+  ...
+# Subtest: durable write: no temp file left, read-back verified, plaintext removed only after the sealed copy verifies
+ok 74 - durable write: no temp file left, read-back verified, plaintext removed only after the sealed copy verifies
+  ---
+  duration_ms: 7.422271
+  ...
+# Subtest: exclusive write replaces {flag:"wx"}: an existing per-run archive is never replaced
+ok 75 - exclusive write replaces {flag:"wx"}: an existing per-run archive is never replaced
+  ---
+  duration_ms: 3.419228
+  ...
+# Subtest: append + lines; listing by logical name; a plaintext T1 file in a sealed folder is refused
+ok 76 - append + lines; listing by logical name; a plaintext T1 file in a sealed folder is refused
+  ---
+  duration_ms: 7.730294
+  ...
+# Subtest: T1 inventory patterns: the 45 tracked families match; neighbours that are not T1 do not
+ok 77 - T1 inventory patterns: the 45 tracked families match; neighbours that are not T1 do not
+  ---
+  duration_ms: 0.584729
+  ...
+# Subtest: unchanged content is not rewritten (no fresh-IV blob for an identical record); changed content is
+ok 78 - unchanged content is not rewritten (no fresh-IV blob for an identical record); changed content is
+  ---
+  duration_ms: 4.607837
+  ...
+# Subtest: segmented ledgers: appends write only that day's sealed segment; reads return base + segments in date order
+ok 79 - segmented ledgers: appends write only that day's sealed segment; reads return base + segments in date order
+  ---
+  duration_ms: 11.501029
+  ...
+# Subtest: no module reads or writes a T1 file with plain fs calls (only through sealed-store)
+ok 80 - no module reads or writes a T1 file with plain fs calls (only through sealed-store)
+  ---
+  duration_ms: 40.319264
+  ...
+# Subtest: indirect writers: variables holding T1 paths are only written through sealed-store calls
+ok 81 - indirect writers: variables holding T1 paths are only written through sealed-store calls
+  ---
+  duration_ms: 0.750698
+  ...
+# Subtest: public Actions logs: no per-stock option quotes, survey summary, or analyst/price message text is printed
+ok 82 - public Actions logs: no per-stock option quotes, survey summary, or analyst/price message text is printed
+  ---
+  duration_ms: 0.231047
+  ...
+# Subtest: the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)
+ok 83 - the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)
+  ---
+  duration_ms: 2.095528
+  ...
+# Subtest: every workflow save that can carry T1 changes registers the sealed merge driver and runs the guard before committing
+ok 84 - every workflow save that can carry T1 changes registers the sealed merge driver and runs the guard before committing
+  ---
+  duration_ms: 1.842067
+  ...
+# Subtest: explicit stage lists use sealed_stage (addition + deletion) for T1 names; no plaintext T1 name is git-added directly
+ok 85 - explicit stage lists use sealed_stage (addition + deletion) for T1 names; no plaintext T1 name is git-added directly
+  ---
+  duration_ms: 2.967168
+  ...
+# Subtest: watcher artifact: the only T1 path uploaded is data/ignition-runs/, which now holds sealed files only
+ok 86 - watcher artifact: the only T1 path uploaded is data/ignition-runs/, which now holds sealed files only
+  ---
+  duration_ms: 0.533211
+  ...
+# Subtest: website: index.html fetches signals.json and discovery.json only (T2), and names no T1 file or sealed file
+ok 87 - website: index.html fetches signals.json and discovery.json only (T2), and names no T1 file or sealed file
+  ---
+  duration_ms: 1.077008
+  ...
+# Subtest: migration workflow: manual dispatch only, exact confirmation, approved source checkout, fast-forward push, tree receipt; no schedule
+ok 88 - migration workflow: manual dispatch only, exact confirmation, approved source checkout, fast-forward push, tree receipt; no schedule
+  ---
+  duration_ms: 0.488484
+  ...
+# Subtest: every push is preceded by the push-time guard on the reconciled tree (Codex re-review 5)
+ok 89 - every push is preceded by the push-time guard on the reconciled tree (Codex re-review 5)
+  ---
+  duration_ms: 0.437217
+  ...
+# Subtest: .gitattributes keeps sealed files out of text merge and diff
+ok 90 - .gitattributes keeps sealed files out of text merge and diff
+  ---
+  duration_ms: 0.187692
+  ...
+# Subtest: inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 same-family) all match the sealed patterns
+ok 91 - inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 same-family) all match the sealed patterns
+  ---
+  duration_ms: 0.33926
+  ...
+# Subtest: rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored
+ok 92 - rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored
+  ---
+  duration_ms: 0.352289
+  ...
+# Subtest: rev5 recovery: no cherry-pick replay; producer refs are immutable (no force push); consumer is the data-only sealed-recover.mjs
+ok 93 - rev5 recovery: no cherry-pick replay; producer refs are immutable (no force push); consumer is the data-only sealed-recover.mjs
+  ---
+  duration_ms: 0.237968
+  ...
+1..93
+# tests 93
+# suites 0
+# pass 92
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 49806.592792
