@@ -1,0 +1,173 @@
+TAP version 13
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: F1: a four-minute stop quote has one consistent five-minute stop assessment; entry/HOLD still require three minutes
+not ok 1 - F1: a four-minute stop quote has one consistent five-minute stop assessment; entry/HOLD still require three minutes
+  ---
+  duration_ms: 190.05401
+  location: '/workspace/g2-verification/engineering-a497/test/dependency-port-review.test.mjs:31:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /ZZS: STOP LEVEL REACHED/. Input:
+    
+    "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n" +
+      '\n' +
+      'YOUR POSITIONS (one action each, the same rules as ACTIONS)\n' +
+      'ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (the latest price is 4 min old (limit 3 min)).\n' +
+      '\n' +
+      "PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\n" +
+      "none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n" +
+      '\n' +
+      'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\n' +
+      'Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n' +
+      '\n' +
+      'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.
+    
+    YOUR POSITIONS (one action each, the same rules as ACTIONS)
+    ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (the latest price is 4 min old (limit 3 min)).
+    
+    PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)
+    none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.
+    
+    Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.
+    Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.
+    
+    Tested signals, not instructions. Not financial advice, not a halal ruling.
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/dependency-port-review.test.mjs:35:10)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: F2: a future-at-fetch quote remains UNKNOWN after wall clock passes it
+not ok 2 - F2: a future-at-fetch quote remains UNKNOWN after wall clock passes it
+  ---
+  duration_ms: 60.648798
+  location: '/workspace/g2-verification/engineering-a497/test/dependency-port-review.test.mjs:39:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /ZZS: STOP STATUS UNKNOWN.*in the future/. Input:
+    
+    "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n" +
+      '\n' +
+      'YOUR POSITIONS (one action each, the same rules as ACTIONS)\n' +
+      'ZZS: STOP LEVEL REACHED: at or below your stop 80.00. If your broker stop order has filled, you are already out: do not sell again. Last price 70.00 (FINNHUB, Nov 5 09:40 New York, 10 s old) (-30.0% from your 100.00).\n' +
+      '\n' +
+      "PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\n" +
+      "none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n" +
+      '\n' +
+      'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\n' +
+      'Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.
+    
+    YOUR POSITIONS (one action each, the same rules as ACTIONS)
+    ZZS: STOP LEVEL REACHED: at or below your stop 80.00. If your broker stop order has filled, you are already out: do not sell again. Last price 70.00 (FINNHUB, Nov 5 09:40 New York, 10 s old) (-30.0% from your 100.00).
+    
+    PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)
+    none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.
+    
+    Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.
+    Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/dependency-port-review.test.mjs:45:10)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# intraday check done: 2 watched, 2 new alerts
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: runtime: no-stop holding without valid price is STATUS UNKNOWN; all quotes failing still sends exactly one first check; rerun does not duplicate
+ok 3 - runtime: no-stop holding without valid price is STATUS UNKNOWN; all quotes failing still sends exactly one first check; rerun does not duplicate
+  ---
+  duration_ms: 86.49241
+  ...
+# intraday check done: 0 watched, 0 new alerts
+# Subtest: runtime: no holdings and no list stays silent
+ok 4 - runtime: no holdings and no list stays silent
+  ---
+  duration_ms: 49.068109
+  ...
+# Telegram rate limit, waiting 1 s
+# Telegram rate limit, waiting 1 s
+# Telegram error 429 {"ok":false,"description":"HTTP_429","parameters":{"retry_after":1}}
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Telegram error 500 {"ok":false,"description":"HTTP_500","parameters":{"retry_after":1}}
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: delivery: first check refused with HTTP 429 is retried on the next run (not consumed pre-ACK); HTTP 500 is UNKNOWN and not repeated
+ok 5 - delivery: first check refused with HTTP 429 is retried on the next run (not consumed pre-ACK); HTTP 500 is UNKNOWN and not repeated
+  ---
+  duration_ms: 153.87096
+  ...
+# Subtest: loopback only
+ok 6 - loopback only
+  ---
+  duration_ms: 0.664188
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: four-minute above-stop quote cannot imply HOLD or falsely say NO STOP SET
+not ok 7 - four-minute above-stop quote cannot imply HOLD or falsely say NO STOP SET
+  ---
+  duration_ms: 73.14382
+  location: '/workspace/g2-verification/engineering-a497/test/dependency-port-review.test.mjs:73:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /ZZS: PRICE STATUS UNKNOWN/. Input:
+    
+    "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n" +
+      '\n' +
+      'YOUR POSITIONS (one action each, the same rules as ACTIONS)\n' +
+      'ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (the latest price is 4 min old (limit 3 min)).\n' +
+      '\n' +
+      "PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\n" +
+      "none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n" +
+      '\n' +
+      'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\n' +
+      'Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.\n' +
+      '\n' +
+      'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.
+    
+    YOUR POSITIONS (one action each, the same rules as ACTIONS)
+    ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (the latest price is 4 min old (limit 3 min)).
+    
+    PLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)
+    none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.
+    
+    Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.
+    Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The development live watcher uses the session calendar and configured segments; actual coverage is UNKNOWN until its archive is verified.
+    
+    Tested signals, not instructions. Not financial advice, not a halal ruling.
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/dependency-port-review.test.mjs:74:148)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+1..7
+# tests 7
+# suites 0
+# pass 4
+# fail 3
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 695.26308

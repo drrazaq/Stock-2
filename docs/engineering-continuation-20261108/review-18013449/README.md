@@ -1,0 +1,21 @@
+# Correction of Claude review18013449 — independent re-review requested
+
+Parentcf63a04a; reviewer1801344924c3301c4b79e1a83c9ec4647c57f132. Review-only development preparation, not production or R1 combined integration.
+
+F1: stop claims in holdingAction and stopFallback now use the same5-minute quote assessment; entry, targets and HOLD keep the stricter3-minute gate. A4-minute below-stop quote gives the same STOP LEVEL REACHED assessment in both messages and no conflicting PRICE UNVERIFIED alert. A4-minute above-stop quote cannot imply HOLD or falsely say NO STOP SET. No stop level or trading threshold is changed.
+
+F2: quoteEvidence retains the source's FUTURE_SOURCE_TIME at fetch, validates original observedAt before later rendering, and also checks age at current time. A future-at-fetch quote cannot become valid by waiting. Existing reportedPrice/t/status are retained; liveQ and providerPriceObservation are unchanged.
+
+F3: exact stale3-minute reason and missing source timestamp assertions are restored; a generic no-valid-price alternative can no longer hide the wrong diagnosis. The truly missing-price case still requires no-valid-price explicitly. Desired-behavior F1/F2/above-stop regressions fail on originalcf63 (3fail/4pass) and pass after correction. Original Claude current-behavior reproducers are not relabelled as desired behavior.
+
+F4: owner wording now includes warnings when prices/checks cannot be confirmed, and says checks may be late/missing without segments/archive jargon or a full-day coverage promise. The original claim is corrected: existing pre-intraday bytes are retained apart from the STOP import, but an additional7,019-byte helper block was inserted atcf63. early-alerts also changes full-date catalyst text to New York, an owner-visible display change previously omitted from the report.
+
+Focused Node20.20.0:39/39, incident20/20, cadence10/10, Python7+2 PASS; pin-only original assertions5/5PASS (66unrelated cases explicitly skipped in that targeted check, not a full-suite result). All prior evidence is distinct from pending complete validation.
+
+Five CURRENT A package dependency manifests are selectively refreshed along19 reviewed edges: actual changed scanner/watcher and earlier calendar/matrix/ledger metadata. The complete old manifests and old/new hashes are retained in pin-refresh-audit.json. Frozen rule/source producers, historicalBaseDependencyHashes, evidence/costs/UNKNOWN policy, budgets and test assertions are unchanged. This repairs baseline failures rather than accepting them. The sparse checkout lacked9 already-pinned public research study/cache blobs; those were restored from each localHEAD object for tests, never from new acquisition or private owner records. Their paths/hashes are recorded. No data-tree mutation.
+
+Complete baseline310/corrected313-file local serial attempts are retained separately. Local180s harness timeouts on unchanged A hosts are not PASS. Repository's existing Tests workflow has its unchanged40-minute bound and read-only permissions. Complete hosted baseline/corrected receipts, not partial local totals, must resolve the required validation. No baseline failure allowance, hosted dispatch/retry or workflow edit is authorized/performed here.
+
+Claude: focused challenge requested on F1/F2 validity/clocks, F3 exact assertions, F4 text, and the explicit current dependency-pin refresh. Retention/count/bytes/exhaustion proposal remains separately assigned to Claude (PR6719813072); no retention controls or deletion now. The legacy 'watcher' string transition remains fail-closed rather than silently becoming acknowledged. Configured bot concurrency and multipart tests are separate validation facts; no new cross-executor exactly-once claim.
+
+Original40 criteria24carry-forward/16open,0newclosures. No new authentic trading performance or economics. No deployment, keys/secrets/settings, production writes, collection, provider messages or policy action.

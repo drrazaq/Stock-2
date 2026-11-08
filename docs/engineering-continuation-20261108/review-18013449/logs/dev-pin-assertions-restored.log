@@ -1,0 +1,365 @@
+TAP version 13
+# Subtest: baseline K1/K2 independently reproduce through unmodified published worker
+ok 1 - baseline K1/K2 independently reproduce through unmodified published worker # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.927273
+  ...
+# Subtest: K1 owner-signed unresolved transition preserves original intent, invents no body and permanently fences old token
+ok 2 - K1 owner-signed unresolved transition preserves original intent, invents no body and permanently fences old token # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.090235
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: forged-signature
+ok 3 - K1 refuses unauthorized/context-changing disposal: forged-signature # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.062684
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: wrong-store
+ok 4 - K1 refuses unauthorized/context-changing disposal: wrong-store # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.064377
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: changed-owner
+ok 5 - K1 refuses unauthorized/context-changing disposal: changed-owner # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.071578
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: omitted-intent
+ok 6 - K1 refuses unauthorized/context-changing disposal: omitted-intent # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.054041
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: wrong-key-id
+ok 7 - K1 refuses unauthorized/context-changing disposal: wrong-key-id # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.117096
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: old-token-signature
+ok 8 - K1 refuses unauthorized/context-changing disposal: old-token-signature # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.063886
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: extra-field
+ok 9 - K1 refuses unauthorized/context-changing disposal: extra-field # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.163475
+  ...
+# Subtest: legacy store cannot add its own recovery root or use old token as recovery authority
+ok 10 - legacy store cannot add its own recovery root or use old token as recovery authority # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.171998
+  ...
+# Subtest: inventory changed after authorization refuses without disposing a different intent
+ok 11 - inventory changed after authorization refuses without disposing a different intent # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.091157
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_ATTEMPT_WRITE
+ok 12 - K1 actual child SIGKILL/restart at DURING_ATTEMPT_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.078317
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_CLAIM_ATTEMPT
+ok 13 - K1 actual child SIGKILL/restart at AFTER_CLAIM_ATTEMPT # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.083145
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_GENERATION_WRITE
+ok 14 - K1 actual child SIGKILL/restart at DURING_GENERATION_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.108924
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_GENERATION
+ok 15 - K1 actual child SIGKILL/restart at AFTER_GENERATION # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.069244
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_HEAD_WRITE
+ok 16 - K1 actual child SIGKILL/restart at DURING_HEAD_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.122655
+  ...
+# Subtest: K1 actual child SIGKILL/restart at BEFORE_HEAD
+ok 17 - K1 actual child SIGKILL/restart at BEFORE_HEAD # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.080181
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_SWITCH_WRITE
+ok 18 - K1 actual child SIGKILL/restart at DURING_SWITCH_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.140321
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_SWITCH_WRITE
+ok 19 - K1 actual child SIGKILL/restart at AFTER_SWITCH_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.082624
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_HEAD
+ok 20 - K1 actual child SIGKILL/restart at AFTER_HEAD # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.100681
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_DISPOSITION_WRITE
+ok 21 - K1 actual child SIGKILL/restart at DURING_DISPOSITION_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.068162
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_DISPOSITION
+ok 22 - K1 actual child SIGKILL/restart at AFTER_DISPOSITION # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.052198
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_RECEIPT_WRITE
+ok 23 - K1 actual child SIGKILL/restart at DURING_RECEIPT_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.0467
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_CLAIM_RECEIPT
+ok 24 - K1 actual child SIGKILL/restart at AFTER_CLAIM_RECEIPT # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.04637
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_ATTEMPT_WRITE
+ok 25 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_ATTEMPT_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.041543
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_ATTEMPT
+ok 26 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_ATTEMPT # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.043366
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_GENERATION_WRITE
+ok 27 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_GENERATION_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.074722
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_GENERATION
+ok 28 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_GENERATION # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.048452
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_HEAD_WRITE
+ok 29 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_HEAD_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.046711
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: BEFORE_HEAD
+ok 30 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: BEFORE_HEAD # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.041312
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_SWITCH_WRITE
+ok 31 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_SWITCH_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.048563
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_SWITCH_WRITE
+ok 32 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_SWITCH_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.121843
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_HEAD
+ok 33 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_HEAD # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.1197
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_RECEIPT_WRITE
+ok 34 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_RECEIPT_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.056014
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_RECEIPT
+ok 35 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_RECEIPT # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.041873
+  ...
+# Subtest: K2 recovers genuine legacy generation residue from exact recorded values without rewriting it
+ok 36 - K2 recovers genuine legacy generation residue from exact recorded values without rewriting it # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.042704
+  ...
+# Subtest: actual old-version worker is fenced after recovery HEAD even if disposition is interrupted
+ok 37 - actual old-version worker is fenced after recovery HEAD even if disposition is interrupted # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.041973
+  ...
+# Subtest: unresolved sticky state prevents reusing a previously valid evaluation, not only arbitrary new outputs
+ok 38 - unresolved sticky state prevents reusing a previously valid evaluation, not only arbitrary new outputs # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.040821
+  ...
+# Subtest: orphan partial original is retained as explicitly authorized unresolved context, never deleted to clear a claim
+ok 39 - orphan partial original is retained as explicitly authorized unresolved context, never deleted to clear a claim # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.08611
+  ...
+# Subtest: corrupt signed attempt or intent refuses resumption without altering original bytes
+ok 40 - corrupt signed attempt or intent refuses resumption without altering original bytes # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.109575
+  ...
+# Subtest: competing independent recovery processes choose one authorized owner; loser cannot take over or silently dispose again
+ok 41 - competing independent recovery processes choose one authorized owner; loser cannot take over or silently dispose again # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.048383
+  ...
+# Subtest: an owner signature for conflicting takeover cannot replace a recorded unfinished recovery
+ok 42 - an owner signature for conflicting takeover cannot replace a recorded unfinished recovery # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.057766
+  ...
+# Subtest: actual collector cannot redial a terminally unresolved request under the new generation
+ok 43 - actual collector cannot redial a terminally unresolved request under the new generation # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.041823
+  ...
+# Subtest: native and close actual adapters keep research context but expose permanent unresolved store evidence
+ok 44 - native and close actual adapters keep research context but expose permanent unresolved store evidence # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.044988
+  ...
+# Subtest: completed generation authorization corruption is not silently ignored by later writes or HEAD verification
+ok 45 - completed generation authorization corruption is not silently ignored by later writes or HEAD verification # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.040271
+  ...
+# Subtest: fault injection is refused before mutation for non-synthetic origins
+ok 46 - fault injection is refused before mutation for non-synthetic origins # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.038708
+  ...
+# Subtest: an unresolved marker cannot be renamed to stand in for a different signed intent
+ok 47 - an unresolved marker cannot be renamed to stand in for a different signed intent # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.03959
+  ...
+# Subtest: exact recovery package and protected strategy/producer dependency hashes remain pinned
+ok 48 - exact recovery package and protected strategy/producer dependency hashes remain pinned
+  ---
+  duration_ms: 3.992909
+  ...
+# Subtest: L1 non-test stores require explicit authority before creating any directory
+ok 49 - L1 non-test stores require explicit authority before creating any directory # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.071167
+  ...
+# Subtest: L2 non-test takeover refuses inline authority; accepts only hash-pinned durable original bytes
+ok 50 - L2 non-test takeover refuses inline authority; accepts only hash-pinned durable original bytes # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.052008
+  ...
+# Subtest: L2 first-record independent worker interruption retains exact request and resumes: DURING_REQUEST_ARCHIVE_WRITE
+ok 51 - L2 first-record independent worker interruption retains exact request and resumes: DURING_REQUEST_ARCHIVE_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.101052
+  ...
+# Subtest: L2 first-record independent worker interruption retains exact request and resumes: AFTER_REQUEST_ARCHIVE
+ok 52 - L2 first-record independent worker interruption retains exact request and resumes: AFTER_REQUEST_ARCHIVE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.050966
+  ...
+# Subtest: L2 first-record independent worker interruption retains exact request and resumes: DURING_ATTEMPT_WRITE
+ok 53 - L2 first-record independent worker interruption retains exact request and resumes: DURING_ATTEMPT_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.045899
+  ...
+# Subtest: L2 unsafe or conflicting signed source refused without generation mutation: wrong-hash
+ok 54 - L2 unsafe or conflicting signed source refused without generation mutation: wrong-hash # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.075103
+  ...
+# Subtest: L2 unsafe or conflicting signed source refused without generation mutation: symlink
+ok 55 - L2 unsafe or conflicting signed source refused without generation mutation: symlink # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.048804
+  ...
+# Subtest: L2 unsafe or conflicting signed source refused without generation mutation: public-mode
+ok 56 - L2 unsafe or conflicting signed source refused without generation mutation: public-mode # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.973633
+  ...
+# Subtest: L2 unsafe or conflicting signed source refused without generation mutation: different-inline
+ok 57 - L2 unsafe or conflicting signed source refused without generation mutation: different-inline # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.05333
+  ...
+# Subtest: L2 exact request recovery fences conflicting signed takeover at AFTER_REQUEST_ARCHIVE
+ok 58 - L2 exact request recovery fences conflicting signed takeover at AFTER_REQUEST_ARCHIVE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.038989
+  ...
+# Subtest: L2 exact request recovery fences conflicting signed takeover at DURING_ATTEMPT_WRITE
+ok 59 - L2 exact request recovery fences conflicting signed takeover at DURING_ATTEMPT_WRITE # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.03319
+  ...
+# Subtest: L1 pre-existing non-test rootless stores remain inspectable but cannot self-enroll or mutate
+ok 60 - L1 pre-existing non-test rootless stores remain inspectable but cannot self-enroll or mutate # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.032489
+  ...
+# Subtest: L1 invalid supplied authority cannot strand a newly created non-test store
+ok 61 - L1 invalid supplied authority cannot strand a newly created non-test store # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.032128
+  ...
+# Subtest: L2 genuine previous-version torn attempt resumes without altering its hash or fragment: signed recovery
+ok 62 - L2 genuine previous-version torn attempt resumes without altering its hash or fragment: signed recovery # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.030757
+  ...
+# Subtest: L2 genuine previous-version torn attempt resumes without altering its hash or fragment: synthetic claim
+ok 63 - L2 genuine previous-version torn attempt resumes without altering its hash or fragment: synthetic claim # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.030886
+  ...
+# Subtest: first-capture exact inactive package and inherited production/frozen sources are pinned
+ok 64 - first-capture exact inactive package and inherited production/frozen sources are pinned
+  ---
+  duration_ms: 36.179756
+  ...
+# Subtest: no default credentials/client/production route, no B/C revival or source-signature truth claim
+ok 65 - no default credentials/client/production route, no B/C revival or source-signature truth claim # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.145018
+  ...
+# Subtest: N1-N4/B-C exact inactive source/test/proposal and protected old strategy hashes
+ok 66 - N1-N4/B-C exact inactive source/test/proposal and protected old strategy hashes
+  ---
+  duration_ms: 8.034851
+  ...
+# Subtest: inactive B/C and recovery are not production wiring or a source-authentication grant
+ok 67 - inactive B/C and recovery are not production wiring or a source-authentication grant # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.101312
+  ...
+# Subtest: exact inactive L1-L4 source/test/dependency hashes, no policy adoption or deployment
+ok 68 - exact inactive L1-L4 source/test/dependency hashes, no policy adoption or deployment
+  ---
+  duration_ms: 4.080921
+  ...
+# Subtest: only inactive local integration consumes native source modules; production decision paths remain untouched
+ok 69 - only inactive local integration consumes native source modules; production decision paths remain untouched # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.097907
+  ...
+# Subtest: exact new package and inherited dependency hashes, including reviewed 572 producer/collector/policy bytes
+ok 70 - exact new package and inherited dependency hashes, including reviewed 572 producer/collector/policy bytes
+  ---
+  duration_ms: 6.616531
+  ...
+# Subtest: native join and close adapters are consumed only through explicit inactive strict integration, without production/network/credentials
+ok 71 - native join and close adapters are consumed only through explicit inactive strict integration, without production/network/credentials # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.110076
+  ...
+1..71
+# tests 71
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 66
+# todo 0
+# duration_ms 195.770647

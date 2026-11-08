@@ -62,7 +62,7 @@ test('stale quote under the stop: UNKNOWN in the first check (not a hit, not HOL
   const r = await run(t, { pos: { ZZS: { entry: 100, stop: 80 } }, quotes: { ZZS: { c: 70, ageSec: 30 * 60 } } });
   const l = r.line('ZZS');
   assert.match(l, /^ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80\.00 was reached cannot be confirmed right now/);
-  assert.match(l, /Current price UNKNOWN \((?:the latest price is 30 min old \(limit 3 min\)|no valid price)\)/);
+  assert.match(l, /Current price UNKNOWN \(the latest price is 30 min old \(limit 3 min\)\)/);
   assert.doesNotMatch(l, /REACHED|HOLD|% from your/);
   assert.match(r.sent.find(x => /STOP CHECK UNKNOWN/.test(x)) || '', /ZZS: the latest price is 30 min old/);
   assert.equal(r.sent.filter(x => /STOP LEVEL REACHED|STOP LOSS REACHED/.test(x)).length, 0);
@@ -71,7 +71,7 @@ test('stale quote under the stop: UNKNOWN in the first check (not a hit, not HOL
 test('undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)', async t => {
   const r = await run(t, { pos: { ZZU: { entry: 50, stop: 40 }, ZZN: { entry: 20, stop: 15 }, ZZF: { entry: 10, stop: 8 } },
     quotes: { ZZU: { c: 39, t: 0 }, ZZF: { c: 12, ageSec: 30 } } });
-  assert.match(r.line('ZZU'), /^ZZU: STOP STATUS UNKNOWN.*Current price UNKNOWN \((?:the price has no source timestamp|no valid price)\)/);
+  assert.match(r.line('ZZU'), /^ZZU: STOP STATUS UNKNOWN.*Current price UNKNOWN \(the price has no source timestamp\)/);
   assert.match(r.line('ZZN'), /^ZZN: STOP STATUS UNKNOWN.*Current price UNKNOWN \(no valid price\)/);
   assert.match(r.line('ZZF'), /^ZZF: HOLD: no exit rule is active; above your stop 8\.00\. Last price 12\.00 \(FINNHUB, Nov 5 09:39 New York, 30 s old\)/);
 });
@@ -95,9 +95,9 @@ test('labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute p
 
 test('development session statement preserves regular and early-close calendar hours without the production 15:00 cutoff', async t => {
   const r = await run(t, { pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
-  assert.match(r.first, /Regular NYSE session today: 9:30 am to 4:00 pm New York/); assert.match(r.first, /uses the session calendar and configured segments; actual coverage is UNKNOWN/); assert.doesNotMatch(r.first,/ends at 3:00 pm/);
+  assert.match(r.first, /Regular NYSE session today: 9:30 am to 4:00 pm New York/); assert.match(r.first, /Live checks can be late or missing/); assert.doesNotMatch(r.first,/ends at 3:00 pm/);
   const e = await run(t, { now: EARLY_CLOSE, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
-  assert.match(e.first, /Regular NYSE session today: 9:30 am to 1:00 pm New York/); assert.match(e.first, /actual coverage is UNKNOWN/); assert.doesNotMatch(e.first,/ends at 3:00 pm/);
+  assert.match(e.first, /Regular NYSE session today: 9:30 am to 1:00 pm New York/); assert.match(e.first, /does not confirm that the watcher ran all day/); assert.doesNotMatch(e.first,/ends at 3:00 pm/);
   const u = await run(t, { calendar: false, pos: { ZZF: { entry: 10, stop: 8 } }, quotes: { ZZF: { c: 12, ageSec: 30 } } });
   assert.match(u.first, /Regular session hours today: UNKNOWN \(the NYSE calendar could not be read\)\./); assert.doesNotMatch(u.first, /4:00 pm/);
 });
