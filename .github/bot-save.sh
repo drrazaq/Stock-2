@@ -27,7 +27,9 @@ save() {
     git rebase --abort 2>/dev/null || true; sleep "${BOT_SAVE_SLEEP:-5}"
   done
   echo "Error: could not save the data folder to the repository (kept in the local commit; retried at the next save)" | tee -a run.log
-  sealed_recovery_push 2>&1 | tee -a run.log
+  # (rev13) run in THIS shell, not in a pipeline subshell, so SEALED_RECOVERY_LAST/REF/SLOT persist across the run's later saves (a pipe
+  # lost them: the next save could not see that its earlier state was already kept, or advance its own slot)
+  local out="${RUNNER_TEMP:-/tmp}/bot-recovery-out-$$"; sealed_recovery_push > "$out" 2>&1; cat "$out" | tee -a run.log; rm -f "$out"
   bot_save_warn
 }
 bot_recover() {

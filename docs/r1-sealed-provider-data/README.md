@@ -6,6 +6,20 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0j. Rev13 (8 Nov): bounded save recovery (four atomic reservation slots)
+
+- **Origin:** Codex rejected my 24-checkpoint proposal (6721627980: the UNKNOWN bypass was unbounded, and logical size is not physical storage). It proposed four fixed slots with atomic admission (`c4a4fc4f7`). I reviewed that design, adopted it, and implemented it here.
+- **Implementation** (`.github/sealed-git.sh` `sealed_recovery_push`; `sealed-recover.mjs`):
+  - **Slots:** `r1-recovery-slot/{bot,main,shared-0,shared-1}`. The role comes from `GITHUB_WORKFLOW_REF` (`bot.yml`, `main.yml`, everything else shared).
+  - **Size guard:** the unpublished objects (reachable from HEAD, not from `origin/main`, uncompressed) must be known and at most 32 MiB. Tests may only lower this limit.
+  - **Admission:** checkpoint and slot are created in one `--atomic` push, both leased as absent. An occupied slot rejects the whole push. There is no listing-based or UNKNOWN bypass.
+  - **Same-run advance (my addition):** if this run holds a slot for an ancestor of HEAD, one atomic push creates the new checkpoint, moves the slot (leased on the old tip) and deletes this run's own superseded checkpoint (leased on the old tip). No content is lost and capacity does not grow.
+  - **Unclear push reply:** reconciled read-only with `ls-remote`. Created as intended → success. Clearly not created → next allowed slot. Anything else, or a failed read-back → UNKNOWN: stop, never another slot.
+  - **Cleanup:** a merged checkpoint and its slot are deleted together in one atomic push, both leased; a raced tip keeps both. A slot without a checkpoint is reported and kept.
+- **Bug fixed on the way:** `bot-save.sh` ran `sealed_recovery_push` in a pipeline subshell, so its kept-state variables never persisted between the run's saves. It now runs in the bot's own shell.
+- **Tests:** `test/sealed-recovery.test.mjs` (6 new cases, all failing on rev12's code) and `test/sealed-wiring.test.mjs`.
+- **Limits:** they are logical admission limits, not physical repository-size or fetch caps. L7 is in RELEASE.md §E.
+
 ## 0i. Rev12 (8 Nov): current price versus a timed stop observation
 
 - Codex 6722848900 showed that rev11 froze every verdict at fetch time. A price 290 s old when fetched and 320 s old when the first check was written was shown as "HOLD … above your stop … 5 min old". The 5-minute gate was not applied at report time.

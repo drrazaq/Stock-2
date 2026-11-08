@@ -1,17 +1,17 @@
-# R1 combined-unit candidate manifest, rev12 (review only; not deployed)
+# R1 combined-unit candidate manifest, rev13 (review only; not deployed)
 
-- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900).
+- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461).
 - **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
 - **Binding:** the authoritative 68-path list with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
 - **Changed-file allowlist** (relative to the base; this manifest itself excluded): 67 files.
-- `git diff --full-index b0d76987 -- <allowlist>` sha256: `52688408b27eebe01116aa8663b57485288164f63f13c5f2d12339d85ecf9111`
+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `1a363fe0531491257b754ae13a6c1bae85206d62a510df2d90323efe5e836b81`
 
 | Status | File | sha256 (candidate) |
 |---|---|---|
 | A | `.gitattributes` | `873f59d9355f4ba27446eb549847336e6c53be85206f28de248d1dea2a71bf9d` |
-| A | `.github/bot-save.sh` | `b2735eb55173ab31fde708fb40b501be9f19665405a1eafb5558296e74a4f721` |
+| A | `.github/bot-save.sh` | `46f54da729e5aa0060329af8534d60c813871a69a365ca06bfb71d53f53a2211` |
 | M | `.github/save-data.sh` | `2f14d37adeeaa3c4624f45c1f29442347e5a897e78132bd82fdc6ad37766ff3a` |
-| A | `.github/sealed-git.sh` | `f90f2954d24ac83fa239860e14b2b545b442f14259fad275fc4d12b9c7fe137f` |
+| A | `.github/sealed-git.sh` | `755c41916d85ea5b0b24c13e8f176dc08aee98515d4b0e547f56e88b57b7cb21` |
 | M | `.github/workflows/Smart-money.yml` | `d395f27f65b666778a310bd8ffbce2012150e9f78c0367ce7762a06a655335ab` |
 | M | `.github/workflows/bot.yml` | `2e4cb467ca233f6ab2a79926b1ca69584dc52f03d428d0f7dd12b3ebd608a89d` |
 | M | `.github/workflows/ignition.yml` | `e17509c5c42cb28cde4a856e1f95cb8f2a4d97e4ef2f1ef2f70339d6fb38938a` |
@@ -25,8 +25,8 @@
 | A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 | M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 | M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-| A | `docs/r1-sealed-provider-data/README.md` | `e31e611af2b0aabead1f55172a7a72acb6a2cba8c9bbdc699019df1fb5e4d3ff` |
-| A | `docs/r1-sealed-provider-data/RELEASE.md` | `607d4001dae04af237c134b7a61e910b352da3c1741e90929758571f857ab7d6` |
+| A | `docs/r1-sealed-provider-data/README.md` | `52a9454624cc66ec761c3db84a45f5cb9b3e2588687a699ab4db5fc34eb75bb6` |
+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `d318b02b5e0f74973289c43fcaae6fec7cbdbe81147acdc4397193abcc3764aa` |
 | A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 | A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 | A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
@@ -43,7 +43,7 @@
 | A | `sealed-guard.mjs` | `b2dc4384e680e8f723951441ff5072487fc5b3a41f13aba7c507463e4e1d7fae` |
 | A | `sealed-merge.mjs` | `4182335911f74cf1ef4adf90da45b9dd071ab344e9e659e1506cf6a2c0fbb3a0` |
 | A | `sealed-migrate.mjs` | `7b24fa34d2b63e4ff1c40496f551b3a4a340e87ac997d0e1390f959992606ecb` |
-| A | `sealed-recover.mjs` | `ed2bfe956349693bbbf1dab09fa65dad61f0b741deb9516d682a60f9e24c034d` |
+| A | `sealed-recover.mjs` | `fc2b8625209e9a0ef6c4b604abae38cf4f25eee29345f6f77f8aaa6ac9fd6faf` |
 | A | `sealed-store.mjs` | `093665cc77014f34e15365bff378894062117ae322e8696bb58e2d043086cc31` |
 | M | `shadow-outcomes.mjs` | `1dcf0a28d9511569cce0d493fc6f00debdc87bd40d966627e478467b10340bdc` |
 | M | `smart-money.mjs` | `3b3a937fbbc47aeafd97d5bf4ffaa53ba224d6c24490c5316424afae8b795bcd` |
@@ -58,10 +58,10 @@
 | A | `test/sealed-git.test.mjs` | `ef3692008daedc85a4a741862d0f428bc76f4ce3207adb9f80c639c033ecb0e3` |
 | A | `test/sealed-migrate.test.mjs` | `ba4dff2cf6bfb25900758ef7d3ea0faab63aed04226a33b012eabc9e64cf9fb9` |
 | A | `test/sealed-readers.test.mjs` | `83ddbf15fdf1875adf5fa4612518cede65fced6ca368445c33acc8779139fcfc` |
-| A | `test/sealed-recovery.test.mjs` | `5b8599f3d18fc7deb3d7a76a0e5c5a7c27c813a19c737b53163b2c038094321b` |
+| A | `test/sealed-recovery.test.mjs` | `4f22acf836b59c92fa90f1e3a74fbd575f84751dd6c0420a9f9213092ebe2971` |
 | A | `test/sealed-release-rehearsal.test.mjs` | `205cc92cf35171056376974b30b498dfc814a8cefc9060c3129e99543ce5edb4` |
 | A | `test/sealed-store.test.mjs` | `eef5c043965b0417c3c03ea90df5379672989328c2393aac21c579c07faa84e9` |
-| A | `test/sealed-wiring.test.mjs` | `c36e1d80e249c3203fd3d9ade02346d637aecd62cd8d51365a953fda4eb4ccb9` |
+| A | `test/sealed-wiring.test.mjs` | `0a37ad53e2c17ce99f6c06644c831d844c6e60972c07823a436731875e86d601` |
 | M | `test/sec-request-runtime.test.mjs` | `0de8866ec04bda4688a09612ac73c42d9c335a9eaada16f07a73068ce73f86fb` |
 | A | `test/watcher-cadence-review.test.mjs` | `3dcc24b6a5504c1dd6f2410542f30bc1f6d7e560e315fa4351e3727fc69e5af8` |
 | M | `test/watcher-guard.test.mjs` | `aee017d1e57126865562dd199c2e2fa7812a789ad5e3f63c279fcd58700efee6` |

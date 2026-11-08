@@ -126,7 +126,7 @@ test('inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 
 test('rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored', () => {
   for (const f of ['ignition.yml', 'options-survey.yml', 'movers.yml', 'leaders-study.yml', 'Smart-money.yml']) assert.match(wf(f), /\[ "\$ok" = 1 \] \|\| \{[^\n]*sealed_recovery_push \|\| true; exit 1; \}/, f);
   assert.match(R('.github/save-data.sh'), /sealed_recovery_push \|\| true; exit 1; \}/);
-  assert.match(R('.github/bot-save.sh'), /sealed_recovery_push 2>&1/); assert.match(R('.github/bot-save.sh'), /bot_recover\(\)/);
+  assert.match(R('.github/bot-save.sh'), /sealed_recovery_push > "\$out" 2>&1/); assert.doesNotMatch(R('.github/bot-save.sh'), /sealed_recovery_push[^;\n]*\|/, 'rev13: never in a pipeline subshell (its kept-state variables must persist)'); assert.match(R('.github/bot-save.sh'), /bot_recover\(\)/);
   const b = wf('bot.yml'); assert.match(b, /bot_recover   # R1 rev4/);
   const fin = b.indexOf('the last chance to publish what the bot recorded'); assert.ok(fin > 0 && b.indexOf('- if: always()', fin) > fin, 'final always() save step');
   assert.match(R('.gitignore'), /^\*\.sealed\.tmp-\*$/m);

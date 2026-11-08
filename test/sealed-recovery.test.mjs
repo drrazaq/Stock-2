@@ -208,3 +208,84 @@ test('a newer checkpoint processed first supersedes its older ancestor (deleted 
   assert.equal(fs.readFileSync(path.join(w.clone('c'), 'data/tg-state.json'), 'utf8'), '{"offset":3}');
   assert.ok(!w.remoteRefs().some((x) => /save-recovery\//.test(x)));
 });
+
+// ---- rev13: bounded recovery slots (Codex c4a4fc4f7 design, reviewed): 4 fixed reservation refs, atomic admission, no UNKNOWN bypass ----
+const BOT_REF = { ...ENV, GITHUB_WORKFLOW: 'Telegram bot', GITHUB_RUN_ID: '901', GITHUB_WORKFLOW_REF: 'drrazaq/Stock-2/.github/workflows/bot.yml@refs/heads/main' };
+const slotRefs = (w) => w.remoteRefs().filter((x) => x.startsWith('refs/heads/r1-recovery-slot/'));
+const cpRefs = (w) => w.remoteRefs().filter((x) => x.startsWith('refs/heads/save-recovery/'));
+const remoteSha = (w, ref) => git(w.d, ['--git-dir=origin.git', 'rev-parse', ref]).trim();
+
+test('rev13: the bot has ONE slot; a second bot run with a different unpublished state finds it full and evicts nothing', (t) => {
+  const w = world(t); w.hook(REFUSE_MAIN);
+  const b1 = w.clone('b1'); fs.writeFileSync(path.join(b1, 'data/tg-state.json'), '{"offset":2}');
+  const s1 = sh(b1, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save; cat run.log', BOT_REF);
+  assert.match(s1.stdout, /kept on branch save-recovery\/Telegram-bot-901-1-\S+ \(slot bot;/);
+  assert.deepEqual(slotRefs(w), ['refs/heads/r1-recovery-slot/bot']); assert.equal(cpRefs(w).length, 1);
+  assert.equal(remoteSha(w, 'refs/heads/r1-recovery-slot/bot'), remoteSha(w, cpRefs(w)[0]), 'the slot holds the checkpoint tip');
+  const b2 = w.clone('b2'); fs.writeFileSync(path.join(b2, 'data/tg-state.json'), '{"offset":5}');
+  const s2 = sh(b2, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save; cat run.log', { ...BOT_REF, GITHUB_RUN_ID: '902' });
+  assert.match(s2.stdout, /slot bot is occupied by an earlier unmerged save/); assert.match(s2.stdout, /SAVE RECOVERY FULL[^\n]*nothing was evicted[^\n]*exists only on this runner/);
+  assert.equal(cpRefs(w).length, 1, 'no extra checkpoint'); assert.equal(slotRefs(w).length, 1);
+  assert.equal(git(b2, ['rev-list', '--count', 'origin/main..HEAD']).trim(), '1', 'still kept locally for later saves in that run');
+});
+
+test('rev13: one bot run\'s later state ADVANCES its own slot atomically (old checkpoint replaced, never more than one); recovery releases the pair', (t) => {
+  const w = world(t), a = seedOwner(w), bot = w.clone('bot'); w.hook(REFUSE_MAIN);
+  const s = sh(bot, `source .github/bot-save.sh && echo '{"offset":2}' > data/tg-state.json && BOT_SAVE_SLEEP=0 save && save && echo '{"offset":3}' > data/tg-state.json && save; cat run.log`, BOT_REF);
+  assert.match(s.stdout, /slot bot; merged/); assert.match(s.stdout, /this unpublished state is already kept on save-recovery\//, 'the same state is not pushed twice (state survives between saves)');
+  assert.match(s.stdout, /\(slot bot, replacing this run's earlier save-recovery\//);
+  assert.equal(cpRefs(w).length, 1, 'exactly one checkpoint'); assert.equal(remoteSha(w, 'refs/heads/r1-recovery-slot/bot'), remoteSha(w, cpRefs(w)[0]));
+  assert.equal(git(w.d, ['--git-dir=origin.git', 'show', remoteSha(w, cpRefs(w)[0]) + ':data/tg-state.json']), '{"offset":3}\n');
+  w.hook(null);
+  const r = recover(w.clone('next')); assert.match(r.stdout, /merged into main; branch deleted at [0-9a-f]{12} \(r1-recovery-slot\/bot released\)/); assert.match(r.stdout, /rc=0/);
+  assert.equal(fs.readFileSync(path.join(w.clone('c'), 'data/tg-state.json'), 'utf8'), '{"offset":3}\n');
+  assert.deepEqual(cpRefs(w), []); assert.deepEqual(slotRefs(w), [], 'slot released only together with its merged checkpoint');
+});
+
+test('rev13: shared writers get at most two slots; a third is refused with nothing created; size over the limit is refused before any push', (t) => {
+  const w = world(t); w.hook(REFUSE_MAIN);
+  const run = (n, id, env = {}) => { const c = w.clone(n); fs.writeFileSync(path.join(c, 'data/x-' + n + '.json'), '{"v":"' + n + '"}'); git(c, ['add', '-A']); git(c, ['commit', '-qm', n]);
+    return sh(c, 'source .github/sealed-git.sh && sealed_recovery_push; echo "rc=$?"', { ...ENV, GITHUB_WORKFLOW: 'Movers', GITHUB_RUN_ID: id, ...env }); };
+  assert.match(run('m1', '1').stdout, /slot shared-0/); assert.match(run('m2', '2').stdout, /slot shared-0 is occupied[\s\S]*slot shared-1;/);
+  const third = run('m3', '3'); assert.match(third.stdout, /SAVE RECOVERY FULL/); assert.match(third.stdout, /rc=1/);
+  assert.equal(cpRefs(w).length, 2, 'no leaked checkpoint from the refused admission'); assert.equal(slotRefs(w).length, 2);
+  const big = run('m4', '4', { SEALED_RECOVERY_TEST_MAX: '10' }); assert.match(big.stdout, /refused: the unpublished data is \d+ bytes \(limit 10\)/); assert.equal(cpRefs(w).length, 2);
+  const lift = run('m5', '5', { SEALED_RECOVERY_TEST_MAX: String(64 * 1024 * 1024) }); assert.match(lift.stdout, /SAVE RECOVERY FULL/, 'the test override can only LOWER the 32 MiB limit');
+});
+
+test('rev13: two writers that both saw one free slot: the server-side lease admits exactly one; the loser leaks no checkpoint', (t) => {
+  const w = world(t); w.hook(REFUSE_MAIN);
+  const mk = (n) => { const c = w.clone(n); fs.writeFileSync(path.join(c, 'data/' + n + '.json'), '1'); git(c, ['add', '-A']); git(c, ['commit', '-qm', n]); return c; };
+  const a = mk('ra'), b = mk('rb');
+  // both read the bot slot as free before pushing; the second push meets the first one's slot (atomic lease, not a listing, decides)
+  const go = (c, id) => spawnSync('bash', ['-c', 'source .github/sealed-git.sh && sealed_recovery_push; echo "rc=$?"'], { cwd: c, env: { ...BOT_REF, GITHUB_RUN_ID: id }, encoding: 'utf8' });
+  const ra = go(a, '11'), rb = go(b, '12');
+  assert.equal([ra, rb].filter((x) => /rc=0/.test(x.stdout)).length, 1, ra.stdout + rb.stdout);
+  assert.equal(cpRefs(w).length, 1); assert.equal(slotRefs(w).length, 1);
+});
+
+test('rev13: an unclear push reply is reconciled read-only (no second checkpoint); a failed read-back is UNKNOWN and tries no other slot', (t) => {
+  const w = world(t); w.hook(REFUSE_MAIN);
+  const c = w.clone('amb'); fs.writeFileSync(path.join(c, 'data/a.json'), '1'); git(c, ['add', '-A']); git(c, ['commit', '-qm', 'a']);
+  // the push lands but its reply is lost (exit 1)
+  const amb = sh(c, 'source .github/sealed-git.sh && git() { if [ "$1" = push ]; then command git "$@"; return 1; fi; command git "$@"; }; sealed_recovery_push; echo "rc=$?"', ENV);
+  assert.match(amb.stdout, /slot shared-0; confirmed after an unclear reply/); assert.match(amb.stdout, /rc=0/); assert.equal(cpRefs(w).length, 1);
+  const d = w.clone('unk'); fs.writeFileSync(path.join(d, 'data/b.json'), '1'); git(d, ['add', '-A']); git(d, ['commit', '-qm', 'b']);
+  const unk = sh(d, 'source .github/sealed-git.sh && git() { case "$1" in push|ls-remote) return 1 ;; esac; command git "$@"; }; sealed_recovery_push; echo "rc=$?"', ENV);
+  assert.match(unk.stdout, /save recovery state UNKNOWN \(the recovery branches could not be read back\); no further attempt/); assert.match(unk.stdout, /rc=1/);
+  assert.equal(cpRefs(w).length, 1, 'nothing more created'); assert.equal(slotRefs(w).length, 1);
+});
+
+test('rev13: cleanup deletes a checkpoint and its slot together or not at all; a slot without a checkpoint is kept and reported', (t) => {
+  const w = world(t), a = seedOwner(w), bot = w.clone('bot'); w.hook(REFUSE_MAIN);
+  fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":2}'); sh(bot, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save', BOT_REF);
+  w.hook(null);
+  // a racing producer moves the slot after the pass read it: the paired delete fails, both stay
+  fs.writeFileSync(path.join(w.d, 'origin.git/hooks/post-receive'), '#!/bin/sh\nwhile read old new ref; do [ "$ref" = refs/heads/main ] && git update-ref refs/heads/r1-recovery-slot/bot $(git rev-parse refs/heads/main); done; exit 0\n', { mode: 0o755 });
+  const r = recover(w.clone('n1')); assert.match(r.stdout, /could not be deleted after merging [0-9a-f]{12}; KEPT for the next pass/); assert.match(r.stdout, /rc=1/);
+  assert.equal(cpRefs(w).length, 1, 'checkpoint kept'); assert.equal(slotRefs(w).length, 1, 'slot kept');
+  fs.rmSync(path.join(w.d, 'origin.git/hooks/post-receive'));
+  // now the slot holds a tip that no checkpoint has: reported, never released silently
+  const r2 = recover(w.clone('n2')); assert.match(r2.stdout, /r1-recovery-slot\/bot holds [0-9a-f]{12} but no save-recovery branch has that tip; slot KEPT/); assert.match(r2.stdout, /rc=1/);
+  assert.equal(slotRefs(w).length, 1);
+});

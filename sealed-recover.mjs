@@ -19,6 +19,9 @@
 //  3. the result is committed on top of main, the push guard checks it, it is pushed WITHOUT force (a moved main -> retried next pass);
 //  4. the ref is deleted only by COMPARE-AND-DELETE on the exact tip that was merged (--force-with-lease=<ref>:<tip>); a ref that a
 //     producer advanced meanwhile is kept and merged on the next pass. Producers create immutable refs (sealed_recovery_push).
+//     (rev13) When a reservation slot refs/heads/r1-recovery-slot/<s> holds that exact tip, the checkpoint AND its slot are deleted in ONE
+//     atomic push, both leased on the tip, only after this pass merged it into main (or main already held it). A raced/new tip on either
+//     ref makes the whole deletion fail and keeps both. A slot whose tip has no checkpoint is reported and KEPT (a person resolves it).
 // Exit: 0 = nothing pending or all merged; 1 = at least one ref kept (refused/conflict/raced); 2 = UNKNOWN (fetch/list failed).
 // Output names refs, paths and reasons only, never content.
 import fs from 'node:fs';
@@ -29,6 +32,7 @@ import { sealedKey, seal, unseal, logicalId, SEALED_EXT } from './sealed-store.m
 import { unionLines, mergeKeyed, KEYED_STATE } from './sealed-merge.mjs';
 
 const PREFIX = 'refs/remotes/origin/save-recovery/';
+const SLOTS = 'refs/remotes/origin/r1-recovery-slot/';
 export const ALLOWED = (p) => /^data\/[^\0]+$/.test(p) && !/\.sealed\.tmp-/.test(p);
 const isUnion = (p) => /\.jsonl(\.sealed)?$/.test(p);
 const isKeyed = (p) => p.endsWith(SEALED_EXT) && KEYED_STATE.has(logicalId(p));
@@ -37,15 +41,21 @@ export function recoverAll({ cwd = process.cwd(), key = sealedKey(), guard = () 
   const g = (args, opts = {}) => execFileSync('git', args, { cwd, maxBuffer: 1 << 28, stdio: ['ignore', 'pipe', 'pipe'], ...opts });
   const gs = (args) => g(args).toString().trim();
   const ok = (args) => spawnSync('git', args, { cwd, stdio: 'ignore' }).status === 0;
-  try { g(['fetch', '-q', 'origin', '+refs/heads/main:refs/remotes/origin/main', '+refs/heads/save-recovery/*:refs/remotes/origin/save-recovery/*', '--prune']); }
+  try { g(['fetch', '-q', 'origin', '+refs/heads/main:refs/remotes/origin/main', '+refs/heads/save-recovery/*:refs/remotes/origin/save-recovery/*', '+refs/heads/r1-recovery-slot/*:refs/remotes/origin/r1-recovery-slot/*', '--prune']); }
   catch { log('UNKNOWN: save-recovery listing/fetch failed; pending recovery state is not known (nothing assumed merged)'); return 2; }
   const refs = gs(['for-each-ref', '--sort=refname', '--format=%(refname)', PREFIX]).split('\n').filter(Boolean);
+  const slots = new Map(gs(['for-each-ref', '--format=%(objectname) %(refname)', SLOTS]).split('\n').filter(Boolean).map((l) => { const [sha, r] = l.split(' '); return [r.slice('refs/remotes/origin/'.length), sha]; }));
+  const tips = new Set(refs.map((r) => gs(['rev-parse', r])));
   let rc = 0;
+  for (const [slot, sha] of slots) if (!tips.has(sha)) { log('save recovery: ' + slot + ' holds ' + sha.slice(0, 12) + ' but no save-recovery branch has that tip; slot KEPT for a person to resolve'); rc = 1; }
   for (const full of refs) {
     const name = full.slice('refs/remotes/origin/'.length), tip = gs(['rev-parse', full]);
     const r = mergeOne({ g, gs, ok, cwd, key, guard, name, tip, log });
     if (r === 'merged' || r === 'empty') {
-      if (ok(['push', '-q', '--force-with-lease=refs/heads/' + name + ':' + tip, 'origin', ':refs/heads/' + name])) log('save recovery: ' + name + (r === 'merged' ? ' merged into main' : ' already contained in main') + '; branch deleted at ' + tip.slice(0, 12));
+      const slot = [...slots].find(([, sha]) => sha === tip)?.[0];
+      const del = slot ? ['push', '-q', '--atomic', '--force-with-lease=refs/heads/' + name + ':' + tip, '--force-with-lease=refs/heads/' + slot + ':' + tip, 'origin', ':refs/heads/' + name, ':refs/heads/' + slot]
+        : ['push', '-q', '--force-with-lease=refs/heads/' + name + ':' + tip, 'origin', ':refs/heads/' + name];
+      if (ok(del)) { if (slot) slots.delete(slot); log('save recovery: ' + name + (r === 'merged' ? ' merged into main' : ' already contained in main') + '; branch deleted at ' + tip.slice(0, 12) + (slot ? ' (' + slot + ' released)' : '')); }
       else { log('save recovery: ' + name + ' advanced or could not be deleted after merging ' + tip.slice(0, 12) + '; KEPT for the next pass'); rc = Math.max(rc, 1); }
     } else rc = Math.max(rc, 1);
     try { g(['fetch', '-q', 'origin', '+refs/heads/main:refs/remotes/origin/main']); } catch { log('UNKNOWN: main could not be re-read after ' + name); return 2; }
