@@ -1,0 +1,962 @@
+TAP version 13
+# intraday check done: 1 watched, 0 new alerts
+# TIMELY: [
+#   'BUY NOW: a proven setup is inside its buy range (17:40 Kuwait)\\n' +
+#     '\\n' +
+#     'ZZE is inside its buy range now\\n' +
+#     '1) ZZE, earnings drift\\n' +
+#     '   Now: 105.00, inside the range: OK to buy\\n' +
+#     '   Buy: 100.00 to 110.00 (skip if above 110.00)\\n' +
+#     '   Stop: 90.00 (-10.0%). If it is hit: about -$151 on a $1,000 buy, fees included\\n' +
+#     '   Sell: when it closes under its 20 day average (~90.00 now, rising) or after 10 sessions\\n' +
+#     '   Wait: days to weeks, up to 10 sessions\\n' +
+#     '   Expected: 60% of 40 past earnings beats it never saw won; average +2.0% a trade after costs (whole-market fair test)\\n' +
+#     '   Why: earnings beat the estimate by 20% and the stock closed up +10.0% on the news\\n' +
+#     '   Halal: HALAL in ZAD (your mark, undefined)\\n' +
+#     '   Amount: BUY 1000 USD (proven, but the edge could still be luck or the stop is wide; size level 1 (your real record sets the most per trade)), about 9 shares at the top of the range\\n' +
+#     '   Size: size 0.8x your usual buy (normal evidence (40 trades, +2.0%), wide stop (10% away): smaller, so a stop-out costs about the same as a normal trade). Tell me your shares when you buy (bought SYMBOL PRICE SHARES) and I will learn your usual size\\n' +
+#     '\\n' +
+#     'Check halal in ZAD first. Buy only inside the range and place the stop at once. Then send: bought SYMBOL PRICE SHARES\\n' +
+#     '\\n' +
+#     'After you act, tap: I ask you to confirm the shares and price before anything is recorded.\\n' +
+#     '\\n' +
+#     'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+# ]
+# Subtest: actual BUY NOW fixture has an eligible existing planned-entry route when timely
+ok 1 - actual BUY NOW fixture has an eligible existing planned-entry route when timely
+  ---
+  duration_ms: 208.986373
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "buy_after_await",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nnone recorded\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nZZE | buy range 100.00 to 110.00: last price 105.00 (FINNHUB, Nov 5 09:20 New York, 20 min old), INSIDE the range\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1
+#     }
+#   }
+# }
+# Subtest: actual BUY NOW card cannot expire behind the first-check send and remain marked
+ok 2 - actual BUY NOW card cannot expire behind the first-check send and remain marked
+  ---
+  duration_ms: 130.567401
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "buy_exact_boundary",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nnone recorded\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nZZE | buy range 100.00 to 110.00: last price 105.00 (FINNHUB, Nov 5 09:20 New York, 20 min old), INSIDE the range\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1
+#     }
+#   }
+# }
+# Subtest: BUY NOW retains its original strictly-less-than20minute admission boundary
+ok 3 - BUY NOW retains its original strictly-less-than20minute admission boundary
+  ---
+  duration_ms: 83.287749
+  ...
+# Subtest: loopback only
+ok 4 - loopback only
+  ---
+  duration_ms: 0.785841
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: holding target: a fresh price is sent as TARGET 2 REACHED (timely, eligible)
+ok 5 - holding target: a fresh price is sent as TARGET 2 REACHED (timely, eligible)
+  ---
+  duration_ms: 230.295399
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: holding target: valid when fetched (290 s) but past the 5-minute rule when sent (+30 s): no target claim, NOT CONFIRMED once, re-checked next run
+ok 6 - holding target: valid when fetched (290 s) but past the 5-minute rule when sent (+30 s): no target claim, NOT CONFIRMED once, re-checked next run
+  ---
+  duration_ms: 211.937638
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: holding target: future-dated or undated at fetch never makes a target claim
+ok 7 - holding target: future-dated or undated at fetch never makes a target claim
+  ---
+  duration_ms: 164.69305
+  ...
+# intraday check done: 2 watched, 1 new alerts
+# intraday check done: 2 watched, 0 new alerts
+# intraday check done: 2 watched, 0 new alerts
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: plan route (paper trade lines, previously unchecked): 20-minute rule at fetch AND at send; undated/future never; fresh is sent
+ok 8 - plan route (paper trade lines, previously unchecked): 20-minute rule at fetch AND at send; undated/future never; fresh is sent
+  ---
+  duration_ms: 313.154597
+  ...
+# Subtest: all requests stayed synthetic and on loopback
+ok 9 - all requests stayed synthetic and on loopback
+  ---
+  duration_ms: 3.148733
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "holding",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nZZT: SELL. Target 2 (110.00) reached. Last price 115.00 (FINNHUB, Nov 5 09:35 New York, 5 min old) (+15.0% from your 100.00).\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889630000,
+#       "text": "Market hours check\\n\\nYOUR POSITION, NOT CONFIRMED: a target check on ZZT (the latest price is 5 min old (limit 5 min)) used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1,
+#       "ZZTmyt2held": 1
+#     }
+#   }
+# }
+# Subtest: holding target is checked after earlier Telegram awaits, not only before the batch
+ok 10 - holding target is checked after earlier Telegram awaits, not only before the batch
+  ---
+  duration_ms: 133.208801
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "plan",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nnone recorded\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1
+#     }
+#   }
+# }
+# Subtest: plan alert is checked after earlier Telegram awaits under the unchanged20min gate
+ok 11 - plan alert is checked after earlier Telegram awaits under the unchanged20min gate
+  ---
+  duration_ms: 91.015048
+  ...
+# Telegram rate limit, waiting 1 s
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "429_retry",
+#   "attempts": [
+#     {
+#       "at": 1793889600000,
+#       "text": "Market hours check\\n\\nZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 429
+#     },
+#     {
+#       "at": 1793889620000,
+#       "text": "Market hours check\\n\\nYOUR POSITION, NOT CONFIRMED: a target check on ZZT (the latest price is 5 min old (limit 5 min)) used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1,
+#       "ZZTmyt2held": 1
+#     }
+#   }
+# }
+# Subtest: rate-limited retry rechecks the holding quote at the next network attempt
+ok 12 - rate-limited retry rechecks the holding quote at the next network attempt
+  ---
+  duration_ms: 121.987305
+  ...
+# Subtest: loopback only
+ok 13 - loopback only
+  ---
+  duration_ms: 0.887343
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
+ok 14 - conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
+  ---
+  duration_ms: 182.745183
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
+ok 15 - stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
+  ---
+  duration_ms: 186.654519
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
+ok 16 - stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
+  ---
+  duration_ms: 95.391517
+  ...
+# intraday check done: 3 watched, 0 new alerts
+# Subtest: undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
+ok 17 - undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
+  ---
+  duration_ms: 97.521929
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
+ok 18 - delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
+  ---
+  duration_ms: 135.072241
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
+ok 19 - labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
+  ---
+  duration_ms: 72.223381
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm
+ok 20 - close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm
+  ---
+  duration_ms: 267.453227
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: records untouched: positions and Telegram offset unchanged; one first check a day
+ok 21 - records untouched: positions and Telegram offset unchanged; one first check a day
+  ---
+  duration_ms: 62.843853
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
+ok 22 - 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
+  ---
+  duration_ms: 178.388921
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# intraday check done: 0 watched, 0 new alerts
+# Subtest: 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
+ok 23 - 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
+  ---
+  duration_ms: 104.475756
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: rev10: a quote future-dated when fetched stays UNKNOWN after the clock moves on (actual intraday caller; no contradiction with the stop route)
+ok 24 - rev10: a quote future-dated when fetched stays UNKNOWN after the clock moves on (actual intraday caller; no contradiction with the stop route)
+  ---
+  duration_ms: 70.580776
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: rev11: a stop quote near the 5-minute limit gets ONE verdict in both messages of the same run (judged at fetch time)
+ok 25 - rev11: a stop quote near the 5-minute limit gets ONE verdict in both messages of the same run (judged at fetch time)
+  ---
+  duration_ms: 64.713198
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: rev12: a price valid when fetched but past its gate when the check is written is never HOLD, a target or % from entry (actual caller)
+ok 26 - rev12: a price valid when fetched but past its gate when the check is written is never HOLD, a target or % from entry (actual caller)
+  ---
+  duration_ms: 59.681841
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: rev12: the 4 min 50 s stop observation stays REACHED in both messages, shown with when it was checked and that no current price remains
+ok 27 - rev12: the 4 min 50 s stop observation stays REACHED in both messages, shown with when it was checked and that no current price remains
+  ---
+  duration_ms: 68.617727
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: rev14: the dedicated stop batch states when the price was checked; after a long batch delay it is not presented as a current price
+ok 28 - rev14: the dedicated stop batch states when the price was checked; after a long batch delay it is not presented as a current price
+  ---
+  duration_ms: 59.619411
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: rev14: a stop batch sent promptly keeps the current price and entry %, with the time it was checked
+ok 29 - rev14: a stop batch sent promptly keeps the current price and entry %, with the time it was checked
+  ---
+  duration_ms: 61.199672
+  ...
+# Subtest: all requests stayed synthetic and on loopback
+ok 30 - all requests stayed synthetic and on loopback
+  ---
+  duration_ms: 0.167432
+  ...
+# Subtest: B5: a valid sealed live record is read and scored by the actual close-radar process
+ok 31 - B5: a valid sealed live record is read and scored by the actual close-radar process
+  ---
+  duration_ms: 138.740073
+  ...
+# Subtest: B5: no key, a damaged file or legacy plaintext is LIVE WATCHER RECORD UNKNOWN with its code (never "no results"); the rest still runs
+ok 32 - B5: no key, a damaged file or legacy plaintext is LIVE WATCHER RECORD UNKNOWN with its code (never "no results"); the rest still runs
+  ---
+  duration_ms: 431.281759
+  ...
+# Subtest: B5 audit: every module that names a T1 data path imports the sealed store (no plain-file wrapper can read T1 silently)
+ok 33 - B5 audit: every module that names a T1 data path imports the sealed store (no plain-file wrapper can read T1 silently)
+  ---
+  duration_ms: 25.46914
+  ...
+# Subtest: blocker 2: a directory-fsync EIO fails the write and the original plaintext is KEPT (Codex injected EIO twice)
+ok 34 - blocker 2: a directory-fsync EIO fails the write and the original plaintext is KEPT (Codex injected EIO twice)
+  ---
+  duration_ms: 8.671572
+  ...
+# Subtest: blocker 2: EINVAL/ENOTSUP from a directory fsync (unsupported) is tolerated; short writes are completed, a zero write fails
+ok 35 - blocker 2: EINVAL/ENOTSUP from a directory fsync (unsupported) is tolerated; short writes are completed, a zero write fails
+  ---
+  duration_ms: 96.182035
+  ...
+# Subtest: blocker 3 (Codex reproduction): no key and NO options record -> the nightly options lane makes no request and sends nothing
+ok 36 - blocker 3 (Codex reproduction): no key and NO options record -> the nightly options lane makes no request and sends nothing
+  ---
+  duration_ms: 70.508078
+  ...
+# Telegram: 1 message(s) read
+# Telegram: 1 message(s) read
+# Subtest: blocker 3: no key and no record -> an owner option command is NOT RECORDED; with the key and no record it is recorded (absent != unreadable)
+ok 37 - blocker 3: no key and no record -> an owner option command is NOT RECORDED; with the key and no record it is recorded (absent != unreadable)
+  ---
+  duration_ms: 200.776684
+  ...
+# Subtest: blocker 3: every keyless writer job stops at once with SEALED_KEY_MISSING (before any request); readers report it even when files are absent
+ok 38 - blocker 3: every keyless writer job stops at once with SEALED_KEY_MISSING (before any request); readers report it even when files are absent
+  ---
+  duration_ms: 451.813127
+  ...
+# Subtest: blocker 5: pre-migration, offset-only bot saves still publish; plaintext T1 that an old writer added is refused at push only once migrated
+ok 39 - blocker 5: pre-migration, offset-only bot saves still publish; plaintext T1 that an old writer added is refused at push only once migrated
+  ---
+  duration_ms: 1437.767332
+  ...
+# Subtest: owner-state race (Codex reproduction): bot records a real trade while the scan saves paper calls -> both kept
+ok 40 - owner-state race (Codex reproduction): bot records a real trade while the scan saves paper calls -> both kept
+  ---
+  duration_ms: 699.537511
+  ...
+# Subtest: owner-state race: a real clash on the owner's trades is REFUSED (never one side), the bot keeps and retries its commit, the owner is warned once
+ok 41 - owner-state race: a real clash on the owner's trades is REFUSED (never one side), the bot keeps and retries its commit, the owner is warned once
+  ---
+  duration_ms: 46871.120507
+  ...
+# Subtest: an unpublished commit is retried by the next save even when nothing new is staged (before rev3 it stayed behind)
+ok 42 - an unpublished commit is retried by the next save even when nothing new is staged (before rev3 it stayed behind)
+  ---
+  duration_ms: 1024.051151
+  ...
+# Subtest: keyed merge unit: one-sided and identical changes merge, deletions respected, clashes refused, non-objects refused
+ok 43 - keyed merge unit: one-sided and identical changes merge, deletions respected, clashes refused, non-objects refused
+  ---
+  duration_ms: 0.570557
+  ...
+# Subtest: writer quiescence gate (rev6 capture v2): open-status census + 31-day created coverage, complete pages, cap, repository, freshness
+ok 44 - writer quiescence gate (rev6 capture v2): open-status census + 31-day created coverage, complete pages, cap, repository, freshness
+  ---
+  duration_ms: 2.192034
+  ...
+# Subtest: Codex rev3 \#1: an identical RETRY after a directory-fsync EIO keeps the plaintext (durability first, then removal)
+ok 45 - Codex rev3 \#1: an identical RETRY after a directory-fsync EIO keeps the plaintext (durability first, then removal)
+  ---
+  duration_ms: 3.892961
+  ...
+# Subtest: all scan requests stayed on loopback
+ok 46 - all scan requests stayed on loopback
+  ---
+  duration_ms: 0.28649
+  ...
+# Subtest: R1-C2: staging only the .sealed name leaves plaintext in HEAD (the trap); sealed_stage + guard leave ciphertext only
+ok 47 - R1-C2: staging only the .sealed name leaves plaintext in HEAD (the trap); sealed_stage + guard leave ciphertext only
+  ---
+  duration_ms: 319.000005
+  ...
+# Subtest: guard --staged: refuses an added/modified plaintext T1 path or temp file; allows its deletion and unrelated saves
+ok 48 - guard --staged: refuses an added/modified plaintext T1 path or temp file; allows its deletion and unrelated saves
+  ---
+  duration_ms: 538.414742
+  ...
+# Subtest: R1-C5 reproduced: WITHOUT the driver, pull --rebase -X theirs silently keeps one side of a sealed ledger
+ok 49 - R1-C5 reproduced: WITHOUT the driver, pull --rebase -X theirs silently keeps one side of a sealed ledger
+  ---
+  duration_ms: 212.812529
+  ...
+# Subtest: R1-C5 closed: WITH sealed-git.sh, concurrent appends from two runs are both kept (decrypt, line union, re-encrypt)
+ok 50 - R1-C5 closed: WITH sealed-git.sh, concurrent appends from two runs are both kept (decrypt, line union, re-encrypt)
+  ---
+  duration_ms: 370.486654
+  ...
+# Subtest: JSON state: non-overlapping edits merge; an overlapping edit follows SEALED_MERGE_FAVOR; without it the save fails, nothing lost
+ok 51 - JSON state: non-overlapping edits merge; an overlapping edit follows SEALED_MERGE_FAVOR; without it the save fails, nothing lost
+  ---
+  duration_ms: 599.809272
+  ...
+# Subtest: binary (.gz) changed on both sides, or no key at merge time: conflict, never one side, never plaintext
+ok 52 - binary (.gz) changed on both sides, or no key at merge time: conflict, never one side, never plaintext
+  ---
+  duration_ms: 461.436601
+  ...
+# Subtest: save-data.sh (nightly scan save) end to end: sealed ledger merged with a concurrent bot save; guard blocks plaintext
+ok 53 - save-data.sh (nightly scan save) end to end: sealed ledger merged with a concurrent bot save; guard blocks plaintext
+  ---
+  duration_ms: 625.568764
+  ...
+# Subtest: leaders-study copy-back: the CLI three-way merge of a history segment keeps the watcher's appends made during the 2-hour run
+ok 54 - leaders-study copy-back: the CLI three-way merge of a history segment keeps the watcher's appends made during the 2-hour run
+  ---
+  duration_ms: 106.948326
+  ...
+# fatal: path '.github/r1-migration-manifest.json' does not exist in 'HEAD'
+# Subtest: plan: exactly the T1 plaintext paths of the given tree (no key needed); neighbours untouched
+ok 55 - plan: exactly the T1 plaintext paths of the given tree (no key needed); neighbours untouched
+  ---
+  duration_ms: 43.707367
+  ...
+# Subtest: apply + receipt: ciphertext only, manifest of every source path/size/hash, parent = approved source; history not rewritten
+ok 56 - apply + receipt: ciphertext only, manifest of every source path/size/hash, parent = approved source; history not rewritten
+  ---
+  duration_ms: 278.524101
+  ...
+# Subtest: Codex blocker 4: an unreviewed staged T1 addition, a dirty tree or HEAD != approved source are all refused; nothing changes
+ok 57 - Codex blocker 4: an unreviewed staged T1 addition, a dirty tree or HEAD != approved source are all refused; nothing changes
+  ---
+  duration_ms: 84.261398
+  ...
+# Subtest: Codex blocker 4: verification refuses zero files, a missing or extra sealed file, a changed one, and a commit rebased off the source
+ok 58 - Codex blocker 4: verification refuses zero files, a missing or extra sealed file, a changed one, and a commit rebased off the source
+  ---
+  duration_ms: 822.093311
+  ...
+# Subtest: interrupted migration: no commit, the guard refuses the partial state, a clean checkout of the source restarts
+ok 59 - interrupted migration: no commit, the guard refuses the partial state, a clean checkout of the source restarts
+  ---
+  duration_ms: 468.791054
+  ...
+# Subtest: Codex blocker 1: recovery export refuses the checkout by real path, symlink escapes, symlinks below it, and overwrites
+ok 60 - Codex blocker 1: recovery export refuses the checkout by real path, symlink escapes, symlinks below it, and overwrites
+  ---
+  duration_ms: 218.871961
+  ...
+# Subtest: CLI: --plan needs no key; --apply needs the key and the approved source; --verify-tree reports counts only
+ok 61 - CLI: --plan needs no key; --apply needs the key and the approved source; --verify-tree reports counts only
+  ---
+  duration_ms: 706.024361
+  ...
+# Subtest: Codex rev3 \#3: deleting a sealed file AND its manifest entry no longer yields a clean receipt (expected set recomputed from the source)
+ok 62 - Codex rev3 \#3: deleting a sealed file AND its manifest entry no longer yields a clean receipt (expected set recomputed from the source)
+  ---
+  duration_ms: 295.113215
+  ...
+# Subtest: Codex rev3 \#2: a segmented ledger is exported ONCE as its logical file (base + segments), never duplicated by its segments
+ok 63 - Codex rev3 \#2: a segmented ledger is exported ONCE as its logical file (base + segments), never duplicated by its segments
+  ---
+  duration_ms: 229.563986
+  ...
+# Subtest: backup-key check vector: reveals neither value nor key; the right backup passes, any other secret fails; CLI exit codes
+ok 64 - backup-key check vector: reveals neither value nor key; the right backup passes, any other secret fails; CLI exit codes
+  ---
+  duration_ms: 334.232554
+  ...
+# Subtest: backup compare (B5b route a): equal copies PASS, any difference FAILS, a missing backup is an error; output reveals nothing
+ok 65 - backup compare (B5b route a): equal copies PASS, any difference FAILS, a missing backup is an error; output reveals nothing
+  ---
+  duration_ms: 126.01233
+  ...
+# R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+# Telegram: 1 message(s) read
+# R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+# Subtest: bot: an options record sealed under another key -> "bought option" is NOT RECORDED and the record bytes stay identical
+ok 66 - bot: an options record sealed under another key -> "bought option" is NOT RECORDED and the record bytes stay identical
+  ---
+  duration_ms: 131.383516
+  ...
+# Telegram: 1 message(s) read
+# Telegram: 1 message(s) read
+# Subtest: bot: without the key the same command is NOT RECORDED (SEALED_KEY_MISSING); with it, recorded and still sealed (control)
+ok 67 - bot: without the key the same command is NOT RECORDED (SEALED_KEY_MISSING); with it, recorded and still sealed (control)
+  ---
+  duration_ms: 159.540216
+  ...
+# R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+# Subtest: nightly options lane: an unreadable options record stops the lane BEFORE any ticket, request or paper change
+ok 68 - nightly options lane: an unreadable options record stops the lane BEFORE any ticket, request or paper change
+  ---
+  duration_ms: 49.931356
+  ...
+# R1 sealed read data/movers-state.json: SEALED_LEGACY_PLAINTEXT
+# Subtest: bot: an unmigrated plaintext movers file is UNKNOWN (SEALED_LEGACY_PLAINTEXT), not "not produced yet"
+ok 69 - bot: an unmigrated plaintext movers file is UNKNOWN (SEALED_LEGACY_PLAINTEXT), not "not produced yet"
+  ---
+  duration_ms: 33.264236
+  ...
+# Subtest: health: a tampered watcher live file is a named problem with state UNKNOWN; the watcher evidence line says UNKNOWN
+ok 70 - health: a tampered watcher live file is a named problem with state UNKNOWN; the watcher evidence line says UNKNOWN
+  ---
+  duration_ms: 160.795372
+  ...
+# Subtest: missed-runner ledger: unmigrated plaintext history stops the job (exit 1) and is left untouched; sealed input appends sealed
+ok 71 - missed-runner ledger: unmigrated plaintext history stops the job (exit 1) and is left untouched; sealed input appends sealed
+  ---
+  duration_ms: 291.390709
+  ...
+# Subtest: shadow outcomes: a sealed day file under another key stops the step with its code; nothing is written
+ok 72 - shadow outcomes: a sealed day file under another key stops the step with its code; nothing is written
+  ---
+  duration_ms: 109.699562
+  ...
+# Subtest: watcher evidence (watcher-reporting): an unmigrated plaintext run archive makes the evidence UNKNOWN and actionable
+ok 73 - watcher evidence (watcher-reporting): an unmigrated plaintext run archive makes the evidence UNKNOWN and actionable
+  ---
+  duration_ms: 45.184401
+  ...
+# Subtest: all requests stayed on loopback
+ok 74 - all requests stayed on loopback
+  ---
+  duration_ms: 1.218702
+  ...
+# {"case":"actual_shell_flags","status":0,"warningReached":true,"continued":true}
+# {"case":"accepted_replace_then_readback_loss","laterStateDurable":true,"stdout":"sealed guard: OK (--push: no T1 plaintext)\\nError: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner\\nfirst_rc=1\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T191405009194559Z-2fde63d96574 (slot bot; confirmed after an unclear reply)\\nsealed guard: OK (--push: no T1 plaintext)\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T191405181162148Z-748fef7a0760 (slot bot, replacing this run's earlier save-recovery/Telegram-bot-777-1-20261108T191405009194559Z-2fde63d96574; merged into main by the bot's next recovery pass)\\nnext_rc=0\\n"}
+# {"case":"new_shell_same_run_final_save","sameRunId":"777","latestStateDurable":true,"stdout":"sealed guard: OK (--staged: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nError: could not save the data folder to the repository (kept in the local commit; retried at the next save)\\nsealed guard: OK (--push: no T1 plaintext)\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T191407854130144Z-160d22ccc757 (slot bot, replacing this run's earlier save-recovery/Telegram-bot-777-1-20261108T191407196029837Z-55ec9874247f; merged into main by the bot's next recovery pass)\\nFINAL_ATTEMPT_COMPLETE\\n"}
+# Subtest: required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+ok 75 - required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+  ---
+  duration_ms: 856.766685
+  ...
+# Subtest: same-run later state progresses after an accepted replacement loses both reply and its first read-back
+ok 76 - same-run later state progresses after an accepted replacement loses both reply and its first read-back
+  ---
+  duration_ms: 577.71179
+  ...
+# Subtest: cleanup winning the old pair race allows this same run to readmit its later descendant
+ok 77 - cleanup winning the old pair race allows this same run to readmit its later descendant
+  ---
+  duration_ms: 923.382982
+  ...
+# Subtest: replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+ok 78 - replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+  ---
+  duration_ms: 857.58573
+  ...
+# Subtest: same GitHub run final always-save shell can advance its earlier loop checkpoint
+ok 79 - same GitHub run final always-save shell can advance its earlier loop checkpoint
+  ---
+  duration_ms: 899.884508
+  ...
+# Subtest: a bot save that cannot reach main is kept on a recovery branch, then merged into main by the next recovery pass and deleted
+ok 80 - a bot save that cannot reach main is kept on a recovery branch, then merged into main by the next recovery pass and deleted
+  ---
+  duration_ms: 1557.91056
+  ...
+# Subtest: a recovery branch that clashes with main on the owner's trades is KEPT (not dropped) and reported; it merges once main allows
+ok 81 - a recovery branch that clashes with main on the owner's trades is KEPT (not dropped) and reported; it merges once main allows
+  ---
+  duration_ms: 1149.18931
+  ...
+# Subtest: every save path uses recovery on final failure: nightly save-data.sh and append ledgers (segments) are recovered too
+ok 82 - every save path uses recovery on final failure: nightly save-data.sh and append ledgers (segments) are recovered too
+  ---
+  duration_ms: 1213.191271
+  ...
+# Subtest: remaining limit, explicit: when the remote refuses BOTH main and recovery pushes, the commit exists only on that runner
+ok 83 - remaining limit, explicit: when the remote refuses BOTH main and recovery pushes, the commit exists only on that runner
+  ---
+  duration_ms: 824.023049
+  ...
+# Subtest: the recovery push is guarded: new T1 plaintext is never pushed to a recovery branch either
+ok 84 - the recovery push is guarded: new T1 plaintext is never pushed to a recovery branch either
+  ---
+  duration_ms: 168.711119
+  ...
+# Subtest: an interrupted sealed write leaves a temp file that is ignored by git (it can never block or join a save)
+ok 85 - an interrupted sealed write leaves a temp file that is ignored by git (it can never block or join a save)
+  ---
+  duration_ms: 302.783141
+  ...
+# Subtest: Codex \#1+\#2: a stale recovery (offset 2, STALE positions, plus a code file) is REFUSED: main keeps offset 9, NEW positions, current code
+ok 86 - Codex \#1+\#2: a stale recovery (offset 2, STALE positions, plus a code file) is REFUSED: main keeps offset 9, NEW positions, current code
+  ---
+  duration_ms: 608.848488
+  ...
+# Subtest: successive checkpoints of two runs (immutable refs) merge in order: offset 2 then 3, never back
+ok 87 - successive checkpoints of two runs (immutable refs) merge in order: offset 2 then 3, never back
+  ---
+  duration_ms: 2003.437163
+  ...
+# Subtest: Codex \#3 race: a ref advanced after its merge is NOT deleted (compare-and-delete); the newer checkpoint merges next pass
+ok 88 - Codex \#3 race: a ref advanced after its merge is NOT deleted (compare-and-delete); the newer checkpoint merges next pass
+  ---
+  duration_ms: 725.602125
+  ...
+# Subtest: Codex \#4: a failed recovery fetch is UNKNOWN (exit 2), visible, and the bot warns; nothing is assumed merged
+ok 89 - Codex \#4: a failed recovery fetch is UNKNOWN (exit 2), visible, and the bot warns; nothing is assumed merged
+  ---
+  duration_ms: 246.804068
+  ...
+# Subtest: Codex d02cdfea \#1: main positions {} -> NEW -> {} after the checkpoint base: the OLD checkpoint is REFUSED (causal history, not blob equality)
+ok 90 - Codex d02cdfea \#1: main positions {} -> NEW -> {} after the checkpoint base: the OLD checkpoint is REFUSED (causal history, not blob equality)
+  ---
+  duration_ms: 391.538733
+  ...
+# Subtest: Codex d02cdfea \#2: a merge commit (data-only parents, code introduced by the merge) is REFUSED; code on main unchanged
+ok 91 - Codex d02cdfea \#2: a merge commit (data-only parents, code introduced by the merge) is REFUSED; code on main unchanged
+  ---
+  duration_ms: 404.20575
+  ...
+# Subtest: a recovery commit records Recovered-From: <tip>; only that lineage counts as "ours" on a later pass
+ok 92 - a recovery commit records Recovered-From: <tip>; only that lineage counts as "ours" on a later pass
+  ---
+  duration_ms: 689.887218
+  ...
+# Subtest: a newer checkpoint processed first supersedes its older ancestor (deleted as contained, not refused)
+ok 93 - a newer checkpoint processed first supersedes its older ancestor (deleted as contained, not refused)
+  ---
+  duration_ms: 575.469787
+  ...
+# Subtest: rev13: the bot has ONE slot; a second bot run with a different unpublished state finds it full and evicts nothing
+ok 94 - rev13: the bot has ONE slot; a second bot run with a different unpublished state finds it full and evicts nothing
+  ---
+  duration_ms: 1582.782336
+  ...
+# Subtest: rev13: one bot run's later state ADVANCES its own slot atomically (old checkpoint replaced, never more than one); recovery releases the pair
+ok 95 - rev13: one bot run's later state ADVANCES its own slot atomically (old checkpoint replaced, never more than one); recovery releases the pair
+  ---
+  duration_ms: 52898.981191
+  ...
+# Subtest: rev13: shared writers get at most two slots; a third is refused with nothing created; size over the limit is refused before any push
+ok 96 - rev13: shared writers get at most two slots; a third is refused with nothing created; size over the limit is refused before any push
+  ---
+  duration_ms: 1124.3639
+  ...
+# Subtest: rev13: two writers that both saw one free slot: the server-side lease admits exactly one; the loser leaks no checkpoint
+ok 97 - rev13: two writers that both saw one free slot: the server-side lease admits exactly one; the loser leaks no checkpoint
+  ---
+  duration_ms: 420.086037
+  ...
+# Subtest: rev13: an unclear push reply is reconciled read-only (no second checkpoint); a failed read-back is UNKNOWN and tries no other slot
+ok 98 - rev13: an unclear push reply is reconciled read-only (no second checkpoint); a failed read-back is UNKNOWN and tries no other slot
+  ---
+  duration_ms: 467.589102
+  ...
+# Subtest: rev13: cleanup deletes a checkpoint and its slot together or not at all; a slot without a checkpoint is kept and reported
+ok 99 - rev13: cleanup deletes a checkpoint and its slot together or not at all; a slot without a checkpoint is kept and reported
+  ---
+  duration_ms: 1491.039125
+  ...
+# Subtest: release rehearsal: gate -> code -> rollback-before-migration -> migration -> receipt -> writers -> guard -> recovery export
+ok 100 - release rehearsal: gate -> code -> rollback-before-migration -> migration -> receipt -> writers -> guard -> recovery export
+  ---
+  duration_ms: 2417.083481
+  ...
+# Subtest: release precheck: PASS when no candidate file drifted on the target; FAIL on drift or an already-sealed target
+ok 101 - release precheck: PASS when no candidate file drifted on the target; FAIL on drift or an already-sealed target
+  ---
+  duration_ms: 191.679921
+  ...
+# Subtest: rev8 combined unit: built source-only on a fresh M0 (newer data and Telegram offset kept); verify refuses anything else
+ok 102 - rev8 combined unit: built source-only on a fresh M0 (newer data and Telegram offset kept); verify refuses anything else
+  ---
+  duration_ms: 1668.378842
+  ...
+# Subtest: round trip; ciphertext reveals no plaintext; fresh IV each time; binary, not base64
+ok 103 - round trip; ciphertext reveals no plaintext; fresh IV each time; binary, not base64
+  ---
+  duration_ms: 4.479732
+  ...
+# Subtest: key derivation: domain-separated from sha256(secret) (the private.enc key); read only from SEALED_SECRET
+ok 104 - key derivation: domain-separated from sha256(secret) (the private.enc key); read only from SEALED_SECRET
+  ---
+  duration_ms: 0.229134
+  ...
+# Subtest: Codex R1-C3 replay: a valid sealed file copied over another path is SEALED_UNREADABLE (path bound in the AAD)
+ok 105 - Codex R1-C3 replay: a valid sealed file copied over another path is SEALED_UNREADABLE (path bound in the AAD)
+  ---
+  duration_ms: 10.199344
+  ...
+# Subtest: wrong key, tampering (every byte region), truncation, other versions and malformed input: SEALED_UNREADABLE
+ok 106 - wrong key, tampering (every byte region), truncation, other versions and malformed input: SEALED_UNREADABLE
+  ---
+  duration_ms: 0.979533
+  ...
+# Subtest: Codex R1-C3 keyless legacy read: plaintext with no sealed copy is SEALED_LEGACY_PLAINTEXT with or without a key
+ok 107 - Codex R1-C3 keyless legacy read: plaintext with no sealed copy is SEALED_LEGACY_PLAINTEXT with or without a key
+  ---
+  duration_ms: 6.323175
+  ...
+# Subtest: no key: every write refuses BEFORE touching any file; a sealed file without the key is SEALED_KEY_MISSING (never absent)
+ok 108 - no key: every write refuses BEFORE touching any file; a sealed file without the key is SEALED_KEY_MISSING (never absent)
+  ---
+  duration_ms: 5.717047
+  ...
+# Subtest: durable write: no temp file left, read-back verified, plaintext removed only after the sealed copy verifies
+ok 109 - durable write: no temp file left, read-back verified, plaintext removed only after the sealed copy verifies
+  ---
+  duration_ms: 6.219372
+  ...
+# Subtest: exclusive write replaces {flag:"wx"}: an existing per-run archive is never replaced
+ok 110 - exclusive write replaces {flag:"wx"}: an existing per-run archive is never replaced
+  ---
+  duration_ms: 4.521326
+  ...
+# Subtest: append + lines; listing by logical name; a plaintext T1 file in a sealed folder is refused
+ok 111 - append + lines; listing by logical name; a plaintext T1 file in a sealed folder is refused
+  ---
+  duration_ms: 19.666048
+  ...
+# Subtest: T1 inventory patterns: the 45 tracked families match; neighbours that are not T1 do not
+ok 112 - T1 inventory patterns: the 45 tracked families match; neighbours that are not T1 do not
+  ---
+  duration_ms: 0.701454
+  ...
+# Subtest: unchanged content is not rewritten (no fresh-IV blob for an identical record); changed content is
+ok 113 - unchanged content is not rewritten (no fresh-IV blob for an identical record); changed content is
+  ---
+  duration_ms: 5.906452
+  ...
+# Subtest: segmented ledgers: appends write only that day's sealed segment; reads return base + segments in date order
+ok 114 - segmented ledgers: appends write only that day's sealed segment; reads return base + segments in date order
+  ---
+  duration_ms: 16.402018
+  ...
+# Subtest: no module reads or writes a T1 file with plain fs calls (only through sealed-store)
+ok 115 - no module reads or writes a T1 file with plain fs calls (only through sealed-store)
+  ---
+  duration_ms: 40.780572
+  ...
+# Subtest: indirect writers: variables holding T1 paths are only written through sealed-store calls
+ok 116 - indirect writers: variables holding T1 paths are only written through sealed-store calls
+  ---
+  duration_ms: 0.652841
+  ...
+# Subtest: public Actions logs: no per-stock option quotes, survey summary, or analyst/price message text is printed
+ok 117 - public Actions logs: no per-stock option quotes, survey summary, or analyst/price message text is printed
+  ---
+  duration_ms: 0.263466
+  ...
+# Subtest: the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)
+ok 118 - the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)
+  ---
+  duration_ms: 1.565363
+  ...
+# Subtest: every workflow save that can carry T1 changes registers the sealed merge driver and runs the guard before committing
+ok 119 - every workflow save that can carry T1 changes registers the sealed merge driver and runs the guard before committing
+  ---
+  duration_ms: 1.545513
+  ...
+# Subtest: explicit stage lists use sealed_stage (addition + deletion) for T1 names; no plaintext T1 name is git-added directly
+ok 120 - explicit stage lists use sealed_stage (addition + deletion) for T1 names; no plaintext T1 name is git-added directly
+  ---
+  duration_ms: 2.423132
+  ...
+# Subtest: watcher artifact: the only T1 path uploaded is data/ignition-runs/, which now holds sealed files only
+ok 121 - watcher artifact: the only T1 path uploaded is data/ignition-runs/, which now holds sealed files only
+  ---
+  duration_ms: 0.528655
+  ...
+# Subtest: website: index.html fetches signals.json and discovery.json only (T2), and names no T1 file or sealed file
+ok 122 - website: index.html fetches signals.json and discovery.json only (T2), and names no T1 file or sealed file
+  ---
+  duration_ms: 1.249117
+  ...
+# Subtest: migration workflow: manual dispatch only, exact confirmation, approved source checkout, fast-forward push, tree receipt; no schedule
+ok 123 - migration workflow: manual dispatch only, exact confirmation, approved source checkout, fast-forward push, tree receipt; no schedule
+  ---
+  duration_ms: 0.41255
+  ...
+# Subtest: every push is preceded by the push-time guard on the reconciled tree (Codex re-review 5)
+ok 124 - every push is preceded by the push-time guard on the reconciled tree (Codex re-review 5)
+  ---
+  duration_ms: 1.013483
+  ...
+# Subtest: .gitattributes keeps sealed files out of text merge and diff
+ok 125 - .gitattributes keeps sealed files out of text merge and diff
+  ---
+  duration_ms: 0.192539
+  ...
+# Subtest: inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 same-family) all match the sealed patterns
+ok 126 - inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 same-family) all match the sealed patterns
+  ---
+  duration_ms: 0.287201
+  ...
+# Subtest: rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored
+ok 127 - rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored
+  ---
+  duration_ms: 0.65827
+  ...
+# Subtest: rev5 recovery: no cherry-pick replay; producer refs are immutable (no force push); consumer is the data-only sealed-recover.mjs
+ok 128 - rev5 recovery: no cherry-pick replay; producer refs are immutable (no force push); consumer is the data-only sealed-recover.mjs
+  ---
+  duration_ms: 0.27979
+  ...
+# Subtest: price evidence: only a ticker-bound, dated, fresh trade price is OK
+ok 129 - price evidence: only a ticker-bound, dated, fresh trade price is OK
+  ---
+  duration_ms: 1.897431
+  ...
+# Subtest: r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN
+ok 130 - r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN
+  ---
+  duration_ms: 0.617649
+  ...
+# Subtest: r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip
+ok 131 - r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip
+  ---
+  duration_ms: 0.721735
+  ...
+# Subtest: stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts
+ok 132 - stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts
+  ---
+  duration_ms: 15.149639
+  ...
+# Subtest: "at or below": a price equal to the stop is a crossing and is worded as at or below
+ok 133 - "at or below": a price equal to the stop is a crossing and is worded as at or below
+  ---
+  duration_ms: 0.341062
+  ...
+# Subtest: wording respects an order that already filled: no second sale, the fill price is what to report
+ok 134 - wording respects an order that already filled: no second sale, the fill price is what to report
+  ---
+  duration_ms: 0.408454
+  ...
+# Subtest: already sold (position no longer recorded): nothing is sent for it
+ok 135 - already sold (position no longer recorded): nothing is sent for it
+  ---
+  duration_ms: 0.154612
+  ...
+# Subtest: stop levels and positions are read, never changed
+ok 136 - stop levels and positions are read, never changed
+  ---
+  duration_ms: 0.278659
+  ...
+# Subtest: catalyst times have a full date and one time zone (previous-day items no longer read like today)
+ok 137 - catalyst times have a full date and one time zone (previous-day items no longer read like today)
+  ---
+  duration_ms: 3.637417
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated
+ok 138 - bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated
+  ---
+  duration_ms: 121.259004
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery missing -> the bot sends the stop once, in the shared wording
+ok 139 - bot fallback: watcher delivery missing -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 81.956399
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery UNSENT -> the bot sends the stop once, in the shared wording
+ok 140 - bot fallback: watcher delivery UNSENT -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 54.668483
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery UNCERTAIN -> the bot sends the stop once, in the shared wording
+ok 141 - bot fallback: watcher delivery UNCERTAIN -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 62.352561
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: duplicate delivery prevention holds across runs (once a day)
+ok 142 - bot fallback: duplicate delivery prevention holds across runs (once a day)
+  ---
+  duration_ms: 49.548899
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing
+ok 143 - bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing
+  ---
+  duration_ms: 105.930716
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller
+ok 144 - r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller
+  ---
+  duration_ms: 115.999673
+  ...
+# Subtest: all requests stayed synthetic and on loopback
+ok 145 - all requests stayed synthetic and on loopback
+  ---
+  duration_ms: 0.20671
+  ...
+# Subtest: price at or below the stop: one STOP LEVEL REACHED message, not repeated
+ok 146 - price at or below the stop: one STOP LEVEL REACHED message, not repeated
+  ---
+  duration_ms: 18.479984
+  ...
+# Subtest: within 2% above the stop: one NEAR STOP warning, then the hit still comes
+ok 147 - within 2% above the stop: one NEAR STOP warning, then the hit still comes
+  ---
+  duration_ms: 0.766993
+  ...
+# Subtest: no stop: nothing; no positions: nothing
+ok 148 - no stop: nothing; no positions: nothing
+  ---
+  duration_ms: 0.690388
+  ...
+1..148
+# tests 148
+# suites 0
+# pass 148
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 73353.535549

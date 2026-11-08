@@ -1,0 +1,97 @@
+TAP version 13
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "multipart_buy",
+#   "firstPartLength": 3148,
+#   "lateMessages": [
+#     {
+#       "at": 1793889630000,
+#       "text": "4) ZZE, earnings drift\\n   Now: 105.00, inside the range: OK to buy\\n   Buy: 100.00 to 110.00 (skip if above 110.00)\\n   Stop: 90.00 (-10.0%). If it is hit: about -$151 on a $1,000 buy, fees included\\n   Sell: when it closes under its 20 day average (~90.00 now, rising) or after 10 sessions\\n   Wait: days to weeks, up to 10 sessions\\n   Expected: 60% of 43 past earnings beats it never saw won; average +2.0% a trade after costs (whole-market fair test)\\n   Why: earnings beat the estimate by 20% and the stock closed up +10.0% on the news\\n   Halal: HALAL in ZAD (your mark, undefined)\\n   Amount: BUY 1000 USD (proven, but the edge could still be luck or the stop is wide; size level 1 (your real record sets the most per trade)), about 9 shares at the top of the range\\n   Size: size 0.8x your usual buy (normal evidence (43 trades, +2.0%), wide stop (10% away): smaller, so a stop-out costs about the same as a normal trade). Tell me your shares when you buy (bought SYMBOL PRICE SHARES) and I will learn your usual size\\n\\nCheck halal in ZAD first. Buy only inside the range and place the stop at once. Then send: bought SYMBOL PRICE SHARES\\n\\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1,
+#       "ZZEbuynow": 1
+#     }
+#   }
+# }
+# Subtest: multipart BUY NOW rechecks the quote before later price-bearing parts
+not ok 1 - multipart BUY NOW rechecks the quote before later price-bearing parts
+  ---
+  duration_ms: 137.61033
+  location: '/workspace/g2-verification/rev16-multipart.test.mjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    later card part uses static shown text without rechecking source age1220s
+    
+    1 !== 0
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: 0
+  actual: 1
+  operator: 'strictEqual'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev16-multipart.test.mjs:52:9)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Telegram rate limit, waiting 1 s
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "multipart_buy_retry",
+#   "attempts": [
+#     {
+#       "at": 1793889600000,
+#       "text": "4) ZZE, earnings drift\\n   Now: 105.00, inside the range: OK to buy\\n   Buy: 100.00 to 110.00 (skip if above 110.00)\\n   Stop: 90.00 (-10.0%). If it is hit: about -$151 on a $1,000 buy, fees included\\n   Sell: when it closes under its 20 day average (~90.00 now, rising) or after 10 sessions\\n   Wait: days to weeks, up to 10 sessions\\n   Expected: 60% of 43 past earnings beats it never saw won; average +2.0% a trade after costs (whole-market fair test)\\n   Why: earnings beat the estimate by 20% and the stock closed up +10.0% on the news\\n   Halal: HALAL in ZAD (your mark, undefined)\\n   Amount: BUY 1000 USD (proven, but the edge could still be luck or the stop is wide; size level 1 (your real record sets the most per trade)), about 9 shares at the top of the range\\n   Size: size 0.8x your usual buy (normal evidence (43 trades, +2.0%), wide stop (10% away): smaller, so a stop-out costs about the same as a normal trade). Tell me your shares when you buy (bought SYMBOL PRICE SHARES) and I will learn your usual size\\n\\nCheck halal in ZAD first. Buy only inside the range and place the stop at once. Then send: bought SYMBOL PRICE SHARES\\n\\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 429
+#     },
+#     {
+#       "at": 1793889630000,
+#       "text": "4) ZZE, earnings drift\\n   Now: 105.00, inside the range: OK to buy\\n   Buy: 100.00 to 110.00 (skip if above 110.00)\\n   Stop: 90.00 (-10.0%). If it is hit: about -$151 on a $1,000 buy, fees included\\n   Sell: when it closes under its 20 day average (~90.00 now, rising) or after 10 sessions\\n   Wait: days to weeks, up to 10 sessions\\n   Expected: 60% of 43 past earnings beats it never saw won; average +2.0% a trade after costs (whole-market fair test)\\n   Why: earnings beat the estimate by 20% and the stock closed up +10.0% on the news\\n   Halal: HALAL in ZAD (your mark, undefined)\\n   Amount: BUY 1000 USD (proven, but the edge could still be luck or the stop is wide; size level 1 (your real record sets the most per trade)), about 9 shares at the top of the range\\n   Size: size 0.8x your usual buy (normal evidence (43 trades, +2.0%), wide stop (10% away): smaller, so a stop-out costs about the same as a normal trade). Tell me your shares when you buy (bought SYMBOL PRICE SHARES) and I will learn your usual size\\n\\nCheck halal in ZAD first. Buy only inside the range and place the stop at once. Then send: bought SYMBOL PRICE SHARES\\n\\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ]
+# }
+# Subtest: retry of a later BUY NOW part rechecks its quote
+not ok 2 - retry of a later BUY NOW part rechecks its quote
+  ---
+  duration_ms: 73.422757
+  location: '/workspace/g2-verification/rev16-multipart.test.mjs:54:1'
+  failureType: 'testCodeFailure'
+  error: 'later-part retry must not bypass quote eligibility'
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected: true
+  actual: false
+  operator: '=='
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev16-multipart.test.mjs:58:9)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: timely multipart card preserves its eligible remainder
+ok 3 - timely multipart card preserves its eligible remainder
+  ---
+  duration_ms: 60.100708
+  ...
+# Subtest: loopback only
+ok 4 - loopback only
+  ---
+  duration_ms: 0.847393
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 2
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 364.766782

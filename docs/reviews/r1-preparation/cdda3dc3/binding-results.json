@@ -1,0 +1,280 @@
+{
+  "candidate": "cdda3dc376d9bead23ae14fba24bd60db9ee53ee",
+  "bindingCommit": "b3e3a744",
+  "bindingSha256": "845866e2f80cb8758a87bfa5ae8441f6c87e046c5ed4da9390c3e9b5573ab0bb",
+  "base": "774273205e1c8ce3db30c59ca368dc107617ef73",
+  "fresh": "6e72a8d0c46385f3c329157d627636875505a224",
+  "fingerprintsMatched": 75,
+  "precheckFresh": {
+    "pass": true,
+    "changed": 75,
+    "drift": [],
+    "already": []
+  },
+  "latestMain": "6e72a8d0c46385f3c329157d627636875505a224",
+  "precheckLatest": {
+    "pass": true,
+    "changed": 75,
+    "drift": [],
+    "already": []
+  },
+  "builds": [
+    {
+      "m0": "774273205e1c8ce3db30c59ca368dc107617ef73",
+      "ok": true,
+      "commit": "fd8cafef47a17ab917c2e065fb94359adbb353bd",
+      "tree": "10e3d8bce56e0476eaf0a281c6dea2599c197885",
+      "verify": {
+        "pass": true,
+        "bad": [],
+        "files": 75
+      },
+      "allDataAndUnboundSourcePreserved": true,
+      "patchEqualsBuild": true,
+      "exactInverse": true
+    },
+    {
+      "m0": "6e72a8d0c46385f3c329157d627636875505a224",
+      "ok": true,
+      "commit": "9d5ec34143059eb3091c0f01d9212e65be819158",
+      "tree": "43e82ea7d9ce9cf9f477968efe0a92ddf67ced6e",
+      "verify": {
+        "pass": true,
+        "bad": [],
+        "files": 75
+      },
+      "allDataAndUnboundSourcePreserved": true,
+      "patchEqualsBuild": true,
+      "exactInverse": true
+    }
+  ],
+  "localObjectsOnlyNoRefsChanged": true,
+  "priorPinFormat": [
+    "patchSHA256",
+    "files"
+  ],
+  "stopPinsMatched": 17,
+  "changedPins": [
+    "ignition-watch.mjs",
+    "scan.mjs",
+    "test/load-scan.mjs",
+    "test/stop-alert-validity.test.mjs",
+    "test/watcher-resilience.test.mjs",
+    "test/watcher-incident-revision.test.mjs",
+    ".github/workflows/bot.yml",
+    ".github/workflows/ignition.yml"
+  ],
+  "wholeCandidateRejected": {
+    "pass": false,
+    "bad": [
+      "parent is not exactly M0",
+      "outside binding: data/calendar-status.json",
+      "outside binding: data/calendar.enc",
+      "outside binding: data/health.json",
+      "outside binding: data/shares.json.gz",
+      "outside binding: data/tg-state.json",
+      "tree differs from M0 + pinned candidate"
+    ],
+    "files": 75
+  },
+  "boundModeMutation": {
+    "mode": "100644 -> 100755",
+    "path": "scan.mjs",
+    "treeDiffers": true,
+    "verify": {
+      "pass": false,
+      "bad": [
+        "mode: scan.mjs",
+        "tree differs from M0 + pinned candidate"
+      ],
+      "files": 75
+    },
+    "buildFromWrongCandidate": {
+      "ok": false,
+      "bad": [
+        "candidate 08a6581c50c40772a01a509e7ea02e84e40c380d is not the binding's pinned candidate cdda3dc376d9bead23ae14fba24bd60db9ee53ee"
+      ]
+    }
+  },
+  "mandatoryBindingControls": {
+    "missingCandidate": {
+      "build": {
+        "threw": true,
+        "error": "binding does not pin the exact candidate commit (40 hex)"
+      },
+      "verify": {
+        "threw": true,
+        "error": "binding does not pin the exact candidate commit (40 hex)"
+      }
+    },
+    "missingMode": {
+      "build": {
+        "threw": true,
+        "error": "bad binding entry scan.mjs"
+      },
+      "verify": {
+        "threw": true,
+        "error": "bad binding entry scan.mjs"
+      }
+    },
+    "candidateModeMismatch": {
+      "build": {
+        "threw": false,
+        "result": {
+          "ok": false,
+          "bad": [
+            "candidate mode differs from binding: scan.mjs"
+          ]
+        }
+      },
+      "verify": {
+        "threw": false,
+        "result": {
+          "pass": false,
+          "bad": [
+            "mode: scan.mjs",
+            "pinned candidate mode differs from binding: scan.mjs"
+          ],
+          "files": 75
+        }
+      }
+    },
+    "unavailableCandidate": {
+      "build": {
+        "threw": false,
+        "result": {
+          "ok": false,
+          "bad": [
+            "candidate cdda3dc376d9bead23ae14fba24bd60db9ee53ee is not the binding's pinned candidate ffffffffffffffffffffffffffffffffffffffff"
+          ]
+        }
+      },
+      "verify": {
+        "threw": false,
+        "result": {
+          "pass": false,
+          "bad": [
+            "pinned candidate ffffffffffffffffffffffffffffffffffffffff not available locally (fetch it; never skip)"
+          ],
+          "files": 75
+        }
+      }
+    },
+    "rev8Binding": {
+      "build": {
+        "threw": true,
+        "error": "bad binding entry .gitattributes"
+      },
+      "verify": {
+        "threw": true,
+        "error": "bad binding entry .gitattributes"
+      }
+    },
+    "rev13Binding": {
+      "build": {
+        "threw": false,
+        "result": {
+          "ok": false,
+          "bad": [
+            "candidate cdda3dc376d9bead23ae14fba24bd60db9ee53ee is not the binding's pinned candidate c00b8b24f17e42cc878b9ed5c6493a977a42c189"
+          ]
+        }
+      },
+      "verify": {
+        "threw": false,
+        "result": {
+          "pass": false,
+          "bad": [
+            "hash: .github/bot-save.sh",
+            "hash: .github/sealed-git.sh",
+            "hash: docs/r1-sealed-provider-data/MANIFEST.md",
+            "hash: docs/r1-sealed-provider-data/README.md",
+            "hash: docs/r1-sealed-provider-data/RELEASE.md",
+            "hash: scan.mjs",
+            "hash: test/open-check-repair.test.mjs",
+            "hash: test/sealed-recovery.test.mjs",
+            "hash: test/sealed-wiring.test.mjs",
+            "outside binding: opportunity-radar.mjs",
+            "outside binding: test/buynow-evidence.test.mjs",
+            "outside binding: test/intraday-alert-evidence.test.mjs",
+            "outside binding: test/intraday-alert-send-time.test.mjs",
+            "outside binding: test/radar-sealed-reader.test.mjs",
+            "outside binding: test/sealed-recovery-actual-paths.test.mjs",
+            "outside binding: test/stop-alert-validity.test.mjs",
+            "tree differs from M0 + pinned candidate"
+          ],
+          "files": 68
+        }
+      }
+    },
+    "rev14Binding": {
+      "build": {
+        "threw": false,
+        "result": {
+          "ok": false,
+          "bad": [
+            "candidate cdda3dc376d9bead23ae14fba24bd60db9ee53ee is not the binding's pinned candidate df5ee960f5d118e5c5b638e22c3fe3788fe4598a"
+          ]
+        }
+      },
+      "verify": {
+        "threw": false,
+        "result": {
+          "pass": false,
+          "bad": [
+            "hash: docs/r1-sealed-provider-data/MANIFEST.md",
+            "hash: docs/r1-sealed-provider-data/README.md",
+            "hash: docs/r1-sealed-provider-data/RELEASE.md",
+            "hash: scan.mjs",
+            "outside binding: test/buynow-evidence.test.mjs",
+            "outside binding: test/intraday-alert-evidence.test.mjs",
+            "outside binding: test/intraday-alert-send-time.test.mjs",
+            "tree differs from M0 + pinned candidate"
+          ],
+          "files": 72
+        }
+      }
+    },
+    "rev15Binding": {
+      "build": {
+        "threw": false,
+        "result": {
+          "ok": false,
+          "bad": [
+            "candidate cdda3dc376d9bead23ae14fba24bd60db9ee53ee is not the binding's pinned candidate 09f58ca51258e02c6950f8d528a3c4093d2963e9"
+          ]
+        }
+      },
+      "verify": {
+        "threw": false,
+        "result": {
+          "pass": false,
+          "bad": [
+            "hash: docs/r1-sealed-provider-data/MANIFEST.md",
+            "hash: docs/r1-sealed-provider-data/README.md",
+            "hash: docs/r1-sealed-provider-data/RELEASE.md",
+            "hash: scan.mjs",
+            "outside binding: test/buynow-evidence.test.mjs",
+            "outside binding: test/intraday-alert-send-time.test.mjs",
+            "tree differs from M0 + pinned candidate"
+          ],
+          "files": 73
+        }
+      }
+    }
+  },
+  "explicitAllowlistDelta": {
+    "added": [
+      "test/buynow-evidence.test.mjs",
+      "test/intraday-alert-send-time.test.mjs"
+    ],
+    "removed": [],
+    "changed": [
+      "docs/r1-sealed-provider-data/MANIFEST.md",
+      "docs/r1-sealed-provider-data/README.md",
+      "docs/r1-sealed-provider-data/RELEASE.md",
+      "scan.mjs"
+    ],
+    "declarationMatches": true
+  }
+}
