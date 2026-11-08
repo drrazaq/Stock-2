@@ -130,3 +130,27 @@ test('8 Nov review: when EVERY holding quote is missing the first check is still
 });
 
 test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
+
+test('future-at-fetch quote remains UNKNOWN after another holding request advances the rendering clock', async t => {
+  const start=ON_TIME;let clock=start,quoteCount=0;const sent=[];
+  const server=http.createServer((req,res)=>{let body='';req.on('data',x=>body+=x);req.on('end',()=>{
+    res.setHeader('content-type','application/json');
+    if(req.url.includes('/getUpdates'))return res.end(JSON.stringify({ok:true,result:[]}));
+    if(req.url.includes('/quote')){quoteCount++;if(quoteCount===1)return res.end(JSON.stringify({c:70,t:(start+20000)/1000}));clock=start+30000;return res.end(JSON.stringify({c:12,t:(start-30000)/1000}));}
+    if(req.url.includes('/sendMessage')){sent.push(JSON.parse(body).text);return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}
+    res.statusCode=404;res.end('{}');
+  });});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
+  const S=await loadScan({files:{'data/my-positions.json':{ZZS:{entry:100,stop:80},ZZF:{entry:10,stop:8}},'data/signals.json':{session:'2026-11-04',stocks:[],quick:[],leaders:[]},'market-session.mjs':SESSION_SRC},env:{BOT_ONLY:'',MODE:'intraday',TG_TOKEN:'synthetic',TG_CHAT:'42',TG_BASE:base,FH_BASE:base,FINNHUB_KEY:'synthetic',TD_BASE:base}});
+  const originalNow=Date.now;Date.now=()=>clock;
+  try{await S.fn('intraday')(false);}finally{Date.now=originalNow;await new Promise(r=>server.close(r));}
+  const first=sent.find(x=>/FIRST MARKET-HOURS CHECK/.test(x))||'',stop=sent.find(x=>/^YOUR STOPS/.test(x))||'';
+  assert.equal(quoteCount,2);assert.match(first,/ZZS: STOP STATUS UNKNOWN/);assert.match(first,/was in the future when fetched/);assert.doesNotMatch(first,/ZZS: STOP LEVEL REACHED/);assert.match(stop,/STOP CHECK UNKNOWN: ZZS.*future/);
+});
+
+test('original observation-time validation preserves the existing five-minute default and explicit stricter gate',async()=>{
+ const S=await loadScan({});const q={price:70,reportedPrice:70,t:ON_TIME-240000,src:'synthetic',observedAt:ON_TIME};
+ assert.equal(S.fn('quoteEvidence')('ZZS',q,ON_TIME).state,'OK');
+ assert.equal(S.fn('quoteEvidence')('ZZS',q,ON_TIME,3).state,'UNKNOWN');
+ assert.equal(S.fn('quoteEvidence')('ZZS',{...q,status:'FUTURE_SOURCE_TIME'},ON_TIME+60000).state,'UNKNOWN');
+ assert.equal(S.fn('quoteEvidence')('ZZS',{...q,observedAt:NaN},ON_TIME).state,'UNKNOWN');
+});
