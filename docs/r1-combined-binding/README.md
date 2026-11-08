@@ -1,16 +1,32 @@
-# R1 combined-unit binding, rev11 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev12 (review only; NOT approved, NOT deployed)
 
 This folder binds the **68-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `8567fd46e6c0d7fc3fb63318472f439626a706a1` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `5849242e3164c19d3e34082db235a27d57544421` on `claude/composed-r1-opencheck-calendar-watcher` |
 | Historical R1 base (allowlist = diff from it) | `b0d76987` → **68 paths** (same set as rev8 and Codex's proposal) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `8be95a134dc133e6821baf7d9a54d37d427b4541` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `b58a5caa` | `df819e84e05d8607323970ac9ae1f0f8cd26fa1b` |
+| Unit tree, `M0` = `7742732` | `e2bde90454ab8f7cfbd6e3c7eb5483cf066d6a44` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `a8f22f84` | `7d7cb2d028bcd068ba205e2d2fe6824c35be743c` |
 
-## Rev11: what changed (review 6721730197, R1)
+## Rev12: what changed (Codex 6722848900)
+
+- **The defect:** rev11 froze every verdict at fetch time. A price 290 s old when fetched and 320 s old when the check was written showed "HOLD … above your stop".
+- **The fix:** two distinct judgements.
+  - **Current price** (`quoteEvidence`): valid when fetched **and** within the unchanged 3/5/20-minute gate at report time. It governs HOLD, targets, % from entry and buy ranges.
+  - **Stop observation** (`stopObservation`): fetch time, the same 5-minute rule as the stop route. Only "STOP LEVEL REACHED" uses it, shown as "N min old when checked at <time>; no current price now: <reason>".
+- **Proof:**
+  - Two actual-caller regressions fail on rev11 and pass on rev12 (15/15).
+  - On the **built unit tree**, Codex's `render-age-hold-actual-caller.mjs` assertions pass (exit 0) and the future-at-fetch probe reports `contradiction: false`.
+- **Changed against rev11:** `scan.mjs`, `test/open-check-repair.test.mjs`, the R1 `README.md` (§0i) and `MANIFEST.md`.
+- **Checks:**
+  - Precheck against `a8f22f84`: PASS (68/0/0).
+  - Build + verify: PASS on `7742732` (tree `e2bde904…`, equal to main + `source.patch`; the inverse restores main) and on `a8f22f84` (tree `7d7cb2d0…`). Revert restores each `M0`.
+  - Refused: the mode mutant, the whole branch, and the old candidate.
+  - Full suite 156/156; gated watcher 9/9 and 11/11.
+
+## Rev11 (history): what changed (review 6721730197, R1)
 
 - **The defect:** a stop quote 4 min 50 s old when fetched, under the stop, was REACHED in the stop route. Thirty seconds of later fetching, and the first check in the same run re-aged it past 5 minutes and said STOP STATUS UNKNOWN. Rev10 had this.
 - **The fix:** a quote stamped with `observedAt` is judged **once, at that moment**, with the same 5-minute rule as the stop route. Thresholds are unchanged.

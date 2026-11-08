@@ -1,18 +1,18 @@
 {
  "status": "ADOPTED_FOR_REVIEW (candidate author); not approved, not deployed",
- "candidate": "8567fd46e6c0d7fc3fb63318472f439626a706a1",
- "candidateTree": "57035d17801e02e6898ed5437f6920d3a7027795",
+ "candidate": "5849242e3164c19d3e34082db235a27d57544421",
+ "candidateTree": "38330d100d222316a7cfb3a35743e705e6daa466",
  "historicalR1Base": "b0d769876a6ee76f23544850c959111f59d8ae7b",
  "mainAtBinding": "774273205e1c8ce3db30c59ca368dc107617ef73",
  "pathCount": 68,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "0b386e2a67d9a2f423c7e46e353a805028727a336880535eb45f2f2934bd1d3c",
+  "sha256": "ab2b96fb425b5fb8fb607624770ebcfba1d3bd85dc850146335a64ae4f0cd149",
   "against": "774273205e1c8ce3db30c59ca368dc107617ef73"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "94aaa6b93b069962fa04bdb2207c6be3dd90f27814ffe017c6814a2af2ed9d7c"
+  "sha256": "2ccf2aa0e0a95517d77987115f28ffea8ceba213d242aa9612d0ffd266464ce4"
  },
  "candidateBranchStaleDataPaths": [
   "data/calendar-status.json",
@@ -22,10 +22,10 @@
   "data/tg-state.json"
  ],
  "neverPushOrMergeCandidateBranch": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 8567fd46e6c0d7fc3fb63318472f439626a706a1 binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 5849242e3164c19d3e34082db235a27d57544421 binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "supersedes": {
-  "binding": "ad11c59a docs/r1-combined-binding/binding.json (rev10 b6ffea2f)",
+  "binding": "1900a0e0 docs/r1-combined-binding/binding.json (rev11 8567fd46)",
   "samePathSet": true,
   "filesChangedVsPrevious": [
    "docs/r1-sealed-provider-data/MANIFEST.md",
@@ -33,7 +33,7 @@
    "scan.mjs",
    "test/open-check-repair.test.mjs"
   ],
-  "reason": "rev11: quote judged once at fetch time (scan.mjs) + near-limit regression; binding format unchanged"
+  "reason": "rev12: current-price gate at report time + timed stop observation (scan.mjs) + regressions; binding format unchanged"
  },
  "files": {
   ".gitattributes": {
@@ -122,13 +122,13 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/MANIFEST.md": {
-   "sha256": "bd25648fb341b6d2696fa7f2e25bcb93d47dcc916636799178a88772b8966e64",
-   "bytes": 9135,
+   "sha256": "4fdd862c87e4b596fd63e92a2c6b487c692bb57439df33f1ee2a31d3928daf04",
+   "bytes": 9199,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/README.md": {
-   "sha256": "1b9e1a5c1bf7ce336bbe1afaefdf0b4ae9dc624a9c301a1930941307cfdcb540",
-   "bytes": 36361,
+   "sha256": "e31e611af2b0aabead1f55172a7a72acb6a2cba8c9bbdc699019df1fb5e4d3ff",
+   "bytes": 37398,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/RELEASE.md": {
@@ -192,8 +192,8 @@
    "mode": "100644"
   },
   "scan.mjs": {
-   "sha256": "b018f97f301fbc0b46eb30260d63611c78a3e3287b383a856bbf342e0c7d0a9b",
-   "bytes": 703380,
+   "sha256": "3af9dda35a2ea9bc9daa94202d160c52ba8d0c047c8dc28160e8b7f5adc91949",
+   "bytes": 704766,
    "mode": "100644"
   },
   "scorecard-1023.mjs": {
@@ -262,8 +262,8 @@
    "mode": "100644"
   },
   "test/open-check-repair.test.mjs": {
-   "sha256": "6d741e8b13403187d684e6bdbd4df50106842f484697a30af91c07dcf358e4e5",
-   "bytes": 17251,
+   "sha256": "cc86f2ced9f4b8bdf3462107e04034c7dbe720a3d3020990146c6b2eb4512ddb",
+   "bytes": 20661,
    "mode": "100644"
   },
   "test/private-data.test.mjs": {
@@ -378,7 +378,7 @@
   }
  },
  "expectedUnitTrees": {
-  "774273205e1c8ce3db30c59ca368dc107617ef73": "8be95a134dc133e6821baf7d9a54d37d427b4541",
-  "b58a5caac5a09a82fc36340ebaa6b41d91112c0b": "df819e84e05d8607323970ac9ae1f0f8cd26fa1b"
+  "774273205e1c8ce3db30c59ca368dc107617ef73": "e2bde90454ab8f7cfbd6e3c7eb5483cf066d6a44",
+  "a8f22f842e85f6743ee498c47a2dee5908853157": "7d7cb2d028bcd068ba205e2d2fe6824c35be743c"
  }
 }
