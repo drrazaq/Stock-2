@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct
+ok 1 - publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct
+  ---
+  duration_ms: 24.806711
+  ...
+# Subtest: actual Actions watcher survives moved
+ok 2 - actual Actions watcher survives moved
+  ---
+  duration_ms: 1511.057324
+  ...
+# Subtest: actual Actions watcher survives competing
+ok 3 - actual Actions watcher survives competing
+  ---
+  duration_ms: 1576.86696
+  ...
+# Subtest: actual Actions watcher survives refusal-retry
+ok 4 - actual Actions watcher survives refusal-retry
+  ---
+  duration_ms: 1952.772386
+  ...
+# Subtest: actual Actions watcher survives interrupted
+ok 5 - actual Actions watcher survives interrupted
+  ---
+  duration_ms: 1087.035455
+  ...
+# Subtest: actual Actions watcher survives uncertain
+ok 6 - actual Actions watcher survives uncertain
+  ---
+  duration_ms: 1602.278177
+  ...
+# Subtest: actual Actions watcher survives clear-rejection
+ok 7 - actual Actions watcher survives clear-rejection
+  ---
+  duration_ms: 2085.363315
+  ...
+# Subtest: actual Actions watcher survives finish-refusal
+ok 8 - actual Actions watcher survives finish-refusal
+  ---
+  duration_ms: 1751.851528
+  ...
+# Subtest: actual Actions watcher survives missing-snapshot
+ok 9 - actual Actions watcher survives missing-snapshot
+  ---
+  duration_ms: 1523.87128
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 13122.151194

@@ -1,0 +1,296 @@
+TAP version 13
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "multipart_buy",
+#   "firstPartLength": 3148,
+#   "lateMessages": [
+#     {
+#       "at": 1793889630000,
+#       "text": "BUY NOW ZZE WITHDRAWN: the price in the card above is no longer current (the latest price is 20 min old (limit 20 min)), so the rest of the card is not sent. Do not buy from it; it is checked again on the next run.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1
+#     }
+#   }
+# }
+# Subtest: multipart BUY NOW rechecks the quote before later price-bearing parts
+ok 1 - multipart BUY NOW rechecks the quote before later price-bearing parts
+  ---
+  duration_ms: 176.371278
+  ...
+# Telegram rate limit, waiting 1 s
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "multipart_buy_retry",
+#   "attempts": [
+#     {
+#       "at": 1793889600000,
+#       "text": "4) ZZE, earnings drift\\n   Now: 105.00, inside the range: OK to buy\\n   Buy: 100.00 to 110.00 (skip if above 110.00)\\n   Stop: 90.00 (-10.0%). If it is hit: about -$151 on a $1,000 buy, fees included\\n   Sell: when it closes under its 20 day average (~90.00 now, rising) or after 10 sessions\\n   Wait: days to weeks, up to 10 sessions\\n   Expected: 60% of 43 past earnings beats it never saw won; average +2.0% a trade after costs (whole-market fair test)\\n   Why: earnings beat the estimate by 20% and the stock closed up +10.0% on the news\\n   Halal: HALAL in ZAD (your mark, undefined)\\n   Amount: BUY 1000 USD (proven, but the edge could still be luck or the stop is wide; size level 1 (your real record sets the most per trade)), about 9 shares at the top of the range\\n   Size: size 0.8x your usual buy (normal evidence (43 trades, +2.0%), wide stop (10% away): smaller, so a stop-out costs about the same as a normal trade). Tell me your shares when you buy (bought SYMBOL PRICE SHARES) and I will learn your usual size\\n\\nCheck halal in ZAD first. Buy only inside the range and place the stop at once. Then send: bought SYMBOL PRICE SHARES\\n\\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 429
+#     },
+#     {
+#       "at": 1793889630000,
+#       "text": "BUY NOW ZZE WITHDRAWN: the price in the card above is no longer current (the latest price is 20 min old (limit 20 min)), so the rest of the card is not sent. Do not buy from it; it is checked again on the next run.",
+#       "status": 200
+#     }
+#   ]
+# }
+# Subtest: retry of a later BUY NOW part rechecks its quote
+ok 2 - retry of a later BUY NOW part rechecks its quote
+  ---
+  duration_ms: 103.846604
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: timely multipart card preserves its eligible remainder
+ok 3 - timely multipart card preserves its eligible remainder
+  ---
+  duration_ms: 64.925627
+  ...
+# Subtest: loopback only
+ok 4 - loopback only
+  ---
+  duration_ms: 0.500743
+  ...
+# {"case":"actual_shell_flags","status":0,"warningReached":true,"continued":true}
+# {"case":"accepted_replace_then_readback_loss","laterStateDurable":true,"stdout":"sealed guard: OK (--push: no T1 plaintext)\\nError: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner\\nfirst_rc=1\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T194645739440454Z-e14aa294afc9 (slot bot; confirmed after an unclear reply)\\nsealed guard: OK (--push: no T1 plaintext)\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T194645869735940Z-f0c4fe759eb3 (slot bot, replacing this run's earlier save-recovery/Telegram-bot-777-1-20261108T194645739440454Z-e14aa294afc9; merged into main by the bot's next recovery pass)\\nnext_rc=0\\n"}
+# {"case":"new_shell_same_run_final_save","sameRunId":"777","latestStateDurable":true,"stdout":"sealed guard: OK (--staged: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nError: could not save the data folder to the repository (kept in the local commit; retried at the next save)\\nsealed guard: OK (--push: no T1 plaintext)\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T194648660667635Z-cecb1f2b6932 (slot bot, replacing this run's earlier save-recovery/Telegram-bot-777-1-20261108T194647957377486Z-53c6aa53a929; merged into main by the bot's next recovery pass)\\nFINAL_ATTEMPT_COMPLETE\\n"}
+# Subtest: required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+ok 5 - required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+  ---
+  duration_ms: 948.269457
+  ...
+# Subtest: same-run later state progresses after an accepted replacement loses both reply and its first read-back
+ok 6 - same-run later state progresses after an accepted replacement loses both reply and its first read-back
+  ---
+  duration_ms: 505.531783
+  ...
+# Subtest: cleanup winning the old pair race allows this same run to readmit its later descendant
+ok 7 - cleanup winning the old pair race allows this same run to readmit its later descendant
+  ---
+  duration_ms: 962.145135
+  ...
+# Subtest: replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+ok 8 - replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+  ---
+  duration_ms: 893.944351
+  ...
+# Subtest: same GitHub run final always-save shell can advance its earlier loop checkpoint
+ok 9 - same GitHub run final always-save shell can advance its earlier loop checkpoint
+  ---
+  duration_ms: 927.706788
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# FIRST: ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (the latest price is 20 min old (limit 5 min)).
+# ALERT: 
+# Subtest: general target alert must not present an unqualified current price after batch delay leaves even the20-minute BUY NOW ceiling expired
+ok 10 - general target alert must not present an unqualified current price after batch delay leaves even the20-minute BUY NOW ceiling expired
+  ---
+  duration_ms: 196.62617
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# FIRST: ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (the price timestamp was in the future when fetched).
+# ALERT: 
+# Subtest: future-at-fetch target evidence must not become valid merely while other quotes are fetched
+ok 11 - future-at-fetch target evidence must not become valid merely while other quotes are fetched
+  ---
+  duration_ms: 80.408068
+  ...
+# Subtest: loopback only
+ok 12 - loopback only
+  ---
+  duration_ms: 0.822846
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "holding",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nZZT: SELL. Target 2 (110.00) reached. Last price 115.00 (FINNHUB, Nov 5 09:35 New York, 5 min old) (+15.0% from your 100.00).\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889630000,
+#       "text": "Market hours check\\n\\nYOUR POSITION, NOT CONFIRMED: a target check on ZZT (the latest price is 5 min old (limit 5 min)) used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1,
+#       "ZZTmyt2held": 1
+#     }
+#   }
+# }
+# Subtest: holding target is checked after earlier Telegram awaits, not only before the batch
+ok 13 - holding target is checked after earlier Telegram awaits, not only before the batch
+  ---
+  duration_ms: 122.401516
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "plan",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nnone recorded\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1
+#     }
+#   }
+# }
+# Subtest: plan alert is checked after earlier Telegram awaits under the unchanged20min gate
+ok 14 - plan alert is checked after earlier Telegram awaits under the unchanged20min gate
+  ---
+  duration_ms: 103.442878
+  ...
+# Telegram rate limit, waiting 1 s
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "429_retry",
+#   "attempts": [
+#     {
+#       "at": 1793889600000,
+#       "text": "Market hours check\\n\\nZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 429
+#     },
+#     {
+#       "at": 1793889620000,
+#       "text": "Market hours check\\n\\nYOUR POSITION, NOT CONFIRMED: a target check on ZZT (the latest price is 5 min old (limit 5 min)) used a price that was no longer current when this message was sent, so no target is claimed. Check the price at your broker; it is checked again on the next run.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1,
+#       "ZZTmyt2held": 1
+#     }
+#   }
+# }
+# Subtest: rate-limited retry rechecks the holding quote at the next network attempt
+ok 15 - rate-limited retry rechecks the holding quote at the next network attempt
+  ---
+  duration_ms: 129.392881
+  ...
+# Subtest: loopback only
+ok 16 - loopback only
+  ---
+  duration_ms: 0.577728
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# TIMELY: [
+#   'BUY NOW: a proven setup is inside its buy range (17:40 Kuwait)\\n' +
+#     '\\n' +
+#     'ZZE is inside its buy range now\\n' +
+#     '1) ZZE, earnings drift\\n' +
+#     '   Now: 105.00, inside the range: OK to buy\\n' +
+#     '   Buy: 100.00 to 110.00 (skip if above 110.00)\\n' +
+#     '   Stop: 90.00 (-10.0%). If it is hit: about -$151 on a $1,000 buy, fees included\\n' +
+#     '   Sell: when it closes under its 20 day average (~90.00 now, rising) or after 10 sessions\\n' +
+#     '   Wait: days to weeks, up to 10 sessions\\n' +
+#     '   Expected: 60% of 40 past earnings beats it never saw won; average +2.0% a trade after costs (whole-market fair test)\\n' +
+#     '   Why: earnings beat the estimate by 20% and the stock closed up +10.0% on the news\\n' +
+#     '   Halal: HALAL in ZAD (your mark, undefined)\\n' +
+#     '   Amount: BUY 1000 USD (proven, but the edge could still be luck or the stop is wide; size level 1 (your real record sets the most per trade)), about 9 shares at the top of the range\\n' +
+#     '   Size: size 0.8x your usual buy (normal evidence (40 trades, +2.0%), wide stop (10% away): smaller, so a stop-out costs about the same as a normal trade). Tell me your shares when you buy (bought SYMBOL PRICE SHARES) and I will learn your usual size\\n' +
+#     '\\n' +
+#     'Check halal in ZAD first. Buy only inside the range and place the stop at once. Then send: bought SYMBOL PRICE SHARES\\n' +
+#     '\\n' +
+#     'After you act, tap: I ask you to confirm the shares and price before anything is recorded.\\n' +
+#     '\\n' +
+#     'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+# ]
+# Subtest: actual BUY NOW fixture has an eligible existing planned-entry route when timely
+ok 17 - actual BUY NOW fixture has an eligible existing planned-entry route when timely
+  ---
+  duration_ms: 148.129036
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "buy_after_await",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nnone recorded\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nZZE | buy range 100.00 to 110.00: last price 105.00 (FINNHUB, Nov 5 09:20 New York, 20 min old), INSIDE the range\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1
+#     }
+#   }
+# }
+# Subtest: actual BUY NOW card cannot expire behind the first-check send and remain marked
+ok 18 - actual BUY NOW card cannot expire behind the first-check send and remain marked
+  ---
+  duration_ms: 76.835832
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# {
+#   "case": "buy_exact_boundary",
+#   "messages": [
+#     {
+#       "at": 1793889600000,
+#       "text": "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\\n\\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\\nYOUR RESULTS: record | goals | paper | shadow | review\\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\\n\\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+#       "status": 200
+#     },
+#     {
+#       "at": 1793889600000,
+#       "text": "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\\n\\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\\nnone recorded\\n\\nBUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\\nZZE | buy range 100.00 to 110.00: last price 105.00 (FINNHUB, Nov 5 09:20 New York, 20 min old), INSIDE the range\\n\\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\\n\\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+#       "status": 200
+#     }
+#   ],
+#   "state": {
+#     "day": "2026-11-05",
+#     "sent": {
+#       "__open": 1
+#     }
+#   }
+# }
+# Subtest: BUY NOW retains its original strictly-less-than20minute admission boundary
+ok 19 - BUY NOW retains its original strictly-less-than20minute admission boundary
+  ---
+  duration_ms: 57.225198
+  ...
+# Subtest: loopback only
+ok 20 - loopback only
+  ---
+  duration_ms: 0.601944
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4313.565657
