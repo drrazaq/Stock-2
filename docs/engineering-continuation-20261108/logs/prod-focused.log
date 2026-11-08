@@ -1,0 +1,104 @@
+✔ extracted source is the real sec() function (0.906833ms)
+SEC answered HTTP 404 (not found) for USD/CY2026Q2.json: the SEC has no such file (for example that quarter is not published yet); not retried; the Finnhub fallback is used instead
+✔ HTTP 404: one request, described as not found (no refusal, no retries), fallback unchanged (25.460715ms)
+SEC answered HTTP 403 for USD/CY2026Q2.json after 3 retries (the SEC is refusing this server); the Finnhub fallback is used instead
+SEC answered HTTP 429 for USD/CY2026Q2.json after 3 retries (the SEC is rate-limiting this server); the Finnhub fallback is used instead
+✔ HTTP 403 and 429 keep the three retries and are described as refusal / rate limiting with the real retry count (21.693346ms)
+SEC answered HTTP 500 for USD/CY2026Q2.json (not retried); the Finnhub fallback is used instead
+✔ other errors: not retried, stated plainly; success unchanged (11.805373ms)
+✔ pure mapping: exact names only; units and plausible bands checked; unmapped names are UNKNOWN (2.228868ms)
+✔ pure merge: a subsidiary series never renames or replaces the official headline; conflicting duplicates are UNKNOWN (19.414674ms)
+✔ actual job + actual ACTIONS: headline series with units, reference periods and source; no misplaced 1710K / private-payroll headline (223.292815ms)
+✔ actual "calendar" command: subsidiary series listed separately with UNKNOWN reasons, vintage and source (177.998923ms)
+✔ provider sends only the private-payrolls row: the jobs report headline is UNKNOWN, never filled by the subsidiary (186.366874ms)
+✔ a calendar saved before the repair is never re-shown with merged figures (40.64827ms)
+✔ R1: a provider period that disagrees with the official reference is UNKNOWN, never relabelled; agreeing and no-hint controls stay valid (477.333618ms)
+✔ R2: duplicate rows that differ only in unit are UNKNOWN in either order (1036.967407ms)
+✔ R3: a null/zero cached CPI index never becomes a released value (no -100%); a valid zero payroll CHANGE stays (360.65064ms)
+✔ R4: a provider previous retrieved after the release is labelled as such, never as a pre-release vintage (200.86619ms)
+✔ R4b: a partial Alpha Vantage refresh does not freshen the unchanged payroll series clock (208.985076ms)
+✔ R5: claims numerically below consensus read BELOW, with the job-market meaning stated separately (22.90137ms)
+✔ R6 (health): an actionable delivery failure with complete configured coverage keeps its message-recovery counts (31.417663ms)
+✔ production reader macroNow: a headline surprise keeps its exact study key; a subsidiary series never triggers a reaction (113.669951ms)
+✔ R4 (r3): a cached actual with a missing retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim (268.155857ms)
+✔ R4 (r3): a cached actual with a invalid retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim (238.894358ms)
+✔ R4 (r3) control: a timestamped cached actual keeps its real retrieval date (203.095809ms)
+✔ R4 (r3): provider figures with an unknown retrieval time make no release-timing claim; footnote cites no fetch date (28.928599ms)
+✔ all requests stayed synthetic and offline (0.682836ms)
+✔ fixture reproduces the saved 5 Nov evidence exactly (16 missing configured minutes, longest 5, 315/390) (0.848385ms)
+✔ health line keeps the outside-window qualification and separates missing minutes from outside time (47.91105ms)
+✔ the same line reaches the actual ACTIONS message unchanged (52.080563ms)
+✔ the full health command still shows the complete original watcher text (22.527314ms)
+✔ a snapshot whose watcher text and structured report disagree is shown in full, never shortened from mismatched numbers (22.400159ms)
+✔ other long problems end at a clause boundary with a pointer to the full text, never mid-word (21.133525ms)
+✔ all requests stayed synthetic and offline (0.635114ms)
+intraday check done: 1 watched, 0 new alerts
+✔ conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS (106.452913ms)
+intraday check done: 1 watched, 0 new alerts
+✔ stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS (45.876604ms)
+intraday check done: 1 watched, 0 new alerts
+✔ stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route (43.050218ms)
+intraday check done: 3 watched, 0 new alerts
+✔ undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped) (40.520739ms)
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open (76.01633ms)
+intraday check done: 1 watched, 0 new alerts
+✔ labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence (38.181184ms)
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm (128.323669ms)
+intraday check done: 1 watched, 0 new alerts
+✔ records untouched: positions and Telegram offset unchanged; one first check a day (64.776621ms)
+✔ all requests stayed synthetic and on loopback (0.226671ms)
+{"date":"2026-10-30","retained":333,"configuredObserved":331,"missing":[]}
+✔ actual watcher covers each configured minute with 2.5second snapshot work 2026-10-30 (1963.92262ms)
+{"date":"2026-11-02","retained":333,"configuredObserved":331,"missing":[]}
+✔ actual watcher covers each configured minute with 2.5second snapshot work 2026-11-02 (1721.36841ms)
+✔ daylight saving: New York is UTC-4 until 1 Nov 2026, UTC-5 after; the 12:45 / 13:45 UTC crons are both 8:45 New York in their season (17.024183ms)
+✔ market days: weekends and NYSE holidays are skipped (0.663998ms)
+✔ nothing is done outside session check window; no start after 15:30 (1.525091ms)
+✔ not running at 9:12 New York: starts it once, then waits 15 minutes before a second attempt, at most 3, then one DOWN alert (1.469808ms)
+✔ running on time: no alert, start time recorded; running late (GitHub delay like 11:10 on 26 Oct): one LATE alert (1.837621ms)
+✔ queued but not started by 9:25: one WAITING alert and no extra dispatch (concurrency would only queue it) (0.510537ms)
+✔ a run that watched and then ended before 11:00 is reported once, not restarted; a quick early exit (winter 7:45 run) does not count (1.164449ms)
+✔ yesterday's runs do not count for today (0.548203ms)
+✔ synthetic queued run uses job start rather than queue creation (0.912991ms)
+✔ unknown or future job timing stays unknown and does not claim a start (2.08416ms)
+✔ an active workflow with its watch job still queued is waiting, not running (0.49912ms)
+✔ long queue followed by a short job is not mistaken for a long watch (0.795315ms)
+✔ October 28 retained timestamps identify 14:59 job start, not 10:31 queue creation (0.375795ms)
+✔ legacy run-derived start is cleared when actual job evidence is unavailable (0.393731ms)
+✔ actual workflow refuses opposite-DST queued start without source I/O 2026-10-30 (143.550376ms)
+✔ actual workflow refuses opposite-DST queued start without source I/O 2026-11-02 (124.332478ms)
+✔ actual workflow preserves configured virtual schedule and observation budget after early wait 2026-10-30 (1831.741324ms)
+✔ actual workflow preserves configured virtual schedule and observation budget after early wait 2026-11-02 (1707.339012ms)
+✔ correct-season setup too early for the single-job envelope is explicitly refused; existing09:10 guard path remains available (65.133078ms)
+✔ correct-season late start remains labelled partial, archives both attempts and preserves richer canonical/delivery state (1879.215893ms)
+✔ slow sources leave explicit missing slots and do not extend beyond configured end (838.501048ms)
+✔ setup/cache delays preserve original chronological clocks and label the resulting late start (1252.947062ms)
+✔ setup/cache delays beyond the configured window never manufacture observations (101.225724ms)
+✔ first verified job and early stop survive later in_progress duplicate (17.785145ms)
+✔ first verified job and early stop survive later queued duplicate (1.093542ms)
+✔ verified no-op with long queue time is not observation and does not consume the start (0.41321ms)
+✔ unavailable job evidence never becomes a creation-time start (0.376656ms)
+✔ configured boundary15:00 is independent of16:00 exchange close (1.809959ms)
+✔ day query bounds follow New York across23/25-hour DST days (2.424842ms)
+✔ manual/guard admission is bounded; late legitimate collection stays explicitly partial (0.794483ms)
+✔ complete daily pagination is independent of lifetime runs and uses actual jobs (18.015702ms)
+✔ history request cap and failed jobs are UNKNOWN, never proof of an earlier observation or permission to dispatch (2.661888ms)
+✔ actual guard handles metadata failure without declaring a start or dispatching (120.73257ms)
+✔ a later completed duplicate reaching15:00 cannot erase the earlier stop (1.225802ms)
+✔ partial history does not mislabel a later job as the original late start (0.746041ms)
+✔ short attempts retain the existing bounded startup retry rule without claiming observation coverage (0.727202ms)
+✔ earliest actual watcher job remains recorded when a later job in the same run is active (0.756026ms)
+✔ malformed run identity/status never establishes an empty history or permits dispatch (2.831944ms)
+ℹ tests 79
+ℹ suites 0
+ℹ pass 79
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 8998.877688

@@ -1,0 +1,201 @@
+intraday check done: 1 watched, 0 new alerts
+✖ conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS (86.95987ms)
+intraday check done: 1 watched, 0 new alerts
+✖ stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS (70.350136ms)
+intraday check done: 1 watched, 0 new alerts
+✖ stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route (59.638946ms)
+intraday check done: 3 watched, 0 new alerts
+✖ undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped) (41.890712ms)
+intraday check done: 1 watched, 0 new alerts
+✖ delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open (35.197187ms)
+intraday check done: 1 watched, 0 new alerts
+✖ labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence (33.358324ms)
+intraday check done: 1 watched, 0 new alerts
+✖ close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm (43.983456ms)
+intraday check done: 1 watched, 0 new alerts
+✖ records untouched: positions and Telegram offset unchanged; one first check a day (48.372319ms)
+✔ all requests stayed synthetic and on loopback (0.485169ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 1
+ℹ fail 8
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 527.878154
+
+✖ failing tests:
+
+test at test/open-check-repair.test.mjs:42:1
+✖ conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS (86.95987ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^ZZG: SELL: last night's exit rule, it closed under its 50 day average, the trend is broken\./. Input:
+  
+  'ZZG 3.77 (-37.2% from your 6.00) | stop 1.98 (-47.5%): HOLD'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-production-774/test/open-check-repair.test.mjs:46:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ZZG 3.77 (-37.2% from your 6.00) | stop 1.98 (-47.5%): HOLD',
+    expected: /^ZZG: SELL: last night's exit rule, it closed under its 50 day average, the trend is broken\./,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:55:1
+✖ stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS (70.350136ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^ZZG: STOP LEVEL REACHED: at or below your stop 4\.00\. If your broker stop order has filled, you are already out: do not sell again\./. Input:
+  
+  'ZZG 3.77 (-37.2% from your 6.00) | stop 4.00 (6.1%): SELL NOW: the stop is reached'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-production-774/test/open-check-repair.test.mjs:57:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ZZG 3.77 (-37.2% from your 6.00) | stop 4.00 (6.1%): SELL NOW: the stop is reached',
+    expected: /^ZZG: STOP LEVEL REACHED: at or below your stop 4\.00\. If your broker stop order has filled, you are already out: do not sell again\./,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:60:1
+✖ stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route (59.638946ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80\.00 was reached cannot be confirmed right now/. Input:
+  
+  'ZZS 70.00 (-30.0% from your 100.00) | stop 80.00 (14.3%): SELL NOW: the stop is reached'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-production-774/test/open-check-repair.test.mjs:63:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ZZS 70.00 (-30.0% from your 100.00) | stop 80.00 (14.3%): SELL NOW: the stop is reached',
+    expected: /^ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80\.00 was reached cannot be confirmed right now/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:70:1
+✖ undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped) (41.890712ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^ZZU: STOP STATUS UNKNOWN.*Current price UNKNOWN \(the price has no source timestamp\)/. Input:
+  
+  'ZZU 39.00 (-22.0% from your 50.00) | stop 40.00 (2.6%): SELL NOW: the stop is reached'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-production-774/test/open-check-repair.test.mjs:73:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'ZZU 39.00 (-22.0% from your 50.00) | stop 40.00 (2.6%): SELL NOW: the stop is reached',
+    expected: /^ZZU: STOP STATUS UNKNOWN.*Current price UNKNOWN \(the price has no source timestamp\)/,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:78:1
+✖ delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open (35.197187ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /^TODAY'S FIRST MARKET-HOURS CHECK, run at 2:57 pm New York \(22:57 Kuwait\)\. The system is running\./. Input:
+  
+  'MARKET OPEN CHECK (10:53 Kuwait). The system is running.\n' +
+    '\n' +
+    'YOUR POSITIONS\n' +
+    'ZZF 12.00 (+20.0% from your 10.00) | stop 8.00 (-33.3%): HOLD\n' +
+    '\n' +
+    'PROVEN BUYS TODAY\n' +
+    'none. Nothing passed the test last night. I will message you the moment one does.\n' +
+    '\n' +
+    'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.\n' +
+    '\n' +
+    'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-production-774/test/open-check-repair.test.mjs:80:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'MARKET OPEN CHECK (10:53 Kuwait). The system is running.\n\nYOUR POSITIONS\nZZF 12.00 (+20.0% from your 10.00) | stop 8.00 (-33.3%): HOLD\n\nPROVEN BUYS TODAY\nnone. Nothing passed the test last night. I will message you the moment one does.\n\nI check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.\n\nTested signals, not instructions. Not financial advice, not a halal ruling.',
+    expected: /^TODAY'S FIRST MARKET-HOURS CHECK, run at 2:57 pm New York \(22:57 Kuwait\)\. The system is running\./,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:87:1
+✖ labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence (33.358324ms)
+  AssertionError [ERR_ASSERTION]: The input was expected to not match the regular expression /PROVEN BUYS|the moment|I check every 30 minutes/. Input:
+  
+  'MARKET OPEN CHECK (10:53 Kuwait). The system is running.\n' +
+    '\n' +
+    'YOUR POSITIONS\n' +
+    'ZZF 12.00 (+20.0% from your 10.00) | stop 8.00 (-33.3%): HOLD\n' +
+    '\n' +
+    'PROVEN BUYS TODAY\n' +
+    'none. Nothing passed the test last night. I will message you the moment one does.\n' +
+    '\n' +
+    'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.\n' +
+    '\n' +
+    'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-production-774/test/open-check-repair.test.mjs:89:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'MARKET OPEN CHECK (10:53 Kuwait). The system is running.\n\nYOUR POSITIONS\nZZF 12.00 (+20.0% from your 10.00) | stop 8.00 (-33.3%): HOLD\n\nPROVEN BUYS TODAY\nnone. Nothing passed the test last night. I will message you the moment one does.\n\nI check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.\n\nTested signals, not instructions. Not financial advice, not a halal ruling.',
+    expected: /PROVEN BUYS|the moment|I check every 30 minutes/,
+    operator: 'doesNotMatch',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:95:1
+✖ close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm (43.983456ms)
+  AssertionError [ERR_ASSERTION]: The input did not match the regular expression /Regular NYSE session today: 9:30 am to 4:00 pm New York \(5:30 pm to 12 am Kuwait\)\. The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live\./. Input:
+  
+  'MARKET OPEN CHECK (10:53 Kuwait). The system is running.\n' +
+    '\n' +
+    'YOUR POSITIONS\n' +
+    'ZZF 12.00 (+20.0% from your 10.00) | stop 8.00 (-33.3%): HOLD\n' +
+    '\n' +
+    'PROVEN BUYS TODAY\n' +
+    'none. Nothing passed the test last night. I will message you the moment one does.\n' +
+    '\n' +
+    'I check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.\n' +
+    '\n' +
+    'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-production-774/test/open-check-repair.test.mjs:97:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 'MARKET OPEN CHECK (10:53 Kuwait). The system is running.\n\nYOUR POSITIONS\nZZF 12.00 (+20.0% from your 10.00) | stop 8.00 (-33.3%): HOLD\n\nPROVEN BUYS TODAY\nnone. Nothing passed the test last night. I will message you the moment one does.\n\nI check every 30 minutes and message you only when something happens: a stop, a target, a sell rule, or a proven buy inside its range.\n\nTested signals, not instructions. Not financial advice, not a halal ruling.',
+    expected: /Regular NYSE session today: 9:30 am to 4:00 pm New York \(5:30 pm to 12 am Kuwait\)\. The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live\./,
+    operator: 'match',
+    diff: 'simple'
+  }
+
+test at test/open-check-repair.test.mjs:104:1
+✖ records untouched: positions and Telegram offset unchanged; one first check a day (48.372319ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+  
+  0 !== 1
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-production-774/test/open-check-repair.test.mjs:109:10)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: 0,
+    expected: 1,
+    operator: 'strictEqual',
+    diff: 'simple'
+  }

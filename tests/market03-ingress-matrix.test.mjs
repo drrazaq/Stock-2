@@ -18,3 +18,9 @@ test('inactive A adapters are explicit partial contracts, never frozen-input or 
  for(const file of ['a-authenticated-collector.mjs','a-sip-window-client.mjs']){const rows=buildMatrix(root).pairs.filter(p=>p.file===file&&p.kind==='PROVIDER');assert.equal(rows.length,1);assert.equal(rows[0].role,'INACTIVE_RESEARCH_ADAPTER');assert.equal(rows[0].contract.identity,'P');assert.equal(rows[0].contract.units,'P');}
  assert.equal(buildMatrix(root).pairs.find(p=>p.file==='a-sip-window-client.mjs'&&p.host==='docs.alpaca.markets').kind,'REFERENCE_ONLY');
 });
+
+test('economic-series agency links are file-scoped citations, not live ingress exemptions',()=>{
+ const src=fs.readFileSync(path.join(root,'econ-series.mjs'),'utf8');assert.doesNotMatch(src,/\bfetch\s*\(|\bimport\s/);
+ const m=buildMatrix(root);for(const host of ['www.bls.gov','www.federalreserve.gov','www.dol.gov'])assert.equal(m.pairs.find(x=>x.file==='econ-series.mjs'&&x.host===host)?.kind,'REFERENCE_ONLY');
+ assert.equal(m.pairs.find(x=>x.file==='calendar.mjs'&&x.host==='www.bls.gov')?.kind,'PROVIDER');
+});

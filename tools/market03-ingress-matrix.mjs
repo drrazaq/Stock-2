@@ -86,7 +86,9 @@ export function buildMatrix(root=ROOT){
  const pairs=[];
  for(const file of files){const src=fs.readFileSync(path.join(root,file),'utf8'),hosts=new Set();for(const m of src.matchAll(hostRe))hosts.add(m[1].toLowerCase());
   for(const host of [...hosts].sort()){
-   const kind=OPS.has(host)?'OPS':REFERENCE.test(host)?'REFERENCE_ONLY':PROVIDER[host]?'PROVIDER':'UNCLASSIFIED';
+   // econ-series is a pure mapping/formatting module: these URLs are citation metadata, not an ingress. Keep this file-scoped.
+   const pureEconReference=file==='econ-series.mjs'&&['www.bls.gov','www.federalreserve.gov','www.dol.gov'].includes(host);
+   const kind=OPS.has(host)?'OPS':pureEconReference||REFERENCE.test(host)?'REFERENCE_ONLY':PROVIDER[host]?'PROVIDER':'UNCLASSIFIED';
    if(kind!=='PROVIDER'){pairs.push({file,host,kind});continue;}
    const provider=PROVIDER[host],role=roleOf(file),contract=CONTRACTS[file+'|'+provider]||null;
    pairs.push({file,host,kind,provider,role,contract:contract||(role==='FROZEN_RESEARCH_PRODUCER'?'OUT_OF_SCOPE_FROZEN_INPUTS':role==='DIAGNOSTIC_TOOL'?'DIAGNOSTIC_NOT_A_DECISION_PATH':'NOT_REVIEWED')});}

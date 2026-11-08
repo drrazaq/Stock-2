@@ -1,0 +1,90 @@
+✖ current-tree actual cadence 2026-10-30 delay 2500 (1482.440748ms)
+✖ current-tree actual cadence 2026-11-02 delay 2500 (1416.987702ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 0
+ℹ fail 2
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2990.406998
+
+✖ failing tests:
+
+test at ../g2-verification/engineering-proof/cadence-current.test.mjs:3:187
+✖ current-tree actual cadence 2026-10-30 delay 2500 (1482.440748ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   591,
+  +   616,
+  +   641,
+  +   666,
+  +   691,
+  +   716,
+  +   741,
+  +   766,
+  +   791,
+  +   816,
+  +   841,
+  +   866,
+  +   891
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-proof/cadence-current.test.mjs:3:1000)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async startSubtestAfterBootstrap (node:internal/test_runner/harness:387:3) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      591, 616, 641, 666,
+      691, 716, 741, 766,
+      791, 816, 841, 866,
+      891
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }
+
+test at ../g2-verification/engineering-proof/cadence-current.test.mjs:3:187
+✖ current-tree actual cadence 2026-11-02 delay 2500 (1416.987702ms)
+  AssertionError [ERR_ASSERTION]: Expected values to be strictly deep-equal:
+  + actual - expected
+  
+  + [
+  +   591,
+  +   616,
+  +   641,
+  +   666,
+  +   691,
+  +   716,
+  +   741,
+  +   766,
+  +   791,
+  +   816,
+  +   841,
+  +   866,
+  +   891
+  + ]
+  - []
+  
+      at TestContext.<anonymous> (file:///workspace/g2-verification/engineering-proof/cadence-current.test.mjs:3:1000)
+      at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+      at async Test.run (node:internal/test_runner/test:1409:7)
+      at async Test.processPendingSubtests (node:internal/test_runner/test:974:7) {
+    generatedMessage: true,
+    code: 'ERR_ASSERTION',
+    actual: [
+      591, 616, 641, 666,
+      691, 716, 741, 766,
+      791, 816, 841, 866,
+      891
+    ],
+    expected: [],
+    operator: 'deepStrictEqual',
+    diff: 'simple'
+  }

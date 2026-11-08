@@ -1,0 +1,103 @@
+✔ actual ACTIONS preserves earlier SELL context when a fresh assessment becomes HOLD; repeat/restart does not imply execution (380.638914ms)
+✔ notices before current recorded purchase do not attach to a new position; malformed neighbors do not erase valid evidence (177.654501ms)
+✔ missing price history is UNKNOWN, preserves previous assessment and never produces a fresh HOLD (61.683514ms)
+✔ missing leader-dip prices does not erase prior SELL; a persisted explicit exit still applies (37.807426ms)
+✔ same-day notice has unresolved order, never a new compulsory SELL or execution claim (115.738532ms)
+✔ pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence (52.07535ms)
+✔ frozen research verdict leads over optimistic subset/live labels (42.653987ms)
+✔ focus OFF cannot turn an evidence-blocked engine candidate into an approved BUY (53.177836ms)
+✔ normalized journal and private cash goal label different populations and neither as account return (45.497508ms)
+✔ existing close-based sell timing uses the regular open; winter time conversion is explicit (119.750495ms)
+Telegram: 1 message(s) read
+✔ actual Telegram command caller renders UNKNOWN and preserves position economics under missing history (70.131365ms)
+✔ dated historical health input is not evidence of current watcher observation (24.784642ms)
+✔ all operations stayed synthetic and on loopback (0.715685ms)
+Telegram: 1 message(s) read
+✔ button: a first tap on "I bought" records NOTHING and asks to confirm the exact shares and price (71.046983ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+✔ button: Confirm records exactly the confirmed shares and price; Cancel records nothing (75.520974ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+✔ button: "I sold all" asks first; Confirm closes the position (77.891484ms)
+Telegram: 1 message(s) read
+✔ button: a tap from another chat is ignored (36.549526ms)
+✔ buttons are offered only for the BUYs under TODAY'S ACTIONS, never for NOT ACTIONABLE names (25.629272ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+✔ settings commands change only their own setting and say what they did (67.395915ms)
+Telegram: 1 message(s) read
+✔ "radar" alone shows the board, it does not switch anything (49.158167ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+✔ halal marks: written for the named stock only, 1-space indent kept, replies name the stock (53.977167ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+✔ trade recording: bought / sold lines record exactly what was typed (72.348025ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+✔ information commands answer (and never with a generic SYM placeholder): opportunities, details, review, paper, lab, longterm, help (59.748728ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+✔ correction: sending the buy line again REPLACES the record and says so (not a second buy) (53.057855ms)
+Telegram rate limit, waiting 1 s
+Telegram error 400 {"ok":false,"description":"HTTP_400","parameters":{"retry_after":1}}
+✔ delivery: a 429 rate limit is waited out and delivered; a refused message is recorded and shows in SYSTEM HEALTH (55.10474ms)
+TELEGRAM DELIVERY UNCONFIRMED: TELEGRAM_NOT_ACKNOWLEDGED; acknowledged parts 0/1
+✔ failed menu delivery never advances the persisted menu version (44.129944ms)
+✔ pure mapping: exact names only; units and plausible bands checked; unmapped names are UNKNOWN (2.468909ms)
+✔ pure merge: a subsidiary series never renames or replaces the official headline; conflicting duplicates are UNKNOWN (16.168249ms)
+✔ actual job + actual ACTIONS: headline series with units, reference periods and source; no misplaced 1710K / private-payroll headline (260.923141ms)
+✔ actual "calendar" command: subsidiary series listed separately with UNKNOWN reasons, vintage and source (185.989471ms)
+✔ provider sends only the private-payrolls row: the jobs report headline is UNKNOWN, never filled by the subsidiary (235.190464ms)
+✔ a calendar saved before the repair is never re-shown with merged figures (36.422501ms)
+✔ R1: a provider period that disagrees with the official reference is UNKNOWN, never relabelled; agreeing and no-hint controls stay valid (412.677644ms)
+✔ R2: duplicate rows that differ only in unit are UNKNOWN in either order (491.206934ms)
+✔ R3: a null/zero cached CPI index never becomes a released value (no -100%); a valid zero payroll CHANGE stays (321.956218ms)
+✔ R4: a provider previous retrieved after the release is labelled as such, never as a pre-release vintage (164.932288ms)
+✔ R4b: a partial Alpha Vantage refresh does not freshen the unchanged payroll series clock (169.273671ms)
+✔ R5: claims numerically below consensus read BELOW, with the job-market meaning stated separately (24.850492ms)
+✔ R6 (health): an actionable delivery failure with complete configured coverage keeps its message-recovery counts (24.448107ms)
+✔ production reader macroNow: a headline surprise keeps its exact study key; a subsidiary series never triggers a reaction (53.279779ms)
+✔ R4 (r3): a cached actual with a missing retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim (153.206264ms)
+✔ R4 (r3): a cached actual with a invalid retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim (153.165763ms)
+✔ R4 (r3) control: a timestamped cached actual keeps its real retrieval date (160.054911ms)
+✔ R4 (r3): provider figures with an unknown retrieval time make no release-timing claim; footnote cites no fetch date (25.423552ms)
+✔ all requests stayed synthetic and offline (0.740472ms)
+intraday check done: 1 watched, 1 new alerts
+intraday check done: 1 watched, 1 new alerts
+✔ stale and unknown-clock holding quotes never produce current-price SELL or healthy open check (102.686991ms)
+Telegram error 403 {"ok":false,"description":"HTTP_403","parameters":{"retry_after":1}}
+Telegram error 403 {"ok":false,"description":"HTTP_403","parameters":{"retry_after":1}}
+intraday check done: 1 watched, 1 new alerts
+intraday check done: 1 watched, 1 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ failed intraday sends never consume keys; ACK is durable and duplicate cycles do not resend (72.569797ms)
+Telegram error 502 {"ok":false,"description":"NETWORK_ERROR","parameters":{"retry_after":1}}
+Telegram error 502 {"ok":false,"description":"NETWORK_ERROR","parameters":{"retry_after":1}}
+intraday check done: 1 watched, 1 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ ambiguous intraday sends stay unknown across reloaded state and are never called ACK (63.567343ms)
+ℹ tests 48
+ℹ suites 0
+ℹ pass 48
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2994.540624
