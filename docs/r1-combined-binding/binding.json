@@ -1,18 +1,18 @@
 {
  "status": "ADOPTED_FOR_REVIEW (candidate author); not approved, not deployed",
- "candidate": "b6ffea2f1b30a4fd45dd164ec5ee6cc75feb3c90",
- "candidateTree": "26a82aea91183c4462949f2ff1506e848147a41b",
+ "candidate": "8567fd46e6c0d7fc3fb63318472f439626a706a1",
+ "candidateTree": "57035d17801e02e6898ed5437f6920d3a7027795",
  "historicalR1Base": "b0d769876a6ee76f23544850c959111f59d8ae7b",
  "mainAtBinding": "774273205e1c8ce3db30c59ca368dc107617ef73",
  "pathCount": 68,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "a63230aaf420feeca343691955f1b10684c3209e7f197e0c3265bb80e04150e1",
+  "sha256": "0b386e2a67d9a2f423c7e46e353a805028727a336880535eb45f2f2934bd1d3c",
   "against": "774273205e1c8ce3db30c59ca368dc107617ef73"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "59f0a87dd188c5c4883de17b19c2ac2bd27f9567be4f05b5caf09c339b670b56"
+  "sha256": "94aaa6b93b069962fa04bdb2207c6be3dd90f27814ffe017c6814a2af2ed9d7c"
  },
  "candidateBranchStaleDataPaths": [
   "data/calendar-status.json",
@@ -22,10 +22,10 @@
   "data/tg-state.json"
  ],
  "neverPushOrMergeCandidateBranch": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 b6ffea2f1b30a4fd45dd164ec5ee6cc75feb3c90 binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 8567fd46e6c0d7fc3fb63318472f439626a706a1 binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "supersedes": {
-  "binding": "bdc3efa2 docs/r1-combined-binding/binding.json (rev9 0663f337)",
+  "binding": "ad11c59a docs/r1-combined-binding/binding.json (rev10 b6ffea2f)",
   "samePathSet": true,
   "filesChangedVsPrevious": [
    "docs/r1-sealed-provider-data/MANIFEST.md",
@@ -33,7 +33,7 @@
    "scan.mjs",
    "test/open-check-repair.test.mjs"
   ],
-  "reason": "rev10: observation-time latch (scan.mjs) + actual-caller regression; binding format unchanged"
+  "reason": "rev11: quote judged once at fetch time (scan.mjs) + near-limit regression; binding format unchanged"
  },
  "files": {
   ".gitattributes": {
@@ -122,13 +122,13 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/MANIFEST.md": {
-   "sha256": "1702882c91a785e663ced3b5222a8a70cd286bdb35095420960292dafa297241",
-   "bytes": 9063,
+   "sha256": "bd25648fb341b6d2696fa7f2e25bcb93d47dcc916636799178a88772b8966e64",
+   "bytes": 9135,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/README.md": {
-   "sha256": "52acda5b3e70c5010108bc20c7b25c348ce2833760d4da578fc7f234817dc92e",
-   "bytes": 35629,
+   "sha256": "1b9e1a5c1bf7ce336bbe1afaefdf0b4ae9dc624a9c301a1930941307cfdcb540",
+   "bytes": 36361,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/RELEASE.md": {
@@ -192,8 +192,8 @@
    "mode": "100644"
   },
   "scan.mjs": {
-   "sha256": "8e3256b4bf3c9ea25981ac32899ec446e668c9218063f52b7fa22ff6cae22fa0",
-   "bytes": 703237,
+   "sha256": "b018f97f301fbc0b46eb30260d63611c78a3e3287b383a856bbf342e0c7d0a9b",
+   "bytes": 703380,
    "mode": "100644"
   },
   "scorecard-1023.mjs": {
@@ -262,8 +262,8 @@
    "mode": "100644"
   },
   "test/open-check-repair.test.mjs": {
-   "sha256": "051c07027244ee2e36adc5f2bda5f01920fc38eead730208003d86641b6a0f59",
-   "bytes": 14706,
+   "sha256": "6d741e8b13403187d684e6bdbd4df50106842f484697a30af91c07dcf358e4e5",
+   "bytes": 17251,
    "mode": "100644"
   },
   "test/private-data.test.mjs": {
@@ -378,7 +378,7 @@
   }
  },
  "expectedUnitTrees": {
-  "774273205e1c8ce3db30c59ca368dc107617ef73": "de98bc31de3b7073e58fb35fe02a22aafeb553cb",
-  "b58a5caac5a09a82fc36340ebaa6b41d91112c0b": "32fe58743d6a58163bd2c963e9c5a71868c72299"
+  "774273205e1c8ce3db30c59ca368dc107617ef73": "8be95a134dc133e6821baf7d9a54d37d427b4541",
+  "b58a5caac5a09a82fc36340ebaa6b41d91112c0b": "df819e84e05d8607323970ac9ae1f0f8cd26fa1b"
  }
 }

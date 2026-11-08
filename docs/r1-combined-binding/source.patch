@@ -723,17 +723,17 @@ index d2b04bed874820b4adcad78970b5bae7c0b738ca..93d5bc2aca08ee0f99be5144f09cd232
  async function frame(taxonomy, tag, unit, period) {
 diff --git a/docs/r1-sealed-provider-data/MANIFEST.md b/docs/r1-sealed-provider-data/MANIFEST.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..082790d5c2e7d014f4280aa00c6a879f2a9c802f
+index 0000000000000000000000000000000000000000..280fc448d0c64484f535a171a5a1aae811eb7ff1
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/MANIFEST.md
 @@ -0,0 +1,84 @@
-+# R1 combined-unit candidate manifest, rev10 (review only; not deployed)
++# R1 combined-unit candidate manifest, rev11 (review only; not deployed)
 +
-+- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907).
++- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1).
 +- **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
 +- **Binding:** the authoritative 68-path list with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
 +- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 67 files.
-+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `9a2d17dffb7db4aa82e6afe6da4d69923efc2845ad50ff7140e50b8cd3a9cece`
++- `git diff --full-index b0d76987 -- <allowlist>` sha256: `4244a0372fdc532a31ffc41931cbeb51b891a44495f7409add1d18f047fc29da`
 +
 +| Status | File | sha256 (candidate) |
 +|---|---|---|
@@ -754,7 +754,7 @@ index 0000000000000000000000000000000000000000..082790d5c2e7d014f4280aa00c6a879f
 +| A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 +| M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 +| M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-+| A | `docs/r1-sealed-provider-data/README.md` | `52acda5b3e70c5010108bc20c7b25c348ce2833760d4da578fc7f234817dc92e` |
++| A | `docs/r1-sealed-provider-data/README.md` | `1b9e1a5c1bf7ce336bbe1afaefdf0b4ae9dc624a9c301a1930941307cfdcb540` |
 +| A | `docs/r1-sealed-provider-data/RELEASE.md` | `607d4001dae04af237c134b7a61e910b352da3c1741e90929758571f857ab7d6` |
 +| A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 +| A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
@@ -767,7 +767,7 @@ index 0000000000000000000000000000000000000000..082790d5c2e7d014f4280aa00c6a879f
 +| M | `options-survey.mjs` | `d3cea82f378e8e5afe287f56b80c29fef8cdefded5effb781c9022e0191e53c9` |
 +| A | `r1-release-precheck.mjs` | `fd56115e0cd354314e962b793b7e9122dee16e8e79db10cd760b2876efb3f57c` |
 +| A | `r1-writer-gate.mjs` | `7ff7a8456d8f693820719f81a70c7370dce9c1f4b7085ed19de7100fe43b6354` |
-+| M | `scan.mjs` | `8e3256b4bf3c9ea25981ac32899ec446e668c9218063f52b7fa22ff6cae22fa0` |
++| M | `scan.mjs` | `b018f97f301fbc0b46eb30260d63611c78a3e3287b383a856bbf342e0c7d0a9b` |
 +| M | `scorecard-1023.mjs` | `a0f0a6a9f1bc9d41886996c76e8d20aa3d988b1ec148a3f7b9ce642bdd10b48a` |
 +| A | `sealed-guard.mjs` | `b2dc4384e680e8f723951441ff5072487fc5b3a41f13aba7c507463e4e1d7fae` |
 +| A | `sealed-merge.mjs` | `4182335911f74cf1ef4adf90da45b9dd071ab344e9e659e1506cf6a2c0fbb3a0` |
@@ -781,7 +781,7 @@ index 0000000000000000000000000000000000000000..082790d5c2e7d014f4280aa00c6a879f
 +| M | `test/feed-integrity-watcher.test.mjs` | `7144f713f3158671fe61feae52112b766d341f2685cc5a7c12a6a2baf02f4cfd` |
 +| A | `test/health-text-watcher-qualification.test.mjs` | `28f16479ec6e5ccf5332496d8c5816d691e6db328a5511b67c5ecb40be4e0310` |
 +| M | `test/load-scan.mjs` | `37bce00506cc2bb73d5707dc2f737fd3d7d8c1de08cbcfb2b86c32ffa726bdde` |
-+| A | `test/open-check-repair.test.mjs` | `051c07027244ee2e36adc5f2bda5f01920fc38eead730208003d86641b6a0f59` |
++| A | `test/open-check-repair.test.mjs` | `6d741e8b13403187d684e6bdbd4df50106842f484697a30af91c07dcf358e4e5` |
 +| M | `test/private-data.test.mjs` | `2c43d3a0fd677fd1cad0404abeecf04b5b555b8fa020512e02ec42c80af0658c` |
 +| A | `test/sealed-blockers.test.mjs` | `016805622b6b0c21300af4c29a4746f088b219fde36007a0a27580520e60f1de` |
 +| A | `test/sealed-git.test.mjs` | `ef3692008daedc85a4a741862d0f428bc76f4ce3207adb9f80c639c033ecb0e3` |
@@ -813,10 +813,10 @@ index 0000000000000000000000000000000000000000..082790d5c2e7d014f4280aa00c6a879f
 +- **Gated actual-watcher scenarios** (`INCIDENT_WATCHER_SRC`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.
 diff --git a/docs/r1-sealed-provider-data/README.md b/docs/r1-sealed-provider-data/README.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..e4c7f13b7e9422a916cef6ed2d40d55b36aaa2c5
+index 0000000000000000000000000000000000000000..ee4293e9fbc488c968b86cfbe90936c4d11f18ca
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/README.md
-@@ -0,0 +1,309 @@
+@@ -0,0 +1,317 @@
 +# R1: stop publishing provider market data in the public `Stock-2` repository (complete candidate, review only)
 +
 +**Prepared by Claude on 8 Nov 2026 at the owner's request. Not deployed.**
@@ -824,6 +824,14 @@ index 0000000000000000000000000000000000000000..e4c7f13b7e9422a916cef6ed2d40d55b
 +- **Base:** `origin/main` `b0d76987`. **Branch:** `claude/r1-sealed-provider-data`. The candidate commit and the exact file allowlist are in `MANIFEST.md`.
 +- **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 +- **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
++
++## 0h. Rev11 (8 Nov): one verdict per quote per run
++
++- My re-review of Codex's corrected development port (finding R1) showed a narrower form of the same problem, and rev10 had it too.
++  - A stop quote 4 min 50 s old when fetched, under the stop, was REACHED in the stop route, which judges right after the fetch.
++  - Thirty seconds of later fetching, and the first check in the same run re-aged it past 5 minutes and said STOP STATUS UNKNOWN.
++- Fix: a quote stamped with `observedAt` is judged once, at that moment, with the same 5-minute rule as the stop route. Thresholds are unchanged.
++- Regression: `test/open-check-repair.test.mjs` "rev11 …" fails on rev10 and passes on rev11. The rev10 future-at-fetch case still passes.
 +
 +## 0g. Rev10 (8 Nov): observation-time latch for the first market-hours check
 +
@@ -1994,7 +2002,7 @@ index 0000000000000000000000000000000000000000..2070baaf96e0d39fdb7e2c216963cab6
 +  } catch (e) { console.error('R1 writer gate: FAIL (' + e.message + ')'); process.exit(1); }
 +}
 diff --git a/scan.mjs b/scan.mjs
-index 14a28526aed258e8063a14785a60c42b2a5ab6ca..1341d2025905f7a884b81062cff29888cd5c7fc4 100644
+index 14a28526aed258e8063a14785a60c42b2a5ab6ca..4ca2e581e4d7eef35defd3f40093c24d32bfb7e8 100644
 --- a/scan.mjs
 +++ b/scan.mjs
 @@ -9,7 +9,8 @@ import crypto from 'node:crypto';
@@ -2200,7 +2208,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..1341d2025905f7a884b81062cff29888
    }
    else {
    // ---- The last message of the night: one short plan. Everything above it is background.
-@@ -4228,6 +4269,59 @@ async function daily() {
+@@ -4228,6 +4269,60 @@ async function daily() {
    console.log('daily scan done:', stocks.length, 'stocks,', buys.length, 'buy watch,', fresh.length, 'journal entries');
  }
  
@@ -2208,15 +2216,16 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..1341d2025905f7a884b81062cff29888
 +// target 2, last night's exit rule (sig.posVerdict: every kind, a trend exit included), the holding review's SELL, then target 1. A
 +// price-based claim (stop reached, targets, % from entry) needs ticker-bound, dated, fresh evidence: stop-watch.mjs priceEvidence(), the
 +// live watcher's rule. Without it the stop status is UNKNOWN, never HOLD. Holdings, stops and rules are only read, never changed.
-+// (rev10, Codex 6720355907) OBSERVATION-TIME LATCH: intraday() stamps each quote with observedAt when liveQ returns it. A quote that was not
-+// valid evidence at that moment (e.g. its source time was in the FUTURE when fetched) stays UNKNOWN; it never becomes valid just because the
-+// clock moved on while later quotes were fetched. The same 5-minute STOP_MAX_AGE_MIN rule applies at fetch time and again at report time.
++// (rev10/rev11) OBSERVATION-TIME LATCH: intraday() stamps each quote with observedAt when liveQ returns it, and the quote is judged ONCE, at
++// that moment, with the same 5-minute STOP_MAX_AGE_MIN rule the stop route (stopFallback) applies right after the fetch. So both messages of
++// one run reach the same verdict on the same quote: a quote future-dated when fetched stays UNKNOWN (rev10, Codex 6720355907), and a quote
++// that was valid when fetched is not re-aged past the limit by the time spent fetching later symbols (rev11, review of 3589faf5, R1).
 +const quoteEvidence = (sym, q, nowMs, maxAgeMin) => {
 +  const native = q && typeof q === 'object' ? { sym, price: +q.price, t: q.t, provider: q.src || 'unknown source', kind: 'TRADE' } : null;
 +  if (q && typeof q === 'object' && Object.hasOwn(q, 'observedAt')) {
 +    if (!Number.isFinite(q.observedAt) || !Number.isFinite(nowMs) || q.observedAt > nowMs) return { state: 'UNKNOWN', why: 'the observation clock is invalid or in the future' };
 +    const atFetch = priceEvidence(sym, native, q.observedAt, maxAgeMin);
-+    if (atFetch.state !== 'OK') return { state: 'UNKNOWN', why: atFetch.why.replace('the price timestamp is in the future', 'the price timestamp was in the future when fetched') };
++    return atFetch.state === 'OK' ? atFetch : { state: 'UNKNOWN', why: atFetch.why.replace('the price timestamp is in the future', 'the price timestamp was in the future when fetched') };
 +  }
 +  return priceEvidence(sym, native, nowMs, maxAgeMin);
 +};
@@ -2260,7 +2269,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..1341d2025905f7a884b81062cff29888
  async function intraday(onlyMine) {
    const now = Date.now();
    const sig = readJson('data/signals.json', null);
-@@ -4246,7 +4340,7 @@ async function intraday(onlyMine) {
+@@ -4246,7 +4341,7 @@ async function intraday(onlyMine) {
    const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
    const buyNowCards = [];
    const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
@@ -2269,7 +2278,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..1341d2025905f7a884b81062cff29888
    // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
    // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
    // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
-@@ -4258,7 +4352,7 @@ async function intraday(onlyMine) {
+@@ -4258,7 +4353,7 @@ async function intraday(onlyMine) {
      if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
      st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
    for (const sym of watch) {
@@ -2278,7 +2287,7 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..1341d2025905f7a884b81062cff29888
      const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
      const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
      if (mp) {   // you told the bot you bought this one
-@@ -4292,15 +4386,15 @@ async function intraday(onlyMine) {
+@@ -4292,15 +4387,15 @@ async function intraday(onlyMine) {
        if (o.target && p >= o.target) say('tg' + o.since, 'paper trade from ' + o.since + ' reached its target ' + money(o.target) + '.');
      }
    }
@@ -3428,10 +3437,10 @@ index b13b1bc80eba8a874a237e4ee9a36d87fae56a26..e98e046ebf6125573387169fe9c55620
  }
 diff --git a/test/open-check-repair.test.mjs b/test/open-check-repair.test.mjs
 new file mode 100644
-index 0000000000000000000000000000000000000000..a0163739b562b272ac885cb27e849eecaf29fe91
+index 0000000000000000000000000000000000000000..d23318579d958a06e707456b604f4c382c62d74a
 --- /dev/null
 +++ b/test/open-check-repair.test.mjs
-@@ -0,0 +1,160 @@
+@@ -0,0 +1,185 @@
 +// Open-check repair (6 Nov 2026). Synthetic fixtures only: invented tickers and prices, loopback services, no owner records,
 +// credentials, provider requests or real messages. Every case runs the ACTUAL intraday() caller (the scanner's market-hours check).
 +// 1 one holding action: a nightly exit (posVerdict, a trend exit included) is never shown as HOLD, and agrees with ACTIONS (planText)
@@ -3589,6 +3598,31 @@ index 0000000000000000000000000000000000000000..a0163739b562b272ac885cb27e849eec
 +  assert.match(stop, /STOP CHECK UNKNOWN: ZZS: the price timestamp is in the future/, 'the stop route says UNKNOWN in the same run');
 +  // the other holding, fetched after the clock moved, is judged normally (30 s old at fetch, fresh)
 +  assert.match(first.split('\n').find(l => l.startsWith('ZZF:')) || '', /^ZZF: HOLD: no exit rule is active; above your stop 8\.00\. Last price 12\.00/);
++});
++
++// rev11 (review of Codex's corrected development port, R1): ZZS's quote is 4 min 50 s old when fetched and under the stop; fetching the
++// next holding moves the clock 30 s. The stop route judges at fetch (REACHED); the first check must reach the same verdict on the same
++// quote instead of re-ageing it past the 5-minute limit (which said STOP STATUS UNKNOWN in the same run).
++test('rev11: a stop quote near the 5-minute limit gets ONE verdict in both messages of the same run (judged at fetch time)', async t => {
++  const T = ON_TIME, sent = []; let clock = T;
++  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
++    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
++    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: sent.length } })); }
++    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol');
++      if (sym === 'ZZS') return res.end(JSON.stringify({ c: 70, t: (T - 290000) / 1000 }));
++      clock = T + 30000; return res.end(JSON.stringify({ c: 12, t: (T + 25000) / 1000 })); }
++    res.statusCode = 404; res.end('{}'); }); });
++  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
++  const base = 'http://127.0.0.1:' + server.address().port;
++  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
++    env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
++  const real = Date.now; Date.now = () => clock;
++  try { await S.fn('intraday')(false); } finally { Date.now = real; }
++  const first = sent.find(x => /FIRST MARKET-HOURS CHECK/.test(x)) || '', stop = sent.find(x => /^YOUR STOPS/.test(x)) || '';
++  assert.match(stop, /STOP LEVEL REACHED[\s\S]*ZZS|ZZS[\s\S]*STOP LEVEL REACHED/, 'the stop route judged the quote at fetch: reached');
++  const zzs = first.split('\n').find(l => l.startsWith('ZZS:')) || '';
++  assert.match(zzs, /^ZZS: STOP LEVEL REACHED/, 'the first check agrees with the stop route: ' + zzs);
++  assert.doesNotMatch(first, /ZZS: STOP STATUS UNKNOWN/);
 +});
 +
 +test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));

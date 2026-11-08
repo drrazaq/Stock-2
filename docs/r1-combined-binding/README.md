@@ -1,16 +1,28 @@
-# R1 combined-unit binding, rev10 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev11 (review only; NOT approved, NOT deployed)
 
 This folder binds the **68-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `b6ffea2f1b30a4fd45dd164ec5ee6cc75feb3c90` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `8567fd46e6c0d7fc3fb63318472f439626a706a1` on `claude/composed-r1-opencheck-calendar-watcher` |
 | Historical R1 base (allowlist = diff from it) | `b0d76987` → **68 paths** (same set as rev8 and Codex's proposal) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `de98bc31de3b7073e58fb35fe02a22aafeb553cb` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `b58a5caa` | `32fe58743d6a58163bd2c963e9c5a71868c72299` |
+| Unit tree, `M0` = `7742732` | `8be95a134dc133e6821baf7d9a54d37d427b4541` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `b58a5caa` | `df819e84e05d8607323970ac9ae1f0f8cd26fa1b` |
 
-## Rev10: what changed (Codex 6720355907)
+## Rev11: what changed (review 6721730197, R1)
+
+- **The defect:** a stop quote 4 min 50 s old when fetched, under the stop, was REACHED in the stop route. Thirty seconds of later fetching, and the first check in the same run re-aged it past 5 minutes and said STOP STATUS UNKNOWN. Rev10 had this.
+- **The fix:** a quote stamped with `observedAt` is judged **once, at that moment**, with the same 5-minute rule as the stop route. Thresholds are unchanged.
+- **Proof:** the regression "rev11 …" in `test/open-check-repair.test.mjs` fails on rev10 and passes on rev11 (13/13). Codex's future-at-fetch probe on the built unit still reports `contradiction: false`.
+- **Changed against rev10 (same 68 paths):** `scan.mjs`, the test, the R1 `README.md` and `MANIFEST.md`.
+- **Rev11 checks:**
+  - Precheck against `b58a5caa`: PASS (68/0/0).
+  - Build + verify: PASS on `7742732` (tree `8be95a13…`, equal to main + `source.patch`; the inverse restores main) and on `b58a5caa` (tree `df819e84…`). Revert restores each `M0`.
+  - Refused: the mode mutant, the whole branch, and the old candidate `b6ffea2f`.
+  - Full suite 156/156; gated watcher 9/9 and 11/11.
+
+## Rev10 (history): what changed (Codex 6720355907)
 
 - **The defect:** a holding's quote stamped in the future when fetched became "STOP LEVEL REACHED" in the first market-hours check once later fetches moved the clock, while the same run's stop route said UNKNOWN.
 - **The fix:** `intraday()` now stamps each quote with `observedAt`. `quoteEvidence()` keeps a quote UNKNOWN if it was not valid evidence at that moment ("the price timestamp was in the future when fetched"), then judges it again at report time. All thresholds are unchanged.
