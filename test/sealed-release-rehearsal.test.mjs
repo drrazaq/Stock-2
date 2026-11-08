@@ -126,8 +126,8 @@ test('rev8 combined unit: built source-only on a fresh M0 (newer data and Telegr
   // production main moved on: newer data and Telegram offset
   git(r, ['checkout', '-q', 'main']); fs.writeFileSync(path.join(r, 'data/tg-state.json'), '{"offset":9}'); fs.writeFileSync(path.join(r, 'data/health.json'), '{"new":1}'); git(r, ['commit', '-qam', 'newer data']);
   const M0 = git(r, ['rev-parse', 'HEAD']).trim();
-  const h = (s) => ({ sha256: crypto.createHash('sha256').update(s).digest('hex'), bytes: Buffer.byteLength(s) });
-  const bind = path.join(d, 'binding.json'); fs.writeFileSync(bind, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1\n'), 'sealed-new.mjs': h('new\n') } }));
+  const h = (s, mode = '100644') => ({ sha256: crypto.createHash('sha256').update(s).digest('hex'), bytes: Buffer.byteLength(s), mode });
+  const bind = path.join(d, 'binding.json'); fs.writeFileSync(bind, JSON.stringify({ candidate: cand, files: { 'scan.mjs': h('v1 + R1\n'), 'sealed-new.mjs': h('new\n') } }));
   const refsBefore = git(r, ['show-ref']), statusBefore = git(r, ['status', '--porcelain']);
   const b = node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, bind]); assert.equal(b.status, 0, b.stdout + b.stderr);
   const C = /commit ([0-9a-f]{40})/.exec(b.stdout)[1];
@@ -142,10 +142,31 @@ test('rev8 combined unit: built source-only on a fresh M0 (newer data and Telegr
   const W = git(wt, ['rev-parse', 'HEAD']).trim(); const fw = v(W); assert.notEqual(fw.status, 0); assert.match(fw.stdout, /outside binding: data\/tg-state\.json/);
   // wrong parent, wrong bound bytes, and a candidate that differs from the binding are all refused
   const P = git(r, ['commit-tree', git(r, ['rev-parse', C + '^{tree}']).trim(), '-p', cand, '-m', 'x']).trim(); assert.match(v(P).stdout, /parent is not exactly M0/);
-  const bad = path.join(d, 'bad.json'); fs.writeFileSync(bad, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1 tampered\n'), 'sealed-new.mjs': h('new\n') } }));
+  const bad = path.join(d, 'bad.json'); fs.writeFileSync(bad, JSON.stringify({ candidate: cand, files: { 'scan.mjs': h('v1 + R1 tampered\n'), 'sealed-new.mjs': h('new\n') } }));
   assert.match(v(C, bad).stdout, /PROBLEM hash: scan\.mjs/);
   const br = node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, bad]); assert.notEqual(br.status, 0); assert.match(br.stdout, /REFUSED candidate differs from binding: scan\.mjs/);
-  const miss = path.join(d, 'miss.json'); fs.writeFileSync(miss, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1\n'), 'absent.mjs': h('x\n') } }));
+  const miss = path.join(d, 'miss.json'); fs.writeFileSync(miss, JSON.stringify({ candidate: cand, files: { 'scan.mjs': h('v1 + R1\n'), 'absent.mjs': h('x\n') } }));
   assert.match(node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, miss]).stdout, /REFUSED missing in candidate: absent\.mjs/);
   assert.equal(node(r, ['r1-release-precheck.mjs', '--verify-unit', M0, C]).status, 2, 'usage error');
+
+  // rev9 (Codex 6719707423) negative controls. 1: same bytes and parent, but scan.mjs made executable -> verify FAIL (rev8 said PASS)
+  const modeTree = (base, f) => { const e = { ...ENV, GIT_INDEX_FILE: path.join(d, 'mi') }; git(r, ['read-tree', base], e);
+    execFileSync('git', ['update-index', '--index-info'], { cwd: r, env: e, input: '100755 ' + git(r, ['rev-parse', base + ':' + f]).trim() + '\t' + f + '\n' }); const t2 = git(r, ['write-tree'], e).trim(); fs.rmSync(path.join(d, 'mi')); return t2; };
+  const X = git(r, ['commit-tree', modeTree(C, 'scan.mjs'), '-p', M0, '-m', 'mode mutant']).trim();
+  assert.equal(git(r, ['show', X + ':scan.mjs']), 'v1 + R1\n', 'same bytes'); const fx = v(X);
+  assert.notEqual(fx.status, 0, 'mode mutant must not verify'); assert.match(fx.stdout, /PROBLEM mode: scan\.mjs/); assert.match(fx.stdout, /tree differs from M0 \+ pinned candidate/);
+  // 2: an unreviewed candidate commit (same bytes, executable mode) is not the pinned candidate -> build REFUSED (rev8 built it)
+  const XC = git(r, ['commit-tree', modeTree(cand, 'scan.mjs'), '-p', cand, '-m', 'unreviewed mode change']).trim();
+  const bx = node(r, ['r1-release-precheck.mjs', '--build-unit', M0, XC, bind]); assert.notEqual(bx.status, 0); assert.match(bx.stdout, /REFUSED candidate [0-9a-f]{40} is not the binding's pinned candidate/);
+  // 3: the binding must pin the candidate and every mode; 4: a bound mode that differs from the candidate is refused
+  const noCand = path.join(d, 'nocand.json'); fs.writeFileSync(noCand, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1\n'), 'sealed-new.mjs': h('new\n') } }));
+  for (const op of ['--build-unit', '--verify-unit']) { const o = node(r, ['r1-release-precheck.mjs', op, M0, op === '--build-unit' ? cand : C, noCand]); assert.equal(o.status, 1); assert.match(o.stdout, /REFUSED binding does not pin the exact candidate/); }
+  const noMode = path.join(d, 'nomode.json'); fs.writeFileSync(noMode, JSON.stringify({ candidate: cand, files: { 'scan.mjs': { sha256: h('v1 + R1\n').sha256, bytes: 8 } } }));
+  assert.match(node(r, ['r1-release-precheck.mjs', '--verify-unit', M0, C, noMode]).stdout, /REFUSED bad binding entry scan\.mjs/);
+  const exe = path.join(d, 'exe.json'); fs.writeFileSync(exe, JSON.stringify({ candidate: cand, files: { 'scan.mjs': h('v1 + R1\n', '100755'), 'sealed-new.mjs': h('new\n') } }));
+  assert.match(node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, exe]).stdout, /REFUSED candidate mode differs from binding: scan\.mjs/);
+  // 5: a pinned candidate that is not available locally fails closed
+  const gone = path.join(d, 'gone.json'); fs.writeFileSync(gone, JSON.stringify({ candidate: 'f'.repeat(40), files: { 'scan.mjs': h('v1 + R1\n'), 'sealed-new.mjs': h('new\n') } }));
+  assert.match(v(C, gone).stdout, /pinned candidate f{40} not available locally/);
+  assert.equal(v(C).status, 0, 'the correct unit still verifies');
 });

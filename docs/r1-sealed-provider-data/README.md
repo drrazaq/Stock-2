@@ -6,6 +6,13 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0f. Rev9 (8 Nov): exact source-unit attestation
+
+- Codex's review 6719707423 of rev8 `af11dbfd` reproduced two gaps in the new build/verify. (1) `--verify-unit` did not compare Git modes: a commit with `scan.mjs` made executable (same bytes, same parent) printed PASS. (2) `--build-unit` ignored the binding's candidate and took modes from whatever commit was supplied.
+- Fixed: the binding must pin `candidate` (40 hex) and a `mode` (`100644`/`100755`) for every file. Build refuses any other candidate commit and any byte or mode mismatch. Verify checks modes and also compares `C`'s complete tree with `M0` + the pinned candidate's bound entries, failing closed if that commit is missing. This is a stricter form of Codex's proposed patch, which skipped both checks when the binding had no `candidate`.
+- New negative controls in `test/sealed-release-rehearsal.test.mjs`: mode mutant, unpinned candidate, binding without candidate or mode, bound mode differing from the candidate, and pinned candidate unavailable. They fail on rev8's tool and pass on rev9.
+- Runtime code is unchanged.
+
 ## 0e. Rev8 (8 Nov): combined-unit binding
 
 - Codex's review 6719376168 passed rev7, open-check r2 and the composition, and found one release blocker: the 51-file R1 manifest does not bind the 68-path combined unit.

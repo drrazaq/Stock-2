@@ -1,10 +1,10 @@
-# R1 combined-unit candidate manifest, rev8 (review only; not deployed)
+# R1 combined-unit candidate manifest, rev9 (review only; not deployed)
 
-- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168).
+- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423).
 - **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
 - **Binding:** the authoritative 68-path list with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
 - **Changed-file allowlist** (relative to the base; this manifest itself excluded): 67 files.
-- `git diff --full-index b0d76987 -- <allowlist>` sha256: `96fff69e31b0f94aa6b5cdd0fa3478693d8c5df2e4badd31745a542d75771aae`
+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `d904b7932198ea8953258f1735a9255c38f509a1b24c9a2772e563a46acde1df`
 
 | Status | File | sha256 (candidate) |
 |---|---|---|
@@ -25,8 +25,8 @@
 | A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 | M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 | M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-| A | `docs/r1-sealed-provider-data/README.md` | `c508f2b8b3609812badd584b5c840cc9411f3c9f96f10e23e74acec4013d2218` |
-| A | `docs/r1-sealed-provider-data/RELEASE.md` | `bf8bb603f7864a3d6af1a8399f99f3d17dbe85aa57a54921855dce96426b54ff` |
+| A | `docs/r1-sealed-provider-data/README.md` | `948e3bc65703aefbd43c1471d1dc0311bc7d98086a8cc79e0aea7f842c8b9021` |
+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `607d4001dae04af237c134b7a61e910b352da3c1741e90929758571f857ab7d6` |
 | A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 | A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 | A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
@@ -36,7 +36,7 @@
 | M | `missed-runners.mjs` | `067d900ec3c1b66ddfd7e754f58fcbef91641a79655eb13bde42d0a5ce3cfd92` |
 | M | `movers.mjs` | `93472c5e0b3d151fd6d49c08c7404d2173f569f05b6ddfceb360e67e0bf545a3` |
 | M | `options-survey.mjs` | `d3cea82f378e8e5afe287f56b80c29fef8cdefded5effb781c9022e0191e53c9` |
-| A | `r1-release-precheck.mjs` | `1614aeda10729a52feda1b576a22f2b805f8408cecf584480a31ebf1f3c32806` |
+| A | `r1-release-precheck.mjs` | `fd56115e0cd354314e962b793b7e9122dee16e8e79db10cd760b2876efb3f57c` |
 | A | `r1-writer-gate.mjs` | `7ff7a8456d8f693820719f81a70c7370dce9c1f4b7085ed19de7100fe43b6354` |
 | M | `scan.mjs` | `085fa42c71dc165a2d852e9d70542508c6232824e9ac8aa9e592d31fbdb24fe3` |
 | M | `scorecard-1023.mjs` | `a0f0a6a9f1bc9d41886996c76e8d20aa3d988b1ec148a3f7b9ce642bdd10b48a` |
@@ -59,7 +59,7 @@
 | A | `test/sealed-migrate.test.mjs` | `ba4dff2cf6bfb25900758ef7d3ea0faab63aed04226a33b012eabc9e64cf9fb9` |
 | A | `test/sealed-readers.test.mjs` | `83ddbf15fdf1875adf5fa4612518cede65fced6ca368445c33acc8779139fcfc` |
 | A | `test/sealed-recovery.test.mjs` | `5b8599f3d18fc7deb3d7a76a0e5c5a7c27c813a19c737b53163b2c038094321b` |
-| A | `test/sealed-release-rehearsal.test.mjs` | `ce140e01a9fa7881c346143d94aa0d5a519c716db9c732eae669eea169a1f21a` |
+| A | `test/sealed-release-rehearsal.test.mjs` | `205cc92cf35171056376974b30b498dfc814a8cefc9060c3129e99543ce5edb4` |
 | A | `test/sealed-store.test.mjs` | `eef5c043965b0417c3c03ea90df5379672989328c2393aac21c579c07faa84e9` |
 | A | `test/sealed-wiring.test.mjs` | `c36e1d80e249c3203fd3d9ade02346d637aecd62cd8d51365a953fda4eb4ccb9` |
 | M | `test/sec-request-runtime.test.mjs` | `0de8866ec04bda4688a09612ac73c42d9c335a9eaada16f07a73068ce73f86fb` |
