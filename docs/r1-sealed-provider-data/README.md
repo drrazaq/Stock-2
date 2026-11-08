@@ -6,6 +6,20 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0b. Rev5: Codex's review of `292557c2` (PR #1 comment 6718423725)
+
+| Codex finding | Rev5 repair | Test |
+|---|---|---|
+| 1. Whole-commit `cherry-pick -X theirs` rewound the Telegram offset 9→2 and replaced NEW positions with STALE ones | `sealed-recover.mjs` replaces it. Per-file rules: lineage (main still holds an older state of the same checkpoint chain → take the tip), append-only union, keyed options merge. **Anything main changed since (offset, positions, settings) refuses the whole checkpoint**, which is kept. A stale state never overwrites a newer one. | `sealed-recovery`: Codex's case, plus a data-only stale offset |
+| 2. A code file in a recovery branch was published | **Data-only provenance:** every commit in the checkpoint may touch only `data/`; anything else is refused | `sealed-recovery` (sentinel refused, main code unchanged) |
+| 3. A newer checkpoint was deleted unmerged | Producers create **immutable** refs (UTC stamp + sha; no force, no reuse). The consumer deletes by **compare-and-delete** on the exact merged tip. | `sealed-recovery`: Codex's post-receive race (kept, merged next pass); two checkpoints merge in order |
+| 4. A failed fetch was reported as success | Exit **2 = UNKNOWN**, visible, and the bot warns. (Codex's shell `git()` shadow cannot intercept the Node consumer, so the equivalent reproduction uses an unreachable remote.) | `sealed-recovery` |
+| B6: a red migration was said to mean "nothing published" | Corrected: establish the remote state first; writers stay off and state is UNKNOWN; R-1 if published | `RELEASE.md` B6 |
+| Writer-gate capture envelope | Repository on every run, a ≥ 36 h `created_since` window, freshness, every page, unique ids = `total_count`, writers `completed` | `sealed-blockers` gate cases |
+| The keyless check is not a full receipt; an owner statement is not a recovery exercise | B7 requires the keyed hosted log too. New **G3b** backup-key proof: a sealed random check vector from `mode=key-check`, verified on the owner's own computer with the backup | `sealed-migrate` key-check test |
+
+Codex's own `recovery-check.mjs` against rev5 (with the new consumer file added to its seed): the stale recovery is refused, the offset stays 9, the NEW positions and current code stay, and the advanced checkpoint is kept, not deleted.
+
 ## 0a. Rev4: release package and save-loss reduction
 
 - **`RELEASE.md`** is the complete executable unit, review only and not approved:
@@ -229,11 +243,11 @@ Measured, not projected: the 45 files are 8.21 MB plaintext, 2.56 MB as git stor
 
 | Run | Result |
 |---|---|
-| R1 tests (rev4): `sealed-store` 12, `sealed-git` 8, `sealed-migrate` 9, `sealed-readers` 9, `sealed-wiring` 13, `sealed-blockers` 13, **`sealed-recovery` 6 (new)**, **`sealed-release-rehearsal` 2 (new)** | **72/72** |
-| Codex rev3 counterexamples against `a791b438` | all 4 fail there (`sealed-blockers` #11/#12, `sealed-migrate` #8/#9); pass on rev4 |
-| Codex re-review blockers against `ae8cbb63` (rev3 evidence) | `sealed-blockers` 9/12 fail, `sealed-migrate` 6/7 fail |
+| R1 tests (rev5): `sealed-store` 12, `sealed-git` 8, `sealed-migrate` 10, `sealed-readers` 9, `sealed-wiring` 14, `sealed-blockers` 13, `sealed-recovery` 10, `sealed-release-rehearsal` 2 | **78/78** |
+| Codex's `recovery-check.mjs` (`344a0a31`) against rev5 | stale recovery refused (offset 9, NEW positions and current code kept); advanced checkpoint kept, not deleted. The fetch-failure probe cannot shadow the Node consumer's `git`; the equivalent test gives exit 2 / UNKNOWN. |
+| Codex rev3 counterexamples against `a791b438` | all 4 fail there; pass since rev4 |
 | Gated actual-watcher scenarios (`INCIDENT_WATCHER_SRC`) | `watcher-resilience` 9/9, `watcher-incident-revision` 11/11 |
-| Full serial suite (149 registered files, rev4) | **149/149** |
+| Full serial suite (149 registered files, rev5) | **149/149** |
 
 ## 11. Remaining blockers and unresolved findings (rev3)
 

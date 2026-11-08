@@ -18,7 +18,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
-import { isT1, sealedKey, writeSealed, unseal, logicalId, sealedPath, SEALED_EXT, readSealed } from './sealed-store.mjs';
+import { isT1, sealedKey, writeSealed, seal, unseal, logicalId, sealedPath, SEALED_EXT, readSealed } from './sealed-store.mjs';
 
 const git = (args, opts = {}) => execFileSync('git', args, { maxBuffer: 1 << 30, ...opts });
 const z = (b) => b.toString('utf8').split('\0').filter(Boolean);
@@ -97,6 +97,20 @@ export function verifyTree(ref = 'HEAD', { key = sealedKey(), cwd = process.cwd(
   return { ref, ...r, manifestCount: man && man.count };
 }
 
+// KEY CHECK (rev5; Codex: an owner statement is not a verified recovery exercise). makeKeyCheck seals a fresh random value with the
+// production secret and returns only { sealed (base64), sha256 of the value }: neither reveals the value or the key. checkKey, run by the
+// owner OUTSIDE GitHub with the backup copy in SEALED_SECRET, must reproduce the sha256: proof the backup is the key that seals the data.
+const KEY_CHECK_ID = 'r1/key-check';
+export function makeKeyCheck(key = sealedKey()) {
+  if (!key) throw Object.assign(new Error('SEALED_KEY_MISSING'), { code: 'SEALED_KEY_MISSING' });
+  const v = crypto.randomBytes(32);
+  return { version: 1, purpose: 'R1 backup-key check (contains no data and no key)', sealed: seal(v, key, KEY_CHECK_ID).toString('base64'), sha256: sha(v) };
+}
+export function checkKey(vector, key = sealedKey()) {
+  if (!key) throw Object.assign(new Error('SEALED_KEY_MISSING'), { code: 'SEALED_KEY_MISSING' });
+  try { return sha(unseal(Buffer.from(String(vector.sealed), 'base64'), key, KEY_CHECK_ID)) === vector.sha256; } catch { return false; }
+}
+
 // Codex re-review blocker 1: the destination is checked by REAL path (symlinks resolved) against the repository's real path, every
 // component is created and checked one at a time (a symlink anywhere below the export root is refused), and nothing is overwritten
 // (files are opened with O_EXCL | O_NOFOLLOW). The export root itself must be a new or empty real directory outside the checkout.
@@ -138,6 +152,8 @@ if (import.meta.url === 'file://' + path.resolve(process.argv[1] || '')) {
     else if (cmd === '--apply') { const d = apply({ source: arg }); console.log('R1 migration: ' + d.length + ' file(s) sealed and staged with the manifest (plaintext deletions included); index verified against the approved source ' + arg.slice(0, 12)); }
     else if (cmd === '--verify-tree') { const r = verifyTree(arg || 'HEAD'); console.log('R1 verify ' + r.ref + ': manifest ' + r.manifestCount + ', sealed T1 ' + r.sealedT1 + ', plaintext T1 ' + r.plaintextT1.length + ', problems ' + r.problems.length); if (r.problems.length) { console.error(r.problems.slice(0, 50).join('\n')); process.exit(1); } }
     else if (cmd === '--verify-structure') { const r = verifyTree(arg || 'HEAD', { key: 'STRUCTURE_ONLY' }); console.log('R1 structure ' + r.ref + ' (no key; contents NOT decrypted): manifest ' + r.manifestCount + ', sealed T1 ' + r.sealedT1 + ', plaintext T1 ' + r.plaintextT1.length + ', problems ' + r.problems.length); if (r.problems.length) { console.error(r.problems.slice(0, 50).join('\n')); process.exit(1); } }
+    else if (cmd === '--key-check-make') { console.log('R1 KEY CHECK VECTOR ' + JSON.stringify(makeKeyCheck())); }
+    else if (cmd === '--key-check') { const ok = checkKey(JSON.parse(fs.readFileSync(arg, 'utf8'))); console.log('R1 key check: ' + (ok ? 'PASS (this secret is the one that seals the R1 data)' : 'FAIL (this secret does NOT match; do not rely on it as the backup)')); process.exit(ok ? 0 : 1); }
     else if (cmd === '--export-to') { console.log('R1 recovery export: ' + exportTo(arg) + ' file(s) written outside the repository'); }
     else fail('usage: --plan | --apply <approved source commit> | --verify-tree <ref> | --export-to <new empty dir outside the repository>');
   } catch (e) { fail((e.code ? e.code + ' ' : '') + e.message); }

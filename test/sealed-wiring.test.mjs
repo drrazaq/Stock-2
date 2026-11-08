@@ -43,7 +43,7 @@ test('public Actions logs: no per-stock option quotes, survey summary, or analys
   assert.match(sm, /content not printed: Actions logs of this repository are public/);
 });
 
-const KEYED = { 'ignition.yml': 3, 'opportunity-radar.yml': 1, 'options-survey.yml': 2, 'Smart-money.yml': 2, 'movers.yml': 3, 'leaders-study.yml': 2, 'main.yml': 2, 'bot.yml': 2, 'scorecard-1023.yml': 1, 'r1-migrate.yml': 1 };
+const KEYED = { 'ignition.yml': 3, 'opportunity-radar.yml': 1, 'options-survey.yml': 2, 'Smart-money.yml': 2, 'movers.yml': 3, 'leaders-study.yml': 2, 'main.yml': 2, 'bot.yml': 2, 'scorecard-1023.yml': 1, 'r1-migrate.yml': 2 };
 test('the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)', () => {
   for (const f of WF) {
     const s = wf(f), n = (s.match(/SEALED_SECRET: \$\{\{ secrets\.PRIVATE_KEY \}\}/g) || []).length;
@@ -130,4 +130,12 @@ test('rev4 save recovery: every save path pushes to a recovery branch on final f
   const b = wf('bot.yml'); assert.match(b, /bot_recover   # R1 rev4/);
   const fin = b.indexOf('the last chance to publish what the bot recorded'); assert.ok(fin > 0 && b.indexOf('- if: always()', fin) > fin, 'final always() save step');
   assert.match(R('.gitignore'), /^\*\.sealed\.tmp-\*$/m);
+});
+
+test('rev5 recovery: no cherry-pick replay; producer refs are immutable (no force push); consumer is the data-only sealed-recover.mjs', () => {
+  const g = R('.github/sealed-git.sh');
+  assert.doesNotMatch(g, /cherry-pick/); assert.match(g, /sealed_recover\(\) \{ node "\$R1_ROOT\/sealed-recover\.mjs"; \}/);
+  assert.doesNotMatch(g.slice(g.indexOf('sealed_recovery_push()')), /git push -q origin "\+HEAD/, 'no forced recovery push');
+  assert.match(R('sealed-recover.mjs'), /--force-with-lease=refs\/heads\/' \+ name \+ ':' \+ tip/, 'compare-and-delete');
+  assert.match(R('.github/workflows/r1-migrate.yml'), /mode == 'key-check'/);
 });

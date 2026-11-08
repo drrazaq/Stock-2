@@ -15,12 +15,33 @@ on:
       source_sha:
         description: 'The approved source commit (full 40-character id of main at the start of the window)'
         required: true
+      mode:
+        description: 'key-check (print a backup-key check vector only; changes nothing) or migrate'
+        required: true
+        default: key-check
 permissions:
   contents: write
 concurrency: r1-migrate
 jobs:
+  key-check:
+    # R1 rev5: before any migration, prove the owner's off-GitHub backup is the production secret (RELEASE.md gate G3b). Prints only a
+    # sealed random value and its hash (no data, no key); the owner verifies it locally with sealed-migrate.mjs --key-check.
+    if: github.event.inputs.confirm == 'MIGRATE-R1' && github.event.inputs.mode == 'key-check'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.source_sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - shell: bash
+        env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
+        run: node sealed-migrate.mjs --key-check-make
   migrate:
-    if: github.event.inputs.confirm == 'MIGRATE-R1'
+    if: github.event.inputs.confirm == 'MIGRATE-R1' && github.event.inputs.mode == 'migrate'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

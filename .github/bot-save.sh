@@ -30,4 +30,8 @@ save() {
   sealed_recovery_push 2>&1 | tee -a run.log
   bot_save_warn
 }
-bot_recover() { sealed_recover >> run.log 2>&1 || { echo "Error: a save-recovery branch could not be merged yet (kept)" >> run.log; bot_save_warn; }; }
+bot_recover() {
+  local rc=0; sealed_recover >> run.log 2>&1 || rc=$?
+  case $rc in 0) ;; 2) echo "Error: save recovery state UNKNOWN (the recovery branches could not be listed); nothing assumed merged" >> run.log; bot_save_warn ;;
+    *) echo "Error: a save-recovery branch could not be merged yet (kept for the next pass)" >> run.log; bot_save_warn ;; esac
+}

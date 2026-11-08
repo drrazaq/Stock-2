@@ -37,8 +37,9 @@ test('release rehearsal: gate -> code -> rollback-before-migration -> migration 
   const pre = git(op, ['rev-parse', 'HEAD']).trim();
 
   // ---- stage 1: writer gate (saved listings): FAIL while a writer runs, PASS once quiet
-  const runs = (status) => ({ total_count: 2, workflow_runs: [{ id: 1, path: '.github/workflows/ignition.yml', status }, { id: 2, path: '.github/workflows/pages.yml', status: 'in_progress' }] });
-  assert.equal(gate([runs('in_progress')]).pass, false); assert.equal(gate([runs('completed')]).pass, true);
+  const cap = (status) => ({ repository: 'drrazaq/Stock-2', captured_at: new Date().toISOString(), query: { created_since: new Date(Date.now() - 37 * 3600e3).toISOString(), per_page: 100 },
+    pages: [{ page: 1, total_count: 2, workflow_runs: [{ id: 1, path: '.github/workflows/ignition.yml', status, repository: { full_name: 'drrazaq/Stock-2' } }, { id: 2, path: '.github/workflows/pages.yml', status: 'in_progress', repository: { full_name: 'drrazaq/Stock-2' } }] }] });
+  assert.equal(gate(cap('in_progress')).pass, false); assert.equal(gate(cap('completed')).pass, true);
 
   // ---- stage 2: push the R1 code (writers off). Readers fail closed on the still-plaintext files
   for (const f of R1_FILES) { fs.mkdirSync(path.dirname(path.join(op, f)), { recursive: true }); fs.copyFileSync(path.join(ROOT, f), path.join(op, f)); }

@@ -9,7 +9,7 @@ import zlib from 'node:zlib';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { sealedKey, readSealedText, readSealed, writeSealed, appendSealedLines } from '../sealed-store.mjs';
-import { plan, apply, verifyTree, exportTo, MANIFEST } from '../sealed-migrate.mjs';
+import { plan, apply, verifyTree, exportTo, MANIFEST, makeKeyCheck, checkKey } from '../sealed-migrate.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const SECRET = 'synthetic-migrate-secret', K = sealedKey(SECRET);
@@ -153,4 +153,19 @@ test('Codex rev3 #2: a segmented ledger is exported ONCE as its logical file (ba
   assert.equal(fs.readFileSync(path.join(out, 'data/opp-ledger.jsonl'), 'utf8'), FIX['data/opp-ledger.jsonl'] + '{"n":"B"}\n{"n":"C"}\n', 'A+B+C exactly once');
   assert.equal(fs.existsSync(path.join(out, 'data/opp-ledger.jsonl.d')), false, 'no segment files exported');
   assert.equal(fs.readFileSync(path.join(out, 'data/movers-journal.jsonl'), 'utf8'), '{"n":"only-segment"}\n', 'a ledger with segments only is exported too');
+});
+
+test('backup-key check vector: reveals neither value nor key; the right backup passes, any other secret fails; CLI exit codes', (t) => {
+  const v = makeKeyCheck(K);
+  assert.deepEqual(Object.keys(v).sort(), ['purpose', 'sealed', 'sha256', 'version']);
+  assert.equal(checkKey(v, K), true); assert.equal(checkKey(v, sealedKey('a different secret')), false);
+  assert.equal(checkKey({ ...v, sha256: '0'.repeat(64) }, K), false);
+  assert.throws(() => makeKeyCheck(null), { code: 'SEALED_KEY_MISSING' });
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'kc-')); t.after(() => fs.rmSync(d, { recursive: true, force: true }));
+  const f = path.join(d, 'vector.json'); fs.writeFileSync(f, JSON.stringify(v));
+  const run = (secret) => spawnSync(process.execPath, [path.join(ROOT, 'sealed-migrate.mjs'), '--key-check', f], { env: { ...ENV, SEALED_SECRET: secret }, encoding: 'utf8' });
+  assert.equal(run(SECRET).status, 0); assert.match(run(SECRET).stdout, /key check: PASS/);
+  assert.equal(run('wrong-backup').status, 1); assert.match(run('wrong-backup').stdout, /key check: FAIL/);
+  const mk = spawnSync(process.execPath, [path.join(ROOT, 'sealed-migrate.mjs'), '--key-check-make'], { env: ENV, encoding: 'utf8' });
+  assert.match(mk.stdout, /^R1 KEY CHECK VECTOR \{/); assert.doesNotMatch(mk.stdout, new RegExp(SECRET));
 });
