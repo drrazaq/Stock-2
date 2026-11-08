@@ -8,10 +8,10 @@ index 0000000000000000000000000000000000000000..8abcdec54127df9d277a066b54319890
 +*.sealed -text -diff merge=sealed
 diff --git a/.github/bot-save.sh b/.github/bot-save.sh
 new file mode 100644
-index 0000000000000000000000000000000000000000..4181938cce4aa9c2d7fac64755fcfcaeb60db9d0
+index 0000000000000000000000000000000000000000..2c7d36483caa7bb4d06d73fd412ed421aa254fe7
 --- /dev/null
 +++ b/.github/bot-save.sh
-@@ -0,0 +1,39 @@
+@@ -0,0 +1,43 @@
 +#!/usr/bin/env bash
 +# The bot loop's save (bot.yml sources this file; it was inline there). R1 rev3, review only.
 +#  - stages data/, refuses T1 plaintext (sealed_guard), commits;
@@ -43,7 +43,11 @@ index 0000000000000000000000000000000000000000..4181938cce4aa9c2d7fac64755fcfcae
 +  echo "Error: could not save the data folder to the repository (kept in the local commit; retried at the next save)" | tee -a run.log
 +  # (rev13) run in THIS shell, not in a pipeline subshell, so SEALED_RECOVERY_LAST/REF/SLOT persist across the run's later saves (a pipe
 +  # lost them: the next save could not see that its earlier state was already kept, or advance its own slot)
-+  local out="${RUNNER_TEMP:-/tmp}/bot-recovery-out-$$"; sealed_recovery_push > "$out" 2>&1; cat "$out" | tee -a run.log; rm -f "$out"
++  # (rev14, Codex 6723732821 B1) bot.yml runs bash -e -o pipefail: a failed/FULL/UNKNOWN recovery must not exit the step before its
++  # output is logged, the owner is warned (SAVE NOT CONFIRMED) and the bot loop continues; the status is kept, never hidden.
++  local out="${RUNNER_TEMP:-/tmp}/bot-recovery-out-$$" rrc=0; sealed_recovery_push > "$out" 2>&1 || rrc=$?
++  cat "$out" | tee -a run.log || true; rm -f "$out"
++  [ "$rrc" = 0 ] || echo "Error: save recovery did not confirm a kept copy (status $rrc); the change may exist only on this runner" | tee -a run.log || true
 +  bot_save_warn
 +}
 +bot_recover() {
@@ -85,10 +89,10 @@ index 9b8bc790ccfdbb58ca2d5174db3dfb0a768ee95d..d2f2ad1305633a0352655c218b964161
 +[ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository"; sealed_recovery_push || true; exit 1; }
 diff --git a/.github/sealed-git.sh b/.github/sealed-git.sh
 new file mode 100644
-index 0000000000000000000000000000000000000000..3e1af9401f8e1070719bae692d72d94f6820d370
+index 0000000000000000000000000000000000000000..1322fe199166a746f428c0a1f6d079088d731d8b
 --- /dev/null
 +++ b/.github/sealed-git.sh
-@@ -0,0 +1,77 @@
+@@ -0,0 +1,120 @@
 +#!/usr/bin/env bash
 +# R1 (review only): sourced by every workflow step that commits sealed provider-data files (*.sealed).
 +#  1. registers the merge driver for *.sealed (.gitattributes), so concurrent saves merge records instead of keeping one side;
@@ -122,41 +126,84 @@ index 0000000000000000000000000000000000000000..3e1af9401f8e1070719bae692d72d94f
 +sealed_recovery_size() { ( set -o pipefail; git rev-list --objects origin/main..HEAD | cut -d' ' -f1 | git cat-file --batch-check='%(objectsize)' | awk '$1 !~ /^[0-9]+$/ { bad = 1 } { s += $1 } END { if (bad) exit 1; print s + 0 }' ); }
 +# remote value of a ref: prints the sha, "absent", or fails (UNKNOWN)
 +sealed_remote_ref() { local out; out=$(git ls-remote origin "refs/heads/$1") || return 1; [ -n "$out" ] && echo "${out%%[[:space:]]*}" || echo absent; }
++# (rev14, Codex 6723732821 B2/B3) PER-RUN RECOVERY STATE, kept in a file under RUNNER_TEMP so it survives a new shell in the same job (the
++# bot's final always() save step) and a lost push reply: LAST/REF/SLOT = the confirmed checkpoint this run holds; PEND_* = an attempted
++# push not yet confirmed (written BEFORE the push). Only this run's own checkpoint names (save-recovery/<workflow>-<run>-<attempt>-...)
++# and this role's slots are ever loaded; anything else in the file is ignored. Every use is re-validated on the remote by exact leases.
++sealed_recovery_prefix() { printf 'save-recovery/%s-%s-%s-' "$(printf '%s' "${GITHUB_WORKFLOW:-local}" | tr -c 'A-Za-z0-9._-' '-')" "${GITHUB_RUN_ID:-$$}" "${GITHUB_RUN_ATTEMPT:-1}"; }
++# keyed by run AND checkout: the loop and the final step of one job share both; separate checkouts (or tests) never share a file
++sealed_recovery_statefile() { printf '%s/r1-recovery-%s%s.state' "${RUNNER_TEMP:-/tmp}" "$(sealed_recovery_prefix | tr '/' '_')" "$(git rev-parse --show-toplevel 2>/dev/null | cksum | cut -d' ' -f1)"; }
++sealed_recovery_save_state() {
++  local f tmp; f=$(sealed_recovery_statefile); tmp="$f.tmp.$$"
++  printf 'LAST=%s\nREF=%s\nSLOT=%s\nPEND_REF=%s\nPEND_TIP=%s\nPEND_SLOT=%s\nPEND_OLD=%s\nPEND_OLDREF=%s\n' "${SEALED_RECOVERY_LAST:-}" "${SEALED_RECOVERY_REF:-}" "${SEALED_RECOVERY_SLOT:-}" \
++    "${SEALED_PEND_REF:-}" "${SEALED_PEND_TIP:-}" "${SEALED_PEND_SLOT:-}" "${SEALED_PEND_OLD:-}" "${SEALED_PEND_OLDREF:-}" > "$tmp" && mv -f "$tmp" "$f"
++}
++sealed_recovery_load_state() {
++  local f k v pre slots ok=1; f=$(sealed_recovery_statefile); [ -f "$f" ] || return 0
++  pre=$(sealed_recovery_prefix); slots=" $(sealed_recovery_slots "$(sealed_recovery_role)") "
++  local L= R= SL= PR= PT= PS= PO= POR=
++  while IFS='=' read -r k v; do case "$k" in LAST) L=$v ;; REF) R=$v ;; SLOT) SL=$v ;; PEND_REF) PR=$v ;; PEND_TIP) PT=$v ;; PEND_SLOT) PS=$v ;; PEND_OLD) PO=$v ;; PEND_OLDREF) POR=$v ;; esac; done < "$f"
++  for v in "$L" "$PT" "$PO"; do [ -z "$v" ] || [[ "$v" =~ ^[0-9a-f]{40}$ ]] || ok=0; done
++  for v in "$R" "$PR" "$POR"; do [ -z "$v" ] || [[ "$v" == "$pre"* ]] || ok=0; done
++  for v in "$SL" "$PS"; do [ -z "$v" ] || [[ "$slots" == *" $v "* ]] || ok=0; done
++  [ "$ok" = 1 ] || { echo "Error: save recovery state file is not this run's (ignored): $f"; return 0; }
++  SEALED_RECOVERY_LAST=$L; SEALED_RECOVERY_REF=$R; SEALED_RECOVERY_SLOT=$SL
++  SEALED_PEND_REF=$PR; SEALED_PEND_TIP=$PT; SEALED_PEND_SLOT=$PS; SEALED_PEND_OLD=$PO; SEALED_PEND_OLDREF=$POR
++}
++sealed_pend_clear() { SEALED_PEND_REF=; SEALED_PEND_TIP=; SEALED_PEND_SLOT=; SEALED_PEND_OLD=; SEALED_PEND_OLDREF=; }
++# Reconcile the pending attempt against the remote (read-only). 0 = settled (confirmed or clearly not applied); 1 = UNKNOWN (kept pending).
++sealed_recovery_reconcile() {
++  [ -n "${SEALED_PEND_REF:-}" ] || return 0
++  local r s o=absent slot="r1-recovery-slot/$SEALED_PEND_SLOT"
++  r=$(sealed_remote_ref "$SEALED_PEND_REF") && s=$(sealed_remote_ref "$slot") || { echo "Error: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner"; return 1; }
++  if [ -n "${SEALED_PEND_OLDREF:-}" ]; then o=$(sealed_remote_ref "$SEALED_PEND_OLDREF") || { echo "Error: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner"; return 1; }; fi
++  if [ "$r" = "$SEALED_PEND_TIP" ] && [ "$s" = "$SEALED_PEND_TIP" ] && [ "$o" = absent ]; then
++    echo "save recovery: the unpublished commit is kept on branch $SEALED_PEND_REF (slot $SEALED_PEND_SLOT; confirmed after an unclear reply)"
++    SEALED_RECOVERY_LAST=$SEALED_PEND_TIP; SEALED_RECOVERY_REF=$SEALED_PEND_REF; SEALED_RECOVERY_SLOT=$SEALED_PEND_SLOT; sealed_pend_clear; sealed_recovery_save_state; return 0
++  fi
++  if [ "$r" = absent ]; then
++    if [ -n "${SEALED_PEND_OLDREF:-}" ]; then
++      if [ "$s" = "$SEALED_PEND_OLD" ] && [ "$o" = "$SEALED_PEND_OLD" ]; then sealed_pend_clear; sealed_recovery_save_state; return 0; fi   # replacement not applied; earlier pair intact
++      if [ "$s" = absent ] && [ "$o" = absent ]; then SEALED_RECOVERY_LAST=; SEALED_RECOVERY_REF=; SEALED_RECOVERY_SLOT=; sealed_pend_clear; sealed_recovery_save_state; return 0; fi   # recovery merged and released the pair
++    elif [ "$s" != "$SEALED_PEND_TIP" ]; then sealed_pend_clear; sealed_recovery_save_state; return 0; fi   # claim not applied (slot free or held by another tip)
++  fi
++  echo "Error: save recovery state UNKNOWN ($SEALED_PEND_REF / slot $SEALED_PEND_SLOT in an unexpected state); no further attempt; the unpublished commit may exist only on this runner"; return 1
++}
 +sealed_recovery_push() {
 +  [ -n "$(git rev-list origin/main..HEAD 2>/dev/null)" ] || return 0
 +  git rebase --abort 2>/dev/null || true
 +  local head; head=$(git rev-parse HEAD)
-+  [ "${SEALED_RECOVERY_LAST:-}" = "$head" ] && { echo "save recovery: this unpublished state is already kept on ${SEALED_RECOVERY_REF:-a recovery branch}"; return 0; }
++  sealed_recovery_load_state
++  sealed_recovery_reconcile || return 1
++  [ -n "${SEALED_RECOVERY_LAST:-}" ] && [ "$SEALED_RECOVERY_LAST" = "$head" ] && { echo "save recovery: this unpublished state is already kept on ${SEALED_RECOVERY_REF:-a recovery branch}"; return 0; }
 +  if ! sealed_push_guard; then echo "Error: save recovery refused by the sealed guard: the unpublished commit exists only on this runner"; return 1; fi
 +  local size max; max=$(sealed_recovery_max)
 +  if ! size=$(sealed_recovery_size) || [ -z "$size" ]; then echo "Error: save recovery size UNKNOWN: no recovery branch pushed; the unpublished commit exists only on this runner"; return 1; fi
 +  if [ "$size" -gt "$max" ]; then echo "Error: save recovery refused: the unpublished data is $size bytes (limit $max); the unpublished commit exists only on this runner"; return 1; fi
-+  local ref; ref="save-recovery/$(printf '%s' "${GITHUB_WORKFLOW:-local}" | tr -c 'A-Za-z0-9._-' '-')-${GITHUB_RUN_ID:-$$}-${GITHUB_RUN_ATTEMPT:-1}-$(date -u +%Y%m%dT%H%M%S%NZ)-${head:0:12}"
-+  local slot r s o
-+  # (a) same-run advance of this run's own slot
++  local ref; ref="$(sealed_recovery_prefix)$(date -u +%Y%m%dT%H%M%S%NZ)-${head:0:12}"
++  local s
++  # (a) same-run advance of this run's own slot (HEAD descends from the checkpoint this run holds)
 +  if [ -n "${SEALED_RECOVERY_SLOT:-}" ] && [ -n "${SEALED_RECOVERY_LAST:-}" ] && git merge-base --is-ancestor "$SEALED_RECOVERY_LAST" "$head" 2>/dev/null; then
-+    slot="r1-recovery-slot/$SEALED_RECOVERY_SLOT"
-+    if git push -q --atomic --force-with-lease="refs/heads/$slot:$SEALED_RECOVERY_LAST" --force-with-lease="refs/heads/$SEALED_RECOVERY_REF:$SEALED_RECOVERY_LAST" --force-with-lease="refs/heads/$ref:" origin "$head:refs/heads/$ref" "$head:refs/heads/$slot" ":refs/heads/$SEALED_RECOVERY_REF" 2>/dev/null; then
++    SEALED_PEND_REF=$ref; SEALED_PEND_TIP=$head; SEALED_PEND_SLOT=$SEALED_RECOVERY_SLOT; SEALED_PEND_OLD=$SEALED_RECOVERY_LAST; SEALED_PEND_OLDREF=$SEALED_RECOVERY_REF; sealed_recovery_save_state
++    if git push -q --atomic --force-with-lease="refs/heads/r1-recovery-slot/$SEALED_RECOVERY_SLOT:$SEALED_RECOVERY_LAST" --force-with-lease="refs/heads/$SEALED_RECOVERY_REF:$SEALED_RECOVERY_LAST" --force-with-lease="refs/heads/$ref:" origin "$head:refs/heads/$ref" "$head:refs/heads/r1-recovery-slot/$SEALED_RECOVERY_SLOT" ":refs/heads/$SEALED_RECOVERY_REF" 2>/dev/null; then
 +      echo "save recovery: the unpublished commit is kept on branch $ref (slot $SEALED_RECOVERY_SLOT, replacing this run's earlier $SEALED_RECOVERY_REF; merged into main by the bot's next recovery pass)"
-+      SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; return 0
++      SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; sealed_pend_clear; sealed_recovery_save_state; return 0
 +    fi
-+    r=$(sealed_remote_ref "$ref") && s=$(sealed_remote_ref "$slot") && o=$(sealed_remote_ref "$SEALED_RECOVERY_REF") || { echo "Error: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner"; return 1; }
-+    if [ "$r" = "$head" ] && [ "$s" = "$head" ] && [ "$o" = absent ]; then echo "save recovery: the unpublished commit is kept on branch $ref (slot $SEALED_RECOVERY_SLOT; confirmed after an unclear reply)"; SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; return 0; fi
-+    if [ "$r" = absent ] && [ "$s" = "$SEALED_RECOVERY_LAST" ] && [ "$o" = "$SEALED_RECOVERY_LAST" ]; then echo "Error: save recovery could not advance slot $SEALED_RECOVERY_SLOT; the earlier state stays on $SEALED_RECOVERY_REF and the newer commit exists only on this runner"; return 1; fi
-+    if [ "$r" != absent ] || [ "$s" != absent ] || [ "$o" != absent ]; then echo "Error: save recovery state UNKNOWN (slot $SEALED_RECOVERY_SLOT changed unexpectedly); no further attempt; the newer commit exists only on this runner"; return 1; fi
++    sealed_recovery_reconcile || return 1
++    [ "${SEALED_RECOVERY_LAST:-}" = "$head" ] && return 0
++    if [ -n "${SEALED_RECOVERY_LAST:-}" ]; then echo "Error: save recovery could not advance slot $SEALED_RECOVERY_SLOT; the earlier state stays on $SEALED_RECOVERY_REF and the newer commit exists only on this runner"; return 1; fi
 +    # the recovery pass merged and released the earlier pair meanwhile: claim a slot as new (below)
-+    SEALED_RECOVERY_SLOT=; SEALED_RECOVERY_LAST=; SEALED_RECOVERY_REF=
 +  fi
 +  # (b) claim a free slot of this role: checkpoint and slot together, both leased as absent
 +  for s in $(sealed_recovery_slots "$(sealed_recovery_role)"); do
-+    slot="r1-recovery-slot/$s"
-+    if git push -q --atomic --force-with-lease="refs/heads/$slot:" --force-with-lease="refs/heads/$ref:" origin "$head:refs/heads/$ref" "$head:refs/heads/$slot" 2>/dev/null; then
-+      SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; SEALED_RECOVERY_SLOT=$s
++    SEALED_PEND_REF=$ref; SEALED_PEND_TIP=$head; SEALED_PEND_SLOT=$s; SEALED_PEND_OLD=; SEALED_PEND_OLDREF=; sealed_recovery_save_state
++    if git push -q --atomic --force-with-lease="refs/heads/r1-recovery-slot/$s:" --force-with-lease="refs/heads/$ref:" origin "$head:refs/heads/$ref" "$head:refs/heads/r1-recovery-slot/$s" 2>/dev/null; then
++      SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; SEALED_RECOVERY_SLOT=$s; sealed_pend_clear; sealed_recovery_save_state
 +      echo "save recovery: the unpublished commit is kept on branch $ref (slot $s; merged into main by the bot's next recovery pass)"; return 0
 +    fi
-+    r=$(sealed_remote_ref "$ref") && o=$(sealed_remote_ref "$slot") || { echo "Error: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner"; return 1; }
-+    if [ "$r" = "$head" ] && [ "$o" = "$head" ]; then SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; SEALED_RECOVERY_SLOT=$s; echo "save recovery: the unpublished commit is kept on branch $ref (slot $s; confirmed after an unclear reply)"; return 0; fi
-+    if [ "$r" != absent ]; then echo "Error: save recovery state UNKNOWN ($ref exists but slot $s does not hold it); no further attempt; the unpublished commit may exist only on this runner"; return 1; fi
++    local o; o=$(sealed_remote_ref "r1-recovery-slot/$s") || o=
++    sealed_recovery_reconcile || return 1
++    [ "${SEALED_RECOVERY_LAST:-}" = "$head" ] && return 0
 +    if [ "$o" = absent ]; then echo "Error: save recovery push failed too: the unpublished commit exists only on this runner (slot $s was free; the push itself was refused)"; return 1; fi
 +    echo "save recovery: slot $s is occupied by an earlier unmerged save"
 +  done
@@ -771,24 +818,24 @@ index d2b04bed874820b4adcad78970b5bae7c0b738ca..93d5bc2aca08ee0f99be5144f09cd232
  async function frame(taxonomy, tag, unit, period) {
 diff --git a/docs/r1-sealed-provider-data/MANIFEST.md b/docs/r1-sealed-provider-data/MANIFEST.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..e31110d7b3fb9adc9059e2b58dd1910883c3ee8d
+index 0000000000000000000000000000000000000000..2a8763d2a6e001fb918e961ae08f9333b9fc9c13
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/MANIFEST.md
-@@ -0,0 +1,84 @@
-+# R1 combined-unit candidate manifest, rev13 (review only; not deployed)
+@@ -0,0 +1,88 @@
++# R1 combined-unit candidate manifest, rev14 (review only; not deployed)
 +
-+- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461).
++- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821).
 +- **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
-+- **Binding:** the authoritative 68-path list with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
-+- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 67 files.
-+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `1a363fe0531491257b754ae13a6c1bae85206d62a510df2d90323efe5e836b81`
++- **Binding:** the authoritative path list (72 paths in rev14) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
++- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 71 files.
++- `git diff --full-index b0d76987 -- <allowlist>` sha256: `9dfa01ebd9d5a21ff42f7a687e32f13b993b1a11be66f94e47bc87f752e36800`
 +
 +| Status | File | sha256 (candidate) |
 +|---|---|---|
 +| A | `.gitattributes` | `873f59d9355f4ba27446eb549847336e6c53be85206f28de248d1dea2a71bf9d` |
-+| A | `.github/bot-save.sh` | `46f54da729e5aa0060329af8534d60c813871a69a365ca06bfb71d53f53a2211` |
++| A | `.github/bot-save.sh` | `0155a56e2db36da3e5766a98e83e30f115c02647fdf24cc1482b07d477ffa339` |
 +| M | `.github/save-data.sh` | `2f14d37adeeaa3c4624f45c1f29442347e5a897e78132bd82fdc6ad37766ff3a` |
-+| A | `.github/sealed-git.sh` | `755c41916d85ea5b0b24c13e8f176dc08aee98515d4b0e547f56e88b57b7cb21` |
++| A | `.github/sealed-git.sh` | `987ee55dc00d407393c8bba8351fa6c28cad3d33fc59bf085a956c00f901844d` |
 +| M | `.github/workflows/Smart-money.yml` | `d395f27f65b666778a310bd8ffbce2012150e9f78c0367ce7762a06a655335ab` |
 +| M | `.github/workflows/bot.yml` | `2e4cb467ca233f6ab2a79926b1ca69584dc52f03d428d0f7dd12b3ebd608a89d` |
 +| M | `.github/workflows/ignition.yml` | `e17509c5c42cb28cde4a856e1f95cb8f2a4d97e4ef2f1ef2f70339d6fb38938a` |
@@ -802,8 +849,8 @@ index 0000000000000000000000000000000000000000..e31110d7b3fb9adc9059e2b58dd19108
 +| A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 +| M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 +| M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-+| A | `docs/r1-sealed-provider-data/README.md` | `52a9454624cc66ec761c3db84a45f5cb9b3e2588687a699ab4db5fc34eb75bb6` |
-+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `d318b02b5e0f74973289c43fcaae6fec7cbdbe81147acdc4397193abcc3764aa` |
++| A | `docs/r1-sealed-provider-data/README.md` | `9769e26b37fd30d24cf39341d99d2fd0bd6485b4bf7de700cc366868d5d36995` |
++| A | `docs/r1-sealed-provider-data/RELEASE.md` | `6e427807b843553962745302e1e93f5189b1180bdc34de291737501c20c2b1ee` |
 +| A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 +| A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 +| A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
@@ -812,10 +859,11 @@ index 0000000000000000000000000000000000000000..e31110d7b3fb9adc9059e2b58dd19108
 +| M | `ignition-watch.mjs` | `5b2fa9e6dadbb5b1d4d9c0d17f70f1b5c8dc6a617e3ae53e1734bdc4ed374e45` |
 +| M | `missed-runners.mjs` | `067d900ec3c1b66ddfd7e754f58fcbef91641a79655eb13bde42d0a5ce3cfd92` |
 +| M | `movers.mjs` | `93472c5e0b3d151fd6d49c08c7404d2173f569f05b6ddfceb360e67e0bf545a3` |
++| M | `opportunity-radar.mjs` | `e628f2006f2e66e5ff8a06bdfcfee4f640876a5c47b47f6b3446bf70323c36c4` |
 +| M | `options-survey.mjs` | `d3cea82f378e8e5afe287f56b80c29fef8cdefded5effb781c9022e0191e53c9` |
 +| A | `r1-release-precheck.mjs` | `fd56115e0cd354314e962b793b7e9122dee16e8e79db10cd760b2876efb3f57c` |
 +| A | `r1-writer-gate.mjs` | `7ff7a8456d8f693820719f81a70c7370dce9c1f4b7085ed19de7100fe43b6354` |
-+| M | `scan.mjs` | `3af9dda35a2ea9bc9daa94202d160c52ba8d0c047c8dc28160e8b7f5adc91949` |
++| M | `scan.mjs` | `730647df0e49ef96b599e7a68e7bebd34690551ed99dc9eba7370f1728104c9c` |
 +| M | `scorecard-1023.mjs` | `a0f0a6a9f1bc9d41886996c76e8d20aa3d988b1ec148a3f7b9ce642bdd10b48a` |
 +| A | `sealed-guard.mjs` | `b2dc4384e680e8f723951441ff5072487fc5b3a41f13aba7c507463e4e1d7fae` |
 +| A | `sealed-merge.mjs` | `4182335911f74cf1ef4adf90da45b9dd071ab344e9e659e1506cf6a2c0fbb3a0` |
@@ -829,17 +877,20 @@ index 0000000000000000000000000000000000000000..e31110d7b3fb9adc9059e2b58dd19108
 +| M | `test/feed-integrity-watcher.test.mjs` | `7144f713f3158671fe61feae52112b766d341f2685cc5a7c12a6a2baf02f4cfd` |
 +| A | `test/health-text-watcher-qualification.test.mjs` | `28f16479ec6e5ccf5332496d8c5816d691e6db328a5511b67c5ecb40be4e0310` |
 +| M | `test/load-scan.mjs` | `37bce00506cc2bb73d5707dc2f737fd3d7d8c1de08cbcfb2b86c32ffa726bdde` |
-+| A | `test/open-check-repair.test.mjs` | `cc86f2ced9f4b8bdf3462107e04034c7dbe720a3d3020990146c6b2eb4512ddb` |
++| A | `test/open-check-repair.test.mjs` | `9ace6e8370bf4df0cf07710c78daafd2ebaedfb0ed6b1b2e81cce9ea6195103d` |
 +| M | `test/private-data.test.mjs` | `2c43d3a0fd677fd1cad0404abeecf04b5b555b8fa020512e02ec42c80af0658c` |
++| A | `test/radar-sealed-reader.test.mjs` | `d156b07bb189118b5d03b3c7e942d07b5e2bd80c976a5832b37de270e32243a6` |
 +| A | `test/sealed-blockers.test.mjs` | `016805622b6b0c21300af4c29a4746f088b219fde36007a0a27580520e60f1de` |
 +| A | `test/sealed-git.test.mjs` | `ef3692008daedc85a4a741862d0f428bc76f4ce3207adb9f80c639c033ecb0e3` |
 +| A | `test/sealed-migrate.test.mjs` | `ba4dff2cf6bfb25900758ef7d3ea0faab63aed04226a33b012eabc9e64cf9fb9` |
 +| A | `test/sealed-readers.test.mjs` | `83ddbf15fdf1875adf5fa4612518cede65fced6ca368445c33acc8779139fcfc` |
-+| A | `test/sealed-recovery.test.mjs` | `4f22acf836b59c92fa90f1e3a74fbd575f84751dd6c0420a9f9213092ebe2971` |
++| A | `test/sealed-recovery-actual-paths.test.mjs` | `215cf144cc90d1f69157474a4d81b380679c57a570c17ead1bfed1944663bdb8` |
++| A | `test/sealed-recovery.test.mjs` | `d10906d15912eb829080128a7688a0b66d273ebd9becd5277fe586cb8e3cf8ea` |
 +| A | `test/sealed-release-rehearsal.test.mjs` | `205cc92cf35171056376974b30b498dfc814a8cefc9060c3129e99543ce5edb4` |
 +| A | `test/sealed-store.test.mjs` | `eef5c043965b0417c3c03ea90df5379672989328c2393aac21c579c07faa84e9` |
-+| A | `test/sealed-wiring.test.mjs` | `0a37ad53e2c17ce99f6c06644c831d844c6e60972c07823a436731875e86d601` |
++| A | `test/sealed-wiring.test.mjs` | `5972b71ac993c5bf05abf10c6da01679088718d49854696bd695fac48d7d9aa3` |
 +| M | `test/sec-request-runtime.test.mjs` | `0de8866ec04bda4688a09612ac73c42d9c335a9eaada16f07a73068ce73f86fb` |
++| M | `test/stop-alert-validity.test.mjs` | `746b5dd44ecdaf57d3dc057c37cd37ad4ff817c125fb8515b6d40d99ddd01f57` |
 +| A | `test/watcher-cadence-review.test.mjs` | `3dcc24b6a5504c1dd6f2410542f30bc1f6d7e560e315fa4351e3727fc69e5af8` |
 +| M | `test/watcher-guard.test.mjs` | `aee017d1e57126865562dd199c2e2fa7812a789ad5e3f63c279fcd58700efee6` |
 +| M | `test/watcher-incident-revision.test.mjs` | `dedec3819728826305d7ef5dd595c9911d2a9774c82a04416600694e4b1b31c3` |
@@ -856,15 +907,15 @@ index 0000000000000000000000000000000000000000..e31110d7b3fb9adc9059e2b58dd19108
 +## Full serial suite on this tree
 +
 +- Node 20.20.0; preload refusing every non-loopback connection (0 attempted).
-+- **156 of 156 files pass.**
++- **158 of 158 files pass.**
 +- `premarket-feed` builds its fixture from the real New York date and clock. At one hour on 8 Nov it failed identically on this branch and on the unchanged base `b0d76987`; it passes in this run. R1 does not touch it.
 +- **Gated actual-watcher scenarios** (`INCIDENT_WATCHER_SRC`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.
 diff --git a/docs/r1-sealed-provider-data/README.md b/docs/r1-sealed-provider-data/README.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..c11effcba64c48fadb6e887589af04f485fba0ef
+index 0000000000000000000000000000000000000000..a7a79a0fbb9de4ab772e3401f1a50c6d2b2eee72
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/README.md
-@@ -0,0 +1,339 @@
+@@ -0,0 +1,358 @@
 +# R1: stop publishing provider market data in the public `Stock-2` repository (complete candidate, review only)
 +
 +**Prepared by Claude on 8 Nov 2026 at the owner's request. Not deployed.**
@@ -872,6 +923,25 @@ index 0000000000000000000000000000000000000000..c11effcba64c48fadb6e887589af04f4
 +- **Base:** `origin/main` `b0d76987`. **Branch:** `claude/r1-sealed-provider-data`. The candidate commit and the exact file allowlist are in `MANIFEST.md`.
 +- **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 +- **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
++
++## 0k. Rev14 (8 Nov): five reproduced blockers from Codex's review 6723732821
++
++- **B1, warning unreachable under the real shell:** `bot.yml` runs `bash -e -o pipefail`, and a failed, FULL or UNKNOWN `sealed_recovery_push` exited the step before logging, SAVE NOT CONFIRMED and the loop continuing (also present in rev12). `bot-save.sh` now keeps the status (`|| rrc=$?`), logs it ("did not confirm a kept copy"), always warns and continues. Failure handling is not disabled anywhere else.
++- **B2, lost reply or read-back:** every attempt is written as **pending** to a per-run state file *before* the push. The next save first reconciles it read-only: landed means adopted as this run's checkpoint; clearly not applied means cleared; an unexpected state or a failed read-back means UNKNOWN, kept pending, and no push. It then advances normally.
++- **B3, final `always()` step is a new shell:** confirmed ownership (LAST/REF/SLOT) and the pending attempt live in `$RUNNER_TEMP/r1-recovery-<this run's checkpoint prefix><checkout hash>.state`. Only this run's own names (`save-recovery/<workflow>-<run>-<attempt>-…`) and this role's slots are ever loaded; anything else is ignored. Every use is still checked by exact remote leases.
++- **B4, stop batch provenance:** a stop REACHED in YOUR STOPS is rendered when the batch is sent: "N s old **when checked at** <time>". If the price is no longer within the unchanged 5-minute stop gate at sending time, the entry % is dropped and "No current price now: <reason>" is added.
++- **B5, after-close radar silently missed the sealed live record:** `opportunity-radar.mjs` read `data/ignition-live.json` with a plain-file wrapper. It now uses `readSealedJson`.
++  - A valid record is scored.
++  - A missing key, a damaged file or a legacy plaintext copy gives "LIVE WATCHER RECORD UNKNOWN (SEALED_…)", never "no results". The rest of the message is still sent, and the ledger is still saved.
++  - An audit test requires every module that names a T1 path to import the sealed store.
++- **Lazy load:** the sealed store is loaded only in close mode, so the midday radar run started by the live watcher keeps its exact dependencies. The gated watcher fixture is unchanged.
++- **Allowlist:** +4 paths:
++  - `opportunity-radar.mjs`;
++  - `test/radar-sealed-reader.test.mjs`;
++  - `test/sealed-recovery-actual-paths.test.mjs` (adapted from Codex's fixture);
++  - `test/stop-alert-validity.test.mjs`.
++- **STOP-pinned test changed:** the last one is STOP-pinned. Its bot-fallback assertion now *requires* the "when checked at" qualification and the entry % (a tightening). The watcher-route assertions are unchanged. The refreshed STOP pins list it as changed (8 of 17).
++- **Proof:** every new regression fails on rev13. The two race controls pass on both revisions.
 +
 +## 0j. Rev13 (8 Nov): bounded save recovery (four atomic reservation slots)
 +
@@ -1206,7 +1276,7 @@ index 0000000000000000000000000000000000000000..c11effcba64c48fadb6e887589af04f4
 +- Pre-existing, unchanged: `health.mjs` throws without `data/health.json`.
 diff --git a/docs/r1-sealed-provider-data/RELEASE.md b/docs/r1-sealed-provider-data/RELEASE.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..a3e9ad9ddd25b6bfd4c51f567d0e70751f9c1438
+index 0000000000000000000000000000000000000000..add6a316e0e6406879a25f2fbd38898ef87fd4b2
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/RELEASE.md
 @@ -0,0 +1,94 @@
@@ -1275,7 +1345,7 @@ index 0000000000000000000000000000000000000000..a3e9ad9ddd25b6bfd4c51f567d0e7075
 +
 +| Situation | Procedure |
 +|---|---|
-+| A save could not reach main | **Automatic, data-only (rev5), bounded (rev13).**<br>1. The saving job pushes an **immutable** checkpoint `save-recovery/<workflow>-<run>-<attempt>-<UTC>-<sha>`, through the same push guard. It is never force-updated or reused.<br>**Rev13 bound:**<br>- **Four reservation slots** `r1-recovery-slot/{bot,main,shared-0,shared-1}`: `bot.yml` uses only `bot`, `main.yml` only `main`, and the other 5 writers `shared-0`/`shared-1`. A checkpoint is created only together with a free slot, in one atomic push, both leased as absent.<br>- **Size:** the unpublished objects must be known and at most 32 MiB.<br>- **One run's newer state** atomically replaces its own earlier checkpoint in the same slot.<br>- **Full, oversized or UNKNOWN:** nothing is pushed or evicted, and the save is lost if the runner ends (L7).<br>2. The bot (`sealed-recover.mjs`, every 5-minute check) merges a checkpoint into main **only if** every commit touches `data/` paths only, and every file either still holds an older state of that same checkpoint lineage on main, or merges append-only (ledgers) or by key (options record).<br>3. It pushes without force, then deletes the checkpoint by **compare-and-delete on the merged tip**. When a slot holds that tip, checkpoint and slot are deleted together in one atomic push, both leased; otherwise both are kept. A slot without a checkpoint is reported and kept for a person.<br>4. **Anything else is refused and KEPT**: a code or workflow path, or a stale owner state or Telegram offset (main changed it since). Exit 1, and the owner is warned once. A failed listing is **UNKNOWN** (exit 2), also with a warning.<br>**A kept checkpoint is resolved by a person:** inspect the branch diff (`git diff main...<branch> -- data/`); never merge it wholesale. Re-enter genuinely missing owner records with the bot commands, then delete the branch. |
++| A save could not reach main | **Automatic, data-only (rev5), bounded (rev13).**<br>1. The saving job pushes an **immutable** checkpoint `save-recovery/<workflow>-<run>-<attempt>-<UTC>-<sha>`, through the same push guard. It is never force-updated or reused.<br>**Rev13 bound:**<br>- **Four reservation slots** `r1-recovery-slot/{bot,main,shared-0,shared-1}`: `bot.yml` uses only `bot`, `main.yml` only `main`, and the other 5 writers `shared-0`/`shared-1`. A checkpoint is created only together with a free slot, in one atomic push, both leased as absent.<br>- **Size:** the unpublished objects must be known and at most 32 MiB.<br>- **One run's newer state** atomically replaces its own earlier checkpoint in the same slot. The run's confirmed and pending recovery state survives step boundaries in a per-run file under `RUNNER_TEMP`, and a lost reply is reconciled read-only before anything else (rev14).<br>- **Full, oversized or UNKNOWN:** nothing is pushed or evicted, and the save is lost if the runner ends (L7).<br>2. The bot (`sealed-recover.mjs`, every 5-minute check) merges a checkpoint into main **only if** every commit touches `data/` paths only, and every file either still holds an older state of that same checkpoint lineage on main, or merges append-only (ledgers) or by key (options record).<br>3. It pushes without force, then deletes the checkpoint by **compare-and-delete on the merged tip**. When a slot holds that tip, checkpoint and slot are deleted together in one atomic push, both leased; otherwise both are kept. A slot without a checkpoint is reported and kept for a person.<br>4. **Anything else is refused and KEPT**: a code or workflow path, or a stale owner state or Telegram offset (main changed it since). Exit 1, and the owner is warned once. A failed listing is **UNKNOWN** (exit 2), also with a warning.<br>**A kept checkpoint is resolved by a person:** inspect the branch diff (`git diff main...<branch> -- data/`); never merge it wholesale. Re-enter genuinely missing owner records with the bot commands, then delete the branch. |
 +| Data needed outside the repository (audit, provider question, move to private storage) | `node sealed-migrate.mjs --export-to <new empty folder outside the checkout>`. Needs the key; refuses folders inside the checkout, symlinks and non-empty folders. |
 +| Key lost | The sealed files cannot be recovered. **Prevention is G3.** History before the migration still holds the old plaintext (public); data written after the migration is lost. |
 +| Key compromised | The sealed files must be considered readable by whoever holds the key. Rotating needs a reviewed re-seal (decrypt with the old key, seal with the new) **and** an owner key action. Not built; not authorized now. |
@@ -1817,6 +1887,38 @@ index 73827b24f5e421d46f879118e9c52bb2f26eff31..4a54a8d6ef60ea75f499afde456686a6
 -fs.writeFileSync('data/movers-state.json', JSON.stringify({ session: D[last], sessions: S.length, cases: all.length, caught, reviewable: reviewable.length, hunt, penny: (() => { const P3 = table[1].h[3], P5 = table[1].h[5]; return P3 && P5 ? 'typically ' + pc(P3.med) + ' three sessions later and ' + pc(P5.med) + ' after five; only ' + Math.round(P5.pos * 100) + '% were higher after five (' + P3.n + ' cases).' : ''; })(), study: A[3] ? 'three sessions after the next open they were typically ' + pc(A[3].med) + ', and ' + Math.round(A[3].pos * 100) + '% were higher (' + A[3].n + ' cases).' : '' }));
 +writeSealed('data/movers-state.json', JSON.stringify({ session: D[last], sessions: S.length, cases: all.length, caught, reviewable: reviewable.length, hunt, penny: (() => { const P3 = table[1].h[3], P5 = table[1].h[5]; return P3 && P5 ? 'typically ' + pc(P3.med) + ' three sessions later and ' + pc(P5.med) + ' after five; only ' + Math.round(P5.pos * 100) + '% were higher after five (' + P3.n + ' cases).' : ''; })(), study: A[3] ? 'three sessions after the next open they were typically ' + pc(A[3].med) + ', and ' + Math.round(A[3].pos * 100) + '% were higher (' + A[3].n + ' cases).' : '' }));
  console.log('movers radar sent:', all.length, 'cases,', today.length, 'movers today,', watch.length, 'build-ups');
+diff --git a/opportunity-radar.mjs b/opportunity-radar.mjs
+index 330761e891cb719ee0f775d1e2e8cb4865a2b553..015aa5fe2dd29191e388ca95a26b0b3b0bc8d9f9 100644
+--- a/opportunity-radar.mjs
++++ b/opportunity-radar.mjs
+@@ -41,6 +41,20 @@ async function score5(ledger, today) {
+   return out;
+ }
+ 
++// (R1 rev14, Codex 6723732821 B5) the live watcher record is T1 provider data, stored SEALED (data/ignition-live.json.sealed). It is read
++// with the sealed store, never with the plain readJson above: a valid sealed record is scored; a missing key, a damaged file or a
++// legacy plaintext copy is reported as UNKNOWN with its code, never as "the watcher saved no results" and never silently empty.
++// The rest of the close message (ledger lines, scorecard, shadow tests) is still sent, and the run is not failed, so the ledger is saved.
++// The sealed store is loaded only here (close mode), so the midday run started by the live watcher keeps its exact dependencies.
++async function closeText(day, ledger, ctx) {
++  const { readSealedJson, sealedCode } = await import('./sealed-store.mjs');
++  let live = null, code = null;
++  try { live = readSealedJson('data/ignition-live.json', null); } catch (e) { code = sealedCode(e); console.error('Error: R1 ignition-live unreadable: ' + code + ' (radar close reports it as UNKNOWN, not as no results)'); }
++  const text = buildClose(day, code ? null : live, ledger, ctx);
++  if (!code) return text;
++  return text.replace('The live watcher saved no results for today (not run, or not saved yet). Nothing to score.',
++    "LIVE WATCHER RECORD UNKNOWN (" + code + "): today's watcher results could not be read, so they are not scored here. This is not a sign that the watcher found nothing.");
++}
+ const ST = readJson('data/settings.json', {});
+ if (!radarOn(ST)) { console.log('radar: off (radar on to switch it back)'); process.exit(0); }
+ const today = nyDay(), ctx = context();
+@@ -59,5 +73,5 @@ if (MODE === 'midday') {
+   const rk = SRp && (SRp.ranking && SRp.ranking.models.A.picks ? SRp.ranking : SRp.rankingPilot), rkLine = rk ? 'RANKING SHADOW TEST (' + (rk === SRp.ranking ? 'counted from ' + rk.frozen.evalFrom : 'PILOT, not counted') + '; same-day net after costs, picks / avg / median): '
+     + ['A', 'B', 'C', 'D', 'R', 'R0'].map(k => { const x = rk.models[k]; return k + ' ' + x.picks + ' / ' + pc(x.day.avg) + ' / ' + pc(x.day.median); }).join('; ') + '. '
+     + (rk.capCost && rk.capCost.firstFive.picks ? 'First five ' + pc(rk.capCost.firstFive.day.avg) + ' vs after the cap ' + pc(rk.capCost.afterCap.day.avg) + '. ' : '') + 'Verdicts: B ' + rk.models.B.verdict + '; C ' + rk.models.C.verdict + '; D ' + rk.models.D.verdict + '. Live ranking is still first come (no change without your approval).' : '';
+-  await telegram('Research ledger view '+view.version+': raw listed '+view.rawLists+', logical listed '+view.logicalLists+', exact repeats '+view.exactRepeats+', unknown identity retained '+view.unknownIdentity+'. Original ledger and frozen raw results preserved; corrected secondary view, not admitted prospective evidence.\n'+buildClose(today, readJson('data/ignition-live.json'), ledger, ctx) + '\n\n' + scorecardText(od) + (shadowLine ? '\n' + shadowLine : '') + (rkLine ? '\n' + rkLine : '')); console.log('radar close: ' + s5.length + ' 5-session scores added');
++  await telegram('Research ledger view '+view.version+': raw listed '+view.rawLists+', logical listed '+view.logicalLists+', exact repeats '+view.exactRepeats+', unknown identity retained '+view.unknownIdentity+'. Original ledger and frozen raw results preserved; corrected secondary view, not admitted prospective evidence.\n'+(await closeText(today, ledger, ctx)) + '\n\n' + scorecardText(od) + (shadowLine ? '\n' + shadowLine : '') + (rkLine ? '\n' + rkLine : '')); console.log('radar close: ' + s5.length + ' 5-session scores added');
+ }
 diff --git a/options-survey.mjs b/options-survey.mjs
 index a6b355b1318b451571c8ff651ed7239f59253b49..fa2a6787480cc2f4b2eb4db23c5f7b2cecae4f35 100644
 --- a/options-survey.mjs
@@ -2074,7 +2176,7 @@ index 0000000000000000000000000000000000000000..2070baaf96e0d39fdb7e2c216963cab6
 +  } catch (e) { console.error('R1 writer gate: FAIL (' + e.message + ')'); process.exit(1); }
 +}
 diff --git a/scan.mjs b/scan.mjs
-index 14a28526aed258e8063a14785a60c42b2a5ab6ca..11546464832c812afa9bed94a2afbe16c213bc9a 100644
+index 14a28526aed258e8063a14785a60c42b2a5ab6ca..2ca94db475e51635e43da974fa1c5d15819040fd 100644
 --- a/scan.mjs
 +++ b/scan.mjs
 @@ -9,7 +9,8 @@ import crypto from 'node:crypto';
@@ -2363,16 +2465,29 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..11546464832c812afa9bed94a2afbe16
    // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
    // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
    // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop
-@@ -4258,7 +4366,7 @@ async function intraday(onlyMine) {
+@@ -4256,9 +4364,19 @@ async function intraday(onlyMine) {
+     if (ev.state !== 'OK') { if (st.sent[sym + 'myunk'] || st.sent[sym + 'myst'] || watcherDelivered(sym, 'unknown') || watcherDelivered(sym, 'hit')) return; st.sent[sym + 'myunk'] = 1; stopAlerts.push(stopText('unknown', sym, P, ev)); return; }
+     if (!(ev.price <= P.stop) || st.sent[sym + 'myst']) return;
      if (watcherDelivered(sym, 'hit')) { st.sent[sym + 'myst'] = 'watcher'; return; }
-     st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
+-    st.sent[sym + 'myst'] = 1; stopAlerts.push(stopText('hit', sym, P, ev)); };
++    st.sent[sym + 'myst'] = 1; stopAlerts.push({ kind: 'hit', sym, P, ev, at: Date.now() }); };
++  // (rev14, Codex 6723732821 B4) the stop batch is sent after every quote is fetched, possibly minutes later. A stop REACHED is an
++  // observation made when the quote was checked: its age is stated "when checked at <time>", and once the price is no longer within the
++  // 5-minute stop gate at sending time, the entry % is dropped and the line says there is no current price. No stop threshold changes.
++  const stopLine = (a, nowMs) => {
++    if (typeof a === 'string') return a;
++    const cur = priceEvidence(a.sym, { sym: a.sym, price: a.ev.price, t: a.ev.t, provider: a.ev.src, kind: 'TRADE' }, nowMs);
++    let t = stopText('hit', a.sym, a.P, a.ev).replace(/ old\)/, ' old when checked at ' + nyStamp(a.at) + ')');
++    if (cur.state !== 'OK') t = t.replace(/ \(bought [^)]*\)\./, '.').replace(/\.\n/, '. No current price now: ' + cur.why + '.\n');
++    return t;
++  };
    for (const sym of watch) {
 -    const j = (await liveQ((sym))) || {}, p = +j.price; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
 +    const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = { ...j, observedAt: Date.now() }; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p; const fresh = !j.t || Date.now() - j.t < 20 * 60000;   // STALE-QUOTE GATE: no BUY NOW on a price older than 20 minutes
      const say = (k, text) => { if (!st.sent[sym + k]) { st.sent[sym + k] = 1; alerts.push(sym + ' at ' + money(p) + ': ' + text); } };
      const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
      if (mp) {   // you told the bot you bought this one
-@@ -4292,15 +4400,15 @@ async function intraday(onlyMine) {
+@@ -4292,15 +4410,15 @@ async function intraday(onlyMine) {
        if (o.target && p >= o.target) say('tg' + o.since, 'paper trade from ' + o.since + ' reached its target ' + money(o.target) + '.');
      }
    }
@@ -2395,6 +2510,15 @@ index 14a28526aed258e8063a14785a60c42b2a5ab6ca..11546464832c812afa9bed94a2afbe16
    }
    fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
    if (openMsg) await telegram(openMsg + '\n' + FOOT);
+@@ -4308,7 +4426,7 @@ async function intraday(onlyMine) {
+   for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
+     await telegram('BUY NOW: a proven setup is inside its buy range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
+       [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
+-  if (stopAlerts.length) await telegram('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
++  if (stopAlerts.length) await telegram('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n' + stopAlerts.map(a => stopLine(a, Date.now())).join('\n\n') + '\n\nStop levels are your own recorded stops. Not financial advice.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
+   if (alerts.length) await telegram('Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
+   console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
+ }
 diff --git a/scorecard-1023.mjs b/scorecard-1023.mjs
 index 5d9ab46beca82d9a8c5dca336fe1f4cdb390aaa5..4998c0a3dbb7b57499cfe2418920da3542b2d674 100644
 --- a/scorecard-1023.mjs
@@ -3532,10 +3656,10 @@ index b13b1bc80eba8a874a237e4ee9a36d87fae56a26..e98e046ebf6125573387169fe9c55620
  }
 diff --git a/test/open-check-repair.test.mjs b/test/open-check-repair.test.mjs
 new file mode 100644
-index 0000000000000000000000000000000000000000..46b57a33dcbc6f14c0649b1cd6ff51ff08b2c766
+index 0000000000000000000000000000000000000000..d1c70c6a0627b279e56dcedc009599728f11a295
 --- /dev/null
 +++ b/test/open-check-repair.test.mjs
-@@ -0,0 +1,221 @@
+@@ -0,0 +1,249 @@
 +// Open-check repair (6 Nov 2026). Synthetic fixtures only: invented tickers and prices, loopback services, no owner records,
 +// credentials, provider requests or real messages. Every case runs the ACTUAL intraday() caller (the scanner's market-hours check).
 +// 1 one holding action: a nightly exit (posVerdict, a trend exit included) is never shown as HOLD, and agrees with ACTIONS (planText)
@@ -3756,6 +3880,34 @@ index 0000000000000000000000000000000000000000..46b57a33dcbc6f14c0649b1cd6ff51ff
 +  assert.doesNotMatch(r.zzs, /% from your/, 'no current-price claim from an observation that is no longer current');
 +});
 +
++// rev14 (Codex 6723732821 B4): the YOUR STOPS batch is sent after all fetches. Fetched 10 s old at 09:40, sent at 09:50: the stop observation
++// keeps its own time ("10 s old when checked at ...") and, no longer current, drops the entry % and says so. Sent promptly, it stays current.
++test('rev14: the dedicated stop batch states when the price was checked; after a long batch delay it is not presented as a current price', async t => {
++  const T = ON_TIME, sent = []; let clock = T;
++  const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
++    if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
++    if (req.url.includes('/sendMessage')) { sent.push(JSON.parse(b).text); return res.end(JSON.stringify({ ok: true, result: { message_id: sent.length } })); }
++    if (req.url.includes('/quote')) { const sym = new URL(req.url, 'http://x').searchParams.get('symbol');
++      if (sym === 'ZZS') return res.end(JSON.stringify({ c: 70, t: (T - 10000) / 1000 }));
++      clock = T + 600000; return res.end(JSON.stringify({ c: 12, t: (T + 590000) / 1000 })); }
++    res.statusCode = 404; res.end('{}'); }); });
++  await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
++  const base = 'http://127.0.0.1:' + server.address().port;
++  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
++    env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
++  const real = Date.now; Date.now = () => clock;
++  try { await S.fn('intraday')(false); } finally { Date.now = real; }
++  const stop = sent.find(x => /^YOUR STOPS/.test(x)) || '';
++  assert.match(stop, /STOP LEVEL REACHED: ZZS traded at or below your stop 80\.00: last price 70\.00 \(FINNHUB, [^)]*, 10 s old when checked at Nov 5 09:40 New York\)\. No current price now: the latest price is 10 min old \(limit 5 min\)\./, stop);
++  assert.doesNotMatch(stop, /ZZS[^\n]*bought 100\.00/, 'no entry % from an observation that is no longer current');
++});
++test('rev14: a stop batch sent promptly keeps the current price and entry %, with the time it was checked', async t => {
++  const r = await run(t, { pos: { ZZS: { entry: 100, stop: 80 } }, quotes: { ZZS: { c: 70, ageSec: 10 } } });
++  const stop = r.sent.find(x => /^YOUR STOPS/.test(x)) || '';
++  assert.match(stop, /last price 70\.00 \([^)]*10 s old when checked at Nov 5 09:40 New York\) \(bought 100\.00, -30\.0%\)\./, stop);
++  assert.doesNotMatch(stop, /No current price now/);
++});
++
 +test('all requests stayed synthetic and on loopback', () => assert.deepEqual(blocked, []));
 diff --git a/test/private-data.test.mjs b/test/private-data.test.mjs
 index dbcf01adf837348e4635de692c69457432aa409d..fe989caa3011065bd522f4fc0bfddb4d5b87d21e 100644
@@ -3770,6 +3922,70 @@ index dbcf01adf837348e4635de692c69457432aa409d..fe989caa3011065bd522f4fc0bfddb4d
    W(pub, 'data/my-positions.json', '{"AAA":{"entry":10,"note":"' + SECRET + '"}}\n'); W(pub, 'data/halal.json', '{\n "AAA": {"s":"ok"}\n}\n');
    W(pub, 'data/settings.json', '{"focus":true}\n'); W(pub, 'data/my-trades.jsonl', '{"sym":"BBB"}\n'); W(pub, 'data/signals.json', '{"public":1}\n');
    sh('git init -q --bare -b main ' + bare, seed);
+diff --git a/test/radar-sealed-reader.test.mjs b/test/radar-sealed-reader.test.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..76035319458dee345260cddf05c16aadc9e3dcd1
+--- /dev/null
++++ b/test/radar-sealed-reader.test.mjs
+@@ -0,0 +1,58 @@
++// R1 rev14 (Codex review 6723732821, B5): the after-close OPPORTUNITY RADAR reads the live watcher record (T1, sealed) through the sealed
++// store. Synthetic only: the ACTUAL `node opportunity-radar.mjs close` process in a throw-away copy of the source (.mjs files), invented
++// data, a synthetic key, and fetch() refused (no network, no provider calls, no Telegram).
++// 1 valid sealed record -> scored (approved-signal count shown), never "saved no results"
++// 2 no key / damaged file / legacy plaintext -> LIVE WATCHER RECORD UNKNOWN with its SEALED_ code, never "no results", never read as data
++// 3 audit: no module reads a T1 data path without importing the sealed store (the indirect readJson wrapper that hid this reader)
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import { spawnSync, execFileSync } from 'node:child_process';
++import { fileURLToPath } from 'node:url';
++import { sealedKey, writeSealedJson, isT1 } from '../sealed-store.mjs';
++
++const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
++const SECRET = 'synthetic-radar-only';
++
++function closeRun(t, setup, key = SECRET) {
++  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'r1-radar-')); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
++  for (const f of fs.readdirSync(ROOT).filter((f) => f.endsWith('.mjs'))) fs.copyFileSync(path.join(ROOT, f), path.join(dir, f));
++  fs.mkdirSync(path.join(dir, 'data'));
++  const guard = path.join(dir, 'network-guard.mjs'); fs.writeFileSync(guard, "globalThis.fetch = async () => { throw Error('EXTERNAL_NETWORK_FORBIDDEN'); };");
++  const day = new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
++  fs.writeFileSync(path.join(dir, 'data/settings.json'), '{"radar":true}'); fs.writeFileSync(path.join(dir, 'data/radar-v3-ledger.jsonl'), '');
++  setup(dir, { day, alerts: 7, missed: [], tally: {}, coverage: { firstMinute: '09:30' } });
++  const r = spawnSync(process.execPath, ['--import', guard, path.join(dir, 'opportunity-radar.mjs'), 'close'], { cwd: dir, env: { PATH: process.env.PATH, SEALED_SECRET: key }, encoding: 'utf8' });
++  return { status: r.status, out: r.stdout + r.stderr };
++}
++const sealedLive = (dir, live) => writeSealedJson(path.join(dir, 'data/ignition-live.json'), live, sealedKey(SECRET));
++
++test('B5: a valid sealed live record is read and scored by the actual close-radar process', (t) => {
++  const r = closeRun(t, sealedLive);
++  assert.equal(r.status, 0, r.out); assert.match(r.out, /APPROVED SIGNALS today: 7/); assert.doesNotMatch(r.out, /saved no results|UNKNOWN \(SEALED_/);
++});
++test('B5: no key, a damaged file or legacy plaintext is LIVE WATCHER RECORD UNKNOWN with its code (never "no results"); the rest still runs', (t) => {
++  const cases = [
++    ['SEALED_KEY_MISSING', sealedLive, ''],
++    ['SEALED_UNREADABLE', (d, l) => { sealedLive(d, l); const p = path.join(d, 'data/ignition-live.json.sealed'), b = fs.readFileSync(p); b[b.length - 1] ^= 1; fs.writeFileSync(p, b); }, SECRET],
++    ['SEALED_LEGACY_PLAINTEXT', (d, l) => fs.writeFileSync(path.join(d, 'data/ignition-live.json'), JSON.stringify(l)), SECRET],
++  ];
++  for (const [code, setup, key] of cases) {
++    const r = closeRun(t, setup, key);
++    assert.equal(r.status, 0, code + ': the ledger save step must still run'); assert.match(r.out, new RegExp('LIVE WATCHER RECORD UNKNOWN \\(' + code + '\\)'), code + '\n' + r.out);
++    assert.doesNotMatch(r.out, /saved no results/, code); assert.doesNotMatch(r.out, /APPROVED SIGNALS today: 7/, code + ': unreadable or plaintext data is never scored');
++    assert.match(r.out, /OPPORTUNITY RADAR, AFTER THE CLOSE/, code + ': the rest of the close message is still produced');
++  }
++});
++test('B5 audit: every module that names a T1 data path imports the sealed store (no plain-file wrapper can read T1 silently)', () => {
++  const files = execFileSync('git', ['ls-files', '*.mjs'], { cwd: ROOT }).toString().split('\n').filter((f) => f && !/^(test|docs)\//.test(f));
++  const offenders = [];
++  for (const f of files) {
++    const src = fs.readFileSync(path.join(ROOT, f), 'utf8');
++    const t1 = [...src.matchAll(/['"`](data\/[A-Za-z0-9_./-]+?)['"`]/g)].map((m) => m[1]).filter((p) => isT1(p));
++    if (t1.length && !/(from |import\()'\.\/sealed-store\.mjs'/.test(src) && f !== 'sealed-store.mjs') offenders.push(f + ': ' + t1[0]);
++  }
++  assert.deepEqual(offenders, []);
++});
 diff --git a/test/sealed-blockers.test.mjs b/test/sealed-blockers.test.mjs
 new file mode 100644
 index 0000000000000000000000000000000000000000..cbfc6221413257249a1f0bd04f7abfe812f6908a
@@ -4466,12 +4682,89 @@ index 0000000000000000000000000000000000000000..25eaf773a8b03004127a1e8263736e88
 +});
 +
 +test('all requests stayed on loopback', () => { assert.deepEqual(blocked, []); server.close(); });
+diff --git a/test/sealed-recovery-actual-paths.test.mjs b/test/sealed-recovery-actual-paths.test.mjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..99c98ef04df99abf1a82b6c7dcbdad873f018a6d
+--- /dev/null
++++ b/test/sealed-recovery-actual-paths.test.mjs
+@@ -0,0 +1,71 @@
++// R1 rev14 (Codex review 6723732821, B1-B3): actual save/recovery paths. Adapted unchanged from Codex's independent fixture
++// docs/reviews/r1-preparation/c00b8b24/independent-races.test.mjs (54049da11); only ROOT now points at this checkout instead of REVIEW_TREE.
++// 1 bot.yml's real shell (bash -e -o pipefail): an unconfirmed save still reaches SAVE NOT CONFIRMED and the loop continues (B1)
++// 2 a replacement that landed but whose reply AND read-back were lost: the next save reconciles it and advances to the latest state (B2)
++// 3/4 cleanup-vs-replacement races keep the newest state
++// 5 the final always() step is a new shell of the SAME run: it advances its own earlier checkpoint instead of reporting it FULL (B3)
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import fs from 'node:fs';
++import os from 'node:os';
++import path from 'node:path';
++import { execFileSync, spawnSync } from 'node:child_process';
++import { fileURLToPath } from 'node:url';
++import {pathToFileURL} from 'node:url';
++const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
++const {sealedKey,writeSealedJson,readSealedJson,appendSealedLines,readSealedText}=await import(pathToFileURL(ROOT+'/sealed-store.mjs'));
++
++
++const SECRET = 'synthetic-recovery-secret', K = sealedKey(SECRET);
++const ENV = { PATH:path.dirname(process.execPath)+':'+process.env.PATH, SEALED_SECRET: SECRET, SEALED_MERGE_FAVOR: 'theirs', GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1', NODE_OPTIONS: '', GITHUB_WORKFLOW: 'Telegram bot', GITHUB_RUN_ID: '777', GITHUB_RUN_ATTEMPT: '1', TG_TOKEN: '', TG_CHAT: '' };
++const git = (cwd, args) => execFileSync('git', args, { cwd, env: ENV, stdio: ['ignore', 'pipe', 'pipe'] }).toString();
++const sh = (cwd, script, env = ENV) => spawnSync('bash', ['-c', script], { cwd, env, encoding: 'utf8' });
++const P = (r) => path.join(r, 'data/options-shadow.json');
++const REFUSE_MAIN = '#!/bin/sh\nwhile read o n r; do [ "$r" = refs/heads/main ] && exit 1; done; exit 0\n', REFUSE_ALL = '#!/bin/sh\nexit 1\n';
++
++function world(t) {
++  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'sealed-rec-')); t.after(() => fs.rmSync(d, { recursive: true, force: true }));
++  git(d, ['init', '-q', '-b', 'main', '--bare', 'origin.git']);
++  const a = path.join(d, 'a'); git(d, ['init', '-q', '-b', 'main', 'a']); git(a, ['remote', 'add', 'origin', '../origin.git']);
++  for (const f of ['sealed-store.mjs', 'sealed-merge.mjs', 'sealed-guard.mjs', 'sealed-recover.mjs', '.gitattributes', '.gitignore', '.github/sealed-git.sh', '.github/save-data.sh', '.github/bot-save.sh']) { fs.mkdirSync(path.dirname(path.join(a, f)), { recursive: true }); fs.copyFileSync(path.join(ROOT, f), path.join(a, f)); }
++  writeSealedJson(P(a), { real: [], open: [] }, K); fs.writeFileSync(path.join(a, 'data/tg-state.json'), '{"offset":1}');
++  git(a, ['add', '-A']); git(a, ['commit', '-q', '-m', 'base']); git(a, ['push', '-q', '-u', 'origin', 'main']);
++  const hook = (body) => { const h = path.join(d, 'origin.git/hooks/pre-receive'); if (body) fs.writeFileSync(h, body, { mode: 0o755 }); else fs.rmSync(h, { force: true }); };
++  const clone = (n) => { git(d, ['clone', '-q', 'origin.git', n]); return path.join(d, n); };
++  const remoteRefs = () => git(d, ['--git-dir=origin.git', 'for-each-ref', '--format=%(refname)']).split('\n').filter(Boolean);
++  return { d, clone, hook, remoteRefs };
++}
++const BOT={...ENV,GITHUB_WORKFLOW_REF:'drrazaq/Stock-2/.github/workflows/bot.yml@refs/heads/main'};
++const quote=s=>"'"+s.replaceAll("'","'\\''")+"'";
++const recover=c=>sh(c,'source .github/sealed-git.sh; sealed_recover; echo "rc=$?"',BOT);
++const checkpoints=w=>w.remoteRefs().filter(x=>x.startsWith('refs/heads/save-recovery/'));
++const remoteTip=(w,ref)=>git(w.d,['--git-dir=origin.git','rev-parse',ref]).trim();
++function checkpoint(t){const w=world(t),bot=w.clone('bot');fs.writeFileSync(path.join(bot,'data/tg-state.json'),'{"offset":2}');git(bot,['commit','-qam','state A']);const state=path.join(w.d,'state.sh');const r=sh(bot,'source .github/sealed-git.sh; sealed_recovery_push; declare -p SEALED_RECOVERY_LAST SEALED_RECOVERY_REF SEALED_RECOVERY_SLOT > '+quote(state),BOT);assert.equal(r.status,0,r.stdout+r.stderr);return{w,bot,state};}
++test('required warning remains reachable and the bot loop continues under actual bash -e -o pipefail',t=>{
++ const w=world(t),bot=w.clone('bot');w.hook(REFUSE_ALL);fs.writeFileSync(path.join(bot,'data/tg-state.json'),'{"offset":2}');const warned=path.join(w.d,'warned');
++ const r=spawnSync('bash',['--noprofile','--norc','-e','-o','pipefail','-c','source .github/bot-save.sh; BOT_SAVE_WARNED='+quote(warned)+'; BOT_SAVE_SLEEP=0 save; echo AFTER_SAVE'],{cwd:bot,env:BOT,encoding:'utf8'});
++ console.log(JSON.stringify({case:'actual_shell_flags',status:r.status,warningReached:fs.existsSync(warned),continued:r.stdout.includes('AFTER_SAVE')}));assert.equal(r.status,0,'unconfirmed save must not exit before warning/continuation');assert.ok(fs.existsSync(warned));assert.match(r.stdout,/AFTER_SAVE/);
++});
++test('same-run later state progresses after an accepted replacement loses both reply and its first read-back',t=>{
++ const {w,bot,state}=checkpoint(t);fs.writeFileSync(path.join(bot,'data/tg-state.json'),'{"offset":3}');git(bot,['commit','-qam','state B']);
++ const r=sh(bot,`source .github/sealed-git.sh; source ${quote(state)}; git(){ if [ "$1" = push ]; then command git "$@"; return 1; fi; if [ "$1" = ls-remote ]; then return 1; fi; command git "$@"; }; sealed_recovery_push; echo first_rc=$?; unset -f git; echo '{"offset":4}' > data/tg-state.json; command git commit -qam 'state C'; sealed_recovery_push; echo next_rc=$?`,BOT);
++ const expected=git(bot,['rev-parse','HEAD']).trim(),actual=remoteTip(w,'refs/heads/r1-recovery-slot/bot');console.log(JSON.stringify({case:'accepted_replace_then_readback_loss',laterStateDurable:actual===expected,stdout:r.stdout}));assert.equal(actual,expected,'next save with working network must reconcile its own pending B before advancing to C');assert.equal(checkpoints(w).length,1);
++});
++test('cleanup winning the old pair race allows this same run to readmit its later descendant',t=>{
++ const {w,bot,state}=checkpoint(t);const r=recover(w.clone('consumer'));assert.match(r.stdout,/rc=0/);assert.equal(checkpoints(w).length,0);
++ fs.writeFileSync(path.join(bot,'data/tg-state.json'),'{"offset":3}');git(bot,['commit','-qam','state B']);const next=sh(bot,'source .github/sealed-git.sh; source '+quote(state)+'; sealed_recovery_push',BOT);assert.equal(next.status,0,next.stdout+next.stderr);assert.equal(checkpoints(w).length,1);assert.equal(remoteTip(w,'refs/heads/r1-recovery-slot/bot'),git(bot,['rev-parse','HEAD']).trim());
++ const done=recover(w.clone('consumer2'));assert.match(done.stdout,/rc=0/);assert.equal(checkpoints(w).length,0);assert.equal(fs.readFileSync(path.join(w.clone('final'),'data/tg-state.json'),'utf8'),'{"offset":3}');
++});
++test('replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint',t=>{
++ const {w,bot,state}=checkpoint(t);fs.writeFileSync(path.join(bot,'data/tg-state.json'),'{"offset":3}');git(bot,['commit','-qam','state B']);const expected=git(bot,['rev-parse','HEAD']).trim(),advance=path.join(w.d,'advance.sh'),out=path.join(w.d,'advance.out');
++ fs.writeFileSync(advance,'#!/bin/bash\nunset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES\ncd '+quote(bot)+'\nsource .github/sealed-git.sh\nsource '+quote(state)+'\nsealed_recovery_push\n');
++ fs.writeFileSync(path.join(w.d,'origin.git/hooks/post-receive'),'#!/bin/sh\nwhile read old new ref; do if [ "$ref" = refs/heads/main ]; then bash '+quote(advance)+' > '+quote(out)+' 2>&1; fi; done\n',{mode:0o755});
++ const r=recover(w.clone('consumer'));assert.match(fs.readFileSync(out,'utf8'),/replacing this run/);assert.match(r.stdout,/KEPT for the next pass/);assert.equal(checkpoints(w).length,1);assert.equal(remoteTip(w,'refs/heads/r1-recovery-slot/bot'),expected);
++ fs.rmSync(path.join(w.d,'origin.git/hooks/post-receive'));const done=recover(w.clone('consumer2'));assert.match(done.stdout,/rc=0/);assert.equal(checkpoints(w).length,0);assert.equal(fs.readFileSync(path.join(w.clone('final'),'data/tg-state.json'),'utf8'),'{"offset":3}');
++});
++test('same GitHub run final always-save shell can advance its earlier loop checkpoint',t=>{
++ const w=world(t),bot=w.clone('bot'),env={...BOT,RUNNER_TEMP:w.d};fs.writeFileSync(path.join(bot,'data/tg-state.json'),'{"offset":2}');git(bot,['commit','-qam','loop state A']);
++ const first=sh(bot,'source .github/bot-save.sh; sealed_recovery_push',env);assert.equal(first.status,0,first.stdout+first.stderr);
++ w.hook(REFUSE_MAIN);fs.writeFileSync(path.join(bot,'data/tg-state.json'),'{"offset":3}');const last=sh(bot,'source .github/bot-save.sh; BOT_SAVE_SLEEP=0 save; echo FINAL_ATTEMPT_COMPLETE',env);
++ const wanted=git(bot,['rev-parse','HEAD']).trim(),actual=remoteTip(w,'refs/heads/r1-recovery-slot/bot');console.log(JSON.stringify({case:'new_shell_same_run_final_save',sameRunId:env.GITHUB_RUN_ID,latestStateDurable:actual===wanted,stdout:last.stdout}));assert.equal(actual,wanted,'same run finalizer must recover verified ownership rather than falsely treating its own earlier slot as another run');assert.equal(checkpoints(w).length,1);
++});
 diff --git a/test/sealed-recovery.test.mjs b/test/sealed-recovery.test.mjs
 new file mode 100644
-index 0000000000000000000000000000000000000000..e5a7e86c099715bb1b5b3e0e858498a59e95c17d
+index 0000000000000000000000000000000000000000..cd1df3bce2437a80bf283c4fd66cfb2dda30ef8d
 --- /dev/null
 +++ b/test/sealed-recovery.test.mjs
-@@ -0,0 +1,291 @@
+@@ -0,0 +1,292 @@
 +// R1 rev4: save recovery (a save that cannot reach main is pushed to a save-recovery/* branch and merged back by the bot).
 +// Synthetic only: throw-away local repositories (a pre-receive hook plays "main refuses pushes"), invented values, no network.
 +import test from 'node:test';
@@ -4603,11 +4896,12 @@ index 0000000000000000000000000000000000000000..e5a7e86c099715bb1b5b3e0e858498a5
 +  assert.equal(fs.readFileSync(path.join(w.clone('c2'), 'data/tg-state.json'), 'utf8'), '{"offset":9}', 'the offset never rewinds');
 +});
 +
-+test('a runner\'s successive checkpoints (immutable refs) merge in order: offset 2 then 3, never back', (t) => {
++test('successive checkpoints of two runs (immutable refs) merge in order: offset 2 then 3, never back', (t) => {
 +  const w = world(t), a = seedOwner(w), bot = w.clone('bot');
 +  w.hook(REFUSE_MAIN);
++  // (rev14) two RUNS of a shared-role writer: one run's own later saves now advance its own checkpoint instead (B3 regression below)
 +  fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":2}'); sh(bot, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save');
-+  fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":3}'); sh(bot, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save');
++  fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":3}'); sh(bot, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save', { ...ENV, GITHUB_RUN_ID: '778' });
 +  assert.equal(w.remoteRefs().filter((x) => /save-recovery\//.test(x)).length, 2, 'two immutable checkpoints, nothing overwritten');
 +  w.hook(null);
 +  const r = recover(w.clone('next')); assert.match(r.stdout, /rc=0/, r.stdout);
@@ -5089,7 +5383,7 @@ index 0000000000000000000000000000000000000000..df7b33d78ff818655c21d98510569b44
 +});
 diff --git a/test/sealed-wiring.test.mjs b/test/sealed-wiring.test.mjs
 new file mode 100644
-index 0000000000000000000000000000000000000000..f2ee0eb1741be6d7690e096422cb3cdc730db52a
+index 0000000000000000000000000000000000000000..d2ab9c8ec1b2338e459b80d20647913660bbae47
 --- /dev/null
 +++ b/test/sealed-wiring.test.mjs
 @@ -0,0 +1,141 @@
@@ -5221,7 +5515,7 @@ index 0000000000000000000000000000000000000000..f2ee0eb1741be6d7690e096422cb3cdc
 +test('rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored', () => {
 +  for (const f of ['ignition.yml', 'options-survey.yml', 'movers.yml', 'leaders-study.yml', 'Smart-money.yml']) assert.match(wf(f), /\[ "\$ok" = 1 \] \|\| \{[^\n]*sealed_recovery_push \|\| true; exit 1; \}/, f);
 +  assert.match(R('.github/save-data.sh'), /sealed_recovery_push \|\| true; exit 1; \}/);
-+  assert.match(R('.github/bot-save.sh'), /sealed_recovery_push > "\$out" 2>&1/); assert.doesNotMatch(R('.github/bot-save.sh'), /sealed_recovery_push[^;\n]*\|/, 'rev13: never in a pipeline subshell (its kept-state variables must persist)'); assert.match(R('.github/bot-save.sh'), /bot_recover\(\)/);
++  assert.match(R('.github/bot-save.sh'), /sealed_recovery_push > "\$out" 2>&1/); assert.doesNotMatch(R('.github/bot-save.sh'), /sealed_recovery_push[^;\n|]*\|(?!\|)/, 'rev13: never in a pipeline subshell (its kept-state variables must persist)'); assert.match(R('.github/bot-save.sh'), /bot_recover\(\)/);
 +  const b = wf('bot.yml'); assert.match(b, /bot_recover   # R1 rev4/);
 +  const fin = b.indexOf('the last chance to publish what the bot recorded'); assert.ok(fin > 0 && b.indexOf('- if: always()', fin) > fin, 'final always() save step');
 +  assert.match(R('.gitignore'), /^\*\.sealed\.tmp-\*$/m);
@@ -5257,6 +5551,20 @@ index 42a5016492d6291235c8ed406143d0c39508cf73..7d68970049b11465b84dd824b63b4072
   assert.equal(calls.some(p=>/sendMessage|orders/.test(p)),false);assert.equal(archive.alerts,0);
   return {calls,archive,shadow,ms:Date.now()-begin,output};
  }
+diff --git a/test/stop-alert-validity.test.mjs b/test/stop-alert-validity.test.mjs
+index 5c76baa8b6636ac87f0d07473dd13873cb5f2129..e633f1f981353fda14f0d333a1a34aad14c3ffe3 100644
+--- a/test/stop-alert-validity.test.mjs
++++ b/test/stop-alert-validity.test.mjs
+@@ -126,7 +126,8 @@ for (const watcherState of [null, 'UNSENT', 'UNCERTAIN'])
+     const { sent, S } = await botRun(t, { watcherState });
+     const stop = sent.filter(x => /STOP LEVEL REACHED/.test(x));
+     assert.equal(stop.length, 1); assert.match(stop[0], /^YOUR STOPS \(bot check; the live watcher had not confirmed these\)/);
+-    assert.match(stop[0], /ZZA traded at or below your stop 80\.00: last price 79\.00 \(FINNHUB, Nov 5 10:30 New York, 20 s old\)/);
++    // (R1 rev14, Codex 6723732821 B4) the bot's stop batch states when the price was checked (the batch can be sent minutes later)
++    assert.match(stop[0], /ZZA traded at or below your stop 80\.00: last price 79\.00 \(FINNHUB, Nov 5 10:30 New York, 20 s old when checked at Nov 5 10:31 New York\) \(bought 100\.00, -21\.0%\)\./);
+     assert.match(stop[0], /do not sell again/); assert.doesNotMatch(stop[0], /not instructions|Sell \/ reassess/);
+     assert.equal(S.readJson('data/my-positions.json').ZZA.stop, 80, 'stop level unchanged');
+   });
 diff --git a/test/watcher-cadence-review.test.mjs b/test/watcher-cadence-review.test.mjs
 new file mode 100644
 index 0000000000000000000000000000000000000000..0510d2858cdbb15afb03596360de4c978eb8f35b

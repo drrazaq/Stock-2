@@ -1,12 +1,13 @@
 {
- "note": "STOP R2 pins refreshed for the rev13 combined unit (no STOP-pinned file changed since rev12).",
+ "note": "STOP R2 pins refreshed for the rev14 combined unit: test/stop-alert-validity.test.mjs is now changed (bot-route stop assertion tightened to require \"when checked at\"), so 8 of 17 pinned files change.",
  "stopPatch": "c1de39fdc301b3c89f3d73b9f05cb6004aee0759a7f4328b259bd31e6bc5433b",
- "currentMain": "a8f22f842e85f6743ee498c47a2dee5908853157",
- "unitTreeOnMain7742732": "d4b60206e8605b8e403999d71005ed8974159abe",
+ "currentMain": "a7c597b77a279de43f3b2ee397c9dd33f3f47000",
+ "unitTreeOnMain7742732": "0d2451b94466a63f93712157c6cf3b7f7d1ff445",
  "changedByUnit": [
   "ignition-watch.mjs",
   "scan.mjs",
   "test/load-scan.mjs",
+  "test/stop-alert-validity.test.mjs",
   "test/watcher-resilience.test.mjs",
   "test/watcher-incident-revision.test.mjs",
   ".github/workflows/bot.yml",
@@ -40,7 +41,7 @@
    "stopR2AppliedPin": "6aa77716cb2a8b614faf3845ecb5d96bf07bad81a5cc6acceca817ae9974fc5c",
    "main7742732": "73ad4853340ee5f562618155df92371ab1ff87e62584bf507157d9c84cd276c3",
    "mainCurrent": "73ad4853340ee5f562618155df92371ab1ff87e62584bf507157d9c84cd276c3",
-   "combinedUnit": "3af9dda35a2ea9bc9daa94202d160c52ba8d0c047c8dc28160e8b7f5adc91949",
+   "combinedUnit": "730647df0e49ef96b599e7a68e7bebd34690551ed99dc9eba7370f1728104c9c",
    "mainEqualsStopPin": false,
    "mainsAgree": true,
    "changedByUnit": true,
@@ -84,11 +85,11 @@
    "stopR2AppliedPin": "d2d29774b069d213345004803dd17ba982064f25ec4136b9430f6c6995f4257f",
    "main7742732": "d2d29774b069d213345004803dd17ba982064f25ec4136b9430f6c6995f4257f",
    "mainCurrent": "d2d29774b069d213345004803dd17ba982064f25ec4136b9430f6c6995f4257f",
-   "combinedUnit": "d2d29774b069d213345004803dd17ba982064f25ec4136b9430f6c6995f4257f",
+   "combinedUnit": "746b5dd44ecdaf57d3dc057c37cd37ad4ff817c125fb8515b6d40d99ddd01f57",
    "mainEqualsStopPin": true,
    "mainsAgree": true,
-   "changedByUnit": false,
-   "inBinding": false
+   "changedByUnit": true,
+   "inBinding": true
   },
   {
    "path": "test/stop-watch.test.mjs",

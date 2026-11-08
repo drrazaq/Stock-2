@@ -1,16 +1,36 @@
-# R1 combined-unit binding, rev13 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev14 (review only; NOT approved, NOT deployed)
 
 This folder binds the **68-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `c00b8b24f17e42cc878b9ed5c6493a977a42c189` on `claude/composed-r1-opencheck-calendar-watcher` |
-| Historical R1 base (allowlist = diff from it) | `b0d76987` → **68 paths** (same set as rev8 and Codex's proposal) |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `df5ee960f5d118e5c5b638e22c3fe3788fe4598a` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Historical R1 base (allowlist = diff from it) | `b0d76987` → **72 paths** (rev14 adds 4; see below) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `d4b60206e8605b8e403999d71005ed8974159abe` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `a8f22f84` | `abaecb0ded838b302403d032aa463410ea3b4b1e` |
+| Unit tree, `M0` = `7742732` | `0d2451b94466a63f93712157c6cf3b7f7d1ff445` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `a7c597b7` | `ae727b9c9f6e15dfcf79a5500d672c268163e329` |
 
-## Rev13: what changed (bounded save recovery; Codex 6722943461, review `ea99db8b`)
+## Rev14: what changed (Codex review 6723732821, blockers B1–B5)
+
+**The fixes:**
+- **B1:** a failed, FULL or UNKNOWN recovery under bot.yml's `bash -e -o pipefail` is logged, SAVE NOT CONFIRMED is sent, and the loop continues.
+- **B2, B3:** a per-run recovery state file (confirmed state, plus the pending attempt written before each push) in `RUNNER_TEMP`. It is reconciled read-only first, survives the final `always()` shell, loads only this run's own names and this role's slots, and leases still decide.
+- **B4:** YOUR STOPS says "when checked at <time>". When the price is no longer current, it drops the entry % and says "No current price now".
+- **B5:** the after-close radar reads the sealed live record. Missing key, damage or plaintext gives "LIVE WATCHER RECORD UNKNOWN (SEALED_…)", never "no results".
+
+**Allowlist expanded by 4 paths, explicitly:** `opportunity-radar.mjs`, `test/radar-sealed-reader.test.mjs`, `test/sealed-recovery-actual-paths.test.mjs`, and the STOP-pinned `test/stop-alert-validity.test.mjs` (bot-route assertion tightened). The STOP-pinned files changed by the unit are now 8 of 17.
+
+**Proof:**
+- Every new regression fails on rev13.
+- On the **built unit tree**, all of Codex's fixtures pass: `render-age` and `future-fetch` exit 0; `stop-provenance` exit 0; `radar-reader` exit 0; `independent-races` 5/5.
+
+**Checks:**
+- Precheck against `a7c597b7`: PASS (72/0/0).
+- Build + verify PASS on `7742732` (tree `0d2451b9…`, equal to main + `source.patch`; the inverse restores main) and on `a7c597b7` (tree `ae727b9c…`). Revert restores each `M0`.
+- Refused: the mode mutant, the whole branch, the old candidate, and the rev13 binding (68 paths).
+- Full suite **158/158**; gated watcher 9/9 and 11/11.
+
+## Rev13 (history): what changed (bounded save recovery; Codex 6722943461, review `ea99db8b`)
 
 - **Design:** Codex's four atomic reservation slots (`r1-recovery-slot/{bot,main,shared-0,shared-1}`):
   - checkpoint and slot are created in one atomic push, both leased as absent;

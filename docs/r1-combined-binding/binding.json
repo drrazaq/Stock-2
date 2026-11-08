@@ -1,18 +1,18 @@
 {
  "status": "ADOPTED_FOR_REVIEW (candidate author); not approved, not deployed",
- "candidate": "c00b8b24f17e42cc878b9ed5c6493a977a42c189",
- "candidateTree": "e90d54c3a7711438d96907a3b0ed35f9662b9f15",
+ "candidate": "df5ee960f5d118e5c5b638e22c3fe3788fe4598a",
+ "candidateTree": "476f1b1d6942925b4e8e7d064e4c4d976d8fb138",
  "historicalR1Base": "b0d769876a6ee76f23544850c959111f59d8ae7b",
  "mainAtBinding": "774273205e1c8ce3db30c59ca368dc107617ef73",
- "pathCount": 68,
+ "pathCount": 72,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "1763c206964a4b8a78770aa34e294b9e788e687bddcfe32c9e47abfec9f3c7f3",
+  "sha256": "b018a6301478614ff09e79f7c544f6bca4d72cd20fb4f7b7b627b1e751f6f997",
   "against": "774273205e1c8ce3db30c59ca368dc107617ef73"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "6108d5a7cc6614c83573b1f9660271e84a8c49564c23853bd4c879c663803cd4"
+  "sha256": "598bc2079be52567ea997df48c0c71f27751fa7d1607acb5a37b85e3e272580e"
  },
  "candidateBranchStaleDataPaths": [
   "data/calendar-status.json",
@@ -22,22 +22,30 @@
   "data/tg-state.json"
  ],
  "neverPushOrMergeCandidateBranch": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 c00b8b24f17e42cc878b9ed5c6493a977a42c189 binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 df5ee960f5d118e5c5b638e22c3fe3788fe4598a binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "supersedes": {
-  "binding": "01e07921 docs/r1-combined-binding/binding.json (rev12 5849242e)",
-  "samePathSet": true,
+  "binding": "bd8627bd docs/r1-combined-binding/binding.json (rev13 c00b8b24)",
+  "samePathSet": false,
   "filesChangedVsPrevious": [
    ".github/bot-save.sh",
    ".github/sealed-git.sh",
    "docs/r1-sealed-provider-data/MANIFEST.md",
    "docs/r1-sealed-provider-data/README.md",
    "docs/r1-sealed-provider-data/RELEASE.md",
-   "sealed-recover.mjs",
+   "scan.mjs",
+   "test/open-check-repair.test.mjs",
    "test/sealed-recovery.test.mjs",
    "test/sealed-wiring.test.mjs"
   ],
-  "reason": "rev13: bounded save recovery (4 atomic slots) + bot-save subshell fix + tests; binding format unchanged"
+  "pathsAddedVsPrevious": [
+   "opportunity-radar.mjs",
+   "test/radar-sealed-reader.test.mjs",
+   "test/sealed-recovery-actual-paths.test.mjs",
+   "test/stop-alert-validity.test.mjs"
+  ],
+  "pathsRemovedVsPrevious": [],
+  "reason": "rev14: B1-B5 (bash -e warning, pending reconcile, per-run state, stop provenance, sealed radar reader); allowlist expanded by 4 paths"
  },
  "files": {
   ".gitattributes": {
@@ -46,8 +54,8 @@
    "mode": "100644"
   },
   ".github/bot-save.sh": {
-   "sha256": "46f54da729e5aa0060329af8534d60c813871a69a365ca06bfb71d53f53a2211",
-   "bytes": 3218,
+   "sha256": "0155a56e2db36da3e5766a98e83e30f115c02647fdf24cc1482b07d477ffa339",
+   "bytes": 3657,
    "mode": "100644"
   },
   ".github/save-data.sh": {
@@ -56,8 +64,8 @@
    "mode": "100644"
   },
   ".github/sealed-git.sh": {
-   "sha256": "755c41916d85ea5b0b24c13e8f176dc08aee98515d4b0e547f56e88b57b7cb21",
-   "bytes": 9424,
+   "sha256": "987ee55dc00d407393c8bba8351fa6c28cad3d33fc59bf085a956c00f901844d",
+   "bytes": 13215,
    "mode": "100644"
   },
   ".github/workflows/Smart-money.yml": {
@@ -126,18 +134,18 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/MANIFEST.md": {
-   "sha256": "c8d55aaa6728643cb31e5808e84f607b58370f2890700b3e32d61a127af6866a",
-   "bytes": 9271,
+   "sha256": "310c2d4b43506cf52c4037a4ecb38ffb096e69452977e5d8c5fb579c13177ab3",
+   "bytes": 9793,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/README.md": {
-   "sha256": "52a9454624cc66ec761c3db84a45f5cb9b3e2588687a699ab4db5fc34eb75bb6",
-   "bytes": 39481,
+   "sha256": "9769e26b37fd30d24cf39341d99d2fd0bd6485b4bf7de700cc366868d5d36995",
+   "bytes": 42273,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/RELEASE.md": {
-   "sha256": "d318b02b5e0f74973289c43fcaae6fec7cbdbe81147acdc4397193abcc3764aa",
-   "bytes": 16735,
+   "sha256": "6e427807b843553962745302e1e93f5189b1180bdc34de291737501c20c2b1ee",
+   "bytes": 16917,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/cost-projection.mjs": {
@@ -180,6 +188,11 @@
    "bytes": 43028,
    "mode": "100644"
   },
+  "opportunity-radar.mjs": {
+   "sha256": "e628f2006f2e66e5ff8a06bdfcfee4f640876a5c47b47f6b3446bf70323c36c4",
+   "bytes": 9490,
+   "mode": "100644"
+  },
   "options-survey.mjs": {
    "sha256": "d3cea82f378e8e5afe287f56b80c29fef8cdefded5effb781c9022e0191e53c9",
    "bytes": 13528,
@@ -196,8 +209,8 @@
    "mode": "100644"
   },
   "scan.mjs": {
-   "sha256": "3af9dda35a2ea9bc9daa94202d160c52ba8d0c047c8dc28160e8b7f5adc91949",
-   "bytes": 704766,
+   "sha256": "730647df0e49ef96b599e7a68e7bebd34690551ed99dc9eba7370f1728104c9c",
+   "bytes": 705687,
    "mode": "100644"
   },
   "scorecard-1023.mjs": {
@@ -266,13 +279,18 @@
    "mode": "100644"
   },
   "test/open-check-repair.test.mjs": {
-   "sha256": "cc86f2ced9f4b8bdf3462107e04034c7dbe720a3d3020990146c6b2eb4512ddb",
-   "bytes": 20661,
+   "sha256": "9ace6e8370bf4df0cf07710c78daafd2ebaedfb0ed6b1b2e81cce9ea6195103d",
+   "bytes": 23542,
    "mode": "100644"
   },
   "test/private-data.test.mjs": {
    "sha256": "2c43d3a0fd677fd1cad0404abeecf04b5b555b8fa020512e02ec42c80af0658c",
    "bytes": 8600,
+   "mode": "100644"
+  },
+  "test/radar-sealed-reader.test.mjs": {
+   "sha256": "d156b07bb189118b5d03b3c7e942d07b5e2bd80c976a5832b37de270e32243a6",
+   "bytes": 4471,
    "mode": "100644"
   },
   "test/sealed-blockers.test.mjs": {
@@ -295,9 +313,14 @@
    "bytes": 9754,
    "mode": "100644"
   },
+  "test/sealed-recovery-actual-paths.test.mjs": {
+   "sha256": "215cf144cc90d1f69157474a4d81b380679c57a570c17ead1bfed1944663bdb8",
+   "bytes": 9445,
+   "mode": "100644"
+  },
   "test/sealed-recovery.test.mjs": {
-   "sha256": "4f22acf836b59c92fa90f1e3a74fbd575f84751dd6c0420a9f9213092ebe2971",
-   "bytes": 27199,
+   "sha256": "d10906d15912eb829080128a7688a0b66d273ebd9becd5277fe586cb8e3cf8ea",
+   "bytes": 27367,
    "mode": "100644"
   },
   "test/sealed-release-rehearsal.test.mjs": {
@@ -311,13 +334,18 @@
    "mode": "100644"
   },
   "test/sealed-wiring.test.mjs": {
-   "sha256": "0a37ad53e2c17ce99f6c06644c831d844c6e60972c07823a436731875e86d601",
-   "bytes": 10684,
+   "sha256": "5972b71ac993c5bf05abf10c6da01679088718d49854696bd695fac48d7d9aa3",
+   "bytes": 10691,
    "mode": "100644"
   },
   "test/sec-request-runtime.test.mjs": {
    "sha256": "0de8866ec04bda4688a09612ac73c42d9c335a9eaada16f07a73068ce73f86fb",
    "bytes": 6145,
+   "mode": "100644"
+  },
+  "test/stop-alert-validity.test.mjs": {
+   "sha256": "746b5dd44ecdaf57d3dc057c37cd37ad4ff817c125fb8515b6d40d99ddd01f57",
+   "bytes": 11672,
    "mode": "100644"
   },
   "test/watcher-cadence-review.test.mjs": {
@@ -382,7 +410,7 @@
   }
  },
  "expectedUnitTrees": {
-  "774273205e1c8ce3db30c59ca368dc107617ef73": "d4b60206e8605b8e403999d71005ed8974159abe",
-  "a8f22f842e85f6743ee498c47a2dee5908853157": "abaecb0ded838b302403d032aa463410ea3b4b1e"
+  "774273205e1c8ce3db30c59ca368dc107617ef73": "0d2451b94466a63f93712157c6cf3b7f7d1ff445",
+  "a7c597b77a279de43f3b2ee397c9dd33f3f47000": "ae727b9c9f6e15dfcf79a5500d672c268163e329"
  }
 }
