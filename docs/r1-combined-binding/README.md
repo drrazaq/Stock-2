@@ -1,16 +1,29 @@
-# R1 combined-unit binding, rev16 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev17 (review only; NOT approved, NOT deployed)
 
-This folder binds the **75-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
+This folder binds the **76-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `cdda3dc376d9bead23ae14fba24bd60db9ee53ee` on `claude/composed-r1-opencheck-calendar-watcher` |
-| Historical R1 base (allowlist = diff from it) | `b0d76987` → **75 paths** (rev14 added 4, rev15 1, rev16 2; see below) |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `73aa701f273ce14147fa38a25e722436d337fe45` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Historical R1 base (allowlist = diff from it) | `b0d76987` → **76 paths** (rev14 added 4, rev15 1, rev16 2, rev17 1; see below) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `10e3d8bce56e0476eaf0a281c6dea2599c197885` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `6e72a8d0` | `43e82ea7d9ce9cf9f477968efe0a92ddf67ced6e` |
+| Unit tree, `M0` = `7742732` | `6e85253669ad9b163fb5dd9995e5e2b1dc3375bf` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `6e72a8d0` | `200daef9679eb544ebf366d5ed2c79c96b293488` |
 
-## Rev16: what changed (Codex 6725294448 R1–R3)
+## Rev17: what changed (Codex 6725877594, multipart BUY NOW)
+
+- **Fix:** a BUY NOW card that Telegram splits into parts is checked again before **every part and every retry**. If the price stops being current after the first part has gone, the rest of the card is **not** sent. One short note is sent instead: `BUY NOW SYM WITHDRAWN: the price in the card above is no longer current (...)`. The note has no price and no buttons, and the card is unmarked so the next run checks it again. A card that is stale before its first part is sent is not sent at all (unchanged).
+- **Unchanged:** the strict BUY NOW **under 20 minutes** limit, the other routes' limits, and every rev16 safeguard.
+- **Allowlist:** +1 path, `test/buynow-multipart.test.mjs` (4 cases through the actual caller and real send/retry). It fails on rev16.
+- **Changed files against rev16:** `scan.mjs`, `RELEASE.md` (live counts now 76), `README.md` and `MANIFEST.md`.
+- **Checks:**
+  - Precheck against `6e72a8d0`: PASS (76/0/0).
+  - Build + verify: PASS on `7742732` (tree `6e852536…`, equal to main + `source.patch`; the inverse restores main) and on `6e72a8d0` (tree `200daef9…`).
+  - Refused: the mode mutant, the whole branch, the old candidate `cdda3dc3`, and the rev16 binding (75 paths).
+  - On the built unit: multipart 4/4, actual-send 4/4, BUY NOW 4/4, races 5/5, N1 5/5; render-age, future-fetch, stop-provenance and radar-reader exit 0.
+  - Full suite **162/162**; gated watcher 9/9 and 11/11.
+
+## Rev16 (history): what changed (Codex 6725294448 R1–R3)
 
 - **R1:** `telegramLive()` renders each price-bearing message again **immediately before every network attempt**: the first try, each 429 or connection retry, and each part. This covers the first market-hours check, BUY NOW cards, YOUR STOPS and the Market-hours alerts. Alerts and cards are marked only while eligible at that attempt, and unmarked when they expire. Parts already sent are never repeated.
 - **R2:** BUY NOW keeps its original strict **under 20 minutes** comparator; other routes are unchanged.
@@ -143,7 +156,7 @@ Changed against rev8 (same 68 paths): `r1-release-precheck.mjs`, `test/sealed-re
 
 ## Refreshed STOP pins (`stop-pins-refresh.json`)
 
-The unit changes 7 of the 17 STOP R2 pinned files: `ignition-watch.mjs`, `scan.mjs`, `test/load-scan.mjs`, the two watcher tests, `bot.yml` and `ignition.yml`. Each row gives the STOP pin, both mains (`7742732` and `6b3c49bc`, which agree on all 17) and the unit hash.
+The unit changes 8 of the 17 STOP R2 pinned files: `ignition-watch.mjs`, `scan.mjs`, `test/load-scan.mjs`, `test/stop-alert-validity.test.mjs`, the two watcher tests, `bot.yml` and `ignition.yml`. Each row gives the STOP pin, both mains (`7742732` and current `6e72a8d0`) and the rev17 unit hash.
 
 ## Still required before any release (unchanged)
 

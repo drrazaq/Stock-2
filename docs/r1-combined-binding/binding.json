@@ -1,18 +1,18 @@
 {
  "status": "ADOPTED_FOR_REVIEW (candidate author); not approved, not deployed",
- "candidate": "cdda3dc376d9bead23ae14fba24bd60db9ee53ee",
- "candidateTree": "d04917faf68d3e7dd4c1977dee0b61ab7430f4ad",
+ "candidate": "73aa701f273ce14147fa38a25e722436d337fe45",
+ "candidateTree": "2f691ec8f65fc6988a91e90f0eca469cce739cbc",
  "historicalR1Base": "b0d769876a6ee76f23544850c959111f59d8ae7b",
  "mainAtBinding": "774273205e1c8ce3db30c59ca368dc107617ef73",
- "pathCount": 75,
+ "pathCount": 76,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "75bf4b6d96934739a65420d83004f097892f44d6225abf681a9ffdf5c25c17e1",
+  "sha256": "6f3eb27e77d6908a82d15cdf57394206b2125ddb07c9478ff9dc514e14b19d4f",
   "against": "774273205e1c8ce3db30c59ca368dc107617ef73"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "6ce17151d6b4d6979270e1e7066e27187d220e77bf002e251fb614cff38d8462"
+  "sha256": "eccc564ec01ebaef67e7bdd49969a534599fef3923976b87107416b52dde409c"
  },
  "candidateBranchStaleDataPaths": [
   "data/calendar-status.json",
@@ -22,10 +22,10 @@
   "data/tg-state.json"
  ],
  "neverPushOrMergeCandidateBranch": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 cdda3dc376d9bead23ae14fba24bd60db9ee53ee binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 73aa701f273ce14147fa38a25e722436d337fe45 binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "supersedes": {
-  "binding": "832fceea docs/r1-combined-binding/binding.json (rev15 09f58ca5)",
+  "binding": "(rev16 cdda3dc3) docs/r1-combined-binding/binding.json",
   "samePathSet": false,
   "filesChangedVsPrevious": [
    "docs/r1-sealed-provider-data/MANIFEST.md",
@@ -34,11 +34,10 @@
    "scan.mjs"
   ],
   "pathsAddedVsPrevious": [
-   "test/buynow-evidence.test.mjs",
-   "test/intraday-alert-send-time.test.mjs"
+   "test/buynow-multipart.test.mjs"
   ],
   "pathsRemovedVsPrevious": [],
-  "reason": "rev16: per-attempt send rendering (telegramLive), BUY NOW strict <20 min, live counts 75; allowlist +2 paths"
+  "reason": "rev17: every part/retry of a BUY NOW card checked; stale remainder withdrawn; live counts 76; allowlist +1 path"
  },
  "files": {
   ".gitattributes": {
@@ -127,17 +126,17 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/MANIFEST.md": {
-   "sha256": "772d979443c4f1de2218ea084ae387f98c3d60253308fb91bb7d773645310f12",
-   "bytes": 10269,
+   "sha256": "e6c3fe21b51a180cd1f58ea74524763c33d848da2013f0d70474ce28aebbcf97",
+   "bytes": 10450,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/README.md": {
-   "sha256": "a6da806211d0ba8d3966eb0282a63001b43c333a079e49deb4a672634db9d39a",
-   "bytes": 45554,
+   "sha256": "7413419192e4de9f8df4f1c88725ef7c318d2f132d91b74cb2f7b9aaa39c85df",
+   "bytes": 46794,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/RELEASE.md": {
-   "sha256": "45f3776e8f3c807c868b25939d9fc138ead23994a113cbd41c0be2a12fca78a7",
+   "sha256": "98e415d8df7caff64c77b4bea644f2b40ae50816b1bffe72c07dd04a16adfbd0",
    "bytes": 17141,
    "mode": "100644"
   },
@@ -202,8 +201,8 @@
    "mode": "100644"
   },
   "scan.mjs": {
-   "sha256": "c9d69996ef14c980d1485550e1871e194258161c613d7fe7b7fdd25b3623c273",
-   "bytes": 712475,
+   "sha256": "bf48e9bb6560811cd7836e31a01d125a6ad1add7a762b29d0630e3e4ecedd341",
+   "bytes": 713677,
    "mode": "100644"
   },
   "scorecard-1023.mjs": {
@@ -249,6 +248,11 @@
   "test/buynow-evidence.test.mjs": {
    "sha256": "128a3af3da884af4c4a1919a14ad89557bc1c3a4374ffbbe2fe8d1c2c89ff842",
    "bytes": 5592,
+   "mode": "100644"
+  },
+  "test/buynow-multipart.test.mjs": {
+   "sha256": "7f3984bb4a19fba4ce01c6cac6d64daca79ec95164df70b263f044ab633ca2d4",
+   "bytes": 5198,
    "mode": "100644"
   },
   "test/discover-sec-note.test.mjs": {
@@ -418,7 +422,7 @@
   }
  },
  "expectedUnitTrees": {
-  "774273205e1c8ce3db30c59ca368dc107617ef73": "10e3d8bce56e0476eaf0a281c6dea2599c197885",
-  "6e72a8d0c46385f3c329157d627636875505a224": "43e82ea7d9ce9cf9f477968efe0a92ddf67ced6e"
+  "774273205e1c8ce3db30c59ca368dc107617ef73": "6e85253669ad9b163fb5dd9995e5e2b1dc3375bf",
+  "6e72a8d0c46385f3c329157d627636875505a224": "200daef9679eb544ebf366d5ed2c79c96b293488"
  }
 }
