@@ -3,6 +3,7 @@
 // and tree receipt -> resumed writers -> old-writer plaintext refused -> recovery export byte-identical to the pre-R1 files.
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -112,4 +113,39 @@ test('release precheck: PASS when no candidate file drifted on the target; FAIL 
   assert.equal(run().status, 0, 'data-only drift on main is fine');
   fs.writeFileSync(path.join(r, 'scan.mjs'), 'v2 (someone changed it)\n'); git(r, ['commit', '-qam', 'code drift']);
   const f = run(); assert.notEqual(f.status, 0); assert.match(f.stdout, /DRIFT scan\.mjs/);
+});
+
+test('rev8 combined unit: built source-only on a fresh M0 (newer data and Telegram offset kept); verify refuses anything else', (t) => {
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'r1-unit-')); t.after(() => fs.rmSync(d, { recursive: true, force: true }));
+  const r = path.join(d, 'r'); git(d, ['init', '-q', '-b', 'main', 'r']); fs.copyFileSync(path.join(ROOT, 'r1-release-precheck.mjs'), path.join(r, 'r1-release-precheck.mjs'));
+  fs.mkdirSync(path.join(r, 'data')); fs.writeFileSync(path.join(r, 'scan.mjs'), 'v1\n'); fs.writeFileSync(path.join(r, 'data/tg-state.json'), '{"offset":1}'); fs.writeFileSync(path.join(r, 'data/health.json'), '{"old":1}');
+  git(r, ['add', '-A']); git(r, ['commit', '-qm', 'base']);
+  // candidate branch: source changes, plus (as on the real candidate branch) OLD data bytes from the base
+  git(r, ['checkout', '-q', '-b', 'cand']); fs.writeFileSync(path.join(r, 'scan.mjs'), 'v1 + R1\n'); fs.writeFileSync(path.join(r, 'sealed-new.mjs'), 'new\n');
+  git(r, ['add', '-A']); git(r, ['commit', '-qm', 'cand']); const cand = git(r, ['rev-parse', 'HEAD']).trim();
+  // production main moved on: newer data and Telegram offset
+  git(r, ['checkout', '-q', 'main']); fs.writeFileSync(path.join(r, 'data/tg-state.json'), '{"offset":9}'); fs.writeFileSync(path.join(r, 'data/health.json'), '{"new":1}'); git(r, ['commit', '-qam', 'newer data']);
+  const M0 = git(r, ['rev-parse', 'HEAD']).trim();
+  const h = (s) => ({ sha256: crypto.createHash('sha256').update(s).digest('hex'), bytes: Buffer.byteLength(s) });
+  const bind = path.join(d, 'binding.json'); fs.writeFileSync(bind, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1\n'), 'sealed-new.mjs': h('new\n') } }));
+  const refsBefore = git(r, ['show-ref']), statusBefore = git(r, ['status', '--porcelain']);
+  const b = node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, bind]); assert.equal(b.status, 0, b.stdout + b.stderr);
+  const C = /commit ([0-9a-f]{40})/.exec(b.stdout)[1];
+  assert.equal(git(r, ['show-ref']), refsBefore, 'no ref created or moved (nothing pushed)'); assert.equal(git(r, ['status', '--porcelain']), statusBefore, 'working tree untouched');
+  assert.equal(git(r, ['show', C + ':data/tg-state.json']), '{"offset":9}', 'newer Telegram offset kept'); assert.equal(git(r, ['show', C + ':data/health.json']), '{"new":1}', 'newer data kept');
+  assert.equal(git(r, ['show', C + ':scan.mjs']), 'v1 + R1\n'); assert.equal(git(r, ['diff', '--name-only', M0, C]).trim().split('\n').sort().join(','), 'scan.mjs,sealed-new.mjs');
+  const v = (c, file = bind) => node(r, ['r1-release-precheck.mjs', '--verify-unit', M0, c, file]);
+  assert.equal(v(C).status, 0, v(C).stdout);
+  assert.equal(git(r, ['diff', M0, git(r, ['commit-tree', git(r, ['rev-parse', M0 + '^{tree}']).trim(), '-p', C, '-m', 'revert']).trim()]).trim(), '', 'inverse = M0 tree exactly');
+  // the forbidden route: the whole candidate branch merged onto M0 brings the old offset back -> FAIL
+  const wt = path.join(d, 'wt'); git(r, ['worktree', 'add', '-q', wt, M0]); git(wt, ['checkout', '-q', '--detach']); git(wt, ['checkout', '-q', cand, '--', '.']); git(wt, ['commit', '-qam', 'whole branch']);
+  const W = git(wt, ['rev-parse', 'HEAD']).trim(); const fw = v(W); assert.notEqual(fw.status, 0); assert.match(fw.stdout, /outside binding: data\/tg-state\.json/);
+  // wrong parent, wrong bound bytes, and a candidate that differs from the binding are all refused
+  const P = git(r, ['commit-tree', git(r, ['rev-parse', C + '^{tree}']).trim(), '-p', cand, '-m', 'x']).trim(); assert.match(v(P).stdout, /parent is not exactly M0/);
+  const bad = path.join(d, 'bad.json'); fs.writeFileSync(bad, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1 tampered\n'), 'sealed-new.mjs': h('new\n') } }));
+  assert.match(v(C, bad).stdout, /PROBLEM hash: scan\.mjs/);
+  const br = node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, bad]); assert.notEqual(br.status, 0); assert.match(br.stdout, /REFUSED candidate differs from binding: scan\.mjs/);
+  const miss = path.join(d, 'miss.json'); fs.writeFileSync(miss, JSON.stringify({ files: { 'scan.mjs': h('v1 + R1\n'), 'absent.mjs': h('x\n') } }));
+  assert.match(node(r, ['r1-release-precheck.mjs', '--build-unit', M0, cand, miss]).stdout, /REFUSED missing in candidate: absent\.mjs/);
+  assert.equal(node(r, ['r1-release-precheck.mjs', '--verify-unit', M0, C]).status, 2, 'usage error');
 });

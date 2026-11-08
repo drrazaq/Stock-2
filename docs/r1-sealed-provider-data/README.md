@@ -6,6 +6,13 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0e. Rev8 (8 Nov): combined-unit binding
+
+- Codex's review 6719376168 passed rev7, open-check r2 and the composition, and found one release blocker: the 51-file R1 manifest does not bind the 68-path combined unit.
+- Adopted: the external 68-path binding (`docs/r1-combined-binding/` on `claude/mentor-release-handoff`), refreshed STOP pins, and RELEASE.md G1/G4/G6/B4/B5/R-0 for the combined unit.
+- New offline tool: `r1-release-precheck.mjs --build-unit` / `--verify-unit` builds and checks `C` = fresh `M0` + exactly the bound files, so the candidate branch's older data and Telegram offset can never be released. Tested in `test/sealed-release-rehearsal.test.mjs`.
+- Runtime code is unchanged from rev7.
+
 ## 0d. Rev7: Codex's review of `dc11c03a` (PR #1 comment 6719132742)
 
 - **B5b failure wording:** Codex's exact replacement, applied verbatim. A FAIL or missing proof stops with **R-0**, and the evidence is **UNVERIFIED**. The selected input, vector and source binding are diagnosed privately before concluding that a key or backup differs; a missing receipt is not evidence of a mismatch. There is no automatic retry or credential change. Later, a separately reviewed unit may re-verify K1 with a confirmed backup, or, only if the owner separately chooses it, enrol K2. The earlier "the only way forward is then K2" is withdrawn.
