@@ -8,10 +8,10 @@ index 8abcdec54127df9d277a066b54319890663d5430..00000000000000000000000000000000
 -*.sealed -text -diff merge=sealed
 diff --git a/.github/bot-save.sh b/.github/bot-save.sh
 deleted file mode 100644
-index 715a87be101b1d7b5e1f73aad3f1863c46201767..0000000000000000000000000000000000000000
+index 4181938cce4aa9c2d7fac64755fcfcaeb60db9d0..0000000000000000000000000000000000000000
 --- a/.github/bot-save.sh
 +++ /dev/null
-@@ -1,37 +0,0 @@
+@@ -1,39 +0,0 @@
 -#!/usr/bin/env bash
 -# The bot loop's save (bot.yml sources this file; it was inline there). R1 rev3, review only.
 -#  - stages data/, refuses T1 plaintext (sealed_guard), commits;
@@ -41,7 +41,9 @@ index 715a87be101b1d7b5e1f73aad3f1863c46201767..00000000000000000000000000000000
 -    git rebase --abort 2>/dev/null || true; sleep "${BOT_SAVE_SLEEP:-5}"
 -  done
 -  echo "Error: could not save the data folder to the repository (kept in the local commit; retried at the next save)" | tee -a run.log
--  sealed_recovery_push 2>&1 | tee -a run.log
+-  # (rev13) run in THIS shell, not in a pipeline subshell, so SEALED_RECOVERY_LAST/REF/SLOT persist across the run's later saves (a pipe
+-  # lost them: the next save could not see that its earlier state was already kept, or advance its own slot)
+-  local out="${RUNNER_TEMP:-/tmp}/bot-recovery-out-$$"; sealed_recovery_push > "$out" 2>&1; cat "$out" | tee -a run.log; rm -f "$out"
 -  bot_save_warn
 -}
 -bot_recover() {
@@ -83,10 +85,10 @@ index d2f2ad1305633a0352655c218b9641611a776324..9b8bc790ccfdbb58ca2d5174db3dfb0a
 +[ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository"; exit 1; }
 diff --git a/.github/sealed-git.sh b/.github/sealed-git.sh
 deleted file mode 100644
-index 3e700c9e620b0c5ce19a544add429c1245bf3bb2..0000000000000000000000000000000000000000
+index 3e1af9401f8e1070719bae692d72d94f6820d370..0000000000000000000000000000000000000000
 --- a/.github/sealed-git.sh
 +++ /dev/null
-@@ -1,31 +0,0 @@
+@@ -1,77 +0,0 @@
 -#!/usr/bin/env bash
 -# R1 (review only): sourced by every workflow step that commits sealed provider-data files (*.sealed).
 -#  1. registers the merge driver for *.sealed (.gitattributes), so concurrent saves merge records instead of keeping one side;
@@ -101,18 +103,64 @@ index 3e700c9e620b0c5ce19a544add429c1245bf3bb2..00000000000000000000000000000000
 -#  4. sealed_push_guard  runs AFTER pull/rebase, immediately before `git push`, on the exact tree being published (see sealed-guard.mjs --push)
 -sealed_push_guard() { node "$R1_ROOT/sealed-guard.mjs" --push "${1:-origin/main}"; }
 -#  5. sealed_recovery_push  (R1 rev5) when a save could not reach main after its retries, the unpublished local commit(s) are pushed to
--#     a NEW, IMMUTABLE checkpoint ref save-recovery/<workflow>-<run>-<attempt>-<UTC stamp>-<short sha> (never force-updated, never
--#     reused: a consumer can never delete a checkpoint it has not seen). One checkpoint per distinct unpublished state per step.
--#     Same content main would have received, through the same push guard.
+-#     a NEW, IMMUTABLE checkpoint ref save-recovery/<workflow>-<run>-<attempt>-<UTC stamp>-<short sha>, through the same push guard.
+-#     (rev13) BOUNDED by four fixed reservation slots, refs/heads/r1-recovery-slot/{bot,main,shared-0,shared-1} (Codex c4a4fc4f7 design,
+-#     independently reviewed): bot.yml may use only "bot", main.yml only "main", every other writer "shared-0" then "shared-1".
+-#     - Size guard: the unpublished objects (reachable from HEAD, not from origin/main; uncompressed) must be known and <= 32 MiB.
+-#     - Admission: the checkpoint AND its slot are created in ONE atomic push, both leased as absent. An occupied slot rejects the whole
+-#       push (no checkpoint leaks). The slot count, not a listing, is the cap: there is no UNKNOWN bypass.
+-#     - Same-run advance: when this run already holds a slot for an ancestor of HEAD, one atomic push creates the new checkpoint, moves the
+-#       slot (leased on the old tip) and deletes this run's own superseded checkpoint (leased on the old tip). The new tip contains every
+-#       old commit, so nothing is lost and capacity does not grow.
+-#     - A failed push is reconciled read-only (ls-remote). Created as intended -> success; clearly not created -> next allowed slot;
+-#       anything else, or a failed listing -> UNKNOWN: stop, never try another slot (no double admission).
+-#     - No slot free or the size limit exceeded -> nothing is pushed or evicted; the commit stays on this runner (loss risk L7).
+-SEALED_RECOVERY_MAX_BYTES=$((32 * 1024 * 1024))
+-sealed_recovery_role() { case "${GITHUB_WORKFLOW_REF:-}" in */.github/workflows/bot.yml@*) echo bot ;; */.github/workflows/main.yml@*) echo main ;; *) echo shared ;; esac; }
+-sealed_recovery_slots() { case "$1" in bot) echo bot ;; main) echo main ;; *) echo "shared-0 shared-1" ;; esac; }
+-sealed_recovery_max() { local m=$SEALED_RECOVERY_MAX_BYTES; case "${SEALED_RECOVERY_TEST_MAX:-}" in ''|*[!0-9]*) ;; *) [ "$SEALED_RECOVERY_TEST_MAX" -lt "$m" ] && m=$SEALED_RECOVERY_TEST_MAX ;; esac; echo "$m"; }   # tests may only LOWER it
+-sealed_recovery_size() { ( set -o pipefail; git rev-list --objects origin/main..HEAD | cut -d' ' -f1 | git cat-file --batch-check='%(objectsize)' | awk '$1 !~ /^[0-9]+$/ { bad = 1 } { s += $1 } END { if (bad) exit 1; print s + 0 }' ); }
+-# remote value of a ref: prints the sha, "absent", or fails (UNKNOWN)
+-sealed_remote_ref() { local out; out=$(git ls-remote origin "refs/heads/$1") || return 1; [ -n "$out" ] && echo "${out%%[[:space:]]*}" || echo absent; }
 -sealed_recovery_push() {
 -  [ -n "$(git rev-list origin/main..HEAD 2>/dev/null)" ] || return 0
 -  git rebase --abort 2>/dev/null || true
 -  local head; head=$(git rev-parse HEAD)
 -  [ "${SEALED_RECOVERY_LAST:-}" = "$head" ] && { echo "save recovery: this unpublished state is already kept on ${SEALED_RECOVERY_REF:-a recovery branch}"; return 0; }
--  local ref; ref="save-recovery/$(printf '%s' "${GITHUB_WORKFLOW:-local}" | tr -c 'A-Za-z0-9._-' '-')-${GITHUB_RUN_ID:-$$}-${GITHUB_RUN_ATTEMPT:-1}-$(date -u +%Y%m%dT%H%M%S%NZ)-${head:0:12}"
 -  if ! sealed_push_guard; then echo "Error: save recovery refused by the sealed guard: the unpublished commit exists only on this runner"; return 1; fi
--  if git push -q origin "HEAD:refs/heads/$ref"; then SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; echo "save recovery: the unpublished commit is kept on branch $ref (merged into main by the bot's next recovery pass)"; return 0; fi
--  echo "Error: save recovery push failed too: the unpublished commit exists only on this runner"; return 1
+-  local size max; max=$(sealed_recovery_max)
+-  if ! size=$(sealed_recovery_size) || [ -z "$size" ]; then echo "Error: save recovery size UNKNOWN: no recovery branch pushed; the unpublished commit exists only on this runner"; return 1; fi
+-  if [ "$size" -gt "$max" ]; then echo "Error: save recovery refused: the unpublished data is $size bytes (limit $max); the unpublished commit exists only on this runner"; return 1; fi
+-  local ref; ref="save-recovery/$(printf '%s' "${GITHUB_WORKFLOW:-local}" | tr -c 'A-Za-z0-9._-' '-')-${GITHUB_RUN_ID:-$$}-${GITHUB_RUN_ATTEMPT:-1}-$(date -u +%Y%m%dT%H%M%S%NZ)-${head:0:12}"
+-  local slot r s o
+-  # (a) same-run advance of this run's own slot
+-  if [ -n "${SEALED_RECOVERY_SLOT:-}" ] && [ -n "${SEALED_RECOVERY_LAST:-}" ] && git merge-base --is-ancestor "$SEALED_RECOVERY_LAST" "$head" 2>/dev/null; then
+-    slot="r1-recovery-slot/$SEALED_RECOVERY_SLOT"
+-    if git push -q --atomic --force-with-lease="refs/heads/$slot:$SEALED_RECOVERY_LAST" --force-with-lease="refs/heads/$SEALED_RECOVERY_REF:$SEALED_RECOVERY_LAST" --force-with-lease="refs/heads/$ref:" origin "$head:refs/heads/$ref" "$head:refs/heads/$slot" ":refs/heads/$SEALED_RECOVERY_REF" 2>/dev/null; then
+-      echo "save recovery: the unpublished commit is kept on branch $ref (slot $SEALED_RECOVERY_SLOT, replacing this run's earlier $SEALED_RECOVERY_REF; merged into main by the bot's next recovery pass)"
+-      SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; return 0
+-    fi
+-    r=$(sealed_remote_ref "$ref") && s=$(sealed_remote_ref "$slot") && o=$(sealed_remote_ref "$SEALED_RECOVERY_REF") || { echo "Error: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner"; return 1; }
+-    if [ "$r" = "$head" ] && [ "$s" = "$head" ] && [ "$o" = absent ]; then echo "save recovery: the unpublished commit is kept on branch $ref (slot $SEALED_RECOVERY_SLOT; confirmed after an unclear reply)"; SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; return 0; fi
+-    if [ "$r" = absent ] && [ "$s" = "$SEALED_RECOVERY_LAST" ] && [ "$o" = "$SEALED_RECOVERY_LAST" ]; then echo "Error: save recovery could not advance slot $SEALED_RECOVERY_SLOT; the earlier state stays on $SEALED_RECOVERY_REF and the newer commit exists only on this runner"; return 1; fi
+-    if [ "$r" != absent ] || [ "$s" != absent ] || [ "$o" != absent ]; then echo "Error: save recovery state UNKNOWN (slot $SEALED_RECOVERY_SLOT changed unexpectedly); no further attempt; the newer commit exists only on this runner"; return 1; fi
+-    # the recovery pass merged and released the earlier pair meanwhile: claim a slot as new (below)
+-    SEALED_RECOVERY_SLOT=; SEALED_RECOVERY_LAST=; SEALED_RECOVERY_REF=
+-  fi
+-  # (b) claim a free slot of this role: checkpoint and slot together, both leased as absent
+-  for s in $(sealed_recovery_slots "$(sealed_recovery_role)"); do
+-    slot="r1-recovery-slot/$s"
+-    if git push -q --atomic --force-with-lease="refs/heads/$slot:" --force-with-lease="refs/heads/$ref:" origin "$head:refs/heads/$ref" "$head:refs/heads/$slot" 2>/dev/null; then
+-      SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; SEALED_RECOVERY_SLOT=$s
+-      echo "save recovery: the unpublished commit is kept on branch $ref (slot $s; merged into main by the bot's next recovery pass)"; return 0
+-    fi
+-    r=$(sealed_remote_ref "$ref") && o=$(sealed_remote_ref "$slot") || { echo "Error: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner"; return 1; }
+-    if [ "$r" = "$head" ] && [ "$o" = "$head" ]; then SEALED_RECOVERY_LAST=$head; SEALED_RECOVERY_REF=$ref; SEALED_RECOVERY_SLOT=$s; echo "save recovery: the unpublished commit is kept on branch $ref (slot $s; confirmed after an unclear reply)"; return 0; fi
+-    if [ "$r" != absent ]; then echo "Error: save recovery state UNKNOWN ($ref exists but slot $s does not hold it); no further attempt; the unpublished commit may exist only on this runner"; return 1; fi
+-    if [ "$o" = absent ]; then echo "Error: save recovery push failed too: the unpublished commit exists only on this runner (slot $s was free; the push itself was refused)"; return 1; fi
+-    echo "save recovery: slot $s is occupied by an earlier unmerged save"
+-  done
+-  echo "Error: SAVE RECOVERY FULL: every recovery slot for this workflow holds an earlier unmerged save; nothing was evicted; the unpublished commit exists only on this runner"; return 1
 -}
 -#  6. sealed_recover  (R1 rev5, run by the bot) = sealed-recover.mjs: data-only provenance, per-file lineage/union/keyed rules (a stale
 -#     owner state or Telegram offset is never replayed), atomic push without force, compare-and-delete on the merged tip, and exit 2 =
@@ -723,24 +771,24 @@ index 93d5bc2aca08ee0f99be5144f09cd2327d4e156c..d2b04bed874820b4adcad78970b5bae7
  async function frame(taxonomy, tag, unit, period) {
 diff --git a/docs/r1-sealed-provider-data/MANIFEST.md b/docs/r1-sealed-provider-data/MANIFEST.md
 deleted file mode 100644
-index d01282371e4dd2cbd6024763bf6c4c521fa1ceec..0000000000000000000000000000000000000000
+index e31110d7b3fb9adc9059e2b58dd1910883c3ee8d..0000000000000000000000000000000000000000
 --- a/docs/r1-sealed-provider-data/MANIFEST.md
 +++ /dev/null
 @@ -1,84 +0,0 @@
--# R1 combined-unit candidate manifest, rev12 (review only; not deployed)
+-# R1 combined-unit candidate manifest, rev13 (review only; not deployed)
 -
--- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900).
+-- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461).
 -- **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
 -- **Binding:** the authoritative 68-path list with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
 -- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 67 files.
--- `git diff --full-index b0d76987 -- <allowlist>` sha256: `52688408b27eebe01116aa8663b57485288164f63f13c5f2d12339d85ecf9111`
+-- `git diff --full-index b0d76987 -- <allowlist>` sha256: `1a363fe0531491257b754ae13a6c1bae85206d62a510df2d90323efe5e836b81`
 -
 -| Status | File | sha256 (candidate) |
 -|---|---|---|
 -| A | `.gitattributes` | `873f59d9355f4ba27446eb549847336e6c53be85206f28de248d1dea2a71bf9d` |
--| A | `.github/bot-save.sh` | `b2735eb55173ab31fde708fb40b501be9f19665405a1eafb5558296e74a4f721` |
+-| A | `.github/bot-save.sh` | `46f54da729e5aa0060329af8534d60c813871a69a365ca06bfb71d53f53a2211` |
 -| M | `.github/save-data.sh` | `2f14d37adeeaa3c4624f45c1f29442347e5a897e78132bd82fdc6ad37766ff3a` |
--| A | `.github/sealed-git.sh` | `f90f2954d24ac83fa239860e14b2b545b442f14259fad275fc4d12b9c7fe137f` |
+-| A | `.github/sealed-git.sh` | `755c41916d85ea5b0b24c13e8f176dc08aee98515d4b0e547f56e88b57b7cb21` |
 -| M | `.github/workflows/Smart-money.yml` | `d395f27f65b666778a310bd8ffbce2012150e9f78c0367ce7762a06a655335ab` |
 -| M | `.github/workflows/bot.yml` | `2e4cb467ca233f6ab2a79926b1ca69584dc52f03d428d0f7dd12b3ebd608a89d` |
 -| M | `.github/workflows/ignition.yml` | `e17509c5c42cb28cde4a856e1f95cb8f2a4d97e4ef2f1ef2f70339d6fb38938a` |
@@ -754,8 +802,8 @@ index d01282371e4dd2cbd6024763bf6c4c521fa1ceec..00000000000000000000000000000000
 -| A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 -| M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 -| M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
--| A | `docs/r1-sealed-provider-data/README.md` | `e31e611af2b0aabead1f55172a7a72acb6a2cba8c9bbdc699019df1fb5e4d3ff` |
--| A | `docs/r1-sealed-provider-data/RELEASE.md` | `607d4001dae04af237c134b7a61e910b352da3c1741e90929758571f857ab7d6` |
+-| A | `docs/r1-sealed-provider-data/README.md` | `52a9454624cc66ec761c3db84a45f5cb9b3e2588687a699ab4db5fc34eb75bb6` |
+-| A | `docs/r1-sealed-provider-data/RELEASE.md` | `d318b02b5e0f74973289c43fcaae6fec7cbdbe81147acdc4397193abcc3764aa` |
 -| A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 -| A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 -| A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
@@ -772,7 +820,7 @@ index d01282371e4dd2cbd6024763bf6c4c521fa1ceec..00000000000000000000000000000000
 -| A | `sealed-guard.mjs` | `b2dc4384e680e8f723951441ff5072487fc5b3a41f13aba7c507463e4e1d7fae` |
 -| A | `sealed-merge.mjs` | `4182335911f74cf1ef4adf90da45b9dd071ab344e9e659e1506cf6a2c0fbb3a0` |
 -| A | `sealed-migrate.mjs` | `7b24fa34d2b63e4ff1c40496f551b3a4a340e87ac997d0e1390f959992606ecb` |
--| A | `sealed-recover.mjs` | `ed2bfe956349693bbbf1dab09fa65dad61f0b741deb9516d682a60f9e24c034d` |
+-| A | `sealed-recover.mjs` | `fc2b8625209e9a0ef6c4b604abae38cf4f25eee29345f6f77f8aaa6ac9fd6faf` |
 -| A | `sealed-store.mjs` | `093665cc77014f34e15365bff378894062117ae322e8696bb58e2d043086cc31` |
 -| M | `shadow-outcomes.mjs` | `1dcf0a28d9511569cce0d493fc6f00debdc87bd40d966627e478467b10340bdc` |
 -| M | `smart-money.mjs` | `3b3a937fbbc47aeafd97d5bf4ffaa53ba224d6c24490c5316424afae8b795bcd` |
@@ -787,10 +835,10 @@ index d01282371e4dd2cbd6024763bf6c4c521fa1ceec..00000000000000000000000000000000
 -| A | `test/sealed-git.test.mjs` | `ef3692008daedc85a4a741862d0f428bc76f4ce3207adb9f80c639c033ecb0e3` |
 -| A | `test/sealed-migrate.test.mjs` | `ba4dff2cf6bfb25900758ef7d3ea0faab63aed04226a33b012eabc9e64cf9fb9` |
 -| A | `test/sealed-readers.test.mjs` | `83ddbf15fdf1875adf5fa4612518cede65fced6ca368445c33acc8779139fcfc` |
--| A | `test/sealed-recovery.test.mjs` | `5b8599f3d18fc7deb3d7a76a0e5c5a7c27c813a19c737b53163b2c038094321b` |
+-| A | `test/sealed-recovery.test.mjs` | `4f22acf836b59c92fa90f1e3a74fbd575f84751dd6c0420a9f9213092ebe2971` |
 -| A | `test/sealed-release-rehearsal.test.mjs` | `205cc92cf35171056376974b30b498dfc814a8cefc9060c3129e99543ce5edb4` |
 -| A | `test/sealed-store.test.mjs` | `eef5c043965b0417c3c03ea90df5379672989328c2393aac21c579c07faa84e9` |
--| A | `test/sealed-wiring.test.mjs` | `c36e1d80e249c3203fd3d9ade02346d637aecd62cd8d51365a953fda4eb4ccb9` |
+-| A | `test/sealed-wiring.test.mjs` | `0a37ad53e2c17ce99f6c06644c831d844c6e60972c07823a436731875e86d601` |
 -| M | `test/sec-request-runtime.test.mjs` | `0de8866ec04bda4688a09612ac73c42d9c335a9eaada16f07a73068ce73f86fb` |
 -| A | `test/watcher-cadence-review.test.mjs` | `3dcc24b6a5504c1dd6f2410542f30bc1f6d7e560e315fa4351e3727fc69e5af8` |
 -| M | `test/watcher-guard.test.mjs` | `aee017d1e57126865562dd199c2e2fa7812a789ad5e3f63c279fcd58700efee6` |
@@ -813,10 +861,10 @@ index d01282371e4dd2cbd6024763bf6c4c521fa1ceec..00000000000000000000000000000000
 -- **Gated actual-watcher scenarios** (`INCIDENT_WATCHER_SRC`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.
 diff --git a/docs/r1-sealed-provider-data/README.md b/docs/r1-sealed-provider-data/README.md
 deleted file mode 100644
-index 8ae15f79a57a995eb8002d87af1bffaf9bc0bb06..0000000000000000000000000000000000000000
+index c11effcba64c48fadb6e887589af04f485fba0ef..0000000000000000000000000000000000000000
 --- a/docs/r1-sealed-provider-data/README.md
 +++ /dev/null
-@@ -1,325 +0,0 @@
+@@ -1,339 +0,0 @@
 -# R1: stop publishing provider market data in the public `Stock-2` repository (complete candidate, review only)
 -
 -**Prepared by Claude on 8 Nov 2026 at the owner's request. Not deployed.**
@@ -824,6 +872,20 @@ index 8ae15f79a57a995eb8002d87af1bffaf9bc0bb06..00000000000000000000000000000000
 -- **Base:** `origin/main` `b0d76987`. **Branch:** `claude/r1-sealed-provider-data`. The candidate commit and the exact file allowlist are in `MANIFEST.md`.
 -- **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 -- **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
+-
+-## 0j. Rev13 (8 Nov): bounded save recovery (four atomic reservation slots)
+-
+-- **Origin:** Codex rejected my 24-checkpoint proposal (6721627980: the UNKNOWN bypass was unbounded, and logical size is not physical storage). It proposed four fixed slots with atomic admission (`c4a4fc4f7`). I reviewed that design, adopted it, and implemented it here.
+-- **Implementation** (`.github/sealed-git.sh` `sealed_recovery_push`; `sealed-recover.mjs`):
+-  - **Slots:** `r1-recovery-slot/{bot,main,shared-0,shared-1}`. The role comes from `GITHUB_WORKFLOW_REF` (`bot.yml`, `main.yml`, everything else shared).
+-  - **Size guard:** the unpublished objects (reachable from HEAD, not from `origin/main`, uncompressed) must be known and at most 32 MiB. Tests may only lower this limit.
+-  - **Admission:** checkpoint and slot are created in one `--atomic` push, both leased as absent. An occupied slot rejects the whole push. There is no listing-based or UNKNOWN bypass.
+-  - **Same-run advance (my addition):** if this run holds a slot for an ancestor of HEAD, one atomic push creates the new checkpoint, moves the slot (leased on the old tip) and deletes this run's own superseded checkpoint (leased on the old tip). No content is lost and capacity does not grow.
+-  - **Unclear push reply:** reconciled read-only with `ls-remote`. Created as intended → success. Clearly not created → next allowed slot. Anything else, or a failed read-back → UNKNOWN: stop, never another slot.
+-  - **Cleanup:** a merged checkpoint and its slot are deleted together in one atomic push, both leased; a raced tip keeps both. A slot without a checkpoint is reported and kept.
+-- **Bug fixed on the way:** `bot-save.sh` ran `sealed_recovery_push` in a pipeline subshell, so its kept-state variables never persisted between the run's saves. It now runs in the bot's own shell.
+-- **Tests:** `test/sealed-recovery.test.mjs` (6 new cases, all failing on rev12's code) and `test/sealed-wiring.test.mjs`.
+-- **Limits:** they are logical admission limits, not physical repository-size or fetch caps. L7 is in RELEASE.md §E.
 -
 -## 0i. Rev12 (8 Nov): current price versus a timed stop observation
 -
@@ -1144,10 +1206,10 @@ index 8ae15f79a57a995eb8002d87af1bffaf9bc0bb06..00000000000000000000000000000000
 -- Pre-existing, unchanged: `health.mjs` throws without `data/health.json`.
 diff --git a/docs/r1-sealed-provider-data/RELEASE.md b/docs/r1-sealed-provider-data/RELEASE.md
 deleted file mode 100644
-index db15ff8f863a36c8e676b0b424679b6f6b9760da..0000000000000000000000000000000000000000
+index a3e9ad9ddd25b6bfd4c51f567d0e70751f9c1438..0000000000000000000000000000000000000000
 --- a/docs/r1-sealed-provider-data/RELEASE.md
 +++ /dev/null
-@@ -1,92 +0,0 @@
+@@ -1,94 +0,0 @@
 -# R1 release, migration and recovery package (review only; NOT approved, NOT executed)
 -
 -This is the executable plan for deploying R1. Nothing here has been run against production.
@@ -1213,7 +1275,7 @@ index db15ff8f863a36c8e676b0b424679b6f6b9760da..00000000000000000000000000000000
 -
 -| Situation | Procedure |
 -|---|---|
--| A save could not reach main | **Automatic, data-only (rev5).**<br>1. The saving job pushes an **immutable** checkpoint `save-recovery/<workflow>-<run>-<attempt>-<UTC>-<sha>`, through the same push guard. It is never force-updated or reused.<br>2. The bot (`sealed-recover.mjs`, every 5-minute check) merges a checkpoint into main **only if** every commit touches `data/` paths only, and every file either still holds an older state of that same checkpoint lineage on main, or merges append-only (ledgers) or by key (options record).<br>3. It pushes without force, then deletes the checkpoint by **compare-and-delete on the merged tip**.<br>4. **Anything else is refused and KEPT**: a code or workflow path, or a stale owner state or Telegram offset (main changed it since). Exit 1, and the owner is warned once. A failed listing is **UNKNOWN** (exit 2), also with a warning.<br>**A kept checkpoint is resolved by a person:** inspect the branch diff (`git diff main...<branch> -- data/`); never merge it wholesale. Re-enter genuinely missing owner records with the bot commands, then delete the branch. |
+-| A save could not reach main | **Automatic, data-only (rev5), bounded (rev13).**<br>1. The saving job pushes an **immutable** checkpoint `save-recovery/<workflow>-<run>-<attempt>-<UTC>-<sha>`, through the same push guard. It is never force-updated or reused.<br>**Rev13 bound:**<br>- **Four reservation slots** `r1-recovery-slot/{bot,main,shared-0,shared-1}`: `bot.yml` uses only `bot`, `main.yml` only `main`, and the other 5 writers `shared-0`/`shared-1`. A checkpoint is created only together with a free slot, in one atomic push, both leased as absent.<br>- **Size:** the unpublished objects must be known and at most 32 MiB.<br>- **One run's newer state** atomically replaces its own earlier checkpoint in the same slot.<br>- **Full, oversized or UNKNOWN:** nothing is pushed or evicted, and the save is lost if the runner ends (L7).<br>2. The bot (`sealed-recover.mjs`, every 5-minute check) merges a checkpoint into main **only if** every commit touches `data/` paths only, and every file either still holds an older state of that same checkpoint lineage on main, or merges append-only (ledgers) or by key (options record).<br>3. It pushes without force, then deletes the checkpoint by **compare-and-delete on the merged tip**. When a slot holds that tip, checkpoint and slot are deleted together in one atomic push, both leased; otherwise both are kept. A slot without a checkpoint is reported and kept for a person.<br>4. **Anything else is refused and KEPT**: a code or workflow path, or a stale owner state or Telegram offset (main changed it since). Exit 1, and the owner is warned once. A failed listing is **UNKNOWN** (exit 2), also with a warning.<br>**A kept checkpoint is resolved by a person:** inspect the branch diff (`git diff main...<branch> -- data/`); never merge it wholesale. Re-enter genuinely missing owner records with the bot commands, then delete the branch. |
 -| Data needed outside the repository (audit, provider question, move to private storage) | `node sealed-migrate.mjs --export-to <new empty folder outside the checkout>`. Needs the key; refuses folders inside the checkout, symlinks and non-empty folders. |
 -| Key lost | The sealed files cannot be recovered. **Prevention is G3.** History before the migration still holds the old plaintext (public); data written after the migration is lost. |
 -| Key compromised | The sealed files must be considered readable by whoever holds the key. Rotating needs a reviewed re-seal (decrypt with the old key, seal with the new) **and** an owner key action. Not built; not authorized now. |
@@ -1230,6 +1292,8 @@ index db15ff8f863a36c8e676b0b424679b6f6b9760da..00000000000000000000000000000000
 -| **L4** | **A guard refusal** | a save would publish T1 plaintext | the save is refused, and so is the recovery push | that save's **other** changes (for example a Telegram offset) wait locally and are not published until the plaintext is removed. A design choice: no publication beats a leak. |
 -| **L5** | **Sealed-file conflicts outside the options record** | a `.gz` changed on both sides, or no key at merge time | conflict → retry → recovery branch | pending on the recovery branch until a later merge succeeds |
 -| **L6** | **Nightly scan, watcher and labs** | the same as L1 and L2 for their own runs | recovery branch on final failure (all save paths) | as L1 and L2. Before rev4 the watcher's whole day of ledgers was lost in this case; Smart-money also failed silently (now it fails loudly). |
+-
+-| **L7** | **Recovery storage full** (rev13) | main refuses the save **and** this writer's recovery slot(s) already hold earlier unmerged saves (bot and main: 1 slot each; the other 5 writers share 2), or the unpublished data is over 32 MiB or of unknown size | nothing is evicted; this run's own newer state still replaces its own checkpoint; the bot's next recovery pass frees a slot once it merges; SAVE NOT CONFIRMED is sent | the newer save exists only on the runner and is lost when the runner ends, as in L2. The owner must accept this risk; the bot can hold only one pending recovered state at a time. |
 -
 -"Recorded" in a bot reply means recorded in that run. It is durable once a later save publishes it to main or to a recovery branch. Making the reply itself wait for a durable push would remove L1 for owner commands; that is a larger bot change and is **not** in R1.
 -
@@ -2659,10 +2723,10 @@ index 834e991273868aa4c13c7b4ecaabe1f963caabc3..00000000000000000000000000000000
 -}
 diff --git a/sealed-recover.mjs b/sealed-recover.mjs
 deleted file mode 100644
-index 2cb3875e6def813879a2d6d03557e35ad747588e..0000000000000000000000000000000000000000
+index cf0b0895a6807614b749387aba909b12796b6777..0000000000000000000000000000000000000000
 --- a/sealed-recover.mjs
 +++ /dev/null
-@@ -1,126 +0,0 @@
+@@ -1,136 +0,0 @@
 -#!/usr/bin/env node
 -// R1 rev5 SAVE RECOVERY CONSUMER (review only). Replaces rev4's whole-commit `cherry-pick -X theirs` (Codex review of 292557c2: it
 -// rewound the Telegram offset 9->2, replaced newer positions with stale ones, published a stale code file, deleted a newer checkpoint
@@ -2684,6 +2748,9 @@ index 2cb3875e6def813879a2d6d03557e35ad747588e..00000000000000000000000000000000
 -//  3. the result is committed on top of main, the push guard checks it, it is pushed WITHOUT force (a moved main -> retried next pass);
 -//  4. the ref is deleted only by COMPARE-AND-DELETE on the exact tip that was merged (--force-with-lease=<ref>:<tip>); a ref that a
 -//     producer advanced meanwhile is kept and merged on the next pass. Producers create immutable refs (sealed_recovery_push).
+-//     (rev13) When a reservation slot refs/heads/r1-recovery-slot/<s> holds that exact tip, the checkpoint AND its slot are deleted in ONE
+-//     atomic push, both leased on the tip, only after this pass merged it into main (or main already held it). A raced/new tip on either
+-//     ref makes the whole deletion fail and keeps both. A slot whose tip has no checkpoint is reported and KEPT (a person resolves it).
 -// Exit: 0 = nothing pending or all merged; 1 = at least one ref kept (refused/conflict/raced); 2 = UNKNOWN (fetch/list failed).
 -// Output names refs, paths and reasons only, never content.
 -import fs from 'node:fs';
@@ -2694,6 +2761,7 @@ index 2cb3875e6def813879a2d6d03557e35ad747588e..00000000000000000000000000000000
 -import { unionLines, mergeKeyed, KEYED_STATE } from './sealed-merge.mjs';
 -
 -const PREFIX = 'refs/remotes/origin/save-recovery/';
+-const SLOTS = 'refs/remotes/origin/r1-recovery-slot/';
 -export const ALLOWED = (p) => /^data\/[^\0]+$/.test(p) && !/\.sealed\.tmp-/.test(p);
 -const isUnion = (p) => /\.jsonl(\.sealed)?$/.test(p);
 -const isKeyed = (p) => p.endsWith(SEALED_EXT) && KEYED_STATE.has(logicalId(p));
@@ -2702,15 +2770,21 @@ index 2cb3875e6def813879a2d6d03557e35ad747588e..00000000000000000000000000000000
 -  const g = (args, opts = {}) => execFileSync('git', args, { cwd, maxBuffer: 1 << 28, stdio: ['ignore', 'pipe', 'pipe'], ...opts });
 -  const gs = (args) => g(args).toString().trim();
 -  const ok = (args) => spawnSync('git', args, { cwd, stdio: 'ignore' }).status === 0;
--  try { g(['fetch', '-q', 'origin', '+refs/heads/main:refs/remotes/origin/main', '+refs/heads/save-recovery/*:refs/remotes/origin/save-recovery/*', '--prune']); }
+-  try { g(['fetch', '-q', 'origin', '+refs/heads/main:refs/remotes/origin/main', '+refs/heads/save-recovery/*:refs/remotes/origin/save-recovery/*', '+refs/heads/r1-recovery-slot/*:refs/remotes/origin/r1-recovery-slot/*', '--prune']); }
 -  catch { log('UNKNOWN: save-recovery listing/fetch failed; pending recovery state is not known (nothing assumed merged)'); return 2; }
 -  const refs = gs(['for-each-ref', '--sort=refname', '--format=%(refname)', PREFIX]).split('\n').filter(Boolean);
+-  const slots = new Map(gs(['for-each-ref', '--format=%(objectname) %(refname)', SLOTS]).split('\n').filter(Boolean).map((l) => { const [sha, r] = l.split(' '); return [r.slice('refs/remotes/origin/'.length), sha]; }));
+-  const tips = new Set(refs.map((r) => gs(['rev-parse', r])));
 -  let rc = 0;
+-  for (const [slot, sha] of slots) if (!tips.has(sha)) { log('save recovery: ' + slot + ' holds ' + sha.slice(0, 12) + ' but no save-recovery branch has that tip; slot KEPT for a person to resolve'); rc = 1; }
 -  for (const full of refs) {
 -    const name = full.slice('refs/remotes/origin/'.length), tip = gs(['rev-parse', full]);
 -    const r = mergeOne({ g, gs, ok, cwd, key, guard, name, tip, log });
 -    if (r === 'merged' || r === 'empty') {
--      if (ok(['push', '-q', '--force-with-lease=refs/heads/' + name + ':' + tip, 'origin', ':refs/heads/' + name])) log('save recovery: ' + name + (r === 'merged' ? ' merged into main' : ' already contained in main') + '; branch deleted at ' + tip.slice(0, 12));
+-      const slot = [...slots].find(([, sha]) => sha === tip)?.[0];
+-      const del = slot ? ['push', '-q', '--atomic', '--force-with-lease=refs/heads/' + name + ':' + tip, '--force-with-lease=refs/heads/' + slot + ':' + tip, 'origin', ':refs/heads/' + name, ':refs/heads/' + slot]
+-        : ['push', '-q', '--force-with-lease=refs/heads/' + name + ':' + tip, 'origin', ':refs/heads/' + name];
+-      if (ok(del)) { if (slot) slots.delete(slot); log('save recovery: ' + name + (r === 'merged' ? ' merged into main' : ' already contained in main') + '; branch deleted at ' + tip.slice(0, 12) + (slot ? ' (' + slot + ' released)' : '')); }
 -      else { log('save recovery: ' + name + ' advanced or could not be deleted after merging ' + tip.slice(0, 12) + '; KEPT for the next pass'); rc = Math.max(rc, 1); }
 -    } else rc = Math.max(rc, 1);
 -    try { g(['fetch', '-q', 'origin', '+refs/heads/main:refs/remotes/origin/main']); } catch { log('UNKNOWN: main could not be re-read after ' + name); return 2; }
@@ -4394,10 +4468,10 @@ index 25eaf773a8b03004127a1e8263736e88806e1cb4..00000000000000000000000000000000
 -test('all requests stayed on loopback', () => { assert.deepEqual(blocked, []); server.close(); });
 diff --git a/test/sealed-recovery.test.mjs b/test/sealed-recovery.test.mjs
 deleted file mode 100644
-index 28bc987835b260190e19f78b2ff677c09c10c8f6..0000000000000000000000000000000000000000
+index e5a7e86c099715bb1b5b3e0e858498a59e95c17d..0000000000000000000000000000000000000000
 --- a/test/sealed-recovery.test.mjs
 +++ /dev/null
-@@ -1,210 +0,0 @@
+@@ -1,291 +0,0 @@
 -// R1 rev4: save recovery (a save that cannot reach main is pushed to a save-recovery/* branch and merged back by the bot).
 -// Synthetic only: throw-away local repositories (a pre-receive hook plays "main refuses pushes"), invented values, no network.
 -import test from 'node:test';
@@ -4607,6 +4681,87 @@ index 28bc987835b260190e19f78b2ff677c09c10c8f6..00000000000000000000000000000000
 -  assert.match(r.stdout, /a-newer merged into main/); assert.match(r.stdout, /b-older already contained in main/); assert.match(r.stdout, /rc=0/);
 -  assert.equal(fs.readFileSync(path.join(w.clone('c'), 'data/tg-state.json'), 'utf8'), '{"offset":3}');
 -  assert.ok(!w.remoteRefs().some((x) => /save-recovery\//.test(x)));
+-});
+-
+-// ---- rev13: bounded recovery slots (Codex c4a4fc4f7 design, reviewed): 4 fixed reservation refs, atomic admission, no UNKNOWN bypass ----
+-const BOT_REF = { ...ENV, GITHUB_WORKFLOW: 'Telegram bot', GITHUB_RUN_ID: '901', GITHUB_WORKFLOW_REF: 'drrazaq/Stock-2/.github/workflows/bot.yml@refs/heads/main' };
+-const slotRefs = (w) => w.remoteRefs().filter((x) => x.startsWith('refs/heads/r1-recovery-slot/'));
+-const cpRefs = (w) => w.remoteRefs().filter((x) => x.startsWith('refs/heads/save-recovery/'));
+-const remoteSha = (w, ref) => git(w.d, ['--git-dir=origin.git', 'rev-parse', ref]).trim();
+-
+-test('rev13: the bot has ONE slot; a second bot run with a different unpublished state finds it full and evicts nothing', (t) => {
+-  const w = world(t); w.hook(REFUSE_MAIN);
+-  const b1 = w.clone('b1'); fs.writeFileSync(path.join(b1, 'data/tg-state.json'), '{"offset":2}');
+-  const s1 = sh(b1, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save; cat run.log', BOT_REF);
+-  assert.match(s1.stdout, /kept on branch save-recovery\/Telegram-bot-901-1-\S+ \(slot bot;/);
+-  assert.deepEqual(slotRefs(w), ['refs/heads/r1-recovery-slot/bot']); assert.equal(cpRefs(w).length, 1);
+-  assert.equal(remoteSha(w, 'refs/heads/r1-recovery-slot/bot'), remoteSha(w, cpRefs(w)[0]), 'the slot holds the checkpoint tip');
+-  const b2 = w.clone('b2'); fs.writeFileSync(path.join(b2, 'data/tg-state.json'), '{"offset":5}');
+-  const s2 = sh(b2, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save; cat run.log', { ...BOT_REF, GITHUB_RUN_ID: '902' });
+-  assert.match(s2.stdout, /slot bot is occupied by an earlier unmerged save/); assert.match(s2.stdout, /SAVE RECOVERY FULL[^\n]*nothing was evicted[^\n]*exists only on this runner/);
+-  assert.equal(cpRefs(w).length, 1, 'no extra checkpoint'); assert.equal(slotRefs(w).length, 1);
+-  assert.equal(git(b2, ['rev-list', '--count', 'origin/main..HEAD']).trim(), '1', 'still kept locally for later saves in that run');
+-});
+-
+-test('rev13: one bot run\'s later state ADVANCES its own slot atomically (old checkpoint replaced, never more than one); recovery releases the pair', (t) => {
+-  const w = world(t), a = seedOwner(w), bot = w.clone('bot'); w.hook(REFUSE_MAIN);
+-  const s = sh(bot, `source .github/bot-save.sh && echo '{"offset":2}' > data/tg-state.json && BOT_SAVE_SLEEP=0 save && save && echo '{"offset":3}' > data/tg-state.json && save; cat run.log`, BOT_REF);
+-  assert.match(s.stdout, /slot bot; merged/); assert.match(s.stdout, /this unpublished state is already kept on save-recovery\//, 'the same state is not pushed twice (state survives between saves)');
+-  assert.match(s.stdout, /\(slot bot, replacing this run's earlier save-recovery\//);
+-  assert.equal(cpRefs(w).length, 1, 'exactly one checkpoint'); assert.equal(remoteSha(w, 'refs/heads/r1-recovery-slot/bot'), remoteSha(w, cpRefs(w)[0]));
+-  assert.equal(git(w.d, ['--git-dir=origin.git', 'show', remoteSha(w, cpRefs(w)[0]) + ':data/tg-state.json']), '{"offset":3}\n');
+-  w.hook(null);
+-  const r = recover(w.clone('next')); assert.match(r.stdout, /merged into main; branch deleted at [0-9a-f]{12} \(r1-recovery-slot\/bot released\)/); assert.match(r.stdout, /rc=0/);
+-  assert.equal(fs.readFileSync(path.join(w.clone('c'), 'data/tg-state.json'), 'utf8'), '{"offset":3}\n');
+-  assert.deepEqual(cpRefs(w), []); assert.deepEqual(slotRefs(w), [], 'slot released only together with its merged checkpoint');
+-});
+-
+-test('rev13: shared writers get at most two slots; a third is refused with nothing created; size over the limit is refused before any push', (t) => {
+-  const w = world(t); w.hook(REFUSE_MAIN);
+-  const run = (n, id, env = {}) => { const c = w.clone(n); fs.writeFileSync(path.join(c, 'data/x-' + n + '.json'), '{"v":"' + n + '"}'); git(c, ['add', '-A']); git(c, ['commit', '-qm', n]);
+-    return sh(c, 'source .github/sealed-git.sh && sealed_recovery_push; echo "rc=$?"', { ...ENV, GITHUB_WORKFLOW: 'Movers', GITHUB_RUN_ID: id, ...env }); };
+-  assert.match(run('m1', '1').stdout, /slot shared-0/); assert.match(run('m2', '2').stdout, /slot shared-0 is occupied[\s\S]*slot shared-1;/);
+-  const third = run('m3', '3'); assert.match(third.stdout, /SAVE RECOVERY FULL/); assert.match(third.stdout, /rc=1/);
+-  assert.equal(cpRefs(w).length, 2, 'no leaked checkpoint from the refused admission'); assert.equal(slotRefs(w).length, 2);
+-  const big = run('m4', '4', { SEALED_RECOVERY_TEST_MAX: '10' }); assert.match(big.stdout, /refused: the unpublished data is \d+ bytes \(limit 10\)/); assert.equal(cpRefs(w).length, 2);
+-  const lift = run('m5', '5', { SEALED_RECOVERY_TEST_MAX: String(64 * 1024 * 1024) }); assert.match(lift.stdout, /SAVE RECOVERY FULL/, 'the test override can only LOWER the 32 MiB limit');
+-});
+-
+-test('rev13: two writers that both saw one free slot: the server-side lease admits exactly one; the loser leaks no checkpoint', (t) => {
+-  const w = world(t); w.hook(REFUSE_MAIN);
+-  const mk = (n) => { const c = w.clone(n); fs.writeFileSync(path.join(c, 'data/' + n + '.json'), '1'); git(c, ['add', '-A']); git(c, ['commit', '-qm', n]); return c; };
+-  const a = mk('ra'), b = mk('rb');
+-  // both read the bot slot as free before pushing; the second push meets the first one's slot (atomic lease, not a listing, decides)
+-  const go = (c, id) => spawnSync('bash', ['-c', 'source .github/sealed-git.sh && sealed_recovery_push; echo "rc=$?"'], { cwd: c, env: { ...BOT_REF, GITHUB_RUN_ID: id }, encoding: 'utf8' });
+-  const ra = go(a, '11'), rb = go(b, '12');
+-  assert.equal([ra, rb].filter((x) => /rc=0/.test(x.stdout)).length, 1, ra.stdout + rb.stdout);
+-  assert.equal(cpRefs(w).length, 1); assert.equal(slotRefs(w).length, 1);
+-});
+-
+-test('rev13: an unclear push reply is reconciled read-only (no second checkpoint); a failed read-back is UNKNOWN and tries no other slot', (t) => {
+-  const w = world(t); w.hook(REFUSE_MAIN);
+-  const c = w.clone('amb'); fs.writeFileSync(path.join(c, 'data/a.json'), '1'); git(c, ['add', '-A']); git(c, ['commit', '-qm', 'a']);
+-  // the push lands but its reply is lost (exit 1)
+-  const amb = sh(c, 'source .github/sealed-git.sh && git() { if [ "$1" = push ]; then command git "$@"; return 1; fi; command git "$@"; }; sealed_recovery_push; echo "rc=$?"', ENV);
+-  assert.match(amb.stdout, /slot shared-0; confirmed after an unclear reply/); assert.match(amb.stdout, /rc=0/); assert.equal(cpRefs(w).length, 1);
+-  const d = w.clone('unk'); fs.writeFileSync(path.join(d, 'data/b.json'), '1'); git(d, ['add', '-A']); git(d, ['commit', '-qm', 'b']);
+-  const unk = sh(d, 'source .github/sealed-git.sh && git() { case "$1" in push|ls-remote) return 1 ;; esac; command git "$@"; }; sealed_recovery_push; echo "rc=$?"', ENV);
+-  assert.match(unk.stdout, /save recovery state UNKNOWN \(the recovery branches could not be read back\); no further attempt/); assert.match(unk.stdout, /rc=1/);
+-  assert.equal(cpRefs(w).length, 1, 'nothing more created'); assert.equal(slotRefs(w).length, 1);
+-});
+-
+-test('rev13: cleanup deletes a checkpoint and its slot together or not at all; a slot without a checkpoint is kept and reported', (t) => {
+-  const w = world(t), a = seedOwner(w), bot = w.clone('bot'); w.hook(REFUSE_MAIN);
+-  fs.writeFileSync(path.join(bot, 'data/tg-state.json'), '{"offset":2}'); sh(bot, 'source .github/bot-save.sh && BOT_SAVE_SLEEP=0 save', BOT_REF);
+-  w.hook(null);
+-  // a racing producer moves the slot after the pass read it: the paired delete fails, both stay
+-  fs.writeFileSync(path.join(w.d, 'origin.git/hooks/post-receive'), '#!/bin/sh\nwhile read old new ref; do [ "$ref" = refs/heads/main ] && git update-ref refs/heads/r1-recovery-slot/bot $(git rev-parse refs/heads/main); done; exit 0\n', { mode: 0o755 });
+-  const r = recover(w.clone('n1')); assert.match(r.stdout, /could not be deleted after merging [0-9a-f]{12}; KEPT for the next pass/); assert.match(r.stdout, /rc=1/);
+-  assert.equal(cpRefs(w).length, 1, 'checkpoint kept'); assert.equal(slotRefs(w).length, 1, 'slot kept');
+-  fs.rmSync(path.join(w.d, 'origin.git/hooks/post-receive'));
+-  // now the slot holds a tip that no checkpoint has: reported, never released silently
+-  const r2 = recover(w.clone('n2')); assert.match(r2.stdout, /r1-recovery-slot\/bot holds [0-9a-f]{12} but no save-recovery branch has that tip; slot KEPT/); assert.match(r2.stdout, /rc=1/);
+-  assert.equal(slotRefs(w).length, 1);
 -});
 diff --git a/test/sealed-release-rehearsal.test.mjs b/test/sealed-release-rehearsal.test.mjs
 deleted file mode 100644
@@ -4934,7 +5089,7 @@ index df7b33d78ff818655c21d98510569b44280b4b96..00000000000000000000000000000000
 -});
 diff --git a/test/sealed-wiring.test.mjs b/test/sealed-wiring.test.mjs
 deleted file mode 100644
-index 9501c7fb02092faf666045aa89c0f8f857eb662c..0000000000000000000000000000000000000000
+index f2ee0eb1741be6d7690e096422cb3cdc730db52a..0000000000000000000000000000000000000000
 --- a/test/sealed-wiring.test.mjs
 +++ /dev/null
 @@ -1,141 +0,0 @@
@@ -5066,7 +5221,7 @@ index 9501c7fb02092faf666045aa89c0f8f857eb662c..00000000000000000000000000000000
 -test('rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored', () => {
 -  for (const f of ['ignition.yml', 'options-survey.yml', 'movers.yml', 'leaders-study.yml', 'Smart-money.yml']) assert.match(wf(f), /\[ "\$ok" = 1 \] \|\| \{[^\n]*sealed_recovery_push \|\| true; exit 1; \}/, f);
 -  assert.match(R('.github/save-data.sh'), /sealed_recovery_push \|\| true; exit 1; \}/);
--  assert.match(R('.github/bot-save.sh'), /sealed_recovery_push 2>&1/); assert.match(R('.github/bot-save.sh'), /bot_recover\(\)/);
+-  assert.match(R('.github/bot-save.sh'), /sealed_recovery_push > "\$out" 2>&1/); assert.doesNotMatch(R('.github/bot-save.sh'), /sealed_recovery_push[^;\n]*\|/, 'rev13: never in a pipeline subshell (its kept-state variables must persist)'); assert.match(R('.github/bot-save.sh'), /bot_recover\(\)/);
 -  const b = wf('bot.yml'); assert.match(b, /bot_recover   # R1 rev4/);
 -  const fin = b.indexOf('the last chance to publish what the bot recorded'); assert.ok(fin > 0 && b.indexOf('- if: always()', fin) > fin, 'final always() save step');
 -  assert.match(R('.gitignore'), /^\*\.sealed\.tmp-\*$/m);

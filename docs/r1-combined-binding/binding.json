@@ -1,18 +1,18 @@
 {
  "status": "ADOPTED_FOR_REVIEW (candidate author); not approved, not deployed",
- "candidate": "5849242e3164c19d3e34082db235a27d57544421",
- "candidateTree": "38330d100d222316a7cfb3a35743e705e6daa466",
+ "candidate": "c00b8b24f17e42cc878b9ed5c6493a977a42c189",
+ "candidateTree": "e90d54c3a7711438d96907a3b0ed35f9662b9f15",
  "historicalR1Base": "b0d769876a6ee76f23544850c959111f59d8ae7b",
  "mainAtBinding": "774273205e1c8ce3db30c59ca368dc107617ef73",
  "pathCount": 68,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "ab2b96fb425b5fb8fb607624770ebcfba1d3bd85dc850146335a64ae4f0cd149",
+  "sha256": "1763c206964a4b8a78770aa34e294b9e788e687bddcfe32c9e47abfec9f3c7f3",
   "against": "774273205e1c8ce3db30c59ca368dc107617ef73"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "2ccf2aa0e0a95517d77987115f28ffea8ceba213d242aa9612d0ffd266464ce4"
+  "sha256": "6108d5a7cc6614c83573b1f9660271e84a8c49564c23853bd4c879c663803cd4"
  },
  "candidateBranchStaleDataPaths": [
   "data/calendar-status.json",
@@ -22,18 +22,22 @@
   "data/tg-state.json"
  ],
  "neverPushOrMergeCandidateBranch": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 5849242e3164c19d3e34082db235a27d57544421 binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 c00b8b24f17e42cc878b9ed5c6493a977a42c189 binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "supersedes": {
-  "binding": "1900a0e0 docs/r1-combined-binding/binding.json (rev11 8567fd46)",
+  "binding": "01e07921 docs/r1-combined-binding/binding.json (rev12 5849242e)",
   "samePathSet": true,
   "filesChangedVsPrevious": [
+   ".github/bot-save.sh",
+   ".github/sealed-git.sh",
    "docs/r1-sealed-provider-data/MANIFEST.md",
    "docs/r1-sealed-provider-data/README.md",
-   "scan.mjs",
-   "test/open-check-repair.test.mjs"
+   "docs/r1-sealed-provider-data/RELEASE.md",
+   "sealed-recover.mjs",
+   "test/sealed-recovery.test.mjs",
+   "test/sealed-wiring.test.mjs"
   ],
-  "reason": "rev12: current-price gate at report time + timed stop observation (scan.mjs) + regressions; binding format unchanged"
+  "reason": "rev13: bounded save recovery (4 atomic slots) + bot-save subshell fix + tests; binding format unchanged"
  },
  "files": {
   ".gitattributes": {
@@ -42,8 +46,8 @@
    "mode": "100644"
   },
   ".github/bot-save.sh": {
-   "sha256": "b2735eb55173ab31fde708fb40b501be9f19665405a1eafb5558296e74a4f721",
-   "bytes": 2883,
+   "sha256": "46f54da729e5aa0060329af8534d60c813871a69a365ca06bfb71d53f53a2211",
+   "bytes": 3218,
    "mode": "100644"
   },
   ".github/save-data.sh": {
@@ -52,8 +56,8 @@
    "mode": "100644"
   },
   ".github/sealed-git.sh": {
-   "sha256": "f90f2954d24ac83fa239860e14b2b545b442f14259fad275fc4d12b9c7fe137f",
-   "bytes": 3233,
+   "sha256": "755c41916d85ea5b0b24c13e8f176dc08aee98515d4b0e547f56e88b57b7cb21",
+   "bytes": 9424,
    "mode": "100644"
   },
   ".github/workflows/Smart-money.yml": {
@@ -122,18 +126,18 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/MANIFEST.md": {
-   "sha256": "4fdd862c87e4b596fd63e92a2c6b487c692bb57439df33f1ee2a31d3928daf04",
-   "bytes": 9199,
+   "sha256": "c8d55aaa6728643cb31e5808e84f607b58370f2890700b3e32d61a127af6866a",
+   "bytes": 9271,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/README.md": {
-   "sha256": "e31e611af2b0aabead1f55172a7a72acb6a2cba8c9bbdc699019df1fb5e4d3ff",
-   "bytes": 37398,
+   "sha256": "52a9454624cc66ec761c3db84a45f5cb9b3e2588687a699ab4db5fc34eb75bb6",
+   "bytes": 39481,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/RELEASE.md": {
-   "sha256": "607d4001dae04af237c134b7a61e910b352da3c1741e90929758571f857ab7d6",
-   "bytes": 15335,
+   "sha256": "d318b02b5e0f74973289c43fcaae6fec7cbdbe81147acdc4397193abcc3764aa",
+   "bytes": 16735,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/cost-projection.mjs": {
@@ -217,8 +221,8 @@
    "mode": "100644"
   },
   "sealed-recover.mjs": {
-   "sha256": "ed2bfe956349693bbbf1dab09fa65dad61f0b741deb9516d682a60f9e24c034d",
-   "bytes": 10753,
+   "sha256": "fc2b8625209e9a0ef6c4b604abae38cf4f25eee29345f6f77f8aaa6ac9fd6faf",
+   "bytes": 12162,
    "mode": "100644"
   },
   "sealed-store.mjs": {
@@ -292,8 +296,8 @@
    "mode": "100644"
   },
   "test/sealed-recovery.test.mjs": {
-   "sha256": "5b8599f3d18fc7deb3d7a76a0e5c5a7c27c813a19c737b53163b2c038094321b",
-   "bytes": 18901,
+   "sha256": "4f22acf836b59c92fa90f1e3a74fbd575f84751dd6c0420a9f9213092ebe2971",
+   "bytes": 27199,
    "mode": "100644"
   },
   "test/sealed-release-rehearsal.test.mjs": {
@@ -307,8 +311,8 @@
    "mode": "100644"
   },
   "test/sealed-wiring.test.mjs": {
-   "sha256": "c36e1d80e249c3203fd3d9ade02346d637aecd62cd8d51365a953fda4eb4ccb9",
-   "bytes": 10515,
+   "sha256": "0a37ad53e2c17ce99f6c06644c831d844c6e60972c07823a436731875e86d601",
+   "bytes": 10684,
    "mode": "100644"
   },
   "test/sec-request-runtime.test.mjs": {
@@ -378,7 +382,7 @@
   }
  },
  "expectedUnitTrees": {
-  "774273205e1c8ce3db30c59ca368dc107617ef73": "e2bde90454ab8f7cfbd6e3c7eb5483cf066d6a44",
-  "a8f22f842e85f6743ee498c47a2dee5908853157": "7d7cb2d028bcd068ba205e2d2fe6824c35be743c"
+  "774273205e1c8ce3db30c59ca368dc107617ef73": "d4b60206e8605b8e403999d71005ed8974159abe",
+  "a8f22f842e85f6743ee498c47a2dee5908853157": "abaecb0ded838b302403d032aa463410ea3b4b1e"
  }
 }

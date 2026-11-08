@@ -1,16 +1,35 @@
-# R1 combined-unit binding, rev12 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev13 (review only; NOT approved, NOT deployed)
 
 This folder binds the **68-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `5849242e3164c19d3e34082db235a27d57544421` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `c00b8b24f17e42cc878b9ed5c6493a977a42c189` on `claude/composed-r1-opencheck-calendar-watcher` |
 | Historical R1 base (allowlist = diff from it) | `b0d76987` → **68 paths** (same set as rev8 and Codex's proposal) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `e2bde90454ab8f7cfbd6e3c7eb5483cf066d6a44` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `a8f22f84` | `7d7cb2d028bcd068ba205e2d2fe6824c35be743c` |
+| Unit tree, `M0` = `7742732` | `d4b60206e8605b8e403999d71005ed8974159abe` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `a8f22f84` | `abaecb0ded838b302403d032aa463410ea3b4b1e` |
 
-## Rev12: what changed (Codex 6722848900)
+## Rev13: what changed (bounded save recovery; Codex 6722943461, review `ea99db8b`)
+
+- **Design:** Codex's four atomic reservation slots (`r1-recovery-slot/{bot,main,shared-0,shared-1}`):
+  - checkpoint and slot are created in one atomic push, both leased as absent;
+  - the unpublished data must be of known size, at most 32 MiB;
+  - paired leased cleanup only after confirmed recovery;
+  - no eviction; L7 in RELEASE.md §E.
+- **Additions:**
+  - **same-run advance** (atomic, leased): a run's newer state replaces its own checkpoint;
+  - **`bot-save.sh` subshell fix:** its kept-state now persists between saves.
+- **Proof:** 6 new tests in `test/sealed-recovery.test.mjs` fail on rev12 (20/20 on rev13). The wiring test forbids the pipe.
+- **Unchanged:** runtime `scan.mjs` and the STOP-pinned files are unchanged from rev12.
+- **Checks:**
+  - Precheck against `a8f22f84`: PASS (68/0/0; the same 68 paths).
+  - Build + verify: PASS on `7742732` (tree `d4b60206…`, equal to main + `source.patch`; the inverse restores main) and on `a8f22f84` (tree `abaecb0d…`). Revert restores each `M0`.
+  - Refused: the mode mutant, the whole branch, and the old candidate.
+  - On the built unit: the render-age and future-at-fetch probes pass, and the recovery tests pass 20/20.
+  - Full suite 156/156; gated watcher 9/9 and 11/11.
+
+## Rev12 (history): what changed (Codex 6722848900)
 
 - **The defect:** rev11 froze every verdict at fetch time. A price 290 s old when fetched and 320 s old when the check was written showed "HOLD … above your stop".
 - **The fix:** two distinct judgements.
