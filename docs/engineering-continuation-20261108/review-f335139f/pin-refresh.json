@@ -1,0 +1,1396 @@
+{
+  "base": "3589faf514cb61b1003abe0425796f1a6f025642",
+  "edges": [
+    {
+      "manifest": "docs/a-fence-recovery/manifest.json",
+      "originalSha256": "8f74682ee46fb9a8788f5ead74d93101e8dade9eff26dfd76eaee0e983a4d9dc",
+      "originalManifest": {
+        "kind": "A_FENCE_AUTHORIZED_RECOVERY_V1",
+        "base": "7ee150f854b23c0f6066a6407e3d52e3a3b774ac",
+        "reviewSource": "446cd250bfe1aba6e8e5b949223d5fe4732cb9d2",
+        "status": "INACTIVE_OFFLINE_IMPLEMENTED_CONFIRMATION_PENDING",
+        "files": {
+          "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "a-native-source-join.mjs": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89",
+          "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+          "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+          "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
+          "docs/a-native-source-join/manifest.json": "6335093724c28f56996f8d8b8764810aae9cf9f0af5f33f9cbf6434c20ae476a",
+          "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
+          "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+          "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
+          "a-native-evidence-contract.mjs": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
+          "a-native-evidence-importer.mjs": "9654571ec3f6ee1d80351eb1cb8568b438a937bfd1b71b6904d59f91edccd420",
+          "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920",
+          ".github/workflows/tests.yml": "b4dac395cc70301565fcdef737361de2c7dee4edae5df66a8ac09c145a1ed5e0"
+        },
+        "protectedUnchanged": {
+          "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
+          "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
+          "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
+          "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
+          "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+          "scan.mjs": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "ignition-watch.mjs": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151",
+          "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
+          "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+          "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+          "capture-json.mjs": "b73a5a9239b6866ad06f915bb1657373aab4c63d216d27483e3f6b7edf858475",
+          "test/a-fenced-store.test.mjs": "dc691681ca265ff298ae18279cdbb554c098eef497896716e7ea710aeb1afe8d",
+          "test/a-authenticated-collector.test.mjs": "e4fd8e652260dcf288874d2183b86c67ce3a900e73e389f1d59050e3657f63dd",
+          "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
+          "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
+          "docs/engineering-acceptance-checks.json": "28be72ec1082320e81c6b586398b3d57f076fef48e5f4f66e111917d66399436"
+        },
+        "actualSetup": false,
+        "realKeys": false,
+        "providerCalls": 0,
+        "productionChanges": false,
+        "newProtocolAdoption": false,
+        "totalStoreByteCap": 16777216,
+        "fileCap": 2000,
+        "workerTimeoutMs": 15000,
+        "acceptanceRowsClosed": 0,
+        "prospectiveAdmissions": 0,
+        "revisionHistory": [
+          {
+            "base": "2c9f418634e05adad5ead5b7fc85de6d1f3eedee",
+            "previousFiles": {
+              "a-fenced-store.mjs": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
+              "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
+              "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+              "test/a-fenced-recovery.test.mjs": "3ee2cee25978affecea3cb1b9a619cdd42b5318530857197c6239dc300013c0a",
+              "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
+              "docs/a-native-source-join/manifest.json": "58b549a3854dabdfcbcf71e56621aec4207a540a69abe1546a10650cf31019f5"
+            },
+            "previousProtected": {
+              "a-authenticated-collector.mjs": "6625653dc3fbbd328ba0a2996a57b9c7483c6f6f407681886847421b88109f84",
+              "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
+              "a-evidence-contract.mjs": "9bcad99ee1db29591790830dfbe9702c6706bc5968907a4e4a238be424772504",
+              "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
+              "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
+              "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
+              "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+              "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
+              "ignition-watch.mjs": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
+              "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
+              "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+              "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+              "capture-json.mjs": "b73a5a9239b6866ad06f915bb1657373aab4c63d216d27483e3f6b7edf858475",
+              "test/a-fenced-store.test.mjs": "dc691681ca265ff298ae18279cdbb554c098eef497896716e7ea710aeb1afe8d",
+              "test/a-authenticated-collector.test.mjs": "e4fd8e652260dcf288874d2183b86c67ce3a900e73e389f1d59050e3657f63dd",
+              "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
+              "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
+              "test/a-native-source-package.test.mjs": "a80c6fb4dc9e44f93324b7363faf1ffb1d607e1df2de2ef66a2567d937cc5293",
+              "docs/engineering-acceptance-checks.json": "e684f906ec454d7d02db3a1fbad8e89de306709785be3533fe98a1f0602af165",
+              ".github/workflows/tests.yml": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97"
+            },
+            "previousDependencyRevisions": {},
+            "reason": "L1-L4 authorized strict importer/enrollment/durable exact-request integration; prior review unchanged for original scope."
+          }
+        ],
+        "followups": [
+          {
+            "base": "a32539f533b89d789822c0896a7ea3dfa2ef410f",
+            "review": "eb234b307258eafb028f36e0f7fcb9c090ed6dae",
+            "status": "N_FOLLOWUP_INDEPENDENT_REVIEW_PENDING",
+            "changes": [
+              {
+                "file": "a-fenced-store.mjs",
+                "priorSha256": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+                "sha256": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "test/a-fenced-recovery.test.mjs",
+                "priorSha256": "0eb153f63260c6bfdb5276a7e01aa2d12c3ac6615f6f04d27e0e1e8e4739bf12",
+                "sha256": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "a-evidence-contract.mjs",
+                "priorSha256": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
+                "sha256": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "a-native-evidence-contract.mjs",
+                "priorSha256": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
+                "sha256": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "a-native-evidence-importer.mjs",
+                "priorSha256": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+                "sha256": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": ".github/workflows/tests.yml",
+                "priorSha256": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97",
+                "sha256": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              }
+            ]
+          },
+          {
+            "base": "3641a8e806b72e65add1ce6a90b82fdad7707a98",
+            "review": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
+            "reason": "Scoped N4 inventory; B retirement/C stop and gate labels; additive inactive source bridge; measured bounded development CI margin30\u219235minutes. N1-N3/export/producer/A rules byte-identical.",
+            "changes": [
+              {
+                "file": "docs/a-native-source-join/manifest.json",
+                "previousSha256": "243d001fc46036b0e51616dc1bdf388d34c805fe32cb97b6e63c8df6c44b90bc",
+                "sha256": "b3b1c50a1095b3d3941c7b44fa18c1ac9d7cfb5a7af8051d9908f11c46577c19"
+              },
+              {
+                "file": ".github/workflows/tests.yml",
+                "previousSha256": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4",
+                "sha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4"
+              }
+            ]
+          },
+          {
+            "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+            "reason": "Additive inactive first-capture host continuation; older execution evidence belongs to its pinned prior commit, never reassigned by refreshed pins. No old N1-N3/export/importer/evaluator or strategy behavior changed. Development test bound35->40min for measured new~3m13s file plus prior30m52s suite.",
+            "evidence": "docs/a-first-capture-continuation/README.md",
+            "changes": [
+              {
+                "file": "docs/a-native-source-join/manifest.json",
+                "priorSha256": "b3b1c50a1095b3d3941c7b44fa18c1ac9d7cfb5a7af8051d9908f11c46577c19",
+                "sha256": "71bf6703e44c910706da629738d3164962de22299e8df20f7b2fbfdd38a42608"
+              },
+              {
+                "file": ".github/workflows/tests.yml",
+                "priorSha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4",
+                "sha256": "84331ec3e35f94c3b0b6b52c49160df663b8ffc7e39f4b1d403ef4bee2f96252"
+              }
+            ]
+          },
+          {
+            "base": "3c0ec3fd3e33b7b2fa19f59d777ba8f8e8dff2f3",
+            "review": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+            "reason": "P1 private response durability and bounded definitive-busy retry; generated ingress metadata correction. Prior execution evidence remains attributed to its original commit.",
+            "changes": [
+              {
+                "file": "docs/a-native-source-join/manifest.json",
+                "previousSha256": "71bf6703e44c910706da629738d3164962de22299e8df20f7b2fbfdd38a42608",
+                "sha256": "7b4f701ab4c01d47bdcc99dc96762061a1391acf9c2d8acb8bfce553f9971354"
+              }
+            ]
+          }
+        ],
+        "workerLifetimeFollowup": {
+          "base": "5713011e426f21e283dccad286af096519f741e9",
+          "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+          "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+          "independentReview": "PENDING",
+          "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+        },
+        "g2OriginalInputFollowup": {
+          "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+          "changedInactiveDependencies": [
+            "a-native-evidence-contract.mjs",
+            "a-native-source-join.mjs"
+          ],
+          "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+          "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+          "productionChanges": false,
+          "providerCalls": 0
+        },
+        "authenticFeasibilityReportFollowup": {
+          "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+          "scope": "Read-only terminal quotes/clocks/cost/missingness view in existing caller; no acquisition or policy gate change",
+          "review": "PENDING",
+          "report": "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
+        }
+      },
+      "changedEdges": [
+        {
+          "group": "protectedUnchanged",
+          "path": "scan.mjs",
+          "before": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "after": "a1d606591a1a58444678cbec27629ab389a667adfb9100fc90049aa0cc2bf3da"
+        }
+      ]
+    },
+    {
+      "manifest": "docs/a-first-capture-continuation/manifest.json",
+      "originalSha256": "9b3f75d58a5c7495f90f04e6d13fdc4c4782bf72cf216ae656198765c557fd82",
+      "originalManifest": {
+        "kind": "A_INACTIVE_FIRST_CAPTURE_HOST_CONTINUATION_V1",
+        "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+        "status": "OFFLINE_ACTUAL_HOST_TESTED_INDEPENDENT_REVIEW_PENDING",
+        "files": {
+          "a-source-acquisition-bridge.mjs": "e3eaaf20ec971fa5e61644d5997d276004907bcfacdeed748ee82b5123e56794",
+          "tools/a-acquisition-rehearsal.mjs": "6733bc609ad8b39fc3f56b5bcd268fb0e6dd0a1b4511547b910adeaacdfd788e",
+          "test/a-first-capture-host.test.mjs": "9113e18d0d1d216dde756010c42267ddbe24233b07f6bf672ab05614f335b778",
+          "test/helper-a-first-capture.mjs": "1a5d1bfd0ec8fbe4d23b6e56a590d774c91e0d38e475731c980a76c061f213e1",
+          "test/a-first-capture-package.test.mjs": "2cfddf6a5c39241b97e18098d2b44fecf2b2d2ebef97a011f33688f8c733e953",
+          ".github/workflows/tests.yml": "b4dac395cc70301565fcdef737361de2c7dee4edae5df66a8ac09c145a1ed5e0",
+          "docs/a-first-capture-continuation/README.md": "497b7bbffab4ba4b8f91532b8e5b63207bb8b12f552fc992322bb252b691fa52",
+          "docs/a-first-capture-continuation/ranked-alternatives.md": "4ddceb1cb811c1dec12743ccd313d5fe981f24ce1bd95ea4cc3b602f68188790",
+          "docs/a-first-capture-continuation/policy-decisions.md": "4bf0c84152d4cff16d3848913a3789165080c380db2e84b477462ba193937035",
+          "docs/a-first-capture-continuation/dependencies.json": "d878bfbf015647c26564ac72c4020edc8717a62a97fb7fa11f42f97fbb8e1020",
+          "docs/a-first-capture-continuation/earnings-input-inventory.json": "4e420cdb28722ec25d207dcb3a5cb118bf7a0323ff020c378a874a1e4f39b054",
+          "docs/a-first-capture-continuation/verification.json": "06486947eb551e181554ae71ce4d109bd7e2c5981132126f1467499d6aa55918",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-previous-paths20.log.gz": "2c9aa72b604915e62a479d19709b7d04b0c8e8e4f65972fca72a7c3fc0421555",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-final-host20.log.gz": "f991087663a384e50e902903c070eaea36d6d7b97301bc6f10243c87806ec121",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-native-closed-connections.log.gz": "e9da9505799e9954126865c6fa99facff596cf2738e78ca90d7b4e0181fadef5",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-initial.log.gz": "ed157d868bfc1f830cd227f678ec4107f57cfef2d8b5583c2313bf3d57fc5987",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-sealed20.log.gz": "9119b3ce9a7f851daa8c63b00aa42e905e303b4d8a363be7e11a0f9bb830d2cb",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-causal20.log.gz": "46b9bf43d5abd1e21fd2710c2cb635a0d85080b6a08df0ee5b89827f17aaaf0c",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-python.log.gz": "144fd6435aa29443ba5a71b8dac8e6efbaa9a1aa381dab1f1a62b9bc1292bd40",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-socket-cause.log.gz": "62c574ca51fb2bb1f3e6580e4e87d1b2662c7ccfd50b12dea82a393b0a00612e",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-causal24.log.gz": "1634f1b9b5499cbd274040f7a72d143c475a6f54af20cd5c5d621d90ac56b15e",
+          "docs/a-first-capture-continuation/evidence/a-first-capture-final-pins20.log.gz": "e0f6d23f1558bf726ec87af1b36ae06ee49552267d9ab97aeadbfc09ea8ad4b0",
+          "test/a-acquisition-spool.test.mjs": "bde94b0c3489e0f13d6823fb66a6685aa1ea6b4c5de7aceb11d770fea762ebda",
+          "test/helper-a-source-bridge.mjs": "c5c8cc94533dfa406e6a6123e4da2f4dfe44a28b836ca27e7268b55a59ff0d0a",
+          "test/helper-a-bridge-competitor.mjs": "749aac4436b4d89ee82251b0de1c1e70e2f2e7bb675b3f9e578d0e9fc9575e32",
+          "docs/a-first-capture-continuation/avoidance-evidence.json": "01ea7d19f7333fea6c8fc8d1bbfea134ba9ad1658a34eb8a50503c589251d48a",
+          "docs/a-first-capture-continuation/warning-preservation-scope.md": "b2bec58f097b5a2f1b3c47f796e1fe0167bf28c7b985f7569c7a84268e48a5aa",
+          "docs/validation/market03-ingress-matrix.json": "fcd633091cd344cfb5874c24c028f4dcf2e0068dc9546a079557f984b118b400",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-claude-reproduced.log.gz": "7bfb5d9f8015879ecff201f9bbd99088f00edd2135556a587198957d5f32e410",
+          "docs/a-first-capture-continuation/evidence/a-first-3c-hosted-failed-complete.log.gz": "42884f6ed06854146987acae305bef2da8e1221bbf23f19db34e54321fc27fd4",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-legacy-final20.log.gz": "c27a1b253586ce33482fc55e1ff2c4c9d37bcee2f6749fd844acc45c41c30b7d",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-desired-control-fails.log.gz": "4c29299fa68b69fd16ae2c245eab683aaf67859746205a93393594e2e54ee55b",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-preserved-race20.log.gz": "93f8b414da4e3dbcf79033ea7ecdc34a6b851654836558e4ecdb4a8c6ddd8bea",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-final24.log.gz": "eaa1111685f17c61077753216ad777ec426ab2f9b4138e51c3994f1147e1af4a",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-final-bounded20.log.gz": "76589f3c1f2534875b671f6dfbdefb5a3513aac2bec1b4a2a7c999172793b8df",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-host-final20.log.gz": "7ee687847e36965b6c2e66b4f42c0f36858566cffa9e3382162d939ff71fcca3",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-ingress-check.log.gz": "f61a93c0764565ddcc61f041ad02e291773b132e54ea4b3fd08774192b2d2b76",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-python-final.log.gz": "40f80a2342e58a894215e7b07a572936625494eaae9fc798ae26adca66e3e281",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-final-positive20.log.gz": "70fe7a0e96eb979e1855a0eb72a0cc4ea45dd982acda8ce82520ca70ae6b2fca",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-spool-link20.log.gz": "dc995cb7dd805087b9cda3a3745ab141e176784c270c89e9a3bc5191b163a7ad",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-pins-sealed20.log.gz": "2936ab97a61e5d5a32d7bf4e56049b2b784bb3a9720da35783dd1dcee1385195",
+          "docs/a-first-capture-continuation/evidence/a-first-p1-final-spool24.log.gz": "c338918f3dcc029f18c3e592b8e95b595050ba60f0211fa972b9d752b31419f9",
+          "test/a-first-entry-facts.test.mjs": "a9c273e3531a60c6e998de08eeffd1d077839af01e1043552231e2f155991394",
+          "docs/a-first-capture-continuation/finite-integration-plan.md": "0510618bc81437c81061f72625af7d764dd10af19ba4dc26689e9426a745f87a",
+          "docs/a-first-capture-continuation/finite-verification.json": "a63714ba98fa574b1d13296b9d180a32368c491bfe2581e98d9b52a67cb3a275",
+          "docs/a-first-capture-continuation/evidence/a-finite-entry-final20.log.gz": "d6bd49a505b41c63cbf0cf1dd5508ef340fed1e3ec4efe346c3b1633220bc477",
+          "docs/a-first-capture-continuation/evidence/a-finite-entry24.log.gz": "99aaf5a59171a8a2c39741d23246666621db26f3b826f12119caec299112ee55",
+          "docs/a-first-capture-continuation/evidence/a-finite-entry-final24-control.log.gz": "8cab3d8c25ed22d93c006c6f09c6836b3084d3c2e6add2ffeed8162b4d963231",
+          "docs/a-first-capture-continuation/evidence/a-finite-original-control20.log.gz": "3cfaff4cb17835ae9e4c0398663a8fd3d711a53026a3b73e0bd787229ba79899",
+          "docs/a-first-capture-continuation/evidence/a-finite-compat20.log.gz": "43d0d0f897ed086578a9d00068491e6fb6da427b7be0e7512dfd01e4a8436350",
+          "docs/a-first-capture-continuation/evidence/a-finite-python.log.gz": "c8c04dad474f6a6b50260de95285ea89d006aae4386a9525169ba5f91309ac27",
+          "docs/a-first-capture-continuation/evidence/a-finite-pin-guards20.log.gz": "7f1bb09f852fa3c61d97a14d4a7cd8a1ad9bd667fb8baaff227912b7d99c39c1",
+          "docs/a-first-capture-continuation/evidence/a-finite-final-current20.log.gz": "bdeef41717caee7706b0ac030bf6d0789519f8b8c623609525c9b78c4cb36b6c",
+          "docs/a-first-capture-continuation/evidence/a-finite-final-current24.log.gz": "a3e3dd4bf75563a73796510e023a6ff843555ad9f35ce8e16487879ad5c41cae",
+          "docs/a-first-capture-continuation/evidence/a-finite-upgrade-original-control20.log.gz": "04e29cd29ebdb6253edbf14f1cc3cfccba3d54055b680c5afa2adbeacb311caf",
+          "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "test/a-worker-lifetime.test.mjs": "6895fcd4dfb09f02a3a8f71ed470451d22e4c2b0673f045b1380963743603d15",
+          "test/helper-a-worker-lifetime.py": "d5be44edd8c40392e9967a1744a0e32c32e0c0b48d7fe106f620743faf5daa29",
+          "docs/a-first-capture-continuation/worker-runtime-followup.md": "8ec84ef432d34bf9bef3e61c07ce0355625e8f2cb78c950455fa172fd248b014",
+          "docs/a-first-capture-continuation/evidence/a-worker-entry-facts-low-thread-diagnostic.log.gz": "7b3bbccb54abeac9112f287097bb6b2d8d7110f6fdbd98996c2bf280879ebd19",
+          "docs/a-first-capture-continuation/evidence/a-worker-serial-probes.json.gz": "161e8361648782f476f3308a03dbf9d5116d168de73db6426f1708f69d002832",
+          "docs/a-first-capture-continuation/evidence/a-worker-serial-probes.py.gz": "8024c8e9b2548794c7111e44a675ebbae7121bd1917d2f51f6cb721fc105e0f8",
+          "docs/a-first-capture-continuation/evidence/a-worker-flock-orphan-reproduction-v2.py.gz": "ab8f53f9495a488a658a94128674a8b0170aec13083e849f5d24dfefb2888da9",
+          "docs/a-first-capture-continuation/evidence/a-worker-flock-orphan-reproduction.py.gz": "0f37cef89851f54cfa9759ac0fb47635b22dd3abe02327960c97972c6bdf0b03",
+          "docs/a-first-capture-continuation/evidence/a-worker-candidate-node-syntax.json.gz": "bacdd65a980c3485b37bac9d5892ed2237edc81189dd399f17a613c757f30258",
+          "docs/a-first-capture-continuation/evidence/a-worker-flock-orphan-reproduction.json.gz": "786dec9bebc0dd86623908ed06c77139d1206ea6b6405a59b784bab1122a0d07",
+          "docs/a-first-capture-continuation/evidence/a-worker-flock-orphan-reproduction-v2.json.gz": "f0c44cd871ea411d8347d550d5b37cf677653d650ddb897ef4b03c308df1ba83",
+          "test/a-first-entry-panels.test.mjs": "9349167748156131c248dec8567fa957ae3edc123e2740834d0d6d1c37cd5dfc",
+          "docs/a-first-capture-continuation/g2-native-panels.md": "dc84c7b1d572d444856ae978dc70d6b7aec0fa66c41435a734e7bf0ff4ccb3b2",
+          "a-native-source-join.mjs": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89",
+          "a-native-evidence-contract.mjs": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
+          "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+          "test/a-first-original-inputs.test.mjs": "b1818c48545be369e88ddfc6a51386134f810d766fac78975967f33a90587f57",
+          "test/helper-a-entry-panels.mjs": "50a1af0d4ab7b7435aba84df5556486c97d5ec2bb13bf86f47108a5f51fc7be3",
+          "test/helper-a-original-inputs.mjs": "380678e45af52928902face125152854003ea680952bd06e77aee120427ceaf2",
+          "docs/a-first-capture-continuation/g2-checkpoint.md": "7b40e7b73cf4875a75b54b31cde08f40238e11eb56b803ecb0942ff0c6709097",
+          "docs/a-first-capture-continuation/g2-native-panels-verification.json": "c756c8d6b2d5b7699087f08af2fe651991dc136d6705df80dfcc8b89f8745639",
+          "docs/a-first-capture-continuation/evidence/g2-g2-node20-final.log.gz": "ffaad5f0898ba2e47616695def597c6fc20a753dde67403943ace665ff1ef9ef",
+          "docs/a-first-capture-continuation/evidence/g2-native-regressions-node20.log.gz": "d1cb6eedef11052a12cb90d3a45a296b14e3d0b21629b6d02437a3174aa8bf29",
+          "docs/a-first-capture-continuation/evidence/g2-existing-paths-node24.log.gz": "77d9708a3f0c8ff83bd7e5f3eb878bb93e8547ca1eebc2ddb0c26993a583081f",
+          "docs/a-first-capture-continuation/evidence/g2-worker-node20.log.gz": "33fa89c12a68bd2f3bc5b9906bf1f8bcfd87aaf5d0acad839412c0b79c165868",
+          "docs/a-first-capture-continuation/evidence/g2-worker-controller-probe.json.gz": "124afb2e9cc001d213e6c1c58e978c61f23309a0f6ab57c42298f8fade2dc824",
+          "docs/a-first-capture-continuation/evidence/g2-worker-task-probe.json.gz": "a31ccebfac8a60de35878278a02ad28f53094ae76541021fa1bce5b2c71e237a",
+          "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-initial.log.gz": "a8b5938099da8482e4b2dac3c34e7de6b2b9e7d46b4f163c5dfba6be4534f517",
+          "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-final.log.gz": "90a89ada5e83807b3ddd3d326c6f6f5752ab0c7d740ac1d1acf5bdbd01b800b5",
+          "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-positive-v2.log.gz": "ac29a8a3f2c8537c266fe1e232d18d360e9a89e488703020be0ac6743075676c",
+          "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-v3.log.gz": "53c279e7547ade2e618d58759672e5ec91f4cc95184ad14d7e3278c226a72ba0",
+          "docs/a-first-capture-continuation/evidence/g2-panels-node20-final.log.gz": "25c5d55f28365015f6908f3876b25e06537e6e763e9b3ab16eb4f2ae6f0f48b9",
+          "docs/a-first-capture-continuation/evidence/g2-corrected-stale-panel-node20.log.gz": "9d7423a331b9a91274f6f90bc7dee157b2e4c453aaf534749e3dfbb40ae5a07d",
+          "docs/a-first-capture-continuation/evidence/g2-python-repository.log.gz": "38f5b5396a98aea271477d05382edf9b678bcb529a5b6136aa300e7738a385c8",
+          "docs/a-first-capture-continuation/evidence/g2-python-verifier.log.gz": "b3f5681439b3ce7c0afaf4afca3826730ed53dd9b4ece14082ec7a0bbed10c6d",
+          "docs/a-first-capture-continuation/evidence/g2-full-inputs-node20-v4.log.gz": "0003ffca38771594e8101a3cc599cd912f07213d76e51ad71129aeeef2c62e7d",
+          "docs/a-first-capture-continuation/evidence/g2-current-packages-node24.log.gz": "cbd29db0fa2361a10e4a378f23d166fd328e39f032f6e1a57268475fcdf24216",
+          "docs/a-first-capture-continuation/evidence/g2-full-inputs-independent-clocks-node20.log.gz": "5c6f4d92e02e88fcc5bbccb9639766fe61e22c4bd9584fd83127da5ec9cd2564",
+          "docs/a-first-capture-continuation/evidence/g2-full-inputs-independent-clocks-node20-v2.log.gz": "9d020df48b78732b74220b0fe3303080d3cf7a5c48047c159a671b56bdd5edc0",
+          "docs/a-first-capture-continuation/evidence/g2-full-inputs-independent-clocks-node20-final.log.gz": "1a5573ecebe88c8a74f811428bef19025238cb5f699dc7f835454f999ed87414",
+          "docs/a-first-capture-continuation/evidence/g2-clock-correction-packages-node24.log.gz": "f9255e0ee9881aa9ebb5b34f1d8b7aad960d17d01ac3f68b395ec135369dfcb5",
+          "docs/a-first-capture-continuation/evidence/g2-recovery-full-ci-followup-node20.log.gz": "d341ead47524122f4854bc3d428bbf145b61ec3ed71ed943eb6aa00b86f3ab58",
+          "docs/a-first-capture-continuation/evidence/g2-ci-followup-pins.log.gz": "a00ef6bf6df5bb44d0429c905814ba65edb3c6749c98d3bdad6969d05e6a5048",
+          "docs/a-first-capture-continuation/evidence/g2-ci-harness-controls.json.gz": "0bd248fb6acf27656ceb4ba22c1037e74a99bcae2696bb37e2b837f1da54c3e3",
+          "docs/a-first-capture-continuation/evidence/g2-parallel-actual-a-first-entry-panels.log.gz": "28415ba3db4d3b1107c8dcca616cb1f5e1507aea6a0799f4e2045a3f3f9890d8",
+          "docs/a-first-capture-continuation/evidence/g2-parallel-actual-a-first-original-inputs.log.gz": "b983e7fd81931c37ba41e24862a2c0a0695c7b9ef8ede273648d208266fda312",
+          "docs/a-first-capture-continuation/evidence/g2-parallel-actual-native-sec-colocated-host.log.gz": "81ff003a73090ebd4f744b478554cf06035eccca09da6db7fbfbe9aa923bd57a",
+          "docs/a-first-capture-continuation/a-hypothesis-checkpoint.md": "452d264cf1ad710c572c0037c807f9849af586e5afcf5b48bbc4c09395d48b44",
+          "docs/a-first-capture-continuation/a-hypothesis-evidence.json": "aab1fc64afd0fc36c7f0b565f859f9ada1aeac73426c148320ca45fcb079ab8b",
+          "docs/a-first-capture-continuation/g2-e68-hosted-receipt.json": "4529555e2f514e082a0b695109c8bddbdb2afd9fa16c5f6ba7d129dcd8eaff7a",
+          "docs/a-first-capture-continuation/research-programme.md": "0dce577ca2666b04dca02dfa09dfbfb72d24104e512054bd89a898e98249595d",
+          "docs/a-first-capture-continuation/research-programme-evidence.json": "294e520d5b0a3c1dc443f9b1fb6c5b1fd5e073740d1f53807b42996f2231e5f2",
+          "docs/a-first-capture-continuation/feasibility-executed-20261107.md": "34ce07b58ce9617e2b7fb9d0b400725cbcc1cbd436f9ee9dbf88d3e54ceeeb59",
+          "docs/a-first-capture-continuation/feasibility-executed-20261107.json": "c53d9f23c62ee74256a588adec8962a95b4361250213a0ef0853e70f688ab0d4",
+          "docs/a-first-capture-continuation/feasibility-time-20261107.json": "d46413533404c329484e5d8bd5a05ac377801b023315e8d044710f924a10cf64",
+          "docs/a-first-capture-continuation/external-recommendation-audit.proposed.json": "3c32daa0a3febed38b10b464e519a54eb04b0234e64882d9e3fdaf1d4dba64c1",
+          "tools/audit-selected-feasibility.py": "6e171f51cddc38767f4a3288414a019e7976fe376bac481cc6193bb7b7e76ade",
+          "docs/a-first-capture-continuation/evidence-resolution.md": "948dc501990d20b4f067a7160d676dd26f6409eb7594ce1ca229b2ff43269b43",
+          "docs/a-first-capture-continuation/evidence-resolution.json": "15c3a7c33268eb372df1131df5ed86f025d72de6f469a01594089562a17b6caa",
+          "docs/a-first-capture-continuation/external-audit-calendar-proof.json": "8b6a146379d89560098b5a8d1cf9c7dcd312dcecbec9dee2c86e966a7d9a35eb",
+          "docs/a-first-capture-continuation/ig1-entry-resolution.proposed.json": "488f0cfeea1ac2b6a403866c1d791673f67a8b665532dd6b589272f59c0909b6",
+          "docs/a-first-capture-continuation/ig1-entry-runtime.json": "66b4196f5fc1ad7eb9910775e46e515f9f740d613d99d1ea6f236d2ebcdcdf2d",
+          "docs/a-first-capture-continuation/ig1-entry-approval.template.json": "8533366cf3458a8ae66de79f4f04ece72795ea88359c309f59364717c9b5d5a0",
+          "tools/ig1-entry-evidence.mjs": "e8db15fbd94f1858eb4bd0ddf5cd00a5af07475dad7fd8d3f2a6c95d2f4eb358",
+          "test/ig1-entry-evidence.test.mjs": "3d304f11f2f2ec7d2028308a1190c56cd8c393f7d6078cf84adf92d270e8a144",
+          "a-native-evidence-importer.mjs": "9654571ec3f6ee1d80351eb1cb8568b438a937bfd1b71b6904d59f91edccd420",
+          "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md": "acd73971bb2a31033f6e2b66f3643aee9bc530b0ab2a8223fd390bafb1042601",
+          "docs/a-first-capture-continuation/authentic-feasibility-scope.proposed.json": "4018a72a5f0b433736d4d302f320e32f7567eae828fa6c0e8e4de86c55b69b1d",
+          "docs/a-first-capture-continuation/authentic-feasibility-public-evidence.json": "5bc087107613ad103f25f35b90e796109271ddcb45deb959843fce70ddb4fdc3",
+          "docs/a-first-capture-continuation/authentic-feasibility-verification.json": "ceff7203b4536a6d0e0d6aa713c0985e7eb3cfc0c5421bc871ba0965c1d82b86",
+          "test/a-authentic-feasibility-scope.test.mjs": "402d248bf8b4df3b8f8c64d1576bd34cbc03f05c485f9643adc1a0599ee9879c",
+          "test/a-first-feasibility-report.test.mjs": "37f2c0c0ae139a3f6d1d976dfefca8e6c6537dcb9301a29c60e68d5f6e255a36",
+          "docs/a-first-capture-continuation/evidence/a-authentic-streaming-public-spec.txt.gz": "4a8fdc1679a531150db11a9f2f40e4be694e4c8b766c4e86e7cc505955d8f18c",
+          "docs/a-first-capture-continuation/evidence/a-authentic-report-actual-caller-corrected.log.gz": "c34df757630c552d0764129de19455abd2f6d611d0d4b3d3c5c3e11a624298df",
+          "docs/a-first-capture-continuation/evidence/a-authentic-report-actual-caller.log.gz": "11a808291b962d6d23b78bf2c140ec410b64c569f0c24b6d5ddcf4a62ebdccfb",
+          "docs/a-first-capture-continuation/evidence/a-authentic-baseline-shared-pin-failure.log.gz": "7864200da55c60aa300d3a91fbe0cc1af09888ca1bc7f1b00130d3c4b27fecaf",
+          "docs/a-first-capture-continuation/evidence/a-authentic-importer-regressions.log.gz": "6f3a6045c0336a607782125c8e3a3e8e1d62b09732f3335d572ae7311a814b05",
+          "docs/a-first-capture-continuation/evidence/a-authentic-existing-host.log.gz": "ecf2d826fd8256ef0d360d52b83c250a7e1dab889ffc8a17cd6e3e7b4edb75ac",
+          "docs/a-first-capture-continuation/evidence/a-authentic-worker-lifetime.log.gz": "d473cef70ff771d7116a169f3efcdf2977bc98538d826478abf76b9301759337",
+          "docs/a-first-capture-continuation/authentic-worker-observation-diagnosis.json": "d79239e5f868cf0bb5c9f92665890ae3ed3413f6e5eb1fa3457b4a9d4d93939b",
+          "docs/a-first-capture-continuation/evidence/a-authentic-worker-lifetime-corrected.log.gz": "1d28d2698809ff5057e0c679b8b842111644a871579253aec4504d68bd4ff9f4",
+          "docs/a-first-capture-continuation/evidence/a-authentic-baseline-worker-lifetime.log.gz": "7a0fe0c675def05be2579ec5eae4175c4dc3f50970f32c9a4acc09ce8eda273b",
+          "docs/a-first-capture-continuation/evidence/a-authentic-worker-thread-diagnostic.json.gz": "bd990ca6587dbd7c32af9c6139905c09dfb91e2299c1b218e1e9428260b2f651",
+          "docs/a-first-capture-continuation/evidence/a-authentic-report-node20.log.gz": "b04b396599b90270a0ac79418408123ee9b314ec806f7025b051a297ecff2449",
+          "docs/a-first-capture-continuation/evidence/a-authentic-worker-node20.log.gz": "06c12086662c035f4fc62f22792f49299c1c42f4d26b1d68119f31170fa64807",
+          "docs/a-first-capture-continuation/evidence/a-authentic-report-classification-node20.log.gz": "ea7874f7a6eedeb26bb6d90a66dbfc6c4be4218f7f6e2714d4e23c7defaded3e",
+          "docs/a-first-capture-continuation/evidence/a-authentic-baseline-no-entry.json.gz": "72d9a6d11462fe01246a0006a4044e00dd1b565cefc66e5f9360aac17bf42e7c",
+          "docs/a-first-capture-continuation/evidence/a-authentic-importer-classification-node20.log.gz": "facbed5e9ab2459f7decde81eaa466b57ad0bbd3aa1c68ad1ae273cb3554e2f4",
+          "docs/a-first-capture-continuation/evidence/a-authentic-baseline-ingress-failure.log.gz": "10b22053ae2c5b603e8a221508bdc4d77f4be2159bcd21c627a0a8580c9aa328",
+          "docs/a-first-capture-continuation/evidence/a-authentic-b895-ingress-failure.log.gz": "19dc6c551b9fe240aecfc5762f6cde2b26b8cabe907290b6e21dc8576f9fef42",
+          "docs/a-first-capture-continuation/evidence/a-authentic-ingress-corrected-node20.log.gz": "fbf3bf119d408367feb9fc11c19d0e43cd155b7667ff388571399ddefdb5fb20"
+        },
+        "inheritedUnchanged": {
+          "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
+          "a-legacy-store-export.mjs": "e81f17bd2ba9f641a72a3f9f7137d76dffb41dd08a76779ef1b25597020dcb13",
+          "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+          "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
+          "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
+          "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
+          "tools/a-legacy-store-export.mjs": "8267e10c3cb0ddf3a6a27fca5950a54af4869e8abdccbbb1e7d5a7adb2c4bc6f",
+          "tools/a-native-evidence-runner.mjs": "c2ba3517764837130bba27544ddaa551ecfe4fff9bc80d3c0155bed8e09bdeeb",
+          "test/a-n-review-regressions.test.mjs": "fc601196fa4f9ecf84caf6994ebd901ac02ce5d97d16e149cfc12332f3b8f46b",
+          "test/a-importer-recovery-matrix.test.mjs": "b47434aa268fc876692da00425eb4298db60a0d10cb6cc97e09d82026ac1c4c3",
+          "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+          "test/a-native-evidence-importer.test.mjs": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed",
+          "scan.mjs": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "ignition-watch.mjs": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151",
+          "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
+          "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+          "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+          "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+          "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
+          "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
+          "catalyst-reclaim-prototype.mjs": "fa11c49394c2a6a380ee5b12b1712d45ebf5184b32f7cbde231ecea83efdcd19",
+          "squad5-core.mjs": "17014859f3dd6b4cc44afa072716bd4b3bb733f5c4d9bd1aa44704b6ff87f012",
+          "squad11-core.mjs": "29044a5bfe27e60d47f7373963fef80d9c06972cce7987026dea3d30f5676ba9",
+          "earnings-study.mjs": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+          "orb-study.mjs": "a9ed7dca072df5776df188db0a1ecfbc94be77a9b62c67c15facc81e75b08c51",
+          "event-orb-retest-core.mjs": "6c47bd988b5a13b1245a279c165ee723fc908467839d4776d5437e3cf1ff83c0",
+          "squad28-core.mjs": "b0f7d9ac12d56eb3ee758f9161385db49cc1f6f565a21dd95938d2028fed6239",
+          "data/earnings-study.json": "a46ec6700fc7dbb8a38c7489a77197b4a2d7aada07e0f30b9cc0625ba3fbbb1c",
+          "data/orb-study.json": "1d624c2e55e7d4a6ddb292767155897405aed8852c639e3ecd51fb1f688030c5",
+          "data/event-orb-retest-15d-gates.json": "c2d4aeb0641dcb30975f31f4c69aec3e9149f0cd781d02877bc279483615fceb",
+          "data/squad11-lab.json": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a",
+          "data/events-study.json": "c147422c452bfd055d3ad63ce21a66c73d0ef1371df9b3b3e17d714a038ad5df",
+          "data/squad28-lab.json": "7b230116f85cf6a20a8a8e3c3169bf9e8ee9b5fcb52e0fd4ab4851aa96afb140",
+          "docs/engineering-acceptance-checks.json": "28be72ec1082320e81c6b586398b3d57f076fef48e5f4f66e111917d66399436",
+          ".github/workflows/bot.yml": "84e708568592eaba00796eb7774d1b1615d2fbe01f2b924eb5c806aa2d2e94fd",
+          ".github/workflows/main.yml": "225265affbe5748d1eced085c661ed5ecd87480d0973ca39243396ff8718a5e4",
+          "native-sec-colocated-prefix.mjs": "49660b2c5de40dab9ef3e9e33e223a8b18bcbcf2245e2479319ccd42070bad5e",
+          "native-sec-handoff.mjs": "90a3b5ff12ad31b132e68e9d660d805aeaefbc581dd57b779b2c217aace9bfe3",
+          "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920",
+          "docs/research-bc/B.proposed.json": "f1fc00dd58e9eab1fcf73039ec64ec86c91d5ba66e695e7d1e59ad6f19a919cf",
+          "docs/research-bc/C.proposed.json": "f0fb025d6610ebb6f890a4ff5e95d2d770412040eda521771e7d755881f5ffda",
+          "docs/research-bc/current-disposition.json": "efc64a9dc99f32044111a24800a72e83ba09e93030fe219bfafebd235670fb78",
+          "CLAUDE.md": "ef35678e0b79026ddc7f4d0fb14c84404d5bf5d16f8d683dcb2de53c3dade510",
+          "data/earnings-cache.json.gz": "95604a6996682cf7cf136c3488cab6eca23a28f4e1a08decd4884be00d2a4857",
+          "squad29-core.mjs": "ca2d3b75ec2ff143a29302e47f3a874a66fe539eaa2c826f8f3f67baec98ae06",
+          "data/squad29-lab.json": "bec398e769170ecdbcbf5b0067ccf31db523a794eac13086c9cacd583924b925"
+        },
+        "realProviderCalls": 0,
+        "realKeys": false,
+        "productionChanges": false,
+        "policyAdopted": false,
+        "genuineAdmissions": 0,
+        "rowsClosed": 0,
+        "B": "RETIRED",
+        "C": "STOP",
+        "replacementSelected": null,
+        "newStandaloneProductionModules": 0,
+        "perRoleRequests": 32,
+        "combinedRequests": 64,
+        "technicalPlanMaxDays": 14,
+        "storeBytes": 50331648,
+        "additionalPrivateNativeViewMaxBytes": 4194304,
+        "approvedAcquisitionScope": false,
+        "limitations": [
+          "Paired HTTP request correspondence is not stream/universe coverage.",
+          "Actual source/host truth and real custody remain unestablished.",
+          "Local first receipt is not global first ingestion.",
+          "PIT opening/liquidity/market-cap/control/native-stream input assembly remains source-contract engineering, not only credentials."
+        ],
+        "followupReview": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+        "P1": "IMPLEMENTED_OFFLINE_REVIEW_PENDING",
+        "remainingEngineering": "G2-G8 explicit PARTIAL/OPEN",
+        "privateSpoolMaxBytesPerRole": 69206016,
+        "combinedSpoolMaxBytes": 138412032,
+        "technicalStoresSpoolsViewMaximumBeforeInputs": 192937984,
+        "priorPublishedFailedCI": "3c0ec3fd3e33b7b2fa19f59d777ba8f8e8dff2f3",
+        "entryFacts": {
+          "base": "e8ac76d79a6db1ec2c734c304e01d6f8153839e7",
+          "status": "OFFLINE_TESTED_INDEPENDENT_REVIEW_PENDING",
+          "plan": "finite-integration-plan.md",
+          "verification": "finite-verification.json",
+          "notComplete": "G2-G8 and authentic source/host/custody/policy readiness"
+        },
+        "workerLifetimeFollowup": {
+          "base": "5713011e426f21e283dccad286af096519f741e9",
+          "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+          "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+          "independentReview": "PENDING",
+          "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+        },
+        "g2NativePanels": {
+          "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+          "status": "OFFLINE_SOURCE_BINDING_VERIFIED_HOSTED_PENDING",
+          "inputAssembly": "SOURCE_DERIVED_UNDER_SUPPLIED_TRUST_ONLY; genuine turnover remains UNKNOWN",
+          "independentReview": "PENDING",
+          "scope": "Raw entry OHLCV/comparable prior20/aggregate-derived liquidity only; no cap/calendar/owner/source-authentication closure",
+          "evidence": "docs/a-first-capture-continuation/g2-checkpoint.md",
+          "remainingG2FocusedHours": [
+            6,
+            12
+          ],
+          "remainingEssentialFocusedHours": [
+            42,
+            66
+          ]
+        },
+        "g2OriginalInputFollowup": {
+          "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+          "changedInactiveDependencies": [
+            "a-evidence-contract.mjs",
+            "a-native-evidence-contract.mjs",
+            "a-native-source-join.mjs",
+            "a-source-acquisition-bridge.mjs"
+          ],
+          "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+          "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+          "productionChanges": false,
+          "providerCalls": 0
+        },
+        "historicalBaseDependencyHashes": {
+          "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
+          "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+          "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b"
+        },
+        "independentClockCorrection": {
+          "parent": "09fb491194d75b94fe62233dd4e4dc16bf6da32a",
+          "localActualCaller": "2/2 Node20 PASS with distinct receipt clocks, late/future witness refused",
+          "bodyEquality": "UNCHANGED_EXACT",
+          "independentReview": "PENDING",
+          "hostedExactSource": "PENDING_AFTER_PUBLICATION"
+        },
+        "authenticFeasibilityReportFollowup": {
+          "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+          "scope": "Read-only terminal quotes/clocks/cost/missingness view in existing caller; no acquisition or policy gate change",
+          "review": "PENDING",
+          "report": "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
+        },
+        "authenticFeasibilityMilestone": {
+          "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+          "scope": "authentic-feasibility-scope.proposed.json",
+          "plan": "first-authentic-evaluation-plan.md",
+          "independentReview": "PENDING",
+          "sourceGateFirst": true,
+          "executionReady": false,
+          "providerDataCalls": 0,
+          "genuineAdmissions": 0
+        },
+        "baselinePinReconciliation": {
+          "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+          "actualBaselineTest": "1/2PASS,1FAIL on shared IG1 stale pins; assertions retained; no IG1 behavior edits",
+          "corrections": [
+            {
+              "file": "docs/a-first-capture-continuation/evidence-resolution.md",
+              "before": "d356c61e1a692a47a67db975991e975ac7219f75203d4756b18f91966c1c1ed3",
+              "after": "948dc501990d20b4f067a7160d676dd26f6409eb7594ce1ca229b2ff43269b43",
+              "sourceUnchangedFromBase": true
+            },
+            {
+              "file": "docs/a-first-capture-continuation/evidence-resolution.json",
+              "before": "cbca1a6b7d3286e8cee9223b117a711d016b219ac46208698239f42f7928904d",
+              "after": "15c3a7c33268eb372df1131df5ed86f025d72de6f469a01594089562a17b6caa",
+              "sourceUnchangedFromBase": true
+            },
+            {
+              "file": "docs/a-first-capture-continuation/ig1-entry-resolution.proposed.json",
+              "before": "7c9ac47bb8ebcb4d4e2406d3069f75527c5bc7511a89a2acda3fed5478bc56e4",
+              "after": "488f0cfeea1ac2b6a403866c1d791673f67a8b665532dd6b589272f59c0909b6",
+              "sourceUnchangedFromBase": true
+            },
+            {
+              "file": "docs/a-first-capture-continuation/ig1-entry-runtime.json",
+              "before": "b160d83f94f34044b6ac879de5bd42835af750ee09e49540d40ea12aaaa0941f",
+              "after": "66b4196f5fc1ad7eb9910775e46e515f9f740d613d99d1ea6f236d2ebcdcdf2d",
+              "sourceUnchangedFromBase": true
+            },
+            {
+              "file": "docs/a-first-capture-continuation/ig1-entry-approval.template.json",
+              "before": "cc595855c2588addebcd12a6491dbb552710658913450439058dcb4d9c5a6799",
+              "after": "8533366cf3458a8ae66de79f4f04ece72795ea88359c309f59364717c9b5d5a0",
+              "sourceUnchangedFromBase": true
+            },
+            {
+              "file": "tools/ig1-entry-evidence.mjs",
+              "before": "08512088009560da4281c06aaabb3afe460dab3422e7296cfa4473346d5f4a15",
+              "after": "e8db15fbd94f1858eb4bd0ddf5cd00a5af07475dad7fd8d3f2a6c95d2f4eb358",
+              "sourceUnchangedFromBase": true
+            },
+            {
+              "file": "test/ig1-entry-evidence.test.mjs",
+              "before": "8f723fc65c8231dcd6caad2bab9b0790231f9e14cfbe770214007a30a283b021",
+              "after": "3d304f11f2f2ec7d2028308a1190c56cd8c393f7d6078cf84adf92d270e8a144",
+              "sourceUnchangedFromBase": true
+            }
+          ]
+        },
+        "workerObservationTestCompanion": {
+          "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+          "reason": "Managed proc task tree empty despite actual stopped direct child; bounded PPid fallback preserves all assertions",
+          "productionWorkerSha256Unchanged": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "review": "PENDING"
+        },
+        "noEntryReportingFollowup": {
+          "base": "83b24f3d11fb81f01816626f670e7bdd24aa44d4",
+          "baselineReproduced": "evidence/a-authentic-baseline-no-entry.json.gz",
+          "reason": "Do not count a known rejection as missing exit; preserve UNKNOWN for source failure",
+          "strategyOrSourceGateChanges": false,
+          "localExactNode20": "2/2actualhost20/20importerPASS",
+          "review": "PENDING"
+        },
+        "ingressInventoryFollowup": {
+          "baselineFailure": "58f90530andb895, identical stale summary.files",
+          "onlyInventoryDifference": "340to342; allpairs/statuses/strategy/production/assertions unchanged",
+          "independentPlanCodeReview": "b895currentrequest preserved; inventory correction separately disclosed"
+        }
+      },
+      "changedEdges": [
+        {
+          "group": "inheritedUnchanged",
+          "path": "scan.mjs",
+          "before": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "after": "a1d606591a1a58444678cbec27629ab389a667adfb9100fc90049aa0cc2bf3da"
+        }
+      ]
+    },
+    {
+      "manifest": "docs/a-n-bc-integration/manifest.json",
+      "originalSha256": "76a06f4b757eec81cfa4a3c168c49ec5887daa80bee1807ba533662a23e61884",
+      "originalManifest": {
+        "kind": "A_N1_N4_AND_SEPARATE_B_C_INACTIVE_V1",
+        "base": "a32539f533b89d789822c0896a7ea3dfa2ef410f",
+        "reviewSource": "eb234b307258eafb028f36e0f7fcb9c090ed6dae",
+        "status": "OFFLINE_TESTED_INDEPENDENT_REVIEW_PENDING",
+        "files": {
+          "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
+          "a-legacy-store-export.mjs": "e81f17bd2ba9f641a72a3f9f7137d76dffb41dd08a76779ef1b25597020dcb13",
+          "a-native-evidence-importer.mjs": "9654571ec3f6ee1d80351eb1cb8568b438a937bfd1b71b6904d59f91edccd420",
+          "a-native-evidence-contract.mjs": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
+          "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+          "tools/a-legacy-store-export.mjs": "8267e10c3cb0ddf3a6a27fca5950a54af4869e8abdccbbb1e7d5a7adb2c4bc6f",
+          "tools/bc-research-rehearsal.mjs": "d5f78fcf1da1a6bc7670ea7b17b12cfa35c80b9490e56a5702507d7cc93cb258",
+          "bc-research-rehearsal.mjs": "70ae5bf10ac15f6544e547dff5eeb7c0ef4e3401c98e8bcc1db742c5c1c1f706",
+          "bc-research-summary.mjs": "cd2aa6c42430922c869bc35b01a79c03c87b329a968e16b2729a01efa6c87e19",
+          ".github/workflows/tests.yml": "b4dac395cc70301565fcdef737361de2c7dee4edae5df66a8ac09c145a1ed5e0",
+          "tools/market03-ingress-matrix.mjs": "b0c2b729c3a0269c02e385638abacbc7d31db6d430e0c6093016acd40b5c1781",
+          "docs/research-bc/README.md": "053e433c12833b6a6f343e2802dc29c77931cd7d4e6903909cdd5c9f20c93bf1",
+          "docs/research-bc/synthetic-examples.json": "fd6ffc9034bd576dbc8c691152bf7521c430b53d799316524e09faf8252df810",
+          "docs/research-bc/C.proposed.json": "f0fb025d6610ebb6f890a4ff5e95d2d770412040eda521771e7d755881f5ffda",
+          "docs/research-bc/prior-verdicts.json": "1b6927fc8d6a3e5cb98005fb5fee65f4bb183dc3793a7ac5b93b9f2f17b3f085",
+          "docs/research-bc/B.proposed.json": "f1fc00dd58e9eab1fcf73039ec64ec86c91d5ba66e695e7d1e59ad6f19a919cf",
+          "test/a-n-review-regressions.test.mjs": "fc601196fa4f9ecf84caf6994ebd901ac02ce5d97d16e149cfc12332f3b8f46b",
+          "test/a-importer-recovery-matrix.test.mjs": "b47434aa268fc876692da00425eb4298db60a0d10cb6cc97e09d82026ac1c4c3",
+          "test/bc-research-rehearsal.test.mjs": "01f46dfccb2a9ce0aeebf80fce2f945f4b0a661e251646d12917e23d3c65e342",
+          "test/a-n-bc-package.test.mjs": "8ea9f766c16d8ab1720d1af7f71b5cc80426363986a3504fd87ad55955a1f673",
+          "test/helper-bc-research.mjs": "54e04af98bd10f62a70c97cd56a4a838bae1e61788a8fb6aada5d01084f51ac2",
+          "test/helper-retained-enrollment.mjs": "4ccc6dad08b189d64abb3cdd03cf7dc541fa93f4d1f3532f87e618c2b06ceec1",
+          "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+          "test/a-native-evidence-importer.test.mjs": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed",
+          "docs/a-n-bc-integration/README.md": "b1b0d92e9626235fc3d2bb35b6c562948d669bd7f9d60563c7b7da837155bffb",
+          "docs/a-n-bc-integration/recovery-and-export.md": "e80becbabb23fb13d2d63354f7f6824e2acc563555374b03cf69aeb0f914e641",
+          "docs/a-native-importer/resumption-procedure.md": "8387c601f7ae85c186fddb04efe8d0a9f9643fb47572b971da9b028f93f9dfd8",
+          "docs/a-n-bc-integration/activation-dependencies.md": "de01bf7836207f944de3acbe0ff9ff4b68256d28ec1dcbf3e2154ad7de10127f",
+          "docs/a-n-bc-integration/verification.json": "b297cd46fe66083c13ceca6798e364e8e261779a6e6d457f1b273b61c2f404c4",
+          "docs/a-n-bc-integration/n1-original-reproduction.json": "e66596a7b6141b3da41b76210f70a518110ac9c5c6e85ebbb3cfdf57cb0642f9",
+          "docs/a-n-bc-integration/n2-original-reproduction.json": "01831856b2871b0356157e5dc3f6f80d25f81d63d4054c30de495389f8edecc7",
+          "docs/a-n-bc-integration/n3-original-reproduction.json": "089fcbdfbcb56a6cbeb57ac5baddadd33b0b2126e0434887872d15e26461aa3a",
+          "docs/a-n-bc-integration/evidence/node24-compatibility.log": "e6846104e85c0d4f38511663e220ad53ec9a82140998748284ecfd6b6cc02aa6",
+          "docs/a-n-bc-integration/evidence/python.log": "f88cd69789afdc3d4b3d517424484538b9cb0fb4111ebcf65a529ea6ef714ca1",
+          "docs/a-n-bc-integration/evidence/intermediate-nested-manifest-failure.tap": "20d883ab7195742e33d78c6ada71b386d916f8c611c95024ec7872d6f77a81ae",
+          "docs/a-n-bc-integration/evidence/static.log": "a5bc9443091074810a0a6471e5ecc3cd5e0c37f66ceb9dd1bf52c88ff4598e0f",
+          "docs/a-n-bc-integration/evidence/node20-a-bc.tap": "68a40e22b1f5baf01d4397deee3f820767abd1919881ab335825f5acc0930eb7",
+          "docs/a-n-bc-integration/evidence/intermediate-wrapper-test-import-failure.tap": "f64ab460095763068819c4e4d63881635a068c27938fec3ec2929588b02d5016",
+          "docs/a-n-bc-integration/evidence/cli-bounds.json": "d32c1a12372939f90cb78ea9b90b4b9317015a410dcc03b81af949ee8dd48f20",
+          "docs/a-n-bc-integration/evidence/package-six.tap": "a568a14b9b07fd2b0b081f4259eddbf78bd2cfc770de06fb3a68785dc14ac73f",
+          "docs/a-n-bc-integration/evidence/nested-manifest-correction.tap": "7cc9cac5e7470d3886bcd902899b085ec373aac9ff0f785725be301248f2545e",
+          "docs/a-n-bc-integration/evidence/export-destination-original-failure.tap": "58446bc06251eb46041a1b5f2a23942e438689083b26045cd628916e5d999feb",
+          "docs/a-n-bc-integration/evidence/export-anchor-node20.tap": "f2c7f4b2c6acc7b931812f94f9c4e3c7d2230fdc1bca5ab1dad071ee4492b721",
+          "docs/a-n-bc-integration/evidence/export-anchor-node24.log": "d546a4d45085bba39b71430f3e16a8d2e918b00990311bf724d13faf44395442",
+          "a-native-source-join.mjs": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89"
+        },
+        "protectedUnchanged": {
+          "scan.mjs": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "ignition-watch.mjs": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151",
+          "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
+          "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+          "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+          "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+          "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+          "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
+          "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
+          "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
+          "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
+          "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
+          "squad5-core.mjs": "17014859f3dd6b4cc44afa072716bd4b3bb733f5c4d9bd1aa44704b6ff87f012",
+          "squad11-core.mjs": "29044a5bfe27e60d47f7373963fef80d9c06972cce7987026dea3d30f5676ba9",
+          "earnings-study.mjs": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+          "leaders-study.mjs": "d3b8ee4f04b4f4304c3419ae619a0ca6382c70f7b279527aa2cbde45412913c3",
+          "squad11-lab.mjs": "6851886bfb72e9bb680f4c69a4f20b38f1e2f6b9fb3cd51d394213b7cb8b3b52",
+          "data/earnings-study.json": "a46ec6700fc7dbb8a38c7489a77197b4a2d7aada07e0f30b9cc0625ba3fbbb1c",
+          "data/leaders-study.json": "2e5fea7cba614c6a0bd8c048fbf02edef4e666a1f973b214af3f1b0ecbdda81c",
+          "data/events-study.json": "c147422c452bfd055d3ad63ce21a66c73d0ef1371df9b3b3e17d714a038ad5df",
+          "data/squad11-lab.json": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a",
+          "docs/engineering-acceptance-checks.json": "28be72ec1082320e81c6b586398b3d57f076fef48e5f4f66e111917d66399436"
+        },
+        "totalStoreBytes": 16777216,
+        "storeFileCap": 2000,
+        "workerTimeoutMs": 15000,
+        "exportEnvelopeBytes": 33554432,
+        "syntheticBCFileBytes": 8388608,
+        "allowBuy": false,
+        "productionChanges": false,
+        "realKeys": false,
+        "providerCalls": 0,
+        "prospectiveAdmissions": 0,
+        "acceptanceRowsClosed": 0,
+        "policyAdopted": false,
+        "followups": [
+          {
+            "base": "3641a8e806b72e65add1ce6a90b82fdad7707a98",
+            "review": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
+            "reason": "Scoped N4 inventory; B retirement/C stop and gate labels; additive inactive source bridge; measured bounded development CI margin30\u219235minutes. N1-N3/export/producer/A rules byte-identical.",
+            "changes": [
+              {
+                "file": "tools/bc-research-rehearsal.mjs",
+                "previousSha256": "7cacb8947f4430c7d6b1bf752c74080cc6899280b4fc8102cbe5903c90722862",
+                "sha256": "d5f78fcf1da1a6bc7670ea7b17b12cfa35c80b9490e56a5702507d7cc93cb258"
+              },
+              {
+                "file": "bc-research-rehearsal.mjs",
+                "previousSha256": "b08874e01921bcef56de6a53c1c1cdbf9a66314e39d2b092d72e8668ccc15146",
+                "sha256": "70ae5bf10ac15f6544e547dff5eeb7c0ef4e3401c98e8bcc1db742c5c1c1f706"
+              },
+              {
+                "file": "bc-research-summary.mjs",
+                "previousSha256": "2ffb5ca02f7949c48a607d732cc01498820411ce5d5d53d3c25b6d3a37805a0a",
+                "sha256": "cd2aa6c42430922c869bc35b01a79c03c87b329a968e16b2729a01efa6c87e19"
+              },
+              {
+                "file": ".github/workflows/tests.yml",
+                "previousSha256": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4",
+                "sha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4"
+              },
+              {
+                "file": "tools/market03-ingress-matrix.mjs",
+                "previousSha256": "d37b06e1524f87cec5c312c9850c8e2f8705b9e608921093c699a31695e5b089",
+                "sha256": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7"
+              },
+              {
+                "file": "docs/research-bc/README.md",
+                "previousSha256": "999733d51dd2eaf9138425dbc1b96857bfff3e0d03740b2df194a8341e9bf3fa",
+                "sha256": "053e433c12833b6a6f343e2802dc29c77931cd7d4e6903909cdd5c9f20c93bf1"
+              },
+              {
+                "file": "test/bc-research-rehearsal.test.mjs",
+                "previousSha256": "4b55e9f07d8b87251b36a19c7efa28e3c61c98a5edd5ac7ad728ec609b4d109d",
+                "sha256": "01f46dfccb2a9ce0aeebf80fce2f945f4b0a661e251646d12917e23d3c65e342"
+              },
+              {
+                "file": "docs/a-n-bc-integration/README.md",
+                "previousSha256": "711dea77c1b74b80eaf3e54e485e500c4e393d07dc4aea02cd5fbc73295d6c8e",
+                "sha256": "b1b0d92e9626235fc3d2bb35b6c562948d669bd7f9d60563c7b7da837155bffb"
+              },
+              {
+                "file": "docs/a-n-bc-integration/recovery-and-export.md",
+                "previousSha256": "b55306ac0393c7370c20b000c66ef415eb823e9b544782871c0dc429085cbb67",
+                "sha256": "e80becbabb23fb13d2d63354f7f6824e2acc563555374b03cf69aeb0f914e641"
+              }
+            ]
+          },
+          {
+            "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+            "reason": "Additive inactive first-capture host continuation; older execution evidence belongs to its pinned prior commit, never reassigned by refreshed pins. No old N1-N3/export/importer/evaluator or strategy behavior changed. Development test bound35->40min for measured new~3m13s file plus prior30m52s suite.",
+            "evidence": "docs/a-first-capture-continuation/README.md",
+            "changes": [
+              {
+                "file": ".github/workflows/tests.yml",
+                "priorSha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4",
+                "sha256": "84331ec3e35f94c3b0b6b52c49160df663b8ffc7e39f4b1d403ef4bee2f96252"
+              },
+              {
+                "file": "docs/a-n-bc-integration/activation-dependencies.md",
+                "priorSha256": "6fb7d970beeca94a86dc00dc8ab42036e5b1e02d91ce5553b12d383cd4496c5c",
+                "sha256": "de01bf7836207f944de3acbe0ff9ff4b68256d28ec1dcbf3e2154ad7de10127f"
+              }
+            ]
+          },
+          {
+            "base": "3c0ec3fd3e33b7b2fa19f59d777ba8f8e8dff2f3",
+            "review": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+            "reason": "P1 private response durability and bounded definitive-busy retry; generated ingress metadata correction. Prior execution evidence remains attributed to its original commit.",
+            "changes": []
+          }
+        ],
+        "workerLifetimeFollowup": {
+          "base": "5713011e426f21e283dccad286af096519f741e9",
+          "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+          "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+          "independentReview": "PENDING",
+          "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+        },
+        "g2OriginalInputFollowup": {
+          "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+          "changedInactiveDependencies": [
+            "a-native-evidence-contract.mjs",
+            "a-native-source-join.mjs"
+          ],
+          "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+          "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+          "productionChanges": false,
+          "providerCalls": 0
+        },
+        "historicalBaseDependencyHashes": {
+          "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49"
+        },
+        "authenticFeasibilityReportFollowup": {
+          "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+          "scope": "Read-only terminal quotes/clocks/cost/missingness view in existing caller; no acquisition or policy gate change",
+          "review": "PENDING",
+          "report": "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
+        }
+      },
+      "changedEdges": [
+        {
+          "group": "protectedUnchanged",
+          "path": "scan.mjs",
+          "before": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "after": "a1d606591a1a58444678cbec27629ab389a667adfb9100fc90049aa0cc2bf3da"
+        }
+      ]
+    },
+    {
+      "manifest": "docs/a-native-importer/manifest.json",
+      "originalSha256": "44e35a3348237b445383e3d3c87db62e11e4e19031d540db27ff1b759d3914c4",
+      "originalManifest": {
+        "kind": "A_NATIVE_STRICT_IMPORTER_L1_L4_INACTIVE_V1",
+        "base": "2c9f418634e05adad5ead5b7fc85de6d1f3eedee",
+        "reviewSource": "80df36fe13fe94634cdd90b1589783be8c4bba16",
+        "files": {
+          "docs/a-native-importer/fixtures/a-fenced-store-2c9.source": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
+          "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
+          "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920",
+          "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+          "a-native-evidence-contract.mjs": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
+          "a-native-evidence-importer.mjs": "9654571ec3f6ee1d80351eb1cb8568b438a937bfd1b71b6904d59f91edccd420",
+          "tools/a-native-evidence-runner.mjs": "c2ba3517764837130bba27544ddaa551ecfe4fff9bc80d3c0155bed8e09bdeeb",
+          "test/helper-a-native-import.mjs": "97b9eda77243bccb046b2e1df686454c7c78e5b2767105b7efd1ef20205925a7",
+          "test/a-native-evidence-importer.test.mjs": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed",
+          "test/a-native-importer-package.test.mjs": "d75358a497bc3acb838170c94e4af11772e509a9b542e5f0b4f6881aff323f28",
+          "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+          "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
+          "tools/market03-ingress-matrix.mjs": "b0c2b729c3a0269c02e385638abacbc7d31db6d430e0c6093016acd40b5c1781",
+          ".github/workflows/tests.yml": "b4dac395cc70301565fcdef737361de2c7dee4edae5df66a8ac09c145a1ed5e0"
+        },
+        "productionProtected": {
+          "a-native-source-join.mjs": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89",
+          "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+          "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
+          "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
+          "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
+          "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
+          "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+          "scan.mjs": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "ignition-watch.mjs": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151",
+          "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
+          "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+          "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+          "capture-json.mjs": "b73a5a9239b6866ad06f915bb1657373aab4c63d216d27483e3f6b7edf858475",
+          "test/a-authenticated-collector.test.mjs": "e4fd8e652260dcf288874d2183b86c67ce3a900e73e389f1d59050e3657f63dd",
+          "test/a-evidence-contract.test.mjs": "0cb6302b45b09a929f2f7320a53d0d35dd6a752d613140167cc84ed8be964a7e",
+          "test/a-independent-coverage.test.mjs": "51bc1e39a5ca4de717b7fc98393f5981ff95218d261166a8b71422881f4cf166",
+          "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
+          "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
+          "test/a-fenced-store.test.mjs": "dc691681ca265ff298ae18279cdbb554c098eef497896716e7ea710aeb1afe8d",
+          "docs/engineering-acceptance-checks.json": "28be72ec1082320e81c6b586398b3d57f076fef48e5f4f66e111917d66399436"
+        },
+        "status": "OFFLINE_TESTED_INDEPENDENT_REVIEW_PENDING",
+        "allowBuy": false,
+        "prospectiveAdmissions": 0,
+        "providerCalls": 0,
+        "realKeys": false,
+        "productionChanges": false,
+        "policyAdopted": false,
+        "acceptanceRowsClosed": 0,
+        "totalStoreBytes": 16777216,
+        "storeFileCap": 2000,
+        "workerTimeoutMs": 15000,
+        "signedSourceMaxBytes": 1048576,
+        "importOriginalCountCap": 400,
+        "quoteParserExtraction": "Algorithm unchanged; both timestamp helper and normalizer imported by collector. Original 38 collector assertions unchanged.",
+        "followups": [
+          {
+            "base": "a32539f533b89d789822c0896a7ea3dfa2ef410f",
+            "review": "eb234b307258eafb028f36e0f7fcb9c090ed6dae",
+            "status": "N_FOLLOWUP_INDEPENDENT_REVIEW_PENDING",
+            "changes": [
+              {
+                "file": "a-fenced-store.mjs",
+                "priorSha256": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+                "sha256": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "a-evidence-contract.mjs",
+                "priorSha256": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
+                "sha256": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "a-native-evidence-contract.mjs",
+                "priorSha256": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
+                "sha256": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "a-native-evidence-importer.mjs",
+                "priorSha256": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+                "sha256": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "test/a-native-evidence-importer.test.mjs",
+                "priorSha256": "7dd7cfff1c9df3d8d5e13b56b05a63a76edd9f0b8ce9724c40a06bf8de0e0a97",
+                "sha256": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "test/a-fenced-recovery.test.mjs",
+                "priorSha256": "0eb153f63260c6bfdb5276a7e01aa2d12c3ac6615f6f04d27e0e1e8e4739bf12",
+                "sha256": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": ".github/workflows/tests.yml",
+                "priorSha256": "da8838c89a820b77e332efa4fc6f968724d6b3d46a6d0e4ddc51fdfcf6336f97",
+                "sha256": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              }
+            ]
+          },
+          {
+            "base": "3641a8e806b72e65add1ce6a90b82fdad7707a98",
+            "review": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
+            "reason": "Scoped N4 inventory; B retirement/C stop and gate labels; additive inactive source bridge; measured bounded development CI margin30\u219235minutes. N1-N3/export/producer/A rules byte-identical.",
+            "changes": [
+              {
+                "file": "tools/market03-ingress-matrix.mjs",
+                "previousSha256": "d37b06e1524f87cec5c312c9850c8e2f8705b9e608921093c699a31695e5b089",
+                "sha256": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7"
+              },
+              {
+                "file": ".github/workflows/tests.yml",
+                "previousSha256": "eed48f27c5cff2a66f5b8b1c14672f925e8269b2ab0108eb984309b9fa7883a4",
+                "sha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4"
+              }
+            ]
+          },
+          {
+            "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+            "reason": "Additive inactive first-capture host continuation; older execution evidence belongs to its pinned prior commit, never reassigned by refreshed pins. No old N1-N3/export/importer/evaluator or strategy behavior changed. Development test bound35->40min for measured new~3m13s file plus prior30m52s suite.",
+            "evidence": "docs/a-first-capture-continuation/README.md",
+            "changes": [
+              {
+                "file": ".github/workflows/tests.yml",
+                "priorSha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4",
+                "sha256": "84331ec3e35f94c3b0b6b52c49160df663b8ffc7e39f4b1d403ef4bee2f96252"
+              }
+            ]
+          },
+          {
+            "base": "3c0ec3fd3e33b7b2fa19f59d777ba8f8e8dff2f3",
+            "review": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+            "reason": "P1 private response durability and bounded definitive-busy retry; generated ingress metadata correction. Prior execution evidence remains attributed to its original commit.",
+            "changes": []
+          }
+        ],
+        "workerLifetimeFollowup": {
+          "base": "5713011e426f21e283dccad286af096519f741e9",
+          "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+          "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+          "independentReview": "PENDING",
+          "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+        },
+        "g2OriginalInputFollowup": {
+          "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+          "changedInactiveDependencies": [
+            "a-native-evidence-contract.mjs",
+            "a-native-source-join.mjs"
+          ],
+          "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+          "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+          "productionChanges": false,
+          "providerCalls": 0
+        },
+        "authenticFeasibilityReportFollowup": {
+          "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+          "scope": "Read-only terminal quotes/clocks/cost/missingness view in existing caller; no acquisition or policy gate change",
+          "review": "PENDING",
+          "report": "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
+        }
+      },
+      "changedEdges": [
+        {
+          "group": "productionProtected",
+          "path": "scan.mjs",
+          "before": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "after": "a1d606591a1a58444678cbec27629ab389a667adfb9100fc90049aa0cc2bf3da"
+        }
+      ]
+    },
+    {
+      "manifest": "docs/a-native-source-join/manifest.json",
+      "originalSha256": "6335093724c28f56996f8d8b8764810aae9cf9f0af5f33f9cbf6434c20ae476a",
+      "originalManifest": {
+        "kind": "A_NATIVE_SOURCE_CLOSE_INACTIVE_V1",
+        "base": "572dc5aeacb1f10d4590123432e4203cd0d347e2",
+        "status": "OFFLINE_IMPLEMENTED_REVIEW_PENDING",
+        "sourceAuthentication": "UNVERIFIED",
+        "allowBuy": false,
+        "genuineAdmissions": 0,
+        "files": {
+          "a-native-source-join.mjs": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89",
+          "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+          "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
+          "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
+          "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791"
+        },
+        "inheritedDependencies": {
+          "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
+          "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+          "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
+          "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
+          "capture-json.mjs": "b73a5a9239b6866ad06f915bb1657373aab4c63d216d27483e3f6b7edf858475",
+          "docs/engineering-acceptance-checks.json": "28be72ec1082320e81c6b586398b3d57f076fef48e5f4f66e111917d66399436",
+          "docs/validation/native-sec-shadow-production-manifest-v3.json": "d6c9f5c3278e1d41c3f706a1fc973f1a08df7f96e2f1333e5e303847f5df0130",
+          "docs/validation/native-sec-shadow-production-v3.patch": "0afd4a1cf621725af086d0a10d242f633c93b74c3d14882de626454a43c1dabd",
+          "docs/validation/native-sec-shadow-runtime-base-v3.json.gz": "6a24d371b4069f5f4c0064c215ab2775b373f72d5a513b3ba7ef8d36c971d129",
+          "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
+          "ignition-watch.mjs": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151",
+          "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+          "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+          "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
+          "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
+          "scan.mjs": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "test/native-sec-producer-fixture.mjs": "74e4ab2c3b9eac1f052f791df3bdc05d394d7402d8dd6831b08a49638a802de4",
+          "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+          "a-native-evidence-contract.mjs": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
+          "a-native-evidence-importer.mjs": "9654571ec3f6ee1d80351eb1cb8568b438a937bfd1b71b6904d59f91edccd420",
+          "a-native-quotes.mjs": "3382f1f7bcb6ba95f6c13be896acf228b41074f54237bfad1c6a7c7cdb746920"
+        },
+        "protectedFilesUnchangedFromBase": [
+          "a-sip-window-client.mjs",
+          "a-independent-coverage.mjs",
+          "reclaim-research-workflow.mjs",
+          "reclaim-research-runner.mjs",
+          "zad-compliance.mjs",
+          "scan.mjs",
+          "ignition-watch.mjs",
+          "edgar-feed.mjs",
+          "native-sec-events.mjs",
+          "market-session.mjs",
+          "capture-json.mjs",
+          "test/native-sec-producer-fixture.mjs",
+          "docs/validation/native-sec-shadow-runtime-base-v3.json.gz",
+          "docs/validation/native-sec-shadow-production-v3.patch",
+          "docs/validation/native-sec-shadow-production-manifest-v3.json",
+          "docs/engineering-acceptance-checks.json"
+        ],
+        "productionOrWorkflowChanges": false,
+        "providerCalls": 0,
+        "storageLimitUnchangedBytes": 16777216,
+        "dependencyRevisions": {
+          "a-fenced-store.mjs": {
+            "base": "2c9f418634e05adad5ead5b7fc85de6d1f3eedee",
+            "before": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
+            "after": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+            "reason": "L1-L4 mandatory non-test authority/durable signed original/strict origin integration",
+            "evidence": "docs/a-native-importer/README.md"
+          }
+        },
+        "revisionHistory": [
+          {
+            "base": "2c9f418634e05adad5ead5b7fc85de6d1f3eedee",
+            "previousFiles": {
+              "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
+              "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+              "test/a-native-source-join.test.mjs": "af156708ee40132315ed6b338140241b0f0fdeffb573da5f6cdeac4563d37417",
+              "test/a-close-source.test.mjs": "4c2a1dcfa20e71190500d1277e12a7d6da8ec9566eb7400eed1fb5cfacd0eb8b",
+              "test/a-native-source-package.test.mjs": "a80c6fb4dc9e44f93324b7363faf1ffb1d607e1df2de2ef66a2567d937cc5293"
+            },
+            "previousProtected": {},
+            "previousDependencyRevisions": {
+              "a-fenced-store.mjs": {
+                "base": "7ee150f854b23c0f6066a6407e3d52e3a3b774ac",
+                "before": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
+                "after": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
+                "reason": "Explicitly authorized K1/K2 recovery/claim follow-up",
+                "evidence": "docs/a-fence-recovery/README.md"
+              }
+            },
+            "reason": "L1-L4 authorized strict importer/enrollment/durable exact-request integration; prior review unchanged for original scope."
+          }
+        ],
+        "integrationRevisions": {
+          "L1-L4": {
+            "base": "2c9f418634e05adad5ead5b7fc85de6d1f3eedee",
+            "evidence": "docs/a-native-importer/README.md",
+            "changedDependencies": [
+              "a-fenced-store.mjs",
+              "a-authenticated-collector.mjs",
+              "a-evidence-contract.mjs"
+            ],
+            "previousHashes": {
+              "a-fenced-store.mjs": "742d66513bcd5fb23f3d17b70a9401b08f0320350b86e5ffe2cfde0f3a4ec98d",
+              "a-authenticated-collector.mjs": "6625653dc3fbbd328ba0a2996a57b9c7483c6f6f407681886847421b88109f84",
+              "a-evidence-contract.mjs": "9bcad99ee1db29591790830dfbe9702c6706bc5968907a4e4a238be424772504"
+            }
+          }
+        },
+        "followups": [
+          {
+            "base": "a32539f533b89d789822c0896a7ea3dfa2ef410f",
+            "review": "eb234b307258eafb028f36e0f7fcb9c090ed6dae",
+            "status": "N_FOLLOWUP_INDEPENDENT_REVIEW_PENDING",
+            "changes": [
+              {
+                "file": "a-evidence-contract.mjs",
+                "priorSha256": "15511671ae52462fe3b6df70cd2cf277790953e52db62e554efe367445930238",
+                "sha256": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "a-fenced-store.mjs",
+                "priorSha256": "36e77c7d9539a660183d7ba4b702dc904cf47917ef77d4f469141b681a1004aa",
+                "sha256": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "a-native-evidence-contract.mjs",
+                "priorSha256": "daae1de93dba75754c749a0cd763f3d02e49dc045805df6f3026b2ec64c911e8",
+                "sha256": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              },
+              {
+                "file": "a-native-evidence-importer.mjs",
+                "priorSha256": "22967215c0cccd3eccdc5d74029d745e9b0666f7bcd8d3850c159ab25a10fada",
+                "sha256": "b0787130200a0e3ef9b9e203ddb448c2cb7d85dce08b6454f9eac6234d81c5e7",
+                "reason": "N1-N4 inactive follow-up; explicit pin refresh, not an unchanged-dependency claim"
+              }
+            ]
+          },
+          {
+            "base": "3641a8e806b72e65add1ce6a90b82fdad7707a98",
+            "review": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
+            "reason": "Scoped N4 inventory; B retirement/C stop and gate labels; additive inactive source bridge; measured bounded development CI margin30\u219235minutes. N1-N3/export/producer/A rules byte-identical.",
+            "changes": []
+          },
+          {
+            "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+            "reason": "Additive inactive first-capture host continuation; older execution evidence belongs to its pinned prior commit, never reassigned by refreshed pins. No old N1-N3/export/importer/evaluator or strategy behavior changed. Development test bound35->40min for measured new~3m13s file plus prior30m52s suite.",
+            "evidence": "docs/a-first-capture-continuation/README.md",
+            "changes": []
+          },
+          {
+            "base": "3c0ec3fd3e33b7b2fa19f59d777ba8f8e8dff2f3",
+            "review": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+            "reason": "P1 private response durability and bounded definitive-busy retry; generated ingress metadata correction. Prior execution evidence remains attributed to its original commit.",
+            "changes": []
+          }
+        ],
+        "workerLifetimeFollowup": {
+          "base": "5713011e426f21e283dccad286af096519f741e9",
+          "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+          "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+          "independentReview": "PENDING",
+          "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+        },
+        "g2OriginalInputFollowup": {
+          "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+          "changedInactiveDependencies": [
+            "a-native-evidence-contract.mjs",
+            "a-native-source-join.mjs"
+          ],
+          "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+          "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+          "productionChanges": false,
+          "providerCalls": 0
+        },
+        "authenticFeasibilityReportFollowup": {
+          "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+          "scope": "Read-only terminal quotes/clocks/cost/missingness view in existing caller; no acquisition or policy gate change",
+          "review": "PENDING",
+          "report": "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
+        }
+      },
+      "changedEdges": [
+        {
+          "group": "inheritedDependencies",
+          "path": "scan.mjs",
+          "before": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "after": "a1d606591a1a58444678cbec27629ab389a667adfb9100fc90049aa0cc2bf3da"
+        }
+      ]
+    },
+    {
+      "manifest": "docs/review-ad3837-response/manifest.json",
+      "originalSha256": "cdf11f542f02d642e2bd37752132a3003bb860cf4f8214013f4b38c6581728ff",
+      "originalManifest": {
+        "kind": "AD3837_RESPONSE_AND_INACTIVE_SOURCE_BRIDGE_V1",
+        "base": "3641a8e806b72e65add1ce6a90b82fdad7707a98",
+        "review": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
+        "status": "OFFLINE_COMPONENT_TESTED_INDEPENDENT_REVIEW_PENDING",
+        "files": {
+          "a-source-acquisition-bridge.mjs": "e3eaaf20ec971fa5e61644d5997d276004907bcfacdeed748ee82b5123e56794",
+          "research-proposal-disposition.mjs": "bdcd2e32195680f46cf40a768648a28fe32ab87a08f3d99de6563d2a1a73a4b7",
+          "tools/a-acquisition-rehearsal.mjs": "6733bc609ad8b39fc3f56b5bcd268fb0e6dd0a1b4511547b910adeaacdfd788e",
+          "bc-research-rehearsal.mjs": "70ae5bf10ac15f6544e547dff5eeb7c0ef4e3401c98e8bcc1db742c5c1c1f706",
+          "bc-research-summary.mjs": "cd2aa6c42430922c869bc35b01a79c03c87b329a968e16b2729a01efa6c87e19",
+          "tools/bc-research-rehearsal.mjs": "d5f78fcf1da1a6bc7670ea7b17b12cfa35c80b9490e56a5702507d7cc93cb258",
+          "test/a-source-acquisition-bridge.test.mjs": "e2180d44289906465ea8ddaa2f9c0690619ff633877b66829265a20a11137aaf",
+          "test/helper-a-source-bridge.mjs": "c5c8cc94533dfa406e6a6123e4da2f4dfe44a28b836ca27e7268b55a59ff0d0a",
+          "test/review-ad3837-disposition.test.mjs": "128383740f6a6d8d0b50293067814528574d5ca6f2155a9d1abfe653532eb441",
+          "test/review-ad3837-package.test.mjs": "3813239e5d924470f4e3bab7ed5cc0712a9457d0a5133a599c36793a9cf14d31",
+          "test/bc-research-rehearsal.test.mjs": "01f46dfccb2a9ce0aeebf80fce2f945f4b0a661e251646d12917e23d3c65e342",
+          "tools/market03-ingress-matrix.mjs": "b0c2b729c3a0269c02e385638abacbc7d31db6d430e0c6093016acd40b5c1781",
+          ".github/workflows/tests.yml": "b4dac395cc70301565fcdef737361de2c7dee4edae5df66a8ac09c145a1ed5e0",
+          "docs/research-bc/current-disposition.json": "efc64a9dc99f32044111a24800a72e83ba09e93030fe219bfafebd235670fb78",
+          "docs/research-bc/README.md": "053e433c12833b6a6f343e2802dc29c77931cd7d4e6903909cdd5c9f20c93bf1",
+          "docs/a-n-bc-integration/README.md": "b1b0d92e9626235fc3d2bb35b6c562948d669bd7f9d60563c7b7da837155bffb",
+          "docs/a-n-bc-integration/recovery-and-export.md": "e80becbabb23fb13d2d63354f7f6824e2acc563555374b03cf69aeb0f914e641",
+          "docs/review-ad3837-response/README.md": "101a5c17be88623762ebcd6f7efb737a40ac0749122afe09797e0431b6cf0637",
+          "docs/review-ad3837-response/source-bridge.md": "552cbd310b5d79b5f6acf87df5046ab9ab30324e1efd005868cefe989e94a1d3",
+          "docs/review-ad3837-response/legacy-inventory.json": "24c4e6fc6dd1e3bc9d4ac2ab51a862cbce1ae33385a87bffc35b436807459177",
+          "docs/review-ad3837-response/retained-comparison.json": "a8a78fdb24259bfe8365bc83245d37e178729d9da4c3a664c2c87b85d585a7d6",
+          "test/helper-a-bridge-competitor.mjs": "749aac4436b4d89ee82251b0de1c1e70e2f2e7bb675b3f9e578d0e9fc9575e32",
+          "docs/review-ad3837-response/verification.json": "eaecfc14a9c651e270232957b648fa1993fe4a143bba4a29ab87a35684a5ea67",
+          "docs/review-ad3837-response/evidence/ad3837-final-restart-attribution20.log.gz": "3da5f560166d943027f914df6b7cf44c2e26403f7bc572d6f54397e870b3fdc9",
+          "docs/review-ad3837-response/evidence/ad3837-final-python.log.gz": "4fa3d6a61ff811411fd7fee6cd9e198fae2b7466e7463f7e11f359323a20d256",
+          "docs/review-ad3837-response/evidence/ad3837-provenance-context-target2.log.gz": "787e74b6220676561436bea52e7f817a9e30a082d02478f62752d263021ba059",
+          "docs/review-ad3837-response/evidence/ad3837-bridge-first.log.gz": "75c472a4240e18ad48510d2ade7b21d4f9bffaea1d2f10fb2db82ef282d19095",
+          "docs/review-ad3837-response/evidence/ad3837-final-exact20.log.gz": "b92c762d2cd4784a9b91edf537f1180bf17499c7ced1d74deca4c057075eeb77",
+          "docs/review-ad3837-response/evidence/ad3837-request-race-after-fix.log.gz": "e26667661382a5cb5a2734728e46b2b6712457583c3cf8fcb2fdb2a4c1b69911",
+          "docs/review-ad3837-response/evidence/ad3837-final-exact24.log.gz": "032b4bd48aa61e1f1e177382f5f9547232784dc70bc7d43276cf15b57b9f72e9",
+          "docs/review-ad3837-response/evidence/ad3837-stale-fixture-correction.log.gz": "483cf06796099c239b2eff9fb0aab6a4ec6a7026b5ce33bddb0d86d6f93d323c",
+          "docs/review-ad3837-response/evidence/ad3837-final-new20.log.gz": "4adf6b126c0bd0c654b8458becbc05bd4d71cb3aa8ea8e5b94ce76a1e8c206f8",
+          "docs/review-ad3837-response/evidence/ad3837-final-exact20-corrected.log.gz": "10d32972406cc3b39113a4c586aae5c1993be01c1857044ad470c8bd5c76599e",
+          "docs/review-ad3837-response/evidence/ad3837-final-all-A20.log.gz": "34cefad6c854d75889e391c9aa1cca96fa70cc3e067fff3301e4733069cb3f3e",
+          "docs/review-ad3837-response/evidence/ad3837-request-race-before-fix2.log.gz": "d9d2f12e13293a82f59ce556daad45eb01a4e77790abc745dcbf309c3a7f4617",
+          "docs/review-ad3837-response/evidence/ad3837-final-new24-v2.log.gz": "46aa8d46b65e67673dda28960d9fd748bd61c3ac0de0193de2327cad461470f2",
+          "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "a-native-source-join.mjs": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89",
+          "a-native-evidence-contract.mjs": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
+          "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+          "a-native-evidence-importer.mjs": "9654571ec3f6ee1d80351eb1cb8568b438a937bfd1b71b6904d59f91edccd420"
+        },
+        "independentPassedUnchanged": {
+          "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
+          "a-legacy-store-export.mjs": "e81f17bd2ba9f641a72a3f9f7137d76dffb41dd08a76779ef1b25597020dcb13",
+          "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+          "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
+          "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
+          "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
+          "tools/a-legacy-store-export.mjs": "8267e10c3cb0ddf3a6a27fca5950a54af4869e8abdccbbb1e7d5a7adb2c4bc6f",
+          "tools/a-native-evidence-runner.mjs": "c2ba3517764837130bba27544ddaa551ecfe4fff9bc80d3c0155bed8e09bdeeb",
+          "test/a-n-review-regressions.test.mjs": "fc601196fa4f9ecf84caf6994ebd901ac02ce5d97d16e149cfc12332f3b8f46b",
+          "test/a-importer-recovery-matrix.test.mjs": "b47434aa268fc876692da00425eb4298db60a0d10cb6cc97e09d82026ac1c4c3",
+          "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+          "test/a-native-evidence-importer.test.mjs": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed"
+        },
+        "productionAndResearchProtected": {
+          "scan.mjs": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "ignition-watch.mjs": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151",
+          "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
+          "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+          "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+          "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+          "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
+          "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
+          "catalyst-reclaim-prototype.mjs": "fa11c49394c2a6a380ee5b12b1712d45ebf5184b32f7cbde231ecea83efdcd19",
+          "squad5-core.mjs": "17014859f3dd6b4cc44afa072716bd4b3bb733f5c4d9bd1aa44704b6ff87f012",
+          "squad11-core.mjs": "29044a5bfe27e60d47f7373963fef80d9c06972cce7987026dea3d30f5676ba9",
+          "earnings-study.mjs": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+          "orb-study.mjs": "a9ed7dca072df5776df188db0a1ecfbc94be77a9b62c67c15facc81e75b08c51",
+          "event-orb-retest-core.mjs": "6c47bd988b5a13b1245a279c165ee723fc908467839d4776d5437e3cf1ff83c0",
+          "squad28-core.mjs": "b0f7d9ac12d56eb3ee758f9161385db49cc1f6f565a21dd95938d2028fed6239",
+          "data/earnings-study.json": "a46ec6700fc7dbb8a38c7489a77197b4a2d7aada07e0f30b9cc0625ba3fbbb1c",
+          "data/orb-study.json": "1d624c2e55e7d4a6ddb292767155897405aed8852c639e3ecd51fb1f688030c5",
+          "data/event-orb-retest-15d-gates.json": "c2d4aeb0641dcb30975f31f4c69aec3e9149f0cd781d02877bc279483615fceb",
+          "data/squad11-lab.json": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a",
+          "data/events-study.json": "c147422c452bfd055d3ad63ce21a66c73d0ef1371df9b3b3e17d714a038ad5df",
+          "data/squad28-lab.json": "7b230116f85cf6a20a8a8e3c3169bf9e8ee9b5fcb52e0fd4ab4851aa96afb140",
+          "docs/engineering-acceptance-checks.json": "28be72ec1082320e81c6b586398b3d57f076fef48e5f4f66e111917d66399436",
+          ".github/workflows/bot.yml": "84e708568592eaba00796eb7774d1b1615d2fbe01f2b924eb5c806aa2d2e94fd",
+          ".github/workflows/main.yml": "225265affbe5748d1eced085c661ed5ecd87480d0973ca39243396ff8718a5e4"
+        },
+        "B": "RETIRED_AS_DESIGNED",
+        "C": "STOP_NO_PROSPECTIVE_COLLECTION",
+        "sameStockPrimary": "FAILED_OLDER_AND_NEWER_RETAINED",
+        "replacement": null,
+        "providerCalls": 0,
+        "realKeys": false,
+        "productionChanges": false,
+        "activation": false,
+        "policyAdopted": false,
+        "acceptanceRowsClosed": 0,
+        "genuineAdmissions": 0,
+        "sourceAuthentication": "NOT_ESTABLISHED",
+        "captureCompleteness": "NOT_ESTABLISHED_BY_HTTP_PAIR_OR_SIGNATURES",
+        "sourceRequestsMaximumPerRole": 32,
+        "combinedMaximumPerPinnedPlan": 64,
+        "newCollectionScopeApproved": false,
+        "storeBytesPerNamespace": 16777216,
+        "storeNamespaces": 3,
+        "currentSourceStatus": "SYNTHETIC_RETAINED_RESPONSE_REHEARSAL_NOT_LIVE_FIRST_CAPTURE_HOST",
+        "intermediateExecutionSource": {
+          "bridgeSha256": "9c482a69c1d770981e2455af3690836ee37a29cb3baead55eef7c42400193c10",
+          "bridgeTestSha256": "eebca6c43253d2dcf4827853a11782db0a46eb0dd77f26a183bc906d13a33b22",
+          "scope": "416Node20/69Node24 before final fixed diagnostic codes and two-process request-reservation regression; final bridge/package checks and hosted suite recorded separately."
+        },
+        "followups": [
+          {
+            "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+            "reason": "Additive inactive first-capture host continuation; older execution evidence belongs to its pinned prior commit, never reassigned by refreshed pins. No old N1-N3/export/importer/evaluator or strategy behavior changed. Development test bound35->40min for measured new~3m13s file plus prior30m52s suite.",
+            "evidence": "docs/a-first-capture-continuation/README.md",
+            "changes": [
+              {
+                "file": "a-source-acquisition-bridge.mjs",
+                "priorSha256": "e4ba23610200364221480ca6ac205341979726b49ef47c2a643805ff19687f30",
+                "sha256": "8b6ed1925143d1859c919e78f95410f74de60abf2779d7d9676c737a1a48bf19"
+              },
+              {
+                "file": "tools/a-acquisition-rehearsal.mjs",
+                "priorSha256": "9e12017f2167e166f408897397240f23458d5791004d12edb0bfaf2cc5dfad88",
+                "sha256": "6733bc609ad8b39fc3f56b5bcd268fb0e6dd0a1b4511547b910adeaacdfd788e"
+              },
+              {
+                "file": ".github/workflows/tests.yml",
+                "priorSha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4",
+                "sha256": "84331ec3e35f94c3b0b6b52c49160df663b8ffc7e39f4b1d403ef4bee2f96252"
+              }
+            ]
+          },
+          {
+            "base": "3c0ec3fd3e33b7b2fa19f59d777ba8f8e8dff2f3",
+            "review": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+            "reason": "P1 private response durability and bounded definitive-busy retry; generated ingress metadata correction. Prior execution evidence remains attributed to its original commit.",
+            "changes": [
+              {
+                "file": "a-source-acquisition-bridge.mjs",
+                "previousSha256": "8b6ed1925143d1859c919e78f95410f74de60abf2779d7d9676c737a1a48bf19",
+                "sha256": "26f3dc1024dc39dfe82d29755679b5a340c85ec0180640127db367d440eb3302"
+              },
+              {
+                "file": "test/helper-a-source-bridge.mjs",
+                "previousSha256": "e5c3a1bd79c4e18bd0d0a1a5942bf386d00a0c2fa60cdb858b086129da9dc772",
+                "sha256": "c5c8cc94533dfa406e6a6123e4da2f4dfe44a28b836ca27e7268b55a59ff0d0a"
+              },
+              {
+                "file": "test/helper-a-bridge-competitor.mjs",
+                "previousSha256": "4f740985786b4b090013ef038302b4080ca07288eb524b69decc23da8bbfd07f",
+                "sha256": "749aac4436b4d89ee82251b0de1c1e70e2f2e7bb675b3f9e578d0e9fc9575e32"
+              }
+            ]
+          },
+          "Current first-capture host source-field concordance; not a new PASS on original118ed, see docs/a-first-capture-continuation/finite-verification.json"
+        ],
+        "workerLifetimeFollowup": {
+          "base": "5713011e426f21e283dccad286af096519f741e9",
+          "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+          "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+          "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+          "independentReview": "PENDING",
+          "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+        },
+        "g2PanelContinuation": {
+          "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+          "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+          "independentReview": "PENDING; historical reviews/results are not transferred to this increment",
+          "G2": "PARTIAL"
+        },
+        "g2OriginalInputFollowup": {
+          "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+          "changedInactiveDependencies": [
+            "a-evidence-contract.mjs",
+            "a-native-evidence-contract.mjs",
+            "a-native-source-join.mjs",
+            "a-source-acquisition-bridge.mjs"
+          ],
+          "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+          "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+          "productionChanges": false,
+          "providerCalls": 0
+        },
+        "historicalBaseDependencyHashes": {
+          "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
+          "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+          "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b"
+        },
+        "authenticFeasibilityReportFollowup": {
+          "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+          "scope": "Read-only terminal quotes/clocks/cost/missingness view in existing caller; no acquisition or policy gate change",
+          "review": "PENDING",
+          "report": "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
+        }
+      },
+      "changedEdges": [
+        {
+          "group": "productionAndResearchProtected",
+          "path": "scan.mjs",
+          "before": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e",
+          "after": "a1d606591a1a58444678cbec27629ab389a667adfb9100fc90049aa0cc2bf3da"
+        }
+      ]
+    }
+  ],
+  "oldAAcceptanceNotTransferredToChangedScanner": true
+}

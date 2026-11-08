@@ -62,7 +62,7 @@ test('stale quote under the stop: UNKNOWN in the first check (not a hit, not HOL
   const r = await run(t, { pos: { ZZS: { entry: 100, stop: 80 } }, quotes: { ZZS: { c: 70, ageSec: 30 * 60 } } });
   const l = r.line('ZZS');
   assert.match(l, /^ZZS: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80\.00 was reached cannot be confirmed right now/);
-  assert.match(l, /Current price UNKNOWN \(the latest price is 30 min old \(limit 3 min\)\)/);
+  assert.match(l, /Current price UNKNOWN \(the latest price is 30 min old \(limit 5 min\)\)/);
   assert.doesNotMatch(l, /REACHED|HOLD|% from your/);
   assert.match(r.sent.find(x => /STOP CHECK UNKNOWN/.test(x)) || '', /ZZS: the latest price is 30 min old/);
   assert.equal(r.sent.filter(x => /STOP LEVEL REACHED|STOP LOSS REACHED/.test(x)).length, 0);

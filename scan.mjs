@@ -4355,12 +4355,20 @@ const quoteEvidence = (sym,q,nowMs,maxAgeMin=3) => {
   }
   return priceEvidence(sym,native,nowMs,maxAgeMin);
 };
+// Retain a stop fact at its original observation; current HOLD/target/buy evidence still uses quoteEvidence at report time.
+const stopObservation = (sym,q,nowMs) => {
+  const at=q&&Object.hasOwn(q,'observedAt')?q.observedAt:nowMs;
+  if(!Number.isFinite(at)||!Number.isFinite(nowMs)||at>nowMs)return {state:'UNKNOWN',why:'the observation clock is invalid or in the future'};
+  const ev=quoteEvidence(sym,q,at,5);return ev.state==='OK'?{...ev,observedAt:at}:ev;
+};
+const quoteAgeWords = sec => sec<90?Math.round(sec)+' s':Math.round(sec/60)+' min';
 const evidenceText = (ev) => ev.state === 'OK' ? 'last price ' + money(ev.price) + ' (' + ev.src + ', ' + nyStamp(ev.t) + ', ' + (ev.ageSec < 90 ? Math.round(ev.ageSec) + ' s' : Math.round(ev.ageSec / 60) + ' min') + ' old)' : 'current price UNKNOWN (' + ev.why + ')';
 function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
   const ev = quoteEvidence(sym, q, nowMs), stopEv=quoteEvidence(sym,q,nowMs,5), ok = ev.state === 'OK', px = ok ? ev.price : null, num = (x) => typeof x === 'number' && Number.isFinite(x) && x > 0;
   const pv = sig && sig.posVerdict ? sig.posVerdict[sym] : null, es = eventSell(sym), hasStop = P.stop !== undefined && P.stop !== null, stopOk = validStop(P.stop);
+  const obs=stopObservation(sym,q,nowMs),stopSeen=stopOk&&obs.state==='OK'&&obs.price<=P.stop;
   let act, text;
-  if (stopEv.state==='OK' && stopOk && stopEv.price <= P.stop) { act = 'SELL'; text = 'STOP LEVEL REACHED: at or below your stop ' + money(P.stop) + '. If your broker stop order has filled, you are already out: do not sell again.'; }
+  if (stopSeen) { act = 'SELL'; text = 'STOP LEVEL REACHED: at or below your stop ' + money(P.stop) + '. If your broker stop order has filled, you are already out: do not sell again.'; }
   else if (es) { act = 'SELL'; text = es; }
   else if (ok && num(P.t2) && px >= P.t2) { act = 'SELL'; text = 'SELL. Target 2 (' + money(P.t2) + ') reached.'; }
   else if (pv) { act = 'SELL'; text = "SELL: last night's exit rule, " + String(pv).replace(/\.?$/, '.') + ' Timing as in ACTIONS (close-based exits: next regular-session open).'; }
@@ -4373,7 +4381,10 @@ function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
   else if (!ok) { act = 'UNKNOWN'; text = 'STATUS UNKNOWN: no exit rule is active from last night, but the current price cannot be confirmed right now' + (P.src === 'leader dip' ? ' (leader dip, no stop by design' + (num(P.target) ? '; check whether your sell limit ' + money(P.target) + ' has filled' : '') + ')' : '; NO STOP SET') + '; this is not a sign the position is safe. Check the price at your broker.'; }
   else { act = 'HOLD'; text = 'HOLD: no exit rule is active' + (hasStop ? '; above your stop ' + money(P.stop) : P.src === 'leader dip' ? '; leader dip, no stop by design' + (num(P.target) ? ', sell limit ' + money(P.target) : '') : '; NO STOP SET') + '.'; }
   const chg = ok && num(P.entry) ? ' (' + (px >= P.entry ? '+' : '') + ((px / P.entry - 1) * 100).toFixed(1) + '% from your ' + money(P.entry) + ')' : '';
-  return { act, ev, line: sym + ': ' + text + ' ' + evidenceText(act==='SELL'&&stopOk&&stopEv.state==='OK'&&stopEv.price<=P.stop?stopEv:ev).replace(/^\w/, c => c.toUpperCase()) + chg + '.' };
+  const evText=stopSeen&&act==='SELL'&&/^STOP LEVEL REACHED/.test(text)
+    ? 'Last price '+money(obs.price)+' ('+obs.src+', '+nyStamp(obs.t)+', '+quoteAgeWords(obs.ageSec)+' old when checked at '+nyStamp(obs.observedAt)+(stopEv.state==='OK'?'':'; no current price now: '+stopEv.why)+')'
+    : evidenceText(act==='UNKNOWN'&&stopOk&&/^STOP STATUS UNKNOWN/.test(text)?stopEv:ev).replace(/^\w/,c=>c.toUpperCase());
+  return {act,ev,line:sym+': '+text+' '+evText+chg+'.'};
 }
 // (6 Nov) the day's first market-hours check: its ACTUAL time (a late first run says it did not observe the open), the buy list labelled
 // for what it is (last night's scan; the rules are NOT PROVEN), and the real schedule and close times instead of timing promises.
@@ -4421,17 +4432,17 @@ async function intraday(onlyMine) {
   // was reached; otherwise one STOP CHECK UNKNOWN line a day. Stop levels and positions are only read.
   const watcherDelivered = (sym, kind) => { try { return JSON.parse(fs.readFileSync('data/watcher-message-state/' + st.day + '/' + crypto.createHash('sha256').update(stopMessageKey(sym, kind)).digest('hex') + '.json', 'utf8')).state === 'ACKNOWLEDGED'; } catch (e) { return false; } };
   const stopFallback = (sym,P,j) => {
-    const ev=!validStop(P.stop)?{state:'UNKNOWN',why:'the recorded stop is not a valid number'}:quoteEvidence(sym,j,Date.now(),5);
+    const checkedAt=Date.now(),ev=!validStop(P.stop)?{state:'UNKNOWN',why:'the recorded stop is not a valid number'}:quoteEvidence(sym,j,checkedAt,5);
     const kind=ev.state!=='OK'?'unknown':ev.price<=P.stop?'hit':null;if(!kind)return;
     const key=sym+(kind==='hit'?'myst':'myunk');
     if(watcherDelivered(sym,'hit')){st.sent[sym+'myst']=1;return;}
     if(watcherDelivered(sym,kind)){st.sent[key]=1;return;}
     if(!alertAvailable(st,key)||stopKeys.has(key)||(kind==='unknown'&&!alertAvailable(st,sym+'myst'))||watcherDelivered(sym,kind)||watcherDelivered(sym,'hit'))return;
-    stopKeys.add(key);stopAlerts.push(stopText(kind,sym,P,ev));
+    stopKeys.add(key);stopAlerts.push('Checked at '+nyStamp(checkedAt)+' (quoted age is at that check):\n'+stopText(kind,sym,P,ev));
   };
   for (const sym of watch) {
     const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym]=j; if(myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym,myPos[sym],j); const fresh = Number.isFinite(p)&&p>0&&Number.isFinite(j.t) && j.t>0 && Date.now()-j.t>=0 && Date.now()-j.t<=180000;   // SOURCE-CLOCK GATE: no BUY NOW on a price older than three minutes; trade is not executable BBO
-    const say = (k, text) => {const key=sym+k;if(alertAvailable(st,key)&&!alertKeys.has(key)){alertKeys.add(key);alerts.push(sym+' at '+money(p)+': '+text);}};
+    const say = (k, text) => {const key=sym+k;if(alertAvailable(st,key)&&!alertKeys.has(key)){alertKeys.add(key);alerts.push(sym+(fresh?' at '+money(p):'')+': '+text);}};
     if(!fresh){const P=myPos[sym],stopNow=P&&validStop(P.stop)?quoteEvidence(sym,j,Date.now(),5):null;if(P&&!(stopNow?.state==='OK'&&stopNow.price<=P.stop))say('priceUnknown','YOUR POSITION: PRICE UNVERIFIED. Check your broker and keep its stop; no current-price SELL/HOLD inference.');continue;}seen[sym]=p;
 
     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
