@@ -1,0 +1,30 @@
+{
+  "sha": "71f97c23954f57404333a5d2f2aac53682c535e8",
+  "kind": "observed",
+  "bytes": 1414713,
+  "sha256": "d22e5877cb2b293605e6bcaaab466b47a755e74d37a9dac8d233c48fae5e86ae",
+  "registered": 313,
+  "groups": 313,
+  "uniquePASS": 311,
+  "failedFiles": [
+    "test/review-ad3837-package.test.mjs",
+    "test/watcher-nov2-clock.test.mjs"
+  ],
+  "missing": [],
+  "unexpected": [],
+  "duplicateGroups": {},
+  "duplicatePASS": {},
+  "errors": [
+    "not ok 1 - ad3837 exact inactive package and independently confirmed source files remain pinned",
+    "# fail 1",
+    "##[error]test file failed",
+    "not ok 6 - correct-season late start remains labelled partial, archives both attempts and preserves richer canonical/delivery state",
+    "# fail 1",
+    "##[error]test file failed",
+    "##[error]Process completed with exit code 1."
+  ],
+  "fullLogAndEveryRegisteredFilePresent": true,
+  "nodeLines": [],
+  "verdict": "FAIL_NOT_WAIVED",
+  "matchesPreviouslyReportedFailureFiles": false
+}

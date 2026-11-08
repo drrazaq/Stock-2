@@ -1,0 +1,230 @@
+{
+  "manifest": "docs/review-ad3837-response/manifest.json",
+  "baselineFailureFile": "test/review-ad3837-package.test.mjs",
+  "originalManifest": {
+    "kind": "AD3837_RESPONSE_AND_INACTIVE_SOURCE_BRIDGE_V1",
+    "base": "3641a8e806b72e65add1ce6a90b82fdad7707a98",
+    "review": "ad3837479af3bc54ba8837f9a08958d9bb8d5075",
+    "status": "OFFLINE_COMPONENT_TESTED_INDEPENDENT_REVIEW_PENDING",
+    "files": {
+      "a-source-acquisition-bridge.mjs": "e3eaaf20ec971fa5e61644d5997d276004907bcfacdeed748ee82b5123e56794",
+      "research-proposal-disposition.mjs": "bdcd2e32195680f46cf40a768648a28fe32ab87a08f3d99de6563d2a1a73a4b7",
+      "tools/a-acquisition-rehearsal.mjs": "6733bc609ad8b39fc3f56b5bcd268fb0e6dd0a1b4511547b910adeaacdfd788e",
+      "bc-research-rehearsal.mjs": "70ae5bf10ac15f6544e547dff5eeb7c0ef4e3401c98e8bcc1db742c5c1c1f706",
+      "bc-research-summary.mjs": "cd2aa6c42430922c869bc35b01a79c03c87b329a968e16b2729a01efa6c87e19",
+      "tools/bc-research-rehearsal.mjs": "d5f78fcf1da1a6bc7670ea7b17b12cfa35c80b9490e56a5702507d7cc93cb258",
+      "test/a-source-acquisition-bridge.test.mjs": "e2180d44289906465ea8ddaa2f9c0690619ff633877b66829265a20a11137aaf",
+      "test/helper-a-source-bridge.mjs": "c5c8cc94533dfa406e6a6123e4da2f4dfe44a28b836ca27e7268b55a59ff0d0a",
+      "test/review-ad3837-disposition.test.mjs": "128383740f6a6d8d0b50293067814528574d5ca6f2155a9d1abfe653532eb441",
+      "test/review-ad3837-package.test.mjs": "3813239e5d924470f4e3bab7ed5cc0712a9457d0a5133a599c36793a9cf14d31",
+      "test/bc-research-rehearsal.test.mjs": "01f46dfccb2a9ce0aeebf80fce2f945f4b0a661e251646d12917e23d3c65e342",
+      "tools/market03-ingress-matrix.mjs": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7",
+      ".github/workflows/tests.yml": "b4dac395cc70301565fcdef737361de2c7dee4edae5df66a8ac09c145a1ed5e0",
+      "docs/research-bc/current-disposition.json": "efc64a9dc99f32044111a24800a72e83ba09e93030fe219bfafebd235670fb78",
+      "docs/research-bc/README.md": "053e433c12833b6a6f343e2802dc29c77931cd7d4e6903909cdd5c9f20c93bf1",
+      "docs/a-n-bc-integration/README.md": "b1b0d92e9626235fc3d2bb35b6c562948d669bd7f9d60563c7b7da837155bffb",
+      "docs/a-n-bc-integration/recovery-and-export.md": "e80becbabb23fb13d2d63354f7f6824e2acc563555374b03cf69aeb0f914e641",
+      "docs/review-ad3837-response/README.md": "101a5c17be88623762ebcd6f7efb737a40ac0749122afe09797e0431b6cf0637",
+      "docs/review-ad3837-response/source-bridge.md": "552cbd310b5d79b5f6acf87df5046ab9ab30324e1efd005868cefe989e94a1d3",
+      "docs/review-ad3837-response/legacy-inventory.json": "24c4e6fc6dd1e3bc9d4ac2ab51a862cbce1ae33385a87bffc35b436807459177",
+      "docs/review-ad3837-response/retained-comparison.json": "a8a78fdb24259bfe8365bc83245d37e178729d9da4c3a664c2c87b85d585a7d6",
+      "test/helper-a-bridge-competitor.mjs": "749aac4436b4d89ee82251b0de1c1e70e2f2e7bb675b3f9e578d0e9fc9575e32",
+      "docs/review-ad3837-response/verification.json": "eaecfc14a9c651e270232957b648fa1993fe4a143bba4a29ab87a35684a5ea67",
+      "docs/review-ad3837-response/evidence/ad3837-final-restart-attribution20.log.gz": "3da5f560166d943027f914df6b7cf44c2e26403f7bc572d6f54397e870b3fdc9",
+      "docs/review-ad3837-response/evidence/ad3837-final-python.log.gz": "4fa3d6a61ff811411fd7fee6cd9e198fae2b7466e7463f7e11f359323a20d256",
+      "docs/review-ad3837-response/evidence/ad3837-provenance-context-target2.log.gz": "787e74b6220676561436bea52e7f817a9e30a082d02478f62752d263021ba059",
+      "docs/review-ad3837-response/evidence/ad3837-bridge-first.log.gz": "75c472a4240e18ad48510d2ade7b21d4f9bffaea1d2f10fb2db82ef282d19095",
+      "docs/review-ad3837-response/evidence/ad3837-final-exact20.log.gz": "b92c762d2cd4784a9b91edf537f1180bf17499c7ced1d74deca4c057075eeb77",
+      "docs/review-ad3837-response/evidence/ad3837-request-race-after-fix.log.gz": "e26667661382a5cb5a2734728e46b2b6712457583c3cf8fcb2fdb2a4c1b69911",
+      "docs/review-ad3837-response/evidence/ad3837-final-exact24.log.gz": "032b4bd48aa61e1f1e177382f5f9547232784dc70bc7d43276cf15b57b9f72e9",
+      "docs/review-ad3837-response/evidence/ad3837-stale-fixture-correction.log.gz": "483cf06796099c239b2eff9fb0aab6a4ec6a7026b5ce33bddb0d86d6f93d323c",
+      "docs/review-ad3837-response/evidence/ad3837-final-new20.log.gz": "4adf6b126c0bd0c654b8458becbc05bd4d71cb3aa8ea8e5b94ce76a1e8c206f8",
+      "docs/review-ad3837-response/evidence/ad3837-final-exact20-corrected.log.gz": "10d32972406cc3b39113a4c586aae5c1993be01c1857044ad470c8bd5c76599e",
+      "docs/review-ad3837-response/evidence/ad3837-final-all-A20.log.gz": "34cefad6c854d75889e391c9aa1cca96fa70cc3e067fff3301e4733069cb3f3e",
+      "docs/review-ad3837-response/evidence/ad3837-request-race-before-fix2.log.gz": "d9d2f12e13293a82f59ce556daad45eb01a4e77790abc745dcbf309c3a7f4617",
+      "docs/review-ad3837-response/evidence/ad3837-final-new24-v2.log.gz": "46aa8d46b65e67673dda28960d9fd748bd61c3ac0de0193de2327cad461470f2",
+      "a-fenced-store.mjs": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+      "a-native-source-join.mjs": "d872e4afc3e1e020778487af1507290b21c0d50dfe55b2f183fc4dfb8f029e89",
+      "a-native-evidence-contract.mjs": "425dac6bfa9e3b1bcfce9732fe138d0d70606c9a1e92a2dc942fed41895f0a35",
+      "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
+      "a-native-evidence-importer.mjs": "9654571ec3f6ee1d80351eb1cb8568b438a937bfd1b71b6904d59f91edccd420"
+    },
+    "independentPassedUnchanged": {
+      "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
+      "a-legacy-store-export.mjs": "e81f17bd2ba9f641a72a3f9f7137d76dffb41dd08a76779ef1b25597020dcb13",
+      "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
+      "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
+      "a-independent-coverage.mjs": "72917fcebdeb60361841742975ac8e12599f18c44178dba394403fb969717973",
+      "a-sip-window-client.mjs": "33fafe6c308e6bbd9158d247480cc6d2da508b13f411f2aa3213a69e0a8eb432",
+      "tools/a-legacy-store-export.mjs": "8267e10c3cb0ddf3a6a27fca5950a54af4869e8abdccbbb1e7d5a7adb2c4bc6f",
+      "tools/a-native-evidence-runner.mjs": "c2ba3517764837130bba27544ddaa551ecfe4fff9bc80d3c0155bed8e09bdeeb",
+      "test/a-n-review-regressions.test.mjs": "fc601196fa4f9ecf84caf6994ebd901ac02ce5d97d16e149cfc12332f3b8f46b",
+      "test/a-importer-recovery-matrix.test.mjs": "b47434aa268fc876692da00425eb4298db60a0d10cb6cc97e09d82026ac1c4c3",
+      "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
+      "test/a-native-evidence-importer.test.mjs": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed"
+    },
+    "productionAndResearchProtected": {
+      "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
+      "ignition-watch.mjs": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
+      "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
+      "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
+      "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+      "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
+      "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
+      "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
+      "catalyst-reclaim-prototype.mjs": "fa11c49394c2a6a380ee5b12b1712d45ebf5184b32f7cbde231ecea83efdcd19",
+      "squad5-core.mjs": "17014859f3dd6b4cc44afa072716bd4b3bb733f5c4d9bd1aa44704b6ff87f012",
+      "squad11-core.mjs": "29044a5bfe27e60d47f7373963fef80d9c06972cce7987026dea3d30f5676ba9",
+      "earnings-study.mjs": "827b23ca3ca6489eb1c144bbc7899f47c518377f252784decae6f01ddb7b6c03",
+      "orb-study.mjs": "a9ed7dca072df5776df188db0a1ecfbc94be77a9b62c67c15facc81e75b08c51",
+      "event-orb-retest-core.mjs": "6c47bd988b5a13b1245a279c165ee723fc908467839d4776d5437e3cf1ff83c0",
+      "squad28-core.mjs": "b0f7d9ac12d56eb3ee758f9161385db49cc1f6f565a21dd95938d2028fed6239",
+      "data/earnings-study.json": "a46ec6700fc7dbb8a38c7489a77197b4a2d7aada07e0f30b9cc0625ba3fbbb1c",
+      "data/orb-study.json": "1d624c2e55e7d4a6ddb292767155897405aed8852c639e3ecd51fb1f688030c5",
+      "data/event-orb-retest-15d-gates.json": "c2d4aeb0641dcb30975f31f4c69aec3e9149f0cd781d02877bc279483615fceb",
+      "data/squad11-lab.json": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a",
+      "data/events-study.json": "c147422c452bfd055d3ad63ce21a66c73d0ef1371df9b3b3e17d714a038ad5df",
+      "data/squad28-lab.json": "7b230116f85cf6a20a8a8e3c3169bf9e8ee9b5fcb52e0fd4ab4851aa96afb140",
+      "docs/engineering-acceptance-checks.json": "e684f906ec454d7d02db3a1fbad8e89de306709785be3533fe98a1f0602af165",
+      ".github/workflows/bot.yml": "84e708568592eaba00796eb7774d1b1615d2fbe01f2b924eb5c806aa2d2e94fd",
+      ".github/workflows/main.yml": "225265affbe5748d1eced085c661ed5ecd87480d0973ca39243396ff8718a5e4"
+    },
+    "B": "RETIRED_AS_DESIGNED",
+    "C": "STOP_NO_PROSPECTIVE_COLLECTION",
+    "sameStockPrimary": "FAILED_OLDER_AND_NEWER_RETAINED",
+    "replacement": null,
+    "providerCalls": 0,
+    "realKeys": false,
+    "productionChanges": false,
+    "activation": false,
+    "policyAdopted": false,
+    "acceptanceRowsClosed": 0,
+    "genuineAdmissions": 0,
+    "sourceAuthentication": "NOT_ESTABLISHED",
+    "captureCompleteness": "NOT_ESTABLISHED_BY_HTTP_PAIR_OR_SIGNATURES",
+    "sourceRequestsMaximumPerRole": 32,
+    "combinedMaximumPerPinnedPlan": 64,
+    "newCollectionScopeApproved": false,
+    "storeBytesPerNamespace": 16777216,
+    "storeNamespaces": 3,
+    "currentSourceStatus": "SYNTHETIC_RETAINED_RESPONSE_REHEARSAL_NOT_LIVE_FIRST_CAPTURE_HOST",
+    "intermediateExecutionSource": {
+      "bridgeSha256": "9c482a69c1d770981e2455af3690836ee37a29cb3baead55eef7c42400193c10",
+      "bridgeTestSha256": "eebca6c43253d2dcf4827853a11782db0a46eb0dd77f26a183bc906d13a33b22",
+      "scope": "416Node20/69Node24 before final fixed diagnostic codes and two-process request-reservation regression; final bridge/package checks and hosted suite recorded separately."
+    },
+    "followups": [
+      {
+        "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
+        "reason": "Additive inactive first-capture host continuation; older execution evidence belongs to its pinned prior commit, never reassigned by refreshed pins. No old N1-N3/export/importer/evaluator or strategy behavior changed. Development test bound35->40min for measured new~3m13s file plus prior30m52s suite.",
+        "evidence": "docs/a-first-capture-continuation/README.md",
+        "changes": [
+          {
+            "file": "a-source-acquisition-bridge.mjs",
+            "priorSha256": "e4ba23610200364221480ca6ac205341979726b49ef47c2a643805ff19687f30",
+            "sha256": "8b6ed1925143d1859c919e78f95410f74de60abf2779d7d9676c737a1a48bf19"
+          },
+          {
+            "file": "tools/a-acquisition-rehearsal.mjs",
+            "priorSha256": "9e12017f2167e166f408897397240f23458d5791004d12edb0bfaf2cc5dfad88",
+            "sha256": "6733bc609ad8b39fc3f56b5bcd268fb0e6dd0a1b4511547b910adeaacdfd788e"
+          },
+          {
+            "file": ".github/workflows/tests.yml",
+            "priorSha256": "751f2d3edf60cb3309ba0928a00c6eb74e10a335ffd29a405373281cc422bfa4",
+            "sha256": "84331ec3e35f94c3b0b6b52c49160df663b8ffc7e39f4b1d403ef4bee2f96252"
+          }
+        ]
+      },
+      {
+        "base": "3c0ec3fd3e33b7b2fa19f59d777ba8f8e8dff2f3",
+        "review": "7d9ff2e03f18c85987e552bc9ca285697f853009",
+        "reason": "P1 private response durability and bounded definitive-busy retry; generated ingress metadata correction. Prior execution evidence remains attributed to its original commit.",
+        "changes": [
+          {
+            "file": "a-source-acquisition-bridge.mjs",
+            "previousSha256": "8b6ed1925143d1859c919e78f95410f74de60abf2779d7d9676c737a1a48bf19",
+            "sha256": "26f3dc1024dc39dfe82d29755679b5a340c85ec0180640127db367d440eb3302"
+          },
+          {
+            "file": "test/helper-a-source-bridge.mjs",
+            "previousSha256": "e5c3a1bd79c4e18bd0d0a1a5942bf386d00a0c2fa60cdb858b086129da9dc772",
+            "sha256": "c5c8cc94533dfa406e6a6123e4da2f4dfe44a28b836ca27e7268b55a59ff0d0a"
+          },
+          {
+            "file": "test/helper-a-bridge-competitor.mjs",
+            "previousSha256": "4f740985786b4b090013ef038302b4080ca07288eb524b69decc23da8bbfd07f",
+            "sha256": "749aac4436b4d89ee82251b0de1c1e70e2f2e7bb675b3f9e578d0e9fc9575e32"
+          }
+        ]
+      },
+      "Current first-capture host source-field concordance; not a new PASS on original118ed, see docs/a-first-capture-continuation/finite-verification.json"
+    ],
+    "workerLifetimeFollowup": {
+      "base": "5713011e426f21e283dccad286af096519f741e9",
+      "before": "08b12d92cda4e5567fcf059a25cf2e5be2147e8ffcfe6a4c86b84d448cced197",
+      "after": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+      "evidence": "docs/a-first-capture-continuation/worker-runtime-followup.md",
+      "independentReview": "PENDING",
+      "scope": "Only inactive worker lifetime; no timeout/fencing/evidence relaxation; historical reviews remain attributed to original snapshots"
+    },
+    "g2PanelContinuation": {
+      "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+      "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+      "independentReview": "PENDING; historical reviews/results are not transferred to this increment",
+      "G2": "PARTIAL"
+    },
+    "g2OriginalInputFollowup": {
+      "base": "a95ab5f50329a4ed1e92e535851b71f1f527cf25",
+      "changedInactiveDependencies": [
+        "a-evidence-contract.mjs",
+        "a-native-evidence-contract.mjs",
+        "a-native-source-join.mjs",
+        "a-source-acquisition-bridge.mjs"
+      ],
+      "evidence": "docs/a-first-capture-continuation/g2-native-panels.md",
+      "independentReview": "PENDING; historical before hashes/reviews/executions are not transferred",
+      "productionChanges": false,
+      "providerCalls": 0
+    },
+    "historicalBaseDependencyHashes": {
+      "a-native-source-join.mjs": "272671596bf0b1606015d5f6c170d8188a8bb200160fbb11d39ef2f08a9e7c49",
+      "a-native-evidence-contract.mjs": "84e474d0df3ddad31209095c381fb6e3f18eaeb5940ab7dcd5febfc552453e37",
+      "a-evidence-contract.mjs": "3121254d69b978f8ac31c519be1f30ecef7073b3cd332cb925d072750559163b"
+    },
+    "authenticFeasibilityReportFollowup": {
+      "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+      "scope": "Read-only terminal quotes/clocks/cost/missingness view in existing caller; no acquisition or policy gate change",
+      "review": "PENDING",
+      "report": "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
+    }
+  },
+  "originalSha256": "01dad6c99b65cc397735cdf752e4038c5539a85431d51b01dbeb2c06d685d73e",
+  "edges": [
+    {
+      "group": "files",
+      "path": "tools/market03-ingress-matrix.mjs",
+      "before": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7",
+      "after": "b0c2b729c3a0269c02e385638abacbc7d31db6d430e0c6093016acd40b5c1781"
+    },
+    {
+      "group": "productionAndResearchProtected",
+      "path": "scan.mjs",
+      "before": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
+      "after": "3ee19205c741f8773b0724226ce42d80e7c34e604d85d43a6783fff85d17df9e"
+    },
+    {
+      "group": "productionAndResearchProtected",
+      "path": "ignition-watch.mjs",
+      "before": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
+      "after": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151"
+    },
+    {
+      "group": "productionAndResearchProtected",
+      "path": "docs/engineering-acceptance-checks.json",
+      "before": "e684f906ec454d7d02db3a1fbad8e89de306709785be3533fe98a1f0602af165",
+      "after": "28be72ec1082320e81c6b586398b3d57f076fef48e5f4f66e111917d66399436"
+    }
+  ],
+  "runtimeAndAssertionsChanged": false
+}
