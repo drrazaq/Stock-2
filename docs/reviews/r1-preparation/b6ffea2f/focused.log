@@ -1,0 +1,229 @@
+TAP version 13
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
+ok 1 - conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
+  ---
+  duration_ms: 127.992393
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
+ok 2 - stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
+  ---
+  duration_ms: 83.660229
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
+ok 3 - stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
+  ---
+  duration_ms: 59.374333
+  ...
+# intraday check done: 3 watched, 0 new alerts
+# Subtest: undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
+ok 4 - undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
+  ---
+  duration_ms: 52.002578
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
+ok 5 - delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
+  ---
+  duration_ms: 106.072265
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
+ok 6 - labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
+  ---
+  duration_ms: 57.365044
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm
+ok 7 - close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm
+  ---
+  duration_ms: 136.976395
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: records untouched: positions and Telegram offset unchanged; one first check a day
+ok 8 - records untouched: positions and Telegram offset unchanged; one first check a day
+  ---
+  duration_ms: 46.538578
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
+ok 9 - 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
+  ---
+  duration_ms: 138.709493
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# intraday check done: 0 watched, 0 new alerts
+# Subtest: 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
+ok 10 - 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
+  ---
+  duration_ms: 84.377286
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: rev10: a quote future-dated when fetched stays UNKNOWN after the clock moves on (actual intraday caller; no contradiction with the stop route)
+ok 11 - rev10: a quote future-dated when fetched stays UNKNOWN after the clock moves on (actual intraday caller; no contradiction with the stop route)
+  ---
+  duration_ms: 51.787483
+  ...
+# Subtest: all requests stayed synthetic and on loopback
+ok 12 - all requests stayed synthetic and on loopback
+  ---
+  duration_ms: 0.251037
+  ...
+# Subtest: release rehearsal: gate -> code -> rollback-before-migration -> migration -> receipt -> writers -> guard -> recovery export
+ok 13 - release rehearsal: gate -> code -> rollback-before-migration -> migration -> receipt -> writers -> guard -> recovery export
+  ---
+  duration_ms: 1860.156805
+  ...
+# Subtest: release precheck: PASS when no candidate file drifted on the target; FAIL on drift or an already-sealed target
+ok 14 - release precheck: PASS when no candidate file drifted on the target; FAIL on drift or an already-sealed target
+  ---
+  duration_ms: 153.866485
+  ...
+# Subtest: rev8 combined unit: built source-only on a fresh M0 (newer data and Telegram offset kept); verify refuses anything else
+ok 15 - rev8 combined unit: built source-only on a fresh M0 (newer data and Telegram offset kept); verify refuses anything else
+  ---
+  duration_ms: 1360.112956
+  ...
+# Subtest: price evidence: only a ticker-bound, dated, fresh trade price is OK
+ok 16 - price evidence: only a ticker-bound, dated, fresh trade price is OK
+  ---
+  duration_ms: 1.117779
+  ...
+# Subtest: r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN
+ok 17 - r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN
+  ---
+  duration_ms: 0.500982
+  ...
+# Subtest: r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip
+ok 18 - r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip
+  ---
+  duration_ms: 0.484347
+  ...
+# Subtest: stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts
+ok 19 - stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts
+  ---
+  duration_ms: 11.333127
+  ...
+# Subtest: "at or below": a price equal to the stop is a crossing and is worded as at or below
+ok 20 - "at or below": a price equal to the stop is a crossing and is worded as at or below
+  ---
+  duration_ms: 0.295725
+  ...
+# Subtest: wording respects an order that already filled: no second sale, the fill price is what to report
+ok 21 - wording respects an order that already filled: no second sale, the fill price is what to report
+  ---
+  duration_ms: 0.291398
+  ...
+# Subtest: already sold (position no longer recorded): nothing is sent for it
+ok 22 - already sold (position no longer recorded): nothing is sent for it
+  ---
+  duration_ms: 0.117447
+  ...
+# Subtest: stop levels and positions are read, never changed
+ok 23 - stop levels and positions are read, never changed
+  ---
+  duration_ms: 0.269696
+  ...
+# Subtest: catalyst times have a full date and one time zone (previous-day items no longer read like today)
+ok 24 - catalyst times have a full date and one time zone (previous-day items no longer read like today)
+  ---
+  duration_ms: 2.759896
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated
+ok 25 - bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated
+  ---
+  duration_ms: 115.123188
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery missing -> the bot sends the stop once, in the shared wording
+ok 26 - bot fallback: watcher delivery missing -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 82.159264
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery UNSENT -> the bot sends the stop once, in the shared wording
+ok 27 - bot fallback: watcher delivery UNSENT -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 50.924558
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery UNCERTAIN -> the bot sends the stop once, in the shared wording
+ok 28 - bot fallback: watcher delivery UNCERTAIN -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 44.478373
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: duplicate delivery prevention holds across runs (once a day)
+ok 29 - bot fallback: duplicate delivery prevention holds across runs (once a day)
+  ---
+  duration_ms: 44.586085
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing
+ok 30 - bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing
+  ---
+  duration_ms: 89.306712
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) sent
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller
+ok 31 - r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller
+  ---
+  duration_ms: 108.055665
+  ...
+# Subtest: all requests stayed synthetic and on loopback
+ok 32 - all requests stayed synthetic and on loopback
+  ---
+  duration_ms: 0.13318
+  ...
+# Subtest: price at or below the stop: one STOP LEVEL REACHED message, not repeated
+ok 33 - price at or below the stop: one STOP LEVEL REACHED message, not repeated
+  ---
+  duration_ms: 14.568578
+  ...
+# Subtest: within 2% above the stop: one NEAR STOP warning, then the hit still comes
+ok 34 - within 2% above the stop: one NEAR STOP warning, then the hit still comes
+  ---
+  duration_ms: 0.5786
+  ...
+# Subtest: no stop: nothing; no positions: nothing
+ok 35 - no stop: nothing; no positions: nothing
+  ---
+  duration_ms: 0.495514
+  ...
+1..35
+# tests 35
+# suites 0
+# pass 35
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3468.250346

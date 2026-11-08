@@ -1,0 +1,18 @@
+{
+  "unknownBypass": {
+    "initialMiB": 128,
+    "checkpointMiB": 32,
+    "allowedUnknownPushes": 2,
+    "finalMiB": 192,
+    "overshootMiB": 64
+  },
+  "staleKnownSnapshotRace": {
+    "eachWriterSeesMiB": 96,
+    "distinctWriters": 3,
+    "checkpointMiB": 32,
+    "eachLocalCheckPasses": true,
+    "finalMiB": 192,
+    "overshootMiB": 64
+  },
+  "meaning": "Finite arithmetic counterexamples to a proposed guarantee, not actual pushes or storage measurements"
+}

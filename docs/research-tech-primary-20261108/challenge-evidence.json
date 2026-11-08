@@ -1,0 +1,238 @@
+{
+  "SQ21-CONTRACT10D": {
+    "source": "data/squad21-lab.json",
+    "sourceSha256": "f9a5ccc78edc25cfff0e0f8ff956430866ab78ad0cf3e3266f4ca0999c997695",
+    "firstRun": {
+      "verdict": "REJECTED",
+      "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.64 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -4.46 under 2.5 in the newer half; not better than same-volatility stocks without a fresh 8-K 1.01 in the older half (-0.9%, 839 trades with that yardstick); not better than same-volatility stocks without a fresh 8-K 1.01 in the newer half (-1.1%, 1025 trades with that yardstick); return per year of capital tied up -79.3% not above the S&P 500 on the same days in the older half (1.9%); return per year of capital tied up -80.8% not above the S&P 500 on the same days in the newer half (11.3%)",
+      "results": {
+        "older": {
+          "n": 839,
+          "days": 371,
+          "stocks": 648,
+          "avg": -0.0108,
+          "median": -0.0145,
+          "avgStress": -0.0148,
+          "ctrl": -0.0095,
+          "edge": -0.0103,
+          "tDay": -5.43,
+          "blocks": 26,
+          "tBlock": -4.64,
+          "vsOwn": -0.0005,
+          "ownCovered": 371,
+          "noTop2": -0.0123,
+          "best": 0.6551,
+          "worst": -0.2555,
+          "win": 0.1514
+        },
+        "newer": {
+          "n": 1025,
+          "days": 476,
+          "stocks": 741,
+          "avg": -0.0104,
+          "median": -0.0144,
+          "avgStress": -0.0144,
+          "ctrl": -0.0077,
+          "edge": -0.0101,
+          "tDay": -3.43,
+          "blocks": 35,
+          "tBlock": -4.46,
+          "vsOwn": -0.0031,
+          "ownCovered": 476,
+          "noTop2": -0.0123,
+          "best": 1.047,
+          "worst": -0.3082,
+          "win": 0.1522
+        },
+        "all": {
+          "n": 1864,
+          "days": 847,
+          "stocks": 1152,
+          "avg": -0.0106,
+          "median": -0.0144,
+          "avgStress": -0.0146,
+          "ctrl": -0.0085,
+          "edge": -0.0102,
+          "tDay": -5.5,
+          "blocks": 60,
+          "tBlock": -6.39,
+          "vsOwn": -0.002,
+          "ownCovered": 847,
+          "noTop2": -0.0116,
+          "best": 1.047,
+          "worst": -0.3082,
+          "win": 0.1518
+        }
+      }
+    }
+  },
+  "SQ24-MEGADEAL": {
+    "source": "data/squad24-lab.json",
+    "sourceSha256": "ebcc1c51d4c58772de061dbb25c2c8ac6d8454b266ac5d37466513ab676d9fbe",
+    "firstRun": {
+      "verdict": "REJECTED",
+      "why": "block t 0.28 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.38 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-2.8%); loses with 2% slippage each way in the newer half (-4.2%); return per year of capital tied up -5.7% not above the S&P 500 on the same days in the newer half (22.3%)",
+      "results": {
+        "older": {
+          "n": 108,
+          "days": 97,
+          "stocks": 91,
+          "avg": 0.0121,
+          "median": -0.0067,
+          "avgStress": 0.0081,
+          "ctrl": -0.0034,
+          "edge": 0.0112,
+          "tDay": 0.82,
+          "blocks": 47,
+          "tBlock": 0.28,
+          "vsOwn": 0.0209,
+          "ownCovered": 97,
+          "noTop2": 0.0003,
+          "best": 0.6509,
+          "worst": -0.3186,
+          "win": 0.4537
+        },
+        "newer": {
+          "n": 156,
+          "days": 141,
+          "stocks": 126,
+          "avg": -0.0022,
+          "median": -0.0129,
+          "avgStress": -0.0062,
+          "ctrl": 0.0016,
+          "edge": -0.0077,
+          "tDay": -0.6,
+          "blocks": 68,
+          "tBlock": -1.38,
+          "vsOwn": 0.0014,
+          "ownCovered": 141,
+          "noTop2": -0.0117,
+          "best": 0.8838,
+          "worst": -0.3254,
+          "win": 0.4423
+        },
+        "all": {
+          "n": 264,
+          "days": 238,
+          "stocks": 202,
+          "avg": 0.0036,
+          "median": -0.009,
+          "avgStress": -0.0004,
+          "ctrl": -0.0004,
+          "edge": 0,
+          "tDay": 0,
+          "blocks": 115,
+          "tBlock": -0.89,
+          "vsOwn": 0.0093,
+          "ownCovered": 238,
+          "noTop2": -0.0022,
+          "best": 0.8838,
+          "worst": -0.3254,
+          "win": 0.447
+        }
+      }
+    }
+  },
+  "SQ26-FIRSTMIN": {
+    "source": "data/squad26-lab.json",
+    "sourceSha256": "2d2dc3ac02adde4e2716c75e5651b65a848cfd094df06e8345c95b1ffe2ae3e8",
+    "firstRun": {
+      "verdict": "REJECTED",
+      "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.53 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.87 under 2.5 in the newer half; return per year of capital tied up -275.8% not above the S&P 500 on the same days in the older half (11.4%); return per year of capital tied up -647.4% not above the S&P 500 on the same days in the newer half (14.2%)",
+      "results": {
+        "older": {
+          "n": 108,
+          "days": 102,
+          "stocks": 91,
+          "avg": -0.0328,
+          "median": -0.0478,
+          "avgStress": -0.0368,
+          "ctrl": -0.0079,
+          "edge": -0.0315,
+          "tDay": -1.28,
+          "blocks": 47,
+          "tBlock": -1.53,
+          "vsOwn": -0.0087,
+          "ownCovered": 77,
+          "noTop2": -0.0558,
+          "best": 1.8929,
+          "worst": -0.5356,
+          "win": 0.3148
+        },
+        "newer": {
+          "n": 130,
+          "days": 124,
+          "stocks": 97,
+          "avg": -0.0771,
+          "median": -0.0746,
+          "avgStress": -0.0811,
+          "ctrl": -0.008,
+          "edge": -0.0744,
+          "tDay": -4.42,
+          "blocks": 56,
+          "tBlock": -3.87,
+          "vsOwn": -0.0694,
+          "ownCovered": 121,
+          "noTop2": -0.0878,
+          "best": 0.6804,
+          "worst": -0.6274,
+          "win": 0.2538
+        },
+        "all": {
+          "n": 238,
+          "days": 226,
+          "stocks": 176,
+          "avg": -0.057,
+          "median": -0.0597,
+          "avgStress": -0.061,
+          "ctrl": -0.008,
+          "edge": -0.055,
+          "tDay": -3.81,
+          "blocks": 102,
+          "tBlock": -3.55,
+          "vsOwn": -0.0458,
+          "ownCovered": 198,
+          "noTop2": -0.0684,
+          "best": 1.8929,
+          "worst": -0.6274,
+          "win": 0.2815
+        }
+      }
+    }
+  },
+  "EVENTS_FAMILY_CONTRACT": {
+    "source": "data/events-study.json",
+    "jsonPath": "firstRun.fam.CONTRACT",
+    "sha256": "c147422c452bfd055d3ad63ce21a66c73d0ef1371df9b3b3e17d714a038ad5df",
+    "verdict": "REJECTED",
+    "older": {
+      "n": 426,
+      "win": 0.26291079812206575,
+      "avg": -0.013171557093137026,
+      "pf": 0.6105702085594309,
+      "spy": -0.0004002018928652829,
+      "bestShare": 0.11759591067412051
+    },
+    "newer": {
+      "n": 491,
+      "win": 0.27494908350305497,
+      "avg": -0.008496852250395127,
+      "pf": 0.7764934269612429,
+      "spy": 0.004730525911762609,
+      "bestShare": 0.07290008422145078
+    }
+  },
+  "C-CT1": {
+    "source": "data/strategy-library.json",
+    "sha256": "38e6f04e19071536e58caafeaedda97c4060ce363618f8a58493548feb67cbc4",
+    "retainedDefinition": {
+      "id": "C-CT1",
+      "family": "Events",
+      "name": "Contract size vs company size",
+      "explain": "8-K item 1.01 whose stated dollar value is over 10% of market cap (value from the filing / Exhibit 10, SEC official APIs); hold 20 days. Stop if most filings state no amount. Second pre-registered version (from the 20 Oct evening review): the contract value must also cover 4+ quarters of operating cash burn (10-Q cash flow).",
+      "status": "pre-registered 22 Oct 2026 (both versions); queued as the next Agent C build",
+      "agent": "C",
+      "note": "From the outside review of 20 Oct (see project doc Agent inbox). | PRE-REGISTERED 22 Oct 2026 (Agent C), exact rule: event = 8-K with item 1.01 (from the SEC event cache, acceptance time UTC -> New York session via sec-time.mjs; earnings-day 8-Ks excluded as in events-study). Amount = the LARGEST dollar figure written as '$X million' or '$X billion' (or '$X,XXX,XXX' of 1,000,000+) in the item 1.01 section of the primary 8-K document (EDGAR Archives, accession from the cache); figures inside 'up to' are counted, figures labelled credit facility / loan / notes / debt / lease are NOT (those are financing, not customer contracts). CT1a: amount >= 10% of market cap (close of the reaction session x SEC share count known by then). CT1b: CT1a AND amount >= 4 quarters of operating cash burn (minus NetCashProvidedByUsedInOperatingActivities, last 10-Q/10-K known 30 days before; companies with positive operating cash flow pass). Buy the open after the reaction session, hold 20 sessions; one event per stock per 60 sessions. STOP RULE: if under 40% of item 1.01 filings state any parsable amount, 'needs data'. Gates: 0.8% / 1.2% stress, both halves, vs average stock, S&P 500 and own other days, without 2 best; PROVEN at t >= max(own, league, 4.0); TRADABLE SMALL tier 2 = both halves positive after 1.2%, beats average stock and S&P, without 2 best positive, t >= 2.5. Universe caveat: the event cache covers the scan universe + watch list only."
+    }
+  }
+}
