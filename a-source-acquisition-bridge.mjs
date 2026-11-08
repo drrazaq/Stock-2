@@ -130,14 +130,14 @@ const firstResult=extra=>({origin:'SYNTHETIC',sourceAuthentication:'NOT_INDEPEND
 function firstFeasibilityView(input,result,audit,facts,archive){
  const event=archive.observations.find(e=>'SEC_FILING_V1:'+e.issuerCik+':'+e.accession===audit.discoveredSourceId),firstSeen=event?.observations?.[0]?.observedAt??null;
  const elapsed=(a,b)=>{const x=evidenceTime(a),y=evidenceTime(b);return Number.isFinite(x)&&Number.isFinite(y)&&y>=x?y-x:null;};
- const c=result.cases?.find(c=>c.observationId===input.observationId),o=c?.outcome,resolved=o?.status==='MODELED_PAPER_ECONOMICS_ONLY';
+ const c=result.cases?.find(c=>c.observationId===input.observationId),o=c?.outcome,resolved=o?.status==='MODELED_PAPER_ECONOMICS_ONLY',noEntry=c?.status==='NO_PAPER_SETUP_UNDER_SUPPLIED_TRUST';
  return {schema:1,verdict:'INCONCLUSIVE',question:'Can this original-bound A attempt be detected in time and priced through its unchanged whole-share exit?',origin:result.origin,sourceAuthentication:'NOT_INDEPENDENTLY_ESTABLISHED',genuineAdmissions:0,allowBuy:false,
-  softwareChain:resolved?'COSTED_SUPPLIED_EVIDENCE':'INCOMPLETE',observationId:input.observationId,inputHash:audit.inputHash,entryFactsHash:audit.entryFactsHash,reportRef:result.reportRef??null,
+  softwareChain:resolved?'COSTED_SUPPLIED_EVIDENCE':noEntry?'NO_ENTRY_UNDER_SUPPLIED_TRUST':'INCOMPLETE',observationId:input.observationId,inputHash:audit.inputHash,entryFactsHash:audit.entryFactsHash,reportRef:result.reportRef??null,
   clocks:{secAcceptanceAt:facts.sourceFields.acceptanceAt,earliestPublicReleaseAt:null,firstObservationInPinnedRunAt:firstSeen,globalFirstIngestionEstablished:false,primaryReceiptAt:facts.sourceFields.primaryObservedAt,paperAssessmentAt:input.asOf,decisionCommittedAt:audit.decisionSealedAt,delivery:{status:'NOT_REQUESTED',sentAt:null,acknowledgedAt:null}},
   timingMs:{secAcceptanceToPinnedObservation:elapsed(facts.sourceFields.acceptanceAt,firstSeen),earliestPublicReleaseToObservation:null,pinnedObservationToPaperAssessment:elapsed(firstSeen,input.asOf),entryQuoteToReceipt:elapsed(input.quote.at,input.quote.observedAt),entryQuoteToAssessment:elapsed(input.quote.at,input.asOf)},
   quoteEvidence:c?.quoteEvidence??{status:'UNKNOWN',entry:null,exit:null,coverage:null,fillGuaranteed:false},
   economics:resolved?{status:'QUOTED_WHOLE_SHARE_MODEL_NOT_ACTUAL_FILLS',budgetUsd:input.paperBudgetUsd,shares:o.shares,entryAsk:o.entryAsk,exitBid:o.exitBid,modeledEntry:o.modeledEntry,modeledExit:o.modeledExit,commissionsUsd:o.commissionsUsd,netUsd:o.netUsd,returnOnBudgetPct:o.returnOnBudgetPct,uninvestedCashUsd:o.uninvestedCashUsd,exitKind:o.exitKind,ruleExitAt:o.ruleExitAt,spreadCounted:'ONCE_IN_ASK_AND_BID'}:null,
-  missingness:{attempts:1,resolvedModeledOutcomes:resolved?1:0,unresolvedModeledOutcomes:resolved?0:1,reason:c?.reason??result.reason??null,candidateDenominator:'ONE_PINNED_ATTEMPT_NOT_COMPLETE_RISK_SET'},
+  missingness:{attempts:1,notEnteredAssessments:noEntry?1:0,resolvedModeledOutcomes:resolved?1:0,unresolvedModeledOutcomes:resolved||noEntry?0:1,reason:c?.reason??result.reason??null,candidateDenominator:'ONE_PINNED_ATTEMPT_NOT_COMPLETE_RISK_SET'},
   comparisons:{sameStock:'NOT_EVALUATED',sameDayEligibleStock:'NOT_EVALUATED',pilotReady:false},
   blockers:['SYNTHETIC_ONLY_HOST','SOURCE_AUTHENTICITY_NOT_ESTABLISHED','GENUINE_TURNOVER_UNRESOLVED','COMPLETE_POPULATION_AND_BOTH_CONTROLS_NOT_ESTABLISHED'],strategy:'NOT_PROVEN'};
 }

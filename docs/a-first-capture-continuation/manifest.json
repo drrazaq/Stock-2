@@ -3,7 +3,7 @@
   "base": "118ed4c5a5c1db11ebb154afa0b326a1b9200d7f",
   "status": "OFFLINE_ACTUAL_HOST_TESTED_INDEPENDENT_REVIEW_PENDING",
   "files": {
-    "a-source-acquisition-bridge.mjs": "b024dc02213419f927eea2180ee9c5973935fc7f11e1243ed51c8254e0ac039b",
+    "a-source-acquisition-bridge.mjs": "e3eaaf20ec971fa5e61644d5997d276004907bcfacdeed748ee82b5123e56794",
     "tools/a-acquisition-rehearsal.mjs": "6733bc609ad8b39fc3f56b5bcd268fb0e6dd0a1b4511547b910adeaacdfd788e",
     "test/a-first-capture-host.test.mjs": "9113e18d0d1d216dde756010c42267ddbe24233b07f6bf672ab05614f335b778",
     "test/helper-a-first-capture.mjs": "1a5d1bfd0ec8fbe4d23b6e56a590d774c91e0d38e475731c980a76c061f213e1",
@@ -77,7 +77,7 @@
     "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
     "test/a-first-original-inputs.test.mjs": "b1818c48545be369e88ddfc6a51386134f810d766fac78975967f33a90587f57",
     "test/helper-a-entry-panels.mjs": "50a1af0d4ab7b7435aba84df5556486c97d5ec2bb13bf86f47108a5f51fc7be3",
-    "test/helper-a-original-inputs.mjs": "87659161414c69b31fce0a5f706b8ecb8408ce720a9e5332f49bc24183bf8331",
+    "test/helper-a-original-inputs.mjs": "380678e45af52928902face125152854003ea680952bd06e77aee120427ceaf2",
     "docs/a-first-capture-continuation/g2-checkpoint.md": "7b40e7b73cf4875a75b54b31cde08f40238e11eb56b803ecb0942ff0c6709097",
     "docs/a-first-capture-continuation/g2-native-panels-verification.json": "c756c8d6b2d5b7699087f08af2fe651991dc136d6705df80dfcc8b89f8745639",
     "docs/a-first-capture-continuation/evidence/g2-g2-node20-final.log.gz": "ffaad5f0898ba2e47616695def597c6fc20a753dde67403943ace665ff1ef9ef",
@@ -124,13 +124,13 @@
     "docs/a-first-capture-continuation/ig1-entry-approval.template.json": "8533366cf3458a8ae66de79f4f04ece72795ea88359c309f59364717c9b5d5a0",
     "tools/ig1-entry-evidence.mjs": "e8db15fbd94f1858eb4bd0ddf5cd00a5af07475dad7fd8d3f2a6c95d2f4eb358",
     "test/ig1-entry-evidence.test.mjs": "3d304f11f2f2ec7d2028308a1190c56cd8c393f7d6078cf84adf92d270e8a144",
-    "a-native-evidence-importer.mjs": "ca299bbe83abe6ea99a92ad8bf75cb807021100675868af4f93e1267dfa3a88e",
-    "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md": "0000998a1ef38bc699796c648136d20032f17af73da4d4b71c97956ea3df6c72",
+    "a-native-evidence-importer.mjs": "9654571ec3f6ee1d80351eb1cb8568b438a937bfd1b71b6904d59f91edccd420",
+    "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md": "acd73971bb2a31033f6e2b66f3643aee9bc530b0ab2a8223fd390bafb1042601",
     "docs/a-first-capture-continuation/authentic-feasibility-scope.proposed.json": "97aae18119fc50506bdcc634b77d27debd6fe9903d791cfcbb69c2b580fb4f8c",
     "docs/a-first-capture-continuation/authentic-feasibility-public-evidence.json": "5bc087107613ad103f25f35b90e796109271ddcb45deb959843fce70ddb4fdc3",
-    "docs/a-first-capture-continuation/authentic-feasibility-verification.json": "d3745b7a0a47aa77531a8e09e1e21b893431241ee76170dc543c93335887708b",
+    "docs/a-first-capture-continuation/authentic-feasibility-verification.json": "511c137312b28e7037a3d5d9a6c193a06987011540ad2b1c1d8113c2da233ec8",
     "test/a-authentic-feasibility-scope.test.mjs": "402d248bf8b4df3b8f8c64d1576bd34cbc03f05c485f9643adc1a0599ee9879c",
-    "test/a-first-feasibility-report.test.mjs": "a68d862b691ad5200c8deb5d3d339a9a776987ca2804d9b93eb35d4401f58759",
+    "test/a-first-feasibility-report.test.mjs": "37f2c0c0ae139a3f6d1d976dfefca8e6c6537dcb9301a29c60e68d5f6e255a36",
     "docs/a-first-capture-continuation/evidence/a-authentic-streaming-public-spec.txt.gz": "4a8fdc1679a531150db11a9f2f40e4be694e4c8b766c4e86e7cc505955d8f18c",
     "docs/a-first-capture-continuation/evidence/a-authentic-report-actual-caller-corrected.log.gz": "c34df757630c552d0764129de19455abd2f6d611d0d4b3d3c5c3e11a624298df",
     "docs/a-first-capture-continuation/evidence/a-authentic-report-actual-caller.log.gz": "11a808291b962d6d23b78bf2c140ec410b64c569f0c24b6d5ddcf4a62ebdccfb",
@@ -141,7 +141,12 @@
     "docs/a-first-capture-continuation/authentic-worker-observation-diagnosis.json": "d79239e5f868cf0bb5c9f92665890ae3ed3413f6e5eb1fa3457b4a9d4d93939b",
     "docs/a-first-capture-continuation/evidence/a-authentic-worker-lifetime-corrected.log.gz": "1d28d2698809ff5057e0c679b8b842111644a871579253aec4504d68bd4ff9f4",
     "docs/a-first-capture-continuation/evidence/a-authentic-baseline-worker-lifetime.log.gz": "7a0fe0c675def05be2579ec5eae4175c4dc3f50970f32c9a4acc09ce8eda273b",
-    "docs/a-first-capture-continuation/evidence/a-authentic-worker-thread-diagnostic.json.gz": "bd990ca6587dbd7c32af9c6139905c09dfb91e2299c1b218e1e9428260b2f651"
+    "docs/a-first-capture-continuation/evidence/a-authentic-worker-thread-diagnostic.json.gz": "bd990ca6587dbd7c32af9c6139905c09dfb91e2299c1b218e1e9428260b2f651",
+    "docs/a-first-capture-continuation/evidence/a-authentic-report-node20.log.gz": "b04b396599b90270a0ac79418408123ee9b314ec806f7025b051a297ecff2449",
+    "docs/a-first-capture-continuation/evidence/a-authentic-worker-node20.log.gz": "06c12086662c035f4fc62f22792f49299c1c42f4d26b1d68119f31170fa64807",
+    "docs/a-first-capture-continuation/evidence/a-authentic-report-classification-node20.log.gz": "ea7874f7a6eedeb26bb6d90a66dbfc6c4be4218f7f6e2714d4e23c7defaded3e",
+    "docs/a-first-capture-continuation/evidence/a-authentic-baseline-no-entry.json.gz": "72d9a6d11462fe01246a0006a4044e00dd1b565cefc66e5f9360aac17bf42e7c",
+    "docs/a-first-capture-continuation/evidence/a-authentic-importer-classification-node20.log.gz": "facbed5e9ab2459f7decde81eaa466b57ad0bbd3aa1c68ad1ae273cb3554e2f4"
   },
   "inheritedUnchanged": {
     "a-origin-contract.mjs": "fe98b051f46bfd1184745748efcd69b4e669d1c80d8d15b7bc98e2529242848d",
@@ -344,6 +349,14 @@
     "base": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
     "reason": "Managed proc task tree empty despite actual stopped direct child; bounded PPid fallback preserves all assertions",
     "productionWorkerSha256Unchanged": "5b59a4dff3b65b240d69f3588ce70552cac2268bc34807d3756f5edbb0cfce45",
+    "review": "PENDING"
+  },
+  "noEntryReportingFollowup": {
+    "base": "83b24f3d11fb81f01816626f670e7bdd24aa44d4",
+    "baselineReproduced": "evidence/a-authentic-baseline-no-entry.json.gz",
+    "reason": "Do not count a known rejection as missing exit; preserve UNKNOWN for source failure",
+    "strategyOrSourceGateChanges": false,
+    "localExactNode20": "2/2actualhost20/20importerPASS",
     "review": "PENDING"
   }
 }
