@@ -1,3 +1,5 @@
+> Follow-up: Claude's code reviewe72adb31 and research reviewbff26b91 PASS. D1b records corrected asb9753abb2; [response](../recommendation-audit-20261108/ra-c2/final/REVIEW-RESPONSE.md). Operator O1 independently has [procedural findings](../reviews/r1-operator-93c8a4e4/REVIEW.md); attendance remains UNCONFIRMED. Entries below are the preceding checkpoint.
+
 # Remaining authorized work checkpoint
 
 The combined rev17 release source review is complete. Operator confirmation remains with Claude; this checkpoint neither reopens it nor performs deployment. The canonical acceptance total remains **24/40; zero full-row closures**. Previously accepted rows are carried forward, not claimed newly retested. `remaining-ledger-reconciliation.json` preserves all 40 criteria and records scoped dependency closures without converting them into row completion.

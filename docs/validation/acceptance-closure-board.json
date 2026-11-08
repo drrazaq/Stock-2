@@ -36,7 +36,7 @@
       "nextConcreteAction": "Claude completes assigned read-only audit; Codex repairs confirmed defects. No duplicate broad audit.",
       "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
       "latestEarlyAlertSourceReview": "docs/validation/repo03-early-alerts-review.json; no production code or acceptance closure.",
-      "currentCheckpointDependency": "Scoped source/actual-caller corrections and inventory validation are complete at037792b8. Development3b7af847 adds actual-send freshness; full exact CI315/315PASS; independent review pending. Complete every-script behavioral coverage remains missing."
+      "currentCheckpointDependency": "Scoped source/actual-caller corrections and inventory validation are complete at037792b8. Development3b7af847 adds actual-send freshness; full exact CI315/315PASS; Claude code review PASS; D1b record correctionb9753abb applied. Complete every-script behavioral coverage remains missing."
     },
     {
       "id": "ACTIONS-04",
@@ -115,7 +115,7 @@
       ],
       "nextConcreteAction": "Review passive observer exact branch fbbd0e43; then finish remaining ingress contracts without adopting thresholds or changing inputs.",
       "latestSipDecision": "docs/validation/sip-diagnostic-decision-package.json; reviewed code unchanged, no approval/observations or threshold adoption.",
-      "currentCheckpointDependency": "Calendar, future-at-fetch and observation-clock scoped repairs validated at037;3b7 actual-dispatch correction full exact CI315/315PASS; independent review pending. All-provider identity/actions/ticker-change/units ingress coverage remains incomplete.",
+      "currentCheckpointDependency": "Calendar, future-at-fetch and observation-clock scoped repairs validated at037;3b7 actual-dispatch correction full exact CI315/315PASS; Claude code review PASS; D1b record correctionb9753abb applied. All-provider identity/actions/ticker-change/units ingress coverage remains incomplete.",
       "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
@@ -309,7 +309,7 @@
         "NATURAL_EVIDENCE"
       ],
       "nextConcreteAction": "Claude delivery audit \u2192 Codex targeted caller integration. No live test message.",
-      "currentCheckpointDependency": "3b7 guards each actual part/retry and preserves ACK/UNKNOWN/known-zero refusal semantics; full exact CI315/315PASS; independent review pending. All-route IDs,callbacks,cross-job integration and persistence are still incomplete.",
+      "currentCheckpointDependency": "3b7 guards each actual part/retry and preserves ACK/UNKNOWN/known-zero refusal semantics; full exact CI315/315PASS; Claude code review PASS; D1b record correctionb9753abb applied. All-route IDs,callbacks,cross-job integration and persistence are still incomplete.",
       "latestScopedEvidence": "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md"
     },
     {
@@ -510,7 +510,21 @@
     "job": 128851393920,
     "receipt": "docs/engineering-continuation-20261108/completion-3b7af847/receipt.json",
     "verdict": "FULL_HOSTED_315_OF_315_PASS",
-    "independentReview": "PENDING_CLAUDE_6726677555",
+    "independentReview": {
+      "verdict": "PASS_CODE",
+      "comment": 6727798619,
+      "reviewCommit": "e72adb31",
+      "recordCorrection": "b9753abb2_D1b_HISTORICAL_PINS_EXPLICIT",
+      "recordOnlyRecheck": "REQUESTED_6727830204"
+    },
+    "newFullRowClosures": []
+  },
+  "latestResearchFocusedReview": {
+    "verdict": "PASS",
+    "comment": 6727804327,
+    "reviewCommit": "bff26b91",
+    "evidenceRequest": "FINALIZED_REVIEW_ONLY_TECHNICAL_ACCOUNT_GATES_OPEN",
+    "source": "78f7955ad",
     "newFullRowClosures": []
   }
 }

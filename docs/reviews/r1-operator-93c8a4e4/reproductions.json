@@ -1,0 +1,82 @@
+{
+  "source": "rev17 fresh unit fb830ee6cba24290683d9ddb981ac8b5f30ac62b built on6e72a8d0; no changes",
+  "counterexamples": [
+    {
+      "workflow": "discover",
+      "expectedO1": "REFUSE_OPEN_WRITER",
+      "actualBoundGate": {
+        "pass": true,
+        "why": [],
+        "notDone": [],
+        "seen": 1
+      }
+    },
+    {
+      "workflow": "ml-lab",
+      "expectedO1": "REFUSE_OPEN_WRITER",
+      "actualBoundGate": {
+        "pass": true,
+        "why": [],
+        "notDone": [],
+        "seen": 1
+      }
+    },
+    {
+      "workflow": "options-lab",
+      "expectedO1": "REFUSE_OPEN_WRITER",
+      "actualBoundGate": {
+        "pass": true,
+        "why": [],
+        "notDone": [],
+        "seen": 1
+      }
+    },
+    {
+      "workflow": "squad26-lab",
+      "expectedO1": "REFUSE_OPEN_WRITER",
+      "actualBoundGate": {
+        "pass": true,
+        "why": [],
+        "notDone": [],
+        "seen": 1
+      }
+    }
+  ],
+  "tenCreatedOnly": {
+    "pass": false,
+    "why": [
+      "created ranges do not cover the last 31 days for .github/workflows/r1-migrate.yml"
+    ],
+    "notDone": [],
+    "seen": 0
+  },
+  "watcher": [
+    {
+      "time": "2026-11-16T13:10:00Z",
+      "result": {
+        "run": false,
+        "reason": "OPPOSITE_DST_CRON",
+        "day": "2026-11-16",
+        "minute": 490,
+        "endMinute": 900,
+        "eventName": "schedule",
+        "schedule": "10 13 * * 1-5",
+        "utcOffsetMinutes": -300
+      }
+    },
+    {
+      "time": "2026-11-16T14:10:00Z",
+      "result": {
+        "run": true,
+        "reason": "PREOPEN_WAIT",
+        "day": "2026-11-16",
+        "minute": 550,
+        "endMinute": 900,
+        "eventName": "schedule",
+        "schedule": "10 14 * * 1-5",
+        "utcOffsetMinutes": -300
+      }
+    }
+  ],
+  "network": "NONE; original imported pure/offline functions, synthetic captures only"
+}

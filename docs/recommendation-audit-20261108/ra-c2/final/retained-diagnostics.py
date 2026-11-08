@@ -91,6 +91,21 @@ for v in views:
                   avoidedLossContribution=avoided,forgoneWinnerContribution=forgone,
                   uncertainRejected=len(uncertain),pairedGateEffectFixed51=net,
                   canonicalConservativeGateEffectUnchanged=j['summary'][v]['matched51GateEffectWithRejectedUnitsCash'])
+    day_rows=[]
+    for day in sorted({r['candidateKey'][:10] for r in retained}):
+        members=[r for r in retained if r['candidateKey'].startswith(day)]
+        day_rows.append(dict(day=day,**summarize(members,v)))
+    gate_days=[]
+    for day in sorted({r['candidateKey'][:10] for r in rejected}):
+        members=[r for r in rejected if r['candidateKey'].startswith(day)]
+        effect=[sum(-r['views'][v]['fixedBudgetWholeShareNetInterval'][1-i] for r in members)/51 for i in (0,1)]
+        gate_days.append(dict(day=day,n=len(members),fixed51Contribution=effect))
+    audit[v]['dayDependenceDisclosure']=dict(retainedSignalDays=len(day_rows),
+        largestSameDayCaseCount=max(x['n'] for x in day_rows),retainedByDay=day_rows,
+        rejectedDayContributions=gate_days,
+        definitelyHelpedDays=sum(x['fixed51Contribution'][0]>0 for x in gate_days),
+        definitelyHarmedDays=sum(x['fixed51Contribution'][1]<0 for x in gate_days),
+        interpretation='Descriptive dependence disclosure only. No independent-day assumption, p-value, financed portfolio path or selected-day trading filter.')
 
 pb=json.loads(PB.read_text()); recovery={}
 for name in ('SQ11-PB8','SQ11-PB12'):
@@ -106,6 +121,15 @@ for name in ('SQ11-PB8','SQ11-PB12'):
                         medianStoredNet=statistics.median(r['net'] for r in rs),
                         goneRows=[r for r in rs if r['kind']=='gone'],pairedControls=controls,
                         basis='Current saved arrays, not frozen firstRun. net/stock controls subtract original COST; SPY is raw. No executable prices/whole-share fees recovered.')
+    common=[r for r in rs if isinstance(r.get('sameStock'),(int,float)) and math.isfinite(r['sameStock'])]
+    missing=[r for r in rs if r not in common]
+    recovery[name]['sameStockCommonPopulation']=dict(n=len(common),
+        meanStoredNet=statistics.mean(r['net'] for r in common),
+        meanDifferences={c:statistics.mean(r['net']-r[c] for r in common) for c in controls},
+        interpretation='All controls on identical rows; SPY retains original raw benchmark basis.')
+    recovery[name]['missingSameStockPopulation']=dict(n=len(missing),
+        meanStoredNet=statistics.mean(r['net'] for r in missing) if missing else None,
+        interpretation='Descriptive missingness only; no zero imputation or exclusion from full saved population.')
 
 result=dict(kind='EXISTING_EVIDENCE_DESCRIPTIVE_DIAGNOSTICS',
             inputs={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (RA,PB)},
