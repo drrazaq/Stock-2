@@ -1,0 +1,1 @@
+Baseline source is exactly9c27aa25009ff88225a0ffb67b2f6bb56b51cf3a; this documentation-only checkpoint triggers existing read-only test CI for a complete unwaived baseline receipt. No production, provider, credential or workflow change. Expected stale package-pin failures are genuine failures, not an allowed outcome. Compare with corrected development port; preserve every result.
