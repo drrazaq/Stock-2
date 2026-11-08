@@ -1114,13 +1114,14 @@ async function loadWide(syms, loaded, now) {
 // (28 Oct, owner item 6) a message Telegram refused (or that never got through after 3 tries) is recorded in data/tg-failures.jsonl; the
 // SYSTEM HEALTH line of ACTIONS counts the last 24 hours, so a failed delivery is never silent.
 function tgFailed(status, why, text) { try { fs.appendFileSync('data/tg-failures.jsonl', JSON.stringify({ at: new Date().toISOString(), status, why: String(why || '').slice(0, 200), head: String(text || '').split('\n')[0].slice(0, 80) }) + '\n'); } catch (e) {} }
-async function telegram(text, buttons) {   // buttons: optional rows of { text, data } shown under the last part
+// Recheck current-price evidence at each actual part/retry. Preserve existing Unicode splitting, ACK checks and no ambiguous replay.
+async function telegram(text, buttons, currentEvidence) {   // buttons: optional rows of { text, data } shown under the last part
   const post=(u,o)=>telegramFetch(u,o,{recordFailure:false,retry429:false});
   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent]\n' + text); return {ok:false,reason:'MISSING_CREDENTIALS'}; }
   const parts=splitTelegramText(text,3800); // Preserve Unicode and every character across parts.
   for (let i = 0; i < parts.length; i++) {
     for (let a = 0; a < 3; a++) {   // Retry only an explicit rate-limit refusal; ambiguous outcomes are not replayed
-      try { const r = await post(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
+      try { if(currentEvidence && currentEvidence(Date.now())!==true)return {ok:false,reason:'PRICE_EVIDENCE_EXPIRED',localEvidenceRefusal:true,deliveredParts:i}; const r = await post(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
         if (r.status === 429 && a < 2) { let w = 5; try { w = +((await r.json()).parameters || {}).retry_after || 5; } catch (e) {} if(w>30){tgFailed(429,'rate limit deferred '+w+' seconds',parts[i]);return {ok:false,reason:'HTTP_429',deliveredParts:i};} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }   // (28 Oct) too many messages: wait as told, retry
         if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, parts[i]);return {ok:false,reason:(await r.json()).description||'HTTP_'+r.status,deliveredParts:i+(r.deliveredParts||0)}; }   // (28 Oct) a refused message is recorded, so SYSTEM HEALTH can say so
         break; }
@@ -4419,7 +4420,7 @@ async function intraday(onlyMine) {
   if (!sig) { console.log('No daily scan yet.'); return; }
   const myPos = loadPos();
   let st;try{st=readAlertState('data/alert-state.json',ny(now).d);}catch{console.error('ALERT STATE UNREADABLE: no intraday messages attempted');return;}
-  const alertKeys=new Set(),save=()=>saveAlertState('data/alert-state.json',st),deliver=(keys,text,buttons)=>deliverAlertOnce({book:st,keys,save,send:()=>telegram(text,buttons)});
+  const alertKeys=new Set(),save=()=>saveAlertState('data/alert-state.json',st),deliver=(keys,text,buttons,currentEvidence)=>deliverAlertOnce({book:st,keys,save,send:()=>telegram(text,buttons,currentEvidence)});
   const OKI = new Set(planCands(sig, loadPos()).filter(x => x.ok && myHalal(x.sym)==='ok').map(x => x.sym)), buys = sig.stocks.filter(s => s.state === 'Buy watch' && OKI.has(s.sym)), trig = sig.stocks.filter(s => s.state !== 'Buy watch' && s.proven && s.trigger && s.trigger / s.last < 1.03);
   const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok && myHalal(x.sym)==='ok');
   const buyNowCards = [];
@@ -4442,7 +4443,7 @@ async function intraday(onlyMine) {
   };
   for (const sym of watch) {
     const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym]=j; if(myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym,myPos[sym],j); const fresh = Number.isFinite(p)&&p>0&&Number.isFinite(j.t) && j.t>0 && Date.now()-j.t>=0 && Date.now()-j.t<=180000;   // SOURCE-CLOCK GATE: no BUY NOW on a price older than three minutes; trade is not executable BBO
-    const say = (k, text) => {const key=sym+k;if(alertAvailable(st,key)&&!alertKeys.has(key)){alertKeys.add(key);alerts.push(sym+(fresh?' at '+money(p):'')+': '+text);}};
+    const say = (k, text) => {const key=sym+k;if(alertAvailable(st,key)&&!alertKeys.has(key)){alertKeys.add(key);alerts.push({sym,key,current: fresh,text:sym+(fresh?' at '+money(p):'')+': '+text});}};
     if(!fresh){const P=myPos[sym],stopNow=P&&validStop(P.stop)?quoteEvidence(sym,j,Date.now(),5):null;if(P&&!(stopNow?.state==='OK'&&stopNow.price<=P.stop))say('priceUnknown','YOUR POSITION: PRICE UNVERIFIED. Check your broker and keep its stop; no current-price SELL/HOLD inference.');continue;}seen[sym]=p;
 
     const b = buys.find(s => s.sym === sym), t = trig.find(s => s.sym === sym), qs0 = OKI.has(sym) ? qk.find(s => s.sym === sym) : null, mp = myPos[sym];
@@ -4480,19 +4481,22 @@ async function intraday(onlyMine) {
   // ONE FIRST MARKET-HOURS CHECK a day, so you know the system is running and where each holding stands, even when no alert fires.
   // (6 Nov repair) Every holding is listed through holdingAction() (the ACTIONS order; a nightly exit is never shown as HOLD; price claims
   // only on valid evidence), the buy list says what it is, and the message gives its actual time and the real schedule and close times.
-  let openMsg = null;
+  let openMsg = null, openCurrent = [];
   if (!onlyMine && alertAvailable(st,'__open') && (Object.keys(seen).length || Object.keys(myPos).length)) {
-    openMsg = await firstCheckText(myPos, planBuys, quotesSeen, sig, Date.now());
+    const at=Date.now();openCurrent=[...new Set([...Object.keys(myPos),...planBuys.map(x=>x.sym)])].filter(sym=>quoteEvidence(sym,quotesSeen[sym],at,3).state==='OK');
+    openMsg = await firstCheckText(myPos, planBuys, quotesSeen, sig, at);
 
   }
   save();
-  if (openMsg) await deliver(['__open'],openMsg+'\n'+FOOT);
-  alerts.sort((a, b) => (b.includes('YOUR POSITION') ? 1 : 0) - (a.includes('YOUR POSITION') ? 1 : 0));
-  for (const bc of buyNowCards) { const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
+  const stillCurrent = syms => at => syms.every(sym=>quoteEvidence(sym,quotesSeen[sym],at,3).state==='OK');
+  if (openMsg) await deliver(['__open'],openMsg+'\n'+FOOT,undefined,stillCurrent(openCurrent));
+  alerts.sort((a, b) => (b.text.includes('YOUR POSITION') ? 1 : 0) - (a.text.includes('YOUR POSITION') ? 1 : 0));
+  for (const bc of buyNowCards) { if(!stillCurrent([bc.sym])(Date.now()))continue; const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
     await deliver([bc.sym+'buynow'],'ENTRY REVIEW: a permitted plan setup is inside its range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
-      [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]]); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
+      [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]],stillCurrent([bc.sym])); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
   if(stopAlerts.length) await deliver([...stopKeys],'YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n'+stopAlerts.join('\n\n')+'\n\nStop levels are your own recorded stops. Not financial advice.'+(env.PAGE_URL?'\n'+env.PAGE_URL:''));
-  if (alerts.length) await deliver([...alertKeys],'Market hours check\n\n' + alerts.join('\n\n') + '\n' + FOOT);
+  const ready=alerts.filter(a=>!a.current||stillCurrent([a.sym])(Date.now()));
+  if (ready.length) await deliver(ready.map(a=>a.key),'Market hours check\n\n' + ready.map(a=>a.text).join('\n\n') + '\n' + FOOT,undefined,stillCurrent(ready.filter(a=>a.current).map(a=>a.sym)));
   console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');
 }
 

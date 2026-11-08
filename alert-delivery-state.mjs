@@ -23,6 +23,7 @@ export async function deliverAlertOnce({book,keys,send,save,at=new Date().toISOS
  for(const key of keys){
   if(result?.ok===true){book.sent[key]=1;book.delivery[key]={status:'ACK',at};}
   else if(/^HTTP_(?:400|401|403|404|429)$/.test(result?.reason||'')&&!result?.deliveredParts)delete book.delivery[key];
+  else if(result?.reason==='PRICE_EVIDENCE_EXPIRED'&&result.localEvidenceRefusal===true&&result.deliveredParts===0)delete book.delivery[key];
   else book.delivery[key]={status:'UNKNOWN',at,reason:result?.reason||'NO_ACK'};
  }
  try{save();}catch{return {ok:false,reason:'ACK_STATE_NOT_DURABLE'};}

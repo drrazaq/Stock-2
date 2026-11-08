@@ -1,3 +1,5 @@
+> Current development follow-up: [send-time/ACK-preserving correction](current-dispatch/README.md), based on037792b8. Earlier dated pending/open-check descriptions below are preserved history. Exact new full validation and independent focused review are pending; no old A acceptance is transferred.
+
 # Engineering continuation: bounded development checkpoint
 
 Coordination: PR #1 comment 6718744064. Development base a4976e0270a41bd0eb5292b153ed819a60aaac37; production observed 774273205e1c8ce3db30c59ca368dc107617ef73. This separate review branch changes neither branch. No production, settings, secrets, credentials, provider acquisition or workflow execution is authorized.

@@ -1,0 +1,450 @@
+TAP version 13
+# Subtest: baseline K1/K2 independently reproduce through unmodified published worker
+ok 1 - baseline K1/K2 independently reproduce through unmodified published worker
+  ---
+  duration_ms: 855.379002
+  ...
+# Subtest: K1 owner-signed unresolved transition preserves original intent, invents no body and permanently fences old token
+ok 2 - K1 owner-signed unresolved transition preserves original intent, invents no body and permanently fences old token
+  ---
+  duration_ms: 1464.44829
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: forged-signature
+ok 3 - K1 refuses unauthorized/context-changing disposal: forged-signature
+  ---
+  duration_ms: 484.935985
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: wrong-store
+ok 4 - K1 refuses unauthorized/context-changing disposal: wrong-store
+  ---
+  duration_ms: 662.552223
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: changed-owner
+ok 5 - K1 refuses unauthorized/context-changing disposal: changed-owner
+  ---
+  duration_ms: 517.425789
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: omitted-intent
+ok 6 - K1 refuses unauthorized/context-changing disposal: omitted-intent
+  ---
+  duration_ms: 539.979275
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: wrong-key-id
+ok 7 - K1 refuses unauthorized/context-changing disposal: wrong-key-id
+  ---
+  duration_ms: 456.011057
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: old-token-signature
+ok 8 - K1 refuses unauthorized/context-changing disposal: old-token-signature
+  ---
+  duration_ms: 499.881029
+  ...
+# Subtest: K1 refuses unauthorized/context-changing disposal: extra-field
+ok 9 - K1 refuses unauthorized/context-changing disposal: extra-field
+  ---
+  duration_ms: 471.220078
+  ...
+# Subtest: legacy store cannot add its own recovery root or use old token as recovery authority
+ok 10 - legacy store cannot add its own recovery root or use old token as recovery authority
+  ---
+  duration_ms: 391.341153
+  ...
+# Subtest: inventory changed after authorization refuses without disposing a different intent
+ok 11 - inventory changed after authorization refuses without disposing a different intent
+  ---
+  duration_ms: 547.658502
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_ATTEMPT_WRITE
+ok 12 - K1 actual child SIGKILL/restart at DURING_ATTEMPT_WRITE
+  ---
+  duration_ms: 1184.665348
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_CLAIM_ATTEMPT
+ok 13 - K1 actual child SIGKILL/restart at AFTER_CLAIM_ATTEMPT
+  ---
+  duration_ms: 1021.897718
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_GENERATION_WRITE
+ok 14 - K1 actual child SIGKILL/restart at DURING_GENERATION_WRITE
+  ---
+  duration_ms: 1067.226331
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_GENERATION
+ok 15 - K1 actual child SIGKILL/restart at AFTER_GENERATION
+  ---
+  duration_ms: 1109.267878
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_HEAD_WRITE
+ok 16 - K1 actual child SIGKILL/restart at DURING_HEAD_WRITE
+  ---
+  duration_ms: 1034.543424
+  ...
+# Subtest: K1 actual child SIGKILL/restart at BEFORE_HEAD
+ok 17 - K1 actual child SIGKILL/restart at BEFORE_HEAD
+  ---
+  duration_ms: 1077.863806
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_SWITCH_WRITE
+ok 18 - K1 actual child SIGKILL/restart at DURING_SWITCH_WRITE
+  ---
+  duration_ms: 1117.980419
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_SWITCH_WRITE
+ok 19 - K1 actual child SIGKILL/restart at AFTER_SWITCH_WRITE
+  ---
+  duration_ms: 1068.099406
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_HEAD
+ok 20 - K1 actual child SIGKILL/restart at AFTER_HEAD
+  ---
+  duration_ms: 1124.661258
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_DISPOSITION_WRITE
+ok 21 - K1 actual child SIGKILL/restart at DURING_DISPOSITION_WRITE
+  ---
+  duration_ms: 1112.771774
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_DISPOSITION
+ok 22 - K1 actual child SIGKILL/restart at AFTER_DISPOSITION
+  ---
+  duration_ms: 1071.888268
+  ...
+# Subtest: K1 actual child SIGKILL/restart at DURING_RECEIPT_WRITE
+ok 23 - K1 actual child SIGKILL/restart at DURING_RECEIPT_WRITE
+  ---
+  duration_ms: 1023.435367
+  ...
+# Subtest: K1 actual child SIGKILL/restart at AFTER_CLAIM_RECEIPT
+ok 24 - K1 actual child SIGKILL/restart at AFTER_CLAIM_RECEIPT
+  ---
+  duration_ms: 915.218304
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_ATTEMPT_WRITE
+ok 25 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_ATTEMPT_WRITE
+  ---
+  duration_ms: 433.782403
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_ATTEMPT
+ok 26 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_ATTEMPT
+  ---
+  duration_ms: 415.435528
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_GENERATION_WRITE
+ok 27 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_GENERATION_WRITE
+  ---
+  duration_ms: 420.544375
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_GENERATION
+ok 28 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_GENERATION
+  ---
+  duration_ms: 403.129479
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_HEAD_WRITE
+ok 29 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_HEAD_WRITE
+  ---
+  duration_ms: 414.391584
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: BEFORE_HEAD
+ok 30 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: BEFORE_HEAD
+  ---
+  duration_ms: 437.159963
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_SWITCH_WRITE
+ok 31 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_SWITCH_WRITE
+  ---
+  duration_ms: 423.604212
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_SWITCH_WRITE
+ok 32 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_SWITCH_WRITE
+  ---
+  duration_ms: 448.623162
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_HEAD
+ok 33 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_HEAD
+  ---
+  duration_ms: 459.445972
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_RECEIPT_WRITE
+ok 34 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: DURING_RECEIPT_WRITE
+  ---
+  duration_ms: 456.652579
+  ...
+# Subtest: K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_RECEIPT
+ok 35 - K2 ordinary generation SIGKILL exact replay rejects conflicting takeover: AFTER_CLAIM_RECEIPT
+  ---
+  duration_ms: 432.682433
+  ...
+# Subtest: K2 recovers genuine legacy generation residue from exact recorded values without rewriting it
+ok 36 - K2 recovers genuine legacy generation residue from exact recorded values without rewriting it
+  ---
+  duration_ms: 450.728358
+  ...
+# Subtest: actual old-version worker is fenced after recovery HEAD even if disposition is interrupted
+ok 37 - actual old-version worker is fenced after recovery HEAD even if disposition is interrupted
+  ---
+  duration_ms: 797.092411
+  ...
+# Subtest: unresolved sticky state prevents reusing a previously valid evaluation, not only arbitrary new outputs
+ok 38 - unresolved sticky state prevents reusing a previously valid evaluation, not only arbitrary new outputs
+  ---
+  duration_ms: 898.413523
+  ...
+# Subtest: orphan partial original is retained as explicitly authorized unresolved context, never deleted to clear a claim
+ok 39 - orphan partial original is retained as explicitly authorized unresolved context, never deleted to clear a claim
+  ---
+  duration_ms: 504.176368
+  ...
+# Subtest: corrupt signed attempt or intent refuses resumption without altering original bytes
+ok 40 - corrupt signed attempt or intent refuses resumption without altering original bytes
+  ---
+  duration_ms: 486.334288
+  ...
+# Subtest: competing independent recovery processes choose one authorized owner; loser cannot take over or silently dispose again
+ok 41 - competing independent recovery processes choose one authorized owner; loser cannot take over or silently dispose again
+  ---
+  duration_ms: 869.275692
+  ...
+# Subtest: an owner signature for conflicting takeover cannot replace a recorded unfinished recovery
+ok 42 - an owner signature for conflicting takeover cannot replace a recorded unfinished recovery
+  ---
+  duration_ms: 1075.398975
+  ...
+# Subtest: actual collector cannot redial a terminally unresolved request under the new generation
+ok 43 - actual collector cannot redial a terminally unresolved request under the new generation
+  ---
+  duration_ms: 792.261092
+  ...
+# Subtest: native and close actual adapters keep research context but expose permanent unresolved store evidence
+ok 44 - native and close actual adapters keep research context but expose permanent unresolved store evidence
+  ---
+  duration_ms: 3566.460898
+  ...
+# Subtest: completed generation authorization corruption is not silently ignored by later writes or HEAD verification
+ok 45 - completed generation authorization corruption is not silently ignored by later writes or HEAD verification
+  ---
+  duration_ms: 498.918827
+  ...
+# Subtest: fault injection is refused before mutation for non-synthetic origins
+ok 46 - fault injection is refused before mutation for non-synthetic origins
+  ---
+  duration_ms: 298.777725
+  ...
+# Subtest: an unresolved marker cannot be renamed to stand in for a different signed intent
+ok 47 - an unresolved marker cannot be renamed to stand in for a different signed intent
+  ---
+  duration_ms: 454.398925
+  ...
+# Subtest: exact recovery package and protected strategy/producer dependency hashes remain pinned
+ok 48 - exact recovery package and protected strategy/producer dependency hashes remain pinned
+  ---
+  duration_ms: 2.670102
+  ...
+# Subtest: L1 non-test stores require explicit authority before creating any directory
+ok 49 - L1 non-test stores require explicit authority before creating any directory
+  ---
+  duration_ms: 257.171591
+  ...
+# Subtest: L2 non-test takeover refuses inline authority; accepts only hash-pinned durable original bytes
+ok 50 - L2 non-test takeover refuses inline authority; accepts only hash-pinned durable original bytes
+  ---
+  duration_ms: 394.225525
+  ...
+# Subtest: L2 first-record independent worker interruption retains exact request and resumes: DURING_REQUEST_ARCHIVE_WRITE
+ok 51 - L2 first-record independent worker interruption retains exact request and resumes: DURING_REQUEST_ARCHIVE_WRITE
+  ---
+  duration_ms: 693.937478
+  ...
+# Subtest: L2 first-record independent worker interruption retains exact request and resumes: AFTER_REQUEST_ARCHIVE
+ok 52 - L2 first-record independent worker interruption retains exact request and resumes: AFTER_REQUEST_ARCHIVE
+  ---
+  duration_ms: 657.794142
+  ...
+# Subtest: L2 first-record independent worker interruption retains exact request and resumes: DURING_ATTEMPT_WRITE
+ok 53 - L2 first-record independent worker interruption retains exact request and resumes: DURING_ATTEMPT_WRITE
+  ---
+  duration_ms: 711.02717
+  ...
+# Subtest: L2 unsafe or conflicting signed source refused without generation mutation: wrong-hash
+ok 54 - L2 unsafe or conflicting signed source refused without generation mutation: wrong-hash
+  ---
+  duration_ms: 330.444865
+  ...
+# Subtest: L2 unsafe or conflicting signed source refused without generation mutation: symlink
+ok 55 - L2 unsafe or conflicting signed source refused without generation mutation: symlink
+  ---
+  duration_ms: 332.803829
+  ...
+# Subtest: L2 unsafe or conflicting signed source refused without generation mutation: public-mode
+ok 56 - L2 unsafe or conflicting signed source refused without generation mutation: public-mode
+  ---
+  duration_ms: 339.7798
+  ...
+# Subtest: L2 unsafe or conflicting signed source refused without generation mutation: different-inline
+ok 57 - L2 unsafe or conflicting signed source refused without generation mutation: different-inline
+  ---
+  duration_ms: 342.483682
+  ...
+# Subtest: L2 exact request recovery fences conflicting signed takeover at AFTER_REQUEST_ARCHIVE
+ok 58 - L2 exact request recovery fences conflicting signed takeover at AFTER_REQUEST_ARCHIVE
+  ---
+  duration_ms: 660.695151
+  ...
+# Subtest: L2 exact request recovery fences conflicting signed takeover at DURING_ATTEMPT_WRITE
+ok 59 - L2 exact request recovery fences conflicting signed takeover at DURING_ATTEMPT_WRITE
+  ---
+  duration_ms: 675.635028
+  ...
+# Subtest: L1 pre-existing non-test rootless stores remain inspectable but cannot self-enroll or mutate
+ok 60 - L1 pre-existing non-test rootless stores remain inspectable but cannot self-enroll or mutate
+  ---
+  duration_ms: 460.55003
+  ...
+# Subtest: L1 invalid supplied authority cannot strand a newly created non-test store
+ok 61 - L1 invalid supplied authority cannot strand a newly created non-test store
+  ---
+  duration_ms: 0.550788
+  ...
+# Subtest: L2 genuine previous-version torn attempt resumes without altering its hash or fragment: signed recovery
+ok 62 - L2 genuine previous-version torn attempt resumes without altering its hash or fragment: signed recovery
+  ---
+  duration_ms: 793.774102
+  ...
+# Subtest: L2 genuine previous-version torn attempt resumes without altering its hash or fragment: synthetic claim
+ok 63 - L2 genuine previous-version torn attempt resumes without altering its hash or fragment: synthetic claim
+  ---
+  duration_ms: 464.195747
+  ...
+# Subtest: actual host monitor survives transient marker disappearance and retains intended partial manifest
+ok 64 - actual host monitor survives transient marker disappearance and retains intended partial manifest
+  ---
+  duration_ms: 16856.295133
+  ...
+# Subtest: actual host monitor records non-sensitive permission failure without stopping producer
+ok 65 - actual host monitor records non-sensitive permission failure without stopping producer
+  ---
+  duration_ms: 2998.822188
+  ...
+# Subtest: normal .observing removal at stat cannot kill capture storage inspection
+ok 66 - normal .observing removal at stat cannot kill capture storage inspection
+  ---
+  duration_ms: 3.910445
+  ...
+# Subtest: normal .observing removal at read cannot kill capture storage inspection
+ok 67 - normal .observing removal at read cannot kill capture storage inspection
+  ---
+  duration_ms: 0.809045
+  ...
+# Subtest: normal .writer-lock removal at stat cannot kill capture storage inspection
+ok 68 - normal .writer-lock removal at stat cannot kill capture storage inspection
+  ---
+  duration_ms: 1.027805
+  ...
+# Subtest: normal .writer-lock removal at read cannot kill capture storage inspection
+ok 69 - normal .writer-lock removal at read cannot kill capture storage inspection
+  ---
+  duration_ms: 0.79236
+  ...
+# Subtest: a disappearing committed file is still an integrity failure
+ok 70 - a disappearing committed file is still an integrity failure
+  ---
+  duration_ms: 1.353624
+  ...
+# Subtest: marker names do not bypass symlink/type/budget or permission failures
+ok 71 - marker names do not bypass symlink/type/budget or permission failures
+  ---
+  duration_ms: 1.513634
+  ...
+# Subtest: monitor health categories preserve known errors without exposing paths or arbitrary text
+ok 72 - monitor health categories preserve known errors without exposing paths or arbitrary text
+  ---
+  duration_ms: 0.209274
+  ...
+# Subtest: V2 guard accepts its exact inactive inputs and refuses changed mode, context or pins
+ok 73 - V2 guard accepts its exact inactive inputs and refuses changed mode, context or pins
+  ---
+  duration_ms: 91.417341
+  ...
+# Subtest: V2 guard revalidates reference bytes and source dependencies after preparation
+ok 74 - V2 guard revalidates reference bytes and source dependencies after preparation
+  ---
+  duration_ms: 241.534175
+  ...
+# Subtest: V2 guard refuses symlink replacement rather than accepting identical bytes
+ok 75 - V2 guard refuses symlink replacement rather than accepting identical bytes
+  ---
+  duration_ms: 72.350033
+  ...
+# Subtest: earlier and UNKNOWN histories never open capture bindings or create output
+ok 76 - earlier and UNKNOWN histories never open capture bindings or create output
+  ---
+  duration_ms: 161.769956
+  ...
+# Subtest: result and failure reporting refuse ancestor symlinks without external writes
+ok 77 - result and failure reporting refuse ancestor symlinks without external writes
+  ---
+  duration_ms: 109.227737
+  ...
+# Subtest: history evidence from another day, run or workflow is rejected despite a matching file hash
+ok 78 - history evidence from another day, run or workflow is rejected despite a matching file hash
+  ---
+  duration_ms: 278.922315
+  ...
+# Subtest: actual V2 host/guard/real client binding success
+ok 79 - actual V2 host/guard/real client binding success
+  ---
+  duration_ms: 24331.551208
+  ...
+# Subtest: actual V2 host/guard/real client binding success-contended
+ok 80 - actual V2 host/guard/real client binding success-contended
+  ---
+  duration_ms: 24048.641433
+  ...
+# Subtest: actual V2 host/guard/real client binding upload-refusal
+ok 81 - actual V2 host/guard/real client binding upload-refusal
+  ---
+  duration_ms: 3012.696172
+  ...
+# Subtest: actual V2 host/guard/real client binding quote-refusal
+ok 82 - actual V2 host/guard/real client binding quote-refusal
+  ---
+  duration_ms: 2808.441454
+  ...
+# Subtest: actual V2 host/guard/real client binding input-change
+ok 83 - actual V2 host/guard/real client binding input-change
+  ---
+  duration_ms: 2781.502405
+  ...
+# Subtest: actual V2 host/guard/real client binding unknown-history
+ok 84 - actual V2 host/guard/real client binding unknown-history
+  ---
+  duration_ms: 2756.703345
+  ...
+# Subtest: actual V2 host/guard/real client binding checkpoint-partial
+ok 85 - actual V2 host/guard/real client binding checkpoint-partial
+  ---
+  duration_ms: 3085.236789
+  ...
+# Subtest: actual V2 host/guard/real client binding ack-partial
+ok 86 - actual V2 host/guard/real client binding ack-partial
+  ---
+  duration_ms: 3021.948074
+  ...
+# Subtest: actual V2 host/guard/real client binding receipt-partial
+ok 87 - actual V2 host/guard/real client binding receipt-partial
+  ---
+  duration_ms: 3017.065608
+  ...
+# Subtest: actual V2 host/guard/real client binding manifest-partial
+ok 88 - actual V2 host/guard/real client binding manifest-partial
+  ---
+  duration_ms: 16265.613784
+  ...
+1..88
+# tests 88
+# suites 0
+# pass 88
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 85392.838498

@@ -1,0 +1,87 @@
+TAP version 13
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: holding target expires after first-check await under development3minute rule and remains retryable
+not ok 1 - holding target expires after first-check await under development3minute rule and remains retryable
+  ---
+  duration_ms: 130.317506
+  location: '/workspace/g2-verification/engineering-a497/test/intraday-current-dispatch.test.mjs:42:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input was expected to not match the regular expression /TARGET 2 REACHED|ZZT at 115/. Input:
+    
+    'Market hours check\n' +
+      '\n' +
+      'ZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).\n' +
+      '\n' +
+      'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    Market hours check
+    
+    ZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).
+    
+    Tested signals, not instructions. Not financial advice, not a halal ruling.
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/intraday-current-dispatch.test.mjs:43:124)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Telegram rate limit, waiting 1 s
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: explicit429 retry rechecks development3minute freshness and releases only the unsent intent
+not ok 2 - explicit429 retry rechecks development3minute freshness and releases only the unsent intent
+  ---
+  duration_ms: 88.942354
+  location: '/workspace/g2-verification/engineering-a497/test/intraday-current-dispatch.test.mjs:46:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input was expected to not match the regular expression /ZZT at 115|TARGET 2 REACHED/. Input:
+    
+    'Market hours check\n' +
+      '\n' +
+      'ZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).\n' +
+      '\n' +
+      'Tested signals, not instructions. Not financial advice, not a halal ruling.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    Market hours check
+    
+    ZZT at 115.00: YOUR POSITION: TARGET 2 REACHED (110.00). You bought at 100.00 (+15.0%).
+    
+    Tested signals, not instructions. Not financial advice, not a halal ruling.
+  operator: 'doesNotMatch'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/engineering-a497/test/intraday-current-dispatch.test.mjs:47:176)
+    process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: timely target is ACKed; the gate does not silently become5minutes
+ok 3 - timely target is ACKed; the gate does not silently become5minutes
+  ---
+  duration_ms: 143.880507
+  ...
+# Subtest: all requests stayed on loopback
+ok 4 - all requests stayed on loopback
+  ---
+  duration_ms: 0.774063
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 2
+# fail 2
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 450.833155

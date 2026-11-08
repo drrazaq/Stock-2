@@ -1,0 +1,376 @@
+TAP version 13
+# intraday check done: 2 watched, 0 new alerts
+# FIRST-CHECK ZZS LINE: ZZS: STOP LEVEL REACHED: at or below your stop 80.00. If your broker stop order has filled, you are already out: do not sell again. Last price 70.00 (FINNHUB, Nov 5 09:35 New York, 5 min old when checked at Nov 5 09:40 New York; no current price now: the latest price is 5 min old (limit 5 min)).
+# YOUR STOPS: YOUR STOPS (bot check; the live watcher had not confirmed these) |  | Checked at Nov 5 09:40 New York (quoted age is at that check):
+# Subtest: R1 (desired): stop quote 4m50s old at fetch, 30 s passes before the first check -> the two messages must not disagree
+ok 1 - R1 (desired): stop quote 4m50s old at fetch, 30 s passes before the first check -> the two messages must not disagree
+  ---
+  duration_ms: 218.733584
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# ALERT: Market hours check |  | ZZS: YOUR POSITION: PRICE UNVERIFIED. Check your broker and keep its stop; no current-price SELL/HOLD inference.
+# Subtest: R2 (desired): stale holding alert must not print a price ("ZZS at 0.00")
+ok 2 - R2 (desired): stale holding alert must not print a price ("ZZS at 0.00")
+  ---
+  duration_ms: 147.315284
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# FIRST: Current price UNKNOWN (the latest price is 30 min old (limit 5 min)).
+# STOPS: ZZS: the latest price is 30 min old (limit 5 min). Whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.
+# Subtest: R3 (wording probe): 30-min stale under stop -> first check vs STOP CHECK UNKNOWN cite which limit?
+ok 3 - R3 (wording probe): 30-min stale under stop -> first check vs STOP CHECK UNKNOWN cite which limit?
+  ---
+  duration_ms: 78.767251
+  ...
+# Subtest: loopback only
+ok 4 - loopback only
+  ---
+  duration_ms: 0.760653
+  ...
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: current holding assessment cannot freeze a3-minute quote gate while later quotes are fetched
+ok 5 - current holding assessment cannot freeze a3-minute quote gate while later quotes are fetched
+  ---
+  duration_ms: 80.162083
+  ...
+# intraday check done: 2 watched, 1 new alerts
+# Subtest: both stop message routes qualify the age of a retained historical stop observation
+ok 6 - both stop message routes qualify the age of a retained historical stop observation
+  ---
+  duration_ms: 68.105162
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: F1: a four-minute stop quote has one consistent five-minute stop assessment; entry/HOLD still require three minutes
+ok 7 - F1: a four-minute stop quote has one consistent five-minute stop assessment; entry/HOLD still require three minutes
+  ---
+  duration_ms: 237.624041
+  ...
+# Subtest: F2: a future-at-fetch quote remains UNKNOWN after wall clock passes it
+ok 8 - F2: a future-at-fetch quote remains UNKNOWN after wall clock passes it
+  ---
+  duration_ms: 98.658326
+  ...
+# intraday check done: 2 watched, 2 new alerts
+# intraday check done: 2 watched, 0 new alerts
+# Subtest: runtime: no-stop holding without valid price is STATUS UNKNOWN; all quotes failing still sends exactly one first check; rerun does not duplicate
+ok 9 - runtime: no-stop holding without valid price is STATUS UNKNOWN; all quotes failing still sends exactly one first check; rerun does not duplicate
+  ---
+  duration_ms: 73.943804
+  ...
+# intraday check done: 0 watched, 0 new alerts
+# Subtest: runtime: no holdings and no list stays silent
+ok 10 - runtime: no holdings and no list stays silent
+  ---
+  duration_ms: 60.372645
+  ...
+# Telegram rate limit, waiting 1 s
+# Telegram rate limit, waiting 1 s
+# Telegram error 429 {"ok":false,"description":"HTTP_429","parameters":{"retry_after":1}}
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Telegram error 500 {"ok":false,"description":"HTTP_500","parameters":{"retry_after":1}}
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: delivery: first check refused with HTTP 429 is retried on the next run (not consumed pre-ACK); HTTP 500 is UNKNOWN and not repeated
+ok 11 - delivery: first check refused with HTTP 429 is retried on the next run (not consumed pre-ACK); HTTP 500 is UNKNOWN and not repeated
+  ---
+  duration_ms: 174.162544
+  ...
+# Subtest: loopback only
+ok 12 - loopback only
+  ---
+  duration_ms: 0.637087
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: four-minute above-stop quote cannot imply HOLD or falsely say NO STOP SET
+ok 13 - four-minute above-stop quote cannot imply HOLD or falsely say NO STOP SET
+  ---
+  duration_ms: 67.192351
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: holding target expires after first-check await under development3minute rule and remains retryable
+ok 14 - holding target expires after first-check await under development3minute rule and remains retryable
+  ---
+  duration_ms: 295.239353
+  ...
+# Telegram rate limit, waiting 1 s
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: explicit429 retry rechecks development3minute freshness and releases only the unsent intent
+ok 15 - explicit429 retry rechecks development3minute freshness and releases only the unsent intent
+  ---
+  duration_ms: 100.735702
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: timely target is ACKed; the gate does not silently become5minutes
+ok 16 - timely target is ACKed; the gate does not silently become5minutes
+  ---
+  duration_ms: 132.223936
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: multipart ENTRY REVIEW expiry keeps partial delivery UNKNOWN and never blindly replays
+ok 17 - multipart ENTRY REVIEW expiry keeps partial delivery UNKNOWN and never blindly replays
+  ---
+  duration_ms: 125.053413
+  ...
+# intraday check done: 40 watched, 40 new alerts
+# Subtest: multipart first-check expiry preserves UNKNOWN rather than completing stale summary
+ok 18 - multipart first-check expiry preserves UNKNOWN rather than completing stale summary
+  ---
+  duration_ms: 95.22669
+  ...
+# Subtest: all requests stayed on loopback
+ok 19 - all requests stayed on loopback
+  ---
+  duration_ms: 0.824649
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
+ok 20 - conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
+  ---
+  duration_ms: 152.658276
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
+ok 21 - stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
+  ---
+  duration_ms: 142.76308
+  ...
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
+ok 22 - stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
+  ---
+  duration_ms: 90.942083
+  ...
+# intraday check done: 3 watched, 2 new alerts
+# Subtest: undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
+ok 23 - undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
+  ---
+  duration_ms: 114.749381
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
+ok 24 - delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
+  ---
+  duration_ms: 127.347019
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
+ok 25 - labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
+  ---
+  duration_ms: 49.145017
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: development session statement preserves regular and early-close calendar hours without the production 15:00 cutoff
+ok 26 - development session statement preserves regular and early-close calendar hours without the production 15:00 cutoff
+  ---
+  duration_ms: 162.590168
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: records untouched: positions and Telegram offset unchanged; one first check a day
+ok 27 - records untouched: positions and Telegram offset unchanged; one first check a day
+  ---
+  duration_ms: 62.528744
+  ...
+# intraday check done: 2 watched, 1 new alerts
+# intraday check done: 1 watched, 0 new alerts
+# intraday check done: 2 watched, 1 new alerts
+# Subtest: 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
+ok 28 - 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
+  ---
+  duration_ms: 155.920692
+  ...
+# intraday check done: 2 watched, 2 new alerts
+# intraday check done: 0 watched, 0 new alerts
+# Subtest: 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
+ok 29 - 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
+  ---
+  duration_ms: 117.910662
+  ...
+# Subtest: all requests stayed synthetic and on loopback
+ok 30 - all requests stayed synthetic and on loopback
+  ---
+  duration_ms: 0.142013
+  ...
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: development summary preserves three-minute boundary and cannot promote reported-only stale prices
+ok 31 - development summary preserves three-minute boundary and cannot promote reported-only stale prices
+  ---
+  duration_ms: 73.838256
+  ...
+# Subtest: price evidence: only a ticker-bound, dated, fresh trade price is OK
+ok 32 - price evidence: only a ticker-bound, dated, fresh trade price is OK
+  ---
+  duration_ms: 1.8302
+  ...
+# Subtest: r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN
+ok 33 - r2: any future timestamp (even 1 s) and any nonfinite or non-numeric price are UNKNOWN
+  ---
+  duration_ms: 0.469025
+  ...
+# Subtest: r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip
+ok 34 - r2: an invalid recorded stop (Infinity, NaN, text, zero) is UNKNOWN, never a crossing or a silent skip
+  ---
+  duration_ms: 0.689016
+  ...
+# Subtest: stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts
+ok 35 - stale or missing evidence below the stop is UNKNOWN, never a hit and never silent; a later fresh price still alerts
+  ---
+  duration_ms: 12.694543
+  ...
+# Subtest: "at or below": a price equal to the stop is a crossing and is worded as at or below
+ok 36 - "at or below": a price equal to the stop is a crossing and is worded as at or below
+  ---
+  duration_ms: 0.303657
+  ...
+# Subtest: wording respects an order that already filled: no second sale, the fill price is what to report
+ok 37 - wording respects an order that already filled: no second sale, the fill price is what to report
+  ---
+  duration_ms: 0.313021
+  ...
+# Subtest: already sold (position no longer recorded): nothing is sent for it
+ok 38 - already sold (position no longer recorded): nothing is sent for it
+  ---
+  duration_ms: 0.124567
+  ...
+# Subtest: stop levels and positions are read, never changed
+ok 39 - stop levels and positions are read, never changed
+  ---
+  duration_ms: 0.29332
+  ...
+# Subtest: catalyst times have a full date and one time zone (previous-day items no longer read like today)
+ok 40 - catalyst times have a full date and one time zone (previous-day items no longer read like today)
+  ---
+  duration_ms: 2.828179
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) acknowledged
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated
+ok 41 - bot fallback: a stop the watcher already delivered (ACKNOWLEDGED) is not repeated
+  ---
+  duration_ms: 129.698862
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) acknowledged
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery missing -> the bot sends the stop once, in the shared wording
+ok 42 - bot fallback: watcher delivery missing -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 93.438223
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) acknowledged
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery UNSENT -> the bot sends the stop once, in the shared wording
+ok 43 - bot fallback: watcher delivery UNSENT -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 63.878662
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) acknowledged
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: watcher delivery UNCERTAIN -> the bot sends the stop once, in the shared wording
+ok 44 - bot fallback: watcher delivery UNCERTAIN -> the bot sends the stop once, in the shared wording
+  ---
+  duration_ms: 56.749351
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) acknowledged
+# intraday check done: 1 watched, 0 new alerts
+# Subtest: bot fallback: duplicate delivery prevention holds across runs (once a day)
+ok 45 - bot fallback: duplicate delivery prevention holds across runs (once a day)
+  ---
+  duration_ms: 59.348597
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) acknowledged
+# intraday check done: 1 watched, 1 new alerts
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) acknowledged
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing
+ok 46 - bot fallback: an undated or stale quote under the stop is STOP CHECK UNKNOWN, not a crossing
+  ---
+  duration_ms: 137.276025
+  ...
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) acknowledged
+# intraday check done: 1 watched, 1 new alerts
+# fast movers off today: no FMP key is passed to the bot
+# watchdog: 2 warning(s) acknowledged
+# intraday check done: 1 watched, 1 new alerts
+# Subtest: r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller
+ok 47 - r2 bot fallback: a future-dated or nonfinite quote is UNKNOWN through the actual caller
+  ---
+  duration_ms: 124.936492
+  ...
+# Subtest: all requests stayed synthetic and on loopback
+ok 48 - all requests stayed synthetic and on loopback
+  ---
+  duration_ms: 0.128052
+  ...
+# Subtest: ACK follows persisted intent; a process restart does not resend an acknowledged key
+ok 49 - ACK follows persisted intent; a process restart does not resend an acknowledged key
+  ---
+  duration_ms: 5.466723
+  ...
+# Subtest: explicit refusal is retryable, while ambiguous/partial or server-error delivery stays unknown
+ok 50 - explicit refusal is retryable, while ambiguous/partial or server-error delivery stays unknown
+  ---
+  duration_ms: 0.451729
+  ...
+# Subtest: failed persistence blocks the network and malformed stored data never silently resets dedup
+ok 51 - failed persistence blocks the network and malformed stored data never silently resets dedup
+  ---
+  duration_ms: 0.820383
+  ...
+# Subtest: malformed nested delivery markers cannot reset uncertainty or permit network sends
+ok 52 - malformed nested delivery markers cannot reset uncertainty or permit network sends
+  ---
+  duration_ms: 0.820403
+  ...
+# Subtest: trusted zero-delivery freshness refusal is retryable; missing proof or partial delivery remains UNKNOWN
+ok 53 - trusted zero-delivery freshness refusal is retryable; missing proof or partial delivery remains UNKNOWN
+  ---
+  duration_ms: 0.323696
+  ...
+# Subtest: local refusal proof cannot clear an already UNKNOWN reservation
+ok 54 - local refusal proof cannot clear an already UNKNOWN reservation
+  ---
+  duration_ms: 0.143295
+  ...
+# Subtest: acknowledged Telegram send counts as delivered
+ok 55 - acknowledged Telegram send counts as delivered
+  ---
+  duration_ms: 1.941608
+  ...
+# Subtest: HTTP failure does not count as delivered
+ok 56 - HTTP failure does not count as delivered
+  ---
+  duration_ms: 0.336315
+  ...
+# Subtest: Telegram-level failure does not count as delivered
+ok 57 - Telegram-level failure does not count as delivered
+  ---
+  duration_ms: 0.510617
+  ...
+# Subtest: network failure and missing credentials fail closed
+ok 58 - network failure and missing credentials fail closed
+  ---
+  duration_ms: 1.442938
+  ...
+1..58
+# tests 58
+# suites 0
+# pass 58
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1458.015467

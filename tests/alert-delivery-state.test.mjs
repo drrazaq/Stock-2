@@ -29,3 +29,13 @@ test('malformed nested delivery markers cannot reset uncertainty or permit netwo
  }
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'s2-invalid-nested-')),file=path.join(dir,'state.json');try{fs.writeFileSync(file,JSON.stringify({day:'2026-10-29',sent:{},delivery:{key:{status:'unexpected'}}}));assert.throws(()=>readAlertState(file,'2026-10-30'),/UNREADABLE/);}finally{fs.rmSync(dir,{recursive:true,force:true});}
 });
+
+test('trusted zero-delivery freshness refusal is retryable; missing proof or partial delivery remains UNKNOWN',async()=>{
+ for(const result of [{ok:false,reason:'PRICE_EVIDENCE_EXPIRED',localEvidenceRefusal:true,deliveredParts:0},{ok:false,reason:'PRICE_EVIDENCE_EXPIRED',deliveredParts:0},{ok:false,reason:'PRICE_EVIDENCE_EXPIRED',localEvidenceRefusal:true,deliveredParts:1},{ok:false,reason:'PRICE_EVIDENCE_EXPIRED',localEvidenceRefusal:true,deliveredParts:-1}]){
+  const book={sent:{},delivery:{}};await deliverAlertOnce({book,keys:['quote'],save:()=>{},send:async()=>result});const retryable=result.localEvidenceRefusal===true&&result.deliveredParts===0;assert.equal(alertAvailable(book,'quote'),retryable);if(!retryable)assert.equal(book.delivery.quote.status,'UNKNOWN');assert.equal(book.sent.quote,undefined);
+ }
+});
+
+test('local refusal proof cannot clear an already UNKNOWN reservation',async()=>{
+ const book={sent:{},delivery:{quote:{status:'UNKNOWN',reason:'NETWORK_ERROR'}}};let calls=0;const r=await deliverAlertOnce({book,keys:['quote'],save:()=>{},send:async()=>{calls++;return {ok:false,reason:'PRICE_EVIDENCE_EXPIRED',localEvidenceRefusal:true,deliveredParts:0};}});assert.equal(r.reason,'ALREADY_RESERVED_OR_ACKED');assert.equal(calls,0);assert.equal(book.delivery.quote.status,'UNKNOWN');
+});
