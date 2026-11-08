@@ -1,0 +1,64 @@
+TAP version 13
+# Subtest: eligibility: a strong forward record comes back; a weak one fades; a short one is too early
+ok 1 - eligibility: a strong forward record comes back; a weak one fades; a short one is too early
+  ---
+  duration_ms: 7.164061
+  ...
+# Subtest: eligibility: every gate is needed (SPY, the average stock, 10 days, the halves)
+ok 2 - eligibility: every gate is needed (SPY, the average stock, 10 days, the halves)
+  ---
+  duration_ms: 4.871988
+  ...
+# Subtest: Bonferroni bar: max(2.5, one-sided z for 0.05 / rules with 30+ forward trades)
+ok 3 - Bonferroni bar: max(2.5, one-sided z for 0.05 / rules with 30+ forward trades)
+  ---
+  duration_ms: 41.038087
+  ...
+# Subtest: after-freeze filter: only signals dated after the rule's own frozenAt count
+ok 4 - after-freeze filter: only signals dated after the rule's own frozenAt count
+  ---
+  duration_ms: 1.883591
+  ...
+# Subtest: near-copies of a live rule (scan.mjs TRY_DUPLICATE), paused rules, baskets, options, intraday and live rules never come back
+ok 5 - near-copies of a live rule (scan.mjs TRY_DUPLICATE), paused rules, baskets, options, intraday and live rules never come back
+  ---
+  duration_ms: 8.1979
+  ...
+# Subtest: format: board fields, comeback-lab.json passes scan.mjs tryQualifies, comeback-today.json copies the rule's own signals
+ok 6 - format: board fields, comeback-lab.json passes scan.mjs tryQualifies, comeback-today.json copies the rule's own signals
+  ---
+  duration_ms: 42.234717
+  ...
+# Subtest: scoreboard section, bot text and the library entry
+not ok 7 - scoreboard section, bot text and the library entry
+  ---
+  duration_ms: 60.137804
+  location: '/workspace/g2-verification/rev14-fresh-unit/test/comeback-core.test.mjs:117:1'
+  failureType: 'testCodeFailure'
+  error: "ENOENT: no such file or directory, open '/workspace/g2-verification/rev14-fresh-unit/data/strategy-library.json'"
+  code: 'ENOENT'
+  stack: |-
+    Object.readFileSync (node:fs:448:20)
+    TestContext.<anonymous> (file:///workspace/g2-verification/rev14-fresh-unit/test/comeback-core.test.mjs:128:29)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: cosmetics and the +300% cap: the bar sentence before any rule has 30 trades; a +900% trade counts as +300%
+ok 8 - cosmetics and the +300% cap: the bar sentence before any rule has 30 trades; a +900% trade counts as +300%
+  ---
+  duration_ms: 1.114225
+  ...
+# Subtest: decoded and expert paper lanes record the average stock (capped +300%) on every resolved trade
+ok 9 - decoded and expert paper lanes record the average stock (capped +300%) on every resolved trade
+  ---
+  duration_ms: 0.607863
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 8
+# fail 1
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 178.283546

@@ -1,0 +1,38 @@
+TAP version 13
+# {"case":"actual_shell_flags","status":0,"warningReached":true,"continued":true}
+# {"case":"accepted_replace_then_readback_loss","laterStateDurable":true,"stdout":"sealed guard: OK (--push: no T1 plaintext)\\nError: save recovery state UNKNOWN (the recovery branches could not be read back); no further attempt; the unpublished commit may exist only on this runner\\nfirst_rc=1\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T170826719808747Z-822b48fb708d (slot bot; confirmed after an unclear reply)\\nsealed guard: OK (--push: no T1 plaintext)\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T170826829112365Z-2088fc534b96 (slot bot, replacing this run's earlier save-recovery/Telegram-bot-777-1-20261108T170826719808747Z-822b48fb708d; merged into main by the bot's next recovery pass)\\nnext_rc=0\\n"}
+# {"case":"new_shell_same_run_final_save","sameRunId":"777","latestStateDurable":true,"stdout":"sealed guard: OK (--staged: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nsealed guard: OK (--push: no T1 plaintext)\\nError: could not save the data folder to the repository (kept in the local commit; retried at the next save)\\nsealed guard: OK (--push: no T1 plaintext)\\nsave recovery: the unpublished commit is kept on branch save-recovery/Telegram-bot-777-1-20261108T170828954991317Z-d8defcfcd2b5 (slot bot, replacing this run's earlier save-recovery/Telegram-bot-777-1-20261108T170828417485593Z-487dd576b917; merged into main by the bot's next recovery pass)\\nFINAL_ATTEMPT_COMPLETE\\n"}
+# Subtest: required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+ok 1 - required warning remains reachable and the bot loop continues under actual bash -e -o pipefail
+  ---
+  duration_ms: 641.192703
+  ...
+# Subtest: same-run later state progresses after an accepted replacement loses both reply and its first read-back
+ok 2 - same-run later state progresses after an accepted replacement loses both reply and its first read-back
+  ---
+  duration_ms: 371.075434
+  ...
+# Subtest: cleanup winning the old pair race allows this same run to readmit its later descendant
+ok 3 - cleanup winning the old pair race allows this same run to readmit its later descendant
+  ---
+  duration_ms: 710.94868
+  ...
+# Subtest: replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+ok 4 - replacement winning after recovery publishes old state makes stale paired deletion fail without deleting newer checkpoint
+  ---
+  duration_ms: 698.603302
+  ...
+# Subtest: same GitHub run final always-save shell can advance its earlier loop checkpoint
+ok 5 - same GitHub run final always-save shell can advance its earlier loop checkpoint
+  ---
+  duration_ms: 716.89927
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3228.507079

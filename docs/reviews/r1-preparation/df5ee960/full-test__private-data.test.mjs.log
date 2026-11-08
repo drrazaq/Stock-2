@@ -1,0 +1,55 @@
+TAP version 13
+# Subtest: no token and no address: every mode does nothing; check and pull report failure, mirror does not
+ok 1 - no token and no address: every mode does nothing; check and pull report failure, mirror does not
+  ---
+  duration_ms: 70.644142
+  ...
+# Subtest: mirror waits for the owner's connection check: nothing is copied before it
+ok 2 - mirror waits for the owner's connection check: nothing is copied before it
+  ---
+  duration_ms: 295.139519
+  ...
+# Subtest: check: reads, writes, copies every private file that exists, reads it back identical; prints names and counts, never contents
+ok 3 - check: reads, writes, copies every private file that exists, reads it back identical; prints names and counts, never contents
+  ---
+  duration_ms: 200.555239
+  ...
+# Subtest: mirror after the check: a change is copied once; an unchanged state makes no commit
+ok 4 - mirror after the check: a change is copied once; an unchanged state makes no commit
+  ---
+  duration_ms: 269.290499
+  ...
+# Subtest: the token never reaches the output or the disk (it travels in the environment only)
+ok 5 - the token never reaches the output or the disk (it travels in the environment only)
+  ---
+  duration_ms: 183.132209
+  ...
+# Subtest: pull: private copies replace the public ones; with no positions file in the private repository it stops (exit 1)
+ok 6 - pull: private copies replace the public ones; with no positions file in the private repository it stops (exit 1)
+  ---
+  duration_ms: 229.662854
+  ...
+# Subtest: push: a bought/sold/halal change is saved; on a conflict the bot's newer positions are kept (save-data.sh rule)
+ok 7 - push: a bought/sold/halal change is saved; on a conflict the bot's newer positions are kept (save-data.sh rule)
+  ---
+  duration_ms: 459.303571
+  ...
+# Subtest: the website workflow publishes index.html only (nothing from data/)
+ok 8 - the website workflow publishes index.html only (nothing from data/)
+  ---
+  duration_ms: 0.365088
+  ...
+# Subtest: every private file in the list exists today or is a ledger created later; the list holds no public research files
+ok 9 - every private file in the list exists today or is a ledger created later; the list holds no public research files
+  ---
+  duration_ms: 0.411228
+  ...
+1..9
+# tests 9
+# suites 0
+# pass 9
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 1718.672288

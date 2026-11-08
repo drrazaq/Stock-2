@@ -1,0 +1,52 @@
+TAP version 13
+# Subtest: a) Codex counterexample: 90 / stop 80, 290 s at fetch, +30 s -> no HOLD/target/% ; STOP STATUS UNKNOWN
+ok 1 - a) Codex counterexample: 90 / stop 80, 290 s at fetch, +30 s -> no HOLD/target/% ; STOP STATUS UNKNOWN # SKIP test name does not match pattern
+  ---
+  duration_ms: 1.284801
+  ...
+# Subtest: a2) 90 / stop 80 / t2 88, 170 s at fetch, +30 s -> fetch-valid but report-stale: PRICE STATUS UNKNOWN in first check, no target
+ok 2 - a2) 90 / stop 80 / t2 88, 170 s at fetch, +30 s -> fetch-valid but report-stale: PRICE STATUS UNKNOWN in first check, no target # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.108002
+  ...
+# intraday check done: 2 watched, 1 new alerts
+# a3 ALERT: ZZS at 90.00: YOUR POSITION: TARGET 2 REACHED (88.00). You bought at 100.00 (-10.0%).
+# Subtest: a3 (probe, pre-existing path) same run: market-hours alert must not say TARGET 2 REACHED at a price the first check calls unknown
+ok 3 - a3 (probe, pre-existing path) same run: market-hours alert must not say TARGET 2 REACHED at a price the first check calls unknown
+  ---
+  duration_ms: 120.528944
+  ...
+# Subtest: b) future-at-fetch (source 20 s ahead), under stop, +30 s -> UNKNOWN everywhere, never REACHED/HOLD/%
+ok 4 - b) future-at-fetch (source 20 s ahead), under stop, +30 s -> UNKNOWN everywhere, never REACHED/HOLD/% # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.2729
+  ...
+# Subtest: b2) future-at-fetch above stop, +30 s -> no HOLD
+ok 5 - b2) future-at-fetch above stop, +30 s -> no HOLD # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.114392
+  ...
+# Subtest: c) 4m50s under stop, +30 s -> one verdict: both REACHED (or both UNKNOWN); first-check stop line timed, no %
+ok 6 - c) 4m50s under stop, +30 s -> one verdict: both REACHED (or both UNKNOWN); first-check stop line timed, no % # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.091938
+  ...
+# Subtest: d) 10 s old under stop, YOUR STOPS emitted after 10 min batching delay -> every observation in the dedicated message is time-qualified
+ok 7 - d) 10 s old under stop, YOUR STOPS emitted after 10 min batching delay -> every observation in the dedicated message is time-qualified # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.244998
+  ...
+# Subtest: loopback only
+ok 8 - loopback only # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.109755
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 1
+# fail 0
+# cancelled 0
+# skipped 7
+# todo 0
+# duration_ms 246.79095
