@@ -183,7 +183,7 @@
       "status": "OPEN",
       "criterion": "Per-script input/output/side-effect, failure, timing and research-boundary review with linked evidence; targeted regressions for defects. Inventory/syntax alone cannot close this.",
       "criterionSha256": "0e69eff7443da396af8626b20f0fe7064717d5c7a0540768c3462f4325f5384e",
-      "closedScopedDependency": "Scoped source/actual-caller corrections and inventory validation are complete at037792b8. Development3b7af847 adds actual-send freshness; independent review/full CI pending. Complete every-script behavioral coverage remains missing.",
+      "closedScopedDependency": "Scoped source/actual-caller corrections and inventory validation are complete at037792b8. Development3b7af847 adds actual-send freshness; full exact CI315/315PASS; independent review pending. Complete every-script behavioral coverage remains missing.",
       "evidence": [
         "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
         "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
@@ -219,7 +219,7 @@
       "status": "OPEN",
       "criterion": "Inventory every provider symbol format, field units/clocks, exchange/session and corporate-action normalization; ambiguous aliases fail closed. Test representative preferred/share classes, ticker changes, DST/half days, missing/future/stale fields across actual ingress paths.",
       "criterionSha256": "a24ee16902bbe85fe6077404c3172b851bd5cf87fe962e03203331e0d14c1c7c",
-      "closedScopedDependency": "Calendar, future-at-fetch and observation-clock scoped repairs validated at037;3b7 actual-dispatch correction pending independent/full validation. All-provider identity/actions/ticker-change/units ingress coverage remains incomplete.",
+      "closedScopedDependency": "Calendar, future-at-fetch and observation-clock scoped repairs validated at037;3b7 actual-dispatch correction full exact CI315/315PASS; independent review pending. All-provider identity/actions/ticker-change/units ingress coverage remains incomplete.",
       "evidence": [
         "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
         "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
@@ -303,7 +303,7 @@
       "status": "OPEN",
       "criterion": "Inventory every message and callback route; stable logical IDs, partial-message ACKs, unknown/reserved quarantine, confirmed persistence and safe reconciliation across independent jobs. Integrate reviewed journal where appropriate; no silent permission additions. Current journal is opt-in, not enabled globally.",
       "criterionSha256": "09d7ae010093c8652b23611ad7e9d716ee6d120a2c2a7cd89f3bde4345d375d3",
-      "closedScopedDependency": "3b7 guards each actual part/retry and preserves ACK/UNKNOWN/known-zero refusal semantics; full CI/review pending. All-route IDs,callbacks,cross-job integration and persistence are still incomplete.",
+      "closedScopedDependency": "3b7 guards each actual part/retry and preserves ACK/UNKNOWN/known-zero refusal semantics; full exact CI315/315PASS; independent review pending. All-route IDs,callbacks,cross-job integration and persistence are still incomplete.",
       "evidence": [
         "docs/engineering-continuation-20261108/REMAINING-CHECKPOINT.md",
         "docs/recommendation-audit-20261108/ra-c2/final/RETAINED-FINDINGS.md"
@@ -373,5 +373,14 @@
   ],
   "developmentVerified": "037792b8aac39a1c82155220c56cabd77e1daba2",
   "developmentPending": "3b7af84728658b732f8876b1a98a8667acdf364b",
-  "criterionPolicy": "Original row criteria unchanged; 24 previously accepted rows carried forward, not newly retested. Scoped dependencies are not full-row closures."
+  "criterionPolicy": "Original row criteria unchanged; 24 previously accepted rows carried forward, not newly retested. Scoped dependencies are not full-row closures.",
+  "latestDevelopmentValidation": {
+    "source": "3b7af84728658b732f8876b1a98a8667acdf364b",
+    "run": 42520064297,
+    "job": 128851393920,
+    "receipt": "docs/engineering-continuation-20261108/completion-3b7af847/receipt.json",
+    "verdict": "FULL_HOSTED_315_OF_315_PASS",
+    "independentReview": "PENDING_CLAUDE_6726677555",
+    "newFullRowClosures": []
+  }
 }
