@@ -12,8 +12,8 @@
   "newScopeChecks": "2/2PASS; arithmetic/unchanged-protocol only, not enforcement or permission",
   "firstAttemptFailure": "Original test expected .000Z but original source clock is Z; assertion corrected to require preserved original clock string. Failed log retained; no code normalization to hide failure.",
   "existingImporterRegressions": "20/20PASS localNode24, including adverse quote omission, conflicting/reverted originals, crash/recovery, restart, stale fence, concurrent callers and origin refusal",
-  "hostedExactCommit": "Final classification revision publication/terminalNode20CI pending",
-  "independentReview": "REQUEST_AFTER_PUBLICATION",
+  "hostedExactCommit": "83b intermediate hosted full test failed solely stale ingress inventory342vs340; b895 unchanged inventory still fails locally. Corrective publication and final terminalCI required; no waiver.",
+  "independentReview": "Requested PR1comment6717550091 on stable b895 plan/code; verdict pending; inventory-only followup does not change plan/code.",
   "providerDataCalls": 0,
   "publicDocumentationGets": 3,
   "realKeys": false,
@@ -39,5 +39,28 @@
     "earlierSource": "Node24/importer20/20/host12/12 apply to83b before classification followup; final full hosted gate must verify current exactSHA",
     "currentImporterNode20": "20/20PASS on final classification source"
   },
-  "sourceSpecificationSupplement": "PR1comment6717410033; two additional public pages only, no provider data/account calls"
+  "sourceSpecificationSupplement": "PR1comment6717410033; two additional public pages only, no provider data/account calls",
+  "ingressBaselineCorrection": {
+    "baseline": "58f90530a25c82e69313b063ecd469c0ca3b9a5f",
+    "baselineAndB895": "Both independently reproduce3/4PASS; identical summary.files340expectedvs342actual",
+    "cause": "Published tools/ig1-entry-evidence.mjs and tools/verify-s1-connector-snapshot.mjs were added after last generated ingress matrix; not new A test files",
+    "repair": "Generated matrix changes only summary.files340to342; all465pairs/324provider pairs/statuses/assertions unchanged",
+    "targetNode20": "4/4PASS",
+    "intermediateHosted": {
+      "sha": "83b24f3d11fb81f01816626f670e7bdd24aa44d4",
+      "run": 42448070377,
+      "job": 128631142492,
+      "logSha256": "8c228855b2f15413620c8a33efa6c07aebc26619ab70b83ab9f3900c6a4bc02e",
+      "registeredFiles": 309,
+      "uniquePassedFiles": 308,
+      "soleFailedFile": "tests/market03-ingress-matrix.test.mjs",
+      "verdict": "FAIL; never transferred as finalPASS"
+    },
+    "evidence": [
+      "docs/a-first-capture-continuation/evidence/a-authentic-baseline-ingress-failure.log.gz",
+      "docs/a-first-capture-continuation/evidence/a-authentic-b895-ingress-failure.log.gz",
+      "docs/a-first-capture-continuation/evidence/a-authentic-ingress-corrected-node20.log.gz"
+    ],
+    "rawFullLog": "Retained in local milestone and complete hosted job, not republished unnecessarily"
+  }
 }
