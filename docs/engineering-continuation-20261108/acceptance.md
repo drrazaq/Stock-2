@@ -11,7 +11,7 @@
 | ACTIONS-01 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | ACTIONS-02 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | ACTIONS-03 | COMPLETE | Carry forward original accepted evidence; no new closure. |
-| ACTIONS-04 | OPEN | Correct the two R1 recovery boundaries and release census/order, then review the remaining write/retry/retention workflow families against their actual callers. Exact passing R1 candidate and complete per-workflow evidence; no operational execution authorized. |
+| ACTIONS-04 | OPEN | R1 rev6 closes the two reproduced recovery boundaries and circular order/old-writer census cases; obtain the corrected backup-proof failure wording and re-review the exact package, then finish remaining write/retry/retention workflow families. Exact passing R1 candidate and complete per-workflow evidence; no operational execution authorized. |
 | MARKET-01 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | MARKET-02 | OPEN | Finish accepted-account/source terms and observed-permission evidence package for one bounded research task; retain subscription versus endpoint distinction. Actual account/rights and separately authorized observed responses absent; no key/provider actions now. |
 | MARKET-03 | OPEN | Review this calendar/typed-series port and its partial source matrix, then complete remaining actual provider symbol/unit/clock/session/action ingress contracts. Static matrix still has unreviewed/partial ingress; no all-provider actual-call evidence. |
@@ -39,7 +39,7 @@
 | STRATEGY-01 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | STRATEGY-02 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | STRATEGY-03 | COMPLETE | Carry forward original accepted evidence; no new closure. |
-| STRATEGY-04 | OPEN | Finish final RA-C2 conformance and existing source-first A/crisis/deal resolution; preserve the negative modeled-cost findings without treating them as authentic validation. Complete PIT/dead-stock originals, untouched confirmation and executable after-cost paths absent. |
+| STRATEGY-04 | OPEN | RA-C2 conformance PASS6718913753 received and K1-K3 pinned before scoring; finish authentic source-first A/crisis/deal resolution and the complete recommendation population; preserve conditional negative modeled costs. Complete PIT/dead-stock originals, untouched confirmation and executable after-cost paths absent. |
 | HISTORY-01 | COMPLETE | Carry forward original accepted evidence; no new closure. |
 | HISTORY-02 | OPEN | Require original stable security/class/listing/action/terminal facts in the existing evidence-resolution path; retain every legacy gone row unchanged. Genuine as-known identifier/universe/terminal-value archives absent; last close is not documented recovery. |
 | HISTORY-03 | OPEN | Port reviewed qualifications without dropping newer development context; correct missing-evidence open-check text and finish every remaining numerical/proven/unseen catalogue claim. Partial calendar/open-check fixes do not authenticate the whole historical claim catalogue. |
