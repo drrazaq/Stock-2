@@ -179,7 +179,9 @@ for (const [id, c] of Object.entries(LAB.candidates)) if (c.status === 'FAILED L
 if (LAB.paper.length > 20000) LAB.paper = LAB.paper.slice(-20000);
 LAB.weeks++; LAB.generatedAt = new Date().toISOString(); LAB.status = 'OK'; LAB.last = { week: D[T - 1], tested: fresh.length, passed: passedAll, bar: +BAR.toFixed(2), totalTried };
 fs.writeFileSync(OUT, JSON.stringify(LAB));
-if (LIBR) { for (const e of LIBR.strategies || []) { if (!e.rule) continue; const x = LAB.tried[ruleId({ b: e.rule.b, h: e.rule.h })]; if (!x) continue; e.status = x.verdict; e.tested = x.week; e.result = x.discovery ? { t: x.discovery.t, edge: x.discovery.edge, n: x.discovery.n, why: x.discovery.why || '' } : null; }
+// Only autolab-form rules ({ b: [...blocks], h }) are matched here; other labs store their rule as plain text (repair 8 Nov 2026, Agent A:
+// C-INSQ1 / C-CONG1 / C-CT1 / C-INS3 text rules crashed this loop with "r.b is not iterable", so the library statuses were not written).
+if (LIBR) { for (const e of LIBR.strategies || []) { if (!e.rule || !Array.isArray(e.rule.b)) continue; const x = LAB.tried[ruleId({ b: e.rule.b, h: e.rule.h })]; if (!x) continue; e.status = x.verdict; e.tested = x.week; e.result = x.discovery ? { t: x.discovery.t, edge: x.discovery.edge, n: x.discovery.n, why: x.discovery.why || '' } : null; }
   LIBR.updated = D[T - 1]; fs.writeFileSync(LIBF, JSON.stringify(LIBR, null, 1)); }
 const nLib = fresh.filter(r => r.lib).length, nBred = fresh.filter(r => r.from).length, cand = Object.values(LAB.candidates), msg = ['AUTOLAB: the system invented and tested ' + fresh.length + ' new rules this week (' + nLib + ' named strategies from the library, ' + nBred + ' bred from the best near-misses of past weeks, ' + (fresh.length - nBred - nLib) + ' brand new; ' + totalTried + ' tried in total; luck bar t ' + BAR.toFixed(1) + ')', '',
   passedAll ? passedAll + ' passed discovery, validation AND the untouched vault: now on live paper.' : 'None passed all three gates this week. That is the normal result; it means the bar is working.',
