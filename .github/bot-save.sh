@@ -5,8 +5,9 @@
 #    and the next save returned early because nothing new was staged, so a recorded owner change could stay unpublished indefinitely;
 #  - pull/rebase uses the sealed merge driver (the owner's options record merges by key and a real clash is refused, never dropped),
 #    then sealed_push_guard checks the exact tree before the push;
-#  - when a save cannot be published, the change stays in the local commit and is retried at every later save; the owner is told
-#    ONCE per run: SAVE NOT CONFIRMED (a bot reply such as "recorded" means recorded in this run, not yet published).
+#  - when a save cannot be published, the change stays in the local commit and is retried at every later save; it is ALSO pushed to
+#    a recovery branch (sealed_recovery_push, rev4) so it survives the end of this runner; the owner is told ONCE per run:
+#    SAVE NOT CONFIRMED. bot_recover (rev4) merges every recovery branch, from any workflow, back into main.
 source "$(dirname "${BASH_SOURCE[0]}")/sealed-git.sh"
 BOT_SAVE_WARNED="${RUNNER_TEMP:-/tmp}/bot-save-warned-$$"
 bot_save_warn() {
@@ -26,5 +27,7 @@ save() {
     git rebase --abort 2>/dev/null || true; sleep "${BOT_SAVE_SLEEP:-5}"
   done
   echo "Error: could not save the data folder to the repository (kept in the local commit; retried at the next save)" | tee -a run.log
+  sealed_recovery_push 2>&1 | tee -a run.log
   bot_save_warn
 }
+bot_recover() { sealed_recover >> run.log 2>&1 || { echo "Error: a save-recovery branch could not be merged yet (kept)" >> run.log; bot_save_warn; }; }

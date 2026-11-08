@@ -179,13 +179,29 @@ test('keyed merge unit: one-sided and identical changes merge, deletions respect
   assert.equal(mergeKeyed(O, '[1]', '{}').ok, false);
 });
 
-test('writer quiescence gate: PASS only when no T1 writer run is queued/running/waiting; FAIL on any such run or an unreadable listing', () => {
-  const run = (path, status, id = 1) => ({ id, path, status });
-  assert.equal(gate([{ workflow_runs: [run('.github/workflows/ignition.yml', 'completed'), run('.github/workflows/pages.yml', 'in_progress')] }]).pass, true);
-  for (const st of ['queued', 'in_progress', 'waiting', 'requested', 'pending']) assert.equal(gate([{ workflow_runs: [run('.github/workflows/bot.yml', st)] }]).pass, false, st);
-  assert.equal(gate([{ workflow_runs: [] }]).pass, false, 'an empty listing proves nothing');
-  assert.throws(() => gate([{ nope: 1 }]));
-  assert.equal(gate([{ workflow_runs: [{ id: 3 }] }]).pass, false, 'a run without path/status fails');
+test('writer quiescence gate: PASS only on COMPLETE listings where every writer run is completed (Codex rev3 #4)', () => {
+  const L = (...runs) => ({ total_count: runs.length, workflow_runs: runs }), run = (path, status, id = 1) => ({ id, path, status });
+  assert.equal(gate([L(run('.github/workflows/ignition.yml', 'completed'), run('.github/workflows/pages.yml', 'in_progress'))]).pass, true);
+  for (const st of ['queued', 'in_progress', 'waiting', 'requested', 'pending', 'action_required', 'some_new_status']) assert.equal(gate([L(run('.github/workflows/bot.yml', st))]).pass, false, st);
+  assert.equal(gate([{ total_count: 2, workflow_runs: [run('.github/workflows/bot.yml', 'completed')] }]).pass, false, 'Codex: total_count 2 with one run supplied = incomplete');
+  assert.equal(gate([L()]).pass, false, 'an empty listing proves nothing');
+  assert.throws(() => gate([{ workflow_runs: [run('.github/workflows/bot.yml', 'completed')] }]), /total_count/);
+  assert.equal(gate([L({ id: 3 })]).pass, false, 'a run without path/status fails');
+});
+
+test('Codex rev3 #1: an identical RETRY after a directory-fsync EIO keeps the plaintext (durability first, then removal)', (t) => {
+  const d = tmpdir(t, 'b2r-'), p = path.join(d, 'data', 'options-shadow.json');
+  fs.mkdirSync(path.dirname(p)); fs.writeFileSync(p, '{"real":[1]}');
+  const real = { f: sealedIO.fsyncSync, o: sealedIO.openSync }, dirs = new Set();
+  sealedIO.openSync = (f, m) => { const fd = real.o(f, m); if (m === 'r') dirs.add(fd); return fd; };
+  sealedIO.fsyncSync = (fd) => { if (dirs.has(fd)) throw Object.assign(new Error('EIO'), { code: 'EIO' }); return real.f(fd); };
+  try {
+    assert.throws(() => writeSealedJson(p, { real: [1] }, K), { code: 'EIO' });
+    assert.ok(fs.existsSync(sealedPath(p)), 'the renamed sealed copy exists but is not acknowledged durable');
+    assert.throws(() => writeSealedJson(p, { real: [1] }, K), { code: 'EIO' }, 'identical retry');
+    assert.equal(fs.readFileSync(p, 'utf8'), '{"real":[1]}', 'plaintext still kept');
+  } finally { Object.assign(sealedIO, { fsyncSync: real.f, openSync: real.o }); }
+  assert.equal(writeSealedJson(p, { real: [1] }, K), false, 'once durable, the identical retry completes'); assert.equal(fs.existsSync(p), false);
 });
 
 test('all scan requests stayed on loopback', () => { assert.deepEqual(blocked.filter((u) => !/data\.alpaca\.markets/.test(u)), []); server.close(); });

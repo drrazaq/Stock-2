@@ -131,7 +131,7 @@ export function writeSealed(p, data, key = sealedKey(), opts = {}) {
   const sp = sealedPath(p);
   if (opts.exclusive && fs.existsSync(sp)) throw Object.assign(new Error('EEXIST: ' + id), { code: 'EEXIST' });
   // unchanged content: no new file (a fresh IV would otherwise make an identical record a new git blob on every save; Codex cost note)
-  if (!opts.exclusive && fs.existsSync(sp)) { let same = false; try { same = unseal(fs.readFileSync(sp), key, id).equals(buf); } catch {} if (same) { if (fs.existsSync(p)) { fs.rmSync(p); fsyncDir(path.dirname(p)); } return false; } }
+  if (!opts.exclusive && fs.existsSync(sp)) { let same = false; try { same = unseal(fs.readFileSync(sp), key, id).equals(buf); } catch {} if (same) { if (fs.existsSync(p)) { fsyncDir(path.dirname(sp)); fs.rmSync(p); fsyncDir(path.dirname(p)); } return false; } }   // Codex rev3 #1: the sealed copy's durability is acknowledged BEFORE the plaintext goes
   fs.mkdirSync(path.dirname(p), { recursive: true });
   const tmp = sp + '.tmp-' + process.pid + '-' + crypto.randomBytes(4).toString('hex');
   const fd = sealedIO.openSync(tmp, 'wx');

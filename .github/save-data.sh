@@ -43,4 +43,4 @@ sealed_guard || { git reset -q; echo "Error: refusing to publish T1 provider dat
 git diff --cached --quiet || git commit -q -m "${1:-scan $(date -u +%FT%RZ)}"
 ok=0; for i in 1 2 3 4 5; do if pull && sealed_push_guard && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep "${SAVE_SLEEP:-10}"; done
 rm -rf "$T"
-[ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository"; exit 1; }
+[ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository"; sealed_recovery_push || true; exit 1; }

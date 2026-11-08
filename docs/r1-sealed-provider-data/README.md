@@ -6,6 +6,40 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0a. Rev4: release package and save-loss reduction
+
+- **`RELEASE.md`** is the complete executable unit, review only and not approved:
+  - entry gates G1–G7;
+  - procedure B1–B10, with who, the pass condition and what to do on failure;
+  - state-safe rollback R-0/R-1/R-2;
+  - recovery procedures;
+  - **the explicit loss-of-save limitations L1–L6**;
+  - the receipts.
+
+  Rehearsed end to end offline (`test/sealed-release-rehearsal.test.mjs`).
+- **Save recovery:**
+  - every save path (bot, nightly, watcher, movers, options-survey, Smart-money, leaders-study) pushes an unpublished commit to `save-recovery/<workflow>-<run>-<attempt>` when main refuses it after the retries, through the same push guard;
+  - the bot merges those branches into main (`bot_recover`) and deletes them; a clash is kept, never dropped;
+  - a final `if: always()` bot save step runs on loop failure, timeout or cancel;
+  - Smart-money no longer ignores a failed save.
+
+  Tests: `test/sealed-recovery.test.mjs`.
+- **Interrupted writes:** temp files are git-ignored. Before rev4, a leftover temp file would make the guard refuse every later save in that run.
+- **Independent verification without the key:** `sealed-migrate.mjs --verify-structure <ref>`.
+- **Drift check before the code push:** `r1-release-precheck.mjs`. On 8 Nov against production main: PASS, 0 drift.
+
+### Codex's rev3 counterexamples (PR #1 comment 6718099309), resolved in rev4
+
+Each counterexample is a test that fails on `a791b438` and passes on rev4.
+
+| # | Counterexample | Fix |
+|---|---|---|
+| 1 | An identical retry after a directory-fsync EIO removed the plaintext | The "unchanged" shortcut now acknowledges the sealed copy's directory durability **before** removing plaintext (`sealed-blockers`) |
+| 2 | Export wrote base A+B+C **and** segments B, C, so restoring gave A+B+C+B+C | The export writes **logical** files only: one plaintext ledger = base + segments; segment files are not exported; a segments-only ledger is exported too (`sealed-migrate`) |
+| 3 | Deleting a sealed file **and** its manifest entry gave a clean receipt | The receipt recomputes the expected set, sizes and hashes from the **approved source commit**; the manifest is no longer trusted. This also applies to the keyless structure check (`sealed-migrate`) |
+| 4 | The gate passed `total_count`=2 with one run supplied, and passed an unknown writer status | A listing must be complete (`workflow_runs.length == total_count`); every writer run must be `completed`, and any other or unknown status fails (`sealed-blockers`) |
+| — | Cost projection needed qualification | Every T1 family, stated assumptions, labelled **nominal, not an enforceable bound** (§8) |
+
 ## 0. Rev3: Codex's re-review of `ae8cbb63` (PR #1 comment 6717623537) and the owner-state race
 
 Each blocker has a reproduction test. The tests were run against the corrected code (pass) and against `ae8cbb63` (fail), except where noted.
@@ -26,7 +60,7 @@ Each blocker has a reproduction test. The tests were run against the corrected c
 - readers see base + segments unchanged;
 - an unchanged record is not rewritten, so a fresh IV no longer makes an identical record a new blob.
 
-Projected one-year growth is now about **25 MB**, against about **26 MB** for plaintext today (§8).
+Projected one-year growth for the ledgers is now about **26 MB** at 2 same-day re-saves (13.7 MB as plaintext today). The **nominal** all-family total is about **137 MB a year** (rev4 §8, qualified, not an enforceable bound).
 
 ## 1. Codex's Stage 1 findings and how this candidate answers them
 
@@ -151,19 +185,31 @@ Between steps 3 and 4 the readers would show `SEALED_LEGACY_PLAINTEXT` (fail-clo
   - The change is a one-word edit per step (`secrets.PRIVATE_KEY` → the new name).
 - **Recommended:** K2 if the owner can keep a backup; otherwise K1 with a written recovery requirement. Before deployment, either way, the owner should confirm that **a copy of the chosen secret exists outside GitHub**, because GitHub secrets cannot be read back.
 
-## 8. Cost (public T1 files at `b0d76987`; aggregate sizes only; reproducible with `node docs/r1-sealed-provider-data/cost-projection.mjs` from the base checkout)
+## 8. Cost: NOMINAL projection, not an enforceable bound (rev4; Codex rev3 qualification)
 
-| Measure | Value |
-|---|---|
-| Plaintext / as git stores it (zlib) / **sealed v2** | 8.21 MB / 2.56 MB / **2.53 MB** (Stage 1 base64: 10.95 MB) |
-| CPU to seal all 45 files | about 0.4 s |
-| **Rewrites per weekday**, from the schedules | watcher 1 effective run (the second cron exits); movers 1; nightly scan 1 (the options lane runs in `daily()` only); bot only on your option commands; smart-money 1; leaders-study weekly; options-survey on dispatch. A retry adds no blob; each driver merge adds one. |
-| Ledger growth | about 52.7 KB/day sealed across the 5 append ledgers (their measured size divided by the days each has existed) |
-| State files rewritten whole (live, movers-state, fastmover-live, options-shadow) | about 47.7 KB per weekday, upper bound (an unchanged record is now skipped) |
-| **One year (250 weekdays), whole-file rewrites (`ae8cbb63`)** | **about 1.78 GB**: quadratic, because each day re-adds the whole grown ledger |
-| **One year, rev3 daily segments** | **about 25 MB**, against about 26 MB for plaintext today (same method) |
-| Per-run archives and shadow days | new files each day in both designs, so no difference |
-| Not established | GitHub's packing of these blobs (ciphertext has no deltas; the figures are object sizes); storage billing beyond the public allowances; clone and fetch time. Public runners do not prove zero spend. |
+Reproduce with `node docs/r1-sealed-provider-data/cost-projection.mjs` from a checkout of the base with the R1 store. It covers **every T1 family**, with stated assumptions: 250 weekdays; `K_SEG`=2 same-day ledger re-saves (watcher runs a day); `OWNER_CMDS`=5 owner option commands a day; analyst archive rewritten each weekday through its month. Override them with environment variables.
+
+| Family (git object bytes added per year) | Nominal | Note |
+|---|---|---|
+| Append ledgers, daily segments | 26.3 MB | whole-file rewrites (as in `ae8cbb63`) would add 1,764 MB |
+| `ignition-live`, once per watcher run | 22.5 MB | |
+| `movers-state` + `fastmover-live` | 0.4 MB | unchanged content skipped |
+| Options record (nightly + owner commands) | 1.7 MB | **owner commands are unbounded by any schedule** |
+| Per-run archives | 56.5 MB | new files; same size as plaintext today (already gzip) |
+| Shadow day files | 26.8 MB | same as plaintext today |
+| Analyst archive | 3.1 MB | quadratic within a month, as today |
+| Options survey | per dispatch | |
+| **Nominal total** | **about 137 MB a year** | ledgers as plaintext today: 13.7 MB |
+
+**Not established:**
+- GitHub packing (ciphertext gets no delta compression);
+- billing and storage allowances;
+- clone and fetch time;
+- growth in daily data volume;
+- merge commits from retries and recovery merges;
+- intermediate saves beyond the stated K_SEG.
+
+Measured, not projected: the 45 files are 8.21 MB plaintext, 2.56 MB as git stores them, and 2.53 MB sealed; sealing all of them takes about 0.4 s of CPU.
 
 ## 9. Existing public copies (separate assessment; unchanged by R1)
 
@@ -183,11 +229,11 @@ Between steps 3 and 4 the readers would show `SEALED_LEGACY_PLAINTEXT` (fail-clo
 
 | Run | Result |
 |---|---|
-| R1 tests (rev3): `sealed-store` 12, `sealed-git` 8, `sealed-migrate` 7, `sealed-readers` 9, `sealed-wiring` 12, **`sealed-blockers` 12 (new)** | **60/60** |
-| Same reproduction files against `ae8cbb63` (imports shimmed only) | `sealed-blockers` 9 of 12 fail, `sealed-migrate` 6 of 7 fail (the passing ones are the writer gate, `bot-save.sh` itself and the loopback check, which are new rev3 files, plus `plan`) |
-| Updated fixtures (T1 fixtures now sealed with a synthetic key, as production writes them): `load-scan` harness, `feed-integrity-watcher` (+2 new end-to-end R1 cases), `sec-request-runtime`, `private-data`, `watcher-resilience`, `watcher-incident-revision` | pass |
+| R1 tests (rev4): `sealed-store` 12, `sealed-git` 8, `sealed-migrate` 9, `sealed-readers` 9, `sealed-wiring` 13, `sealed-blockers` 13, **`sealed-recovery` 6 (new)**, **`sealed-release-rehearsal` 2 (new)** | **72/72** |
+| Codex rev3 counterexamples against `a791b438` | all 4 fail there (`sealed-blockers` #11/#12, `sealed-migrate` #8/#9); pass on rev4 |
+| Codex re-review blockers against `ae8cbb63` (rev3 evidence) | `sealed-blockers` 9/12 fail, `sealed-migrate` 6/7 fail |
 | Gated actual-watcher scenarios (`INCIDENT_WATCHER_SRC`) | `watcher-resilience` 9/9, `watcher-incident-revision` 11/11 |
-| Full serial suite (147 registered files, rev3) | **147/147** (`premarket-feed` is wall-clock dependent; see `MANIFEST.md`) |
+| Full serial suite (149 registered files, rev4) | **149/149** |
 
 ## 11. Remaining blockers and unresolved findings (rev3)
 
@@ -202,6 +248,8 @@ Between steps 3 and 4 the readers would show `SEALED_LEGACY_PLAINTEXT` (fail-clo
 
    There is no licence closure. Actual contract acceptance is unknown.
 4. **Existing copies:** history, raw SHA URLs, clones, caches, and artifact 13536188063 (expires 13 Nov 19:58 UTC) remain (§9).
+
+**Loss-of-save limitations:** see `RELEASE.md` §E (L1–L6). The main residual is L1: a hard runner loss between a bot reply and its save loses that change, and the owner must resend it.
 
 **Residual code limits (documented, not blockers in Codex's list):**
 - **Owner command acknowledgement:** "recorded" means recorded in this run. If publication keeps failing, the change is kept locally and retried, and you are told once per run (SAVE NOT CONFIRMED). If the runner ends before a later save succeeds, the unpublished commit is lost with the runner, as before R1. Making the reply wait for a durable push would be a larger bot change.

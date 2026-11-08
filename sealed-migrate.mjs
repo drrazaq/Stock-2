@@ -10,6 +10,8 @@
 //        already holds sealed files are refused. Any failure -> exit 1 before anything is committed.
 //   node sealed-migrate.mjs --verify-tree <ref>    needs SEALED_SECRET. Reads the manifest from <ref>: no T1 plaintext, the exact manifest
 //                                                  set present and decrypting to its hashes, and <ref>'s parent = the approved source.
+//   node sealed-migrate.mjs --verify-structure <ref>  NO key: the same checks except decryption (for an independent verifier who
+//                                                  must not hold the key): manifest, exact sealed set, no plaintext, parent = source.
 //   node sealed-migrate.mjs --export-to <dir>      RECOVERY ONLY: decrypt every sealed T1 file into a NEW or EMPTY real directory OUTSIDE
 //                                                  this repository (real paths checked, symlinks refused, nothing overwritten).
 import fs from 'node:fs';
@@ -63,6 +65,7 @@ function checkSet(show, all, man, key, exact) {
   for (const p of plain) problems.push('T1 plaintext present: ' + p);
   for (const f of (man && man.files) || []) {
     if (!sealed.has(f.rel)) { problems.push('sealed copy missing: ' + f.rel); continue; }
+    if (key === 'STRUCTURE_ONLY') continue;   // keyless independent check: set, plaintext and parent only (contents not decrypted)
     try { const b = unseal(show(f.rel + SEALED_EXT), key, f.rel); if (b.length !== f.bytes || sha(b) !== f.sha256) problems.push('sealed copy differs from the source: ' + f.rel); }
     catch (e) { problems.push('unreadable: ' + f.rel + ' ' + (e.code || 'ERROR')); }
   }
@@ -75,6 +78,21 @@ function checkSet(show, all, man, key, exact) {
 export function verifyTree(ref = 'HEAD', { key = sealedKey(), cwd = process.cwd(), exact = true } = {}) {
   let man = null; try { man = JSON.parse(git(['show', ref + ':' + MANIFEST], { cwd }).toString()); } catch {}
   const r = checkSet((p) => git(['show', ref + ':' + p], { cwd }), z(git(['ls-tree', '-r', '--name-only', '-z', ref], { cwd })), man, key, exact);
+  // Codex rev3 #3: the manifest is NOT trusted. The expected set and every size/hash are recomputed from the approved source commit
+  // itself (its T1 plaintext paths and blobs), so deleting a sealed file together with its manifest entry cannot pass.
+  if (man && /^[0-9a-f]{40}$/.test(man.source || '')) {
+    let expected = null; try { expected = plan(cwd, man.source); } catch { r.problems.push('the approved source ' + man.source.slice(0, 12) + ' is not available to recompute the expected set'); }
+    if (expected) {
+      const listed = new Map((man.files || []).map((f) => [f.rel, f]));
+      for (const rel of expected) {
+        const f = listed.get(rel), b = git(['show', man.source + ':' + rel], { cwd });
+        if (!f) r.problems.push('source file missing from the manifest: ' + rel);
+        else if (f.bytes !== b.length || f.sha256 !== sha(b)) r.problems.push('manifest size/hash differs from the source file: ' + rel);
+      }
+      for (const rel of listed.keys()) if (!expected.includes(rel)) r.problems.push('manifest lists a file that is not T1 plaintext in the source: ' + rel);
+      if (man.count !== expected.length) r.problems.push('manifest count ' + man.count + ' != source T1 plaintext count ' + expected.length);
+    }
+  } else if (man) r.problems.push('manifest has no valid source id');
   if (man && man.source) { let parent = ''; try { parent = git(['rev-parse', ref + '^'], { cwd }).toString().trim(); } catch {} if (parent !== man.source) r.problems.push('the migration commit\'s parent ' + parent.slice(0, 12) + ' is not the approved source ' + String(man.source).slice(0, 12)); }
   return { ref, ...r, manifestCount: man && man.count };
 }
@@ -94,8 +112,16 @@ export function exportTo(dir, { key = sealedKey(), cwd = process.cwd() } = {}) {
   let cur = anchor; for (const c of rest) { cur = path.join(cur, c); mkReal(cur); }
   if (fs.readdirSync(out).length) throw new Error('the export folder must be new or empty');
   let n = 0;
+  // Codex rev3 #2: export LOGICAL files. A segmented ledger (base + data/x.jsonl.d/DAY.jsonl segments) is exported ONCE, as the single
+  // plaintext file data/x.jsonl that a pre-R1 reader expects (base followed by its segments); segment files are not exported separately.
+  const logical = new Set();
   for (const s of z(git(['ls-files', '-z'], { cwd })).filter((p) => p.endsWith(SEALED_EXT) && isT1(p.slice(0, -SEALED_EXT.length)))) {
-    const rel = s.slice(0, -SEALED_EXT.length), b = readSealed(path.join(cwd, rel), key);
+    const rel = s.slice(0, -SEALED_EXT.length), m = /^(.*\.jsonl)\.d\/\d{4}-\d{2}-\d{2}\.jsonl$/.exec(rel);
+    logical.add(m ? m[1] : rel);
+  }
+  for (const rel of [...logical].sort()) {
+    const b = readSealed(path.join(cwd, rel), key);
+    if (b === null) continue;
     let d = out; for (const c of path.dirname(rel).split('/')) { d = path.join(d, c); mkReal(d); }
     if (fs.realpathSync(d) !== d || inside(fs.realpathSync(d))) throw new Error('export path escaped: ' + rel);
     const fd = fs.openSync(path.join(out, rel), fs.constants.O_WRONLY | fs.constants.O_CREAT | fs.constants.O_EXCL | fs.constants.O_NOFOLLOW, 0o600);
@@ -111,6 +137,7 @@ if (import.meta.url === 'file://' + path.resolve(process.argv[1] || '')) {
     if (cmd === '--plan') { const p = plan(); console.log(p.join('\n')); console.log('R1 migration plan: ' + p.length + ' tracked T1 plaintext path(s)'); }
     else if (cmd === '--apply') { const d = apply({ source: arg }); console.log('R1 migration: ' + d.length + ' file(s) sealed and staged with the manifest (plaintext deletions included); index verified against the approved source ' + arg.slice(0, 12)); }
     else if (cmd === '--verify-tree') { const r = verifyTree(arg || 'HEAD'); console.log('R1 verify ' + r.ref + ': manifest ' + r.manifestCount + ', sealed T1 ' + r.sealedT1 + ', plaintext T1 ' + r.plaintextT1.length + ', problems ' + r.problems.length); if (r.problems.length) { console.error(r.problems.slice(0, 50).join('\n')); process.exit(1); } }
+    else if (cmd === '--verify-structure') { const r = verifyTree(arg || 'HEAD', { key: 'STRUCTURE_ONLY' }); console.log('R1 structure ' + r.ref + ' (no key; contents NOT decrypted): manifest ' + r.manifestCount + ', sealed T1 ' + r.sealedT1 + ', plaintext T1 ' + r.plaintextT1.length + ', problems ' + r.problems.length); if (r.problems.length) { console.error(r.problems.slice(0, 50).join('\n')); process.exit(1); } }
     else if (cmd === '--export-to') { console.log('R1 recovery export: ' + exportTo(arg) + ' file(s) written outside the repository'); }
     else fail('usage: --plan | --apply <approved source commit> | --verify-tree <ref> | --export-to <new empty dir outside the repository>');
   } catch (e) { fail((e.code ? e.code + ' ' : '') + e.message); }

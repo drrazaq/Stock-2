@@ -43,7 +43,7 @@ test('public Actions logs: no per-stock option quotes, survey summary, or analys
   assert.match(sm, /content not printed: Actions logs of this repository are public/);
 });
 
-const KEYED = { 'ignition.yml': 3, 'opportunity-radar.yml': 1, 'options-survey.yml': 2, 'Smart-money.yml': 2, 'movers.yml': 3, 'leaders-study.yml': 2, 'main.yml': 2, 'bot.yml': 1, 'scorecard-1023.yml': 1, 'r1-migrate.yml': 1 };
+const KEYED = { 'ignition.yml': 3, 'opportunity-radar.yml': 1, 'options-survey.yml': 2, 'Smart-money.yml': 2, 'movers.yml': 3, 'leaders-study.yml': 2, 'main.yml': 2, 'bot.yml': 2, 'scorecard-1023.yml': 1, 'r1-migrate.yml': 1 };
 test('the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)', () => {
   for (const f of WF) {
     const s = wf(f), n = (s.match(/SEALED_SECRET: \$\{\{ secrets\.PRIVATE_KEY \}\}/g) || []).length;
@@ -121,4 +121,13 @@ test('inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 
   assert.equal(rows.length, 45);
   assert.equal(rows.filter((r) => r[1] === 'D2').length, 34);
   for (const r of rows) assert.ok(isT1(r[0]), r[0]);
+});
+
+test('rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored', () => {
+  for (const f of ['ignition.yml', 'options-survey.yml', 'movers.yml', 'leaders-study.yml', 'Smart-money.yml']) assert.match(wf(f), /\[ "\$ok" = 1 \] \|\| \{[^\n]*sealed_recovery_push \|\| true; exit 1; \}/, f);
+  assert.match(R('.github/save-data.sh'), /sealed_recovery_push \|\| true; exit 1; \}/);
+  assert.match(R('.github/bot-save.sh'), /sealed_recovery_push 2>&1/); assert.match(R('.github/bot-save.sh'), /bot_recover\(\)/);
+  const b = wf('bot.yml'); assert.match(b, /bot_recover   # R1 rev4/);
+  const fin = b.indexOf('the last chance to publish what the bot recorded'); assert.ok(fin > 0 && b.indexOf('- if: always()', fin) > fin, 'final always() save step');
+  assert.match(R('.gitignore'), /^\*\.sealed\.tmp-\*$/m);
 });

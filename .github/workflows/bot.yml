@@ -45,6 +45,7 @@ jobs:
               # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages
               node scan.mjs >> run.log 2>&1 || echo "full check failed" >> run.log
               node watcher-guard.mjs >> run.log 2>&1 || echo "watcher guard failed" >> run.log   # (28 Oct) is the live watcher running? start it if not
+              bot_recover   # R1 rev4: merge any save-recovery/* branch (a save that could not reach main) back into main
               last_full=$now
             else
               # in between: wait up to 25 seconds for a message and answer it at once
@@ -73,6 +74,21 @@ jobs:
           RATE: ${{ vars.RATE || '8' }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
       # If anything above failed, tell the owner on Telegram straight away.
+      # R1 rev4: the last chance to publish what the bot recorded, also when the loop step failed, timed out or was cancelled.
+      # Publishes any unpublished commit to main, else to a save-recovery branch (merged by the next bot run).
+      - if: always()
+        shell: bash
+        env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
+          SEALED_MERGE_FAVOR: theirs
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          git rebase --abort 2>/dev/null || true
+          source .github/bot-save.sh
+          touch run.log; BOT_SAVE_SLEEP=5 save
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

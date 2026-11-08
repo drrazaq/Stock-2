@@ -8,7 +8,7 @@ import path from 'node:path';
 import zlib from 'node:zlib';
 import { execFileSync, spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { sealedKey, readSealedText, readSealed, writeSealed } from '../sealed-store.mjs';
+import { sealedKey, readSealedText, readSealed, writeSealed, appendSealedLines } from '../sealed-store.mjs';
 import { plan, apply, verifyTree, exportTo, MANIFEST } from '../sealed-migrate.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
@@ -129,4 +129,28 @@ test('CLI: --plan needs no key; --apply needs the key and the approved source; -
   assert.equal(run(['--apply', head]).status, 0); git(r, ['commit', '-q', '-m', 'R1']);
   const v = run(['--verify-tree', 'HEAD']); assert.equal(v.status, 0); assert.match(v.stdout, /manifest 8, sealed T1 8, plaintext T1 0, problems 0/); assert.doesNotMatch(v.stdout + v.stderr, /ZZ[ABC]/);
   assert.notEqual(run(['--verify-tree', 'HEAD~1']).status, 0, 'the pre-migration commit fails verification');
+});
+
+test('Codex rev3 #3: deleting a sealed file AND its manifest entry no longer yields a clean receipt (expected set recomputed from the source)', (t) => {
+  const { r, head } = repo(t); migrateCommit(r, head);
+  const m = JSON.parse(fs.readFileSync(path.join(r, MANIFEST), 'utf8'));
+  m.files = m.files.filter((f) => f.rel !== 'data/premarket.jsonl'); m.count = m.files.length;
+  fs.writeFileSync(path.join(r, MANIFEST), JSON.stringify(m)); git(r, ['rm', '-q', 'data/premarket.jsonl.sealed']); git(r, ['add', '-A']);
+  git(r, ['commit', '-q', '--amend', '-m', 'R1 (one file silently dropped)']);
+  const v = verifyTree('HEAD', { key: K, cwd: r });
+  assert.match(v.problems.join('\n'), /source file missing from the manifest: data\/premarket\.jsonl/);
+  assert.match(v.problems.join('\n'), /manifest count 7 != source T1 plaintext count 8/);
+  m.files[0].sha256 = '0'.repeat(64); fs.writeFileSync(path.join(r, MANIFEST), JSON.stringify(m)); git(r, ['commit', '-qam', 'hash forged']);
+  assert.match(verifyTree('HEAD', { key: 'STRUCTURE_ONLY', cwd: r }).problems.join('\n'), /manifest size\/hash differs from the source file/, 'also caught by the keyless check');
+});
+
+test('Codex rev3 #2: a segmented ledger is exported ONCE as its logical file (base + segments), never duplicated by its segments', (t) => {
+  const { d, r, head } = repo(t); migrateCommit(r, head);
+  appendSealedLines(path.join(r, 'data/opp-ledger.jsonl'), [{ n: 'B' }], K, { day: '2026-01-03' }); appendSealedLines(path.join(r, 'data/opp-ledger.jsonl'), [{ n: 'C' }], K, { day: '2026-01-04' });
+  appendSealedLines(path.join(r, 'data/movers-journal.jsonl'), [{ n: 'only-segment' }], K, { day: '2026-01-04' });
+  git(r, ['add', '-A']); git(r, ['commit', '-q', '-m', 'appends']);
+  const out = path.join(d, 'exp'); exportTo(out, { key: K, cwd: r });
+  assert.equal(fs.readFileSync(path.join(out, 'data/opp-ledger.jsonl'), 'utf8'), FIX['data/opp-ledger.jsonl'] + '{"n":"B"}\n{"n":"C"}\n', 'A+B+C exactly once');
+  assert.equal(fs.existsSync(path.join(out, 'data/opp-ledger.jsonl.d')), false, 'no segment files exported');
+  assert.equal(fs.readFileSync(path.join(out, 'data/movers-journal.jsonl'), 'utf8'), '{"n":"only-segment"}\n', 'a ledger with segments only is exported too');
 });

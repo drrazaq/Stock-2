@@ -63,7 +63,7 @@ jobs:
           sealed_guard   # refuses a commit that adds or modifies any T1 path in plaintext
           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase && sealed_push_guard && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
-          [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }
+          [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; sealed_recovery_push || true; exit 1; }
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
