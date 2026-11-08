@@ -1,0 +1,36 @@
+intraday check done: 2 watched, 0 new alerts
+{
+  "root": "/workspace/g2-verification/combined-rev11",
+  "quoteCount": 2,
+  "firstLine": "ZZS: HOLD: no exit rule is active; above your stop 80.00. Last price 90.00 (FINNHUB, Nov 5 09:35 New York, 5 min old) (-10.0% from your 100.00).",
+  "stopMessage": "",
+  "rendersHOLD": true,
+  "actualFirstQuoteAgeSec": 320
+}
+node:internal/modules/run_main:123
+    triggerUncaughtException(
+    ^
+
+AssertionError [ERR_ASSERTION]: render-time source age320s must not support an unqualified fresh HOLD claim under the5-minute gate
+    at file:///workspace/Stock-2/docs/reviews/r1-preparation/6720355907-followup/render-age-hold-actual-caller.mjs:7:8
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5) {
+  generatedMessage: false,
+  code: 'ERR_ASSERTION',
+  actual: "TODAY'S FIRST MARKET-HOURS CHECK, run at 9:40 am New York (17:40 Kuwait). The system is running.\n" +
+    '\n' +
+    'YOUR POSITIONS (one action each, the same rules as ACTIONS)\n' +
+    'ZZS: HOLD: no exit rule is active; above your stop 80.00. Last price 90.00 (FINNHUB, Nov 5 09:35 New York, 5 min old) (-10.0% from your 100.00).\n' +
+    'ZZF: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 5 09:39 New York, 60 s old) (+20.0% from your 10.00).\n' +
+    '\n' +
+    "BUY LIST FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; a line is a buy only while its price is INSIDE its range)\n" +
+    "none. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n" +
+    '\n' +
+    'Next checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. A message comes only when a check runs and finds a stop, a target, an exit rule or a listed buy inside its range.\n' +
+    'Regular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). The live watcher’s configured window ends at 3:00 pm New York, 60 minutes before the close; the last part of the session is not watched live.\n' +
+    '\n' +
+    'Tested signals, not instructions. Not financial advice, not a halal ruling.',
+  expected: /ZZS: HOLD/,
+  operator: 'doesNotMatch'
+}
+
+Node.js v20.20.0

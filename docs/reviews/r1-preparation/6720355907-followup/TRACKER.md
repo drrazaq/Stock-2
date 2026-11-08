@@ -1,0 +1,19 @@
+# Binding follow-up to PR comment6720355907
+
+No release approval request until all three obligations and the latest exact candidate prerequisites pass. This record updates status; earlier pending/failed records remain immutable evidence, not retroactive PASS.
+
+| Obligation | Current status | Exact evidence / remaining action |
+|---|---|---|
+| Future-at-fetch correction and independent verification | CLOSED for the original defect | Rev10b6ffea2f actual caller keeps summary and dedicated stop UNKNOWN. Independent68-path binding/build/inverse/pin checks pass. Rev118567fd46 also retains that original correction; rev11-future-caller.txt records it. |
+| Complete run42471387411 without waiving failures | CLOSED | Exact3589faf514cb61b1003abe0425796f1a6f025642, job128702714864, terminalSUCCESS, all313 expected files present and PASS exactly once, no missing/duplicate/unexpected/errors. Node20.20.2 and both Python suites verified. Complete saved UTF-8 log SHA2562bce5f1e0747ba867daf7999e48ae932ed99006064ffc73368183cb0f60474cc. [complete receipt](../../../engineering-continuation-20261108/completion/receipt.json). Earlier baseline6failures and first-corrected2failures remain recorded, none waived. Separate host stress was skipped, not PASS. |
+| Finalize bounded recovery retention/storage before release approval | OPEN / REVIEW BLOCKED | Claudeffef0524 proposal received, reviewed6721627980: repeated/concurrentUNKNOWN bypass is unbounded; logical reachable size cannot guarantee physical storage/fetch growth. Correct enforceable admission/concurrency, count-duration/clock facts, custody/exhaustion/cost basis; independently review before owner request. No caps/cleanup are currently implemented or activated. A concrete smaller4-slot alternative with local atomic-reservation proof is prepared at docs/reviews/r1-recovery-budget-ffef0524/bounded-alternative/PROPOSAL.md; it is not adopted and requires independent review/source integration. |
+
+## New exact-candidate regression cannot be hidden by the two closures
+
+Claude development re-reviewf335139f/comment6721730197 confirms originalF1–F4 corrections with no softened threshold/assertion, but returns narrower timing/wording findings. Claude rev118567fd46/comment6721770611 fixes stop-message disagreement by returning observation-time OK for every later quote claim. Independent actual-caller counterexample: first holding ZZSprice90/stop80, source age290s at fetch; second fetch advances30s. Actual source age320s at report. Rev10 correctly says current-price/stop status UNKNOWN; rev11 says HOLD above stop with lastprice90, using fetch-time age. Desired assertion fails on rev11 and passes on rev10 (logs and source accompany this record). Both use invented holdings and loopback services only.
+
+The original future-at-fetch defect stays closed; the new HOLD freshness regression is a separate release blocker. Retain fetch-time invalidity and report-time3/5/20-minute gates for fresh-price claims. A valid earlier stop hit may be retained as an explicitly timed historical observation; it must not make HOLD/targets/buy-range evidence timeless. Sent concrete correction request to Claude6722848900. Rev11 binding/mode/build/inverse/pin checks pass independently, which does not close this runtime failure.
+
+Development full-run PASS is exact to3589faf51, not later runtime fixes or any R1 tree. Claude re-review also notes the23 selectively refreshed metadata hashes do not transfer old A acceptance coverage to changed scanner/watcher bytes; that limitation is retained. Its residualR2false0.00 andR3stop-limit wording are separately open, not erased by full-suite success.
+
+Release request remains withheld. No owner action requested now. No deployment, settings/credentials, production writes, collection, spending, provider action or history rewriting.

@@ -1,0 +1,96 @@
+{
+  "run": 42471387411,
+  "url": "https://github.com/drrazaq/Stock-2/actions/runs/42471387411",
+  "event": "push",
+  "headSha": "3589faf514cb61b1003abe0425796f1a6f025642",
+  "headBranch": "codex/engineering-continuation-20261108",
+  "status": "completed",
+  "conclusion": "success",
+  "attempt": 1,
+  "createdAt": "2026-11-08T10:25:46Z",
+  "completedUpdatedAt": "2026-11-08T10:51:49Z",
+  "jobs": [
+    {
+      "id": 128702714864,
+      "name": "test",
+      "status": "completed",
+      "conclusion": "success",
+      "startedAt": "2026-11-08T10:25:48Z",
+      "completedAt": "2026-11-08T10:51:49Z",
+      "steps": [
+        {
+          "number": 1,
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 2,
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 3,
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 4,
+          "name": "Verify inactive V2 integration before the complete regression suite",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 5,
+          "name": "Verify REPO-03 source inventory and non-destructive verifier behavior",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 6,
+          "name": "Verify gated actual-watcher callers against the explicit development contract",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 7,
+          "name": "Run every test file",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 13,
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 14,
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "number": 15,
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 128702715884,
+      "name": "host-monitor-stress",
+      "status": "completed",
+      "conclusion": "skipped",
+      "startedAt": "2026-11-08T10:25:46Z",
+      "completedAt": "2026-11-08T10:25:46Z",
+      "steps": []
+    }
+  ],
+  "completeLogReceipt": "receipt.json",
+  "completeLogSha256": "2bce5f1e0747ba867daf7999e48ae932ed99006064ffc73368183cb0f60474cc",
+  "meaning": "Post-run read-only metadata receipt; code commit is immutable and predates this evidence publication. Skipped host stress is not PASS."
+}

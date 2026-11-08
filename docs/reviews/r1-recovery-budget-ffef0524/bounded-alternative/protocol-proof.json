@@ -1,0 +1,31 @@
+{
+  "scope": "DISPOSABLE_LOCAL_GIT_PROTOCOL_ONLY",
+  "concurrentEmptyLeaseAdmissions": [
+    {
+      "status": 0,
+      "checkpoint": "refs/heads/save-recovery/bot-A",
+      "slot": "refs/heads/r1-recovery-slot/bot",
+      "tip": "3a606a33bd6abeb41cdc7a5e46357143efec2a44"
+    },
+    {
+      "status": 1,
+      "checkpoint": "refs/heads/save-recovery/bot-B",
+      "slot": "refs/heads/r1-recovery-slot/bot",
+      "tip": "8debf8f56209ac5507c2e1bcdd9bf048410ee7d2"
+    }
+  ],
+  "oneWinnerNoCheckpointLeak": true,
+  "fourSlotsFull": true,
+  "fullSlotAttemptsRefusedAtomically": true,
+  "staleDeletionRefused": true,
+  "mergedExactTipPairDeletionPassed": true,
+  "logicalPayloadBoundIfEachCheckpointAtMost32MiB": {
+    "slots": 4,
+    "perSlotMiB": 32,
+    "totalMiB": 128
+  },
+  "physicalGitStorageOrFetchBoundClaimed": false,
+  "productionSizeGuardOrIntegrationTested": false,
+  "productionRefsWritten": 0,
+  "keysOrSettingsChanged": false
+}
