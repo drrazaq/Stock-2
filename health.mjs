@@ -4,8 +4,10 @@ import {readWatcherReport} from './watcher-reporting.mjs';
 // Today's smart-money crash ran unnoticed for a day; this is what catches that. Read-only; sends a message only when something is wrong.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { isT1, readSealedJson, sealedCode } from './sealed-store.mjs';   // R1: T1 provider-data files are sealed; unreadable = a named problem, never 'fine'
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org';
-const readJson = (f) => { try { return JSON.parse(/\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8')); } catch (e) { return undefined; } };
+const sealedProblem = {};
+const readJson = (f) => { if (isT1(f)) { try { const v = readSealedJson(f, null); return v === null ? undefined : v; } catch (e) { sealedProblem[f] = sealedCode(e); return undefined; } } try { return JSON.parse(/\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8')); } catch (e) { return undefined; } };
 const now = Date.now();
 // hours between t and now, not counting Saturdays and Sundays (US jobs do not run then)
 const bizHours = (t) => { let h = 0; for (let x = t; x < now; x += 3600e3) { const d = new Date(x).getUTCDay(); if (d !== 0 && d !== 6) h++; } return h; };
@@ -49,7 +51,8 @@ const CHECKS = [
 ];
 const problems = [], ok = [];
 for (const [f, name, how, lim, check] of CHECKS) {
-  const j = readJson(f); if (j === undefined) { if (!lim.optional) problems.push(name + ': its file is missing (' + f + '). It should update ' + how + '.'); continue; }
+  const j = readJson(f); if (j === undefined && sealedProblem[f]) { problems.push(name + ': its sealed provider-data file cannot be read (' + sealedProblem[f] + '), so its state is UNKNOWN (' + f + ').'); continue; }
+  if (j === undefined) { if (!lim.optional) problems.push(name + ': its file is missing (' + f + '). It should update ' + how + '.'); continue; }
   const t = stamp(j); if (!t) { problems.push(name + ': its file has no date (' + f + '), so its age cannot be checked. The output format may have changed.'); continue; }
   const age = lim.biz ? bizHours(t) : (now - t) / 864e5, stale = lim.biz ? age > lim.biz : age > lim.days;
   if (stale) problems.push(name + ': last result ' + new Date(t).toISOString().slice(0, 16).replace('T', ' ') + ' UTC; it should update ' + how + '. The job is probably failing.');

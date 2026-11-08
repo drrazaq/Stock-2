@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
+import { isT1, sealedKey, writeSealed, readSealedText } from '../sealed-store.mjs';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const blocked = [];
@@ -21,18 +22,26 @@ const SECRETS = ['TG_TOKEN', 'TG_CHAT', 'TG_BASE', 'FH_BASE', 'TD_BASE', 'FINNHU
 let seq = 0; const DIRS = [];
 process.on('exit', () => { process.chdir(os.tmpdir()); for (const d of DIRS) try { fs.rmSync(d, { recursive: true, force: true }); } catch (e) {} });
 
+// R1: T1 provider-data fixtures are written SEALED with a synthetic test secret (as production writes them), unless the code under
+// test predates R1 (SCAN_SRC pointing at an old scan.mjs) or the test removes the secret (SEALED_SECRET: '') to test fail-closed paths.
+export const TEST_SEALED_SECRET = 'synthetic-scan-test-secret';
+let SEAL = true;
+const sealedNow = (name) => SEAL && isT1(name.replace(/\\/g, '/')) && sealedKey(process.env.SEALED_SECRET || TEST_SEALED_SECRET);
 export function writeFixture(dir, name, data) {
   const f = path.join(dir, name); fs.mkdirSync(path.dirname(f), { recursive: true });
-  if (typeof data === 'string') fs.writeFileSync(f, data);
-  else if (name.endsWith('.jsonl')) fs.writeFileSync(f, data.map(x => JSON.stringify(x)).join('\n') + (data.length ? '\n' : ''));
-  else fs.writeFileSync(f, JSON.stringify(data));
+  const text = typeof data === 'string' ? data : name.endsWith('.jsonl') ? data.map(x => JSON.stringify(x)).join('\n') + (data.length ? '\n' : '') : JSON.stringify(data);
+  const key = sealedNow(name);
+  if (key) writeSealed(f, text, key); else fs.writeFileSync(f, text);
 }
+const readFixture = (dir, name) => { const key = sealedNow(name); return key && fs.existsSync(path.join(dir, name) + '.sealed') ? readSealedText(path.join(dir, name), key) : fs.readFileSync(path.join(dir, name), 'utf8'); };
 
 // files: { 'data/signals.json': {...}, 'data/my-trades.jsonl': [rows], ... }; settings are merged over the migration flags.
 export async function loadScan({ files = {}, env = {} } = {}) {
   const src = fs.readFileSync(process.env.SCAN_SRC || path.join(REPO, 'scan.mjs'), 'utf8').trimEnd().split('\n');
   const last = src.pop(); if (!/^await \(MODE ===/.test(last)) throw new Error('scan.mjs no longer ends with its main call; update test/load-scan.mjs: ' + last.slice(0, 80));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
+  SEAL = src.some(l => l.includes("from './sealed-store.mjs'"));
+  if (SEAL) process.env.SEALED_SECRET = 'SEALED_SECRET' in env ? env.SEALED_SECRET : TEST_SEALED_SECRET;
   fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
   // (4 Nov) local modules scan.mjs imports statically (e.g. './stop-watch.mjs') are copied beside the copy, from the same tree
   const srcDir = path.dirname(process.env.SCAN_SRC ? path.resolve(process.env.SCAN_SRC) : path.join(REPO, 'scan.mjs'));
@@ -48,5 +57,5 @@ export async function loadScan({ files = {}, env = {} } = {}) {
   process.chdir(dir);
   const mod = await import(pathToFileURL(file).href);
   const fn = (name) => { const f = mod.__get(name); if (typeof f !== 'function') throw new Error(name + ' is not a function in scan.mjs'); return f; };
-  return { dir, fn, value: (name) => mod.__get(name), write: (name, data) => writeFixture(dir, name, data), read: (name) => fs.readFileSync(path.join(dir, name), 'utf8'), readJson: (name) => JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8')) };
+  return { dir, fn, value: (name) => mod.__get(name), write: (name, data) => writeFixture(dir, name, data), read: (name) => readFixture(dir, name), readJson: (name) => JSON.parse(readFixture(dir, name)) };
 }

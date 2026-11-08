@@ -9,11 +9,13 @@ import path from 'node:path';
 import http from 'node:http';
 import zlib from 'node:zlib';
 import { spawn, execFileSync } from 'node:child_process';
+import { sealedKey, readSealedJson, readSealed, isT1 } from '../sealed-store.mjs';   // R1: the watcher saves T1 provider data only sealed
+const SEALED_TEST_SECRET = 'synthetic-watcher-secret', SK = sealedKey(SEALED_TEST_SECRET);
 const root = path.resolve(process.env.FEED_INTEGRITY_ROOT || path.join(import.meta.dirname, '..'));
 const day = '2026-10-30', epoch = Date.parse(day + 'T13:40:00Z'), late = epoch - 20 * 60000, L = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-async function run(t, scenario) {
+async function run(t, scenario, opts = {}) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'feed-integrity-watcher-')); t.after(() => fs.rmSync(dir, { recursive: true, force: true }));
   for (const f of fs.readdirSync(root).filter(p => p.endsWith('.mjs'))) fs.copyFileSync(path.join(root, f), path.join(dir, f));
   fs.mkdirSync(path.join(dir, 'data'));
@@ -41,15 +43,18 @@ async function run(t, scenario) {
   const base = 'http://127.0.0.1:' + server.address().port, preload = path.join(dir, 'local-only.mjs');
   fs.writeFileSync(preload, `const D=Date,start=D.now(),at=${epoch};globalThis.Date=class extends D{constructor(...a){super(...(a.length?a:[at+D.now()-start]));}static now(){return at+D.now()-start;}};const f=fetch;globalThis.fetch=(u,o)=>{if(!String(u).startsWith(${JSON.stringify(base + '/')}))throw Error('NO_EXTERNAL_ACCESS');return f(u,o);};`);
   const env = { PATH: process.env.PATH, IG_DAY: day, IG_FAKE_MIN: '580', IG_FAKE_STEP: '400', IG_RUN_MIN: '1', IG_NO_RADAR: '1', MASSIVE_BASE: base, ALPACA_DATA: base, ALPACA_KEY: 'synthetic', ALPACA_SECRET: 'synthetic', SEC_BASE: base, SEC_UA: 'synthetic fixture', GITHUB_RUN_ID: 'synthetic-' + scenario, GITHUB_RUN_ATTEMPT: '1' };
+  if (opts.key !== false) env.SEALED_SECRET = SEALED_TEST_SECRET;
   if (scenario !== 'top50') env.MASSIVE_KEY = 'synthetic';
   const child = spawn(process.execPath, ['--import', preload, 'ignition-watch.mjs'], { cwd: dir, env, stdio: ['ignore', 'pipe', 'pipe'] }); t.after(() => { if (child.exitCode === null) child.kill('SIGKILL'); });
   let output = ''; child.stdout.on('data', x => output += x); child.stderr.on('data', x => output += x);
   const timer = setTimeout(() => child.kill('SIGKILL'), 60000); const code = await new Promise((resolve, reject) => { child.on('error', reject); child.on('close', resolve); }); clearTimeout(timer);
+  const files = (function walk(d) { return fs.readdirSync(d, { withFileTypes: true }).flatMap(e => e.isDirectory() ? walk(path.join(d, e.name)) : [path.relative(dir, path.join(d, e.name)).split(path.sep).join('/')]); })(path.join(dir, 'data'));
+  if (opts.key === false) return { code, output, files, calls };
   assert.equal(code, 0, output);
-  const live = JSON.parse(fs.readFileSync(path.join(dir, 'data/ignition-live.json'))), rd = path.join(dir, 'data/ignition-runs', day);
-  const shadow = fs.readdirSync(rd).filter(n => n.endsWith('.shadow.jsonl.gz')).flatMap(n => zlib.gunzipSync(fs.readFileSync(path.join(rd, n))).toString().trim().split('\n').filter(Boolean).map(JSON.parse));
+  const live = readSealedJson(path.join(dir, 'data/ignition-live.json'), null, SK), rd = path.join(dir, 'data/ignition-runs', day);
+  const shadow = fs.readdirSync(rd).filter(n => n.endsWith('.shadow.jsonl.gz.sealed')).flatMap(n => zlib.gunzipSync(readSealed(path.join(rd, n.slice(0, -7)), SK)).toString().trim().split('\n').filter(Boolean).map(JSON.parse));
   assert.equal(calls.some(p => /sendMessage|orders/.test(p)), false, 'no message or order endpoint');
-  return { calls, live, shadow, SYMS, snaps: calls.filter(c => c.startsWith('/v2/stocks/snapshots')) };
+  return { dir, files, calls, live, shadow, SYMS, snaps: calls.filter(c => c.startsWith('/v2/stocks/snapshots')) };
 }
 
 test('SIP answer: SIP price and quote with their own clocks; SIP daily volume used but labelled as having no stated as-of time', async t => {
@@ -101,4 +106,23 @@ test('top-50 fallback: future-dated volume on both sources leaves volume unknown
   const r = await run(t, 'top50-future-sip-minute'), x = r.shadow.find(s => s.sym === 'ZZQ');
   assert.equal(r.live.mode, 'PARTIAL_TOP50_FALLBACK'); assert.equal(x.px0, 11);
   assert.ok(!(x.dv0 > 0), 'no volume survives clock validation: dv0=' + x.dv0);
+});
+
+// R1 end to end, through the ACTUAL watcher process: provider data leaves it only sealed; without the key nothing is saved and the run fails
+test('R1: after a full watcher run no T1 provider-data file exists in plaintext; every T1 output is sealed and readable', async t => {
+  const r = await run(t, 'sip-ok');
+  assert.deepEqual(r.files.filter(isT1), [], 'no T1 plaintext written');
+  assert.ok(r.files.includes('data/ignition-live.json.sealed'));
+  assert.ok(r.files.some(f => /^data\/ignition-runs\/.+\.shadow\.jsonl\.gz\.sealed$/.test(f)) && r.files.some(f => /^data\/ignition-runs\/.+-progress\.json\.sealed$/.test(f)));
+  assert.deepEqual(r.files.filter(f => /\.tmp/.test(f)), [], 'no temp files left');
+  for (const f of r.files.filter(f => f.endsWith('.sealed'))) assert.doesNotMatch(fs.readFileSync(path.join(r.dir, f)).toString('latin1'), /ZZQ|10\.99/, f + ' holds no readable symbol or quote');
+});
+
+test('R1: WITHOUT the key the actual watcher keeps running, saves no provider data (sealed or plaintext) and exits 1', async t => {
+  const r = await run(t, 'sip-ok', { key: false });
+  assert.equal(r.code, 1, r.output);
+  assert.match(r.output, /R1 SEALED_KEY_MISSING: watching continues/);
+  assert.match(r.output, /sealed save\(s\) failed/);
+  assert.deepEqual(r.files.filter(f => isT1(f) || f.endsWith('.sealed')), [], 'nothing T1 written at all');
+  assert.ok(r.calls.some(c => c.startsWith('/v2/stocks/snapshots')), 'it still watched the market');
 });

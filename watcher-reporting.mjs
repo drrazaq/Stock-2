@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import {marketSession} from './market-session.mjs';
+import {readSealedJson,listSealed,sealedCode} from './sealed-store.mjs';
 const day=x=>typeof x==='string'&&/^\d{4}-\d\d-\d\d$/.test(x)&&Number.isFinite(Date.parse(x))&&new Date(x).toISOString().slice(0,10)===x;
 const minute=x=>typeof x==='string'&&/^\d\d:\d\d$/.test(x)&&+x.slice(0,2)<24&&+x.slice(3)<60?+x.slice(0,2)*60+ +x.slice(3):null;
 export const watchMinute=m=>m===null?'UNKNOWN':String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
@@ -34,10 +35,12 @@ export function watcherReport(summaries=[],snapshots=[]){
  return {day:latest,opening,complete,configuredComplete,actionable,messageDelivery:delivery,configuredExpected,configuredMinutes,configuredMissing,longestGap,outsideExpected,outside,regularMinutes:regular.length,expected:close-open,first:minutes[0]??null,missing,firstReported,legacyOnly,duplicateSummaries:u.duplicates,text};
 }
 export function readWatcherReport(directory='data'){
- const read=p=>{try{return JSON.parse(fs.readFileSync(p,'utf8'));}catch{return null;}}, rows=[];
+ // R1: the live file and per-run archives are sealed T1 files; an unreadable one makes the evidence UNKNOWN (actionable), never "no data"
+ let sealedFail=null;const read=p=>{try{return readSealedJson(p,null);}catch(e){sealedFail=sealedFail||sealedCode(e);return null;}}, rows=[];
  try{for(const l of fs.readFileSync(path.join(directory,'ignition-days.jsonl'),'utf8').split('\n')){try{rows.push(JSON.parse(l));}catch{}}}catch{}
  const snapshots=[read(path.join(directory,'ignition-live.json'))].filter(Boolean),date=uniqueWatcherDays(rows).rows.at(-1)?.day||snapshots[0]?.day;
- if(day(date)){const dir=path.join(directory,'ignition-runs',date);try{for(const f of fs.readdirSync(dir).filter(f=>/^[A-Za-z0-9_-]+\.json$/.test(f))){const x=read(path.join(dir,f));if(x)snapshots.push(x);}}catch{}}
+ if(day(date)){const dir=path.join(directory,'ignition-runs',date);let names=[];try{names=listSealed(dir,/^[A-Za-z0-9_-]+\.json$/);}catch(e){sealedFail=sealedFail||sealedCode(e);}for(const f of names){const x=read(path.join(dir,f));if(x)snapshots.push(x);}}
+ if(sealedFail)return {day:date||null,actionable:true,sealedUnavailable:sealedFail,text:'watcher evidence UNKNOWN: the sealed watcher records cannot be read ('+sealedFail+')'};
  return watcherReport(rows,snapshots);
 }
 export function missedRunnerPopulation(rows){

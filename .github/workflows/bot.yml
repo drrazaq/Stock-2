@@ -33,8 +33,10 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
+          source .github/sealed-git.sh   # R1: sealed merge driver + guard
           save() {
             git add data
+            sealed_guard || { git reset -q; echo "Error: refusing to publish T1 provider data in plaintext (save skipped; the bot keeps answering)" | tee -a run.log; return 0; }
             git diff --cached --quiet && return 0
             git commit -q -m "bot $(date -u +%FT%RZ)"
             for i in 1 2 3 4 5; do if git pull -q --rebase -X theirs && git push -q; then return 0; fi; git rebase --abort 2>/dev/null || true; sleep 5; done
@@ -61,6 +63,8 @@ jobs:
           done
         env:
           MODE: chat
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data (options record, movers, live watcher record)
+          SEALED_MERGE_FAVOR: theirs                   # R1: same hunk preference as this loop's -X theirs, on decrypted text
           GITHUB_TOKEN: ${{ github.token }}
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}

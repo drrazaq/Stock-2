@@ -3,6 +3,7 @@
 // Massive grouped daily bars (22 and 23 Oct) + ticker types, and Alpaca SIP minute bars (Massive minute bars as fallback).
 // Writes data/scorecard-1023.json only.
 import fs from 'node:fs';
+import { readSealedJson, sealedCode } from './sealed-store.mjs';
 const env = process.env, D0 = '2026-10-22', D1 = '2026-10-23', OUT = 'data/scorecard-1023.json';
 const MV = 'https://api.massive.com', AD = 'https://data.alpaca.markets';
 const AH = { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY || '', 'APCA-API-SECRET-KEY': env.ALPACA_SECRET || '' } };
@@ -65,7 +66,7 @@ function regular(sym) { return (BARS.get(sym) || []).filter(x => x[0] >= 570 && 
 
 // ---------- watcher records ----------
 const read = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
-const live = read('data/ignition-live.json', {});
+let live; try { live = readSealedJson('data/ignition-live.json', {}); } catch (e) { console.error('scorecard: ' + sealedCode(e) + ' (sealed watcher record unavailable; nothing written)'); process.exit(1); }   // R1: sealed T1
 let paper = []; try { paper = fs.readFileSync('data/ignition-paper.jsonl', 'utf8').trim().split('\n').map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(x => x && x.d === D1); } catch (e) {}
 const radar = read('data/radar-day.json', null);
 const liveTrig = (live.day === D1 ? live.triggers || [] : []);

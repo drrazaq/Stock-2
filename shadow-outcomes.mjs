@@ -11,6 +11,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { filterTable, stats, entryOf, netExit } from './shadow-eval.mjs';
 import { evaluate } from './rank-models.mjs';
+import { readSealed, listSealed, readSealedLines, sealedCode } from './sealed-store.mjs';   // R1: the shadow stream and opp-ledger are sealed T1 files
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const env = process.env, ALPD = local(process.env.ALPACA_DATA) || 'https://data.alpaca.markets', readJson = (f, d = null) => { try { return JSON.parse(/\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const readLines = (f) => { try { const t = /\.gz$/.test(f) ? zlib.gunzipSync(fs.readFileSync(f)).toString() : fs.readFileSync(f, 'utf8'); return t.trim().split('\n').filter(Boolean).map(l => JSON.parse(l)); } catch (e) { return []; } };
@@ -19,9 +20,13 @@ const SD = 'data/shadow', OD = 'data/shadow-outcomes';
 
 // (day, sym) pairs
 const want = new Map(); const add = (d, s) => { if (d >= since && d <= today && /^[A-Z.]{1,6}$/.test(s)) (want.get(d) || want.set(d, new Set()).get(d)).add(s); };
-const shadowDays = fs.existsSync(SD) ? fs.readdirSync(SD).filter(f => /^\d{4}-\d{2}-\d{2}\.jsonl\.gz$/.test(f)).map(f => f.slice(0, 10)).sort() : [];
-const shadowRows = []; for (const d of shadowDays) for (const r of readLines(SD + '/' + d + '.jsonl.gz')) { shadowRows.push(r); add(r.d, r.sym); }
-const opp = readLines('data/opp-ledger.jsonl'); for (const r of opp) add(r.d, r.sym);
+// R1: strict sealed reads; a missing key / unreadable / unmigrated T1 file stops this step with its code (never a report built on empty input)
+const gzLines = (b) => b === null ? [] : zlib.gunzipSync(b).toString().trim().split('\n').filter(Boolean).map(l => JSON.parse(l));
+let shadowDays, opp; const shadowRows = [];
+try { shadowDays = listSealed(SD, /^\d{4}-\d{2}-\d{2}\.jsonl\.gz$/).map(f => f.slice(0, 10));
+  for (const d of shadowDays) for (const r of gzLines(readSealed(SD + '/' + d + '.jsonl.gz'))) { shadowRows.push(r); add(r.d, r.sym); }
+  opp = readSealedLines('data/opp-ledger.jsonl'); } catch (e) { console.error('shadow outcomes: ' + sealedCode(e) + ' (T1 sealed data unavailable; nothing written)'); process.exit(1); }
+for (const r of opp) add(r.d, r.sym);
 for (const r of readLines('data/radar-v3-ledger.jsonl')) if (r.type === 'list') add(r.d, r.sym);
 
 async function bars(syms, start) {

@@ -17,6 +17,7 @@
 // MODE=study: Sunday (leaders-study workflow, paid Massive plan). MODE=live: weekdays 7 am Kuwait (movers workflow).
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { writeSealed } from './sealed-store.mjs';   // R1: data/fastmover-live.json is a sealed T1 file
 const env = process.env, MODE = ['live', 'intraday'].includes(env.MODE) ? env.MODE : 'study';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const TEST = local(env.MASSIVE_BASE), PX = TEST || 'https://api.massive.com', TG = local(env.TG_BASE) || 'https://api.telegram.org';
@@ -281,7 +282,7 @@ P.record = paper; P.updated = new Date().toISOString(); fs.writeFileSync(PAPER, 
 const passed = new Set(LAB && LAB.rules ? Object.entries(LAB.rules).filter(([, x]) => x.verdict === 'PROMISING').map(([k]) => k) : []);
 const halal = readJson('data/halal.json', {}), notHalal = (s) => halal[s] && halal[s].s === 'fail';
 const list = today.filter(x => passed.has(x.rule) && !notHalal(x.sym)).sort((a, b) => b.chg - a.chg).slice(0, 12);
-fs.writeFileSync(LIVE, JSON.stringify({ updated: new Date().toISOString(), day: nextDay, from: lastD, list, logged: today.length, paper }, null, 1));
+writeSealed(LIVE, JSON.stringify({ updated: new Date().toISOString(), day: nextDay, from: lastD, list, logged: today.length, paper }, null, 1));
 console.log('fast-mover live: ' + today.length + ' paper candidates for ' + nextDay + ', ' + list.length + ' from passed rules; paper record: ' + RULES.map(r => r.id + ' ' + (paper[r.id].n ? paper[r.id].n + ' / ' + pc(paper[r.id].avg) : '0')).join(', '));
 if (list.length && env.TG_TOKEN && env.TG_CHAT) {
   const name = (id) => (LAB.rules[id] || {}).name || id, t = (id) => (LAB.rules[id] || {}).results;

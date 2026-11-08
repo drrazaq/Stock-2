@@ -4,6 +4,7 @@
 // news behind them, and watches small stocks whose trading volume is building before any big move.
 // Everything goes to your private Telegram. It gives evidence and watchlists, never buy signals.
 import fs from 'node:fs';
+import { readSealedJson, readSealedLines, appendSealedLines, writeSealed, sealedCode } from './sealed-store.mjs';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
 
 const env = process.env;
@@ -47,7 +48,7 @@ for (let k = 0, ms = Date.now(); S.length < SESSIONS && k < SESSIONS * 2; k++, m
   S.unshift(m); D.unshift(iso(ms));
 }
 if (S.length < 12) { console.error('Too few sessions loaded (' + S.length + '). Check the MASSIVE_KEY secret.'); process.exit(1); }
-const last = S.length - 1, prevDone = (() => { try { return JSON.parse(fs.readFileSync('data/movers-state.json', 'utf8')).session; } catch { return ''; } })();
+const last = S.length - 1, prevDone = (() => { try { return (readSealedJson('data/movers-state.json', {}) || {}).session || ''; } catch (e) { console.error('movers state: ' + sealedCode(e) + ' (recomputed in full)'); return ''; } })();   // R1: sealed T1
 console.log('sessions loaded:', S.length, 'from', D[0], 'to', D[last]);
 if (prevDone === D[last] && !env.FORCE) { console.log('No new session since ' + D[last] + '. Nothing sent.'); process.exit(0); }
 
@@ -216,8 +217,8 @@ if (env.FINNHUB_KEY) for (const j of today.slice(0, 8)) {
 }
 const expect = (j) => { const g = all.filter(x => x.penny === j.penny && (x.loc >= 0.7) === (j.loc >= 0.7) && x.f && x.f[3] !== undefined).map(x => x.f[3]), s = stat(g); return s && s.n >= 15 ? 'stocks like this (' + (j.penny ? 'under 5 USD' : '5 USD and over') + ', ' + (j.loc >= 0.7 ? 'closed near the high' : 'gave back part of the jump') + ') were typically ' + pc(s.med) + ' three sessions later; ' + Math.round(s.pos * 100) + '% were higher' : 'too few similar cases to say'; };
 // journal (tickers, dates, tags and results only) so results by kind of news accumulate week after week
-const JF = 'data/movers-journal.jsonl', journal = fs.existsSync(JF) ? fs.readFileSync(JF, 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)) : [];
-for (const j of today) if (j.tag && !journal.some(x => x.sym === j.sym && x.d === D[last])) { const e = { sym: j.sym, d: D[last], ret: +j.ret.toFixed(4), tag: j.tag, penny: j.penny }; journal.push(e); fs.appendFileSync(JF, JSON.stringify(e) + '\n'); }
+const JF = 'data/movers-journal.jsonl'; let journal; try { journal = readSealedLines(JF); } catch (e) { console.error('movers journal: ' + sealedCode(e) + ' (sealed T1 journal unavailable; nothing written)'); process.exit(1); }   // R1: never restart the journal from empty
+for (const j of today) if (j.tag && !journal.some(x => x.sym === j.sym && x.d === D[last])) { const e = { sym: j.sym, d: D[last], ret: +j.ret.toFixed(4), tag: j.tag, penny: j.penny }; journal.push(e); appendSealedLines(JF, [e]); }
 const byTag = {};
 for (const e of journal) { const i = D.indexOf(e.d); if (i < 1 || i + 3 > last) continue; const en = S[i + 1].get(e.sym), x = S[i + 3].get(e.sym); if (!en || !x) continue; (byTag[e.tag] = byTag[e.tag] || []).push(x.c / en.o - 1 - cost(en.o)); }
 
@@ -359,5 +360,5 @@ const hunt = { reasons: null, studies: {}, upcoming: [] };
   await telegram(out.join('\n'));
   console.log('hunt:', JSON.stringify(hunt.reasons), Object.keys(hunt.studies).length, 'studies,', hunt.upcoming.length, 'upcoming');
 }
-fs.writeFileSync('data/movers-state.json', JSON.stringify({ session: D[last], sessions: S.length, cases: all.length, caught, reviewable: reviewable.length, hunt, penny: (() => { const P3 = table[1].h[3], P5 = table[1].h[5]; return P3 && P5 ? 'typically ' + pc(P3.med) + ' three sessions later and ' + pc(P5.med) + ' after five; only ' + Math.round(P5.pos * 100) + '% were higher after five (' + P3.n + ' cases).' : ''; })(), study: A[3] ? 'three sessions after the next open they were typically ' + pc(A[3].med) + ', and ' + Math.round(A[3].pos * 100) + '% were higher (' + A[3].n + ' cases).' : '' }));
+writeSealed('data/movers-state.json', JSON.stringify({ session: D[last], sessions: S.length, cases: all.length, caught, reviewable: reviewable.length, hunt, penny: (() => { const P3 = table[1].h[3], P5 = table[1].h[5]; return P3 && P5 ? 'typically ' + pc(P3.med) + ' three sessions later and ' + pc(P5.med) + ' after five; only ' + Math.round(P5.pos * 100) + '% were higher after five (' + P3.n + ' cases).' : ''; })(), study: A[3] ? 'three sessions after the next open they were typically ' + pc(A[3].med) + ', and ' + Math.round(A[3].pos * 100) + '% were higher (' + A[3].n + ' cases).' : '' }));
 console.log('movers radar sent:', all.length, 'cases,', today.length, 'movers today,', watch.length, 'build-ups');

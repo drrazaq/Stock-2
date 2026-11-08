@@ -29,7 +29,8 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: dated on the New York calendar (fixed 22 Oct 2026)
 import { LIVE_RULES, IG_RULES, EXITS, simulate, toBars, costOf } from './ignition-core.mjs';
-import { blockedRunnerPolicy } from './blocked-runner-policy.mjs';   // (24 Oct, outside patch) KEEP / REVIEW / UNRESOLVED by a 30-case, 55% rule
+import { blockedRunnerPolicy } from './blocked-runner-policy.mjs';
+import { readSealedLines, readSealedJson, appendSealedLines, sealedCode } from './sealed-store.mjs';   // R1: T1 history and live file are sealed (provider prices)   // (24 Oct, outside patch) KEEP / REVIEW / UNRESOLVED by a 30-case, 55% rule
 const env = process.env, OUT = env.OUT || 'data/missed-runners.json', CDIR = env.FM_CACHE_DIR || 'fm-cache', HIST = 'data/ignition-missed-history.jsonl', DAYS = 'data/ignition-days.jsonl';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TEST = local(env.MASSIVE_BASE), PX = TEST || 'https://api.massive.com';
 const sleep = (ms) => new Promise(r => setTimeout(r, TEST ? 0 : ms)), J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
@@ -40,9 +41,11 @@ const minOf = (s) => { const m = /^(\d{1,2}):(\d{2})/.exec(String(s || '')); ret
 fs.mkdirSync('data', { recursive: true }); fs.mkdirSync(CDIR, { recursive: true });
 
 // ---- 1. ledger: merge today's per-stock audit (data/ignition-live.json) into the durable history, one line per mover per day
-let hist = JL(HIST); { const live = J('data/ignition-live.json', null), have = new Set(hist.map(x => x.d + '|' + x.sym));
+// R1: sealed T1 files are read strictly; a missing key / unreadable / unmigrated file stops the study with its code (never an empty ledger)
+let hist, live; try { hist = readSealedLines(HIST); live = readSealedJson('data/ignition-live.json', null); } catch (e) { console.error('missed-runner ledger: ' + sealedCode(e) + ' (T1 sealed data unavailable; nothing written)'); process.exit(1); }
+{ const have = new Set(hist.map(x => x.d + '|' + x.sym));
   if (live && live.day && Array.isArray(live.missed)) { const add = live.missed.filter(x => !have.has(live.day + '|' + x.sym)).map(x => ({ d: live.day, mode: live.mode, ...x }));
-    if (add.length) { fs.appendFileSync(HIST, add.map(x => JSON.stringify(x) + '\n').join('')); hist = hist.concat(add); console.log('missed-runner ledger: +' + add.length + ' movers from ' + live.day); } } }
+    if (add.length) { appendSealedLines(HIST, add); hist = hist.concat(add); console.log('missed-runner ledger: +' + add.length + ' movers from ' + live.day); } } }
 if (env.MR_LEDGER_ONLY) process.exit(0);
 const dayRows = JL(DAYS), watched = new Set(dayRows.map(x => x.day));
 const byKey = new Map(hist.map(x => [x.d + '|' + x.sym, x]));

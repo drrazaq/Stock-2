@@ -42,16 +42,25 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: T1 provider data is saved only sealed (sealed-store.mjs); no key = nothing saved, run fails
       # Durable per-stock ledger of today's 15%+ movers (the missed-runner autopsy reads it; no data calls).
       - if: always()
         continue-on-error: true
         run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
+        env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
       - if: always()
+        env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
         run: |
           set -euo pipefail
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/radar-v3-snap.json data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; true
+          source .github/sealed-git.sh   # R1: sealed merge driver + staging that includes deletions + guard
+          for f in data/ignition-paper.jsonl data/ignition-days.jsonl data/vol-curve.json data/radar-v3-ledger.jsonl data/radar-v3-snap.json data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; true
+          for f in data/ignition-live.json data/premarket.jsonl data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/opp-ledger.jsonl; do sealed_stage "$f" "$f.sealed"; done
+          sealed_stage data/shadow data/ignition-runs
+          sealed_guard   # refuses a commit that adds or modifies any T1 path in plaintext
           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }

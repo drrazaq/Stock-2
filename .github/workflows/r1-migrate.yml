@@ -1,0 +1,42 @@
+name: R1 sealed provider data migration (one-off, owner approval only)
+# R1 (review only; NOT run). Converts the tracked plaintext T1 provider-data files to sealed files in ONE verified commit:
+# seal + read-back, plaintext deletions staged with their sealed replacements, index verified (no T1 plaintext left, every sealed
+# blob decrypts to the original bytes). Nothing is committed unless every check passes. Runs only by hand, with the exact
+# confirmation text, inside the approved maintenance window while the T1 writer workflows are disabled (see the R1 deployment notes).
+# Git HISTORY is not changed: earlier commits keep their plaintext copies.
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type MIGRATE-R1 to seal the T1 files (owner-approved maintenance only)'
+        required: true
+permissions:
+  contents: write
+concurrency: r1-migrate
+jobs:
+  migrate:
+    if: github.event.inputs.confirm == 'MIGRATE-R1'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - shell: bash
+        env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
+          SEALED_MERGE_FAVOR: ''   # a concurrent sealed change during the migration is a conflict, never one side
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          source .github/sealed-git.sh
+          node sealed-migrate.mjs --plan | tail -n 1
+          node sealed-migrate.mjs --apply
+          node sealed-guard.mjs --all
+          git commit -q -m "R1: seal T1 provider data (plaintext removed from the tip; history unchanged)"
+          ok=0; for i in 1 2 3; do if git pull -q --rebase && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$ok" = 1 ] || { echo "Error: migration commit not published"; exit 1; }
+          node sealed-migrate.mjs --verify-tree origin/main

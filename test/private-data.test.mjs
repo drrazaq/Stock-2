@@ -24,7 +24,7 @@ const SECRET = 'HOLDING-SENTINEL-7781';
 // a fake "public" checkout (the script + file list + save-data.sh + private files) and a fake private repository with a README
 function world() {
   const pub = tmp('pub-'), bare = tmp('priv-'), seed = tmp('seed-'), dir = path.join(tmp('run-'), 'private-data');
-  for (const f of ['.github/private-data.sh', '.github/private-files.txt', '.github/save-data.sh']) W(pub, f, fs.readFileSync(path.join(REPO, f)));
+  for (const f of ['.github/private-data.sh', '.github/private-files.txt', '.github/save-data.sh', '.github/sealed-git.sh', 'sealed-guard.mjs', 'sealed-merge.mjs', 'sealed-store.mjs', '.gitattributes']) W(pub, f, fs.readFileSync(path.join(REPO, f)));
   W(pub, 'data/my-positions.json', '{"AAA":{"entry":10,"note":"' + SECRET + '"}}\n'); W(pub, 'data/halal.json', '{\n "AAA": {"s":"ok"}\n}\n');
   W(pub, 'data/settings.json', '{"focus":true}\n'); W(pub, 'data/my-trades.jsonl', '{"sym":"BBB"}\n'); W(pub, 'data/signals.json', '{"public":1}\n');
   sh('git init -q --bare -b main ' + bare, seed);

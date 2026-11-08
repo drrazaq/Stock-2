@@ -31,6 +31,7 @@ jobs:
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data (options lane, movers, live watcher record)
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
@@ -43,7 +44,10 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
           RATE: ${{ vars.RATE || '8' }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
-      - run: |
+      - env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
+          SEALED_MERGE_FAVOR: theirs                   # R1: this run's hunk wins, as resolve_step does for non-owner files
+        run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           # review S-1 (22 Oct): on a conflict the owner's positions, trades and bot state keep origin's copy (the bot's), every other

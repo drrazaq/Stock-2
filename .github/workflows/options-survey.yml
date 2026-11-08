@@ -26,17 +26,24 @@ jobs:
           set -o pipefail
           node options-survey.mjs 2>&1 | tee run.log
         env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
       - shell: bash
+        env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
+          SEALED_MERGE_FAVOR: theirs                   # R1: same hunk preference as -X theirs, applied to the decrypted text
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
+          source .github/sealed-git.sh
           OUTD="$RUNNER_TEMP/out"; mkdir -p "$OUTD"
-          cp data/options-spread-survey.json data/options-spread-survey.md "$OUTD/"
+          cp data/options-spread-survey.json.sealed data/options-spread-survey.md.sealed "$OUTD/"   # R1: only the sealed copies exist
           git reset -q --hard && git pull -q --rebase
-          cp "$OUTD/options-spread-survey.json" "$OUTD/options-spread-survey.md" data/
-          git add data/options-spread-survey.json data/options-spread-survey.md
+          cp "$OUTD/options-spread-survey.json.sealed" "$OUTD/options-spread-survey.md.sealed" data/
+          rm -f data/options-spread-survey.json data/options-spread-survey.md
+          sealed_stage data/options-spread-survey.json data/options-spread-survey.json.sealed data/options-spread-survey.md data/options-spread-survey.md.sealed
+          sealed_guard
           git diff --cached --quiet || git commit -m "options spread survey $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the survey"; exit 1; }

@@ -6,12 +6,16 @@
 # as -X theirs did. Hunks that do not conflict are kept from both sides, as before.
 # Usage: bash .github/save-data.sh "commit message"   (test/save-data.test.mjs drives it on throw-away repositories)
 OWNER_FILES=" data/my-positions.json data/my-trades.jsonl data/tg-state.json "
+# R1 (review only): sealed provider-data files (*.sealed) are merged by the sealed driver (decrypt, merge, re-encrypt); a sealed file
+# still in conflict here is never byte-merged or taken from one side: it stays unresolved, so this save fails loudly and retries.
+source "$(dirname "$0")/sealed-git.sh"
 T=$(mktemp -d)
 has() { git cat-file -e ":$1:$2" 2>/dev/null; }
 # one stopped rebase step: during a rebase stage 2 is origin (upstream), stage 3 is this job's commit
 resolve_step() {
   local f side
   git diff --name-only --diff-filter=U -z | while IFS= read -r -d '' f; do
+    case "$f" in *.sealed) echo "sealed file still in conflict after the sealed merge driver: $f"; continue ;; esac
     case "$OWNER_FILES" in *" $f "*) side=ours ;; *) side=theirs ;; esac
     if has 2 "$f" && has 3 "$f"; then
       git show ":2:$f" > "$T/o"; git show ":3:$f" > "$T/t"; if has 1 "$f"; then git show ":1:$f" > "$T/b"; else : > "$T/b"; fi
@@ -35,6 +39,7 @@ pull() {
   ! in_rebase
 }
 git add data
+sealed_guard || { git reset -q; echo "Error: refusing to publish T1 provider data in plaintext"; exit 1; }
 git diff --cached --quiet || git commit -q -m "${1:-scan $(date -u +%FT%RZ)}"
 ok=0; for i in 1 2 3 4 5; do if pull && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep "${SAVE_SLEEP:-10}"; done
 rm -rf "$T"

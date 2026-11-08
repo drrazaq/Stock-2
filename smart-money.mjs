@@ -10,6 +10,7 @@
 // Read-only. Never an order. Not a halal ruling.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { readSealed, writeSealed, sealedCode } from './sealed-store.mjs';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
 
 const env = process.env;
@@ -80,8 +81,9 @@ insiders.sort((p, q) => q.usd - p.usd); analysts.sort((p, q) => (q.now - q.was) 
 // POINT-IN-TIME ANALYST ARCHIVE (forward only): today's analyst counts for every stock, saved with the capture time, so analyst
 // revisions can be tested honestly in a few months (past values cannot be rebuilt: providers show only today's numbers).
 if (snap.length) { const F = 'data/analyst-archive-' + today.slice(0, 7) + '.jsonl.gz';   // one file a month keeps each daily save small
-  let old = ''; try { old = zlib.gunzipSync(fs.readFileSync(F)).toString(); } catch (e) {}
-  if (!old.includes('"at":"' + today)) fs.writeFileSync(F, zlib.gzipSync(old + JSON.stringify({ at: today, capturedAt: new Date().toISOString(), source: 'finnhub recommendation', rows: snap }) + '\n')); }
+  // R1: the archive is a sealed T1 file; an unreadable one is reported and NOT replaced by a fresh month (that would drop its history)
+  let old = null; try { const b = readSealed(F); old = b === null ? '' : zlib.gunzipSync(b).toString(); } catch (e) { console.error('analyst archive: ' + sealedCode(e) + ' (not updated)'); }
+  if (old !== null && !old.includes('"at":"' + today)) writeSealed(F, zlib.gzipSync(old + JSON.stringify({ at: today, capturedAt: new Date().toISOString(), source: 'finnhub recommendation', rows: snap }) + '\n')); }
 
 // ---- 3: FMP upgrades (only if the FMP plan allows this endpoint; otherwise skipped quietly)
 let upgrades = [], fmpNote = '';
@@ -161,4 +163,4 @@ if (study) msg.push('', 'HISTORY TEST (' + study.at + '): buying the next open a
 msg.push('', 'Insiders sell for many reasons; buying with their own money is the rarer, stronger signal. Not an order, not a halal ruling: check ZAD.');
 const text = msg.join('\n');
 if (env.TG_TOKEN && env.TG_CHAT && !QUIET) for (let i = 0; i < text.length; i += 3800) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: text.slice(i, i + 3800), disable_web_page_preview: true }) }).catch(() => {});
-console.log(text);
+console.log('smart money: message of ' + text.length + ' characters, ' + insiders.length + ' insider and ' + analysts.length + ' analyst lines (content not printed: Actions logs of this repository are public; R1)');

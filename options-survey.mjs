@@ -9,6 +9,7 @@
 //   (c) whether ANY such call exists (count), and the highest-delta one of them.
 // Writes data/options-spread-survey.json and data/options-spread-survey.md. Keys only from env (GitHub secrets), never printed.
 import fs from 'node:fs';
+import { writeSealed } from './sealed-store.mjs';
 const env = process.env, AD = 'https://data.alpaca.markets', AH = { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY || '', 'APCA-API-SECRET-KEY': env.ALPACA_SECRET || '' } };
 const J = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const sleep = (ms) => new Promise(r => setTimeout(r, ms)), TODAY = new Date().toISOString().slice(0, 10);
@@ -62,7 +63,7 @@ for (const p of PICK) { const sp = snap[p.s], spot = (sp && sp.latestTrade && sp
     atm: atm ? { ...view(atm, spot), mid: r4((atm.ap + atm.bp) / 2), premiumMidUSD: r4(50 * (atm.ap + atm.bp)) } : null, atmHalfSpreadPctMedianAllExpiries: r4(atmAll.length ? 100 * median(atmAll) : null),
     cheapestAffordable: view(cheapest, spot), highestDeltaAffordable: view(best, spot), anyAffordable: aff.length > 0, nAffordable: aff.length, anyAffordableWithFee: affFee.length > 0, nTightAllIn: tight.length, highestDeltaTightAllIn: view(bestTight, spot),
     affordableHalfSpreadPctMedian: r4(aff.length ? 100 * median(aff.map(halfSp)) : null) });
-  console.log(p.s.padEnd(6), 'spot ' + r4(spot), 'atm ' + (atm ? (100 * atm.ap).toFixed(0) + ' USD hs ' + (100 * halfSp(atm)).toFixed(2) + '%' : 'n/a'), 'affordable ' + aff.length, best ? 'best delta ' + best.delta.toFixed(2) : ''); }
+  }   // R1: the per-stock quote line (spot, ATM cost, spread) is no longer printed: Actions logs of this public repository are public
 const atmHs = rows.filter(r => r.atm).map(r => r.atm.halfSpreadPct), atmFs = rows.filter(r => r.atm).map(r => r.atm.fullSpreadPct), tightRows = rows.filter(r => r.nTightAllIn > 0), withAff = rows.filter(r => r.anyAffordable);
 const S = { stocks: rows.length, medianAtmHalfSpreadPct: r4(median(atmHs)), medianAtmFullSpreadPct: r4(median(atmFs)), maxAtmFullSpreadPct: r4(Math.max(...atmFs)), atmFullSpreadOver5Pct: atmFs.filter(x => x > 5).length, medianAtmQuoteAgeMin: r4(median(rows.filter(r => r.atm && r.atm.quoteAgeMin !== null).map(r => r.atm.quoteAgeMin))),
   withSq15b300Contract: tightRows.length, sq15b300Note: 'delta >= 0.30, ask x 100 + 5 <= 300, FULL spread (ask-bid)/mid <= 5%, not crossed/locked, sizes > 0 (the SQ15-PB12-300 filters, quote age not applied here)', typicalDeltaSq15b300: r4(median(tightRows.map(r => r.highestDeltaTightAllIn.delta))), sq15b300Stocks: tightRows.map(r => r.sym), maxAtmHalfSpreadPct: r4(Math.max(...atmHs)), medianAtmCostUSD: r4(median(rows.filter(r => r.atm).map(r => r.atm.costUSD))),
@@ -74,11 +75,11 @@ const OUT = { generatedAt: new Date().toISOString(), note: 'INFORMATION ONLY (on
   window: { daysToExpiry: [LO, HI], cap: CAP, minDelta: MIN_DELTA, atm: 'standard monthly expiry nearest 90 days in the window (any expiry if no monthly), strike nearest the latest trade' },
   universe: { halalOk: OK.length, ranked: ranked.length, picked: PICK.length, giantsIncluded: forced.map(x => x.s), giantsMissing: GIANTS.filter(g => !forced.some(f => f.s === g)) },
   summary: S, requests: req, errors: errs, stocks: rows };
-fs.writeFileSync('data/options-spread-survey.json', JSON.stringify(OUT, null, 1));
+writeSealed('data/options-spread-survey.json', JSON.stringify(OUT, null, 1));   // R1: sealed T1 (OPRA quotes via Alpaca)
 const f = (x, d = 2) => x === null || x === undefined ? 'n/a' : (+x).toFixed(d);
 const md = ['# Options spread survey (' + TODAY + ', information only)', '', 'OPRA snapshot at ' + OUT.generatedAt + ' (Alpaca). Calls ' + LO + '-' + HI + ' days to expiry. ' + rows.length + ' most liquid ZAD-halal-ok US stocks (20-day traded value; named giants always in).', '',
   '**Summary:** median ATM half-spread ' + f(S.medianAtmHalfSpreadPct) + '% of mid (worst ' + f(S.maxAtmHalfSpreadPct) + '%), FULL spread ' + f(S.medianAtmFullSpreadPct) + '% (worst ' + f(S.maxAtmFullSpreadPct) + '%; ' + S.atmFullSpreadOver5Pct + ' over 5%); median ATM quote age ' + f(S.medianAtmQuoteAgeMin, 0) + ' min. median ATM call costs ' + f(S.medianAtmCostUSD, 0) + ' USD. ' + S.withAffordableCall + ' of ' + rows.length + ' have a call with delta >= 0.30 at <= 300 USD (' + S.withAffordableCallIncludingFee + ' counting the 5 USD fee; ' + S.withSq15b300Contract + ' also with full spread <= 5%: ' + (S.sq15b300Stocks.join(', ') || 'none') + '); typical delta of the cheapest such call ' + f(S.typicalDeltaCheapestAffordable) + ', of the highest-delta affordable call ' + f(S.typicalDeltaHighestAffordable) + '. No affordable call: ' + (S.withoutAffordable.join(', ') || 'none') + '.', '',
   '| # | Stock | Spot | ATM cost USD | ATM half-spr % | ATM full-spr % | Cheapest <=300 & delta>=0.30: strike / expiry / delta / cost / half-spr % | Highest-delta <=300 | Any? |', '|---|---|---|---|---|---|---|---|---|',
   ...rows.map(r => { const c = r.cheapestAffordable, b = r.highestDeltaAffordable; return '| ' + r.liquidityRank + ' | ' + r.sym + ' | ' + f(r.spot) + ' | ' + (r.atm ? f(r.atm.costUSD, 0) : 'n/a') + ' | ' + (r.atm ? f(r.atm.halfSpreadPct) : 'n/a') + ' | ' + (r.atm ? f(r.atm.fullSpreadPct) : 'n/a') + ' | ' + (c ? c.strike + ' / ' + c.expiry + ' / ' + f(c.delta) + ' / ' + f(c.costUSD, 0) + ' / ' + f(c.halfSpreadPct) : '-') + ' | ' + (b ? b.strike + ' ' + b.expiry + ' d' + f(b.delta) + ' ' + f(b.costUSD, 0) + ' USD' : '-') + ' | ' + (r.anyAffordable ? 'yes (' + r.nAffordable + ')' : 'no') + ' |'; }), ''];
-fs.writeFileSync('data/options-spread-survey.md', md.join('\n'));
-console.log(JSON.stringify(S, null, 1));
+writeSealed('data/options-spread-survey.md', md.join('\n'));
+console.log('options survey: ' + rows.length + ' stocks surveyed, ' + Object.values(errs).reduce((a, b) => a + b, 0) + ' request errors; results sealed (quotes and summaries are not printed: Actions logs are public; R1)');

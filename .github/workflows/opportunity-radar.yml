@@ -26,6 +26,7 @@ jobs:
           node shadow-outcomes.mjs 2>&1 | tee run.log || echo 'shadow outcomes failed' | tee -a run.log   # Phase 1 (28 Oct): 1/5/10-session outcomes + filter shadow report
           node opportunity-radar.mjs close 2>&1 | tee -a run.log
         env:
+          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

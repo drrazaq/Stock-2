@@ -29,6 +29,7 @@ import { dEligible, hash, FROZEN as RANK } from './rank-models.mjs';
 import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { readSealedJson, writeSealed, appendSealedLines, sealedKey, sealedCode } from './sealed-store.mjs';   // R1: T1 provider data is saved only sealed
 import { IG_RULES, LIVE_RULES, passes, fmtM, nyOffset, toBars, IG_VERSION } from './ignition-core.mjs';
 import { isFreshPriceAge } from './ignition-gates.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -36,6 +37,13 @@ const MV = local(env.MASSIVE_BASE) || 'https://api.massive.com', ALPD = local(en
 const SEC_WWW = local(env.SEC_BASE) || 'https://www.sec.gov', SEC_DATA = local(env.SEC_BASE) || 'https://data.sec.gov', SEC_UA = env.SEC_UA || 'stock-signal-board admin@users.noreply.github.com';
 const FAST = Boolean(local(env.MASSIVE_BASE)), sleep = (ms) => new Promise(r => setTimeout(r, FAST ? 0 : ms));
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
+// R1 (review only): every T1 save goes through sealedSave. Without the key (or on any sealed failure) the watcher keeps WATCHING and
+// alerting, saves NO provider data in plaintext, and ends with exit code 1 so the run shows as failed. An unreadable live file is
+// never overwritten (LIVE_UNKNOWN). An existing per-run archive is never replaced (EEXIST still stops the run, as {flag:'wx'} did).
+const SEALED_FAIL = [], sealedSave = (what, fn) => { try { fn(); return true; } catch (e) { if (e && e.code === 'EEXIST') throw e; SEALED_FAIL.push(what + ': ' + sealedCode(e)); console.error('R1 sealed save ' + what + ': ' + sealedCode(e) + ' (not saved; nothing written in plaintext)'); return false; } };
+const sealedExit = (code) => { if (SEALED_FAIL.length) { console.error('R1: ' + SEALED_FAIL.length + ' sealed save(s) failed: ' + SEALED_FAIL.join('; ')); process.exit(1); } process.exit(code); };
+if (!sealedKey()) console.error('R1 SEALED_KEY_MISSING: watching continues, but no provider data will be saved this run');
+let LIVE_UNKNOWN = null; const readLive = () => { try { return readSealedJson('data/ignition-live.json', null); } catch (e) { LIVE_UNKNOWN = sealedCode(e); console.error('R1 ignition-live: ' + LIVE_UNKNOWN + ' (treated as not recorded; it will not be overwritten)'); return null; } };
 // SEC map/submissions/Atom only: same requests, bounded headers and body consumption.
 const request = (url, options = {}) => fetch(url, { ...options, signal: AbortSignal.timeout(10000) });
 const pc = (x) => x === null || x === undefined ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%', CDIR = env.FM_CACHE_DIR || 'fm-cache';
@@ -48,7 +56,7 @@ PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in
 const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
 const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
 const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
-if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExclusive:901})){MESSAGE_STATE.maintain();const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(dir+'/'+INCIDENT_RUN_ID+'-delivery-recovery.json',JSON.stringify({day,runId:INCIDENT_RUN_ID,messageDelivery:MESSAGE_STATE.report()}),{flag:'wx'});console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
+if(sessionFinished(readLive(),day,{open:570,endExclusive:901})){MESSAGE_STATE.maintain();const dir='data/ignition-runs/'+day;sealedSave('delivery-recovery',()=>writeSealed(dir+'/'+INCIDENT_RUN_ID+'-delivery-recovery.json',JSON.stringify({day,runId:INCIDENT_RUN_ID,messageDelivery:MESSAGE_STATE.report()}),undefined,{exclusive:true}));console.log('watcher: session already recorded; skipping duplicate');sealedExit(0);}
 if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
 if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
@@ -180,7 +188,7 @@ if ((env.IG_PM_TEST || !env.IG_FAKE_MIN) && env.MASSIVE_KEY && clock() < 570) { 
     const all = rows.filter(r => r.prevC >= 0.10 && r.vol > 0 && r.price > 0).map(r => { const av = avgVol.get(r.sym) || (r.prevV > 0 ? r.prevV : 0); return { s: r.sym, pc: +r.prevC.toFixed(4), p: +r.price.toFixed(4), gap: +(r.price / r.prevC - 1).toFixed(4), v: Math.round(r.vol), x: av > 0 ? +(r.vol / av).toFixed(4) : null }; });
     for (const r of all) pm.set(r.s, r);
     const keep = [...all].filter(r => r.x !== null).sort((a, b) => b.x - a.x).slice(0, 600), ks = new Set(keep.map(r => r.s)); for (const r of all) if (!ks.has(r.s) && Math.abs(r.gap) >= 0.05) keep.push(r);
-    fs.appendFileSync('data/premarket.jsonl', JSON.stringify({ day, at: fmtM(clock()), priceAgeMin: ageMed, stocks: all.length, rows: keep }) + '\n');
+    sealedSave('premarket', () => appendSealedLines('data/premarket.jsonl', [{ day, at: fmtM(clock()), priceAgeMin: ageMed, stocks: all.length, rows: keep }]));
     console.log('pre-market record: ' + all.length + ' stocks traded before the open, ' + keep.length + ' saved (heaviest volume + gaps of 5%+), data about ' + ageMed + ' min old'); } }
 // ---- the audit: every stock that ran 15%+ (moved above the loop on 28 Oct so the 11:15 OPPORTUNITY RADAR snapshot can use it too), one deterministic code (data and safety reasons first, so they are never blamed on a rule)
 const codeOf = (v) => { const f = v.flags;
@@ -278,7 +286,7 @@ async function radarSnap(m, scanned, live) {
     movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
   await sendRadarOnce();
 }
-const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
+const saveObservationProgress=()=>{try{const file='data/ignition-runs/'+day+'/'+INCIDENT_RUN_ID+'-progress.json';writeSealed(file,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));}catch(e){console.error('observation progress archive unavailable ('+sealedCode(e)+')');}};   // R1: sealed, durable (temp+fsync+rename+read-back)
 process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
 saveObservationProgress();
 while (Date.now() - START < MAXMS) {
@@ -362,26 +370,27 @@ const coverage = beat.length ? { minutesWatched: beat.length, firstMinute: fmtM(
 // Incident backport: archive on original observation basis before any canonical end-of-run publication.
 const incidentSnapshot={version:IG_VERSION,configuredWindow:{open:570,endExclusive:901},collectionVersion:"WATCHER_CONTEXT_V2",day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()};
 const incidentArchive='data/ignition-runs/'+day;
-fs.mkdirSync(incidentArchive,{recursive:true});
-fs.writeFileSync(incidentArchive+'/'+INCIDENT_RUN_ID+'.json',JSON.stringify(incidentSnapshot),{flag:'wx'});
-fs.writeFileSync(incidentArchive+'/'+INCIDENT_RUN_ID+'.shadow.jsonl.gz',zlib.gzipSync(SR.rows().map(x=>JSON.stringify(x)).join('\n')+'\n'),{flag:'wx'});
-if(!preferSession(readJson('data/ignition-live.json',null),incidentSnapshot)){console.log('watcher: retained richer existing session; attempt archived');process.exit(0);}
+sealedSave('run archive',()=>writeSealed(incidentArchive+'/'+INCIDENT_RUN_ID+'.json',JSON.stringify(incidentSnapshot),undefined,{exclusive:true}));
+sealedSave('run shadow archive',()=>writeSealed(incidentArchive+'/'+INCIDENT_RUN_ID+'.shadow.jsonl.gz',zlib.gzipSync(SR.rows().map(x=>JSON.stringify(x)).join('\n')+'\n'),undefined,{exclusive:true}));
+const priorLive=readLive();
+if(LIVE_UNKNOWN){SEALED_FAIL.push('ignition-live unreadable: '+LIVE_UNKNOWN);}
+else if(!preferSession(priorLive,incidentSnapshot)){console.log('watcher: retained richer existing session; attempt archived');sealedExit(0);}
 if (Object.keys(vcToday).length >= 12) { VC.days[day] = vcToday; for (const d of Object.keys(VC.days).sort().slice(0, -25)) delete VC.days[d]; fs.writeFileSync('data/vol-curve.json', JSON.stringify(VC)); }
-fs.writeFileSync('data/ignition-live.json', JSON.stringify(incidentSnapshot,null,1));
+if (!LIVE_UNKNOWN) sealedSave('ignition-live', () => writeSealed('data/ignition-live.json', JSON.stringify(incidentSnapshot,null,1)));
 // FEED-FIXABLE: a data-feed miss that real-time prices could actually have helped = not visible/late live AND not already up 10%+
 // at the open AND not gapped 20%+ before 9:25 (a gap happens before any feed can help). Real-time cannot fix the rest.
 const DATA_CODES = new Set(['NOT_VISIBLE_LIVE', 'NO_LIVE_PRICE_AT_SIGNAL', 'VISIBLE_TOO_LATE', 'VOLUME_FIGURE_LATE']), dataMiss = missed.filter(x => DATA_CODES.has(x.code)),
   gapLike = (x) => (x.preMarketGap !== null && x.preMarketGap >= 0.2) || (x.openGap !== null && x.openGap >= 0.10) || (/^0?9:3[0-5]/.test(String(x.firstSeen)) && x.firstSeenUp >= 0.10), feedFix = dataMiss.filter(x => !gapLike(x));
 const edgar = { polls: EF.polls, fails: EF.fails, firstOk: EF.firstOkM === null ? null : fmtM(EF.firstOkM), filings: EF.filings, decided: EF.decided, eligibleD: EF.eligible, noLivePrice: EF.noPrice, medianLatencySec: EF.lat.length ? EF.lat.sort((a, b) => a - b)[Math.floor(EF.lat.length / 2)] : null };   // feed readiness, measured
 fs.appendFileSync('data/ignition-days.jsonl', JSON.stringify({ day, procStart: PROC_START, edgar, mode, feedFix: feedFix.length, feedGapLike: dataMiss.length - feedFix.length, feedFixAges: feedFix.map(x => x.firstQuoteAgeMin).filter(v => v !== null).slice(0, 50), liveRate: coverage ? coverage.liveRate : null, minutes: coverage ? coverage.minutesWatched : 0, firstMinute: coverage ? coverage.firstMinute : null, movers: missed.length, tally, alerts }) + '\n');   // one line a day: why each 15%+ mover was or was not caught (the 'missed' report reads the history)
-{ const ewl = Object.values(earlyWave).sort((x, y) => y.score - x.score); if (ewl.length) fs.appendFileSync('data/early-wave-obs.jsonl', JSON.stringify({ day, mode, src, n: ewl.length, top: ewl.slice(0, 300) }) + '\n'); }   // judged later against matched stocks; not a signal
+{ const ewl = Object.values(earlyWave).sort((x, y) => y.score - x.score); if (ewl.length) sealedSave('early-wave-obs', () => appendSealedLines('data/early-wave-obs.jsonl', [{ day, mode, src, n: ewl.length, top: ewl.slice(0, 300) }])); }   // judged later against matched stocks; not a signal
 fs.appendFileSync('data/ignition-paper.jsonl', triggers.filter(t => !t.logged).map(t => JSON.stringify(t) + '\n').join(''));
 // SHADOW STREAM (Phase 1): the day's candidates, gzipped (about 1,000-2,000 rows); outcomes are added after the close by shadow-outcomes.mjs
-try { const rs = SR.rows(); if (rs.length) { fs.mkdirSync('data/shadow', { recursive: true }); fs.writeFileSync('data/shadow/' + day + '.jsonl.gz', zlib.gzipSync(rs.map(x => JSON.stringify(x)).join('\n') + '\n')); console.log('shadow stream: ' + rs.length + ' candidates saved'); } } catch (e) { console.log('shadow stream: ' + e.message); }
+try { const rs = SR.rows(); if (rs.length && sealedSave('shadow stream', () => writeSealed('data/shadow/' + day + '.jsonl.gz', zlib.gzipSync(rs.map(x => JSON.stringify(x)).join('\n') + '\n')))) console.log('shadow stream: ' + rs.length + ' candidates saved (sealed)'); } catch (e) { console.log('shadow stream: ' + e.message); }
 // DELIVERY SCORECARD: every candidate that met an alert trigger (or was a rule hit) with its decision and 15:00 result; soft misses are
 // counted in the day's summary only (about 1,500 a day would bloat the public repo)
 try { const lastPx = {}; for (const v of Object.values(vis)) if (v.last > 0) lastPx[v.sym] = v.last; const E = EA.finish(lastPx, null, alerts); E.summary.sessionMinutes=sessionEvidence(incidentSnapshot).usableMinutes; const keep = E.rows.filter(r => !/^SOFT/.test(r.decision));
-  if (keep.length) fs.appendFileSync('data/opp-ledger.jsonl', keep.map(r => JSON.stringify(r)).join('\n') + '\n'); fs.appendFileSync('data/opp-days.jsonl', JSON.stringify(E.summary) + '\n'); } catch (e) { console.log('delivery scorecard: ' + e.message); }
+  if (keep.length) sealedSave('opp-ledger', () => appendSealedLines('data/opp-ledger.jsonl', keep)); fs.appendFileSync('data/opp-days.jsonl', JSON.stringify(E.summary) + '\n'); } catch (e) { console.log('delivery scorecard: ' + e.message); }
 // OPPORTUNITY RADAR same-day score (pre-registered in radar-v3-core.mjs): each line listed at 11:15 gets its last watched price and the
 // median $1+ stock's move over the same minutes, so the radar is judged against the average stock, not only against zero.
 try { if (RADAR.done) { const L = fs.existsSync('data/radar-v3-ledger.jsonl') ? fs.readFileSync('data/radar-v3-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)) : [], mEnd = medChg();
@@ -389,3 +398,4 @@ try { if (RADAR.done) { const L = fs.existsSync('data/radar-v3-ledger.jsonl') ? 
   const rows = [...new Set(L.filter(r => r.type === 'list' && r.d === day).map(r => r.sym))].filter(s => !have.has(s) && vis[s] && vis[s].last > 0).map(s => JSON.stringify({ type: 'close', d: day, sym: s, px: vis[s].last, mkt }));
   if (rows.length) fs.appendFileSync('data/radar-v3-ledger.jsonl', rows.join('\n') + '\n'); } } catch (e) { console.log('radar close rows: ' + e.message); }
 console.log('ignition watcher: ' + loops + ' minutes, modes ' + JSON.stringify(modes) + (note ? ' [' + note + ']' : '') + ', ' + triggers.length + ' ignitions, ' + alerts + ' alerts, ' + missed.length + ' movers of 15%+ audited ' + JSON.stringify(tally));
+if (SEALED_FAIL.length) sealedExit(1);   // R1: a run whose provider data could not be saved sealed is reported as failed
