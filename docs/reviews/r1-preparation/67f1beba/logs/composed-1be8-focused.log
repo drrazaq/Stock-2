@@ -1,0 +1,204 @@
+✔ extracted source is the real sec() function (1.1183ms)
+SEC answered HTTP 404 (not found) for USD/CY2026Q2.json: the SEC has no such file (for example that quarter is not published yet); not retried; the Finnhub fallback is used instead
+✔ HTTP 404: one request, described as not found (no refusal, no retries), fallback unchanged (45.250255ms)
+SEC answered HTTP 403 for USD/CY2026Q2.json after 3 retries (the SEC is refusing this server); the Finnhub fallback is used instead
+SEC answered HTTP 429 for USD/CY2026Q2.json after 3 retries (the SEC is rate-limiting this server); the Finnhub fallback is used instead
+✔ HTTP 403 and 429 keep the three retries and are described as refusal / rate limiting with the real retry count (33.176796ms)
+SEC answered HTTP 500 for USD/CY2026Q2.json (not retried); the Finnhub fallback is used instead
+✔ other errors: not retried, stated plainly; success unchanged (14.17035ms)
+✔ pure mapping: exact names only; units and plausible bands checked; unmapped names are UNKNOWN (12.404667ms)
+✔ pure merge: a subsidiary series never renames or replaces the official headline; conflicting duplicates are UNKNOWN (16.914854ms)
+✔ actual job + actual ACTIONS: headline series with units, reference periods and source; no misplaced 1710K / private-payroll headline (349.353481ms)
+✔ actual "calendar" command: subsidiary series listed separately with UNKNOWN reasons, vintage and source (400.253415ms)
+✔ provider sends only the private-payrolls row: the jobs report headline is UNKNOWN, never filled by the subsidiary (351.779101ms)
+✔ a calendar saved before the repair is never re-shown with merged figures (44.600309ms)
+✔ R1: a provider period that disagrees with the official reference is UNKNOWN, never relabelled; agreeing and no-hint controls stay valid (708.792627ms)
+✔ R2: duplicate rows that differ only in unit are UNKNOWN in either order (870.217395ms)
+✔ R3: a null/zero cached CPI index never becomes a released value (no -100%); a valid zero payroll CHANGE stays (489.264563ms)
+✔ R4: a provider previous retrieved after the release is labelled as such, never as a pre-release vintage (276.129894ms)
+✔ R4b: a partial Alpha Vantage refresh does not freshen the unchanged payroll series clock (242.935539ms)
+✔ R5: claims numerically below consensus read BELOW, with the job-market meaning stated separately (29.699821ms)
+✔ R6 (health): an actionable delivery failure with complete configured coverage keeps its message-recovery counts (38.43215ms)
+✔ production reader macroNow: a headline surprise keeps its exact study key; a subsidiary series never triggers a reaction (58.748463ms)
+✔ R4 (r3): a cached actual with a missing retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim (252.531212ms)
+✔ R4 (r3): a cached actual with a invalid retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim (252.485575ms)
+✔ R4 (r3) control: a timestamped cached actual keeps its real retrieval date (252.656822ms)
+✔ R4 (r3): provider figures with an unknown retrieval time make no release-timing claim; footnote cites no fetch date (26.83715ms)
+✔ all requests stayed synthetic and offline (0.876647ms)
+✔ fixture reproduces the saved 5 Nov evidence exactly (16 missing configured minutes, longest 5, 315/390) (1.139021ms)
+✔ health line keeps the outside-window qualification and separates missing minutes from outside time (79.462426ms)
+✔ the same line reaches the actual ACTIONS message unchanged (85.443262ms)
+✔ the full health command still shows the complete original watcher text (33.496737ms)
+✔ a snapshot whose watcher text and structured report disagree is shown in full, never shortened from mismatched numbers (56.719497ms)
+✔ other long problems end at a clause boundary with a pointer to the full text, never mid-word (40.059817ms)
+✔ all requests stayed synthetic and offline (0.644028ms)
+intraday check done: 1 watched, 0 new alerts
+✔ conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS (121.348287ms)
+intraday check done: 1 watched, 0 new alerts
+✔ stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS (62.070706ms)
+intraday check done: 1 watched, 0 new alerts
+✔ stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route (45.255994ms)
+intraday check done: 3 watched, 0 new alerts
+✔ undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped) (86.494271ms)
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open (113.9893ms)
+intraday check done: 1 watched, 0 new alerts
+✔ labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence (74.430897ms)
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+✔ close statement: the regular 4:00 pm NYSE close is kept apart from the watcher's 3:00 pm cutoff; early-close days use 1:00 pm (179.89648ms)
+intraday check done: 1 watched, 0 new alerts
+✔ records untouched: positions and Telegram offset unchanged; one first check a day (49.816926ms)
+intraday check done: 2 watched, 0 new alerts
+intraday check done: 1 watched, 0 new alerts
+intraday check done: 2 watched, 0 new alerts
+✔ 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check (198.008934ms)
+intraday check done: 2 watched, 0 new alerts
+intraday check done: 0 watched, 0 new alerts
+✔ 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN (160.778623ms)
+✔ all requests stayed synthetic and on loopback (0.336365ms)
+✔ blocker 2: a directory-fsync EIO fails the write and the original plaintext is KEPT (Codex injected EIO twice) (6.106685ms)
+✔ blocker 2: EINVAL/ENOTSUP from a directory fsync (unsupported) is tolerated; short writes are completed, a zero write fails (79.586724ms)
+✔ blocker 3 (Codex reproduction): no key and NO options record -> the nightly options lane makes no request and sends nothing (73.18839ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+✔ blocker 3: no key and no record -> an owner option command is NOT RECORDED; with the key and no record it is recorded (absent != unreadable) (240.004974ms)
+✔ blocker 3: every keyless writer job stops at once with SEALED_KEY_MISSING (before any request); readers report it even when files are absent (752.778958ms)
+✔ blocker 5: pre-migration, offset-only bot saves still publish; plaintext T1 that an old writer added is refused at push only once migrated (1557.417272ms)
+✔ owner-state race (Codex reproduction): bot records a real trade while the scan saves paper calls -> both kept (709.043028ms)
+✔ owner-state race: a real clash on the owner's trades is REFUSED (never one side), the bot keeps and retries its commit, the owner is warned once (46673.99889ms)
+✔ an unpublished commit is retried by the next save even when nothing new is staged (before rev3 it stayed behind) (751.888589ms)
+✔ keyed merge unit: one-sided and identical changes merge, deletions respected, clashes refused, non-objects refused (0.474022ms)
+✔ writer quiescence gate (rev6 capture v2): open-status census + 31-day created coverage, complete pages, cap, repository, freshness (1.651762ms)
+✔ Codex rev3 #1: an identical RETRY after a directory-fsync EIO keeps the plaintext (durability first, then removal) (3.551306ms)
+✔ all scan requests stayed on loopback (0.260932ms)
+✔ R1-C2: staging only the .sealed name leaves plaintext in HEAD (the trap); sealed_stage + guard leave ciphertext only (360.866589ms)
+✔ guard --staged: refuses an added/modified plaintext T1 path or temp file; allows its deletion and unrelated saves (609.929683ms)
+✔ R1-C5 reproduced: WITHOUT the driver, pull --rebase -X theirs silently keeps one side of a sealed ledger (243.142542ms)
+✔ R1-C5 closed: WITH sealed-git.sh, concurrent appends from two runs are both kept (decrypt, line union, re-encrypt) (320.020887ms)
+✔ JSON state: non-overlapping edits merge; an overlapping edit follows SEALED_MERGE_FAVOR; without it the save fails, nothing lost (539.252075ms)
+✔ binary (.gz) changed on both sides, or no key at merge time: conflict, never one side, never plaintext (525.368353ms)
+✔ save-data.sh (nightly scan save) end to end: sealed ledger merged with a concurrent bot save; guard blocks plaintext (610.102036ms)
+✔ leaders-study copy-back: the CLI three-way merge of a history segment keeps the watcher's appends made during the 2-hour run (65.06878ms)
+fatal: path '.github/r1-migration-manifest.json' does not exist in 'HEAD'
+✔ plan: exactly the T1 plaintext paths of the given tree (no key needed); neighbours untouched (32.911807ms)
+✔ apply + receipt: ciphertext only, manifest of every source path/size/hash, parent = approved source; history not rewritten (221.498459ms)
+✔ Codex blocker 4: an unreviewed staged T1 addition, a dirty tree or HEAD != approved source are all refused; nothing changes (68.800796ms)
+✔ Codex blocker 4: verification refuses zero files, a missing or extra sealed file, a changed one, and a commit rebased off the source (668.759551ms)
+✔ interrupted migration: no commit, the guard refuses the partial state, a clean checkout of the source restarts (285.393541ms)
+✔ Codex blocker 1: recovery export refuses the checkout by real path, symlink escapes, symlinks below it, and overwrites (164.572672ms)
+✔ CLI: --plan needs no key; --apply needs the key and the approved source; --verify-tree reports counts only (461.785657ms)
+✔ Codex rev3 #3: deleting a sealed file AND its manifest entry no longer yields a clean receipt (expected set recomputed from the source) (217.985037ms)
+✔ Codex rev3 #2: a segmented ledger is exported ONCE as its logical file (base + segments), never duplicated by its segments (160.37071ms)
+✔ backup-key check vector: reveals neither value nor key; the right backup passes, any other secret fails; CLI exit codes (230.359324ms)
+✔ backup compare (B5b route a): equal copies PASS, any difference FAILS, a missing backup is an error; output reveals nothing (85.734197ms)
+R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+Telegram: 1 message(s) read
+R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+✔ bot: an options record sealed under another key -> "bought option" is NOT RECORDED and the record bytes stay identical (74.169277ms)
+Telegram: 1 message(s) read
+Telegram: 1 message(s) read
+R1 sealed read data/options-shadow.json: SEALED_UNREADABLE
+R1 sealed read data/movers-state.json: SEALED_LEGACY_PLAINTEXT
+✔ bot: without the key the same command is NOT RECORDED (SEALED_KEY_MISSING); with it, recorded and still sealed (control) (101.894907ms)
+✔ nightly options lane: an unreadable options record stops the lane BEFORE any ticket, request or paper change (30.845503ms)
+✔ bot: an unmigrated plaintext movers file is UNKNOWN (SEALED_LEGACY_PLAINTEXT), not "not produced yet" (27.281278ms)
+✔ health: a tampered watcher live file is a named problem with state UNKNOWN; the watcher evidence line says UNKNOWN (159.690008ms)
+✔ missed-runner ledger: unmigrated plaintext history stops the job (exit 1) and is left untouched; sealed input appends sealed (225.724088ms)
+✔ shadow outcomes: a sealed day file under another key stops the step with its code; nothing is written (110.962816ms)
+✔ watcher evidence (watcher-reporting): an unmigrated plaintext run archive makes the evidence UNKNOWN and actionable (37.231924ms)
+✔ all requests stayed on loopback (0.949176ms)
+✔ a bot save that cannot reach main is kept on a recovery branch, then merged into main by the next recovery pass and deleted (1171.946234ms)
+✔ a recovery branch that clashes with main on the owner's trades is KEPT (not dropped) and reported; it merges once main allows (917.173109ms)
+✔ every save path uses recovery on final failure: nightly save-data.sh and append ledgers (segments) are recovered too (909.767943ms)
+✔ remaining limit, explicit: when the remote refuses BOTH main and recovery pushes, the commit exists only on that runner (727.928698ms)
+✔ the recovery push is guarded: new T1 plaintext is never pushed to a recovery branch either (143.184728ms)
+✔ an interrupted sealed write leaves a temp file that is ignored by git (it can never block or join a save) (284.235641ms)
+✔ Codex #1+#2: a stale recovery (offset 2, STALE positions, plus a code file) is REFUSED: main keeps offset 9, NEW positions, current code (555.445011ms)
+✔ a runner's successive checkpoints (immutable refs) merge in order: offset 2 then 3, never back (1809.250179ms)
+✔ Codex #3 race: a ref advanced after its merge is NOT deleted (compare-and-delete); the newer checkpoint merges next pass (622.275954ms)
+✔ Codex #4: a failed recovery fetch is UNKNOWN (exit 2), visible, and the bot warns; nothing is assumed merged (200.698229ms)
+✔ Codex d02cdfea #1: main positions {} -> NEW -> {} after the checkpoint base: the OLD checkpoint is REFUSED (causal history, not blob equality) (292.317218ms)
+✔ Codex d02cdfea #2: a merge commit (data-only parents, code introduced by the merge) is REFUSED; code on main unchanged (283.805711ms)
+✔ a recovery commit records Recovered-From: <tip>; only that lineage counts as "ours" on a later pass (518.492459ms)
+✔ a newer checkpoint processed first supersedes its older ancestor (deleted as contained, not refused) (437.050914ms)
+✔ release rehearsal: gate -> code -> rollback-before-migration -> migration -> receipt -> writers -> guard -> recovery export (1889.193013ms)
+✔ release precheck: PASS when no candidate file drifted on the target; FAIL on drift or an already-sealed target (142.646509ms)
+✔ round trip; ciphertext reveals no plaintext; fresh IV each time; binary, not base64 (3.895709ms)
+✔ key derivation: domain-separated from sha256(secret) (the private.enc key); read only from SEALED_SECRET (0.305199ms)
+✔ Codex R1-C3 replay: a valid sealed file copied over another path is SEALED_UNREADABLE (path bound in the AAD) (6.875771ms)
+✔ wrong key, tampering (every byte region), truncation, other versions and malformed input: SEALED_UNREADABLE (1.233654ms)
+✔ Codex R1-C3 keyless legacy read: plaintext with no sealed copy is SEALED_LEGACY_PLAINTEXT with or without a key (1.429898ms)
+✔ no key: every write refuses BEFORE touching any file; a sealed file without the key is SEALED_KEY_MISSING (never absent) (3.596874ms)
+✔ durable write: no temp file left, read-back verified, plaintext removed only after the sealed copy verifies (5.170979ms)
+✔ exclusive write replaces {flag:"wx"}: an existing per-run archive is never replaced (3.658577ms)
+✔ append + lines; listing by logical name; a plaintext T1 file in a sealed folder is refused (8.409004ms)
+✔ T1 inventory patterns: the 45 tracked families match; neighbours that are not T1 do not (0.486662ms)
+✔ unchanged content is not rewritten (no fresh-IV blob for an identical record); changed content is (3.893049ms)
+✔ segmented ledgers: appends write only that day's sealed segment; reads return base + segments in date order (11.546819ms)
+✔ no module reads or writes a T1 file with plain fs calls (only through sealed-store) (38.012898ms)
+✔ indirect writers: variables holding T1 paths are only written through sealed-store calls (0.80524ms)
+✔ public Actions logs: no per-stock option quotes, survey summary, or analyst/price message text is printed (0.267582ms)
+✔ the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed) (2.212334ms)
+✔ every workflow save that can carry T1 changes registers the sealed merge driver and runs the guard before committing (1.522086ms)
+✔ explicit stage lists use sealed_stage (addition + deletion) for T1 names; no plaintext T1 name is git-added directly (2.416531ms)
+✔ watcher artifact: the only T1 path uploaded is data/ignition-runs/, which now holds sealed files only (0.550847ms)
+✔ website: index.html fetches signals.json and discovery.json only (T2), and names no T1 file or sealed file (1.079682ms)
+✔ migration workflow: manual dispatch only, exact confirmation, approved source checkout, fast-forward push, tree receipt; no schedule (0.31269ms)
+✔ every push is preceded by the push-time guard on the reconciled tree (Codex re-review 5) (0.458128ms)
+✔ .gitattributes keeps sealed files out of text merge and diff (0.18005ms)
+✔ inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 same-family) all match the sealed patterns (0.380952ms)
+✔ rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored (0.555605ms)
+✔ rev5 recovery: no cherry-pick replay; producer refs are immutable (no force push); consumer is the data-only sealed-recover.mjs (0.354483ms)
+{"date":"2026-10-30","retained":333,"configuredObserved":331,"missing":[]}
+✔ actual watcher covers each configured minute with 2.5second snapshot work 2026-10-30 (2258.997322ms)
+{"date":"2026-11-02","retained":333,"configuredObserved":331,"missing":[]}
+✔ actual watcher covers each configured minute with 2.5second snapshot work 2026-11-02 (2024.616839ms)
+✔ daylight saving: New York is UTC-4 until 1 Nov 2026, UTC-5 after; the 12:45 / 13:45 UTC crons are both 8:45 New York in their season (14.56979ms)
+✔ market days: weekends and NYSE holidays are skipped (0.70558ms)
+✔ nothing is done outside session check window; no start after 15:30 (1.130478ms)
+✔ not running at 9:12 New York: starts it once, then waits 15 minutes before a second attempt, at most 3, then one DOWN alert (1.14431ms)
+✔ running on time: no alert, start time recorded; running late (GitHub delay like 11:10 on 26 Oct): one LATE alert (1.558792ms)
+✔ queued but not started by 9:25: one WAITING alert and no extra dispatch (concurrency would only queue it) (0.515234ms)
+✔ a run that watched and then ended before 11:00 is reported once, not restarted; a quick early exit (winter 7:45 run) does not count (0.960073ms)
+✔ yesterday's runs do not count for today (0.712892ms)
+✔ synthetic queued run uses job start rather than queue creation (0.806482ms)
+✔ unknown or future job timing stays unknown and does not claim a start (1.716809ms)
+✔ an active workflow with its watch job still queued is waiting, not running (0.383827ms)
+✔ long queue followed by a short job is not mistaken for a long watch (0.856376ms)
+✔ October 28 retained timestamps identify 14:59 job start, not 10:31 queue creation (0.275394ms)
+✔ legacy run-derived start is cleared when actual job evidence is unavailable (0.340511ms)
+✔ actual workflow refuses opposite-DST queued start without source I/O 2026-10-30 (86.825008ms)
+✔ actual workflow refuses opposite-DST queued start without source I/O 2026-11-02 (60.882291ms)
+✔ actual workflow preserves configured virtual schedule and observation budget after early wait 2026-10-30 (1837.212886ms)
+✔ actual workflow preserves configured virtual schedule and observation budget after early wait 2026-11-02 (1812.718374ms)
+✔ correct-season setup too early for the single-job envelope is explicitly refused; existing09:10 guard path remains available (61.837437ms)
+✔ correct-season late start remains labelled partial, archives both attempts and preserves richer canonical/delivery state (2176.008756ms)
+✔ slow sources leave explicit missing slots and do not extend beyond configured end (1210.946896ms)
+✔ setup/cache delays preserve original chronological clocks and label the resulting late start (1927.838823ms)
+✔ setup/cache delays beyond the configured window never manufacture observations (114.38622ms)
+✔ first verified job and early stop survive later in_progress duplicate (16.369805ms)
+✔ first verified job and early stop survive later queued duplicate (0.913813ms)
+✔ verified no-op with long queue time is not observation and does not consume the start (0.402214ms)
+✔ unavailable job evidence never becomes a creation-time start (0.494884ms)
+✔ configured boundary15:00 is independent of16:00 exchange close (1.42425ms)
+✔ day query bounds follow New York across23/25-hour DST days (2.651914ms)
+✔ manual/guard admission is bounded; late legitimate collection stays explicitly partial (0.696887ms)
+✔ complete daily pagination is independent of lifetime runs and uses actual jobs (16.465228ms)
+✔ history request cap and failed jobs are UNKNOWN, never proof of an earlier observation or permission to dispatch (3.126718ms)
+✔ actual guard handles metadata failure without declaring a start or dispatching (124.904911ms)
+✔ a later completed duplicate reaching15:00 cannot erase the earlier stop (1.032581ms)
+✔ partial history does not mislabel a later job as the original late start (0.573182ms)
+✔ short attempts retain the existing bounded startup retry rule without claiming observation coverage (0.424848ms)
+✔ earliest actual watcher job remains recorded when a later job in the same run is active (0.446161ms)
+✔ malformed run identity/status never establishes an empty history or permits dispatch (2.031512ms)
+ℹ tests 164
+ℹ suites 0
+ℹ pass 164
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 51385.207761
