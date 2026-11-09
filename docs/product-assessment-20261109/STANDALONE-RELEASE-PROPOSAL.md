@@ -5,7 +5,7 @@
 ## Exact baseline and current disposition
 
 - Source89d21db67cc9da1ab8254144d5d97ab80b5c4de3, parent production6e72a8d0c46385f3c329157d627636875505a224.
-- Binding/docs614ee388,25paths, bindingSHA25661f75b81acfdf51c46e540efdd856ae8c9698dc73e452fa3c005bc93401ca1b8; sourcepatch13fca8d4prefix/inversede28fbd9prefix, fullpins in existing reviewreceipt.
+- Binding/docs614ee388,25paths, bindingSHA25661f75b81acfdf51c46e540efdd856ae8c9698dc73e452fa3c005bc93401ca1b8; sourcepatchSHA25613fca8d442f0c81a15347bd124620ff71a80c46b9bdaab6d1bb669dcf94fd2f5; inverseSHA256de28fbd9c565e27d04c8aece6621af54d075175acc50f2efb5fd6ffd63ae542d.
 - Exact treefbd577399679dee0a36f9c92005ecf12fd365f2e. All25paths/bytes/modes/sourcebuild/inverse and155filevalidationPASS. Frozen clocks and actual-calendar4/4PASS; prior runtime freshness/STOPreviews preserved.
 - Operative-doc correction e15c93db, READMEsha256132cb6a48ba99dce47bc234f7f1e684be44942e67af01a8f111320578567f01a, reviewed against6733675493. Adoption unbounded, first genuine loaded-code evidence required, disjointsource/data not blanket concurrency proof: ACCEPTED corrections.
 - **Remaining R-B release blocker:** exactold/new replay proves duplicate09:20dispatch after new09:16reservation. Bounded compatibility correction requested directly fromClaude6733778910; source not yet published. No owner waiver requested for this small fix. Final corrected source/binding/STOP/inverse must replace the above baseline IN THIS SAME proposal and pass focused review before an executable approval request. These pins are not transferable to an unpublished rev3.
