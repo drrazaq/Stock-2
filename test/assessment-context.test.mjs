@@ -35,3 +35,15 @@ test('actual holdings lists distinguish designed no-stop from missing manual sto
  }finally{Date.now=old;await new Promise(r=>server.close(r));}
 });
 test('all assessment work stayed local',()=>assert.deepEqual(blocked,[]));
+
+test('business readiness and producer lineage remain separate from entry, execution and ZAD',()=>run({'data/discovery-journal.jsonl':[{
+ type:'assessment',id:'a'.repeat(64),symbol:'ZZQ',cycleKey:'b'.repeat(64),evidenceVersion:'c'.repeat(64),
+ ruleId:'DERIVED_RULE_SPEC_SHA256:'+'d'.repeat(64),ruleIdentityBasis:'DERIVED_FROM_RETAINED_RULE_TEXT_NOT_ADOPTION'
+}]},async S=>{
+ const t=S.fn('assessmentContext')('ZZQ',sig,{},'WAIT');
+ assert.match(t,/business DATED_DISCOVERY_LEAD_NOT_VALIDATED; valuation UNKNOWN/);
+ assert.match(t,/executable price UNKNOWN; ZAD/);assert.match(t,/Rule validation: NOT PROVEN/);
+ assert.ok(t.includes('assessment '+'a'.repeat(64)));assert.ok(t.includes('cycle '+'b'.repeat(64)));
+ assert.ok(t.includes('evidence '+'c'.repeat(64)));assert.match(t,/DERIVED_FROM_RETAINED_RULE_TEXT_NOT_ADOPTION/);
+ assert.doesNotMatch(t,/BUYING_RESEARCH/);
+}));
