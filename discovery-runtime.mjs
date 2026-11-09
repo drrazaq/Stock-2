@@ -75,7 +75,7 @@ export function triageAssessments({signals={},discovery={},earnings={},events={}
   batches,decisions,counts:Object.fromEntries(['SELECTED','EXISTING_EXCLUSION','ALREADY_INVESTIGATED_THIS_BATCH','ASSESSMENT_VERSION_ALREADY_RECORDED','DEFERRED_BATCH_CAP'].map(k=>[k,decisions.filter(x=>x.decision===k).length])),invalid};
 }
 export function assessmentJournalRows(queue){
- return Object.values(queue.batches).flat().map(r=>({type:'assessment',version:1,id:r.id,sym:r.symbol,horizon:r.horizon,recordedAt:queue.cutoff,evidenceVersion:r.evidenceVersion,triageVersion:queue.version,
+ return Object.values(queue.batches).flat().map(r=>({type:'assessment',version:1,id:r.id,symbol:r.symbol,horizon:r.horizon,recordedAt:queue.cutoff,evidenceVersion:r.evidenceVersion,triageVersion:queue.version,
   decision:'INVESTIGATE_OR_WAIT_NOT_ENTRY',sourceReferences:r.facts.map(x=>({source:x.source,...x.meta})),
   ruleId:r.facts.find(x=>x.source==='signals')?.facts.key||null,sourceSession:queue.sourceFreshness.session,
   quote:'UNKNOWN',execution:'NOT_OBSERVED',outcome:'UNRESOLVED',control:'UNLINKED',costConvention:{budget:1000,feeEachExecutedSide:3,wholeShares:true},
@@ -85,7 +85,7 @@ export function assessmentJournalRows(queue){
 // price or aggregate performance to fill an individual missing chain.
 export function linkAssessmentOutcomes(assessments,outcomes=[]){
  return assessments.map(a=>{const hits=outcomes.filter(o=>o.assessmentId===a.id&&o.evidenceVersion===a.evidenceVersion&&o.ruleId===a.ruleId&&o.horizon===a.horizon);
-  const o=hits.length===1?hits[0]:null;return {assessmentId:a.id,symbol:a.sym,horizon:a.horizon,status:!o?'UNRESOLVED_NO_UNIQUE_VERSIONED_OUTCOME':o.status,
+  const o=hits.length===1?hits[0]:null;return {assessmentId:a.id,symbol:a.symbol,horizon:a.horizon,status:!o?'UNRESOLVED_NO_UNIQUE_VERSIONED_OUTCOME':o.status,
    economicBasis:o?.economicBasis||'UNKNOWN',fixedControl:o?.controlVersion||'UNKNOWN',netAfterCosts:a.ruleId&&o?.completeChain===true&&o?.controlVersion&&o?.economicBasis==='AUTHENTIC_EXECUTION'&&o?.reviewStatus==='INDEPENDENT_COMPLETE_CHAIN_REVIEWED'&&/^[a-f0-9]{64}$/.test(o?.witnessId||'')?o.netAfterCosts??null:null,
    sourceWitness:o?.witnessId||null};});
 }

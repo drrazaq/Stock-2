@@ -17,7 +17,7 @@ try{
  const S=await loadScan({files});
  const cycle=S.fn('researchAssessmentCycle')(files['data/signals.json'],{cutoff,reviewedSymbols});
  if(cycle.error)throw Error(cycle.error);
- const cards=cycle.records.map(r=>({symbol:r.sym,horizon:r.horizon,id:r.id,output:S.fn('assessmentContext')(r.sym,files['data/signals.json'],{},'INVESTIGATE / WAIT: research attention only; no entry granted')}));
+ const cards=cycle.records.map(r=>({symbol:r.symbol,horizon:r.horizon,id:r.id,output:S.fn('assessmentContext')(r.symbol,files['data/signals.json'],{},'INVESTIGATE / WAIT: research attention only; no entry granted')}));
  if(blocked.length)throw Error('external request attempted');
  fs.mkdirSync(output,{recursive:true});
  const original=files['data/discovery-journal.jsonl'],saved=S.read('data/discovery-journal.jsonl');
@@ -25,5 +25,5 @@ try{
  const selected=new Set(cycle.records.map(x=>x.id)),result={sourceRef:ref,cutoff,clockMeaning:'Present research replay clock, not original bot detection',sourceFingerprints:fingerprints,reviewedSymbols,queue:cycle.queue,records:cycle.records,cards,
   feedback:cycle.feedback.filter(x=>selected.has(x.assessmentId)),persistence:cycle.persistence,legacyJournalPrefixPreserved:true,externalRequests:blocked.length,productionWrites:0};
  fs.writeFileSync(path.join(output,'flow-result.json'),JSON.stringify(result,null,2)+'\n');
- console.log(JSON.stringify({population:cycle.queue.population,counts:cycle.queue.counts,selected:cycle.records.map(x=>({symbol:x.sym,horizon:x.horizon,id:x.id})),sourceFreshness:cycle.queue.sourceFreshness,feedback:result.feedback,persistence:cycle.persistence,externalRequests:0},null,2));
+ console.log(JSON.stringify({population:cycle.queue.population,counts:cycle.queue.counts,selected:cycle.records.map(x=>({symbol:x.symbol,horizon:x.horizon,id:x.id})),sourceFreshness:cycle.queue.sourceFreshness,feedback:result.feedback,persistence:cycle.persistence,externalRequests:0},null,2));
 }finally{Date.now=old;process.chdir(root);}
