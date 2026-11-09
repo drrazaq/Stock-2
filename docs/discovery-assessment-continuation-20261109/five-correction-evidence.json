@@ -97,14 +97,16 @@
     "tradingLogic": "index.html math and live gates unchanged"
   },
   "validation": {
-    "status": "PENDING_EXACT_CORRECTED_COMMIT",
+    "status": "PASS_COMPLETE_EXACT_COMMIT_HOSTED_LOG",
+    "commit": "5ba1606d5d6c981d913006396f24a56fb46d686b",
     "run": 42701026958,
     "job": 129445452513,
-    "previousCompleteFailure": "6afba46d-complete-failure-receipt.json",
-    "previousPassFiles": 317,
-    "previousCompleteGroups": 318,
-    "previousRequiredPythonChecks": 9,
-    "testCorrection": "Pinned same four producer source files and clock; preserved NOT PROVEN assertion; added actual-caller same-cycle/frozen assertions. No runtime change."
+    "receipt": "5ba1606d-complete-validation.json",
+    "expectedFiles": 318,
+    "passFiles": 318,
+    "pythonChecks": 9,
+    "criticalTests": "Both real save/rebase orders; stable batches; exact rule/outcome linkage; NOT PROVEN actual display; legacy-cycle compatibility all PASS",
+    "previousFailurePreserved": "6afba46d-complete-failure-receipt.json"
   },
   "runtimeCodeCommit": "6afba46db47da597463b2041e8fd3c2ef00a54cc"
 }
