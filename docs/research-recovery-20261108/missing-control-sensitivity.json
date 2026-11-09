@@ -1,0 +1,25 @@
+{
+  "kind": "SAVED_PB12_MISSING_CONTROL_SENSITIVITY",
+  "sourceSha256": "77e49a4b263a694112f5e26b40b4419fe6f82cd462a5865b0726067261defd1a",
+  "producerSha256": "6851886bfb72e9bb680f4c69a4f20b38f1e2f6b9fb3cd51d394213b7cb8b3b52",
+  "ownAverageSha256": "c761ea1296ca625e742d6a17b6006171548498ae02ffadd7dd467dc919932b02",
+  "nullControlSemantics": "Retained producer calls ownAverage on same-half/liquid/same-hold other-date windows, skipping busy overlaps; helper returnsnull with fewer than3eligible returns. Per-row historic cause is not retained/authenticated.",
+  "fullSavedRows": 357,
+  "pairedRows": 324,
+  "missingControlRows": 33,
+  "knownPairedDifferenceSum": "-23.6677",
+  "meanMissingAdvantageNeededForFullZero": "0.7172030303030303030303030303",
+  "neededAdvantageRoundingEnvelope": [
+    "0.7162212121212121212121212121",
+    "0.7181848484848484848484848485"
+  ],
+  "meanStoredNetOnMissingRows": "0.2638757575757575757575757576",
+  "missingControlMeanThresholdForFullZero": "-0.4533272727272727272727272727",
+  "interpretation": "To erase the known paired deficit across all357rows, missing33net-minus-sameStock differences must average about+71.72percentage points; equivalently their missing controls must average about\u221245.33%at the saved net values. Not evidence that they do.",
+  "limits": [
+    "Original rounded percentage-model friction basis only; no exact executable $1,000 whole-share/$3-side P&L.",
+    "No missing controls imputed, outcomes excluded, exits changed or new strategy/filter tested.",
+    "Current saved rows differ from frozen firstRun; original NOT PROVEN verdict unchanged.",
+    "Full357-row same-stock superiority is not established; original prices/actions/terminal and control paths remain missing."
+  ]
+}
