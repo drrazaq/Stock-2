@@ -1,0 +1,489 @@
+{
+  "sourceCommit": "3ebf21b53e7986ce0482c579278d98895f9d8703",
+  "pricesSession": "2026-11-06",
+  "signalsGeneratedAt": "2026-11-07T01:00:32.060Z",
+  "sourceQuoteTimestamp": "NOT STORED in these rows",
+  "currentBBO": "UNKNOWN; no quote acquired",
+  "quickCandidates": 0,
+  "leadersCandidates": 0,
+  "shortRecordedPortfolio": {
+    "n": 115,
+    "winRate": 0.46956521739130436,
+    "avgPct": -0.02473645227190077,
+    "avgSpy": -0.00794220065489961,
+    "days": 20,
+    "stocks": 69
+  },
+  "discoveryGeneratedAt": "2026-11-07T11:37:11.914Z",
+  "horizonsGeneratedAt": "2026-11-08T06:43:36.511Z",
+  "qualityGeneratedAt": "2026-11-08T06:44:04.296Z",
+  "earningsFullVerdict": "NOT PROVEN",
+  "earningsRule": {
+    "minSurprise": 0.1,
+    "minUp": 0.03,
+    "minLoc": 0.5,
+    "maxGap": 0.03,
+    "maxStop": 0.15,
+    "exitMA": 20,
+    "hold": 40
+  },
+  "inputFingerprints": {
+    "data/signals.json": {
+      "gitCommit": "3ebf21b53e7986ce0482c579278d98895f9d8703",
+      "sha256": "60566afff1d76e90ae62209bb233f44e0c448fb1ac347f8ad3fdc78e48a03bc1"
+    },
+    "data/discovery.json": {
+      "gitCommit": "3ebf21b53e7986ce0482c579278d98895f9d8703",
+      "sha256": "de9a4143015f5d0539cdfa35e6819689786866399c978a470f36aa049441fa71"
+    },
+    "data/horizons.json": {
+      "gitCommit": "3ebf21b53e7986ce0482c579278d98895f9d8703",
+      "sha256": "42f25c1280d285eba3274ec2656d9d41092d164ed05e92c76bcaaad804d96f3b"
+    },
+    "data/quality.json": {
+      "gitCommit": "3ebf21b53e7986ce0482c579278d98895f9d8703",
+      "sha256": "f87ac5d41d349b28ea0795f7eaf933484a40749eef76d56f6fbf51989730ead7"
+    },
+    "data/earnings-recent.json": {
+      "gitCommit": "3ebf21b53e7986ce0482c579278d98895f9d8703",
+      "sha256": "90fb6efc24eacba515c6295b1781cf08d7f5b407be924d1cc6a1b4c000d1a56c"
+    },
+    "data/zad-list.json": {
+      "gitCommit": "3ebf21b53e7986ce0482c579278d98895f9d8703",
+      "sha256": "0cf79a403263b9e4b8e74c7823fdde5e86cfd5d2e2dcc563845efed724bcca6b"
+    },
+    "data/earnings-study.json": {
+      "gitCommit": "3ebf21b53e7986ce0482c579278d98895f9d8703",
+      "sha256": "240ef13901d85dc5fd465310abd308e0f74fd044c9c3694f78c780d03599cf68"
+    }
+  },
+  "rows": [
+    {
+      "symbol": "GRMN",
+      "scanner": {
+        "sym": "GRMN",
+        "last": 285.57,
+        "state": "Buy watch",
+        "why": "The 10 day average crossed above the 30 day average at the last close, with price above the 200 day average.",
+        "halal": "unknown",
+        "rule": "10/30 day cross, stop 2 \u00d7 ATR, target 2R",
+        "proven": true,
+        "uptrend": true,
+        "mom6": 0.1894,
+        "trigger": null,
+        "buyLo": 285.57,
+        "buyHi": 290.4794,
+        "stop": 265.9323,
+        "target": 324.8454,
+        "half": false,
+        "tgtNote": "target 2x the stop distance, chosen by the walk-forward test",
+        "exitBelow": 282.4443,
+        "hit": 0.1111111111111111,
+        "days": 21,
+        "n": 9,
+        "win": 0.5555555555555556,
+        "avgPct": 0.012286753811217169,
+        "pcts": [
+          0.0631,
+          0.0044,
+          0.0268,
+          0.0433,
+          -0.003,
+          0.0936,
+          -0.0403,
+          -0.0375,
+          -0.0398
+        ],
+        "r10": 0.1111111111111111,
+        "r20": 0,
+        "key": "cross|10|30|2|2|0||",
+        "maxHold": null,
+        "reg": {
+          "up": {
+            "n": 9,
+            "avgR": 0.5091354076952662
+          },
+          "down": {
+            "n": 0,
+            "avgR": 0
+          }
+        },
+        "earn": "no earnings in the next three weeks",
+        "earnDays": null,
+        "sector": "Consumer products"
+      },
+      "earningsDrift": null,
+      "discovery": null,
+      "horizonSetups": [],
+      "qualityRank": 0.283,
+      "recentReports": [],
+      "zad": {
+        "affirmativeCurrentStatus": "UNKNOWN",
+        "publicUpdateEffective": "2026-10-22",
+        "inPublicChangeLists": {
+          "notHalal": false,
+          "halalAgain": false,
+          "newHalal": false
+        },
+        "absenceDoesNotEstablishEligibility": true,
+        "finalAuthority": "ZAD"
+      },
+      "costReference": {
+        "label": "Reference-price arithmetic ONLY; not executable/current sizing or a proposed order",
+        "budgetUsd": 1000,
+        "feeEachExecutedSideUsd": 3,
+        "referenceShares": 3,
+        "referenceNotionalUsd": 856.71,
+        "entryFeePlusNotionalUsd": 859.71,
+        "idleCashAfterEntryUsd": 140.29,
+        "roundTripCommissionUsd": 6,
+        "roundTripCommissionPctOfNotional": 0.7003536786076969,
+        "actualQuantitySpreadSlippageFillAndNetResult": "UNKNOWN"
+      }
+    },
+    {
+      "symbol": "TIGO",
+      "scanner": {
+        "sym": "TIGO",
+        "last": 83.24,
+        "state": "Buy watch",
+        "why": "In an uptrend, price dipped under its 20 day average and closed back above it at the last close.",
+        "halal": "unknown",
+        "rule": "buy the dip back above the 20 day average, stop 1.5 \u00d7 ATR, no fixed target",
+        "proven": true,
+        "uptrend": true,
+        "mom6": 0.0349,
+        "trigger": null,
+        "buyLo": 83.24,
+        "buyHi": 84.7993,
+        "stop": 78.5621,
+        "target": null,
+        "half": false,
+        "tgtNote": "tested: on its own past trades no target beat the exit rule",
+        "exitBelow": 85.1,
+        "hit": null,
+        "days": 17,
+        "n": 16,
+        "win": 0.5,
+        "avgPct": 0.03457676946791538,
+        "pcts": [
+          0.1076,
+          -0.0128,
+          -0.0432,
+          -0.0212,
+          0.0046,
+          -0.0291,
+          0.0998,
+          0.184,
+          0.1716,
+          -0.0475,
+          -0.042,
+          0.0833,
+          -0.0297,
+          0.1704,
+          0.0085,
+          -0.0512
+        ],
+        "r10": 0.4375,
+        "r20": 0.1875,
+        "key": "pull|20|50|1.5||0||",
+        "maxHold": null,
+        "reg": {
+          "up": {
+            "n": 15,
+            "avgR": 0.4881367263427226
+          },
+          "down": {
+            "n": 1,
+            "avgR": 3.098270152103314
+          }
+        },
+        "earn": "no earnings in the next three weeks",
+        "earnDays": null,
+        "live": {
+          "n": 6,
+          "avg": -0.04016439025624576,
+          "win": 0
+        },
+        "sector": "Telecommunication"
+      },
+      "earningsDrift": null,
+      "discovery": null,
+      "horizonSetups": [],
+      "qualityRank": null,
+      "recentReports": [
+        {
+          "sym": "TIGO",
+          "d": "2026-11-05",
+          "t": "bmo",
+          "a": 0.58,
+          "e": 1.071
+        }
+      ],
+      "zad": {
+        "affirmativeCurrentStatus": "UNKNOWN",
+        "publicUpdateEffective": "2026-10-22",
+        "inPublicChangeLists": {
+          "notHalal": false,
+          "halalAgain": false,
+          "newHalal": false
+        },
+        "absenceDoesNotEstablishEligibility": true,
+        "finalAuthority": "ZAD"
+      },
+      "costReference": {
+        "label": "Reference-price arithmetic ONLY; not executable/current sizing or a proposed order",
+        "budgetUsd": 1000,
+        "feeEachExecutedSideUsd": 3,
+        "referenceShares": 11,
+        "referenceNotionalUsd": 915.64,
+        "entryFeePlusNotionalUsd": 918.64,
+        "idleCashAfterEntryUsd": 81.36,
+        "roundTripCommissionUsd": 6,
+        "roundTripCommissionPctOfNotional": 0.655279367436984,
+        "actualQuantitySpreadSlippageFillAndNetResult": "UNKNOWN"
+      }
+    },
+    {
+      "symbol": "ETON",
+      "scanner": {
+        "sym": "ETON",
+        "last": 56.46,
+        "state": "No action",
+        "why": "No signal yet. The 10 day average must cross above the 30 day average.",
+        "halal": "unknown",
+        "rule": "10/30 day cross, stop 2 \u00d7 ATR, no fixed target, only while the market is in an uptrend",
+        "proven": true,
+        "uptrend": true,
+        "mom6": 0.9042,
+        "trigger": 58.2999
+      },
+      "earningsDrift": {
+        "sym": "ETON",
+        "inTest": true,
+        "last": 56.46,
+        "buyLo": 56.46,
+        "buyHi": 58.15,
+        "stop": 51.56,
+        "sur": 2.325,
+        "up": 0.197,
+        "sma20": 51.34,
+        "hold": 40,
+        "live": false,
+        "test": {
+          "n": 325,
+          "avg": 0.008313403501240256,
+          "win": 0.3415384615384615
+        }
+      },
+      "discovery": null,
+      "horizonSetups": [
+        "PB_UP"
+      ],
+      "qualityRank": 0.554,
+      "recentReports": [
+        {
+          "sym": "ETON",
+          "d": "2026-11-05",
+          "t": "amc",
+          "a": 1.06,
+          "e": 0.3188
+        }
+      ],
+      "zad": {
+        "affirmativeCurrentStatus": "UNKNOWN",
+        "publicUpdateEffective": "2026-10-22",
+        "inPublicChangeLists": {
+          "notHalal": false,
+          "halalAgain": false,
+          "newHalal": false
+        },
+        "absenceDoesNotEstablishEligibility": true,
+        "finalAuthority": "ZAD"
+      },
+      "costReference": {
+        "label": "Reference-price arithmetic ONLY; not executable/current sizing or a proposed order",
+        "budgetUsd": 1000,
+        "feeEachExecutedSideUsd": 3,
+        "referenceShares": 17,
+        "referenceNotionalUsd": 959.82,
+        "entryFeePlusNotionalUsd": 962.82,
+        "idleCashAfterEntryUsd": 37.18,
+        "roundTripCommissionUsd": 6,
+        "roundTripCommissionPctOfNotional": 0.6251172094767768,
+        "actualQuantitySpreadSlippageFillAndNetResult": "UNKNOWN"
+      }
+    },
+    {
+      "symbol": "KNSA",
+      "scanner": {
+        "sym": "KNSA",
+        "last": 93.86,
+        "state": "No action",
+        "why": "In an uptrend with no dip yet. A signal needs a close under the 20 day average, then a close back above it.",
+        "halal": "unknown",
+        "rule": "buy the dip back above the 20 day average, stop 1.5 \u00d7 ATR, no fixed target, only while the market is in an uptrend",
+        "proven": true,
+        "uptrend": true,
+        "mom6": 0.6017,
+        "trigger": null
+      },
+      "earningsDrift": null,
+      "discovery": {
+        "sym": "KNSA",
+        "price": 93.86,
+        "mom3": 0.22676774277872158,
+        "mom6": 0.6486913753732655,
+        "mom12": 1.3980582524271843,
+        "offHigh": 0,
+        "dollarVol": 33504856.40802195,
+        "name": "Kiniksa Pharmaceuticals International, plc",
+        "quarter": "CY2026Q2",
+        "revenue": 243600000,
+        "revGrowth": 0.5536011530832861,
+        "netIncome": 25432000,
+        "netIncomePrev": 17832000,
+        "mcap": null,
+        "debtToCap": null,
+        "cashToCap": null,
+        "insider": "net buying",
+        "profitTrend": "profitable and growing",
+        "score": 185,
+        "industry": "Biotechnology",
+        "bio": {
+          "risk": "elevated",
+          "trials": 3,
+          "late": 2,
+          "text": "2 late-stage trials running, none due within four months. Next expected around 2027-12-31."
+        },
+        "score100": 59,
+        "scoreVerdict": "REJECTED",
+        "reasons": [
+          "Price +65% in 6 months, +140% in 12, 0% below its high. Stock score 59/100 (the score is rejected as a picker)",
+          "Revenue +55% against a year ago (244 million USD in CY2026Q2)",
+          "Profit: profitable and growing",
+          "Company value unknown",
+          "Debt ratio unknown",
+          "Insiders: net buying over 3 months",
+          "Industry: Biotechnology",
+          "Trial check: 2 late-stage trials running, none due within four months. Next expected around 2027-12-31. (ClinicalTrials.gov)"
+        ],
+        "hardBlock": "its share count rose 11% in a year"
+      },
+      "horizonSetups": [],
+      "qualityRank": null,
+      "recentReports": [],
+      "zad": {
+        "affirmativeCurrentStatus": "UNKNOWN",
+        "publicUpdateEffective": "2026-10-22",
+        "inPublicChangeLists": {
+          "notHalal": false,
+          "halalAgain": false,
+          "newHalal": false
+        },
+        "absenceDoesNotEstablishEligibility": true,
+        "finalAuthority": "ZAD"
+      },
+      "costReference": {
+        "label": "Reference-price arithmetic ONLY; not executable/current sizing or a proposed order",
+        "budgetUsd": 1000,
+        "feeEachExecutedSideUsd": 3,
+        "referenceShares": 10,
+        "referenceNotionalUsd": 938.6,
+        "entryFeePlusNotionalUsd": 941.6,
+        "idleCashAfterEntryUsd": 58.4,
+        "roundTripCommissionUsd": 6,
+        "roundTripCommissionPctOfNotional": 0.6392499467291711,
+        "actualQuantitySpreadSlippageFillAndNetResult": "UNKNOWN"
+      }
+    },
+    {
+      "symbol": "CEG",
+      "scanner": {
+        "sym": "CEG",
+        "last": 249.95,
+        "state": "No action",
+        "why": "No signal yet. The 10 day average must cross above the 30 day average and price must get back above the 200 day average.",
+        "halal": "unknown",
+        "rule": "10/30 day cross, stop 1.5 \u00d7 ATR, no fixed target",
+        "proven": false,
+        "uptrend": false,
+        "mom6": -0.1768,
+        "trigger": null
+      },
+      "earningsDrift": null,
+      "discovery": null,
+      "horizonSetups": [],
+      "qualityRank": 0.416,
+      "recentReports": [],
+      "zad": {
+        "affirmativeCurrentStatus": "UNKNOWN",
+        "publicUpdateEffective": "2026-10-22",
+        "inPublicChangeLists": {
+          "notHalal": false,
+          "halalAgain": false,
+          "newHalal": false
+        },
+        "absenceDoesNotEstablishEligibility": true,
+        "finalAuthority": "ZAD"
+      },
+      "costReference": {
+        "label": "Reference-price arithmetic ONLY; not executable/current sizing or a proposed order",
+        "budgetUsd": 1000,
+        "feeEachExecutedSideUsd": 3,
+        "referenceShares": 3,
+        "referenceNotionalUsd": 749.85,
+        "entryFeePlusNotionalUsd": 752.85,
+        "idleCashAfterEntryUsd": 247.15,
+        "roundTripCommissionUsd": 6,
+        "roundTripCommissionPctOfNotional": 0.8001600320064013,
+        "actualQuantitySpreadSlippageFillAndNetResult": "UNKNOWN"
+      }
+    },
+    {
+      "symbol": "BE",
+      "scanner": {
+        "sym": "BE",
+        "last": 173.24,
+        "state": "No action",
+        "why": "No signal yet. The 10 day average must cross above the 30 day average and price must get back above the 200 day average.",
+        "halal": "unknown",
+        "rule": "10/30 day cross, stop 2 \u00d7 ATR, no fixed target",
+        "proven": false,
+        "uptrend": false,
+        "mom6": -0.3363,
+        "trigger": null
+      },
+      "earningsDrift": null,
+      "discovery": null,
+      "horizonSetups": [],
+      "qualityRank": 0.04,
+      "recentReports": [],
+      "zad": {
+        "affirmativeCurrentStatus": "UNKNOWN",
+        "publicUpdateEffective": "2026-10-22",
+        "inPublicChangeLists": {
+          "notHalal": false,
+          "halalAgain": false,
+          "newHalal": false
+        },
+        "absenceDoesNotEstablishEligibility": true,
+        "finalAuthority": "ZAD"
+      },
+      "costReference": {
+        "label": "Reference-price arithmetic ONLY; not executable/current sizing or a proposed order",
+        "budgetUsd": 1000,
+        "feeEachExecutedSideUsd": 3,
+        "referenceShares": 5,
+        "referenceNotionalUsd": 866.2,
+        "entryFeePlusNotionalUsd": 869.2,
+        "idleCashAfterEntryUsd": 130.8,
+        "roundTripCommissionUsd": 6,
+        "roundTripCommissionPctOfNotional": 0.6926806742091896,
+        "actualQuantitySpreadSlippageFillAndNetResult": "UNKNOWN"
+      }
+    }
+  ],
+  "noStrategyOrGateChanged": true,
+  "noAuthenticExecutionPerformanceInferred": true
+}
