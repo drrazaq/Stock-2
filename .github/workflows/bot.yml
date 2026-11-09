@@ -56,7 +56,7 @@ jobs:
           done
         env:
           MODE: chat
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data (options record, movers, live watcher record)
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: sealed T1 provider data (options record, movers, live watcher record)
           SEALED_MERGE_FAVOR: theirs                   # R1: same hunk preference as this loop's -X theirs, on decrypted text
           GITHUB_TOKEN: ${{ github.token }}
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
@@ -79,7 +79,7 @@ jobs:
       - if: always()
         shell: bash
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}
           SEALED_MERGE_FAVOR: theirs
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}

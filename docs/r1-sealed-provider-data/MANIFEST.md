@@ -1,10 +1,10 @@
-# R1 combined-unit candidate manifest, rev17 (review only; not deployed)
+# R1 combined-unit candidate manifest, rev18 (review only; not deployed)
 
 - **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821), `df5ee960` (rev14: B1-B5 closed; N1 and operative counts open, 6724620286), `09f58ca5` (rev15: CHANGES REQUIRED R1-R3, 6725294448), `cdda3dc3` (rev16: multipart BUY NOW remainder unchecked, 6725877594).
 - **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
-- **Binding:** the authoritative path list (76 paths in rev17) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
-- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 75 files.
-- `git diff --full-index b0d76987 -- <allowlist>` sha256: `9d56becfb022adcb9d0ec3b3e244a29f7558db6f92e9b52c45f978c13667aa17`
+- **Binding:** the authoritative path list (77 paths in rev18) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
+- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 76 files.
+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `15991fd5f0705686663cd93dfdbfbb716732dc102d67ab037d670943163b3d9b`
 
 | Status | File | sha256 (candidate) |
 |---|---|---|
@@ -12,21 +12,22 @@
 | A | `.github/bot-save.sh` | `0155a56e2db36da3e5766a98e83e30f115c02647fdf24cc1482b07d477ffa339` |
 | M | `.github/save-data.sh` | `2f14d37adeeaa3c4624f45c1f29442347e5a897e78132bd82fdc6ad37766ff3a` |
 | A | `.github/sealed-git.sh` | `987ee55dc00d407393c8bba8351fa6c28cad3d33fc59bf085a956c00f901844d` |
-| M | `.github/workflows/Smart-money.yml` | `d395f27f65b666778a310bd8ffbce2012150e9f78c0367ce7762a06a655335ab` |
-| M | `.github/workflows/bot.yml` | `2e4cb467ca233f6ab2a79926b1ca69584dc52f03d428d0f7dd12b3ebd608a89d` |
-| M | `.github/workflows/ignition.yml` | `e17509c5c42cb28cde4a856e1f95cb8f2a4d97e4ef2f1ef2f70339d6fb38938a` |
-| M | `.github/workflows/leaders-study.yml` | `c32756c900354f1a8753e8be7332d6c8350c96bbbca0026d93ae277a77df8566` |
-| M | `.github/workflows/main.yml` | `94f9757ef04fe1efddd78b03b5f8164d24930e861d1e0e026ebc4382ae560afa` |
-| M | `.github/workflows/movers.yml` | `6b582f33e5f7ec9c7f781b81542bc33faf57a5783b2c8e4beeae91ac00319d90` |
-| M | `.github/workflows/opportunity-radar.yml` | `e98b95b7d91ddb8a6aa605a79013cb53015cbfb502d4452e3d3e5b7707ff5f75` |
-| M | `.github/workflows/options-survey.yml` | `4af85096edd7761ace7af0231b18a38f59fedb3341ed475ac958c53dff15fe02` |
-| A | `.github/workflows/r1-migrate.yml` | `c12ae92aeeb40ba14a267715028c69d3fdfce61a2dcbf7162a974f8ac225459b` |
-| M | `.github/workflows/scorecard-1023.yml` | `9e5cc4f7342606f9f8775035a79658c0cb7803f1062e93b61df048c0aa6b3a33` |
+| M | `.github/workflows/Smart-money.yml` | `96ad0f675fc37c865ef13d834e7bc8e24fc89308ee40a6ae30439fd1786b1d41` |
+| M | `.github/workflows/bot.yml` | `3d7ca09494aeda3f4436d9f4d58e41cc2c0cac0df2d06f8415a8343b8f81be6b` |
+| M | `.github/workflows/ignition.yml` | `b7ae9bdc8c9e76748e77d2a8120c55d12895b607821af0bb69947a3d1227d3bc` |
+| M | `.github/workflows/leaders-study.yml` | `15705735a22e6c6fc45378b2204c0aacddc9b92854b63c5508d1949d9bbed37d` |
+| M | `.github/workflows/main.yml` | `70af57b6676f8079d473041849d37c6716bac51314ce31e5471edce68c2d8b7b` |
+| M | `.github/workflows/movers.yml` | `8294c7f18ffd8af226292d803935bb5046453448009e77e592a8ec7300efbfe4` |
+| M | `.github/workflows/opportunity-radar.yml` | `18a9154fce48d85ff7ca3123ac157eafb69b0c94c6226144dcacfacf1d2d57a0` |
+| M | `.github/workflows/options-survey.yml` | `9505fae492034e52f9d59c308f8f0119355da942c2e805217f497d0377c9c804` |
+| A | `.github/workflows/r1-migrate.yml` | `4daea823419dd4abe3fb2235ebd40ffdc8b065666e16696166f226e9b7005f59` |
+| M | `.github/workflows/scorecard-1023.yml` | `13a4403762a517ee1150c835285dcbf0a01924f6c094d9f9184dc69fcd417a91` |
 | A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 | M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 | M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-| A | `docs/r1-sealed-provider-data/README.md` | `7413419192e4de9f8df4f1c88725ef7c318d2f132d91b74cb2f7b9aaa39c85df` |
-| A | `docs/r1-sealed-provider-data/RELEASE.md` | `98e415d8df7caff64c77b4bea644f2b40ae50816b1bffe72c07dd04a16adfbd0` |
+| A | `docs/r1-sealed-provider-data/K2-KEY-SETUP.md` | `619fd3ba8dc45e8ce5e30bbe8858406e682c254b0545ff21b3bd334432bccf5d` |
+| A | `docs/r1-sealed-provider-data/README.md` | `f60154f314d076a92290861021947030ae17dfc018bd279ce4240ee22780c81d` |
+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `a0423e3ac899fa134c84c92614e061f6839147927986073110a43b662d56d280` |
 | A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
 | A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 | A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
@@ -43,9 +44,9 @@
 | M | `scorecard-1023.mjs` | `a0f0a6a9f1bc9d41886996c76e8d20aa3d988b1ec148a3f7b9ce642bdd10b48a` |
 | A | `sealed-guard.mjs` | `b2dc4384e680e8f723951441ff5072487fc5b3a41f13aba7c507463e4e1d7fae` |
 | A | `sealed-merge.mjs` | `4182335911f74cf1ef4adf90da45b9dd071ab344e9e659e1506cf6a2c0fbb3a0` |
-| A | `sealed-migrate.mjs` | `7b24fa34d2b63e4ff1c40496f551b3a4a340e87ac997d0e1390f959992606ecb` |
+| A | `sealed-migrate.mjs` | `8a11ac9edc22676bc6a2a53a1801ab8b77f09c4a3768622f141552dac70e5f9c` |
 | A | `sealed-recover.mjs` | `fc2b8625209e9a0ef6c4b604abae38cf4f25eee29345f6f77f8aaa6ac9fd6faf` |
-| A | `sealed-store.mjs` | `093665cc77014f34e15365bff378894062117ae322e8696bb58e2d043086cc31` |
+| A | `sealed-store.mjs` | `aad05868366741d724c0ea5b161e005eb676f4813f2f2599824a3a74364df8c4` |
 | M | `shadow-outcomes.mjs` | `1dcf0a28d9511569cce0d493fc6f00debdc87bd40d966627e478467b10340bdc` |
 | M | `smart-money.mjs` | `3b3a937fbbc47aeafd97d5bf4ffaa53ba224d6c24490c5316424afae8b795bcd` |
 | A | `test/buynow-evidence.test.mjs` | `128a3af3da884af4c4a1919a14ad89557bc1c3a4374ffbbe2fe8d1c2c89ff842` |
@@ -62,13 +63,13 @@
 | A | `test/radar-sealed-reader.test.mjs` | `d156b07bb189118b5d03b3c7e942d07b5e2bd80c976a5832b37de270e32243a6` |
 | A | `test/sealed-blockers.test.mjs` | `016805622b6b0c21300af4c29a4746f088b219fde36007a0a27580520e60f1de` |
 | A | `test/sealed-git.test.mjs` | `ef3692008daedc85a4a741862d0f428bc76f4ce3207adb9f80c639c033ecb0e3` |
-| A | `test/sealed-migrate.test.mjs` | `ba4dff2cf6bfb25900758ef7d3ea0faab63aed04226a33b012eabc9e64cf9fb9` |
+| A | `test/sealed-migrate.test.mjs` | `84eb55be7df5ae4540929f717f69b97af0823f666a7a3aa50472ecbaafe1ea8f` |
 | A | `test/sealed-readers.test.mjs` | `83ddbf15fdf1875adf5fa4612518cede65fced6ca368445c33acc8779139fcfc` |
 | A | `test/sealed-recovery-actual-paths.test.mjs` | `215cf144cc90d1f69157474a4d81b380679c57a570c17ead1bfed1944663bdb8` |
 | A | `test/sealed-recovery.test.mjs` | `d10906d15912eb829080128a7688a0b66d273ebd9becd5277fe586cb8e3cf8ea` |
-| A | `test/sealed-release-rehearsal.test.mjs` | `205cc92cf35171056376974b30b498dfc814a8cefc9060c3129e99543ce5edb4` |
+| A | `test/sealed-release-rehearsal.test.mjs` | `7b90231ea6cb8416c48c300365f2602bb65617a70e8f286dad11cd78f6d730f4` |
 | A | `test/sealed-store.test.mjs` | `eef5c043965b0417c3c03ea90df5379672989328c2393aac21c579c07faa84e9` |
-| A | `test/sealed-wiring.test.mjs` | `5972b71ac993c5bf05abf10c6da01679088718d49854696bd695fac48d7d9aa3` |
+| A | `test/sealed-wiring.test.mjs` | `2fea74777a0d2c2e1a7d3f816a93c20b68f56c4796135047c7d065824e82aad9` |
 | M | `test/sec-request-runtime.test.mjs` | `0de8866ec04bda4688a09612ac73c42d9c335a9eaada16f07a73068ce73f86fb` |
 | M | `test/stop-alert-validity.test.mjs` | `746b5dd44ecdaf57d3dc057c37cd37ad4ff817c125fb8515b6d40d99ddd01f57` |
 | A | `test/watcher-cadence-review.test.mjs` | `3dcc24b6a5504c1dd6f2410542f30bc1f6d7e560e315fa4351e3727fc69e5af8` |
@@ -87,6 +88,6 @@
 ## Full serial suite on this tree
 
 - Node 20.20.0; preload refusing every non-loopback connection (0 attempted).
-- **162 of 162 files pass.**
+- ** of  files pass.**
 - `premarket-feed` builds its fixture from the real New York date and clock. At one hour on 8 Nov it failed identically on this branch and on the unchanged base `b0d76987`; it passes in this run. R1 does not touch it.
 - **Gated actual-watcher scenarios** (`INCIDENT_WATCHER_SRC`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.

@@ -52,16 +52,16 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: T1 provider data is saved only sealed (sealed-store.mjs); no key = nothing saved, run fails
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: T1 provider data is saved only sealed (sealed-store.mjs); no key = nothing saved, run fails
       # Durable per-stock ledger of today's 15%+ movers (the missed-runner autopsy reads it; no data calls).
       - if: always() && steps.ready.outputs.run == 'true'
         continue-on-error: true
         run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}
       - if: always() && steps.ready.outputs.run == 'true'
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
         run: |
           set -euo pipefail
           git config user.name "scanner"

@@ -14,7 +14,7 @@ import { sealedKey, appendSealedLines, readSealedLines } from '../sealed-store.m
 import { gate, OPEN_STATUSES } from '../r1-writer-gate.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const SECRET = 'synthetic-release-secret', K = sealedKey(SECRET);
+const SECRET = '6a61b9af16e6fa697c48b44143db7cda9aa173366deb800267bed785175072b9', K = sealedKey(SECRET);
 const ENV = { ...process.env, SEALED_SECRET: SECRET, SEALED_MERGE_FAVOR: 'theirs', GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1', NODE_OPTIONS: '', TG_TOKEN: '', TG_CHAT: '' };
 const git = (cwd, args, env = ENV) => execFileSync('git', args, { cwd, env, stdio: ['ignore', 'pipe', 'pipe'] }).toString();
 const sh = (cwd, script, env = ENV) => spawnSync('bash', ['-c', script], { cwd, env, encoding: 'utf8' });

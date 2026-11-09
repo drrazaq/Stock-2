@@ -6,6 +6,22 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0o. Rev18 (9 Nov): K2, a dedicated data key (owner decision); deployment still deferred
+
+- **Owner decision:** use a new dedicated secret `R1_DATA_KEY` for R1, and keep its recovery copy. Do not regenerate Alpaca, Telegram, `PRIVATE_KEY` or any existing credential.
+- **Change:**
+  - All 21 `SEALED_SECRET` mappings now read `secrets.R1_DATA_KEY` (one word per step; same steps, same step-level scope).
+  - `PRIVATE_KEY` keeps exactly its 7 pre-R1 uses.
+  - The one-time steps refuse a key that is not 64 hex characters (`SEALED_KEY_FORMAT`, `sealed-migrate.mjs`).
+  - New owner guide: `K2-KEY-SETUP.md`.
+  - `sealed-store.mjs`: one comment line only.
+- **Unchanged:** every reader and writer, the sealed format and derivation, the recovery slots, the alert/open-check/watcher code, the procedure and the dispatch budget.
+- **Tests:**
+  - K2 wiring test (no `SEALED_SECRET` from `PRIVATE_KEY`; `PRIVATE_KEY` use counts equal main).
+  - K2 format test: 5 malformed keys are refused by all three one-time commands with no change, and the hex case is accepted.
+  - Synthetic test keys are now 64 hex characters.
+- **Paths:** 77 (+`K2-KEY-SETUP.md`).
+
 ## 0n. Rev17 (8 Nov): every part of a long BUY NOW card is checked (Codex 6725877594)
 
 - **The defect:** in rev16 a BUY NOW card long enough for several Telegram parts re-checked the price only for its first part. A later part, or a retry of it, reused the first rendering, so "Now 105.00, inside the range, OK to buy … BUY 1000 USD" could be sent 1220 s after the price.
@@ -306,18 +322,16 @@ Between steps 3 and 4 the readers would show `SEALED_LEGACY_PLAINTEXT` (fail-clo
 - **Recovery of the data:** `sealed-migrate.mjs --export-to <dir outside the repository>`. It refuses any folder inside the repository (tested), for example a folder in the private repository or on the owner's computer.
 - **Returning to plaintext in this public repository** would re-publish. It is an explicit owner decision, not a rollback step.
 
-## 7. Key custody: owner decisions, not established facts
+## 7. Key custody (rev18: K2 chosen by the owner, 9 Nov)
 
-- **K1 (candidate default): reuse `PRIVATE_KEY`.**
-  - The secret already exists and nothing needs creating.
-  - The same master secret reaches **18 workflow steps**: 16 that did not have it before (the readers, writers, save steps and the migration), plus the 2 that already had it (the nightly scan and the bot loop). The subkey isolates the files' key from `private.enc`'s key, not the master secret's exposure.
-  - Its entropy, the owner's backup and recovery are **NOT established**, and nothing was inspected.
-  - If it is lost, the sealed files are unreadable (as `private.enc` already is).
-- **K2: a dedicated new secret.**
-  - Better isolation.
-  - Needs the owner to create a strong random secret **and keep a backup**, which is a credential action not authorized now.
-  - The change is a one-word edit per step (`secrets.PRIVATE_KEY` → the new name).
-- **Recommended:** K2 if the owner can keep a backup; otherwise K1 with a written recovery requirement. Before deployment, either way, the owner should confirm that **a copy of the chosen secret exists outside GitHub**, because GitHub secrets cannot be read back.
+- **Chosen: K2, the dedicated secret `R1_DATA_KEY`.** All 21 `SEALED_SECRET` mappings read it; no workflow hands `PRIVATE_KEY` to the sealed store (`test/sealed-wiring.test.mjs`, K2 test).
+- **`PRIVATE_KEY` is unchanged:** exactly its 7 pre-R1 uses (calendar decryption and the existing readers), the same as main. Its exposure no longer grows with R1. Alpaca, Telegram and all other credentials are untouched; nothing is rotated or regenerated.
+- **Strength:** the owner generates 32 random bytes as 64 hex characters on his own device (`K2-KEY-SETUP.md`). `--apply`, `--key-check-make` and `--backup-compare` refuse any other form (`SEALED_KEY_FORMAT`), before anything is changed. Runtime reads and writes are unchanged.
+- **Recovery:**
+  - The owner keeps the copy outside GitHub in two places.
+  - B5b proves it equals the secret before migration (`backup-compare`, temporary `R1_BACKUP_CHECK`).
+  - If the key is lost, the sealed files cannot be read; the pre-migration plaintext in history stays public.
+- **Superseded:** K1 (reuse `PRIVATE_KEY`) and its exposure figures (rev17: 26 step contexts) are historical only.
 
 ## 8. Cost: NOMINAL projection, not an enforceable bound (rev4; Codex rev3 qualification)
 
@@ -372,7 +386,7 @@ Measured, not projected: the 45 files are 8.21 MB plaintext, 2.56 MB as git stor
 ## 11. Remaining blockers and unresolved findings (rev3)
 
 **Release blockers, not code:**
-1. **Key custody:** K1 or K2, plus your backup verified outside GitHub (§7). An owner decision; no key was changed.
+1. **Key custody:** K2 `R1_DATA_KEY` (§7, `K2-KEY-SETUP.md`), with your recovery copy proved equal at B5b. No existing key is changed.
 2. **An approved executable deployment unit:** exact parent; writer gate evidence; the complete hosted receipt; restoration gates; refreshed STOP watcher pins and independent release review (`ignition-watch.mjs` is unchanged since `ae8cbb63` but changed from STOP's pins).
 3. **Residual public outputs need an explicit disposition** (R1 does not close them):
    - T2 and derived files: `signals.json`, `discovery.json`, `smart-money.json`, the tips ledger, `radar-v3-*`, `missed-runners.json`, `ignition-paper.jsonl`, `shadow-outcomes/`, `opp-days.jsonl`;

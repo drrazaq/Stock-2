@@ -46,12 +46,24 @@ test('public Actions logs: no per-stock option quotes, survey summary, or analys
 const KEYED = { 'ignition.yml': 3, 'opportunity-radar.yml': 1, 'options-survey.yml': 2, 'Smart-money.yml': 2, 'movers.yml': 3, 'leaders-study.yml': 2, 'main.yml': 2, 'bot.yml': 2, 'scorecard-1023.yml': 1, 'r1-migrate.yml': 3 };
 test('the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)', () => {
   for (const f of WF) {
-    const s = wf(f), n = (s.match(/SEALED_SECRET: \$\{\{ secrets\.PRIVATE_KEY \}\}/g) || []).length;
+    const s = wf(f), n = (s.match(/SEALED_SECRET: \$\{\{ secrets\.R1_DATA_KEY \}\}/g) || []).length;
     assert.equal(n, KEYED[f] || 0, f);
     assert.doesNotMatch(s, /echo[^\n]*SEALED_SECRET|\$SEALED_SECRET|\$\{SEALED_SECRET/, f);
     if (n) assert.doesNotMatch(s.split('steps:')[0], /SEALED_SECRET/, f + ': not job-level');
   }
   assert.doesNotMatch(wf('fastmover-intraday.yml'), /SEALED_SECRET/, 'intraday/study modes never touch T1');
+});
+
+// R1 rev18 (K2): the data key is the dedicated secret R1_DATA_KEY. No workflow may hand PRIVATE_KEY to the sealed store, and
+// PRIVATE_KEY keeps exactly its pre-R1 uses (calendar decryption and the existing readers), so its exposure does not grow.
+const PRIVATE_KEY_USES = { 'bot.yml': 2, 'calendar.yml': 1, 'leaders-study.yml': 2, 'main.yml': 1, 'movers.yml': 1 };
+test('K2: SEALED_SECRET always comes from R1_DATA_KEY, never PRIVATE_KEY; PRIVATE_KEY uses are unchanged from before R1', () => {
+  for (const f of WF) {
+    const s = wf(f);
+    assert.doesNotMatch(s, /SEALED_SECRET:[^\n]*PRIVATE_KEY/, f);
+    assert.doesNotMatch(s, /R1_DATA_KEY/.test(s) ? /(?<!SEALED_SECRET: \$\{\{ secrets\.)R1_DATA_KEY(?! \}\})/ : /$^/, f + ': R1_DATA_KEY only as the SEALED_SECRET source');
+    assert.equal((s.match(/secrets\.PRIVATE_KEY/g) || []).length, PRIVATE_KEY_USES[f] || 0, f + ': PRIVATE_KEY uses');
+  }
 });
 
 const STAGERS = ['ignition.yml', 'options-survey.yml', 'Smart-money.yml', 'movers.yml', 'leaders-study.yml'];

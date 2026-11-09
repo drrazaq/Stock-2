@@ -24,7 +24,7 @@ jobs:
           set -o pipefail
           node movers.mjs 2>&1 | tee run.log
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: sealed T1 provider data
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
@@ -43,7 +43,7 @@ jobs:
           set -o pipefail
           MODE=live node fastmover-lab.mjs 2>&1 | tee -a run.log
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: sealed T1 provider data
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           MASSIVE_PAID: '1'
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
@@ -61,7 +61,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       - shell: bash
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
           SEALED_MERGE_FAVOR: theirs                   # R1: same hunk preference as -X theirs, applied to the decrypted text
         run: |
           git config user.name "scanner"

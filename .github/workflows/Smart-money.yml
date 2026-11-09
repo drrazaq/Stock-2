@@ -23,7 +23,7 @@ jobs:
           set -o pipefail
           node smart-money.mjs 2>&1 | tee run.log
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: sealed T1 provider data
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           FMP_KEY: ${{ secrets.FMP_KEY }}
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
@@ -68,7 +68,7 @@ jobs:
           key: events-cache-${{ github.run_id }}
       - if: always()
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
           SEALED_MERGE_FAVOR: theirs                   # R1: same hunk preference as -X theirs, applied to the decrypted text
         run: |
           git config user.name "scanner"

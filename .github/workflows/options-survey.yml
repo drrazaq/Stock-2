@@ -26,12 +26,12 @@ jobs:
           set -o pipefail
           node options-survey.mjs 2>&1 | tee run.log
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: sealed T1 provider data
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
       - shell: bash
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: the sealed merge driver decrypts both sides of a concurrent save
           SEALED_MERGE_FAVOR: theirs                   # R1: same hunk preference as -X theirs, applied to the decrypted text
         run: |
           git config user.name "scanner"

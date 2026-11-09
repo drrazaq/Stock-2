@@ -155,16 +155,27 @@ export function exportTo(dir, { key = sealedKey(), cwd = process.cwd() } = {}) {
   return n;
 }
 
+// R1 rev18 (K2, owner decision 9 Nov): the data is sealed with a DEDICATED key, GitHub secret R1_DATA_KEY (not PRIVATE_KEY), which
+// must be 32 random bytes written as exactly 64 hex characters. The one-time steps that create or prove the key's use (--apply,
+// --key-check-make, --backup-compare) refuse any other form, so a short, typed or mistyped secret can never become the data key.
+// Runtime reads and writes are unchanged; a missing key is still SEALED_KEY_MISSING.
+export const KEY_FORMAT = /^[0-9a-f]{64}$/i;
+export const keyFormatOk = (s) => typeof s === 'string' && KEY_FORMAT.test(s);
+function needKeyFormat(s = process.env.SEALED_SECRET) {
+  if (typeof s !== 'string' || !s.length) return;   // missing: the existing SEALED_KEY_MISSING path reports it
+  if (!keyFormatOk(s)) throw Object.assign(new Error('the data key (GitHub secret R1_DATA_KEY) must be exactly 64 hex characters (32 random bytes); nothing was done'), { code: 'SEALED_KEY_FORMAT' });
+}
+
 if (import.meta.url === 'file://' + path.resolve(process.argv[1] || '')) {
   const [cmd, arg] = process.argv.slice(2);
   try {
     if (cmd === '--plan') { const p = plan(); console.log(p.join('\n')); console.log('R1 migration plan: ' + p.length + ' tracked T1 plaintext path(s)'); }
-    else if (cmd === '--apply') { const d = apply({ source: arg }); console.log('R1 migration: ' + d.length + ' file(s) sealed and staged with the manifest (plaintext deletions included); index verified against the approved source ' + arg.slice(0, 12)); }
+    else if (cmd === '--apply') { needKeyFormat(); const d = apply({ source: arg }); console.log('R1 migration: ' + d.length + ' file(s) sealed and staged with the manifest (plaintext deletions included); index verified against the approved source ' + arg.slice(0, 12)); }
     else if (cmd === '--verify-tree') { const r = verifyTree(arg || 'HEAD'); console.log('R1 verify ' + r.ref + ': manifest ' + r.manifestCount + ', sealed T1 ' + r.sealedT1 + ', plaintext T1 ' + r.plaintextT1.length + ', problems ' + r.problems.length); if (r.problems.length) { console.error(r.problems.slice(0, 50).join('\n')); process.exit(1); } }
     else if (cmd === '--verify-structure') { const r = verifyTree(arg || 'HEAD', { key: 'STRUCTURE_ONLY' }); console.log('R1 structure ' + r.ref + ' (no key; contents NOT decrypted): manifest ' + r.manifestCount + ', sealed T1 ' + r.sealedT1 + ', plaintext T1 ' + r.plaintextT1.length + ', problems ' + r.problems.length); if (r.problems.length) { console.error(r.problems.slice(0, 50).join('\n')); process.exit(1); } }
-    else if (cmd === '--key-check-make') { console.log('R1 KEY CHECK VECTOR ' + JSON.stringify(makeKeyCheck())); }
+    else if (cmd === '--key-check-make') { needKeyFormat(); console.log('R1 KEY CHECK VECTOR ' + JSON.stringify(makeKeyCheck())); }
     else if (cmd === '--key-check') { const ok = checkKey(JSON.parse(fs.readFileSync(arg, 'utf8'))); console.log('R1 key check: ' + (ok ? 'PASS (this secret is the one that seals the R1 data)' : 'FAIL (this secret does NOT match; do not rely on it as the backup)')); process.exit(ok ? 0 : 1); }
-    else if (cmd === '--backup-compare') { const ok = backupCompare(); console.log('R1 backup compare: ' + (ok ? 'PASS (the off-GitHub copy equals the production secret)' : 'FAIL (the off-GitHub copy does NOT match; do not rely on it)')); process.exit(ok ? 0 : 1); }
+    else if (cmd === '--backup-compare') { needKeyFormat(); const ok = backupCompare(); console.log('R1 backup compare: ' + (ok ? 'PASS (the off-GitHub copy equals the production secret)' : 'FAIL (the off-GitHub copy does NOT match; do not rely on it)')); process.exit(ok ? 0 : 1); }
     else if (cmd === '--export-to') { console.log('R1 recovery export: ' + exportTo(arg) + ' file(s) written outside the repository'); }
     else fail('usage: --plan | --apply <approved source commit> | --verify-tree <ref> | --export-to <new empty dir outside the repository>');
   } catch (e) { fail((e.code ? e.code + ' ' : '') + e.message); }

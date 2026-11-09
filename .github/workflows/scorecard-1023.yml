@@ -18,7 +18,7 @@ jobs:
           node-version: 20
       - run: node scorecard-1023.mjs
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: sealed T1 provider data
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}

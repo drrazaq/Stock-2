@@ -248,7 +248,7 @@ jobs:
           set -o pipefail
           node missed-runners.mjs 2>&1 | tee -a run.log
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed T1 provider data
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: sealed T1 provider data
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           MR_CALLS: '300'
           MR_MINUTES: '12'
@@ -471,7 +471,7 @@ jobs:
       - if: success() || failure()
         shell: bash
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}   # R1: sealed merge of the missed-runner history (see below)
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}   # R1: sealed merge of the missed-runner history (see below)
           SEALED_MERGE_FAVOR: theirs
         run: |
           git config user.name "scanner"

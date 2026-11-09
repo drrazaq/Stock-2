@@ -38,7 +38,7 @@ jobs:
           node-version: 20
       - shell: bash
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}
         run: node sealed-migrate.mjs --key-check-make
   backup-compare:
     # R1 rev6 (RELEASE.md B5b, route a): the owner adds a TEMPORARY secret R1_BACKUP_CHECK pasted from the off-GitHub backup, runs this,
@@ -55,7 +55,7 @@ jobs:
           node-version: 20
       - shell: bash
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}
           BACKUP_SECRET: ${{ secrets.R1_BACKUP_CHECK }}
         run: node sealed-migrate.mjs --backup-compare
   migrate:
@@ -71,7 +71,7 @@ jobs:
           node-version: 20
       - shell: bash
         env:
-          SEALED_SECRET: ${{ secrets.PRIVATE_KEY }}
+          SEALED_SECRET: ${{ secrets.R1_DATA_KEY }}
           SOURCE_SHA: ${{ github.event.inputs.source_sha }}
         run: |
           git config user.name "scanner"

@@ -12,7 +12,7 @@ import { sealedKey, readSealedText, readSealed, writeSealed, appendSealedLines }
 import { plan, apply, verifyTree, exportTo, MANIFEST, makeKeyCheck, checkKey, backupCompare } from '../sealed-migrate.mjs';
 
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
-const SECRET = 'synthetic-migrate-secret', K = sealedKey(SECRET);
+const SECRET = 'ea2bc293ca457c7bac79990a9a34d9f5495712840a5674b5d7452532f1cd772a', K = sealedKey(SECRET);
 const ENV = { ...process.env, SEALED_SECRET: SECRET, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1', NODE_OPTIONS: '' };
 const git = (cwd, args) => execFileSync('git', args, { cwd, env: ENV }).toString();
 const FIX = {
@@ -176,8 +176,21 @@ test('backup compare (B5b route a): equal copies PASS, any difference FAILS, a m
   assert.equal(backupCompare('prod-secret-x', 'prod-secret-x '), false, 'a trailing space is a different secret');
   assert.throws(() => backupCompare('prod-secret-x', ''), { code: 'BACKUP_SECRET_MISSING' });
   assert.throws(() => backupCompare('', 'x'), { code: 'SEALED_KEY_MISSING' });
-  const run = (b) => spawnSync(process.execPath, [path.join(ROOT, 'sealed-migrate.mjs'), '--backup-compare'], { env: { ...ENV, SEALED_SECRET: 'prod-secret-x', BACKUP_SECRET: b }, encoding: 'utf8' });
-  const ok = run('prod-secret-x'), bad = run('nope');
+  const run = (b) => spawnSync(process.execPath, [path.join(ROOT, 'sealed-migrate.mjs'), '--backup-compare'], { env: { ...ENV, SEALED_SECRET: '6a61b9af16e6fa697c48b44143db7cda9aa173366deb800267bed785175072b9', BACKUP_SECRET: b }, encoding: 'utf8' });
+  const ok = run('6a61b9af16e6fa697c48b44143db7cda9aa173366deb800267bed785175072b9'), bad = run('24817997ede41e8c358cafeac50a856b11843f8d58d99e501d5a162284bd4b00');
   assert.equal(ok.status, 0); assert.match(ok.stdout, /backup compare: PASS/); assert.equal(bad.status, 1); assert.match(bad.stdout, /backup compare: FAIL/);
-  for (const r of [ok, bad]) assert.doesNotMatch(r.stdout + r.stderr, /prod-secret|nope/);
+  for (const r of [ok, bad]) assert.doesNotMatch(r.stdout + r.stderr, /6a61b9af16e6fa697c48b44143db7cda9aa173366deb800267bed785175072b9|24817997ede41e8c358cafeac50a856b11843f8d58d99e501d5a162284bd4b00/);
+});
+
+test('K2: the one-time steps refuse a data key that is not exactly 64 hex characters (32 random bytes); nothing is changed', (t) => {
+  const { r, head } = repo(t), run = (args, secret, extra = {}) => spawnSync('node', ['sealed-migrate.mjs', ...args], { cwd: r, env: { ...ENV, SEALED_SECRET: secret, ...extra }, encoding: 'utf8' });
+  const before = git(r, ['status', '--porcelain']);
+  for (const bad of ['short-typed-password', SECRET.slice(0, 63), SECRET + '0', SECRET.slice(0, 62) + 'zz', ' ' + SECRET]) {
+    const a = run(['--apply', head], bad); assert.notEqual(a.status, 0); assert.match(a.stderr, /SEALED_KEY_FORMAT/); assert.doesNotMatch(a.stdout + a.stderr, new RegExp(bad.trim().slice(0, 12)));
+    const m = run(['--key-check-make'], bad); assert.notEqual(m.status, 0); assert.match(m.stderr, /SEALED_KEY_FORMAT/);
+    const b = run(['--backup-compare'], bad, { BACKUP_SECRET: bad }); assert.notEqual(b.status, 0); assert.match(b.stderr, /SEALED_KEY_FORMAT/); assert.doesNotMatch(b.stdout, /PASS/);
+  }
+  assert.equal(git(r, ['status', '--porcelain']), before, 'a refused key changes nothing');
+  assert.match(run(['--apply', head], '').stderr, /SEALED_KEY_MISSING/, 'missing stays SEALED_KEY_MISSING');
+  assert.equal(run(['--key-check-make'], SECRET.toUpperCase()).status, 0, 'hex case does not matter');
 });

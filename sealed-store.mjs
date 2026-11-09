@@ -10,7 +10,7 @@
 //   AES-256-GCM additional data = header | 0x00 | LOGICAL FILE ID (e.g. "data/opp-ledger.jsonl"), so valid ciphertext of file A is
 //   REJECTED at file B (wrong-file replay). Replaying an OLDER version of the same file is not detected (git history holds those).
 // Key: sha256("stock-2 sealed provider data v1\0" || secret), the secret read from env SEALED_SECRET only (workflows map it from a
-// GitHub secret; today PRIVATE_KEY, see README "key custody": an owner decision, not established custody).
+// GitHub secret: rev18 (K2) maps it from the dedicated secret R1_DATA_KEY, never PRIVATE_KEY; see README "key custody").
 // Rules (fail closed):
 //  - no key -> SEALED_KEY_MISSING, before any file is touched; a write NEVER falls back to plaintext;
 //  - wrong key, tampering, truncation, wrong file, unknown version -> SEALED_UNREADABLE, never silent data;
