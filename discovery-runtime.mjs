@@ -69,7 +69,7 @@ export function triageAssessments({signals={},discovery={},earnings={},events={}
  if(!clock(cutoff)||![1,2,3].includes(perHorizon))throw Error('INVALID_ASSESSMENT_TRIAGE_SCOPE');
  const now=Date.parse(cutoff),array=x=>Array.isArray(x)?x:[],all=[],pools={SHORT:[],MID:[],LONG:[]};
  const dates=d=>({generatedAt:d?.generatedAt||null,session:d?.session||d?.to||null});
- const add=(source,rows,meta,project)=>{if(rows.length>20000)throw Error('ASSESSMENT_INPUT_ROW_CAP');for(const r of rows){const s=typeof r==='string'?r:r?.sym||r?.symbol;all.push({symbol:s,source,meta,facts:project&&r&&typeof r==='object'?project(r):{}});}};
+ const add=(source,rows,meta,project)=>{if(rows.length>20000)throw Error('ASSESSMENT_INPUT_ROW_CAP');for(const r of rows){const s=typeof r==='string'?r:r?.sym||r?.symbol;all.push({symbol:s,source,meta,facts:project&&r&&typeof r==='object'?JSON.parse(JSON.stringify(project(r))):{}});}};
  add('signals',array(signals.stocks),dates(signals),r=>({state:r.state,rule:r.rule,key:r.key,proven:r.proven,last:r.last,trigger:r.trigger,buyLo:r.buyLo,buyHi:r.buyHi,stop:r.stop,target:r.target,maxHold:r.maxHold,exitBelow:r.exitBelow,hardBlock:r.hardBlock}));
  add('discovery',array(discovery.candidates),dates(discovery),r=>({name:r.name,price:r.price,quarter:r.quarter,revGrowth:r.revGrowth,profitTrend:r.profitTrend,hardBlock:r.hardBlock}));
  add('earnings',array(earnings.reports),dates(earnings),r=>({day:r.d,actual:r.a,estimate:r.e,timing:r.t}));
