@@ -164,7 +164,7 @@
     "test/a-importer-recovery-matrix.test.mjs": "b47434aa268fc876692da00425eb4298db60a0d10cb6cc97e09d82026ac1c4c3",
     "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "test/a-native-evidence-importer.test.mjs": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed",
-    "scan.mjs": "a15de89d3dcd3d1c60b605fd455850c78cb2348cd8e3d454549373b0e94ec254",
+    "scan.mjs": "41687703da0aa21899d84b0f566eafbb8d01aa246843e82e7498838609bbd3f3",
     "ignition-watch.mjs": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151",
     "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
@@ -366,5 +366,14 @@
     "baselineFailure": "58f90530andb895, identical stale summary.files",
     "onlyInventoryDifference": "340to342; allpairs/statuses/strategy/production/assertions unchanged",
     "independentPlanCodeReview": "b895currentrequest preserved; inventory correction separately disclosed"
+  },
+  "assessmentPresentationFollowup": {
+    "base": "b9753abb2",
+    "scope": "Read-only assessment presentation and current dependency pins; no entry/exit/admission change. protectedUnchanged is a current integration pin here, not a claim scan.mjs remains identical to the historical base.",
+    "previousCurrentMappings": {
+      "inheritedUnchanged:scan.mjs": "a15de89d3dcd3d1c60b605fd455850c78cb2348cd8e3d454549373b0e94ec254"
+    },
+    "productionChanges": false,
+    "review": "PENDING focused independent review"
   }
 }
