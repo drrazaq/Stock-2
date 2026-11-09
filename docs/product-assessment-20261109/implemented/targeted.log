@@ -2,133 +2,143 @@ TAP version 13
 # Subtest: actual ACTIONS preserves earlier SELL context when a fresh assessment becomes HOLD; repeat/restart does not imply execution
 ok 1 - actual ACTIONS preserves earlier SELL context when a fresh assessment becomes HOLD; repeat/restart does not imply execution
   ---
-  duration_ms: 585.512857
+  duration_ms: 659.587337
   ...
 # Subtest: notices before current recorded purchase do not attach to a new position; malformed neighbors do not erase valid evidence
 ok 2 - notices before current recorded purchase do not attach to a new position; malformed neighbors do not erase valid evidence
   ---
-  duration_ms: 193.092276
+  duration_ms: 288.515636
   ...
 # Subtest: missing price history is UNKNOWN, preserves previous assessment and never produces a fresh HOLD
 ok 3 - missing price history is UNKNOWN, preserves previous assessment and never produces a fresh HOLD
   ---
-  duration_ms: 49.466977
+  duration_ms: 62.350091
   ...
 # Subtest: missing leader-dip prices does not erase prior SELL; a persisted explicit exit still applies
 ok 4 - missing leader-dip prices does not erase prior SELL; a persisted explicit exit still applies
   ---
-  duration_ms: 34.508533
+  duration_ms: 46.114558
   ...
 # Subtest: same-day notice has unresolved order, never a new compulsory SELL or execution claim
 ok 5 - same-day notice has unresolved order, never a new compulsory SELL or execution claim
   ---
-  duration_ms: 102.223344
+  duration_ms: 141.684557
   ...
 # Subtest: pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence
 ok 6 - pending ZAD signal and no permitted buy are distinct; assessment does not promote evidence
   ---
-  duration_ms: 39.091609
+  duration_ms: 69.215196
   ...
 # Subtest: frozen research verdict leads over optimistic subset/live labels
 ok 7 - frozen research verdict leads over optimistic subset/live labels
   ---
-  duration_ms: 56.203547
+  duration_ms: 79.554821
   ...
 # Subtest: focus OFF cannot turn an evidence-blocked engine candidate into an approved BUY
 ok 8 - focus OFF cannot turn an evidence-blocked engine candidate into an approved BUY
   ---
-  duration_ms: 58.867439
+  duration_ms: 66.142629
   ...
 # Subtest: normalized journal and private cash goal label different populations and neither as account return
 ok 9 - normalized journal and private cash goal label different populations and neither as account return
   ---
-  duration_ms: 59.687396
+  duration_ms: 75.379068
   ...
 # Subtest: existing close-based sell timing uses the regular open; winter time conversion is explicit
 ok 10 - existing close-based sell timing uses the regular open; winter time conversion is explicit
   ---
-  duration_ms: 112.041555
+  duration_ms: 108.435891
   ...
 # Telegram: 1 message(s) read
 # Subtest: actual Telegram command caller renders UNKNOWN and preserves position economics under missing history
 ok 11 - actual Telegram command caller renders UNKNOWN and preserves position economics under missing history
   ---
-  duration_ms: 111.111177
+  duration_ms: 97.046818
   ...
 # Subtest: dated historical health input is not evidence of current watcher observation
 ok 12 - dated historical health input is not evidence of current watcher observation
   ---
-  duration_ms: 32.041999
+  duration_ms: 29.598963
   ...
 # Subtest: all operations stayed synthetic and on loopback
 ok 13 - all operations stayed synthetic and on loopback
   ---
-  duration_ms: 0.594683
+  duration_ms: 0.728735
   ...
 # Subtest: actual known-stock caller exposes favorable and adverse horizons without admitting the lead
 ok 14 - actual known-stock caller exposes favorable and adverse horizons without admitting the lead
   ---
-  duration_ms: 66.270886
+  duration_ms: 74.555357
   ...
 # Subtest: stale, future and missing context is dated/UNKNOWN, never manufactured eligibility
 ok 15 - stale, future and missing context is dated/UNKNOWN, never manufactured eligibility
   ---
-  duration_ms: 53.533416
+  duration_ms: 122.763737
   ...
 # Subtest: holdings presentation cannot turn a supplied SELL into a BUY for favorable research
 ok 16 - holdings presentation cannot turn a supplied SELL into a BUY for favorable research
   ---
-  duration_ms: 53.224432
+  duration_ms: 145.349103
   ...
 # Subtest: actual discovery watchlist hunts retained candidates and emits evidence cards, without a live entry
 ok 17 - actual discovery watchlist hunts retained candidates and emits evidence cards, without a live entry
   ---
-  duration_ms: 81.530727
+  duration_ms: 66.221008
   ...
-# Telegram: 3 message(s) read
+# Telegram: 4 message(s) read
 # Subtest: actual Telegram command delivers the hunt -> evidence -> assessment chain on loopback only
 ok 18 - actual Telegram command delivers the hunt -> evidence -> assessment chain on loopback only
   ---
-  duration_ms: 273.402555
+  duration_ms: 237.980452
   ...
 # Subtest: missing quick prices stay UNKNOWN and do not produce NaN ranges
 ok 19 - missing quick prices stay UNKNOWN and do not produce NaN ranges
   ---
-  duration_ms: 42.319098
+  duration_ms: 69.865603
   ...
 # Subtest: top quality rank is a percentile, never better than every stock
 ok 20 - top quality rank is a percentile, never better than every stock
   ---
-  duration_ms: 32.346686
+  duration_ms: 59.526238
+  ...
+# Subtest: actual held-stock check uses the existing holding and stop, never presents a new add entry
+ok 21 - actual held-stock check uses the existing holding and stop, never presents a new add entry
+  ---
+  duration_ms: 71.517966
+  ...
+# Subtest: nightly list summary is bounded and points to the complete detail card
+ok 22 - nightly list summary is bounded and points to the complete detail card
+  ---
+  duration_ms: 58.729091
   ...
 # Subtest: all assessment work stayed local
-ok 21 - all assessment work stayed local
+ok 23 - all assessment work stayed local
   ---
-  duration_ms: 0.265198
+  duration_ms: 0.333421
   ...
 # intraday check done: 1 watched, 0 new alerts
 # Subtest: F1: a four-minute stop quote has one consistent five-minute stop assessment; entry/HOLD still require three minutes
-ok 22 - F1: a four-minute stop quote has one consistent five-minute stop assessment; entry/HOLD still require three minutes
+ok 24 - F1: a four-minute stop quote has one consistent five-minute stop assessment; entry/HOLD still require three minutes
   ---
-  duration_ms: 281.951608
+  duration_ms: 238.466457
   ...
 # Subtest: F2: a future-at-fetch quote remains UNKNOWN after wall clock passes it
-ok 23 - F2: a future-at-fetch quote remains UNKNOWN after wall clock passes it
+ok 25 - F2: a future-at-fetch quote remains UNKNOWN after wall clock passes it
   ---
-  duration_ms: 100.771815
+  duration_ms: 129.504285
   ...
 # intraday check done: 2 watched, 2 new alerts
 # intraday check done: 2 watched, 0 new alerts
 # Subtest: runtime: no-stop holding without valid price is STATUS UNKNOWN; all quotes failing still sends exactly one first check; rerun does not duplicate
-ok 24 - runtime: no-stop holding without valid price is STATUS UNKNOWN; all quotes failing still sends exactly one first check; rerun does not duplicate
+ok 26 - runtime: no-stop holding without valid price is STATUS UNKNOWN; all quotes failing still sends exactly one first check; rerun does not duplicate
   ---
-  duration_ms: 107.314574
+  duration_ms: 133.678602
   ...
 # intraday check done: 0 watched, 0 new alerts
 # Subtest: runtime: no holdings and no list stays silent
-ok 25 - runtime: no holdings and no list stays silent
+ok 27 - runtime: no holdings and no list stays silent
   ---
-  duration_ms: 89.661863
+  duration_ms: 100.440913
   ...
 # Telegram rate limit, waiting 1 s
 # Telegram rate limit, waiting 1 s
@@ -139,104 +149,104 @@ ok 25 - runtime: no holdings and no list stays silent
 # intraday check done: 1 watched, 0 new alerts
 # intraday check done: 1 watched, 0 new alerts
 # Subtest: delivery: first check refused with HTTP 429 is retried on the next run (not consumed pre-ACK); HTTP 500 is UNKNOWN and not repeated
-ok 26 - delivery: first check refused with HTTP 429 is retried on the next run (not consumed pre-ACK); HTTP 500 is UNKNOWN and not repeated
+ok 28 - delivery: first check refused with HTTP 429 is retried on the next run (not consumed pre-ACK); HTTP 500 is UNKNOWN and not repeated
   ---
-  duration_ms: 151.614572
+  duration_ms: 224.577124
   ...
 # Subtest: loopback only
-ok 27 - loopback only
+ok 29 - loopback only
   ---
-  duration_ms: 0.658349
+  duration_ms: 0.775365
   ...
 # intraday check done: 1 watched, 1 new alerts
 # Subtest: four-minute above-stop quote cannot imply HOLD or falsely say NO STOP SET
-ok 28 - four-minute above-stop quote cannot imply HOLD or falsely say NO STOP SET
+ok 30 - four-minute above-stop quote cannot imply HOLD or falsely say NO STOP SET
   ---
-  duration_ms: 59.803501
+  duration_ms: 102.121853
   ...
 # intraday check done: 1 watched, 0 new alerts
 # Subtest: conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
-ok 29 - conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
+ok 31 - conflicting exits: last night's trend exit is SELL in the first check, never HOLD, and agrees with ACTIONS
   ---
-  duration_ms: 252.286412
+  duration_ms: 175.4792
   ...
 # intraday check done: 1 watched, 0 new alerts
 # Subtest: stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
-ok 30 - stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
+ok 32 - stop reached on fresh evidence takes precedence over a nightly exit, as in ACTIONS
   ---
-  duration_ms: 115.780773
+  duration_ms: 159.038327
   ...
 # intraday check done: 1 watched, 1 new alerts
 # Subtest: stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
-ok 31 - stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
+ok 33 - stale quote under the stop: UNKNOWN in the first check (not a hit, not HOLD), and STOP CHECK UNKNOWN from the stop route
   ---
-  duration_ms: 106.912179
+  duration_ms: 119.921262
   ...
 # intraday check done: 3 watched, 2 new alerts
 # Subtest: undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
-ok 32 - undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
+ok 34 - undated quote and a holding with no price at all are UNKNOWN and still listed (never dropped)
   ---
-  duration_ms: 129.089993
+  duration_ms: 117.807157
   ...
 # intraday check done: 1 watched, 0 new alerts
 # intraday check done: 1 watched, 0 new alerts
 # Subtest: delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
-ok 33 - delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
+ok 35 - delayed startup: a 2:57 pm first run shows its actual time and says it did not observe the open
   ---
-  duration_ms: 131.069086
+  duration_ms: 188.213882
   ...
 # intraday check done: 1 watched, 0 new alerts
 # Subtest: labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
-ok 34 - labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
+ok 36 - labels and promises: no PROVEN BUYS, no "the moment", no fixed 30-minute promise; buy lines need fresh evidence
   ---
-  duration_ms: 56.429938
+  duration_ms: 68.932611
   ...
 # intraday check done: 1 watched, 0 new alerts
 # intraday check done: 1 watched, 0 new alerts
 # intraday check done: 1 watched, 0 new alerts
 # Subtest: development session statement preserves regular and early-close calendar hours without the production 15:00 cutoff
-ok 35 - development session statement preserves regular and early-close calendar hours without the production 15:00 cutoff
+ok 37 - development session statement preserves regular and early-close calendar hours without the production 15:00 cutoff
   ---
-  duration_ms: 150.389987
+  duration_ms: 197.222403
   ...
 # intraday check done: 1 watched, 0 new alerts
 # Subtest: records untouched: positions and Telegram offset unchanged; one first check a day
-ok 36 - records untouched: positions and Telegram offset unchanged; one first check a day
+ok 38 - records untouched: positions and Telegram offset unchanged; one first check a day
   ---
-  duration_ms: 53.834949
+  duration_ms: 53.15757
   ...
 # intraday check done: 2 watched, 1 new alerts
 # intraday check done: 1 watched, 0 new alerts
 # intraday check done: 2 watched, 1 new alerts
 # Subtest: 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
-ok 37 - 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
+ok 39 - 8 Nov review: a no-stop leader-dip holding with no valid price is STATUS UNKNOWN (never HOLD) when another holding triggers the check
   ---
-  duration_ms: 185.544782
+  duration_ms: 199.493599
   ...
 # intraday check done: 2 watched, 2 new alerts
 # intraday check done: 0 watched, 0 new alerts
 # Subtest: 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
-ok 38 - 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
+ok 40 - 8 Nov review: when EVERY holding quote is missing the first check is still sent and lists each holding as UNKNOWN
   ---
-  duration_ms: 113.610763
+  duration_ms: 150.680289
   ...
 # Subtest: all requests stayed synthetic and on loopback
-ok 39 - all requests stayed synthetic and on loopback
+ok 41 - all requests stayed synthetic and on loopback
   ---
-  duration_ms: 0.137356
+  duration_ms: 0.206991
   ...
 # intraday check done: 1 watched, 0 new alerts
 # Subtest: development summary preserves three-minute boundary and cannot promote reported-only stale prices
-ok 40 - development summary preserves three-minute boundary and cannot promote reported-only stale prices
+ok 42 - development summary preserves three-minute boundary and cannot promote reported-only stale prices
   ---
-  duration_ms: 71.521255
+  duration_ms: 77.286333
   ...
-1..40
-# tests 40
+1..42
+# tests 42
 # suites 0
-# pass 40
+# pass 42
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 1508.262316
+# duration_ms 1795.776723

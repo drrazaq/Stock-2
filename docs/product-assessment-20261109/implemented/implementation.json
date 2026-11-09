@@ -1,8 +1,8 @@
 {
-  "source": "c8466c63f5a392df416cf44e64cdbd6e03f35e1f",
+  "source": "3cef3ddbc297942c13a188c4fb2e495275440e47",
   "branch": "codex/engineering-continuation-20261108",
   "base": "b9753abb2",
-  "scannerSha256": "3611d2eb91e2fe92e14d09afe6b5a01af220326fe14ce05f66888de488091d45",
+  "scannerSha256": "635e70e7a0c388c211ff6f5d62fc53bd870a7c652e88cb4aad6d6d8b79929b9f",
   "changedRuntime": [
     "scan.mjs"
   ],
@@ -30,5 +30,15 @@
     "First fixture expected WATCH from an unproven rule; corrected expectation to existing NO BUY",
     "Initial gated invocation lacked mandatory development-full profile; profile mismatch, corrected to exact workflow env,20/20passed"
   ],
-  "priorRuns": "a343 and844 stopped/superseded for pin and P1-P3corrections; not counted as complete or waived"
+  "priorRuns": "a343 and844 stopped/superseded for pin and P1-P3corrections; not counted as complete or waived",
+  "reviewCorrections": {
+    "S1": "checkOnepassesloadPos;heldstop/noaddtest",
+    "L1": "compact discovery/holdings summaries;fullcardonlyexplicitcheck",
+    "missingDaily": "checkLivekeepsUNKNOWNbusiness/horizoncontext evenwhenhistoryunavailable",
+    "minor": "word-boundaryellipsis, no repeatedunknownworstfields"
+  },
+  "targetedChecks": 42,
+  "supersededRuns": "a343protectedpinfailed;844supersededP1-P3;c846partialvalidation supersededS1/L1. No partialrunclaimedfullPASS;final316inventoryrestartedon3cefwith4isolatedNodeprocesses.",
+  "fullValidationLocation": "local implementation-reviewed/receipt.json pending",
+  "liveRulesChanged": false
 }
