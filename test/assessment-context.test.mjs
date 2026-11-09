@@ -42,8 +42,8 @@ test('business readiness and producer lineage remain separate from entry, execut
 }]},async S=>{
  const t=S.fn('assessmentContext')('ZZQ',sig,{},'WAIT');
  assert.match(t,/business DATED_DISCOVERY_LEAD_NOT_VALIDATED; valuation UNKNOWN/);
- assert.match(t,/executable price UNKNOWN; ZAD/);assert.match(t,/Rule validation: NOT PROVEN/);
+ assert.match(t,/executable price UNKNOWN; ZAD/);assert.match(t,/Retained scanner rule: rule NOT PROVEN/);
  assert.ok(t.includes('assessment '+'a'.repeat(64)));assert.ok(t.includes('cycle '+'b'.repeat(64)));
- assert.ok(t.includes('evidence '+'c'.repeat(64)));assert.match(t,/DERIVED_FROM_RETAINED_RULE_TEXT_NOT_ADOPTION/);
+ assert.ok(t.includes('evidence '+'c'.repeat(64)));assert.match(t,/LEGACY_UNKEYED/);
  assert.doesNotMatch(t,/BUYING_RESEARCH/);
 }));

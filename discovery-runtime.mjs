@@ -34,7 +34,7 @@ export const ASSESSMENT_TRIAGE_VERSION='EXISTING_HORIZON_ATTENTION_V1';
 export function assessmentCycleKey(input={}){
  const session=d=>d?.session||d?.to||null;
  return hash([ASSESSMENT_TRIAGE_VERSION,
-  ['signals','discovery','quality','horizons','radar','leaders'].map(k=>[k,session(input[k])]),
+  ['signals','discovery','quality','horizons','radar','leaders'].map(k=>[k,session(input[k])]),input.signals?.ruleIdentityVersion||null,
   [...new Set((input.events?.events||[]).map(r=>r?.p).filter(clock))].sort(),
   [...new Set((input.earnings?.reports||[]).map(r=>r?.d).filter(isDay))].sort()]);
 }
@@ -57,6 +57,26 @@ export function assessmentCycleRows(queue){
  const {decisions,invalid,...snapshot}=queue;
  return [{type:'assessment-cycle',version:1,cycleKey:queue.cycleKey,recordedAt:queue.cutoff,queue:snapshot},...assessmentJournalRows(queue)];
 }
+
+const ruleCanonical=x=>x&&typeof x==='object'?Array.isArray(x)?x.map(ruleCanonical):Object.fromEntries(Object.keys(x).sort().map(k=>[k,ruleCanonical(x[k])])):x;
+export function makeScannerAssessmentRule({logicVersion,sourceHash,variant,config,targetOverlay=null,ruleText,variantKey}={}){
+ if(!Number.isInteger(logicVersion)||!/^[a-f0-9]{64}$/.test(sourceHash||'')||!object(variant)||!object(config)||typeof ruleText!=='string'||!ruleText||typeof variantKey!=='string'||!variantKey)return null;
+ if(!['cross','pull','brk','brk20'].includes(variant.fam)||!Number.isFinite(variant.mult)||variant.mult<=0||!(variant.tp===null||Number.isFinite(variant.tp)&&variant.tp>0)||typeof variant.mf!=='boolean')return null;
+ if(!Number.isInteger(variant.fast)||!Number.isInteger(variant.slow)||!(variant.maxHold===undefined||Number.isInteger(variant.maxHold)&&variant.maxHold>0)||![config.ATR,config.TREND,config.TIME_STOP_DAYS,config.FLAT_R].every(Number.isFinite))return null;
+ const overlay=variant.tp?null:targetOverlay&&{mode:targetOverlay.mode??null,x:targetOverlay.x??null};
+ const definition=ruleCanonical({schema:'SCANNER_RULE_DEFINITION_V1',logicVersion,sourceHash,variantKey,variant:JSON.parse(JSON.stringify(variant)),config:JSON.parse(JSON.stringify(config)),ruleText,
+  exitPolicy:{modeled:'index.html#logic:followTrade/exitAt',holding:'index.html#logic:exitCheck',level:'index.html#logic:sellLevel',displayTarget:overlay},
+  scope:'RETAINED_SCANNER_RULE_AND_DISPLAY_POLICY_NOT_ADMISSION'});
+ return {definition,ruleId:'SCANNER_RULE_SHA256:'+hash(definition),ruleVersion:'SCANNER_RULE_DEFINITION_V1:'+logicVersion+':'+sourceHash};
+}
+export function assessmentRuleIdentity(row){
+ if(!row||!row.rule&&!row.key&&!row.assessmentRule)return {ruleIdentityState:'NO_ADOPTED_RULE_SUPPLIED',ruleId:null,ruleVersion:null,ruleDefinition:null,legacyRuleKey:row?.key||null};
+ const d=row?.assessmentRule?.definition,b=d&&makeScannerAssessmentRule({logicVersion:d.logicVersion,sourceHash:d.sourceHash,variant:d.variant,config:d.config,targetOverlay:d.exitPolicy?.displayTarget,ruleText:d.ruleText,variantKey:d.variantKey});
+ const valid=b&&JSON.stringify(b.definition)===JSON.stringify(ruleCanonical(d))&&b.ruleId===row.assessmentRule.ruleId&&b.ruleVersion===row.assessmentRule.ruleVersion&&row.rule===d.ruleText&&(!row.key||row.key===d.variantKey);
+ return valid?{ruleIdentityState:'IDENTIFIED',ruleId:b.ruleId,ruleVersion:b.ruleVersion,ruleDefinition:b.definition,legacyRuleKey:row.key||null,ruleIdentityBasis:'ACTUAL_SCANNER_DEFINITION_VERSION_NOT_ADOPTION'}:
+  {ruleIdentityState:'RULE_UNKEYED',ruleId:null,ruleVersion:null,ruleDefinition:null,legacyRuleKey:row?.key||null,ruleIdentityBasis:'MISSING_OR_CONFLICTING_ACTUAL_DEFINITION_VERSION'};
+}
+
 export function assessmentSourceStatus(signals,cutoff){
  if(!clock(cutoff))throw Error('INVALID_ASSESSMENT_CUTOFF');
  const now=Date.parse(cutoff),session=signals?.session||null,lag=closeLagSessions(session,now);
@@ -70,7 +90,7 @@ export function triageAssessments({signals={},discovery={},earnings={},events={}
  const now=Date.parse(cutoff),array=x=>Array.isArray(x)?x:[],all=[],pools={SHORT:[],MID:[],LONG:[]};
  const dates=d=>({generatedAt:d?.generatedAt||null,session:d?.session||d?.to||null});
  const add=(source,rows,meta,project)=>{if(rows.length>20000)throw Error('ASSESSMENT_INPUT_ROW_CAP');for(const r of rows){const s=typeof r==='string'?r:r?.sym||r?.symbol;all.push({symbol:s,source,meta,facts:project&&r&&typeof r==='object'?JSON.parse(JSON.stringify(project(r))):{}});}};
- add('signals',array(signals.stocks),dates(signals),r=>({state:r.state,rule:r.rule,key:r.key,proven:r.proven,last:r.last,trigger:r.trigger,buyLo:r.buyLo,buyHi:r.buyHi,stop:r.stop,target:r.target,maxHold:r.maxHold,exitBelow:r.exitBelow,hardBlock:r.hardBlock}));
+ add('signals',array(signals.stocks),dates(signals),r=>({state:r.state,rule:r.rule,key:r.key,proven:r.proven,assessmentRule:r.assessmentRule,last:r.last,trigger:r.trigger,buyLo:r.buyLo,buyHi:r.buyHi,stop:r.stop,target:r.target,maxHold:r.maxHold,exitBelow:r.exitBelow,hardBlock:r.hardBlock}));
  add('discovery',array(discovery.candidates),dates(discovery),r=>({name:r.name,price:r.price,quarter:r.quarter,revGrowth:r.revGrowth,profitTrend:r.profitTrend,hardBlock:r.hardBlock}));
  add('earnings',array(earnings.reports),dates(earnings),r=>({day:r.d,actual:r.a,estimate:r.e,timing:r.t}));
  add('SEC',array(events.events),dates(events),r=>({publication:r.p,form:r.f,sourceId:r.sourceId||null}));
@@ -105,8 +125,7 @@ export function triageAssessments({signals={},discovery={},earnings={},events={}
 export function assessmentJournalRows(queue){
  return Object.values(queue.batches).flat().map(r=>({type:'assessment',version:1,cycleKey:queue.cycleKey||null,id:r.id,symbol:r.symbol,horizon:r.horizon,recordedAt:queue.cutoff,evidenceVersion:r.evidenceVersion,triageVersion:queue.version,
   decision:'INVESTIGATE_OR_WAIT_NOT_ENTRY',sourceReferences:r.facts.map(x=>({source:x.source,...x.meta})),
-  ruleId:r.facts.find(x=>x.source==='signals')?.facts.key||(r.facts.find(x=>x.source==='signals')?.facts.rule?'DERIVED_RULE_SPEC_SHA256:'+hash(r.facts.find(x=>x.source==='signals').facts.rule):null),
-  ruleIdentityBasis:r.facts.find(x=>x.source==='signals')?.facts.key?'RETAINED_RULE_KEY':r.facts.find(x=>x.source==='signals')?.facts.rule?'DERIVED_FROM_RETAINED_RULE_TEXT_NOT_ADOPTION':'NO_RULE_SUPPLIED',
+  ...assessmentRuleIdentity(r.facts.find(x=>x.source==='signals')?.facts),
   sourceSession:queue.sourceFreshness.session,
   quote:'UNKNOWN',execution:'NOT_OBSERVED',outcome:'UNRESOLVED',control:'UNLINKED',costConvention:{budget:1000,feeEachExecutedSide:3,wholeShares:true},
   caveat:'Assessment recording time is not original detection/receipt, a trade, or an outcome. No owner holdings/ZAD records stored.'}));
@@ -114,9 +133,9 @@ export function assessmentJournalRows(queue){
 // Only exact, already computed outcome witnesses may join. Never use a later
 // price or aggregate performance to fill an individual missing chain.
 export function linkAssessmentOutcomes(assessments,outcomes=[]){
- return assessments.map(a=>{const hits=outcomes.filter(o=>o.assessmentId===a.id&&o.evidenceVersion===a.evidenceVersion&&o.ruleId===a.ruleId&&o.horizon===a.horizon);
-  const o=hits.length===1?hits[0]:null;return {assessmentId:a.id,symbol:a.symbol,horizon:a.horizon,status:!o?'UNRESOLVED_NO_UNIQUE_VERSIONED_OUTCOME':o.status,
-   economicBasis:o?.economicBasis||'UNKNOWN',fixedControl:o?.controlVersion||'UNKNOWN',netAfterCosts:a.ruleId&&o?.completeChain===true&&o?.controlVersion&&o?.economicBasis==='AUTHENTIC_EXECUTION'&&o?.reviewStatus==='INDEPENDENT_COMPLETE_CHAIN_REVIEWED'&&/^[a-f0-9]{64}$/.test(o?.witnessId||'')?o.netAfterCosts??null:null,
+ return assessments.map(a=>{const binding=assessmentRuleIdentity({rule:a.ruleDefinition?.ruleText,assessmentRule:{definition:a.ruleDefinition,ruleId:a.ruleId,ruleVersion:a.ruleVersion}});const identified=a.ruleIdentityState==='IDENTIFIED'&&binding.ruleIdentityState==='IDENTIFIED';const hits=identified?outcomes.filter(o=>o.assessmentId===a.id&&o.evidenceVersion===a.evidenceVersion&&o.ruleId===a.ruleId&&o.ruleVersion===a.ruleVersion&&o.horizon===a.horizon):[];
+  const o=hits.length===1?hits[0]:null;return {assessmentId:a.id,symbol:a.symbol,horizon:a.horizon,status:!identified?(a.ruleIdentityState==='NO_ADOPTED_RULE_SUPPLIED'?'UNRESOLVED_NO_ADOPTED_RULE_SUPPLIED':'UNRESOLVED_RULE_UNKEYED_OR_LEGACY_VERSION'):!o?'UNRESOLVED_NO_UNIQUE_VERSIONED_OUTCOME':o.status,
+   economicBasis:o?.economicBasis||'UNKNOWN',fixedControl:o?.controlVersion||'UNKNOWN',netAfterCosts:identified&&o?.completeChain===true&&o?.controlVersion&&o?.economicBasis==='AUTHENTIC_EXECUTION'&&o?.reviewStatus==='INDEPENDENT_COMPLETE_CHAIN_REVIEWED'&&/^[a-f0-9]{64}$/.test(o?.witnessId||'')?o.netAfterCosts??null:null,
    sourceWitness:o?.witnessId||null};});
 }
 function rowsOf(lane,doc) {

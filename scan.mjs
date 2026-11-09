@@ -5,7 +5,7 @@ import {paperRequest} from './paper-transport.mjs';
 import {paperMutationOnce,createPrivatePaperJournal} from './paper-mutation-journal.mjs';
 import {resolveZad} from './zad-compliance.mjs';
 import {telegramFetch,splitTelegramText} from './telegram-delivery.mjs';
-import {frozenAssessmentQueue,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes} from './discovery-runtime.mjs';
+import {makeScannerAssessmentRule,assessmentRuleIdentity,frozenAssessmentQueue,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes} from './discovery-runtime.mjs';
 import {appendRadarRows,readRadarLedger} from './radar-ledger.mjs';
 // Cloud scanner for the US stock signal board. Runs on GitHub Actions (free), so it works while your phone is off.
 // It reuses the exact rules inside index.html, writes data/signals.json and an append-only journal, and sends Telegram alerts.
@@ -264,9 +264,9 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
   const rank = Q && Q.rank && Q.rank[sym], qr = Q && Q.results ? Object.values(Q.results).filter(r => r && /^Quality/.test(r.name || '')) : [];
   const quality = typeof rank === 'number' && Number.isFinite(rank) ? 'retained quality percentile ' + (100 * rank).toFixed(1) + '; investigate business/valuation, not a buy signal' : 'quality rank UNKNOWN';
   const px = st && st.last > 0 ? st.last : lead && lead.price > 0 ? lead.price : null;
-  const sourceStatus=assessmentSourceStatus(sig,new Date(Date.now()).toISOString());
+  const sourceStatus=assessmentSourceStatus(sig,new Date(Date.now()).toISOString()),ruleIdentity=assessmentRuleIdentity(st);
   let trace=[];try{trace=readRadarLedger('data/discovery-journal.jsonl').filter(r=>r.type==='assessment'&&r.symbol===sym).slice(-3);}catch{}
-  const lineage=trace.length?trace.map(r=>'assessment '+clean(r.id,64)+'; cycle '+clean(r.cycleKey||'LEGACY_UNSTATED',64)+'; evidence '+clean(r.evidenceVersion,64)+'; rule '+clean(r.ruleId||'NONE',100)+' ('+clean(r.ruleIdentityBasis||'LEGACY_UNSTATED')+')').join(' | '):'No producer-recorded assessment ID supplied; source context is not a completed investigation or outcome';
+  const lineage=trace.length?trace.map(r=>'assessment '+clean(r.id,64)+'; cycle '+clean(r.cycleKey||'LEGACY_UNSTATED',64)+'; evidence '+clean(r.evidenceVersion,64)+'; rule '+clean(r.ruleId||'NONE',100)+'; version '+clean(r.ruleVersion||'UNKEYED / original version unavailable',120)+' ('+clean(r.ruleIdentityState||'LEGACY_UNKEYED')+')').join(' | '):'No producer-recorded assessment ID supplied; source context is not a completed investigation or outcome';
   if (compact) return 'ASSESSMENT SUMMARY — ' + sym + ': ' + clean(decision, 64) + (P ? ' | held, ' + stopLabel : '') + ' | mid ' + (rows.length ? [...new Set(rows.map(r => clean(r.verdict || 'UNKNOWN')))].join('/') : 'UNKNOWN') + ' | long ' + (typeof rank === 'number' && Number.isFinite(rank) ? (rank * 100).toFixed(1) + ' percentile; research only' : 'UNKNOWN') + ' | saved close ' + clean(sig && sig.session || D && D.session || 'UNKNOWN', 10) + ' | no new entry; details: check ' + sym;
   return [
     'ASSESSMENT CONTEXT — ' + sym + ' / ' + clean(issuer) + ' (information; this card grants no BUY approval)',
@@ -275,7 +275,7 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
     'Source freshness: '+sourceStatus.status+'; expected completed close '+(sourceStatus.expectedCompletedSession||'UNKNOWN')+'; saved '+(sourceStatus.session||'UNKNOWN')+'. A current completed close is not a current quote; intraday invocation and executable readiness are not established by this file.',
     'SHORT ACTION | existing assessment: ' + clean(decision) + ' | horizon ' + (P ? P.src === 'leader dip' ? (P.ldHold || LDIP_HOLD) + ' sessions' : P.maxHold || (P.kind === 'leader' ? 'trend rule; no fixed hold' : 'existing holding rule') : q && (q.maxHold || q.days) || 'stored scanner rule, duration UNKNOWN') + '. Entry: ' + entry + '. Exit: ' + clean(exit) + '.',
     'Trace: '+lineage+'.',
-    'Rule validation: '+(st?.proven===false?'NOT PROVEN':st?.proven===true?'stored test pass only; no current entry approval':'UNKNOWN / no rule verdict supplied')+'.',
+    'Retained scanner rule: '+(st?.proven===false?'rule NOT PROVEN':st?.proven===true?'stored test pass only; no current entry approval':'UNKNOWN / no rule verdict supplied')+'; identity '+ruleIdentity.ruleIdentityState+'; version '+(ruleIdentity.ruleVersion||'UNKNOWN / not retroactively inferred')+'.',
     'Short evidence: scan close ' + clean(sig && sig.session || 'UNKNOWN') + ' (date only; not receipt time). Record: ' + track + '.',
     'MID TERM | ' + (rows.length ? 'INVESTIGATE / WAIT; no entry granted here. ' + rows.map(line).join(' | ') + '. Existing research entry: next open after ' + setups.map(k => rules[k] || k).join('; ') + '; close 25% below entry exits next open, otherwise original 20/60/120-session hold. These are research definitions, not adopted orders.' : 'WAIT / UNKNOWN: no linked horizon setup supplied; no entry or exit invented.') + ' Source horizons.json: ' + stamp(H && H.generatedAt) + ', prices through ' + clean(H && H.to || 'UNKNOWN') + '.',
     'LONG TERM | INVESTIGATE / NO BUY APPROVAL: ' + quality + '. ' + (qr.length ? qr.map(r => clean(r.verdict || 'UNKNOWN') + ' at ' + r.months + ' months; ' + half(r.results && r.results.older, 'older') + ' | ' + half(r.results && r.results.newer, 'newer') + (r.why ? '; ' + clean(r.why) : '')).join('; ') : 'No linked quality test supplied') + '. No adopted individual-stock entry/exit supplied by this rank. Source quality.json: ' + stamp(Q && Q.generatedAt) + ', prices through ' + clean(Q && Q.to || 'UNKNOWN') + '.',
@@ -648,7 +648,7 @@ function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 =
   { const cycle=researchAssessmentCycle(sig);
     if(cycle.error)out.push(cycle.error);
     else {const q=cycle.queue;out.push('BOUNDED INVESTIGATION QUEUE — attention, not live eligibility. '+q.sourceFreshness.status+'; '+q.population.uniqueSymbolLabels+' unique ticker labels, verified eligible issuer count UNKNOWN.');
-      for(const [h,rows]of Object.entries(q.batches))out.push(h+': '+(!q.frozen?'awaiting producer-frozen batch; no new investigation selected by this reply':rows.length?rows.slice(0,short?1:2).map(r=>r.symbol+' [INVESTIGATE / WAIT; '+r.source+'; version '+r.evidenceVersion.slice(0,10)+']').join('; '):'no candidate in this frozen source cycle'));
+      for(const [h,rows]of Object.entries(q.batches))out.push(h+': '+(!q.frozen?'awaiting producer-frozen batch; no new investigation selected by this reply':rows.length?rows.slice(0,short?1:2).map(r=>r.symbol+' [INVESTIGATE / WAIT; '+(r.facts.find(x=>x.source==='signals')?.facts.proven===false?'rule NOT PROVEN; ':'')+r.source+'; version '+r.evidenceVersion.slice(0,10)+']').join('; '):'no candidate in this frozen source cycle'));
       out.push(cycle.persistence+'; feedback '+cycle.feedback.filter(x=>x.status.startsWith('UNRESOLVED')).length+' unresolved. No model aggregate or later price is an individual executable outcome.');
     }
   }
@@ -833,6 +833,12 @@ const L = (() => { const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'stock2-log
   try { fs.writeFileSync(file, m[1], {flag:'wx',mode:0o600}); return createRequire(import.meta.url)(file); }
   finally { fs.rmSync(dir, {recursive:true,force:true}); } })();
 
+// Bind only newly produced scanner rows to the actual loaded definition. Old
+// saved rows are never assigned a guessed version from their display text.
+const ASSESSMENT_LOGIC_SOURCE_HASH=crypto.createHash('sha256').update(m[1]).digest('hex');
+function scannerAssessmentRule(learned){
+ return makeScannerAssessmentRule({logicVersion:L.LOGIC_VERSION,sourceHash:ASSESSMENT_LOGIC_SOURCE_HASH,variant:learned.v,config:L.CFG,targetOverlay:learned.tgt||null,ruleText:L.ruleText(learned.v),variantKey:L.vkey(learned.v)});
+}
 const readJson0 = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
 // SETTINGS WRITES (review S-4, 22 Oct): every write was readJson(settings, {}) -> one key -> write, so a file that failed to parse was
 // replaced by {} and the decision, focus, quiet, tier2 and fee were lost silently. readSettings() gives {} only when the file is missing
@@ -4086,7 +4092,7 @@ async function daily() {
           P.tChecked = c[i].d; } }
       const paused = L.isPaused(resolved.filter(y => !y.t.open && y.x.kind !== 'quick').map(y => y.t.r));
       const v = L.applyGates(L.verdict(c, ind, Lr, null, d.last, paused), { dollarVol: T.dollarVol, halal, limit: null }), trig = L.buyTrigger(c, ind, Lr), dist = Lr.v.mult * ind.atr[i];
-      const row = { sym, last: d.last, state: v.word, why: v.why, halal, rule: L.ruleText(Lr.v), proven: Lr.proven, uptrend: T.up, mom6: +T.mom6.toFixed(4), trigger: trig.price ? +trig.price.toFixed(4) : null };
+      const row = { sym, last: d.last, state: v.word, why: v.why, halal, rule: L.ruleText(Lr.v), assessmentRule:scannerAssessmentRule(Lr), proven: Lr.proven, uptrend: T.up, mom6: +T.mom6.toFixed(4), trigger: trig.price ? +trig.price.toFixed(4) : null };
       if (v.act) Object.assign(row, { buyLo: d.last, buyHi: +(d.last + 0.5 * ind.atr[i]).toFixed(4), stop: +(d.last - dist).toFixed(4), target: Lr.v.tp ? +(d.last + Lr.v.tp * dist).toFixed(4) : Lr.tgt && Lr.tgt.mode !== 'none' && Lr.tgt.x ? +(d.last * (1 + Lr.tgt.x)).toFixed(4) : null, half: !Lr.v.tp && Lr.tgt && Lr.tgt.mode === 'half', tgtNote: Lr.v.tp ? 'target ' + Lr.v.tp + 'x the stop distance, chosen by the walk-forward test' : Lr.tgt ? Lr.tgt.verdict + (Lr.tgt.mode !== 'none' && Lr.tgt.oosAvg !== null ? ' (' + pcs(Lr.tgt.oosAvg) + ' a trade with it vs ' + pcs(Lr.tgt.baseAvg) + ' without)' : '') : null, exitBelow: +L.sellLevel({ v: Lr.v }, c, ind).toFixed(4), hit: Lr.hitRate, days: Lr.medDays, n: Lr.test ? Lr.test.n : null, win: Lr.test ? Lr.test.winRate : null, avgPct: Lr.avgPct, pcts: Lr.oosPct || null, r10: Lr.reach10 ?? null, r20: Lr.reach20 ?? null, key: Lr.key, maxHold: Lr.v.maxHold || null, reg: Lr.regime || null });
       stocks.push(row);
       if (BIOBLOCK.has(sym)) { if (v.act) { blocked.push(sym + ': a tested rule fired, but ' + BIOBLOCK.get(sym)); row.state = 'Blocked'; } else if (DISC.has(sym)) blocked.push(sym + ' (discovery pick): ' + BIOBLOCK.get(sym)); }
@@ -4307,7 +4313,7 @@ async function daily() {
   fs.writeFileSync('data/models.json', JSON.stringify(models, null, 1));
   { const n = await zoyaCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym), ...Object.keys(myPos)]); if (env.ZOYA_KEY) console.log('Zoya halal checks:', n, zoyaLive() ? '(live)' : '(sandbox)'); }
   { const n = await halalExtCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym)]); if (n) console.log('other halal checks:', n); }
-  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.length, tested: Object.keys(loaded).length, discoveryCoverage: discoveryScanCoverage, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
+  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, ruleIdentityVersion:'SCANNER_RULE_DEFINITION_V1:'+L.LOGIC_VERSION+':'+ASSESSMENT_LOGIC_SOURCE_HASH, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.length, tested: Object.keys(loaded).length, discoveryCoverage: discoveryScanCoverage, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
   fs.writeFileSync('data/alert-state.json', JSON.stringify({ day: '', sent: {} }));
   { const n = ledgerAppend(); if (n) console.log('research ledger: ' + n + ' new result' + (n > 1 ? 's' : '') + ' logged'); }
   try { switchPaper(loaded); } catch (e) { console.log('switch paper: ' + e.message); }
