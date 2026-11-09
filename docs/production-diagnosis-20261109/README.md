@@ -28,6 +28,10 @@ All tests are isolated, synthetic and loopback/intercepted; no provider/Telegram
 
 Published logs here are synthetic only. `assessment.json` records test/harness provenance, unpublished local assessment commits and exact changed paths. `component-inverses.json` proves both tested component inverses restore the exact current main tree and touch no data path. No R1sealed-store/writer/migration/recovery dependency was installed by either component assessment.
 
+## Current standalone checkpoint
+
+Claude subsequently supplied candidate10874f68/binding-docs a7704f9a. The old calendar-port conflict below is historical, superseded by that fresh candidate. Independent24-path fingerprint/build/inverse checks pass, with no data paths changed. Full offline155-file suite passes at the actual clock; a separate frozen-clock fixture defect and operative recovery wording still require correction. See[exact review](STANDALONE-REVIEW.md) and[receipt](standalone-review.json). Findings sent6732979886; revised candidate and compatibility evidence remain pending. No PASS or deployment authorization is inferred.
+
 ## Smallest complete remedy and exact remaining blocker
 
 Prepare **one fresh source-only non-R1 repair** on actual main: the exact-series calendar producer/formatter join, reviewed watcher seasonal/admission/history/cadence corrections, and first-check position/UNKNOWN/time semantics with the necessary later freshness safeguards. Keep existing calendar encryption format/key access, STOP/D/ZAD, strategies/fees/exits, actual observations, all current data and newer unrelated code unchanged. No key-backup setup or broader encryption migration is part of this remedy.
