@@ -1,0 +1,100 @@
+{
+  "sourceCommit": "6afba46db47da597463b2041e8fd3c2ef00a54cc",
+  "scope": "Separate follow-on; passed release d52499c454d2cdf472993e696d3a2ba8f4f77ef3 unchanged",
+  "baseline": {
+    "comment": 6748828550,
+    "commit": "16c72e0b3343a69232251eefff74f34d6200fe85",
+    "receiptCommit": "5e42760e8f9e7c0113427943ceb51e46917575c9",
+    "rootFiles": 231,
+    "additionalInstrumentTypeFiles": 1,
+    "gatedChecks": 20,
+    "python": "NOT RUN in this independent baseline receipt",
+    "outside232": "UNVERIFIED by this baseline",
+    "wrongProfileInvocation": "preserved, not classified as source failure"
+  },
+  "corrections": [
+    {
+      "id": "J1",
+      "implementation": "Existing discovery producer alone appends assessment cycles/rows; bot/opportunities reads only",
+      "tests": [
+        "actual bot-first saves preserve discovery and assessment rows",
+        "actual discovery-first saves preserve discovery and assessment rows"
+      ],
+      "method": "Actual bot.yml and discover.yml save/rebase shell bodies plus actual discover.mjs producer block in two temporary Git clones, both push orders, duplicate producer call, legacy/discovery/assessment and Telegram state assertions",
+      "files": [
+        "test/assessment-save-paths.test.mjs",
+        "scan.mjs",
+        "discover.mjs"
+      ]
+    },
+    {
+      "id": "T1",
+      "implementation": "One persisted producer batch per source version; output generatedAt excluded; absent new rule-version preserves exact legacy cycle; full/compact reads never advance or append",
+      "tests": [
+        "one producer cycle freezes the same batch; regeneration clocks cannot make completed names new",
+        "actual reply withholds a time-varying unfrozen preview and later reuses producer selection",
+        "binding rollout preserves the pinned legacy cycle until real versioned inputs arrive"
+      ],
+      "files": [
+        "test/assessment-triage.test.mjs",
+        "discovery-runtime.mjs",
+        "scan.mjs"
+      ]
+    },
+    {
+      "id": "R1",
+      "implementation": "New producer binding from actual loaded scanner source/logic version, variant/config/parameters/selected target overlay and hash-bound modeled/holding/level exit policy; NO_ADOPTED_RULE_SUPPLIED, RULE_UNKEYED and IDENTIFIED distinct; no backfill",
+      "tests": [
+        "actual scanner definition binds parameters, exits and implementation version without adopting the rule",
+        "newly recorded rows join only exact rule/version/evidence and never retrofit legacy identities"
+      ],
+      "negativeJoins": [
+        "wrong/missing rule version",
+        "wrong rule ID",
+        "wrong evidence version",
+        "wrong assessment ID",
+        "wrong horizon",
+        "duplicate outcome witnesses",
+        "missing legacy definition/version"
+      ],
+      "retainedSetups": "rule NOT PROVEN",
+      "files": [
+        "test/assessment-triage.test.mjs",
+        "test/assessment-context.test.mjs",
+        "discovery-runtime.mjs",
+        "scan.mjs"
+      ]
+    },
+    {
+      "id": "C1",
+      "correctedRetainedFinding": {
+        "symbol": "VGZ",
+        "label": "EVENT-PINNED / INVESTIGATE transaction; no standalone short assessment",
+        "basis": "Pending 0.0966 Artemis shares per VGZ; acquirer price/deal spread, FX/listing and completion terms matter",
+        "entry": "No adopted deal-entry rule or current executable quote supplied",
+        "exit": "No new exit invented; standalone crossover is historical context only, rule NOT PROVEN",
+        "completion": "No closing receipt established in retained evidence"
+      },
+      "demonstrationType": "Corrected retained offline investigation; not a current recommendation or newly executed product caller"
+    },
+    {
+      "id": "C2",
+      "correctedRetainedFinding": {
+        "symbol": "ACRE",
+        "label": "INVESTIGATE / WAIT",
+        "business": "Interest-based commercial mortgage lending is a material halal concern; ZAD is final",
+        "entry": "No core scanner row, adopted entry/exit plan, current BBO or current ZAD approval supplied",
+        "furtherSpend": "Affirmative owner ZAD decision required before further proposed spend"
+      },
+      "demonstrationType": "Corrected retained offline investigation; not a current recommendation or newly executed product caller"
+    }
+  ],
+  "unchanged": {
+    "history": "Original reports, signals, journal and outcomes preserved; interpretation corrections supersede ambiguous PASS language without rewriting evidence",
+    "identity": "AD is not ARRY; GEF class mapping unresolved",
+    "economics": "1000-dollar whole shares; 3 dollars EACH executed order side; no manufactured returns",
+    "acquisition": "Seven-request acquisition deferred; prospective raw-SEC-body retention remains design only",
+    "tradingLogic": "index.html math and live gates unchanged"
+  },
+  "validation": "Await final exact-commit complete hosted log before claiming these Node/Git tests PASS"
+}
