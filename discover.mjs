@@ -5,6 +5,7 @@ const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // (revenue growth, profit trend, debt, cash) and writes a short list of small, fast-growing companies to data/discovery.json.
 // It finds candidates to research. It does not give buy signals and cannot trade.
 import fs from 'node:fs';
+import {appendRadarRows} from './radar-ledger.mjs';
 import { latestCompletedSession, nextSession, closeLagSessions, adjustmentBasis, isDay } from './source-contract.mjs';
 import { marketSession } from './market-session.mjs';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
@@ -406,9 +407,9 @@ for (const c of top) {
 }
 
 // ---- 4. Journal and honest follow-up: how did earlier candidates do against the S&P 500?
-const journal = fs.existsSync('data/discovery-journal.jsonl') ? fs.readFileSync('data/discovery-journal.jsonl', 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)) : [];
+const journal = fs.existsSync('data/discovery-journal.jsonl') ? fs.readFileSync('data/discovery-journal.jsonl', 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(x=>x.type!=='assessment') : [];
 const seen = new Set(journal.map(x => x.sym)), fresh = top.filter(c => !seen.has(c.sym));
-for (const c of fresh) fs.appendFileSync('data/discovery-journal.jsonl', JSON.stringify({ sym: c.sym, d: first.date, price: c.price, spy: spyNow, score: c.score }) + '\n');
+if(fresh.length)appendRadarRows('data/discovery-journal.jsonl',fresh.map(c=>({ sym:c.sym,d:first.date,price:c.price,spy:spyNow,score:c.score })));
 const aged = journal.filter(x => Date.parse(first.date) - Date.parse(x.d) >= 28 * 86400000 && closes[0].get(x.sym) && x.spy && spyNow).map(x => ({ ret: closes[0].get(x.sym).c / x.price - 1, spy: spyNow / x.spy - 1 }));
 const record = aged.length ? { n: aged.length, avgReturn: aged.reduce((a, x) => a + x.ret, 0) / aged.length, avgSpy: aged.reduce((a, x) => a + x.spy, 0) / aged.length, beat: aged.filter(x => x.ret > x.spy).length / aged.length } : null;
 

@@ -4,7 +4,7 @@ import {createHash} from 'node:crypto';
 import {LANES,assembleMultiAngle} from './multi-angle-discovery.mjs';
 import {isFreshPriceAge} from './ignition-gates.mjs';
 import {marketSymbol} from './market-symbol.mjs';
-import {SOURCE_STATUS,closeLagSessions,isDay} from './source-contract.mjs';
+import {SOURCE_STATUS,closeLagSessions,isDay,latestCompletedSession} from './source-contract.mjs';
 const clock=x=>typeof x==='string'&&/T.*(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
 const symbol=x=>typeof x==='string'&&marketSymbol(x)===x;
 // Provider statuses this package adds; absent ones are LEGACY_UNSTATED (labelled, never read as observed).
@@ -25,6 +25,70 @@ export const DISCOVERY_SOURCES=Object.freeze([
  {lane:'TECHNICAL_BUILDUP',path:'data/discovery2-today.json',hours:72},
  {lane:'MARKET_DISLOCATION',path:'data/comeback-today.json',hours:72}
 ]);
+
+// Research attention over EXISTING outputs. This is neither a strategy score nor
+// trade admission. Source facts, not subsequent returns, determine the queue.
+export const ASSESSMENT_TRIAGE_VERSION='EXISTING_HORIZON_ATTENTION_V1';
+export function assessmentSourceStatus(signals,cutoff){
+ if(!clock(cutoff))throw Error('INVALID_ASSESSMENT_CUTOFF');
+ const now=Date.parse(cutoff),session=signals?.session||null,lag=closeLagSessions(session,now);
+ return {session,expectedCompletedSession:latestCompletedSession(now),completedSessionLag:lag,
+  status:lag===null?'UNKNOWN':lag<0?'FUTURE_SOURCE':lag===0?'LATEST_COMPLETED_CLOSE_REFERENCE':'STALE_COMPLETED_CLOSE_REFERENCE',
+  generatedAt:signals?.generatedAt||null,generatedClock:!clock(signals?.generatedAt)?'UNKNOWN':Date.parse(signals.generatedAt)>now?'FUTURE':'DATED_OUTPUT_NOT_QUOTE_RECEIPT',
+  executableQuote:'UNKNOWN',intradayInvocation:'NOT_ESTABLISHED_BY_DAILY_OUTPUT'};
+}
+export function triageAssessments({signals={},discovery={},earnings={},events={},quality={},horizons={},radar={},leaders={},cutoff,reviewedSymbols=[],seenAssessmentIds=[],excludedSymbols=[],perHorizon=2}={}){
+ if(!clock(cutoff)||![1,2,3].includes(perHorizon))throw Error('INVALID_ASSESSMENT_TRIAGE_SCOPE');
+ const now=Date.parse(cutoff),array=x=>Array.isArray(x)?x:[],all=[],pools={SHORT:[],MID:[],LONG:[]};
+ const dates=d=>({generatedAt:d?.generatedAt||null,session:d?.session||d?.to||null});
+ const add=(source,rows,meta,project)=>{if(rows.length>20000)throw Error('ASSESSMENT_INPUT_ROW_CAP');for(const r of rows){const s=typeof r==='string'?r:r?.sym||r?.symbol;all.push({symbol:s,source,meta,facts:project&&r&&typeof r==='object'?project(r):{}});}};
+ add('signals',array(signals.stocks),dates(signals),r=>({state:r.state,rule:r.rule,key:r.key,last:r.last,trigger:r.trigger,buyLo:r.buyLo,buyHi:r.buyHi,stop:r.stop,target:r.target,maxHold:r.maxHold,exitBelow:r.exitBelow,hardBlock:r.hardBlock}));
+ add('discovery',array(discovery.candidates),dates(discovery),r=>({name:r.name,price:r.price,quarter:r.quarter,revGrowth:r.revGrowth,profitTrend:r.profitTrend,hardBlock:r.hardBlock}));
+ add('earnings',array(earnings.reports),dates(earnings),r=>({day:r.d,actual:r.a,estimate:r.e,timing:r.t}));
+ add('SEC',array(events.events),dates(events),r=>({publication:r.p,form:r.f,sourceId:r.sourceId||null}));
+ add('quality',array(quality.today),dates(quality),r=>({rank:r.q,growth:r.growth,dilution:r.dilute}));
+ add('quality-rank',Object.keys(quality.rank||{}),dates(quality));
+ add('radar',array(radar.syms),dates(radar));add('leaders',array(leaders.syms),dates(leaders));
+ for(const [setup,syms]of Object.entries(horizons.today||{}))add('horizons',array(syms),dates(horizons),()=>({setup}));
+ const by=new Map(),invalid=[];for(const r of all){if(!symbol(r.symbol)){invalid.push({source:r.source,reason:'INVALID_SYMBOL'});continue;}if(!by.has(r.symbol))by.set(r.symbol,[]);by.get(r.symbol).push(r);}
+ const excluded=new Set(excludedSymbols),reviewed=new Set(reviewedSymbols),seen=new Set(seenAssessmentIds);
+ const eligibleSource=r=>!r.meta.generatedAt||clock(r.meta.generatedAt)&&Date.parse(r.meta.generatedAt)<=now;
+ const offer=(h,r,priority,time=0)=>{if(!eligibleSource(r))return;pools[h].push({symbol:r.symbol,priority,time,source:r.source});};
+ for(const r of all){if(!symbol(r.symbol))continue;
+  if(r.source==='signals'&&r.facts.state==='Buy watch')offer('SHORT',r,0);
+  if(r.source==='SEC'&&clock(r.facts.publication)){const t=Date.parse(r.facts.publication);if(t<=now&&now-t<=240*3600000)offer('SHORT',r,1,t);}
+  if(r.source==='earnings'&&isDay(r.facts.day)){const t=Date.parse(r.facts.day+'T00:00:00Z');if(t<=now&&now-t<=(72+24)*3600000)offer('MID',r,0,t);}
+  if(r.source==='horizons')offer('MID',r,1);
+  if(r.source==='quality')offer('LONG',r,0,Number.isFinite(r.facts.rank)?r.facts.rank:0);
+  if(r.source==='discovery')offer('LONG',r,1);
+ }
+ const decisions=[],batches={};for(const [h,pool]of Object.entries(pools)){
+  pool.sort((a,b)=>a.priority-b.priority||b.time-a.time||a.symbol.localeCompare(b.symbol));const used=new Set();batches[h]=[];
+  for(const r of pool){if(used.has(r.symbol))continue;used.add(r.symbol);const facts=by.get(r.symbol),evidenceVersion=hash(facts),id=hash([ASSESSMENT_TRIAGE_VERSION,h,r.symbol,evidenceVersion]);
+   const reason=excluded.has(r.symbol)?'EXISTING_EXCLUSION':reviewed.has(r.symbol)?'ALREADY_INVESTIGATED_THIS_BATCH':seen.has(id)?'ASSESSMENT_VERSION_ALREADY_RECORDED':batches[h].length>=perHorizon?'DEFERRED_BATCH_CAP':'SELECTED';
+   const row={...r,horizon:h,id,evidenceVersion,decision:reason,identity:'UNKNOWN_NOT_A_VERIFIED_ISSUER_COUNT',facts};decisions.push(row);if(reason==='SELECTED')batches[h].push(row);
+  }
+ }
+ return {version:ASSESSMENT_TRIAGE_VERSION,cutoff,policy:'Existing trigger first / dated SEC; recent earnings then existing horizon setups; existing quality percentile then business shortlist. Newest source date, lexical ties. Research attention only; no return fields used.',sourceFreshness:assessmentSourceStatus(signals,cutoff),
+  population:{rawRows:all.length,uniqueSymbolLabels:by.size,invalidRows:invalid.length,verifiedEligibleIssuers:0,verifiedEligibleInstruments:0,identityUnknownSymbols:by.size,issuerInstrumentDedup:'UNRESOLVED_NO_AUTHENTICATED_REFERENCE_JOIN',producerSweptCount:discovery.swept??null,producerStrongCount:discovery.strong??null,
+   sources:Object.fromEntries([...new Set(all.map(x=>x.source))].map(s=>{const a=all.filter(x=>x.source===s);return[s,{rows:a.length,uniqueSymbolLabels:new Set(a.filter(x=>symbol(x.symbol)).map(x=>x.symbol)).size,asOf:a[0]?.meta||null}]}))},
+  batches,decisions,counts:Object.fromEntries(['SELECTED','EXISTING_EXCLUSION','ALREADY_INVESTIGATED_THIS_BATCH','ASSESSMENT_VERSION_ALREADY_RECORDED','DEFERRED_BATCH_CAP'].map(k=>[k,decisions.filter(x=>x.decision===k).length])),invalid};
+}
+export function assessmentJournalRows(queue){
+ return Object.values(queue.batches).flat().map(r=>({type:'assessment',version:1,id:r.id,sym:r.symbol,horizon:r.horizon,recordedAt:queue.cutoff,evidenceVersion:r.evidenceVersion,triageVersion:queue.version,
+  decision:'INVESTIGATE_OR_WAIT_NOT_ENTRY',sourceReferences:r.facts.map(x=>({source:x.source,...x.meta})),
+  ruleId:r.facts.find(x=>x.source==='signals')?.facts.key||null,sourceSession:queue.sourceFreshness.session,
+  quote:'UNKNOWN',execution:'NOT_OBSERVED',outcome:'UNRESOLVED',control:'UNLINKED',costConvention:{budget:1000,feeEachExecutedSide:3,wholeShares:true},
+  caveat:'Assessment recording time is not original detection/receipt, a trade, or an outcome. No owner holdings/ZAD records stored.'}));
+}
+// Only exact, already computed outcome witnesses may join. Never use a later
+// price or aggregate performance to fill an individual missing chain.
+export function linkAssessmentOutcomes(assessments,outcomes=[]){
+ return assessments.map(a=>{const hits=outcomes.filter(o=>o.assessmentId===a.id&&o.evidenceVersion===a.evidenceVersion&&o.ruleId===a.ruleId&&o.horizon===a.horizon);
+  const o=hits.length===1?hits[0]:null;return {assessmentId:a.id,symbol:a.sym,horizon:a.horizon,status:!o?'UNRESOLVED_NO_UNIQUE_VERSIONED_OUTCOME':o.status,
+   economicBasis:o?.economicBasis||'UNKNOWN',fixedControl:o?.controlVersion||'UNKNOWN',netAfterCosts:a.ruleId&&o?.completeChain===true&&o?.controlVersion&&o?.economicBasis==='AUTHENTIC_EXECUTION'&&o?.reviewStatus==='INDEPENDENT_COMPLETE_CHAIN_REVIEWED'&&/^[a-f0-9]{64}$/.test(o?.witnessId||'')?o.netAfterCosts??null:null,
+   sourceWitness:o?.witnessId||null};});
+}
 function rowsOf(lane,doc) {
  const fields={SEC_EVENT:'events',INSIDER_CLUSTER:'recent',EARNINGS_SURPRISE:'reports',INDUSTRY_RIPPLE:'todayMovers',SUPPLY_SHIFT:'now',TECHNICAL_BUILDUP:'buys'};
  if(fields[lane]&&!Array.isArray(doc[fields[lane]]))throw Error('missing or invalid rows');
