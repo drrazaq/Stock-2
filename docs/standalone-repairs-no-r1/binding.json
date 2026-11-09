@@ -1,26 +1,26 @@
 {
- "status": "REVIEW ONLY: standalone calendar/watcher/open-check/alert-freshness repairs WITHOUT R1; not approved, not deployed",
- "candidate": "10874f6867cd6564c236e2dba217497f1cc591e8",
- "candidateTree": "d2d69949e4e85dbe8a29d3ec3ba7ab427944460f",
+ "status": "REVIEW ONLY: standalone non-R1 repairs rev2; not approved, not deployed",
+ "candidate": "89d21db67cc9da1ab8254144d5d97ab80b5c4de3",
+ "candidateTree": "fbd577399679dee0a36f9c92005ecf12fd365f2e",
  "mainAtBinding": "6e72a8d0c46385f3c329157d627636875505a224",
  "derivedFrom": {
   "reviewedCombinedCandidate": "73aa701f273ce14147fa38a25e722436d337fe45",
   "method": "every R1 change removed (3-way: candidate - (R1 rev7 67f1beba - pre-R1 b0d76987)); plaintext watcher fixture from development 954c2ed5; two sealed-path edits removed from watcher-nov2-clock"
  },
- "pathCount": 24,
+ "pathCount": 25,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "df212ce6f642d8112bc9e7e37386b7158d3b6006c136729008b344737dde130f",
+  "sha256": "13fca8d442f0c81a15347bd124620ff71a80c46b9bdaab6d1bb669dcf94fd2f5",
   "against": "6e72a8d0c46385f3c329157d627636875505a224"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "a04862494fed883b2abf6fbb91a5ce0a64e1643b863343ebe56e5c1cfec15aec"
+  "sha256": "de28fbd9c565e27d04c8aece6621af54d075175acc50f2efb5fd6ffd63ae542d"
  },
  "noR1": true,
  "noKeysOrSecretsAdded": true,
  "neverForcePush": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 10874f6867cd6564c236e2dba217497f1cc591e8 binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 89d21db67cc9da1ab8254144d5d97ab80b5c4de3 binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "files": {
   ".github/workflows/ignition.yml": {
@@ -98,6 +98,11 @@
    "bytes": 11672,
    "mode": "100644"
   },
+  "test/try-small-audit.test.mjs": {
+   "sha256": "cfd71b94906d0fbe37fda4bcdfa5e9ab542edf53d4f05a0a1a2b91805942dfd7",
+   "bytes": 15092,
+   "mode": "100644"
+  },
   "test/watcher-cadence-review.test.mjs": {
    "sha256": "3dcc24b6a5504c1dd6f2410542f30bc1f6d7e560e315fa4351e3727fc69e5af8",
    "bytes": 1002,
@@ -143,5 +148,18 @@
    "bytes": 2516,
    "mode": "100644"
   }
+ },
+ "supersedes": {
+  "candidate": "10874f6867cd6564c236e2dba217497f1cc591e8",
+  "bindingSha256": "cd87e9f98450cafb41724e3dc9da6b204d47a2e683a9191e2e6d36a00a6b6049",
+  "reason": "Codex 6733165226 F1: deterministic try-small fixture from development b9753abb2"
+ },
+ "testInventory": {
+  "rootTestFiles": 154,
+  "otherTestFiles": [
+   "tests/instrument-type.test.mjs"
+  ],
+  "completeFiles": 155,
+  "mainCompleteFiles": 144
  }
 }

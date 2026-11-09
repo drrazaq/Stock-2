@@ -1632,6 +1632,88 @@ index e633f1f981353fda14f0d333a1a34aad14c3ffe3..5c76baa8b6636ac87f0d07473dd13873
      assert.match(stop[0], /do not sell again/); assert.doesNotMatch(stop[0], /not instructions|Sell \/ reassess/);
      assert.equal(S.readJson('data/my-positions.json').ZZA.stop, 80, 'stop level unchanged');
    });
+diff --git a/test/try-small-audit.test.mjs b/test/try-small-audit.test.mjs
+index 3a8a432cd420a025498b0a8b6ef253c3739ee3ab..325ee0be39e9f83aa30a3026de906e506485d87f 100644
+--- a/test/try-small-audit.test.mjs
++++ b/test/try-small-audit.test.mjs
+@@ -13,7 +13,6 @@ import assert from 'node:assert/strict';
+ import http from 'node:http';
+ import fs from 'node:fs';
+ import { loadScan as loadScan0, blocked } from './load-scan.mjs';
+-import {marketSession} from '../market-session.mjs';
+ // (27 Oct 2026) TRY SMALL is paper-only by default now; these tests pin the REAL-money lane, so they switch it on unless a test sets settings.
+ const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'data/settings.json': { trySmallReal: true, ...(((o.files || {})['data/settings.json']) || {}) } } });
+ 
+@@ -21,39 +20,24 @@ const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'dat
+ const half = (avgStress, edge, noTop2) => ({ avgStress, edge, noTop2, avg: avgStress + 0.004 });
+ const good = (hold) => ({ verdict: 'NOT PROVEN', hold, results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } });
+ const now = new Date().toISOString(), day = (n) => new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
++// (3 Nov 2026) tests 1 and 3b used the fixed session 2026-10-23, which aged past the 5-session freshness window: use the last weekday instead
++const SESS = (() => { for (let n = 1; ; n++) { const d = new Date(Date.now() - n * 864e5), w = d.getUTCDay(); if (w !== 0 && w !== 6) return d.toISOString().slice(0, 10); } })();
+ const HAL = { TPC: { s: 'ok', d: '2026-10-23', by: 'you' }, QLYS: { s: 'ok', d: '2026-10-23', by: 'you' }, RELY: { s: 'ok', d: '2026-10-23', by: 'you' } };
+ const lab = (lastClose, extra = {}) => ({ 'data/value-lab.json': { firstRun: {} }, 'data/halal.json': HAL,
+   'data/squad6-lab.json': { firstRun: { 'SQ6-MTUM': good(126) } },
+   'data/squad6-today.json': { generatedAt: now, lastClose, methods: { 'SQ6-MTUM': { name: 'MTUM-style momentum', hold: 126, newSignals: [{ sym: 'TPC', close: 78, d: lastClose }] } } }, ...extra });
+ 
+-// Historical literal closes eventually expire under the real caller's independent NY freshness check.
+-// Use known exchange sessions for freshness fixtures; keep historical entry/stop/hold expectations unchanged.
+-function sessionFixtureDays() {
+-  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+-  const todayNY=parts.year+'-'+parts.month+'-'+parts.day,closes=[];let d=todayNY;
+-  for(let i=0;i<60&&closes.length<7;i++){const session=marketSession(d);assert.equal(session.known,true);if(!session.closed)closes.push(d);d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);}
+-  assert.equal(closes.length,7);
+-  return {todayNY,closes};
+-}
+-
+ test('1. a new-signal list from an older close than the newest session is not shown as a buy', async () => {
+-  const {todayNY,closes}=sessionFixtureDays(),fresh=closes[1];
+-  const S = await loadScan({ files: lab(closes[2]) });
+-  assert.deepEqual(S.fn('trySmallLines')({}, {}, null, fresh), []);
+-  const S2 = await loadScan({ files: lab(fresh) });
+-  assert.equal(S2.fn('sessionsAfter')(fresh,todayNY),1);
+-  assert.match(S2.fn('trySmallLines')({}, {}, null, fresh).join('\n'), /- BUY TPC 1000 USD up to 80\.34\. STOP 50\.70 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\).*SQ6-MTUM/);
++  const S = await loadScan({ files: lab('2026-10-16') });
++  assert.deepEqual(S.fn('trySmallLines')({}, {}, null, SESS), []);
++  const S2 = await loadScan({ files: lab(SESS) });
++  assert.match(S2.fn('trySmallLines')({}, {}, null, SESS).join('\n'), /- BUY TPC 1000 USD up to 80\.34\. STOP 50\.70 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\).*SQ6-MTUM/);
+ });
+ 
+ test('1b. without a session, a list whose close is more than 5 trading sessions old is not shown', async () => {
+-  // A UTC ten-day lookback can be only five NY sessions before midnight after a weekend.
+-  // Pin the intended six-session stale / one-session fresh boundaries on the exchange calendar.
+-  const {todayNY,closes}=sessionFixtureDays();
+-  const S = await loadScan({ files: lab(closes[6]) });
+-  assert.equal(S.fn('sessionsAfter')(closes[6],todayNY),6);
++  const S = await loadScan({ files: lab(day(10)) });
+   assert.deepEqual(S.fn('trySmallLines')({}, {}), []);
+-  const S2 = await loadScan({ files: lab(closes[1]) });
+-  assert.equal(S2.fn('sessionsAfter')(closes[1],todayNY),1);
++  const S2 = await loadScan({ files: lab(day(1)) });
+   assert.match(S2.fn('trySmallLines')({}, {}).join('\n'), /- BUY TPC/);
+ });
+ 
+@@ -75,17 +59,13 @@ test('2b. ACTIONS prices TRY SMALL from sig.uni too (QLYS was only there on 23 O
+ });
+ 
+ test('3. a stock already a BUY elsewhere in the message is not bought again by TRY SMALL', async () => {
+-  const fresh=sessionFixtureDays().closes[1],files=lab(fresh);
+-  const control=await loadScan({files});
+-  assert.match(control.fn('trySmallLines')({}, {TPC:78}, null, fresh).join('\n'), /- BUY TPC/);
+-  const S = await loadScan({ files });
+-  assert.deepEqual(S.fn('trySmallLines')({}, { TPC: 78 }, new Set(['TPC']), fresh), []);
++  const S = await loadScan({ files: lab('2026-10-23') });
++  assert.deepEqual(S.fn('trySmallLines')({}, { TPC: 78 }, new Set(['TPC']), '2026-10-23'), []);
+ });
+ 
+ test('3b. the TRY SMALL ledger row carries the hold and stop that were shown', async () => {
+-  const fresh=sessionFixtureDays().closes[1];
+-  const S = await loadScan({ files: lab(fresh) });
+-  S.fn('trySmallLines')({}, { TPC: 78 }, null, fresh);
++  const S = await loadScan({ files: lab(SESS) });
++  S.fn('trySmallLines')({}, { TPC: 78 }, null, SESS);
+   const row = S.read('data/tier2-ledger.jsonl').trim().split('\n').map(x => JSON.parse(x)).find(r => r.kind === 'try:SQ6-MTUM');
+   assert.equal(row.hold, 126); assert.equal(row.stopPct, 0.35); assert.equal(row.sym, 'TPC');
+ });
 diff --git a/test/watcher-cadence-review.test.mjs b/test/watcher-cadence-review.test.mjs
 deleted file mode 100644
 index 0510d2858cdbb15afb03596360de4c978eb8f35b..0000000000000000000000000000000000000000
