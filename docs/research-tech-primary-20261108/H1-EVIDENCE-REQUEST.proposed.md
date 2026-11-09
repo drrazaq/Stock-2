@@ -38,3 +38,6 @@ This is the single new evidence proposal prepared here, not an approval request 
 
 
 Current C1–C5corrected execution/custody proposal: [single evidence request](../research-horizons-20261109/EVIDENCE-REQUEST.md). It names a proposed private GitHub-hosted job, direct owner research-credential enrollment (paper order capability explicit) and separateH1_SPECIMEN_KEY; none is established or approved. Owner alone opens accepted plan/terms; no express hosted-AIpermission meansSTOPbeforeGET1. A capped open-window response isINCONCLUSIVE, not entitlement refusal. Existing request/count/byte/deadline caps unchanged.
+
+
+**C6custody amendment under review (6733775450):** the[current single proposal](../research-horizons-20261109/EVIDENCE-REQUEST.md) now proposes owner-only private-repository export/account-based recovery with NO extra key by default. This explicitly supersedes the prior mandatory-encryption description for review; conditional independent-key encryption only if applicable terms require it. Bounds unchanged:raw7MiB/export8MiB/metadata1MiB,3GETs/30min+2h/$0. Private ownership/access and permitted storage unverified, Claudeprivateaccess403; no setup/acquisition grant. DefaultH1and unrelatedresearch no longer depend on K2iPhoneroute. Existing account recovery is not off-GitHub disaster recovery.

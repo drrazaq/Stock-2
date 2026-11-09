@@ -1,0 +1,18 @@
+PASS capability banner: all capabilities present
+PASS generator: 20 clicks give 20 distinct keys, each exactly 64 lower-case hex
+PASS a generated key is accepted by the real release tool and its record verifies (PASS)
+PASS right copy: PASS
+PASS different valid key: NOT VERIFIED, cause not determined, stop
+PASS one changed character: NOT VERIFIED
+PASS upper-case copy: NOT VERIFIED (secret is case-sensitive)
+PASS 63 characters: INPUT ERROR, nothing checked
+PASS trailing space: INPUT ERROR
+PASS altered record: INPUT ERROR or NOT VERIFIED, never PASS
+PASS built-in synthetic preflight: PASS
+PASS no result text claims the data is fine or invites a retry
+PASS no network request other than the page itself
+PASS without DecompressionStream: UNSUPPORTED banner before anything is made or checked
+PASS without DecompressionStream: Make key / Check / test buttons disabled
+PASS Codex 6733594774 case: a VALID record without deflate-raw returns UNSUPPORTED, not "damaged"
+PASS without crypto.subtle: UNSUPPORTED banner, buttons disabled
+17/17 checks (headless Chromium 156.0.8078.79, served from 127.0.0.1)

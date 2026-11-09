@@ -1,0 +1,51 @@
+{
+  "source": "89d21db67cc9da1ab8254144d5d97ab80b5c4de3",
+  "notDeployed": true,
+  "files": [
+    {
+      "path": "scan.mjs",
+      "sha256": "ad7856978cb2cc7c467c2effb2affd7922e1dc8a7f6801c756a51ac36f10f388",
+      "locations": {
+        "async function intraday": 4363,
+        "async function checkLive": 1850,
+        "function horizonLine": 218,
+        "function qualityLine": 169,
+        "function longTermText": 2621,
+        "async function stockMap": 2945,
+        "async function natural": 3068
+      }
+    },
+    {
+      "path": ".github/workflows/leaders-study.yml",
+      "sha256": "1a5870c9bf48988a4ade68593686504a56c78df7eefe73ecad02e3d91d33589c",
+      "locations": {
+        "node horizons.mjs": 132,
+        "node quality.mjs": 172
+      }
+    },
+    {
+      "path": "horizons.mjs",
+      "sha256": "3ce9b92249e195288e59b85982b1f5332723ad6067c1caaf89a73de681a4a107",
+      "locations": {
+        "const H =": 22,
+        "function fwd": 31,
+        "fs.writeFileSync(OUT": 23
+      }
+    },
+    {
+      "path": "quality.mjs",
+      "sha256": "91c466d9e1ff4340d270f921f42c4d9c2458eaf6815f67a7351eea4914c88dfe",
+      "locations": {
+        "const spyI": 92,
+        "fs.writeFileSync(OUT": 68
+      }
+    }
+  ],
+  "shortRoute": "bot MODEchat/intraday workflow -> intraday(false) -> quoteEvidence/holdingAction/first-check -> telegram -> loopback capture",
+  "stockRoute": "Telegram check/review path -> known?checkOne:checkLive -> loadDaily -> originalL.learn/applyGates -> horizonLine/qualityLine -> reply; demo calls actualcheckLive, no realTelegram dispatch",
+  "midProducer": "leaders-study.yml -> horizons.mjs -> data/horizons.json -> horizonLine/checkLive/planCands onlyPROMISING",
+  "longProducer": "leaders-study.yml -> quality.mjs -> data/quality.json -> qualityLine/checkLive/qualityText; longterm command -> longTermText genericcore, not stock-specific card",
+  "noRuleChanged": true,
+  "network": "loopbackonly;0externalrequests",
+  "sideEffects": "checkLive adds symbols only within helper scratch extra.json; intraday writes only synthetic scratchstate; no live delivery, repo setting or provider call"
+}

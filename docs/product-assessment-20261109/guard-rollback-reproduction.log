@@ -1,0 +1,4 @@
+new guard 9:16 dispatch: true | state keys: d,started,dispatched,alerted,attempts,version | dispatched: [] | attempts: 1
+old guard 9:20 on new state -> dispatch: true | why: not running | alerts: WATCHER NOT STARTED by 09:20 New York: GitHub had not starte
+control old->old 9:16 dispatch: true | 9:20 dispatch: false
+forward old->new 9:20 dispatch: false | attempts: [{"min":556,"status":"UNCONFIRMED_LEGACY"}]
