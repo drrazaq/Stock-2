@@ -1,3 +1,8 @@
+// Review evidence (offline, no network): actual watcher-guard-core.mjs of main 6e72a8d0 (old) and package 89d21db6 (new).
+// Setup: DIR/old and DIR/new each hold that version's watcher-guard-core.mjs, market-session.mjs and watcher-schedule.mjs
+// (git show <sha>:<file>). Run: node guard-rollback-sim.mjs DIR
+// Observed 9 Nov: new 9:16 dispatch true (attempts 1, dispatched []); old 9:20 on new state dispatch TRUE (R-B);
+// control old->old 9:20 false; forward old->new 9:20 false (UNCONFIRMED_LEGACY).
 const N = await import(process.argv[2] + '/new/watcher-guard-core.mjs'), O = await import(process.argv[2] + '/old/watcher-guard-core.mjs');
 // Mon 16 Nov 2026, 9:16 New York (14:16Z): no watcher run yet today -> the NEW guard decides to dispatch.
 const t1 = Date.parse('2026-11-16T14:16:00Z'), noRuns = [];
