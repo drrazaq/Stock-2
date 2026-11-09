@@ -14,8 +14,8 @@
 
 | Element | Status |
 |---|---|
-| Exact candidate  and binding  | named exactly |
-| Protocol , including the new review/response timetable and residual risks | approved explicitly |
+| Exact candidate `d52499c4…` and binding `1a799a15…` | named exactly |
+| Protocol `d2f76b64…`, including the new review/response timetable and residual risks | approved explicitly |
 | R-A | **accepted** (same substance as the reviewed wording); nothing else waived |
 | $0 control | confirmed (see `PREREQUISITE-BILLING-20261109.md`, `9de94fd1`) |
 | Start condition | session A only on the owner's request, with both agents confirmed present and fresh readiness checks passing |
