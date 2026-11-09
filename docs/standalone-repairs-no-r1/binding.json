@@ -1,26 +1,26 @@
 {
- "status": "REVIEW ONLY: standalone non-R1 repairs rev2; not approved, not deployed",
- "candidate": "89d21db67cc9da1ab8254144d5d97ab80b5c4de3",
- "candidateTree": "fbd577399679dee0a36f9c92005ecf12fd365f2e",
+ "status": "REVIEW ONLY: standalone non-R1 repairs rev3; not approved, not deployed",
+ "candidate": "0e89cb90c1f9b9a4ec199a0c70b66115a6501f22",
+ "candidateTree": "cdb70068ac49ae1edddb6bf1dbc1b2af4f556ef6",
  "mainAtBinding": "6e72a8d0c46385f3c329157d627636875505a224",
  "derivedFrom": {
   "reviewedCombinedCandidate": "73aa701f273ce14147fa38a25e722436d337fe45",
   "method": "every R1 change removed (3-way: candidate - (R1 rev7 67f1beba - pre-R1 b0d76987)); plaintext watcher fixture from development 954c2ed5; two sealed-path edits removed from watcher-nov2-clock"
  },
- "pathCount": 25,
+ "pathCount": 27,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "13fca8d442f0c81a15347bd124620ff71a80c46b9bdaab6d1bb669dcf94fd2f5",
+  "sha256": "f1b18152ba51c2c14bf08d9d307219a00ddfb112e40eae45f2400f6fde0ac03a",
   "against": "6e72a8d0c46385f3c329157d627636875505a224"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "de28fbd9c565e27d04c8aece6621af54d075175acc50f2efb5fd6ffd63ae542d"
+  "sha256": "2c9e9c9c4919fc4778fbabb23e6fdbbbd3b6247f9bf92ac728346bd7ed04bc95"
  },
  "noR1": true,
  "noKeysOrSecretsAdded": true,
  "neverForcePush": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 89d21db67cc9da1ab8254144d5d97ab80b5c4de3 binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 0e89cb90c1f9b9a4ec199a0c70b66115a6501f22 binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "files": {
   ".github/workflows/ignition.yml": {
@@ -108,6 +108,16 @@
    "bytes": 1002,
    "mode": "100644"
   },
+  "test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs": {
+   "sha256": "0ba5c9450661749d0e85d46f6af6206f1ee865219d0fdacc436b0d69f1c33527",
+   "bytes": 5203,
+   "mode": "100644"
+  },
+  "test/watcher-guard-rollback-compat.test.mjs": {
+   "sha256": "3c514f47b9f3d3bcdbaede44981ad31a930598217a133f30b2650615caac4f8f",
+   "bytes": 8014,
+   "mode": "100644"
+  },
   "test/watcher-guard.test.mjs": {
    "sha256": "aee017d1e57126865562dd199c2e2fa7812a789ad5e3f63c279fcd58700efee6",
    "bytes": 8234,
@@ -129,8 +139,8 @@
    "mode": "100644"
   },
   "watcher-guard-core.mjs": {
-   "sha256": "05a0d3b7a5ff12e019200f71d5624bc2c8b43d0f65fa354f4b7c5baf19039812",
-   "bytes": 10546,
+   "sha256": "c5270837694adf7fa246a4e8120f01f6bebe96a90f8e5dd6efd7f4210c857356",
+   "bytes": 11433,
    "mode": "100644"
   },
   "watcher-guard-history.mjs": {
@@ -139,8 +149,8 @@
    "mode": "100644"
   },
   "watcher-guard.mjs": {
-   "sha256": "d34ade6fbba9c7c78675c51f0dc14cf06a8c76ed2bdb20f9619137e650b52d16",
-   "bytes": 3131,
+   "sha256": "15c0a8fbf40cc6c706ddec54543f8ce8385e12b3dc91be826a9587bc0432b650",
+   "bytes": 3108,
    "mode": "100644"
   },
   "watcher-schedule.mjs": {
@@ -150,16 +160,16 @@
   }
  },
  "supersedes": {
-  "candidate": "10874f6867cd6564c236e2dba217497f1cc591e8",
-  "bindingSha256": "cd87e9f98450cafb41724e3dc9da6b204d47a2e683a9191e2e6d36a00a6b6049",
-  "reason": "Codex 6733165226 F1: deterministic try-small fixture from development b9753abb2"
+  "candidate": "89d21db67cc9da1ab8254144d5d97ab80b5c4de3",
+  "bindingSha256": "61f75b81acfdf51c46e540efdd856ae8c9698dc73e452fa3c005bc93401ca1b8",
+  "reason": "Codex 6733778910 R-B: watcher-guard reservations mirrored into legacy dispatched; legacy additions reconciled; old/new regression test"
  },
  "testInventory": {
-  "rootTestFiles": 154,
+  "rootTestFiles": 155,
   "otherTestFiles": [
    "tests/instrument-type.test.mjs"
   ],
-  "completeFiles": 155,
+  "completeFiles": 156,
   "mainCompleteFiles": 144
  }
 }

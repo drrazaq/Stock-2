@@ -1,4 +1,4 @@
-# Standalone repairs without R1, rev2 (review only; not approved, not deployed)
+# Standalone repairs without R1, rev3 (review only; not approved, not deployed)
 
 This package ships the already-reviewed **calendar, watcher, open-check and intraday price-freshness repairs** on their own. It contains **no R1 encryption**.
 
@@ -12,10 +12,10 @@ This package ships the already-reviewed **calendar, watcher, open-check and intr
 
 | Item | Value |
 |---|---|
-| Package commit (review branch `claude/standalone-repairs-no-r1-rev2`) | `89d21db67cc9da1ab8254144d5d97ab80b5c4de3`, sole parent = production main `6e72a8d0`. Supersedes rev1 `10874f68` (branch `claude/standalone-repairs-no-r1`, kept unchanged). |
-| Paths | **25** (`paths`; rev2 adds `test/try-small-audit.test.mjs`); fingerprint, size and Git mode of each in `binding.json` |
+| Package commit (review branch `claude/standalone-repairs-no-r1-rev3`) | `0e89cb90c1f9b9a4ec199a0c70b66115a6501f22`. Its parent is rev2 `89d21db6`, whose sole parent is production main `6e72a8d0`. Supersedes rev2 (branch `claude/standalone-repairs-no-r1-rev2`) and rev1 `10874f68`; both branches are kept unchanged. |
+| Paths | **27** (`paths`; rev2 added `test/try-small-audit.test.mjs`; rev3 adds `test/watcher-guard-rollback-compat.test.mjs` and its pinned fixture `test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs`); fingerprint, size and Git mode of each in `binding.json` |
 | `source.patch` / `inverse.patch` | against main `6e72a8d0`; hashes in `SHA256SUMS` |
-| Package tree | `fbd577399679dee0a36f9c92005ecf12fd365f2e` |
+| Package tree | `cdb70068ac49ae1edddb6bf1dbc1b2af4f556ef6` |
 | Derived from | reviewed combined candidate `73aa701f` (Codex PASS 6726424167), with every R1 change removed |
 
 ## What it repairs (each defect reproduced on production main `6e72a8d0`)
@@ -54,7 +54,7 @@ The package's own regression tests were run against **production code**:
 - **Not included (R1-only):** `sealed-*.mjs`, `r1-*.mjs`, `.github/sealed-git.sh`, `bot-save.sh`, `save-data.sh`, every other workflow, `health.mjs`, `watcher-reporting.mjs`, `opportunity-radar.mjs` (sealed reader), the R1 reader/writer changes in the other modules, `test/load-scan.mjs`, R1 tests and docs, `.gitattributes`, `.gitignore`.
 - **Encryption mentions left:** the only `PRIVATE_KEY` in the patch is the synthetic test key of the calendar's **existing** `data/calendar.enc` encryption, which production already uses.
 
-## Independent review of rev1: PASS (`REVIEW.md`); rev2 changes only `test/try-small-audit.test.mjs` and this README
+## Independent review of rev1: PASS (`REVIEW.md`); rev2 changed only `test/try-small-audit.test.mjs`; rev3 changes only the watcher guard (R-B, below)
 
 No blocking findings. Non-blocking points, all inherited unchanged from the reviewed candidate:
 - If `watcher-schedule.mjs` itself crashed, no RUN FAILED message is sent; the watcher guard remains the warning.
@@ -63,8 +63,9 @@ No blocking findings. Non-blocking points, all inherited unchanged from the revi
 
 ## Checks (offline; Node 20 with the network guard)
 
-- **Complete test inventory (F2):** 155 files = 154 root `test/*.test.mjs` + `tests/instrument-type.test.mjs` (main: 143 + 1 = 144).
-  - On rev2 at the actual clock (9 Nov, Node 20, network guard): **155/155 files PASS**. That is 154/154 root files with 1,470/1,470 tests, plus `tests/instrument-type` 9/9.
+- **Complete test inventory (F2):** 156 files = 155 root `test/*.test.mjs` + `tests/instrument-type.test.mjs` (main: 143 + 1 = 144).
+  - On rev3 at the actual clock (9 Nov, Node 20, network guard): **156/156 files PASS**. That is 155/155 root files with 1,480/1,480 tests, plus `tests/instrument-type` 9/9. No network attempt was logged.
+  - Rev2 had 155/155 files (1,470 root tests); the 10 added tests are the R-B regression.
   - Rev1's "153/154" counted root files only and is superseded.
 - **Deterministic try-small fixture (F1):** `test/try-small-audit.test.mjs` is the development version from `b9753abb2`, unchanged.
   - Its stale/fresh cases use real NYSE sessions (`closes[6]` is 6 sessions old, `closes[1]` is 1) with positive controls kept. No runtime gate was changed.
@@ -77,9 +78,9 @@ No blocking findings. Non-blocking points, all inherited unchanged from the revi
     | 2026-11-09 05:30 | 16/16 | 16/16 |
     | 2026-11-07 15:00 | 16/16 | 16/16 |
     | 2026-11-10 03:59 | 16/16 | 16/16 |
-- **Gated watcher suites** (`INCIDENT_WATCHER_SRC` = this package): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.
-- **Precheck** against `6e72a8d0`: PASS (25 files, 0 drift).
-- **Build and verify:** `--build-unit 6e72a8d0 89d21db6` then `--verify-unit`: PASS (25 files). Unit tree `fbd57739…` = package tree.
+- **Gated watcher suites** (`INCIDENT_WATCHER_SRC` = this package's `ignition-watch.mjs`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11 (rerun on rev3).
+- **Precheck** against `6e72a8d0`: PASS (27 files, 0 drift).
+- **Build and verify:** `--build-unit 6e72a8d0 0e89cb90` then `--verify-unit`: PASS (27 files). Unit tree `cdb70068…` = package tree.
 - **Patches:** `source.patch` on main gives the package tree, and `inverse.patch` restores main exactly.
 - **STOP R2 pins** (`stop-pins.json`): 4 of 17 pinned files change: `scan.mjs`, `ignition-watch.mjs`, `ignition.yml` and `test/stop-alert-validity.test.mjs`. On main, `scan.mjs` already differs from its STOP pin because of the approved 7 Nov D1–D4 patch.
 
@@ -111,29 +112,36 @@ A bot job's head, its green status, or a data commit made after the push does **
 | Case | Verified behaviour |
 |---|---|
 | New calendar reader on an old-layout file | Shows "figures UNKNOWN (saved before…)", never merged figures (`cal-rollback-compat.test.mjs`) |
-| New watcher guard on old guard state | Converts it to `UNCONFIRMED_LEGACY` attempts and does **not** re-dispatch (`guard-rollback-sim.mjs`) |
+| New watcher guard on old guard state | Converts it to `UNCONFIRMED_LEGACY` attempts and does **not** re-dispatch (`guard-rollback-sim.mjs`; `test/watcher-guard-rollback-compat.test.mjs`) |
+| Old watcher guard on new guard state | Keeps its 15-minute spacing and 3-attempt cap (rev3; same evidence) |
 | `data/alert-state.json` | The same `{day, sent}` layout in both versions |
 
 **These are the verified cases, not a blanket concurrency guarantee.** That `C` and its revert touch no data path proves only that the inverse preserves data.
 
-### Rollback limits (verified with the actual old and new code; require explicit owner acceptance, or a rollback inside the stated boundary)
+### Rollback limits (verified with the actual old and new code)
 
 - **R-A, calendar units (up to 6 days).**
   - After a revert, once the **old** calendar job runs on a file the new job wrote, it keeps the new-layout rows until its provider refresh (up to 6 days).
   - The old message then shows some figures **without units**: "Jobs report: forecast 40, previous 29" for 40K / 29K, and CPI "0.3" for 0.3%.
   - Nothing crashes. No procedural boundary avoids this without changing data or code, so it needs the owner's **explicit acceptance** before approval. The alternative is a separately reviewed forward-compatibility change, which is not in this package.
-- **R-B, watcher guard on the rollback day (found in this correction).**
-  - The new guard records its start attempts only in `attempts`, not in the old `dispatched` list.
-  - Actual functions, `guard-rollback-sim.mjs`: on Mon 16 Nov, the new guard dispatches at 09:16 NY; an old guard restored by rollback dispatches **again at 09:20** with a second "WATCHER NOT STARTED" alert. The old guard's own control waits 15 minutes.
-  - This is limited to that New York day, because guard state resets daily, and to at most 3 old-guard attempts. It never happens while a watcher run is visible as running or queued.
-  - **Boundary that avoids it:** roll back only **outside 09:00–15:05 New York on a trading day**. Otherwise owner acceptance is needed.
-- **No mandatory safeguard is removed** by a rollback. It restores the previous code exactly (the inverse is byte-exact on the 25 paths). Data saved since is kept.
+  - **No bounded compatibility change exists inside this package.** The new scanner itself reads the legacy `fc` / `act` / `kind` fields of the new rows (`scan.mjs`), so the writer cannot stop emitting them without also changing the reader; and the old job's unit-less copy happens in the **old** `calendar.mjs`, which a revert restores. R-A therefore remains an owner decision: accept it, or ask for a separately reviewed change.
+- **R-B, watcher guard on the rollback day: CLOSED in rev3 by code (Codex 6733778910).**
+  - **Fix:** the new guard records every start reservation in the legacy `dispatched` list as well as in `attempts`, before the request is sent, which is what the old guard itself did. The CLI no longer appends to `dispatched`. Any reservation an old guard adds is read back by the new guard as an `UNCONFIRMED_LEGACY` attempt, never as an accepted request. "Guard request accepted" in `watcher-starts.jsonl` is read from attempt statuses only.
+  - **Evidence:** `test/watcher-guard-rollback-compat.test.mjs` (10 tests) runs the old core of main `6e72a8d0`, vendored byte-for-byte with its sha256 pinned, against the same state as the new core:
+    - new → old: after an ACCEPTED, REJECTED or UNKNOWN new request, the old guard waits 15 minutes; after 3 new attempts it sends its DOWN alert and never a 4th start;
+    - old → new and old → new → old → new cycles: at most 3 starts, 15-minute spacing kept, no acceptance invented, no duplicate attempts;
+    - visible running, queued or history-UNKNOWN never dispatch under the new guard, with or without old-guard state;
+    - no warning is removed: NOT STARTED, DOWN, LATE and STOPPED EARLY still fire.
+  - On rev2 code, 7 of these 10 tests fail. `guard-rollback-sim.mjs` rerun unchanged on rev3: the old guard at 09:20 now gives **dispatch false** (on rev2 it dispatched again).
+  - **Correction to the rev2 description:** my earlier simulation called `guardDecide` only. The rev2 CLI did copy **accepted** requests into `dispatched`, so rev2's actual exposure was narrower than stated: an old guard could re-request early only after a REJECTED or UNKNOWN request, and its cap counted accepted requests only. Rev3 removes that exposure too.
+  - **No rollback time boundary is needed for the guard any more.** Rolling back restores the old guard's own known limits (it uses run status, not job evidence); that is the pre-repair behaviour, not a compatibility defect.
+- **No mandatory safeguard is removed** by a rollback. It restores the previous code exactly (the inverse is byte-exact on the 27 paths). Data saved since is kept.
 
 ## Applying it (only after separate owner approval; not authorized by this document)
 
-1. Fresh precheck: main must still match `6e72a8d0` on the 25 paths. If not, stop and rebase for re-review.
+1. Fresh precheck: main must still match `6e72a8d0` on the 27 paths. If not, stop and rebase for re-review.
 2. Build `C` on the then-current main, verify it, then make one fast-forward source-only push.
 3. Check the Tests run on `C`.
 4. No pause is required. The running bot job may load `C` at a later loop iteration (no time promised; see qualifications). Watcher and scan jobs use it from their next run.
-5. **Rollback:** `git revert C`, or `inverse.patch`, preferably outside 09:00–15:05 New York on a trading day (R-B). The tree returns byte-identical on the 25 paths and data saved since is kept, subject to limit R-A, which needs explicit owner acceptance.
+5. **Rollback:** `git revert C`, or `inverse.patch`, at any time (R-B is closed in rev3). The tree returns byte-identical on the 27 paths and data saved since is kept, subject to limit R-A, which needs explicit owner acceptance.
 6. **First observations** (each needs the loaded-code evidence above, otherwise UNKNOWN): the next bot run, the next intraday market-hours check, the next watcher day (14:10 UTC on a weekday) and the next calendar refresh.

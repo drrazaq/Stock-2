@@ -1722,6 +1722,170 @@ index 0510d2858cdbb15afb03596360de4c978eb8f35b..00000000000000000000000000000000
 @@ -1,2 +0,0 @@
 -import test from 'node:test';import assert from 'node:assert/strict';import {nov2Fixture} from './watcher-nov2-fixture.mjs';
 -for(const [date,start] of [['2026-10-30','2026-10-30T13:10:00Z'],['2026-11-02','2026-11-02T14:10:00Z']])test('actual watcher covers each configured minute with 2.5second snapshot work '+date,async()=>{const f=await nov2Fixture();try{f.state.slowMs=2500;const r=await f.workflow({start,event:'schedule',schedule:'CURRENT_CRON'});assert.equal(r.code,0,r.output);const j=f.read('data/ignition-runs/'+date+'/101-1.json'),observed=new Set(j.heartbeat.map(x=>x.m)),missing=Array.from({length:331},(_,i)=>570+i).filter(m=>!observed.has(m));assert.deepEqual(missing,[],'work shorter than a minute must not accumulate drift');assert.equal(observed.has(900),true);assert.ok(r.trace.ended-Date.parse(start)<=360*60000);assert.equal(f.state.dispatches,0);console.log(JSON.stringify({date,retained:j.heartbeat.length,configuredObserved:331-missing.length,missing}));}finally{f.close();}});
+diff --git a/test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs b/test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs
+deleted file mode 100644
+index 3e44c5f2a8d3aa88806cbf33de6fc1c2ff7d5111..0000000000000000000000000000000000000000
+--- a/test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs
++++ /dev/null
+@@ -1,47 +0,0 @@
+-// WATCHER GUARD (owner, 28 Oct 2026, V3.0 item 4 "startup reliability"). Pure decision; watcher-guard.mjs does the GitHub and Telegram calls.
+-// WHY: GitHub's cron queue started the live watcher 33-44 minutes late every day (9:38-9:49 New York) and about 2 hours late on 26 Oct
+-// (11:10), so moving the cron earlier cannot be trusted alone. The bot job runs all day (one ~5.5 h run after another), so every 5 minutes
+-// it asks GitHub whether the watcher is running and, if it is not running by 9:10 New York on a market day, starts it with a
+-// workflow_dispatch (GitHub allows that event from the job's own token) and tells the owner. It also measures the real start time.
+-// New York time comes from Intl (America/New_York), so daylight saving is automatic (summer UTC-4, winter UTC-5 from 1 Nov 2026).
+-// Market holidays: the NYSE full-day closures below (update every December); half days still run.
+-export const HOLIDAYS = ['2026-11-26', '2026-12-25', '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31', '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24'];
+-export const WINDOW = { from: 550, to: 895, startUntil: 840, wantBy: 565 };   // check 9:10-14:55 New York, start it until 14:00; it should run by 9:25
+-export const fmt = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+-export function nyParts(ms) {
+-  const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', weekday: 'short', hourCycle: 'h23' })
+-    .formatToParts(new Date(ms)).forEach(x => p[x.type] = x.value);
+-  return { d: p.year + '-' + p.month + '-' + p.day, min: +p.hour * 60 + +p.minute, wd: p.weekday };
+-}
+-export const marketDay = (n, holidays = HOLIDAYS) => !['Sat', 'Sun'].includes(n.wd) && !holidays.includes(n.d);
+-
+-// runs: GitHub workflow runs of ignition.yml [{ id, status, conclusion, created_at, run_started_at, updated_at }]
+-// state: { d, started, dispatched: [min...], alerted: {kind: true} }   returns { state, dispatch, alerts: [text] }
+-export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) {
+-  const n = nyParts(nowMs), alerts = []; let dispatch = false;
+-  const state = state0 && state0.d === n.d ? { ...state0, dispatched: [...(state0.dispatched || [])], alerted: { ...(state0.alerted || {}) } } : { d: n.d, started: null, dispatched: [], alerted: {} };
+-  if (!marketDay(n, holidays) || n.min < WINDOW.from || n.min > WINDOW.to) return { state, dispatch, alerts, why: 'outside the check window' };
+-  const today = runs.filter(r => nyParts(Date.parse(r.created_at)).d === n.d);
+-  const running = today.filter(r => r.status === 'in_progress'), queued = today.filter(r => ['queued', 'waiting', 'requested', 'pending'].includes(r.status));
+-  // a run that finished within 10 minutes was an early exit (outside its window), not a watch
+-  const watchedAlready = today.some(r => r.status === 'completed' && Date.parse(r.updated_at) - Date.parse(r.run_started_at || r.created_at) > 10 * 60000);
+-  if (running.length) {
+-    const st = Math.min(...running.map(r => Date.parse(r.run_started_at || r.created_at))), sm = nyParts(st).min;
+-    if (state.started === null) state.started = sm;
+-    if (sm > WINDOW.wantBy + 10 && !state.alerted.late) { state.alerted.late = true; alerts.push('WATCHER STARTED LATE: the live watcher started at ' + fmt(sm) + ' New York (it should run by 9:25). The open was not watched' + (state.dispatched.length ? '; it was started by the guard.' : '; GitHub started it late.')); }
+-    return { state, dispatch, alerts, why: 'running since ' + fmt(sm) };
+-  }
+-  if (watchedAlready) { if (!state.alerted.stopped) { state.alerted.stopped = true; alerts.push('WATCHER STOPPED EARLY: today\'s live watcher ended before 14:55 New York (crash or time limit). Not restarted automatically (a second run would overwrite the day\'s record). Send this to Claude.'); }
+-    return { state, dispatch, alerts, why: 'watched today, then stopped' }; }
+-  if (queued.length) {
+-    if (n.min >= WINDOW.wantBy && !state.alerted.queued) { state.alerted.queued = true; alerts.push('WATCHER WAITING: GitHub has the live watcher queued but has not started it (' + fmt(n.min) + ' New York). Nothing is watched until it starts.'); }
+-    return { state, dispatch, alerts, why: 'queued' };
+-  }
+-  const last = state.dispatched.length ? state.dispatched[state.dispatched.length - 1] : null;
+-  if (n.min > WINDOW.startUntil) return { state, dispatch, alerts, why: 'not running, too late to start' };
+-  if (state.dispatched.length < 3 && (last === null || n.min - last >= 15)) {
+-    dispatch = true; state.dispatched.push(n.min);
+-    alerts.push('WATCHER NOT STARTED by ' + fmt(n.min) + ' New York: GitHub had not started it, so Stock-2 started it itself (attempt ' + state.dispatched.length + ' of 3).');
+-  } else if (state.dispatched.length >= 3 && !state.alerted.gaveUp) { state.alerted.gaveUp = true; alerts.push('WATCHER DOWN: 3 start attempts failed (last ' + fmt(last) + ' New York). No live watch today unless it starts. Send this to Claude.'); }
+-  return { state, dispatch, alerts, why: 'not running' };
+-}
+diff --git a/test/watcher-guard-rollback-compat.test.mjs b/test/watcher-guard-rollback-compat.test.mjs
+deleted file mode 100644
+index 598d70045617b2be8b0974b822926612a2cc7692..0000000000000000000000000000000000000000
+--- a/test/watcher-guard-rollback-compat.test.mjs
++++ /dev/null
+@@ -1,105 +0,0 @@
+-// Standalone rev3 (Codex 6733778910, R-B): rollback compatibility of watcher-guard state. The pre-repair guard core from production
+-// main 6e72a8d0 is vendored byte-for-byte (sha256 pinned below) and run against the same data/watcher-guard.json as the repaired core,
+-// in both directions and in alternating cycles. Run: node --test test/watcher-guard-rollback-compat.test.mjs
+-import test from 'node:test';
+-import assert from 'node:assert/strict';
+-import fs from 'node:fs';
+-import crypto from 'node:crypto';
+-import { guardDecide as newDecide } from '../watcher-guard-core.mjs';
+-import { guardDecide as oldDecide } from './watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs';
+-
+-const at = (hm) => Date.parse('2026-11-10T' + hm + ':00Z');   // Tue 10 Nov 2026, New York = UTC-5
+-const nyMin = (hm) => { const [h, m] = hm.split(':').map(Number); return (h - 5) * 60 + m; };
+-const disk = (s) => JSON.parse(JSON.stringify(s));             // both CLIs persist JSON.stringify(out.state)
+-// The repaired CLI sets the reservation's transport status after guardDecide; `dispatched` is NOT touched there any more.
+-const newCli = (hm, runs, s, status = 'ACCEPTED', cfg = {}) => { const o = newDecide(at(hm), runs, s, undefined, cfg); if (o.dispatch) o.state.attempts.at(-1).status = status; return { ...o, state: disk(o.state) }; };
+-const oldCli = (hm, runs, s) => { const o = oldDecide(at(hm), runs, s); return { ...o, state: disk(o.state) }; };
+-
+-test('vendored pre-repair core is byte-identical to production main 6e72a8d0', () => {
+-  const b = fs.readFileSync(new URL('./watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs', import.meta.url));
+-  assert.equal(crypto.createHash('sha256').update(b).digest('hex'), '0ba5c9450661749d0e85d46f6af6206f1ee865219d0fdacc436b0d69f1c33527');
+-});
+-
+-test('new -> old: every new reservation (ACCEPTED, REJECTED or UNKNOWN) is mirrored, so the old guard keeps 15-minute spacing', () => {
+-  for (const status of ['ACCEPTED', 'REJECTED', 'UNKNOWN']) {
+-    const a = newCli('14:12', [], {}, status);
+-    assert.equal(a.dispatch, true); assert.deepEqual(a.state.dispatched, [nyMin('14:12')]); assert.equal(a.state.attempts[0].status, status);
+-    assert.equal(oldCli('14:20', [], a.state).dispatch, false, status + ': old guard must wait 15 minutes');
+-    assert.equal(oldCli('14:27', [], a.state).dispatch, true, status + ': old guard may retry after 15 minutes');
+-  }
+-});
+-
+-test('new -> old: the 3-attempt cap carries over; the old guard then sends its DOWN alert and never a fourth start', () => {
+-  let s = newCli('14:12', [], {}, 'REJECTED').state; s = newCli('14:27', [], s, 'UNKNOWN').state; s = newCli('14:42', [], s, 'ACCEPTED').state;
+-  assert.deepEqual(s.dispatched, [nyMin('14:12'), nyMin('14:27'), nyMin('14:42')]);
+-  const o = oldCli('14:58', [], s); assert.equal(o.dispatch, false); assert.match(o.alerts[0], /WATCHER DOWN/);
+-  assert.equal(oldCli('15:30', [], o.state).dispatch, false);
+-});
+-
+-test('old -> new: a reservation the old guard added after a new one is reconciled as UNCONFIRMED_LEGACY, never as accepted', () => {
+-  const a = newCli('14:12', [], {}, 'REJECTED'); const b = oldCli('14:27', [], a.state);
+-  assert.equal(b.dispatch, true); assert.equal(b.state.version, 2); assert.equal(b.state.attempts.length, 1, 'old guard does not write attempts');
+-  const c = newCli('14:35', [], b.state);
+-  assert.equal(c.dispatch, false, 'spacing counts the old reservation');
+-  assert.deepEqual(c.state.attempts, [{ min: nyMin('14:12'), status: 'REJECTED' }, { min: nyMin('14:27'), status: 'UNCONFIRMED_LEGACY' }]);
+-  assert.deepEqual(c.state.dispatched, [nyMin('14:12'), nyMin('14:27')]);
+-  assert.equal(c.state.attempts.some(x => x.status === 'ACCEPTED'), false);
+-});
+-
+-test('old -> new -> old -> new: alternating guards never exceed 3 starts, keep spacing, and never invent an acceptance', () => {
+-  const guards = [oldCli, newCli, oldCli, newCli, oldCli, newCli, oldCli, newCli];
+-  let s = {}, starts = [], last = null;
+-  for (let i = 0; i < 16; i++) {
+-    const t = 14 * 60 + 10 + i * 5, hm = String(Math.floor(t / 60)).padStart(2, '0') + ':' + String(t % 60).padStart(2, '0');
+-    const g = guards[i % guards.length], o = g === newCli ? newCli(hm, [], s, 'UNKNOWN') : g(hm, [], s);
+-    if (o.dispatch) { const m = nyMin(hm); if (last !== null) assert.ok(m - last >= 15, 'spacing at ' + hm); starts.push(m); last = m; }
+-    s = o.state;
+-  }
+-  assert.equal(starts.length, 3);
+-  const fin = newCli('16:30', [], s).state;
+-  assert.deepEqual(fin.dispatched, starts); assert.deepEqual(fin.attempts.map(x => x.min), starts);
+-  assert.equal(fin.attempts.some(x => x.status === 'ACCEPTED'), false);
+-});
+-
+-test('legacy-only state (no version) is read as UNCONFIRMED_LEGACY attempts, as before rev3', () => {
+-  const s = oldCli('14:12', [], {}).state; assert.equal(s.version, undefined);
+-  const o = newCli('14:20', [], s); assert.equal(o.dispatch, false);
+-  assert.deepEqual(o.state.attempts, [{ min: nyMin('14:12'), status: 'UNCONFIRMED_LEGACY' }]); assert.deepEqual(o.state.dispatched, [nyMin('14:12')]);
+-});
+-
+-test('repeated new-guard reads are idempotent: no duplicate attempts from the mirror', () => {
+-  let s = newCli('14:12', [], {}, 'ACCEPTED').state;
+-  for (const hm of ['14:15', '14:20', '14:25']) s = newCli(hm, [{ status: 'queued', created_at: '2026-11-10T14:13:00Z' }], s).state;
+-  assert.deepEqual(s.attempts, [{ min: nyMin('14:12'), status: 'ACCEPTED' }]); assert.deepEqual(s.dispatched, [nyMin('14:12')]);
+-});
+-
+-test('visible running, queued or history-UNKNOWN never dispatch under the new guard, whatever an old guard left behind', () => {
+-  const legacy = oldCli('14:12', [], {}).state;
+-  const running = [{ status: 'in_progress', created_at: '2026-11-10T14:28:00Z', jobEvidence: 'MEASURED', jobStartedAt: '2026-11-10T14:28:30Z' }];
+-  const unmeasured = [{ status: 'in_progress', created_at: '2026-11-10T14:28:00Z' }];
+-  const queued = [{ status: 'queued', created_at: '2026-11-10T14:28:00Z' }];
+-  for (const s of [{}, legacy]) {
+-    assert.equal(newCli('14:30', running, s).dispatch, false);
+-    assert.equal(newCli('14:30', unmeasured, s).dispatch, false);
+-    const q = newCli('14:30', queued, s); assert.equal(q.dispatch, false); assert.match(q.alerts[0], /WATCHER WAITING/);
+-    const h = newCli('14:30', [], s, 'ACCEPTED', { historyComplete: false }); assert.equal(h.dispatch, false); assert.match(h.alerts[0], /WATCHER HISTORY UNKNOWN/);
+-  }
+-});
+-
+-test('no warning removed: NOT STARTED, DOWN, LATE and STOPPED EARLY still fire under the new guard after a rollback cycle', () => {
+-  let s = oldCli('14:12', [], {}).state; let o = newCli('14:27', [], s, 'UNKNOWN'); assert.match(o.alerts[0], /WATCHER NOT STARTED by 09:27.*attempt 2 of 3/);
+-  o = newCli('14:42', [], o.state, 'REJECTED'); assert.match(o.alerts[0], /attempt 3 of 3/);
+-  o = newCli('14:58', [], o.state); assert.match(o.alerts[0], /WATCHER DOWN/);
+-  const late = newCli('15:15', [{ status: 'in_progress', created_at: '2026-11-10T15:10:00Z', jobEvidence: 'MEASURED', jobStartedAt: '2026-11-10T15:10:10Z' }], s);
+-  assert.match(late.alerts.join('\n'), /WATCHER STARTED LATE/);
+-  const stop = newCli('16:30', [{ id: 7, status: 'completed', created_at: '2026-11-10T14:20:00Z', jobEvidence: 'MEASURED', jobStartedAt: '2026-11-10T14:20:10Z', jobCompletedAt: '2026-11-10T16:00:00Z' }], s);
+-  assert.match(stop.alerts.join('\n'), /WATCHER STOPPED EARLY/);
+-});
+-
+-test('guardRequestAccepted (CLI) is computed from attempt statuses, not from the reservation mirror', () => {
+-  const src = fs.readFileSync(new URL('../watcher-guard.mjs', import.meta.url), 'utf8');
+-  assert.match(src, /guardRequestAccepted:out\.state\.attempts\.some\(a=>a\.status==='ACCEPTED'\)/);
+-  assert.doesNotMatch(src, /dispatched\.push/);
+-  const rej = newCli('14:12', [], {}, 'REJECTED').state; assert.equal(rej.dispatched.length, 1); assert.equal(rej.attempts.some(a => a.status === 'ACCEPTED'), false);
+-  const acc = newCli('14:12', [], {}, 'ACCEPTED').state; assert.equal(acc.attempts.some(a => a.status === 'ACCEPTED'), true);
+-});
 diff --git a/test/watcher-guard.test.mjs b/test/watcher-guard.test.mjs
 index 1208f399072fd5e68504ac4d9bbec924bcd5cd7e..ada919ee49815e9a32d44b45e72b2fa957f8d534 100644
 --- a/test/watcher-guard.test.mjs
@@ -1998,10 +2162,10 @@ index 5e9d417e4a0fbd3dde235a79a5d2ca78ea271bed..00000000000000000000000000000000
 - for(const row of [{created_at:'2026-11-02T14:00:00Z',status:'in_progress'},{id:5,created_at:'2026-11-02T14:00:00Z',status:'unexpected'},{id:5,status:'completed',created_at:'malformed'}]){const h=await readGuardHistory({base:'https://synthetic.invalid/repos/x/y',headers:{},day:'2026-11-02',nowMs:at,fetchImpl:async()=>({ok:true,json:async()=>({workflow_runs:[row]})})});assert.equal(h.complete,false);assert.equal(guardDecide(at,h.runs,{},undefined,{historyComplete:h.complete}).dispatch,false);}
 -});
 diff --git a/watcher-guard-core.mjs b/watcher-guard-core.mjs
-index 675f0a5f1786dfbdf6071f580b0da9c4ce59fbbe..3e44c5f2a8d3aa88806cbf33de6fc1c2ff7d5111 100644
+index 331fa385fc727881fe96e253d43119201ea18d51..3e44c5f2a8d3aa88806cbf33de6fc1c2ff7d5111 100644
 --- a/watcher-guard-core.mjs
 +++ b/watcher-guard-core.mjs
-@@ -6,82 +6,42 @@
+@@ -6,87 +6,42 @@
  // New York time comes from Intl (America/New_York), so daylight saving is automatic (summer UTC-4, winter UTC-5 from 1 Nov 2026).
  // Market holidays: the NYSE full-day closures below (update every December); half days still run.
  export const HOLIDAYS = ['2026-11-26', '2026-12-25', '2027-01-01', '2027-01-18', '2027-02-15', '2027-03-26', '2027-05-31', '2027-06-18', '2027-07-05', '2027-09-06', '2027-11-25', '2027-12-24'];
@@ -2044,8 +2208,9 @@ index 675f0a5f1786dfbdf6071f580b0da9c4ce59fbbe..3e44c5f2a8d3aa88806cbf33de6fc1c2
 +export const marketDay = (n, holidays = HOLIDAYS) => !['Sat', 'Sun'].includes(n.wd) && !holidays.includes(n.d);
  
  // runs: GitHub workflow runs of ignition.yml [{ id, status, conclusion, created_at, run_started_at, updated_at }]
- // state: { d, started, dispatched: [min...], alerted: {kind: true} }   returns { state, dispatch, alerts: [text] }
+-// state: { d, started, dispatched: [min...] (every reservation; legacy-compatible), attempts: [{min,status}], alerted: {kind: true} }   returns { state, dispatch, alerts: [text] }
 -export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS, config = {}) {
++// state: { d, started, dispatched: [min...], alerted: {kind: true} }   returns { state, dispatch, alerts: [text] }
 +export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS) {
    const n = nyParts(nowMs), alerts = []; let dispatch = false;
 -  const session=marketSession(n.d),configuredEnd=Math.min(config.endMinute??900,session.close||900),windowEnd=session.closed?0:configuredEnd+5,startUntil=session.closed?0:Math.min(840,configuredEnd-30);
@@ -2053,7 +2218,12 @@ index 675f0a5f1786dfbdf6071f580b0da9c4ce59fbbe..3e44c5f2a8d3aa88806cbf33de6fc1c2
 -  // Old `dispatched` entries were recorded before HTTP acknowledgment. Retain
 -  // them as unknown attempts for rate limiting, never as accepted requests.
 -  state.attempts = state.version===2 ? (state.attempts||[]).map(x=>({...x})) : state.dispatched.map(min=>({min,status:'UNCONFIRMED_LEGACY'}));
--  if(state.version!==2) state.dispatched=[];
+-  // Rollback compatibility (standalone rev3, Codex 6733778910 R-B): `dispatched` mirrors EVERY start reservation (the pre-repair guard's
+-  // own meaning, recorded before acknowledgment), so a pre-repair guard restored by a rollback keeps its 15-minute spacing and 3-attempt
+-  // cap. A pre-repair guard copies version-2 fields forward but appends only to `dispatched`; any reservation it added there is
+-  // reconciled here as an UNCONFIRMED_LEGACY attempt, never as an accepted request. Acceptance is read from attempt statuses only.
+-  if(state.version===2){const left=state.attempts.map(a=>a.min);for(const m of state.dispatched){const i=left.indexOf(m);if(i>=0)left.splice(i,1);else state.attempts.push({min:m,status:'UNCONFIRMED_LEGACY'});}state.attempts.sort((a,b)=>a.min-b.min);}
+-  state.dispatched=state.attempts.map(a=>a.min);
 -  state.version=2;
 -  if (state.startedSource !== 'github_job') state.started = null;
 -  if (!marketDay(n, holidays) || n.min < WINDOW.from || n.min > windowEnd) return { state, dispatch, alerts, why: 'outside the check window' };
@@ -2098,7 +2268,7 @@ index 675f0a5f1786dfbdf6071f580b0da9c4ce59fbbe..3e44c5f2a8d3aa88806cbf33de6fc1c2
 -  const last = state.attempts.length ? state.attempts[state.attempts.length - 1].min : null;
 -  if (n.min > startUntil) return { state, dispatch, alerts, why: 'not running, too late to start' };
 -  if (state.attempts.length < 3 && (last === null || n.min - last >= 15)) {
--    dispatch = true; state.attempts.push({min:n.min,status:'PENDING'});
+-    dispatch = true; state.attempts.push({min:n.min,status:'PENDING'}); state.dispatched.push(n.min);
 -    alerts.push('WATCHER NOT STARTED by ' + fmt(n.min) + ' New York: requesting a start (attempt ' + state.attempts.length + ' of 3); execution is not confirmed.');
 -  } else if (state.attempts.length >= 3 && !state.alerted.gaveUp) { state.alerted.gaveUp = true; alerts.push('WATCHER DOWN: 3 start attempts without confirmed execution (last ' + fmt(last) + ' New York). No live watch confirmed. Send this to Claude.'); }
 +  const last = state.dispatched.length ? state.dispatched[state.dispatched.length - 1] : null;
@@ -2132,7 +2302,7 @@ index 43dcaacabe1ccd7acf280b870cddd50deb5f826e..00000000000000000000000000000000
 - return {rawRuns,runs,complete:errorCode===null,errorCode,reads};
 -}
 diff --git a/watcher-guard.mjs b/watcher-guard.mjs
-index 0c74f371fde3453e9c886dd59ccf0ef4d39559bd..44cf647169518152bf515a8c4b5ffc2c0e711d23 100644
+index 8283f163646a61eb79fbe2cff054fe5e10f2ddc7..44cf647169518152bf515a8c4b5ffc2c0e711d23 100644
 --- a/watcher-guard.mjs
 +++ b/watcher-guard.mjs
 @@ -1,20 +1,21 @@
@@ -2155,9 +2325,9 @@ index 0c74f371fde3453e9c886dd59ccf0ef4d39559bd..44cf647169518152bf515a8c4b5ffc2c
 -const old=read('data/watcher-guard.json',{}),out=guardDecide(now(),history.runs,old,undefined,{historyComplete:history.complete});
 -out.state.history={complete:history.complete,errorCode:history.errorCode,reads:history.reads};
 -const persist=()=>{fs.mkdirSync('data',{recursive:true});fs.writeFileSync('data/watcher-guard.json.tmp',JSON.stringify(out.state));fs.renameSync('data/watcher-guard.json.tmp','data/watcher-guard.json');};
--if(out.dispatch){persist();const attempt=out.state.attempts.at(-1);try{const r=await fetch(base+'/repos/'+REPO+'/actions/workflows/ignition.yml/dispatches',{method:'POST',headers,signal:AbortSignal.timeout(10000),body:JSON.stringify({ref:'main'})});attempt.status=r.ok?'ACCEPTED':'REJECTED';if(r.ok)out.state.dispatched.push(attempt.min);else out.alerts.push('WATCHER START REQUEST REJECTED: HTTP '+r.status+'; execution unconfirmed.');}catch{attempt.status='UNKNOWN';out.alerts.push('WATCHER START REQUEST UNKNOWN: transport outcome unavailable; execution unconfirmed.');}}
+-if(out.dispatch){persist();const attempt=out.state.attempts.at(-1);try{const r=await fetch(base+'/repos/'+REPO+'/actions/workflows/ignition.yml/dispatches',{method:'POST',headers,signal:AbortSignal.timeout(10000),body:JSON.stringify({ref:'main'})});attempt.status=r.ok?'ACCEPTED':'REJECTED';if(!r.ok)out.alerts.push('WATCHER START REQUEST REJECTED: HTTP '+r.status+'; execution unconfirmed.');}catch{attempt.status='UNKNOWN';out.alerts.push('WATCHER START REQUEST UNKNOWN: transport outcome unavailable; execution unconfirmed.');}}
 -for(const text of out.alerts){console.log('[guard] '+text);if(env.TG_TOKEN&&env.TG_CHAT)try{const r=await fetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{method:'POST',signal:AbortSignal.timeout(10000),headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:env.TG_CHAT,text})});if(!r.ok)console.log('guard notification delivery unconfirmed');}catch{console.log('guard notification delivery unconfirmed');}}
--if(out.state.started!==null&&(old.d!==out.state.d||old.started===null||old.started===undefined||old.startedSource!=='github_job'||old.started!==out.state.started))fs.appendFileSync('data/watcher-starts.jsonl',JSON.stringify({d:out.state.d,started:fmt(out.state.started),runId:out.state.startedRunId,source:'github_job',marketCoverage:'UNVERIFIED',byGuard:null,guardRequestAccepted:out.state.dispatched.length>0,restartCausality:'UNVERIFIED'})+'\n');
+-if(out.state.started!==null&&(old.d!==out.state.d||old.started===null||old.started===undefined||old.startedSource!=='github_job'||old.started!==out.state.started))fs.appendFileSync('data/watcher-starts.jsonl',JSON.stringify({d:out.state.d,started:fmt(out.state.started),runId:out.state.startedRunId,source:'github_job',marketCoverage:'UNVERIFIED',byGuard:null,guardRequestAccepted:out.state.attempts.some(a=>a.status==='ACCEPTED'),restartCausality:'UNVERIFIED'})+'\n');
 -persist();console.log('watcher guard '+fmt(n.min)+' New York: '+out.why);
 +import { guardDecide, nyParts, fmt } from './watcher-guard-core.mjs';
 +const env = process.env, REPO = env.GITHUB_REPOSITORY, TOKEN = env.GITHUB_TOKEN, API = 'https://api.github.com/repos/' + REPO + '/actions/workflows/ignition.yml';
