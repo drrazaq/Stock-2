@@ -5,7 +5,8 @@ const out=path.resolve(process.argv[2]||'/tmp/stock2-product-demo.json');
 const {loadScan,blocked}=await import(pathToFileURL(root+'/test/load-scan.mjs'));
 const {marketSession}=await import(pathToFileURL(root+'/market-session.mjs'));
 const AT=Date.parse('2026-11-09T15:10:00Z'),now=Date.now;Date.now=()=>AT;
-const HZ=JSON.parse(fs.readFileSync(root+'/data/horizons.json')),QY=JSON.parse(fs.readFileSync(root+'/data/quality.json'));
+const dataRoot=process.env.ASSESSMENT_DATA_TREE||root;
+const HZ=JSON.parse(fs.readFileSync(dataRoot+'/data/horizons.json')),QY=JSON.parse(fs.readFileSync(dataRoot+'/data/quality.json'));
 const sessions=[];for(let t=Date.parse('2023-01-01T12:00:00Z');t<=Date.parse('2026-11-06T12:00:00Z');t+=864e5){const d=new Date(t).toISOString().slice(0,10);const m=marketSession(d);if(m.known ? !m.closed : ![0,6].includes(new Date(t).getUTCDay()))sessions.push(d);}
 // Pure invented OHLCV: never read as a stock's actual price or return sample.
 const values=sessions.slice(-650).map((d,i)=>{const p=100+i*.02+Math.sin(i/8)*.4;return{datetime:d,open:String(p),high:String(p+1),low:String(p-1),close:String(p),volume:'1000000'};});
@@ -17,10 +18,10 @@ const server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.o
  if(u.pathname.includes('/sendMessage')){sent.push(JSON.parse(b).text);return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}
  if(u.pathname.includes('/getUpdates'))return res.end(JSON.stringify({ok:true,result:[]}));
  res.statusCode=404;res.end('{}');});});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
-const fingerprint=p=>crypto.createHash('sha256').update(fs.readFileSync(root+'/'+p)).digest('hex');
-const provenance={source:'89d21db67cc9da1ab8254144d5d97ab80b5c4de3 (reviewed candidate, NOT deployed)',evaluatedAt:'2026-11-09T15:10:00Z (fixed demo clock)',marketInputs:'ALL prices/holdings/OHLCV invented; pre2026 fixture dates are weekdays, not certified exchange sessions; no history-performance conclusion, real positions, quotes or keys',retainedStudyInputs:Object.fromEntries(['data/horizons.json','data/quality.json'].map(p=>[p,{sha256:fingerprint(p),generatedAt:(p.includes('horizons')?HZ:QY).generatedAt,through:(p.includes('horizons')?HZ:QY).to}]))};
+const fingerprint=p=>crypto.createHash('sha256').update(fs.readFileSync(dataRoot+'/'+p)).digest('hex');
+const provenance={source:process.env.SOURCE_COMMIT||'89d21db67cc9da1ab8254144d5d97ab80b5c4de3 (reviewed candidate, NOT deployed)',evaluatedAt:'2026-11-09T15:10:00Z (fixed demo clock)',marketInputs:'ALL prices/holdings/OHLCV invented; pre2026 fixture dates are weekdays, not certified exchange sessions; no history-performance conclusion, real positions, quotes or keys',retainedStudyInputs:Object.fromEntries(['data/horizons.json','data/quality.json'].map(p=>[p,{sha256:fingerprint(p),generatedAt:(p.includes('horizons')?HZ:QY).generatedAt,through:(p.includes('horizons')?HZ:QY).to}]))};
 try{
- const files={'data/horizons.json':HZ,'data/quality.json':QY,'data/settings.json':{focus:true},'data/zad-list.json':{notHalal:[]},'data/splits.json':{splits:[]},'market-session.mjs':fs.readFileSync(root+'/market-session.mjs','utf8')};
+ const files={'data/names.json':JSON.parse(fs.readFileSync(dataRoot+'/data/names.json')),'data/horizons.json':HZ,'data/quality.json':QY,'data/settings.json':{focus:true},'data/zad-list.json':{notHalal:[]},'data/splits.json':{splits:[]},'market-session.mjs':fs.readFileSync(root+'/market-session.mjs','utf8')};
  const S=await loadScan({files,env:{TD_BASE:base,SEC_BASE:base,CT_BASE:base,RATE:'100000'}});
  const stocks=[];for(const sym of ['ETON','CNNE']){const raw=await S.fn('checkLive')(sym);stocks.push({stock:sym,label:'SYNTHETIC PRICE HISTORY + RETAINED STUDY CONTEXT; NOT a current recommendation',actualCaller:'checkLive',raw,actualHorizonLine:S.fn('horizonLine')(sym),actualQualityLine:S.fn('qualityLine')(sym)});}
  const longtermRaw=S.fn('longTermText')();

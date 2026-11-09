@@ -1,0 +1,605 @@
+{
+  "provenance": {
+    "source": "c8466c63f",
+    "evaluatedAt": "2026-11-09T15:10:00Z (fixed demo clock)",
+    "marketInputs": "ALL prices/holdings/OHLCV invented; pre2026 fixture dates are weekdays, not certified exchange sessions; no history-performance conclusion, real positions, quotes or keys",
+    "retainedStudyInputs": {
+      "data/horizons.json": {
+        "sha256": "42f25c1280d285eba3274ec2656d9d41092d164ed05e92c76bcaaad804d96f3b",
+        "generatedAt": "2026-11-08T06:43:36.511Z",
+        "through": "2026-11-06"
+      },
+      "data/quality.json": {
+        "sha256": "f87ac5d41d349b28ea0795f7eaf933484a40749eef76d56f6fbf51989730ead7",
+        "generatedAt": "2026-11-08T06:44:04.296Z",
+        "through": "2026-11-06"
+      }
+    }
+  },
+  "short": {
+    "caller": "intraday(false) -> telegram -> loopback sendMessage captured, no external delivery",
+    "syntheticPositions": {
+      "ZZH": {
+        "entry": 10,
+        "stop": 8,
+        "kind": "quick",
+        "since": "2026-11-05",
+        "maxHold": 5
+      },
+      "ZZS": {
+        "entry": 6,
+        "stop": 1.98,
+        "kind": "leader",
+        "since": "2026-10-20"
+      },
+      "ZZU": {
+        "entry": 100,
+        "stop": 80,
+        "kind": "manual",
+        "since": "2026-11-05"
+      }
+    },
+    "syntheticQuotes": {
+      "ZZH": {
+        "c": 12,
+        "age": 30
+      },
+      "ZZS": {
+        "c": 3.77,
+        "age": 20
+      },
+      "ZZU": {
+        "c": 70,
+        "age": 1800
+      }
+    },
+    "rawMessages": [
+      "MENU: tap a button in the bar under the typing box, or the  /  Menu button for the full list.\n\nEVERY DAY: market today (buying, selling or nothing-to-do day) | actions (what to do) | my stocks | today\nAFTER YOU TRADE: i bought, i sold (I show the exact words to send) | stop placed (from the / menu)\nANY STOCK: check a stock (deep check: tested rules, news, SEC filings, analysts, insiders, halal)\nMARKET NOW: market | movers | day trades (fast movers, tested) | radar\nIDEAS AND STUDIES: leaders | themes | events | timing | days | lab | score\nYOUR RESULTS: record | goals | paper | shadow | review\nWAYS TO TRADE (ways): a) THE BASKET, core (basket; buy day: basket buy AMOUNT) | b) TRY SMALL 1,000 USD buys (in actions) | c) options paper lane (options lab)\n\nYou can still type anything in plain words (Arabic or English), or forward a message.",
+      "TODAY'S FIRST MARKET-HOURS CHECK, run at 10:10 am New York (18:10 Kuwait). The system is running.\nLATE: this is the first check that reached this point today, so it did NOT observe the open. The market opened at 9:30 am New York (5:30 pm Kuwait), 0 h 40 min before this check.\n\nYOUR POSITIONS (one action each, the same rules as ACTIONS)\nZZH: HOLD: no exit rule is active; above your stop 8.00. Last price 12.00 (FINNHUB, Nov 9 10:09 New York, 30 s old) (+20.0% from your 10.00).\nZZS: SELL: last night's exit rule, it closed under its 50 day average, the trend is broken. Timing as in ACTIONS (close-based exits: next regular-session open). Last price 3.77 (FINNHUB, Nov 9 10:09 New York, 20 s old) (-37.2% from your 6.00).\nZZU: STOP STATUS UNKNOWN: no exit rule is active, but whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker. Current price UNKNOWN (the latest price is 30 min old (limit 5 min)).\n\nPLAN CANDIDATES FROM LAST NIGHT'S SCAN (the rules are NOT PROVEN; current gates and fresh price evidence still required; this line is not execution authorization)\nnone. Nothing qualified in last night's scan. New buy candidates are chosen only by the nightly scan, never during the day.\n\nNext checks: scheduled every 30 minutes while the market is open, but GitHub can start them late or skip them, so no exact time is promised. Messages report stops, targets, exit rules and listed plans inside their ranges. I also warn when a price or check cannot be confirmed.\nRegular NYSE session today: 9:30 am to 4:00 pm New York (5:30 pm to 12 am Kuwait). Live checks can be late or missing. This message does not confirm that the watcher ran all day.\n\nTested signals, not instructions. Not financial advice, not a halal ruling.",
+      "YOUR STOPS (bot check; the live watcher had not confirmed these)\n\nChecked at Nov 9 10:10 New York (quoted age is at that check):\nSTOP CHECK UNKNOWN: ZZU: the latest price is 30 min old (limit 5 min). Whether your stop 80.00 was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.\n\nStop levels are your own recorded stops. Not financial advice.",
+      "Market hours check\n\nZZU: YOUR POSITION: PRICE UNVERIFIED. Check your broker and keep its stop; no current-price SELL/HOLD inference.\n\nTested signals, not instructions. Not financial advice, not a halal ruling."
+    ]
+  },
+  "stockChecks": [
+    {
+      "stock": "ETON",
+      "label": "SYNTHETIC PRICE HISTORY + RETAINED STUDY CONTEXT; NOT a current recommendation",
+      "actualCaller": "checkLive",
+      "raw": "ETON: NO BUY: no tested rule supports a trade on it.\nETON, analysed now from the 2026-11-06 close\nClosed 112.77.\nIn an uptrend, +2% over 6 months (+0% vs the market).\nRule tested for it: 9/21 day cross, stop 1.5 × ATR, target 3R. 6 historical out-of-sample test trades, 100% wins. Selected-rule record, separate from untested reference levels. Too few trades to judge, so its signals are skipped.\nNo tested rule supports a trade on this stock.\nCONCLUSION: no plan. Separate UNTESTED reference-level diagnostic: reward marker came before the stop in 0% of 265 cases, below the existing reference threshold; this is not the selected-rule record.\nMid / long term: Pullback in a long uptrend, back above its 20-day -> tested, no edge (1m rejected, 3m not proven, 6m not proven).\nLong term (company quality from its SEC reports): average quality (rank percentile 55.4 within the stored liquid-stock universe). The quality test has not passed yet, so this is information, not a buy.\nHalal: pending ZAD verification.\nASSESSMENT CONTEXT — ETON / issuer name UNKNOWN (information; this card grants no BUY approval)\nIdentity: ticker only; stable point-in-time security identity UNKNOWN. ZAD: unknown; ZAD is final authority.\nSHORT ACTION | existing assessment: NO BUY: no tested rule supports a trade on it. | horizon stored scanner rule, duration UNKNOWN. Entry: CONCLUSION: no plan. Separate UNTESTED reference-level diagnostic: reward marker came before the stop in 0% of 265 cases, below the existing reference threshold; this is not the selected-rule record.. Exit: Original caller conclusion: CONCLUSION: no plan. Separate UNTESTED reference-level diagnostic: reward marker came before the stop in 0% of 265 cases, below the existing reference threshold; this is not the selected-rule record..\nShort evidence: scan close 2026-11-06 (date only; not receipt time). Record: 6 stored cases; NOT PROVEN.\nMID TERM | INVESTIGATE / WAIT; no entry granted here. Pullback in a long uptrend, back above its 20-day: REJECTED, hold 20 sessions; older n=6267, model -0.0% vs control -0.1%, SPY raw +1.6%, worst model trade -52.9% | newer n=6772, model -0.3% vs control -0.4%, SPY raw +1.2%, worst model trade -85.1%; original avg-stock margin 0.5 points: older NOT MET, newer NOT MET; lost money in the older half; not +0.5%+ better than an average stock in the older half (-0.0% vs -0.1%); lost money in the newer half; not +0.5%+ better than an average stock in the newer half (-0.3% vs -0.4%); profit factor 0.95; loses at | Pullback in a long uptrend, back above its 20-day: NOT PROVEN, hold 60 sessions; older n=4494, model +1.7% vs control +1.3%, SPY raw +5.0%, worst model trade -87.1% | newer n=4417, model +2.0% vs control +0.3%, SPY raw +2.9%, worst model trade -90.0%; original avg-stock margin 1.5 points: older NOT MET, newer met; not +1.5%+ better than an average stock in the older half (+1.7% vs +1.3%); did not beat simply holding the S&P 500 in the older half (+1.7% vs +5.0%); did not beat simply holding the S&P 500 in the newer half (+2.0% vs +2.9%) | Pullback in a long uptrend, back above its 20-day: NOT PROVEN, hold 120 sessions; older n=3641, model +3.5% vs control +2.6%, SPY raw +9.9%, worst model trade -85.6% | newer n=3021, model +4.2% vs control +2.9%, SPY raw +8.3%, worst model trade -82.1%; original avg-stock margin 3.0 points: older NOT MET, newer NOT MET; not +3.0%+ better than an average stock in the older half (+3.5% vs +2.6%); not +3.0%+ better than an average stock in the newer half (+4.2% vs +2.9%); did not beat simply holding the S&P 500 in the older half (+3.5% vs +9.9%); did not beat. Existing research entry: next open after horizons.mjs PB_UP: above 200-day; 8-25% below year high; dipped below 50-day, closes above 20-day; close 25% below entry exits next open, otherwise original 20/60/120-session hold. These are research definitions, not adopted orders. Source horizons.json: 2026-11-08T06:43:36.511Z (32 h old; saved context, not a live quote), prices through 2026-11-06.\nLONG TERM | INVESTIGATE / NO BUY APPROVAL: retained quality percentile 55.4; investigate business/valuation, not a buy signal. REJECTED at 6 months; older n=4048, model +1.5% vs control -0.7%, SPY raw +4.3%, worst model trade UNKNOWN | newer n=4867, model +2.4% vs control +6.1%, SPY raw +8.9%, worst model trade UNKNOWN; did not beat holding the S&P 500 in the older half (+1.5% vs +4.3%); not +1.5%+ better than an average stock in the newer half (+2.4% vs +6.1%); did not beat holding the S&P 500 in the newer half (+2.4% vs +8.9%); the edge over an average s; REJECTED at 12 months; older n=4048, model +7.9% vs control +4.6%, SPY raw +14.1%, worst model trade UNKNOWN | newer n=3696, model +4.1% vs control +12.8%, SPY raw +17.2%, worst model trade UNKNOWN; did not beat holding the S&P 500 in the older half (+7.9% vs +14.1%); not +3.0%+ better than an average stock in the newer half (+4.1% vs +12.8%); did not beat holding the S&P 500 in the newer half (+4.1% vs +17.2%); the edge over an averag. No adopted individual-stock entry/exit supplied by this rank. Source quality.json: 2026-11-08T06:44:04.296Z (32 h old; saved context, not a live quote), prices through 2026-11-06.\nKnown-then evidence (events-recent.json; not an original receipt): No dated catalyst witness supplied (not evidence of no catalyst); original observation/receipt UNKNOWN. Business lead: no discovery business evidence supplied.\nPrice/execution: saved close 112.77, not current executable price; live BBO, conditions, displayed size, fills and quantity UNKNOWN. Research assumption: $1,000 whole shares, $3 each executed side; actual after-cost result UNKNOWN. Displayed size would not prove fill capacity.\nRisks/next check: horizons may disagree; favorable comparisons do not erase SPY losses, severe drawdowns or failed gates; SPY is the stored raw benchmark, not a matched-fee execution result. Financing/dilution, expected-vs-new information and original filing vintages remain unresolved unless separately evidenced. Reassess on the next completed scan/new dated disclosure, or fresh price for the EXISTING position rule; no timing promise. No exit or live gate changed.\nI have added ETON to my nightly scan. Send: remove ETON   to take it off.",
+      "actualHorizonLine": "Mid / long term: Pullback in a long uptrend, back above its 20-day -> tested, no edge (1m rejected, 3m not proven, 6m not proven).",
+      "actualQualityLine": "Long term (company quality from its SEC reports): average quality (rank percentile 55.4 within the stored liquid-stock universe). The quality test has not passed yet, so this is information, not a buy."
+    },
+    {
+      "stock": "CNNE",
+      "label": "SYNTHETIC PRICE HISTORY + RETAINED STUDY CONTEXT; NOT a current recommendation",
+      "actualCaller": "checkLive",
+      "raw": "CNNE: NO BUY: no tested rule supports a trade on it.\nCNNE, analysed now from the 2026-11-06 close\nClosed 112.77.\nIn an uptrend, +2% over 6 months (+0% vs the market).\nRule tested for it: 9/21 day cross, stop 1.5 × ATR, target 3R. 6 historical out-of-sample test trades, 100% wins. Selected-rule record, separate from untested reference levels. Too few trades to judge, so its signals are skipped.\nNo tested rule supports a trade on this stock.\nCONCLUSION: no plan. Separate UNTESTED reference-level diagnostic: reward marker came before the stop in 0% of 265 cases, below the existing reference threshold; this is not the selected-rule record.\nMid / long term: not in any of the 4 tested pullback / leader / turn-around setups today.\nLong term (company quality from its SEC reports): TOP 10% quality (rank percentile 100.0 within the stored liquid-stock universe). The quality test has not passed yet, so this is information, not a buy.\nHalal: pending ZAD verification.\nASSESSMENT CONTEXT — CNNE / issuer name UNKNOWN (information; this card grants no BUY approval)\nIdentity: ticker only; stable point-in-time security identity UNKNOWN. ZAD: unknown; ZAD is final authority.\nSHORT ACTION | existing assessment: NO BUY: no tested rule supports a trade on it. | horizon stored scanner rule, duration UNKNOWN. Entry: CONCLUSION: no plan. Separate UNTESTED reference-level diagnostic: reward marker came before the stop in 0% of 265 cases, below the existing reference threshold; this is not the selected-rule record.. Exit: Original caller conclusion: CONCLUSION: no plan. Separate UNTESTED reference-level diagnostic: reward marker came before the stop in 0% of 265 cases, below the existing reference threshold; this is not the selected-rule record..\nShort evidence: scan close 2026-11-06 (date only; not receipt time). Record: 6 stored cases; NOT PROVEN.\nMID TERM | WAIT / UNKNOWN: no linked horizon setup supplied; no entry or exit invented. Source horizons.json: 2026-11-08T06:43:36.511Z (32 h old; saved context, not a live quote), prices through 2026-11-06.\nLONG TERM | INVESTIGATE / NO BUY APPROVAL: retained quality percentile 100.0; investigate business/valuation, not a buy signal. REJECTED at 6 months; older n=4048, model +1.5% vs control -0.7%, SPY raw +4.3%, worst model trade UNKNOWN | newer n=4867, model +2.4% vs control +6.1%, SPY raw +8.9%, worst model trade UNKNOWN; did not beat holding the S&P 500 in the older half (+1.5% vs +4.3%); not +1.5%+ better than an average stock in the newer half (+2.4% vs +6.1%); did not beat holding the S&P 500 in the newer half (+2.4% vs +8.9%); the edge over an average s; REJECTED at 12 months; older n=4048, model +7.9% vs control +4.6%, SPY raw +14.1%, worst model trade UNKNOWN | newer n=3696, model +4.1% vs control +12.8%, SPY raw +17.2%, worst model trade UNKNOWN; did not beat holding the S&P 500 in the older half (+7.9% vs +14.1%); not +3.0%+ better than an average stock in the newer half (+4.1% vs +12.8%); did not beat holding the S&P 500 in the newer half (+4.1% vs +17.2%); the edge over an averag. No adopted individual-stock entry/exit supplied by this rank. Source quality.json: 2026-11-08T06:44:04.296Z (32 h old; saved context, not a live quote), prices through 2026-11-06.\nKnown-then evidence (events-recent.json; not an original receipt): No dated catalyst witness supplied (not evidence of no catalyst); original observation/receipt UNKNOWN. Business lead: no discovery business evidence supplied.\nPrice/execution: saved close 112.77, not current executable price; live BBO, conditions, displayed size, fills and quantity UNKNOWN. Research assumption: $1,000 whole shares, $3 each executed side; actual after-cost result UNKNOWN. Displayed size would not prove fill capacity.\nRisks/next check: horizons may disagree; favorable comparisons do not erase SPY losses, severe drawdowns or failed gates; SPY is the stored raw benchmark, not a matched-fee execution result. Financing/dilution, expected-vs-new information and original filing vintages remain unresolved unless separately evidenced. Reassess on the next completed scan/new dated disclosure, or fresh price for the EXISTING position rule; no timing promise. No exit or live gate changed.\nI have added CNNE to my nightly scan. Send: remove CNNE   to take it off.",
+      "actualHorizonLine": "Mid / long term: not in any of the 4 tested pullback / leader / turn-around setups today.",
+      "actualQualityLine": "Long term (company quality from its SEC reports): TOP 10% quality (rank percentile 100.0 within the stored liquid-stock universe). The quality test has not passed yet, so this is information, not a buy."
+    }
+  ],
+  "longtermCommand": {
+    "caller": "longTermText()",
+    "raw": "LONGER-TERM (separate from trading; information, not trade instructions):\n- YARDSTICK: among the stored horizon and quality studies, no long-term stock-picking method has passed the full test. This is not a ranking of raw returns. Long-term money: a halal index fund (check ZAD).\n- NO CORE PURCHASE APPROVAL: SPUS, IAUM needs a current affirmative owner ZAD mark. Keep that allocation in cash; no substitute purchase is approved. Existing holdings and the saved allocation are unchanged.\n- Unallocated cash stays cash while the core compliance review is incomplete."
+  },
+  "retainedTrackRecord": {
+    "horizonResults": [
+      {
+        "setup": "PB_UP",
+        "hold": 20,
+        "verdict": "REJECTED",
+        "why": "lost money in the older half; not +0.5%+ better than an average stock in the older half (-0.0% vs -0.1%); lost money in the newer half; not +0.5%+ better than an average stock in the newer half (-0.3% vs -0.4%); profit factor 0.95; loses at 1.2% cost; loses without its 2 best trades; did not beat simply holding the S&P 500 in the older half (-0.0% vs +1.6%); did not beat simply holding the S&P 500 in the newer half (-0.3% vs +1.2%)",
+        "newer": {
+          "n": 6772,
+          "win": 0.4706142941523922,
+          "avg": -0.002723206780376626,
+          "ctrl": -0.00385004609137492,
+          "pf": 0.9457364679651332,
+          "bestShare": 0.004640754937268759,
+          "noTop2": -0.003156161343227274,
+          "days": 476,
+          "spy": 0.011689970218054787,
+          "worst": -0.8505182438943437,
+          "avgMAE": -0.07246129918429356,
+          "topStock": 0.006590766749907747
+        }
+      },
+      {
+        "setup": "PB_UP",
+        "hold": 60,
+        "verdict": "NOT PROVEN",
+        "why": "not +1.5%+ better than an average stock in the older half (+1.7% vs +1.3%); did not beat simply holding the S&P 500 in the older half (+1.7% vs +5.0%); did not beat simply holding the S&P 500 in the newer half (+2.0% vs +2.9%)",
+        "newer": {
+          "n": 4417,
+          "win": 0.4876613085804845,
+          "avg": 0.019831903744704695,
+          "ctrl": 0.0032005572295068533,
+          "pf": 1.2496545484096677,
+          "bestShare": 0.008890989599415533,
+          "noTop2": 0.018390938613401502,
+          "days": 432,
+          "spy": 0.02913567417180704,
+          "worst": -0.9001310671909496,
+          "avgMAE": -0.11939815340718507,
+          "topStock": 0.008890989599415533
+        }
+      },
+      {
+        "setup": "PB_UP",
+        "hold": 120,
+        "verdict": "NOT PROVEN",
+        "why": "not +3.0%+ better than an average stock in the older half (+3.5% vs +2.6%); not +3.0%+ better than an average stock in the newer half (+4.2% vs +2.9%); did not beat simply holding the S&P 500 in the older half (+3.5% vs +9.9%); did not beat simply holding the S&P 500 in the newer half (+4.2% vs +8.3%)",
+        "newer": {
+          "n": 3021,
+          "win": 0.5071168487255876,
+          "avg": 0.042109233358949776,
+          "ctrl": 0.028963027379244218,
+          "pf": 1.4363450694781377,
+          "bestShare": 0.007003508011479211,
+          "noTop2": 0.04022897117318054,
+          "days": 363,
+          "spy": 0.08305986886652837,
+          "worst": -0.8207659707685212,
+          "avgMAE": -0.1448700849694297,
+          "topStock": 0.007042293214121664
+        }
+      }
+    ],
+    "qualityResults": [
+      {
+        "name": "Quality companies (profit, no dilution, lean growth, cash-backed profit)",
+        "months": 6,
+        "verdict": "REJECTED",
+        "why": "did not beat holding the S&P 500 in the older half (+1.5% vs +4.3%); not +1.5%+ better than an average stock in the newer half (+2.4% vs +6.1%); did not beat holding the S&P 500 in the newer half (+2.4% vs +8.9%); the edge over an average stock could be luck in the newer half (t -6.0)",
+        "newer": {
+          "n": 4867,
+          "months": 27,
+          "avg": 0.02383894305939134,
+          "ctrl": 0.06141125497736614,
+          "ctrlDown": 0.06480871498444214,
+          "spy": 0.08854369117938574,
+          "win": 0.4783234025066776,
+          "pf": 1.2056495672495402,
+          "noTop2": 0.022465517347912255,
+          "topStock": 0.019715964279481704,
+          "edge": -0.03883420926500702,
+          "t": -6.0191921219564515,
+          "own": -0.012779730826774943
+        }
+      },
+      {
+        "name": "Quality companies (profit, no dilution, lean growth, cash-backed profit)",
+        "months": 12,
+        "verdict": "REJECTED",
+        "why": "did not beat holding the S&P 500 in the older half (+7.9% vs +14.1%); not +3.0%+ better than an average stock in the newer half (+4.1% vs +12.8%); did not beat holding the S&P 500 in the newer half (+4.1% vs +17.2%); the edge over an average stock could be luck in the newer half (t -8.6)",
+        "newer": {
+          "n": 3696,
+          "months": 21,
+          "avg": 0.04099286087284071,
+          "ctrl": 0.1277221261246906,
+          "ctrlDown": 0.17673710961473776,
+          "spy": 0.1724841776070074,
+          "win": 0.4623917748917749,
+          "pf": 1.2504385236299507,
+          "noTop2": 0.03786775360233218,
+          "topStock": 0.02967761140879611,
+          "edge": -0.08739619216909467,
+          "t": -8.559903337397063,
+          "own": 0.021107251097616506
+        }
+      },
+      {
+        "name": "High gross profit on assets",
+        "months": 6,
+        "verdict": "REJECTED",
+        "why": "not +1.5%+ better than an average stock in the older half (-3.7% vs -0.7%); did not beat holding the S&P 500 in the older half (-3.7% vs +4.3%); the edge over an average stock could be luck in the older half (t -3.2); not +1.5%+ better than an average stock in the newer half (-0.1% vs +6.2%); did not beat holding the S&P 500 in the newer half (-0.1% vs +8.9%); the edge over an average stock could be luck in the newer half (t -3.3); loses at 1.2% cost; loses without its 2 best trades",
+        "newer": {
+          "n": 2363,
+          "months": 27,
+          "avg": -0.0006056647489429558,
+          "ctrl": 0.06164467898852465,
+          "ctrlDown": 0.06514846859613585,
+          "spy": 0.08865525572108515,
+          "win": 0.4384257300042319,
+          "pf": 0.9955981544454334,
+          "noTop2": -0.0027685489881045934,
+          "topStock": 0.035924194956763675,
+          "edge": -0.0597269786107863,
+          "t": -3.349446190237017,
+          "own": -0.00261014646947025
+        }
+      },
+      {
+        "name": "High gross profit on assets",
+        "months": 12,
+        "verdict": "REJECTED",
+        "why": "not +3.0%+ better than an average stock in the older half (+0.3% vs +4.6%); did not beat holding the S&P 500 in the older half (+0.3% vs +14.0%); the edge over an average stock could be luck in the older half (t -3.8); not +3.0%+ better than an average stock in the newer half (-0.4% vs +12.8%); did not beat holding the S&P 500 in the newer half (-0.4% vs +17.2%); the edge over an average stock could be luck in the newer half (t -4.4); loses at 1.2% cost; loses without its 2 best trades",
+        "newer": {
+          "n": 1802,
+          "months": 21,
+          "avg": -0.003628132436318354,
+          "ctrl": 0.12803157944210866,
+          "ctrlDown": 0.17745038951264716,
+          "spy": 0.17245309189334102,
+          "win": 0.43507214206437295,
+          "pf": 0.98084099211295,
+          "noTop2": -0.007312855335307275,
+          "topStock": 0.05831438081019018,
+          "edge": -0.12651505689462322,
+          "t": -4.372788554352864,
+          "own": 0.06692489623754744
+        }
+      },
+      {
+        "name": "Cheap for its cash flow (fair-price lane)",
+        "months": 6,
+        "verdict": "REJECTED",
+        "why": "did not beat holding the S&P 500 in the older half (+1.2% vs +4.2%); the edge over an average stock could be luck in the older half (t 1.5); not +1.5%+ better than an average stock in the newer half (+5.7% vs +6.1%); did not beat holding the S&P 500 in the newer half (+5.7% vs +8.9%); the edge over an average stock could be luck in the newer half (t -0.8)",
+        "newer": {
+          "n": 4649,
+          "months": 27,
+          "avg": 0.05696664462189396,
+          "ctrl": 0.061438660196020914,
+          "ctrlDown": 0.06473643412612597,
+          "spy": 0.08856239631063272,
+          "win": 0.5364594536459454,
+          "pf": 1.6206652992857093,
+          "noTop2": 0.055494116611481306,
+          "topStock": 0.02501688630218904,
+          "edge": -0.006070798203960838,
+          "t": -0.8430881857620385,
+          "own": -0.019631611847741412
+        }
+      },
+      {
+        "name": "Cheap for its cash flow (fair-price lane)",
+        "months": 12,
+        "verdict": "REJECTED",
+        "why": "not +3.0%+ better than an average stock in the older half (+6.3% vs +4.5%); did not beat holding the S&P 500 in the older half (+6.3% vs +14.0%); the edge over an average stock could be luck in the older half (t 1.3); not +3.0%+ better than an average stock in the newer half (+12.2% vs +12.8%); did not beat holding the S&P 500 in the newer half (+12.2% vs +17.2%); the edge over an average stock could be luck in the newer half (t -0.5)",
+        "newer": {
+          "n": 3524,
+          "months": 21,
+          "avg": 0.12232516685562475,
+          "ctrl": 0.12755113074504426,
+          "ctrlDown": 0.17633296424531184,
+          "spy": 0.172396184037704,
+          "win": 0.5550510783200908,
+          "pf": 1.9997045823184183,
+          "noTop2": 0.11857546864751314,
+          "topStock": 0.05308141911905024,
+          "edge": -0.0067235097973510575,
+          "t": -0.4921194302000791,
+          "own": -0.017516858570494294
+        }
+      },
+      {
+        "name": "Good AND cheap (quality + cash-flow value)",
+        "months": 6,
+        "verdict": "REJECTED",
+        "why": "did not beat holding the S&P 500 in the older half (+1.4% vs +4.3%); the edge over an average stock could be luck in the older half (t 1.7); not +1.5%+ better than an average stock in the newer half (+3.9% vs +6.1%); did not beat holding the S&P 500 in the newer half (+3.9% vs +8.9%); the edge over an average stock could be luck in the newer half (t -3.2)",
+        "newer": {
+          "n": 4473,
+          "months": 27,
+          "avg": 0.038972006140615426,
+          "ctrl": 0.06139812980387995,
+          "ctrlDown": 0.06478775384464114,
+          "spy": 0.08854362291249819,
+          "win": 0.5010060362173038,
+          "pf": 1.382019165919825,
+          "noTop2": 0.03750225749852918,
+          "topStock": 0.018344601202685436,
+          "edge": -0.02411570763341515,
+          "t": -3.1790306844017904,
+          "own": -0.015413463846584402
+        }
+      },
+      {
+        "name": "Good AND cheap (quality + cash-flow value)",
+        "months": 12,
+        "verdict": "REJECTED",
+        "why": "not +3.0%+ better than an average stock in the older half (+6.9% vs +4.6%); did not beat holding the S&P 500 in the older half (+6.9% vs +14.1%); the edge over an average stock could be luck in the older half (t 1.5); not +3.0%+ better than an average stock in the newer half (+6.5% vs +12.8%); did not beat holding the S&P 500 in the newer half (+6.5% vs +17.3%); the edge over an average stock could be luck in the newer half (t -5.0)",
+        "newer": {
+          "n": 3395,
+          "months": 21,
+          "avg": 0.06518722844203334,
+          "ctrl": 0.12770147896939946,
+          "ctrlDown": 0.176624650627719,
+          "spy": 0.1725289506702066,
+          "win": 0.5045655375552283,
+          "pf": 1.465160315041722,
+          "noTop2": 0.061790486849823814,
+          "topStock": 0.029118645399640698,
+          "edge": -0.06386571272642533,
+          "t": -4.951193464780176,
+          "own": -0.005650913082277114
+        }
+      },
+      {
+        "name": "Fair-price dip (down 40%+ but cheap for its cash flow, little dilution)",
+        "months": 6,
+        "verdict": "REJECTED",
+        "why": "not +1.5%+ better than an average stock in the older half (-3.0% vs +0.4%); did not beat holding the S&P 500 in the older half (-3.0% vs +5.4%); the edge over an average stock could be luck in the older half (t -2.0); not +1.5%+ better than an average stock in the newer half (+8.8% vs +8.8%); did not beat holding the S&P 500 in the newer half (+8.8% vs +11.2%); the edge over an average stock could be luck in the newer half (t -0.3); no better than any stock down 40%+ in the newer half (+8.8% vs +11.7%)",
+        "newer": {
+          "n": 337,
+          "months": 27,
+          "avg": 0.08786462679853782,
+          "ctrl": 0.08808890700225042,
+          "ctrlDown": 0.11721579327978283,
+          "spy": 0.1115179305640327,
+          "win": 0.5311572700296736,
+          "pf": 1.767893690712373,
+          "noTop2": 0.07485651607941322,
+          "topStock": 0.0557416434628917,
+          "edge": -0.008960847330477058,
+          "t": -0.3025649027642044,
+          "own": -0.034628834417771995
+        }
+      },
+      {
+        "name": "Fair-price dip (down 40%+ but cheap for its cash flow, little dilution)",
+        "months": 12,
+        "verdict": "REJECTED",
+        "why": "not +3.0%+ better than an average stock in the older half (-0.6% vs +5.3%); did not beat holding the S&P 500 in the older half (-0.6% vs +15.4%); the edge over an average stock could be luck in the older half (t -2.5); not +3.0%+ better than an average stock in the newer half (+12.5% vs +16.5%); did not beat holding the S&P 500 in the newer half (+12.5% vs +19.5%); the edge over an average stock could be luck in the newer half (t -1.4); no better than any stock down 40%+ in the newer half (+12.5% vs +25.4%)",
+        "newer": {
+          "n": 257,
+          "months": 21,
+          "avg": 0.12549779882324696,
+          "ctrl": 0.16451362718187967,
+          "ctrlDown": 0.25370827396059403,
+          "spy": 0.19487541716563406,
+          "win": 0.5019455252918288,
+          "pf": 1.79273936051416,
+          "noTop2": 0.0977347665002558,
+          "topStock": 0.061628310128354735,
+          "edge": -0.06578629556189121,
+          "t": -1.4271940405104473,
+          "own": -0.0727208872408106
+        }
+      },
+      {
+        "name": "Magic formula (Greenblatt: high earnings yield + high return on capital)",
+        "months": 6,
+        "verdict": "REJECTED",
+        "why": "not +1.5%+ better than an average stock in the older half (+0.8% vs -0.6%); did not beat holding the S&P 500 in the older half (+0.8% vs +4.3%); not +1.5%+ better than an average stock in the newer half (+6.0% vs +6.1%); did not beat holding the S&P 500 in the newer half (+6.0% vs +8.8%); the edge over an average stock could be luck in the newer half (t -0.3)",
+        "newer": {
+          "n": 2420,
+          "months": 27,
+          "avg": 0.06001185499515655,
+          "ctrl": 0.061301518923707256,
+          "ctrlDown": 0.06428698610410344,
+          "spy": 0.0882528903563799,
+          "win": 0.5173553719008265,
+          "pf": 1.6558877932438392,
+          "noTop2": 0.0575187225446433,
+          "topStock": 0.029982907222271163,
+          "edge": -0.0026510190824770123,
+          "t": -0.30853347845692275,
+          "own": 0.06415564043928651
+        }
+      },
+      {
+        "name": "Magic formula (Greenblatt: high earnings yield + high return on capital)",
+        "months": 12,
+        "verdict": "NOT PROVEN",
+        "why": "not +3.0%+ better than an average stock in the older half (+4.9% vs +4.6%); did not beat holding the S&P 500 in the older half (+4.9% vs +14.0%); the edge over an average stock could be luck in the older half (t 0.4); not +3.0%+ better than an average stock in the newer half (+15.6% vs +12.7%); did not beat holding the S&P 500 in the newer half (+15.6% vs +17.2%); the edge over an average stock could be luck in the newer half (t 1.2)",
+        "newer": {
+          "n": 1830,
+          "months": 21,
+          "avg": 0.15599888079735658,
+          "ctrl": 0.12721803830353723,
+          "ctrlDown": 0.1755251046557423,
+          "spy": 0.17210095906286604,
+          "win": 0.5513661202185792,
+          "pf": 2.3241066854043018,
+          "noTop2": 0.14898268519575383,
+          "topStock": 0.044578820541915996,
+          "edge": 0.02668655254000742,
+          "t": 1.1930482375877198,
+          "own": 0.15827365039433053
+        }
+      },
+      {
+        "name": "Piotroski F-score 8-9 (improving finances)",
+        "months": 6,
+        "verdict": "NOT PROVEN",
+        "why": "did not beat holding the S&P 500 in the older half (+2.9% vs +4.9%)",
+        "newer": {
+          "n": 1378,
+          "months": 27,
+          "avg": 0.07975068395112943,
+          "ctrl": 0.060287924678903045,
+          "ctrlDown": 0.06529049726084395,
+          "spy": 0.08734391302857972,
+          "win": 0.5137880986937591,
+          "pf": 1.9484262534139514,
+          "noTop2": 0.07591002426709276,
+          "topStock": 0.08983823909554244,
+          "edge": 0.017111966259272,
+          "t": 2.826667310169777,
+          "own": 0.07667350926780392
+        }
+      },
+      {
+        "name": "Piotroski F-score 8-9 (improving finances)",
+        "months": 12,
+        "verdict": "NOT PROVEN",
+        "why": "did not beat holding the S&P 500 in the older half (+8.1% vs +14.9%); the edge over an average stock could be luck in the newer half (t 2.0)",
+        "newer": {
+          "n": 1081,
+          "months": 21,
+          "avg": 0.1682412581897603,
+          "ctrl": 0.13094948908818535,
+          "ctrlDown": 0.18371802558348643,
+          "spy": 0.17548051888992336,
+          "win": 0.5374653098982424,
+          "pf": 2.4869740108068137,
+          "noTop2": 0.15176521691173828,
+          "topStock": 0.12028615671706357,
+          "edge": 0.035946295584978596,
+          "t": 1.9713429152733526,
+          "own": 0.2052185834703437
+        }
+      },
+      {
+        "name": "Piotroski F-score 8-9 among the cheapest 30% by book value",
+        "months": 6,
+        "verdict": "REJECTED",
+        "why": "did not beat holding the S&P 500 in the older half (+1.2% vs +4.4%); the edge over an average stock could be luck in the older half (t 0.6); not +1.5%+ better than an average stock in the newer half (+5.0% vs +6.0%); did not beat holding the S&P 500 in the newer half (+5.0% vs +8.8%); the edge over an average stock could be luck in the newer half (t -0.4)",
+        "newer": {
+          "n": 270,
+          "months": 27,
+          "avg": 0.05037466533793036,
+          "ctrl": 0.06034695748068869,
+          "ctrlDown": 0.06250693575466919,
+          "spy": 0.08811284408688383,
+          "win": 0.4703703703703704,
+          "pf": 1.5354796488689615,
+          "noTop2": 0.033528836363862474,
+          "topStock": 0.16681482199822964,
+          "edge": -0.00997229214275825,
+          "t": -0.42020222717977934,
+          "own": 0.022090144848582457
+        }
+      },
+      {
+        "name": "Piotroski F-score 8-9 among the cheapest 30% by book value",
+        "months": 12,
+        "verdict": "NOT PROVEN",
+        "why": "not +3.0%+ better than an average stock in the older half (+7.0% vs +4.1%); did not beat holding the S&P 500 in the older half (+7.0% vs +14.2%); the edge over an average stock could be luck in the older half (t 0.3); not +3.0%+ better than an average stock in the newer half (+14.6% vs +12.6%); did not beat holding the S&P 500 in the newer half (+14.6% vs +17.2%); the edge over an average stock could be luck in the newer half (t 0.2); one stock made over 25% of the profit",
+        "newer": {
+          "n": 210,
+          "months": 21,
+          "avg": 0.1462665332734205,
+          "ctrl": 0.12580057399696765,
+          "ctrlDown": 0.1726964814325835,
+          "spy": 0.17169314920537765,
+          "win": 0.4142857142857143,
+          "pf": 1.8631816904268728,
+          "noTop2": 0.06058577371179556,
+          "topStock": 0.3872385792947755,
+          "edge": 0.02046595927645316,
+          "t": 0.2333849980975407,
+          "own": 0.07816757598726337
+        }
+      },
+      {
+        "name": "Piotroski F-score 8-9, only stocks above their 200-day average",
+        "months": 6,
+        "verdict": "NOT PROVEN",
+        "why": "did not beat holding the S&P 500 in the older half (+5.0% vs +9.8%); the edge over an average stock could be luck in the newer half (t 2.0)",
+        "newer": {
+          "n": 757,
+          "months": 27,
+          "avg": 0.0851686342167694,
+          "ctrl": 0.040810333666763406,
+          "ctrlDown": 0.03037680763266828,
+          "spy": 0.07236039252059842,
+          "win": 0.5323645970937912,
+          "pf": 2.1042121708557313,
+          "noTop2": 0.0787416824445538,
+          "topStock": 0.12752052211454942,
+          "edge": 0.037168470217924604,
+          "t": 1.9795187819854378,
+          "own": 0.11425704233755601
+        }
+      },
+      {
+        "name": "Piotroski F-score 8-9, only stocks above their 200-day average",
+        "months": 12,
+        "verdict": "NOT PROVEN",
+        "why": "did not beat holding the S&P 500 in the older half (+17.0% vs +22.6%); the edge over an average stock could be luck in the newer half (t 1.5)",
+        "newer": {
+          "n": 612,
+          "months": 21,
+          "avg": 0.1651865583828107,
+          "ctrl": 0.10527678888996347,
+          "ctrlDown": 0.13236706898745,
+          "spy": 0.16062330951569942,
+          "win": 0.5620915032679739,
+          "pf": 2.618400874183811,
+          "noTop2": 0.1449901519475768,
+          "topStock": 0.11302324327373212,
+          "edge": 0.052039086126936016,
+          "t": 1.4906410191788015,
+          "own": 0.2871354758902174
+        }
+      },
+      {
+        "name": "Piotroski F-score 8-9, only when the S&P 500 is above its 200-day average",
+        "months": 6,
+        "verdict": "NOT PROVEN",
+        "why": "not +1.5%+ better than an average stock in the older half (+3.4% vs +2.6%); did not beat holding the S&P 500 in the older half (+3.4% vs +10.7%)",
+        "newer": {
+          "n": 1215,
+          "months": 24,
+          "avg": 0.06169699819137616,
+          "ctrl": 0.03798282270637637,
+          "ctrlDown": 0.0180788572236463,
+          "spy": 0.06683015942803786,
+          "win": 0.5037037037037037,
+          "pf": 1.697264715229117,
+          "noTop2": 0.05762672140627876,
+          "topStock": 0.09660435822195122,
+          "edge": 0.020706358520469027,
+          "t": 3.329291612836868,
+          "own": 0.08970832480790081
+        }
+      },
+      {
+        "name": "Piotroski F-score 8-9, only when the S&P 500 is above its 200-day average",
+        "months": 12,
+        "verdict": "NOT PROVEN",
+        "why": "not +3.0%+ better than an average stock in the older half (+12.2% vs +11.7%); did not beat holding the S&P 500 in the older half (+12.2% vs +24.6%); the edge over an average stock could be luck in the older half (t -0.2); did not beat holding the S&P 500 in the newer half (+13.1% vs +15.4%); the edge over an average stock could be luck in the newer half (t 1.9)",
+        "newer": {
+          "n": 918,
+          "months": 18,
+          "avg": 0.13129531580840514,
+          "ctrl": 0.09650321121383128,
+          "ctrlDown": 0.10276228177345248,
+          "spy": 0.15399458983794817,
+          "win": 0.5294117647058824,
+          "pf": 2.1295091919749636,
+          "noTop2": 0.11506241321617398,
+          "topStock": 0.11461994092399654,
+          "edge": 0.031337135761082435,
+          "t": 1.8511422978365604,
+          "own": 0.21934147292230075
+        }
+      },
+      {
+        "name": "B-FS2: F-score 8-9, cheapest 30% by book value, share count up under 5% (12 months only, run once)",
+        "months": 12,
+        "verdict": "REJECTED",
+        "why": "under the league luck bar in the older half (t 0.8, 4.1 needed); not better than the same stocks on their other days in the older half (+8.6% vs +8.6%); under the league luck bar in the newer half (t -2.5, 4.1 needed); not better than the same stocks on their other days in the newer half (+3.1% vs +3.7%); did not beat holding the S&P 500 in the older half (+8.6% vs +14.1%); the edge over an average stock could be luck in the older half (t 0.8); not +3.0%+ better than an average stock in the newer half (+3.1% vs +12.6%); did not beat holding the S&P 500 in the newer half (+3.1% vs +17.2%); the edge over an average stock could be luck in the newer half (t -2.5); loses without its 2 best trades",
+        "newer": {
+          "n": 210,
+          "months": 21,
+          "avg": 0.031168402943515125,
+          "ctrl": 0.12580057399696765,
+          "ctrlDown": 0.1726964814325835,
+          "spy": 0.17169314920537765,
+          "win": 0.4095238095238095,
+          "pf": 1.1830223414517684,
+          "noTop2": -0.00951860726087896,
+          "topStock": 0.16849423593853172,
+          "edge": -0.09463217105345231,
+          "t": -2.4786528044218183,
+          "own": 0.03658394858064096
+        }
+      }
+    ]
+  },
+  "network": {
+    "externalRequests": 0,
+    "loopbackRequests": 13,
+    "paths": [
+      "/time_series",
+      "/botsynthetic/getUpdates",
+      "/botsynthetic/setMyCommands",
+      "/botsynthetic/setChatMenuButton",
+      "/botsynthetic/sendMessage",
+      "/quote"
+    ]
+  },
+  "implementationBoundaries": "Raw product text does not itself consistently show source age, missing-evidence provenance, every horizon entry/exit, dollar fees, or fully audited strategy evidence. Sidecar dates/trackrecord here are evidence annotations, not shipped UI."
+}

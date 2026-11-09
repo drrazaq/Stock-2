@@ -1,0 +1,60 @@
+TAP version 13
+# Subtest: vendored pre-repair core is byte-identical to production main 6e72a8d0
+ok 1 - vendored pre-repair core is byte-identical to production main 6e72a8d0
+  ---
+  duration_ms: 2.537332
+  ...
+# Subtest: new -> old: every new reservation (ACCEPTED, REJECTED or UNKNOWN) is mirrored, so the old guard keeps 15-minute spacing
+ok 2 - new -> old: every new reservation (ACCEPTED, REJECTED or UNKNOWN) is mirrored, so the old guard keeps 15-minute spacing
+  ---
+  duration_ms: 19.879729
+  ...
+# Subtest: new -> old: the 3-attempt cap carries over; the old guard then sends its DOWN alert and never a fourth start
+ok 3 - new -> old: the 3-attempt cap carries over; the old guard then sends its DOWN alert and never a fourth start
+  ---
+  duration_ms: 1.185501
+  ...
+# Subtest: old -> new: a reservation the old guard added after a new one is reconciled as UNCONFIRMED_LEGACY, never as accepted
+ok 4 - old -> new: a reservation the old guard added after a new one is reconciled as UNCONFIRMED_LEGACY, never as accepted
+  ---
+  duration_ms: 0.686652
+  ...
+# Subtest: old -> new -> old -> new: alternating guards never exceed 3 starts, keep spacing, and never invent an acceptance
+ok 5 - old -> new -> old -> new: alternating guards never exceed 3 starts, keep spacing, and never invent an acceptance
+  ---
+  duration_ms: 2.959006
+  ...
+# Subtest: legacy-only state (no version) is read as UNCONFIRMED_LEGACY attempts, as before rev3
+ok 6 - legacy-only state (no version) is read as UNCONFIRMED_LEGACY attempts, as before rev3
+  ---
+  duration_ms: 0.580052
+  ...
+# Subtest: repeated new-guard reads are idempotent: no duplicate attempts from the mirror
+ok 7 - repeated new-guard reads are idempotent: no duplicate attempts from the mirror
+  ---
+  duration_ms: 1.519814
+  ...
+# Subtest: visible running, queued or history-UNKNOWN never dispatch under the new guard, whatever an old guard left behind
+ok 8 - visible running, queued or history-UNKNOWN never dispatch under the new guard, whatever an old guard left behind
+  ---
+  duration_ms: 2.932546
+  ...
+# Subtest: no warning removed: NOT STARTED, DOWN, LATE and STOPPED EARLY still fire under the new guard after a rollback cycle
+ok 9 - no warning removed: NOT STARTED, DOWN, LATE and STOPPED EARLY still fire under the new guard after a rollback cycle
+  ---
+  duration_ms: 3.071966
+  ...
+# Subtest: guardRequestAccepted (CLI) is computed from attempt statuses, not from the reservation mirror
+ok 10 - guardRequestAccepted (CLI) is computed from attempt statuses, not from the reservation mirror
+  ---
+  duration_ms: 0.8586
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 104.91465
