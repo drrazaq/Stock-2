@@ -1,18 +1,18 @@
 {
  "status": "ADOPTED_FOR_REVIEW (candidate author); not approved, not deployed",
- "candidate": "72ff1f5bdf1ec747ccdaa6374515a3a238b2acae",
- "candidateTree": "38d748c33d078352d48f435de6537a1b6aca5ce2",
+ "candidate": "98ac7b246b1ec3da35057e0ffeb3b0617e06e504",
+ "candidateTree": "ec13ce41aa4e72763d64a83099398e6ea07884e2",
  "historicalR1Base": "b0d769876a6ee76f23544850c959111f59d8ae7b",
  "mainAtBinding": "774273205e1c8ce3db30c59ca368dc107617ef73",
  "pathCount": 79,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "961f61c421b8bf71606ef3b9839189ee983a77838ee989c1ecb88a7e5bd1c240",
+  "sha256": "99f713c5ee12313105f0b876723d2666e8157b6360139feee1a1fb2401b2388b",
   "against": "774273205e1c8ce3db30c59ca368dc107617ef73"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "6133f2ae2ce3929006104f78bdeeeeb80e6fff57e2110a38301d2f538fedaeea"
+  "sha256": "90eeed82f74780efe8a7b45e6926b0e6132aa4710682eb323f114d050b6a6ac3"
  },
  "candidateBranchStaleDataPaths": [
   "data/calendar-status.json",
@@ -22,24 +22,21 @@
   "data/tg-state.json"
  ],
  "neverPushOrMergeCandidateBranch": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 72ff1f5bdf1ec747ccdaa6374515a3a238b2acae binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 98ac7b246b1ec3da35057e0ffeb3b0617e06e504 binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "supersedes": {
-  "binding": "a7704f9a docs/r1-combined-binding/binding.json (rev18 304657d9)",
-  "samePathSet": false,
+  "binding": "88cba3a5 docs/r1-combined-binding/binding.json (rev19 72ff1f5b)",
+  "samePathSet": true,
   "filesChangedVsPrevious": [
    "docs/r1-sealed-provider-data/K2-KEY-SETUP.md",
    "docs/r1-sealed-provider-data/MANIFEST.md",
    "docs/r1-sealed-provider-data/README.md",
    "docs/r1-sealed-provider-data/RELEASE.md",
-   "test/sealed-migrate.test.mjs"
+   "docs/r1-sealed-provider-data/k2-key-tool.html"
   ],
-  "pathsAddedVsPrevious": [
-   "docs/r1-sealed-provider-data/k2-key-tool.html",
-   "test/try-small-audit.test.mjs"
-  ],
+  "pathsAddedVsPrevious": [],
   "pathsRemovedVsPrevious": [],
-  "reason": "rev19: K2 custody corrections, outside-runner key check tool, deterministic fixture; +2 paths"
+  "reason": "rev20: key-tool capability checks and result wording; guide/RELEASE aligned; iPhone setup blocked"
  },
  "files": {
   ".gitattributes": {
@@ -128,23 +125,23 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/K2-KEY-SETUP.md": {
-   "sha256": "730888a959444f907d82e34323c7f2dd94ef45b09e5bb7f196fb56ec195a1334",
-   "bytes": 4835,
+   "sha256": "a669af86e9ed2ec1a5a85682723409ca7a7d2f85facf1056c16377f398a18bf6",
+   "bytes": 6537,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/MANIFEST.md": {
-   "sha256": "a12146ebcbc8fc50951214cc9972fc8fec316970b52ae02ebdfeaa4eedd6b74f",
+   "sha256": "8f3bf969bf999dcede6e0ed39793e1d142e751cc4d9d286432b385f0d01248ff",
    "bytes": 10802,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/README.md": {
-   "sha256": "5bd61a9c2be9b93728f86911cba9abd4cf5b00017497f01f732f9945e352dae8",
-   "bytes": 49172,
+   "sha256": "472d9d961caf6facb1084cd63ff8c5ffa47ad8ceba6fcd1ff75b597e6682a320",
+   "bytes": 50301,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/RELEASE.md": {
-   "sha256": "7b62ad129278ece73d0170e8da1596ee427cdfaa7419e4a3bc74c97a8501d010",
-   "bytes": 18178,
+   "sha256": "291ed119a49289d822df84c466cef7ff4195ba1635564206b4b9277cbd14e05b",
+   "bytes": 18476,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/cost-projection.mjs": {
@@ -153,8 +150,8 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/k2-key-tool.html": {
-   "sha256": "eae4d8f03fd4233d79a24ba8cf2bd90366224ae34ef53f5bf16295629bda2a3b",
-   "bytes": 6813,
+   "sha256": "18c663a4294f98b757105eb4b63de5a4c5dca6b5e87d27b9190bfb2d935ff00b",
+   "bytes": 9293,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/t1-inventory.tsv": {
@@ -439,7 +436,7 @@
   }
  },
  "expectedUnitTrees": {
-  "774273205e1c8ce3db30c59ca368dc107617ef73": "b963b89a711e1a029e9b77353eb1b4509dc1a728",
-  "6e72a8d0c46385f3c329157d627636875505a224": "64da303113c9b64f83709419a3c69811ea268e9d"
+  "774273205e1c8ce3db30c59ca368dc107617ef73": "2f1a67c7adda61701cc009555b1e4e19070ffd21",
+  "6e72a8d0c46385f3c329157d627636875505a224": "a30f105349023d4bafdccbf0b48fb4315526a471"
  }
 }

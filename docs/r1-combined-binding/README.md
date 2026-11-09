@@ -1,16 +1,28 @@
-# R1 combined-unit binding, rev19 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev20 (review only; NOT approved, NOT deployed)
 
 This folder binds the **79-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `72ff1f5bdf1ec747ccdaa6374515a3a238b2acae` on `claude/composed-r1-opencheck-calendar-watcher` |
-| Historical R1 base (allowlist = diff from it) | `b0d76987` → **79 paths** (rev14 added 4, rev15 1, rev16 2, rev17 1, rev18 1, rev19 2; see below) |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `98ac7b246b1ec3da35057e0ffeb3b0617e06e504` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Historical R1 base (allowlist = diff from it) | `b0d76987` → **79 paths** (rev14 added 4, rev15 1, rev16 2, rev17 1, rev18 1, rev19 2, rev20 0; see below) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `b963b89a711e1a029e9b77353eb1b4509dc1a728` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `6e72a8d0` | `64da303113c9b64f83709419a3c69811ea268e9d` |
+| Unit tree, `M0` = `7742732` | `2f1a67c7adda61701cc009555b1e4e19070ffd21` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `6e72a8d0` | `a30f105349023d4bafdccbf0b48fb4315526a471` |
 
-## Rev19: what changed (Codex 6733228697; combined deployment still DEFERRED)
+## Rev20: what changed (Codex 6733558788 / 6733594774; combined deployment still DEFERRED)
+
+- **`k2-key-tool.html`:** capability checks before acting (UNSUPPORTED, buttons disabled); results PASS / NOT VERIFIED (cause not determined) / INPUT ERROR / UNSUPPORTED. No "data is fine" or retry wording. A valid record without `deflate-raw` is now UNSUPPORTED, not "damaged".
+- **Docs:** `K2-KEY-SETUP.md` and RELEASE B5b aligned. **iPhone-only setup is BLOCKED**, with precise blockers.
+- **Changed vs rev19:** those 5 documentation/tool files only. Runtime code and tests are byte-identical, so Codex's 163/163 receipt for rev19 applies.
+- **Evidence:** `docs/r1-k2-custody-evidence/`, headless Chromium **17/17** with the page served from 127.0.0.1 (not `file://`), including the missing-capability cases.
+- **Checks:**
+  - Precheck 79/0/0.
+  - Build + verify PASS on `7742732` (`2f1a67c7…`) and `6e72a8d0` (`a30f1053…`).
+  - Refused: rev19 `72ff1f5b` against the rev20 binding.
+  - STOP pins: 8 of 17 changed (the same set).
+
+## Rev19 (history): what changed (Codex 6733228697; combined deployment still DEFERRED)
 
 - **Custody guide (`K2-KEY-SETUP.md`):**
   - The format check proves form only (not randomness, and not a correct copy).

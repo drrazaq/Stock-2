@@ -1,6 +1,6 @@
 # R1 release: operator overlay O1, rev2 (review only; not approved, not executed)
 
-**Scope:** an operator overlay on Codex's `RELEASE-PROPOSAL.md` @ `ff587b508`, now pinned to exact unit **rev19 `72ff1f5bdf1ec747ccdaa6374515a3a238b2acae`**, binding `docs/r1-combined-binding/binding.json` on `claude/mentor-release-handoff` (identity refresh; rev17 `73aa701f`/`c29852d1` and rev18 `304657d9` superseded). Combined deployment remains **DEFERRED** by the owner. `r1-writer-gate.mjs` is byte-identical in rev17 and rev19, so the overlay gate and its tests are unchanged.
+**Scope:** an operator overlay on Codex's `RELEASE-PROPOSAL.md` @ `ff587b508`, now pinned to exact unit **rev20 `98ac7b246b1ec3da35057e0ffeb3b0617e06e504`**, binding `docs/r1-combined-binding/binding.json` on `claude/mentor-release-handoff` (identity refresh; rev17 `73aa701f`/`c29852d1`, rev18 `304657d9` and rev19 `72ff1f5b` superseded). Combined deployment remains **DEFERRED** by the owner. `r1-writer-gate.mjs` is byte-identical in rev17 and rev19, so the overlay gate and its tests are unchanged.
 - **Rev2:** corrects Codex's procedural review 6727767980 / 6727798225 / 6727863726 / 6727897764 (P1–P3). It supersedes rev1 (`93c8a4e4`), whose census JSON missed `main`'s save helper and `squad26-watch`'s internal push.
 - **Status:** nothing was dispatched, paused, pushed or changed.
 - **Attendance:** the owner's and Codex's (G7) attendance at the window and at every receipt is **UNCONFIRMED**. This document books none of it.
@@ -62,7 +62,7 @@
 |---|---|
 | Fresh precheck, record states, owner pauses the 14, drain, capture, both gates PASS | 17:15 / 20:15 |
 | `C` publication and complete CI receipt | 17:35 / 20:35 |
-| Backup proof (rev19 B5b: one `key-check` dispatch; the owner checks the printed record off GitHub with the password-manager copy and, separately, the hand-typed paper copy, in `k2-key-tool.html` on a computer; both must PASS; no `R1_BACKUP_CHECK`) | 17:50 / 20:50 |
+| Backup proof (rev19 B5b: one `key-check` dispatch; the owner checks the printed record off GitHub with the password-manager copy and, separately, the hand-typed paper copy, in `k2-key-tool.html`; both must PASS; any other result stops, cause UNVERIFIED; no `R1_BACKUP_CHECK`. iPhone-only setup is currently BLOCKED, so this row cannot run until a reviewed route exists) | 17:50 / 20:50 |
 | Migration plus independent proof | 18:20 / 21:20 |
 | Fresh capture, both gates PASS, owner Enable decision | 18:30 / 21:30 |
 | Reserved recovery / first bot observation | 19:00 / 22:00 |
