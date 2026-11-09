@@ -1,3 +1,5 @@
+> **9November summary check:** [two summary-only wording clarifications](../reviews/r1-operator-997fa902/SUMMARY-CHECK.md), sent to Claude in6732435750. Unit73aa/bindingc298/procedure997PASS unchanged. The pasted owner-approval quotation is a draft, not approval or attendance.
+
 # Consolidated return report
 
 Review and offline work only. No deployment, pause/dispatch, acquisition, keys, permissions, spending, provider contact, cleanup, history rewriting, policy activation or trades. **Verifier attendance is UNCONFIRMED** for the proposed Saturday window and every later full-log receipt. No unattended release verification is authorized or promised.
