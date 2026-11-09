@@ -1,0 +1,17 @@
+# K2 rev19 independent focused review
+
+**CORRECTIONS REQUIRED; IPHONE SETUP BLOCKED.** Published6733558788immediately, independently of standalone/research. Exact72ff1f5bdf1ec747ccdaa6374515a3a238b2acae, binding-docs88cba3a5, bindingSHAa645a82e5e3088eb6c2d38189b538400a063032f8f950d1b9841e06758bb4794. No key/setup/deployment/migration/production action.
+
+All79binding fingerprints/bytes/modes/sourcepatch/inversePASS. Source-only build on current6e72gives localunit766d28f1a8e04dad4bba7250bb3c3332f3d9ee42/tree64da303113c9b64f83709419a3c69811ea268e9d,verify79/0PASS; inverse restores exactcurrentmain whole tree, preserving newer data. No unit pushed. Final exact-source163/163filesPASS under Node20/networkguard, no failures/waivers. Record in full-inventory-receipt.json. The correction ported the existing deterministic session fixture; prior clock repros on byte-identical fixture preserved.
+
+Wording corrections accepted:64hex proves shape, not entropy or validhex copying correctness; derivation case-sensitive; no automatic operational retry; preferred proof verifies BOTH independently retrieved copies outside original runner. Executable runtime unchangedrev18. Scan/watcher/recovery/atomic publisher/writer/precheck plus gatedwatcherfixtures byte-identical; prior substantive reviews and20gatedchecks preserved, not unnecessarily repeated. Overlaygate/tests byte-identical997;88cbaidentity/B5brow refreshed to rev19/key-check. Exact original reviews remain historical records, not operational authority.
+
+Remaining blockers:
+
+1. Owner has iPhone only; author explicitly has NO verified iPhone route. Desktop commands and a desktop-tested HTMLfile do not satisfy this prerequisite. Need one concrete reviewed usable local route with synthetic capability/record preflight on actual chosen device before real creation/enrollment. Current rawGitHub/plaintext/CSP and Filespreview failures are not bypassed by claims of desktop support. No new computer/purchase/permission assumed; setup stays blocked.
+2. Correct key-tool failure provenance and UI. It says'FAIL:nothing is wrong with data'and suggests retry when copies differ; record/browser/decompression problems cannot establish data integrity or a wrong key. Actual checkCopy on its VALID public demo record with unavailable decompression returns'record damaged'(unsupported-engine.json). Report unsupported capability/UNVERIFIEDcause before real generation, stop operational steps; no automatic retry. This is a controlled NodeVM proof, NOT browser/iPhone execution.
+3. Refresh exact operative artifacts/binding after actual corrections, validate changed helper/guides and any new executable code, preserve unchanged reviews. No unrelated redesign.
+
+Independent browser replay **BLOCKED**, notPASS: managedChromium rejects file navigation ERR_BLOCKED_BY_ADMINISTRATOR. Log retained. No policy override/permission action, no successful11/11independentbrowserclaim and no iOSclaim. AuthorChromium receipt remains distinct evidence. This is an explicit validation/tool limitation requiring a usable route, not a failure of the163source-file run. No tool remains running or stalled.
+
+Claude receives exact corrections6733558788/6733594774. No owner decision needed for routine fixes; existing willingness to new dedicated data key stands. ExistingAlpaca/TG/PRIVATE_KEY remain unchanged. R1 deployment stays deferred until complete exactPASS+separateownerapproval, fresh actual attendance and all existing writer/recovery/receipt gates. Research review remains independent, acceptance24/40unchanged.
