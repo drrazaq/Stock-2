@@ -1,0 +1,126 @@
+{
+  "readStarted": "2026-11-09 10:41:20 UTC",
+  "readEnded": "2026-11-09 10:41:21 UTC",
+  "readOnly": true,
+  "notAtomic": true,
+  "census": [
+    {
+      "status": "in_progress",
+      "total": 2,
+      "runs": [
+        {
+          "id": 42602344453,
+          "name": "Tests",
+          "status": "in_progress",
+          "branch": "claude/mentor-release-handoff",
+          "head_sha": "ce533a3432043a45a5eb60ccc79c825ba1fa60a7",
+          "path": ".github/workflows/tests.yml",
+          "created_at": "2026-11-09T10:38:42Z",
+          "workflow_run_started_at": "2026-11-09T10:38:42Z",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/42602344453"
+        },
+        {
+          "id": 42550984309,
+          "name": "Telegram bot replies",
+          "status": "in_progress",
+          "branch": "main",
+          "head_sha": "6e72a8d0c46385f3c329157d627636875505a224",
+          "path": ".github/workflows/bot.yml",
+          "created_at": "2026-11-09T02:26:53Z",
+          "workflow_run_started_at": "2026-11-09T02:26:53Z",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/42550984309"
+        }
+      ],
+      "readSucceeded": true
+    },
+    {
+      "status": "queued",
+      "total": 0,
+      "runs": [],
+      "readSucceeded": true
+    },
+    {
+      "status": "waiting",
+      "total": 0,
+      "runs": [],
+      "readSucceeded": true
+    },
+    {
+      "status": "requested",
+      "total": 0,
+      "runs": [],
+      "readSucceeded": true
+    },
+    {
+      "status": "pending",
+      "total": 1,
+      "runs": [
+        {
+          "id": 42598952130,
+          "name": "Telegram bot replies",
+          "status": "pending",
+          "branch": "main",
+          "head_sha": "3ebf21b53e7986ce0482c579278d98895f9d8703",
+          "path": ".github/workflows/bot.yml",
+          "created_at": "2026-11-09T10:10:38Z",
+          "workflow_run_started_at": "2026-11-09T10:10:38Z",
+          "url": "https://github.com/drrazaq/Stock-2/actions/runs/42598952130"
+        }
+      ],
+      "readSucceeded": true
+    }
+  ],
+  "jobs": [
+    {
+      "run": 42602344453,
+      "total": 2,
+      "jobs": [
+        {
+          "id": 129109632091,
+          "name": "test",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-09T10:38:44Z",
+          "completed_at": null
+        },
+        {
+          "id": 129109634137,
+          "name": "host-monitor-stress",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-09T10:38:42Z",
+          "completed_at": "2026-11-09T10:38:42Z"
+        }
+      ],
+      "readSucceeded": true
+    },
+    {
+      "run": 42550984309,
+      "total": 2,
+      "jobs": [
+        {
+          "id": 129028390492,
+          "name": "reply",
+          "status": "in_progress",
+          "conclusion": null,
+          "started_at": "2026-11-09T07:09:23Z",
+          "completed_at": null
+        },
+        {
+          "id": 129028391576,
+          "name": "accounting-preflight",
+          "status": "completed",
+          "conclusion": "skipped",
+          "started_at": "2026-11-09T07:09:21Z",
+          "completed_at": "2026-11-09T07:09:21Z"
+        }
+      ],
+      "readSucceeded": true
+    }
+  ],
+  "availability": {
+    "Codex": "Attended current assessment only; continuous forward/conditional-restoration coverage unconfirmed",
+    "Claude": "Actual continuous operator coverage requested on PR1, not inferred from plan"
+  },
+  "sourceReviews": "CLOSED/PASS"
+}
