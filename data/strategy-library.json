@@ -34229,6 +34229,38 @@
     ],
     "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
    }
+  },
+  {
+   "id": "RQ-OC-126",
+   "family": "Daily researcher (RQ)",
+   "name": "Organization capital (capitalised SG&A per assets) in the top 20%, hold 6 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-09 (daily researcher); 5-year one-shot pending",
+   "explain": "Buy the next open after a 10-K whose organization capital (perpetual inventory of annual SG&A, us-gaap SellingGeneralAndAdministrativeExpense, 15% depreciation, initial stock SG&A / 0.25, 5+ consecutive years) divided by total assets is in the top 20% (percentile >= 0.80 vs all such 10-Ks of the prior 365 days; filed within 120 days of the year end; assets 10M USD+); stock liquid; sell the close 126 sessions later. Measure, chain rule, perpetual inventory, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 13) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/jofi.12034",
+    "https://www.aeaweb.org/conference/2013/retrieve.php?pdfid=51",
+    "https://mingze-gao.com/posts/estimate-organization-capital/"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-09: Eisfeldt and Papanikolaou (2013, Journal of Finance) \"Organization Capital and the Cross-Section of Expected Returns\": firms with high capitalised SG&A per assets earned about 4.7% a year more (1970-2008). New line (organization capital from annual SG&A, official SEC XBRL company facts); nothing in the library tests it. Nominal dollars and no industry sort (stated simplifications). Buy top 20%. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 9 Nov 2026."
+  },
+  {
+   "id": "RQ-OC-252",
+   "family": "Daily researcher (RQ)",
+   "name": "Organization capital in the top 20%, hold 12 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-09 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-OC-126, hold 252 sessions. Measure, chain rule, perpetual inventory, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 13) before any run.",
+   "sources": [
+    "https://doi.org/10.1111/jofi.12034",
+    "https://www.aeaweb.org/conference/2013/retrieve.php?pdfid=51",
+    "https://mingze-gao.com/posts/estimate-organization-capital/"
+   ],
+   "hold": 252,
+   "note": "Daily researcher 2026-11-09: Eisfeldt and Papanikolaou (2013, Journal of Finance) \"Organization Capital and the Cross-Section of Expected Returns\": firms with high capitalised SG&A per assets earned about 4.7% a year more (1970-2008). New line (organization capital from annual SG&A, official SEC XBRL company facts); nothing in the library tests it. Nominal dollars and no industry sort (stated simplifications). Buy top 20%. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 9 Nov 2026."
   }
  ]
 }

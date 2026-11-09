@@ -159,6 +159,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'gpc') { ch += preRegisterGpc(LB); continue; }
     if (R.family === 'dvc') { ch += preRegisterDvc(LB); continue; }
     if (R.family === 'dst') { ch += preRegisterDst(LB); continue; }
+    if (R.family === 'oc') { ch += preRegisterOc(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -887,4 +888,77 @@ export function preRegisterDst(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of DST_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-08 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Score coefficients, inputs, simplifications, ranking and data rule fixed in research-core.mjs (IDEA 12) before any run.', sources: DST_SOURCES, hold: R.hold, note: DST_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 13 (pre-registered 9 Nov 2026, before any run): ORGANIZATION CAPITAL (capitalised SG&A per assets) ----------------
+// Source: Eisfeldt and Papanikolaou, "Organization Capital and the Cross-Section of Expected Returns", Journal of Finance 68(4), 2013,
+// 1365-1406: a stock of organization capital built from SG&A by the perpetual-inventory method (depreciation 15%, initial stock
+// SG&A_1 / (g + 15%), g = 10%); firms with HIGH organization capital per assets earned about 4.7% a year more than LOW ones (1970-2008).
+// NEW information line in this library: nothing tests capitalised SG&A (the SG&A-vs-sales CHANGE variant was dropped on 5 Nov unrun; R&D
+// intensity, gross profitability, quality and value levels are tested elsewhere). Long only: buy the top 20%; no avoid check.
+// MEASURE (fixed now, no tuning): us-gaap:SellingGeneralAndAdministrativeExpense, unit USD, ANNUAL durations only (start..end 350-380
+// days), forms 10-K (no amendments), period end from 2008-01-01. us-gaap:Assets (instant). Point in time: only values filed on or before F.
+// EVENT: a filing date F whose latest fiscal-year end E (annual SG&A) is later than every year end reported before F and 0 <= F - E <= 120.
+// CHAIN: SG&A for E, then back one year at a time (the year end 330-400 days earlier, closest to 365; latest filed on or before F); stops
+// at the first missing year or a value <= 0; 5+ consecutive years needed (E included), at most 20.
+// OC: oldest year s1 -> OC = s1 / (0.10 + 0.15); then for every year y oldest..E: OC = 0.85 OC + s_y. SIMPLIFICATIONS (stated now):
+// nominal dollars (no CPI deflator: a near-common factor in a cross-section ranked within 365 days); no within-industry sort (the paper
+// sorts within 17 industries; SIC history for dead companies is not in the system); banks mostly do not tag SG&A (they drop out; stated).
+// SCORE = OC / total assets at E (instant within 5 days of E, latest filed on or before F); assets 10M USD+.
+// RANK (point in time, the lazy-prices ranker): percentile among ALL OC events filed in the 365 days before F (300+ needed).
+//   RQ-OC-126   BUY the next open after a 10-K whose OC / assets is in the top 20% (percentile >= 0.80); sell the close 126 sessions later.
+//   RQ-OC-252   the same, hold 252 sessions (the paper rebalances once a year).
+// Public on the 'filed' date: bought at the OPEN of the first session strictly AFTER it. Liquid (system rule) on the session before entry.
+// One open trade per stock per rule. Gates, costs, halves and verdicts: the shared judge of this file (same as IDEAS 6-10).
+// DATA RULE (fixed now): no verdict until (a) 95%+ of universe companies looked up in the SEC bulk company facts file, (b) 85%+ of liquid
+// stock-months map to an SEC number, (c) 3,000+ OC events from 2021-10-01 (fewer = the reader is broken: fix it, no verdict).
+export const OC = { tag: 'SellingGeneralAndAdministrativeExpense', assets: 'Assets', from: '2008-01-01', endFrom: '2019-06-01', yLo: 350, yHi: 380, maxLag: 120, back: [330, 400],
+  minYears: 5, maxYears: 20, g: 0.10, dep: 0.15, aTol: 5, minAssets: 10e6, eventsFrom: '2021-10-01' };
+export const OC_DATA = { looked: 0.95, map: 0.85, events: 3000 };
+RULES['RQ-OC-126'] = { kind: 'buy', hold: 126, side: 'top', family: 'oc', name: 'Organization capital (capitalised SG&A per assets) in the top 20%, hold 6 months',
+  rule: 'Buy the next open after a 10-K whose organization capital (perpetual inventory of annual SG&A, us-gaap SellingGeneralAndAdministrativeExpense, 15% depreciation, initial stock SG&A / 0.25, 5+ consecutive years) divided by total assets is in the top 20% (percentile >= 0.80 vs all such 10-Ks of the prior 365 days; filed within 120 days of the year end; assets 10M USD+); stock liquid; sell the close 126 sessions later.' };
+RULES['RQ-OC-252'] = { kind: 'buy', hold: 252, side: 'top', family: 'oc', name: 'Organization capital in the top 20%, hold 12 months', rule: 'As RQ-OC-126, hold 252 sessions.' };
+export const OC_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'oc');
+for (const id of OC_IDS) { if (!IDS.includes(id)) IDS.push(id); if (!BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// companyfacts JSON -> { y: [[start, end, val, filed]] annual SG&A, a: [[end, val, filed]] assets }, sorted by filed
+export function ocRows(j) { const g = j && j.facts && j.facts['us-gaap'], uy = g && g[OC.tag] && g[OC.tag].units, ua = g && g[OC.assets] && g[OC.assets].units;
+  const y = [], a = [], sy = new Set(), sa = new Set();
+  for (const x of (uy && Array.isArray(uy.USD) ? uy.USD : [])) { if (!x || !x.start || !x.end || !x.filed || !ok(x.val) || x.form !== '10-K' || x.end < OC.from) continue;
+    const len = daysBetween(x.start, x.end); if (len < OC.yLo || len > OC.yHi) continue; const k = x.end + '|' + x.val + '|' + x.filed; if (sy.has(k)) continue; sy.add(k); y.push([x.start, x.end, x.val, x.filed]); }
+  for (const x of (ua && Array.isArray(ua.USD) ? ua.USD : [])) { if (!x || x.start || !x.end || !x.filed || !ok(x.val) || x.val <= 0 || !(x.form === '10-K' || x.form === '10-Q') || x.end < OC.from) continue;
+    const k = x.end + '|' + x.val + '|' + x.filed; if (sa.has(k)) continue; sa.add(k); a.push([x.end, x.val, x.filed]); }
+  const by = (i, j2) => (p, r) => p[i] < r[i] ? -1 : p[i] > r[i] ? 1 : p[j2] < r[j2] ? -1 : p[j2] > r[j2] ? 1 : 0;
+  return { y: y.sort(by(3, 1)), a: a.sort(by(2, 0)) }; }
+// perpetual inventory over SG&A values oldest..newest -> OC stock (null when fewer than minYears or a value <= 0)
+export function ocStock(vals) { if (!Array.isArray(vals) || vals.length < OC.minYears || vals.some(v => !ok(v) || v <= 0)) return null; let oc = vals[0] / (OC.g + OC.dep);
+  for (const v of vals) oc = (1 - OC.dep) * oc + v; return oc; }
+// latest-filed (on or before F) row closest to `target`, its date within [lo, hi] days before `from` (or within tol of target when lo/hi null)
+const ocNear = (rows, target, F, test) => { let b = null; for (const r of rows) { if (r[3] > F || !test(r)) continue; const gap = Math.abs(daysBetween(r[1], target));
+  const bg = b ? Math.abs(daysBetween(b[1], target)) : 1e9; if (!b || gap < bg || (gap === bg && r[3] >= b[3])) b = r; } return b; };
+// SG&A chain ending at E, as known on F: values oldest..newest (E last)
+export function ocChain(yrows, E, F) { const known = yrows.filter(r => r[3] <= F), e0 = ocNear(known, E, F, r => r[1] === E); if (!e0 || !(e0[2] > 0)) return [];
+  const out = [e0[2]]; let cur = E;
+  while (out.length < OC.maxYears) { const p = ocNear(known, addDays(cur, -365), F, r => { const gp = daysBetween(r[1], cur); return gp >= OC.back[0] && gp <= OC.back[1]; });
+    if (!p || !(p[2] > 0)) break; out.unshift(p[2]); cur = p[1]; }
+  return out; }
+// rows -> events [{ d (filed), end, years, oc, assets, g (= OC / assets) }]
+export function ocEvents(rows) { const out = [], Y = (rows && rows.y) || [], A = (rows && rows.a) || []; let maxEnd = '';
+  const byF = new Map(); for (const r of Y) (byF.get(r[3]) || byF.set(r[3], []).get(r[3])).push(r);
+  for (const F of [...byF.keys()].sort()) { const E = byF.get(F).reduce((m, r) => r[1] > m ? r[1] : m, '');
+    if (E > maxEnd && E >= OC.endFrom && daysBetween(E, F) >= 0 && daysBetween(E, F) <= OC.maxLag) { const ch = ocChain(Y, E, F), oc = ocStock(ch);
+      let as = null; for (const x of A) { if (x[2] > F) break; const gap = Math.abs(daysBetween(x[0], E)); if (gap > OC.aTol) continue; if (!as || gap < Math.abs(daysBetween(as[0], E)) || (x[0] === as[0] && x[2] >= as[2])) as = x; }
+      if (oc !== null && as && as[1] >= OC.minAssets) out.push({ d: F, end: E, years: ch.length, oc: Math.round(oc), assets: as[1], g: +(oc / as[1]).toFixed(6), form: '10-K' }); }
+    if (E > maxEnd) maxEnd = E; }
+  return out; }
+export function ocDataRule({ ciks, looked, liqMonths, liqMapped, events }) { const r = { looked: ciks ? looked / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.looked >= OC_DATA.looked)) why.push('company facts looked up ' + (r.looked * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= OC_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(events >= OC_DATA.events)) why.push('organization capital events ' + events + ' (3,000 needed: reader check)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+const OC_SOURCES = ['https://doi.org/10.1111/jofi.12034', 'https://www.aeaweb.org/conference/2013/retrieve.php?pdfid=51', 'https://mingze-gao.com/posts/estimate-organization-capital/'];
+const OC_NOTE = 'Daily researcher 2026-11-09: Eisfeldt and Papanikolaou (2013, Journal of Finance) "Organization Capital and the Cross-Section of Expected Returns": firms with high capitalised SG&A per assets earned about 4.7% a year more (1970-2008). New line (organization capital from annual SG&A, official SEC XBRL company facts); nothing in the library tests it. Nominal dollars and no industry sort (stated simplifications). Buy top 20%. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 9 Nov 2026.';
+export function preRegisterOc(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of OC_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-09 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Measure, chain rule, perpetual inventory, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 13) before any run.', sources: OC_SOURCES, hold: R.hold, note: OC_NOTE }); ch++; }
   return ch; }
