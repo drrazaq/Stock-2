@@ -1,0 +1,110 @@
+TAP version 13
+# Subtest: configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable
+ok 1 - configured duplicate completion is 331 usable minutes; incomplete runs remain recoverable
+  ---
+  duration_ms: 3.780431
+  ...
+# Subtest: health reports configured gaps and known outside hour separately; explicit actionable thresholds
+ok 2 - health reports configured gaps and known outside hour separately; explicit actionable thresholds
+  ---
+  duration_ms: 2.499966
+  ...
+# Subtest: message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed
+ok 3 - message reservations persist across instances; uncertain send is not replayed; corrupt state fails closed
+  ---
+  duration_ms: 15.656884
+  ...
+# Subtest: unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY
+ok 4 - unknown instrument retains lead/paper decisions and frozen D eligibility, but never approved BUY
+  ---
+  duration_ms: 1.965503
+  ...
+# Subtest: actual watcher shadow producer retains unknown observations and filing records without adding source calls
+ok 5 - actual watcher shadow producer retains unknown observations and filing records without adding source calls
+  ---
+  duration_ms: 1.943119
+  ...
+# Subtest: actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop
+ok 6 - actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop
+  ---
+  duration_ms: 1139.715994
+  ...
+# Subtest: reservation publication failure prevents send and quarantines local retry
+ok 7 - reservation publication failure prevents send and quarantines local retry
+  ---
+  duration_ms: 4.468313
+  ...
+# Subtest: actual watcher approved-alert caller blocks unknown identity before any send
+ok 8 - actual watcher approved-alert caller blocks unknown identity before any send
+  ---
+  duration_ms: 1.001174
+  ...
+# Subtest: actual filing decision caller records eligible unknown-type research, and preserves source failure
+ok 9 - actual filing decision caller records eligible unknown-type research, and preserves source failure
+  ---
+  duration_ms: 1.625323
+  ...
+# Subtest: actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment
+ok 10 - actual ranking consumer preserves classified cohort identity and cannot silently pool changed enrollment
+  ---
+  duration_ms: 4.171839
+  ...
+# Subtest: actual shadow caller captures identity once rather than retroactively reclassifying the first observation
+ok 11 - actual shadow caller captures identity once rather than retroactively reclassifying the first observation
+  ---
+  duration_ms: 1.426744
+  ...
+# Subtest: publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct
+ok 12 - publication refusal is retryable UNSENT; acknowledgements and uncertain sends stay distinct
+  ---
+  duration_ms: 49.859099
+  ...
+# Subtest: actual Actions watcher survives moved
+ok 13 - actual Actions watcher survives moved
+  ---
+  duration_ms: 2208.929897
+  ...
+# Subtest: actual Actions watcher survives competing
+ok 14 - actual Actions watcher survives competing
+  ---
+  duration_ms: 2135.8791
+  ...
+# Subtest: actual Actions watcher survives refusal-retry
+ok 15 - actual Actions watcher survives refusal-retry
+  ---
+  duration_ms: 2676.121443
+  ...
+# Subtest: actual Actions watcher survives interrupted
+ok 16 - actual Actions watcher survives interrupted
+  ---
+  duration_ms: 1581.308488
+  ...
+# Subtest: actual Actions watcher survives uncertain
+ok 17 - actual Actions watcher survives uncertain
+  ---
+  duration_ms: 2240.321895
+  ...
+# Subtest: actual Actions watcher survives clear-rejection
+ok 18 - actual Actions watcher survives clear-rejection
+  ---
+  duration_ms: 3059.847065
+  ...
+# Subtest: actual Actions watcher survives finish-refusal
+ok 19 - actual Actions watcher survives finish-refusal
+  ---
+  duration_ms: 2632.219089
+  ...
+# Subtest: actual Actions watcher survives missing-snapshot
+ok 20 - actual Actions watcher survives missing-snapshot
+  ---
+  duration_ms: 2294.549219
+  ...
+1..20
+# tests 20
+# suites 0
+# pass 20
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 18977.614929
