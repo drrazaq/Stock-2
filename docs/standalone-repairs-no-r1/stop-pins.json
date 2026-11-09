@@ -1,0 +1,147 @@
+{
+ "note": "STOP R2 pins vs standalone 10874f68 on main 6e72a8d0",
+ "changed": [
+  "ignition-watch.mjs",
+  "scan.mjs",
+  "test/stop-alert-validity.test.mjs",
+  ".github/workflows/ignition.yml"
+ ],
+ "rows": [
+  {
+   "path": "stop-watch.mjs",
+   "stopR2AppliedPin": "418c41c300613fc7e51c57ceafcbc303964888a8faf028e84022b86fded51212",
+   "mainCurrent": "418c41c300613fc7e51c57ceafcbc303964888a8faf028e84022b86fded51212",
+   "standalone": "418c41c300613fc7e51c57ceafcbc303964888a8faf028e84022b86fded51212",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "ignition-watch.mjs",
+   "stopR2AppliedPin": "62589fffed6985f2202f9adbbbd6766b4a681017de5b42f5b37a1e70425ac665",
+   "mainCurrent": "62589fffed6985f2202f9adbbbd6766b4a681017de5b42f5b37a1e70425ac665",
+   "standalone": "2eedca171154c58507c3b399a354d5560753781f1f2878708416a43bb5be9a91",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": true
+  },
+  {
+   "path": "scan.mjs",
+   "stopR2AppliedPin": "6aa77716cb2a8b614faf3845ecb5d96bf07bad81a5cc6acceca817ae9974fc5c",
+   "mainCurrent": "73ad4853340ee5f562618155df92371ab1ff87e62584bf507157d9c84cd276c3",
+   "standalone": "ad7856978cb2cc7c467c2effb2affd7922e1dc8a7f6801c756a51ac36f10f388",
+   "mainEqualsStopPin": false,
+   "changedByStandalone": true
+  },
+  {
+   "path": "early-alerts.mjs",
+   "stopR2AppliedPin": "367e6d546fd6e751cf3821052f4e458e4bad5295202dd827739af11ce1f2c231",
+   "mainCurrent": "367e6d546fd6e751cf3821052f4e458e4bad5295202dd827739af11ce1f2c231",
+   "standalone": "367e6d546fd6e751cf3821052f4e458e4bad5295202dd827739af11ce1f2c231",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "test/load-scan.mjs",
+   "stopR2AppliedPin": "f1323f5d354501e5611b5a2f77b0f12fffeb6d8272a0688b5e88eb9410dafa72",
+   "mainCurrent": "f1323f5d354501e5611b5a2f77b0f12fffeb6d8272a0688b5e88eb9410dafa72",
+   "standalone": "f1323f5d354501e5611b5a2f77b0f12fffeb6d8272a0688b5e88eb9410dafa72",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "test/shadow.test.mjs",
+   "stopR2AppliedPin": "f88a6dc1d60a3a58fbc34dd95aae8b683be673cad50b9cb8e29385e08cd958ab",
+   "mainCurrent": "f88a6dc1d60a3a58fbc34dd95aae8b683be673cad50b9cb8e29385e08cd958ab",
+   "standalone": "f88a6dc1d60a3a58fbc34dd95aae8b683be673cad50b9cb8e29385e08cd958ab",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "test/stop-alert-validity.test.mjs",
+   "stopR2AppliedPin": "d2d29774b069d213345004803dd17ba982064f25ec4136b9430f6c6995f4257f",
+   "mainCurrent": "d2d29774b069d213345004803dd17ba982064f25ec4136b9430f6c6995f4257f",
+   "standalone": "746b5dd44ecdaf57d3dc057c37cd37ad4ff817c125fb8515b6d40d99ddd01f57",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": true
+  },
+  {
+   "path": "test/stop-watch.test.mjs",
+   "stopR2AppliedPin": "40e5d39611cc6385d5231e46b8e48ef98dc958ced922e44a40b7cd354d8e9217",
+   "mainCurrent": "40e5d39611cc6385d5231e46b8e48ef98dc958ced922e44a40b7cd354d8e9217",
+   "standalone": "40e5d39611cc6385d5231e46b8e48ef98dc958ced922e44a40b7cd354d8e9217",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "test/watcher-resilience.test.mjs",
+   "stopR2AppliedPin": "8730bfd1752c92be5901081f624bbf4e58aa2a7be8ff5e3790247ed8f1c43634",
+   "mainCurrent": "8730bfd1752c92be5901081f624bbf4e58aa2a7be8ff5e3790247ed8f1c43634",
+   "standalone": "8730bfd1752c92be5901081f624bbf4e58aa2a7be8ff5e3790247ed8f1c43634",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "test/watcher-incident-revision.test.mjs",
+   "stopR2AppliedPin": "1a1626aa54e4c17533958092e55e2719d749979cac27dd0982669382f437be8e",
+   "mainCurrent": "1a1626aa54e4c17533958092e55e2719d749979cac27dd0982669382f437be8e",
+   "standalone": "1a1626aa54e4c17533958092e55e2719d749979cac27dd0982669382f437be8e",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "index.html",
+   "stopR2AppliedPin": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
+   "mainCurrent": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
+   "standalone": "2a706b2556994c4057a7fdda86dc3770cf3ae770ddb28315d6a9232ed3bb6348",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "ignition-gates.mjs",
+   "stopR2AppliedPin": "e1b299686c5c919f77d0513d3bda8f8985921cc907e8e0536062f2ff1840b912",
+   "mainCurrent": "e1b299686c5c919f77d0513d3bda8f8985921cc907e8e0536062f2ff1840b912",
+   "standalone": "e1b299686c5c919f77d0513d3bda8f8985921cc907e8e0536062f2ff1840b912",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "snapshot-fields.mjs",
+   "stopR2AppliedPin": "1f06f2270ee796aab30d624065b04a31f70fae18bedf39bd98ff7f3bae50950e",
+   "mainCurrent": "1f06f2270ee796aab30d624065b04a31f70fae18bedf39bd98ff7f3bae50950e",
+   "standalone": "1f06f2270ee796aab30d624065b04a31f70fae18bedf39bd98ff7f3bae50950e",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "watcher-messages.mjs",
+   "stopR2AppliedPin": "5803a587420fca807a0c60ad2812165d7e1ae26b0ac6ae08ddcd1a49d9a68c25",
+   "mainCurrent": "5803a587420fca807a0c60ad2812165d7e1ae26b0ac6ae08ddcd1a49d9a68c25",
+   "standalone": "5803a587420fca807a0c60ad2812165d7e1ae26b0ac6ae08ddcd1a49d9a68c25",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": "radar-v3-core.mjs",
+   "stopR2AppliedPin": "4d1c4f47d29c7463620454b35c22039e8c58d28b01737304f6be184f86eb1355",
+   "mainCurrent": "4d1c4f47d29c7463620454b35c22039e8c58d28b01737304f6be184f86eb1355",
+   "standalone": "4d1c4f47d29c7463620454b35c22039e8c58d28b01737304f6be184f86eb1355",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": ".github/workflows/bot.yml",
+   "stopR2AppliedPin": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40",
+   "mainCurrent": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40",
+   "standalone": "2a7a8a66bbf03d02d0732cc44f4973cf534cbef9faffe3aa85b13659e0484e40",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": false
+  },
+  {
+   "path": ".github/workflows/ignition.yml",
+   "stopR2AppliedPin": "b5ebab71b7f6d33ceb4d41e965fe8247db81e610e6016b35272095fa87b43909",
+   "mainCurrent": "b5ebab71b7f6d33ceb4d41e965fe8247db81e610e6016b35272095fa87b43909",
+   "standalone": "d8496c62ae27285e5c3892ef7847ee3abff7f406c3901ffb088fd6e66d830e58",
+   "mainEqualsStopPin": true,
+   "changedByStandalone": true
+  }
+ ]
+}

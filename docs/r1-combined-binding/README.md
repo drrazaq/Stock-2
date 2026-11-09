@@ -1,16 +1,30 @@
-# R1 combined-unit binding, rev17 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev18 (review only; NOT approved, NOT deployed)
 
-This folder binds the **76-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
+This folder binds the **77-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `73aa701f273ce14147fa38a25e722436d337fe45` on `claude/composed-r1-opencheck-calendar-watcher` |
-| Historical R1 base (allowlist = diff from it) | `b0d76987` → **76 paths** (rev14 added 4, rev15 1, rev16 2, rev17 1; see below) |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `304657d93c0fd10974781712553a282f28294bca` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Historical R1 base (allowlist = diff from it) | `b0d76987` → **77 paths** (rev14 added 4, rev15 1, rev16 2, rev17 1, rev18 1; see below) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `6e85253669ad9b163fb5dd9995e5e2b1dc3375bf` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `6e72a8d0` | `200daef9679eb544ebf366d5ed2c79c96b293488` |
+| Unit tree, `M0` = `7742732` | `e1d14386ac92d70bde4e0b1922846b405e1b32c0` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `6e72a8d0` | `f774f78f685b646552522d961cc11a50a98ba57e` |
 
-## Rev17: what changed (Codex 6725877594, multipart BUY NOW)
+## Rev18: what changed (owner decision 9 Nov: K2 dedicated data key; combined deployment DEFERRED)
+
+- **Key wiring:** all 21 `SEALED_SECRET` mappings read `secrets.R1_DATA_KEY`. `PRIVATE_KEY` keeps exactly its 7 pre-R1 uses (equal to main). No existing credential is changed.
+- **`sealed-migrate.mjs`:** `--apply`, `--key-check-make` and `--backup-compare` refuse a key that is not 64 hex characters (`SEALED_KEY_FORMAT`) before changing anything. `sealed-store.mjs` changes by one comment line only.
+- **New owner guide:** `docs/r1-sealed-provider-data/K2-KEY-SETUP.md` (+1 path, 77).
+- **Unchanged vs rev17:** `scan.mjs`, `ignition-watch.mjs`, every reader and writer, the sealed format, recovery, `r1-writer-gate.mjs`, `r1-release-precheck.mjs`. The alert, scanner and watcher reviews therefore carry over.
+- **Changed vs rev17 (18 files):** 10 workflows (key name only), `sealed-migrate.mjs`, `sealed-store.mjs` (comment), 3 tests, and RELEASE/README/MANIFEST.
+- **Checks:**
+  - Precheck against `6e72a8d0`: PASS (77/0/0).
+  - Build + verify: PASS on `7742732` (tree `e1d14386…`) and `6e72a8d0` (tree `f774f78f…`).
+  - Refused: rev17 candidate `73aa701f`, and the rev17 binding with the rev18 candidate.
+  - Full suite 162/162; gated 9/9 and 11/11; new K2 wiring and format tests.
+  - STOP pins: 8 of 17 changed (the same set).
+
+## Rev17 (history): what changed (Codex 6725877594, multipart BUY NOW)
 
 - **Fix:** a BUY NOW card that Telegram splits into parts is checked again before **every part and every retry**. If the price stops being current after the first part has gone, the rest of the card is **not** sent. One short note is sent instead: `BUY NOW SYM WITHDRAWN: the price in the card above is no longer current (...)`. The note has no price and no buttons, and the card is unmarked so the next run checks it again. A card that is stale before its first part is sent is not sent at all (unchanged).
 - **Unchanged:** the strict BUY NOW **under 20 minutes** limit, the other routes' limits, and every rev16 safeguard.

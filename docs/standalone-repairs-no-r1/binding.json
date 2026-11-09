@@ -1,0 +1,147 @@
+{
+ "status": "REVIEW ONLY: standalone calendar/watcher/open-check/alert-freshness repairs WITHOUT R1; not approved, not deployed",
+ "candidate": "10874f6867cd6564c236e2dba217497f1cc591e8",
+ "candidateTree": "d2d69949e4e85dbe8a29d3ec3ba7ab427944460f",
+ "mainAtBinding": "6e72a8d0c46385f3c329157d627636875505a224",
+ "derivedFrom": {
+  "reviewedCombinedCandidate": "73aa701f273ce14147fa38a25e722436d337fe45",
+  "method": "every R1 change removed (3-way: candidate - (R1 rev7 67f1beba - pre-R1 b0d76987)); plaintext watcher fixture from development 954c2ed5; two sealed-path edits removed from watcher-nov2-clock"
+ },
+ "pathCount": 24,
+ "sourcePatch": {
+  "file": "source.patch",
+  "sha256": "df212ce6f642d8112bc9e7e37386b7158d3b6006c136729008b344737dde130f",
+  "against": "6e72a8d0c46385f3c329157d627636875505a224"
+ },
+ "inversePatch": {
+  "file": "inverse.patch",
+  "sha256": "a04862494fed883b2abf6fbb91a5ce0a64e1643b863343ebe56e5c1cfec15aec"
+ },
+ "noR1": true,
+ "noKeysOrSecretsAdded": true,
+ "neverForcePush": true,
+ "build": "node r1-release-precheck.mjs --build-unit M0 10874f6867cd6564c236e2dba217497f1cc591e8 binding.json",
+ "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
+ "files": {
+  ".github/workflows/ignition.yml": {
+   "sha256": "d8496c62ae27285e5c3892ef7847ee3abff7f406c3901ffb088fd6e66d830e58",
+   "bytes": 4275,
+   "mode": "100644"
+  },
+  "calendar.mjs": {
+   "sha256": "33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3",
+   "bytes": 35210,
+   "mode": "100644"
+  },
+  "discover.mjs": {
+   "sha256": "10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4",
+   "bytes": 38047,
+   "mode": "100644"
+  },
+  "econ-series.mjs": {
+   "sha256": "bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58",
+   "bytes": 19840,
+   "mode": "100644"
+  },
+  "ignition-watch.mjs": {
+   "sha256": "2eedca171154c58507c3b399a354d5560753781f1f2878708416a43bb5be9a91",
+   "bytes": 60085,
+   "mode": "100644"
+  },
+  "scan.mjs": {
+   "sha256": "ad7856978cb2cc7c467c2effb2affd7922e1dc8a7f6801c756a51ac36f10f388",
+   "bytes": 711413,
+   "mode": "100644"
+  },
+  "test/buynow-evidence.test.mjs": {
+   "sha256": "128a3af3da884af4c4a1919a14ad89557bc1c3a4374ffbbe2fe8d1c2c89ff842",
+   "bytes": 5592,
+   "mode": "100644"
+  },
+  "test/buynow-multipart.test.mjs": {
+   "sha256": "7f3984bb4a19fba4ce01c6cac6d64daca79ec95164df70b263f044ab633ca2d4",
+   "bytes": 5198,
+   "mode": "100644"
+  },
+  "test/discover-sec-note.test.mjs": {
+   "sha256": "2561908a8afd7181b7d51b5451574b9e0c53f581c397d38ae1ef165bb22041d5",
+   "bytes": 3291,
+   "mode": "100644"
+  },
+  "test/econ-calendar-exact-series.test.mjs": {
+   "sha256": "aa9e0177cff2753ff459e89d712d1098e77716c91731e784c7a016198a0b9e03",
+   "bytes": 23218,
+   "mode": "100644"
+  },
+  "test/health-text-watcher-qualification.test.mjs": {
+   "sha256": "28f16479ec6e5ccf5332496d8c5816d691e6db328a5511b67c5ecb40be4e0310",
+   "bytes": 5249,
+   "mode": "100644"
+  },
+  "test/intraday-alert-evidence.test.mjs": {
+   "sha256": "6f40820604d323293914cd1be464e73a59b3fd98caa4a2ee58a63d3d97be9d17",
+   "bytes": 5964,
+   "mode": "100644"
+  },
+  "test/intraday-alert-send-time.test.mjs": {
+   "sha256": "97f4b803a932f4a76b462b1d4b7cf80353b794c08173645d1468af31cebe535a",
+   "bytes": 5985,
+   "mode": "100644"
+  },
+  "test/open-check-repair.test.mjs": {
+   "sha256": "9ace6e8370bf4df0cf07710c78daafd2ebaedfb0ed6b1b2e81cce9ea6195103d",
+   "bytes": 23542,
+   "mode": "100644"
+  },
+  "test/stop-alert-validity.test.mjs": {
+   "sha256": "746b5dd44ecdaf57d3dc057c37cd37ad4ff817c125fb8515b6d40d99ddd01f57",
+   "bytes": 11672,
+   "mode": "100644"
+  },
+  "test/watcher-cadence-review.test.mjs": {
+   "sha256": "3dcc24b6a5504c1dd6f2410542f30bc1f6d7e560e315fa4351e3727fc69e5af8",
+   "bytes": 1002,
+   "mode": "100644"
+  },
+  "test/watcher-guard.test.mjs": {
+   "sha256": "aee017d1e57126865562dd199c2e2fa7812a789ad5e3f63c279fcd58700efee6",
+   "bytes": 8234,
+   "mode": "100644"
+  },
+  "test/watcher-nov2-clock.test.mjs": {
+   "sha256": "d5ee6f74b1a7aacfda24400fb2199c01263635c9638a6e6c739f77715763d502",
+   "bytes": 5796,
+   "mode": "100644"
+  },
+  "test/watcher-nov2-fixture.mjs": {
+   "sha256": "954c2ed54495176092efb2e385fbc317db728af0a697aef04b164f4a350900cb",
+   "bytes": 9610,
+   "mode": "100644"
+  },
+  "test/watcher-nov2-guard.test.mjs": {
+   "sha256": "6e2fbcd66a09af00366e6a21a4677b48ddcdfe9fbd8c568cd224e4774a3b238d",
+   "bytes": 8621,
+   "mode": "100644"
+  },
+  "watcher-guard-core.mjs": {
+   "sha256": "05a0d3b7a5ff12e019200f71d5624bc2c8b43d0f65fa354f4b7c5baf19039812",
+   "bytes": 10546,
+   "mode": "100644"
+  },
+  "watcher-guard-history.mjs": {
+   "sha256": "10ae2aa871f495ba603b61fa922d31042516639b4b78682084ae3595507fc421",
+   "bytes": 2298,
+   "mode": "100644"
+  },
+  "watcher-guard.mjs": {
+   "sha256": "d34ade6fbba9c7c78675c51f0dc14cf06a8c76ed2bdb20f9619137e650b52d16",
+   "bytes": 3131,
+   "mode": "100644"
+  },
+  "watcher-schedule.mjs": {
+   "sha256": "9fdcdf9bae3c4c0c29d40f0a1b4c747d487e21d00e1e932f6e006a5c744bc111",
+   "bytes": 2516,
+   "mode": "100644"
+  }
+ }
+}
