@@ -1,0 +1,161 @@
+TAP version 13
+# fatal: path '.github/r1-migration-manifest.json' does not exist in 'HEAD'
+# Subtest: plan: exactly the T1 plaintext paths of the given tree (no key needed); neighbours untouched
+ok 1 - plan: exactly the T1 plaintext paths of the given tree (no key needed); neighbours untouched
+  ---
+  duration_ms: 36.859747
+  ...
+# Subtest: apply + receipt: ciphertext only, manifest of every source path/size/hash, parent = approved source; history not rewritten
+ok 2 - apply + receipt: ciphertext only, manifest of every source path/size/hash, parent = approved source; history not rewritten
+  ---
+  duration_ms: 190.002585
+  ...
+# Subtest: Codex blocker 4: an unreviewed staged T1 addition, a dirty tree or HEAD != approved source are all refused; nothing changes
+ok 3 - Codex blocker 4: an unreviewed staged T1 addition, a dirty tree or HEAD != approved source are all refused; nothing changes
+  ---
+  duration_ms: 55.119568
+  ...
+# Subtest: Codex blocker 4: verification refuses zero files, a missing or extra sealed file, a changed one, and a commit rebased off the source
+ok 4 - Codex blocker 4: verification refuses zero files, a missing or extra sealed file, a changed one, and a commit rebased off the source
+  ---
+  duration_ms: 485.533741
+  ...
+# Subtest: interrupted migration: no commit, the guard refuses the partial state, a clean checkout of the source restarts
+ok 5 - interrupted migration: no commit, the guard refuses the partial state, a clean checkout of the source restarts
+  ---
+  duration_ms: 248.428409
+  ...
+# Subtest: Codex blocker 1: recovery export refuses the checkout by real path, symlink escapes, symlinks below it, and overwrites
+ok 6 - Codex blocker 1: recovery export refuses the checkout by real path, symlink escapes, symlinks below it, and overwrites
+  ---
+  duration_ms: 141.571616
+  ...
+# Subtest: CLI: --plan needs no key; --apply needs the key and the approved source; --verify-tree reports counts only
+ok 7 - CLI: --plan needs no key; --apply needs the key and the approved source; --verify-tree reports counts only
+  ---
+  duration_ms: 448.931793
+  ...
+# Subtest: Codex rev3 \#3: deleting a sealed file AND its manifest entry no longer yields a clean receipt (expected set recomputed from the source)
+ok 8 - Codex rev3 \#3: deleting a sealed file AND its manifest entry no longer yields a clean receipt (expected set recomputed from the source)
+  ---
+  duration_ms: 227.458552
+  ...
+# Subtest: Codex rev3 \#2: a segmented ledger is exported ONCE as its logical file (base + segments), never duplicated by its segments
+ok 9 - Codex rev3 \#2: a segmented ledger is exported ONCE as its logical file (base + segments), never duplicated by its segments
+  ---
+  duration_ms: 154.345019
+  ...
+# Subtest: backup-key check vector: reveals neither value nor key; the right backup passes, any other secret fails; CLI exit codes
+ok 10 - backup-key check vector: reveals neither value nor key; the right backup passes, any other secret fails; CLI exit codes
+  ---
+  duration_ms: 210.749365
+  ...
+# Subtest: backup compare (B5b route a): equal copies PASS, any difference FAILS, a missing backup is an error; output reveals nothing
+ok 11 - backup compare (B5b route a): equal copies PASS, any difference FAILS, a missing backup is an error; output reveals nothing
+  ---
+  duration_ms: 86.096019
+  ...
+# Subtest: K2: the one-time steps refuse a data key that is not exactly 64 hex characters (32 random bytes); nothing is changed
+ok 12 - K2: the one-time steps refuse a data key that is not exactly 64 hex characters (32 random bytes); nothing is changed
+  ---
+  duration_ms: 722.526884
+  ...
+# Subtest: release rehearsal: gate -> code -> rollback-before-migration -> migration -> receipt -> writers -> guard -> recovery export
+ok 13 - release rehearsal: gate -> code -> rollback-before-migration -> migration -> receipt -> writers -> guard -> recovery export
+  ---
+  duration_ms: 1680.678377
+  ...
+# Subtest: release precheck: PASS when no candidate file drifted on the target; FAIL on drift or an already-sealed target
+ok 14 - release precheck: PASS when no candidate file drifted on the target; FAIL on drift or an already-sealed target
+  ---
+  duration_ms: 139.545733
+  ...
+# Subtest: rev8 combined unit: built source-only on a fresh M0 (newer data and Telegram offset kept); verify refuses anything else
+ok 15 - rev8 combined unit: built source-only on a fresh M0 (newer data and Telegram offset kept); verify refuses anything else
+  ---
+  duration_ms: 1237.974848
+  ...
+# Subtest: no module reads or writes a T1 file with plain fs calls (only through sealed-store)
+ok 16 - no module reads or writes a T1 file with plain fs calls (only through sealed-store)
+  ---
+  duration_ms: 52.926024
+  ...
+# Subtest: indirect writers: variables holding T1 paths are only written through sealed-store calls
+ok 17 - indirect writers: variables holding T1 paths are only written through sealed-store calls
+  ---
+  duration_ms: 0.899952
+  ...
+# Subtest: public Actions logs: no per-stock option quotes, survey summary, or analyst/price message text is printed
+ok 18 - public Actions logs: no per-stock option quotes, survey summary, or analyst/price message text is printed
+  ---
+  duration_ms: 0.300121
+  ...
+# Subtest: the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)
+ok 19 - the key reaches exactly the steps that read/write T1 or merge sealed files (step env, never job-wide, never echoed)
+  ---
+  duration_ms: 2.627951
+  ...
+# Subtest: K2: SEALED_SECRET always comes from R1_DATA_KEY, never PRIVATE_KEY; PRIVATE_KEY uses are unchanged from before R1
+ok 20 - K2: SEALED_SECRET always comes from R1_DATA_KEY, never PRIVATE_KEY; PRIVATE_KEY uses are unchanged from before R1
+  ---
+  duration_ms: 2.544164
+  ...
+# Subtest: every workflow save that can carry T1 changes registers the sealed merge driver and runs the guard before committing
+ok 21 - every workflow save that can carry T1 changes registers the sealed merge driver and runs the guard before committing
+  ---
+  duration_ms: 2.481089
+  ...
+# Subtest: explicit stage lists use sealed_stage (addition + deletion) for T1 names; no plaintext T1 name is git-added directly
+ok 22 - explicit stage lists use sealed_stage (addition + deletion) for T1 names; no plaintext T1 name is git-added directly
+  ---
+  duration_ms: 4.319354
+  ...
+# Subtest: watcher artifact: the only T1 path uploaded is data/ignition-runs/, which now holds sealed files only
+ok 23 - watcher artifact: the only T1 path uploaded is data/ignition-runs/, which now holds sealed files only
+  ---
+  duration_ms: 0.614735
+  ...
+# Subtest: website: index.html fetches signals.json and discovery.json only (T2), and names no T1 file or sealed file
+ok 24 - website: index.html fetches signals.json and discovery.json only (T2), and names no T1 file or sealed file
+  ---
+  duration_ms: 1.808369
+  ...
+# Subtest: migration workflow: manual dispatch only, exact confirmation, approved source checkout, fast-forward push, tree receipt; no schedule
+ok 25 - migration workflow: manual dispatch only, exact confirmation, approved source checkout, fast-forward push, tree receipt; no schedule
+  ---
+  duration_ms: 0.404929
+  ...
+# Subtest: every push is preceded by the push-time guard on the reconciled tree (Codex re-review 5)
+ok 26 - every push is preceded by the push-time guard on the reconciled tree (Codex re-review 5)
+  ---
+  duration_ms: 0.429556
+  ...
+# Subtest: .gitattributes keeps sealed files out of text merge and diff
+ok 27 - .gitattributes keeps sealed files out of text merge and diff
+  ---
+  duration_ms: 0.507654
+  ...
+# Subtest: inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 same-family) all match the sealed patterns
+ok 28 - inventory reconciliation: the 45 tracked T1 paths at b0d76987 (D2 34 + 11 same-family) all match the sealed patterns
+  ---
+  duration_ms: 0.573782
+  ...
+# Subtest: rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored
+ok 29 - rev4 save recovery: every save path pushes to a recovery branch on final failure; the bot merges them; temp files are ignored
+  ---
+  duration_ms: 0.562005
+  ...
+# Subtest: rev5 recovery: no cherry-pick replay; producer refs are immutable (no force push); consumer is the data-only sealed-recover.mjs
+ok 30 - rev5 recovery: no cherry-pick replay; producer refs are immutable (no force push); consumer is the data-only sealed-recover.mjs
+  ---
+  duration_ms: 0.428905
+  ...
+1..30
+# tests 30
+# suites 0
+# pass 30
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 3119.9934
