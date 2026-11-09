@@ -63,7 +63,8 @@ const ruleCanonical=x=>x&&typeof x==='object'?Array.isArray(x)?x.map(ruleCanonic
 export function makeScannerAssessmentRule({logicVersion,sourceHash,variant,config,targetOverlay=null,ruleText,variantKey}={}){
  if(!Number.isInteger(logicVersion)||!/^[a-f0-9]{64}$/.test(sourceHash||'')||!object(variant)||!object(config)||typeof ruleText!=='string'||!ruleText||typeof variantKey!=='string'||!variantKey)return null;
  if(!['cross','pull','brk','brk20'].includes(variant.fam)||!Number.isFinite(variant.mult)||variant.mult<=0||!(variant.tp===null||Number.isFinite(variant.tp)&&variant.tp>0)||typeof variant.mf!=='boolean')return null;
- if(!Number.isInteger(variant.fast)||!Number.isInteger(variant.slow)||!(variant.maxHold===undefined||Number.isInteger(variant.maxHold)&&variant.maxHold>0)||![config.ATR,config.TREND,config.TIME_STOP_DAYS,config.FLAT_R].every(Number.isFinite))return null;
+ if(!Number.isInteger(variant.fast)||variant.fast<=0||!Number.isInteger(variant.slow)||variant.slow<=0||!(variant.maxHold===undefined||Number.isInteger(variant.maxHold)&&variant.maxHold>0)||![config.ATR,config.TREND,config.TIME_STOP_DAYS,config.FLAT_R].every(Number.isFinite))return null;
+ if(!variant.tp&&targetOverlay!==null&&(!object(targetOverlay)||!['none','all','half'].includes(targetOverlay.mode)||targetOverlay.mode==='none'&&targetOverlay.x!==null||targetOverlay.mode!=='none'&&(!Number.isFinite(targetOverlay.x)||targetOverlay.x<=0)))return null;
  const overlay=variant.tp?null:targetOverlay&&{mode:targetOverlay.mode??null,x:targetOverlay.x??null};
  const definition=ruleCanonical({schema:'SCANNER_RULE_DEFINITION_V1',logicVersion,sourceHash,variantKey,variant:JSON.parse(JSON.stringify(variant)),config:JSON.parse(JSON.stringify(config)),ruleText,
   exitPolicy:{modeled:'index.html#logic:followTrade/exitAt',holding:'index.html#logic:exitCheck',level:'index.html#logic:sellLevel',displayTarget:overlay},

@@ -66,7 +66,7 @@ test('actual scanner definition binds parameters, exits and implementation versi
  assert.equal(a.definition.variant.mult,1.5);assert.equal(a.definition.config.ATR,L.CFG.ATR);
  assert.equal(a.definition.exitPolicy.modeled,'index.html#logic:followTrade/exitAt');
  assert.deepEqual(build({...v}),a);assert.deepEqual(build(Object.fromEntries(Object.entries(v).reverse())),a);
- const unTargeted={...v,tp:null};const t1=S.fn('scannerAssessmentRule')({v:unTargeted,tgt:{mode:'all',x:.1}}),t2=S.fn('scannerAssessmentRule')({v:unTargeted,tgt:{mode:'half',x:.1}});assert.notEqual(t1.ruleId,t2.ruleId);
+ const unTargeted={...v,tp:null};const t1=S.fn('scannerAssessmentRule')({v:unTargeted,tgt:{mode:'all',x:.1}}),t2=S.fn('scannerAssessmentRule')({v:unTargeted,tgt:{mode:'half',x:.1}});assert.notEqual(t1.ruleId,t2.ruleId);assert.equal(S.fn('scannerAssessmentRule')({v:unTargeted,tgt:{mode:'half',x:null}}),null);
  for(const patch of [{mult:2},{tp:2},{mf:true},{maxHold:20},{fast:9,slow:21}])assert.notEqual(build({...v,...patch}).ruleId,a.ruleId);
  const next=makeScannerAssessmentRule({...{logicVersion:L.LOGIC_VERSION+1,sourceHash:'f'.repeat(64),variant:v,config:L.CFG,ruleText:L.ruleText(v),variantKey:L.vkey(v)}});
  assert.notEqual(next.ruleId,a.ruleId);assert.notEqual(next.ruleVersion,a.ruleVersion);
