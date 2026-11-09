@@ -1,0 +1,12 @@
+import fs from 'node:fs';import {pathToFileURL} from 'node:url';
+const root=process.argv[2];const {loadScan}=await import(pathToFileURL(root+'/test/load-scan.mjs'));
+const rd=p=>JSON.parse(fs.readFileSync(root+'/'+p));
+const H=rd('data/horizons.json'); const sym=(H.today.PB_UP||[])[0]||'ZZA';
+const files={'data/horizons.json':H,'data/quality.json':rd('data/quality.json'),'market-session.mjs':fs.readFileSync(root+'/market-session.mjs','utf8')};
+const pos={[sym]:{entry:10,stop:8,kind:'manual',since:'2026-10-01',shares:10}};
+const sig={session:'2026-11-06',stocks:[{sym,last:12,n:40,proven:false,rule:'9/21 cross',state:'Buy watch',trigger:13,why:'x',mom6:0.1,uptrend:true}],quick:[]};
+files['data/my-positions.json']=pos; files['data/signals.json']=sig;
+const S=await loadScan({files,env:{}});
+const one=S.fn('checkOne')(sym,sig); const card=one.slice(one.indexOf('ASSESSMENT CONTEXT'));
+console.log('held',sym,'checkOne card chars',card.length);console.log(card.split('\n').slice(0,3).join('\n'));
+const A=S.fn('assessmentContext'); const t=A(sym,sig,pos,'HOLD'); console.log('\nPB_UP card with 3 horizon rows chars',t.length);
