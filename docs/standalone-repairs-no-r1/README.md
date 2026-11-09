@@ -85,26 +85,24 @@ No blocking findings. Non-blocking points, all inherited unchanged from the revi
 
 ## Live-switch and rollback qualifications (F3)
 
-- **The running bot job switches mid-run.**
-  - `bot.yml`'s loop runs `git pull --rebase` before every iteration and starts a new `node scan.mjs` / `node watcher-guard.mjs` process each time.
-  - So the bot job already running when `C` is pushed loads `C` at its next iteration: within about 5 minutes, or 25 seconds in reply mode. The same applies to a revert.
-  - Its application output goes to `run.log`, which the job does not retain. A green hosted job therefore cannot show which source ran.
-  - First post-change evidence must name the loaded source by content:
-    - a message string that only `C` produces (open-check STATUS UNKNOWN wording, or the calendar "figures UNKNOWN (saved before the exact-series check…)" line);
-    - or a data commit made after `C`'s push by the bot.
-  - The job head or the next job's head is not proof.
+- **The running bot job can switch mid-run.**
+  - `bot.yml`'s loop runs `git pull --rebase` before each iteration and starts new `node scan.mjs` / `node watcher-guard.mjs` processes. The bot job already running when `C` is pushed **may** load `C` at a later iteration.
+  - No switch time is promised: a pull can fail, and an in-flight old process can still run and save after the push. The same applies to a revert.
+  - `run.log` is not retained, so a green hosted job cannot show which source ran.
+  - **First post-change evidence must establish content or source identity:** a message string that only `C` can produce (open-check STATUS UNKNOWN wording, or the calendar "figures UNKNOWN (saved before the exact-series check…)" line), tied to its delivery time.
+  - A bot data commit made after the push is **not** proof on its own, because an old in-flight process may have saved it.
 - **Running watcher and scan jobs** keep their own checkout until they end. The workflow file `ignition.yml` takes effect for the next run.
 - **Calendar data compatibility** (`cal-rollback-compat.test.mjs`, review evidence, not part of the package: copy it into this package's `test/` and run `OLD_TREE=<checkout of main 6e72a8d0> node test/cal-rollback-compat.test.mjs`; runs the actual `calendar.mjs` job and the actual `calendarText`/`macroNow` readers of main `6e72a8d0` and of this package on synthetic schedules; 4/4 PASS):
   - **First run (old file, new code):** the new reader shows every saved row as "figures UNKNOWN (saved before the exact-series check; the next calendar run refreshes them)". It never shows merged figures. The next calendar run (`calendar.yml`: weekdays 20:45 UTC, Sundays 05:30 UTC) converts the file to the new layout (schema 2).
   - **Rollback (new file, old code):** the old reader renders the new file without errors or broken values. But once the old calendar job runs on a new-layout file, it keeps the schema-2 rows until its provider refresh (up to 6 days). The old message then shows some figures **without units**, for example "Jobs report: forecast 40, previous 29" instead of 40K/29K, and "CPI forecast 0.3" instead of 0.3%. This is a display limit of the old code, not a crash.
   - **So rollback is code-safe at any time, but calendar figures can be mislabelled for up to 6 days afterwards.** No data file is rewritten by the rollback itself.
-- **Concurrent saves:** the package changes no data path, so `C` or its revert cannot conflict with a data commit. The bot's `pull --rebase -X theirs` save is unchanged.
+- **Concurrent saves:** the package changes no data path, so `C` and its revert touch no file that a data commit writes. That alone is **not** a blanket concurrency guarantee: an old and a new process may write the same data files in sequence during the switch. The calendar layout case above is the one verified behaviour difference. The bot's `pull --rebase -X theirs` save is unchanged.
 
 ## Applying it (only after separate owner approval; not authorized by this document)
 
 1. Fresh precheck: main must still match `6e72a8d0` on the 25 paths. If not, stop and rebase for re-review.
 2. Build `C` on the then-current main, verify it, then make one fast-forward source-only push.
 3. Check the Tests run on `C`.
-4. No pause is required. The running bot job loads `C` at its next loop iteration (see qualifications); watcher and scan jobs use it from their next run.
+4. No pause is required. The running bot job may load `C` at a later loop iteration (no time promised; see qualifications). Watcher and scan jobs use it from their next run.
 5. **Rollback:** `git revert C`, or `inverse.patch`. The tree returns byte-identical on the 25 paths, and data saved since is kept. It is code-safe at any time, but subject to the calendar display limit above.
 6. **First observations:** the next bot run, the next intraday market-hours check, the next watcher day (14:10 UTC on a weekday) and the next calendar refresh.
