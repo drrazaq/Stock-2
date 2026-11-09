@@ -225,6 +225,46 @@ function horizonLine(sym) { const HZ = readJson0('data/horizons.json'); if (!HZ 
   const sets = Object.entries(HZ.today || {}).filter(([, a]) => a.includes(sym)).map(([k]) => k); if (!sets.length) return 'Mid / long term: not in any of the 4 tested pullback / leader / turn-around setups today.';
   return 'Mid / long term: ' + sets.map(k => { const rs = Object.values(HZ.results).filter(r => r.setup === k), best = rs.find(r => r.verdict === 'PROMISING');
     return (rs[0] ? rs[0].name : k) + ' -> ' + (best ? 'TESTED BUY for ' + best.months + ' month' + (best.months > 1 ? 's' : '') + ' (' + pcs(best.results.newer.avg) + ' vs an average stock ' + pcs(best.results.newer.ctrl) + ')' + ((EX) => EX && EX.results && EX.results[k] && EX.results[k].best !== 'HOLD60' ? ', SELL: ' + EX.results[k].exits[EX.results[k].best].name + ' (tested better exit)' : ', SELL: after ' + best.months + ' month' + (best.months > 1 ? 's' : '') + ' or a close 25% under your buy')(readJson0('data/exits.json')) : 'tested, no edge (' + rs.map(r => r.months + 'm ' + r.verdict.toLowerCase()).join(', ') + ')'); }).join('; ') + '.'; }
+// Assessment context is a read-only presentation of existing decisions and saved research.
+// It neither ranks opportunities nor admits entries, changes exits, or fetches additional data.
+function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current action supplied') {
+  const clean = v => String(v !== null && typeof v === 'object' ? 'UNKNOWN' : v ?? '').replace(/[\r\n]+/g, ' ').slice(0, 240);
+  const stamp = (v) => { const t = Date.parse(v || ''); return !Number.isFinite(t) ? 'UNKNOWN date' : t > Date.now() ? 'UNKNOWN (future timestamp ' + clean(v) + ')' : clean(v) + ' (' + Math.floor((Date.now() - t) / 36e5) + ' h old; saved context, not a live quote)'; };
+  const array = v => Array.isArray(v) ? v : []; pos = pos && typeof pos === 'object' ? pos : {};
+  const H = readJson0('data/horizons.json'), Q = readJson0('data/quality.json'), D = readJson0('data/discovery.json');
+  const P = pos[sym], st = array(sig && sig.stocks).find(x => x && x.sym === sym), q = array(sig && sig.quick).find(x => x && x.sym === sym);
+  const lead = array(D && D.candidates).find(x => x && x.sym === sym), names = readJson0('data/names.json') || {};
+  const issuer = typeof names[sym] === 'string' ? names[sym] : lead && lead.name || 'issuer name UNKNOWN';
+  const er = readJson0('data/events-recent.json'), events = array(er && er.events).filter(x => x && x.sym === sym).slice(-2);
+  const evidence = events.length ? events.map(x => clean(x.p || 'UNKNOWN publication date') + ' ' + clean(x.f || 'unclassified filing')).join('; ') + '; original observation/receipt and incrementality UNKNOWN' : 'No dated catalyst witness supplied (not evidence of no catalyst); original observation/receipt UNKNOWN';
+  const exit = P ? posLine(sym, P, null).replace(sym + ': ', '') : st && st.assessmentEntry ? 'Original caller conclusion: ' + clean(st.assessmentEntry) : q ? 'Stored quick rule: invalidation ' + (q.stop > 0 ? money(q.stop) : 'UNKNOWN') + (q.t1 > 0 ? ', target ' + money(q.t1) : '; no target supplied') + '; hold ' + (q.maxHold || q.days || 'UNKNOWN') + ' sessions' : 'No adopted exit supplied here; retain the existing rule, never infer one from a research rank';
+  const entry = P ? 'Existing holding; no new entry or add authorized by this card' : st && st.assessmentEntry ? clean(st.assessmentEntry) : q ? 'Stored quick entry ' + money(q.buyLo) + ' to ' + money(q.buyHi) + '; existing gates still decide' : st && st.trigger > 0 ? 'Existing scanner needs a daily close above ' + money(st.trigger) + '; existing gates still decide' : st && st.rule ? clean(st.rule) + '; no new entry condition added' : 'No adopted entry rule supplied';
+  const track = q ? q.n + ' stored historical cases, ' + Math.round((q.win || 0) * 100) + '% wins; not authentic fills or prospective approval' : st ? (st.n || 0) + ' stored cases; ' + (st.proven ? 'stored test pass, other gates still apply' : 'NOT PROVEN') : 'No linked strategy outcome chain supplied';
+  const line = (r) => { const n = r.results && r.results.newer || {}; return clean(r.name || r.setup) + ': ' + clean(r.verdict || 'UNKNOWN') + ', hold ' + (r.hold || 'UNKNOWN') + ' sessions; newer n=' + (n.n ?? 'UNKNOWN') + ', model ' + (typeof n.avg === 'number' ? pcs(n.avg) : 'UNKNOWN') + ' vs control ' + (typeof n.ctrl === 'number' ? pcs(n.ctrl) : 'UNKNOWN') + (r.why ? '; ' + clean(r.why) : ''); };
+  const setups = H && H.status === 'OK' ? Object.entries(H.today || {}).filter(([, a]) => Array.isArray(a) && a.includes(sym)).map(([k]) => k) : [];
+  const rows = H && H.results ? Object.values(H.results).filter(r => r && setups.includes(r.setup)) : [];
+  const rules = {
+    PB_UP: 'horizons.mjs PB_UP: above 200-day; 8-25% below year high; dipped below 50-day, closes above 20-day',
+    PB_DEEP: 'horizons.mjs PB_DEEP: top 30% six-month gain; 15-35% below year high; closes above 10-day',
+    LEADER: 'horizons.mjs LEADER: top 10% twelve-month gain skipping latest month; above 200-day',
+    TURN: 'horizons.mjs TURN: 30%+ below year high, below 200-day, closes above 50-day'
+  };
+  const rank = Q && Q.rank && Q.rank[sym], qr = Q && Q.results ? Object.values(Q.results).filter(r => r && /^Quality/.test(r.name || '')) : [];
+  const quality = typeof rank === 'number' && Number.isFinite(rank) ? 'retained quality percentile ' + (100 * rank).toFixed(1) + '; investigate business/valuation, not a buy signal' : 'quality rank UNKNOWN';
+  const px = st && st.last > 0 ? st.last : lead && lead.price > 0 ? lead.price : null;
+  return [
+    'ASSESSMENT CONTEXT — ' + sym + ' / ' + clean(issuer) + ' (information; this card grants no BUY approval)',
+    'Identity: ticker only; stable point-in-time security identity UNKNOWN. ZAD: ' + clean(myHalal(sym)) + '; ZAD is final authority.',
+    'SHORT ACTION | existing assessment: ' + clean(decision) + ' | horizon ' + (P ? P.maxHold || (P.kind === 'leader' ? 'trend rule; no fixed hold' : 'existing holding rule') : q && (q.maxHold || q.days) || 'stored scanner rule, duration UNKNOWN') + '. Entry: ' + entry + '. Exit: ' + clean(exit) + '.',
+    'Short evidence: scan close ' + clean(sig && sig.session || 'UNKNOWN') + ' (date only; not receipt time). Record: ' + track + '.',
+    'MID TERM | ' + (rows.length ? 'INVESTIGATE / WAIT; no entry granted here. ' + rows.map(line).join(' | ') + '. Existing research entry: next open after ' + setups.map(k => rules[k] || k).join('; ') + '; close 25% below entry exits next open, otherwise original 20/60/120-session hold. These are research definitions, not adopted orders.' : 'WAIT / UNKNOWN: no linked horizon setup supplied; no entry or exit invented.') + ' Source horizons.json: ' + stamp(H && H.generatedAt) + ', prices through ' + clean(H && H.to || 'UNKNOWN') + '.',
+    'LONG TERM | INVESTIGATE / NO BUY APPROVAL: ' + quality + '. ' + (qr.length ? qr.map(r => { const n = r.results && r.results.newer || {}; return clean(r.verdict || 'UNKNOWN') + ' at ' + r.months + ' months, newer n=' + (n.n ?? 'UNKNOWN') + ', model ' + (typeof n.avg === 'number' ? pcs(n.avg) : 'UNKNOWN') + ' vs control ' + (typeof n.ctrl === 'number' ? pcs(n.ctrl) : 'UNKNOWN') + (r.why ? '; ' + clean(r.why) : ''); }).join('; ') : 'No linked quality test supplied') + '. No adopted individual-stock entry/exit supplied by this rank. Source quality.json: ' + stamp(Q && Q.generatedAt) + ', prices through ' + clean(Q && Q.to || 'UNKNOWN') + '.',
+    'Known-then evidence (events-recent.json; not an original receipt): ' + evidence + '. Business lead: ' + (lead ? clean(lead.profitTrend || 'discovery candidate') + (typeof lead.revGrowth === 'number' ? ', reported revenue growth ' + pcs(lead.revGrowth) : '') + '; discovery.json ' + stamp(D.generatedAt) + ', close ' + clean(D.session || 'UNKNOWN') : 'no discovery business evidence supplied') + '.',
+    'Price/execution: ' + (px ? 'saved close ' + money(px) + ', not current executable price; ' : '') + 'live BBO, conditions, displayed size, fills and quantity UNKNOWN. Research assumption: $1,000 whole shares, $3 each executed side; actual after-cost result UNKNOWN. Displayed size would not prove fill capacity.',
+    'Risks/next check: ' + (lead && (lead.hardBlock || lead.bio && lead.bio.text) ? 'Existing discovery warning: ' + clean(lead.hardBlock || lead.bio.text) + '. ' : '') + 'horizons may disagree; favorable model comparisons do not erase failed gates. Financing/dilution, expected-vs-new information and original filing vintages remain unresolved unless separately evidenced. Reassess on the next completed scan/new dated disclosure, or fresh price for the EXISTING position rule; no timing promise. No exit or live gate changed.'
+  ].join('\n');
+}
+
 // Research registry: every idea ever tested, its result and how many versions were tried (the false-discovery count).
 const PENDING = [
   ['Short interest (FINRA, twice a month)', 'free public files with an archive, so nothing is lost by waiting. Build the collector if any company-news or fast-mover test passes on Sunday, then test squeeze setups against the same baseline'],
@@ -567,7 +607,8 @@ function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 =
     if (H.length) out.push('QUICK SETUPS [EARLY] (NOT PROVEN; legacy historical sample only):', ...H.map(x => { const q = Q.get(x.sym); return '- ' + x.sym + ': research only; ' + researchZad(x.sym) + (q && q.n ? '; ' + q.n + ' legacy historical cases, not prospective approval' : ''); }), ''); }
   // 5. strong companies by their reports (discovery)
   { const DC = readJson0('data/discovery.json'), dc = DC && DC.candidates ? DC.candidates.filter(x => !skip(x.sym)).slice(0, N) : [];
-    if (dc.length) out.push('STRONG COMPANIES [INFO] (growth + momentum; ' + (DC.session || 'UNKNOWN SESSION') + ' completed-close references, not live BBO):', ...dc.map(x => '- ' + x.sym + ' ' + m0(x.price) + ': ' + (x.revGrowth !== undefined ? 'revenue ' + pcs(x.revGrowth) : '') + (x.profitTrend ? ', ' + x.profitTrend : '') + (x.mom6 !== undefined ? ', 6 months ' + pcs(x.mom6) : '')), ''); }
+    if (dc.length) out.push('STRONG COMPANIES [INFO] (growth + momentum; ' + (DC.session || 'UNKNOWN SESSION') + ' completed-close references, not live BBO):', ...dc.map(x => '- ' + x.sym + ' ' + m0(x.price) + ': ' + (x.revGrowth !== undefined ? 'revenue ' + pcs(x.revGrowth) : '') + (x.profitTrend ? ', ' + x.profitTrend : '') + (x.mom6 !== undefined ? ', 6 months ' + pcs(x.mom6) : '')), '');
+    for (const x of dc) out.push(assessmentContext(x.sym, sig, mine, 'WAIT: research lead; no entry granted'), ''); }
   // 6. quality and autolab (after Sunday)
   { const Q = readJson0('data/quality.json'), q = Q && Q.status === 'OK' ? Q.today.filter(x => !skip(x.sym)).slice(0, N) : [], pass = Q && Q.results && Object.entries(Q.results).some(([k, r]) => /^QUALITY_/.test(k) && r.verdict === 'PROMISING');
     if (q.length) out.push('TOP QUALITY COMPANIES [' + (pass ? 'TESTED on history, paper next' : 'INFO') + ']: ' + q.map(x => x.sym).join(', '), ''); }
@@ -1928,12 +1969,13 @@ async function checkLive(sym) {
     if (!r) return 'CONCLUSION: no plan. ' + (c.length < 30 ? 'It is too new.' : 'the short-term rules only buy stocks above their 50-day average, and this one is under it (that is the short-term angle only; see mid / long term below).');
     if (o && o.won < 0.25) return 'CONCLUSION: no plan. On its own history the reward marker came before the stop in only ' + Math.round(o.won * 100) + '% of cases, which loses on average.';
     return 'REFERENCE LEVELS (not tested, not a buy): ' + (r.extended ? 'after a pullback, range ' : 'range ') + money(r.lo) + ' to ' + money(r.hi) + ' | STOP ' + money(r.stop) + ' | reward marker ' + money(r.target) + (o ? '. The marker came first in ' + Math.round(o.won * 100) + '% of ' + o.cases + ' past cases.' : '.'); };
-  let word = 'NO BUY: no tested rule supports a trade on it.';
+  let word = 'NO BUY: no tested rule supports a trade on it.'; let assessmentRow = null;
   if (c.length < 600) out.push('This response contains ' + c.length + '/600 completed daily bars. The existing core scanner model cannot be assessed from it; this is not a strategy rejection or a test of every other lane. Listing age versus incomplete provider history is unresolved.', refLine2());
   else {
     const spy = await loadDaily('SPY'), mkt = spy ? L.marketMap(spy.candles) : null, ind = L.indicators(c, mkt);
     const mom = spy && spy.candles.length > 130 ? spy.candles[spy.candles.length - 1].c / spy.candles[spy.candles.length - 127].c - 1 : undefined;
     const T = L.trendStats(c, ind, mom), Lr = L.learn(c, ind, null, false), halal = myHalal(sym), v = L.applyGates(L.verdict(c, ind, Lr, null, d.last, false), { dollarVol: T.dollarVol, halal, limit: null });
+    assessmentRow = { sym, last: d.last, n: Lr.test.n, proven: Lr.proven, rule: L.ruleText(Lr.v) };
     const trig = L.buyTrigger(c, ind, Lr), dist = Lr.v.mult * ind.atr[i], half = 0.5 * ind.atr[i], Q = d.last >= 5 ? L.quickFire(c, ind, L.quickStudy(c, ind, false)) : null;
     out.push((T.up ? 'In an uptrend' : c[i].c < ind.e[L.CFG.TREND][i] ? 'In a downtrend' : 'Mixed trend') + ', ' + (T.mom6 >= 0 ? '+' : '') + Math.round(T.mom6 * 100) + '% over 6 months' + (T.rs === null ? '' : ' (' + (T.rs >= 0 ? '+' : '') + Math.round(T.rs * 100) + '% vs the market)') + '.',
       'Rule tested for it: ' + L.ruleText(Lr.v) + '. ' + Lr.test.n + ' historical out-of-sample test trades, ' + Math.round(Lr.test.winRate * 100) + '% wins. ' + L.statusText(Lr));
@@ -1955,6 +1997,8 @@ async function checkLive(sym) {
   if (myHalal(sym) === 'fail') word = 'NO BUY: you marked it NOT halal in ZAD.';
   { const gv = gateVerdict(sym); if (gv && /^BUY|ENTRY CONFIRMED/.test(word)) word = 'NO BUY (paper only): ' + gv + '.'; const g2 = gateLines(out, gv); out.length = 0; out.push(...g2); }
   out.unshift(sym + ': ' + word);
+  if (assessmentRow) assessmentRow.assessmentEntry = out.find(l => /^CONCLUSION:/.test(l)) || 'No entry conclusion supplied';
+  out.push(assessmentContext(sym, { session: c[i].d, stocks: assessmentRow ? [assessmentRow] : [] }, loadPos(), word));
   out.push(added ? 'I have added ' + sym + ' to my nightly scan. Send: remove ' + sym + '   to take it off.' : sym + ' is on my nightly scan list.');
   return out.join('\n');
 }
@@ -2023,6 +2067,7 @@ function checkOne(sym, sig) {
   if (q) lines.push((gv1?'RESEARCH ONLY — NO BUY APPROVAL. ':'')+'Quick trade setup: entry ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ', invalidation ' + money(q.stop) + (q.t1 ? ', target 1 ' + money(q.t1) : '') + '. Past result ' + Math.round(q.win * 100) + '% wins over ' + q.n + ' trades.');
   if (st) lines.push('Closed ' + money(st.last) + '. ' + (st.uptrend ? 'In an uptrend' : 'Not in an uptrend') + ', ' + (st.mom6 >= 0 ? '+' : '') + Math.round(st.mom6 * 100) + '% over 6 months.', 'Rule: ' + st.rule + '. ' + (st.proven ? 'It passed its tests.' : 'It did not pass its tests, so no signals are given.'), 'State: ' + (gv1?'RESEARCH ONLY — NO BUY APPROVAL; ':'') + (st.state === 'Buy watch' ? 'ENTRY CONFIRMED' : st.trigger ? 'BUY WATCH, needs a close above ~' + money(st.trigger) : st.state) + '. ' + st.why, L.HALAL_TEXT[myHalal(sym)] || '');
   if (!q && !st) lines.push(discoveryCoverageText(sym, sig));
+  lines.push(assessmentContext(sym, sig, {}, lines[0]));
   return lines.filter(Boolean).join('\n');
 }
 // Pre-market briefing: sent once each weekday about an hour before the US open, without being asked.
@@ -2455,6 +2500,7 @@ async function holdingsText(sig, pos, title, raw) {
   { try { const cr = clusterRisk(CL, DL); if (cr) out.push('', cr.line); } catch (e) {} }
   { const dn = buyDayNote(), tn = timingNote(); if (tn) out.push('', tn); if (dn) out.push(dn); }
   { const g = goalsText().split('\n'); if (/^MONEY GOALS \((?!they start)/.test(g[0])) out.push('', 'GOAL: ' + (g.find(x => /^NEXT /.test(x)) || '').replace(/^NEXT\s+/, '') + ' | ' + g[1].replace(/^Now: /, 'now ') + ' (accounting only: never a reason to buy more or bigger)'); }
+  for (const sym of mine.slice(0, 15)) { const row = ['sell', 'part', 'add', 'hold', 'unknown'].flatMap(k => acts[k]).find(x => x.startsWith(sym + ':') || x.startsWith(sym + ' ')); out.push('', assessmentContext(sym, sig, pos, row || 'UNKNOWN: no fresh holding assessment')); }
   out.push('', 'After you act, send:  sold SYM PRICE   or  sold SYM PRICE 5 shares   (part) or  added SYM PRICE SHARES . Details for one stock:  review SYM');
   return out.join('\n');
 }
