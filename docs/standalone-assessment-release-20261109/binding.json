@@ -1,0 +1,169 @@
+{
+  "status": "REVIEW ONLY; combined standalone repairs and stock assessment, no operational authority",
+  "candidate": "d52499c454d2cdf472993e696d3a2ba8f4f77ef3",
+  "candidateTree": "71223b3574ecd2abc265d3faa06dc7cb37d205a3",
+  "mainAtBinding": "9c6331929968e63650593d1e83b3601d12469c17",
+  "pathCount": 28,
+  "sourcePatch": {
+    "file": "source.patch",
+    "sha256": "2a857ea560a721cb1c204892b4641047b404fbaff8fd2d82ee066dbf414540dc",
+    "against": "9c6331929968e63650593d1e83b3601d12469c17"
+  },
+  "inversePatch": {
+    "file": "inverse.patch",
+    "sha256": "19fc56cbc6e1f7df4e449ce289be1c03ba4344fc8d120e3e1bfe782f5c827c7e"
+  },
+  "noR1": true,
+  "noKeysOrSecretsAdded": true,
+  "neverForcePush": true,
+  "derivedFrom": {
+    "standalone": "0e89cb90c1f9b9a4ec199a0c70b66115a6501f22",
+    "assessmentDevelopment": "a0f51bc520cb658a9f4b61f404b71c1a83eb73e9",
+    "assessmentBase": "b9753abb2",
+    "requiredCorrection": 6736496408,
+    "conflictRecord": "composition-resolutions.json",
+    "notIncluded": "Whole development scanner, test-worker helper, research integration manifests, R1 encryption or migration"
+  },
+  "files": {
+    ".github/workflows/ignition.yml": {
+      "sha256": "d8496c62ae27285e5c3892ef7847ee3abff7f406c3901ffb088fd6e66d830e58",
+      "bytes": 4275,
+      "mode": "100644"
+    },
+    "calendar.mjs": {
+      "sha256": "33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3",
+      "bytes": 35210,
+      "mode": "100644"
+    },
+    "discover.mjs": {
+      "sha256": "10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4",
+      "bytes": 38047,
+      "mode": "100644"
+    },
+    "econ-series.mjs": {
+      "sha256": "bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58",
+      "bytes": 19840,
+      "mode": "100644"
+    },
+    "ignition-watch.mjs": {
+      "sha256": "2eedca171154c58507c3b399a354d5560753781f1f2878708416a43bb5be9a91",
+      "bytes": 60085,
+      "mode": "100644"
+    },
+    "scan.mjs": {
+      "sha256": "0224fb2f7ad1bc172bd5f94726944c35c0576f7dbcfd6c31579d48f2efdf3b1e",
+      "bytes": 722600,
+      "mode": "100644"
+    },
+    "test/assessment-context.test.mjs": {
+      "sha256": "e29a201db43994f00898bbb15d935154213f41255f55e303eb1768dd59d1cd84",
+      "bytes": 9970,
+      "mode": "100644"
+    },
+    "test/buynow-evidence.test.mjs": {
+      "sha256": "128a3af3da884af4c4a1919a14ad89557bc1c3a4374ffbbe2fe8d1c2c89ff842",
+      "bytes": 5592,
+      "mode": "100644"
+    },
+    "test/buynow-multipart.test.mjs": {
+      "sha256": "7f3984bb4a19fba4ce01c6cac6d64daca79ec95164df70b263f044ab633ca2d4",
+      "bytes": 5198,
+      "mode": "100644"
+    },
+    "test/discover-sec-note.test.mjs": {
+      "sha256": "2561908a8afd7181b7d51b5451574b9e0c53f581c397d38ae1ef165bb22041d5",
+      "bytes": 3291,
+      "mode": "100644"
+    },
+    "test/econ-calendar-exact-series.test.mjs": {
+      "sha256": "aa9e0177cff2753ff459e89d712d1098e77716c91731e784c7a016198a0b9e03",
+      "bytes": 23218,
+      "mode": "100644"
+    },
+    "test/health-text-watcher-qualification.test.mjs": {
+      "sha256": "28f16479ec6e5ccf5332496d8c5816d691e6db328a5511b67c5ecb40be4e0310",
+      "bytes": 5249,
+      "mode": "100644"
+    },
+    "test/intraday-alert-evidence.test.mjs": {
+      "sha256": "6f40820604d323293914cd1be464e73a59b3fd98caa4a2ee58a63d3d97be9d17",
+      "bytes": 5964,
+      "mode": "100644"
+    },
+    "test/intraday-alert-send-time.test.mjs": {
+      "sha256": "97f4b803a932f4a76b462b1d4b7cf80353b794c08173645d1468af31cebe535a",
+      "bytes": 5985,
+      "mode": "100644"
+    },
+    "test/open-check-repair.test.mjs": {
+      "sha256": "9ace6e8370bf4df0cf07710c78daafd2ebaedfb0ed6b1b2e81cce9ea6195103d",
+      "bytes": 23542,
+      "mode": "100644"
+    },
+    "test/stop-alert-validity.test.mjs": {
+      "sha256": "746b5dd44ecdaf57d3dc057c37cd37ad4ff817c125fb8515b6d40d99ddd01f57",
+      "bytes": 11672,
+      "mode": "100644"
+    },
+    "test/try-small-audit.test.mjs": {
+      "sha256": "cfd71b94906d0fbe37fda4bcdfa5e9ab542edf53d4f05a0a1a2b91805942dfd7",
+      "bytes": 15092,
+      "mode": "100644"
+    },
+    "test/watcher-cadence-review.test.mjs": {
+      "sha256": "3dcc24b6a5504c1dd6f2410542f30bc1f6d7e560e315fa4351e3727fc69e5af8",
+      "bytes": 1002,
+      "mode": "100644"
+    },
+    "test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs": {
+      "sha256": "0ba5c9450661749d0e85d46f6af6206f1ee865219d0fdacc436b0d69f1c33527",
+      "bytes": 5203,
+      "mode": "100644"
+    },
+    "test/watcher-guard-rollback-compat.test.mjs": {
+      "sha256": "3c514f47b9f3d3bcdbaede44981ad31a930598217a133f30b2650615caac4f8f",
+      "bytes": 8014,
+      "mode": "100644"
+    },
+    "test/watcher-guard.test.mjs": {
+      "sha256": "aee017d1e57126865562dd199c2e2fa7812a789ad5e3f63c279fcd58700efee6",
+      "bytes": 8234,
+      "mode": "100644"
+    },
+    "test/watcher-nov2-clock.test.mjs": {
+      "sha256": "d5ee6f74b1a7aacfda24400fb2199c01263635c9638a6e6c739f77715763d502",
+      "bytes": 5796,
+      "mode": "100644"
+    },
+    "test/watcher-nov2-fixture.mjs": {
+      "sha256": "954c2ed54495176092efb2e385fbc317db728af0a697aef04b164f4a350900cb",
+      "bytes": 9610,
+      "mode": "100644"
+    },
+    "test/watcher-nov2-guard.test.mjs": {
+      "sha256": "6e2fbcd66a09af00366e6a21a4677b48ddcdfe9fbd8c568cd224e4774a3b238d",
+      "bytes": 8621,
+      "mode": "100644"
+    },
+    "watcher-guard-core.mjs": {
+      "sha256": "c5270837694adf7fa246a4e8120f01f6bebe96a90f8e5dd6efd7f4210c857356",
+      "bytes": 11433,
+      "mode": "100644"
+    },
+    "watcher-guard-history.mjs": {
+      "sha256": "10ae2aa871f495ba603b61fa922d31042516639b4b78682084ae3595507fc421",
+      "bytes": 2298,
+      "mode": "100644"
+    },
+    "watcher-guard.mjs": {
+      "sha256": "15c0a8fbf40cc6c706ddec54543f8ce8385e12b3dc91be826a9587bc0432b650",
+      "bytes": 3108,
+      "mode": "100644"
+    },
+    "watcher-schedule.mjs": {
+      "sha256": "9fdcdf9bae3c4c0c29d40f0a1b4c747d487e21d00e1e932f6e006a5c744bc111",
+      "bytes": 2516,
+      "mode": "100644"
+    }
+  }
+}
