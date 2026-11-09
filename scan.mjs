@@ -614,9 +614,9 @@ function autolabText() { const AL = readJson0('data/autolab.json'); if (!AL || A
 // a bot reply cannot race discovery's cross-runner save/rebase path.
 function researchAssessmentCycle(sig,{cutoff=new Date(Date.now()).toISOString(),reviewedSymbols=[]}={}){
   let journal;try{journal=readRadarLedger('data/discovery-journal.jsonl');}catch{return {error:'ASSESSMENT JOURNAL UNREADABLE; originals preserved; no selection recorded'};}
-  const queue=frozenAssessmentQueue({signals:sig||{},discovery:readJson0('data/discovery.json')||{},earnings:readJson0('data/earnings-recent.json')||{},events:readJson0('data/events-recent.json')||{},quality:readJson0('data/quality.json')||{},horizons:readJson0('data/horizons.json')||{},radar:readJson0('data/radar-universe.json')||{},leaders:readJson0('data/leaders-universe.json')||{},
-    cutoff,reviewedSymbols,seenAssessmentIds:journal.filter(x=>x.type==='assessment').map(x=>x.id),excludedSymbols:[...ZADPOLICY().excluded]},journal);
-  const records=assessmentJournalRows(queue),persistence=queue.frozen?'READ_ONLY_FROZEN_PRODUCER_BATCH':'READ_ONLY_PREVIEW_NOT_RECORDED: awaiting existing discovery producer';
+  let queue;try{queue=frozenAssessmentQueue({signals:sig||{},discovery:readJson0('data/discovery.json')||{},earnings:readJson0('data/earnings-recent.json')||{},events:readJson0('data/events-recent.json')||{},quality:readJson0('data/quality.json')||{},horizons:readJson0('data/horizons.json')||{},radar:readJson0('data/radar-universe.json')||{},leaders:readJson0('data/leaders-universe.json')||{},
+    cutoff,reviewedSymbols,seenAssessmentIds:journal.filter(x=>x.type==='assessment').map(x=>x.id),excludedSymbols:[...ZADPOLICY().excluded]},journal);}catch{return {error:'ASSESSMENT CYCLE UNVERIFIED; original journal preserved; no new selection'};}
+  const records=queue.frozen?assessmentJournalRows(queue):[],persistence=queue.frozen?'READ_ONLY_FROZEN_PRODUCER_BATCH':'READ_ONLY_NOT_FROZEN: awaiting existing discovery producer';
   const outcomes=readJson0('data/outcomes.json');
   return {queue,records,persistence,feedback:linkAssessmentOutcomes(journal.filter(x=>x.type==='assessment'),Array.isArray(outcomes?.assessmentOutcomes)?outcomes.assessmentOutcomes:[])};
 }
@@ -648,7 +648,7 @@ function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 =
   { const cycle=researchAssessmentCycle(sig);
     if(cycle.error)out.push(cycle.error);
     else {const q=cycle.queue;out.push('BOUNDED INVESTIGATION QUEUE — attention, not live eligibility. '+q.sourceFreshness.status+'; '+q.population.uniqueSymbolLabels+' unique ticker labels, verified eligible issuer count UNKNOWN.');
-      for(const [h,rows]of Object.entries(q.batches))out.push(h+': '+(rows.length?rows.slice(0,short?1:2).map(r=>r.symbol+' [INVESTIGATE / WAIT; '+r.source+'; version '+r.evidenceVersion.slice(0,10)+']').join('; '):'no candidate in this frozen source cycle'));
+      for(const [h,rows]of Object.entries(q.batches))out.push(h+': '+(!q.frozen?'awaiting producer-frozen batch; no new investigation selected by this reply':rows.length?rows.slice(0,short?1:2).map(r=>r.symbol+' [INVESTIGATE / WAIT; '+r.source+'; version '+r.evidenceVersion.slice(0,10)+']').join('; '):'no candidate in this frozen source cycle'));
       out.push(cycle.persistence+'; feedback '+cycle.feedback.filter(x=>x.status.startsWith('UNRESOLVED')).length+' unresolved. No model aggregate or later price is an individual executable outcome.');
     }
   }
