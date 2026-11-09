@@ -818,86 +818,90 @@ index d2b04bed874820b4adcad78970b5bae7c0b738ca..93d5bc2aca08ee0f99be5144f09cd232
  async function frame(taxonomy, tag, unit, period) {
 diff --git a/docs/r1-sealed-provider-data/K2-KEY-SETUP.md b/docs/r1-sealed-provider-data/K2-KEY-SETUP.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..51a1ae293bdcf795566cfa78d7dca71067547621
+index 0000000000000000000000000000000000000000..b0f92d9c0278d6955b0109cbdc1f0ed7274067ab
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/K2-KEY-SETUP.md
-@@ -0,0 +1,63 @@
-+# K2: the dedicated data key `R1_DATA_KEY` (owner steps; review only)
+@@ -0,0 +1,67 @@
++# K2: the dedicated data key `R1_DATA_KEY` (owner steps; review only; nothing here is authorized yet)
 +
-+**What it is:**
-+- A new secret used **only** to encrypt the provider-data files (R1).
-+- `PRIVATE_KEY`, Alpaca, Telegram and every other existing credential stay exactly as they are. Nothing is rotated or regenerated.
++**What it is:** a new secret used **only** to encrypt the provider-data files (R1). `PRIVATE_KEY`, Alpaca, Telegram and every other existing credential stay exactly as they are; nothing is rotated or regenerated.
 +
 +**Rules:**
-+- The key is made **on your own device**.
-+- It goes only to two private backup places and into GitHub's secret page.
-+- **Never** paste it in chat, email, a GitHub comment, an issue or a file in the repository. Claude never needs to see it.
++- Make the key **on your own device**.
++- Keep it in **two independent places** outside GitHub.
++- Put it into GitHub's secret page only when Claude says the reviewed package passed and you approve it.
++- **Never** paste it into chat, email, a comment, an issue or a repository file. Claude never sees it.
 +
-+**Format:**
-+- Exactly **64 characters**, each `0`–`9` or `a`–`f`. That is 32 random bytes.
-+- The release tools refuse anything else (`SEALED_KEY_FORMAT`), so a typing mistake cannot become the key.
++**What the format check does and does not prove:**
++- The release tools accept only 64 characters, each `0`–`9` or `a`–`f`; anything else is refused (`SEALED_KEY_FORMAT`).
++- That check proves only the **form**. It does not prove the key is random: randomness comes from the generator below.
++- It does not catch a copying mistake that keeps valid characters, such as `b` written as `d`.
++- **Only the key check (step 4) proves that a copy is correct.**
++- The key is used **exactly as stored**: upper and lower case are different keys. Keep it in lower case, as generated.
 +
-+## Step 1: make the key (on your computer)
++## Step 1: make the key
 +
-+**Mac:**
-+1. Open **Terminal**: press Cmd+Space, type `Terminal`, press Enter.
-+2. Paste this line and press Enter:
-+   ```
-+   openssl rand -hex 32
-+   ```
++| Route | How | Verified |
++|---|---|---|
++| **Mac** | Open **Terminal** (Cmd+Space, type `Terminal`, Enter). Paste `openssl rand -hex 32`, press Enter. One line of 64 characters appears. | `openssl rand -hex 32` output checked here (OpenSSL 3.0; 64 lower-case hex). The macOS Terminal itself was not run here. |
++| **Any computer with Chrome or Edge** | Save `k2-key-tool.html` from the repository to the computer, open it in Chrome or Edge with no internet needed, and press **Make key**. | Checked in headless Chromium 153 (`k2-key-tool.browser-check.mjs`, 11/11). Safari and Firefox were **not** checked. |
++| **iPhone only** | **Not available yet.** See "iPhone blocker" below. | **Not verified.** |
 +
-+**Windows:**
-+1. Open **PowerShell** from the Start menu.
-+2. Paste this line and press Enter:
-+   ```
-+   $b = New-Object byte[] 32; [Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($b); ($b | ForEach-Object { $_.ToString('x2') }) -join ''
-+   ```
++## Step 2: store two independent copies
 +
-+**Check:** one line of **64** characters appears, using only digits and the letters a–f. Count roughly: 8 groups of 8. If it is not 64, run the line again.
++1. In your password manager, make an entry named `Stock-2 R1_DATA_KEY` and paste the 64 characters.
++2. Write the key on paper, or print it, and keep the paper away from the computer.
++3. Do not copy one store from the other later; both must come from the key as generated. Step 4 checks each copy **separately**.
 +
-+## Step 2: store the recovery copy in two places outside GitHub
++If every copy is lost, the encrypted data cannot be recovered. No one, including Claude and GitHub, can read the key back.
 +
-+Do this **before** you close the window.
++## Step 3: add it to GitHub (only after the reviewed package passes and you approve)
 +
-+1. In your password manager, create an entry named `Stock-2 R1_DATA_KEY`, and paste the 64 characters as the password.
-+2. Write it on paper, or print it, and keep it somewhere safe and separate from the computer.
-+3. Copy it from the password manager and compare it with the paper: all 64 characters must match.
++1. Go to github.com, then **drrazaq/Stock-2**, then **Settings**, then **Secrets and variables**, then **Actions**, then **New repository secret**.
++2. Fill in **Name** `R1_DATA_KEY`, and **Secret**: paste from the password manager, exactly, with no space before or after.
++3. Click **Add secret**. Tell Claude only "R1_DATA_KEY is listed", never the value.
 +
-+If this key is ever lost, the encrypted data can **not** be recovered. These two copies are what prevents that.
++Nothing reads `R1_DATA_KEY` until the approved release is pushed.
 +
-+## Step 3: add it to GitHub (only when Claude says the reviewed package passed)
++## Step 4 (inside the release window, B5b): prove each copy equals the enrolled key, outside GitHub
 +
-+1. Open github.com, then the repository **drrazaq/Stock-2**.
-+2. Go to **Settings**, then **Secrets and variables**, then **Actions**, then **New repository secret**.
-+3. Fill in the form:
-+   - **Name:** `R1_DATA_KEY`
-+   - **Secret:** paste the 64 characters from the password manager. Paste exactly; no space at the start or end.
-+4. Click **Add secret**.
-+5. Tell Claude only: "R1_DATA_KEY is listed." **Do not** send the value.
++1. Claude runs the one-time `key-check` job.
++   - It seals a random value with the enrolled `R1_DATA_KEY` and prints a **key-check record**: a line starting `R1 KEY CHECK VECTOR`.
++   - The record contains no data and no key.
++   - Claude sends you that line.
++2. On your own computer, open `k2-key-tool.html`. Paste the record, then check:
++   - the **password-manager copy**: PASS needed;
++   - the **paper copy**, typed in by hand: PASS needed.
 +
-+No workflow reads `R1_DATA_KEY` until the reviewed release is approved and pushed. Adding it changes nothing that runs today.
++   (The same check exists as `sealed-migrate.mjs --key-check` for a technical operator; it is not part of these owner steps.)
++3. Two PASS results prove that both independent copies are the key that seals the data, and that each can decrypt it. This proof happens outside GitHub's runner.
++4. **Any FAIL:** the release stops before migration, and nothing is encrypted.
++   - Compare the copies character by character.
++   - **Do not retry or re-run any release step on your own.** A further attempt needs its own reviewed plan and your approval.
 +
-+## Step 4 (inside the release window): prove your copy equals the secret
++## iPhone blocker (precise; nothing for you to try)
 +
-+This is stage B5b.
-+1. Add a **temporary** secret `R1_BACKUP_CHECK`, pasted from the **paper or password-manager copy**, not from the GitHub page.
-+2. Claude runs the one-time `backup-compare` job. It prints only PASS or FAIL.
-+3. Delete `R1_BACKUP_CHECK` right after.
++There is no verified iPhone-only route, for two reasons:
++- **Untested engine:** this review environment has only Chromium. It has no iPhone, Safari or WebKit engine, so the page could not be run as iPhone Safari runs it.
++- **No way onto the phone:** there is no reviewed way to open the page on an iPhone so that its script runs.
++  - GitHub serves repository files as plain text in a locked sandbox, so scripts do not run.
++  - The website workflow publishes only `index.html`. Publishing the tool would be a workflow change, which is not authorized.
++  - Opening a saved HTML file from the iPhone Files app is a preview whose script support was not verified.
 +
-+FAIL means nothing is migrated; you then compare your copies and try once more.
++Until one of these is reviewed and verified, the key must be made and checked with a computer (rows 1–2 above).
 diff --git a/docs/r1-sealed-provider-data/MANIFEST.md b/docs/r1-sealed-provider-data/MANIFEST.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..849c1411567971ca1bae479296bd4758093d6581
+index 0000000000000000000000000000000000000000..7ef19714ce5b6c5086eb520b8c0050d51df41aa4
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/MANIFEST.md
-@@ -0,0 +1,93 @@
-+# R1 combined-unit candidate manifest, rev18 (review only; not deployed)
+@@ -0,0 +1,95 @@
++# R1 combined-unit candidate manifest, rev19 (review only; not deployed)
 +
 +- **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821), `df5ee960` (rev14: B1-B5 closed; N1 and operative counts open, 6724620286), `09f58ca5` (rev15: CHANGES REQUIRED R1-R3, 6725294448), `cdda3dc3` (rev16: multipart BUY NOW remainder unchecked, 6725877594).
 +- **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
-+- **Binding:** the authoritative path list (77 paths in rev18) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
-+- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 76 files.
-+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `15991fd5f0705686663cd93dfdbfbb716732dc102d67ab037d670943163b3d9b`
++- **Binding:** the authoritative path list (79 paths in rev19) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
++- **Changed-file allowlist** (relative to the base; this manifest itself excluded): 78 files.
++- `git diff --full-index b0d76987 -- <allowlist>` sha256: `5b18b9fc5d99c5f6167c4e1933c4efcae7a284114409afce5c50a4b819128147`
 +
 +| Status | File | sha256 (candidate) |
 +|---|---|---|
@@ -918,10 +922,11 @@ index 0000000000000000000000000000000000000000..849c1411567971ca1bae479296bd4758
 +| A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 +| M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 +| M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-+| A | `docs/r1-sealed-provider-data/K2-KEY-SETUP.md` | `619fd3ba8dc45e8ce5e30bbe8858406e682c254b0545ff21b3bd334432bccf5d` |
-+| A | `docs/r1-sealed-provider-data/README.md` | `f60154f314d076a92290861021947030ae17dfc018bd279ce4240ee22780c81d` |
-+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `a0423e3ac899fa134c84c92614e061f6839147927986073110a43b662d56d280` |
++| A | `docs/r1-sealed-provider-data/K2-KEY-SETUP.md` | `730888a959444f907d82e34323c7f2dd94ef45b09e5bb7f196fb56ec195a1334` |
++| A | `docs/r1-sealed-provider-data/README.md` | `5bd61a9c2be9b93728f86911cba9abd4cf5b00017497f01f732f9945e352dae8` |
++| A | `docs/r1-sealed-provider-data/RELEASE.md` | `7b62ad129278ece73d0170e8da1596ee427cdfaa7419e4a3bc74c97a8501d010` |
 +| A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
++| A | `docs/r1-sealed-provider-data/k2-key-tool.html` | `eae4d8f03fd4233d79a24ba8cf2bd90366224ae34ef53f5bf16295629bda2a3b` |
 +| A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 +| A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
 +| M | `fastmover-lab.mjs` | `a777ecc0d47fe9a08e9e2ca488af1b7a128b5764cd625a22271493e1f66de7ea` |
@@ -956,7 +961,7 @@ index 0000000000000000000000000000000000000000..849c1411567971ca1bae479296bd4758
 +| A | `test/radar-sealed-reader.test.mjs` | `d156b07bb189118b5d03b3c7e942d07b5e2bd80c976a5832b37de270e32243a6` |
 +| A | `test/sealed-blockers.test.mjs` | `016805622b6b0c21300af4c29a4746f088b219fde36007a0a27580520e60f1de` |
 +| A | `test/sealed-git.test.mjs` | `ef3692008daedc85a4a741862d0f428bc76f4ce3207adb9f80c639c033ecb0e3` |
-+| A | `test/sealed-migrate.test.mjs` | `84eb55be7df5ae4540929f717f69b97af0823f666a7a3aa50472ecbaafe1ea8f` |
++| A | `test/sealed-migrate.test.mjs` | `17a4354a6f1c30dd1daabf3daa6a7a91ea91a724246d83a8b308f81308413989` |
 +| A | `test/sealed-readers.test.mjs` | `83ddbf15fdf1875adf5fa4612518cede65fced6ca368445c33acc8779139fcfc` |
 +| A | `test/sealed-recovery-actual-paths.test.mjs` | `215cf144cc90d1f69157474a4d81b380679c57a570c17ead1bfed1944663bdb8` |
 +| A | `test/sealed-recovery.test.mjs` | `d10906d15912eb829080128a7688a0b66d273ebd9becd5277fe586cb8e3cf8ea` |
@@ -965,6 +970,7 @@ index 0000000000000000000000000000000000000000..849c1411567971ca1bae479296bd4758
 +| A | `test/sealed-wiring.test.mjs` | `2fea74777a0d2c2e1a7d3f816a93c20b68f56c4796135047c7d065824e82aad9` |
 +| M | `test/sec-request-runtime.test.mjs` | `0de8866ec04bda4688a09612ac73c42d9c335a9eaada16f07a73068ce73f86fb` |
 +| M | `test/stop-alert-validity.test.mjs` | `746b5dd44ecdaf57d3dc057c37cd37ad4ff817c125fb8515b6d40d99ddd01f57` |
++| M | `test/try-small-audit.test.mjs` | `cfd71b94906d0fbe37fda4bcdfa5e9ab542edf53d4f05a0a1a2b91805942dfd7` |
 +| A | `test/watcher-cadence-review.test.mjs` | `3dcc24b6a5504c1dd6f2410542f30bc1f6d7e560e315fa4351e3727fc69e5af8` |
 +| M | `test/watcher-guard.test.mjs` | `aee017d1e57126865562dd199c2e2fa7812a789ad5e3f63c279fcd58700efee6` |
 +| M | `test/watcher-incident-revision.test.mjs` | `dedec3819728826305d7ef5dd595c9911d2a9774c82a04416600694e4b1b31c3` |
@@ -986,10 +992,10 @@ index 0000000000000000000000000000000000000000..849c1411567971ca1bae479296bd4758
 +- **Gated actual-watcher scenarios** (`INCIDENT_WATCHER_SRC`): `watcher-resilience` 9/9, `watcher-incident-revision` 11/11.
 diff --git a/docs/r1-sealed-provider-data/README.md b/docs/r1-sealed-provider-data/README.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..ffdaf7aec9d01f496cc7797c66ede5a2a6d93410
+index 0000000000000000000000000000000000000000..1db99caccbf6e1969477c53f1d5848a5b67e94a1
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/README.md
-@@ -0,0 +1,406 @@
+@@ -0,0 +1,418 @@
 +# R1: stop publishing provider market data in the public `Stock-2` repository (complete candidate, review only)
 +
 +**Prepared by Claude on 8 Nov 2026 at the owner's request. Not deployed.**
@@ -997,6 +1003,18 @@ index 0000000000000000000000000000000000000000..ffdaf7aec9d01f496cc7797c66ede5a2
 +- **Base:** `origin/main` `b0d76987`. **Branch:** `claude/r1-sealed-provider-data`. The candidate commit and the exact file allowlist are in `MANIFEST.md`.
 +- **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 +- **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
++
++## 0p. Rev19 (9 Nov): K2 custody corrections (Codex 6733228697)
++
++- **Guide (`K2-KEY-SETUP.md`):**
++  - The format check proves form only: not randomness, and not a correct copy, since a valid-character typo passes it.
++  - The secret is case-sensitive.
++  - No retry after a FAIL.
++  - Only verified generation routes are listed; the unverified PowerShell line is removed.
++- **Outside-runner proof:** B5b is now the `key-check` record checked off GitHub with **each** independent copy (password manager and hand-typed paper), using the offline `k2-key-tool.html`. It was checked in headless Chromium 11/11 against records from the real `sealed-migrate.mjs`, including the case and one-character tests, with no network. `backup-compare` is no longer the proof.
++- **iPhone-only route: NOT verified**, with the precise blocker stated in the guide (no Safari/WebKit here; no reviewed way to run the page on an iPhone).
++- **Fixture:** `test/try-small-audit.test.mjs` is the deterministic exchange-session fixture from development `b9753abb2`.
++- **Paths:** 79 (+`k2-key-tool.html`, +`test/try-small-audit.test.mjs`). Runtime code is unchanged.
 +
 +## 0o. Rev18 (9 Nov): K2, a dedicated data key (owner decision); deployment still deferred
 +
@@ -1318,10 +1336,10 @@ index 0000000000000000000000000000000000000000..ffdaf7aec9d01f496cc7797c66ede5a2
 +
 +- **Chosen: K2, the dedicated secret `R1_DATA_KEY`.** All 21 `SEALED_SECRET` mappings read it; no workflow hands `PRIVATE_KEY` to the sealed store (`test/sealed-wiring.test.mjs`, K2 test).
 +- **`PRIVATE_KEY` is unchanged:** exactly its 7 pre-R1 uses (calendar decryption and the existing readers), the same as main. Its exposure no longer grows with R1. Alpaca, Telegram and all other credentials are untouched; nothing is rotated or regenerated.
-+- **Strength:** the owner generates 32 random bytes as 64 hex characters on his own device (`K2-KEY-SETUP.md`). `--apply`, `--key-check-make` and `--backup-compare` refuse any other form (`SEALED_KEY_FORMAT`), before anything is changed. Runtime reads and writes are unchanged.
++- **Strength:** the owner generates 32 random bytes as 64 hex characters on his own computer (`K2-KEY-SETUP.md`; no iPhone-only route is verified). The format gate proves form only. `--apply`, `--key-check-make` and `--backup-compare` refuse any other form (`SEALED_KEY_FORMAT`), before anything is changed. Runtime reads and writes are unchanged.
 +- **Recovery:**
-+  - The owner keeps the copy outside GitHub in two places.
-+  - B5b proves it equals the secret before migration (`backup-compare`, temporary `R1_BACKUP_CHECK`).
++  - The owner keeps two independent copies outside GitHub.
++  - B5b proves each copy is the enrolled key, outside the runner (`key-check` record + `k2-key-tool.html`).
 +  - If the key is lost, the sealed files cannot be read; the pre-migration plaintext in history stays public.
 +- **Superseded:** K1 (reuse `PRIVATE_KEY`) and its exposure figures (rev17: 26 step contexts) are historical only.
 +
@@ -1398,7 +1416,7 @@ index 0000000000000000000000000000000000000000..ffdaf7aec9d01f496cc7797c66ede5a2
 +- Pre-existing, unchanged: `health.mjs` throws without `data/health.json`.
 diff --git a/docs/r1-sealed-provider-data/RELEASE.md b/docs/r1-sealed-provider-data/RELEASE.md
 new file mode 100644
-index 0000000000000000000000000000000000000000..abaa0e8d0fc97f08f08837288c1f12a0654fca3c
+index 0000000000000000000000000000000000000000..59d929ac0cd98f1608ecb13765868932d86ea546
 --- /dev/null
 +++ b/docs/r1-sealed-provider-data/RELEASE.md
 @@ -0,0 +1,94 @@
@@ -1413,21 +1431,21 @@ index 0000000000000000000000000000000000000000..abaa0e8d0fc97f08f08837288c1f12a0
 +
 +### Combined unit (rev8): what is released, and how it is built
 +
-+- **The unit** is R1 plus the reviewed calendar/watcher composition plus the open-check repair: **77 source paths** (rev18), all listed with sha256 and size in the external **binding** file `docs/r1-combined-binding/binding.json` on branch `claude/mentor-release-handoff` (its own sha256 is given in the PR #1 comment, since a file cannot pin itself). R1's older 51-file manifest does **not** cover this unit.
++- **The unit** is R1 plus the reviewed calendar/watcher composition plus the open-check repair: **79 source paths** (rev19), all listed with sha256 and size in the external **binding** file `docs/r1-combined-binding/binding.json` on branch `claude/mentor-release-handoff` (its own sha256 is given in the PR #1 comment, since a file cannot pin itself). R1's older 51-file manifest does **not** cover this unit.
 +- **The candidate branch must never be pushed or merged.** It was cut from `b0d76987` and still carries older copies of 5 data files (`calendar-status.json`, `calendar.enc`, `health.json`, `shares.json.gz`, `tg-state.json`); a whole-branch push would put back old data and an old Telegram offset.
-+- **C is built source-only** on the fresh main `M0`: `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` refuses unless `<candidate>` is exactly the commit the binding pins, and every bound file there matches the binding's sha256, size **and Git mode**. It then puts exactly the 77 bound files (rev18) onto `M0` in a temporary index and creates commit `C` (parent `M0`) **without pushing**. `--verify-unit M0 C binding.json` then requires: sole parent `M0`; all 77 bound files (rev18) byte-exact with the bound mode; no other path different from `M0`; and `C`'s **whole tree** equal to the tree rebuilt from `M0` plus the pinned candidate's bound entries. If the pinned candidate commit is not available locally, verify fails (fetch it; never skip). (rev9: Codex 6719707423 showed that rev8 ignored modes and the candidate identity.)
++- **C is built source-only** on the fresh main `M0`: `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` refuses unless `<candidate>` is exactly the commit the binding pins, and every bound file there matches the binding's sha256, size **and Git mode**. It then puts exactly the 79 bound files (rev19) onto `M0` in a temporary index and creates commit `C` (parent `M0`) **without pushing**. `--verify-unit M0 C binding.json` then requires: sole parent `M0`; all 79 bound files (rev19) byte-exact with the bound mode; no other path different from `M0`; and `C`'s **whole tree** equal to the tree rebuilt from `M0` plus the pinned candidate's bound entries. If the pinned candidate commit is not available locally, verify fails (fetch it; never skip). (rev9: Codex 6719707423 showed that rev8 ignored modes and the candidate identity.)
 +
 +## A. Entry gates (all required before the window opens)
 +
 +| Gate | Evidence |
 +|---|---|
-+| G1 Codex verdict PASS on the **exact** candidate commit, its manifest **and the combined binding** (77 paths in rev18, source patch and inverse hashes) | PR #1 comment |
++| G1 Codex verdict PASS on the **exact** candidate commit, its manifest **and the combined binding** (79 paths in rev19, source patch and inverse hashes) | PR #1 comment |
 +| G2 Owner approval of **this** unit, window and roles | owner message |
-+| G3 (rev18, K2, owner decision 9 Nov) The data key is a **new dedicated GitHub secret `R1_DATA_KEY`**, never `PRIVATE_KEY` (which keeps exactly its 7 pre-R1 uses; Alpaca, Telegram and every existing credential are untouched). The owner generates it **on his own device** as 32 random bytes written as **exactly 64 hex characters** (`docs/r1-sealed-provider-data/K2-KEY-SETUP.md`), keeps the recovery copy **outside GitHub in two places**, and adds it as the repository secret `R1_DATA_KEY`. Claude never sees or asks for the value; the owner reports only that the secret NAME is listed. The one-time steps refuse any other key form (`SEALED_KEY_FORMAT`; `--apply`, `--key-check-make`, `--backup-compare`), and B5b proves the off-GitHub copy equals the secret before anything is migrated. | owner message (secret name listed; recovery copy stored) |
-+| G3b (rev6) **Choose** the backup-proof route for stage B5b. The proof itself runs **inside the window**, because the workflow exists only after B4. (a) `backup-compare`: the owner adds a temporary secret `R1_BACKUP_CHECK`, pasted from the off-GitHub copy, in GitHub's secrets page before B5b, and deletes it after; Actions compares derived keys in constant time and prints PASS/FAIL only. (b) `key-check` vector verified on the owner's own computer, only if that route is set up and verified beforehand. Nothing is requested before the unit is approved. | owner message (route) |
++| G3 (rev18, K2, owner decision 9 Nov) The data key is a **new dedicated GitHub secret `R1_DATA_KEY`**, never `PRIVATE_KEY` (which keeps exactly its 7 pre-R1 uses; Alpaca, Telegram and every existing credential are untouched). The owner generates it **on his own computer** (no iPhone-only route is verified) as 32 random bytes written as **exactly 64 hex characters** (`docs/r1-sealed-provider-data/K2-KEY-SETUP.md`), keeps the recovery copy **outside GitHub in two places**, and adds it as the repository secret `R1_DATA_KEY`. Claude never sees or asks for the value; the owner reports only that the secret NAME is listed. The one-time steps refuse any other key form (`SEALED_KEY_FORMAT`; `--apply`, `--key-check-make`, `--backup-compare`), and B5b proves, outside the runner, that each independent off-GitHub copy is the enrolled key before anything is migrated. The format check proves form only, not randomness or a correct copy; the secret is case-sensitive. | owner message (secret name listed; recovery copy stored) |
++| G3b (rev19, Codex 6733228697) The backup proof for B5b is the **key-check route, verified OUTSIDE GitHub's runner with each independent copy**. The in-runner `backup-compare` (temporary `R1_BACKUP_CHECK`) only compares against one pasted copy inside the runner and **cannot stand in** for this proof; it is not used. Verifier: `k2-key-tool.html` opened offline in Chrome or Edge on the owner's computer (checked in headless Chromium, 11/11), or `sealed-migrate.mjs --key-check` run by an operator. **No iPhone-only route is verified** (`K2-KEY-SETUP.md`, iPhone blocker). | owner message: both copies stored; a computer with Chrome/Edge available in the window |
 +| G4 Refreshed review of the STOP-pinned files the unit changes: `ignition-watch.mjs`, `scan.mjs`, `.github/workflows/ignition.yml`, `.github/workflows/bot.yml`, `test/load-scan.mjs`, `test/watcher-resilience.test.mjs`, `test/watcher-incident-revision.test.mjs`, `test/stop-alert-validity.test.mjs` (old pin, current main and unit hashes: `docs/r1-combined-binding/stop-pins-refresh.json`). 8 of the 17 STOP-pinned files change; the other 9 are unchanged by the unit. | Codex |
 +| G5 Owner acceptance of the residual public outputs (README §11 item 3) **or** a separate decision to defer them. R1 does not close them. | owner message |
-+| G6 `node r1-release-precheck.mjs b0d76987 <candidate> origin/main` = **PASS**, run at the start of the window (combined candidate on 8 Nov against main `7742732`: PASS, 68 files, 0 drift; rev15 against `a7c597b7`: PASS, 73 files, 0 drift; rev17 against current main: 76 files; rev18: see the PR #1 handoff, 77 files). This proves the bound paths did not move on main; it does **not** replace the binding (G1). | operator log |
++| G6 `node r1-release-precheck.mjs b0d76987 <candidate> origin/main` = **PASS**, run at the start of the window (combined candidate on 8 Nov against main `7742732`: PASS, 68 files, 0 drift; rev15 against `a7c597b7`: PASS, 73 files, 0 drift; rev17 against current main: 76 files; rev18: 77 files; rev19: see the PR #1 handoff, 79 files). This proves the bound paths did not move on main; it does **not** replace the binding (G1). | operator log |
 +| G7 No other release in flight; Codex available for the whole window | both |
 +
 +**Suggested window:** a weekend, outside the market. Production writers on weekends:
@@ -1446,8 +1464,8 @@ index 0000000000000000000000000000000000000000..abaa0e8d0fc97f08f08837288c1f12a0
 +| B2 | Owner | Disable the 10 T1 writer/saver workflows: `ignition`, `bot`, `main`, `movers`, `options-survey`, `Smart-money`, `leaders-study`, `opportunity-radar`, `scorecard-1023`, `fastmover-intraday`. Reply "DONE DISABLE". | — | — |
 +| B3 | Claude | **Capture v2** (`r1-writer-gate.mjs` header). One complete query **per open status** (queued, in_progress, waiting, requested, pending, action_required), whatever the creation date: this catches old re-runs and environment waits. **Plus** `created` queries covering the **last 31 days** for every writer workflow (GitHub allows re-runs and waits up to 30 days), each split under the 1,000-result cap. All pages saved verbatim. Then `node r1-writer-gate.mjs capture.json`. | **PASS**: no writer run in any open-status query; every writer run in the 31-day coverage `completed`; every query complete (pages, unique ids = total, at most 1,000); right repository; capture at most 10 min old | wait for the run to finish, then capture again. **Never cancel** without a separate owner approval. |
 +| B4 | Claude | `node r1-release-precheck.mjs --build-unit M0 <candidate> binding.json` (creates `C`, parent `M0`, nothing pushed), then `--verify-unit M0 C binding.json` = PASS. Push `C` to main as a **fast-forward only** (`git push origin C:refs/heads/main`, no force). **Never** push or merge the candidate branch. If main moved after `M0`, do not push: start again from B1. | verify PASS; push accepted; CI on `C` green with a complete hosted log | revert `C` (rollback **R-0**) |
-+| B5 | Codex | Independently run `--verify-unit M0 C binding.json` (binding sha256 as published) and check `git diff --name-only M0 C` lists only the bound paths (77 in rev18) and that the 5 data paths above equal `M0`. If `M0` = `7742732`, the expected tree is given in the PR #1 comment. | Codex receipt | R-0 |
-+| B5b | Owner + Claude | **Backup-key proof** by the route chosen at G3b: (a) dispatch `r1-migrate.yml` with `mode=backup-compare`, then the owner deletes `R1_BACKUP_CHECK`; or (b) `mode=key-check`, verified on the owner's computer. Writers are still off and nothing is migrated yet. | **PASS** line from the job log, or from the owner's local check | **FAIL or no proof**: stop. **R-0** (revert `C`): safe, because nothing is sealed yet. Evidence remains UNVERIFIED. Privately diagnose the selected input, vector and source binding before concluding that the existing key or backup differs. A missing receipt is not evidence of a key mismatch. No automatic retry or credential change. After R-0 and restored-state verification, a separately reviewed unit may re-verify K1 with a confirmed backup or, only if the owner separately chooses it, enroll and back up K2. |
++| B5 | Codex | Independently run `--verify-unit M0 C binding.json` (binding sha256 as published) and check `git diff --name-only M0 C` lists only the bound paths (79 in rev19) and that the 5 data paths above equal `M0`. If `M0` = `7742732`, the expected tree is given in the PR #1 comment. | Codex receipt | R-0 |
++| B5b | Owner + Claude | **Backup-key proof (G3b):** dispatch `r1-migrate.yml` once with `mode=key-check`. Claude passes the printed `R1 KEY CHECK VECTOR` line (no data, no key) to the owner, who checks it in `k2-key-tool.html` with the **password-manager copy** and, separately, the **hand-typed paper copy**. Writers are still off and nothing is migrated yet. | **PASS for both copies**, reported by the owner (Claude sees neither copy) | **FAIL or no proof**: stop. **R-0** (revert `C`): safe, because nothing is sealed yet. Evidence remains UNVERIFIED. Privately diagnose the selected input, vector and source binding before concluding that the existing key or backup differs. A missing receipt is not evidence of a key mismatch. No automatic retry, no second dispatch and no credential change. After R-0 and restored-state verification, any further attempt needs its own reviewed unit and owner approval. |
 +| B6 | Claude | Dispatch `r1-migrate.yml` once with `confirm=MIGRATE-R1`, `mode=migrate`, `source_sha=C`. | job green; log shows `--apply`, a fast-forward push and `--verify-tree origin/main` with problems 0; complete hosted log saved | **A red, missing, partial or late job does NOT mean nothing was published**: the push happens before the final verification, and a transport error can leave it uncertain. First **establish the remote state**: fetch main; is the head a migration commit (manifest present, parent = `C`)? Then run `--verify-structure` (B7) on it. Writers stay **off** and state is **UNKNOWN** until established. No automatic retry and no code inverse; follow R-1 if published, R-0 if not. |
 +| B7 | Codex | Clone main. `node sealed-migrate.mjs --verify-structure origin/main` (keyless; expected set, sizes and hashes recomputed from `C`, never from the manifest; no plaintext; parent = `C`). **Plus** an independent review of B6's complete keyed hosted log (`--apply` and `--verify-tree`, which decrypt every file). | Codex receipt. The keyless check **supplements** the keyed receipt, never replaces it. | R-1 |
 +| B8 | Claude | Writer gate again, with a fresh capture v2 (nothing ran meanwhile). | PASS | wait |
@@ -1535,6 +1553,90 @@ index 0000000000000000000000000000000000000000..b9cd3a6271bfd83ac30a82c4369a9365
 +console.log('NOMINAL TOTAL (git object bytes added per year)'.padEnd(62), MB(total).padStart(10));
 +console.log('plaintext-today comparison for the ledgers only (compressed daily delta):', MB(N * gPlain));
 +console.log('NOT established: GitHub pack sizes/deltas (ciphertext does not delta), billing, clone time, growth of daily data volumes, retries that add merge commits.');
+diff --git a/docs/r1-sealed-provider-data/k2-key-tool.html b/docs/r1-sealed-provider-data/k2-key-tool.html
+new file mode 100644
+index 0000000000000000000000000000000000000000..0bc4521fadff728ee076d40a0d3b9f05dd451a46
+--- /dev/null
++++ b/docs/r1-sealed-provider-data/k2-key-tool.html
+@@ -0,0 +1,78 @@
++<!doctype html>
++<html lang="en">
++<head>
++<meta charset="utf-8">
++<meta name="viewport" content="width=device-width, initial-scale=1">
++<!-- No network of any kind: the page can load nothing and send nothing. -->
++<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; form-action 'none'; base-uri 'none'">
++<title>R1 data key tool</title>
++<style>
++ :root { --fg:#111; --bg:#fff; --mut:#555; --ok:#0a6b2d; --bad:#a3141c; --line:#ccc; }
++ @media (prefers-color-scheme: dark) { :root { --fg:#eee; --bg:#111; --mut:#aaa; --ok:#4cc77a; --bad:#ff6b73; --line:#444; } }
++ body { font: 16px/1.45 -apple-system, system-ui, sans-serif; color: var(--fg); background: var(--bg); margin: 0; padding: 16px; max-width: 640px; }
++ h1 { font-size: 20px; } h2 { font-size: 17px; margin-top: 28px; }
++ textarea, input { width: 100%; box-sizing: border-box; font: 15px ui-monospace, Menlo, monospace; padding: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--fg); }
++ button { font-size: 16px; padding: 10px 14px; margin-top: 8px; }
++ .out { font: 15px ui-monospace, Menlo, monospace; word-break: break-all; padding: 8px; border: 1px solid var(--line); min-height: 1.4em; }
++ .ok { color: var(--ok); font-weight: 600; } .bad { color: var(--bad); font-weight: 600; } .mut { color: var(--mut); font-size: 14px; }
++</style>
++</head>
++<body>
++<h1>R1 data key tool (offline)</h1>
++<p class="mut">Runs only on this device; it cannot connect to anything. Nothing is saved. Close the page when done.</p>
++
++<h2>1. Make a new key</h2>
++<button id="gen" type="button">Make key</button>
++<div id="genOut" class="out" aria-live="polite"></div>
++<p class="mut">32 random bytes from this device's secure random generator, shown as 64 characters 0-9, a-f. Copy it into your password manager and onto paper exactly as shown (lower case).</p>
++
++<h2>2. Check a backup copy against a key-check record</h2>
++<label for="secret">Backup copy of the key (64 characters)</label>
++<input id="secret" autocomplete="off" autocapitalize="off" spellcheck="false">
++<label for="vector">Key-check record (the line after "R1 KEY CHECK VECTOR")</label>
++<textarea id="vector" rows="4" autocapitalize="off" spellcheck="false"></textarea>
++<button id="check" type="button">Check</button>
++<button id="demo" type="button">Fill the synthetic test (no real key)</button>
++<div id="checkOut" class="out" aria-live="polite"></div>
++<p class="mut">PASS proves this copy is the key that sealed the record, so it can decrypt the data. FAIL: nothing is wrong with the data; compare your copies character by character and do not retry the release step until the difference is found.</p>
++
++<script>
++'use strict';
++// Same construction as sealed-store.mjs / sealed-migrate.mjs (format v2, key check id "r1/key-check"):
++//   key = SHA-256("stock-2 sealed provider data v1\0" || secret as UTF-8);  file = "S2SEAL" | 0x02 | flags | iv(12) | tag(16) | ct
++//   AES-256-GCM additional data = header(8) | 0x00 | "r1/key-check";  flags bit0 = raw-deflate before encryption
++const LABEL = 'stock-2 sealed provider data v1\0', KEY_CHECK_ID = 'r1/key-check', HEX64 = /^[0-9a-f]{64}$/i;
++// Synthetic preflight only: a published test key and a record made with it by sealed-migrate.mjs. Never use this key for data.
++const DEMO_SECRET = '4b77d7a3cc3f36601a3b07e91f55c73cc86c22d7264c19e17e82c0f36f0da3cb', DEMO_VECTOR = '{"version":1,"purpose":"R1 backup-key check (contains no data and no key)","sealed":"UzJTRUFMAgGz+1MZoxdyjP6KUkGUdTL8JMUTWlpW4J23Z58KnWQTmhMpY9Qb0qvYDej1fKzKXsP7hzsWIYxWmGuhScHiJLE=","sha256":"d28a997218627bfc9d030713016111bda44d9f2b34fd20ab270afae9865352e0"}';
++const enc = new TextEncoder();
++const hex = (b) => Array.from(new Uint8Array(b), (x) => x.toString(16).padStart(2, '0')).join('');
++const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
++const cat = (...a) => { const n = a.reduce((s, x) => s + x.length, 0), o = new Uint8Array(n); let i = 0; for (const x of a) { o.set(x, i); i += x.length; } return o; };
++async function inflateRaw(bytes) { const s = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw')); return new Uint8Array(await new Response(s).arrayBuffer()); }
++function makeKey() { const b = new Uint8Array(32); crypto.getRandomValues(b); return hex(b); }
++async function checkCopy(secret, vectorText) {
++  if (!HEX64.test(secret)) return { ok: false, why: 'not a 64-character 0-9/a-f key (check for a missing, extra or changed character, or a space)' };
++  let v; try { v = JSON.parse(vectorText); } catch { return { ok: false, why: 'the key-check record is not valid; copy the whole {...} line' }; }
++  if (!v || v.version !== 1 || typeof v.sealed !== 'string' || !/^[0-9a-f]{64}$/.test(v.sha256 || '')) return { ok: false, why: 'the key-check record is incomplete' };
++  let b; try { b = b64(v.sealed); } catch { return { ok: false, why: 'the key-check record is damaged' }; }
++  const MAGIC = enc.encode('S2SEAL');
++  if (b.length < 8 + 12 + 16 || MAGIC.some((x, i) => b[i] !== x) || b[6] !== 2 || (b[7] & ~1)) return { ok: false, why: 'the key-check record has an unknown format' };
++  const hdr = b.subarray(0, 8), iv = b.subarray(8, 20), tag = b.subarray(20, 36), ct = b.subarray(36);
++  const raw = await crypto.subtle.digest('SHA-256', cat(enc.encode(LABEL), enc.encode(secret)));
++  const key = await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, ['decrypt']);
++  let body; try { body = new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv, additionalData: cat(hdr, new Uint8Array([0]), enc.encode(KEY_CHECK_ID)), tagLength: 128 }, key, cat(ct, tag))); }
++  catch { return { ok: false, why: 'this copy is NOT the key that made the record' }; }
++  if (b[7] & 1) { try { body = await inflateRaw(body); } catch { return { ok: false, why: 'the key-check record is damaged' }; } }
++  return hex(await crypto.subtle.digest('SHA-256', body)) === v.sha256 ? { ok: true } : { ok: false, why: 'this copy is NOT the key that made the record' };
++}
++if (typeof document !== 'undefined') {
++  const $ = (id) => document.getElementById(id);
++  $('gen').onclick = () => { $('genOut').textContent = makeKey(); };
++  $('demo').onclick = () => { $('secret').value = DEMO_SECRET; $('vector').value = DEMO_VECTOR; };
++  $('check').onclick = async () => { const o = $('checkOut'); o.className = 'out'; o.textContent = 'Checking...';
++    try { const r = await checkCopy($('secret').value, $('vector').value.trim()); o.className = 'out ' + (r.ok ? 'ok' : 'bad'); o.textContent = r.ok ? 'PASS: this copy is the key that made the record.' : 'FAIL: ' + r.why + '.'; }
++    catch (e) { o.className = 'out bad'; o.textContent = 'FAIL: this browser could not run the check (' + (e && e.name || 'error') + '). Use the computer route.'; } };
++}
++</script>
++</body>
++</html>
 diff --git a/docs/r1-sealed-provider-data/t1-inventory.tsv b/docs/r1-sealed-provider-data/t1-inventory.tsv
 new file mode 100644
 index 0000000000000000000000000000000000000000..fea74129988cdd79ec0fef49b3abb8187274d9fc
@@ -4887,10 +4989,10 @@ index 0000000000000000000000000000000000000000..79e85a8990325b4ea3bb7ed02e5999e6
 +});
 diff --git a/test/sealed-migrate.test.mjs b/test/sealed-migrate.test.mjs
 new file mode 100644
-index 0000000000000000000000000000000000000000..fe7fe785bc89ee3a94b2bef756ceeab5d44ef843
+index 0000000000000000000000000000000000000000..cca160517041f736edbcbb62acdce73715675179
 --- /dev/null
 +++ b/test/sealed-migrate.test.mjs
-@@ -0,0 +1,196 @@
+@@ -0,0 +1,197 @@
 +// R1 migration (sealed-migrate.mjs), rev3: bound to one approved source commit, manifest, complete-set verification, safe recovery.
 +// Synthetic throw-away repositories only. Includes Codex's re-review reproductions for blockers 1 (export escape) and 4 (provenance).
 +import test from 'node:test';
@@ -5085,7 +5187,8 @@ index 0000000000000000000000000000000000000000..fe7fe785bc89ee3a94b2bef756ceeab5
 +  }
 +  assert.equal(git(r, ['status', '--porcelain']), before, 'a refused key changes nothing');
 +  assert.match(run(['--apply', head], '').stderr, /SEALED_KEY_MISSING/, 'missing stays SEALED_KEY_MISSING');
-+  assert.equal(run(['--key-check-make'], SECRET.toUpperCase()).status, 0, 'hex case does not matter');
++  assert.equal(run(['--key-check-make'], SECRET.toUpperCase()).status, 0, 'upper-case hex passes the FORM check only');
++  assert.notEqual(sealedKey(SECRET.toUpperCase()).toString('hex'), sealedKey(SECRET).toString('hex'), 'the secret itself is case-sensitive: an upper-case copy is a DIFFERENT key');
 +});
 diff --git a/test/sealed-readers.test.mjs b/test/sealed-readers.test.mjs
 new file mode 100644
@@ -6105,6 +6208,88 @@ index 5c76baa8b6636ac87f0d07473dd13873cb5f2129..e633f1f981353fda14f0d333a1a34aad
      assert.match(stop[0], /do not sell again/); assert.doesNotMatch(stop[0], /not instructions|Sell \/ reassess/);
      assert.equal(S.readJson('data/my-positions.json').ZZA.stop, 80, 'stop level unchanged');
    });
+diff --git a/test/try-small-audit.test.mjs b/test/try-small-audit.test.mjs
+index 325ee0be39e9f83aa30a3026de906e506485d87f..3a8a432cd420a025498b0a8b6ef253c3739ee3ab 100644
+--- a/test/try-small-audit.test.mjs
++++ b/test/try-small-audit.test.mjs
+@@ -13,6 +13,7 @@ import assert from 'node:assert/strict';
+ import http from 'node:http';
+ import fs from 'node:fs';
+ import { loadScan as loadScan0, blocked } from './load-scan.mjs';
++import {marketSession} from '../market-session.mjs';
+ // (27 Oct 2026) TRY SMALL is paper-only by default now; these tests pin the REAL-money lane, so they switch it on unless a test sets settings.
+ const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'data/settings.json': { trySmallReal: true, ...(((o.files || {})['data/settings.json']) || {}) } } });
+ 
+@@ -20,24 +21,39 @@ const loadScan = (o = {}) => loadScan0({ ...o, files: { ...(o.files || {}), 'dat
+ const half = (avgStress, edge, noTop2) => ({ avgStress, edge, noTop2, avg: avgStress + 0.004 });
+ const good = (hold) => ({ verdict: 'NOT PROVEN', hold, results: { older: half(0.02, 0.01, 0.015), newer: half(0.04, 0.02, 0.03) } });
+ const now = new Date().toISOString(), day = (n) => new Date(Date.now() - n * 864e5).toISOString().slice(0, 10);
+-// (3 Nov 2026) tests 1 and 3b used the fixed session 2026-10-23, which aged past the 5-session freshness window: use the last weekday instead
+-const SESS = (() => { for (let n = 1; ; n++) { const d = new Date(Date.now() - n * 864e5), w = d.getUTCDay(); if (w !== 0 && w !== 6) return d.toISOString().slice(0, 10); } })();
+ const HAL = { TPC: { s: 'ok', d: '2026-10-23', by: 'you' }, QLYS: { s: 'ok', d: '2026-10-23', by: 'you' }, RELY: { s: 'ok', d: '2026-10-23', by: 'you' } };
+ const lab = (lastClose, extra = {}) => ({ 'data/value-lab.json': { firstRun: {} }, 'data/halal.json': HAL,
+   'data/squad6-lab.json': { firstRun: { 'SQ6-MTUM': good(126) } },
+   'data/squad6-today.json': { generatedAt: now, lastClose, methods: { 'SQ6-MTUM': { name: 'MTUM-style momentum', hold: 126, newSignals: [{ sym: 'TPC', close: 78, d: lastClose }] } } }, ...extra });
+ 
++// Historical literal closes eventually expire under the real caller's independent NY freshness check.
++// Use known exchange sessions for freshness fixtures; keep historical entry/stop/hold expectations unchanged.
++function sessionFixtureDays() {
++  const parts=Object.fromEntries(new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
++  const todayNY=parts.year+'-'+parts.month+'-'+parts.day,closes=[];let d=todayNY;
++  for(let i=0;i<60&&closes.length<7;i++){const session=marketSession(d);assert.equal(session.known,true);if(!session.closed)closes.push(d);d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);}
++  assert.equal(closes.length,7);
++  return {todayNY,closes};
++}
++
+ test('1. a new-signal list from an older close than the newest session is not shown as a buy', async () => {
+-  const S = await loadScan({ files: lab('2026-10-16') });
+-  assert.deepEqual(S.fn('trySmallLines')({}, {}, null, SESS), []);
+-  const S2 = await loadScan({ files: lab(SESS) });
+-  assert.match(S2.fn('trySmallLines')({}, {}, null, SESS).join('\n'), /- BUY TPC 1000 USD up to 80\.34\. STOP 50\.70 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\).*SQ6-MTUM/);
++  const {todayNY,closes}=sessionFixtureDays(),fresh=closes[1];
++  const S = await loadScan({ files: lab(closes[2]) });
++  assert.deepEqual(S.fn('trySmallLines')({}, {}, null, fresh), []);
++  const S2 = await loadScan({ files: lab(fresh) });
++  assert.equal(S2.fn('sessionsAfter')(fresh,todayNY),1);
++  assert.match(S2.fn('trySmallLines')({}, {}, null, fresh).join('\n'), /- BUY TPC 1000 USD up to 80\.34\. STOP 50\.70 at your broker \(35%\)\. SELL after about 6 months \(126 sessions\).*SQ6-MTUM/);
+ });
+ 
+ test('1b. without a session, a list whose close is more than 5 trading sessions old is not shown', async () => {
+-  const S = await loadScan({ files: lab(day(10)) });
++  // A UTC ten-day lookback can be only five NY sessions before midnight after a weekend.
++  // Pin the intended six-session stale / one-session fresh boundaries on the exchange calendar.
++  const {todayNY,closes}=sessionFixtureDays();
++  const S = await loadScan({ files: lab(closes[6]) });
++  assert.equal(S.fn('sessionsAfter')(closes[6],todayNY),6);
+   assert.deepEqual(S.fn('trySmallLines')({}, {}), []);
+-  const S2 = await loadScan({ files: lab(day(1)) });
++  const S2 = await loadScan({ files: lab(closes[1]) });
++  assert.equal(S2.fn('sessionsAfter')(closes[1],todayNY),1);
+   assert.match(S2.fn('trySmallLines')({}, {}).join('\n'), /- BUY TPC/);
+ });
+ 
+@@ -59,13 +75,17 @@ test('2b. ACTIONS prices TRY SMALL from sig.uni too (QLYS was only there on 23 O
+ });
+ 
+ test('3. a stock already a BUY elsewhere in the message is not bought again by TRY SMALL', async () => {
+-  const S = await loadScan({ files: lab('2026-10-23') });
+-  assert.deepEqual(S.fn('trySmallLines')({}, { TPC: 78 }, new Set(['TPC']), '2026-10-23'), []);
++  const fresh=sessionFixtureDays().closes[1],files=lab(fresh);
++  const control=await loadScan({files});
++  assert.match(control.fn('trySmallLines')({}, {TPC:78}, null, fresh).join('\n'), /- BUY TPC/);
++  const S = await loadScan({ files });
++  assert.deepEqual(S.fn('trySmallLines')({}, { TPC: 78 }, new Set(['TPC']), fresh), []);
+ });
+ 
+ test('3b. the TRY SMALL ledger row carries the hold and stop that were shown', async () => {
+-  const S = await loadScan({ files: lab(SESS) });
+-  S.fn('trySmallLines')({}, { TPC: 78 }, null, SESS);
++  const fresh=sessionFixtureDays().closes[1];
++  const S = await loadScan({ files: lab(fresh) });
++  S.fn('trySmallLines')({}, { TPC: 78 }, null, fresh);
+   const row = S.read('data/tier2-ledger.jsonl').trim().split('\n').map(x => JSON.parse(x)).find(r => r.kind === 'try:SQ6-MTUM');
+   assert.equal(row.hold, 126); assert.equal(row.stopPct, 0.35); assert.equal(row.sym, 'TPC');
+ });
 diff --git a/test/watcher-cadence-review.test.mjs b/test/watcher-cadence-review.test.mjs
 new file mode 100644
 index 0000000000000000000000000000000000000000..0510d2858cdbb15afb03596360de4c978eb8f35b

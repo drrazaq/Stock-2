@@ -1,0 +1,12 @@
+PASS generator: 20 clicks give 20 distinct keys, each exactly 64 lower-case hex
+PASS a generated key is accepted by the real release tool and its record verifies in the page
+PASS right copy PASSES (record from the real sealed-migrate.mjs)
+PASS a different valid-format key FAILS
+PASS one changed character FAILS
+PASS upper-case copy of the right key FAILS (the secret is case-sensitive)
+PASS 63 characters FAILS on format
+PASS a trailing space FAILS on format
+PASS a damaged record FAILS
+PASS built-in synthetic preflight PASSES
+PASS no network request other than the page file itself
+11/11 checks (headless Chromium 153.0.8010.12)

@@ -1,18 +1,18 @@
 {
  "status": "ADOPTED_FOR_REVIEW (candidate author); not approved, not deployed",
- "candidate": "304657d93c0fd10974781712553a282f28294bca",
- "candidateTree": "99ece53cefea48ab78e7f552fdc7d344ab193514",
+ "candidate": "72ff1f5bdf1ec747ccdaa6374515a3a238b2acae",
+ "candidateTree": "38d748c33d078352d48f435de6537a1b6aca5ce2",
  "historicalR1Base": "b0d769876a6ee76f23544850c959111f59d8ae7b",
  "mainAtBinding": "774273205e1c8ce3db30c59ca368dc107617ef73",
- "pathCount": 77,
+ "pathCount": 79,
  "sourcePatch": {
   "file": "source.patch",
-  "sha256": "969649c7d770dcd917a84d2f21135dbb509c0f03b29ba24d058609c559cb6f63",
+  "sha256": "961f61c421b8bf71606ef3b9839189ee983a77838ee989c1ecb88a7e5bd1c240",
   "against": "774273205e1c8ce3db30c59ca368dc107617ef73"
  },
  "inversePatch": {
   "file": "inverse.patch",
-  "sha256": "1c1d6968a6c5afa0570373e8f75e240f35757a2bb1d3da7ed5c3dcbcc06756c7"
+  "sha256": "6133f2ae2ce3929006104f78bdeeeeb80e6fff57e2110a38301d2f538fedaeea"
  },
  "candidateBranchStaleDataPaths": [
   "data/calendar-status.json",
@@ -22,36 +22,24 @@
   "data/tg-state.json"
  ],
  "neverPushOrMergeCandidateBranch": true,
- "build": "node r1-release-precheck.mjs --build-unit M0 304657d93c0fd10974781712553a282f28294bca binding.json",
+ "build": "node r1-release-precheck.mjs --build-unit M0 72ff1f5bdf1ec747ccdaa6374515a3a238b2acae binding.json",
  "verify": "node r1-release-precheck.mjs --verify-unit M0 C binding.json",
  "supersedes": {
-  "binding": "c29852d1 docs/r1-combined-binding/binding.json (rev17 73aa701f)",
+  "binding": "a7704f9a docs/r1-combined-binding/binding.json (rev18 304657d9)",
   "samePathSet": false,
   "filesChangedVsPrevious": [
-   ".github/workflows/Smart-money.yml",
-   ".github/workflows/bot.yml",
-   ".github/workflows/ignition.yml",
-   ".github/workflows/leaders-study.yml",
-   ".github/workflows/main.yml",
-   ".github/workflows/movers.yml",
-   ".github/workflows/opportunity-radar.yml",
-   ".github/workflows/options-survey.yml",
-   ".github/workflows/r1-migrate.yml",
-   ".github/workflows/scorecard-1023.yml",
+   "docs/r1-sealed-provider-data/K2-KEY-SETUP.md",
    "docs/r1-sealed-provider-data/MANIFEST.md",
    "docs/r1-sealed-provider-data/README.md",
    "docs/r1-sealed-provider-data/RELEASE.md",
-   "sealed-migrate.mjs",
-   "sealed-store.mjs",
-   "test/sealed-migrate.test.mjs",
-   "test/sealed-release-rehearsal.test.mjs",
-   "test/sealed-wiring.test.mjs"
+   "test/sealed-migrate.test.mjs"
   ],
   "pathsAddedVsPrevious": [
-   "docs/r1-sealed-provider-data/K2-KEY-SETUP.md"
+   "docs/r1-sealed-provider-data/k2-key-tool.html",
+   "test/try-small-audit.test.mjs"
   ],
   "pathsRemovedVsPrevious": [],
-  "reason": "rev18: K2 dedicated data key R1_DATA_KEY; key format gate; owner guide; +1 path"
+  "reason": "rev19: K2 custody corrections, outside-runner key check tool, deterministic fixture; +2 paths"
  },
  "files": {
   ".gitattributes": {
@@ -140,28 +128,33 @@
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/K2-KEY-SETUP.md": {
-   "sha256": "619fd3ba8dc45e8ce5e30bbe8858406e682c254b0545ff21b3bd334432bccf5d",
-   "bytes": 2950,
+   "sha256": "730888a959444f907d82e34323c7f2dd94ef45b09e5bb7f196fb56ec195a1334",
+   "bytes": 4835,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/MANIFEST.md": {
-   "sha256": "16d5c5dc833c257d6b35400991c96547ed74a31261ceca226deb2eb9234e7d3e",
-   "bytes": 10568,
+   "sha256": "a12146ebcbc8fc50951214cc9972fc8fec316970b52ae02ebdfeaa4eedd6b74f",
+   "bytes": 10802,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/README.md": {
-   "sha256": "f60154f314d076a92290861021947030ae17dfc018bd279ce4240ee22780c81d",
-   "bytes": 47961,
+   "sha256": "5bd61a9c2be9b93728f86911cba9abd4cf5b00017497f01f732f9945e352dae8",
+   "bytes": 49172,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/RELEASE.md": {
-   "sha256": "a0423e3ac899fa134c84c92614e061f6839147927986073110a43b662d56d280",
-   "bytes": 17856,
+   "sha256": "7b62ad129278ece73d0170e8da1596ee427cdfaa7419e4a3bc74c97a8501d010",
+   "bytes": 18178,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/cost-projection.mjs": {
    "sha256": "c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2",
    "bytes": 3775,
+   "mode": "100644"
+  },
+  "docs/r1-sealed-provider-data/k2-key-tool.html": {
+   "sha256": "eae4d8f03fd4233d79a24ba8cf2bd90366224ae34ef53f5bf16295629bda2a3b",
+   "bytes": 6813,
    "mode": "100644"
   },
   "docs/r1-sealed-provider-data/t1-inventory.tsv": {
@@ -335,8 +328,8 @@
    "mode": "100644"
   },
   "test/sealed-migrate.test.mjs": {
-   "sha256": "84eb55be7df5ae4540929f717f69b97af0823f666a7a3aa50472ecbaafe1ea8f",
-   "bytes": 17862,
+   "sha256": "17a4354a6f1c30dd1daabf3daa6a7a91ea91a724246d83a8b308f81308413989",
+   "bytes": 18060,
    "mode": "100644"
   },
   "test/sealed-readers.test.mjs": {
@@ -377,6 +370,11 @@
   "test/stop-alert-validity.test.mjs": {
    "sha256": "746b5dd44ecdaf57d3dc057c37cd37ad4ff817c125fb8515b6d40d99ddd01f57",
    "bytes": 11672,
+   "mode": "100644"
+  },
+  "test/try-small-audit.test.mjs": {
+   "sha256": "cfd71b94906d0fbe37fda4bcdfa5e9ab542edf53d4f05a0a1a2b91805942dfd7",
+   "bytes": 15092,
    "mode": "100644"
   },
   "test/watcher-cadence-review.test.mjs": {
@@ -441,7 +439,7 @@
   }
  },
  "expectedUnitTrees": {
-  "774273205e1c8ce3db30c59ca368dc107617ef73": "e1d14386ac92d70bde4e0b1922846b405e1b32c0",
-  "6e72a8d0c46385f3c329157d627636875505a224": "f774f78f685b646552522d961cc11a50a98ba57e"
+  "774273205e1c8ce3db30c59ca368dc107617ef73": "b963b89a711e1a029e9b77353eb1b4509dc1a728",
+  "6e72a8d0c46385f3c329157d627636875505a224": "64da303113c9b64f83709419a3c69811ea268e9d"
  }
 }

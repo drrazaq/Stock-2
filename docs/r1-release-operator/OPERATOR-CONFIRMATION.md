@@ -1,6 +1,6 @@
 # R1 release: operator overlay O1, rev2 (review only; not approved, not executed)
 
-**Scope:** an operator overlay on Codex's `RELEASE-PROPOSAL.md` @ `ff587b508`, for exact unit `73aa701f`, binding `c29852d1`. The source and binding are unchanged.
+**Scope:** an operator overlay on Codex's `RELEASE-PROPOSAL.md` @ `ff587b508`, now pinned to exact unit **rev19 `72ff1f5bdf1ec747ccdaa6374515a3a238b2acae`**, binding `docs/r1-combined-binding/binding.json` on `claude/mentor-release-handoff` (identity refresh; rev17 `73aa701f`/`c29852d1` and rev18 `304657d9` superseded). Combined deployment remains **DEFERRED** by the owner. `r1-writer-gate.mjs` is byte-identical in rev17 and rev19, so the overlay gate and its tests are unchanged.
 - **Rev2:** corrects Codex's procedural review 6727767980 / 6727798225 / 6727863726 / 6727897764 (P1–P3). It supersedes rev1 (`93c8a4e4`), whose census JSON missed `main`'s save helper and `squad26-watch`'s internal push.
 - **Status:** nothing was dispatched, paused, pushed or changed.
 - **Attendance:** the owner's and Codex's (G7) attendance at the window and at every receipt is **UNCONFIRMED**. This document books none of it.
@@ -62,7 +62,7 @@
 |---|---|
 | Fresh precheck, record states, owner pauses the 14, drain, capture, both gates PASS | 17:15 / 20:15 |
 | `C` publication and complete CI receipt | 17:35 / 20:35 |
-| Backup proof (`backup-compare`; owner adds and then deletes `R1_BACKUP_CHECK`) | 17:50 / 20:50 |
+| Backup proof (rev19 B5b: one `key-check` dispatch; the owner checks the printed record off GitHub with the password-manager copy and, separately, the hand-typed paper copy, in `k2-key-tool.html` on a computer; both must PASS; no `R1_BACKUP_CHECK`) | 17:50 / 20:50 |
 | Migration plus independent proof | 18:20 / 21:20 |
 | Fresh capture, both gates PASS, owner Enable decision | 18:30 / 21:30 |
 | Reserved recovery / first bot observation | 19:00 / 22:00 |
@@ -84,8 +84,8 @@ No receipt appointment is booked by this document. Each needs confirmed attendan
 
 ## 6. Confirmed as written in the proposal
 
-- **Job limits:** Tests 10 min; key-check and backup-compare 5; migrate 15; bot 350; main 300; ignition 360. Capture age ≤ 10 min.
+- **Job limits:** Tests 10 min; key-check 5 (`backup-compare` is no longer used); migrate 15; bot 350; main 300; ignition 360. Capture age ≤ 10 min.
 - **The 10 writers** equal RELEASE B2.
-- **Dispatches:** 2 (B5b route (a) + B6), with one R-0 at most.
+- **Dispatches:** 2 (B5b `key-check` + B6), with one R-0 at most.
 - **Key mappings:** SEALED_SECRET 21; `PRIVATE_KEY` 7 on M0.
 - **Unchanged rules:** the receipt rule, the rollback/UNKNOWN rules and the $0 constraints.

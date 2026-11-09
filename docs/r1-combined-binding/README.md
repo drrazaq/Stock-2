@@ -1,16 +1,37 @@
-# R1 combined-unit binding, rev18 (review only; NOT approved, NOT deployed)
+# R1 combined-unit binding, rev19 (review only; NOT approved, NOT deployed)
 
-This folder binds the **77-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
+This folder binds the **79-path combined release unit**: R1 + the reviewed calendar/watcher composition + open-check r2.
 
 | Item | Value |
 |---|---|
-| Candidate (pinned in `binding.json`; never push or merge this branch) | `304657d93c0fd10974781712553a282f28294bca` on `claude/composed-r1-opencheck-calendar-watcher` |
-| Historical R1 base (allowlist = diff from it) | `b0d76987` → **77 paths** (rev14 added 4, rev15 1, rev16 2, rev17 1, rev18 1; see below) |
+| Candidate (pinned in `binding.json`; never push or merge this branch) | `72ff1f5bdf1ec747ccdaa6374515a3a238b2acae` on `claude/composed-r1-opencheck-calendar-watcher` |
+| Historical R1 base (allowlist = diff from it) | `b0d76987` → **79 paths** (rev14 added 4, rev15 1, rev16 2, rev17 1, rev18 1, rev19 2; see below) |
 | `source.patch` / `inverse.patch` | against main `7742732`; hashes in `SHA256SUMS` and in `binding.json` |
-| Unit tree, `M0` = `7742732` | `e1d14386ac92d70bde4e0b1922846b405e1b32c0` (= main + `source.patch`) |
-| Unit tree, `M0` = current main `6e72a8d0` | `f774f78f685b646552522d961cc11a50a98ba57e` |
+| Unit tree, `M0` = `7742732` | `b963b89a711e1a029e9b77353eb1b4509dc1a728` (= main + `source.patch`) |
+| Unit tree, `M0` = current main `6e72a8d0` | `64da303113c9b64f83709419a3c69811ea268e9d` |
 
-## Rev18: what changed (owner decision 9 Nov: K2 dedicated data key; combined deployment DEFERRED)
+## Rev19: what changed (Codex 6733228697; combined deployment still DEFERRED)
+
+- **Custody guide (`K2-KEY-SETUP.md`):**
+  - The format check proves form only (not randomness, and not a correct copy).
+  - The secret is case-sensitive.
+  - No retry after FAIL.
+  - Only verified generation routes are listed; the unverified PowerShell route is removed.
+- **B5b:** the `key-check` record is verified OUTSIDE the runner with each independent copy, using the offline `k2-key-tool.html` (+1 path).
+  - Evidence: `docs/r1-k2-custody-evidence/`, headless Chromium 11/11 against records from the real `sealed-migrate.mjs`, with no network.
+  - `backup-compare` is no longer the proof.
+- **iPhone-only route: NOT verified** (no Safari/WebKit here; no reviewed way to run the page on an iPhone).
+- **Fixture:** deterministic exchange-session `test/try-small-audit.test.mjs` from development `b9753abb2` (+1 path). It passes at 2026-11-09 04:30Z and 2026-12-28 04:30Z, where the old fixture failed.
+- **Changed vs rev18:** K2-KEY-SETUP, MANIFEST, README, RELEASE, `test/sealed-migrate.test.mjs` (case-sensitivity assertion), plus the 2 added paths. Runtime code is unchanged.
+- **Complete inventory: 163/163 files.** 162 root files with 1,562/1,562 tests, plus `tests/instrument-type` 9/9. Gated 9/9 and 11/11.
+- **Checks:**
+  - Precheck 79/0/0.
+  - Build + verify PASS on `7742732` (`b963b89a…`) and `6e72a8d0` (`64da3031…`).
+  - Refused: rev18 `304657d9`, and the rev18 binding with rev19.
+  - STOP pins: 8 of 17 changed (the same set).
+- **Operator overlay** `OPERATOR-CONFIRMATION.md`: identities refreshed, and the B5b row is now `key-check`. `r1-writer-gate.mjs` is byte-identical, so the overlay gate is unchanged.
+
+## Rev18 (history): what changed (owner decision 9 Nov: K2 dedicated data key; combined deployment DEFERRED)
 
 - **Key wiring:** all 21 `SEALED_SECRET` mappings read `secrets.R1_DATA_KEY`. `PRIVATE_KEY` keeps exactly its 7 pre-R1 uses (equal to main). No existing credential is changed.
 - **`sealed-migrate.mjs`:** `--apply`, `--key-check-make` and `--backup-compare` refuse a key that is not 64 hex characters (`SEALED_KEY_FORMAT`) before changing anything. `sealed-store.mjs` changes by one comment line only.
