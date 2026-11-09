@@ -120,8 +120,11 @@ A bot job's head, its green status, or a data commit made after the push does **
 
 ### Rollback limits (verified with the actual old and new code)
 
-- **R-A, calendar units (up to 6 days).**
-  - After a revert, once the **old** calendar job runs on a file the new job wrote, it keeps the new-layout rows until its provider refresh (up to 6 days).
+- **R-A, calendar units (no guaranteed time bound; corrected per Codex 6734009022).**
+  - After a revert, once the **old** calendar job runs on a file the new job wrote, it carries the new-layout rows forward (`calendar.mjs` of main `6e72a8d0`, lines 71–73, 125, 128–130).
+  - They are replaced **only by a successful TipRanks refresh**, which needs all of: `TIPRANKS_KEY` present, the 6-day interval elapsed since the last success, at least 20 calls left that month, and a reply that parses. If any fails (no key, budget skip, error), the old rows are kept again.
+  - Otherwise each affected row drops out only **3 days after its own event date**. Rows for scheduled releases further ahead can therefore persist for weeks.
+  - **"6 days" is the nominal refresh interval, not a repair deadline.** Whether the exposure has ended is shown only by `data/calendar-status.json` reporting a TipRanks `ok:` refresh after the revert, or by every affected row's event date being more than 3 days past.
   - The old message then shows some figures **without units**: "Jobs report: forecast 40, previous 29" for 40K / 29K, and CPI "0.3" for 0.3%.
   - Nothing crashes. No procedural boundary avoids this without changing data or code, so it needs the owner's **explicit acceptance** before approval. The alternative is a separately reviewed forward-compatibility change, which is not in this package.
   - **No bounded compatibility change exists inside this package.** The new scanner itself reads the legacy `fc` / `act` / `kind` fields of the new rows (`scan.mjs`), so the writer cannot stop emitting them without also changing the reader; and the old job's unit-less copy happens in the **old** `calendar.mjs`, which a revert restores. R-A therefore remains an owner decision: accept it, or ask for a separately reviewed change.
@@ -143,5 +146,5 @@ A bot job's head, its green status, or a data commit made after the push does **
 2. Build `C` on the then-current main, verify it, then make one fast-forward source-only push.
 3. Check the Tests run on `C`.
 4. No pause is required. The running bot job may load `C` at a later loop iteration (no time promised; see qualifications). Watcher and scan jobs use it from their next run.
-5. **Rollback:** `git revert C`, or `inverse.patch`, at any time (R-B is closed in rev3). The tree returns byte-identical on the 27 paths and data saved since is kept, subject to limit R-A, which needs explicit owner acceptance.
+5. **Rollback:** `git revert C`, or `inverse.patch`, at any time (R-B is closed in rev3). The tree returns byte-identical on the 27 paths and data saved since is kept, subject to limit R-A (no guaranteed time bound), which needs explicit owner acceptance.
 6. **First observations** (each needs the loaded-code evidence above, otherwise UNKNOWN): the next bot run, the next intraday market-hours check, the next watcher day (14:10 UTC on a weekday) and the next calendar refresh.
