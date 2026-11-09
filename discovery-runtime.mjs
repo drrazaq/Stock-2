@@ -33,7 +33,7 @@ export function assessmentSourceStatus(signals,cutoff){
  if(!clock(cutoff))throw Error('INVALID_ASSESSMENT_CUTOFF');
  const now=Date.parse(cutoff),session=signals?.session||null,lag=closeLagSessions(session,now);
  return {session,expectedCompletedSession:latestCompletedSession(now),completedSessionLag:lag,
-  status:lag===null?'UNKNOWN':lag<0?'FUTURE_SOURCE':lag===0?'LATEST_COMPLETED_CLOSE_REFERENCE':'STALE_COMPLETED_CLOSE_REFERENCE',
+  status:clock(signals?.generatedAt)&&Date.parse(signals.generatedAt)>now?'UNKNOWN_FUTURE_OUTPUT_CLOCK':lag===null?'UNKNOWN':lag<0?'FUTURE_SOURCE':lag===0?'LATEST_COMPLETED_CLOSE_REFERENCE':'STALE_COMPLETED_CLOSE_REFERENCE',
   generatedAt:signals?.generatedAt||null,generatedClock:!clock(signals?.generatedAt)?'UNKNOWN':Date.parse(signals.generatedAt)>now?'FUTURE':'DATED_OUTPUT_NOT_QUOTE_RECEIPT',
   executableQuote:'UNKNOWN',intradayInvocation:'NOT_ESTABLISHED_BY_DAILY_OUTPUT'};
 }
