@@ -46,8 +46,12 @@ If choosing acceptance, use the reviewed wording:
 
 The alternative is to defer deployment pending a separately reviewed compatibility correction. Neither choice suspends research or R1 protection work.
 
+## Read-only main drift observation
+
+Subsequent main **3ebf21b53e7986ce0482c579278d98895f9d8703** changed only five research-data files relative to the bound parent; none of the 28 source paths drifted. The eventual C must preserve them and every further intervening change. This observation does not replace the fresh check required at the actual approved window.
+
 ## Only decisions requiring the owner
 
 After final review and validation pass: choose R-A acceptance or deferral; approve/defer this exact combined unit and bounded forward/conditional inverse scope; confirm an attended window and existing $0 spending control. Claude and Codex independently confirm their own roles/availability. No research acquisition, R1/K2 key setup, provider rights or trading decision is bundled into this approval.
 
-**Current disposition:** proposal prepared for independent review; final composition verdict and full receipts must be recorded before an approval request is presented. No deployment or production change has occurred.
+**Current disposition:** complete technical validation PASS: combined158/158, development316/316, actual combined watcher20/20, prior freshness/retry/multipart15/15, Python9/9, syntax215, binding/build/inverse/data preservation. Final independent combined-source/procedure verdict is still pending; no owner approval request is presented until it passes. No deployment or production change has occurred.

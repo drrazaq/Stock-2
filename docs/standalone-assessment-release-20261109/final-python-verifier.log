@@ -1,0 +1,33 @@
+.F
+======================================================================
+FAIL: test_new_evidence_roundtrip_and_repeat_preserve_first_logs (test_incident_verifier_evidence.IncidentVerifierEvidenceTests.test_new_evidence_roundtrip_and_repeat_preserve_first_logs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/g2-verification/engineering-a497/tests/test_incident_verifier_evidence.py", line 50, in test_new_evidence_roundtrip_and_repeat_preserve_first_logs
+    self.assertEqual(first.returncode, 0, first.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Traceback (most recent call last):
+  File "/tmp/tmpvekywb1g/repo/tools/verify-incident-production-package.py", line 36, in <module>
+    result=subprocess.run(['node',str(file)],cwd=root,env=env,text=True,stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=180)
+  File "/usr/lib/python3.13/subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/subprocess.py", line 1972, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+FileNotFoundError: [Errno 2] No such file or directory: 'node'
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.299s
+
+FAILED (failures=1)

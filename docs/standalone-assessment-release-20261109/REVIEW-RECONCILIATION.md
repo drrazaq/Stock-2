@@ -22,6 +22,12 @@ Four three-way contexts were resolved explicitly in `composition-resolutions.jso
 
 ## Validation status
 
-Complete final-source validation PASSED 158/158 files on d52499c4, with gated watcher20/20, unchanged actual-send/retry/multipart15/15 and215 root/tool syntax checks. Receipts are attached. The final development316-file run remains in progress; no completed verdict claimed for it. A first final-source attempt had two missing sparse-checkout dependencies after switching source; it remains in `first-final-run-failed.json`. Exact tracked local fixtures were restored from final HEAD, contents not published. Corrected holdings targeted 11/11 passed. Prior 50c candidate validation is preserved, not relabelled as final.
+Complete final-source validation PASSED 158/158 files on d52499c4, with gated watcher20/20, unchanged actual-send/retry/multipart15/15 and215 root/tool syntax checks. Receipts are attached. The final development inventory also PASSED316/316 on exact a0f51bc52, single frozen-source run; full-development-receipt.json and compressed original logs are included. No targeted/composed substitution remains. A first final-source attempt had two missing sparse-checkout dependencies after switching source; it remains in `first-final-run-failed.json`. Exact tracked local fixtures were restored from final HEAD, contents not published. Corrected holdings targeted 11/11 passed. Prior 50c candidate validation is preserved, not relabelled as final.
 
 Build/check passes: 28 fingerprints/modes/bytes, sole main parent, source-only tree, exact inverse and preservation of all 537 tracked data blobs. STOP's same four changed paths are repinned. No live atomic-push probe is needed: this unit is a single-ref fast-forward source push, with no encrypted-data migration or multi-ref publication. It makes no claim about R1 atomic-push capability.
+
+
+Final required Python checks: repository7/7 and incident-verifier2/2 PASS. The first verifier invocation used a PATH without Node and failed; the original log is retained. Rerun with the actual Node20 path passed without code or assertion changes. This was a harness invocation correction, not a waived test.
+
+
+**Remaining review dependency:** Claude has not yet posted the final corrected combined-source/procedure verdict. Prior source findings are addressed and technical validation is complete; this is not a claim of independent composition PASS. Owner approval is not requested while that verdict is absent.
