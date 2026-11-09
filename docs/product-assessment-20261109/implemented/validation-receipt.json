@@ -1,0 +1,55 @@
+{
+  "status": "PASS_COMPOSED_INVENTORY_NOT_SINGLE_RUN",
+  "finalSource": "e773756888d00ffee827bcb6a00ea6a904c57374",
+  "runtimeSource": "3cef3ddbc297942c13a188c4fb2e495275440e47",
+  "registeredNodeFiles": 316,
+  "originalRun": {
+    "pass": 310,
+    "failed": 6,
+    "receipt": "full-node-original-receipt.json"
+  },
+  "exactFinalSourceRerun": {
+    "files": [
+      "test/a-worker-lifetime.test.mjs",
+      "test/a-first-capture-package.test.mjs",
+      "test/a-n-bc-package.test.mjs",
+      "test/a-native-importer-package.test.mjs",
+      "test/a-native-source-package.test.mjs",
+      "test/a-fenced-recovery.test.mjs",
+      "test/review-ad3837-package.test.mjs",
+      "test/assessment-context.test.mjs",
+      "test/comeback-core.test.mjs",
+      "test/ig1-entry-evidence.test.mjs",
+      "test/mentor-plan.test.mjs",
+      "test/private-data.test.mjs",
+      "test/s1-connector-verifier.test.mjs"
+    ],
+    "testCases": 133,
+    "failed": 0,
+    "log": "implementation-exact-e773.log"
+  },
+  "allOriginalFailuresRerunAndPassed": true,
+  "allNodeTestFileHashesUnchanged": true,
+  "finalDeltaOnly": [
+    "docs/a-first-capture-continuation/manifest.json",
+    "test/helper-a-worker-lifetime.py"
+  ],
+  "affectedDependencyConsumersRerun": [
+    "test/a-worker-lifetime.test.mjs",
+    "test/a-first-capture-package.test.mjs"
+  ],
+  "restoredLocalDependencies": "restored-fixtures.json",
+  "gatedActualWatcher": {
+    "pass": 20,
+    "profile": "development-full"
+  },
+  "requiredPython": {
+    "pass": 9
+  },
+  "notOneSingleFinalCommit316Run": true,
+  "originalRunFreezeQualification": "Original HEAD/runtime stayed 3cef throughout. After 315 files finished, test helper was corrected locally while the last unrelated native-sec host file finished. Therefore do not interpret original receipt execution wording as a whole-worktree freeze. Final exact-commit rerun covers helper and changed manifest, all former failures and assessment regression; all Node test file bytes and every runtime file are unchanged.",
+  "noWaivedFailure": true,
+  "externalRequests": 0,
+  "profitabilityEvidence": false,
+  "independentReview": "PENDING Claude focused S1/L1 + bounded helper review requested6736193308"
+}

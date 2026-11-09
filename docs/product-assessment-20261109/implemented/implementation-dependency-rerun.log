@@ -1,0 +1,263 @@
+TAP version 13
+# Subtest: stopped actual writer is killed within its existing bound; intent/loss/lock survive explicit recovery
+ok 1 - stopped actual writer is killed within its existing bound; intent/loss/lock survive explicit recovery
+  ---
+  duration_ms: 15831.99846
+  ...
+# Subtest: eligibility: a strong forward record comes back; a weak one fades; a short one is too early
+ok 2 - eligibility: a strong forward record comes back; a weak one fades; a short one is too early
+  ---
+  duration_ms: 7.952972
+  ...
+# Subtest: eligibility: every gate is needed (SPY, the average stock, 10 days, the halves)
+ok 3 - eligibility: every gate is needed (SPY, the average stock, 10 days, the halves)
+  ---
+  duration_ms: 5.284652
+  ...
+# Subtest: Bonferroni bar: max(2.5, one-sided z for 0.05 / rules with 30+ forward trades)
+ok 4 - Bonferroni bar: max(2.5, one-sided z for 0.05 / rules with 30+ forward trades)
+  ---
+  duration_ms: 113.614309
+  ...
+# Subtest: after-freeze filter: only signals dated after the rule's own frozenAt count
+ok 5 - after-freeze filter: only signals dated after the rule's own frozenAt count
+  ---
+  duration_ms: 5.893196
+  ...
+# Subtest: near-copies of a live rule (scan.mjs TRY_DUPLICATE), paused rules, baskets, options, intraday and live rules never come back
+ok 6 - near-copies of a live rule (scan.mjs TRY_DUPLICATE), paused rules, baskets, options, intraday and live rules never come back
+  ---
+  duration_ms: 31.229254
+  ...
+# Subtest: format: board fields, comeback-lab.json passes scan.mjs tryQualifies, comeback-today.json copies the rule's own signals
+ok 7 - format: board fields, comeback-lab.json passes scan.mjs tryQualifies, comeback-today.json copies the rule's own signals
+  ---
+  duration_ms: 98.810311
+  ...
+# Subtest: scoreboard section, bot text and the library entry
+ok 8 - scoreboard section, bot text and the library entry
+  ---
+  duration_ms: 104.804869
+  ...
+# Subtest: cosmetics and the +300% cap: the bar sentence before any rule has 30 trades; a +900% trade counts as +300%
+ok 9 - cosmetics and the +300% cap: the bar sentence before any rule has 30 trades; a +900% trade counts as +300%
+  ---
+  duration_ms: 0.994946
+  ...
+# Subtest: decoded and expert paper lanes record the average stock (capped +300%) on every resolved trade
+ok 10 - decoded and expert paper lanes record the average stock (capped +300%) on every resolved trade
+  ---
+  duration_ms: 0.709616
+  ...
+# Subtest: first regular quote is fixed before size/price: later favorable quote cannot rescue tiny first size
+ok 11 - first regular quote is fixed before size/price: later favorable quote cannot rescue tiny first size
+  ---
+  duration_ms: 2.274098
+  ...
+# Subtest: unobserved/partial/ambiguous quotes are inconclusive, never negative trading proof
+ok 12 - unobserved/partial/ambiguous quotes are inconclusive, never negative trading proof
+  ---
+  duration_ms: 0.868244
+  ...
+# Subtest: no approval or expired window opens no private context; refusal stops without retry
+ok 13 - no approval or expired window opens no private context; refusal stops without retry
+  ---
+  duration_ms: 39.067923
+  ...
+# Subtest: three synthetic responses traverse actual sealed journal and recover the same entry-only result
+ok 14 - three synthetic responses traverse actual sealed journal and recover the same entry-only result
+  ---
+  duration_ms: 31.232238
+  ...
+# Subtest: Friday signal maps across DST to Monday; entry is next-open only, never a live quote
+ok 15 - Friday signal maps across DST to Monday; entry is next-open only, never a live quote
+  ---
+  duration_ms: 2.886679
+  ...
+# Subtest: recorded plan counts buy day once; no stop loss cap or guaranteed fill is manufactured
+ok 16 - recorded plan counts buy day once; no stop loss cap or guaranteed fill is manufactured
+  ---
+  duration_ms: 24.220782
+  ...
+# Subtest: late recorded entry is qualified, not erased or represented as tested next-open execution
+ok 17 - late recorded entry is qualified, not erased or represented as tested next-open execution
+  ---
+  duration_ms: 1.605263
+  ...
+# Subtest: unknown calendar, source, malformed quantities and altered targets remain unresolved
+ok 18 - unknown calendar, source, malformed quantities and altered targets remain unresolved
+  ---
+  duration_ms: 14.47868
+  ...
+# Subtest: time-exit due/passed distinctions and holidays use the bounded calendar
+ok 19 - time-exit due/passed distinctions and holidays use the bounded calendar
+  ---
+  duration_ms: 3.701222
+  ...
+# Telegram: 1 message(s) read
+# Subtest: actual mentor command is read-only for positions, private accounting and strategy ledger; no provider requests
+ok 20 - actual mentor command is read-only for positions, private accounting and strategy ledger; no provider requests
+  ---
+  duration_ms: 144.206475
+  ...
+# Subtest: actual caller rejects conflicting producer dates without generating a source plan
+ok 21 - actual caller rejects conflicting producer dates without generating a source plan
+  ---
+  duration_ms: 74.080444
+  ...
+# Subtest: chosen contract retains frozen registration and negative adoption/evidence
+ok 22 - chosen contract retains frozen registration and negative adoption/evidence
+  ---
+  duration_ms: 11.046392
+  ...
+# Subtest: saved source contract survives producer replacement; tampering and changed specification stay unknown
+ok 23 - saved source contract survives producer replacement; tampering and changed specification stay unknown
+  ---
+  duration_ms: 1.412683
+  ...
+# Subtest: actual existing holding never borrows a newer producer signal as its original plan
+ok 24 - actual existing holding never borrows a newer producer signal as its original plan
+  ---
+  duration_ms: 36.527536
+  ...
+# Telegram: 1 message(s) read
+# Telegram: 1 message(s) read
+# Subtest: actual owner fill archives the source contract; later mentor does not replace it or mutate financial state
+ok 25 - actual owner fill archives the source contract; later mentor does not replace it or mutate financial state
+  ---
+  duration_ms: 99.661014
+  ...
+# Subtest: actual New York opening expiry across DST: 2026-10-30
+ok 26 - actual New York opening expiry across DST: 2026-10-30
+  ---
+  duration_ms: 1.52371
+  ...
+# Subtest: actual New York opening expiry across DST: 2026-11-02
+ok 27 - actual New York opening expiry across DST: 2026-11-02
+  ---
+  duration_ms: 0.800103
+  ...
+# Subtest: base fixed-hold exit and unadopted target overlay remain distinct and never actionable
+ok 28 - base fixed-hold exit and unadopted target overlay remain distinct and never actionable
+  ---
+  duration_ms: 1.604882
+  ...
+# Subtest: contradictory or unsupported plan is visibly unresolved {"src":"quick"}
+ok 29 - contradictory or unsupported plan is visibly unresolved {"src":"quick"}
+  ---
+  duration_ms: 0.258819
+  ...
+# Subtest: contradictory or unsupported plan is visibly unresolved {"target":150}
+ok 30 - contradictory or unsupported plan is visibly unresolved {"target":150}
+  ---
+  duration_ms: 1.471091
+  ...
+# Subtest: contradictory or unsupported plan is visibly unresolved {"stop":90}
+ok 31 - contradictory or unsupported plan is visibly unresolved {"stop":90}
+  ---
+  duration_ms: 1.495517
+  ...
+# Subtest: contradictory or unsupported plan is visibly unresolved {"ldHold":5}
+ok 32 - contradictory or unsupported plan is visibly unresolved {"ldHold":5}
+  ---
+  duration_ms: 0.474513
+  ...
+# Subtest: contradictory or unsupported plan is visibly unresolved {"entry":null}
+ok 33 - contradictory or unsupported plan is visibly unresolved {"entry":null}
+  ---
+  duration_ms: 1.193574
+  ...
+# Subtest: contradictory or unsupported plan is visibly unresolved {"boughtSession":null}
+ok 34 - contradictory or unsupported plan is visibly unresolved {"boughtSession":null}
+  ---
+  duration_ms: 0.362655
+  ...
+# Subtest: published examples are reproducible from synthetic inputs, with no actionable plan
+ok 35 - published examples are reproducible from synthetic inputs, with no actionable plan
+  ---
+  duration_ms: 28.957541
+  ...
+# Subtest: no token and no address: every mode does nothing; check and pull report failure, mirror does not
+ok 36 - no token and no address: every mode does nothing; check and pull report failure, mirror does not
+  ---
+  duration_ms: 168.896175
+  ...
+# Subtest: mirror waits for the owner's connection check: nothing is copied before it
+ok 37 - mirror waits for the owner's connection check: nothing is copied before it
+  ---
+  duration_ms: 318.94434
+  ...
+# Subtest: check: reads, writes, copies every private file that exists, reads it back identical; prints names and counts, never contents
+ok 38 - check: reads, writes, copies every private file that exists, reads it back identical; prints names and counts, never contents
+  ---
+  duration_ms: 140.834297
+  ...
+# Subtest: mirror after the check: a change is copied once; an unchanged state makes no commit
+ok 39 - mirror after the check: a change is copied once; an unchanged state makes no commit
+  ---
+  duration_ms: 241.564993
+  ...
+# Subtest: the token never reaches the output or the disk (it travels in the environment only)
+ok 40 - the token never reaches the output or the disk (it travels in the environment only)
+  ---
+  duration_ms: 133.101024
+  ...
+# Subtest: pull: private copies replace the public ones; with no positions file in the private repository it stops (exit 1)
+ok 41 - pull: private copies replace the public ones; with no positions file in the private repository it stops (exit 1)
+  ---
+  duration_ms: 170.71481
+  ...
+# Subtest: push: a bought/sold/halal change is saved; on a conflict the bot's newer positions are kept (save-data.sh rule)
+ok 42 - push: a bought/sold/halal change is saved; on a conflict the bot's newer positions are kept (save-data.sh rule)
+  ---
+  duration_ms: 314.718113
+  ...
+# Subtest: the website workflow publishes index.html only (nothing from data/)
+ok 43 - the website workflow publishes index.html only (nothing from data/)
+  ---
+  duration_ms: 0.330807
+  ...
+# Subtest: every private file in the list exists today or is a ledger created later; the list holds no public research files
+ok 44 - every private file in the list exists today or is a ledger created later; the list holds no public research files
+  ---
+  duration_ms: 0.553392
+  ...
+# Subtest: exact original14 byte fingerprints pass payload only; owner-reported Actions never becomes API proof
+ok 45 - exact original14 byte fingerprints pass payload only; owner-reported Actions never becomes API proof
+  ---
+  duration_ms: 16.409101
+  ...
+# Subtest: empty or wrong repository cannot pass
+ok 46 - empty or wrong repository cannot pass
+  ---
+  duration_ms: 3.073339
+  ...
+# Subtest: unexpected private/workflow/symlink paths rejected before any blob can be requested
+ok 47 - unexpected private/workflow/symlink paths rejected before any blob can be requested
+  ---
+  duration_ms: 6.653109
+  ...
+# Subtest: missing duplicate truncated or mismatched-ref evidence is refused
+ok 48 - missing duplicate truncated or mismatched-ref evidence is refused
+  ---
+  duration_ms: 5.967358
+  ...
+# Subtest: byte changes and noncanonical blobs are refused; no newline normalization
+ok 49 - byte changes and noncanonical blobs are refused; no newline normalization
+  ---
+  duration_ms: 4.245139
+  ...
+# Subtest: tool-decoded UTF8 bridge preserves exact bytes or fails the pinned fingerprint
+ok 50 - tool-decoded UTF8 bridge preserves exact bytes or fails the pinned fingerprint
+  ---
+  duration_ms: 3.303195
+  ...
+1..50
+# tests 50
+# suites 0
+# pass 50
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 15909.820507
