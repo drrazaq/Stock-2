@@ -1,7 +1,7 @@
 # Current five-correction checkpoint — 9 November 2026
 
 Exact corrected source: **5ba1606d5d6c981d913006396f24a56fb46d686b** on codex/discovery-assessment-continuation-20261109.
-**Exact-commit validation PENDING:** existing Tests run42701026958/job129445452513. Required inventory/Python, inactiveV2 and explicit gated steps have passed; complete318-file regression is still running. No final PASS is claimed.
+**Complete exact-commit validation PASS:** existing Tests run42701026958/job129445452513 completed SUCCESS21:54:20UTC, Node20.20.2, all318/318files (232root+86nested), Python7+2, explicit gated11+9 and inactiveV2 checks. Full1,431,970-character hosted log inspected;0missing/0unexpected/0failed. [Receipt](5ba1606d-complete-validation.json). No timeout extension, assertion waiver, workflow dispatch or rerun. This is validation, not independent source acceptance or operational READY.
 Claude's focused acceptance remains distinct from this validation receipt. Passed release d52499c454d2cdf472993e696d3a2ba8f4f77ef3 / 28-path binding 1a799a15b06ce6e36c466a37702ba72830552fc9972d8ebd3a96311425da2dd4 is unchanged and excludes this follow-on.
 
 ## Five review findings
@@ -29,7 +29,6 @@ Existing2375/3000 exact held CIK associations leave625unmatched and9multi-label 
 Current BBO, ZAD and original exact-rule entry/exit/no-fill chains remain missing. Synthetic test outcomes are never trading performance.1000-dollar whole shares and3dollars each executed side remain fixed; losses/no-fills/missing outcomes stay distinct.
 
 ## Remaining dependencies and owner decisions
-1. Terminal complete hosted-log reconciliation for exact5ba1606d (all318 Node files plus applicable Python/gated checks).
-2. Claude focused source/package acceptance and separate scheduling-amendment review.
-3. Instrument/class, current BBO/ZAD and authentic rule-linked outcome evidence before further trading conclusions.
+1. Claude focused source/package acceptance against validated5ba1606d and separate scheduling-amendment review.
+2. Instrument/class, current BBO/ZAD and authentic rule-linked outcome evidence before further trading conclusions.
 No deployment, acquisition, workflow dispatch/rerun/cancellation, key, spending, permission or production change. No new owner setup decision is requested before the focused review.
