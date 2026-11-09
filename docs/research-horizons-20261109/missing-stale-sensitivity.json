@@ -1,0 +1,110 @@
+{
+  "kind": "MISSING_STALE_WHOLE_SHARE_SENSITIVITY_NOT_NEW_ARM",
+  "input": "docs/recommendation-audit-20261108/ra-c2/final/retained-diagnostics.json",
+  "sha256": "55f5a6b486370ebbf55af96d2308f26c510b5f6d38554d5d425399846909e647",
+  "missingIds": [
+    "2026-10-22|MACIU|IG1",
+    "2026-10-22|XCUR|IG1"
+  ],
+  "unitUSD": 1000,
+  "feePerExecutedSideUSD": 3,
+  "viewsUnchanged": true,
+  "missingRowsImputed": false,
+  "ruleChanges": false,
+  "interpretation": "If the unknown pair mean is below the lower threshold, rejecting all23 helps this extended model; above the upper threshold it harms; between depends on retained intervals. No feasible return bound excludes either result. This is not full102 or all31age-fail effect, executable performance, new trading threshold or fill claim.",
+  "views": {
+    "legacy_base": {
+      "knownRejects": 21,
+      "missingStaleLabels": 2,
+      "knownNetReturnSum": [
+        "-0.6646523828750001",
+        "-0.65240105608759998"
+      ],
+      "requiredMissingPairMeanNetReturnForFull23Zero": [
+        "0.32620052804379999",
+        "0.33232619143750005"
+      ],
+      "requiredMeanPct": [
+        "32.62005280437999900",
+        "33.23261914375000500"
+      ],
+      "fixed53GateEffectAtSymbolicMissingMeanM": {
+        "interceptInterval": [
+          "0.012309453888445282641509433962264151",
+          "0.012540610997641511320754716981132075"
+        ],
+        "minusCoefficientTimesM": "0.037735849056603773584905660377358491"
+      }
+    },
+    "legacy_existing_stress": {
+      "knownRejects": 21,
+      "missingStaleLabels": 2,
+      "knownNetReturnSum": [
+        "-0.83397718375000008",
+        "-0.82016512803859998"
+      ],
+      "requiredMissingPairMeanNetReturnForFull23Zero": [
+        "0.41008256401929999",
+        "0.41698859187500004"
+      ],
+      "requiredMeanPct": [
+        "41.00825640192999900",
+        "41.69885918750000400"
+      ],
+      "fixed53GateEffectAtSymbolicMissingMeanM": {
+        "interceptInterval": [
+          "0.015474813736577358113207547169811321",
+          "0.015735418561320756226415094339622642"
+        ],
+        "minusCoefficientTimesM": "0.037735849056603773584905660377358491"
+      }
+    },
+    "legacy_plus_2pct_each_way": {
+      "knownRejects": 21,
+      "missingStaleLabels": 2,
+      "knownNetReturnSum": [
+        "-1.47730108483052928",
+        "-1.45509236926731048"
+      ],
+      "requiredMissingPairMeanNetReturnForFull23Zero": [
+        "0.72754618463365524",
+        "0.73865054241526464"
+      ],
+      "requiredMeanPct": [
+        "72.75461846336552400",
+        "73.86505424152646400"
+      ],
+      "fixed53GateEffectAtSymbolicMissingMeanM": {
+        "interceptInterval": [
+          "0.027454573005043593962264150943396226",
+          "0.027873605374160929811320754716981132"
+        ],
+        "minusCoefficientTimesM": "0.037735849056603773584905660377358491"
+      }
+    },
+    "legacy_existing_stress_plus_2pct_each_way": {
+      "knownRejects": 21,
+      "missingStaleLabels": 2,
+      "knownNetReturnSum": [
+        "-1.64668691258752926",
+        "-1.62275723563943052"
+      ],
+      "requiredMissingPairMeanNetReturnForFull23Zero": [
+        "0.81137861781971526",
+        "0.82334345629376463"
+      ],
+      "requiredMeanPct": [
+        "81.13786178197152600",
+        "82.33434562937646300"
+      ],
+      "fixed53GateEffectAtSymbolicMissingMeanM": {
+        "interceptInterval": [
+          "0.030618061049800575849056603773584906",
+          "0.031069564388443948301886792452830189"
+        ],
+        "minusCoefficientTimesM": "0.037735849056603773584905660377358491"
+      }
+    }
+  },
+  "terminal": "FULL23_AND_AUTHENTIC_GATE_EFFECT_INCONCLUSIVE"
+}
