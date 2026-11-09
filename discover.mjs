@@ -79,8 +79,15 @@ async function sec(url) {
   let r;
   try { r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } }); } catch (e) { if (!secNote) { secNote = 'SEC request failed: ' + e.message; console.log(secNote); } return null; }
   // If the SEC refuses, it may be because other jobs share this server's address. Wait a random few seconds and try again, up to three times.
-  for (let t = 0; t < 3 && !secNote && (r.status === 403 || r.status === 429); t++) { await sleep(FAST ? 0 : 3000 + Math.random() * 6000); try { r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } }); if (r.ok) console.log('SEC accepted the request on retry ' + (t + 1)); } catch (e) { break; } }
-  if (!r.ok) { if (!secNote) { secNote = 'SEC answered HTTP ' + r.status + ' for ' + url.split('/').slice(-2).join('/') + ' after 3 retries (the SEC is refusing this server; the Finnhub fallback is used instead)'; console.log(secNote); } return null; }
+  let tries = 0;
+  for (let t = 0; t < 3 && !secNote && (r.status === 403 || r.status === 429); t++) { tries++; await sleep(FAST ? 0 : 3000 + Math.random() * 6000); try { r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } }); if (r.ok) console.log('SEC accepted the request on retry ' + (t + 1)); } catch (e) { break; } }
+  // (6 Nov) the note states what the SEC actually answered: 404 = no such file (e.g. that quarter is not published), not a refusal; only 403/429
+  // are retried and described as refusal or rate limiting. The fallback behaviour is unchanged.
+  if (!r.ok) { if (!secNote) { const what = url.split('/').slice(-2).join('/'), fb = 'the Finnhub fallback is used instead';
+      secNote = r.status === 404 ? 'SEC answered HTTP 404 (not found) for ' + what + ': the SEC has no such file (for example that quarter is not published yet); not retried; ' + fb
+        : r.status === 403 || r.status === 429 ? 'SEC answered HTTP ' + r.status + ' for ' + what + ' after ' + tries + ' retr' + (tries === 1 ? 'y' : 'ies') + ' (the SEC is ' + (r.status === 429 ? 'rate-limiting' : 'refusing') + ' this server); ' + fb
+        : 'SEC answered HTTP ' + r.status + ' for ' + what + ' (not retried); ' + fb;
+      console.log(secNote); } return null; }
   return r.json().catch(() => null);
 }
 async function frame(taxonomy, tag, unit, period) {
