@@ -78,8 +78,9 @@ test('actual scanner definition binds parameters, exits and implementation versi
  }finally{process.chdir(root);}
 });
 test('newly recorded rows join only exact rule/version/evidence and never retrofit legacy identities',async()=>{
- const S=await loadScan();try{
- const x=input(),L=S.value('L'),v=L.BASE,definition=S.fn('scannerAssessmentRule')({v,tgt:null});
+ const x=input(),oldClock=Date.now;Date.now=()=>Date.parse(T);try{
+ const S=await loadScan({files:{'data/signals.json':x.signals,'data/earnings-recent.json':x.earnings,'data/events-recent.json':x.events,'data/quality.json':x.quality}});
+ const L=S.value('L'),v=L.BASE,definition=S.fn('scannerAssessmentRule')({v,tgt:null});
  x.signals.stocks[0]={sym:'AAA',state:'Buy watch',rule:L.ruleText(v),proven:false,assessmentRule:definition};
  const q=frozenAssessmentQueue(x),a=assessmentJournalRows(q).find(r=>r.symbol==='AAA');
  const out={assessmentId:a.id,evidenceVersion:a.evidenceVersion,ruleId:a.ruleId,ruleVersion:a.ruleVersion,horizon:a.horizon,status:'LOSS',economicBasis:'AUTHENTIC_EXECUTION',completeChain:true,controlVersion:'fixed-control-v1',reviewStatus:'INDEPENDENT_COMPLETE_CHAIN_REVIEWED',witnessId:'a'.repeat(64),netAfterCosts:-23};
@@ -91,9 +92,10 @@ test('newly recorded rows join only exact rule/version/evidence and never retrof
  const legacy={...a};delete legacy.ruleVersion;delete legacy.ruleIdentityState;delete legacy.ruleDefinition;
  const original=JSON.stringify(legacy);assert.equal(linkAssessmentOutcomes([legacy],[out])[0].netAfterCosts,null);assert.equal(JSON.stringify(legacy),original);
  const before=S.read('data/settings.json');S.write('data/signals.json',x.signals);S.write('data/discovery-journal.jsonl',assessmentCycleRows(q));
+ const replay=S.fn('researchAssessmentCycle')(x.signals);assert.equal(replay.queue.cycleKey,q.cycleKey);assert.equal(replay.queue.frozen,true);
  const text=S.fn('opportunitiesText')(x.signals,false);assert.match(text,/AAA \[INVESTIGATE \/ WAIT; rule NOT PROVEN/);
  assert.equal(S.read('data/settings.json'),before);
- }finally{process.chdir(root);}
+ }finally{Date.now=oldClock;process.chdir(root);}
 });
 
 test('binding rollout preserves the pinned legacy cycle until real versioned inputs arrive',()=>{
