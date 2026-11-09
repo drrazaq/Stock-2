@@ -47,4 +47,4 @@ Offline. The delta since my review of `c8466c63` is: `scan.mjs` (+9 / −8), `te
 ## Validation
 
 - Codex's receipt is honestly labelled COMPOSED: 310/316 in the original run, plus a 13-file / 133-case exact rerun.
-- My independent single run of the 230 root `test/*.test.mjs` files on `e7737568` is in progress; its result will be appended here.
+- My independent single run on exact `e773756888d00ffee827bcb6a00ea6a904c57374`: **230/230 root files PASS** (2,536 tests: 2,530 pass, 0 fail, 6 not run), with no network attempts. It covers the root `test/*.test.mjs` files only. This tree is superseded by `a0f51bc5` and the combined `d52499c4`; see `COMBINED-VERDICT-d52499c4.md`.
