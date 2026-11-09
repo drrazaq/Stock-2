@@ -1,0 +1,67 @@
+TAP version 13
+# OLD scan on NEW data, calendar command:
+# ECONOMIC CALENDAR (US, next 7 days, every release big and small; TipRanks, private)
+# - Tue 10 Nov, 16:30 Kuwait: Productivity and costs: forecast 2.5%, previous 1.4%
+# - Tue 10 Nov, 16:30 Kuwait: Jobless claims: forecast 195K, previous 195K
+# - Tue 10 Nov, 18:30 Kuwait: EIA Crude Oil Stocks Change: forecast n/a, previous n/a
+# - Wed 11 Nov, 16:30 Kuwait: Jobs report: forecast 40K, previous 29K
+# - Thu 12 Nov, 16:30 Kuwait: Inflation (CPI): forecast 0.3%, previous 0.2%
+# What goes up or down after each kind of surprise: the study runs on Sunday.
+# MARKET HOLIDAYS (2 weeks): none
+# YOUR STOCKS, EX-DIVIDEND (7 days): none
+# DECISION: no release has a tested effect yet (the study runs on Sunday), so normal rules apply. Big moves are covered by the market-shock alert and your stops.
+# Updated 2026-11-09 06:10 UTC. Not financial advice.
+# Subtest: rollback: NEW job data read by the OLD scan renders without errors or broken values
+ok 1 - rollback: NEW job data read by the OLD scan renders without errors or broken values
+  ---
+  duration_ms: 217.862676
+  ...
+# OLD job on NEW file -> OLD scan:
+# ECONOMIC CALENDAR (US, next 7 days, every release big and small; TipRanks, private)
+# - Tue 10 Nov, 16:30 Kuwait: Productivity and costs: forecast 2.5%, previous 1.4%
+# - Tue 10 Nov, 16:30 Kuwait: Jobless claims: forecast 195K, previous 195K
+# - Tue 10 Nov, 18:30 Kuwait: EIA Crude Oil Stocks Change: forecast n/a, previous n/a
+# - Wed 11 Nov, 16:30 Kuwait: Jobs report: forecast 40, previous 29
+# - Thu 12 Nov, 16:30 Kuwait: Inflation (CPI): forecast 0.3, previous 0.2
+# What goes up or down after each kind of surprise: the study runs on Sunday.
+# MARKET HOLIDAYS (2 weeks): none
+# YOUR STOCKS, EX-DIVIDEND (7 days): none
+# DECISION: no release has a tested effect yet (the study runs on Sunday), so normal rules apply. Big moves are covered by the market-shock alert and your stops.
+# Updated 2026-11-09 06:10 UTC. Not financial advice.
+# schema-2 rows left after the old job: 3
+# Subtest: rollback: the OLD job run on a NEW-format file succeeds, and the OLD scan renders its result cleanly
+ok 2 - rollback: the OLD job run on a NEW-format file succeeds, and the OLD scan renders its result cleanly
+  ---
+  duration_ms: 355.384926
+  ...
+# NEW scan on OLD data:
+# ECONOMIC CALENDAR (US, next 7 days, every release big and small; TipRanks, private)
+# - Tue 10 Nov, 16:30 Kuwait: Jobless claims: figures UNKNOWN (saved before the exact-series check; the next calendar run refreshes them)
+# - Tue 10 Nov, 16:30 Kuwait: Jobs report: figures UNKNOWN (saved before the exact-series check; the next calendar run refreshes them)
+# - Tue 10 Nov, 18:30 Kuwait: EIA Crude Oil Stocks Change: figures UNKNOWN (saved before the exact-series check; the next calendar run refreshes them)
+# - Wed 11 Nov, 16:30 Kuwait: Jobs report: figures UNKNOWN (saved before the exact-series check; the next calendar run refreshes them)
+# - Thu 12 Nov, 16:30 Kuwait: Inflation (CPI): figures UNKNOWN (saved before the exact-series check; the next calendar run refreshes them)
+# What goes up or down after each kind of surprise: the study runs on Sunday.
+# MARKET HOLIDAYS (2 weeks): none
+# YOUR STOCKS, EX-DIVIDEND (7 days): none
+# DECISION: no release has a tested effect yet (the study runs on Sunday), so normal rules apply. Big moves are covered by the market-shock alert and your stops.
+# Updated 2026-11-09 06:10 UTC. Not financial advice.
+# Subtest: first run: OLD-format file read by the NEW scan shows figures UNKNOWN, never merged values; the NEW job converts it
+ok 3 - first run: OLD-format file read by the NEW scan shows figures UNKNOWN, never merged values; the NEW job converts it
+  ---
+  duration_ms: 354.060233
+  ...
+# Subtest: offline
+ok 4 - offline
+  ---
+  duration_ms: 0.841094
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 991.860163
