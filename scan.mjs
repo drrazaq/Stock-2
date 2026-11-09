@@ -5,7 +5,7 @@ import {paperRequest} from './paper-transport.mjs';
 import {paperMutationOnce,createPrivatePaperJournal} from './paper-mutation-journal.mjs';
 import {resolveZad} from './zad-compliance.mjs';
 import {telegramFetch,splitTelegramText} from './telegram-delivery.mjs';
-import {triageAssessments,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes} from './discovery-runtime.mjs';
+import {frozenAssessmentQueue,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes} from './discovery-runtime.mjs';
 import {appendRadarRows,readRadarLedger} from './radar-ledger.mjs';
 // Cloud scanner for the US stock signal board. Runs on GitHub Actions (free), so it works while your phone is off.
 // It reuses the exact rules inside index.html, writes data/signals.json and an append-only journal, and sends Telegram alerts.
@@ -268,6 +268,7 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
   if (compact) return 'ASSESSMENT SUMMARY — ' + sym + ': ' + clean(decision, 64) + (P ? ' | held, ' + stopLabel : '') + ' | mid ' + (rows.length ? [...new Set(rows.map(r => clean(r.verdict || 'UNKNOWN')))].join('/') : 'UNKNOWN') + ' | long ' + (typeof rank === 'number' && Number.isFinite(rank) ? (rank * 100).toFixed(1) + ' percentile; research only' : 'UNKNOWN') + ' | saved close ' + clean(sig && sig.session || D && D.session || 'UNKNOWN', 10) + ' | no new entry; details: check ' + sym;
   return [
     'ASSESSMENT CONTEXT — ' + sym + ' / ' + clean(issuer) + ' (information; this card grants no BUY approval)',
+    'Evidence readiness: business '+(lead?'DATED_DISCOVERY_LEAD_NOT_VALIDATED':'UNKNOWN / no business rejection inferred')+'; valuation UNKNOWN / no causal valuation supplied; entry rule '+(P?'EXISTING_HOLDING_RULE':st||q?'STORED_RULE_NOT_CURRENT_ADMISSION':'MISSING')+'; executable price UNKNOWN; ZAD '+clean(myHalal(sym))+'.',
     'Identity: ticker only; stable point-in-time security identity UNKNOWN. ZAD: ' + clean(myHalal(sym)) + '; ZAD is final authority.',
     'Source freshness: '+sourceStatus.status+'; expected completed close '+(sourceStatus.expectedCompletedSession||'UNKNOWN')+'; saved '+(sourceStatus.session||'UNKNOWN')+'. A current completed close is not a current quote; intraday invocation and executable readiness are not established by this file.',
     'SHORT ACTION | existing assessment: ' + clean(decision) + ' | horizon ' + (P ? P.src === 'leader dip' ? (P.ldHold || LDIP_HOLD) + ' sessions' : P.maxHold || (P.kind === 'leader' ? 'trend rule; no fixed hold' : 'existing holding rule') : q && (q.maxHold || q.days) || 'stored scanner rule, duration UNKNOWN') + '. Entry: ' + entry + '. Exit: ' + clean(exit) + '.',
@@ -605,14 +606,13 @@ function autolabText() { const AL = readJson0('data/autolab.json'); if (!AL || A
     '', 'Autolab uses a legacy paper-record gate (30+ profitable paper trades beating the average stock), not the full proof bar. Your own lanes are separate and remain NOT PROVEN. Check ZAD; this is research context.'].join('\n'); }
 // OPPORTUNITY BOARD: everything worth knowing today, wider than the tested buys, each with an honest evidence label.
 //   [TESTED] passed its 5-year test   [EARLY] promising, too few trades yet   [PAPER] on live paper   [INFO] no test supports buying it
-// Existing research consumer, using the same discovery journal and its locked
-// append path. No price fetch, broker call, private holding or ZAD mark is logged.
-function researchAssessmentCycle(sig,{cutoff=new Date(Date.now()).toISOString(),record=true,reviewedSymbols=[],perHorizon=2}={}){
+// Read-only research consumer. Only discover.mjs publishes assessment cycles;
+// a bot reply cannot race discovery's cross-runner save/rebase path.
+function researchAssessmentCycle(sig,{cutoff=new Date(Date.now()).toISOString(),reviewedSymbols=[]}={}){
   let journal;try{journal=readRadarLedger('data/discovery-journal.jsonl');}catch{return {error:'ASSESSMENT JOURNAL UNREADABLE; originals preserved; no selection recorded'};}
-  const queue=triageAssessments({signals:sig||{},discovery:readJson0('data/discovery.json')||{},earnings:readJson0('data/earnings-recent.json')||{},events:readJson0('data/events-recent.json')||{},quality:readJson0('data/quality.json')||{},horizons:readJson0('data/horizons.json')||{},radar:readJson0('data/radar-universe.json')||{},leaders:readJson0('data/leaders-universe.json')||{},
-    cutoff,reviewedSymbols,seenAssessmentIds:journal.filter(x=>x.type==='assessment').map(x=>x.id),excludedSymbols:[...ZADPOLICY().excluded],perHorizon});
-  const records=assessmentJournalRows(queue);let persistence='READ_ONLY_NOT_RECORDED';
-  if(record)try{const receipt=appendRadarRows('data/discovery-journal.jsonl',records);persistence='RECORDED '+receipt.appended+' assessment versions';journal=readRadarLedger('data/discovery-journal.jsonl');}catch{persistence='UNVERIFIED: journal append failed; do not claim complete capture';}
+  const queue=frozenAssessmentQueue({signals:sig||{},discovery:readJson0('data/discovery.json')||{},earnings:readJson0('data/earnings-recent.json')||{},events:readJson0('data/events-recent.json')||{},quality:readJson0('data/quality.json')||{},horizons:readJson0('data/horizons.json')||{},radar:readJson0('data/radar-universe.json')||{},leaders:readJson0('data/leaders-universe.json')||{},
+    cutoff,reviewedSymbols,seenAssessmentIds:journal.filter(x=>x.type==='assessment').map(x=>x.id),excludedSymbols:[...ZADPOLICY().excluded]},journal);
+  const records=assessmentJournalRows(queue),persistence=queue.frozen?'READ_ONLY_FROZEN_PRODUCER_BATCH':'READ_ONLY_PREVIEW_NOT_RECORDED: awaiting existing discovery producer';
   const outcomes=readJson0('data/outcomes.json');
   return {queue,records,persistence,feedback:linkAssessmentOutcomes(journal.filter(x=>x.type==='assessment'),Array.isArray(outcomes?.assessmentOutcomes)?outcomes.assessmentOutcomes:[])};
 }
@@ -641,10 +641,10 @@ function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 =
     if (q.length) out.push('TOP QUALITY COMPANIES [' + (pass ? 'TESTED on history, paper next' : 'INFO') + ']: ' + q.map(x => x.sym).join(', '), ''); }
   { const AL = readJson0('data/autolab.json'), c = AL && AL.candidates ? Object.values(AL.candidates).filter(x => x.today && x.today.length) : [];
     if (c.length) out.push('AUTOLAB [PAPER] (rules the system invented, passed 3 gates):', ...c.slice(0, N).map(x => '- ' + x.name + ': ' + x.today.filter(s0 => !skip(s0)).slice(0, 5).join(', ')), ''); }
-  { const cycle=researchAssessmentCycle(sig,{perHorizon:short?1:2});
+  { const cycle=researchAssessmentCycle(sig);
     if(cycle.error)out.push(cycle.error);
     else {const q=cycle.queue;out.push('BOUNDED INVESTIGATION QUEUE — attention, not live eligibility. '+q.sourceFreshness.status+'; '+q.population.uniqueSymbolLabels+' unique ticker labels, verified eligible issuer count UNKNOWN.');
-      for(const [h,rows]of Object.entries(q.batches))out.push(h+': '+(rows.length?rows.map(r=>r.symbol+' [INVESTIGATE / WAIT; '+r.source+'; version '+r.evidenceVersion.slice(0,10)+']').join('; '):'no unrecorded candidate in this source version'));
+      for(const [h,rows]of Object.entries(q.batches))out.push(h+': '+(rows.length?rows.slice(0,short?1:2).map(r=>r.symbol+' [INVESTIGATE / WAIT; '+r.source+'; version '+r.evidenceVersion.slice(0,10)+']').join('; '):'no candidate in this frozen source cycle'));
       out.push(cycle.persistence+'; feedback '+cycle.feedback.filter(x=>x.status.startsWith('UNRESOLVED')).length+' unresolved. No model aggregate or later price is an individual executable outcome.');
     }
   }

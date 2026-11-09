@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from'node:fs';import os from'node:os';import path from'node:path';import {fileURLToPath}from'node:url';import {execFile}from'node:child_process';import {promisify}from'node:util';
-import {triageAssessments,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes}from'../discovery-runtime.mjs';
+import {triageAssessments,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes,assessmentCycleKey,frozenAssessmentQueue,assessmentCycleRows}from'../discovery-runtime.mjs';
 import {appendRadarRows,readRadarLedger}from'../radar-ledger.mjs';
 import {loadScan,blocked}from'./load-scan.mjs';
 const T='2026-11-09T17:18:16Z',root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
@@ -11,4 +11,31 @@ test('future output clock cannot seed attention candidates',()=>{const x=input()
 test('existing journal preserves legacy bytes, deduplicates assessment versions and refuses corrupt append',()=>{const d=fs.mkdtempSync(path.join(os.tmpdir(),'assessment-journal-'));try{const f=path.join(d,'journal.jsonl'),old='{"sym":"OLD","d":"2020-01-01","price":1,"spy":1}\n';fs.writeFileSync(f,old);const rows=assessmentJournalRows(triageAssessments(input()));assert.ok(rows.every(x=>x.sym===undefined&&x.d===undefined&&x.price===undefined));assert.ok(!new Set([JSON.parse(old),...rows].map(x=>x.sym)).has('AAA'));assert.equal(appendRadarRows(f,rows).appended,6);assert.equal(appendRadarRows(f,rows).appended,0);assert.ok(fs.readFileSync(f,'utf8').startsWith(old));assert.equal(readRadarLedger(f).length,7);const before=fs.readFileSync(f);assert.throws(()=>appendRadarRows(f,[{...rows[0],evidenceVersion:'0'.repeat(64)}]));assert.deepEqual(fs.readFileSync(f),before);fs.writeFileSync(f,'{"sym":"BROKEN"');assert.throws(()=>appendRadarRows(f,rows));assert.equal(fs.readFileSync(f,'utf8'),'{"sym":"BROKEN"');}finally{fs.rmSync(d,{recursive:true,force:true});}});
 test('concurrent legacy discovery and assessment saves retain both under the existing lock',async()=>{const d=fs.mkdtempSync(path.join(os.tmpdir(),'assessment-race-'));try{const f=path.join(d,'journal.jsonl'),rows=assessmentJournalRows(triageAssessments(input()));const run=promisify(execFile),src=path.join(root,'radar-ledger.mjs');await Promise.all([rows,[{sym:'LEGACY',d:'2026-11-06',price:10,spy:600}]].map(a=>run(process.execPath,['--input-type=module','-e',`import {appendRadarRows} from ${JSON.stringify(src)}; appendRadarRows(${JSON.stringify(f)},${JSON.stringify(a)});`])));assert.equal(readRadarLedger(f).length,7);assert.equal(readRadarLedger(f).filter(x=>x.sym==='LEGACY').length,1);}finally{fs.rmSync(d,{recursive:true,force:true});}});
 test('exact outcome versions retain losses, no-fills and missing cases; cannot turn an aggregate/label into performance',()=>{const a=assessmentJournalRows(triageAssessments(input())),outcomes=a.slice(0,3).map((r,i)=>({assessmentId:r.id,evidenceVersion:r.evidenceVersion,ruleId:r.ruleId,horizon:r.horizon,status:['LOSS','NO_FILL','MISSING'][i],economicBasis:'MODELED',netAfterCosts:999}));const r=linkAssessmentOutcomes(a,outcomes);assert.deepEqual(r.slice(0,3).map(x=>x.status),['LOSS','NO_FILL','MISSING']);assert.ok(r.every(x=>x.netAfterCosts===null));outcomes[0].evidenceVersion='wrong';assert.match(linkAssessmentOutcomes(a,outcomes)[0].status,/UNRESOLVED/);});
-test('actual opportunities caller displays all three horizons and captures versions without a provider or owner-state export',async()=>{const old=Date.now;Date.now=()=>Date.parse(T);try{const x=input(),S=await loadScan({files:{'data/signals.json':x.signals,'data/earnings-recent.json':x.earnings,'data/events-recent.json':x.events,'data/quality.json':x.quality,'data/discovery-journal.jsonl':'{"sym":"OLD","d":"2026-11-06","price":10,"spy":600}\n'}});const text=S.fn('opportunitiesText')(x.signals,false);assert.match(text,/BOUNDED INVESTIGATION QUEUE/);for(const h of ['SHORT','MID','LONG'])assert.match(text,new RegExp(h+':'));assert.match(text,/RECORDED 6 assessment versions/);const rows=S.read('data/discovery-journal.jsonl').trim().split('\n').map(JSON.parse);assert.equal(rows.length,7);assert.ok(rows.filter(x=>x.type==='assessment').every(x=>!('owner' in x)&&!('halal' in x)&&!('holdings' in x)));assert.match(S.fn('assessmentContext')('AAA',x.signals,{},'WAIT'),/current completed close is not a current quote/);assert.match(S.fn('assessmentContext')('CCC',x.signals,{},'WAIT'),/cached actual 1 vs estimate 0.5.*not a verified surprise/);assert.equal(blocked.length,0);}finally{Date.now=old;process.chdir(root);}});
+test('actual opportunities caller is read-only across repeated full and compact replies',async()=>{const old=Date.now;Date.now=()=>Date.parse(T);try{const x=input(),S=await loadScan({files:{'data/signals.json':x.signals,'data/earnings-recent.json':x.earnings,'data/events-recent.json':x.events,'data/quality.json':x.quality,'data/discovery-journal.jsonl':'{"sym":"OLD","d":"2026-11-06","price":10,"spy":600}\n'}});const text=S.fn('opportunitiesText')(x.signals,false);assert.match(text,/BOUNDED INVESTIGATION QUEUE/);for(const h of ['SHORT','MID','LONG'])assert.match(text,new RegExp(h+':'));assert.match(text,/READ_ONLY_PREVIEW_NOT_RECORDED/);const again=S.fn('opportunitiesText')(x.signals,false);assert.equal(again,text);S.fn('opportunitiesText')(x.signals,true);const rows=S.read('data/discovery-journal.jsonl').trim().split('\n').map(JSON.parse);assert.equal(rows.length,1);assert.ok(rows.filter(x=>x.type==='assessment').every(x=>!('owner' in x)&&!('halal' in x)&&!('holdings' in x)));assert.match(S.fn('assessmentContext')('AAA',x.signals,{},'WAIT'),/current completed close is not a current quote/);assert.match(S.fn('assessmentContext')('CCC',x.signals,{},'WAIT'),/cached actual 1 vs estimate 0.5.*not a verified surprise/);assert.equal(blocked.length,0);}finally{Date.now=old;process.chdir(root);}});
+
+test('one producer cycle freezes the same batch; regeneration clocks cannot make completed names new',()=>{
+ const x=input(),q=frozenAssessmentQueue(x),journal=assessmentCycleRows(q);
+ const changed=structuredClone(x);changed.quality.generatedAt='2026-11-09T12:00:00Z';
+ assert.equal(assessmentCycleKey(changed),q.cycleKey);
+ assert.deepEqual(Object.values(triageAssessments(changed).batches).flat().map(r=>r.id),Object.values(triageAssessments(x).batches).flat().map(r=>r.id));
+ // New symbols/ranks within the same session cannot expand a persisted cycle.
+ changed.quality.today.unshift({sym:'ZZZ',q:1});changed.seenAssessmentIds=journal.filter(r=>r.type==='assessment').map(r=>r.id);
+ const repeat=frozenAssessmentQueue(changed,journal);
+ assert.equal(repeat.frozen,true);assert.deepEqual(repeat.batches,q.batches);
+ assert.equal(Object.values(repeat.batches).flat().length,6);
+ changed.signals.session='2026-11-09';assert.notEqual(assessmentCycleKey(changed),q.cycleKey);
+});
+test('cycle + assessment append is idempotent, preserves originals and distinguishes derived rule from absent rule',()=>{
+ const d=fs.mkdtempSync(path.join(os.tmpdir(),'assessment-cycle-'));try{
+ const f=path.join(d,'journal.jsonl'),before='{"sym":"LEGACY","d":"2020-01-01","price":1,"spy":1}\n';
+ fs.writeFileSync(f,before);const x=input();delete x.signals.stocks[0].key;
+ const q=frozenAssessmentQueue(x),rows=assessmentCycleRows(q);
+ assert.equal(rows[1].ruleIdentityBasis,'DERIVED_FROM_RETAINED_RULE_TEXT_NOT_ADOPTION');
+ assert.match(rows[1].ruleId,/^DERIVED_RULE_SPEC_SHA256:/);
+ assert.equal(rows.find(r=>r.symbol==='CCC').ruleIdentityBasis,'NO_RULE_SUPPLIED');
+ assert.equal(appendRadarRows(f,rows).appended,7);
+ assert.equal(appendRadarRows(f,rows).appended,0);
+ assert.ok(fs.readFileSync(f,'utf8').startsWith(before));
+ const frozen=frozenAssessmentQueue(x,readRadarLedger(f));assert.equal(frozen.frozen,true);assert.deepEqual(frozen.batches,q.batches);
+ }finally{fs.rmSync(d,{recursive:true,force:true});}
+});

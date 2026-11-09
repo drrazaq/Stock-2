@@ -29,6 +29,34 @@ export const DISCOVERY_SOURCES=Object.freeze([
 // Research attention over EXISTING outputs. This is neither a strategy score nor
 // trade admission. Source facts, not subsequent returns, determine the queue.
 export const ASSESSMENT_TRIAGE_VERSION='EXISTING_HORIZON_ATTENTION_V1';
+// Session identities, never Sunday/output-generation clocks. New event/report
+// dates are relevant input versions; a refresh of an unchanged study is not.
+export function assessmentCycleKey(input={}){
+ const session=d=>d?.session||d?.to||null;
+ return hash([ASSESSMENT_TRIAGE_VERSION,
+  ['signals','discovery','quality','horizons','radar','leaders'].map(k=>[k,session(input[k])]),
+  [...new Set((input.events?.events||[]).map(r=>r?.p).filter(clock))].sort(),
+  [...new Set((input.earnings?.reports||[]).map(r=>r?.d).filter(isDay))].sort()]);
+}
+export function frozenAssessmentQueue(input={},journal=[]){
+ const cycleKey=assessmentCycleKey(input),hits=journal.filter(r=>r.type==='assessment-cycle'&&r.cycleKey===cycleKey);
+ if(hits.length>1)throw Error('CONFLICTING_ASSESSMENT_CYCLE_RECEIPTS');
+ if(hits.length===1){
+  const q=hits[0].queue;
+  if(!q||q.cycleKey!==cycleKey||q.version!==ASSESSMENT_TRIAGE_VERSION||!q.batches||
+   Object.values(q.batches).some(a=>!Array.isArray(a)||a.length>2||a.some(r=>r.id!==hash([ASSESSMENT_TRIAGE_VERSION,r.horizon,r.symbol,r.evidenceVersion]))))
+   throw Error('INVALID_ASSESSMENT_CYCLE_RECEIPT');
+  return {...q,frozen:true,sourceFreshness:assessmentSourceStatus(input.signals,input.cutoff)};
+ }
+ // Display size never changes selection. Existing recorded versions can defer
+ // earlier investigations only when a NEW producer cycle is first selected.
+ return {...triageAssessments({...input,perHorizon:2}),cycleKey,frozen:false};
+}
+export function assessmentCycleRows(queue){
+ if(!/^[a-f0-9]{64}$/.test(queue.cycleKey||''))throw Error('MISSING_ASSESSMENT_CYCLE_KEY');
+ const {decisions,invalid,...snapshot}=queue;
+ return [{type:'assessment-cycle',version:1,cycleKey:queue.cycleKey,recordedAt:queue.cutoff,queue:snapshot},...assessmentJournalRows(queue)];
+}
 export function assessmentSourceStatus(signals,cutoff){
  if(!clock(cutoff))throw Error('INVALID_ASSESSMENT_CUTOFF');
  const now=Date.parse(cutoff),session=signals?.session||null,lag=closeLagSessions(session,now);
@@ -42,7 +70,7 @@ export function triageAssessments({signals={},discovery={},earnings={},events={}
  const now=Date.parse(cutoff),array=x=>Array.isArray(x)?x:[],all=[],pools={SHORT:[],MID:[],LONG:[]};
  const dates=d=>({generatedAt:d?.generatedAt||null,session:d?.session||d?.to||null});
  const add=(source,rows,meta,project)=>{if(rows.length>20000)throw Error('ASSESSMENT_INPUT_ROW_CAP');for(const r of rows){const s=typeof r==='string'?r:r?.sym||r?.symbol;all.push({symbol:s,source,meta,facts:project&&r&&typeof r==='object'?project(r):{}});}};
- add('signals',array(signals.stocks),dates(signals),r=>({state:r.state,rule:r.rule,key:r.key,last:r.last,trigger:r.trigger,buyLo:r.buyLo,buyHi:r.buyHi,stop:r.stop,target:r.target,maxHold:r.maxHold,exitBelow:r.exitBelow,hardBlock:r.hardBlock}));
+ add('signals',array(signals.stocks),dates(signals),r=>({state:r.state,rule:r.rule,key:r.key,proven:r.proven,last:r.last,trigger:r.trigger,buyLo:r.buyLo,buyHi:r.buyHi,stop:r.stop,target:r.target,maxHold:r.maxHold,exitBelow:r.exitBelow,hardBlock:r.hardBlock}));
  add('discovery',array(discovery.candidates),dates(discovery),r=>({name:r.name,price:r.price,quarter:r.quarter,revGrowth:r.revGrowth,profitTrend:r.profitTrend,hardBlock:r.hardBlock}));
  add('earnings',array(earnings.reports),dates(earnings),r=>({day:r.d,actual:r.a,estimate:r.e,timing:r.t}));
  add('SEC',array(events.events),dates(events),r=>({publication:r.p,form:r.f,sourceId:r.sourceId||null}));
@@ -64,7 +92,7 @@ export function triageAssessments({signals={},discovery={},earnings={},events={}
  }
  const decisions=[],batches={};for(const [h,pool]of Object.entries(pools)){
   pool.sort((a,b)=>a.priority-b.priority||b.time-a.time||a.symbol.localeCompare(b.symbol));const used=new Set();batches[h]=[];
-  for(const r of pool){if(used.has(r.symbol))continue;used.add(r.symbol);const facts=by.get(r.symbol),evidenceVersion=hash(facts),id=hash([ASSESSMENT_TRIAGE_VERSION,h,r.symbol,evidenceVersion]);
+  for(const r of pool){if(used.has(r.symbol))continue;used.add(r.symbol);const facts=by.get(r.symbol),evidenceVersion=hash(facts.map(({symbol,source,meta,facts})=>({symbol,source,session:meta.session,facts}))),id=hash([ASSESSMENT_TRIAGE_VERSION,h,r.symbol,evidenceVersion]);
    const reason=excluded.has(r.symbol)?'EXISTING_EXCLUSION':reviewed.has(r.symbol)?'ALREADY_INVESTIGATED_THIS_BATCH':seen.has(id)?'ASSESSMENT_VERSION_ALREADY_RECORDED':batches[h].length>=perHorizon?'DEFERRED_BATCH_CAP':'SELECTED';
    const row={...r,horizon:h,id,evidenceVersion,decision:reason,identity:'UNKNOWN_NOT_A_VERIFIED_ISSUER_COUNT',facts};decisions.push(row);if(reason==='SELECTED')batches[h].push(row);
   }
@@ -75,9 +103,11 @@ export function triageAssessments({signals={},discovery={},earnings={},events={}
   batches,decisions,counts:Object.fromEntries(['SELECTED','EXISTING_EXCLUSION','ALREADY_INVESTIGATED_THIS_BATCH','ASSESSMENT_VERSION_ALREADY_RECORDED','DEFERRED_BATCH_CAP'].map(k=>[k,decisions.filter(x=>x.decision===k).length])),invalid};
 }
 export function assessmentJournalRows(queue){
- return Object.values(queue.batches).flat().map(r=>({type:'assessment',version:1,id:r.id,symbol:r.symbol,horizon:r.horizon,recordedAt:queue.cutoff,evidenceVersion:r.evidenceVersion,triageVersion:queue.version,
+ return Object.values(queue.batches).flat().map(r=>({type:'assessment',version:1,cycleKey:queue.cycleKey||null,id:r.id,symbol:r.symbol,horizon:r.horizon,recordedAt:queue.cutoff,evidenceVersion:r.evidenceVersion,triageVersion:queue.version,
   decision:'INVESTIGATE_OR_WAIT_NOT_ENTRY',sourceReferences:r.facts.map(x=>({source:x.source,...x.meta})),
-  ruleId:r.facts.find(x=>x.source==='signals')?.facts.key||null,sourceSession:queue.sourceFreshness.session,
+  ruleId:r.facts.find(x=>x.source==='signals')?.facts.key||(r.facts.find(x=>x.source==='signals')?.facts.rule?'DERIVED_RULE_SPEC_SHA256:'+hash(r.facts.find(x=>x.source==='signals').facts.rule):null),
+  ruleIdentityBasis:r.facts.find(x=>x.source==='signals')?.facts.key?'RETAINED_RULE_KEY':r.facts.find(x=>x.source==='signals')?.facts.rule?'DERIVED_FROM_RETAINED_RULE_TEXT_NOT_ADOPTION':'NO_RULE_SUPPLIED',
+  sourceSession:queue.sourceFreshness.session,
   quote:'UNKNOWN',execution:'NOT_OBSERVED',outcome:'UNRESOLVED',control:'UNLINKED',costConvention:{budget:1000,feeEachExecutedSide:3,wholeShares:true},
   caveat:'Assessment recording time is not original detection/receipt, a trade, or an outcome. No owner holdings/ZAD records stored.'}));
 }

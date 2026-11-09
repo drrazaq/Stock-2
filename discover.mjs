@@ -5,7 +5,8 @@ const telegramFetch=(u,o)=>sharedTelegramFetch(u,o,{research:true});
 // (revenue growth, profit trend, debt, cash) and writes a short list of small, fast-growing companies to data/discovery.json.
 // It finds candidates to research. It does not give buy signals and cannot trade.
 import fs from 'node:fs';
-import {appendRadarRows} from './radar-ledger.mjs';
+import {appendRadarRows,readRadarLedger} from './radar-ledger.mjs';
+import {frozenAssessmentQueue,assessmentCycleRows} from './discovery-runtime.mjs';
 import { latestCompletedSession, nextSession, closeLagSessions, adjustmentBasis, isDay } from './source-contract.mjs';
 import { marketSession } from './market-session.mjs';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
@@ -407,7 +408,7 @@ for (const c of top) {
 }
 
 // ---- 4. Journal and honest follow-up: how did earlier candidates do against the S&P 500?
-const journal = fs.existsSync('data/discovery-journal.jsonl') ? fs.readFileSync('data/discovery-journal.jsonl', 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(x=>x.type!=='assessment') : [];
+const journal = fs.existsSync('data/discovery-journal.jsonl') ? fs.readFileSync('data/discovery-journal.jsonl', 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(x=>x.type!=='assessment'&&x.type!=='assessment-cycle') : [];
 const seen = new Set(journal.map(x => x.sym)), fresh = top.filter(c => !seen.has(c.sym));
 if(fresh.length)appendRadarRows('data/discovery-journal.jsonl',fresh.map(c=>({ sym:c.sym,d:first.date,price:c.price,spy:spyNow,score:c.score })));
 const aged = journal.filter(x => Date.parse(first.date) - Date.parse(x.d) >= 28 * 86400000 && closes[0].get(x.sym) && x.spy && spyNow).map(x => ({ ret: closes[0].get(x.sym).c / x.price - 1, spy: spyNow / x.spy - 1 }));
@@ -418,6 +419,22 @@ const record = aged.length ? { n: aged.length, avgReturn: aged.reduce((a, x) => 
 const pub = top.map(({ privateNotes, deep, analyst, ...c }) => ({ ...c, priceEvidence: { basis: 'COMPLETED_DAILY_CLOSE', session: first.date, provider: 'MASSIVE', executableQuote: false } }));
 fs.writeFileSync('data/discovery.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session: first.date, priceDay, swept: closes[0].size, strong: strong.length, quarter: P, source: source.replace(' + FMP statements', '').replace(' + Alpha Vantage statements', ''), secNote, record, recordBasis: { kind: 'LEGACY_GROSS_VARIABLE_AGE_MODEL_MARKS', minimumCalendarDays: 28, fixedExit: false, executionCostsIncluded: false, journalPricesAffectSelection: false }, candidates: pub }, null, 1));
 console.log('discovery done:', top.length, 'candidates,', fresh.length, 'new');
+// Sole publishing path for assessment cycles: discovery's existing workflow
+// concurrency serializes producers. Bot/scanner consumers never append here.
+{
+ const journal=readRadarLedger('data/discovery-journal.jsonl');
+ const input={cutoff:new Date(now).toISOString(),
+  signals:readJson('data/signals.json',{}),discovery:readJson('data/discovery.json',{}),
+  earnings:readJson('data/earnings-recent.json',{}),events:readJson('data/events-recent.json',{}),
+  quality:readJson('data/quality.json',{}),horizons:readJson('data/horizons.json',{}),
+  radar:readJson('data/radar-universe.json',{}),leaders:readJson('data/leaders-universe.json',{}),
+  excludedSymbols:readJson('data/zad-list.json',{}).notHalal||[],
+  seenAssessmentIds:journal.filter(r=>r.type==='assessment').map(r=>r.id)};
+ const queue=frozenAssessmentQueue(input,journal);
+ if(!queue.frozen)appendRadarRows('data/discovery-journal.jsonl',assessmentCycleRows(queue));
+ console.log('assessment cycle',queue.cycleKey,queue.frozen?'already frozen':'recorded once');
+}
+
 
 // Statement findings (cash flow, debt, dilution) are private, so they are sent once per company even when it is not a new candidate.
 // New candidates carry their findings in the "new candidates" message below; every other company with findings gets a "deeper look".
