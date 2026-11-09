@@ -34,9 +34,10 @@ export const ASSESSMENT_TRIAGE_VERSION='EXISTING_HORIZON_ATTENTION_V1';
 export function assessmentCycleKey(input={}){
  const session=d=>d?.session||d?.to||null;
  return hash([ASSESSMENT_TRIAGE_VERSION,
-  ['signals','discovery','quality','horizons','radar','leaders'].map(k=>[k,session(input[k])]),input.signals?.ruleIdentityVersion||null,
+  ['signals','discovery','quality','horizons','radar','leaders'].map(k=>[k,session(input[k])]),
   [...new Set((input.events?.events||[]).map(r=>r?.p).filter(clock))].sort(),
-  [...new Set((input.earnings?.reports||[]).map(r=>r?.d).filter(isDay))].sort()]);
+  [...new Set((input.earnings?.reports||[]).map(r=>r?.d).filter(isDay))].sort(),
+  ...(/^SCANNER_RULE_DEFINITION_V1:\d+:[a-f0-9]{64}$/.test(input.signals?.ruleIdentityVersion||'')?[[input.signals.ruleIdentityVersion]]:[])]);
 }
 export function frozenAssessmentQueue(input={},journal=[]){
  const cycleKey=assessmentCycleKey(input),hits=journal.filter(r=>r.type==='assessment-cycle'&&r.cycleKey===cycleKey);

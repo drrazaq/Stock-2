@@ -95,3 +95,9 @@ test('newly recorded rows join only exact rule/version/evidence and never retrof
  assert.equal(S.read('data/settings.json'),before);
  }finally{process.chdir(root);}
 });
+
+test('binding rollout preserves the pinned legacy cycle until real versioned inputs arrive',()=>{
+ const x=input();assert.equal(assessmentCycleKey(x),'3ec0fdfc4050ebcffc18bbf9531650e06a8b370a3db6027855af4fad556e9d01');
+ x.quality.generatedAt='2026-11-09T12:00:00Z';assert.equal(assessmentCycleKey(x),'3ec0fdfc4050ebcffc18bbf9531650e06a8b370a3db6027855af4fad556e9d01');
+ x.signals.ruleIdentityVersion='SCANNER_RULE_DEFINITION_V1:16:'+'a'.repeat(64);assert.notEqual(assessmentCycleKey(x),'3ec0fdfc4050ebcffc18bbf9531650e06a8b370a3db6027855af4fad556e9d01');
+});
