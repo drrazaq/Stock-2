@@ -20,6 +20,7 @@
 <body>
 <h1>R1 data key tool (offline)</h1>
 <p class="mut">Runs only on this device; it cannot connect to anything. Nothing is saved. Close the page when done.</p>
+<div id="cap" class="out" aria-live="polite">Checking this browser...</div>
 
 <h2>1. Make a new key</h2>
 <button id="gen" type="button">Make key</button>
@@ -34,7 +35,7 @@
 <button id="check" type="button">Check</button>
 <button id="demo" type="button">Fill the synthetic test (no real key)</button>
 <div id="checkOut" class="out" aria-live="polite"></div>
-<p class="mut">PASS proves this copy is the key that sealed the record, so it can decrypt the data. FAIL: nothing is wrong with the data; compare your copies character by character and do not retry the release step until the difference is found.</p>
+<p class="mut">PASS proves this copy opens the record, so it is the key that sealed it. Any other result is NOT VERIFIED: this page cannot tell whether the copy differs, the record was altered or the browser failed. Stop there: do not run, repeat or retry any release step; report the exact result line to Claude. Nothing about the data can be concluded from this page.</p>
 
 <script>
 'use strict';
@@ -49,29 +50,44 @@ const hex = (b) => Array.from(new Uint8Array(b), (x) => x.toString(16).padStart(
 const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
 const cat = (...a) => { const n = a.reduce((s, x) => s + x.length, 0), o = new Uint8Array(n); let i = 0; for (const x of a) { o.set(x, i); i += x.length; } return o; };
 async function inflateRaw(bytes) { const s = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('deflate-raw')); return new Uint8Array(await new Response(s).arrayBuffer()); }
+// Every capability the tool needs, checked BEFORE anything is generated or checked. Missing -> UNSUPPORTED, never a key/record verdict.
+function capabilities() {
+  const missing = [];
+  if (!globalThis.isSecureContext) missing.push('secure context');
+  if (!globalThis.crypto || typeof crypto.getRandomValues !== 'function') missing.push('crypto.getRandomValues');
+  const sub = globalThis.crypto && crypto.subtle; for (const f of ['digest', 'importKey', 'decrypt']) if (!sub || typeof sub[f] !== 'function') missing.push('crypto.subtle.' + f);
+  try { if (typeof DecompressionStream !== 'function') throw 0; new DecompressionStream('deflate-raw'); } catch { missing.push("DecompressionStream('deflate-raw')"); }
+  for (const f of ['TextEncoder', 'Blob', 'Response', 'atob']) if (typeof globalThis[f] !== 'function') missing.push(f);
+  return missing;
+}
 function makeKey() { const b = new Uint8Array(32); crypto.getRandomValues(b); return hex(b); }
+// Results: PASS | INPUT (malformed entry; nothing checked) | UNSUPPORTED (browser capability) | NOT_VERIFIED (cause undetermined).
 async function checkCopy(secret, vectorText) {
-  if (!HEX64.test(secret)) return { ok: false, why: 'not a 64-character 0-9/a-f key (check for a missing, extra or changed character, or a space)' };
-  let v; try { v = JSON.parse(vectorText); } catch { return { ok: false, why: 'the key-check record is not valid; copy the whole {...} line' }; }
-  if (!v || v.version !== 1 || typeof v.sealed !== 'string' || !/^[0-9a-f]{64}$/.test(v.sha256 || '')) return { ok: false, why: 'the key-check record is incomplete' };
-  let b; try { b = b64(v.sealed); } catch { return { ok: false, why: 'the key-check record is damaged' }; }
+  const miss = capabilities(); if (miss.length) return { ok: false, kind: 'UNSUPPORTED', why: 'this browser lacks ' + miss.join(', ') + '; nothing was checked' };
+  if (!HEX64.test(secret)) return { ok: false, kind: 'INPUT', why: 'the copy is not 64 characters of 0-9/a-f (a missing, extra or changed character, or a space); nothing was checked' };
+  let v; try { v = JSON.parse(vectorText); } catch { return { ok: false, kind: 'INPUT', why: 'the key-check record could not be read as a whole {...} line; nothing was checked' }; }
+  if (!v || v.version !== 1 || typeof v.sealed !== 'string' || !/^[0-9a-f]{64}$/.test(v.sha256 || '')) return { ok: false, kind: 'INPUT', why: 'the key-check record is incomplete; nothing was checked' };
+  let b; try { b = b64(v.sealed); } catch { return { ok: false, kind: 'INPUT', why: 'the key-check record is not valid base64; nothing was checked' }; }
   const MAGIC = enc.encode('S2SEAL');
-  if (b.length < 8 + 12 + 16 || MAGIC.some((x, i) => b[i] !== x) || b[6] !== 2 || (b[7] & ~1)) return { ok: false, why: 'the key-check record has an unknown format' };
+  if (b.length < 8 + 12 + 16 || MAGIC.some((x, i) => b[i] !== x) || b[6] !== 2 || (b[7] & ~1)) return { ok: false, kind: 'INPUT', why: 'the key-check record has an unknown format; nothing was checked' };
   const hdr = b.subarray(0, 8), iv = b.subarray(8, 20), tag = b.subarray(20, 36), ct = b.subarray(36);
   const raw = await crypto.subtle.digest('SHA-256', cat(enc.encode(LABEL), enc.encode(secret)));
   const key = await crypto.subtle.importKey('raw', raw, { name: 'AES-GCM' }, false, ['decrypt']);
   let body; try { body = new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv, additionalData: cat(hdr, new Uint8Array([0]), enc.encode(KEY_CHECK_ID)), tagLength: 128 }, key, cat(ct, tag))); }
-  catch { return { ok: false, why: 'this copy is NOT the key that made the record' }; }
-  if (b[7] & 1) { try { body = await inflateRaw(body); } catch { return { ok: false, why: 'the key-check record is damaged' }; } }
-  return hex(await crypto.subtle.digest('SHA-256', body)) === v.sha256 ? { ok: true } : { ok: false, why: 'this copy is NOT the key that made the record' };
+  catch { return { ok: false, kind: 'NOT_VERIFIED', why: 'this copy did not open the record (the copy may differ or the record may have been altered; the cause is not determined)' }; }
+  if (b[7] & 1) { try { body = await inflateRaw(body); } catch { return { ok: false, kind: 'NOT_VERIFIED', why: 'the opened record could not be decompressed in this browser (cause not determined)' }; } }
+  return hex(await crypto.subtle.digest('SHA-256', body)) === v.sha256 ? { ok: true, kind: 'PASS' } : { ok: false, kind: 'NOT_VERIFIED', why: 'the opened record does not match its fingerprint (cause not determined)' };
 }
 if (typeof document !== 'undefined') {
   const $ = (id) => document.getElementById(id);
-  $('gen').onclick = () => { $('genOut').textContent = makeKey(); };
+  const miss = capabilities(), cap = $('cap');
+  if (miss.length) { cap.className = 'out bad'; cap.textContent = 'UNSUPPORTED: this browser lacks ' + miss.join(', ') + '. Nothing can be made or checked here. Stop and tell Claude this exact line.'; $('gen').disabled = true; $('check').disabled = true; $('demo').disabled = true; }
+  else { cap.className = 'out ok'; cap.textContent = 'This browser has every capability the tool needs.'; }
+  $('gen').onclick = () => { if (capabilities().length) return; $('genOut').textContent = makeKey(); };
   $('demo').onclick = () => { $('secret').value = DEMO_SECRET; $('vector').value = DEMO_VECTOR; };
   $('check').onclick = async () => { const o = $('checkOut'); o.className = 'out'; o.textContent = 'Checking...';
-    try { const r = await checkCopy($('secret').value, $('vector').value.trim()); o.className = 'out ' + (r.ok ? 'ok' : 'bad'); o.textContent = r.ok ? 'PASS: this copy is the key that made the record.' : 'FAIL: ' + r.why + '.'; }
-    catch (e) { o.className = 'out bad'; o.textContent = 'FAIL: this browser could not run the check (' + (e && e.name || 'error') + '). Use the computer route.'; } };
+    try { const r = await checkCopy($('secret').value, $('vector').value.trim()); o.className = 'out ' + (r.ok ? 'ok' : 'bad'); o.textContent = r.ok ? 'PASS: this copy opens the record, so it is the key that sealed it.' : (r.kind === 'INPUT' ? 'INPUT ERROR: ' : r.kind === 'UNSUPPORTED' ? 'UNSUPPORTED: ' : 'NOT VERIFIED: ') + r.why + '. Stop; do not run, repeat or retry any release step; report this line to Claude.'; }
+    catch (e) { o.className = 'out bad'; o.textContent = 'NOT VERIFIED: the check could not run in this browser (' + (e && e.name || 'error') + '; cause not determined). Stop; report this line to Claude.'; } };
 }
 </script>
 </body>

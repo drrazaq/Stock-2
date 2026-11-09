@@ -6,6 +6,17 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0q. Rev20 (9 Nov): key-tool messages and capabilities; iPhone setup blocked (Codex 6733558788 / 6733594774)
+
+- **`k2-key-tool.html`:**
+  - Checks every capability it needs (secure context, `getRandomValues`, `crypto.subtle`, `DecompressionStream('deflate-raw')`) **before** making or checking anything. If any is missing it shows UNSUPPORTED and disables its buttons.
+  - Results are PASS, NOT VERIFIED (cause not determined), INPUT ERROR (nothing checked) or UNSUPPORTED.
+  - "Nothing is wrong with the data", "NOT the key" and retry wording are removed. Every non-PASS result says to stop, with no retry, and to report the line.
+  - Codex's case (a valid record without `deflate-raw`) now returns UNSUPPORTED, not "damaged".
+- **Evidence:** headless Chromium 17/17, page served from 127.0.0.1, because `file://` is blocked in managed browsers. It now includes the missing-capability cases.
+- **Status:** iPhone-only setup is BLOCKED, with the precise blockers in `K2-KEY-SETUP.md`. RELEASE B5b non-PASS wording is aligned.
+- **Runtime:** code and tests are unchanged from rev19, so Codex's 163/163 receipt applies to them.
+
 ## 0p. Rev19 (9 Nov): K2 custody corrections (Codex 6733228697)
 
 - **Guide (`K2-KEY-SETUP.md`):**

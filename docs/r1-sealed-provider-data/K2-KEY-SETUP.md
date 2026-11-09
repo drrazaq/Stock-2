@@ -1,5 +1,7 @@
 # K2: the dedicated data key `R1_DATA_KEY` (owner steps; review only; nothing here is authorized yet)
 
+> **Status (rev20): SETUP BLOCKED for an iPhone-only owner.** No reviewed, verified route exists to make the key and prove its copies on an iPhone (see "iPhone blocker"). No real key is to be made or enrolled until one does. The computer routes below are documented for completeness and were verified only in Chromium.
+
 **What it is:** a new secret used **only** to encrypt the provider-data files (R1). `PRIVATE_KEY`, Alpaca, Telegram and every other existing credential stay exactly as they are; nothing is rotated or regenerated.
 
 **Rules:**
@@ -51,17 +53,23 @@ Nothing reads `R1_DATA_KEY` until the approved release is pushed.
 
    (The same check exists as `sealed-migrate.mjs --key-check` for a technical operator; it is not part of these owner steps.)
 3. Two PASS results prove that both independent copies are the key that seals the data, and that each can decrypt it. This proof happens outside GitHub's runner.
-4. **Any FAIL:** the release stops before migration, and nothing is encrypted.
-   - Compare the copies character by character.
-   - **Do not retry or re-run any release step on your own.** A further attempt needs its own reviewed plan and your approval.
+4. **Any result other than PASS** stops the release before migration, and nothing is encrypted. That means NOT VERIFIED, INPUT ERROR or UNSUPPORTED.
+   - The page cannot tell why a check failed: the copy may differ, the record may have been altered, or the browser may have failed. **Nothing about the data can be concluded.**
+   - Report the exact result line to Claude. **Do not run, repeat or retry any release step.** A further attempt needs its own reviewed plan and your approval.
+   - If the page shows **UNSUPPORTED** when it opens, the browser lacks a needed capability. The buttons are disabled, and nothing is made or checked.
 
 ## iPhone blocker (precise; nothing for you to try)
 
-There is no verified iPhone-only route, for two reasons:
-- **Untested engine:** this review environment has only Chromium. It has no iPhone, Safari or WebKit engine, so the page could not be run as iPhone Safari runs it.
-- **No way onto the phone:** there is no reviewed way to open the page on an iPhone so that its script runs.
-  - GitHub serves repository files as plain text in a locked sandbox, so scripts do not run.
-  - The website workflow publishes only `index.html`. Publishing the tool would be a workflow change, which is not authorized.
-  - Opening a saved HTML file from the iPhone Files app is a preview whose script support was not verified.
+There is no verified iPhone-only route. Each of the following is a blocker on its own:
+1. **No iPhone engine in review.** Neither this review environment nor Codex's has Safari, WebKit or an iOS device; both have only Chromium. The tool's behaviour on iOS Safari cannot be observed by either reviewer. It needs `crypto.subtle`, `crypto.getRandomValues`, `DecompressionStream('deflate-raw')` and a secure context, and it now refuses to run without them. Documentation is not verification.
+2. **No reviewed way to open the tool on an iPhone with its script running:**
+   - GitHub serves repository files as `text/plain` with CSP `sandbox`, so scripts do not run (confirmed).
+   - The website workflow publishes only `index.html`. Publishing the tool would be a workflow change that is not authorized.
+   - A file opened from the Files app is a preview whose script support is not verified.
+   - Local `file://` pages are blocked in Codex's managed browser (`ERR_BLOCKED_BY_ADMINISTRATOR`); the evidence now serves the page from `127.0.0.1` instead.
+3. **The only verification step is on your phone.** Any iPhone route still needs a synthetic preflight (the built-in test record, no real key) run on an actual iPhone. The only iPhone in this process is yours, and you asked not to be given unverified iPhone steps. So that preflight cannot happen without your separate, explicit decision.
 
-Until one of these is reviewed and verified, the key must be made and checked with a computer (rows 1–2 above).
+What would unblock it (each is your decision; none is requested now):
+- (a) a reviewed hosting route for the tool, such as an approved change to the website workflow, followed by your explicit consent to a synthetic, no-real-key preflight on your iPhone;
+- (b) use of any computer with Chrome or Edge for the one-time key steps, which is verified in Chromium;
+- (c) keep R1 deferred.

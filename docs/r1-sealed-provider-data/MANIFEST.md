@@ -1,10 +1,10 @@
-# R1 combined-unit candidate manifest, rev19 (review only; not deployed)
+# R1 combined-unit candidate manifest, rev20 (review only; not deployed)
 
 - **Base:** `b0d769876a6ee76f23544850c959111f59d8ae7b` (origin/main when R1 started). **Branch:** `claude/composed-r1-opencheck-calendar-watcher` (never push or merge it: build the release commit with `--build-unit`, RELEASE.md B4). **Previous candidates:** `ae8cbb63` (CHANGES REQUIRED, 6717623537), `a791b438` (CHANGES REQUIRED, 6718099309), `292557c2` (CHANGES REQUIRED, 6718423725), `d02cdfea` (CHANGES REQUIRED, 6718847939), `dc11c03a` (CHANGES REQUIRED, wording only, 6719132742), `67f1beba` (R1 rev7: PASS, 6719376168), `1be8b683` (composition PASS; release binding missing, 6719376168), `af11dbfd` (rev8: CHANGES REQUIRED, modes and candidate identity, 6719707423), `0663f337` (rev9: binding controls PASS; future-at-fetch runtime blocker, 6720355907), `b6ffea2f` (rev10: near-limit re-ageing found in review 6721730197 R1), `8567fd46` (rev11: stale HOLD frozen at fetch age, 6722848900), `5849242e` (rev12: runtime fix; recovery bound still open, 6722943461), `c00b8b24` (rev13: CHANGES REQUIRED B1-B5, 6723732821), `df5ee960` (rev14: B1-B5 closed; N1 and operative counts open, 6724620286), `09f58ca5` (rev15: CHANGES REQUIRED R1-R3, 6725294448), `cdda3dc3` (rev16: multipart BUY NOW remainder unchecked, 6725877594).
 - **Candidate identity:** the commit that adds this file. Its id is given in the PR #1 comment, because a file cannot contain the id of the commit that holds it.
-- **Binding:** the authoritative path list (79 paths in rev19) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
+- **Binding:** the authoritative path list (79 paths in rev20) with sha256 and size for every file, including this one, is the external `docs/r1-combined-binding/binding.json` (branch `claude/mentor-release-handoff`). This table repeats it for reading.
 - **Changed-file allowlist** (relative to the base; this manifest itself excluded): 78 files.
-- `git diff --full-index b0d76987 -- <allowlist>` sha256: `5b18b9fc5d99c5f6167c4e1933c4efcae7a284114409afce5c50a4b819128147`
+- `git diff --full-index b0d76987 -- <allowlist>` sha256: `766bb3185391f219209bd2dc7a06dcfe22ac1ade23b5daa2fddf25342edd499a`
 
 | Status | File | sha256 (candidate) |
 |---|---|---|
@@ -25,11 +25,11 @@
 | A | `.gitignore` | `1f3ba70278008b3e3d1542d35177da92a1e678cb131f55376a7a388fffc94892` |
 | M | `calendar.mjs` | `33e18a1b893ca80d03684e2043e370354a0a6168d159ff6a7e44eef2b8c74cf3` |
 | M | `discover.mjs` | `10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4` |
-| A | `docs/r1-sealed-provider-data/K2-KEY-SETUP.md` | `730888a959444f907d82e34323c7f2dd94ef45b09e5bb7f196fb56ec195a1334` |
-| A | `docs/r1-sealed-provider-data/README.md` | `5bd61a9c2be9b93728f86911cba9abd4cf5b00017497f01f732f9945e352dae8` |
-| A | `docs/r1-sealed-provider-data/RELEASE.md` | `7b62ad129278ece73d0170e8da1596ee427cdfaa7419e4a3bc74c97a8501d010` |
+| A | `docs/r1-sealed-provider-data/K2-KEY-SETUP.md` | `a669af86e9ed2ec1a5a85682723409ca7a7d2f85facf1056c16377f398a18bf6` |
+| A | `docs/r1-sealed-provider-data/README.md` | `472d9d961caf6facb1084cd63ff8c5ffa47ad8ceba6fcd1ff75b597e6682a320` |
+| A | `docs/r1-sealed-provider-data/RELEASE.md` | `291ed119a49289d822df84c466cef7ff4195ba1635564206b4b9277cbd14e05b` |
 | A | `docs/r1-sealed-provider-data/cost-projection.mjs` | `c4e10f28c820de2e86840f4e247b83bcfbfc9bb36ad9eb9cb31738013ea68cf2` |
-| A | `docs/r1-sealed-provider-data/k2-key-tool.html` | `eae4d8f03fd4233d79a24ba8cf2bd90366224ae34ef53f5bf16295629bda2a3b` |
+| A | `docs/r1-sealed-provider-data/k2-key-tool.html` | `18c663a4294f98b757105eb4b63de5a4c5dca6b5e87d27b9190bfb2d935ff00b` |
 | A | `docs/r1-sealed-provider-data/t1-inventory.tsv` | `a04ce3bcab12b577634f37279004ca88014e52768c95403ede8ee59cfe6792dd` |
 | A | `econ-series.mjs` | `bf1784e957edcff8a03a9cacc61515f094f9dc56451e28c157db33a4e95ebf58` |
 | M | `fastmover-lab.mjs` | `a777ecc0d47fe9a08e9e2ca488af1b7a128b5764cd625a22271493e1f66de7ea` |
