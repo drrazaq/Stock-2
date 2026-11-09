@@ -43,7 +43,7 @@ export function watcherJobEvidence(run, jobs, nowMs = Date.now()) {
 }
 
 // runs: GitHub workflow runs of ignition.yml [{ id, status, conclusion, created_at, run_started_at, updated_at }]
-// state: { d, started, dispatched: [min...], alerted: {kind: true} }   returns { state, dispatch, alerts: [text] }
+// state: { d, started, dispatched: [min...] (every reservation; legacy-compatible), attempts: [{min,status}], alerted: {kind: true} }   returns { state, dispatch, alerts: [text] }
 export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS, config = {}) {
   const n = nyParts(nowMs), alerts = []; let dispatch = false;
   const session=marketSession(n.d),configuredEnd=Math.min(config.endMinute??900,session.close||900),windowEnd=session.closed?0:configuredEnd+5,startUntil=session.closed?0:Math.min(840,configuredEnd-30);
@@ -51,7 +51,12 @@ export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS, 
   // Old `dispatched` entries were recorded before HTTP acknowledgment. Retain
   // them as unknown attempts for rate limiting, never as accepted requests.
   state.attempts = state.version===2 ? (state.attempts||[]).map(x=>({...x})) : state.dispatched.map(min=>({min,status:'UNCONFIRMED_LEGACY'}));
-  if(state.version!==2) state.dispatched=[];
+  // Rollback compatibility (standalone rev3, Codex 6733778910 R-B): `dispatched` mirrors EVERY start reservation (the pre-repair guard's
+  // own meaning, recorded before acknowledgment), so a pre-repair guard restored by a rollback keeps its 15-minute spacing and 3-attempt
+  // cap. A pre-repair guard copies version-2 fields forward but appends only to `dispatched`; any reservation it added there is
+  // reconciled here as an UNCONFIRMED_LEGACY attempt, never as an accepted request. Acceptance is read from attempt statuses only.
+  if(state.version===2){const left=state.attempts.map(a=>a.min);for(const m of state.dispatched){const i=left.indexOf(m);if(i>=0)left.splice(i,1);else state.attempts.push({min:m,status:'UNCONFIRMED_LEGACY'});}state.attempts.sort((a,b)=>a.min-b.min);}
+  state.dispatched=state.attempts.map(a=>a.min);
   state.version=2;
   if (state.startedSource !== 'github_job') state.started = null;
   if (!marketDay(n, holidays) || n.min < WINDOW.from || n.min > windowEnd) return { state, dispatch, alerts, why: 'outside the check window' };
@@ -80,7 +85,7 @@ export function guardDecide(nowMs, runs = [], state0 = {}, holidays = HOLIDAYS, 
   const last = state.attempts.length ? state.attempts[state.attempts.length - 1].min : null;
   if (n.min > startUntil) return { state, dispatch, alerts, why: 'not running, too late to start' };
   if (state.attempts.length < 3 && (last === null || n.min - last >= 15)) {
-    dispatch = true; state.attempts.push({min:n.min,status:'PENDING'});
+    dispatch = true; state.attempts.push({min:n.min,status:'PENDING'}); state.dispatched.push(n.min);
     alerts.push('WATCHER NOT STARTED by ' + fmt(n.min) + ' New York: requesting a start (attempt ' + state.attempts.length + ' of 3); execution is not confirmed.');
   } else if (state.attempts.length >= 3 && !state.alerted.gaveUp) { state.alerted.gaveUp = true; alerts.push('WATCHER DOWN: 3 start attempts without confirmed execution (last ' + fmt(last) + ' New York). No live watch confirmed. Send this to Claude.'); }
   return { state, dispatch, alerts, why: 'not running' };
