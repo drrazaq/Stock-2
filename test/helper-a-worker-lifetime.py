@@ -22,14 +22,16 @@ try:
    # Some managed proc views expose PPid/status but an empty task tree. Inspect
    # only direct children of our known parent; never relax stopped/lock assertions.
    if not children:
-    entries=list(pathlib.Path('/proc').iterdir())
-    if len(entries)>4096:raise RuntimeError('bounded proc inspection unavailable')
-    for entry in entries:
-     if not entry.name.isdecimal():continue
-     try:
-      status=(entry/'status').read_text()
-      if int(status.split('PPid:',1)[1].splitlines()[0].strip())==p.pid:children.append(entry.name)
-     except (OSError,IndexError,ValueError):continue
+    # Bound the query to our own direct children, not the host's process count.
+    # ps has a two-second deadline and output goes to a local temporary file so
+    # an unexpectedly large result cannot accumulate in captured memory.
+    import tempfile
+    with tempfile.TemporaryFile() as child_list:
+     query=subprocess.run(['ps','--no-headers','--ppid',str(p.pid),'-o','pid='],stdout=child_list,stderr=subprocess.DEVNULL,timeout=2)
+     if query.returncode not in (0,1):raise RuntimeError('bounded child inspection unavailable')
+     if child_list.tell()>4096:raise RuntimeError('bounded child output exceeded')
+     child_list.seek(0);children=child_list.read(4096).decode('ascii').split()
+    if any(not pid.isdecimal() for pid in children):raise RuntimeError('invalid child identity')
    for pid in children:
     proc=pathlib.Path('/proc')/pid
     try:
