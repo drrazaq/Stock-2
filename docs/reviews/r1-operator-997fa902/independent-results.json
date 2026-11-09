@@ -1,0 +1,33 @@
+{
+  "verdict": "PASS",
+  "cases": 578,
+  "publisherDefinitions": 75,
+  "scheduledPublishers": 58,
+  "statuses": [
+    "queued",
+    "in_progress",
+    "waiting",
+    "requested",
+    "pending",
+    "action_required"
+  ],
+  "all80PathsAllSixStatuses": true,
+  "all80UnknownCreatedStatuses": true,
+  "unknownPathAllSixStatusesRefused": true,
+  "negativeControls": [
+    "missing migration coverage",
+    "missing addition coverage",
+    "missing status query",
+    "wrong repository",
+    "stale",
+    "future outside inherited tolerance",
+    "incomplete overlay pages",
+    "overlay API cap exceeded",
+    "wrong overlay run repository",
+    "foreign per-workflow run",
+    "overlay range gap"
+  ],
+  "rawCaptureNeverMutated": true,
+  "network": "NONE; source imports and synthetic captures only",
+  "scope": "Overlay semantics only; not operational readiness, future attendance or market evidence"
+}

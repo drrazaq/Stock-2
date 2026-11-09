@@ -1,0 +1,38 @@
+[
+  {
+    "utc": "2026-11-16T13:10:00Z",
+    "clock": {
+      "day": "2026-11-16",
+      "minute": 490,
+      "offset": -300
+    },
+    "admission": {
+      "run": false,
+      "reason": "OPPOSITE_DST_CRON",
+      "day": "2026-11-16",
+      "minute": 490,
+      "endMinute": 900,
+      "eventName": "schedule",
+      "schedule": "10 13 * * 1-5",
+      "utcOffsetMinutes": -300
+    }
+  },
+  {
+    "utc": "2026-11-16T14:10:00Z",
+    "clock": {
+      "day": "2026-11-16",
+      "minute": 550,
+      "offset": -300
+    },
+    "admission": {
+      "run": true,
+      "reason": "PREOPEN_WAIT",
+      "day": "2026-11-16",
+      "minute": 550,
+      "endMinute": 900,
+      "eventName": "schedule",
+      "schedule": "10 14 * * 1-5",
+      "utcOffsetMinutes": -300
+    }
+  }
+]

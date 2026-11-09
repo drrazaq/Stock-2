@@ -1,0 +1,85 @@
+TAP version 13
+# Subtest: control: quiet capture passes the bound gate and the overlay
+ok 1 - control: quiet capture passes the bound gate and the overlay
+  ---
+  duration_ms: 2.696582
+  ...
+# Subtest: S1: an open run of .github/workflows/discover.yml fails the overlay, though the bound gate alone passes
+ok 2 - S1: an open run of .github/workflows/discover.yml fails the overlay, though the bound gate alone passes
+  ---
+  duration_ms: 1.630661
+  ...
+# Subtest: S1: an open run of .github/workflows/ml-lab.yml fails the overlay, though the bound gate alone passes
+ok 3 - S1: an open run of .github/workflows/ml-lab.yml fails the overlay, though the bound gate alone passes
+  ---
+  duration_ms: 0.63895
+  ...
+# Subtest: S1: an open run of .github/workflows/options-lab.yml fails the overlay, though the bound gate alone passes
+ok 4 - S1: an open run of .github/workflows/options-lab.yml fails the overlay, though the bound gate alone passes
+  ---
+  duration_ms: 0.318288
+  ...
+# Subtest: S1: an open run of .github/workflows/squad26-lab.yml fails the overlay, though the bound gate alone passes
+ok 5 - S1: an open run of .github/workflows/squad26-lab.yml fails the overlay, though the bound gate alone passes
+  ---
+  duration_ms: 0.374883
+  ...
+# Subtest: S1: an open run of .github/workflows/squad26-watch.yml fails the overlay, though the bound gate alone passes
+ok 6 - S1: an open run of .github/workflows/squad26-watch.yml fails the overlay, though the bound gate alone passes
+  ---
+  duration_ms: 0.605209
+  ...
+# Subtest: S1: an open run of .github/workflows/research-lab.yml fails the overlay, though the bound gate alone passes
+ok 7 - S1: an open run of .github/workflows/research-lab.yml fails the overlay, though the bound gate alone passes
+  ---
+  duration_ms: 0.417938
+  ...
+# Subtest: S1: an open run of .github/workflows/feed-check.yml fails the overlay, though the bound gate alone passes
+ok 8 - S1: an open run of .github/workflows/feed-check.yml fails the overlay, though the bound gate alone passes
+  ---
+  duration_ms: 0.302023
+  ...
+# Subtest: S1: an open run of .github/workflows/brand-new.yml fails the overlay, though the bound gate alone passes
+ok 9 - S1: an open run of .github/workflows/brand-new.yml fails the overlay, though the bound gate alone passes
+  ---
+  duration_ms: 0.382605
+  ...
+# Subtest: S1: an open tests.yml run (the CI on C) is allowed
+ok 10 - S1: an open tests.yml run (the CI on C) is allowed
+  ---
+  duration_ms: 0.290397
+  ...
+# Subtest: S2: an unknown created status for an added workflow fails
+ok 11 - S2: an unknown created status for an added workflow fails
+  ---
+  duration_ms: 0.739572
+  ...
+# Subtest: S3: missing 31-day coverage for one added workflow fails
+ok 12 - S3: missing 31-day coverage for one added workflow fails
+  ---
+  duration_ms: 0.671589
+  ...
+# Subtest: bound-gate safeguards still apply: missing migration coverage fails
+ok 13 - bound-gate safeguards still apply: missing migration coverage fails
+  ---
+  duration_ms: 0.639742
+  ...
+# Subtest: bound-gate safeguards still apply: an open writer run fails
+ok 14 - bound-gate safeguards still apply: an open writer run fails
+  ---
+  duration_ms: 0.618279
+  ...
+# Subtest: incomplete overlay pages fail
+ok 15 - incomplete overlay pages fail
+  ---
+  duration_ms: 0.356696
+  ...
+1..15
+# tests 15
+# suites 0
+# pass 15
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 91.892777

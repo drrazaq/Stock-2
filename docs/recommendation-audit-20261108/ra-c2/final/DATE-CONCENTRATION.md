@@ -1,0 +1,9 @@
+# Additional completed calculation: date concentration
+
+Reproduce offline: `python docs/recommendation-audit-20261108/ra-c2/final/date-concentration.py`. The existing hash-pinned89-case/four-view output is the sole input. Original scoring, fees, costs,3%entry limit, sample and exits are unchanged. This is descriptive accounting, not a new backtest arm or date filter.
+
+The10retained cases dated23October2026 contribute **+1.784–1.800percentage points** to the same68-attempt base-model mean of **+1.466–1.533%**. The other58cases across7dates contribute **−0.318 to−0.267points**. With existing stress, that date contributes+1.640–1.656points and the remainder−1.085 to−1.031points. Thus the positive base/stress aggregate is concentrated on one signal date, despite eight observed dates. The largest case-count date (24cases) is a different observation from this largest economic-contribution date (10cases); they are not conflated.
+
+Under required extra2%each-way costs, the same date contributes+1.124–1.141points and all other dates−3.712 to−3.642points, reconciling to the already reviewed negative total. Existing stress+2%also reconciles to its unchanged negative total. Every case remains included in every original mean; the complement is an accounting component with fixed denominator68, **not a simulated strategy that excludes the best day**.
+
+The largest contribution date is selected after seeing outcomes and therefore supplies no untouched significance or future trading filter. There is no financed portfolio, equity curve, independence assumption or new hypothesis count. This quantifies why a positive mean from these saved models is insufficient evidence of a dependable method. It does not falsify the broader economic mechanism or authenticate any fill:0complete/102incomplete authentic chains remain. The calculation has been sent to Claude for a narrow arithmetic challenge; prior reviewed findings remain unchanged.
