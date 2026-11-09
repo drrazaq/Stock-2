@@ -192,5 +192,6 @@ test('K2: the one-time steps refuse a data key that is not exactly 64 hex charac
   }
   assert.equal(git(r, ['status', '--porcelain']), before, 'a refused key changes nothing');
   assert.match(run(['--apply', head], '').stderr, /SEALED_KEY_MISSING/, 'missing stays SEALED_KEY_MISSING');
-  assert.equal(run(['--key-check-make'], SECRET.toUpperCase()).status, 0, 'hex case does not matter');
+  assert.equal(run(['--key-check-make'], SECRET.toUpperCase()).status, 0, 'upper-case hex passes the FORM check only');
+  assert.notEqual(sealedKey(SECRET.toUpperCase()).toString('hex'), sealedKey(SECRET).toString('hex'), 'the secret itself is case-sensitive: an upper-case copy is a DIFFERENT key');
 });

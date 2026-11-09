@@ -6,6 +6,18 @@
 - **Inputs:** D2 (`276215ff`), Stage 1 (`0b3bc095`), and Codex's Stage 1 verdict (CHANGES REQUIRED, PR #1 comments 6717284560 and 6717307865; evidence `a7a2039a`).
 - **Not a legal conclusion.** Ciphertext in a public repository reduces plaintext exposure. It is not shown to satisfy any provider's terms, and what this owner actually accepted is not established. **R1 removes nothing already published** (§9).
 
+## 0p. Rev19 (9 Nov): K2 custody corrections (Codex 6733228697)
+
+- **Guide (`K2-KEY-SETUP.md`):**
+  - The format check proves form only: not randomness, and not a correct copy, since a valid-character typo passes it.
+  - The secret is case-sensitive.
+  - No retry after a FAIL.
+  - Only verified generation routes are listed; the unverified PowerShell line is removed.
+- **Outside-runner proof:** B5b is now the `key-check` record checked off GitHub with **each** independent copy (password manager and hand-typed paper), using the offline `k2-key-tool.html`. It was checked in headless Chromium 11/11 against records from the real `sealed-migrate.mjs`, including the case and one-character tests, with no network. `backup-compare` is no longer the proof.
+- **iPhone-only route: NOT verified**, with the precise blocker stated in the guide (no Safari/WebKit here; no reviewed way to run the page on an iPhone).
+- **Fixture:** `test/try-small-audit.test.mjs` is the deterministic exchange-session fixture from development `b9753abb2`.
+- **Paths:** 79 (+`k2-key-tool.html`, +`test/try-small-audit.test.mjs`). Runtime code is unchanged.
+
 ## 0o. Rev18 (9 Nov): K2, a dedicated data key (owner decision); deployment still deferred
 
 - **Owner decision:** use a new dedicated secret `R1_DATA_KEY` for R1, and keep its recovery copy. Do not regenerate Alpaca, Telegram, `PRIVATE_KEY` or any existing credential.
@@ -326,10 +338,10 @@ Between steps 3 and 4 the readers would show `SEALED_LEGACY_PLAINTEXT` (fail-clo
 
 - **Chosen: K2, the dedicated secret `R1_DATA_KEY`.** All 21 `SEALED_SECRET` mappings read it; no workflow hands `PRIVATE_KEY` to the sealed store (`test/sealed-wiring.test.mjs`, K2 test).
 - **`PRIVATE_KEY` is unchanged:** exactly its 7 pre-R1 uses (calendar decryption and the existing readers), the same as main. Its exposure no longer grows with R1. Alpaca, Telegram and all other credentials are untouched; nothing is rotated or regenerated.
-- **Strength:** the owner generates 32 random bytes as 64 hex characters on his own device (`K2-KEY-SETUP.md`). `--apply`, `--key-check-make` and `--backup-compare` refuse any other form (`SEALED_KEY_FORMAT`), before anything is changed. Runtime reads and writes are unchanged.
+- **Strength:** the owner generates 32 random bytes as 64 hex characters on his own computer (`K2-KEY-SETUP.md`; no iPhone-only route is verified). The format gate proves form only. `--apply`, `--key-check-make` and `--backup-compare` refuse any other form (`SEALED_KEY_FORMAT`), before anything is changed. Runtime reads and writes are unchanged.
 - **Recovery:**
-  - The owner keeps the copy outside GitHub in two places.
-  - B5b proves it equals the secret before migration (`backup-compare`, temporary `R1_BACKUP_CHECK`).
+  - The owner keeps two independent copies outside GitHub.
+  - B5b proves each copy is the enrolled key, outside the runner (`key-check` record + `k2-key-tool.html`).
   - If the key is lost, the sealed files cannot be read; the pre-migration plaintext in history stays public.
 - **Superseded:** K1 (reuse `PRIVATE_KEY`) and its exposure figures (rev17: 26 step contexts) are historical only.
 
