@@ -1,0 +1,71 @@
+{
+  "main": "6e72a8d0c46385f3c329157d627636875505a224",
+  "classification": "Synthetic reproduction on exact production source, not actual owner-message evidence",
+  "openCheck": {
+    "base": "6e72a8d0c46385f3c329157d627636875505a224",
+    "localAssessmentCommit": "25a30526d38ec91b2798e0c545f320cf18940786",
+    "changedPaths": [
+      "scan.mjs",
+      "test/open-check-repair.test.mjs"
+    ],
+    "dataTreeUnchanged": true,
+    "published": false
+  },
+  "watcher": {
+    "base": "6e72a8d0c46385f3c329157d627636875505a224",
+    "localCommit": "dc350f6378dfc75f2f27eb81862a22181551e461",
+    "paths": [
+      ".github/workflows/ignition.yml",
+      "ignition-watch.mjs",
+      "test/watcher-cadence-review.test.mjs",
+      "test/watcher-guard.test.mjs",
+      "test/watcher-nov2-clock.test.mjs",
+      "test/watcher-nov2-fixture.mjs",
+      "test/watcher-nov2-guard.test.mjs",
+      "watcher-guard-core.mjs",
+      "watcher-guard-history.mjs",
+      "watcher-guard.mjs",
+      "watcher-schedule.mjs"
+    ],
+    "dataTreeUnchanged": true,
+    "published": false,
+    "releaseReady": false
+  },
+  "calendarComposition": {
+    "base": "6e72a8d0c46385f3c329157d627636875505a224",
+    "steps": [
+      {
+        "patch": "watcher-reviewed.patch",
+        "exit": 0,
+        "stderr": ""
+      },
+      {
+        "patch": "calendar-original.patch",
+        "exit": 1,
+        "stderr": "error: patch failed: scan.mjs:2674\nerror: scan.mjs: patch does not apply\n"
+      }
+    ],
+    "releaseReady": false
+  },
+  "calendarHarness": {
+    "source": "73aa701f:test/econ-calendar-exact-series.test.mjs",
+    "originalTestSha256": "aa9e0177cff2753ff459e89d712d1098e77716c91731e784c7a016198a0b9e03",
+    "adaptedTestSha256": "cc19fc36cbd09f3251710c9a3434b8b68f04f91f106523f77bf5ae559f71facb",
+    "onlyAdapterChange": "Inherit external-network guard into actual calendar child; all assertions unchanged",
+    "referenceModule": "econ-series.mjs added only for test import; production calendar does not import it",
+    "productionSourcesUnmodified": true
+  },
+  "outcomes": {
+    "openMain": "10FAIL/1PASS desired repair assertions; repeated wording assertions are not10distinct operational incidents",
+    "openOriginalR2": "11PASS/0FAIL; local diagnostic component only",
+    "watcherMainCadence": "2FAIL/0PASS; two synthetic seasonal cases",
+    "watcherReviewedCadence": "2PASS/0FAIL; actual configured clock caller, no provider/Telegram/dispatch",
+    "calendarMainActualCallers": "3FAIL; independent offline assertion1PASS;15unselected tests explicitly skipped"
+  },
+  "notReleaseReady": [
+    "Fresh main calendar scan.mjs port conflicts; no hunk forced",
+    "Preserve later reviewed fetch-time/send-time/part/retry freshness without R1 dependencies",
+    "Fresh composed manifest/inverse, data/schema/reader compatibility, full local validation and focused independent review still needed"
+  ],
+  "privacy": "All published test logs are synthetic. Production logs and holdings are not copied here. No key values accessed."
+}

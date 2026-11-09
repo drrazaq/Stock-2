@@ -1,0 +1,185 @@
+TAP version 13
+# Subtest: pure mapping: exact names only; units and plausible bands checked; unmapped names are UNKNOWN
+ok 1 - pure mapping: exact names only; units and plausible bands checked; unmapped names are UNKNOWN # SKIP test name does not match pattern
+  ---
+  duration_ms: 1.003498
+  ...
+# Subtest: pure merge: a subsidiary series never renames or replaces the official headline; conflicting duplicates are UNKNOWN
+ok 2 - pure merge: a subsidiary series never renames or replaces the official headline; conflicting duplicates are UNKNOWN # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.13335
+  ...
+# Subtest: actual job + actual ACTIONS: headline series with units, reference periods and source; no misplaced 1710K / private-payroll headline
+not ok 3 - actual job + actual ACTIONS: headline series with units, reference periods and source; no misplaced 1710K / private-payroll headline
+  ---
+  duration_ms: 275.936046
+  location: '/workspace/g2-verification/standalone-prod-6e72/test/econ-calendar-exact-series.test.mjs:86:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /Jobless claims: Initial jobless claims, week ending \d{4}-\d\d-\d\d: consensus 195K, previous 195K/. Input:
+    
+    'THIS WEEK: Tue 10 Nov, 16:30 Kuwait: Jobless claims (Initial Jobless Claims): forecast 1710, previous 1701 | Tue 10 Nov, 16:30 Kuwait: Jobs report (Nonfarm Productivity QoQ): forecast 2.5%, previous 1.4% | Wed 11 Nov, 16:30 Kuwait: Jobs report (Nonfarm Payrolls): forecast 5, previous 9 | Thu 12 Nov, 16:30 Kuwait: Inflation (CPI) (CPI MoM): forecast 0.3, previous 0.2'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: 'THIS WEEK: Tue 10 Nov, 16:30 Kuwait: Jobless claims (Initial Jobless Claims): forecast 1710, previous 1701 | Tue 10 Nov, 16:30 Kuwait: Jobs report (Nonfarm Productivity QoQ): forecast 2.5%, previous 1.4% | Wed 11 Nov, 16:30 Kuwait: Jobs report (Nonfarm Payrolls): forecast 5, previous 9 | Thu 12 Nov, 16:30 Kuwait: Inflation (CPI) (CPI MoM): forecast 0.3, previous 0.2'
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/standalone-prod-6e72/test/econ-calendar-exact-series.test.mjs:90:10)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: actual "calendar" command: subsidiary series listed separately with UNKNOWN reasons, vintage and source
+not ok 4 - actual "calendar" command: subsidiary series listed separately with UNKNOWN reasons, vintage and source
+  ---
+  duration_ms: 241.596053
+  location: '/workspace/g2-verification/standalone-prod-6e72/test/econ-calendar-exact-series.test.mjs:101:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /Initial claims, 4-week average, week ending [\d-]+: consensus UNKNOWN, previous UNKNOWN \[consensus UNKNOWN: value outside the plausible range for this series \(source mapping not verified\)/. Input:
+    
+    'ECONOMIC CALENDAR (US, next 7 days, every release big and small; TipRanks, private)\n' +
+      '\n' +
+      '- Tue 10 Nov, 16:30 Kuwait: Jobless claims (Initial Jobless Claims): forecast 1710, previous 1701\n' +
+      '- Tue 10 Nov, 16:30 Kuwait: Jobs report (Nonfarm Productivity QoQ): forecast 2.5%, previous 1.4%\n' +
+      '- Tue 10 Nov, 18:30 Kuwait: EIA Crude Oil Stocks Change: forecast 1.2, previous -0.4\n' +
+      '- Wed 11 Nov, 16:30 Kuwait: Jobs report (Nonfarm Payrolls): forecast 5, previous 9\n' +
+      '- Thu 12 Nov, 16:30 Kuwait: Inflation (CPI) (CPI MoM): forecast 0.3, previous 0.2\n' +
+      '\n' +
+      'What goes up or down after each kind of surprise: the study runs on Sunday.\n' +
+      '\n' +
+      'MARKET HOLIDAYS (2 weeks): none\n' +
+      'YOUR STOCKS, EX-DIVIDEND (7 days): none\n' +
+      '\n' +
+      'DECISION: no release has a tested effect yet (the study runs on Sunday), so normal rules apply. Big moves are covered by the market-shock alert and your stops.\n' +
+      'Updated 2026-11-09 05:09 UTC. Not financial advice.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    ECONOMIC CALENDAR (US, next 7 days, every release big and small; TipRanks, private)
+    
+    - Tue 10 Nov, 16:30 Kuwait: Jobless claims (Initial Jobless Claims): forecast 1710, previous 1701
+    - Tue 10 Nov, 16:30 Kuwait: Jobs report (Nonfarm Productivity QoQ): forecast 2.5%, previous 1.4%
+    - Tue 10 Nov, 18:30 Kuwait: EIA Crude Oil Stocks Change: forecast 1.2, previous -0.4
+    - Wed 11 Nov, 16:30 Kuwait: Jobs report (Nonfarm Payrolls): forecast 5, previous 9
+    - Thu 12 Nov, 16:30 Kuwait: Inflation (CPI) (CPI MoM): forecast 0.3, previous 0.2
+    
+    What goes up or down after each kind of surprise: the study runs on Sunday.
+    
+    MARKET HOLIDAYS (2 weeks): none
+    YOUR STOCKS, EX-DIVIDEND (7 days): none
+    
+    DECISION: no release has a tested effect yet (the study runs on Sunday), so normal rules apply. Big moves are covered by the market-shock alert and your stops.
+    Updated 2026-11-09 05:09 UTC. Not financial advice.
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/standalone-prod-6e72/test/econ-calendar-exact-series.test.mjs:103:10)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: provider sends only the private-payrolls row: the jobs report headline is UNKNOWN, never filled by the subsidiary
+not ok 5 - provider sends only the private-payrolls row: the jobs report headline is UNKNOWN, never filled by the subsidiary
+  ---
+  duration_ms: 198.238897
+  location: '/workspace/g2-verification/standalone-prod-6e72/test/econ-calendar-exact-series.test.mjs:110:1'
+  failureType: 'testCodeFailure'
+  error: |-
+    The input did not match the regular expression /Jobs report: figures UNKNOWN \(headline not provided or not verified\)/. Input:
+    
+    'THIS WEEK: Tue 10 Nov, 16:30 Kuwait: Jobless claims (Initial Jobless Claims): forecast 1710, previous 1701 | Tue 10 Nov, 16:30 Kuwait: Jobs report (Nonfarm Productivity QoQ): forecast 2.5%, previous 1.4% | Wed 11 Nov, 16:30 Kuwait: Jobs report (Nonfarm Payrolls Private): forecast 5, previous 9 | Thu 12 Nov, 16:30 Kuwait: Inflation (CPI) (CPI MoM): forecast 0.3, previous 0.2\n' +
+      'DECISION: no release has a tested effect yet (the study runs on Sunday), so normal rules apply. Big moves are covered by the market-shock alert and your stops.'
+    
+  code: 'ERR_ASSERTION'
+  name: 'AssertionError'
+  expected:
+  actual: |-
+    THIS WEEK: Tue 10 Nov, 16:30 Kuwait: Jobless claims (Initial Jobless Claims): forecast 1710, previous 1701 | Tue 10 Nov, 16:30 Kuwait: Jobs report (Nonfarm Productivity QoQ): forecast 2.5%, previous 1.4% | Wed 11 Nov, 16:30 Kuwait: Jobs report (Nonfarm Payrolls Private): forecast 5, previous 9 | Thu 12 Nov, 16:30 Kuwait: Inflation (CPI) (CPI MoM): forecast 0.3, previous 0.2
+    DECISION: no release has a tested effect yet (the study runs on Sunday), so normal rules apply. Big moves are covered by the market-shock alert and your stops.
+  operator: 'match'
+  stack: |-
+    TestContext.<anonymous> (file:///workspace/g2-verification/standalone-prod-6e72/test/econ-calendar-exact-series.test.mjs:112:10)
+    async Test.run (node:internal/test_runner/test:797:9)
+    async Test.processPendingSubtests (node:internal/test_runner/test:526:7)
+  ...
+# Subtest: a calendar saved before the repair is never re-shown with merged figures
+ok 6 - a calendar saved before the repair is never re-shown with merged figures # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.407002
+  ...
+# Subtest: R1: a provider period that disagrees with the official reference is UNKNOWN, never relabelled; agreeing and no-hint controls stay valid
+ok 7 - R1: a provider period that disagrees with the official reference is UNKNOWN, never relabelled; agreeing and no-hint controls stay valid # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.126941
+  ...
+# Subtest: R2: duplicate rows that differ only in unit are UNKNOWN in either order
+ok 8 - R2: duplicate rows that differ only in unit are UNKNOWN in either order # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.070576
+  ...
+# Subtest: R3: a null/zero cached CPI index never becomes a released value (no -100%); a valid zero payroll CHANGE stays
+ok 9 - R3: a null/zero cached CPI index never becomes a released value (no -100%); a valid zero payroll CHANGE stays # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.14662
+  ...
+# Subtest: R4: a provider previous retrieved after the release is labelled as such, never as a pre-release vintage
+ok 10 - R4: a provider previous retrieved after the release is labelled as such, never as a pre-release vintage # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.359119
+  ...
+# Subtest: R4b: a partial Alpha Vantage refresh does not freshen the unchanged payroll series clock
+ok 11 - R4b: a partial Alpha Vantage refresh does not freshen the unchanged payroll series clock # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.163495
+  ...
+# Subtest: R5: claims numerically below consensus read BELOW, with the job-market meaning stated separately
+ok 12 - R5: claims numerically below consensus read BELOW, with the job-market meaning stated separately # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.069034
+  ...
+# Subtest: R6 (health): an actionable delivery failure with complete configured coverage keeps its message-recovery counts
+ok 13 - R6 (health): an actionable delivery failure with complete configured coverage keeps its message-recovery counts # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.133671
+  ...
+# Subtest: production reader macroNow: a headline surprise keeps its exact study key; a subsidiary series never triggers a reaction
+ok 14 - production reader macroNow: a headline surprise keeps its exact study key; a subsidiary series never triggers a reaction # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.092479
+  ...
+# Subtest: R4 (r3): a cached actual with a missing retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim
+ok 15 - R4 (r3): a cached actual with a missing retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.056294
+  ...
+# Subtest: R4 (r3): a cached actual with a invalid retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim
+ok 16 - R4 (r3): a cached actual with a invalid retrieval time shows retrieval time UNKNOWN and no freshness or release-timing claim # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.096595
+  ...
+# Subtest: R4 (r3) control: a timestamped cached actual keeps its real retrieval date
+ok 17 - R4 (r3) control: a timestamped cached actual keeps its real retrieval date # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.134532
+  ...
+# Subtest: R4 (r3): provider figures with an unknown retrieval time make no release-timing claim; footnote cites no fetch date
+ok 18 - R4 (r3): provider figures with an unknown retrieval time make no release-timing claim; footnote cites no fetch date # SKIP test name does not match pattern
+  ---
+  duration_ms: 0.064777
+  ...
+# Subtest: all requests stayed synthetic and offline
+ok 19 - all requests stayed synthetic and offline
+  ---
+  duration_ms: 0.62589
+  ...
+1..19
+# tests 19
+# suites 0
+# pass 1
+# fail 3
+# cancelled 0
+# skipped 15
+# todo 0
+# duration_ms 821.209923

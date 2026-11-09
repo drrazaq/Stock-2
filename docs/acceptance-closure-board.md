@@ -1,3 +1,5 @@
+> **Owner priority supersedes release discussion:**6732435750 review COMPLETE; combined R1DEPLOYMENT DEFERRED, no off-GitHub key backup or key changes. [Current production evidence/standalone assessment](production-diagnosis-20261109/README.md).24/40unchanged;0full-row closures. Historical proceduralPASS is not execution authority.
+
 > **O1rev2 proceduralPASS:** [exact997fa902 independent receipt](reviews/r1-operator-997fa902/REVIEW.md), [verdict6732177812](https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6732177812). P1–P3 resolved; candidate73aa/bindingc298unchanged. Actual attendance/G7, approvals and fresh readiness remain unconfirmed. D1b/research additions confirmed in6728406448.24/40 unchanged,0 new full-row closures. Earlier procedural findings below remain history.
 
 > **Focused reviews:** development3b7 codePASS(e72adb31); D1b record correctionb9753abb2; research/evidence requestPASS(bff26b91). [Current procedural review](reviews/r1-operator-93c8a4e4/REVIEW.md) requires corrections, separate from sourcePASS and unconfirmed attendance.24/40 unchanged;0 full-row closures.

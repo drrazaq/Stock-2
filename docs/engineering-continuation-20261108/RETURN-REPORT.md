@@ -1,3 +1,5 @@
+> **Current owner direction9November:** previous review6732435750 COMPLETE; combined R1encryption DEPLOYMENT DEFERRED. Off-GitHub key backup NOT ESTABLISHED; no key rotation/regeneration. [Read-only production diagnosis and standalone repair assessment](../production-diagnosis-20261109/README.md) supersedes all pending combined-release approval discussion below. No operational action.
+
 > **9November summary check:** [two summary-only wording clarifications](../reviews/r1-operator-997fa902/SUMMARY-CHECK.md), sent to Claude in6732435750. Unit73aa/bindingc298/procedure997PASS unchanged. The pasted owner-approval quotation is a draft, not approval or attendance.
 
 # Consolidated return report
