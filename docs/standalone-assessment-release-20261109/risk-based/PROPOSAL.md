@@ -27,6 +27,22 @@ Reserve **165minutes maximum**, beginning only when Claude and Codex are actuall
 
 Let T be that actual session start. Readiness and the only forward push must finish **by T+20minutes**. Readiness: fresh main;0bound drift; source-only C′;28/0 verification and existing required local inventory; current running/queued census and writer/definition compatibility; preserve all intervening data/newer code. At most one rebuild inside that same cutoff. If not ready, end/defer **before a write**, with no automatic replacement date.
 
+### Mandatory timing band for every source write
+
+Every forward push and every inverse, whether in A or a later recovery session, must occur **at least 30 minutes before the next scheduled trigger of `main.yml`, `ignition.yml` or `calendar.yml` under either the installed or proposed/restored definition**. Immediately before each write, a fresh census must show **no queued or running job of any of those three workflows**. Both conditions are required; a quiet census alone is insufficient. A run using an old workflow definition with new checked-out source is MIXED; an observing MIXED watcher is FAILED, not accepted as C′ evidence.
+
+The pinned definitions have these UTC triggers:
+
+| Workflow | Triggers under either definition |
+|---|---|
+| `main.yml` | Weekdays 13:10, 13:40, then every half hour through 20:40 (16 intraday triggers), plus 21:30 nightly |
+| `ignition.yml` | Weekdays old 12:45 / 13:45 and new 13:10 / 14:10; include opposite-season triggers even when expected to no-op |
+| `calendar.yml` | Weekdays 20:45; Sunday 05:30 |
+
+For A, the worst-case inverse is P+85 ≤ T+105. It must still precede the next trigger by 30 minutes, so **T ≤ next trigger − 135 minutes**. With the pinned weekday definitions, the first trigger under either definition is 12:45 UTC: **T ≤ 10:30 UTC**, and T must be after the prior nightly run and all other queued/running jobs of these three workflows have completed. Apply the same conservative T ≤ next trigger − 135 minutes admission band to a later paired recovery session, then recheck the 30-minute write margin and empty census immediately before its inverse. On weekends calculate the next trigger from the union above, including Sunday calendar; do not reuse the weekday cutoff blindly.
+
+This band is arithmetically feasible, not a claim that a particular session is available. If a prior job has not finished by the admission cutoff, either role/access is unavailable, or a fresh census/timing check fails, **the session is infeasible and no write starts**. If a required inverse becomes unsafe after the forward push, do not bypass the band, cancel a job or change a deadline: remain UNVERIFIED and report the unmet recovery condition. No date is nominated.
+
 For actual forward push P:
 
 - Hosted Tests must start≤P+30minutes; complete independent receipt≤job start+25, hence≤P+55.
@@ -46,7 +62,7 @@ B is a **read-only independent review**, budget≤90minutes. It occurs after the
 Review every required component, not merely samples:
 
 - actual workflow/event definition and actual checked-out code, qualifying data-only descendants and relevant unchanged source dependencies; C′ is the actual fresh build, not the historical candidate ancestor;
-- intraday and nightly completion/output/error evidence;
+- **F2: every one of the selected weekday cycle's 16 scheduled `main.yml` intraday runs**, from 13:10 through 20:40 UTC, each with P-def, P-code, full completion/output/error evidence and immutable publication identities; also the selected nightly run. Enumerate all 16 expected trigger slots and reconcile each to its actual run/job or explicit missing/failed result. Do not substitute only the first successful intraday run, omit a later failure, or treat a queued/cancelled/missing run as complete;
 - winter watcher admissions, actual heartbeat coverage/denominators, gaps, end and publication. A no-op or partial watch is not complete market coverage;
 - fresh guard adoption provenance; state version alone is not proof of all guard functions;
 - newly generated calendar result/status and available output evidence;
@@ -68,6 +84,8 @@ Always preserve separately: fault/event time when known, original missed target,
 
 If B establishes a qualifying regression caused by C′, a **currently paired recovery session** may use the one reviewed source-only inverse, if it has not already been used, under the new prospectively approved response arrangement. Prepare and independently verify the exact current-state inverse first. Its live decision/push/hosted Tests envelope remains≤85minutes; reserve90minutes. The new remedy window is not an assertion that the old failure clock was satisfied. If only a scheduler/provider/evidence outage is established, do not infer a source regression or blindly restore older known defects; record FAILED/UNKNOWN and a concrete disposition. Any write outside the exact inverse requires separate review/approval.
 
+That recovery session must also satisfy §2's timing band and empty-job census; its 90-minute reservation does not waive either. Before A, identify a feasible B window and conditional recovery admission opportunity together. If B cannot finish within its 20-hour/expiry bounds or a conditional paired recovery opportunity cannot fit the write band, the proposed arrangement is infeasible for that cycle: do not begin A. Later attendance is still unconfirmed until actually established. A missed opportunity is disclosed, not silently rolled to another date; no immediate response outside the band is promised.
+
 An owner fault/STOP report between sessions is recorded at its actual timestamp and blocks further release progression when received. **No immediate acknowledgement, reversal or24-hour service is promised outside an active paired turn.** When attended, assess the evidence and disposition; if required access/roles are unavailable, stay UNVERIFIED. Owner urgency/reporting does not authorize an unattended action or a new deadline.
 
 ## 5. Restoration review C, only if an inverse was used
@@ -75,6 +93,8 @@ An owner fault/STOP report between sessions is recorded at its actual timestamp 
 Date each required restored component once to its next eligible ordinary cycle, with finite expected start/coverage boundaries; do not keep rolling to a later “first restored run.” Original restored source,355-minute watcher timeout/13:45cron, absent new admission step, old calendar semantics and actual restored test inventory apply. R-A remains expressly disclosed.
 
 The independent reviewer checks **all** required restoration receipts from retained complete evidence under the same age/expiry bounds as B. Budget≤60minutes; no paired operator or further write is needed merely to read and report. Restoration remains **REVERSED—UNVERIFIED** until every required gate passes. A failed/missing receipt does not authorize a second inverse, corrective forward push or manufactured probe.
+
+**R2 includes every one of the restored cycle's 16 scheduled `main.yml` intraday runs, 13:10–20:40 UTC, and the selected nightly run**, with restored P-def, P-code, complete logs, completion/output/error evidence and publication identities for each. Enumerate missing/failed slots as such; no first-run-only or successful-run-only substitution. The B/C review budgets are work limits, not permission to sample or waive failures. If complete review cannot finish within its budget and evidence deadline, publish the incomplete receipt and remain UNVERIFIED; do not silently extend the deadline.
 
 ## 6. Explicit residual risks
 
@@ -94,4 +114,4 @@ If a known fault arrives outside a session and prompt response is important, the
 
 Keep **the single reviewed28-path combined unit**. The standalone27-path source PASS is preserved, but separating watcher/calendar/scanner/assessment ownership would require newly verified intermediate definitions/imports/data readers and separate inverses/activation cycles. It would not remove the natural-cycle evidence or overnight message risk and would add writes. No split unit is declared deployment-ready by inference. No feature or safeguard is discarded or parked by this sequencing.
 
-**Review status: proposed for independent review; not owner approval-ready until Claude's focused verdict is attached. No date proposed.**
+**Review status: Claude's independent review 6739680243 passed all other provisions of f383cdaaa and required the two corrections now explicit above: the every-write timing band/census and all-16-run F2/R2 scope. This exact revision is returned for focused acceptance; not owner approval-ready until that verdict is attached. All source reviews remain closed. No date proposed; no operational action authorized.**
