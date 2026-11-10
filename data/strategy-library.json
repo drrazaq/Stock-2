@@ -34430,7 +34430,7 @@
    "name": "Wikipedia page views rising most last month (top 20%), hold 1 month",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-10 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "At the first session of each month, score every liquid stock with an English Wikipedia article (Wikidata CIK P5531 sitelink) by ln(page views last month) - ln(page views the month before) (Wikimedia Pageviews API, agent=user, both months 1,000+ views); buy the top 20% of that month's cross-section (300+ stocks needed) at the open of that session; sell the close 21 sessions later. Article mapping, view counts, score, ranking, spike rule, timing and data rule fixed in research-core.mjs (IDEA 14) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.econlet.2024.111836",
@@ -34440,7 +34440,45 @@
     "https://www.wikidata.org/wiki/Property:P5531"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-11-10: Pyun (2024, Economics Letters) \"The Wikipedia effect\": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today's titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026."
+   "note": "Daily researcher 2026-11-10: Pyun (2024, Economics Letters) \"The Wikipedia effect\": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today's titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026.",
+   "tested": "2026-11-09",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     4785,
+     6235
+    ],
+    "avg": [
+     -0.0111,
+     0.0039
+    ],
+    "stress": [
+     -0.0151,
+     -0.0001
+    ],
+    "edge": [
+     -0.0072,
+     -0.0066
+    ],
+    "vsOwn": [
+     -0.0116,
+     0.0032
+    ],
+    "noTop2": [
+     -0.0116,
+     0.0033
+    ],
+    "tBlock": [
+     -2.9,
+     -2.43
+    ],
+    "win": [
+     0.4405,
+     0.4966
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.9 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t -2.43 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-WIKI-M63",
@@ -34448,7 +34486,7 @@
    "name": "Wikipedia page views rising most last month (top 20%), hold 3 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-10 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-WIKI-M21, hold 63 sessions. Article mapping, view counts, score, ranking, spike rule, timing and data rule fixed in research-core.mjs (IDEA 14) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.econlet.2024.111836",
@@ -34458,7 +34496,45 @@
     "https://www.wikidata.org/wiki/Property:P5531"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-11-10: Pyun (2024, Economics Letters) \"The Wikipedia effect\": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today's titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026."
+   "note": "Daily researcher 2026-11-10: Pyun (2024, Economics Letters) \"The Wikipedia effect\": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today's titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026.",
+   "tested": "2026-11-09",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     3682,
+     4404
+    ],
+    "avg": [
+     -0.0096,
+     0.0179
+    ],
+    "stress": [
+     -0.0136,
+     0.0139
+    ],
+    "edge": [
+     -0.005,
+     -0.0121
+    ],
+    "vsOwn": [
+     -0.0348,
+     0.0043
+    ],
+    "noTop2": [
+     -0.0107,
+     0.0167
+    ],
+    "tBlock": [
+     -2,
+     -3.84
+    ],
+    "win": [
+     0.4677,
+     0.5116
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2 under 2.5 in the older half; not better than the average stock in the newer half; block t -3.84 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-WIKI-SPIKE10",
@@ -34466,7 +34542,7 @@
    "name": "Wikipedia attention spike (5-day views 3x the 8-week median), hold 2 weeks",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-10 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "A UTC day d where the mean English Wikipedia page views (agent=user) of d-4..d are 3x+ the median of days d-60..d-5 (median 100+ views a day), first spike of that article in 91 days; buy the next open after d (stock liquid); sell the close 10 sessions later. Article mapping, view counts, score, ranking, spike rule, timing and data rule fixed in research-core.mjs (IDEA 14) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.econlet.2024.111836",
@@ -34476,7 +34552,45 @@
     "https://www.wikidata.org/wiki/Property:P5531"
    ],
    "hold": 10,
-   "note": "Daily researcher 2026-11-10: Pyun (2024, Economics Letters) \"The Wikipedia effect\": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today's titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026."
+   "note": "Daily researcher 2026-11-10: Pyun (2024, Economics Letters) \"The Wikipedia effect\": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today's titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026.",
+   "tested": "2026-11-09",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     318,
+     555
+    ],
+    "avg": [
+     -0.0118,
+     -0.0056
+    ],
+    "stress": [
+     -0.0158,
+     -0.0096
+    ],
+    "edge": [
+     -0.0078,
+     -0.0094
+    ],
+    "vsOwn": [
+     -0.0089,
+     -0.004
+    ],
+    "noTop2": [
+     -0.014,
+     -0.0075
+    ],
+    "tBlock": [
+     -2.04,
+     -0.52
+    ],
+    "win": [
+     0.4623,
+     0.4306
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.04 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.52 under 2.5 in the newer half"
+   }
   }
  ]
 }
