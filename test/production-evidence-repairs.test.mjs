@@ -119,7 +119,7 @@ test('actual holdings caller does not turn stale or undated quotes into stop-rea
  }
 });
 test('actual stale-close caller preserves original position and recorded exit instead of minting a current HOLD',async t=>{
- const f=await holdingsFixture(t,{end:'2026-11-06'});f.pos.ZZA.exitFlag={d:'2026-11-06',why:'existing close-based exit'};f.pos.ZZA.lastAct={act:'SELL ALL',d:'2026-11-06',since:'2026-11-06'};const before=JSON.stringify(f.pos);
+ const f=await holdingsFixture(t,{end:'2026-11-06',age:3600000});f.pos.ZZA.exitFlag={d:'2026-11-06',why:'existing close-based exit'};f.pos.ZZA.lastAct={act:'SELL ALL',d:'2026-11-06',since:'2026-11-06'};const before=JSON.stringify(f.pos);
  const text=await f.S.fn('holdingsText')(f.sig,f.pos,'SYNTHETIC HOLDINGS',false);
  assert.match(text,/ASSESSMENT UNKNOWN/);assert.match(text,/RECORDED CLOSE-BASED EXIT dated 2026-11-06/);assert.match(text,/existing instruction is not cancelled/);assert.equal(JSON.stringify(f.pos),before);assert.doesNotMatch(text,/ZZA[^\n]*: HOLD,/);
 });
@@ -128,5 +128,9 @@ test('actual fresh stop, send-time expiry and private-body logging boundaries pr
  assert.match(text,/the stop 8.00 is reached/);assert.match(text,/do not sell twice/);
  const before=f.S.read('data/my-positions.json');f.clock.now+=4*60000;const r=await f.S.fn('telegram')(text+'\nSYNTHETIC footer');
  assert.equal(r.ok,false);assert.equal(r.reason,'PRICE_EVIDENCE_EXPIRED');assert.equal(f.sent.length,0);assert.equal(f.S.read('data/my-positions.json'),before);
+});
+test('actual review and holdings keep a fresh stop fact even when the daily assessment is stale',async t=>{
+ const f=await holdingsFixture(t,{end:'2026-11-06'}),review=await f.S.fn('reviewReply')('ZZA',f.sig,f.pos),text=await f.S.fn('holdingsText')(f.sig,f.pos,'SYNTHETIC HOLDINGS',false);
+ assert.match(review,/STOP LEVEL REACHED/);assert.match(review,/do not sell again/);assert.match(text,/the stop 8.00 is reached/);assert.doesNotMatch(text,/ZZA[^\n]*: HOLD,/);
 });
 test('all actual caller requests stayed on loopback',()=>assert.deepEqual(blocked,[]));
