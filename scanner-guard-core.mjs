@@ -1,4 +1,4 @@
-// SCANNER GUARD, revision 2 (development proposal; NOT deployed; every dispatch needs a separately approved horizon). Pure decisions;
+// SCANNER GUARD, revision 3 (development proposal; NOT deployed; dispatches only inside one separately approved pilot day). Pure decisions;
 // scanner-guard.mjs does the remote state, GitHub and Telegram I/O.
 // WHY: GitHub created main.yml runs late or not at all for most scheduled slots 30 Oct - 9 Nov (see docs/scanner-execution-20261110).
 // Revision 2 answers Codex review 6758807819 (G1-G6):
@@ -8,25 +8,27 @@
 //   G3 every input is validated strictly; anything malformed, incomplete, from the future or out of calendar makes the whole decision
 //      UNKNOWN (no dispatch), never empty/current. Missing state (no remote branch yet) is distinct from corrupt state.
 //   G5 alerts are delivery records (PENDING -> ACK | REFUSED | UNKNOWN), published before sending; UNKNOWN is never resent.
-//   G6 nothing is dispatched unless an approval horizon is configured and current; dispatch START cutoffs, COMPLETION bounds and
-//      per-day/total caps are explicit constants below.
+//   G6 nothing is dispatched unless an approval names ONE pilot NYSE day; then at most the 16 scheduled intraday slots of that day
+//      (one assisted start per slot, shared with the natural schedule) and at most ONE conditional nightly for that session.
+//      There is no self-renewing successor chain. Dispatch START cutoffs and COMPLETION bounds are explicit constants below.
+// Revision 3 answers Codex 6761146322: natural + assisted share one slot identity; one-day 16-slot pilot + max 1 nightly; no successor.
 import { marketSession } from './market-session.mjs';
 
 export const VERSION = 2;
 export const ACTIVE = ['queued', 'in_progress', 'waiting', 'requested', 'pending'];
 export const RUN_STATUSES = [...ACTIVE, 'completed'];
 export const LIMITS = {
-  // Nightly: dispatch START window 22:15-01:00 UTC; main.yml timeout 300 min, so any guard nightly COMPLETES by 06:00 UTC, which keeps
-  // 06:00-13:40 UTC free of guard scanner runs (the release Session A band).
-  nightlyFromUtcMin: 22 * 60 + 15, nightlyStartCutoffUtcMin: 60, nightlyCompletionBoundUtcMin: 6 * 60, mainTimeoutMin: 300,
-  nightlyMaxAttempts: 2, nightlyGapMin: 60,
-  intradayIdleMin: 40, intradayGapMin: 30, intradayMaxPerDay: 14,
-  successorLeadMin: 45, successorMaxPerDay: 6,
-  // Total dispatches over one approval horizon (all kinds). Horizon length itself is capped.
-  horizonMaxDays: 14, horizonMaxDispatches: 14 * (2 + 14 + 6),
+  // Nightly: ONE conditional start, window 22:15-01:00 UTC after the pilot session; main.yml timeout 300 min, so it COMPLETES by 06:00 UTC,
+  // which keeps 06:00-13:40 UTC free of guard scanner runs (the release Session A band).
+  nightlyFromUtcMin: 22 * 60 + 15, nightlyStartCutoffUtcMin: 60, nightlyCompletionBoundUtcMin: 6 * 60, mainTimeoutMin: 300, nightlyMaxAttempts: 1,
+  // Intraday: the 16 scheduled slots of main.yml ('10,40 13-20 * * 1-5', UTC). A slot's window is [slot, slot+30 min). The schedule has the
+  // first 20 minutes to its own; only then may the guard assist, once, until the window ends. Any main.yml run created in the window covers it.
+  slotWindowMin: 30, slotNaturalGraceMin: 20, maxDispatches: 16 + 1,
   unresolvedAlertMin: 30, alertMaxAttempts: 3, futureSlackMs: 5 * 60000, logMax: 200,
 };
-
+// The 16 scheduled intraday slot times (UTC minutes) of main.yml: 13:10, 13:40, ..., 20:40.
+export const SLOTS = Array.from({ length: 16 }, (_, k) => 13 * 60 + 10 + 30 * k);
+const hhmm = (m) => String(Math.floor(m / 60)).padStart(2, '0') + String(m % 60).padStart(2, '0');
 export function nyParts(ms) {
   const p = {}; new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
     .formatToParts(new Date(ms)).forEach(x => p[x.type] = x.value);
@@ -85,7 +87,7 @@ export function validateState(state, nowMs) {
   const bad = (why) => ({ ok: false, why: 'scanner guard state corrupt: ' + why });
   if (!isObj(state) || state.version !== VERSION || !Array.isArray(state.attempts) || !isObj(state.alerts) || !Array.isArray(state.log)) return bad('shape');
   for (const a of state.attempts) {
-    if (!isObj(a) || typeof a.key !== 'string' || !['nightly', 'intraday', 'successor'].includes(a.kind) || typeof a.scope !== 'string' || !ATTEMPT_OUTCOMES.includes(a.outcome)
+    if (!isObj(a) || typeof a.key !== 'string' || !['nightly', 'intraday'].includes(a.kind) || typeof a.scope !== 'string' || !ATTEMPT_OUTCOMES.includes(a.outcome)
       || !Number.isFinite(a.at) || a.at > nowMs + LIMITS.futureSlackMs || !(a.runId === null || Number.isSafeInteger(a.runId)) || !(a.http === null || Number.isInteger(a.http))) return bad('attempt ' + (a && a.key));
   }
   if (new Set(state.attempts.map(a => a.key)).size !== state.attempts.length) return bad('duplicate attempt key');
@@ -98,23 +100,43 @@ export function validateState(state, nowMs) {
 // A guard-started run carries its key in its run-name ("Stock scanner guard <key>"), so it is matched exactly, never by time proximity.
 export function reconcile(state, runs) {
   for (const a of state.attempts) {
-    if (a.kind === 'successor' || a.runId !== null || a.outcome === 'REFUSED') continue;
+    if (a.runId !== null || a.outcome === 'REFUSED') continue;
     const hit = runs.filter(r => r.title === 'Stock scanner guard ' + a.key);
     if (hit.length === 1) a.runId = hit[0].id;
   }
   return state;
 }
 // unresolved = execution not positively established and not definitely refused
-export const unresolved = (a) => a.kind !== 'successor' && a.runId === null && a.outcome !== 'REFUSED';
+export const unresolved = (a) => a.runId === null && a.outcome !== 'REFUSED';
 
+// approval = { pilotDay: 'YYYY-MM-DD' } written only by a reviewed, owner-approved commit. It must be a reviewed open NYSE session.
 export function approvalCurrent(approval, nowMs) {
-  const from = approval && isoMs(approval.from), until = approval && isoMs(approval.until);
-  if (from === null || until === null || until <= from || until - from > LIMITS.horizonMaxDays * 864e5) return { ok: false, why: 'no current approved dispatch horizon' };
-  if (nowMs < from || nowMs >= until) return { ok: false, why: 'outside the approved dispatch horizon' };
-  return { ok: true, from, until };
+  const d = approval && approval.pilotDay;
+  if (typeof d !== 'string' || !DAY.test(d)) return { ok: false, why: 'no approved pilot day' };
+  const s = marketSession(d); if (!s.known || s.closed) return { ok: false, why: 'approved pilot day is not a reviewed open session' };
+  const end = utcMs(addDays(d, 1), LIMITS.nightlyStartCutoffUtcMin);
+  if (nowMs < utcMs(d, SLOTS[0]) || nowMs >= end) return { ok: false, why: 'outside the approved pilot day', pilotDay: d };
+  return { ok: true, pilotDay: d };
 }
 
-// input: { nowMs, approval:{from,until}, runs: {main: body, bot: body}, signals, state (null = none), botRunId, loopEndMs }
+// Slot reconciliation for verification and for the guard itself (pure). For each of the 16 slots of `day`:
+//   NATURAL   a main.yml run not started by the guard was created inside the slot window
+//   ASSISTED  the guard's attempt for this slot matched its run by exact run-name (run created at any time)
+//   UNKNOWN   the guard's attempt for this slot is unresolved (execution not established)
+//   MISSED    the window has ended with no run and no attempt (scheduler gap; never a source defect, never a PASS)
+//   OPEN      the window has not ended yet
+// A run is "created inside the window" by its created_at; GitHub does not say which cron produced a late event, so a late natural event
+// is counted in the window where it actually arrived, never backdated.
+export function classifySlots(day, runs, state, nowMs) {
+  return SLOTS.map(m => {
+    const from = utcMs(day, m), to = from + LIMITS.slotWindowMin * 60000, key = 'intraday:' + day + ':' + hhmm(m);
+    const a = state.attempts.find(x => x.key === key), natural = runs.filter(r => r.createdMs >= from && r.createdMs < to && !r.title.startsWith('Stock scanner guard '));
+    let status = a && a.runId !== null ? 'ASSISTED' : a && unresolved(a) ? 'UNKNOWN' : natural.length ? 'NATURAL' : nowMs < to ? 'OPEN' : 'MISSED';
+    return { slot: hhmm(m), key, from, to, status, naturalRuns: natural.map(r => r.id), attempt: a ? { outcome: a.outcome, runId: a.runId } : null };
+  });
+}
+
+// input: { nowMs, approval:{pilotDay}, runs: {main: body}, signals, state (null = none) }
 // output: { ok, why, state, dispatches:[{workflow, inputs, kind, key, scope}], alerts:[{key, text}] }
 export function scannerGuardDecide(input) {
   const { nowMs } = input, why = [];
@@ -123,8 +145,8 @@ export function scannerGuardDecide(input) {
   if (!st.ok) return { ok: false, why: [st.why], dispatches: [], alerts: [] };   // corrupt: no decision, no alert record can be kept
   const state = st.state, alerts = [], dispatches = [];
   const alert = (key, text) => { if (!state.alerts[key]) alerts.push({ key, text }); };
-  const mainL = validateRuns(input.runs && input.runs.main, nowMs), botL = validateRuns(input.runs && input.runs.bot, nowMs);
-  if (!mainL.ok || !botL.ok) return { ok: false, why: ['run list: ' + (!mainL.ok ? mainL.why : botL.why)], state, dispatches: [], alerts: [] };
+  const mainL = validateRuns(input.runs && input.runs.main, nowMs);
+  if (!mainL.ok) return { ok: false, why: ['run list: ' + mainL.why], state, dispatches: [], alerts: [] };
   reconcile(state, mainL.runs);
   const L = latestCompletedSession(nowMs);
   if (L.unknown) { alert('calendar:' + L.day, 'SCANNER GUARD: the market calendar does not cover ' + L.day + '; it starts nothing until the calendar is reviewed. Send this to Claude.'); return { ok: false, why: ['calendar unknown'], state, dispatches, alerts }; }
@@ -135,9 +157,9 @@ export function scannerGuardDecide(input) {
 
   const appr = approvalCurrent(input.approval, nowMs);
   if (!appr.ok) why.push(appr.why);
-  const inHorizon = appr.ok ? state.attempts.filter(a => a.at >= appr.from && a.outcome !== 'REFUSED').length : 0;
-  const budgetLeft = appr.ok && inHorizon < LIMITS.horizonMaxDispatches;
-  if (appr.ok && !budgetLeft) why.push('horizon dispatch cap reached');
+  const used = appr.ok ? state.attempts.filter(a => (a.scope === appr.pilotDay) && a.outcome !== 'REFUSED').length : 0;
+  const budgetLeft = appr.ok && used < LIMITS.maxDispatches;
+  if (appr.ok && !budgetLeft) why.push('pilot dispatch cap reached');
   const mainActive = mainL.runs.some(r => ACTIVE.includes(r.status));
   const of = (kind, scope) => state.attempts.filter(a => a.kind === kind && a.scope === scope);
 
@@ -153,35 +175,24 @@ export function scannerGuardDecide(input) {
     else if (mainActive) why.push('nightly: a scanner run is queued or running');
     else if (mine.filter(a => a.outcome !== 'REFUSED').length >= LIMITS.nightlyMaxAttempts) { why.push('nightly: attempt limit'); alert('nightly-limit:' + L.day, 'NIGHTLY SCAN NOT DONE for the ' + L.day + ' session after ' + LIMITS.nightlyMaxAttempts + ' guard starts. Send this to Claude.'); }
     else if (mine.length && nowMs - Math.max(...mine.map(a => a.at)) < LIMITS.nightlyGapMin * 60000) why.push('nightly: waiting after the previous guard start');
-    else if (!appr.ok || !budgetLeft) why.push('nightly: due, but not dispatching (' + (appr.ok ? 'cap' : appr.why) + ')');
+    else if (!appr.ok || !budgetLeft || L.day !== appr.pilotDay) why.push('nightly: due, but not dispatching (' + (!appr.ok ? appr.why : L.day !== appr.pilotDay ? 'not the pilot session' : 'cap') + ')');
     else { const key = 'nightly:' + L.day + ':' + (mine.length + 1); dispatches.push({ workflow: 'main.yml', inputs: { mode: 'daily', slot: key }, kind: 'nightly', key, scope: L.day }); }
   }
 
-  // 2. INTRADAY
-  const n = nyParts(nowMs), s = marketSession(n.d);
-  if (!s.known) why.push('intraday: calendar does not cover ' + n.d);
-  else if (s.closed || n.min < s.open + 10 || n.min > s.close - 10) why.push('intraday: outside the market window');
+  // 2. INTRADAY: slots of the approved pilot day only, shared with the natural schedule
+  const n = nyParts(nowMs), utcDay = new Date(nowMs).toISOString().slice(0, 10);
+  if (!appr.ok) why.push('intraday: ' + appr.why);
   else {
-    const mine = of('intraday', n.d), lastRun = Math.max(0, ...mainL.runs.map(r => r.createdMs)), lastGuard = mine.length ? Math.max(...mine.map(a => a.at)) : 0;
-    if (mine.some(unresolved)) why.push('intraday: QUARANTINED, unresolved attempt today');
+    const day = appr.pilotDay, slots = classifySlots(day, mainL.runs, state, nowMs), dayAttempts = of('intraday', day);
+    const cur = slots.find(x => nowMs >= x.from && nowMs < x.to);
+    if (utcDay !== day || !cur) why.push('intraday: no open pilot slot now');
+    else if (dayAttempts.some(unresolved)) why.push('intraday: QUARANTINED, unresolved attempt today');
+    else if (cur.status !== 'OPEN') why.push('intraday: slot ' + cur.slot + ' ' + cur.status);
+    else if (nowMs < cur.from + LIMITS.slotNaturalGraceMin * 60000) why.push('intraday: slot ' + cur.slot + ' left to the schedule for its first ' + LIMITS.slotNaturalGraceMin + ' min');
     else if (mainActive) why.push('intraday: a scanner run is queued or running');
-    else if (nowMs - lastRun < LIMITS.intradayIdleMin * 60000) why.push('intraday: a scanner run started recently');
-    else if (nowMs - lastGuard < LIMITS.intradayGapMin * 60000) why.push('intraday: waiting after the previous guard start');
-    else if (mine.filter(a => a.outcome !== 'REFUSED').length >= LIMITS.intradayMaxPerDay) why.push('intraday: daily limit reached');
     else if (dispatches.length) why.push('intraday: nightly start takes priority');
-    else if (!appr.ok || !budgetLeft) why.push('intraday: due, but not dispatching');
-    else { const key = 'intraday:' + n.d + ':' + (mine.length + 1); dispatches.push({ workflow: 'main.yml', inputs: { mode: 'intraday', slot: key }, kind: 'intraday', key, scope: n.d }); }
-  }
-
-  // 3. BOT SUCCESSOR (bounded: once per bot run, at most successorMaxPerDay per UTC day, only inside the approved horizon)
-  const botRunId = input.botRunId, loopEndMs = input.loopEndMs, utcDay = new Date(nowMs).toISOString().slice(0, 10);
-  if (/^\d+$/.test(String(botRunId || '')) && Number.isFinite(loopEndMs) && loopEndMs - nowMs < LIMITS.successorLeadMin * 60000) {
-    const waiting = botL.runs.some(r => String(r.id) !== String(botRunId) && ACTIVE.includes(r.status) && r.status !== 'in_progress'), key = 'successor:' + botRunId;
-    if (state.attempts.some(a => a.key === key)) why.push('successor: already requested by this bot run');
-    else if (waiting) why.push('successor: a bot run is already waiting');
-    else if (of('successor', utcDay).length >= LIMITS.successorMaxPerDay) why.push('successor: daily cap');
-    else if (!appr.ok || !budgetLeft || dispatches.length + inHorizon >= LIMITS.horizonMaxDispatches) why.push('successor: not dispatching');
-    else dispatches.push({ workflow: 'bot.yml', inputs: {}, kind: 'successor', key, scope: utcDay });
+    else if (!budgetLeft) why.push('intraday: pilot cap');
+    else dispatches.push({ workflow: 'main.yml', inputs: { mode: 'intraday', slot: cur.key }, kind: 'intraday', key: cur.key, scope: day });
   }
   return { ok: true, why, state, dispatches, alerts };
 }

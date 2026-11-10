@@ -1,4 +1,4 @@
-# Dependable scanner execution and bounded release verification (PROPOSAL, revision 2; development only, nothing authorized)
+# Dependable scanner execution and bounded release verification (PROPOSAL, revision 3; development only, nothing authorized)
 
 Diagnosis: `DIAGNOSIS.md`. This proposal does not change the approved unit `d52499c4` / binding `1a799a15` (28 paths), the approved protocol `d2f76b64`, or production. Every production workflow change, dispatch, cancellation and protocol amendment below needs its own exact owner approval.
 
@@ -94,6 +94,29 @@ Diagnosis: `DIAGNOSIS.md`. This proposal does not change the approved unit `d524
 - **Aggregate over a horizon:** at most 14 × (2 + 14 + 6) = 308 dispatches.
 - **Storage:** one small JSON file on its own branch. A commit is written only when state changes (no-op cycles write nothing), at most about 4 commits per dispatch or alert. History is pruned to 14 days (unresolved items kept), and the log is capped at 200 entries.
 - **Completion, receipt and restoration gates** (for verification) are separate and unchanged: a dispatch is never evidence of execution. Each run is verified from its own log, run-name, P-code and P-def.
+
+## 2b. Revision 3 (answers Codex 6761146322; supersedes the G6 bounds of §2a)
+
+- **No self-renewing successor chain.** Bot-successor dispatch is removed. `bot.yml` only calls `node scanner-guard.mjs`. The guard runs while a bot run is alive, and its absence is reported, never covered by recovery.
+- **One-day pilot.** `scanner-guard-approval.json` = `{ "pilotDay": "YYYY-MM-DD" }`. It must be a reviewed open NYSE session and be written only by a reviewed, owner-approved commit; the candidate ships none. Dispatching is possible only from 13:10 UTC that day to 01:00 UTC the next day.
+- **Natural + assisted shared slots.** The 16 scheduled slots are 13:10, 13:40, …, 20:40 UTC, each with a window `[slot, slot+30 min)`.
+  - The schedule has the first 20 minutes alone. The guard may assist **once per slot**, only if no `main.yml` run was created in the window and none is active.
+  - Any non-guard run created in the window covers the slot (NATURAL).
+  - A guard run is matched to **its own** slot by run-name, even if it is created late inside another window.
+- **Maximum dispatches:** 16 intraday + **1 conditional nightly** = 17, all for the pilot day/session. There is no second nightly. If an executed nightly leaves signals stale, the guard sends an alert instead.
+- **Nightly bounds:** start 22:15–01:00 UTC; completion bound 01:00 + 300 min = 06:00 UTC; the 06:00–13:40 UTC band stays clear.
+- **Slot classification for verification** (`classifySlots`, pure): each slot is NATURAL, ASSISTED, UNKNOWN (unresolved attempt), MISSED (window ended with no run and no attempt: a scheduler gap, never a source defect and never a PASS) or OPEN.
+  - A late natural event is counted where it actually arrived, never backdated.
+  - This supports the 16-slot F2 enumeration directly. It does **not** change F2's criterion, and any relabelling (for example "SOURCE-VERIFIED / SCHEDULE-COVERAGE-UNVERIFIED") remains an owner decision.
+- **Pilot cost bound:** at most 17 extra `main.yml` runs (each the same work as the scheduled run it replaces: about 1–3 min intraday, about 50 min nightly) and the matching provider calls. State is one JSON file on its own branch, with at most about 4 small commits per dispatch or alert and none on no-op cycles.
+- **Regressions:**
+  - shared slots: inside the grace nothing happens; at slot + 20 one assisted start; a natural run covers the slot; one per slot; the next slot is its own;
+  - a late guard run does not make the next slot look natural;
+  - one nightly only;
+  - a non-session, holiday or 2099 pilot day is refused, and so is a day outside the pilot;
+  - pilot-window edges.
+
+  `test/scanner-guard.test.mjs` passes 13/13. Five revision-3 mutations and three revision-2 mutations re-run, each detected.
 
 ## 3. Bounded alternative release verification (protocol amendment; needs owner approval)
 

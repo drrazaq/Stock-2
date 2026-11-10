@@ -1,12 +1,12 @@
-// Scanner guard revision 2 (development proposal): Codex review 6758807819 G1-G6. Pure decisions plus the actual CLI with real git
+// Scanner guard revision 3 (development proposal): Codex review 6758807819 G1-G6 and 6761146322 (shared slots, one-day pilot, no successor). Pure decisions plus the actual CLI with real git
 // (a local bare "remote", two clones) and a loopback GitHub/Telegram stub. No network, no live dispatch.
 import test from 'node:test'; import assert from 'node:assert/strict';
 import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path'; import http from 'node:http';
 import { execFileSync, spawn } from 'node:child_process'; import { fileURLToPath } from 'node:url';
-import { scannerGuardDecide, latestCompletedSession, validateRuns, validateSignals, validateState, reserveAttempt, finishAttempt, reserveAlert, alertOutcome, finishAlert, pendingRetries, LIMITS } from '../scanner-guard-core.mjs';
+import { approvalCurrent, scannerGuardDecide, latestCompletedSession, validateRuns, validateSignals, validateState, reserveAttempt, finishAttempt, reserveAlert, alertOutcome, finishAlert, pendingRetries, classifySlots, SLOTS, LIMITS } from '../scanner-guard-core.mjs';
 
 const T = (s) => Date.parse(s);
-const APPROVAL = { from: '2026-11-09T00:00:00Z', until: '2026-11-20T00:00:00Z' };
+const APPROVAL = { pilotDay: '2026-11-09' }, PILOT10 = { pilotDay: '2026-11-10' };
 const runs = (list) => ({ total_count: list.length, workflow_runs: list });
 const run = (id, status, created, title = 'Stock scanner') => ({ id, status, created_at: created, display_title: title, event: 'schedule' });
 const DONE = [run(42321580565, 'completed', '2026-11-07T01:00:15Z')];
@@ -39,13 +39,15 @@ test('G2: only an exact run-name match resolves an attempt; a definite refusal r
   assert.equal(decide('2026-11-09T23:25:00Z', { state: o.state, runs: { main: near, bot: runs([]) } }).dispatches.length, 0);
   const matched = runs([run(10, 'completed', '2026-11-09T22:21:00Z', 'Stock scanner guard nightly:2026-11-09:1'), ...DONE]);
   const m = decide('2026-11-09T23:25:00Z', { state: o.state, runs: { main: matched, bot: runs([]) } });
-  assert.equal(m.state.attempts[0].runId, 10); assert.equal(m.dispatches[0].key, 'nightly:2026-11-09:2', 'executed but signals still stale: second (last) attempt');
+  assert.equal(m.state.attempts[0].runId, 10); assert.equal(m.dispatches.length, 0, 'executed but signals still stale: no second nightly (max 1); alert instead');
+  assert.ok(m.alerts.some(a => a.key === 'nightly-limit:2026-11-09'));
   const r = decide('2026-11-09T22:20:00Z'); reserveAttempt(r.state, r.dispatches[0], T('2026-11-09T22:20:00Z')); finishAttempt(r.state, r.dispatches[0].key, 422, T('2026-11-09T22:20:01Z'));
   assert.equal(decide('2026-11-09T23:21:00Z', { state: r.state }).dispatches[0].key, 'nightly:2026-11-09:2', 'definite refusal is not an execution');
   // intraday: same quarantine inside the day
-  const i = decide('2026-11-10T14:41:00Z', { signals: { session: '2026-11-09', generatedAt: '2026-11-10T03:41:07Z' } });
-  assert.equal(i.dispatches[0].kind, 'intraday'); reserveAttempt(i.state, i.dispatches[0], T('2026-11-10T14:41:00Z'));
-  assert.equal(decide('2026-11-10T16:00:00Z', { state: i.state, signals: { session: '2026-11-09', generatedAt: '2026-11-10T03:41:07Z' } }).dispatches.length, 0);
+  const S9 = { approval: PILOT10, signals: { session: '2026-11-09', generatedAt: '2026-11-10T03:41:07Z' } };
+  const i = decide('2026-11-10T15:01:00Z', S9);
+  assert.equal(i.dispatches[0].key, 'intraday:2026-11-10:1440'); reserveAttempt(i.state, i.dispatches[0], T('2026-11-10T15:01:00Z'));
+  assert.equal(decide('2026-11-10T16:01:00Z', { ...S9, state: i.state }).dispatches.length, 0, 'later slots quarantined');
 });
 
 test('G3: corrupt state, malformed/incomplete/future run lists and invalid or future saved sessions fail closed', () => {
@@ -69,20 +71,37 @@ test('G3: corrupt state, malformed/incomplete/future run lists and invalid or fu
   }
 });
 
-test('G6: no approval -> nothing; horizon over 14 days invalid; start cutoff 01:00 UTC so completion <= 06:00 UTC; caps', () => {
-  assert.equal(LIMITS.nightlyStartCutoffUtcMin + LIMITS.mainTimeoutMin, LIMITS.nightlyCompletionBoundUtcMin + 24 * 60 - 24 * 60, 'start cutoff + timeout = completion bound');
-  assert.equal(decide('2026-11-09T22:20:00Z', { approval: null }).dispatches.length, 0);
-  assert.equal(decide('2026-11-09T22:20:00Z', { approval: { from: '2026-11-01T00:00:00Z', until: '2026-11-30T00:00:00Z' } }).dispatches.length, 0, '29-day horizon refused');
-  assert.equal(decide('2026-11-09T22:20:00Z', { approval: { from: '2026-11-10T00:00:00Z', until: '2026-11-12T00:00:00Z' } }).dispatches.length, 0, 'before horizon');
+test('G6: no approval -> nothing; one pilot day only; ONE conditional nightly; start cutoff 01:00 UTC so completion <= 06:00 UTC', () => {
+  assert.equal(LIMITS.nightlyStartCutoffUtcMin + LIMITS.mainTimeoutMin, LIMITS.nightlyCompletionBoundUtcMin, 'start cutoff + timeout = completion bound');
+  assert.equal(LIMITS.maxDispatches, 17); assert.equal(SLOTS.length, 16); assert.equal(LIMITS.nightlyMaxAttempts, 1);
+  for (const approval of [null, {}, { pilotDay: '2026-11-08' }, { pilotDay: '2026-11-26' }, { pilotDay: '2099-01-05' }, { pilotDay: '2026-11-10' }])
+    assert.equal(decide('2026-11-09T22:20:00Z', { approval }).dispatches.length, 0, JSON.stringify(approval));
   assert.equal(decide('2026-11-10T00:59:00Z').dispatches[0].kind, 'nightly');
   const late = decide('2026-11-10T01:00:00Z'); assert.equal(late.dispatches.length, 0); assert.ok(late.alerts.some(a => a.key === 'nightly-missed:2026-11-09'));
   for (const h of ['06:00', '09:00', '10:30', '13:30']) assert.equal(decide('2026-11-10T' + h + ':00Z').dispatches.length, 0, h);
-  // successor: once per run, at most 6 per UTC day, only with approval
-  const S = { signals: { session: '2026-11-09', generatedAt: '2026-11-10T03:41:07Z' } }, now = T('2026-11-10T03:00:00Z');
-  const s1 = scannerGuardDecide({ nowMs: now, ...base(S), botRunId: '77', loopEndMs: now + 30 * 60000 }); assert.deepEqual(s1.dispatches.map(d => d.key), ['successor:77']);
-  const six = { version: 2, attempts: Array.from({ length: 6 }, (_, k) => ({ key: 'successor:' + k, kind: 'successor', scope: '2026-11-10', at: now - 1000, outcome: 'ACCEPTED', http: 204, runId: null })), alerts: {}, log: [] };
-  assert.equal(scannerGuardDecide({ nowMs: now, ...base({ ...S, state: six }), botRunId: '78', loopEndMs: now + 30 * 60000 }).dispatches.length, 0, 'daily successor cap');
-  assert.equal(scannerGuardDecide({ nowMs: now, ...base({ ...S, approval: null }), botRunId: '77', loopEndMs: now + 30 * 60000 }).dispatches.length, 0, 'no approval, no successor');
+  // one nightly only: an executed (matched) attempt that left signals stale gives an alert, not a second start
+  const o = decide('2026-11-09T22:20:00Z'); reserveAttempt(o.state, o.dispatches[0], T('2026-11-09T22:20:00Z')); finishAttempt(o.state, o.dispatches[0].key, 204, T('2026-11-09T22:20:01Z'));
+  const m = decide('2026-11-09T23:40:00Z', { state: o.state, runs: { main: runs([run(10, 'completed', '2026-11-09T22:21:00Z', 'Stock scanner guard nightly:2026-11-09:1'), ...DONE]) } });
+  assert.equal(m.dispatches.length, 0); assert.ok(m.alerts.some(a => a.key === 'nightly-limit:2026-11-09'));
+});
+
+test('shared slots: the schedule keeps each slot for 20 min; one assisted start per slot; natural late events counted where they arrive', () => {
+  const S = { approval: PILOT10, signals: { session: '2026-11-09', generatedAt: '2026-11-10T03:41:07Z' } };
+  assert.equal(decide('2026-11-10T13:25:00Z', S).dispatches.length, 0, 'inside the natural grace');
+  assert.equal(decide('2026-11-10T13:30:00Z', S).dispatches[0].key, 'intraday:2026-11-10:1310', 'assist at slot+20');
+  const nat = runs([run(5, 'completed', '2026-11-10T13:12:00Z'), ...DONE]);
+  assert.equal(decide('2026-11-10T13:31:00Z', { ...S, runs: { main: nat } }).dispatches.length, 0, 'natural run covered the slot');
+  const o = decide('2026-11-10T13:30:00Z', S); reserveAttempt(o.state, o.dispatches[0], T('2026-11-10T13:30:00Z')); finishAttempt(o.state, o.dispatches[0].key, 204, T('2026-11-10T13:30:01Z'));
+  const done = runs([run(6, 'completed', '2026-11-10T13:31:00Z', 'Stock scanner guard intraday:2026-11-10:1310'), ...DONE]);
+  const n2 = decide('2026-11-10T13:35:00Z', { ...S, state: o.state, runs: { main: done } }); assert.equal(n2.dispatches.length, 0, 'one per slot');
+  assert.equal(decide('2026-11-10T14:00:00Z', { ...S, state: n2.state, runs: { main: done } }).dispatches[0].key, 'intraday:2026-11-10:1340', 'next slot is its own');
+  // classification for review: natural, assisted, unknown, missed, open
+  const st = validateState(null, 0).state; st.attempts.push({ key: 'intraday:2026-11-10:1340', kind: 'intraday', scope: '2026-11-10', at: T('2026-11-10T14:00:00Z'), outcome: 'UNCERTAIN', http: null, runId: null });
+  st.attempts.push({ key: 'intraday:2026-11-10:1310', kind: 'intraday', scope: '2026-11-10', at: T('2026-11-10T13:30:00Z'), outcome: 'ACCEPTED', http: 204, runId: 6 });
+  const late = validateRuns(runs([run(7, 'completed', '2026-11-10T14:15:00Z'), run(6, 'completed', '2026-11-10T13:31:00Z', 'Stock scanner guard intraday:2026-11-10:1310')]), T('2026-11-10T16:00:00Z')).runs;
+  const c = classifySlots('2026-11-10', late, st, T('2026-11-10T16:00:00Z'));
+  assert.deepEqual(c.slice(0, 6).map(x => x.slot + ' ' + x.status), ['1310 ASSISTED', '1340 UNKNOWN', '1410 NATURAL', '1440 MISSED', '1510 MISSED', '1540 OPEN']);
+  assert.equal(decide('2026-11-11T15:01:00Z', S).dispatches.length, 0, 'not the pilot day');
 });
 
 test('G5: alert records: ACK needs an explicit Telegram acknowledgement; RETRY bounded; PENDING and UNKNOWN are never resent', () => {
@@ -135,6 +154,24 @@ function ghEval(src, ctx) {
   const v = or(); if (i !== toks.length) throw Error('trailing'); return v === false ? '' : v;
 }
 
+
+test('pilot-day window and guard-run identity are pinned directly', () => {
+  const A = { pilotDay: '2026-11-10' };
+  assert.equal(approvalCurrent(A, T('2026-11-10T13:09:59Z')).ok, false, 'before the first slot');
+  assert.equal(approvalCurrent(A, T('2026-11-10T13:10:00Z')).ok, true);
+  assert.equal(approvalCurrent(A, T('2026-11-11T00:59:59Z')).ok, true, 'conditional nightly window');
+  assert.equal(approvalCurrent(A, T('2026-11-11T01:00:00Z')).ok, false, 'pilot ends at the nightly start cutoff');
+  // a LATE guard run for slot 13:40 arriving inside the 14:10 window must not make 14:10 look naturally covered
+  const st = validateState(null, 0).state;
+  st.attempts.push({ key: 'intraday:2026-11-10:1340', kind: 'intraday', scope: '2026-11-10', at: T('2026-11-10T14:00:00Z'), outcome: 'ACCEPTED', http: 204, runId: null });
+  const r = validateRuns(runs([run(8, 'completed', '2026-11-10T14:12:00Z', 'Stock scanner guard intraday:2026-11-10:1340')]), T('2026-11-10T14:35:00Z')).runs;
+  const c = classifySlots('2026-11-10', r, structuredClone(st), T('2026-11-10T14:35:00Z'));
+  assert.equal(c[1].status, 'UNKNOWN', 'not yet reconciled in this pure call'); assert.equal(c[2].status, 'OPEN', '14:10 is not natural');
+  const d = scannerGuardDecide({ nowMs: T('2026-11-10T14:35:00Z'), approval: A, runs: { main: runs([run(8, 'completed', '2026-11-10T14:12:00Z', 'Stock scanner guard intraday:2026-11-10:1340')]) }, signals: { session: '2026-11-09', generatedAt: '2026-11-10T03:41:07Z' }, state: st });
+  assert.equal(d.state.attempts[0].runId, 8, 'reconciled to its own slot');
+  assert.deepEqual(d.dispatches.map(x => x.key), ['intraday:2026-11-10:1410'], 'the 14:10 slot is still assisted');
+});
+
 // ---------- G1: actual CLI with real git remote state ----------
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const g = (cwd, ...a) => execFileSync('git', a, { cwd, encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }).trim();
@@ -173,7 +210,7 @@ test('G1: the RESERVED record is on the remote BEFORE the request; outcome publi
 
 test('G1: a second writer that publishes between read and reservation wins; the loser makes NO request', async (t) => {
   const w = world(t), a = w.clone('a'), b = w.clone('b');
-  const s0 = await stub(t, w); await cli(b, ENV(s0.url, '2026-11-09T21:00:00Z'));   // creates the state branch (no dispatch due yet)
+  const s0 = await stub(t, w); await cli(b, ENV(s0.url, '2026-11-09T21:15:00Z'));   // creates the state branch (no dispatch due yet)
   assert.equal(s0.seen.posts.length, 0); assert.ok(w.remoteState());
   let raced = false;
   const s = await stub(t, w, { onList: () => { if (raced) return; raced = true;   // b's change lands after a read the remote

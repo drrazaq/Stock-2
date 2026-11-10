@@ -1,4 +1,4 @@
-// SCANNER GUARD runner, revision 2 (decisions in scanner-guard-core.mjs). Called every 5 minutes by the bot loop (bot.yml).
+// SCANNER GUARD runner, revision 3 (decisions in scanner-guard-core.mjs). Called every 5 minutes by the bot loop (bot.yml).
 // G1: state is NOT a local file saved later by the bot. It lives on its own branch (scanner-guard-state, one file scanner-guard.json)
 // and every change is published by a plain (non-force) push of a child commit of the tip just read: GitHub accepts it only if the tip
 // is unchanged, so the push is a compare-and-publish. A dispatch request is made only AFTER its RESERVED record is confirmed on the
@@ -46,10 +46,10 @@ const readJsonOrNull = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8
 
 const R = readRemote();
 if (!R.ok) { log(R.why + '; no decision'); process.exit(0); }
-const [mainBody, botBody] = await Promise.all([runList('main.yml'), runList('bot.yml')]);
+const mainBody = await runList('main.yml');
 const now = clock();
-const out = scannerGuardDecide({ nowMs: now, approval: readJsonOrNull('scanner-guard-approval.json'), runs: { main: mainBody, bot: botBody }, signals: readJsonOrNull('data/signals.json'),
-  state: R.state, botRunId: env.GITHUB_RUN_ID || null, loopEndMs: env.BOT_LOOP_END ? +env.BOT_LOOP_END * 1000 : null });
+const out = scannerGuardDecide({ nowMs: now, approval: readJsonOrNull('scanner-guard-approval.json'), runs: { main: mainBody }, signals: readJsonOrNull('data/signals.json'),
+  state: R.state });
 if (!out.ok) { log(out.why.join('; ') + '; no decision'); if (!out.state) process.exit(0); }
 let state = out.state, tip = R.tip, lastBody = R.state === null ? null : JSON.stringify(R.state);
 // Publish only a real change (bounded commits); a no-op cycle writes nothing.
