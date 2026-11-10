@@ -1,0 +1,31 @@
+{
+  "source": "322c08b57aece8d22b52e4c9292d282ae0a84239",
+  "run": 42792387795,
+  "job": 129748810903,
+  "fullLogInspected": true,
+  "logCharacters": 613778,
+  "checkout": "2026-11-10T09:38:24.1129841Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +322c08b57aece8d22b52e4c9292d282ae0a84239:refs/remotes/origin/codex/price-readiness-research-20261110",
+  "rootFiles": 147,
+  "uniqueRootFiles": 147,
+  "failures": [],
+  "newCaseLines": [
+    "2026-11-10T09:39:13.9438066Z # Subtest: actual snap accepts a trade during the awaited refresh, using post-response merge time",
+    "2026-11-10T09:39:13.9445994Z ok 1 - actual snap accepts a trade during the awaited refresh, using post-response merge time",
+    "2026-11-10T09:39:13.9450646Z # Subtest: actual batch response rejects future trade/BBO at receipt even if merger runs later",
+    "2026-11-10T09:39:13.9452073Z ok 2 - actual batch response rejects future trade/BBO at receipt even if merger runs later",
+    "2026-11-10T09:39:13.9456989Z # Subtest: actual top50 response also rejects a clock future at receipt",
+    "2026-11-10T09:39:13.9458999Z ok 3 - actual top50 response also rejects a clock future at receipt",
+    "2026-11-10T09:39:13.9463922Z # Subtest: actual batch preserves valid trade and separate quote clocks; does not turn stale trade into fresh quote price",
+    "2026-11-10T09:39:13.9466171Z ok 4 - actual batch preserves valid trade and separate quote clocks; does not turn stale trade into fresh quote price",
+    "2026-11-10T09:39:13.9468931Z # Subtest: actual loop sleep accounts for snapshot latency instead of accumulating it every minute",
+    "2026-11-10T09:39:13.9476167Z ok 5 - actual loop sleep accounts for snapshot latency instead of accumulating it every minute",
+    "2026-11-10T09:39:13.9477929Z # Subtest: actual loop attributes the post-fetch minute and drops a response beyond the configured endpoint",
+    "2026-11-10T09:39:13.9479223Z ok 6 - actual loop attributes the post-fetch minute and drops a response beyond the configured endpoint"
+  ],
+  "limits": "Existing root inventory only; no production deployment/delivery proof, no statistical performance claim. No Python test files in this research-source tree.",
+  "inventoryExpected": 147,
+  "missing": [],
+  "checkoutExact": [
+    "2026-11-10T09:38:28.2541155Z 322c08b57aece8d22b52e4c9292d282ae0a84239"
+  ]
+}

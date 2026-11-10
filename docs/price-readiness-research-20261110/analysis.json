@@ -1,0 +1,947 @@
+{
+  "neverFreshBreakdown": {
+    "total": 541,
+    "under1Coded": 537,
+    "under1NeverFresh": 537,
+    "regularFirstUnder1": 231,
+    "otherNeverFresh": [
+      {
+        "symbol": "XQTM",
+        "day": "2026-11-02",
+        "code": "GAPPED_AT_OPEN"
+      },
+      {
+        "symbol": "RDACU",
+        "day": "2026-11-03",
+        "code": "GAPPED_AT_OPEN"
+      },
+      {
+        "symbol": "BULLW",
+        "day": "2026-11-09",
+        "code": "GAPPED_AT_OPEN"
+      },
+      {
+        "symbol": "BKHAU",
+        "day": "2026-11-09",
+        "code": "GAPPED_AT_OPEN"
+      }
+    ]
+  },
+  "firstSight": {
+    "all": {
+      "n": 1876,
+      "age": {
+        "n": 1848,
+        "mean": 399.9419372294366,
+        "median": 16.7,
+        "positive": 1847,
+        "withoutBest": 397.9990795885213,
+        "withoutBest2": 396.05411700975014
+      },
+      "older3": 1309,
+      "neverFresh": 541
+    },
+    "preOpen": {
+      "n": 1638,
+      "age": {
+        "n": 1638,
+        "mean": 449.1180708180702,
+        "median": 17.4,
+        "positive": 1638,
+        "withoutBest": 446.95601710445874,
+        "withoutBest2": 444.79132029339786
+      },
+      "older3": 1101,
+      "neverFresh": 307
+    },
+    "regular": {
+      "n": 238,
+      "age": {
+        "n": 210,
+        "mean": 16.368095238095236,
+        "median": 16.6,
+        "positive": 209,
+        "withoutBest": 16.364593301435402,
+        "withoutBest2": 16.36105769230769
+      },
+      "older3": 208,
+      "neverFresh": 234
+    }
+  },
+  "coverage": [
+    {
+      "day": "2026-11-02",
+      "runs": [
+        "41456912382-1",
+        "41463855119-1"
+      ],
+      "observed": 318,
+      "expected": 331,
+      "missing": [
+        587,
+        615,
+        644,
+        673,
+        701,
+        728,
+        756,
+        781,
+        810,
+        832,
+        856,
+        878,
+        892
+      ]
+    },
+    {
+      "day": "2026-11-03",
+      "runs": [
+        "41648541757-1",
+        "41654967502-1"
+      ],
+      "observed": 319,
+      "expected": 331,
+      "missing": [
+        587,
+        629,
+        676,
+        724,
+        769,
+        799,
+        824,
+        856,
+        877,
+        880,
+        881,
+        893
+      ]
+    },
+    {
+      "day": "2026-11-04",
+      "runs": [
+        "41845636679-1"
+      ],
+      "observed": 324,
+      "expected": 331,
+      "missing": [
+        593,
+        643,
+        693,
+        744,
+        798,
+        853,
+        900
+      ]
+    },
+    {
+      "day": "2026-11-05",
+      "runs": [
+        "42042506576-1"
+      ],
+      "observed": 315,
+      "expected": 331,
+      "missing": [
+        587,
+        612,
+        637,
+        662,
+        689,
+        716,
+        744,
+        775,
+        807,
+        838,
+        867,
+        896,
+        897,
+        898,
+        899,
+        900
+      ]
+    },
+    {
+      "day": "2026-11-06",
+      "runs": [
+        "42231862220-1",
+        "42282044370-1"
+      ],
+      "observed": 320,
+      "expected": 331,
+      "missing": [
+        583,
+        614,
+        644,
+        677,
+        708,
+        739,
+        771,
+        803,
+        836,
+        868,
+        897
+      ]
+    },
+    {
+      "day": "2026-11-09",
+      "runs": [
+        "42632637138-1"
+      ],
+      "observed": 317,
+      "expected": 331,
+      "missing": [
+        572,
+        599,
+        627,
+        655,
+        683,
+        711,
+        739,
+        767,
+        796,
+        822,
+        851,
+        879,
+        899,
+        900
+      ]
+    }
+  ],
+  "liquidity": {
+    "GE_2M": {
+      "rows": 541,
+      "validBbo": 340,
+      "freshBbo120": 340,
+      "identityKnown": 0
+    },
+    "LT_2M": {
+      "rows": 176,
+      "validBbo": 138,
+      "freshBbo120": 137,
+      "identityKnown": 0
+    },
+    "UNKNOWN": {
+      "rows": 214,
+      "validBbo": 170,
+      "freshBbo120": 167,
+      "identityKnown": 0
+    }
+  },
+  "B": {
+    "listed": 45,
+    "matured": 20,
+    "unmatured": 25,
+    "legacy": {
+      "n": 20,
+      "mean": 0.06135,
+      "median": -0.023649999999999997,
+      "positive": 7,
+      "withoutBest": -0.029205263157894734,
+      "withoutBest2": -0.04305555555555555
+    },
+    "wholeShareProxy": {
+      "n": 20,
+      "mean": 0.06113011976999999,
+      "median": -0.02327757130000009,
+      "positive": 7,
+      "withoutBest": -0.02820935197894738,
+      "withoutBest2": -0.041814246533333335
+    },
+    "stressProxy": {
+      "n": 20,
+      "mean": 0.05686295450000016,
+      "median": -0.02522648549999989,
+      "positive": 7,
+      "withoutBest": -0.031153527421052467,
+      "withoutBest2": -0.04445218936111095
+    },
+    "beatsStoredSpy": 10,
+    "best": [
+      {
+        "symbol": "CHSN",
+        "day": "2026-10-28",
+        "net": 1.7819
+      },
+      {
+        "symbol": "SSP",
+        "day": "2026-10-28",
+        "net": 0.2201
+      }
+    ],
+    "days": [
+      {
+        "day": "2026-10-28",
+        "legacy": {
+          "n": 5,
+          "mean": 0.42776,
+          "median": 0.2124,
+          "positive": 4,
+          "withoutBest": 0.08922499999999994,
+          "withoutBest2": 0.045599999999999925
+        },
+        "spy": -0.0071
+      },
+      {
+        "day": "2026-10-29",
+        "legacy": {
+          "n": 5,
+          "mean": -0.10275999999999999,
+          "median": -0.0505,
+          "positive": 1,
+          "withoutBest": -0.12935,
+          "withoutBest2": -0.16516666666666666
+        },
+        "spy": -0.0473
+      },
+      {
+        "day": "2026-10-30",
+        "legacy": {
+          "n": 5,
+          "mean": -0.04429999999999999,
+          "median": -0.0254,
+          "positive": 1,
+          "withoutBest": -0.0774,
+          "withoutBest2": -0.10186666666666666
+        },
+        "spy": -0.027
+      },
+      {
+        "day": "2026-11-02",
+        "legacy": {
+          "n": 5,
+          "mean": -0.03529999999999999,
+          "median": -0.0465,
+          "positive": 1,
+          "withoutBest": -0.07114999999999999,
+          "withoutBest2": -0.09126666666666666
+        },
+        "spy": 0.0008
+      }
+    ],
+    "observations": [
+      {
+        "type": "s5",
+        "d": "2026-10-28",
+        "sym": "AXGN",
+        "panel": "B",
+        "px5": 51.35,
+        "net": 0.0686,
+        "spy": -0.0071,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-28",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "AXGN",
+          "px": 47.65,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 20,
+          "outlay": 957.4295,
+          "netDollars": 65.03000000000009,
+          "returnOnBudget": 0.06503000000000009
+        },
+        "stress": {
+          "shares": 20,
+          "outlay": 958.3824999999999,
+          "netDollars": 63.05000000000015,
+          "returnOnBudget": 0.06305000000000015
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-28",
+        "sym": "VRT",
+        "panel": "B",
+        "px5": 205.55,
+        "net": -0.1442,
+        "spy": -0.0071,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-28",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "VRT",
+          "px": 237.69,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 4,
+          "outlay": 955.18614,
+          "netDollars": -137.21943999999996,
+          "returnOnBudget": -0.13721943999999997
+        },
+        "stress": {
+          "shares": 4,
+          "outlay": 956.1369,
+          "netDollars": -138.99239999999986,
+          "returnOnBudget": -0.13899239999999985
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-28",
+        "sym": "ULCC",
+        "panel": "B",
+        "px5": 7.09,
+        "net": 0.2124,
+        "spy": -0.0071,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-28",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "ULCC",
+          "px": 5.805,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 171,
+          "outlay": 997.1439825000001,
+          "netDollars": 210.42743249999995,
+          "returnOnBudget": 0.21042743249999996
+        },
+        "stress": {
+          "shares": 171,
+          "outlay": 998.1366374999999,
+          "netDollars": 208.2223875000002,
+          "returnOnBudget": 0.2082223875000002
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-28",
+        "sym": "CHSN",
+        "panel": "B",
+        "px5": 3.36,
+        "net": 1.7819,
+        "spy": -0.0071,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-28",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "CHSN",
+          "px": 1.2009,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 826,
+          "outlay": 999.9031170000001,
+          "netDollars": 1758.580083,
+          "returnOnBudget": 1.758580083
+        },
+        "stress": {
+          "shares": 821,
+          "outlay": 998.7982889999998,
+          "netDollars": 1729.1761110000002,
+          "returnOnBudget": 1.7291761110000001
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-28",
+        "sym": "SSP",
+        "panel": "B",
+        "px5": 2.88,
+        "net": 0.2201,
+        "spy": -0.0071,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-28",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "SSP",
+          "px": 2.33,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 425,
+          "outlay": 998.20125,
+          "netDollars": 216.67874999999987,
+          "returnOnBudget": 0.21667874999999986
+        },
+        "stress": {
+          "shares": 423,
+          "outlay": 998.4458999999998,
+          "netDollars": 204.61170000000018,
+          "returnOnBudget": 0.20461170000000017
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-29",
+        "sym": "CROX",
+        "panel": "B",
+        "px5": 152.93,
+        "net": 0.0036,
+        "spy": -0.0473,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-29",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "CROX",
+          "px": 151.03,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 6,
+          "outlay": 910.5392700000001,
+          "netDollars": 2.6643600000000447,
+          "returnOnBudget": 0.002664360000000045
+        },
+        "stress": {
+          "shares": 6,
+          "outlay": 911.4454499999999,
+          "netDollars": 0.8406000000002791,
+          "returnOnBudget": 0.0008406000000002791
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-29",
+        "sym": "BHYP",
+        "panel": "B",
+        "px5": 43.94,
+        "net": -0.1749,
+        "spy": -0.0473,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-29",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "BHYP",
+          "px": 52.68,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 18,
+          "outlay": 952.66236,
+          "netDollars": -165.92873999999995,
+          "returnOnBudget": -0.16592873999999994
+        },
+        "stress": {
+          "shares": 18,
+          "outlay": 953.6105999999999,
+          "netDollars": -167.66789999999986,
+          "returnOnBudget": -0.16766789999999987
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-29",
+        "sym": "PCLA",
+        "panel": "B",
+        "px5": 6,
+        "net": -0.2701,
+        "spy": -0.0473,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-29",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "PCLA",
+          "px": 8.12,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 122,
+          "outlay": 995.12596,
+          "netDollars": -267.2239599999999,
+          "returnOnBudget": -0.2672239599999999
+        },
+        "stress": {
+          "shares": 122,
+          "outlay": 996.1165999999997,
+          "netDollars": -268.9465999999997,
+          "returnOnBudget": -0.2689465999999997
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-29",
+        "sym": "FVRR",
+        "panel": "B",
+        "px5": 8.41,
+        "net": -0.0219,
+        "spy": -0.0473,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-29",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "FVRR",
+          "px": 8.5199,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 116,
+          "outlay": 992.7908626000001,
+          "netDollars": -21.694202600000125,
+          "returnOnBudget": -0.021694202600000125
+        },
+        "stress": {
+          "shares": 116,
+          "outlay": 993.7791709999999,
+          "netDollars": -23.658070999999822,
+          "returnOnBudget": -0.023658070999999822
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-29",
+        "sym": "INSM",
+        "panel": "B",
+        "px5": 108.76,
+        "net": -0.0505,
+        "spy": -0.0473,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-29",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "INSM",
+          "px": 113.4725,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 8,
+          "outlay": 912.14167,
+          "netDollars": -46.366789999999924,
+          "returnOnBudget": -0.04636678999999992
+        },
+        "stress": {
+          "shares": 8,
+          "outlay": 913.04945,
+          "netDollars": -48.14464999999984,
+          "returnOnBudget": -0.048144649999999845
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-30",
+        "sym": "STRZ",
+        "panel": "B",
+        "px5": 24.64,
+        "net": 0.0881,
+        "spy": -0.027,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-30",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "STRZ",
+          "px": 22.46,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 44,
+          "outlay": 992.72236,
+          "netDollars": 86.81140000000012,
+          "returnOnBudget": 0.08681140000000012
+        },
+        "stress": {
+          "shares": 44,
+          "outlay": 993.7106,
+          "netDollars": 84.7390000000001,
+          "returnOnBudget": 0.0847390000000001
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-30",
+        "sym": "ACCO",
+        "panel": "B",
+        "px5": 5.06,
+        "net": -0.004,
+        "spy": -0.027,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-30",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "ACCO",
+          "px": 5.035,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 197,
+          "outlay": 996.3828425,
+          "netDollars": -4.058072500000029,
+          "returnOnBudget": -0.0040580725000000295
+        },
+        "stress": {
+          "shares": 197,
+          "outlay": 997.3747374999999,
+          "netDollars": -6.046787499999978,
+          "returnOnBudget": -0.006046787499999979
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-30",
+        "sym": "ZSL",
+        "panel": "B",
+        "px5": 35.85,
+        "net": -0.1172,
+        "spy": -0.027,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-30",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "ZSL",
+          "px": 40.2,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 24,
+          "outlay": 969.2472000000002,
+          "netDollars": -113.13780000000003,
+          "returnOnBudget": -0.11313780000000002
+        },
+        "stress": {
+          "shares": 24,
+          "outlay": 970.212,
+          "netDollars": -114.96299999999991,
+          "returnOnBudget": -0.11496299999999991
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-30",
+        "sym": "OSPN",
+        "panel": "B",
+        "px5": 21.59,
+        "net": -0.163,
+        "spy": -0.027,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-30",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "OSPN",
+          "px": 25.52,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 39,
+          "outlay": 999.77292,
+          "netDollars": -162.02593499999992,
+          "returnOnBudget": -0.16202593499999993
+        },
+        "stress": {
+          "shares": 38,
+          "outlay": 975.1843999999999,
+          "netDollars": -159.81544999999977,
+          "returnOnBudget": -0.15981544999999978
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-10-30",
+        "sym": "CVEO",
+        "panel": "B",
+        "px5": 34.25,
+        "net": -0.0254,
+        "spy": -0.027,
+        "entry": {
+          "type": "list",
+          "d": "2026-10-30",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "CVEO",
+          "px": 34.82,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 28,
+          "outlay": 979.42244,
+          "netDollars": -24.860940000000056,
+          "returnOnBudget": -0.024860940000000057
+        },
+        "stress": {
+          "shares": 28,
+          "outlay": 980.3974,
+          "netDollars": -26.794899999999956,
+          "returnOnBudget": -0.026794899999999955
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-11-02",
+        "sym": "PERI",
+        "panel": "B",
+        "px5": 11.4,
+        "net": -0.0108,
+        "spy": 0.0008,
+        "entry": {
+          "type": "list",
+          "d": "2026-11-02",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "PERI",
+          "px": 11.42,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 87,
+          "outlay": 998.03031,
+          "netDollars": -10.718009999999884,
+          "returnOnBudget": -0.010718009999999884
+        },
+        "stress": {
+          "shares": 87,
+          "outlay": 999.0238499999999,
+          "netDollars": -12.703349999999832,
+          "returnOnBudget": -0.012703349999999832
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-11-02",
+        "sym": "RECT",
+        "panel": "B",
+        "px5": 1.27,
+        "net": -0.0465,
+        "spy": 0.0008,
+        "entry": {
+          "type": "list",
+          "d": "2026-11-02",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "RECT",
+          "px": 1.31,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 757,
+          "outlay": 999.62835,
+          "netDollars": -46.04529999999996,
+          "returnOnBudget": -0.04604529999999996
+        },
+        "stress": {
+          "shares": 753,
+          "outlay": 999.2942999999998,
+          "netDollars": -55.547399999999726,
+          "returnOnBudget": -0.055547399999999726
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-11-02",
+        "sym": "GSIW",
+        "panel": "B",
+        "px5": 10.3,
+        "net": 0.1081,
+        "spy": 0.0008,
+        "entry": {
+          "type": "list",
+          "d": "2026-11-02",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "GSIW",
+          "px": 9.22,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 107,
+          "outlay": 991.0198100000001,
+          "netDollars": 106.42704,
+          "returnOnBudget": 0.10642704
+        },
+        "stress": {
+          "shares": 107,
+          "outlay": 992.00635,
+          "netDollars": 104.3384000000002,
+          "returnOnBudget": 0.1043384000000002
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-11-02",
+        "sym": "QXL",
+        "panel": "B",
+        "px5": 3.38,
+        "net": -0.171,
+        "spy": 0.0008,
+        "entry": {
+          "type": "list",
+          "d": "2026-11-02",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "QXL",
+          "px": 4,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 248,
+          "outlay": 999.9599999999999,
+          "netDollars": -168.91119999999995,
+          "returnOnBudget": -0.16891119999999996
+        },
+        "stress": {
+          "shares": 246,
+          "outlay": 996.8399999999998,
+          "netDollars": -176.67479999999978,
+          "returnOnBudget": -0.17667479999999977
+        }
+      },
+      {
+        "type": "s5",
+        "d": "2026-11-02",
+        "sym": "NVNO",
+        "panel": "B",
+        "px5": 6.85,
+        "net": -0.0563,
+        "spy": 0.0008,
+        "entry": {
+          "type": "list",
+          "d": "2026-11-02",
+          "at": "11:15",
+          "panel": "B",
+          "sym": "NVNO",
+          "px": 7.19,
+          "rule": "IG1"
+        },
+        "base": {
+          "shares": 138,
+          "outlay": 996.70833,
+          "netDollars": -55.826280000000146,
+          "returnOnBudget": -0.055826280000000145
+        },
+        "stress": {
+          "shares": 138,
+          "outlay": 997.70055,
+          "netDollars": -57.76380000000009,
+          "returnOnBudget": -0.05776380000000009
+        }
+      }
+    ]
+  },
+  "controlCaveat": {
+    "duplicateListKeys": [
+      [
+        "2026-10-29|GNSS|A",
+        2
+      ]
+    ],
+    "duplicateS5Keys": [
+      [
+        "2026-10-29|GNSS|A",
+        2
+      ]
+    ],
+    "ArawS5": {
+      "n": 35,
+      "mean": -0.0711657142857143,
+      "median": -0.0389,
+      "positive": 9,
+      "withoutBest": -0.08205000000000003,
+      "withoutBest2": -0.08910606060606062
+    },
+    "meaning": "A mixed-cap reference only. GNSS two entries/two s5 outcomes share a key; no invented original observation linkage. Stored SPY return is not executable benchmark proof."
+  },
+  "verdict": "INCONCLUSIVE: frozen study unchanged; descriptive concentration and cost sensitivity, no demonstrated executable edge"
+}

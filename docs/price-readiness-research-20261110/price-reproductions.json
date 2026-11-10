@@ -1,0 +1,260 @@
+{
+  "clock": {
+    "kind": "UNMODIFIED_ACTUAL_SNAP_BODY_WITH_DETERMINISTIC_DEPENDENCY_ADAPTERS_NOT_MARKET_DATA",
+    "before": {
+      "price": 10,
+      "t": 40000,
+      "src": "alpaca live prices (SIP feed) for 0 of 1 stocks + massive volume (late)",
+      "mode": "FULL_SNAPSHOT_PLUS_ALPACA_LIVE",
+      "receipt": 1000500
+    },
+    "after": {
+      "price": 10.1,
+      "t": 1000250,
+      "src": "alpaca live prices (SIP feed) for 1 of 1 stocks + massive volume (late)",
+      "mode": "FULL_SNAPSHOT_PLUS_ALPACA_LIVE",
+      "receipt": 1000500
+    }
+  },
+  "cadence": {
+    "before": {
+      "cyclesIn331Min": 320,
+      "cadenceMs": 62000
+    },
+    "after": {
+      "cyclesIn331Min": 331,
+      "cadenceMs": 60000
+    },
+    "assumptions": "Synthetic constant2s I/O + <58s processing; no feed acquisition. Expected slot opportunity count, not demonstrated market coverage. Actual >60s processing still gaps; endpoint unchanged."
+  },
+  "unionCoverage": [
+    {
+      "day": "2026-11-02",
+      "runs": [
+        "41456912382-1",
+        "41463855119-1"
+      ],
+      "observed": 318,
+      "expected": 331,
+      "missing": [
+        587,
+        615,
+        644,
+        673,
+        701,
+        728,
+        756,
+        781,
+        810,
+        832,
+        856,
+        878,
+        892
+      ],
+      "internalMissing": 13,
+      "tailMissing": 0,
+      "longestGap": 1,
+      "fullSessionExpected": 390,
+      "knownOutsideWindowMinutes": 59
+    },
+    {
+      "day": "2026-11-03",
+      "runs": [
+        "41648541757-1",
+        "41654967502-1"
+      ],
+      "observed": 319,
+      "expected": 331,
+      "missing": [
+        587,
+        629,
+        676,
+        724,
+        769,
+        799,
+        824,
+        856,
+        877,
+        880,
+        881,
+        893
+      ],
+      "internalMissing": 12,
+      "tailMissing": 0,
+      "longestGap": 2,
+      "fullSessionExpected": 390,
+      "knownOutsideWindowMinutes": 59
+    },
+    {
+      "day": "2026-11-04",
+      "runs": [
+        "41845636679-1"
+      ],
+      "observed": 324,
+      "expected": 331,
+      "missing": [
+        593,
+        643,
+        693,
+        744,
+        798,
+        853,
+        900
+      ],
+      "internalMissing": 6,
+      "tailMissing": 1,
+      "longestGap": 1,
+      "fullSessionExpected": 390,
+      "knownOutsideWindowMinutes": 59
+    },
+    {
+      "day": "2026-11-05",
+      "runs": [
+        "42042506576-1"
+      ],
+      "observed": 315,
+      "expected": 331,
+      "missing": [
+        587,
+        612,
+        637,
+        662,
+        689,
+        716,
+        744,
+        775,
+        807,
+        838,
+        867,
+        896,
+        897,
+        898,
+        899,
+        900
+      ],
+      "internalMissing": 11,
+      "tailMissing": 5,
+      "longestGap": 5,
+      "fullSessionExpected": 390,
+      "knownOutsideWindowMinutes": 59
+    },
+    {
+      "day": "2026-11-06",
+      "runs": [
+        "42231862220-1",
+        "42282044370-1"
+      ],
+      "observed": 320,
+      "expected": 331,
+      "missing": [
+        583,
+        614,
+        644,
+        677,
+        708,
+        739,
+        771,
+        803,
+        836,
+        868,
+        897
+      ],
+      "internalMissing": 11,
+      "tailMissing": 0,
+      "longestGap": 1,
+      "fullSessionExpected": 390,
+      "knownOutsideWindowMinutes": 59
+    },
+    {
+      "day": "2026-11-09",
+      "runs": [
+        "42632637138-1"
+      ],
+      "observed": 317,
+      "expected": 331,
+      "missing": [
+        572,
+        599,
+        627,
+        655,
+        683,
+        711,
+        739,
+        767,
+        796,
+        822,
+        851,
+        879,
+        899,
+        900
+      ],
+      "internalMissing": 12,
+      "tailMissing": 2,
+      "longestGap": 2,
+      "fullSessionExpected": 390,
+      "knownOutsideWindowMinutes": 59
+    }
+  ],
+  "reasonSession": {
+    "PRE": {
+      "UNDER_1_USD": {
+        "n": 306,
+        "neverFresh": 306,
+        "median": 28.4
+      },
+      "CAUGHT_RULE_NOT_PASSED": {
+        "n": 187,
+        "neverFresh": 0,
+        "median": 3.8
+      },
+      "AFTER_11_00": {
+        "n": 187,
+        "neverFresh": 0,
+        "median": 37.1
+      },
+      "GAPPED_AT_OPEN": {
+        "n": 382,
+        "neverFresh": 1,
+        "median": 4.4
+      },
+      "VOLUME_FIGURE_LATE": {
+        "n": 239,
+        "neverFresh": 0,
+        "median": 18.4
+      },
+      "LOW_VOLUME": {
+        "n": 336,
+        "neverFresh": 0,
+        "median": 9
+      },
+      "VISIBLE_TOO_LATE": {
+        "n": 1,
+        "neverFresh": 0,
+        "median": 3928.7
+      }
+    },
+    "REGULAR": {
+      "UNDER_1_USD": {
+        "n": 231,
+        "neverFresh": 231,
+        "median": 16.6
+      },
+      "CAUGHT_RULE_NOT_PASSED": {
+        "n": 1,
+        "neverFresh": 0,
+        "median": 0.6
+      },
+      "GAPPED_AT_OPEN": {
+        "n": 5,
+        "neverFresh": 3,
+        "median": 13.9
+      },
+      "AFTER_11_00": {
+        "n": 1,
+        "neverFresh": 0,
+        "median": 12.8
+      }
+    }
+  },
+  "historicalCounterfactual": "NOT_IDENTIFIABLE_WITHOUT_ORIGINAL_RESPONSE_RECEIPTS"
+}
