@@ -1,0 +1,94 @@
+{
+  "status": "REVIEW_ONLY_NOT_OWNER_APPROVED",
+  "original28Source": "d52499c454d2cdf472993e696d3a2ba8f4f77ef3",
+  "original28BindingUnchanged": "1a799a15b06ce6e36c466a37702ba72830552fc9972d8ebd3a96311425da2dd4",
+  "productionBase": "ea9db656fc28a84b3f9d6f0a5ef9cb2ed717f1d1",
+  "noDataChanges": true,
+  "noCredentialsOrPermissions": true,
+  "stage": 1,
+  "source": "211cf16427f37ca73eeb061ea3d81ca11cb3835d",
+  "sourceTree": "c2b38dfa688326fc53ab96c1bbbffe304dc85245",
+  "pathCount": 9,
+  "files": {
+    ".github/merge-alert-state.mjs": {
+      "sha256": "17d022bc1a41e8e3556d1a8b6235b831038c08594dc83a75f34d02f0f6b51017",
+      "bytes": 3272,
+      "gitBlobSHA1": "50947c0b91a11bc8f496e1aebefacd14850627dc",
+      "mode": "100644",
+      "before": null
+    },
+    "market-session.mjs": {
+      "sha256": "58367d1a42ca663e062298e89bfbf476375ae5017c9a3788c0517fc05215eeb1",
+      "bytes": 2775,
+      "gitBlobSHA1": "9042d7c37938905e21e96b8e0f39bd821bf223ab",
+      "mode": "100644",
+      "before": {
+        "gitBlobSHA1": "233eed2717b88fc1340616bd769de486c4cc082d",
+        "mode": "100644"
+      }
+    },
+    "premarket-check.mjs": {
+      "sha256": "b66e7c7e925779bfc9b65fa55109b8c51743353b08b9484981ecd0a9f528186b",
+      "bytes": 10156,
+      "gitBlobSHA1": "553f132589d60c9354cb668614024b0b7fbb4e83",
+      "mode": "100644",
+      "before": {
+        "gitBlobSHA1": "a5edcd4e00daed609593d587ceaaf8e9a6482eee",
+        "mode": "100644"
+      }
+    },
+    "scan.mjs": {
+      "sha256": "8942e4bdc71858c60bf7765170cf091c8b5152c12472e6494453e6203102834e",
+      "bytes": 690596,
+      "gitBlobSHA1": "fa83ed718b5deb60c183d8123f0cfb3a457958db",
+      "mode": "100644",
+      "before": {
+        "gitBlobSHA1": "14a28526aed258e8063a14785a60c42b2a5ab6ca",
+        "mode": "100644"
+      }
+    },
+    "test/alert-merge-compatibility.test.mjs": {
+      "sha256": "c8308fb40ff55d39e20fbeddefe71fcf79b5e0c33471097317b722e19fa55663",
+      "bytes": 2742,
+      "gitBlobSHA1": "1a7c56dc61c12d7aa001a40dc97b91e9aad5c9ee",
+      "mode": "100644",
+      "before": null
+    },
+    "test/bot-commands.test.mjs": {
+      "sha256": "298b6447045d79f72a50e7647cd0db11eb56c2d877dbaf32663762b7f89f34a1",
+      "bytes": 9707,
+      "gitBlobSHA1": "b66a46645d8eff9ea861d90cfc211cb4b354c022",
+      "mode": "100644",
+      "before": {
+        "gitBlobSHA1": "c7cfd24be41db2d6cd2ab82d7852b7b88e8539fa",
+        "mode": "100644"
+      }
+    },
+    "test/premarket-feed.test.mjs": {
+      "sha256": "f3434fe3d05b360fe84ee40ed962db0704689eb53ad1e28c483cefc11aaf30df",
+      "bytes": 7201,
+      "gitBlobSHA1": "41c780f4dd213bad6f79cbda8ec3103c78d02f40",
+      "mode": "100644",
+      "before": {
+        "gitBlobSHA1": "d56e62d0318e681fe30724496e5638b2a06c49ea",
+        "mode": "100644"
+      }
+    },
+    "test/premarket-standalone-evidence.test.mjs": {
+      "sha256": "88e8c470af8f68cc094ec54743a0a6a4c843801ea57ead3694f41483cd08cd20",
+      "bytes": 9291,
+      "gitBlobSHA1": "effe3a7c0a094e289b9d58c53b79ace9f6aabd2a",
+      "mode": "100644",
+      "before": null
+    },
+    "test/recovery-floor.test.mjs": {
+      "sha256": "93fddc0d777629c800e8414c621dc202979336ebce487258ebd8ca8188910014",
+      "bytes": 2677,
+      "gitBlobSHA1": "cafc018d36b9f295e64ce1493c9d9aa44eb0db9c",
+      "mode": "100644",
+      "before": null
+    }
+  },
+  "inverse": "inverse-stage1.json",
+  "scope": "Premarket repair and minimum recovery floor. Does not enable merge callers or fix scanner scheduling/current holdings evidence. Needs independent composition review; old P4 PASS preserved separately."
+}

@@ -1,0 +1,77 @@
+{
+  "against": "d52499c454d2cdf472993e696d3a2ba8f4f77ef3",
+  "rootRuntimeChanged": [
+    "market-session.mjs",
+    "premarket-check.mjs",
+    "scan.mjs",
+    "agent-a-tp-core.mjs",
+    "agent-a-tp-lab.mjs"
+  ],
+  "unchangedWatcherEvidence": "Independent cross-unit receipt6761658790 already includes unchanged P market-session. New merge helper is used by save boundaries, not watcher code; scan.mjs does not run inside the gated watcher subprocess. Final independent review must confirm applicability.",
+  "crossReceiptBase": "a761c74e",
+  "unboundAgentModulesSameAsCrossReceiptBase": true,
+  "watcherDoesNotReferenceChangedAgentModules": true,
+  "prerequisiteDirectTransportV8": [
+    {
+      "mode": "ack",
+      "posts": 1,
+      "result": {
+        "ok": true,
+        "deliveredParts": 1
+      }
+    },
+    {
+      "mode": "network",
+      "posts": 1,
+      "result": {
+        "ok": false,
+        "reason": "NETWORK_ERROR",
+        "deliveryState": "UNKNOWN",
+        "deliveredParts": 0
+      }
+    },
+    {
+      "mode": "403",
+      "posts": 1,
+      "result": {
+        "ok": false,
+        "reason": "HTTP_403",
+        "deliveryState": "REFUSED",
+        "definitelyUnsentPart": true,
+        "deliveredParts": 0
+      }
+    },
+    {
+      "mode": "503",
+      "posts": 1,
+      "result": {
+        "ok": false,
+        "reason": "HTTP_503",
+        "deliveryState": "UNKNOWN",
+        "definitelyUnsentPart": false,
+        "deliveredParts": 0
+      }
+    },
+    {
+      "mode": "invalid",
+      "posts": 1,
+      "result": {
+        "ok": false,
+        "reason": "NOT_ACKNOWLEDGED",
+        "deliveryState": "UNKNOWN",
+        "deliveredParts": 0
+      }
+    },
+    {
+      "mode": "local",
+      "posts": 0,
+      "result": {
+        "ok": false,
+        "reason": "PRICE_EVIDENCE_EXPIRED",
+        "localEvidenceRefusal": true,
+        "definitelyUnsentPart": true,
+        "deliveredParts": 0
+      }
+    }
+  ]
+}
