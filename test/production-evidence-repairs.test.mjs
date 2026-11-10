@@ -131,6 +131,6 @@ test('actual fresh stop, send-time expiry and private-body logging boundaries pr
 });
 test('actual review and holdings keep a fresh stop fact even when the daily assessment is stale',async t=>{
  const f=await holdingsFixture(t,{end:'2026-11-06'}),review=await f.S.fn('reviewReply')('ZZA',f.sig,f.pos),text=await f.S.fn('holdingsText')(f.sig,f.pos,'SYNTHETIC HOLDINGS',false);
- assert.match(review,/STOP LEVEL REACHED/);assert.match(review,/do not sell again/);assert.match(text,/the stop 8.00 is reached/);assert.doesNotMatch(text,/ZZA[^\n]*: HOLD,/);
+ assert.match(review,/STOP LEVEL REACHED/);assert.doesNotMatch(review.split('\n')[0],/as of .* close/);assert.match(review,/do not sell again/);assert.match(text,/the stop 8.00 is reached/);assert.doesNotMatch(text,/ZZA[^\n]*: HOLD,/);
 });
 test('all actual caller requests stayed on loopback',()=>assert.deepEqual(blocked,[]));
