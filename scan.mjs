@@ -12,6 +12,7 @@ import {appendRadarRows,readRadarLedger} from './radar-ledger.mjs';
 // It reuses the exact rules inside index.html, writes data/signals.json and an append-only journal, and sends Telegram alerts.
 // Read only: it holds no broker login and cannot trade.
 import fs from 'node:fs';
+import {isDeepStrictEqual} from 'node:util';
 import os from 'node:os';
 import path from 'node:path';
 import crypto from 'node:crypto';
@@ -1237,8 +1238,22 @@ const POS_FILE = 'data/my-positions.json';
 function guideTargets(P) { if (P && P.guide) { delete P.t1; delete P.t2; delete P.guide; delete P.aw; }
   if (P && P.kind === 'quick' && P.t1 && !P.ownT && (!P.tmode || !P.tnote)) { delete P.t1; delete P.t2; delete P.tmode; }   // a quick-trade target saved before the target study existed was never tested
   return P; }
-const loadPos = () => { const p = readJson(POS_FILE, {}); for (const k of Object.keys(p)) guideTargets(p[k]); return p; };
-const savePos = (p) => fs.writeFileSync(POS_FILE, JSON.stringify(p, null, 1));
+const loadPos = () => {
+  let raw;try{raw=fs.readFileSync(POS_FILE,'utf8');}catch(e){if(e.code==='ENOENT')return {};throw e;}
+  let p;try{p=JSON.parse(raw);}catch{throw Error('POSITION_STATE_UNREADABLE: original bytes retained');}
+  if(!p||typeof p!=='object'||Array.isArray(p))throw Error('POSITION_STATE_UNREADABLE: original bytes retained');
+  for(const k of Object.keys(p))guideTargets(p[k]);return p;
+};
+const savePos = (p) => {
+  if(!p||typeof p!=='object'||Array.isArray(p))throw Error('POSITION_CANDIDATE_INVALID');
+  const bytes=JSON.stringify(p,null,1),value=JSON.parse(bytes);
+  let raw;try{raw=fs.readFileSync(POS_FILE,'utf8');}catch(e){if(e.code!=='ENOENT')throw e;}
+  if(raw!==undefined){let previous;try{previous=JSON.parse(raw);}catch{throw Error('POSITION_STATE_UNREADABLE: original bytes retained');}
+    if(!previous||typeof previous!=='object'||Array.isArray(previous))throw Error('POSITION_STATE_UNREADABLE: original bytes retained');
+    if(isDeepStrictEqual(previous,value))return; // Poll/retry without an edit must preserve original bytes, formatting and provenance.
+  }
+  fs.writeFileSync(POS_FILE,bytes);
+};
 // STOP PLAN of 18 Oct (stop study: 35% under the buy for own picks), applied ONCE to the positions still held. The owner still
 // places the same stops at his broker (they show UNCONFIRMED until he sends  stop placed ).
 { const ST = readSettings(); if (ST && !ST.stopPlan1018) { try { const p = JSON.parse(fs.readFileSync(POS_FILE, 'utf8')), plan = { RKLB: 48.74, RELL: 13.77, APP: 204.68, CCJ: 56.30 };

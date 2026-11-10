@@ -100,8 +100,8 @@ function dailyValues(end){
  return out.reverse().map((d,i)=>({datetime:d,open:String(10+i*.01),high:String(10.2+i*.01),low:String(9.8+i*.01),close:String(10+i*.01),volume:'1000000'}));
 }
 async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true,bars=300,deliveryMode='ack',afterSendAdvance=0}={}){
- const clock={now:Date.parse('2026-11-10T15:00:00Z')},sent=[];
- const server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{
+ const clock={now:Date.parse('2026-11-10T15:00:00Z')},sent=[],requests=[];
+ const server=http.createServer((req,res)=>{requests.push(req.url);let b='';req.on('data',x=>b+=x);req.on('end',()=>{
   res.setHeader('Content-Type','application/json');
   if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);clock.now+=afterSendAdvance;if(deliveryMode==='ambiguous'||deliveryMode==='stopAmbiguous'&&sent.at(-1).startsWith('YOUR STOPS')){res.destroy();return;}if(deliveryMode==='stop429'&&sent.at(-1).startsWith('YOUR STOPS')&&sent.filter(x=>x.startsWith('YOUR STOPS')).length===1){clock.now+=5*60000;res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}if(deliveryMode==='429'&&sent.length===1){res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}
   if(req.url.includes('/getUpdates'))return res.end(JSON.stringify({ok:true,result:[]}));
@@ -112,7 +112,7 @@ async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true,bars=300
  });});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>server.close());const base='http://127.0.0.1:'+server.address().port,old=Date.now;Date.now=()=>clock.now;t.after(()=>{Date.now=ORIGINAL_NOW;process.chdir(root);});
  const S=await loadScan({files:{'data/settings.json':{focus:false},'data/signals.json':{session:'2026-11-09',generatedAt:'2026-11-09T23:00:00Z'},'data/my-positions.json':{ZZA:{entry:10,stop:8,kind:'quick',q:'gap',since:'2026-11-06'}}},env:{TD_BASE:base,FH_BASE:base,SEC_BASE:base,FINNHUB_KEY:'synthetic',TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'synthetic'}});
- return {S,clock,sent,sig:{session:'2026-11-09',generatedAt:'2026-11-09T23:00:00Z'},pos:{ZZA:{entry:10,stop:8,kind:'quick',q:'gap',since:'2026-11-06'}}};
+ return {S,clock,sent,requests,sig:{session:'2026-11-09',generatedAt:'2026-11-09T23:00:00Z'},pos:{ZZA:{entry:10,stop:8,kind:'quick',q:'gap',since:'2026-11-06'}}};
 }
 test('actual holdings caller does not turn stale or undated quotes into stop-reached facts',async t=>{
  for(const spec of [{age:3600000},{dated:false}]){
@@ -234,6 +234,21 @@ test('actual short-history callers preserve own trade rules and independent curr
  assert.match(text,/the stop 8.00 is reached/);assert.match(text,/do not sell twice/);
  const old=await holdingsFixture(t,{end:'2026-11-06',age:3600000,bars:5});old.pos.ZZA.exitFlag={d:'2026-11-06',why:'TIME EXIT: SELL at the next open.'};const before=JSON.stringify(old.pos),raw=await old.S.fn('holdingsText')(old.sig,old.pos,null,true);
  assert.match(raw.acts.sell.join('\n'),/RECORDED CLOSE-BASED EXIT dated 2026-11-06: TIME EXIT/);assert.match(raw.acts.unknown.join('\n'),/ASSESSMENT UNKNOWN/);assert.equal(JSON.stringify(old.pos),before);
+});
+
+
+test('actual position save preserves byte-identical no-op input and refuses corrupt original state',async t=>{
+ const f=await holdingsFixture(t),raw='{ \n "ZZA" : {"stop":8, "entry":10,"since":"2026-11-06","q":"gap","kind":"quick"}\n}\n';
+ f.S.write('data/my-positions.json',raw);const candidate={ZZA:{entry:10,stop:8,kind:'quick',q:'gap',since:'2026-11-06'}};
+ f.S.fn('savePos')(candidate);assert.equal(f.S.read('data/my-positions.json'),raw);
+ f.S.write('data/my-positions.json','{SYNTHETIC BROKEN ORIGINAL');assert.throws(()=>f.S.fn('savePos')(candidate),/POSITION_STATE_UNREADABLE/);assert.equal(f.S.read('data/my-positions.json'),'{SYNTHETIC BROKEN ORIGINAL');
+});
+
+
+test('actual Telegram caller refuses corrupt positions before polling or advancing offsets',async t=>{
+ const f=await holdingsFixture(t),raw='{SYNTHETIC BROKEN ORIGINAL';f.S.write('data/my-positions.json',raw);f.S.write('data/tg-state.json',{offset:42});
+ await assert.rejects(f.S.fn('tgCommands')(f.sig),/POSITION_STATE_UNREADABLE/);
+ assert.equal(f.requests.length,0);assert.equal(f.sent.length,0);assert.equal(f.S.read('data/my-positions.json'),raw);assert.equal(f.S.readJson('data/tg-state.json').offset,42);
 });
 
 test('all actual caller requests stayed on loopback',()=>assert.deepEqual(blocked,[]));
