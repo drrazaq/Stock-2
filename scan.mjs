@@ -2518,7 +2518,7 @@ function unresolvedSells(pos, lastPx, today) {
   for (const [sym, P] of Object.entries(pos || {})) { const A = P && P.lastAct; if (!A || A.act !== 'SELL ALL') continue;
     const since = A.since || A.d; if (!since || since >= today) continue;
     const days = Math.round((Date.parse(today) - Date.parse(since)) / 864e5), now = lastPx && lastPx[sym];
-    out.push(sym + ': SELL since ' + since + ' (' + days + ' days)' + (A.px0 > 0 && now > 0 ? ', ' + money(A.px0) + ' then, ' + money(now) + ' now (' + pcs(now / A.px0 - 1) + ' since)' : '') + '. Still held. If you are keeping it on purpose, that is your call; the tested rule says sell.'); }
+    out.push(sym + ': SELL since ' + since + ' (' + days + ' days)' + (A.px0 > 0 && now > 0 ? ', ' + money(A.px0) + ' then, ' + money(now) + ' saved reference (source clock not established here; ' + pcs(now / A.px0 - 1) + ' since)' : '') + '. Position still recorded as held; this is a recorded notice, not proof of a pending order, fill or withdrawal. Reconcile the source dates and broker state; existing instructions are not cancelled.'); }
   return out;
 }
 // Read-only history context. A changed assessment is neither an execution receipt nor proof of withdrawal.
@@ -2796,7 +2796,7 @@ async function completedSourceClose(day, nowMs = Date.now()) {
   const noon = Date.parse(day + 'T12:00:00Z'), closeMs = noon + (s.close - ny(noon).mins) * 60000;
   return nowMs >= closeMs ? day : null;
 }
-async function marketSessionOf(day) { try { const m = await import(new URL('./market-session.mjs', import.meta.url).href); const s = m.marketSession(day); return s && s.known ? s : null; } catch { return null; } }
+async function marketSessionOf(day) { try { fs.readFileSync(new URL('./market-session.mjs',import.meta.url),'utf8'); const m = await import(new URL('./market-session.mjs', import.meta.url).href); const s = m.marketSession(day); return s && s.known ? s : null; } catch { return null; } }
 function shockLine(ml, hasBuy, sess) {
   const t = Date.parse(ml.at), n = ny(t), today = ny(Date.now()).d, sameDay = n.d === today;
   const status = !sess ? ', session status UNKNOWN' : !sess.closed && n.mins >= sess.open && n.mins < sess.close ? ', during the session, not a close' : sess.closed ? ', market closed that day' : n.mins >= sess.close ? ', after the close' : ', before the open';
@@ -2831,7 +2831,7 @@ async function actionsText(sig, pos, px, title) {
   const srcClose = await completedSourceClose(sig && sig.session);   // D4 (r3): named only when that NYSE session has actually closed
   if (sells.length) S.sells.push('SELL (close-based exits: next regular-session open, ' + K(570) + ' Kuwait; stop-reached lines: your broker stop applies. No automatic 15-minute delay. Existing broker stop orders remain active; ' + (srcClose ? 'from the ' + srcClose + ' close' : 'source close UNKNOWN') + '):', ...sells.map(l => '- ' + l));
   { const lp = {}; for (const x of (sig && sig.stocks) || []) if (x.last) lp[x.sym] = x.last; for (const x of (sig && sig.uni) || []) if (x.last && !lp[x.sym]) lp[x.sym] = x.last;
-    const un = unresolvedSells(pos, lp, ny(Date.now()).d); if (un.length) S.crit.push('SELLS NOT DONE YET (' + un.length + ')', ...un.map(l => '- ' + l)); }
+    const un = unresolvedSells(pos, lp, ny(Date.now()).d); if (un.length) S.crit.push('RECORDED SELL NOTICES NEED RECONCILIATION (' + un.length + ')', ...un.map(l => '- ' + l)); }
   { const hg = halalGapLine(pos); if (hg) S.holds.push(hg); }
   if (h.acts.unknown.length) { S.crit.push('ASSESSMENT UNKNOWN for ' + h.acts.unknown.length + ' holding(s); see holdings below. No fresh HOLD inferred from missing data.'); S.holds.push(...h.acts.unknown); }
   S.crit.push(...priorSellReconciliation(priorActs, pos, new Set(sells.map(l => l.replace(/^- /, '').split(/[ :]/)[0])), ny(Date.now()).d));
@@ -2948,7 +2948,7 @@ async function actionsText(sig, pos, px, title) {
   { const hl = healthLine(); if (hl) out.push('', hl); }
   out.push('', 'LONGER-TERM: kept separate (send  longterm ). Your monthly SPUS + IAUM plan is unchanged.');
   out.push('', 'After you trade: bought / sold SYMBOL PRICE SHARES. Details: send  details  or  review SYMBOL');
-  return out.join('\n');
+  return rememberHoldingEvidence(out.join('\n'),typeof h.currentEvidence==='function'?[h.currentEvidence]:[]);
 }
 // STOCK MAP (the spider web for one stock): what the company is, where it sits in its value chain (AI: chip equipment -> chips ->
 // networking -> servers -> power -> data centers -> cloud -> software -> security), how every link of that chain and its industry are
@@ -4523,7 +4523,14 @@ async function intraday(onlyMine) {
     if(!stopAvailable(key)||stopKeys.has(key)||(kind==='unknown'&&!stopAvailable(sym+'myst')))return;
     stopKeys.add(key);stopAlerts.push({kind,sym,P,ev,at,key,quote:j});
   };
-  const stopLine=(a,now)=>'Checked at '+nyStamp(a.at)+' (quoted age is at that check):\n'+stopText(a.kind,a.sym,a.P,a.ev);
+  const stopLine = (a, nowMs) => {
+    if (typeof a === 'string') return a;
+    if(a.kind==='unknown')return stopText('unknown',a.sym,a.P,a.ev);
+    const cur = priceEvidence(a.sym, { sym: a.sym, price: a.ev.price, t: a.ev.t, provider: a.ev.src, kind: 'TRADE' }, nowMs);
+    let t = stopText('hit', a.sym, a.P, a.ev).replace(/ old\)/, ' old when checked at ' + nyStamp(a.at) + ')');
+    if (cur.state !== 'OK') t = t.replace(/ \(bought [^)]*\)\./, '.').replace(/\.\n/, '. No current price now: ' + cur.why + '.\n');
+    return t;
+  };
   for (const sym of watch) {
     const j = (await liveQ((sym))) || {}, p = +j.price; quotesSeen[sym] = { ...j, observedAt: Date.now() }; if (myPos[sym] && myPos[sym].stop !== undefined && myPos[sym].stop !== null) stopFallback(sym, myPos[sym], j); if (!(p > 0)) continue; seen[sym] = p;
     // (rev15, Codex 6724441072/6724603156 N1) every price claim below is admitted only on evidence valid WHEN FETCHED under its route's

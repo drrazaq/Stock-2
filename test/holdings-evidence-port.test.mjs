@@ -1,6 +1,7 @@
 // Exact approved-scanner successor: synthetic holdings and loopback services only.
 import test from 'node:test';import assert from 'node:assert/strict';
 import fs from 'node:fs';import path from 'node:path';import http from 'node:http';import {fileURLToPath} from 'node:url';
+import '../tests/instrument-type.test.mjs';
 import {loadScan,blocked} from './load-scan.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),ORIGINAL_NOW=Date.now;
 function dailyValues(end){
@@ -180,4 +181,13 @@ test('actual holdings and review do not replace an old recorded exit with a fres
  const old=JSON.stringify(f.pos),review=await f.S.fn('reviewReply')('ZZA',f.sig,f.pos),holdings=await f.S.fn('holdingsText')(f.sig,f.pos,'SYNTHETIC HOLDINGS',false);
  assert.match(review,/RECORDED PRIOR EXIT/);assert.doesNotMatch(review.split('\n')[0],/→ HOLD/);
  assert.match(holdings,/RECORDED PRIOR EXIT/);assert.match(holdings,/no replacement HOLD inferred/);assert.doesNotMatch(holdings,/ZZA[^\n]*: HOLD,/);assert.equal(JSON.stringify(f.pos),old);
+});
+
+test('actual ACTIONS output carries holding evidence into every send attempt',async t=>{
+ const f=await holdingsFixture(t),text=await f.S.fn('actionsText')({...f.sig,stocks:[],quick:[],leaders:[]},f.pos,null,'SYNTHETIC ACTIONS');
+ f.clock.now+=6*60000;const r=await f.S.fn('telegram')(text);assert.equal(r.reason,'PRICE_EVIDENCE_EXPIRED');assert.equal(f.sent.length,0);
+});
+test('corrupt stop-delivery quarantine is not reset to an empty state',async t=>{
+ const f=await holdingsFixture(t);process.env.BOT_ONLY='';f.S.write('data/alert-state.json',{day:'2026-11-10',sent:{},delivery:[]});const before=f.S.read('data/alert-state.json');
+ await assert.rejects(f.S.fn('intraday')(false),/STOP_DELIVERY_STATE_UNREADABLE/);assert.equal(f.S.read('data/alert-state.json'),before);
 });

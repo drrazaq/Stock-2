@@ -33,6 +33,7 @@ async function run(t, { now = ON_TIME, pos, quotes, sig = SIG, calendar = true }
   const files = { 'data/my-positions.json': pos, 'data/signals.json': sig, 'data/tg-state.json': { offset: 42 } }; if (calendar) files['market-session.mjs'] = SESSION_SRC;
   const S = await loadScan({ files,
     env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
+  if(!calendar)fs.unlinkSync(S.dir+'/market-session.mjs');
   const real = Date.now; Date.now = () => now;
   try { await S.fn('intraday')(false); } finally { Date.now = real; }
   const first = sent.find(x => /FIRST MARKET-HOURS CHECK|MARKET OPEN CHECK/.test(x)) || '';
@@ -48,7 +49,7 @@ test('conflicting exits: last night\'s trend exit is SELL in the first check, ne
   assert.match(l, /Last price 3\.77 \(FINNHUB, Nov 5 09:39 New York, 20 s old\) \(-37\.2% from your 6\.00\)/);
   // the same holding in ACTIONS (planText, unchanged) is a SELL from the same nightly verdict
   const actions = r.S.fn('planText')(SIG, pos, { ZZG: 3.77 });
-  assert.match(actions, /ZZG: SELL at the close or next open\. It closed under its 50 day average, the trend is broken\./);
+  assert.match(actions, /ZZG: RECORDED CLOSE-BASED EXIT, source session 2026-11-04: it closed under its 50 day average, the trend is broken\./);assert.doesNotMatch(actions,/ZZG: HOLD|ZZG: SELL NOW/);
   assert.equal(r.S.readJson('data/my-positions.json').ZZG.stop, 1.98, 'stop unchanged');
 });
 
@@ -160,7 +161,7 @@ test('rev10: a quote future-dated when fetched stays UNKNOWN after the clock mov
 // rev11 (review of Codex's corrected development port, R1): ZZS's quote is 4 min 50 s old when fetched and under the stop; fetching the
 // next holding moves the clock 30 s. The stop route judges at fetch (REACHED); the first check must reach the same verdict on the same
 // quote instead of re-ageing it past the 5-minute limit (which said STOP STATUS UNKNOWN in the same run).
-test('rev11: a stop quote near the 5-minute limit gets ONE verdict in both messages of the same run (judged at fetch time)', async t => {
+test('Nov10: first-check historical stop stays dated; dedicated stop transport refuses expiry', async t => {
   const T = ON_TIME, sent = []; let clock = T;
   const server = http.createServer((req, res) => { let b = ''; req.on('data', x => b += x); req.on('end', () => { res.setHeader('content-type', 'application/json');
     if (req.url.includes('/getUpdates')) return res.end(JSON.stringify({ ok: true, result: [] }));
@@ -176,7 +177,7 @@ test('rev11: a stop quote near the 5-minute limit gets ONE verdict in both messa
   const real = Date.now; Date.now = () => clock;
   try { await S.fn('intraday')(false); } finally { Date.now = real; }
   const first = sent.find(x => /FIRST MARKET-HOURS CHECK/.test(x)) || '', stop = sent.find(x => /^YOUR STOPS/.test(x)) || '';
-  assert.match(stop, /STOP LEVEL REACHED[\s\S]*ZZS|ZZS[\s\S]*STOP LEVEL REACHED/, 'the stop route judged the quote at fetch: reached');
+  assert.equal(stop,'','dedicated transport refuses expired stop evidence; prior first-check observation remains separately dated');assert.equal(S.readJson('data/alert-state.json').sent.ZZSmyst,undefined);assert.equal(S.readJson('data/alert-state.json').delivery?.ZZSmyst,undefined);
   const zzs = first.split('\n').find(l => l.startsWith('ZZS:')) || '';
   assert.match(zzs, /^ZZS: STOP LEVEL REACHED/, 'the first check agrees with the stop route: ' + zzs);
   assert.doesNotMatch(first, /ZZS: STOP STATUS UNKNOWN/);
@@ -210,9 +211,9 @@ test('rev12: a price valid when fetched but past its gate when the check is writ
   assert.doesNotMatch(r.first, /ZZS: HOLD|ZZS: TARGET|ZZS:.*Last price 90|ZZS:.*% from your/);
   assert.equal(r.stop, '', 'above the stop at fetch: the stop route sends nothing, so nothing contradicts the UNKNOWN line');
 });
-test('rev12: the 4 min 50 s stop observation stays REACHED in both messages, shown with when it was checked and that no current price remains', async t => {
+test('Nov10: first-check 4min50s historical observation remains; no stale dedicated stop send', async t => {
   const r = await twoHoldingRun(t, { c: 70, ageSec: 290 });
-  assert.match(r.stop, /STOP LEVEL REACHED[\s\S]*ZZS|ZZS[\s\S]*STOP LEVEL REACHED/);
+  assert.equal(r.stop,'','no newly dispatched stop batch from expired evidence; first-check historical observation is retained below');
   assert.match(r.zzs, /^ZZS: STOP LEVEL REACHED/, r.zzs);
   assert.match(r.zzs, /5 min old when checked at Nov 5 09:40 New York; no current price now: the latest price is 5 min old \(limit 5 min\)/);
   assert.doesNotMatch(r.zzs, /% from your/, 'no current-price claim from an observation that is no longer current');
@@ -236,7 +237,7 @@ test('rev14: the dedicated stop batch states when the price was checked; after a
   const real = Date.now; Date.now = () => clock;
   try { await S.fn('intraday')(false); } finally { Date.now = real; }
   const stop = sent.find(x => /^YOUR STOPS/.test(x)) || '';
-  assert.match(stop, /STOP LEVEL REACHED: ZZS traded at or below your stop 80\.00: last price 70\.00 \(FINNHUB, [^)]*, 10 s old when checked at Nov 5 09:40 New York\)\. No current price now: the latest price is 10 min old \(limit 5 min\)\./, stop);
+  assert.equal(stop,'','no transport after evidence expires, even when a stop was seen during fetch');assert.equal(S.readJson('data/alert-state.json').sent.ZZSmyst,undefined);assert.equal(S.readJson('data/alert-state.json').delivery?.ZZSmyst,undefined);
   assert.doesNotMatch(stop, /ZZS[^\n]*bought 100\.00/, 'no entry % from an observation that is no longer current');
 });
 test('rev14: a stop batch sent promptly keeps the current price and entry %, with the time it was checked', async t => {
