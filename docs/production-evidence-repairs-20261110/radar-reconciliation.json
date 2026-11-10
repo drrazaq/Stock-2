@@ -1,0 +1,147 @@
+{
+  "kind": "EXECUTED_RETAINED_RADAR_RECONCILIATION_NOT_EXECUTABLE_PERFORMANCE",
+  "asOfInput": "40308ddf09304760855731836302d59a1710f42f",
+  "inputs": {
+    "ledger": {
+      "path": "data/radar-v3-ledger.jsonl",
+      "gitBlob": "d0439223ad8a108311e7ec833ce346e25d7470f2",
+      "sha256": "eb91b7d85b86c81a5f89e0da0c5427e1c0cfcdd0ccd95c483dce131816db2afb"
+    },
+    "snapshot": {
+      "path": "data/radar-v3-snap.json",
+      "gitBlob": "c533c3e163b390cf94f56023b17e6362ab41f466",
+      "sha256": "6fb3553b89b2cc373e0152f6e09ce40d5491428fe1b58aa20fde1472684319e3"
+    },
+    "universe": {
+      "path": "data/radar-universe.json",
+      "gitBlob": "c229f0363a592f098b7aee0aeb66f0915fa1d4b4",
+      "session": "2026-11-06",
+      "labels": 249
+    }
+  },
+  "population": {
+    "snapshotDay": "2026-11-09",
+    "snapshotAt": "11:15NY",
+    "rawSnapshotLabels": 12720,
+    "usableRecentTradeLabels": 5160,
+    "retainedMoverRows": 20,
+    "totalMoverPopulation": "UNKNOWN: total not retained, capped list is not total",
+    "retainedEarlyRows": 40,
+    "ruleHitRows": 83,
+    "panelListLimit": "A<=5,B<=5 current source; historical first3days A10/B5, do not merge as unchanged population",
+    "distinctTradableCommonStocks": "UNKNOWN; snapshot labels include unresolved security classes/corporate actions; dated cached249symbol radar universe is a different scanner population, not12720"
+  },
+  "ledger": {
+    "types": {
+      "list": 103,
+      "close": 102,
+      "s5": 55
+    },
+    "repeatedCloseKeys": [],
+    "repeatedListKeys": [
+      [
+        "2026-10-29|A|GNSS",
+        2
+      ]
+    ],
+    "priorCounts": {
+      "2026-10-28": {
+        "A": 10,
+        "B": 5
+      },
+      "2026-10-29": {
+        "A": 10,
+        "B": 5
+      },
+      "2026-10-30": {
+        "A": 10,
+        "B": 5
+      },
+      "2026-11-02": {
+        "A": 5,
+        "B": 5
+      },
+      "2026-11-03": {
+        "A": 5,
+        "B": 5
+      },
+      "2026-11-04": {
+        "A": 3,
+        "B": 5
+      },
+      "2026-11-05": {
+        "A": 5,
+        "B": 5
+      },
+      "2026-11-06": {
+        "A": 5,
+        "B": 5
+      },
+      "2026-11-09": {
+        "A": 5,
+        "B": 5
+      }
+    },
+    "missingSameDay": 0,
+    "missing5": 48
+  },
+  "observations": {
+    "rawLists": 103,
+    "exactRepeatCorrectionRemoved": 0,
+    "unknownObservationIdentity": 0,
+    "note": "Observation identity is not instrument identity. GNSS A has two different retained Oct29 observations; no invented deduplication or independence.102 close rows join103 observations; no same-day outcome missing at symbol/day model level. These are not complete executable outcome chains."
+  },
+  "legacyResult": {
+    "sessions": 9,
+    "panels": {
+      "B": {
+        "n": 45,
+        "avgNet": -0.0112,
+        "win": 0.489,
+        "beatMkt": 0.511,
+        "n5": 20,
+        "avgNet5": 0.0614,
+        "beatSpy5": 0.5
+      },
+      "A": {
+        "n": 58,
+        "avgNet": -0.0142,
+        "win": 0.224,
+        "beatMkt": 0.241,
+        "n5": 35,
+        "avgNet5": -0.071,
+        "beatSpy5": 0.4
+      }
+    }
+  },
+  "wholeShareSensitivity": {
+    "assumptions": "Same retained reference entry/exit and frozen spread proxy1% under5USD else0.3%, now floor((1000-3)/entry),3USD each executed model side and unspent cash idle. This is a modeled fee/rounding re-expression, not inferred bid/ask/fill. Original ledger/numerical legacy series unchanged.",
+    "summary": {
+      "B": {
+        "observations": 45,
+        "budgetNoEntry": 0,
+        "executedModel": 45,
+        "netDollars": -504.55774790000055,
+        "positive": 22,
+        "averageBudgetReturn": -0.01121239439777779,
+        "averageNetDollars": -11.21239439777779,
+        "winFraction": 0.4888888888888889
+      },
+      "A": {
+        "observations": 58,
+        "budgetNoEntry": 0,
+        "executedModel": 58,
+        "netDollars": -823.7753940000003,
+        "positive": 13,
+        "averageBudgetReturn": -0.014203024034482765,
+        "averageNetDollars": -14.203024034482764,
+        "winFraction": 0.22413793103448276
+      }
+    }
+  },
+  "fiveSessionMaturity": "55 modeled5-session records join55 matured observations throughNov2;48 later observations not matured byNov9, not scored as failures. PanelB+6.14%,PanelA-7.10% remain legacy modeled averages; changed population and small/correlated sample preclude edge claim.",
+  "verdict": "Observed legacy same-day modeled means are negative in both panels (B-1.12%,A-1.42%). Unfavorable model results remain visible. Five-day B positive is balanced against A losses, changing caps and unresolved execution/identity/actions. Neither favorable selected-day gains nor software tests establish edge. Executable whole-share after-cost performance remains INCONCLUSIVE.",
+  "missing": "Original point-in-time instrument/security-class/corporate-action chain, split adjustments, executable BBO/size/receipt and order/fill/no-fill/halts chain, original event-availability clock, exact rule/version-linked outcomes. Headline context does not prove causation.",
+  "scope": "Existing GitHub archives and actual pure functions only; no provider-data acquisition, collection, production writes or live-rule changes.",
+  "validation": "Actual radarLedgerView and scoreboard executed in V8 with portable SHA256 adapter; not a Node/Git/caller-save test. Independent replay script supplied; exact hosted validation separate."
+}

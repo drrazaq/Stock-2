@@ -1,0 +1,203 @@
+{
+  "kind": "SOURCE_ONLY_COMPOSITION_REVIEW_NOT_RELEASE_BINDING",
+  "productionEvidencePin": "40308ddf09304760855731836302d59a1710f42f",
+  "approvedUnit": "d52499c454d2cdf472993e696d3a2ba8f4f77ef3",
+  "approvedBinding": "1a799a15b06ce6e36c466a37702ba72830552fc9972d8ebd3a96311425da2dd4",
+  "developmentRepair": "e54d2f656fc4407c2231ad0ef1e3ebbca4648596",
+  "staticModuleClosure": [
+    {
+      "path": "scan.mjs",
+      "deps": [
+        "market-session.mjs",
+        "mentor-plan.mjs",
+        "watcher-reporting.mjs",
+        "alert-delivery-state.mjs",
+        "paper-transport.mjs",
+        "paper-mutation-journal.mjs",
+        "zad-compliance.mjs",
+        "telegram-delivery.mjs",
+        "discovery-runtime.mjs",
+        "radar-ledger.mjs",
+        "stop-watch.mjs"
+      ],
+      "productionPresence": true,
+      "sameBaselineBlob": false,
+      "edited": true
+    },
+    {
+      "path": "premarket-check.mjs",
+      "deps": [
+        "alpaca-feed.mjs",
+        "market-session.mjs",
+        "stop-watch.mjs",
+        "telegram-delivery.mjs"
+      ],
+      "productionPresence": true,
+      "sameBaselineBlob": false,
+      "edited": true
+    },
+    {
+      "path": "telegram-delivery.mjs",
+      "deps": [
+        "telegram-delivery-ledger.mjs"
+      ],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": true
+    },
+    {
+      "path": "health.mjs",
+      "deps": [
+        "market-session.mjs",
+        "alert-delivery-state.mjs",
+        "watcher-reporting.mjs",
+        "telegram-delivery.mjs"
+      ],
+      "productionPresence": true,
+      "sameBaselineBlob": false,
+      "edited": true
+    },
+    {
+      "path": "radar-v3-core.mjs",
+      "deps": [
+        "zad-compliance.mjs"
+      ],
+      "productionPresence": true,
+      "sameBaselineBlob": false,
+      "edited": true
+    },
+    {
+      "path": "market-session.mjs",
+      "deps": [],
+      "productionPresence": true,
+      "sameBaselineBlob": true,
+      "edited": true
+    },
+    {
+      "path": "mentor-plan.mjs",
+      "deps": [
+        "market-session.mjs"
+      ],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "watcher-reporting.mjs",
+      "deps": [
+        "market-session.mjs"
+      ],
+      "productionPresence": true,
+      "sameBaselineBlob": true,
+      "edited": false
+    },
+    {
+      "path": "alert-delivery-state.mjs",
+      "deps": [],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "paper-transport.mjs",
+      "deps": [],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "paper-mutation-journal.mjs",
+      "deps": [
+        "paper-transport.mjs"
+      ],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "zad-compliance.mjs",
+      "deps": [],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "discovery-runtime.mjs",
+      "deps": [
+        "multi-angle-discovery.mjs",
+        "ignition-gates.mjs",
+        "market-symbol.mjs",
+        "source-contract.mjs"
+      ],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "radar-ledger.mjs",
+      "deps": [],
+      "productionPresence": true,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "stop-watch.mjs",
+      "deps": [],
+      "productionPresence": true,
+      "sameBaselineBlob": true,
+      "edited": false
+    },
+    {
+      "path": "alpaca-feed.mjs",
+      "deps": [
+        "market-symbol.mjs"
+      ],
+      "productionPresence": true,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "telegram-delivery-ledger.mjs",
+      "deps": [],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "market-symbol.mjs",
+      "deps": [],
+      "productionPresence": true,
+      "sameBaselineBlob": true,
+      "edited": false
+    },
+    {
+      "path": "multi-angle-discovery.mjs",
+      "deps": [],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": false
+    },
+    {
+      "path": "ignition-gates.mjs",
+      "deps": [],
+      "productionPresence": true,
+      "sameBaselineBlob": true,
+      "edited": false
+    },
+    {
+      "path": "source-contract.mjs",
+      "deps": [
+        "market-symbol.mjs",
+        "market-session.mjs"
+      ],
+      "productionPresence": false,
+      "sameBaselineBlob": false,
+      "edited": false
+    }
+  ],
+  "index": "Dynamic index.html logic providerPriceObservation is absent in production; exact reviewed helper/exports or compatible source port required. Do not copy entire dev index without preserving website behavior.",
+  "productionOnlyTests": "Ported test/health-line-freshness.test.mjs and test/premarket-feed.test.mjs; retain remaining production-only tests during composition, no blanket replacement.",
+  "watcher": "Production approved15:00 contract differs from devfull. Never deploy whole dev tree or use development-full test receipt as production15 proof.",
+  "nextRequired": "Exact source-only composition with approved28 and accepted5ba follow-on, preserving freshmain code/data; deterministic path allowlist/fingerprints, complete inventory applicablePython, build/inverse, conflict/preservation and independent focused review. Source overlapscan requires explicit rebind/newdelta approval; original28binding remains immutable. No production write proposed before allpass.",
+  "operating": "Original all16F2 remains; latest-complete-baseline-beforeA/G8slot amendments remain proposals requiring explicitapproval; no date/deadline/attendance assumed."
+}
