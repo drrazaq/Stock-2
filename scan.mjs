@@ -914,7 +914,7 @@ function buyDayNote() {
 function timingNote() { const T = readJson0('data/timing-study.json'); if (!T || !T.buy) return null;
   const w = (x) => x === 'CLOSE' ? 'in the last 15 minutes before the close (' + kwt(945, sessDay()) + ' Kuwait)' : x === 'OPEN' ? 'at the open, after the first 15 minutes (' + kwt(585, sessDay()) + ' Kuwait)' : 'at the open, after the first 15 minutes (' + kwt(585, sessDay()) + ' Kuwait; tested: no difference from the close)';
   const pre = T.buy === 'CLOSE' || T.sell === 'CLOSE';   // acting near the close needs an alert before the close, which the scheduled jobs cannot send yet
-  return 'WHEN: buy ' + (T.buy === 'CLOSE' ? 'at the open after the first 15 minutes (tested: buying in the last minutes of the signal day did better, but that needs a pre-close alert, planned with the always-on server)' : w(T.buy)) + '; sell on a rule exit ' + (T.sell === 'CLOSE' ? 'at the open (near the close did better, same pre-close alert needed)' : w(T.sell)) + '. Stops: any time. Never in pre-market or after-hours.'; }
+  return 'WHEN: buy ' + (T.buy === 'CLOSE' ? 'at the open after the first 15 minutes (tested: buying in the last minutes of the signal day did better, but that needs a pre-close alert, planned with the always-on server)' : w(T.buy)) + '; sell on a rule exit ' + (T.sell === 'CLOSE' ? 'at the next regular-session open (daily comparison preferred the close, but the required pre-close alert is unavailable)' : T.sell === 'OPEN' ? 'at the next regular-session open (daily open-price comparison preferred the open; no 15-minute sell delay was tested)' : 'at the next regular-session open (daily open-versus-close comparison did not meet the preference threshold; this does not establish equivalence or test a 15-minute sell delay)') + '. Stops: any time. Never in pre-market or after-hours.'; }
 function timingText() { const T = readJson0('data/timing-study.json'); if (!T || !T.older) return 'The timing study runs with the nightly scan. Ask again tomorrow.';
   const l = (h, k) => T[h][k].n ? pcs(T[h][k].avg) + ' (' + T[h][k].n + ')' : 'n/a';
   return ['WHEN TO BUY AND SELL (tested on the unseen trades of the rules the system offers, after costs; older | newer half)',
@@ -1111,9 +1111,11 @@ async function telegramLive(render, buttons) {
     const parts = tgParts(text), part = parts[0], last = parts.length === 1;
     try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true, ...(buttons && buttons.length && last && !noButtons ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
       if (r.status === 429 && a < 2) { a++; let w = 5; try { w = Math.min(30, +((await r.json()).parameters || {}).retry_after || 5); } catch (e) {} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }
-      if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, part); }
+      if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram refusal; part not acknowledged', r.status); tgFailed(r.status, why, part); sent.deliveryState = sent.length || r.status >= 500 ? 'UNKNOWN' : 'REFUSED'; return sent; }
+      let ack; try { ack = await r.json(); } catch { sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
+      if (!ack || ack.ok !== true || !Number.isSafeInteger(ack.result?.message_id)) { sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
       sent.push(part); a = 0; if (last) return sent; await sleep(FAST ? 0 : 700); }
-    catch (e) { console.error('Telegram connection error, retrying', e.message); if (a === 2) { tgFailed('network', e.message, part); sent.push(part); a = 0; if (last) return sent; continue; } a++; await sleep(FAST ? 50 : 3000); }
+    catch (e) { console.error('Telegram delivery UNKNOWN; connection failure, no replay'); tgFailed('UNKNOWN', 'connection failed after send attempt; no replay', part); sent.deliveryState = 'UNKNOWN'; return sent; }
   }
   return sent;
 }
