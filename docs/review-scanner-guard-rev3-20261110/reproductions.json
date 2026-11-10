@@ -1,0 +1,118 @@
+{
+  "source": "5e12a654d2ba656e99743d1e918738bd2e6fedb6",
+  "verdict": "CORRECTIONS_REQUIRED",
+  "methodLimits": "Unmodified logic evaluated with V8 adapters; not Node/real Git/live execution",
+  "publicationRace": {
+    "method": "Actual unmodified runner, in-memory Git CAS/filesystem/transport adapters; not Node/real Git/live dispatch",
+    "injectedConcurrentPending": true,
+    "normalFastForwardErasedRecord": true,
+    "dispatchRequests": 1,
+    "telegramPostsAfterErasure": 1,
+    "finalAlert": {
+      "status": "ACK",
+      "tries": 1,
+      "text": "SCANNER GUARD: a scanner start (nightly:2026-11-06:1) has no matching run after 30 minutes. It is not repeated automatically. Send this to Claude.",
+      "at": 1794231000000
+    },
+    "events": [
+      "concurrent writer publishes PENDING between the two remote-tip reads",
+      "scanner guard: intraday:2026-11-09:1310 -> ACCEPTED (HTTP 204)",
+      "fast-forward outcome commit drops other writer PENDING",
+      "scanner guard: nightly: current for 2026-11-06"
+    ]
+  },
+  "core": {
+    "refusedNightlyRequests": 18,
+    "declaredDispatchCap": 17,
+    "lastKey": "nightly:2026-11-09:18",
+    "intradayAfterRefusal": [
+      {
+        "workflow": "main.yml",
+        "inputs": {
+          "mode": "intraday",
+          "slot": "intraday:2026-11-09:1310"
+        },
+        "kind": "intraday",
+        "key": "intraday:2026-11-09:1310",
+        "scope": "2026-11-09"
+      }
+    ],
+    "ownDuplicateStateValidity": {
+      "ok": false,
+      "why": "scanner guard state corrupt: duplicate attempt key"
+    },
+    "incompleteRunListAccepted": {
+      "ok": true,
+      "runs": []
+    },
+    "futureDevRunDecision": {
+      "dispatches": [],
+      "why": [
+        "nightly: current for 2026-11-06",
+        "intraday: slot 1310 NATURAL"
+      ]
+    },
+    "onTimeGeneration": {
+      "dispatches": [],
+      "why": [
+        "nightly: saved scan was generated before its session completed",
+        "intraday: no open pilot slot now"
+      ]
+    },
+    "malformedSignalsIntraday": [
+      {
+        "workflow": "main.yml",
+        "inputs": {
+          "mode": "intraday",
+          "slot": "intraday:2026-11-09:1310"
+        },
+        "kind": "intraday",
+        "key": "intraday:2026-11-09:1310",
+        "scope": "2026-11-09"
+      }
+    ],
+    "outcome408": "REFUSED",
+    "method": "Unmodified pure guard core executed in V8 with JSON structuredClone adapter; not Node/real Git or live dispatch"
+  },
+  "cutoffRace": {
+    "method": "Unmodified actual runner with in-memory Git/clock/transport adapters, not live requests",
+    "decisionAt": "2026-11-10T00:59:59Z",
+    "reservationAdvancedClock": true,
+    "actualDispatches": [
+      {
+        "at": "2026-11-10T01:00:01Z",
+        "url": "http://127.0.0.1/repos/synthetic/review/actions/workflows/main.yml/dispatches",
+        "body": {
+          "ref": "main",
+          "inputs": {
+            "mode": "daily",
+            "slot": "nightly:2026-11-09:1"
+          }
+        }
+      }
+    ],
+    "declaredCutoff": "2026-11-10T01:00:00Z",
+    "violation": true
+  },
+  "additional": {
+    "invalidAttemptAccepted": true,
+    "manualUnknownModeSlot": {
+      "slot": "1310",
+      "key": "intraday:2026-11-09:1310",
+      "from": 1794229800000,
+      "to": 1794231600000,
+      "status": "NATURAL",
+      "naturalRuns": [
+        1
+      ],
+      "attempt": null
+    }
+  },
+  "completedPackagePreservation": {
+    "sourceStage1": "211cf16427f37ca73eeb061ea3d81ca11cb3835d",
+    "sourceStage2": "6440e5764abee879a7020784252a70b0f2a523c5",
+    "packet": "a70d04aa71c998a55798f5285c9670b8bf35b71c",
+    "unchanged": true
+  },
+  "notSeparateBlocker": "HTTP408 classification alone; RFC9110 checked, no real duplicate execution claimed"
+}
