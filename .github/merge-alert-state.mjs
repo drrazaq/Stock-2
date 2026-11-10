@@ -17,7 +17,7 @@ export function mergeAlertState(remote,local){
  const day=remote.day>local.day?remote.day:local.day,out={...remote,...local,day},sent={};
  for(const k of new Set([...Object.keys(remote),...Object.keys(local)]))if(!['day','sent','delivery'].includes(k)&&k in remote&&k in local&&!same(remote[k],local[k]))throw Error('ALERT_METADATA_CONFLICT: evidence retained');
  // sent is a legacy suppression flag, NOT a hosted ACK.
- for(const x of [remote,local])if(x.day===day)for(const [k,v]of Object.entries(x.sent))if(v||!(k in sent))sent[k]=v;
+ for(const x of [remote,local])if(x.day===day)for(const [k,v]of Object.entries(x.sent))if(v||!(k in sent))sent[k]=sent[k]==='UNKNOWN'||v==='UNKNOWN'?'UNKNOWN':v;
  out.sent=sent;const delivery={};
  for(const x of [remote,local])for(const [k,v]of Object.entries(x.delivery||{})){
   if(!delivery[k]){delivery[k]=v;continue;}

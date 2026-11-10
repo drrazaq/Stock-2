@@ -4613,7 +4613,7 @@ async function intraday(onlyMine) {
     // The intent survives ordinary save/rebase; UNKNOWN is not automatically replayed.
     for(const key of stopKeys)st.delivery[key]={status:'RESERVED',at:new Date().toISOString()};saveState();
     const r=await telegram('YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n'+stopAlerts.map(a=>stopLine(a,Date.now())).join('\n\n')+'\n\nStop levels are your own recorded stops. Not financial advice.'+(env.PAGE_URL?'\n'+env.PAGE_URL:''),undefined,current);
-    for(const key of stopKeys){if(r.ok){st.sent[key]=1;delete st.delivery[key];}else if((r.localEvidenceRefusal||r.definitelyUnsentPart)&&!r.deliveredParts){delete st.delivery[key];}else st.delivery[key]={status:'UNKNOWN',at:new Date().toISOString(),reason:r.reason||'NOT_ACKNOWLEDGED'};}saveState();
+    for(const key of stopKeys){if(r.ok){st.sent[key]=1;delete st.delivery[key];}else if((r.localEvidenceRefusal||r.definitelyUnsentPart)&&!r.deliveredParts){delete st.delivery[key];}else {st.sent[key]='UNKNOWN';st.delivery[key]={status:'UNKNOWN',at:new Date().toISOString(),reason:r.reason||'NOT_ACKNOWLEDGED'};}}saveState();
   }
   if (queued.length) {
     const lineOf = (a) => a.sym + ' at ' + money(+quotesSeen[a.sym].price) + ': ' + a.text, delivered = new Set();

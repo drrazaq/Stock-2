@@ -143,7 +143,7 @@ test('actual intraday stop fallback checks after earlier messages and at retry, 
 test('actual intraday stop fallback keeps ambiguous delivery UNKNOWN without replay or owner-record edits',async t=>{
  const f=await holdingsFixture(t,{deliveryMode:'stopAmbiguous'});process.env.BOT_ONLY='';f.S.write('data/signals.json',{...f.sig,stocks:[],quick:[],leaders:[]});f.S.write('data/tg-state.json',{offset:42});
  const before=f.S.read('data/my-positions.json');await f.S.fn('intraday')(false);
- assert.equal(f.sent.filter(x=>x.startsWith('YOUR STOPS')).length,1);const state=f.S.readJson('data/alert-state.json');assert.equal(state.sent.ZZAmyst,undefined);assert.equal(state.delivery.ZZAmyst.status,'UNKNOWN');assert.equal(f.S.read('data/my-positions.json'),before);assert.equal(f.S.readJson('data/tg-state.json').offset,42);
+ assert.equal(f.sent.filter(x=>x.startsWith('YOUR STOPS')).length,1);const state=f.S.readJson('data/alert-state.json');assert.equal(state.sent.ZZAmyst,'UNKNOWN','legacy reader suppresses replay; this flag is not an ACK');assert.equal(state.delivery.ZZAmyst.status,'UNKNOWN');assert.equal(f.S.read('data/my-positions.json'),before);assert.equal(f.S.readJson('data/tg-state.json').offset,42);
 });
 
 
