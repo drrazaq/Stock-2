@@ -18,7 +18,11 @@ Reviewer: Claude. Read-only; no dispatch, rerun or cancellation.
 
 ## 2. Local independent run (one process per file, Node 20, this container)
 
-PENDING at the time of writing; appended below when complete.
+**321 files run (235 `test/` + 86 `tests/`), one process each with a 600 s limit: 319 PASS, 2 FAIL as root, and both PASS as a non-root user.**
+- `tests/mentor-persistence-receipt.test.mjs` subtest 14 and `tests/research-recovery-publication.test.mjs` subtest 7 failed with their own guard message, `'run this permissions regression as a non-root user'`: this container runs as uid 0. That is an environment precondition, not a code defect.
+- Re-run as a non-root user (`tester`) on an identical copy of the tree: **33/33** and **7/7 PASS**.
+- **Result: 321/321 files pass** under each file's stated precondition. This agrees with Codex's complete-hosted-log count (6761353994: 321/321, checkout `b2ce57de`), which I could not reproduce from the log myself (see §1).
+- Per-file logs: `local-per-file-logs.tar.gz`.
 
 ## 3. Independent adversarial probes (actual `premarket-check.mjs`, faked clock, loopback stub, synthetic data)
 
