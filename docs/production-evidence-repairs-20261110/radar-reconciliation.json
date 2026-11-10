@@ -143,5 +143,67 @@
   "verdict": "Observed legacy same-day modeled means are negative in both panels (B-1.12%,A-1.42%). Unfavorable model results remain visible. Five-day B positive is balanced against A losses, changing caps and unresolved execution/identity/actions. Neither favorable selected-day gains nor software tests establish edge. Executable whole-share after-cost performance remains INCONCLUSIVE.",
   "missing": "Original point-in-time instrument/security-class/corporate-action chain, split adjustments, executable BBO/size/receipt and order/fill/no-fill/halts chain, original event-availability clock, exact rule/version-linked outcomes. Headline context does not prove causation.",
   "scope": "Existing GitHub archives and actual pure functions only; no provider-data acquisition, collection, production writes or live-rule changes.",
-  "validation": "Actual radarLedgerView and scoreboard executed in V8 with portable SHA256 adapter; not a Node/Git/caller-save test. Independent replay script supplied; exact hosted validation separate."
+  "validation": "Actual radarLedgerView and scoreboard executed in V8 with portable SHA256 adapter; not a Node/Git/caller-save test. Independent replay script supplied; exact hosted validation separate.",
+  "retainedOutliers": {
+    "sameDayLargestAbsolute": [
+      {
+        "day": "2026-11-05",
+        "symbol": "ELPW",
+        "panel": "B",
+        "entry": 3.4799,
+        "end": 1.2,
+        "gross": -0.6551625046696745
+      },
+      {
+        "day": "2026-11-09",
+        "symbol": "NWGL",
+        "panel": "B",
+        "entry": 5.69,
+        "end": 3.2209,
+        "gross": -0.43393673110720565
+      },
+      {
+        "day": "2026-10-29",
+        "symbol": "PCLA",
+        "panel": "B",
+        "entry": 8.12,
+        "end": 10.7106,
+        "gross": 0.3190394088669952
+      },
+      {
+        "day": "2026-11-09",
+        "symbol": "CKX",
+        "panel": "B",
+        "entry": 15.895,
+        "end": 19.6999,
+        "gross": 0.23937716262975783
+      },
+      {
+        "day": "2026-11-06",
+        "symbol": "SNT",
+        "panel": "B",
+        "entry": 1.63,
+        "end": 1.96,
+        "gross": 0.2024539877300615
+      }
+    ],
+    "retainedMoversOver300pct": [
+      {
+        "symbol": "MTRI",
+        "maximumObservedChange": 1239,
+        "firstSeen": "09:28",
+        "firstSeenChange": 1225.4,
+        "code": "UNDER_1_USD"
+      },
+      {
+        "symbol": "OMH",
+        "maximumObservedChange": 6.736,
+        "firstSeen": "09:28",
+        "firstSeenChange": 1.791,
+        "code": "GAPPED_AT_OPEN"
+      }
+    ],
+    "note": "Large snapshot-change flags are suspicions requiring corporate-action/raw-source reconciliation, not proof of an error or an economic opportunity. Do not correct prices by guessed split factors. Selected-day and retained-cap samples are biased."
+  },
+  "endpoint": "Nominal watcher cutoff15:00NY, not16:00cashclose. Nov9 final retained beats miss14:59/15:00; close ledger is vis.last without per-observation provider clock, so actual15:00 executable trade is NOT established. Endpoints may precede cutoff; do not interpolate an unavailable quote or assumed fill."
 }
