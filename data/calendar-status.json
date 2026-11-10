@@ -1,6 +1,6 @@
 {
- "at": "2026-11-08T06:17:03.512Z",
- "tipranks": "kept (fetched 2026-11-03, refreshed every 6 days to save calls)",
+ "at": "2026-11-10T02:55:27.937Z",
+ "tipranks": "ok: 77 US events read (all sizes), 14 major",
  "massive": "ok: 12 holidays, dividends for 3 of 11 held stocks",
  "official": {
   "cpi": "14 release dates",
@@ -10,17 +10,90 @@
   "fomc": "57 meeting dates"
  },
  "officialUpcoming": 3,
- "alphaVantage": "kept (refreshed weekly, last 2026-11-02)",
- "econUpcoming": 7,
- "econUpcomingOfficial": 7,
- "study": {
-  "at": "2026-11-08T06:45:36.012Z",
-  "releases": 195,
-  "eventKinds": 119,
-  "keysWithEnoughCases": 0,
-  "tests": 0,
-  "passBar": 2,
-  "marketEffects": 0,
-  "industryEffects": 0
- }
+ "alphaVantage": "6 of 6 series",
+ "toolArgs": [
+  "daysBack",
+  "daysForward",
+  "fromDate",
+  "toDate",
+  "countries",
+  "impact",
+  "limit"
+ ],
+ "toolSchema": {
+  "daysBack": {
+   "type": "integer",
+   "desc": "",
+   "required": false
+  },
+  "daysForward": {
+   "type": "integer",
+   "desc": "",
+   "required": false
+  },
+  "fromDate": {
+   "type": "string",
+   "desc": "",
+   "required": false
+  },
+  "toDate": {
+   "type": "string",
+   "desc": "",
+   "required": false
+  },
+  "countries": {
+   "type": "string",
+   "desc": "Comma-separated country names to keep (default 'US'); pass '' to keep all. Examples: 'US','UK','Germany','Japan','China'.",
+   "required": false
+  },
+  "impact": {
+   "type": "string",
+   "desc": "Comma-separated impact levels to keep: High, Medium, Low (default 'High,Medium'); pass '' to keep all.",
+   "required": false
+  },
+  "limit": {
+   "type": "integer",
+   "desc": "",
+   "required": false
+  }
+ },
+ "lastArgs": {
+  "daysBack": 3,
+  "daysForward": 10,
+  "countries": "US",
+  "limit": 500,
+  "impact": ""
+ },
+ "replyShape": {
+  "totalMatched": "number",
+  "returned": "number",
+  "filters": {
+   "countries": "string",
+   "impact": "string",
+   "limit": "number"
+  },
+  "economicCalendar": [
+   "list of 77",
+   {
+    "eventId": "number",
+    "actual": "object",
+    "country": "string",
+    "estimate": "object",
+    "event": "string",
+    "impact": "string",
+    "prev": "object",
+    "time": "string",
+    "unit": "object"
+   }
+  ],
+  "note": "string"
+ },
+ "rowsFound": 77,
+ "countriesSeen": [
+  "US"
+ ],
+ "tipranksCallsLeft": 40,
+ "history": "202 past releases (all sizes) with an actual, back to 2026-10-13",
+ "econUpcoming": 58,
+ "econUpcomingOfficial": 3
 }
