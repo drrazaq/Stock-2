@@ -29425,7 +29425,7 @@
    "agent": "A",
    "family": "Momentum risk management (Agent A web scout)",
    "name": "Risk-managed momentum (Barroso & Santa-Clara 2015): the SQ6-MTUM book sized to a 12% volatility target",
-   "status": "pre-registered 2026-11-10 (Agent A); 5-year one-shot pending (agent-a-tp-lab.mjs)",
+   "status": "tested: not adopted (sizing)",
    "registered": "2026-10-25",
    "kind": "sizing",
    "explain": "RULE (written 25 Oct 2026 before any test): hold the SQ6-MTUM book as now, but at each formation put min(1, 0.12 / sigma) of the money in it, sigma = the annualised standard deviation of the book's own daily returns over the previous 126 sessions (the previous formation's picks held equally; under 126 sessions of history: 1); the rest in cash at 0%. Yardsticks: the unscaled SQ6-MTUM book, SPY, the average stock; both halves; the worst month and the worst drawdown reported next to the return per year. Long-only version (the paper scales a long-short book).",
@@ -29435,7 +29435,17 @@
     "https://run.unl.pt/bitstream/10362/11836/1/Barroso_2012.pdf"
    ],
    "note": "Web scout 25 Oct 2026. Queue position: Agent A item after A-TGT1.",
-   "judging": "JUDGING (agent-a-tp-core.mjs header, written 10 Nov 2026 before any run): MTUM book bought equally at the next open, held to the close of session 126, cost 0.8% (1.2%) half in / half out; w = min(1, 0.12 / sigma) from the previous book's last 126 daily returns; halves by formation date; ADOPT (sizing) = 3+ finished books a half and, in both halves at both costs, higher Sharpe AND shallower drawdown than the unscaled book."
+   "judging": "JUDGING (agent-a-tp-core.mjs header, written 10 Nov 2026 before any run): MTUM book bought equally at the next open, held to the close of session 126, cost 0.8% (1.2%) half in / half out; w = min(1, 0.12 / sigma) from the previous book's last 126 daily returns; halves by formation date; ADOPT (sizing) = 3+ finished books a half and, in both halves at both costs, higher Sharpe AND shallower drawdown than the unscaled book.",
+   "result": {
+    "verdict": "NOT ADOPTED",
+    "level": "sizing overlay; base SQ6-MTUM stays NOT PROVEN",
+    "why": [
+     "scaled book not both higher Sharpe and shallower drawdown in both halves at 0.8%",
+     "same test fails at 1.2%"
+    ],
+    "frozenAt": "2026-11-10T01:23:36.447Z",
+    "summary": "older 3 books: scaled +11.6%/yr Sharpe 0.8752 DD -12.3% vs unscaled +13.8% Sharpe 0.9491 DD -12.3% (SPY +20.2%); newer 4 books: scaled +31.7%/yr Sharpe 1.4135 DD -16.6% vs unscaled +39.4% Sharpe 1.4197 DD -21.7% (SPY +21.0%) (0.8%)"
+   }
   },
   {
    "id": "A-TGT1",
@@ -32880,7 +32890,7 @@
    "family": "Market timing (Agent A web scout 1 Nov 2026)",
    "name": "Momentum turning points: hold SPY/SPUS on the 50/50 blend of the 12-month and 1-month excess-return signals, else cash",
    "explain": "RULE (written before any test): at each month end, slow = sign of SPY 12-month excess return, fast = sign of the 1-month excess return; blended signal = 0.5 slow + 0.5 fast (Bull +1, Correction/Rebound 0, Bear -1). Long-only version: hold SPY (SPUS for the owner) for the next month when the blend >= 0, else cash (T-bill). Cost 0.1% a switch (ETF). Judged vs buy-and-hold SPY per half (before / from 2024): return, max drawdown, Sharpe; must not lower return per year in both halves to be useful as a core-timing overlay.",
-   "status": "pre-registered 2026-11-10 (Agent A); 5-year one-shot pending (agent-a-tp-lab.mjs)",
+   "status": "tested: rejected",
    "agent": "A",
    "registered": "2026-11-01",
    "kind": "timing",
@@ -32890,7 +32900,19 @@
    ],
    "data": "SPY daily closes and T-bill rate (system has SPY in the study cache; T-bill from FRED, free)",
    "note": "Garg, Goulding, Harvey and Mazzoleni (2021, JFE), out-of-sample 1969-2018 on the US market: gross Sharpe 0.51 for the equal blend vs 0.38 buy-and-hold, gain mostly from smaller drawdowns; gross of costs. Library check: ANOM-TSMOM (12-month time-series momentum on stocks: rejected) and A-RG1 (regime gate on rules: not proven) are different (single-speed, or a gate on stock rules). Owner's monthly core (SPUS + IAUM) is his decision: this would be information only unless it passes.",
-   "judging": "JUDGING (agent-a-tp-core.mjs header, written 10 Nov 2026 before any run): signal at the month-end close, trade at the next open; T-bill = FRED DTB3; each switch pays half a round trip at 0.8% (and 1.2% stress); halves by signal date before / from 2024-01-01; USEFUL = beats buy-and-hold SPY on return per year AND drawdown in both halves at both costs; TIER 2 = USEFUL + 20+ months a half + monthly-difference t >= 2.5 a half; PROVEN = also t >= the league luck bar. Longer SPY history = information only."
+   "judging": "JUDGING (agent-a-tp-core.mjs header, written 10 Nov 2026 before any run): signal at the month-end close, trade at the next open; T-bill = FRED DTB3; each switch pays half a round trip at 0.8% (and 1.2% stress); halves by signal date before / from 2024-01-01; USEFUL = beats buy-and-hold SPY on return per year AND drawdown in both halves at both costs; TIER 2 = USEFUL + 20+ months a half + monthly-difference t >= 2.5 a half; PROVEN = also t >= the league luck bar. Longer SPY history = information only.",
+   "result": {
+    "verdict": "REJECTED (does not beat holding)",
+    "level": "none",
+    "why": [
+     "does not beat holding (return per year and drawdown) in both halves at 0.8%",
+     "does not beat holding in both halves at 1.2%",
+     "under 20 months in a half",
+     "monthly-difference t under 2.5 in a half"
+    ],
+    "frozenAt": "2026-11-10T01:23:36.447Z",
+    "summary": "older 14 months: rule +6.3%/yr (DD -9.0%) vs hold +15.3% (DD -8.1%); newer 33 months: rule +17.7%/yr (DD -7.5%) vs hold +17.7% (DD -7.5%); at 0.8%; t (1.2%) -1.6353 / null"
+   }
   },
   {
    "id": "A-ANCH1",

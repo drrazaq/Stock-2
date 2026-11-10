@@ -1,0 +1,953 @@
+{
+ "generatedAt": "2026-11-10T01:23:36.447Z",
+ "agent": "A",
+ "preRegistered": "agent-a-tp-core.mjs header (2026-11-10, before any run)",
+ "status": {
+  "price": {
+   "ok": true,
+   "sessions": 1261,
+   "from": "2021-11-01",
+   "to": "2026-11-09",
+   "stocks": 8593,
+   "rowsWithHighLow": 1
+  },
+  "tbill": {
+   "ok": true,
+   "source": "FRED DTB3",
+   "values": 18204,
+   "note": "accrued per session at DTB3 / 100 / 252"
+  },
+  "tp": {
+   "ok": true,
+   "months": 47,
+   "older": 14,
+   "newer": 33,
+   "from": "2022-11-30",
+   "to": "2026-09-30"
+  },
+  "mtum": {
+   "ok": true,
+   "frozenTrades": 839,
+   "rebuilt": 839,
+   "formations": 8,
+   "dates": [
+    "2022-11-30:120",
+    "2023-05-31:120",
+    "2023-11-30:120",
+    "2024-05-31:120",
+    "2024-11-29:120",
+    "2025-05-30:120",
+    "2025-11-28:120",
+    "2026-05-29:120"
+   ]
+  },
+  "books": {
+   "ok": true,
+   "finished": 7,
+   "older": 3,
+   "newer": 4
+  }
+ },
+ "firstRun": {
+  "A-TP1": {
+   "rule": "A-TP1",
+   "registered": "2026-11-10",
+   "window": "2022-11-30 to 2026-09-30",
+   "luckBar": 4.1,
+   "tbill": {
+    "ok": true,
+    "source": "FRED DTB3",
+    "values": 18204,
+    "note": "accrued per session at DTB3 / 100 / 252"
+   },
+   "byCost": {
+    "registered": {
+     "older": {
+      "months": 14,
+      "from": "2022-11-30",
+      "to": "2023-12-29",
+      "out": 2,
+      "switches": 5,
+      "rule": {
+       "n": 14,
+       "total": 0.0908,
+       "perYear": 0.0773,
+       "maxDD": -0.0819,
+       "worstMonth": -0.0606,
+       "sharpe": 0.2404
+      },
+      "hold": {
+       "n": 14,
+       "total": 0.1844,
+       "perYear": 0.1561,
+       "maxDD": -0.0812,
+       "worstMonth": -0.0606,
+       "sharpe": 0.7132
+      },
+      "diffAvg": -0.006,
+      "diffT": -1.4589
+     },
+     "newer": {
+      "months": 33,
+      "from": "2024-01-31",
+      "to": "2026-09-30",
+      "out": 0,
+      "switches": 0,
+      "rule": {
+       "n": 33,
+       "total": 0.5671,
+       "perYear": 0.1774,
+       "maxDD": -0.0755,
+       "worstMonth": -0.065,
+       "sharpe": 1.1252
+      },
+      "hold": {
+       "n": 33,
+       "total": 0.5671,
+       "perYear": 0.1774,
+       "maxDD": -0.0755,
+       "worstMonth": -0.065,
+       "sharpe": 1.1252
+      },
+      "diffAvg": 0,
+      "diffT": null
+     },
+     "whole": {
+      "months": 47,
+      "from": "2022-11-30",
+      "to": "2026-09-30",
+      "out": 2,
+      "switches": 5,
+      "rule": {
+       "n": 47,
+       "total": 0.7093,
+       "perYear": 0.1467,
+       "maxDD": -0.0819,
+       "worstMonth": -0.065,
+       "sharpe": 0.8225
+      },
+      "hold": {
+       "n": 47,
+       "total": 0.856,
+       "perYear": 0.171,
+       "maxDD": -0.0812,
+       "worstMonth": -0.065,
+       "sharpe": 0.9833
+      },
+      "diffAvg": -0.0018,
+      "diffT": -1.4185
+     }
+    },
+    "base": {
+     "older": {
+      "months": 14,
+      "from": "2022-11-30",
+      "to": "2023-12-29",
+      "out": 2,
+      "switches": 5,
+      "rule": {
+       "n": 14,
+       "total": 0.0745,
+       "perYear": 0.0635,
+       "maxDD": -0.0901,
+       "worstMonth": -0.0635,
+       "sharpe": 0.1484
+      },
+      "hold": {
+       "n": 14,
+       "total": 0.1808,
+       "perYear": 0.1531,
+       "maxDD": -0.0812,
+       "worstMonth": -0.0635,
+       "sharpe": 0.6909
+      },
+      "diffAvg": -0.0069,
+      "diffT": -1.571
+     },
+     "newer": {
+      "months": 33,
+      "from": "2024-01-31",
+      "to": "2026-09-30",
+      "out": 0,
+      "switches": 0,
+      "rule": {
+       "n": 33,
+       "total": 0.5671,
+       "perYear": 0.1774,
+       "maxDD": -0.0755,
+       "worstMonth": -0.065,
+       "sharpe": 1.1252
+      },
+      "hold": {
+       "n": 33,
+       "total": 0.5671,
+       "perYear": 0.1774,
+       "maxDD": -0.0755,
+       "worstMonth": -0.065,
+       "sharpe": 1.1252
+      },
+      "diffAvg": 0,
+      "diffT": null
+     },
+     "whole": {
+      "months": 47,
+      "from": "2022-11-30",
+      "to": "2026-09-30",
+      "out": 2,
+      "switches": 5,
+      "rule": {
+       "n": 47,
+       "total": 0.6838,
+       "perYear": 0.1423,
+       "maxDD": -0.0901,
+       "worstMonth": -0.065,
+       "sharpe": 0.7862
+      },
+      "hold": {
+       "n": 47,
+       "total": 0.8505,
+       "perYear": 0.1702,
+       "maxDD": -0.0812,
+       "worstMonth": -0.065,
+       "sharpe": 0.974
+      },
+      "diffAvg": -0.002,
+      "diffT": -1.515
+     }
+    },
+    "stress": {
+     "older": {
+      "months": 14,
+      "from": "2022-11-30",
+      "to": "2023-12-29",
+      "out": 2,
+      "switches": 5,
+      "rule": {
+       "n": 14,
+       "total": 0.0637,
+       "perYear": 0.0544,
+       "maxDD": -0.0972,
+       "worstMonth": -0.0653,
+       "sharpe": 0.0884
+      },
+      "hold": {
+       "n": 14,
+       "total": 0.1785,
+       "perYear": 0.1511,
+       "maxDD": -0.0812,
+       "worstMonth": -0.0653,
+       "sharpe": 0.6762
+      },
+      "diffAvg": -0.0075,
+      "diffT": -1.6353
+     },
+     "newer": {
+      "months": 33,
+      "from": "2024-01-31",
+      "to": "2026-09-30",
+      "out": 0,
+      "switches": 0,
+      "rule": {
+       "n": 33,
+       "total": 0.5671,
+       "perYear": 0.1774,
+       "maxDD": -0.0755,
+       "worstMonth": -0.065,
+       "sharpe": 1.1252
+      },
+      "hold": {
+       "n": 33,
+       "total": 0.5671,
+       "perYear": 0.1774,
+       "maxDD": -0.0755,
+       "worstMonth": -0.065,
+       "sharpe": 1.1252
+      },
+      "diffAvg": 0,
+      "diffT": null
+     },
+     "whole": {
+      "months": 47,
+      "from": "2022-11-30",
+      "to": "2026-09-30",
+      "out": 2,
+      "switches": 5,
+      "rule": {
+       "n": 47,
+       "total": 0.667,
+       "perYear": 0.1394,
+       "maxDD": -0.0972,
+       "worstMonth": -0.0653,
+       "sharpe": 0.762
+      },
+      "hold": {
+       "n": 47,
+       "total": 0.8467,
+       "perYear": 0.1695,
+       "maxDD": -0.0812,
+       "worstMonth": -0.0653,
+       "sharpe": 0.9677
+      },
+      "diffAvg": -0.0022,
+      "diffT": -1.5694
+     }
+    }
+   },
+   "judged": {
+    "verdict": "REJECTED (does not beat holding)",
+    "level": "none",
+    "useful": false,
+    "why": [
+     "does not beat holding (return per year and drawdown) in both halves at 0.8%",
+     "does not beat holding in both halves at 1.2%",
+     "under 20 months in a half",
+     "monthly-difference t under 2.5 in a half"
+    ]
+   },
+   "summary": "older 14 months: rule +6.3%/yr (DD -9.0%) vs hold +15.3% (DD -8.1%); newer 33 months: rule +17.7%/yr (DD -7.5%) vs hold +17.7% (DD -7.5%); at 0.8%; t (1.2%) -1.6353 / null",
+   "months": [
+    {
+     "d": "2022-11-30",
+     "in": 1,
+     "slow": -1,
+     "fast": 1,
+     "spy": -0.0597,
+     "cash": 0.0035
+    },
+    {
+     "d": "2022-12-30",
+     "in": 0,
+     "slow": -1,
+     "fast": -1,
+     "spy": 0.0542,
+     "cash": 0.0036
+    },
+    {
+     "d": "2023-01-31",
+     "in": 1,
+     "slow": -1,
+     "fast": 1,
+     "spy": -0.0242,
+     "cash": 0.0035
+    },
+    {
+     "d": "2023-02-28",
+     "in": 0,
+     "slow": -1,
+     "fast": -1,
+     "spy": 0.034,
+     "cash": 0.0043
+    },
+    {
+     "d": "2023-03-31",
+     "in": 1,
+     "slow": -1,
+     "fast": 1,
+     "spy": 0.0162,
+     "cash": 0.0037
+    },
+    {
+     "d": "2023-04-28",
+     "in": 1,
+     "slow": -1,
+     "fast": 1,
+     "spy": 0.0063,
+     "cash": 0.0045
+    },
+    {
+     "d": "2023-05-31",
+     "in": 1,
+     "slow": -1,
+     "fast": 1,
+     "spy": 0.0594,
+     "cash": 0.0043
+    },
+    {
+     "d": "2023-06-30",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0301,
+     "cash": 0.0042
+    },
+    {
+     "d": "2023-07-31",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": -0.0068,
+     "cash": 0.0048
+    },
+    {
+     "d": "2023-08-31",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": -0.0586,
+     "cash": 0.0042
+    },
+    {
+     "d": "2023-09-29",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": -0.0174,
+     "cash": 0.0047
+    },
+    {
+     "d": "2023-10-31",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.0872,
+     "cash": 0.0044
+    },
+    {
+     "d": "2023-11-30",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.036,
+     "cash": 0.0042
+    },
+    {
+     "d": "2023-12-29",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0264,
+     "cash": 0.0044
+    },
+    {
+     "d": "2024-01-31",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0502,
+     "cash": 0.0042
+    },
+    {
+     "d": "2024-02-29",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0292,
+     "cash": 0.0042
+    },
+    {
+     "d": "2024-03-28",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": -0.0429,
+     "cash": 0.0046
+    },
+    {
+     "d": "2024-04-30",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.0551,
+     "cash": 0.0046
+    },
+    {
+     "d": "2024-05-31",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0314,
+     "cash": 0.004
+    },
+    {
+     "d": "2024-06-28",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0127,
+     "cash": 0.0045
+    },
+    {
+     "d": "2024-07-31",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0143,
+     "cash": 0.0044
+    },
+    {
+     "d": "2024-08-30",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0231,
+     "cash": 0.0038
+    },
+    {
+     "d": "2024-09-30",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": -0.0036,
+     "cash": 0.0041
+    },
+    {
+     "d": "2024-10-31",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.0554,
+     "cash": 0.0035
+    },
+    {
+     "d": "2024-11-29",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": -0.0225,
+     "cash": 0.0036
+    },
+    {
+     "d": "2024-12-31",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.0056,
+     "cash": 0.0033
+    },
+    {
+     "d": "2025-01-31",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0059,
+     "cash": 0.0032
+    },
+    {
+     "d": "2025-02-28",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": -0.065,
+     "cash": 0.0035
+    },
+    {
+     "d": "2025-03-31",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.0052,
+     "cash": 0.0035
+    },
+    {
+     "d": "2025-04-30",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.0489,
+     "cash": 0.0035
+    },
+    {
+     "d": "2025-05-30",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0487,
+     "cash": 0.0034
+    },
+    {
+     "d": "2025-06-30",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0161,
+     "cash": 0.0037
+    },
+    {
+     "d": "2025-07-31",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0179,
+     "cash": 0.0034
+    },
+    {
+     "d": "2025-08-29",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0403,
+     "cash": 0.0033
+    },
+    {
+     "d": "2025-09-30",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0339,
+     "cash": 0.0035
+    },
+    {
+     "d": "2025-10-31",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": -0.01,
+     "cash": 0.0029
+    },
+    {
+     "d": "2025-11-28",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.0102,
+     "cash": 0.0031
+    },
+    {
+     "d": "2025-12-31",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.0056,
+     "cash": 0.0028
+    },
+    {
+     "d": "2026-01-30",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": -0.0158,
+     "cash": 0.0027
+    },
+    {
+     "d": "2026-02-27",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": -0.0365,
+     "cash": 0.0032
+    },
+    {
+     "d": "2026-03-31",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.103,
+     "cash": 0.003
+    },
+    {
+     "d": "2026-04-30",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0473,
+     "cash": 0.0029
+    },
+    {
+     "d": "2026-05-29",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": -0.0137,
+     "cash": 0.0031
+    },
+    {
+     "d": "2026-06-30",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.006,
+     "cash": 0.0033
+    },
+    {
+     "d": "2026-07-31",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": 0.0168,
+     "cash": 0.0031
+    },
+    {
+     "d": "2026-08-31",
+     "in": 1,
+     "slow": 1,
+     "fast": 1,
+     "spy": 0.0031,
+     "cash": 0.0033
+    },
+    {
+     "d": "2026-09-30",
+     "in": 1,
+     "slow": 1,
+     "fast": -1,
+     "spy": -0.0064,
+     "cash": 0.0035
+    }
+   ],
+   "frozenAt": "2026-11-10T01:23:36.447Z"
+  },
+  "A-RMOM1": {
+   "rule": "A-RMOM1",
+   "registered": "2026-11-10",
+   "mtum": {
+    "ok": true,
+    "frozenTrades": 839,
+    "rebuilt": 839,
+    "formations": 8,
+    "dates": [
+     "2022-11-30:120",
+     "2023-05-31:120",
+     "2023-11-30:120",
+     "2024-05-31:120",
+     "2024-11-29:120",
+     "2025-05-30:120",
+     "2025-11-28:120",
+     "2026-05-29:120"
+    ]
+   },
+   "byCost": {
+    "base": {
+     "older": {
+      "books": 3,
+      "scaled": {
+       "sessions": 378,
+       "total": 0.1785,
+       "perYear": 0.1157,
+       "maxDD": -0.1235,
+       "sharpe": 0.8752,
+       "worstBook": -0.0796
+      },
+      "unscaled": {
+       "sessions": 378,
+       "total": 0.2137,
+       "perYear": 0.1378,
+       "maxDD": -0.1235,
+       "sharpe": 0.9491,
+       "worstBook": -0.0796
+      },
+      "spy": {
+       "sessions": 378,
+       "total": 0.3182,
+       "perYear": 0.2022,
+       "maxDD": -0.1029,
+       "sharpe": 1.4688
+      },
+      "avgStockPerBook": 0.044,
+      "weights": [
+       1,
+       0.7984,
+       0.9201
+      ]
+     },
+     "newer": {
+      "books": 4,
+      "scaled": {
+       "sessions": 504,
+       "total": 0.7357,
+       "perYear": 0.3174,
+       "maxDD": -0.1658,
+       "sharpe": 1.4135,
+       "worstBook": 0.0128
+      },
+      "unscaled": {
+       "sessions": 504,
+       "total": 0.9443,
+       "perYear": 0.3944,
+       "maxDD": -0.2167,
+       "sharpe": 1.4197,
+       "worstBook": 0.0122
+      },
+      "spy": {
+       "sessions": 504,
+       "total": 0.4646,
+       "perYear": 0.2102,
+       "maxDD": -0.19,
+       "sharpe": 1.229
+      },
+      "avgStockPerBook": 0.079,
+      "weights": [
+       0.7709,
+       0.6602,
+       0.4116,
+       0.9462
+      ]
+     }
+    },
+    "stress": {
+     "older": {
+      "books": 3,
+      "scaled": {
+       "sessions": 378,
+       "total": 0.1657,
+       "perYear": 0.1076,
+       "maxDD": -0.1253,
+       "sharpe": 0.8213,
+       "worstBook": -0.0833
+      },
+      "unscaled": {
+       "sessions": 378,
+       "total": 0.1991,
+       "perYear": 0.1287,
+       "maxDD": -0.1253,
+       "sharpe": 0.8943,
+       "worstBook": -0.0833
+      },
+      "spy": {
+       "sessions": 378,
+       "total": 0.3182,
+       "perYear": 0.2022,
+       "maxDD": -0.1029,
+       "sharpe": 1.4688
+      },
+      "avgStockPerBook": 0.044,
+      "weights": [
+       1,
+       0.7984,
+       0.9201
+      ]
+     },
+     "newer": {
+      "books": 4,
+      "scaled": {
+       "sessions": 504,
+       "total": 0.7163,
+       "perYear": 0.3101,
+       "maxDD": -0.1658,
+       "sharpe": 1.3866,
+       "worstBook": 0.0101
+      },
+      "unscaled": {
+       "sessions": 504,
+       "total": 0.9133,
+       "perYear": 0.3832,
+       "maxDD": -0.2167,
+       "sharpe": 1.388,
+       "worstBook": 0.0081
+      },
+      "spy": {
+       "sessions": 504,
+       "total": 0.4646,
+       "perYear": 0.2102,
+       "maxDD": -0.19,
+       "sharpe": 1.229
+      },
+      "avgStockPerBook": 0.079,
+      "weights": [
+       0.7709,
+       0.6602,
+       0.4116,
+       0.9462
+      ]
+     }
+    }
+   },
+   "judged": {
+    "verdict": "NOT ADOPTED",
+    "level": "sizing overlay; base SQ6-MTUM stays NOT PROVEN",
+    "adopt": false,
+    "why": [
+     "scaled book not both higher Sharpe and shallower drawdown in both halves at 0.8%",
+     "same test fails at 1.2%"
+    ]
+   },
+   "books": [
+    {
+     "d": "2022-11-30",
+     "half": "older",
+     "k": "2022-12-01",
+     "x": "2023-06-02",
+     "n": 120,
+     "sigma": null,
+     "w": 1,
+     "gross": -0.0722,
+     "avgStock": -0.0259
+    },
+    {
+     "d": "2023-05-31",
+     "half": "older",
+     "k": "2023-06-01",
+     "x": "2023-11-29",
+     "n": 120,
+     "sigma": 0.1503,
+     "w": 0.7984,
+     "gross": 0.0804,
+     "avgStock": 0.0367
+    },
+    {
+     "d": "2023-11-30",
+     "half": "older",
+     "k": "2023-12-01",
+     "x": "2024-06-03",
+     "n": 120,
+     "sigma": 0.1304,
+     "w": 0.9201,
+     "gross": 0.2402,
+     "avgStock": 0.1211
+    },
+    {
+     "d": "2024-05-31",
+     "half": "newer",
+     "k": "2024-06-03",
+     "x": "2024-11-29",
+     "n": 120,
+     "sigma": 0.1557,
+     "w": 0.7709,
+     "gross": 0.2142,
+     "avgStock": 0.1288
+    },
+    {
+     "d": "2024-11-29",
+     "half": "newer",
+     "k": "2024-12-02",
+     "x": "2025-06-04",
+     "n": 120,
+     "sigma": 0.1818,
+     "w": 0.6602,
+     "gross": 0.0203,
+     "avgStock": -0.0923
+    },
+    {
+     "d": "2025-05-30",
+     "half": "newer",
+     "k": "2025-06-02",
+     "x": "2025-11-28",
+     "n": 120,
+     "sigma": 0.2916,
+     "w": 0.4116,
+     "gross": 0.1079,
+     "avgStock": 0.1504
+    },
+    {
+     "d": "2025-11-28",
+     "half": "newer",
+     "k": "2025-12-01",
+     "x": "2026-06-02",
+     "n": 119,
+     "sigma": 0.1268,
+     "w": 0.9462,
+     "gross": 0.4626,
+     "avgStock": 0.129
+    }
+   ],
+   "summary": "older 3 books: scaled +11.6%/yr Sharpe 0.8752 DD -12.3% vs unscaled +13.8% Sharpe 0.9491 DD -12.3% (SPY +20.2%); newer 4 books: scaled +31.7%/yr Sharpe 1.4135 DD -16.6% vs unscaled +39.4% Sharpe 1.4197 DD -21.7% (SPY +21.0%) (0.8%)",
+   "frozenAt": "2026-11-10T01:23:36.447Z"
+  }
+ },
+ "latest": {
+  "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
+  "at": "2026-11-10T01:23:36.447Z",
+  "results": {
+   "A-TP1": {
+    "verdict": "REJECTED (does not beat holding)",
+    "summary": "older 14 months: rule +6.3%/yr (DD -9.0%) vs hold +15.3% (DD -8.1%); newer 33 months: rule +17.7%/yr (DD -7.5%) vs hold +17.7% (DD -7.5%); at 0.8%; t (1.2%) -1.6353 / null"
+   },
+   "A-RMOM1": {
+    "verdict": "NOT ADOPTED",
+    "summary": "older 3 books: scaled +11.6%/yr Sharpe 0.8752 DD -12.3% vs unscaled +13.8% Sharpe 0.9491 DD -12.3% (SPY +20.2%); newer 4 books: scaled +31.7%/yr Sharpe 1.4135 DD -16.6% vs unscaled +39.4% Sharpe 1.4197 DD -21.7% (SPY +21.0%) (0.8%)"
+   }
+  }
+ },
+ "longInfo": {
+  "label": "INFORMATION ONLY",
+  "note": "Massive returned 1254 SPY daily bars (no long history): not shown"
+ }
+}

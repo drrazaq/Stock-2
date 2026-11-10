@@ -1,9 +1,13 @@
+[0s] library: 0 entries given their judging text now
 [4s] cache to 2026-11-06; fresh sessions: 2026-11-09
-[5s] splits since 2026-11-06: 69 listed, 8 repaired
-[5s] window 2021-11-01..2026-11-09 (1261 sessions, 8593 stocks)
-[5s] T-bill: {"ok":true,"source":"FRED DTB3","values":18204,"note":"accrued per session at DTB3 / 100 / 252"}
-[5s] A-TP1 months: {"ok":true,"months":47,"older":14,"newer":33,"from":"2022-11-30","to":"2026-09-30"}
-[5s] SQ6-MTUM rebuild: {"ok":true,"frozenTrades":839,"rebuilt":839,"formations":8,"dates":["2022-11-30:120","2023-05-31:120","2023-11-30:120","2024-05-31:120","2024-11-29:120","2025-05-30:120","2025-11-28:120","2026-05-29:120"]}
-[6s] A-RMOM1 books: {"ok":true,"finished":7,"older":3,"newer":4} [["2022-11-30",120,1,-0.0722],["2023-05-31",120,0.7984,0.0804],["2023-11-30",120,0.9201,0.2402],["2024-05-31",120,0.7709,0.2142],["2024-11-29",120,0.6602,0.0203],["2025-05-30",120,0.4116,0.1079],["2025-11-28",119,0.9462,0.4626]]
-AGENT A TIMING OVERLAYS DIAG (data coverage and counts only; nothing judged or written)
-DATA {"price":{"ok":true,"sessions":1261,"from":"2021-11-01","to":"2026-11-09","stocks":8593,"rowsWithHighLow":1},"tbill":{"ok":true,"source":"FRED DTB3","values":18204,"note":"accrued per session at DTB3 / 100 / 252"},"tp":{"ok":true,"months":47,"older":14,"newer":33,"from":"2022-11-30","to":"2026-09-30"},"mtum":{"ok":true,"frozenTrades":839,"rebuilt":839,"formations":8,"dates":["2022-11-30:120","2023-05-31:120","2023-11-30:120","2024-05-31:120","2024-11-29:120","2025-05-30:120","2025-11-28:120","2026-05-29:120"]},"books":{"ok":true,"finished":7,"older":3,"newer":4}}
+[6s] splits since 2026-11-06: 69 listed, 8 repaired
+[6s] window 2021-11-01..2026-11-09 (1261 sessions, 8593 stocks)
+[6s] T-bill: {"ok":true,"source":"FRED DTB3","values":18204,"note":"accrued per session at DTB3 / 100 / 252"}
+[6s] A-TP1 months: {"ok":true,"months":47,"older":14,"newer":33,"from":"2022-11-30","to":"2026-09-30"}
+[6s] A-TP1 long check: {"label":"INFORMATION ONLY","note":"Massive returned 1254 SPY daily bars (no long history): not shown"}
+[6s] SQ6-MTUM rebuild: {"ok":true,"frozenTrades":839,"rebuilt":839,"formations":8,"dates":["2022-11-30:120","2023-05-31:120","2023-11-30:120","2024-05-31:120","2024-11-29:120","2025-05-30:120","2025-11-28:120","2026-05-29:120"]}
+[7s] A-RMOM1 books: {"ok":true,"finished":7,"older":3,"newer":4} [["2022-11-30",120,1,-0.0722],["2023-05-31",120,0.7984,0.0804],["2023-11-30",120,0.9201,0.2402],["2024-05-31",120,0.7709,0.2142],["2024-11-29",120,0.6602,0.0203],["2025-05-30",120,0.4116,0.1079],["2025-11-28",119,0.9462,0.4626]]
+[7s] library: 2 results recorded
+AGENT A TIMING OVERLAYS (first run frozen; verdicts below are firstRun)
+A-TP1: REJECTED (does not beat holding) | older 14 months: rule +6.3%/yr (DD -9.0%) vs hold +15.3% (DD -8.1%); newer 33 months: rule +17.7%/yr (DD -7.5%) vs hold +17.7% (DD -7.5%); at 0.8%; t (1.2%) -1.6353 / null | why: does not beat holding (return per year and drawdown) in both halves at 0.8%; does not beat holding in both halves at 1.2%; under 20 months in a half; monthly-difference t under 2.5 in a half
+A-RMOM1: NOT ADOPTED | older 3 books: scaled +11.6%/yr Sharpe 0.8752 DD -12.3% vs unscaled +13.8% Sharpe 0.9491 DD -12.3% (SPY +20.2%); newer 4 books: scaled +31.7%/yr Sharpe 1.4135 DD -16.6% vs unscaled +39.4% Sharpe 1.4197 DD -21.7% (SPY +21.0%) (0.8%) | why: scaled book not both higher Sharpe and shallower drawdown in both halves at 0.8%; same test fails at 1.2%
