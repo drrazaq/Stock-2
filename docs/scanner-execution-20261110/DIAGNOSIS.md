@@ -2,6 +2,8 @@
 
 Evidence from production `main` `40308ddf`, GitHub's run and job APIs for `main.yml`, `bot.yml` and `premarket.yml`, and complete job logs. No dispatch, cancellation, workflow change or production write was made.
 
+> **Erratum (10 Nov, after Codex 6760515948 / 6761038271).** An earlier version of this file said no nightly run was created for 9 Nov and "none created by 04:30 UTC" on 10 Nov. That was wrong: my run list was read before 03:40:52 UTC, and I did not re-read it before committing. The 9 Nov nightly *was* delivered, 6 h 11 min late. Telegram delivery of that night's ACTIONS remains UNVERIFIED (no explicit acknowledgement record). The corrected statement is: on 4–6 and 9 Nov the nightly arrived 3.5–6.2 hours late, and in-session intraday delivery was 0–2 per day from 3 Nov.
+
 ## 1. What the 29-second run 42716422194 actually executed
 
 | Fact | Evidence |
@@ -28,8 +30,7 @@ Mode is **confirmed from the log only for 42716422194**. For the other runs it i
 | Wed 4 Nov | 1 (20:23) | created **01:34 on 5 Nov** (+4 h 04 min) |
 | Thu 5 Nov | 1 (20:37) | created **01:41 on 6 Nov** (+4 h 11 min) |
 | Fri 6 Nov | 1 (19:55) | created **01:00 on 7 Nov** (+3 h 30 min) |
-| Mon 9 Nov | **0** | **none created**. The only run, 42716422194, was an intraday event (section 1) |
-| Tue 10 Nov | none created by 04:30 UTC | n/a |
+| Mon 9 Nov | **0** | created **03:40:52 UTC on 10 Nov** (+6 h 11 min): run 42751003080, `MODE=daily`, checkout `40308ddf`, scanner step 03:41:06–04:30:29, saved in `9b3c9ac1` at 04:30:45 (erratum, see below). Run 42716422194 at 22:57 was a separate late intraday event |
 
 Late intraday events that exited "Market closed": 4 Nov 00:52, 5 Nov 01:02, 6 Nov 01:06, 7 Nov 00:04 and 9 Nov 22:57 (all UTC).
 
@@ -47,7 +48,7 @@ The same pattern appears elsewhere:
 - **Concurrency cancellation.** `concurrency: scanner` is used only by `main.yml`; a superseded pending run would appear as `cancelled`, and none exists.
 - **60-day inactivity auto-disable.** The repository is active daily.
 - **Billing block.** Other workflows started on the same days. Actions on standard runners is free for public repositories, so the $0 / "Usage blocked" budget did not stop run creation.
-- **Code failure in the nightly path.** No nightly run was created on 9 Nov, so no code ran for it.
+- **Code failure in the nightly path.** The late 9 Nov nightly ran `daily()` and saved normally once delivered.
 
 **Not proven.** *Why* GitHub created no run is not observable from the repository. GitHub's documentation for the `schedule` event says it "can be delayed during periods of high loads … If the load is sufficiently high enough, some queued jobs may be dropped" (docs.github.com, *Events that trigger workflows*, schedule). The observations are **consistent with** that documented behaviour, but it is not proven to be the cause. A per-repository effect cannot be confirmed or excluded either: this repository has 60 cron-bearing workflows, including `bot.yml` every 30 minutes. The accurate statement is therefore:
 
@@ -59,6 +60,6 @@ The same pattern appears elsewhere:
 
 ## 4. Consequences
 
-- **Nightly:** ACTIONS for 9 Nov was never produced. On 4–6 Nov it arrived 3.5–4 hours late (about 04:30–05:30 Kuwait).
+- **Nightly:** on 4–6 Nov and 9 Nov the nightly arrived 3.5–6.2 hours late (9 Nov: saved 04:30 UTC = 07:30 Kuwait; delivery unverified).
 - **Intraday:** from 3 Nov, 0–2 checks per day instead of 16.
 - **Release protocol `d2f76b64`:** B requires all 16 intraday runs plus the nightly. At this delivery rate B cannot reach VERIFIED, whatever the code does.
