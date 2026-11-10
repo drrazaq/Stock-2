@@ -1,0 +1,58 @@
+{
+  "verdict": "CORRECTIONS_REQUIRED_REVIEW_ONLY",
+  "candidate": "dbe6e7b84396b93f79bfd2b50fc04713293a48db",
+  "disjointness": "Five source paths have no overlap with exact approved28, verified by file names; unchanged original PASS not reopened",
+  "required": [
+    {
+      "id": "G1",
+      "finding": "Reservation is only local rename, not durably published before POST. Runner loss before bot save loses intent across checkout; bot -X theirs is not a remote CAS reservation. Kill-CLI local-file test does not prove cross-runner durability.",
+      "correction": "Use reviewed remotely durable compare-and-publish for bounded state before dispatch; remote uncertainty means no POST. Two-clone actual save/rebase and runner-loss-after-POST tests; no live probe required."
+    },
+    {
+      "id": "G2",
+      "finding": "RESERVED/UNCERTAIN attempt permits another nightly key after61min with no confirmed run/proof of non-execution; same issue intraday new keys. Actual pure core reproduction: unknown attempt1 -> nightly:2026-11-09:2.",
+      "correction": "Quarantine unresolved intent until positively reconciled with its actual run or separately approved resolution. A new slot key/time gap must not erase unknown prior execution."
+    },
+    {
+      "id": "G3",
+      "finding": "Malformed state falls back to{}; malformed/missing workflow_runs falls back to[]. Future/invalid signalsSession can suppress missing detector via lexical>=. Unknown evidence can reset budgets or masquerade as empty/current.",
+      "correction": "Strict state/run-list/session/receipt schemas and provenance; fail closed preserving original bytes; missing and corrupt different; future source never CURRENT. Test malformed200 JSON, corrupt state, reset/future clocks and incomplete run lists."
+    },
+    {
+      "id": "G4",
+      "finding": "main.yml forces daily for EVERY nonempty invalid mode as well as empty mode. This differs from stated empty-only legacy behavior.",
+      "correction": "Reject nonempty invalid mode before data/send. Test empty, daily,intraday,typo values through operative expression/admission paths."
+    },
+    {
+      "id": "G5",
+      "finding": "Alert intent is marked alerted before unchecked plain Telegram transport; neither HTTP/JSON ACK nor UNKNOWN/definite refusal is durably distinguished. It may be permanently suppressed while unreceived.",
+      "correction": "Reuse acknowledged, durable alert delivery with UNKNOWN quarantine/visible status and no blind replay; actual concurrent saves and failed intent/ACK cases."
+    },
+    {
+      "id": "G6",
+      "finding": "Bot successor introduces an ongoing self-dispatch chain; per-run1 is not a stated total recovery-window bound.06:00 is ambiguous between dispatch cutoff and completion deadline, and a05:59 daily can run300min later.",
+      "correction": "Name finite approval horizon/aggregate successor cap, start cutoff and separate required completion/receipt/restoration gates. Bound incremental provider calls, job/storage costs and actions, not just dispatch attempts; all require separate owner approval."
+    }
+  ],
+  "procedure": "8 intraday executions/three windows substitutes for original16 scheduled-slot criterion; substantive owner approval required, never treated already approved. Latest complete baseline beforeA also additional proposal, not original requirement. No changed date, deadline, verifier attendance or auto-recovery authorization.",
+  "reproduction": {
+    "firstUnknown": "UNCERTAIN",
+    "after61min": [
+      {
+        "workflow": "main.yml",
+        "inputs": {
+          "mode": "daily",
+          "slot": "nightly:2026-11-09:2"
+        },
+        "kind": "nightly",
+        "key": "nightly:2026-11-09:2",
+        "day": "2026-11-09"
+      }
+    ],
+    "futureWhy": [
+      "nightly: signals already at 2099-01-01",
+      "intraday: outside the market window"
+    ]
+  },
+  "scopeLimits": "Pure unmodified core executed in V8 against actual reviewed calendar. Runner durability/schema/expressions inspected from exact source; no Node CLI run or live GitHub dispatch claimed."
+}
