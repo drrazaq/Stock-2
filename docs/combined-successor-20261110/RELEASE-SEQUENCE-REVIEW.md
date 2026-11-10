@@ -19,7 +19,7 @@ The original four-path P alone is smaller and independently passed (6761580817),
 
 ## Proof and limits
 Actual Git-object composition and inverses reproduce expected trees exactly; see composition-proof.json and inverse JSON allowlists. This is stronger than a textual patch claim, but does not prove a future live process adopted the code.
-The complete successor hosted run42779533256/job129705951461 loaded the exact source and passed164 root files; nested instrument cases ran. First prerequisite run timed out on a real missing splitter dependency, now corrected without weakening assertions or changing the10-minute workflow limit. Its new complete receipt remains required. Historical failures are retained.
+The complete successor hosted run42779533256/job129705951461 loaded the exact source and passed164 root files; nested instrument cases ran. First prerequisite run timed out on a real missing splitter dependency, now corrected without weakening assertions or changing the10-minute workflow limit. Its corrected exact run42781021434/job129710830019 now passes all148 root files; the complete612545-character hosted log and checkout SHA were inspected. Historical failures are retained.
 Applicable production tree has one nested instrument suite and no test Python files. Preserve development321/Python7+2 evidence separately; do not import all development infrastructure.
 Independent final review, YAML/actual caller checks and applicable gated watcher reconciliation remain required. Original watcher/calendar source is unchanged from its accepted unit; reuse only exact unchanged closure evidence, not a generic PASS count.
 
@@ -39,7 +39,7 @@ Natural writer drain and later runtime receipts can be reviewed from retained ev
 No date is proposed until this is feasible. No workflow re-enable is implied while required restoration gates are unsatisfied.
 
 ## Remaining blockers
-- Complete final stage1 receipt and independent review of BOTH exact candidates, including recovery floor and two save paths.
+- Independent review of BOTH final exact candidates, including the recovery floor, YAML, callers and two save paths.
 - Focused acceptance of new source bindings/inverses and finite operating arrangement; fresh actual readiness and owner approval.
 - Old-definition bot writers/queued jobs and unavailable workflow-state evidence must be resolved by a reviewed route.
 - Missing scanner invocation cause remains unresolved. G revision3 still lacks shared natural/assisted execution admission; schedules are not repaired by this successor. The most-recent-complete-day and alternative coverage label are proposed amendments, not already approved.
