@@ -8,6 +8,7 @@ import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 const root=path.resolve(import.meta.dirname,'..');
 async function fixture(t,{stale=false,future=false,macro=false,unknown=false,premarket=false,unacknowledged=false,corrupt=false,sourceFailure=null,generalNews=false,remoteJournal=false,crashAfterSend=false,journalFailure=null,journalRace=false,companyId=1}={}){
+ const premarketNow=Date.parse('2026-11-09T13:40:00Z');
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'news-delivery-'));fs.mkdirSync(path.join(dir,'data'));
  const put=(name,value)=>fs.writeFileSync(path.join(dir,'data',name),JSON.stringify(value));
  put('my-positions.json',macro?{}:{AAA:{entry:10,stop:9}});
@@ -21,7 +22,7 @@ async function fixture(t,{stale=false,future=false,macro=false,unknown=false,pre
  const remoteBook=()=>JSON.parse(git(['--git-dir='+origin,'show','refs/heads/fixture:data/news-delivery.json']));
  const server=http.createServer(async(req,res)=>{if(journalRace&&req.url.startsWith('/company-news')){journalRace=false;const other=fs.mkdtempSync(path.join(os.tmpdir(),'s2-news-race-'));try{git(['clone','--branch','fixture',origin,other]);fs.writeFileSync(path.join(other,'data/news-delivery.json'),JSON.stringify({unknown:{'AAA|1':{reason:'competing writer'}},sent:{},delivery:{'AAA|1':{status:'UNKNOWN'}}}));git(['add','data/news-delivery.json'],other);git(['commit','-m','competing unknown'],other);git(['push'],other);}finally{fs.rmSync(other,{recursive:true,force:true});}}let raw='';for await(const part of req)raw+=part;const u=new URL(req.url,'http://localhost');let body={};
   if(u.pathname.includes('/sendMessage')){if(!premarket){const book=JSON.parse(fs.readFileSync(path.join(dir,'data/news-delivery.json'),'utf8'));assert.ok(Object.values(book.delivery).some(x=>x.status==='PENDING'));}if(remoteJournal)assert.ok(Object.values(remoteBook().delivery).some(x=>x.status==='PENDING'&&x.reservationOwner));messages.push(JSON.parse(raw).text);if(crashAfterSend){crashAfterSend=false;activeChild.kill('SIGKILL');res.destroy();return;}if(unknown&&!ack){res.destroy();return;}res.statusCode=ack||unacknowledged?200:403;body=ack?{ok:true,result:{message_id:messages.length}}:unacknowledged?{ok:true,result:{}}:{ok:false,error_code:403,description:'refused'};}
-  else if(u.pathname.includes('/snapshots'))body={AAA:{latestTrade:{p:8,t:new Date(Date.now()-(stale?3600000:1000)).toISOString()},prevDailyBar:{c:8}}};
+  else if(u.pathname.includes('/snapshots'))body={AAA:{latestTrade:{p:8,t:new Date((premarket?premarketNow:Date.now())-(stale?3600000:1000)).toISOString()},prevDailyBar:{c:8}}};
   else if(u.pathname==='/news')body=generalNews?[{id:2,headline,datetime:publication}]:[];
   else if(u.pathname==='/company-news'&&sourceFailure){res.statusCode=sourceFailure;body={error:'fixture source failure'};}
   else if(u.pathname==='/company-news')body=[{id:companyId,headline,datetime:publication}];
@@ -29,7 +30,8 @@ async function fixture(t,{stale=false,future=false,macro=false,unknown=false,pre
   res.setHeader('Content-Type','application/json');res.end(JSON.stringify(body));});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});});
  const base='http://127.0.0.1:'+server.address().port;
- const run=({allowDeliveryFailure=false,allowStateFailure=false,allowKilled=false}={})=>new Promise((resolve,reject)=>{const c=spawn(process.execPath,[path.join(root,premarket?'premarket-check.mjs':'news-watch.mjs')],{cwd:dir,env:{PATH:childPath,ALPACA_KEY:'fixture',ALPACA_SECRET:'fixture',ALPACA_DATA_BASE:base,FINNHUB_KEY:'fixture',FH_BASE:base,TG_BASE:base,TG_TOKEN:'fixture',TG_CHAT:'fixture',NEWS_TEST_FAILURE_MARKER:path.join(dir,'failure-reached'),...(remoteJournal?{NEWS_REMOTE_INTENT_REQUIRED:'1',NEWS_JOURNAL_LOCAL_FIXTURE:'1'}:{})}});activeChild=c;let out='';c.stdout.on('data',d=>out+=d);c.stderr.on('data',d=>out+=d);c.on('error',reject);c.on('exit',code=>code===0||allowKilled&&code===null||allowDeliveryFailure&&code===2||allowStateFailure&&code===1?resolve(out):reject(Error(out)));});
+ if(premarket)fs.writeFileSync(path.join(dir,'premarket-clock.mjs'),`const RealDate=Date;globalThis.Date=class extends RealDate{constructor(...args){super(...(args.length?args:[${premarketNow}]));}static now(){return ${premarketNow};}};`);
+ const run=({allowDeliveryFailure=false,allowStateFailure=false,allowKilled=false}={})=>new Promise((resolve,reject)=>{const c=spawn(process.execPath,[...(premarket?['--import',path.join(dir,'premarket-clock.mjs')]:[]),path.join(root,premarket?'premarket-check.mjs':'news-watch.mjs')],{cwd:dir,env:{PATH:childPath,ALPACA_KEY:'fixture',ALPACA_SECRET:'fixture',ALPACA_DATA_BASE:base,FINNHUB_KEY:'fixture',FH_BASE:base,TG_BASE:base,TG_TOKEN:'fixture',TG_CHAT:'fixture',NEWS_TEST_FAILURE_MARKER:path.join(dir,'failure-reached'),...(remoteJournal?{NEWS_REMOTE_INTENT_REQUIRED:'1',NEWS_JOURNAL_LOCAL_FIXTURE:'1'}:{})}});activeChild=c;let out='';c.stdout.on('data',d=>out+=d);c.stderr.on('data',d=>out+=d);c.on('error',reject);c.on('exit',code=>code===0||allowKilled&&code===null||allowDeliveryFailure&&code===2||allowStateFailure&&code===1?resolve(out):reject(Error(out)));});
  return {run,messages,remoteFiles:()=>[...new Set(git(['--git-dir='+origin,'log','-2','--format=','--name-only','refs/heads/fixture']).split('\n').filter(Boolean))],failureReached:()=>fs.existsSync(path.join(dir,'failure-reached')),remoteBook,restoreRemote:()=>put('news-delivery.json',remoteBook()),revise:value=>{headline=value;},ack:()=>{ack=true;},write:(name,value)=>put(name,value),raw:name=>fs.readFileSync(path.join(dir,'data',name),'utf8'),read:name=>JSON.parse(fs.readFileSync(path.join(dir,'data',name),'utf8'))};
 }
 test('news is marked delivered only after real ACK and duplicate cycles do not resend',async t=>{
@@ -49,7 +51,7 @@ test('ambiguous news outcome is quarantined, never marked ACK or blindly replaye
  const f=await fixture(t,{unknown:true});await f.run({allowDeliveryFailure:true});assert.deepEqual(f.read('news-seen.json'),{});assert.equal(f.read('news-delivery.json').unknown['AAA|1'].reason,'NETWORK_ERROR');f.ack();await f.run();assert.equal(f.messages.length,1);
 });
 test('premarket prior close and old trade cannot create a live-price stop SELL',async t=>{
- const f=await fixture(t,{premarket:true,stale:true});f.ack();await f.run();assert.match(f.messages[0],/PRICE UNVERIFIED/);assert.doesNotMatch(f.messages[0],/SELL at the open/);
+ const f=await fixture(t,{premarket:true,stale:true});f.ack();await f.run();assert.match(f.messages[0],/PRICE\/STOP CHECK UNKNOWN/);assert.doesNotMatch(f.messages[0],/SELL at the open/);
 });
 
 test('HTTP200 without a message ID is quarantined across later processes',async t=>{

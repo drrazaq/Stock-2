@@ -99,13 +99,13 @@ function dailyValues(end){
  const out=[];let ms=Date.parse(end+'T12:00:00Z');while(out.length<300){const d=new Date(ms);if(d.getUTCDay()!==0&&d.getUTCDay()!==6)out.push(d.toISOString().slice(0,10));ms-=864e5;}
  return out.reverse().map((d,i)=>({datetime:d,open:String(10+i*.01),high:String(10.2+i*.01),low:String(9.8+i*.01),close:String(10+i*.01),volume:'1000000'}));
 }
-async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true,deliveryMode='ack',afterSendAdvance=0}={}){
+async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true,bars=300,deliveryMode='ack',afterSendAdvance=0}={}){
  const clock={now:Date.parse('2026-11-10T15:00:00Z')},sent=[];
  const server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{
   res.setHeader('Content-Type','application/json');
   if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);clock.now+=afterSendAdvance;if(deliveryMode==='ambiguous'||deliveryMode==='stopAmbiguous'&&sent.at(-1).startsWith('YOUR STOPS')){res.destroy();return;}if(deliveryMode==='stop429'&&sent.at(-1).startsWith('YOUR STOPS')&&sent.filter(x=>x.startsWith('YOUR STOPS')).length===1){clock.now+=5*60000;res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}if(deliveryMode==='429'&&sent.length===1){res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}
   if(req.url.includes('/getUpdates'))return res.end(JSON.stringify({ok:true,result:[]}));
-  if(req.url.includes('/time_series'))return res.end(JSON.stringify({values:dailyValues(end)}));
+  if(req.url.includes('/time_series'))return res.end(JSON.stringify({values:dailyValues(end).slice(-bars)}));
   if(req.url.includes('/quote?'))return res.end(JSON.stringify({c:7,...(dated?{t:(clock.now-age)/1000}:{})}));
   if(req.url.includes('/stock/split'))return res.end('[]');
   res.end(JSON.stringify({values:[],splits:[],earningsCalendar:[]}));
@@ -116,8 +116,8 @@ async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true,delivery
 }
 test('actual holdings caller does not turn stale or undated quotes into stop-reached facts',async t=>{
  for(const spec of [{age:3600000},{dated:false}]){
-  const f=await holdingsFixture(t,spec),text=await f.S.fn('holdingsText')(f.sig,f.pos,'SYNTHETIC HOLDINGS',false);
-  assert.match(text,/close-based 2026-11-09/);assert.match(text,/current stop UNKNOWN/);assert.doesNotMatch(text,/the stop 8.00 is reached|SELL ALL\. the stop/);
+  const f=await holdingsFixture(t,spec);f.pos.ZZA.stop=20;f.S.write('data/my-positions.json',f.pos);const before=f.S.read('data/my-positions.json'),text=await f.S.fn('holdingsText')(f.sig,f.pos,'SYNTHETIC HOLDINGS',false);
+  assert.match(text,/close-based 2026-11-09/);assert.match(text,/current stop UNKNOWN/);assert.doesNotMatch(text,/the stop 20.00 is reached|SELL ALL\. the stop/);assert.equal(f.S.read('data/my-positions.json'),before);
  }
 });
 test('actual stale-close caller preserves original position and recorded exit instead of minting a current HOLD',async t=>{
@@ -164,8 +164,8 @@ test('bounded evidence registry never evicts the guard from a previously rendere
 
 
 test('actual sell-check uses structured stop evidence rather than its displayed prior close',async t=>{
- const f=await holdingsFixture(t,{age:3600000});const text=await f.S.fn('sellCheckText')(f.sig);
- assert.doesNotMatch(text,/TESTED:.*at or under your stop|TESTED:.*stop 8.00 is reached/);assert.match(text,/current stop UNKNOWN/);
+ const f=await holdingsFixture(t,{age:3600000});f.pos.ZZA.stop=20;f.S.write('data/my-positions.json',f.pos);const text=await f.S.fn('sellCheckText')(f.sig);
+ assert.doesNotMatch(text,/TESTED:.*at or under your stop|TESTED:.*stop 20.00 is reached/);assert.match(text,/current stop UNKNOWN/);
  const old=await holdingsFixture(t,{end:'2026-11-06',age:3600000}),unknown=await old.S.fn('sellCheckText')(old.sig);assert.match(unknown,/ASSESSMENT UNKNOWN/);
 });
 test('actual legacy plan and conclusion callers never treat numeric prices as timestamped holding evidence',async t=>{
@@ -226,6 +226,14 @@ test('actual intraday stop fallback keeps ambiguous delivery UNKNOWN without rep
  const f=await holdingsFixture(t,{deliveryMode:'stopAmbiguous'});process.env.BOT_ONLY='';f.S.write('data/signals.json',{...f.sig,stocks:[],quick:[],leaders:[]});f.S.write('data/tg-state.json',{offset:42});
  const before=f.S.read('data/my-positions.json');await f.S.fn('intraday')(false);
  assert.equal(f.sent.filter(x=>x.startsWith('YOUR STOPS')).length,1);const state=f.S.readJson('data/alert-state.json');assert.equal(state.sent.ZZAmyst,undefined);assert.equal(state.delivery.ZZAmyst.status,'UNKNOWN');assert.equal(f.S.read('data/my-positions.json'),before);assert.equal(f.S.readJson('data/tg-state.json').offset,42);
+});
+
+
+test('actual short-history callers preserve own trade rules and independent current-stop evidence',async t=>{
+ const f=await holdingsFixture(t,{bars:5}),text=await f.S.fn('holdingsText')(f.sig,f.pos,'SYNTHETIC SHORT HISTORY',false);
+ assert.match(text,/the stop 8.00 is reached/);assert.match(text,/do not sell twice/);
+ const old=await holdingsFixture(t,{end:'2026-11-06',age:3600000,bars:5});old.pos.ZZA.exitFlag={d:'2026-11-06',why:'TIME EXIT: SELL at the next open.'};const before=JSON.stringify(old.pos),raw=await old.S.fn('holdingsText')(old.sig,old.pos,null,true);
+ assert.match(raw.acts.sell.join('\n'),/RECORDED CLOSE-BASED EXIT dated 2026-11-06: TIME EXIT/);assert.match(raw.acts.unknown.join('\n'),/ASSESSMENT UNKNOWN/);assert.equal(JSON.stringify(old.pos),before);
 });
 
 test('all actual caller requests stayed on loopback',()=>assert.deepEqual(blocked,[]));

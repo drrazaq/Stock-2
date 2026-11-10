@@ -14,7 +14,7 @@
     "prospective-paper-capture.mjs": "c7f5f09e9e1416e620b650fce76ebacac8fa572618d468eb59d0be92998a439f",
     "prospective-capture-transport.mjs": "a1eed686ac2415f47a09551381473d99d1d22d7a02b844cbbb1841bc9798caf1",
     "discovery-paper.mjs": "57254fa0a2845cf392d4f5cbb59225eeda5d9387e34f1d7be6de546baf452b43",
-    "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+    "market-session.mjs": "58367d1a42ca663e062298e89bfbf476375ae5017c9a3788c0517fc05215eeb1",
     "tools/seal-research-artifact.mjs": "2bd37bd895fd9637331a5603fcdb65a6fd280c19a4ab2ce7bf030255e5efb3b2",
     "tools/run-paper-capture-workflow.mjs": "f1dc0d20398ada2bce2c388631d50ee79f29329f42bae9ed5017ee65c969f473",
     "tools/recover-paper-capture.mjs": "38fecfa78760dbcd087c706a8066e4f958860a02a859e5872f7e9d59b42fdcae"
@@ -71,5 +71,10 @@
   "crossRunOriginalLineageImplementedOffline": true,
   "timelyLocalHandoffImplementedOffline": true,
   "originalNativeEvidenceEncryptedRecoveryImplemented": true,
-  "incrementalNativeAppendImplemented": true
+  "incrementalNativeAppendImplemented": true,
+  "runtimeDependencyCorrection": {
+    "reason": "Nov10 production-reporting helpers appended; original NYSE calendar definitions unchanged. Currentruntimefingerprint refreshed, no protocol/budget/sourceapproval activation.",
+    "originalMarketSessionSha256": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+    "sourceRepairPendingReview": true
+  }
 }

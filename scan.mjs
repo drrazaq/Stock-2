@@ -2436,7 +2436,14 @@ function observedHoldingPrice(sym,quote,now=Date.now()){
  return {current:reference.state==='OK',price:reference.state==='OK'?reference.price:null,stop,validCurrent:n=>regular(n)&&quoteEvidence(sym,quote,n,3).state==='OK',validStop:n=>regular(n)&&quoteEvidence(sym,quote,n,5).state==='OK'};
 }
 async function reviewReply(sym, sig, pos, evidence = {}) {
-  const d = await loadDaily(sym); if (!d || d.candles.length < 260) return sym + ': not enough price history to study (one year needed). Check the ticker.';
+  const d = await loadDaily(sym);
+  if (!d || d.candles.length < 260) {
+    const candles=d?.candles||[],closeSession=candles.at(-1)?.d,closeCurrent=closeBasisCurrent(closeSession),checks=closeCurrent?[n=>closeBasisCurrent(closeSession,n)]:[];
+    let q=null;if(validStop(pos[sym]?.stop)&&marketClock(Date.now()).phase==='REGULAR'){try{q=await liveQ(sym);}catch{}}
+    const observed=observedHoldingPrice(sym,q);Object.assign(evidence,{candles,closeSession,closeCurrent,observed,checks});
+    if(validStop(pos[sym]?.stop)&&observed.stop.state==='OK'&&observed.stop.price<=pos[sym].stop){checks.push(observed.validStop);return rememberHoldingEvidence('HOLD OR SELL: '+sym+' → STOP LEVEL REACHED\nPrice '+money(observed.stop.price)+' (dated stop observation '+nyStamp(observed.stop.t)+')\nWhy: '+stopText('hit',sym,pos[sym],observed.stop)+'\nDaily strategy assessment UNKNOWN: insufficient history.',checks);}
+    return sym + ': not enough price history to study (one year needed). Check the ticker.';
+  }
   const spy = await loadDaily('SPY'), sMap = new Map((spy ? spy.candles : []).map(x => [x.d, x.c]));
   const c = d.candles, n = c.length, i = n - 1, cl = c.map(x => x.c);
   const sma = (p) => { const o = new Array(n).fill(null); let t = 0; for (let k = 0; k < n; k++) { t += cl[k]; if (k >= p) t -= cl[k - p]; if (k >= p - 1) o[k] = t / p; } return o; };
@@ -2538,7 +2545,7 @@ async function holdingsText(sig, pos, title, raw) {
     const recorded=P.exitFlag&&P.exitFlag.why,storedExit=recorded&&isSessionDate(P.exitFlag.d)&&P.exitFlag.d>=(P.boughtSession||P.since||'')&&P.exitFlag.d<=(completedMarketSession()||'')?P.exitFlag:null;
     const stopObservation=evidence.observed?.stop||{state:'UNKNOWN',why:'no fresh observation'};
     const stopReached=validStop(P.stop)&&stopObservation.state==='OK'&&stopObservation.price<=P.stop;
-    if(evidence.closeCurrent!==true&&!stopReached){acts.unknown.push(sym+': ASSESSMENT UNKNOWN: daily evidence '+(evidence.closeSession||'UNKNOWN')+'; no current HOLD or stop claim.'+(storedExit?' RECORDED CLOSE-BASED EXIT dated '+storedExit.d+': '+storedExit.why+'. Fulfilment/withdrawal not established; existing instruction is not cancelled.':' Existing broker instructions remain.'));continue;}
+    if(evidence.closeCurrent!==true&&!stopReached){if(storedExit)acts.sell.push(sym+': RECORDED CLOSE-BASED EXIT dated '+storedExit.d+': '+storedExit.why+'. This existing instruction is not cancelled by missing/stale daily data. Current quote/fill UNKNOWN: reconcile the broker and do not sell twice.');acts.unknown.push(sym+': ASSESSMENT UNKNOWN: '+(evidence.closeSession?'daily evidence '+evidence.closeSession:'price/history too short or unavailable')+'; no current HOLD or stop claim.'+(storedExit?' RECORDED CLOSE-BASED EXIT dated '+storedExit.d+': '+storedExit.why+'. Fulfilment/withdrawal not established; existing instruction is not cancelled.':' Existing broker instructions remain.'));continue;}
     const evidenceTail=' [close-based '+evidence.closeSession+'; current stop '+(!validStop(P.stop)?(P.src==='leader dip'?'not applicable: no stop by design':'NOT SET'):stopObservation.state==='OK'?'trade '+money(stopObservation.price)+' observed '+nyStamp(stopObservation.t):'UNKNOWN: '+stopObservation.why)+']';
     holdingBases.set(sym,evidenceTail);if(validStop(P.stop)&&stopObservation.state==='OK')reportChecks.push(evidence.observed.validStop);
     // TWO PRICES (user, 20 Oct): the profit line (30% above the 50-day: the tested SWITCH sell, then buy back 10% lower) and the loss line
@@ -2595,7 +2602,7 @@ function unresolvedSells(pos, lastPx, today) {
   for (const [sym, P] of Object.entries(pos || {})) { const A = P && P.lastAct; if (!A || A.act !== 'SELL ALL') continue;
     const since = A.since || A.d; if (!since || since >= today) continue;
     const days = Math.round((Date.parse(today) - Date.parse(since)) / 864e5), now = lastPx && lastPx[sym];
-    out.push(sym + ': SELL since ' + since + ' (' + days + ' days)' + (A.px0 > 0 && now > 0 ? ', ' + money(A.px0) + ' then, ' + money(now) + ' now (' + pcs(now / A.px0 - 1) + ' since)' : '') + '. Still held. If you are keeping it on purpose, that is your call; the tested rule says sell.'); }
+    out.push(sym + ': SELL since ' + since + ' (' + days + ' days)' + (A.px0 > 0 && now > 0 ? ', ' + money(A.px0) + ' then, ' + money(now) + ' saved reference (source clock not established here; ' + pcs(now / A.px0 - 1) + ' since)' : '') + '. Position still recorded as held; this is a recorded notice, not proof of a pending order, fill or withdrawal. Reconcile the source dates and broker state; existing instructions are not cancelled.'); }
   return out;
 }
 // Read-only history context. A changed assessment is neither an execution receipt nor proof of withdrawal.
@@ -2849,7 +2856,6 @@ function healthLine(nowMs = Date.now()) { const out = [];
     else out.push(bad.length ? 'NOT CURRENT: ' + lateTxt + ' (the ' + snap + ' found no problems before this)' : 'checks OK (' + snap + ')');
     if (src) out.push(src);
   } catch (e) { out.push('health check UNKNOWN (could not be read)'); }
-  try { const L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n'), j = JSON.parse(L[L.length - 1]); if (j.firstMinute) out.push('live watcher on ' + j.day + ': first minute ' + j.firstMinute + ' New York (' + kwt(+j.firstMinute.slice(0, 2) * 60 + +j.firstMinute.slice(3), j.day) + ' Kuwait)' + (j.firstMinute > '09:35' ? ' LATE: the open was not watched' : '')); } catch (e) {}
   try { const F = fs.readFileSync('data/tg-failures.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(x => Date.now() - Date.parse(x.at) < 24 * 3600e3); if (F.length) out.push('TELEGRAM: ' + F.length + ' message' + (F.length > 1 ? 's' : '') + ' delivery unconfirmed in the last 24 h (last: "' + F[F.length - 1].head + '", ' + F[F.length - 1].status + ')'); } catch (e) {}
   try { out.push(readWatcherReport().text); } catch {out.push('watcher coverage UNKNOWN');}
   try{const state=readJson0('data/alert-state.json'),n=Object.values(state?.delivery||{}).filter(x=>['PENDING','UNKNOWN'].includes(x?.status)).length;if(n)out.push('ALERT DELIVERY: '+n+' pending/unknown outcomes; review before replay');}catch{}
@@ -2888,7 +2894,7 @@ async function actionsText(sig, pos, px, title) {
   const srcClose=await completedSourceClose(sig&&sig.session);
   if (sells.length) S.sells.push('SELL (close-based exits: next regular-session open, ' + K(570) + ' Kuwait; stop-reached lines: your broker stop applies. No automatic 15-minute delay. Existing broker stop orders remain active; '+(srcClose?'from the '+srcClose+' close':'source close UNKNOWN')+'):', ...sells.map(l => '- ' + l));
   { const lp = {}; for (const x of (sig && sig.stocks) || []) if (x.last) lp[x.sym] = x.last; for (const x of (sig && sig.uni) || []) if (x.last && !lp[x.sym]) lp[x.sym] = x.last;
-    const un = unresolvedSells(pos, lp, ny(Date.now()).d); if (un.length) S.crit.push('SELLS NOT DONE YET (' + un.length + ')', ...un.map(l => '- ' + l)); }
+    const un = unresolvedSells(pos, lp, ny(Date.now()).d); if (un.length) S.crit.push('RECORDED SELLS NEED RECONCILIATION (' + un.length + ')', ...un.map(l => '- ' + l)); }
   { const hg = halalGapLine(pos); if (hg) S.holds.push(hg); }
   if (h.acts.unknown.length) { S.crit.push('ASSESSMENT UNKNOWN for ' + h.acts.unknown.length + ' holding(s); see holdings below. No fresh HOLD inferred from missing data.'); S.holds.push(...h.acts.unknown); }
   S.crit.push(...priorSellReconciliation(priorActs, pos, new Set(sells.map(l => l.replace(/^- /, '').split(/[ :]/)[0])), ny(Date.now()).d));

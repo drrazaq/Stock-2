@@ -49,7 +49,7 @@ test('conflicting exits: last night\'s trend exit is SELL in the first check, ne
   assert.match(l, /Last price 3\.77 \(FINNHUB, Nov 5 09:39 New York, 20 s old\) \(-37\.2% from your 6\.00\)/);
   // the same holding in ACTIONS (planText, unchanged) is a SELL from the same nightly verdict
   const actions = r.S.fn('planText')(SIG, pos, { ZZG: 3.77 });
-  assert.match(actions, /ZZG: SELL at the close or next open\. It closed under its 50 day average, the trend is broken\./);
+  assert.match(actions, /ZZG: RECORDED CLOSE-BASED EXIT, source session 2026-11-04: it closed under its 50 day average, the trend is broken\./);
   assert.equal(r.S.readJson('data/my-positions.json').ZZG.stop, 1.98, 'stop unchanged');
 });
 

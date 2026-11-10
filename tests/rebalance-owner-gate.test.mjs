@@ -1,12 +1,13 @@
-import test from 'node:test';
+import test,{after} from 'node:test';
+const originalNow=Date.now;Date.now=()=>Date.parse('2026-11-10T15:00:00Z');after(()=>{Date.now=originalNow;});
 import assert from 'node:assert/strict';
 import {loadScan} from '../test/load-scan.mjs';
-const day=new Date().toISOString().slice(0,10),yes={s:'ok',d:day,by:'ZAD (you)'};
+const day='2026-11-10',yes={s:'ok',d:day,by:'ZAD (you)'};
 async function fixture(marks,list={notHalal:[]}){
  const positions={AAA:{entry:10,stop:5},BBB:{entry:10,stop:5}};
  const S=await loadScan({env:{PRIVATE_KEY:'disposable-fixture-only-not-owner-key'},files:{'data/my-positions.json':positions,'data/halal.json':marks,'data/zad-list.json':list}});
  assert.equal(S.fn('privWrite')({shares:{AAA:10,BBB:1000},buys:[],budget:50000}),true);
- return {S,positions:S.read('data/my-positions.json'),marks:S.read('data/halal.json'),render:stocks=>S.fn('rebalanceText')({stocks})};
+ return {S,positions:S.read('data/my-positions.json'),marks:S.read('data/halal.json'),render:stocks=>S.fn('rebalanceText')({session:'2026-11-09',generatedAt:'2026-11-09T23:00:00Z',stocks})};
 }
 test('underweight profitable holding cannot receive ADD with missing/stale/rejected/third-party ZAD',async()=>{
  for(const mark of [undefined,{s:'fail',d:day},{s:'ok',d:'2020-01-01'},{s:'ok',d:'2099-01-01'},{s:'ok',d:'bad'},{s:'ok',d:day,by:'Zoya'}]){
