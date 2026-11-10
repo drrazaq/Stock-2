@@ -1035,7 +1035,7 @@ async function telegram(text, buttons, currentEvidence) {
   const given=currentEvidence;
   const valid=now=>!given||given(now)===true;
   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent; private body omitted]'); return {ok:false,reason:'MISSING_CREDENTIALS',deliveredParts:0}; }
-  const parts=tgParts(text);
+  const parts = []; { let rest = text; while (rest.length > 3800) { let cut = rest.lastIndexOf('\n\n', 3800); if (cut < 1500) cut = rest.lastIndexOf('\n', 3800); if (cut < 1500) cut = 3800; parts.push(rest.slice(0, cut)); rest = rest.slice(cut).replace(/^\n+/, ''); } parts.push(rest); }   // split long messages between paragraphs, never mid-word
   for(let i=0;i<parts.length;i++){
     for(let a=0;a<3;a++){
       let evidenceOK=false;try{evidenceOK=valid(Date.now())===true;}catch{}
