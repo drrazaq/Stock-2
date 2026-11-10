@@ -201,14 +201,14 @@ async function sellCheckText(sig) { const pos = loadPos(), syms = Object.keys(po
   const pv = privRead(), Z = readJson0('data/zad-list.json'), bad = ZADPOLICY().excluded, tips = readTips(), last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
   let news = []; try { news = fs.readFileSync('data/news-log.jsonl', 'utf8').trim().split('\n').slice(-300).map(l => { try { return JSON.parse(l); } catch (e) { return null; } }).filter(Boolean); } catch (e) {}
   const Q = readJson0('data/quality.json'), tot = syms.reduce((a, k) => a + ((pv.shares || {})[k] || 0) * (last[k] || pos[k].entry), 0);
-  const sells = [], options = [], holds = [];
-  for (const sym of syms) { const P = pos[sym], R = []; let r = ''; try { r = await reviewReply(sym, sig, pos); } catch (e) {}
+  const sells = [], options = [], holds = [],checks=[];
+  for (const sym of syms) { const P = pos[sym], R = [],evidence={}; let r = ''; try { r = await reviewReply(sym, sig, pos,evidence); } catch (e) {}if(evidence.checks)checks.push(...evidence.checks);
     const pm = r.match(/^Price ([\d.,]+)/m), px = pm ? +pm[1].replace(/,/g, '') : last[sym] || null, verdict = ((r.match(/\u2192 (.+)/) || [])[1] || '').trim(), earn = ((r.match(/^Earnings on (\S+)/m) || [])[1] || '').replace(/:+$/, '');
     if (bad.has(sym)) R.push(['MUST', 'not halal on the ZAD list (from ' + ((Z && Z.effective) || 'the new list') + ')']);
-    if (P.stop && px && px <= P.stop) R.push(['TESTED', 'at or under your stop ' + money(P.stop)]);
+    if(validStop(P.stop)&&evidence.observed?.stop?.state==='OK'&&evidence.observed.stop.price<=P.stop){R.push(['TESTED',stopText('hit',sym,P,evidence.observed.stop)]);checks.push(evidence.observed.validStop);}
     { const es = eventSell(sym); if (es) R.push(['TESTED', es.replace(/^SELL at the next open\. /, '')]); }
     { const dg = dangerFlag(sym); if (dg) R.push(['TESTED', dg]); }
-    if (P.src === 'leader dip' && P.exitFlag && P.exitFlag.d >= (P.boughtSession || P.since || '')) R.push(['TESTED', 'leader dip rule: ' + P.exitFlag.why]);   // (27 Oct) +20% target reached / time exit
+    if (P.src === 'leader dip' && P.exitFlag && P.exitFlag.d >= (P.boughtSession || P.since || '') && P.exitFlag.d <= (completedMarketSession()||'')) R.push(['TESTED', 'leader dip rule: ' + P.exitFlag.why]);   // (27 Oct) +20% target reached / time exit
     if (verdict === 'TAKE PROFIT OPTION') R.push(['OPTION', ((r.match(/^Why: (.+)$/m) || [])[1] || 'stretched far above its average').split('. Historical reference:')[0] + ': sell/buy-back option passed the existing switch gate; see its stored verdict, execution unverified']);
     if (earn) { const days = Math.round((Date.parse(earn) - Date.now()) / 864e5); if (days >= 0 && days <= 10) R.push(['INFO', 'earnings in ' + days + ' day' + (days === 1 ? '' : 's') + ' (' + earn + '): the price can jump past your stop that day']); }
     { const dl = dilutionLine(sym); if (/^DILUTION/.test(dl)) R.push(['INFO', dl.replace(/^DILUTION: /, '').split('.')[0] + ' (new shares)']); }
@@ -219,11 +219,12 @@ async function sellCheckText(sig) { const pos = loadPos(), syms = Object.keys(po
     const head = sym + (px ? ' ' + money(px) + ' (' + pcs(px / P.entry - 1) + ' from your ' + money(P.entry) + ')' : ''), body = R.map(([k, w]) => '   ' + k + ': ' + w);
     if (R.some(x => x[0] === 'MUST' || x[0] === 'TESTED')) { sells.push([head + ': SELL', ...body]); noteSell(sym, R.filter(x => x[0] === 'MUST' || x[0] === 'TESTED').map(x => x[1]).join('; ')); }
     else if (R.some(x => x[0] === 'OPTION')) options.push([head + ': TAKE PROFIT OPTION (your choice)', ...body]);
-    else holds.push([head + ': HOLD' + (P.src === 'leader dip' && !P.stop ? ', target ' + money(P.target) + ' (sell limit at your broker), time exit about ' + ldipExitDay(P.boughtSession || P.since, P.ldHold || LDIP_HOLD) + '; no stop by design' : P.stop ? ', stop ' + money(P.stop) : ', SET A STOP'), ...(body.length ? body : ['   no sell reason found: trend, filings, news, quality and size checked'])]); }
+    else if(evidence.closeCurrent!==true)holds.push([head+': ASSESSMENT UNKNOWN; no current HOLD or stop claim. Existing broker/close-based instructions are not cancelled.',...body]);
+    else holds.push([head + ': HOLD as of '+evidence.closeSession+' close; current stop '+(evidence.observed?.stop?.state==='OK'?'dated trade '+money(evidence.observed.stop.price):'UNKNOWN')+'; recorded plan' + (P.src === 'leader dip' && !P.stop ? ', target ' + money(P.target) + ' (sell limit at your broker), time exit about ' + ldipExitDay(P.boughtSession || P.since, P.ldHold || LDIP_HOLD) + '; no stop by design' : P.stop ? ', stop ' + money(P.stop) : ', SET A STOP'), ...(body.length ? body : ['   no sell reason found: trend, filings, news, quality and size checked'])]); }
   const out = ['WHAT TO SELL AND WHY (' + syms.length + ' stocks checked: stop, halal, SEC filings, stretch, earnings, dilution, quality, your sources, news, size)', ''];
-  if (sells.length) out.push('SELL', ...sells.flat(), ''); if (options.length) out.push('OPTION', ...options.flat(), ''); if (holds.length) out.push('HOLD', ...holds.flat(), '');
+  if (sells.length) out.push('SELL', ...sells.flat(), ''); if (options.length) out.push('OPTION', ...options.flat(), ''); if (holds.length) out.push('CLOSE-BASED CONTEXT / INCOMPLETE ASSESSMENTS', ...holds.flat(), '');
   out.push('MUST = your rules. TESTED = passed a 5-year test. OPTION = passed on history, live check running. INFO = a real risk, not a tested sell signal: weigh it, the stop still decides.', 'After you sell: sold SYM PRICE. Not financial advice, not a halal ruling.');
-  return out.join('\n'); }
+  return rememberHoldingEvidence(out.join('\n'),checks); }
 function horizonLine(sym) { const HZ = readJson0('data/horizons.json'); if (!HZ || HZ.status !== 'OK') return 'Mid / long term: the 1-6 month study runs on Sunday.';
   const sets = Object.entries(HZ.today || {}).filter(([, a]) => a.includes(sym)).map(([k]) => k); if (!sets.length) return 'Mid / long term: not in any of the 4 tested pullback / leader / turn-around setups today.';
   return 'Mid / long term: ' + sets.map(k => { const rs = Object.values(HZ.results).filter(r => r.setup === k), best = rs.find(r => r.verdict === 'PROMISING');
@@ -361,6 +362,7 @@ function rebuyText() { const RB = readJson0('data/rebuy.json'); if (!RB || RB.st
 // REBALANCE: your portfolio by stock and by industry, measured against equal weights. Health first (stop, halal, tested warning), then
 // trim what grew too big, then where new cash should go. Whether trimming is advised follows the Sunday rebalancing test (rebalance.mjs).
 function rebalanceText(sig) { const pos = loadPos(), pv = privRead(), sh = pv.shares || {}, syms = Object.keys(pos); if (!syms.length) return 'REBALANCE: no stocks recorded. Send  bought SYM PRICE SHARES  for each one you own.';
+  if(!scanCloseCurrent(sig))return 'REBALANCE ASSESSMENT UNKNOWN: saved session '+(sig?.session||'UNKNOWN')+' lacks current completed-close evidence. Recorded holdings/trades are unchanged; no current stop, trim or new-cash instruction is inferred.';
   const last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
   const SEC = readJson0('data/sectors.json') || {}, CK = readJson0('data/sec-ciks.json') || {}, sicG = (c) => { c = +c; if (!c) return null; return c === 3674 || c === 3825 ? 'Semiconductors' : (c >= 2830 && c <= 2836) || c === 8731 ? 'Health care and biotech' : (c >= 7370 && c <= 7379) || (c >= 3570 && c <= 3579) ? 'Technology' : (c >= 3660 && c <= 3679) || c === 3827 ? 'Electrical Equipment' : c === 1311 || c === 2911 || c === 1381 || c === 1389 ? 'Energy' : c >= 1000 && c <= 1099 ? 'Mining' : c >= 3720 && c <= 3769 ? 'Aerospace' : c >= 6000 && c <= 6799 ? 'Financials' : c >= 4900 && c <= 4999 ? 'Utilities' : c >= 1500 && c <= 1799 ? 'Construction' : c >= 5000 && c <= 5199 ? 'Distribution' : c >= 3500 && c <= 3569 ? 'Machinery' : null; }, Z = readJson0('data/zad-list.json'), m0 = (x) => money(x).replace(/\.00$/, '');
   const noSh = syms.filter(k => !(sh[k] > 0)); if (noSh.length === syms.length) return 'REBALANCE: I know your buy prices but not how many shares you hold, so I cannot see the weights. Send for each:  bought SYM PRICE SHARES  (shares stay encrypted).';
@@ -371,8 +373,8 @@ function rebalanceText(sig) { const pos = loadPos(), pv = privRead(), sh = pv.sh
   const ind = {}; for (const r of rows) ind[r.ind] = (ind[r.ind] || 0) + r.usd; const heavy = Object.entries(ind).filter(([g, v]) => g !== 'Other' && v / tot > 0.35);
   out.push('', 'BY INDUSTRY: ' + Object.entries(ind).sort((a, b) => b[1] - a[1]).map(([g, v]) => g + ' ' + Math.round(v / tot * 100) + '%').join(', ') + (heavy.length ? '. TOO MUCH IN ' + heavy.map(x => x[0]).join(', ') + ': these tend to fall together; no new buys there until under 35%.' : '.'));
   // 1. health first: these are sells for their own reason, not rebalancing
-  const fix = rows.filter(r => (r.P.stop && r.px <= r.P.stop) || (Z && (Z.notHalal || []).includes(r.k)) || eventSell(r.k));
-  if (fix.length) out.push('', 'SELL FIRST (not rebalancing):', ...fix.map(r => '- ' + r.k + ': ' + [r.P.stop && r.px <= r.P.stop ? 'at or under your stop ' + money(r.P.stop) : '', Z && (Z.notHalal || []).includes(r.k) ? 'not halal on the new ZAD list' : '', eventSell(r.k) ? 'tested warning filing' : ''].filter(Boolean).join('; ') + ' (' + m0(r.usd) + ' USD)'));
+  const fix = rows.filter(r => (Z && (Z.notHalal || []).includes(r.k)) || eventSell(r.k));
+  if (fix.length) out.push('', 'SELL FIRST (not rebalancing):', ...fix.map(r => '- ' + r.k + ': ' + [Z && (Z.notHalal || []).includes(r.k) ? 'not halal on the new ZAD list' : '', eventSell(r.k) ? 'tested warning filing' : ''].filter(Boolean).join('; ') + ' (' + m0(r.usd) + ' USD)'));
   // 2. trim what grew too big (only winners; a loser that is big is a stop question, not a trim)
   const okR = rows.filter(r => !fix.includes(r)), big = okR.filter(r => r.usd / tot > cap && r.g > 0).map(r => ({ ...r, cut: r.usd - tgt * tot })).filter(r => r.cut >= 1000);
   const trimWord = !band ? 'the rebalancing test runs Sunday' : 'a RISK REVIEW, not an order. Tested on 10-stock portfolios: trimming cut the worst fall (' + pcs(band.newer.mdd) + ' vs ' + pcs(band.newer.baseMdd) + ') and the profit was ' + pcs(band.newer.ret) + ' vs ' + pcs(band.newer.baseRet) + ' a year without trimming (' + (band.moreProfit ? 'more profit' : band.lessProfit ? 'LESS profit' : 'difference within luck') + ')' + (n < 8 ? '. You hold under 8 stocks, so the test does not fit your portfolio well' : '');
@@ -389,7 +391,8 @@ function rebalanceText(sig) { const pos = loadPos(), pv = privRead(), sh = pv.sh
   if (falling.length) out.push('NOT ADDING TO (underweight because they fell; adding would only lower your average): ' + falling.map(r => r.k + ' ' + pcs(r.g)).join(', ') + '. They stay on their stops.');
   if(unapproved.length)out.push('NO ADD APPROVAL: '+unapproved.map(r=>r.k+' ('+(myHalal(r.k)!=='ok'?'current affirmative owner ZAD mark missing/expired/rejected':'recent price unavailable')+')').join(', ')+'. Existing holdings are unchanged; no new purchase is approved here.');
   out.push('', 'Tested buys in ACTIONS come before rebalancing buys. Fees: 3 USD a trade; no trade under 1,000 USD. Research only, not financial advice.');
-  return out.join('\n'); }
+  out.push('Allocation prices are dated close references for session '+sig.session+', not current stop/target observations. A saved close at/below a stop is not proof of a live crossing or broker fill.');
+  return rememberHoldingEvidence(out.join('\n'),[n=>scanCloseCurrent(sig,n)]); }
 // LIVE PAPER CHECK of "sell a stretched stock, buy it back 10% lower" (rebuy.mjs passed it on 5 years of history). Every stock in the
 // nightly scan that newly closes 30%+ above its 50-day average (STRETCH) or 25%+ above its close 10 sessions earlier (SPIKE) is logged;
 // paper-sold at the next open, paper-bought back at 10% under that price (or at the close 60 sessions later if it never comes back),
@@ -1208,7 +1211,8 @@ async function telegram(text, buttons, currentEvidence) {   // buttons: optional
   const parts=splitTelegramText(text,3800); // Preserve Unicode and every character across parts.
   for (let i = 0; i < parts.length; i++) {
     for (let a = 0; a < 3; a++) {   // Retry only an explicit rate-limit refusal; ambiguous outcomes are not replayed
-      try { if(currentEvidence && currentEvidence(Date.now())!==true)return {ok:false,reason:'PRICE_EVIDENCE_EXPIRED',localEvidenceRefusal:true,deliveredParts:i}; const r = await post(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
+      let evidenceOK=false;try{evidenceOK=!currentEvidence||currentEvidence(Date.now())===true;}catch{}if(!evidenceOK)return {ok:false,reason:'PRICE_EVIDENCE_EXPIRED',localEvidenceRefusal:true,definitelyUnsentPart:true,deliveredParts:i};
+      try { const r = await post(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
         if (r.status === 429 && a < 2) { let w = 5; try { w = +((await r.json()).parameters || {}).retry_after || 5; } catch (e) {} if(w>30){tgFailed(429,'rate limit deferred '+w+' seconds',parts[i]);return {ok:false,reason:'HTTP_429',deliveredParts:i};} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }   // (28 Oct) too many messages: wait as told, retry
         if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, parts[i]);return {ok:false,reason:(await r.json()).description||'HTTP_'+r.status,deliveredParts:i+(r.deliveredParts||0)}; }   // (28 Oct) a refused message is recorded, so SYSTEM HEALTH can say so
         break; }
@@ -1736,13 +1740,8 @@ function planText(sig, pos, px, title, only, full, opts) {
   const c = planCands(sig, held), pick = c.filter(x => x.ok && myHalal(x.sym)==='ok' && (!only || only.includes(x.sym))).sort((a, b) => b.score - a.score), skipped = [];
   for (const x of pick) { const g = secGroup(x.sector), first = g && pick.find(p => p !== x && secGroup(p.sector) === g && pick.indexOf(p) < pick.indexOf(x)); if (first) x.sameAs = first.sym; }
   const pv = sig.posVerdict || {}, sells = [], holds = [];
-  for (const sym of Object.keys(held)) { const P = held[sym], p = px && px[sym], now = p ? ' Now ' + money(p) + ' (' + pcs(p / P.entry - 1) + ').' : '';
-    if (p && P.stop && p <= P.stop) { sells.push(sym + ': SELL NOW. Your stop ' + money(P.stop) + ' is reached.' + now); noteSell(sym, 'stop reached'); }
-    else if (eventSell(sym)) { sells.push(sym + ': ' + eventSell(sym) + now); noteSell(sym, eventSell(sym)); }
-    else if (p && P.t2 && p >= P.t2) { sells.push(sym + ': SELL. Target 2 (' + money(P.t2) + ') reached.' + now); noteSell(sym, 'target 2 reached'); }
-    else if (pv[sym]) { sells.push(sym + ': SELL at the ' + (px ? 'close or next open' : 'open') + '. ' + pv[sym].replace(/^\w/, ch => ch.toUpperCase()).replace(/\.?$/, '.') + now); noteSell(sym, pv[sym]); }
-    else if (p && P.t1 && p >= P.t1 && !P.trail) sells.push(sym + ': ' + t1Text(sym, P) + now);
-    else holds.push(sym + ': stop ' + (P.stop ? money(P.stop) : 'NOT SET') + (P.t1 ? ', target ' + money(P.t1) : '') + (P.own ? ' (your own stop)' : '') + (p ? ', now ' + money(p) + ' (' + pcs(p / P.entry - 1) + ')' : '')); }
+  for (const sym of Object.keys(held)) { const P=held[sym],line=retainedHoldingContext(sym,P,sig);if(sig.posVerdict?.[sym])sells.push(line);else holds.push(line); }
+
   // PROTECT MODE (a risk rule fixed in advance, not a tested edge): stop buying while the portfolio is bleeding or buys are piling up.
   //  - 2+ of your stocks at or under their stop, or
   //  - your buys of the last 7 days (4+ of them) are down 8%+ on average, or
@@ -1817,7 +1816,7 @@ function planText(sig, pos, px, title, only, full, opts) {
     if (holds.length) out.push('', 'HOLD (stops at your broker)', ...holds.map(h => h.replace(' (your own stop)', '')));
     const RR = readJson('data/radar-record.json', null), rv = RR ? Object.values(RR.groups || {}).filter(g => g.proven).length : 0;
     out.push('', 'Tested ' + (sig.tested || sig.scanned || 0) + ' stocks | radar ' + (rv ? 'has PROVEN setups' : 'paper only') + ' | check ZAD, buy inside the range, set the stop, then send: bought SYMBOL PRICE SHARES', 'Full cards: send  details');
-    return out.join('\n');
+    return rememberHoldingEvidence(out.join('\n'),scanCloseCurrent(sig)?[n=>scanCloseCurrent(sig,n)]:[]);
   }
   const notProven = c.filter(x => !x.ok).map(x => x.sym);
   if (skipped.length) out.push('', 'Also passed, left out: ' + skipped.join(', ') + '.');
@@ -1848,7 +1847,7 @@ function conclusion(sig, pos) {
   if (sig.quickPaused) out.push('Quick trades are paused by the circuit breaker.');
   if (out.length === 1) out.push('No new trade today. Nothing passed its tests.');
   const pv = sig.posVerdict || {};
-  for (const sym of Object.keys(pos || {})) { const P = pos[sym]; out.push(sym + ' (yours): ' + (pv[sym] ? 'SELL at the next open, ' + pv[sym] : 'HOLD | STOP ' + (P.stop ? money(P.stop) : 'none set') + ' | SELL ' + (P.t1 ? money(P.t1) + (P.t2 ? ' then ' + money(P.t2) : '') : 'no target set'))); }
+  for (const sym of Object.keys(pos || {}))out.push(retainedHoldingContext(sym,pos[sym],sig));
   return out;
 }
 // The same conclusion, recalculated from the price RIGHT NOW (market hours only): buy near the live price, with the stop and
@@ -1864,8 +1863,7 @@ function conclusionLive(sig, pos, px) {
   if (sig.quickPaused) out.push('Quick trades are paused by the circuit breaker.');
   if (!any) out.push('No new trade right now. Nothing passed its tests at the last close.');
   const pv = sig.posVerdict || {};
-  for (const sym of Object.keys(held)) { const P = held[sym], p = px[sym], chg = p ? ' Now ' + money(p) + ' (' + (p >= P.entry ? '+' : '') + ((p / P.entry - 1) * 100).toFixed(1) + '%).' : '';
-    out.push(sym + ' (yours): ' + (p && P.stop && p <= P.stop ? 'SELL NOW, your stop ' + money(P.stop) + ' is reached.' + chg : eventSell(sym) ? eventSell(sym) + chg : p && P.t2 && p >= P.t2 ? 'TARGET 2 REACHED (' + money(P.t2) + '). Sell.' + chg : p && P.t1 && p >= P.t1 ? 'TARGET 1 REACHED (' + money(P.t1) + '). Take profit, or sell part and raise the stop to your entry.' + chg : pv[sym] ? 'SELL at the next open, ' + pv[sym] + chg : 'HOLD | STOP ' + (P.stop ? money(P.stop) : 'none set') + ' | SELL ' + (P.t1 ? money(P.t1) + (P.t2 ? ' then ' + money(P.t2) : '') : 'no target set') + '.' + chg)); }
+  for (const sym of Object.keys(held))out.push(retainedHoldingContext(sym,held[sym],sig));
   return out;
 }
 // WHAT KIND OF DAY IS TODAY? The market's state, each part checked against the market-day study (the system's own historical out-of-sample test trades
@@ -2373,15 +2371,25 @@ async function pennyReply(sig) {
 }
 async function sellReply(sym, sig, pos) {
   const P = pos[sym];
-  if (P) { let p = null; if (marketOpen(Date.now())) { const j = await liveQ((sym)); p = +j.price || null; }
-    const pv = (sig && sig.posVerdict || {})[sym], lines = ['WHEN TO SELL ' + sym + ' (you bought at ' + money(P.entry) + (p ? ', now ' + money(p) + ', ' + (p >= P.entry ? '+' : '') + ((p / P.entry - 1) * 100).toFixed(1) + '%' : '') + ')'];
-    if (p && P.stop && p <= P.stop) lines.push('SELL NOW: your stop ' + money(P.stop) + ' is reached.');
-    else if (eventSell(sym)) lines.push(eventSell(sym));
-    else if (pv) lines.push('SELL at the next open: ' + pv);
-    else lines.push('Not yet. HOLD.');
-    // THE SELL PLAN, in the order that matters: the tested exit first (it is what the tests measured), then the stop, then a target only if one was tested.
-    let c = null; try { const d = await loadDaily(sym); c = d && d.candles; } catch (e) {}
-    const avgN = (n) => c && c.length >= n ? c.slice(-n).reduce((a, x) => a + x.c, 0) / n : null, held = c ? c.filter(k => k.d > (P.since || '')).length : null, left = (n) => held === null ? n + ' sessions from your buy' : Math.max(0, n - held) + ' more session' + (n - held === 1 ? '' : 's');
+  if (P) {
+    let c=null;try{const d=await loadDaily(sym);c=d&&d.candles;}catch{}
+    const closeDay=c?.at(-1)?.d,dailyCurrent=closeBasisCurrent(closeDay),checks=dailyCurrent?[n=>closeBasisCurrent(closeDay,n)]:[];
+    let q=null;if(marketClock(Date.now()).phase==='REGULAR'){try{q=await liveQ(sym);}catch{}}
+    const observed=observedHoldingPrice(sym,q),p=observed.price;
+    if(p)checks.push(observed.validCurrent);
+    const prior=(sig?.posVerdict||{})[sym],pv=prior&&scanCloseCurrent(sig)?prior:null;
+    const lines=['WHEN TO SELL '+sym+' (you bought at '+money(P.entry)+(p?', observed '+money(p)+' at '+nyStamp(q.t):'')+')'];
+    if(validStop(P.stop)&&observed.stop.state==='OK'){checks.push(observed.validStop);if(observed.stop.price<=P.stop)lines.push(stopText('hit',sym,P,observed.stop));}
+    if(!(validStop(P.stop)&&observed.stop.state==='OK'&&observed.stop.price<=P.stop)){
+      if(eventSell(sym))lines.push(eventSell(sym));
+      else if(pv)lines.push('RECORDED CLOSE-BASED EXIT, source session '+sig.session+': '+pv+'. Existing instruction is not cancelled by a rebound quote. Follow its adopted exit timing and check broker fulfilment; no new 15-minute stop delay.');
+      else if(prior)lines.push('RECORDED PRIOR EXIT, source session '+(sig.session||'UNKNOWN')+': '+prior+'. Fulfilment/withdrawal UNKNOWN: reconcile the broker and source. This report does not cancel it or establish a current HOLD.');
+      else if(dailyCurrent)lines.push('HOLD context as of '+closeDay+' close only; current stop status is reported separately.');
+      else lines.push('ASSESSMENT UNKNOWN: daily evidence ends '+(closeDay||'UNKNOWN')+'; no current HOLD or new exit is inferred.');
+    }
+    lines.push('Current stop observation: '+(observed.stop.state==='OK'?'trade '+money(observed.stop.price)+' at '+nyStamp(observed.stop.t):'UNKNOWN: '+observed.stop.why)+'. Existing broker orders and adopted exit rules remain.');
+    // Existing sell-plan rules are retained; dated historical levels never become new current recommendations.
+    const avgN = (n) => dailyCurrent && c && c.length >= n ? c.slice(-n).reduce((a, x) => a + x.c, 0) / n : null, held = dailyCurrent && c ? c.filter(k => k.d > (P.since || '')).length : null, left = (n) => held === null ? n + ' sessions from your buy' : Math.max(0, n - held) + ' more session' + (n - held === 1 ? '' : 's');
     if (P.kind === 'quick') { const a5 = avgN(5); lines.push('SELL (TESTED EXIT): on the first day it CLOSES ' + (P.q === 'gap' ? 'below' : 'above') + ' its 5 day average' + (a5 ? ' (about ' + money(a5) + ' now; the line moves each day)' : '') + ', at the next open; or after ' + left(P.maxHold || 5) + ', whatever happens. I send this as SELL in your ACTIONS.'); }
     else if (P.kind === 'entry') { const lv = P.exitMA ? avgN(P.exitMA) : P.exitBelow; lines.push('SELL (TESTED EXIT): on a daily close under ' + (lv ? '~' + money(lv) : 'its exit line') + (P.exitMA ? ' (its ' + P.exitMA + ' day average, rising)' : '') + ', at the next open' + (P.maxHold ? '; or after ' + left(P.maxHold) : '') + '. I send this as SELL in your ACTIONS.'); }
     else if (P.kind === 'leader') lines.push('SELL (TESTED EXIT): on a daily close under its rising stop or its 50 day average' + (avgN(50) ? ' (~' + money(avgN(50)) + ')' : '') + '. No price target on purpose: trend trades make their money from the big runs.');
@@ -2390,12 +2398,14 @@ async function sellReply(sym, sig, pos) {
     lines.push('TARGET: ' + (P.t1 ? money(P.t1) + (P.ownT ? ' (yours)' : P.tmode ? ' (tested: sell ' + (P.tmode === 'half' ? 'half' : 'all') + ' there)' : '') : P.kind === 'manual' ? 'none (optional: target ' + sym + ' PRICE)' : 'none on purpose: the target study found no fixed price that beat the tested exit above. The exit catches the bounce for you.'));
     // ONE PLAIN LINE (user, 20 Oct): the single price that decides, so the message never needs decoding. For a trend/leader trade the
     // 50-day line is the working sell line when the formula stop sits far below it (lottery-like stocks make a 3-ATR stop meaningless).
-    { const a50 = avgN(50), far = P.stop && p && P.stop < p * 0.75, line = P.kind === 'leader' || far ? (a50 && (!P.stop || a50 > P.stop) ? a50 : P.stop) : (P.kind === 'quick' ? null : P.stop);
+    if(dailyCurrent) { const a50 = avgN(50), far = P.stop && p && P.stop < p * 0.75, line = P.kind === 'leader' || far ? (a50 && (!P.stop || a50 > P.stop) ? a50 : P.stop) : (P.kind === 'quick' ? null : P.stop);
       if (line) lines.push('IN ONE LINE: hold while it closes above ' + money(line) + '. If it CLOSES under ' + money(line) + ', sell at the next open.' + (far ? ' Move your broker stop from ' + money(P.stop) + ' up to ' + money(line) + ': the old stop is far too wide for this stock.' : ' Keep that stop at your broker.') + ' No target: wait for my SELL message when it is stretched.'); }
-    return lines.join('\n'); }
+    if(!dailyCurrent)lines.push('Daily level/time-exit calculation UNKNOWN or stale; recorded stop/target and rule descriptions above are retained plans, not a fresh execution instruction.');
+    return rememberHoldingEvidence(lines.join('\n'),checks); }
   const d = await loadDaily(sym); if (!d || d.candles.length < 60) return sym + ': I could not load prices for it. Check the ticker.';
   const c = d.candles, i = c.length - 1, ind = L.indicators(c, null), a = ind.atr[i], e50 = ind.e[50][i];
-  return ['WHEN TO SELL ' + sym + ' (closed ' + money(c[i].c) + '). I am not tracking it for you, so these are general levels for a holder:', 'Trend exit: a daily close below its 50 day average, now ~' + money(e50) + (c[i].c < e50 ? '. It is ALREADY below that line: the trend has broken.' : '.'), 'Volatility stop: ' + money(c[i].c - 2 * a) + ', two normal daily moves under the price.', 'If you hold it, send:  bought ' + sym + ' YOUR-PRICE   and I will set a stop, raise it as it rises, and alert you.'].join('\n');
+  if(!closeBasisCurrent(c[i].d))return 'WHEN TO SELL '+sym+': ASSESSMENT UNKNOWN; historical data ends '+c[i].d+'. No current stop, HOLD or exit instruction is inferred.';
+  return rememberHoldingEvidence(['WHEN TO SELL ' + sym + ' (closed ' + money(c[i].c) + '). I am not tracking it for you, so these are general levels for a holder:', 'Trend exit: a daily close below its 50 day average, now ~' + money(e50) + (c[i].c < e50 ? '. It is ALREADY below that line: the trend has broken.' : '.'), 'Volatility stop: ' + money(c[i].c - 2 * a) + ', two normal daily moves under the price.', 'If you hold it, send:  bought ' + sym + ' YOUR-PRICE   and I will set a stop, raise it as it rises, and alert you.'].join('\n'),[n=>closeBasisCurrent(c[i].d,n)]);
 }
 // HOLD OR SELL REVIEW of a stock you own (bought before the system or not). It studies the stock's OWN past: every earlier
 // day when it was in the same state as now (trend, and how stretched it was above its 50 day average), what it did over the
@@ -2414,9 +2424,11 @@ function sixAngles(sym, sig, pos) { const L = [];
   return ['SIX ANGLES on ' + sym + (obj.length ? ' (objections: ' + obj.join(', ') + ')' : ' (no module objects)'), ...L.map(l => '- ' + l)].join('\n'); }
 // Ephemeral evidence for already-rendered holding reports. No owner records are rewritten.
 const holdingEvidenceReports=new Map();
-function rememberHoldingEvidence(text,checks=[]){if(checks.length){holdingEvidenceReports.set(text,checks);while(holdingEvidenceReports.size>64)holdingEvidenceReports.delete(holdingEvidenceReports.keys().next().value);}return text;}
+function rememberHoldingEvidence(text,checks=[]){if(checks.length){if(!holdingEvidenceReports.has(text)&&holdingEvidenceReports.size>=64)return 'HOLDING ASSESSMENT UNAVAILABLE: this session reached its evidence-report limit. No new current claim is made; existing broker instructions remain. Previously rendered evidence remains guarded.';holdingEvidenceReports.set(text,checks);}return text;}
 function holdingSendEvidence(text,now){for(const [body,checks] of holdingEvidenceReports)if(text.includes(body)&&!checks.every(check=>check(now)))return false;return true;}
 function closeBasisCurrent(day,now=Date.now()){return typeof day==='string'&&day===completedMarketSession(now);}
+function scanCloseCurrent(sig,now=Date.now()){const at=typeof sig?.generatedAt==='string'&&/T.*(?:Z|[+-]\d\d:\d\d)$/.test(sig.generatedAt)?Date.parse(sig.generatedAt):NaN;return closeBasisCurrent(sig?.session,now)&&Number.isFinite(at)&&at<=now&&completedMarketSession(at)===sig.session;}
+function retainedHoldingContext(sym,P,sig){const prior=sig?.posVerdict?.[sym],dated=scanCloseCurrent(sig);const text=sym+': '+(prior?'RECORDED CLOSE-BASED EXIT, source session '+(sig.session||'UNKNOWN')+': '+String(prior)+'. Fulfilment/withdrawal not established; existing instruction remains for reconciliation.':dated?'HOLD context as of '+sig.session+' close only.':'ASSESSMENT UNKNOWN: saved session '+(sig?.session||'UNKNOWN')+'; no current HOLD inferred.')+' Recorded stop '+(validStop(P.stop)?money(P.stop):'NOT SET')+'; current stop/target observation UNKNOWN: numeric display alone is not timestamped quote evidence. No new execution claim.';return rememberHoldingEvidence(text,dated?[n=>scanCloseCurrent(sig,n)]:[]);}
 function observedHoldingPrice(sym,quote,now=Date.now()){
  const regular=n=>marketClock(n).phase==='REGULAR',reference=regular(now)?quoteEvidence(sym,quote,now,3):{state:'UNKNOWN',why:'outside the regular session'},stop=regular(now)?quoteEvidence(sym,quote,now,5):{state:'UNKNOWN',why:'outside the regular session'};
  return {current:reference.state==='OK',price:reference.state==='OK'?reference.price:null,stop,validCurrent:n=>regular(n)&&quoteEvidence(sym,quote,n,3).state==='OK',validStop:n=>regular(n)&&quoteEvidence(sym,quote,n,5).state==='OK'};
@@ -2458,7 +2470,7 @@ async function reviewReply(sym, sig, pos, evidence = {}) {
   else if (z >= 4) { verdict = 'HOLD, RAISE THE STOP'; why = 'strong but very stretched (' + z.toFixed(1) + ' daily moves above its 50 day average). Nobody knows the top; a raised stop keeps most of the gain if it turns.'; }
   else { verdict = 'HOLD'; why = 'the trend is intact: above its 50 day' + (cl[i] > m200[i] ? ' and 200 day averages.' : ' average (under its 200 day, so weaker).'); }
   // a SYSTEM trade (quick, swing, radar, leader) follows its own tested exit and stop; the general holder rules do not override it
-  const sysTrade = P && ['quick', 'entry', 'radar', 'leader'].includes(P.kind), pv = sig && sig.session===completedMarketSession() && Number.isFinite(Date.parse(sig.generatedAt)) && Date.parse(sig.generatedAt)<=Date.now() && sig.posVerdict ? sig.posVerdict[sym] : null;
+  const sysTrade = P && ['quick', 'entry', 'radar', 'leader'].includes(P.kind), pv = scanCloseCurrent(sig)&&sig.posVerdict ? sig.posVerdict[sym] : null;
   if (sysTrade && pv) { verdict = 'SELL (its tested exit fired)'; why = pv.replace(/\.?$/, '.') + ' This trade follows its own tested rule.'; }
   else if (sysTrade && !verdict.startsWith('SELL')) { verdict = 'HOLD (follow its tested rule)'; why = 'this is a ' + (P.kind === 'entry' ? 'swing' : P.kind) + ' trade from the plan: keep its own stop ' + money(P.stop) + ' and exit rule; the bot tells you when it fires. ' + why; }
   if(!closeCurrent){verdict='ASSESSMENT UNKNOWN';why='Daily history ends '+c[i].d+'; expected completed session '+(completedMarketSession()||'UNKNOWN')+'. No current HOLD or new exit is inferred; prior recorded instructions require reconciliation.';}

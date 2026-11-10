@@ -31,7 +31,7 @@ const q={},fetchEvidence={};for(const sym of syms){const lt=snaps[sym]?.latestTr
 }
 const renderAt=Date.now(),renderClock=marketClock(renderAt);
 if(renderClock.phase!=='PRE_MARKET'||renderClock.day!==invocation.day){console.log('premarket: skipped after fetch; session changed before rendering');process.exit(0);}
-const expected=completedMarketSession(renderAt),scanAt=at(SG.generatedAt),scanCurrent=!!expected&&SG.session===expected&&scanAt!==null&&scanAt<=renderAt;
+const expected=completedMarketSession(renderAt),scanAt=at(SG.generatedAt),scanCurrent=!!expected&&SG.session===expected&&scanAt!==null&&scanAt<=renderAt&&completedMarketSession(scanAt)===SG.session;
 const asAt=at(AS.at),asValid=asAt!==null&&asAt<=renderAt&&renderAt-asAt<4*864e5;
 const asell=Object.fromEntries((Array.isArray(AS.sells)?AS.sells:[]).map(x=>[x.sym,x.why]));
 const last=Object.fromEntries((Array.isArray(SG.stocks)?SG.stocks:[]).filter(x=>positive(x.last)).map(x=>[x.sym,x.last]));

@@ -26,6 +26,6 @@ export function nightlyScanEvidence(snapshot,now=Date.now()){
  const n=marketClock(now),expected=completedMarketSession(now),due=!!expected&&(n.day>expected||n.minutes>=1230);
  const have=snapshot?.session,s=marketSession(have),generated=typeof snapshot?.generatedAt==='string'&&/T.*(?:Z|[+-]\d\d:\d\d)$/.test(snapshot.generatedAt)?Date.parse(snapshot.generatedAt):NaN;
  const valid=s.known&&!s.closed&&typeof have==='string'&&!!expected&&have<=expected;
- const state=!expected||!valid||!Number.isFinite(generated)||generated>now?'UNKNOWN':have===expected?'CURRENT':due?'LATE':'PENDING';
+ const state=!expected||!valid||!Number.isFinite(generated)||generated>now||completedMarketSession(generated)!==have?'UNKNOWN':have===expected?'CURRENT':due?'LATE':'PENDING';
  return {expected,have:valid?have:null,due,state,generatedAt:Number.isFinite(generated)&&generated<=now?snapshot.generatedAt:null};
 }

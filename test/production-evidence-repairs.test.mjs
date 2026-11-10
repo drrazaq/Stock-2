@@ -83,6 +83,7 @@ test('nightly saved-result evidence distinguishes late/unknown from not-due, wit
  assert.equal(nightlyScanEvidence(current,Date.parse('2026-11-10T03:40:00Z')).state,'CURRENT');
  assert.equal(nightlyScanEvidence({...current,generatedAt:'2026-11-11T00:00:00Z'},Date.parse('2026-11-10T03:40:00Z')).state,'UNKNOWN');
  assert.equal(nightlyScanEvidence(null,Date.parse('2026-11-10T03:40:00Z')).state,'UNKNOWN');
+ assert.equal(nightlyScanEvidence({...current,generatedAt:'2026-11-09T13:00:00Z'},Date.parse('2026-11-10T03:40:00Z')).state,'UNKNOWN');
 });
 test('shared actual transport callback refuses before fetch and classifies its own exception as local',async()=>{
  let calls=0;const x=await sendTelegramMessage({token:'synthetic',chat:'synthetic',text:'invented',currentEvidence:()=>{throw Error('synthetic');},fetcher:async()=>{calls++;}});
@@ -98,11 +99,11 @@ function dailyValues(end){
  const out=[];let ms=Date.parse(end+'T12:00:00Z');while(out.length<300){const d=new Date(ms);if(d.getUTCDay()!==0&&d.getUTCDay()!==6)out.push(d.toISOString().slice(0,10));ms-=864e5;}
  return out.reverse().map((d,i)=>({datetime:d,open:String(10+i*.01),high:String(10.2+i*.01),low:String(9.8+i*.01),close:String(10+i*.01),volume:'1000000'}));
 }
-async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true}={}){
+async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true,deliveryMode='ack',afterSendAdvance=0}={}){
  const clock={now:Date.parse('2026-11-10T15:00:00Z')},sent=[];
  const server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{
   res.setHeader('Content-Type','application/json');
-  if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}
+  if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);clock.now+=afterSendAdvance;if(deliveryMode==='ambiguous'){res.destroy();return;}if(deliveryMode==='429'&&sent.length===1){res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}
   if(req.url.includes('/time_series'))return res.end(JSON.stringify({values:dailyValues(end)}));
   if(req.url.includes('/quote?'))return res.end(JSON.stringify({c:7,...(dated?{t:(clock.now-age)/1000}:{})}));
   if(req.url.includes('/stock/split'))return res.end('[]');
@@ -133,4 +134,62 @@ test('actual review and holdings keep a fresh stop fact even when the daily asse
  const f=await holdingsFixture(t,{end:'2026-11-06'}),review=await f.S.fn('reviewReply')('ZZA',f.sig,f.pos),text=await f.S.fn('holdingsText')(f.sig,f.pos,'SYNTHETIC HOLDINGS',false);
  assert.match(review,/STOP LEVEL REACHED/);assert.doesNotMatch(review.split('\n')[0],/as of .* close/);assert.match(review,/do not sell again/);assert.match(text,/the stop 8.00 is reached/);assert.doesNotMatch(text,/ZZA[^\n]*: HOLD,/);
 });
+
+test('actual when-to-sell caller separates stale quote, dated exit and current stop; send expiry is checked',async t=>{
+ for(const spec of [{age:3600000},{dated:false}]){
+  const f=await holdingsFixture(t,spec),text=await f.S.fn('sellReply')('ZZA',f.sig,f.pos);
+  assert.match(text,/HOLD context as of 2026-11-09 close only/);assert.match(text,/Current stop observation: UNKNOWN/);assert.doesNotMatch(text,/SELL NOW:|stop 8.00 is reached/);
+ }
+ const f=await holdingsFixture(t),text=await f.S.fn('sellReply')('ZZA',f.sig,f.pos);assert.match(text,/do not sell again/);assert.match(text,/observed/);
+ const before=f.S.read('data/my-positions.json');f.clock.now+=4*60000;const r=await f.S.fn('telegram')(text);assert.equal(r.ok,false);assert.equal(f.sent.length,0);assert.equal(f.S.read('data/my-positions.json'),before);
+});
+test('actual when-to-sell preserves old exits without stale HOLD or fresh-level calculations',async t=>{
+ const f=await holdingsFixture(t,{end:'2026-11-06',age:3600000});f.sig.session='2026-11-06';f.sig.posVerdict={ZZA:'existing close-based exit'};
+ const before=JSON.stringify(f.pos),text=await f.S.fn('sellReply')('ZZA',f.sig,f.pos);
+ assert.match(text,/RECORDED PRIOR EXIT, source session 2026-11-06/);assert.match(text,/does not cancel it or establish a current HOLD/);assert.match(text,/Daily level\/time-exit calculation UNKNOWN or stale/);assert.doesNotMatch(text,/Not yet\. HOLD|IN ONE LINE:/);assert.equal(JSON.stringify(f.pos),before);
+});
+test('actual scanner sender rechecks holding evidence at retry/multipart boundaries and never replays ambiguous delivery',async t=>{
+ for(const deliveryMode of ['429','ack','ambiguous']){
+  const f=await holdingsFixture(t,{deliveryMode,afterSendAdvance:4*60000}),text=await f.S.fn('holdingsText')(f.sig,f.pos,'SYNTHETIC HOLDINGS',false);
+  const before=f.S.read('data/my-positions.json'),r=await f.S.fn('telegram')(deliveryMode==='ack'?text+'\n'+'SYNTHETIC '.repeat(900):text);
+  assert.equal(r.ok,false);assert.equal(f.sent.length,1);assert.equal(r.reason,deliveryMode==='ambiguous'?'NETWORK_ERROR':'PRICE_EVIDENCE_EXPIRED');assert.equal(f.S.read('data/my-positions.json'),before);
+ }
+});
+test('bounded evidence registry never evicts the guard from a previously rendered report',async t=>{
+ const f=await holdingsFixture(t),remember=f.S.fn('rememberHoldingEvidence'),check=f.S.fn('holdingSendEvidence');
+ const first=remember('SYNTHETIC GUARDED 0',[n=>n<100]);for(let i=1;i<64;i++)remember('SYNTHETIC GUARDED '+i,[()=>true]);
+ assert.match(remember('SYNTHETIC GUARDED overflow',[()=>true]),/ASSESSMENT UNAVAILABLE/);assert.equal(check(first,101),false);assert.equal(check(first,99),true);
+});
+
+
+test('actual sell-check uses structured stop evidence rather than its displayed prior close',async t=>{
+ const f=await holdingsFixture(t,{age:3600000});const text=await f.S.fn('sellCheckText')(f.sig);
+ assert.doesNotMatch(text,/TESTED:.*at or under your stop|TESTED:.*stop 8.00 is reached/);assert.match(text,/current stop UNKNOWN/);
+ const old=await holdingsFixture(t,{end:'2026-11-06',age:3600000}),unknown=await old.S.fn('sellCheckText')(old.sig);assert.match(unknown,/ASSESSMENT UNKNOWN/);
+});
+test('actual legacy plan and conclusion callers never treat numeric prices as timestamped holding evidence',async t=>{
+ const f=await holdingsFixture(t),stale={...f.sig,session:'2026-11-06',stocks:[],quick:[],leaders:[]},current={...f.sig,stocks:[],quick:[],leaders:[]};
+ for(const name of ['planText','conclusion','conclusionLive']){
+  const x=f.S.fn(name)(stale,f.pos,{ZZA:7});const text=Array.isArray(x)?x.join('\n'):x;
+  assert.match(text,/ZZA: ASSESSMENT UNKNOWN/);assert.doesNotMatch(text,/ZZA: SELL NOW|ZZA \(yours\): HOLD/);
+  const y=f.S.fn(name)(current,f.pos,{ZZA:7}),dated=Array.isArray(y)?y.join('\n'):y;assert.match(dated,/HOLD context as of 2026-11-09 close only/);assert.match(dated,/current stop\/target observation UNKNOWN/);
+ }
+});
+test('actual rebalancing refuses stale or undated scan basis without record mutation',async t=>{
+ const f=await holdingsFixture(t),before=f.S.read('data/my-positions.json');
+ for(const sig of [{session:'2026-11-06',generatedAt:'2026-11-07T01:00:00Z'}, {session:'2026-11-09'}, {session:'2026-11-09',generatedAt:'2026-11-09T13:00:00Z'}]){
+  assert.match(f.S.fn('rebalanceText')(sig),/REBALANCE ASSESSMENT UNKNOWN/);assert.equal(f.S.read('data/my-positions.json'),before);
+ }
+});
+test('saved-close identity requires dated generation after that source session actually completed',async t=>{
+ const f=await holdingsFixture(t),current=f.S.fn('scanCloseCurrent');assert.equal(current(f.sig),true);
+ for(const generatedAt of [undefined,'2026-11-09T23:00:00','2026-11-09T13:00:00Z','2026-11-11T00:00:00Z'])assert.equal(current({...f.sig,generatedAt}),false);
+});
+
+
+test('actual scanner sender classifies an evidence-check exception as local unsent, never transport uncertainty',async t=>{
+ const f=await holdingsFixture(t),before=f.S.read('data/my-positions.json'),r=await f.S.fn('telegram')('SYNTHETIC LOCAL GUARD',null,()=>{throw Error('synthetic guard failure');});
+ assert.equal(r.ok,false);assert.equal(r.reason,'PRICE_EVIDENCE_EXPIRED');assert.equal(r.localEvidenceRefusal,true);assert.equal(r.definitelyUnsentPart,true);assert.equal(f.sent.length,0);assert.equal(f.S.read('data/my-positions.json'),before);
+});
+
 test('all actual caller requests stayed on loopback',()=>assert.deepEqual(blocked,[]));
