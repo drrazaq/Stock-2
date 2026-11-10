@@ -51,6 +51,7 @@ jobs:
               # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages
               node scan.mjs >> run.log 2>&1 || echo "full check failed" >> run.log
               node watcher-guard.mjs >> run.log 2>&1 || echo "watcher guard failed" >> run.log   # (28 Oct) is the live watcher running? start it if not
+              BOT_LOOP_END=$end node scanner-guard.mjs >> run.log 2>&1 || echo "scanner guard failed" >> run.log   # (10 Nov, proposal) start a missed scanner run; queue the next bot run
               last_full=$now
             else
               # in between: wait up to 25 seconds for a message and answer it at once
