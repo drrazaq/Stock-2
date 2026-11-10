@@ -4500,8 +4500,9 @@ async function intraday(onlyMine) {
   if (!marketOpen(now) && !env.FORCE) { console.log('Market closed. Nothing to do.'); return; }
   if (!sig) { console.log('No daily scan yet.'); return; }
   const myPos = loadPos();
-  const st = readJson('data/alert-state.json', { day: '', sent: {} }), day = ny(now).d; if (st.day !== day) { st.day = day; st.sent = {}; }
+  const st = readJson('data/alert-state.json', { day: '', sent: {} }), day = ny(now).d;
   if(st.delivery!==undefined&&(!st.delivery||typeof st.delivery!=='object'||Array.isArray(st.delivery)))throw Error('STOP_DELIVERY_STATE_UNREADABLE: original state retained');
+  if(st.day!==day){st.day=day;st.sent={};st.delivery={};} // A new NY day is a fresh evaluation, not a retry of yesterday's intent.
   st.delivery=st.delivery||{};
   const stopAvailable=key=>!st.sent[key]&&!['RESERVED','UNKNOWN'].includes(st.delivery[key]?.status);
   const OKI = new Set(planCands(sig, loadPos()).filter(x => x.ok).map(x => x.sym)), buys = sig.stocks.filter(s => s.state === 'Buy watch' && OKI.has(s.sym)), trig = sig.stocks.filter(s => s.state !== 'Buy watch' && s.proven && s.trigger && s.trigger / s.last < 1.03);

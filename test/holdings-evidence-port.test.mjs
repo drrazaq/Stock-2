@@ -8,14 +8,14 @@ function dailyValues(end){
  const out=[];let ms=Date.parse(end+'T12:00:00Z');while(out.length<300){const d=new Date(ms);if(d.getUTCDay()!==0&&d.getUTCDay()!==6)out.push(d.toISOString().slice(0,10));ms-=864e5;}
  return out.reverse().map((d,i)=>({datetime:d,open:String(10+i*.01),high:String(10.2+i*.01),low:String(9.8+i*.01),close:String(10+i*.01),volume:'1000000'}));
 }
-async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true,bars=300,deliveryMode='ack',afterSendAdvance=0}={}){
+async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true,bars=300,deliveryMode='ack',afterSendAdvance=0,quotePrice={value:7}}={}){
  const clock={now:Date.parse('2026-11-10T15:00:00Z')},sent=[],requests=[];
  const server=http.createServer((req,res)=>{requests.push(req.url);let b='';req.on('data',x=>b+=x);req.on('end',()=>{
   res.setHeader('Content-Type','application/json');
   if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);clock.now+=afterSendAdvance;if(deliveryMode==='ambiguous'||deliveryMode==='stopAmbiguous'&&sent.at(-1).startsWith('YOUR STOPS')){res.destroy();return;}if(deliveryMode==='stop429'&&sent.at(-1).startsWith('YOUR STOPS')&&sent.filter(x=>x.startsWith('YOUR STOPS')).length===1){clock.now+=5*60000;res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}if(deliveryMode==='429'&&sent.length===1){res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}
   if(req.url.includes('/getUpdates'))return res.end(JSON.stringify({ok:true,result:[]}));
   if(req.url.includes('/time_series'))return res.end(JSON.stringify({values:dailyValues(end).slice(-bars)}));
-  if(req.url.includes('/quote?'))return res.end(JSON.stringify({c:7,...(dated?{t:(clock.now-age)/1000}:{})}));
+  if(req.url.includes('/quote?'))return res.end(JSON.stringify({c:quotePrice.value,...(dated?{t:(clock.now-age)/1000}:{})}));
   if(req.url.includes('/stock/split'))return res.end('[]');
   res.end(JSON.stringify({values:[],splits:[],earningsCalendar:[]}));
  });});
@@ -190,4 +190,19 @@ test('actual ACTIONS output carries holding evidence into every send attempt',as
 test('corrupt stop-delivery quarantine is not reset to an empty state',async t=>{
  const f=await holdingsFixture(t);process.env.BOT_ONLY='';f.S.write('data/alert-state.json',{day:'2026-11-10',sent:{},delivery:[]});const before=f.S.read('data/alert-state.json');
  await assert.rejects(f.S.fn('intraday')(false),/STOP_DELIVERY_STATE_UNREADABLE/);assert.equal(f.S.read('data/alert-state.json'),before);
+});
+
+test('B1 actual next-day caller allows a new stop evaluation after yesterday UNKNOWN; same-day remains once only',async t=>{
+ const price={value:9},f=await holdingsFixture(t,{quotePrice:price});process.env.BOT_ONLY='';
+ f.S.write('data/signals.json',{...f.sig,stocks:[],quick:[],leaders:[]});
+ f.S.write('data/alert-state.json',{day:'2026-11-09',sent:{ZZAmyst:'UNKNOWN'},delivery:{ZZAmyst:{status:'UNKNOWN',at:'2026-11-09T15:00:00Z'}}});
+ const owner=f.S.read('data/my-positions.json');await f.S.fn('intraday')(false);
+ assert.equal(f.S.readJson('data/alert-state.json').day,'2026-11-10');assert.equal(f.S.readJson('data/alert-state.json').delivery?.ZZAmyst,undefined);assert.equal(f.sent.filter(x=>x.startsWith('YOUR STOPS')).length,0);
+ price.value=7;f.clock.now+=60000;await f.S.fn('intraday')(false);assert.equal(f.sent.filter(x=>x.startsWith('YOUR STOPS')).length,1);
+ await f.S.fn('intraday')(false);assert.equal(f.sent.filter(x=>x.startsWith('YOUR STOPS')).length,1);assert.equal(f.S.read('data/my-positions.json'),owner);
+});
+test('B1 actual same-day UNKNOWN is not cleared or replayed',async t=>{
+ const f=await holdingsFixture(t);process.env.BOT_ONLY='';f.S.write('data/signals.json',{...f.sig,stocks:[],quick:[],leaders:[]});
+ f.S.write('data/alert-state.json',{day:'2026-11-10',sent:{ZZAmyst:'UNKNOWN'},delivery:{ZZAmyst:{status:'UNKNOWN',at:'2026-11-10T14:50:00Z'}}});
+ await f.S.fn('intraday')(false);assert.equal(f.sent.filter(x=>x.startsWith('YOUR STOPS')).length,0);assert.equal(f.S.readJson('data/alert-state.json').delivery.ZZAmyst.status,'UNKNOWN');
 });
