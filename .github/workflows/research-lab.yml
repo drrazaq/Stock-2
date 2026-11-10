@@ -17,7 +17,9 @@ name: Research lab
 # Idea 12 (8 Nov 2026): DISTRESS RISK as an AVOID / SELL-warning check (RQ-DIST-*; Campbell, Hilscher and Szilagyi 2008): net income, liabilities,
 # equity, cash from the same bulk file (research-cache/dst.json.gz) + prices + data/shares.json.gz; no paper buy lane.
 # Idea 13 (9 Nov 2026): ORGANIZATION CAPITAL (RQ-OC-*; Eisfeldt and Papanikolaou 2013): annual SG&A (10-K) + Assets from the same bulk file,
-# read once into research-cache/oc.json.gz; paper via companyconcept. The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
+# read once into research-cache/oc.json.gz; paper via companyconcept. Idea 14 (10 Nov 2026): WIKIPEDIA ATTENTION (RQ-WIKI-*; Pyun 2024, Da, Engelberg
+# and Gao 2011): Wikidata CIK (P5531) -> English article map (research-cache/wiki-map.json) + Wikimedia Pageviews API daily user views
+# (research-cache/wiki.json.gz, extended each run; also the paper lane). The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
 # research-cache is saved. Commits only its own output files and its own library entries. Never places an order.
 # Start by hand: change run-research-now.txt (or run the workflow).
 on:

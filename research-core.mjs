@@ -160,6 +160,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'dvc') { ch += preRegisterDvc(LB); continue; }
     if (R.family === 'dst') { ch += preRegisterDst(LB); continue; }
     if (R.family === 'oc') { ch += preRegisterOc(LB); continue; }
+    if (R.family === 'wiki') { ch += preRegisterWiki(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -961,4 +962,83 @@ export function preRegisterOc(LB) { if (!LB || !Array.isArray(LB.strategies)) re
   for (const id of OC_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-09 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Measure, chain rule, perpetual inventory, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 13) before any run.', sources: OC_SOURCES, hold: R.hold, note: OC_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 14 (pre-registered 10 Nov 2026, before any run): WIKIPEDIA ATTENTION (page-view change and attention spikes) ----------------
+// Sources: Pyun, "The Wikipedia effect: Analyzing investor attention for strategic investment decisions", Economics Letters 241 (2024)
+// 111836: firms whose English Wikipedia page views INCREASE earn higher returns (high-minus-low significant, not explained by factors).
+// Da, Engelberg and Gao, "In Search of Attention", Journal of Finance 66(5), 2011: abnormal attention (Google search) predicts higher
+// returns over the next two weeks (and a partial reversal within a year). NEW information line in this library: nothing tests public
+// attention data (DEC-SOC / C-SOCMKT1 need licensed social data; Squad 18 tested price behaviour only). Long only; no avoid check.
+// DATA (official Wikimedia APIs, free, no key; descriptive User-Agent): (1) Wikidata Query Service (query.wikidata.org/sparql): every item
+// with SEC CIK (property P5531) and its English Wikipedia article (sitelink). A CIK with several articles: the alphabetically first title
+// (stated). (2) Wikimedia Pageviews REST API, per article, en.wikipedia, all-access, agent=user (no bots), daily, 2021-07-01 to yesterday.
+// Days the API omits count as 0 views. STATED LIMITS: titles are today's sitelinks, so an article renamed during the window keeps its older
+// views under the old title (a rename looks like a jump from near 0: the minimum-views floors below exclude most such cases); coverage is
+// the Wikipedia-covered subset of the universe (better-known companies); dead companies are kept when their Wikidata item has the CIK.
+// TIMING: page views are counted per UTC day; a UTC day ends 19:00-20:00 New York, after that day's close, so a signal using day d is
+// bought at the OPEN of the first session strictly AFTER d. Liquid (system rule) on the session before entry. One open trade per stock per rule.
+//   RQ-WIKI-M21  MONTHLY: at the first session of month M, score = ln(views of month M-1) - ln(views of month M-2), both 1,000+ views, for
+//                every mapped liquid stock; percentile within that month's cross-section (300+ stocks needed, else the month is skipped);
+//                BUY the top 20% (percentile >= 0.80) at the open of that first session; sell the close 21 sessions later.
+//   RQ-WIKI-M63  the same, hold 63 sessions.
+//   RQ-WIKI-SPIKE10  DAILY: a UTC day d where the mean views of d-4..d is 3x+ the median of days d-60..d-5 (that median 100+ views a day)
+//                and no earlier spike of the same article in the 91 days before d; BUY the next open after d, sell the close 10 sessions later.
+// Gates, costs, halves and verdicts: the shared judge of this file (same as IDEAS 6-13).
+// DATA RULE (fixed now): no verdict until (a) 1,500+ universe companies have an English Wikipedia article, (b) 95%+ of those articles
+// answered by the page-view API (data or a clean 404), (c) 50+ monthly cross-sections from 2021-11 with 300+ ranked stocks, (d) 500+ spikes.
+export const WIKI = { from: '2021-07-01', minMonth: 1000, top: 0.80, minCross: 300, signalFrom: '2021-11-01', spikeX: 3, spikeBase: 100, spikeGap: 91, recent: 5, baseLo: 60, baseHi: 5 };
+export const WIKI_DATA = { articles: 1500, answered: 0.95, months: 50, spikes: 500 };
+RULES['RQ-WIKI-M21'] = { kind: 'buy', hold: 21, side: 'top', family: 'wiki', name: 'Wikipedia page views rising most last month (top 20%), hold 1 month',
+  rule: 'At the first session of each month, score every liquid stock with an English Wikipedia article (Wikidata CIK P5531 sitelink) by ln(page views last month) - ln(page views the month before) (Wikimedia Pageviews API, agent=user, both months 1,000+ views); buy the top 20% of that month\'s cross-section (300+ stocks needed) at the open of that session; sell the close 21 sessions later.' };
+RULES['RQ-WIKI-M63'] = { kind: 'buy', hold: 63, side: 'top', family: 'wiki', name: 'Wikipedia page views rising most last month (top 20%), hold 3 months', rule: 'As RQ-WIKI-M21, hold 63 sessions.' };
+RULES['RQ-WIKI-SPIKE10'] = { kind: 'buy', hold: 10, side: 'spike', family: 'wiki', name: 'Wikipedia attention spike (5-day views 3x the 8-week median), hold 2 weeks',
+  rule: 'A UTC day d where the mean English Wikipedia page views (agent=user) of d-4..d are 3x+ the median of days d-60..d-5 (median 100+ views a day), first spike of that article in 91 days; buy the next open after d (stock liquid); sell the close 10 sessions later.' };
+export const WIKI_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'wiki');
+for (const id of WIKI_IDS) { if (!IDS.includes(id)) IDS.push(id); if (!BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// SPARQL JSON -> { map: { cik: title }, items, dupCiks }
+export function wikiMap(j) { const B = j && j.results && Array.isArray(j.results.bindings) ? j.results.bindings : [], all = new Map();
+  for (const b of B) { const c = String(+String((b.cik && b.cik.value) || '').replace(/\D/g, '')), u = String((b.article && b.article.value) || '');
+    const m = /^https?:\/\/en\.wikipedia\.org\/wiki\/(.+)$/.exec(u); if (!(+c > 0) || !m) continue; let t; try { t = decodeURIComponent(m[1]).replace(/ /g, '_'); } catch (e) { continue; }
+    (all.get(c) || all.set(c, new Set()).get(c)).add(t); }
+  const map = {}; let dup = 0; for (const [c, s] of all) { const a = [...s].sort(); if (a.length > 1) dup++; map[c] = a[0]; }
+  return { map, items: B.length, dupCiks: dup }; }
+// Pageviews JSON -> { d0, v } daily from d0 (YYYY-MM-DD), omitted days = 0; null when no items
+export function wikiSeries(j, from = null) { const it = j && Array.isArray(j.items) ? j.items : []; const rows = [];
+  for (const x of it) { const s = String(x.timestamp || ''); if (!/^\d{8}/.test(s) || !ok(x.views)) continue; rows.push([s.slice(0, 4) + '-' + s.slice(4, 6) + '-' + s.slice(6, 8), x.views]); }
+  if (!rows.length) return null; rows.sort((a, b) => a[0] < b[0] ? -1 : 1); const d0 = from && from < rows[0][0] ? from : rows[0][0], n = daysBetween(d0, rows[rows.length - 1][0]) + 1, v = new Array(n).fill(0);
+  for (const [d, x] of rows) v[daysBetween(d0, d)] += x; return { d0, v }; }
+// append a newer series (overlap: newer wins)
+export function wikiAppend(a, b) { if (!a) return b; if (!b) return a; const n = Math.max(a.v.length, daysBetween(a.d0, b.d0) + b.v.length), v = new Array(n).fill(0);
+  a.v.forEach((x, k) => { v[k] = x; }); const off = daysBetween(a.d0, b.d0); b.v.forEach((x, k) => { if (off + k >= 0) v[off + k] = x; }); return { d0: a.d0, v }; }
+export const wikiEnd = (s) => s ? addDays(s.d0, s.v.length - 1) : null;
+// total views of month 'YYYY-MM' (null unless the series covers the whole month)
+export function wikiMonth(s, ym) { if (!s) return null; const a = ym + '-01', mo = +ym.slice(5, 7), y = +ym.slice(0, 4), nx = mo === 12 ? (y + 1) + '-01-01' : y + '-' + String(mo + 1).padStart(2, '0') + '-01', b = addDays(nx, -1);
+  const i0 = daysBetween(s.d0, a), i1 = daysBetween(s.d0, b); if (i0 < 0 || i1 >= s.v.length) return null; let t = 0; for (let k = i0; k <= i1; k++) t += s.v[k]; return t; }
+const prevYm = (ym) => { const y = +ym.slice(0, 4), m = +ym.slice(5, 7); return m === 1 ? (y - 1) + '-12' : y + '-' + String(m - 1).padStart(2, '0'); };
+// score for a signal in month M (uses M-1 vs M-2); null when a month is missing or under the floor
+export function wikiScore(s, ym) { const a = wikiMonth(s, prevYm(ym)), b = wikiMonth(s, prevYm(prevYm(ym))); if (a === null || b === null || a < WIKI.minMonth || b < WIKI.minMonth) return null; return Math.log(a) - Math.log(b); }
+// percentile within a cross-section [{key, s}] -> Map key -> p (ties share the mid rank); empty under minCross
+export function wikiRank(list, min = WIKI.minCross) { const a = list.filter(x => ok(x.s)); const out = new Map(); if (a.length < min) return out; const s = a.map(x => x.s).sort((p, q) => p - q), n = s.length;
+  const lo = (x) => { let l = 0, h = n; while (l < h) { const m = (l + h) >> 1; if (s[m] < x) l = m + 1; else h = m; } return l; }, hi = (x) => { let l = 0, h = n; while (l < h) { const m = (l + h) >> 1; if (s[m] <= x) l = m + 1; else h = m; } return l; };
+  for (const x of a) { const b = lo(x.s), e = hi(x.s); out.set(x.key, ((b + e - 1) / 2) / (n - 1)); } return out; }
+// spikes [{ d, ratio, base }]
+export function wikiSpikes(s, from = null) { const out = []; if (!s) return out; let last = null; const med = (arr) => { const z = [...arr].sort((p, q) => p - q), n = z.length; return n % 2 ? z[n >> 1] : (z[n / 2 - 1] + z[n / 2]) / 2; };
+  for (let k = WIKI.baseLo; k < s.v.length; k++) { const d = addDays(s.d0, k); const base = med(s.v.slice(k - WIKI.baseLo, k - WIKI.baseHi + 1)); if (!(base >= WIKI.spikeBase)) continue;
+    let r = 0; for (let q = k - WIKI.recent + 1; q <= k; q++) r += s.v[q]; r /= WIKI.recent; if (!(r >= WIKI.spikeX * base)) continue;
+    if (last !== null && daysBetween(last, d) <= WIKI.spikeGap) continue; last = d; if (!from || d >= from) out.push({ d, ratio: +(r / base).toFixed(3), base }); }
+  return out; }
+export function wikiDataRule({ articles, answered, months, spikes }) { const r = { answered: articles ? answered / articles : 0 }, why = [];
+  if (!(articles >= WIKI_DATA.articles)) why.push('universe companies with an English Wikipedia article ' + articles + ' (1,500 needed)');
+  if (!(r.answered >= WIKI_DATA.answered)) why.push('articles answered by the page-view API ' + (r.answered * 100).toFixed(1) + '% (95% needed)');
+  if (!(months >= WIKI_DATA.months)) why.push('monthly cross-sections with 300+ stocks ' + months + ' (50 needed)');
+  if (!(spikes >= WIKI_DATA.spikes)) why.push('attention spikes ' + spikes + ' (500 needed)');
+  return { ok: !why.length, ratios: { answered: r4(r.answered) }, articles, months, spikes, why: why.join('; ') || null }; }
+export const WIKI_SPARQL = 'SELECT ?cik ?article WHERE { ?item wdt:P5531 ?cik . ?article schema:about ?item ; schema:isPartOf <https://en.wikipedia.org/> . }';
+const WIKI_SOURCES = ['https://doi.org/10.1016/j.econlet.2024.111836', 'https://ideas.repec.org/a/eee/ecolet/v241y2024ics0165176524003203.html', 'https://doi.org/10.1111/j.1540-6261.2011.01679.x', 'https://wikimedia.org/api/rest_v1/', 'https://www.wikidata.org/wiki/Property:P5531'];
+const WIKI_NOTE = 'Daily researcher 2026-11-10: Pyun (2024, Economics Letters) "The Wikipedia effect": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today\'s titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026.';
+export function preRegisterWiki(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of WIKI_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-10 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Article mapping, view counts, score, ranking, spike rule, timing and data rule fixed in research-core.mjs (IDEA 14) before any run.', sources: WIKI_SOURCES, hold: R.hold, note: WIKI_NOTE }); ch++; }
   return ch; }

@@ -34423,6 +34423,60 @@
    ],
    "data": "n/a",
    "note": "Long-only, halal, no shorts: the part that works cannot be traded here. A-TP1 tests the long-only market-timing question instead."
+  },
+  {
+   "id": "RQ-WIKI-M21",
+   "family": "Daily researcher (RQ)",
+   "name": "Wikipedia page views rising most last month (top 20%), hold 1 month",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-10 (daily researcher); 5-year one-shot pending",
+   "explain": "At the first session of each month, score every liquid stock with an English Wikipedia article (Wikidata CIK P5531 sitelink) by ln(page views last month) - ln(page views the month before) (Wikimedia Pageviews API, agent=user, both months 1,000+ views); buy the top 20% of that month's cross-section (300+ stocks needed) at the open of that session; sell the close 21 sessions later. Article mapping, view counts, score, ranking, spike rule, timing and data rule fixed in research-core.mjs (IDEA 14) before any run.",
+   "sources": [
+    "https://doi.org/10.1016/j.econlet.2024.111836",
+    "https://ideas.repec.org/a/eee/ecolet/v241y2024ics0165176524003203.html",
+    "https://doi.org/10.1111/j.1540-6261.2011.01679.x",
+    "https://wikimedia.org/api/rest_v1/",
+    "https://www.wikidata.org/wiki/Property:P5531"
+   ],
+   "hold": 21,
+   "note": "Daily researcher 2026-11-10: Pyun (2024, Economics Letters) \"The Wikipedia effect\": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today's titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026."
+  },
+  {
+   "id": "RQ-WIKI-M63",
+   "family": "Daily researcher (RQ)",
+   "name": "Wikipedia page views rising most last month (top 20%), hold 3 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-10 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-WIKI-M21, hold 63 sessions. Article mapping, view counts, score, ranking, spike rule, timing and data rule fixed in research-core.mjs (IDEA 14) before any run.",
+   "sources": [
+    "https://doi.org/10.1016/j.econlet.2024.111836",
+    "https://ideas.repec.org/a/eee/ecolet/v241y2024ics0165176524003203.html",
+    "https://doi.org/10.1111/j.1540-6261.2011.01679.x",
+    "https://wikimedia.org/api/rest_v1/",
+    "https://www.wikidata.org/wiki/Property:P5531"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-10: Pyun (2024, Economics Letters) \"The Wikipedia effect\": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today's titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026."
+  },
+  {
+   "id": "RQ-WIKI-SPIKE10",
+   "family": "Daily researcher (RQ)",
+   "name": "Wikipedia attention spike (5-day views 3x the 8-week median), hold 2 weeks",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-10 (daily researcher); 5-year one-shot pending",
+   "explain": "A UTC day d where the mean English Wikipedia page views (agent=user) of d-4..d are 3x+ the median of days d-60..d-5 (median 100+ views a day), first spike of that article in 91 days; buy the next open after d (stock liquid); sell the close 10 sessions later. Article mapping, view counts, score, ranking, spike rule, timing and data rule fixed in research-core.mjs (IDEA 14) before any run.",
+   "sources": [
+    "https://doi.org/10.1016/j.econlet.2024.111836",
+    "https://ideas.repec.org/a/eee/ecolet/v241y2024ics0165176524003203.html",
+    "https://doi.org/10.1111/j.1540-6261.2011.01679.x",
+    "https://wikimedia.org/api/rest_v1/",
+    "https://www.wikidata.org/wiki/Property:P5531"
+   ],
+   "hold": 10,
+   "note": "Daily researcher 2026-11-10: Pyun (2024, Economics Letters) \"The Wikipedia effect\": rising Wikipedia page views predict higher returns; Da, Engelberg and Gao (2011, Journal of Finance) abnormal attention predicts higher returns over two weeks. New information line (public attention, official Wikimedia APIs: Wikidata CIK P5531 -> English article; Pageviews API agent=user). Today's titles (renames: stated limit). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 10 Nov 2026."
   }
  ]
 }
