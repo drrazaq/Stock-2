@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-07T06:01:32.944Z",
- "lastClose": "2026-11-06",
+ "generatedAt": "2026-11-10T07:20:00.550Z",
+ "lastClose": "2026-11-09",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Squad 12: events in the 300 largest US companies (SQ12-*). newSignals = signals on the last close (buy at the next open, hold 63 sessions). Nothing here is a buy by itself: a rule needs a frozen 5-year verdict that qualifies (data/squad12-lab.json firstRun). Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
@@ -10,18 +10,18 @@
    "tier": "NOT PROVEN",
    "newSignals": [
     {
-     "sym": "VST",
-     "close": 124.8,
+     "sym": "FERG",
+     "close": 259.93,
      "halal": "unknown",
-     "rank": 241,
-     "ev": "2026-11-06 07:01 NY 0001692819-26-000023"
+     "rank": 236,
+     "ev": "2026-11-09 06:50 NY 0002011641-26-000042"
     },
     {
-     "sym": "ABNB",
-     "close": 189.99,
+     "sym": "CEG",
+     "close": 276.09,
      "halal": "unknown",
-     "rank": 105,
-     "ev": "2026-11-05 16:02 NY 0001193125-26-449727"
+     "rank": 126,
+     "ev": "2026-11-09 06:53 NY 0001868275-26-000116"
     }
    ]
   },
@@ -29,15 +29,7 @@
    "name": "Big company closes at a new 52-week high on its earnings reaction day",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": [
-    {
-     "sym": "HUM",
-     "close": 433.74,
-     "halal": "unknown",
-     "rank": 225,
-     "ev": "2026-11-06 06:09 NY 0000049071-26-000064"
-    }
-   ]
+   "newSignals": []
   },
   "SQ12-REVEPS": {
    "name": "Big company 10-Q: revenue AND diluted EPS both up 10%+ on the same quarter last year",
@@ -45,18 +37,25 @@
    "tier": "NOT PROVEN",
    "newSignals": [
     {
-     "sym": "MET",
-     "close": 98.27,
+     "sym": "OXY",
+     "close": 55.76,
      "halal": "unknown",
-     "rank": 183,
-     "ev": "10-Q 2026-11-06 q 2026-09-30 rev +18.2% eps +200.8%"
+     "rank": 191,
+     "ev": "10-Q 2026-11-09 q 2026-09-30 rev +19.0% eps +147.7%"
     },
     {
-     "sym": "SCHW",
-     "close": 91.49,
+     "sym": "VST",
+     "close": 133.92,
      "halal": "unknown",
-     "rank": 72,
-     "ev": "10-Q 2026-11-06 q 2026-09-30 rev +16.9% eps +28.6%"
+     "rank": 241,
+     "ev": "10-Q 2026-11-09 q 2026-09-30 rev +27.7% eps +84.6%"
+    },
+    {
+     "sym": "KDP",
+     "close": 36.94,
+     "halal": "unknown",
+     "rank": 220,
+     "ev": "10-Q 2026-11-09 q 2026-09-30 rev +70.6% eps +20.4%"
     }
    ]
   },
@@ -66,11 +65,18 @@
    "tier": "REJECTED",
    "newSignals": [
     {
-     "sym": "MET",
-     "close": 98.27,
+     "sym": "FERG",
+     "close": 259.93,
      "halal": "unknown",
-     "rank": 183,
-     "ev": "10-Q 2026-11-06 q 2026-09-30 growth +18.2% > +10.5% > +2.7%"
+     "rank": 236,
+     "ev": "10-Q 2026-11-09 q 2026-09-30 growth +9.5% > +4.6% > +3.6%"
+    },
+    {
+     "sym": "EMR",
+     "close": 169.52,
+     "halal": "unknown",
+     "rank": 123,
+     "ev": "10-K 2026-11-09 q 2026-09-30 growth +7.1% > +7.0% > +2.9%"
     }
    ]
   },
@@ -80,18 +86,11 @@
    "tier": "NOT PROVEN",
    "newSignals": [
     {
-     "sym": "CAH",
-     "close": 271.72,
+     "sym": "HUM",
+     "close": 423.22,
      "halal": "unknown",
-     "rank": 195,
-     "ev": "8-K 2026-11-05 0000721371-26-000042"
-    },
-    {
-     "sym": "PH",
-     "close": 917.79,
-     "halal": "unknown",
-     "rank": 91,
-     "ev": "8-K 2026-11-05 0000076334-26-000170"
+     "rank": 225,
+     "ev": "8-K 2026-11-06 0000049071-26-000064"
     }
    ]
   },
@@ -99,7 +98,15 @@
    "name": "Big company investor / analyst day (8-K) followed by a higher close",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": []
+   "newSignals": [
+    {
+     "sym": "USB",
+     "close": 60.95,
+     "halal": "unknown",
+     "rank": 117,
+     "ev": "8-K 2026-11-06 0001193125-26-450781"
+    }
+   ]
   }
  }
 }
