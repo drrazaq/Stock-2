@@ -26,7 +26,8 @@
       "exit": "Only the retained rule's2R/1.5ATR/20-session exits if a valid trade were adopted; no new event exit.",
       "datedReferencePrice": {
         "price": 188.79,
-        "session": "2026-11-06"
+        "session": "2026-11-06",
+        "sessionMeaning": "Global source-file session; individual bar/trade timestamp UNVERIFIED"
       },
       "identity": "Held map CIK1053507 matches independent current filing; original feed/source-event receipt and historical tradability still unresolved.",
       "ZAD": "UNKNOWN; interest-bearing financing requires final ZAD screening, no owner mark inferred.",
@@ -86,7 +87,8 @@
       "exit": "Existing retained rule exit only; no fixed target/time cap invented.",
       "datedReferencePrice": {
         "price": 362.96,
-        "session": "2026-11-06"
+        "session": "2026-11-06",
+        "sessionMeaning": "Global source-file session; individual bar/trade timestamp UNVERIFIED"
       },
       "identity": "Held CIK1004434 agrees with issuer identity; original price/instrument/event join still incomplete.",
       "ZAD": "UNKNOWN; conventional investment-management exposures need final ZAD review before trading/spend.",
@@ -108,7 +110,8 @@
       "exit": "Retain existing rule exits if subsequently adopted; no silent extension of holding period.",
       "datedReferencePrice": {
         "price": 8.34,
-        "session": "2026-11-06"
+        "session": "2026-11-06",
+        "sessionMeaning": "Global source-file session; individual bar/trade timestamp UNVERIFIED"
       },
       "identity": "Held CIK1121484 and issuer source agree; split/action/instrument/price chain remains incomplete.",
       "ZAD": "UNKNOWN; final ZAD decision and financial screening absent.",
@@ -130,14 +133,15 @@
       "exit": "Existing3R/stop/rule exit preserved; no new time exit or holding extension.",
       "datedReferencePrice": {
         "price": 14.84,
-        "session": "2026-11-06"
+        "session": "2026-11-06",
+        "sessionMeaning": "Global source-file session; individual bar/trade timestamp UNVERIFIED"
       },
       "identity": "Held CIK1724965 agrees with issuer source; historical instrument/corporate-action/executable-price chain still incomplete.",
       "ZAD": "UNKNOWN; debt/hedging and financial ratios need final ZAD review.",
       "terminal": "CONTINUE cash/obligation-adjusted business investigation; executable after-cost result INCONCLUSIVE"
     }
   ],
-  "priceReadiness": "All retained scanner prices are2026-11-06 completed-close references from outputgenerated2026-11-07T01:00:32.060Z; expected completed session atcutoff2026-11-09. No current executable BBO, displayed size/fill proof or whole-share outcome chain. No new market-provider requests.",
+  "priceReadiness": "Original snapshot globalsession2026-11-06/generatedAt2026-11-07T01:00:32.060Z; individual price clocks are absent. No current executableBBO, displayed-size/fill proof or whole-share outcome chain. New later archive is separately identified. No new market-provider requests.",
   "costContract": {
     "tradeBudget": 1000,
     "feeEachExecutedSide": 3,
@@ -171,5 +175,6 @@
     }
   },
   "sources": "Public issuer/SEC primary document reading within research mandate; no market-data acquisition, credentials, purchase, messages to providers or live gate change.",
-  "review": "Focused independent factual/method review requested separately; no profitability verdict or operational READY."
+  "review": "Focused independent factual/method review requested separately; no profitability verdict or operational READY.",
+  "provenanceCorrection": "Earlier Nov6 close-reference wording denotes the source file's global session, not an authenticated individual stock bar/trade clock. Production rows omit that field and last=d.last can be the final unfiltered provider bar. Original numeric values/source pins remain; no retrospective clock is invented. See appended new-archive-followup.json for later publication, not a backfill."
 }

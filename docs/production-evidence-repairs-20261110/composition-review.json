@@ -1,215 +1,53 @@
 {
-  "kind": "SOURCE_ONLY_COMPOSITION_REVIEW_NOT_RELEASE_BINDING",
-  "productionEvidencePin": "40308ddf09304760855731836302d59a1710f42f",
-  "approvedUnit": "d52499c454d2cdf472993e696d3a2ba8f4f77ef3",
-  "approvedBinding": "1a799a15b06ce6e36c466a37702ba72830552fc9972d8ebd3a96311425da2dd4",
-  "developmentRepair": "fa0591bee9725ae2927fdb0a4e214571377e0449",
-  "staticModuleClosure": [
-    {
-      "path": "scan.mjs",
-      "deps": [
-        "market-session.mjs",
-        "mentor-plan.mjs",
-        "watcher-reporting.mjs",
-        "alert-delivery-state.mjs",
-        "paper-transport.mjs",
-        "paper-mutation-journal.mjs",
-        "zad-compliance.mjs",
-        "telegram-delivery.mjs",
-        "discovery-runtime.mjs",
-        "radar-ledger.mjs",
-        "stop-watch.mjs"
-      ],
-      "productionPresence": true,
-      "sameBaselineBlob": false,
-      "edited": true
-    },
-    {
-      "path": "premarket-check.mjs",
-      "deps": [
-        "alpaca-feed.mjs",
-        "market-session.mjs",
-        "stop-watch.mjs",
-        "telegram-delivery.mjs"
-      ],
-      "productionPresence": true,
-      "sameBaselineBlob": false,
-      "edited": true
-    },
-    {
-      "path": "telegram-delivery.mjs",
-      "deps": [
-        "telegram-delivery-ledger.mjs"
-      ],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": true
-    },
-    {
-      "path": "health.mjs",
-      "deps": [
-        "market-session.mjs",
-        "alert-delivery-state.mjs",
-        "watcher-reporting.mjs",
-        "telegram-delivery.mjs"
-      ],
-      "productionPresence": true,
-      "sameBaselineBlob": false,
-      "edited": true
-    },
-    {
-      "path": "radar-v3-core.mjs",
-      "deps": [
-        "zad-compliance.mjs"
-      ],
-      "productionPresence": true,
-      "sameBaselineBlob": false,
-      "edited": true
-    },
-    {
-      "path": "market-session.mjs",
-      "deps": [],
-      "productionPresence": true,
-      "sameBaselineBlob": true,
-      "edited": true
-    },
-    {
-      "path": "mentor-plan.mjs",
-      "deps": [
-        "market-session.mjs"
-      ],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "watcher-reporting.mjs",
-      "deps": [
-        "market-session.mjs"
-      ],
-      "productionPresence": true,
-      "sameBaselineBlob": true,
-      "edited": false
-    },
-    {
-      "path": "alert-delivery-state.mjs",
-      "deps": [],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "paper-transport.mjs",
-      "deps": [],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "paper-mutation-journal.mjs",
-      "deps": [
-        "paper-transport.mjs"
-      ],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "zad-compliance.mjs",
-      "deps": [],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "discovery-runtime.mjs",
-      "deps": [
-        "multi-angle-discovery.mjs",
-        "ignition-gates.mjs",
-        "market-symbol.mjs",
-        "source-contract.mjs"
-      ],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "radar-ledger.mjs",
-      "deps": [],
-      "productionPresence": true,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "stop-watch.mjs",
-      "deps": [],
-      "productionPresence": true,
-      "sameBaselineBlob": true,
-      "edited": false
-    },
-    {
-      "path": "alpaca-feed.mjs",
-      "deps": [
-        "market-symbol.mjs"
-      ],
-      "productionPresence": true,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "telegram-delivery-ledger.mjs",
-      "deps": [],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "market-symbol.mjs",
-      "deps": [],
-      "productionPresence": true,
-      "sameBaselineBlob": true,
-      "edited": false
-    },
-    {
-      "path": "multi-angle-discovery.mjs",
-      "deps": [],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": false
-    },
-    {
-      "path": "ignition-gates.mjs",
-      "deps": [],
-      "productionPresence": true,
-      "sameBaselineBlob": true,
-      "edited": false
-    },
-    {
-      "path": "source-contract.mjs",
-      "deps": [
-        "market-symbol.mjs",
-        "market-session.mjs"
-      ],
-      "productionPresence": false,
-      "sameBaselineBlob": false,
-      "edited": false
-    }
-  ],
-  "index": "Dynamic index.html logic providerPriceObservation is absent in production; exact reviewed helper/exports or compatible source port required. Do not copy entire dev index without preserving website behavior.",
-  "productionOnlyTests": "Ported test/health-line-freshness.test.mjs and test/premarket-feed.test.mjs; retain remaining production-only tests during composition, no blanket replacement.",
-  "watcher": "Production approved15:00 contract differs from devfull. Never deploy whole dev tree or use development-full test receipt as production15 proof.",
-  "nextRequired": "Exact source-only composition with approved28 and accepted5ba follow-on, preserving freshmain code/data; deterministic path allowlist/fingerprints, complete inventory applicablePython, build/inverse, conflict/preservation and independent focused review. Source overlapscan requires explicit rebind/newdelta approval; original28binding remains immutable. No production write proposed before allpass.",
-  "operating": "Original all16F2 remains; latest-complete-baseline-beforeA/G8slot amendments remain proposals requiring explicitapproval; no date/deadline/attendance assumed.",
-  "missingApprovedTestFiles": [
-    "test/buynow-evidence.test.mjs",
-    "test/buynow-multipart.test.mjs",
-    "test/discover-sec-note.test.mjs",
-    "test/health-text-watcher-qualification.test.mjs",
-    "test/intraday-alert-evidence.test.mjs",
-    "test/intraday-alert-send-time.test.mjs",
-    "test/watcher-cadence-review.test.mjs",
-    "test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs",
-    "test/watcher-guard-rollback-compat.test.mjs"
-  ],
-  "preservePlanGate": "Original approved strict<20-minute BUY NOW boundary and multipart/429 withdrawal fixture mandatory; development3-minute reference-price contract is not productionapproval. Preserve existing5-minutestop contract. Recheck onlychangeddependentcomposition; oldsourcePASSclosed."
+  "sourceCommit": "b2ce57dec49fa0ac5b600b4d77d1be301fc0fd17",
+  "inventory": {
+    "mainNodeFiles": 146,
+    "developmentNodeFiles": 321,
+    "unionNodeFiles": 348,
+    "additionalApplicableProductionTests": [
+      "test/actions-wording-d1-d4.test.mjs",
+      "test/agent-a-ldx-core.test.mjs",
+      "test/agent-a-tp-core.test.mjs",
+      "test/agent-c-core.test.mjs",
+      "test/agent-c2-core.test.mjs",
+      "test/autolab-library-guard.test.mjs",
+      "test/feed-integrity-watcher.test.mjs",
+      "test/feed-integrity.test.mjs",
+      "test/research-dst.test.mjs",
+      "test/research-dvc.test.mjs",
+      "test/research-eat.test.mjs",
+      "test/research-gpc.test.mjs",
+      "test/research-gwi.test.mjs",
+      "test/research-inv.test.mjs",
+      "test/research-oc.test.mjs",
+      "test/research-rdi.test.mjs",
+      "test/research-tax.test.mjs",
+      "test/sec-request-runtime.test.mjs",
+      "test/value-core-nov.test.mjs",
+      "test/buynow-evidence.test.mjs",
+      "test/buynow-multipart.test.mjs",
+      "test/discover-sec-note.test.mjs",
+      "test/health-text-watcher-qualification.test.mjs",
+      "test/intraday-alert-evidence.test.mjs",
+      "test/intraday-alert-send-time.test.mjs",
+      "test/watcher-cadence-review.test.mjs",
+      "test/watcher-guard-rollback-compat.test.mjs"
+    ],
+    "extraFixture": [
+      "test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs"
+    ],
+    "note": "Union is inventory, not a claim all test expectations are compatible/validated; preserve valid behavioral assertions and reconcile only genuinely superseded assumptions."
+  },
+  "originalApprovedSource": "d52499c454d2cdf472993e696d3a2ba8f4f77ef3",
+  "originalBinding": "1a799a15b06ce6e36c466a37702ba72830552fc9972d8ebd3a96311425da2dd4",
+  "status": "COMPOSITION_NOT_YET_VERIFIED",
+  "preserve": "All later production data/code; no wholesale development-tree replacement. No workflow or data changes in this development delta.",
+  "required": [
+    "Exact latest complete hosted receipt",
+    "Independent Claude review of changed source",
+    "Minimal production composition: preserve all newer data/code and original strict BUY NOW <20-minute multipart/retry behavior; union inventory348 is not a validation PASS",
+    "Source-only build/inverse and exact reviewed delta/binding; original approved28path package unchanged",
+    "Resolve conflicting documented first15minute versus next-open rule-exit instructions without inventing trading policy",
+    "Review scheduling/admission, recovery and actual attended verification arrangement; no assumed future attendance or deadline waiver"
+  ]
 }

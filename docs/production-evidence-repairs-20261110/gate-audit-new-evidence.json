@@ -1,0 +1,13 @@
+{
+  "source": "c8f05b7638b336a1ae0870b5986fc989400531f9",
+  "path": "data/avoid-ledger.jsonl",
+  "records": 1,
+  "storedUTCDate": "2026-11-10",
+  "reasons": {
+    "lottery": 1
+  },
+  "matureOutcomes": 0,
+  "missing": "No outcome/exit/net fields or executable chain, no untouched comparison/complete rejected denominator. Stored UTC date is not proof of NY decision/entry time.",
+  "codeFinding": "Existing resolver uses Date.now-Date.parse(storedUTCdate)>=14days, not fixed10sessions, cap2000; legacy inference 'rules were right' unsupported.",
+  "correction": "Report labels/corrupt-input preservation only. Legacy horizon, price formula, cap, filters/exits unchanged. No production record edited."
+}
