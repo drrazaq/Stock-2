@@ -82,7 +82,7 @@ export function closestRule(record = {}, lab = {}) {
 export function runnerLines(movers = [], n = 5, withAfter = false) {
   const big = movers.filter(m => m.code !== 'UNDER_1_USD').sort((a, b) => b.maxUp - a.maxUp), under = movers.length - movers.filter(m => m.code !== 'UNDER_1_USD').length, out = [];
   for (const m of big.slice(0, n)) out.push('- ' + m.sym + ' up to ' + pct(m.maxUp) + (m.maxUp > 3 ? ' (LIKELY A SPLIT OR DATA ERROR: check before reading anything into it)' : '') + ' (first seen ' + m.firstSeen + ' at ' + pct(m.firstSeenUp)
-    + (withAfter ? '; ' + pct(m.afterFirstSeen && m.afterFirstSeen.last) + ' from there to 15:00' : '') + '): ' + (CODE_WORDS[m.code] || m.code) + '.');
+    + (withAfter ? '; ' + pct(m.afterFirstSeen && m.afterFirstSeen.last) + ' from there to the retained watcher endpoint (individual price clock UNKNOWN)' : '') + '): ' + (CODE_WORDS[m.code] || m.code) + '.');
   if (under) out.push('  (+' + under + ' under 1 USD, mostly warrants and pennies: not listed, never tradable by these rules)');
   return out;
 }
@@ -153,14 +153,14 @@ export function scoreboard(ledger = []) {
 // ---- AFTER THE CLOSE
 // live = data/ignition-live.json (today's), ledger = all radar rows
 export function buildClose(day, live, ledger = [], ctx = {}) {
-  const text = ['OPPORTUNITY RADAR, AFTER THE CLOSE (' + day + ')','MODELED RESEARCH OBSERVATIONS: listing to the retained 15:00 New York endpoint, NOT the 16:00 cash close. Mixed-instrument identity and corporate-action/split reconciliation remain UNKNOWN; quote observations do not establish fills. Selected-day gains are not evidence of an edge.'];
+  const text = ['OPPORTUNITY RADAR, WATCHER ENDPOINT REVIEW (' + day + ')','MODELED RESEARCH OBSERVATIONS: listing to the retained 15:00 New York endpoint, NOT the 16:00 cash close. Mixed-instrument identity and corporate-action/split reconciliation remain UNKNOWN; quote observations do not establish fills. Endpoint rows retain last observations without individual provider clocks, so an actual 15:00 trade is not established. Selected-day gains are not evidence of an edge.'];
   if (!live || live.day !== day) { text.push('The live watcher saved no results for today (not run, or not saved yet). Nothing to score.'); }
   else {
     const cov = live.coverage || {}; if (cov.firstMinute && cov.firstMinute > '09:35') text.push('WATCHER STARTED LATE (' + cov.firstMinute + '): the open was not watched.');
     const mine = ledger.filter(r => r.type === 'list' && r.d === day), close = new Map(ledger.filter(r => r.type === 'close' && r.d === day).map(r => [r.sym, r]));
     text.push('', 'TODAY\'S RADAR LINES (legacy fractional-notional model to 15:00; assumed 6 USD round-trip fee and spread):' + (mine.length ? '' : ' none were listed.'));
     for (const r of mine) { const c = close.get(r.sym), s = c ? scoreSameDay(r, c) : null;
-      text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', legacy MODELED net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
+      text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', legacy MODELED net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no retained endpoint price')); }
     text.push('', 'D. RUNNERS WE MISSED TODAY (retrospective, not buys):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true));
     const ts = topSilence(live.tally), all = Object.values(live.tally || {}).reduce((a, b) => a + b, 0); if (ts) text.push('Top reason for silence today: ' + ts.words + ' (' + ts.n + ' of ' + all + ' movers of 15%+; ' + ts.kind + ').');
     text.push('', 'C. SIGNAL DELIVERY HISTORY today: ' + (Number.isInteger(live.alerts)&&live.alerts>=0?live.alerts:'unknown') + '. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.', ...alertDeliveryLines(live));

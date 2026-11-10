@@ -63,7 +63,7 @@ test('actual stale, undated, wrong-session and future-at-fetch prices never crea
 });
 test('actual prior close exit is not cancelled by an above-stop quote; no first-15-minutes stop rule',async t=>{
  const r=await pre(t,{signals:{session:'2026-11-06',generatedAt:'2026-11-07T01:00:00Z',posVerdict:{AAA:'SELL: existing close-based exit'}}});
- assert.match(r.text,/RECORDED CLOSE-BASED EXIT, session 2026-11-06/);assert.match(r.text,/not withdrawn by a later quote/);assert.doesNotMatch(r.text,/SELL at the open \(after the first 15 minutes\)/);assert.match(r.text,/adds no 15-minute delay/);
+ assert.match(r.text,/RECORDED CLOSE-BASED EXIT, session 2026-11-06/);assert.match(r.text,/not withdrawn by a later quote/);assert.doesNotMatch(r.text,/SELL at the open \(after the first 15 minutes\)/);assert.match(r.text,/does not change the adopted rule's execution timing/);assert.match(r.text,/No 15-minute stop delay/);
 });
 test('actual provider delay crossing the open and send-time expiry suppress transport',async t=>{
  const late=await pre(t,{fetchAdvance:50*60000});assert.equal(late.calls,0);assert.match(late.out,/session changed before rendering/);
@@ -92,7 +92,7 @@ test('shared actual transport callback refuses before fetch and classifies its o
 test('radar report explicitly retains legacy model and 15:00 endpoint limits without rewriting economics',()=>{
  const ledger=[{type:'list',d:'2026-11-09',sym:'ZZZ',panel:'A',px:10},{type:'close',d:'2026-11-09',sym:'ZZZ',px:11,mkt:0}];
  const before=JSON.stringify(ledger),n=netOf(10,11),text=buildClose('2026-11-09',{day:'2026-11-09',missed:[],tally:{},alerts:0},ledger,{});
- assert.equal(netOf(10,11),n);assert.equal(JSON.stringify(ledger),before);assert.match(text,/15:00 New York endpoint, NOT the 16:00 cash close/);assert.match(text,/legacy MODELED net/);assert.match(text,/corporate-action\/split reconciliation remain UNKNOWN/);assert.match(text,/not executable whole shares/);assert.match(text,/Selected-day gains are not evidence of an edge/);assert.equal(scoreboard(ledger).panels.A.n,1);
+ assert.equal(netOf(10,11),n);assert.equal(JSON.stringify(ledger),before);assert.match(text,/WATCHER ENDPOINT REVIEW/);assert.doesNotMatch(text,/AFTER THE CLOSE/);assert.match(text,/15:00 New York endpoint, NOT the 16:00 cash close/);assert.match(text,/actual 15:00 trade is not established/);assert.match(text,/legacy MODELED net/);assert.match(text,/corporate-action\/split reconciliation remain UNKNOWN/);assert.match(text,/not executable whole shares/);assert.match(text,/Selected-day gains are not evidence of an edge/);assert.equal(scoreboard(ledger).panels.A.n,1);
 });
 
 function dailyValues(end){
