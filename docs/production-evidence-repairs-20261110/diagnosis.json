@@ -9,7 +9,7 @@
     "paths": 28,
     "unchanged": true
   },
-  "privacy": "No original owner messages, holdings, trades, message bodies, private record paths/digests or credentials are copied into this package. Read-only original hosted evidence retained in private task context; owner/Claude private conversation remains original-message custodian. Existing public hosted-log exposure is not erased or permission-cleared; cleanup/history/privacy migration requires separate authorization. Corrected premarket logs omit private bodies.",
+  "privacy": "No original owner messages, holdings, trades, message bodies, private record paths/digests or credentials are copied into this package. Read-only original hosted evidence retained in private task context; owner/Claude private conversation remains original-message custodian. Existing public hosted-log exposure is not erased or permission-cleared; cleanup/history/privacy migration requires separate authorization. Corrected premarket logs omit private bodies. New fixtures are synthetic. A pre-existing owner-derived unresolved-sells fixture is replaced in this development candidate by invented equivalents; original Git history/production and earlier public copies remain. No claim of private archival recovery, history erasure or completed R1 protection.",
   "defects": [
     {
       "id": 1,
@@ -33,7 +33,23 @@
       "observed": "Run42716422194/job129499026589 is schedule-triggered but hosted MODE=intraday at22:57:46UTC; guard says Market closed.Nothing to do. No daily assessment/save/delivery occurred. Retained signals sessionNov6/generatedNov7 remains. No daily invocation found in inspected bounded run census; cause of absence unresolved.",
       "approvedCoverage": "No cron-delivery repair. Source warning/data freshness does not create invocation.",
       "correction": "Preserve production sourceFreshness/health-line semantics and reviewed deadlines; remove blind-dispatch wording; health checks expected dated completed session, not coarse30weekday-hour OK.",
-      "recovery": "No dispatch proposed until a fresh run/writer census, exact loaded source, idempotent save/delivery consequences and bounded scope are independently reviewed. No recovery action authorized."
+      "recovery": "No dispatch proposed until a fresh run/writer census, exact loaded source, idempotent save/delivery consequences and bounded scope are independently reviewed. No recovery action authorized.",
+      "latest": {
+        "asOf": "2026-11-10T05:44:51Z",
+        "sourceRef": "c8f05b7638b336a1ae0870b5986fc989400531f9",
+        "lateDailyRun": 42751003080,
+        "job": 129614337617,
+        "actualMode": "daily",
+        "loadedSource": "40308ddf09304760855731836302d59a1710f42f",
+        "globalSession": "2026-11-09",
+        "started": "2026-11-10T03:40:52Z",
+        "finished": "2026-11-10T04:30:52Z",
+        "saveCommit": "9b3c9ac193d0ba5ea76efcdaeebb21900facb0e7",
+        "saveAt": "2026-11-10T04:30:45Z",
+        "generatedAtFieldIsStartClock": true,
+        "delivery": "UNVERIFIED, no explicitcompleteACKretained; noerrors/jobsuccessnotproof",
+        "disposition": "Earlier bounded notobservedfinding preserved, now supersededbylatenaturalcompletion. No blinddailyrecoverydispatch appropriatewhileoutputalreadyexists; scheduler-causeremainsUNRESOLVED."
+      }
     },
     {
       "id": 4,
@@ -82,7 +98,44 @@
       "conclusion": "Unchanged40-minute timeout; incomplete full inventory,30 failing subtests share duplicate nyClockText module declaration error. Partial passes are not full PASS.",
       "correction": "Removed identical duplicate nyClockText and marketSessionOf declarations; retained single implementation, all tests and timeout unchanged. Exact corrected Node/full validation required."
     },
-    "productionCompositionInventory": "Development inventory321 is not the union of production tests. Eight approved testfiles plus rollbackfixture absent fromdevbase must be retained unchanged in actualcomposition, especially strict<20-minute BUY NOW and multipart/retry withdrawal fixture. Different dev3minute reference contract is not a substitute; originalPASSclosed.",
+    "productionCompositionInventory": {
+      "mainNodeFiles": 146,
+      "developmentNodeFiles": 321,
+      "unionNodeFiles": 348,
+      "additionalApplicableProductionTests": [
+        "test/actions-wording-d1-d4.test.mjs",
+        "test/agent-a-ldx-core.test.mjs",
+        "test/agent-a-tp-core.test.mjs",
+        "test/agent-c-core.test.mjs",
+        "test/agent-c2-core.test.mjs",
+        "test/autolab-library-guard.test.mjs",
+        "test/feed-integrity-watcher.test.mjs",
+        "test/feed-integrity.test.mjs",
+        "test/research-dst.test.mjs",
+        "test/research-dvc.test.mjs",
+        "test/research-eat.test.mjs",
+        "test/research-gpc.test.mjs",
+        "test/research-gwi.test.mjs",
+        "test/research-inv.test.mjs",
+        "test/research-oc.test.mjs",
+        "test/research-rdi.test.mjs",
+        "test/research-tax.test.mjs",
+        "test/sec-request-runtime.test.mjs",
+        "test/value-core-nov.test.mjs",
+        "test/buynow-evidence.test.mjs",
+        "test/buynow-multipart.test.mjs",
+        "test/discover-sec-note.test.mjs",
+        "test/health-text-watcher-qualification.test.mjs",
+        "test/intraday-alert-evidence.test.mjs",
+        "test/intraday-alert-send-time.test.mjs",
+        "test/watcher-cadence-review.test.mjs",
+        "test/watcher-guard-rollback-compat.test.mjs"
+      ],
+      "extraFixture": [
+        "test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs"
+      ],
+      "note": "Union is inventory, not a claim all test expectations are compatible/validated; preserve valid behavioral assertions and reconcile only genuinely superseded assumptions."
+    },
     "completeFailedRun": {
       "commit": "4106b6c94ee02368e009016976692d086f84fc7b",
       "run": 42758096814,
@@ -114,6 +167,15 @@
       "required": 321,
       "failingSubtests": 16,
       "newFindings": "Two actual intraday assertions proved unchanged positions reformatted by tgCommands no-op save. Preserve byte-level assertion: no-op save now skips semantic-equal state; corrupt originals fail before polling/offset changes. Other new residual expected a stale queued stop; updated to assert no transmission/noACK/eligiblelocalunsent while preserving first-check historical-clock qualifiers."
+    },
+    "latestCompleted": {
+      "commit": "16a871af8e05fc69d0d20aa453d808022d25fa0f",
+      "run": 42763797997,
+      "job": 129655432497,
+      "complete": true,
+      "passedFiles": 319,
+      "required": 321,
+      "remainingFailures": "Two exact oldwording assertions only: retainedrunnerendpoint and unqualifiedsavedprice'now'. Corrected preservingallvalues/calculations; fullnewexactcommitstillrequired."
     }
   },
   "releaseAction": "After focused review, compose an explicitly bound source-only delta with approved28-path unit and accepted5ba follow-on on freshmain; verify preservation/build/inverse and operating consequences. Never deploy development branch wholesale or alter originalbinding. Original all16 F2 criterion stands; latest-complete-market-day-beforeA is an additional reviewed proposal requiring owner approval, not an original precondition. G dispatch and8/16 F2 amendment also require separate approval. No operational approval requested before exact composition/review passes.",
@@ -133,6 +195,20 @@
     "scanProvenance": "Strict zoned generatedAt, <= now, and source session actually completed by generation; future/undated/pre-close generation cannot establish current nightly scan.",
     "preserved": "Legacy plan/live-conclusion filing exits remain; source-current recorded exit notices retain existing note semantics. Saved-close stop-reference rows remain excluded from rebalance trim/add under original stop safeguard, but are not presented as current stop SELL or assumed freed cash. No entry/exit or gate weakened.",
     "intradayStop": "Frozen stop fallback was missing its actual-send evidence callback. It now rechecks each hit with existing5-minute quoteEvidence before every actual part/retry; noACK means existing local refusal eligibility, transport ambiguity remains UNKNOWN. Added actual intraday delayed-earlier-send/429/ambiguous, positions andoffset preservation tests.",
-    "positionSave": "No-op actual save preserves original bytes/key order/formatting via deep JSON value equality. Malformed/nonobject originals fail closed before getUpdates/offset advance; legitimate changed-state writer remains original path. No new order/rule/permission, no realownerrecordwritten."
+    "positionSave": "No-op actual save preserves original bytes/key order/formatting via deep JSON value equality. Malformed/nonobject originals fail closed before getUpdates/offset advance; legitimate changed-state writer remains original path. No new order/rule/permission, no realownerrecordwritten.",
+    "globalMetadata": "GlobalscanCURRENTdoesnotproveper-stockassessment/priceclock. Numeric-onlylegacyplan/conclusion doesnotmintHOLD; actualdatedreview/holdingsremainavailable.",
+    "rejectionLedger": {
+      "source": "c8f05b7638b336a1ae0870b5986fc989400531f9",
+      "path": "data/avoid-ledger.jsonl",
+      "records": 1,
+      "storedUTCDate": "2026-11-10",
+      "reasons": {
+        "lottery": 1
+      },
+      "matureOutcomes": 0,
+      "missing": "No outcome/exit/net fields or executable chain, no untouched comparison/complete rejected denominator. Stored UTC date is not proof of NY decision/entry time.",
+      "codeFinding": "Existing resolver uses Date.now-Date.parse(storedUTCdate)>=14days, not fixed10sessions, cap2000; legacy inference 'rules were right' unsupported.",
+      "correction": "Report labels/corrupt-input preservation only. Legacy horizon, price formula, cap, filters/exits unchanged. No production record edited."
+    }
   }
 }

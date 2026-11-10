@@ -169,11 +169,11 @@ test('actual sell-check uses structured stop evidence rather than its displayed 
  const old=await holdingsFixture(t,{end:'2026-11-06',age:3600000}),unknown=await old.S.fn('sellCheckText')(old.sig);assert.match(unknown,/ASSESSMENT UNKNOWN/);
 });
 test('actual legacy plan and conclusion callers never treat numeric prices as timestamped holding evidence',async t=>{
- const f=await holdingsFixture(t),stale={...f.sig,session:'2026-11-06',stocks:[],quick:[],leaders:[]},current={...f.sig,stocks:[],quick:[],leaders:[]};
+ const f=await holdingsFixture(t),stale={...f.sig,session:'2026-11-06',stocks:[],quick:[],leaders:[]},current={...f.sig,stocks:[{sym:'ZZA',last:7,state:'No action'}],quick:[],leaders:[]};
  for(const name of ['planText','conclusion','conclusionLive']){
   const x=f.S.fn(name)(stale,f.pos,{ZZA:7});const text=Array.isArray(x)?x.join('\n'):x;
   assert.match(text,/ZZA: ASSESSMENT UNKNOWN/);assert.doesNotMatch(text,/ZZA: SELL NOW|ZZA \(yours\): HOLD/);
-  const y=f.S.fn(name)(current,f.pos,{ZZA:7}),dated=Array.isArray(y)?y.join('\n'):y;assert.match(dated,/HOLD context as of 2026-11-09 close only/);assert.match(dated,/current stop\/target observation UNKNOWN/);
+  const y=f.S.fn(name)(current,f.pos,{ZZA:7}),dated=Array.isArray(y)?y.join('\n'):y;assert.match(dated,/saved scan session 2026-11-09 is current, but this interface has no dated stock-specific assessment/);assert.match(dated,/no current HOLD inferred/);assert.match(dated,/current stop\/target observation UNKNOWN/);
  }
 });
 test('actual rebalancing refuses stale or undated scan basis without record mutation',async t=>{
@@ -249,6 +249,14 @@ test('actual Telegram caller refuses corrupt positions before polling or advanci
  const f=await holdingsFixture(t),raw='{SYNTHETIC BROKEN ORIGINAL';f.S.write('data/my-positions.json',raw);f.S.write('data/tg-state.json',{offset:42});
  await assert.rejects(f.S.fn('tgCommands')(f.sig),/POSITION_STATE_UNREADABLE/);
  assert.equal(f.requests.length,0);assert.equal(f.sent.length,0);assert.equal(f.S.read('data/my-positions.json'),raw);assert.equal(f.S.readJson('data/tg-state.json').offset,42);
+});
+
+
+test('actual avoid-ledger reader reports the unchanged calendar-date model without claiming gate benefit',async t=>{
+ const f=await holdingsFixture(t);f.S.write('data/avoid-ledger.jsonl',[{d:'2026-10-20',sym:'ZZR',why:'lottery',px:10},{d:'2026-10-19',sym:'ZZS',why:'FADE',px:10}]);
+ const text=f.S.fn('avoidLedger')([],{ZZR:11,ZZS:9}),rows=f.S.read('data/avoid-ledger.jsonl').trim().split('\n').map(JSON.parse);
+ assert.equal(rows[0].pct,.1);assert.equal(rows[1].pct,-.1);assert.match(text,/UTC-date-plus-14-calendar-days rule/);assert.match(text,/raw reference-price moves/);assert.match(text,/do not show whether a restriction helped or harmed/);assert.doesNotMatch(text,/10 sessions later|avoid rules were right|rules are too strict/);
+ f.S.write('data/avoid-ledger.jsonl','SYNTHETIC ORIGINAL BROKEN');assert.match(f.S.fn('avoidLedger')([{sym:'ZZR',why:'lottery'}],{ZZR:11}),/UNKNOWN/);assert.equal(f.S.read('data/avoid-ledger.jsonl'),'SYNTHETIC ORIGINAL BROKEN');
 });
 
 test('all actual caller requests stayed on loopback',()=>assert.deepEqual(blocked,[]));
