@@ -1,0 +1,80 @@
+{
+  "status": "DEVELOPMENT_PORT_VALIDATED_NOT_COMPOSED_RELEASE",
+  "receipt": {
+    "run": 42773115021,
+    "job": 129685279469,
+    "commit": "afbb07580d384aef36e555525c85c07d8a7c88a5",
+    "rootFiles": 158,
+    "failures": 0,
+    "fullLogInspected": true,
+    "checkout": "2026-11-10T07:07:46.4532128Z afbb07580d384aef36e555525c85c07d8a7c88a5",
+    "actualCallerLines": [
+      "2026-11-10T07:09:43.0028237Z ##[group]test/telegram-live-no-replay.test.mjs",
+      "2026-11-10T07:09:43.1319066Z # Subtest: actual telegramLive connection reset: one POST, UNKNOWN, zero acknowledged parts",
+      "2026-11-10T07:09:43.1329186Z ok 1 - actual telegramLive connection reset: one POST, UNKNOWN, zero acknowledged parts",
+      "2026-11-10T07:09:43.2901246Z # Subtest: actual partial delivery then lost reply: acknowledged prefix only, no replay",
+      "2026-11-10T07:09:43.2905664Z ok 3 - actual partial delivery then lost reply: acknowledged prefix only, no replay",
+      "2026-11-10T07:09:43.4892540Z # Subtest: actual intraday BUY caller never replays connection-reset or refused card",
+      "2026-11-10T07:09:43.4893870Z ok 7 - actual intraday BUY caller never replays connection-reset or refused card",
+      "2026-11-10T07:09:43.5104856Z PASS test/telegram-live-no-replay.test.mjs"
+    ],
+    "unchangedSafeguards": [
+      "test/buynow-evidence.test.mjs",
+      "test/buynow-multipart.test.mjs",
+      "test/intraday-alert-send-time.test.mjs"
+    ]
+  },
+  "inverse": {
+    "source": "afbb07580d384aef36e555525c85c07d8a7c88a5",
+    "restoredTree": "71223b3574ecd2abc265d3faa06dc7cb37d205a3",
+    "baseline": "d52499c454d2cdf472993e696d3a2ba8f4f77ef3",
+    "pass": true,
+    "scope": "Development port inverse to approved candidate; not final successor inverse to production baseline"
+  },
+  "v8": [
+    {
+      "mode": "network",
+      "posts": 1,
+      "acknowledged": 0,
+      "state": "UNKNOWN"
+    },
+    {
+      "mode": "400",
+      "posts": 1,
+      "acknowledged": 0,
+      "state": "REFUSED"
+    },
+    {
+      "mode": "503",
+      "posts": 1,
+      "acknowledged": 0,
+      "state": "UNKNOWN"
+    },
+    {
+      "mode": "invalid",
+      "posts": 1,
+      "acknowledged": 0,
+      "state": "UNKNOWN"
+    },
+    {
+      "mode": "partial",
+      "posts": 2,
+      "acknowledged": 1,
+      "state": "UNKNOWN"
+    },
+    {
+      "mode": "429",
+      "posts": 2,
+      "acknowledged": 1,
+      "state": "ACK"
+    }
+  ],
+  "remaining": [
+    "Independent Claude review",
+    "Remaining holdings semantic port onto approved scanner",
+    "Full successor source-only composition/binding/inverse preserving separately approvedP/newer code and data",
+    "Applicable additional validation and actual operating approval"
+  ],
+  "originalApprovalUnchanged": true,
+  "productionActions": []
+}
