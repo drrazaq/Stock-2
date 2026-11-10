@@ -1,4 +1,4 @@
-# Dependable scanner execution and bounded release verification (PROPOSAL; development only, nothing authorized)
+# Dependable scanner execution and bounded release verification (PROPOSAL, revision 2; development only, nothing authorized)
 
 Diagnosis: `DIAGNOSIS.md`. This proposal does not change the approved unit `d52499c4` / binding `1a799a15` (28 paths), the approved protocol `d2f76b64`, or production. Every production workflow change, dispatch, cancellation and protocol amendment below needs its own exact owner approval.
 
@@ -46,7 +46,7 @@ Diagnosis: `DIAGNOSIS.md`. This proposal does not change the approved unit `d524
 3. **Bot successor.** When the current bot loop has under 45 minutes left, it requests the next `bot.yml` run once, so the guard's host no longer depends on the every-30-minutes cron (9 Nov bot gap: 18:10–20:58 UTC). The concurrency group `bot` holds at most one waiting run.
 
 **Safety properties (each tested):**
-- The attempt is written to `data/scanner-guard.json` as RESERVED **before** the request leaves. Tested by killing the runner while the request is in flight: the record already exists, and no repeat follows inside the gap.
+- *(Revision 1 text, superseded by §2a.)* The attempt is written to `data/scanner-guard.json` as RESERVED **before** the request leaves. Tested by killing the runner while the request is in flight: the record already exists, and no repeat follows inside the gap.
 - A timeout, network error or 5xx gives UNCERTAIN. It counts as an attempt and is never retried blindly.
 - A 4xx gives REFUSED, with one alert per day.
 - If GitHub's run list fails, nothing is decided or written.
@@ -58,7 +58,7 @@ Diagnosis: `DIAGNOSIS.md`. This proposal does not change the approved unit `d524
 - A first log line records event, schedule, MODE, FORCE, slot and checkout SHA. This is direct P-code/P-def evidence for every run, including guard-started runs.
 
 **Validation so far:**
-- `node --test test/scanner-guard.test.mjs`: 9/9 PASS. The cases cover:
+- *(Revision 1 validation, superseded by §2a.)* `node --test test/scanner-guard.test.mjs`: 9/9 PASS. The cases cover:
   - the 9 Nov replay (run 42716422194 active, nothing new);
   - summer and winter clocks, weekend, Thanksgiving, an early close and an unknown year;
   - the two-attempt limit, the 06:00 cutoff and one alert only;
@@ -73,6 +73,28 @@ Diagnosis: `DIAGNOSIS.md`. This proposal does not change the approved unit `d524
 - A late *scheduled* daily event that arrives after a guard-completed nightly still loads market data (about 45 minutes) before `daily()` refuses the session. This already happens today with late events. It costs data-provider calls but sends no duplicate message. Avoiding it would need an edit to `scan.mjs`, which is bound, so it is not proposed here.
 - If the bot loop is down, the guard is down too. The successor request reduces this risk but does not remove it.
 
+## 2a. Revision 2 (answers Codex review 6758807819, G1–G6)
+
+| Finding | Correction in revision 2 | Regression (`test/scanner-guard.test.mjs`) |
+|---|---|---|
+| **G1** local rename was not a remote reservation | State moved off `data/` to its own branch `scanner-guard-state` (one file). Every change is a plain, non-force push of a child of the tip just read, so GitHub accepts it only if nobody moved the tip: compare-and-publish. The dispatch request is made **only after** the RESERVED record is confirmed on the remote. An ambiguous push is read back: ours → published; otherwise or unreadable → **no request**. | Real git: bare remote + two clones. The remote shows RESERVED at the moment of the request; another writer racing between read and reservation wins and the loser makes no request; an unreadable remote means no request; the runner is killed after the request |
+| **G2** an unknown attempt allowed a new key later | An attempt that is RESERVED, UNCERTAIN, or ACCEPTED without its run **quarantines** its kind for that session or day. Only an exact run-name match (`run-name: Stock scanner guard <key>`) or a definite 4xx refusal resolves it, never a time gap, a new key or time proximity. One "no matching run" alert after 30 min. | Codex's exact reproduction (UNCERTAIN, then +61 min) gives no `nightly:…:2`; an unrelated run 1 s later does not resolve; an exact match does; a killed runner stays quarantined across three later cycles with one alert |
+| **G3** malformed inputs became `{}`, `[]` or "current" | Strict schemas: state version/attempts/alerts/log; run list needs `total_count`, valid statuses, ISO times, no future entries, `display_title`. Saved session must be a reviewed open session, not after the latest completed session, generated after it completed. Missing state (no branch) ≠ corrupt state; corrupt bytes are never replaced. | Five corrupt states, eight malformed lists, a 2099 session, a weekend session, generation before close: all give no dispatch; the corrupt remote commit is preserved |
+| **G4** any non-empty invalid mode forced a daily | `FORCE` only for **empty** mode (legacy manual). Bash admission before any data: `''`, `daily` or `intraday` without a slot, or a slot matching its mode exactly; everything else exits before `scan.mjs`. | The actual `main.yml` expressions are evaluated (GitHub's case-insensitive `==`) and the actual admission is run in bash for 11 combinations including `dayly`, `DAILY`, `' daily'`, a mismatched slot and an injection-shaped slot |
+| **G5** alert marked before an unchecked send | Alerts are delivery records: PENDING is published before the send. ACK needs HTTP 200 + `ok:true` + a positive `message_id`. 400/401/403/404/429 → RETRY (at most 3 sends, then REFUSED). Anything else is UNKNOWN and never resent; a crash leaves PENDING, also never resent. | Outcome table; PENDING/UNKNOWN never resent; RETRY bounded |
+| **G6** unbounded successor chain and ambiguous 06:00 | See bounds below. **No dispatch at all** unless `scanner-guard-approval.json` holds a current horizon of at most 14 days, written only by a reviewed, owner-approved commit (the candidate ships none). | No approval / 29-day horizon / before the horizon: nothing; 00:59 UTC start allowed, 01:00 refused with one alert; successor daily cap |
+
+**Bounds (revision 2; all require the owner's separate approval before any use):**
+- **Approval horizon:** at most 14 days per approval file. Outside it the guard only reads, reconciles and reports.
+- **Nightly:** dispatch **start** window 22:15–01:00 UTC. `main.yml` timeout is 300 min, so a guard nightly **completes by 06:00 UTC** at the latest, keeping 06:00–13:40 UTC free for Session A.
+  - At most 2 non-refused starts per session; no start while an earlier one is unresolved.
+  - Each start is one daily scan with the same provider calls as the scheduled one. Worst case per session: 1 scheduled + 2 guard daily scans.
+- **Intraday:** at most 14 a day (each about 1–3 min of runner time and one intraday check's provider calls); none while one is unresolved.
+- **Bot successor:** once per bot run, at most 6 per UTC day, only inside the horizon. The bot concurrency group holds at most one waiting run.
+- **Aggregate over a horizon:** at most 14 × (2 + 14 + 6) = 308 dispatches.
+- **Storage:** one small JSON file on its own branch. A commit is written only when state changes (no-op cycles write nothing), at most about 4 commits per dispatch or alert. History is pruned to 14 days (unresolved items kept), and the log is capped at 200 entries.
+- **Completion, receipt and restoration gates** (for verification) are separate and unchanged: a dispatch is never evidence of execution. Each run is verified from its own log, run-name, P-code and P-def.
+
 ## 3. Bounded alternative release verification (protocol amendment; needs owner approval)
 
 **Order:**
@@ -83,7 +105,7 @@ Diagnosis: `DIAGNOSIS.md`. This proposal does not change the approved unit `d524
    - at most one inverse: restore the 5 paths.
 2. **G baseline day (the next market day, old scanner code).** Read-only review of retained evidence:
    - every `main.yml` run, scheduled or guard-started, with its first log line (P-def/P-code);
-   - `data/scanner-guard.json` commits.
+   - `scanner-guard-state` branch commits (revision 2).
 
    This **replaces** the open-ended "complete latest day" wait with one specific day. It also records how often the **old code** fails, which is the baseline for the next step.
 

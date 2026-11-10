@@ -1,4 +1,6 @@
 name: Stock scanner
+# (10 Nov, development proposal rev 2) a guard-started run carries its attempt key in its name, so the guard reconciles it exactly.
+run-name: ${{ github.event_name == 'workflow_dispatch' && inputs.slot != '' && format('Stock scanner guard {0}', inputs.slot) || 'Stock scanner' }}
 on:
   schedule:
     - cron: '30 21 * * 1-5'
@@ -34,12 +36,22 @@ jobs:
       - shell: bash
         run: |
           set -o pipefail
+          # (rev 2, G4) admission before any data or send. Allowed: empty mode (legacy manual = forced daily), 'daily' or 'intraday'
+          # without a slot (manual), or a guard slot that matches its mode exactly. Every other combination is refused.
+          ok=0
+          case "$MODE_INPUT:$GUARD_SLOT" in
+            :|daily:|intraday:) ok=1 ;;
+            daily:nightly:*|intraday:intraday:*) [[ "$GUARD_SLOT" =~ ^(nightly|intraday):[0-9]{4}-[0-9]{2}-[0-9]{2}:[0-9]+$ ]] && ok=1 ;;
+          esac
+          if [ "$ok" != 1 ]; then echo "scanner refused: invalid dispatch mode or slot"; exit 1; fi
           echo "scanner start: event=${{ github.event_name }} schedule='${{ github.event.schedule }}' MODE=$MODE FORCE=${FORCE:-0} slot=${GUARD_SLOT:-none} sha=$(git rev-parse HEAD)" | tee run.log
           node scan.mjs 2>&1 | tee -a run.log
         env:
           NODE_OPTIONS: --max-old-space-size=12288
           MODE: ${{ (github.event_name == 'workflow_dispatch' && (inputs.mode == 'daily' || inputs.mode == 'intraday')) && inputs.mode || (github.event.schedule == '10,40 13-20 * * 1-5' && 'intraday' || 'daily') }}
-          FORCE: ${{ (github.event_name == 'workflow_dispatch' && inputs.mode != 'daily' && inputs.mode != 'intraday') && '1' || '' }}
+          # FORCE only for the legacy manual dispatch with an EMPTY mode; any other value is rejected below before any data or send.
+          FORCE: ${{ (github.event_name == 'workflow_dispatch' && inputs.mode == '') && '1' || '' }}
+          MODE_INPUT: ${{ github.event_name == 'workflow_dispatch' && inputs.mode || '' }}
           GUARD_SLOT: ${{ github.event_name == 'workflow_dispatch' && inputs.slot || '' }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
