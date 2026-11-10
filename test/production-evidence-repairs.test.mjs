@@ -63,7 +63,13 @@ test('actual stale, undated, wrong-session and future-at-fetch prices never crea
 });
 test('actual prior close exit is not cancelled by an above-stop quote; no first-15-minutes stop rule',async t=>{
  const r=await pre(t,{signals:{session:'2026-11-06',generatedAt:'2026-11-07T01:00:00Z',posVerdict:{AAA:'SELL: existing close-based exit'}}});
- assert.match(r.text,/RECORDED CLOSE-BASED EXIT, session 2026-11-06/);assert.match(r.text,/not withdrawn by a later quote/);assert.doesNotMatch(r.text,/SELL at the open \(after the first 15 minutes\)/);assert.match(r.text,/does not change the adopted rule's execution timing/);assert.match(r.text,/No 15-minute stop delay/);
+ assert.match(r.text,/RECORDED CLOSE-BASED EXIT, session 2026-11-06/);assert.match(r.text,/not withdrawn by a later quote/);assert.match(r.text,/PRICE CONTEXT ONLY; the recorded exit above stands/);assert.doesNotMatch(r.text,/HOLD context|: WATCH,/);assert.doesNotMatch(r.text,/SELL at the open \(after the first 15 minutes\)/);assert.match(r.text,/does not change the adopted rule's execution timing/);assert.match(r.text,/No 15-minute stop delay/);
+});
+test('actual ACTIONS recorded exit also prevents a fresh above-stop HOLD or WATCH',async t=>{
+ const r=await pre(t,{actions:{at:'2026-11-07T01:00:00Z',sells:[{sym:'AAA',why:'existing rule exit'}]}});
+ assert.match(r.text,/RECORDED ACTIONS EXIT/);assert.match(r.text,/PRICE CONTEXT ONLY; the recorded exit above stands/);assert.doesNotMatch(r.text,/HOLD context|: WATCH,/);
+ const stopped=await pre(t,{signals:{session:'2026-11-06',generatedAt:'2026-11-07T01:00:00Z',posVerdict:{AAA:'existing rule exit'}},rows:{AAA:{latestTrade:{p:7,t:iso(T-60000)}}}});
+ assert.match(stopped.text,/STOP LEVEL OBSERVED/);assert.doesNotMatch(stopped.text,/HOLD context|: WATCH,/);
 });
 test('actual provider delay crossing the open and send-time expiry suppress transport',async t=>{
  const late=await pre(t,{fetchAdvance:50*60000});assert.equal(late.calls,0);assert.match(late.out,/session changed before rendering/);

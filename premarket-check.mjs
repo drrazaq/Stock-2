@@ -49,6 +49,7 @@ for(const sym of syms){const p=P[sym],sn=snaps[sym]||{},lt=sn.latestTrade,t=at(l
  if(ev.state!=='OK'){rows.unknown.push('- '+tag+': PRICE/STOP CHECK UNKNOWN: '+clean(ev.why)+'. No current HOLD or stop-crossing assessment; existing broker/close-based instructions are not cancelled.');continue;}
  asserted.push(sym);
  if(stop&&ev.price<=stop)rows.watch.push('- '+tag+': PRE-MARKET STOP LEVEL OBSERVED at/below '+money(stop)+'. This does not prove a broker fill. Follow the existing stop policy in the regular session; check the broker, do not sell twice, and do not add a 15-minute wait.');
+ else if(prior||asell[sym])rows.history.push('- '+tag+': PRICE CONTEXT ONLY; the recorded exit above stands. No replacement assessment is made from this trade.');
  else if(stop&&ev.price/stop-1<0.03)rows.watch.push('- '+tag+': WATCH, within the existing 3% stop-distance threshold on this fresh pre-market trade; regular-session stop status is not established.');
  else rows.hold.push('- '+tag+': HOLD context based only on this fresh pre-market trade (limit '+STOP_MAX_AGE_MIN+' min); not a regular-session stop confirmation or a new entry.');
 }
