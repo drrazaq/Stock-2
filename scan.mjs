@@ -4611,7 +4611,7 @@ async function intraday(onlyMine) {
   const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok && myHalal(x.sym)==='ok');
   const buyNowCards = [];
   const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
-  const seen = {}, stopAlerts = [], stopKeys = new Set(), quotesSeen = {};
+  const seen = {}, stopAlerts = [], stopKeys = new Set(), stopEvidenceChecks=[], quotesSeen = {};
 
   // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
   // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
@@ -4625,6 +4625,7 @@ async function intraday(onlyMine) {
     if(watcherDelivered(sym,'hit')){st.sent[sym+'myst']=1;return;}
     if(watcherDelivered(sym,kind)){st.sent[key]=1;return;}
     if(!alertAvailable(st,key)||stopKeys.has(key)||(kind==='unknown'&&!alertAvailable(st,sym+'myst'))||watcherDelivered(sym,kind)||watcherDelivered(sym,'hit'))return;
+    if(kind==='hit')stopEvidenceChecks.push(at=>quoteEvidence(sym,j,at,5).state==='OK'&&quoteEvidence(sym,j,at,5).price<=P.stop);
     stopKeys.add(key);stopAlerts.push('Checked at '+nyStamp(checkedAt)+' (quoted age is at that check):\n'+stopText(kind,sym,P,ev));
   };
   for (const sym of watch) {
@@ -4680,7 +4681,7 @@ async function intraday(onlyMine) {
   for (const bc of buyNowCards) { if(!stillCurrent([bc.sym])(Date.now()))continue; const cd = planCands(sig, myPos).find(x => x.sym === bc.sym && x.ok), sh = cd ? Math.max(1, Math.floor(amountFor(cd, sig.market, false).usd / bc.p)) : null;
     await deliver([bc.sym+'buynow'],'ENTRY REVIEW: a permitted plan setup is inside its range (' + new Date().toLocaleTimeString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit' }) + ' Kuwait)\n\n' + bc.text + '\n\nAfter you act, tap: I ask you to confirm the shares and price before anything is recorded.\n' + FOOT,
       [[{ text: 'I bought ' + bc.sym, data: 'b|' + bc.sym }, { text: 'Skipped', data: 's|' + bc.sym }]],stillCurrent([bc.sym])); }   // (28 Oct) the tap asks for confirmation; nothing is recorded on the first tap
-  if(stopAlerts.length) await deliver([...stopKeys],'YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n'+stopAlerts.join('\n\n')+'\n\nStop levels are your own recorded stops. Not financial advice.'+(env.PAGE_URL?'\n'+env.PAGE_URL:''));
+  if(stopAlerts.length) await deliver([...stopKeys],'YOUR STOPS (bot check; the live watcher had not confirmed these)\n\n'+stopAlerts.join('\n\n')+'\n\nStop levels are your own recorded stops. Not financial advice.'+(env.PAGE_URL?'\n'+env.PAGE_URL:''),undefined,at=>stopEvidenceChecks.every(check=>check(at)));
   const ready=alerts.filter(a=>!a.current||stillCurrent([a.sym])(Date.now()));
   if (ready.length) await deliver(ready.map(a=>a.key),'Market hours check\n\n' + ready.map(a=>a.text).join('\n\n') + '\n' + FOOT,undefined,stillCurrent(ready.filter(a=>a.current).map(a=>a.sym)));
   console.log('intraday check done:', watch.length, 'watched,', alerts.length, 'new alerts');

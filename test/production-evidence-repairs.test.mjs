@@ -103,7 +103,8 @@ async function holdingsFixture(t,{end='2026-11-09',age=60000,dated=true,delivery
  const clock={now:Date.parse('2026-11-10T15:00:00Z')},sent=[];
  const server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{
   res.setHeader('Content-Type','application/json');
-  if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);clock.now+=afterSendAdvance;if(deliveryMode==='ambiguous'){res.destroy();return;}if(deliveryMode==='429'&&sent.length===1){res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}
+  if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);clock.now+=afterSendAdvance;if(deliveryMode==='ambiguous'||deliveryMode==='stopAmbiguous'&&sent.at(-1).startsWith('YOUR STOPS')){res.destroy();return;}if(deliveryMode==='stop429'&&sent.at(-1).startsWith('YOUR STOPS')&&sent.filter(x=>x.startsWith('YOUR STOPS')).length===1){clock.now+=5*60000;res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}if(deliveryMode==='429'&&sent.length===1){res.statusCode=429;return res.end(JSON.stringify({ok:false,parameters:{retry_after:0}}));}return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}
+  if(req.url.includes('/getUpdates'))return res.end(JSON.stringify({ok:true,result:[]}));
   if(req.url.includes('/time_series'))return res.end(JSON.stringify({values:dailyValues(end)}));
   if(req.url.includes('/quote?'))return res.end(JSON.stringify({c:7,...(dated?{t:(clock.now-age)/1000}:{})}));
   if(req.url.includes('/stock/split'))return res.end('[]');
@@ -209,6 +210,22 @@ test('actual plan and live conclusion preserve existing filing-exit rules while 
  const f=await holdingsFixture(t);f.S.write('data/events-study.json',{fam:{X:{warn:true,name:'synthetic warning',drift:{newer:{avg:-.02,n:40,vs:-.03},older:{avg:-.02,vs:-.03}}}}});f.S.write('data/events-recent.json',{events:[{sym:'ZZA',f:'X',p:'2026-11-09T12:00:00Z'}]});
  const sig={...f.sig,stocks:[],quick:[],leaders:[]},plan=f.S.fn('planText')(sig,f.pos,{ZZA:7}),live=f.S.fn('conclusionLive')(sig,f.pos,{ZZA:7}).join('\n');
  for(const text of [plan,live]){assert.match(text,/synthetic warning/);assert.match(text,/Existing filing-based rule/);assert.doesNotMatch(text,/SELL NOW.*stop 8.00/);}
+});
+
+
+test('actual intraday stop fallback checks after earlier messages and at retry, preserving owner records and offsets',async t=>{
+ for(const spec of [{afterSendAdvance:5*60000},{deliveryMode:'stop429'}]){
+  const f=await holdingsFixture(t,spec);process.env.BOT_ONLY='';f.S.write('data/signals.json',{...f.sig,stocks:[],quick:[],leaders:[]});f.S.write('data/tg-state.json',{offset:42});
+  const before=f.S.read('data/my-positions.json');await f.S.fn('intraday')(false);
+  const stops=f.sent.filter(x=>x.startsWith('YOUR STOPS'));assert.equal(stops.length,spec.deliveryMode==='stop429'?1:0);
+  const state=f.S.readJson('data/alert-state.json');assert.equal(state.sent.ZZAmyst,undefined);assert.equal(state.delivery?.ZZAmyst,undefined,'local refusal before any stop-part ACK remains eligible, not falsely UNKNOWN');
+  assert.equal(f.S.read('data/my-positions.json'),before);assert.equal(f.S.readJson('data/tg-state.json').offset,42);
+ }
+});
+test('actual intraday stop fallback keeps ambiguous delivery UNKNOWN without replay or owner-record edits',async t=>{
+ const f=await holdingsFixture(t,{deliveryMode:'stopAmbiguous'});process.env.BOT_ONLY='';f.S.write('data/signals.json',{...f.sig,stocks:[],quick:[],leaders:[]});f.S.write('data/tg-state.json',{offset:42});
+ const before=f.S.read('data/my-positions.json');await f.S.fn('intraday')(false);
+ assert.equal(f.sent.filter(x=>x.startsWith('YOUR STOPS')).length,1);const state=f.S.readJson('data/alert-state.json');assert.equal(state.sent.ZZAmyst,undefined);assert.equal(state.delivery.ZZAmyst.status,'UNKNOWN');assert.equal(f.S.read('data/my-positions.json'),before);assert.equal(f.S.readJson('data/tg-state.json').offset,42);
 });
 
 test('all actual caller requests stayed on loopback',()=>assert.deepEqual(blocked,[]));
