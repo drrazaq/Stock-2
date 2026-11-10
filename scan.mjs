@@ -4501,14 +4501,15 @@ async function intraday(onlyMine) {
   if (!sig) { console.log('No daily scan yet.'); return; }
   const myPos = loadPos();
   const st = readJson('data/alert-state.json', { day: '', sent: {} }), day = ny(now).d; if (st.day !== day) { st.day = day; st.sent = {}; }
+  if(st.delivery!==undefined&&(!st.delivery||typeof st.delivery!=='object'||Array.isArray(st.delivery)))throw Error('STOP_DELIVERY_STATE_UNREADABLE: original state retained');
+  st.delivery=st.delivery||{};
+  const stopAvailable=key=>!st.sent[key]&&!['RESERVED','UNKNOWN'].includes(st.delivery[key]?.status);
   const OKI = new Set(planCands(sig, loadPos()).filter(x => x.ok).map(x => x.sym)), buys = sig.stocks.filter(s => s.state === 'Buy watch' && OKI.has(s.sym)), trig = sig.stocks.filter(s => s.state !== 'Buy watch' && s.proven && s.trigger && s.trigger / s.last < 1.03);
   const qk = sig.quick || [], planBuys = planCands(sig, myPos).filter(x => x.ok);
   const buyNowCards = [], queued = [];
   const watch = onlyMine ? Object.keys(myPos).slice(0, 12) : [...new Set([...Object.keys(myPos), ...planBuys.map(s => s.sym), ...qk.map(s => s.sym), ...(sig.leaders || []).map(s => s.sym), ...buys.map(s => s.sym), ...(sig.openTrades || []).map(t => t.sym), ...trig.map(s => s.sym)])].slice(0, 40), alerts = [];
   const seen = {}, stopAlerts = [], stopKeys=new Set(), quotesSeen = {};
-  if(st.delivery!==undefined&&(!st.delivery||typeof st.delivery!=='object'||Array.isArray(st.delivery)))throw Error('STOP_DELIVERY_STATE_UNREADABLE: original state retained');
-  st.delivery=st.delivery||{};
-  const stopAvailable=key=>!st.sent[key]&&!['RESERVED','UNKNOWN'].includes(st.delivery[key]?.status);
+
   // (4 Nov) STOP FALLBACK. The live watcher (stop-watch.mjs, every minute) is the primary stop route. The bot sends a stop line only when
   // the watcher has no ACKNOWLEDGED delivery record for that stock and kind today, so a failed or uncertain watcher send is never lost and a
   // delivered one is not repeated. Price evidence (ticker-bound, provider timestamp, at most STOP_MAX_AGE_MIN old) is required to say a stop

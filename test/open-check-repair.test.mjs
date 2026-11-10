@@ -153,7 +153,7 @@ test('rev10: a quote future-dated when fetched stays UNKNOWN after the clock mov
   const zzs = first.split('\n').find(l => l.startsWith('ZZS:')) || '';
   assert.match(zzs, /^ZZS: STOP STATUS UNKNOWN/, zzs); assert.match(zzs, /the price timestamp was in the future when fetched/);
   assert.doesNotMatch(first, /STOP LEVEL REACHED|ZZS:.*Last price 70|ZZS:.*% from your/, 'no price claim and no stop reached from a future-at-fetch quote');
-  assert.match(stop, /STOP CHECK UNKNOWN: ZZS: the price timestamp is in the future/, 'the stop route says UNKNOWN in the same run');
+  assert.match(stop, /STOP CHECK UNKNOWN: ZZS: the price timestamp was in the future when fetched/, 'the stop route says UNKNOWN in the same run');
   // the other holding, fetched after the clock moved, is judged normally (30 s old at fetch, fresh)
   assert.match(first.split('\n').find(l => l.startsWith('ZZF:')) || '', /^ZZF: HOLD: no exit rule is active; above your stop 8\.00\. Last price 12\.00/);
 });
