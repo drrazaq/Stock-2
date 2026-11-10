@@ -3379,9 +3379,47 @@
    "family": "Exits and risk",
    "name": "LONGER HOLDS with a break-even stop after +15%",
    "explain": "PRE-REGISTERED 10 Nov 2026 (value-lab.mjs header, value-core v15Exit). Buys = V15 exactly (F-score 8-9 above the 200-day, else the 10 best, every 21 sessions; buy the next open). Exits on CLOSES (no intraday lows in the cache), sold at the next open: close <= 75% of the buy (25% stop), close >= 130% of its 50-day average (SELL WITH PROFIT), else the close of the 126th session; the variant adds a break-even stop: after a close >= 115% of the buy, a later close under the buy price. Average stock and SPY over the same windows. value-core judge (blocks of 126) plus, both halves: better than the same buys with the V15 live exits, and better than SPY over the same windows. The live V15 rule is not changed by any result.",
-   "status": "pre-registered 2026-11-10 (value lab); run once pending",
+   "status": "tested: rejected",
    "agent": "B",
-   "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days."
+   "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days.",
+   "tested": "2026-11-06",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     649,
+     510
+    ],
+    "avg": [
+     0.0553,
+     0.0037
+    ],
+    "median": [
+     0.0302,
+     -0.0251
+    ],
+    "edge": [
+     0.0278,
+     -0.0299
+    ],
+    "vsOwn": [
+     -0.0329,
+     -0.0688
+    ],
+    "noTop2": [
+     0.053,
+     -0.0026
+    ],
+    "stress": [
+     0.0513,
+     -0.0003
+    ],
+    "tBlock": [
+     3.11,
+     -0.88
+    ],
+    "why": "not better than the same stocks on their other days in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.88 under 2.5 in the newer half; not better than the same buys with the V15 live exits in the older half (+5.5% vs +5.9% after cost); not better than SPY over the same windows in the older half (+5.5% after cost vs +8.1%); not better than the same buys with the V15 live exits in the newer half (+0.4% vs +0.4% after cost); not better than SPY over the same windows in the newer half (+0.4% after cost vs +3.8%)"
+   }
   },
   {
    "id": "C-SPEC1",
@@ -33201,13 +33239,51 @@
    "family": "Quality and value",
    "name": "Free cash flow news drift after the 10-Q / 10-K",
    "agent": "B",
-   "status": "pre-registered 2026-11-10 (value lab); run once pending",
+   "status": "tested: not proven",
    "registered": "2026-11-03",
    "explain": "PRE-REGISTERED 10 Nov 2026 (value-lab.mjs header, value-core fcfNewsAt / niNewsAt / trailingCut). Events: each company's SEC filing day whose newest operating-cash-flow period was first filed that day, 1-120 days after the period end (an original 10-Q / 10-K). Buy the open of the session AFTER the filing day (companyfacts has no acceptance time), sell the close 63 sessions later. Eligible: liquid (5 USD+, 5M USD+ a day), non-financial, share count known. FCF news = (this quarter's operating cash flow - capex) minus the same quarter a year earlier, over market value at the formation close (YTD figures differenced; |news| >= 40% = data error). Pick: news > 0 and above the 90th percentile of all eligible filings formed in the 63 sessions BEFORE (200+ values; causal, replacing the 3 Nov 'monthly pool' wording, which would rank against later filings of the same month). value-core judge (tier 2 at block t 2.5, PROVEN at the bar) plus, both halves: better than the earnings-news-only version (net income change, same scaling and cut) and better than SPY bought the same dates. Same-stock-other-days = the stock's other eligible filings in the half that were not picked.",
    "sources": [
     "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5375954"
    ],
-   "note": "Web scout 3 Nov 2026. Lem, Koski and McVay (SSRN 2025): the market reacts to FCF news at the earnings announcement, more for growth firms and noisy earnings; the paper measures the reaction, NOT a later drift, so a drift test is a new trial. Data: SEC companyfacts quarterly cash flows (in value-cache) + filing dates: the system has it. Queue position 1 for Agent B. 10 Nov 2026: exact rule pre-registered before any run (Agent B)."
+   "note": "Web scout 3 Nov 2026. Lem, Koski and McVay (SSRN 2025): the market reacts to FCF news at the earnings announcement, more for growth firms and noisy earnings; the paper measures the reaction, NOT a later drift, so a drift test is a new trial. Data: SEC companyfacts quarterly cash flows (in value-cache) + filing dates: the system has it. Queue position 1 for Agent B. 10 Nov 2026: exact rule pre-registered before any run (Agent B).",
+   "tested": "2026-11-06",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     1106,
+     1124
+    ],
+    "avg": [
+     0.0287,
+     0.0557
+    ],
+    "median": [
+     0.0086,
+     0.0201
+    ],
+    "edge": [
+     0.0347,
+     0.0265
+    ],
+    "vsOwn": [
+     0.0575,
+     0.0546
+    ],
+    "noTop2": [
+     0.0252,
+     0.0507
+    ],
+    "stress": [
+     0.0247,
+     0.0517
+    ],
+    "tBlock": [
+     2.74,
+     1.02
+    ],
+    "why": "block t 1.02 under 2.5 in the newer half; not better than the earnings-news-only version in the newer half (+5.6% vs +5.9% after cost)"
+   }
   },
   {
    "id": "B-BBG1",
