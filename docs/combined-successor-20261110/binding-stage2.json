@@ -6,27 +6,21 @@
   "noDataChanges": true,
   "noCredentialsOrPermissions": true,
   "stage": 2,
-  "source": "6440e5764abee879a7020784252a70b0f2a523c5",
-  "sourceTree": "4e402b7697d30d054e1b15b2a98576e68b21bd1d",
+  "source": "e689a53d1253710d45079609a12a7198ad8ade14",
+  "sourceTree": "7e7ec4f3f59f1f535f8c3e9e5701315d6f3c686c",
   "totalBoundPaths": 45,
   "writePaths": [
+    ".github/merge-alert-state.mjs",
     ".github/save-data.sh",
     ".github/workflows/bot.yml",
     ".github/workflows/ignition.yml",
     "calendar.mjs",
     "discover.mjs",
+    "econ-series.mjs",
     "ignition-watch.mjs",
     "scan.mjs",
     "test/actions-reconciliation.test.mjs",
     "test/actions-wording-d1-d4.test.mjs",
-    "test/private-data.test.mjs",
-    "test/stop-alert-validity.test.mjs",
-    "test/try-small-audit.test.mjs",
-    "test/unresolved-sells.test.mjs",
-    "test/watcher-guard.test.mjs",
-    "watcher-guard-core.mjs",
-    "watcher-guard.mjs",
-    "econ-series.mjs",
     "test/alert-save-preservation.test.mjs",
     "test/assessment-context.test.mjs",
     "test/buynow-evidence.test.mjs",
@@ -38,14 +32,21 @@
     "test/intraday-alert-evidence.test.mjs",
     "test/intraday-alert-send-time.test.mjs",
     "test/open-check-repair.test.mjs",
+    "test/private-data.test.mjs",
+    "test/stop-alert-validity.test.mjs",
     "test/telegram-live-no-replay.test.mjs",
+    "test/try-small-audit.test.mjs",
+    "test/unresolved-sells.test.mjs",
     "test/watcher-cadence-review.test.mjs",
     "test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs",
     "test/watcher-guard-rollback-compat.test.mjs",
+    "test/watcher-guard.test.mjs",
     "test/watcher-nov2-clock.test.mjs",
     "test/watcher-nov2-fixture.mjs",
     "test/watcher-nov2-guard.test.mjs",
+    "watcher-guard-core.mjs",
     "watcher-guard-history.mjs",
+    "watcher-guard.mjs",
     "watcher-schedule.mjs"
   ],
   "dependencyPaths": [
@@ -53,7 +54,6 @@
     "premarket-check.mjs",
     "test/bot-commands.test.mjs",
     "test/premarket-feed.test.mjs",
-    ".github/merge-alert-state.mjs",
     "test/alert-merge-compatibility.test.mjs",
     "test/premarket-standalone-evidence.test.mjs",
     "test/recovery-floor.test.mjs"
@@ -61,9 +61,9 @@
   "requiredStage1Source": "211cf16427f37ca73eeb061ea3d81ca11cb3835d",
   "files": {
     ".github/merge-alert-state.mjs": {
-      "sha256": "17d022bc1a41e8e3556d1a8b6235b831038c08594dc83a75f34d02f0f6b51017",
-      "bytes": 3272,
-      "gitBlobSHA1": "50947c0b91a11bc8f496e1aebefacd14850627dc",
+      "sha256": "7db2fcadb2c0eab4a5727226ca2120e929afb7ab0ce76dd89b90accecaf265ed",
+      "bytes": 3287,
+      "gitBlobSHA1": "0428417912f68c38020f541f86ab932d8aa218c9",
       "mode": "100644",
       "before": {
         "gitBlobSHA1": "50947c0b91a11bc8f496e1aebefacd14850627dc",
@@ -158,9 +158,9 @@
       }
     },
     "scan.mjs": {
-      "sha256": "1d31ffdfd0b396392d50930244eeef0dc6ef561e0f82fe1a0a1d99202c6cdd35",
-      "bytes": 734804,
-      "gitBlobSHA1": "15c8816f636136ced26bbbdbf7bb3b8e192c9e99",
+      "sha256": "98743f6aa707b7402aa58ba678950c8897a7a0d3745c0a1200ac67a2b80efc2f",
+      "bytes": 734884,
+      "gitBlobSHA1": "693a7346c3dcefc69f12aab4366052267c6e5422",
       "mode": "100644",
       "before": {
         "gitBlobSHA1": "fa83ed718b5deb60c183d8123f0cfb3a457958db",
@@ -198,9 +198,9 @@
       }
     },
     "test/alert-save-preservation.test.mjs": {
-      "sha256": "8602b79c598c49439733ac8892542bd1ac6d906469d6cef090da1e396c01265b",
-      "bytes": 4787,
-      "gitBlobSHA1": "d6483ab1e0ce64e24b7a79e90b77468fd52628cb",
+      "sha256": "66abc36d32d46760a3f684f4873f0040c393a55988c994466e5eae26f6270083",
+      "bytes": 6464,
+      "gitBlobSHA1": "5629d1580fb1ca7ab396c62db310db790eaca13e",
       "mode": "100644",
       "before": null
     },
@@ -257,9 +257,9 @@
       "before": null
     },
     "test/holdings-evidence-port.test.mjs": {
-      "sha256": "8030e98f928b93705b09f3d7eaa9dc2061bf2106d6efc4c4915571117ea39fde",
-      "bytes": 17800,
-      "gitBlobSHA1": "89a33f04a03f3e40eed3ff684cbdb0e15d548616",
+      "sha256": "c2d9ecd6a8448d6661db561039456cfe37764b8c23e475fa9cd01e19929cd4c2",
+      "bytes": 19411,
+      "gitBlobSHA1": "7ee93f6eab878ac90b3f95f8898d6c582ee76c89",
       "mode": "100644",
       "before": null
     },
@@ -449,5 +449,34 @@
     }
   },
   "inverse": "inverse-stage2-to-stage1.json",
-  "scope": "Full necessary holdings/save/evidence successor. No development scanner copy. Stage2 inverse retains stage1 helper and transport/timing/save floor. No operator/protocol approval."
+  "scope": "Full necessary holdings/save/evidence successor. No development scanner copy. Stage2 inverse retains stage1 helper and transport/timing/save floor. No operator/protocol approval.",
+  "B1": {
+    "review": 6762783851,
+    "correction": "Reader day-reset after original-shape validation; merger delivery maps only from sides in merged NY day",
+    "stage1Unchanged": true,
+    "receipt": {
+      "source": "e689a53d1253710d45079609a12a7198ad8ade14",
+      "run": 42786546026,
+      "job": 129729075742,
+      "completeHostedLog": true,
+      "rootFiles": 164,
+      "uniqueFiles": 164,
+      "checkout": "2026-11-10T08:56:29.5214668Z e689a53d1253710d45079609a12a7198ad8ade14",
+      "failures": [],
+      "B1Cases": [
+        "2026-11-10T08:56:41.4689036Z # Subtest: B1 actual nightly reset/save then next-day reader: bot-first",
+        "2026-11-10T08:56:41.4691329Z ok 5 - B1 actual nightly reset/save then next-day reader: bot-first",
+        "2026-11-10T08:56:41.4694459Z # Subtest: B1 actual nightly reset/save then next-day reader: nightly-first",
+        "2026-11-10T08:56:41.4695805Z ok 6 - B1 actual nightly reset/save then next-day reader: nightly-first",
+        "2026-11-10T08:57:18.6921522Z # Subtest: B1 actual next-day caller allows a new stop evaluation after yesterday UNKNOWN; same-day remains once only",
+        "2026-11-10T08:57:18.6923561Z ok 34 - B1 actual next-day caller allows a new stop evaluation after yesterday UNKNOWN; same-day remains once only",
+        "2026-11-10T08:57:18.7255069Z # Subtest: B1 actual same-day UNKNOWN is not cleared or replayed",
+        "2026-11-10T08:57:18.7255985Z ok 35 - B1 actual same-day UNKNOWN is not cleared or replayed"
+      ],
+      "nestedInstrumentExecuted": true,
+      "stage1Rebuilt": false,
+      "independentVerdict": "PENDING"
+    },
+    "independentVerdict": "PENDING"
+  }
 }

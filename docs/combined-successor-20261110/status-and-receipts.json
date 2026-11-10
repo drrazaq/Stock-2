@@ -14,19 +14,27 @@
       "limits": "Root inventory only; original P/nested evidence separate. Independent nine-path composition review and operating readiness still required."
     },
     "stage2": {
-      "source": "6440e5764abee879a7020784252a70b0f2a523c5",
-      "run": 42779533256,
-      "job": 129705951461,
-      "result": "COMPLETE_HOSTED_SUCCESS",
+      "source": "e689a53d1253710d45079609a12a7198ad8ade14",
+      "run": 42786546026,
+      "job": 129729075742,
+      "completeHostedLog": true,
       "rootFiles": 164,
-      "uniqueRootFiles": 164,
-      "fullLogBytes": 703317,
-      "checkout": "2026-11-10T08:02:28.5710969Z 6440e5764abee879a7020784252a70b0f2a523c5",
-      "failedAssertions": [],
-      "embeddedNestedInstrument": true,
-      "skipped": [],
-      "watcherGatedEvidence": "Independent unchanged P+approved watcher composition20/20 in6761658790. Conditional actual-watcher cases are not all registered without INCIDENT_WATCHER_SRC; final reviewer must confirm unchanged closure before reuse.",
-      "limits": "Not independent approval, operational READY, runtime delivery proof or future attendance."
+      "uniqueFiles": 164,
+      "checkout": "2026-11-10T08:56:29.5214668Z e689a53d1253710d45079609a12a7198ad8ade14",
+      "failures": [],
+      "B1Cases": [
+        "2026-11-10T08:56:41.4689036Z # Subtest: B1 actual nightly reset/save then next-day reader: bot-first",
+        "2026-11-10T08:56:41.4691329Z ok 5 - B1 actual nightly reset/save then next-day reader: bot-first",
+        "2026-11-10T08:56:41.4694459Z # Subtest: B1 actual nightly reset/save then next-day reader: nightly-first",
+        "2026-11-10T08:56:41.4695805Z ok 6 - B1 actual nightly reset/save then next-day reader: nightly-first",
+        "2026-11-10T08:57:18.6921522Z # Subtest: B1 actual next-day caller allows a new stop evaluation after yesterday UNKNOWN; same-day remains once only",
+        "2026-11-10T08:57:18.6923561Z ok 34 - B1 actual next-day caller allows a new stop evaluation after yesterday UNKNOWN; same-day remains once only",
+        "2026-11-10T08:57:18.7255069Z # Subtest: B1 actual same-day UNKNOWN is not cleared or replayed",
+        "2026-11-10T08:57:18.7255985Z ok 35 - B1 actual same-day UNKNOWN is not cleared or replayed"
+      ],
+      "nestedInstrumentExecuted": true,
+      "stage1Rebuilt": false,
+      "independentVerdict": "PENDING"
     },
     "developmentF1": {
       "source": "f4f6cfe2c4cd782d2dac44ccc828f9bebdfb8f37",
@@ -45,13 +53,28 @@
       "failingAssertions": [],
       "fullLogInspected": true,
       "scope": "Development F1 correction receipt only; production composition validated separately"
+    },
+    "previousStage2": {
+      "source": "6440e5764abee879a7020784252a70b0f2a523c5",
+      "run": 42779533256,
+      "job": 129705951461,
+      "result": "COMPLETE_HOSTED_SUCCESS",
+      "rootFiles": 164,
+      "uniqueRootFiles": 164,
+      "fullLogBytes": 703317,
+      "checkout": "2026-11-10T08:02:28.5710969Z 6440e5764abee879a7020784252a70b0f2a523c5",
+      "failedAssertions": [],
+      "embeddedNestedInstrument": true,
+      "skipped": [],
+      "watcherGatedEvidence": "Independent unchanged P+approved watcher composition20/20 in6761658790. Conditional actual-watcher cases are not all registered without INCIDENT_WATCHER_SRC; final reviewer must confirm unchanged closure before reuse.",
+      "limits": "Not independent approval, operational READY, runtime delivery proof or future attendance."
     }
   },
   "independent": {
     "P4": "PASS6761580817",
     "transportPort": "PASS6761658790",
-    "finalStage1": "PENDING",
-    "finalStage2": "PENDING"
+    "finalStage1": "SOURCE/RECOVERY_PASS_6762783851",
+    "finalStage2": "B1_CORRECTED_AWAITING_FOCUSED_REVIEW"
   },
   "originalReviews": {
     "fiveFindings": "CLOSED6758155955",
@@ -99,10 +122,23 @@
     "No future operator/verifier attendance confirmed"
   ],
   "currentRemaining": [
-    "Independent review of final nine-path prerequisite211cf164 and full45-path successor6440e576",
-    "Review of staged inverse runtime behavior, old bot writer drain, state-observation capability and bounded owner-command retention/restoration",
-    "Fresh actual readiness, explicit package/protocol owner approval and actual attendance; none established",
-    "Baseline missing scanner invocations and unapproved all16 coverage amendment; successor does not fix cron creation",
-    "G rev3 natural+assisted shared-slot admission and bot.yml composition remains separate and blocked"
-  ]
+    "Independent B1/recovery re-review of e689a53d",
+    "Corrected stage1 component protocol:3h, non-vacuous runtime evidence, actual delivery evidence/UNKNOWN",
+    "Finite and explicitly accepted stage2 natural-adoption window; no assumed queue-time bound",
+    "Original all16 scanner criterion or separately approved amendment; G remains separate and unapproved",
+    "Fresh exact owner approvals and actual independently confirmed attendance"
+  ],
+  "guard": {
+    "source": "5e12a654d2ba656e99743d1e918738bd2e6fedb6",
+    "review": "7e7ed860b5f13e6958a88413b6dee23399f6978c",
+    "verdict": "CORRECTIONS_REQUIRED",
+    "findings": [
+      "R1 lost-intent publication race",
+      "R2 missing shared execution admission",
+      "R3 request/retry caps",
+      "R4 incomplete/provenance/future evidence",
+      "R5 actual POST/start cutoffs",
+      "R6 source-clock and total-budget semantics"
+    ]
+  }
 }

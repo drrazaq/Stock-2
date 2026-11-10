@@ -1,6 +1,7 @@
 {
-  "source": "6440e5764abee879a7020784252a70b0f2a523c5",
-  "target": "211cf16427f37ca73eeb061ea3d81ca11cb3835d",
+  "source": "e689a53d1253710d45079609a12a7198ad8ade14",
+  "targetStage1": "211cf16427f37ca73eeb061ea3d81ca11cb3835d",
+  "preserveAllUnboundPaths": true,
   "restore": [
     {
       "path": ".github/save-data.sh",
@@ -223,7 +224,12 @@
       "mode": "100644",
       "type": "blob",
       "sha": null
+    },
+    {
+      "path": ".github/merge-alert-state.mjs",
+      "mode": "100644",
+      "type": "blob",
+      "sha": "50947c0b91a11bc8f496e1aebefacd14850627dc"
     }
-  ],
-  "gate": "Retain helper, P and baseline no-replay/timing/save floor. Required complete restoration receipts still apply."
+  ]
 }
