@@ -199,4 +199,16 @@ test('actual midday report separates raw labels, retained caps and unknown total
  const known=buildMidday({...snap,moverCount:45},{});assert.match(known.text,/mover population: 45/);
 });
 
+
+test('actual rebalancing retains existing stop exclusion without claiming a saved-close live crossing',async t=>{
+ const f=await holdingsFixture(t);process.env.PRIVATE_KEY='SYNTHETIC_TEST_ONLY_NOT_A_CREDENTIAL';assert.equal(f.S.fn('privWrite')({shares:{ZZA:100},buys:[],budget:5000}),true);
+ const before=f.S.read('data/my-positions.json'),text=f.S.fn('rebalanceText')({...f.sig,stocks:[{sym:'ZZA',last:7}]});
+ assert.match(text,/DATED CLOSE \/ STOP RECONCILIATION: ZZA/);assert.match(text,/excluded from trim\/add calculations under the existing stop safeguard/);assert.doesNotMatch(text,/SELL FIRST|at or under your stop/);assert.equal(f.S.read('data/my-positions.json'),before);
+});
+test('actual plan and live conclusion preserve existing filing-exit rules while numeric stop claims remain unknown',async t=>{
+ const f=await holdingsFixture(t);f.S.write('data/events-study.json',{fam:{X:{warn:true,name:'synthetic warning',drift:{newer:{avg:-.02,n:40,vs:-.03},older:{avg:-.02,vs:-.03}}}}});f.S.write('data/events-recent.json',{events:[{sym:'ZZA',f:'X',p:'2026-11-09T12:00:00Z'}]});
+ const sig={...f.sig,stocks:[],quick:[],leaders:[]},plan=f.S.fn('planText')(sig,f.pos,{ZZA:7}),live=f.S.fn('conclusionLive')(sig,f.pos,{ZZA:7}).join('\n');
+ for(const text of [plan,live]){assert.match(text,/synthetic warning/);assert.match(text,/Existing filing-based rule/);assert.doesNotMatch(text,/SELL NOW.*stop 8.00/);}
+});
+
 test('all actual caller requests stayed on loopback',()=>assert.deepEqual(blocked,[]));

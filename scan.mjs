@@ -373,10 +373,12 @@ function rebalanceText(sig) { const pos = loadPos(), pv = privRead(), sh = pv.sh
   const ind = {}; for (const r of rows) ind[r.ind] = (ind[r.ind] || 0) + r.usd; const heavy = Object.entries(ind).filter(([g, v]) => g !== 'Other' && v / tot > 0.35);
   out.push('', 'BY INDUSTRY: ' + Object.entries(ind).sort((a, b) => b[1] - a[1]).map(([g, v]) => g + ' ' + Math.round(v / tot * 100) + '%').join(', ') + (heavy.length ? '. TOO MUCH IN ' + heavy.map(x => x[0]).join(', ') + ': these tend to fall together; no new buys there until under 35%.' : '.'));
   // 1. health first: these are sells for their own reason, not rebalancing
+  const stopReferences=rows.filter(r=>r.P.stop&&r.px<=r.P.stop);
   const fix = rows.filter(r => (Z && (Z.notHalal || []).includes(r.k)) || eventSell(r.k));
+  if(stopReferences.length)out.push('DATED CLOSE / STOP RECONCILIATION: '+stopReferences.map(r=>r.k).join(', ')+'. Saved close is at/below recorded stop; current crossing/fill UNKNOWN. These remain excluded from trim/add calculations under the existing stop safeguard; no new SELL is inferred.');
   if (fix.length) out.push('', 'SELL FIRST (not rebalancing):', ...fix.map(r => '- ' + r.k + ': ' + [Z && (Z.notHalal || []).includes(r.k) ? 'not halal on the new ZAD list' : '', eventSell(r.k) ? 'tested warning filing' : ''].filter(Boolean).join('; ') + ' (' + m0(r.usd) + ' USD)'));
   // 2. trim what grew too big (only winners; a loser that is big is a stop question, not a trim)
-  const okR = rows.filter(r => !fix.includes(r)), big = okR.filter(r => r.usd / tot > cap && r.g > 0).map(r => ({ ...r, cut: r.usd - tgt * tot })).filter(r => r.cut >= 1000);
+  const okR = rows.filter(r => !fix.includes(r)&&!stopReferences.includes(r)), big = okR.filter(r => r.usd / tot > cap && r.g > 0).map(r => ({ ...r, cut: r.usd - tgt * tot })).filter(r => r.cut >= 1000);
   const trimWord = !band ? 'the rebalancing test runs Sunday' : 'a RISK REVIEW, not an order. Tested on 10-stock portfolios: trimming cut the worst fall (' + pcs(band.newer.mdd) + ' vs ' + pcs(band.newer.baseMdd) + ') and the profit was ' + pcs(band.newer.ret) + ' vs ' + pcs(band.newer.baseRet) + ' a year without trimming (' + (band.moreProfit ? 'more profit' : band.lessProfit ? 'LESS profit' : 'difference within luck') + ')' + (n < 8 ? '. You hold under 8 stocks, so the test does not fit your portfolio well' : '');
   out.push('', 'TRIM (' + trimWord + '):', ...(big.length ? big.map(r => '- ' + r.k + ': SELL about ' + m0(Math.floor(r.cut / r.px) * r.px) + ' USD (' + Math.floor(r.cut / r.px) + ' shares) to bring it from ' + Math.round(r.usd / tot * 100) + '% back to ' + Math.round(tgt * 100) + '%. Keep the rest with its stop.') : ['- nothing: no winner is over ' + Math.round(cap * 100) + '% of your portfolio.']));
   // 3. new cash: into the most underweight healthy holding, never into one under its 50-day trend break or a sell
@@ -1740,7 +1742,7 @@ function planText(sig, pos, px, title, only, full, opts) {
   const c = planCands(sig, held), pick = c.filter(x => x.ok && myHalal(x.sym)==='ok' && (!only || only.includes(x.sym))).sort((a, b) => b.score - a.score), skipped = [];
   for (const x of pick) { const g = secGroup(x.sector), first = g && pick.find(p => p !== x && secGroup(p.sector) === g && pick.indexOf(p) < pick.indexOf(x)); if (first) x.sameAs = first.sym; }
   const pv = sig.posVerdict || {}, sells = [], holds = [];
-  for (const sym of Object.keys(held)) { const P=held[sym],line=retainedHoldingContext(sym,P,sig);if(sig.posVerdict?.[sym])sells.push(line);else holds.push(line); }
+  for (const sym of Object.keys(held)) { const P=held[sym],es=eventSell(sym),line=retainedHoldingContext(sym,P,sig);if(es){sells.push(sym+': '+es+' Existing filing-based rule; current stop/fill status is not established by this report.');noteSell(sym,es);}else if(sig.posVerdict?.[sym]){sells.push(line);if(scanCloseCurrent(sig))noteSell(sym,sig.posVerdict[sym]);}else holds.push(line); }
 
   // PROTECT MODE (a risk rule fixed in advance, not a tested edge): stop buying while the portfolio is bleeding or buys are piling up.
   //  - 2+ of your stocks at or under their stop, or
@@ -1863,7 +1865,7 @@ function conclusionLive(sig, pos, px) {
   if (sig.quickPaused) out.push('Quick trades are paused by the circuit breaker.');
   if (!any) out.push('No new trade right now. Nothing passed its tests at the last close.');
   const pv = sig.posVerdict || {};
-  for (const sym of Object.keys(held))out.push(retainedHoldingContext(sym,held[sym],sig));
+  for (const sym of Object.keys(held)){const es=eventSell(sym);out.push(es?sym+': '+es+' Existing filing-based rule; current stop/fill status is not established here.':retainedHoldingContext(sym,held[sym],sig));}
   return out;
 }
 // WHAT KIND OF DAY IS TODAY? The market's state, each part checked against the market-day study (the system's own historical out-of-sample test trades

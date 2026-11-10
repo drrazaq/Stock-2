@@ -97,6 +97,7 @@
     "correction": "Structured quoteEvidence only for current stop observations; legacy numeric plan price cannot establish timestamp/source. Dated close context and prior instructions remain distinct; stale/unavailable source gives UNKNOWN. No new entry/exit rules.",
     "registry": "64 retained report guards; reject additional report at capacity rather than evict guards. Synthetic direct regression.",
     "localRefusal": "Evidence callback exceptions are definite local refusal before transport, not NETWORK_ERROR/UNKNOWN delivery.",
-    "scanProvenance": "Strict zoned generatedAt, <= now, and source session actually completed by generation; future/undated/pre-close generation cannot establish current nightly scan."
+    "scanProvenance": "Strict zoned generatedAt, <= now, and source session actually completed by generation; future/undated/pre-close generation cannot establish current nightly scan.",
+    "preserved": "Legacy plan/live-conclusion filing exits remain; source-current recorded exit notices retain existing note semantics. Saved-close stop-reference rows remain excluded from rebalance trim/add under original stop safeguard, but are not presented as current stop SELL or assumed freed cash. No entry/exit or gate weakened."
   }
 }
