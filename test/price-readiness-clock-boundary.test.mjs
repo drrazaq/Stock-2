@@ -1,0 +1,16 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import vm from 'node:vm';
+import {alpacaSnapshot,mergeLiveSnapshot,validateClocks} from '../snapshot-fields.mjs';
+const source=fs.readFileSync(new URL('../ignition-watch.mjs',import.meta.url),'utf8');
+const between=(a,b)=>source.slice(source.indexOf(a),source.indexOf(b));
+const snapBody=between('async function snap()','async function minuteBars(');
+const allBody=between('async function alpacaAll(', 'async function snap()');
+const topBody=between('async function snapTop50(', 'async function alpacaAll(');
+const base=Date.parse('2026-11-09T15:00:00Z');
+function harness(extra={}){let now=base;const ctx={Map,Promise,Infinity,Date:{now:()=>now},env:{MASSIVE_KEY:'fixture',ALPACA_KEY:'fixture',ALPACA_SECRET:'fixture'},src:'',mode:'',note:'',ALPD:'http://localhost',AH:()=>({}),feedUsed:()=> 'sip',snapshotFeed:()=> 'sip',alpacaSnapshot,mergeLiveSnapshot,validateClocks,...extra};vm.createContext(ctx);return {ctx,advance:n=>{now+=n;},get now(){return now;}};}
+test('actual snap accepts a trade during the awaited refresh, using post-response merge time',async()=>{const h=harness();h.ctx.snapMassive=async()=>[{sym:'LIQ',price:10,t:base-16*60000,prevC:10,vol:100,vt:0}];h.ctx.alpacaAll=async()=>{h.advance(500);return new Map([['LIQ',{price:10.1,t:base+250,priceProvider:'ALPACA',priceFeed:'sip',priceKind:'TRADE'}]]);};h.ctx.snapTop50=async()=>null;vm.runInContext(snapBody,h.ctx);const rows=await h.ctx.snap();assert.equal(rows[0].price,10.1);assert.equal(rows[0].t,base+250);assert.match(h.ctx.src,/for 1 of 1/);});
+test('actual batch response rejects future trade/BBO at receipt even if merger runs later',async()=>{const h=harness();h.ctx.snapshots=async()=>({BAD:{latestTrade:{p:10.2,t:new Date(base+250).toISOString()},latestQuote:{bp:10.1,ap:10.2,t:new Date(base+250).toISOString()}}});vm.runInContext(allBody,h.ctx);const rows=await h.ctx.alpacaAll(['BAD']);const r=rows.get('BAD');assert.equal(r.t,0);assert.equal(r.qt,0);assert.equal(r.priceClockRejected,'FUTURE');h.advance(1000);const original={price:9,t:base-1000};assert.equal(mergeLiveSnapshot(original,r,h.now),false);assert.equal(original.price,9);});
+test('actual top50 response also rejects a clock future at receipt',async()=>{const h=harness({fetch:async()=>({ok:true,json:async()=>({gainers:[{symbol:'BAD'}]})})});h.ctx.snapshots=async()=>({BAD:{latestTrade:{p:10.2,t:new Date(base+250).toISOString()}}});vm.runInContext(topBody,h.ctx);const rows=await h.ctx.snapTop50();assert.equal(rows[0].t,0);assert.equal(rows[0].priceClockRejected,'FUTURE');});
+test('actual batch preserves valid trade and separate quote clocks; does not turn stale trade into fresh quote price',async()=>{const h=harness();h.ctx.snapshots=async()=>({THIN:{latestTrade:{p:5,t:new Date(base-3600000).toISOString()},latestQuote:{bp:4.9,ap:5.1,t:new Date(base-1000).toISOString()}}});vm.runInContext(allBody,h.ctx);const r=(await h.ctx.alpacaAll(['THIN'])).get('THIN');assert.equal(r.t,base-3600000);assert.equal(r.price,5);assert.equal(r.qt,base-1000);assert.equal(r.bid,4.9);});

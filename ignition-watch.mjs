@@ -83,13 +83,13 @@ async function snapTop50() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
   try { const r = await fetch(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
     const sj = (await snapshots(ALPD, syms, AH())) || {}, sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
-    const at = Date.now(); return syms.map(s => alpacaSnapshot(s, sj[s] || {}, sip, at)); } catch (e) { return null; } }
+    const at = Date.now(); return syms.map(s => validateClocks(alpacaSnapshot(s, sj[s] || {}, sip, at), at)); } catch (e) { return null; } }
 async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
     try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
-      const at = Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x || {}, sip, at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
+      const at = Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = validateClocks(alpacaSnapshot(s, x || {}, sip, at), at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
   return out; }
 async function snap() {
@@ -97,7 +97,7 @@ async function snap() {
   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
   if (m && m.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
   if (m && m.length) { const live = await alpacaAll(m.filter(r => r.prevC >= 1).map(r => r.sym));
-    if (live) { let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, now)) n++; if (x && r.volumeBasis === 'SIP_DAILY_BAR_ASOF_UNSTATED') sv++; }
+    if (live) { const mergeAt=Date.now(); let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, mergeAt)) n++; if (x && r.volumeBasis === 'SIP_DAILY_BAR_ASOF_UNSTATED') sv++; }
       const feeds = [...new Set([...live.values()].map(x => x.priceFeed))], feedLabel = feeds.length === 1 ? feeds[0] : feeds.length ? 'mixed' : feedUsed();   // this minute's responses, not the whole day's
       src = 'alpaca live prices (' + feedLabel.toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (sv ? 'SIP daily volume (provider states no as-of time) for ' + sv : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
   const a = await snapTop50();
