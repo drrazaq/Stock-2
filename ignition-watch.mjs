@@ -283,8 +283,8 @@ process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
 saveObservationProgress();
 while (Date.now() - START < MAXMS) {
   MESSAGE_STATE.maintain();
-  const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
-  const rows = await snap(); loops++; const tStart = triggers.length;
+  const loopStarted=Date.now(); let m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
+  const rows = await snap(); m=clock(); if(m>900)break; loops++; const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
     // (4 Nov) every held stock gets its own price evidence (ticker-bound response, provider clock, age); no row or a stale/undated one -> STOP CHECK UNKNOWN, never silently safe
@@ -348,7 +348,7 @@ while (Date.now() - START < MAXMS) {
   if (m >= 675 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
   else if(m>=675&&RADAR.done&&MESSAGE_STATE.has('midday-radar')&&MESSAGE_STATE.state('midday-radar')==='UNSENT'){await sendRadarOnce();}
   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
-  const wait = 60000 - (Date.now() - nowMs); if (wait > 0) await sleep(wait);
+  const wait = 60000 - (Date.now() - loopStarted); if (wait > 0) await sleep(wait);
 }
 const movers = Object.values(vis).filter(v => v.maxC >= 0.15), missed = buildMissed();
 const tally = {}; for (const x of missed) tally[x.code] = (tally[x.code] || 0) + 1;
