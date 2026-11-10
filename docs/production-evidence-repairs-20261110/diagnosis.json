@@ -63,7 +63,8 @@
       "name": "Research populations/economics",
       "approvedCoverage": "Existing provenance/duplicate/report safeguards do not authenticate securities, splits or fills.",
       "correction": "Keep raw/logical populations and caps separate; preserve original ledger and legacy numerical formulas; label15:00 observation endpoint versus16:00 cash close, fractional-notional model, unknown identities/actions/fills and selected-day selection bias. Headlines are context, not causation. No economics or live gate overwritten.",
-      "terminalEvidence": "1000-dollar whole-share executable evaluation still needs instrument/corporate-action reconciliation, executable bid/ask, quantities, halts/no-fills and both3-dollar executed-side fees. Legacy modeled returns do not resolve these."
+      "terminalEvidence": "1000-dollar whole-share executable evaluation still needs instrument/corporate-action reconciliation, executable bid/ask, quantities, halts/no-fills and both3-dollar executed-side fees. Legacy modeled returns do not resolve these.",
+      "populationCorrection": "Midday counts are raw snapshot labels, not authenticated common-stock population. Retained movers20/early40 caps, A/B<=5each, displayD<=5; total mover population UNKNOWN if missing, never replace by cap. No numeric formula/ranking changes."
     }
   ],
   "validation": {
@@ -72,7 +73,15 @@
     "requiredNodeFiles": 321,
     "requiredPython": "Existing repository behavior + incident verifier; full unchanged gated requirements retained",
     "noWaivers": true,
-    "productionTestsRetained": "Ported main's premarket-feed test file into development inventory; preserve SIP/IEX/refusal/reference/exit provenance assertions. Explicit owner stale-HOLD correction supersedes only old no-freshness/default-HOLD assertions; fixed synthetic clocks and real loopback transport replace private-body console assertions."
+    "productionTestsRetained": "Ported main's premarket-feed test file into development inventory; preserve SIP/IEX/refusal/reference/exit provenance assertions. Explicit owner stale-HOLD correction supersedes only old no-freshness/default-HOLD assertions; fixed synthetic clocks and real loopback transport replace private-body console assertions.",
+    "retainedFailure": {
+      "commit": "8ec2dfd6d2fc9d099d7f0fa16212d70a44114cd4",
+      "run": 42753531321,
+      "job": 129622477732,
+      "completedAt": "2026-11-10T04:45:13Z",
+      "conclusion": "Unchanged40-minute timeout; incomplete full inventory,30 failing subtests share duplicate nyClockText module declaration error. Partial passes are not full PASS.",
+      "correction": "Removed identical duplicate nyClockText and marketSessionOf declarations; retained single implementation, all tests and timeout unchanged. Exact corrected Node/full validation required."
+    }
   },
   "releaseAction": "After focused review, compose an explicitly bound source-only delta with approved28-path unit and accepted5ba follow-on on freshmain; verify preservation/build/inverse and operating consequences. Never deploy development branch wholesale or alter originalbinding. Original all16 F2 criterion stands; latest-complete-market-day-beforeA is an additional reviewed proposal requiring owner approval, not an original precondition. G dispatch and8/16 F2 amendment also require separate approval. No operational approval requested before exact composition/review passes.",
   "selfReviewFollowup": "Fresh5-minute stop evidence must remain reportable even when daily history is stale; direct review and holdings both use the same stopText/quoteEvidence contract. Stale closes still cannot mint HOLD/trail recommendations. Added actual-caller regression; prior8ec run retained. Current stop header no longer inherits an as-of-close suffix.",

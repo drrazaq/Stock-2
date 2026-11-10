@@ -2854,7 +2854,6 @@ function healthLine(nowMs = Date.now()) { const out = [];
   return out.length ? 'SYSTEM HEALTH: ' + out.join('; ') + '.' : ''; }
 
 const SHOCK_SLOT = '\u0000MARKET_SHOCK';
-function nyClockText(mins) { const h = Math.floor(mins / 60), m = mins % 60; return ((h + 11) % 12 + 1) + ':' + String(m).padStart(2, '0') + (h < 12 ? ' am' : ' pm'); }
 // R3 (Codex review of c670d626): "during the session" uses the actual session hours from the reviewed NYSE calendar
 // (market-session.mjs: holidays and 1 pm early closes). If that calendar cannot be read, the session status is stated as UNKNOWN.
 // D4 r3 (Codex review of 06253f62): the scanner's source session is named as a completed close only if the reviewed NYSE calendar
@@ -2866,7 +2865,6 @@ async function completedSourceClose(day, nowMs = Date.now()) {
   const noon = Date.parse(day + 'T12:00:00Z'), closeMs = noon + (s.close - ny(noon).mins) * 60000;
   return nowMs >= closeMs ? day : null;
 }
-async function marketSessionOf(day) { try { const m = await import(new URL('./market-session.mjs', import.meta.url).href); const s = m.marketSession(day); return s && s.known ? s : null; } catch { return null; } }
 function shockLine(ml, hasBuy, sess) {
   const t = Date.parse(ml.at), n = ny(t), today = ny(Date.now()).d, sameDay = n.d === today;
   const status = !sess ? ', session status UNKNOWN' : !sess.closed && n.mins >= sess.open && n.mins < sess.close ? ', during the session, not a close' : sess.closed ? ', market closed that day' : n.mins >= sess.close ? ', after the close' : ', before the open';

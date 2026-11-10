@@ -7,7 +7,7 @@ import {marketClock,completedMarketSession,nightlyScanEvidence} from '../market-
 import {copyFixtureModuleClosure} from './watcher-contract-profile.mjs';
 import {loadScan,blocked} from './load-scan.mjs';
 import {sendTelegramMessage,telegramFetch} from '../telegram-delivery.mjs';
-import {buildClose,netOf,scoreboard} from '../radar-v3-core.mjs';
+import {buildClose,buildMidday,netOf,scoreboard} from '../radar-v3-core.mjs';
 const ORIGINAL_NOW=Date.now;
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),T=Date.parse('2026-11-09T13:40:00Z'),iso=x=>new Date(x).toISOString();
 async function pre(t,{now=T,positions={AAA:{entry:10,stop:8}},signals={session:'2026-11-06',generatedAt:'2026-11-07T01:00:00Z'},actions={sells:[]},rows,fetchAdvance=0,sendAdvance=0,afterReplyAdvance=0,mode='ack',feedStatus=200}={}){
@@ -190,6 +190,13 @@ test('saved-close identity requires dated generation after that source session a
 test('actual scanner sender classifies an evidence-check exception as local unsent, never transport uncertainty',async t=>{
  const f=await holdingsFixture(t),before=f.S.read('data/my-positions.json'),r=await f.S.fn('telegram')('SYNTHETIC LOCAL GUARD',null,()=>{throw Error('synthetic guard failure');});
  assert.equal(r.ok,false);assert.equal(r.reason,'PRICE_EVIDENCE_EXPIRED');assert.equal(r.localEvidenceRefusal,true);assert.equal(r.definitelyUnsentPart,true);assert.equal(f.sent.length,0);assert.equal(f.S.read('data/my-positions.json'),before);
+});
+
+
+test('actual midday report separates raw labels, retained caps and unknown total movers without inventing identities',()=>{
+ const snap={day:'2026-11-09',at:'11:15',scanned:12720,live:5160,movers:[],hits:[],early:[],tally:{}},out=buildMidday(snap,{});
+ assert.match(out.text,/12720 raw snapshot labels/);assert.match(out.text,/not verified common-stock identities/);assert.match(out.text,/mover population: UNKNOWN; 0 retained, cap 20/);assert.match(out.text,/cap 40/);assert.match(out.text,/headlines are context, not established market causation/);assert.deepEqual(out.rows,[]);
+ const known=buildMidday({...snap,moverCount:45},{});assert.match(known.text,/mover population: 45/);
 });
 
 test('all actual caller requests stayed on loopback',()=>assert.deepEqual(blocked,[]));

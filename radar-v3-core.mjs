@@ -107,8 +107,8 @@ export function buildMidday(snap, ctx0 = {}) {
   text.push('', 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED + ')' + (B.length ? ':' : ': none before 11:00.'));
   for (const x of B.slice(0, 5)) { const { h, r, hv, n } = x;
     text.push('- ' + h.sym + ': ' + h.rule + ' at ' + fm(h.m) + ' ' + usd(h.price) + (n.px > 0 ? ', now ' + usd(n.px) + ' (' + pct(n.px / h.price - 1) + ' since)' : '') + '. ' + halalWord(h.sym, ctx) + '.',
-      '  Rule record: ' + (r ? r.n + ' paper trades on ' + (r.days || 0) + ' days, ' + pct(r.avg, 1) + ' a trade after costs' : 'no paper record yet') + '; minute-bar history verdict ' + hv + '.',
-      '  For +2% net on 1,000 USD it needs ' + pct(netHurdle(h.price), 1) + ' gross. ' + catalystOf(h.sym, ctx) + '.');
+      '  Rule record: ' + (r ? r.n + ' modeled paper trades on ' + (r.days || 0) + ' days, ' + pct(r.avg, 1) + ' a trade under retained cost assumptions (fills unverified)' : 'no paper record yet') + '; minute-bar history verdict ' + hv + '.',
+      '  Legacy fractional-notional model: for +2% net on 1,000 USD it needs ' + pct(netHurdle(h.price), 1) + ' gross. ' + catalystOf(h.sym, ctx) + '.');
     rows.push({ type: 'list', d: snap.day, at: snap.at, panel: 'B', sym: h.sym, px: n.px > 0 ? n.px : h.price, rule: h.rule }); }
   // A: early-wave observations not already in B, not extended (+2% to +20% now), not blocked
   const A = [];
@@ -118,7 +118,7 @@ export function buildMidday(snap, ctx0 = {}) {
     A.push({ sym: e.sym, px, chg, rvT: e.rvT, first: e.firstMinute }); if (A.length >= 5) break; }
   text.push('', 'A. LIVE RESEARCH LEADS (' + NOT_APPROVED + ')' + (A.length ? ':' : ': none right now.'));
   for (const a of A) { text.push('- ' + a.sym + ' ' + pct(a.chg) + ' at ' + usd(a.px) + (a.rvT ? ', volume pace ' + a.rvT.toFixed(1) + 'x normal' : '') + ' (seen ' + a.first + '). ' + halalWord(a.sym, ctx) + '.',
-      '  ' + catalystOf(a.sym, ctx) + '. Needs ' + pct(netHurdle(a.px), 1) + ' gross for +2% net.' + (a.px < 5 ? ' Under 5 USD: wide spreads, halts, gaps.' : ''));
+      '  ' + catalystOf(a.sym, ctx) + '. Legacy fractional-notional hurdle ' + pct(netHurdle(a.px), 1) + ' gross for +2% net; not a whole-share execution result.' + (a.px < 5 ? ' Under 5 USD: wide spreads, halts, gaps.' : ''));
     rows.push({ type: 'list', d: snap.day, at: snap.at, panel: 'A', sym: a.sym, px: a.px }); }
   if (blocked.length) text.push('BLOCKED by hard rules (not leads): ' + blocked.slice(0, 6).join('; ') + (blocked.length > 6 ? '; +' + (blocked.length - 6) + ' more' : '') + '.');
   // C
@@ -128,9 +128,9 @@ export function buildMidday(snap, ctx0 = {}) {
   // D
   text.push('', 'D. RUNNERS SO FAR (retrospective, not buys)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers));
   const ts = topSilence(snap.tally);
-  text.push('', 'Received ' + (snap.scanned ?? '?') + ' stocks (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a fresh price). 15%+ movers: ' + (snap.moverCount ?? (snap.movers || []).length) + ' (showing ' + (snap.movers || []).length + '). Rule hits: ' + (snap.hits || []).length + '.'
+  text.push('', 'Received ' + (snap.scanned ?? '?') + ' raw snapshot labels (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a usable recent trade under the watcher contract; not verified common-stock identities). 15%+ mover population: ' + (Number.isInteger(snap.moverCount)?snap.moverCount:'UNKNOWN; '+(snap.movers || []).length+' retained, cap 20') + '. Rule-hit rows: ' + (snap.hits || []).length + '; retained early candidates: ' + (snap.early || []).length + ' (cap 40). Panels A/B show at most 5 each; runner display at most 5 of the retained movers.'
     + (ts ? ' Top reason for silence: ' + ts.words + ' (' + ts.n + ', ' + ts.kind + ').' : ''));
-  text.push('Chasing risk: no authenticated numerical estimate is linked here. Late discovery does not establish remaining opportunity. Check ZAD. Research only, not advice.');
+  text.push('Population counts/caps are not validated tradable-security coverage. Corporate actions/splits and instrument identity remain unreconciled; headlines are context, not established market causation or evidence of an edge. Chasing risk: no authenticated numerical estimate is linked here. Late discovery does not establish remaining opportunity. Check ZAD. Research only, not advice.');
   return { text: text.join('\n'), rows };
 }
 
