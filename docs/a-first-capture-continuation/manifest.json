@@ -164,11 +164,11 @@
     "test/a-importer-recovery-matrix.test.mjs": "b47434aa268fc876692da00425eb4298db60a0d10cb6cc97e09d82026ac1c4c3",
     "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "test/a-native-evidence-importer.test.mjs": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed",
-    "scan.mjs": "9b8f836f2fc5640c4faa52aaee76ed44c682fa23c9fc87a3fa6ec20e408d947a",
+    "scan.mjs": "d0da1c119ffcaae53fc8cadc279ab9a2aa9f53095b6cb84e0fad57ce54a0ead7",
     "ignition-watch.mjs": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151",
     "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
-    "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
+    "market-session.mjs": "b59ff8503e32ad898296782253a284df72bb10c63bc360f21c9622aa9a378d2e",
     "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
     "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
     "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
@@ -396,5 +396,16 @@
   "discoveryAssessmentContinuation": {
     "request": "6746514530",
     "scope": "Dependent current fingerprints only; original assertions, strategy rules and historical base evidence retained. Offline review, not activation."
+  },
+  "productionEvidenceRepairFollowup": {
+    "sourceBase": "5ba1606d5d6c981d913006396f24a56fb46d686b",
+    "scope": "Separate development delta; evidence/session/transport reporting safeguards, no strategy/exit/admission change. Current dependency pins refreshed, historical pins/data/acquisition limits preserved. Not approved28-path unit.",
+    "previousCurrentHashes": {
+      "scan.mjs": "9b8f836f2fc5640c4faa52aaee76ed44c682fa23c9fc87a3fa6ec20e408d947a",
+      "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21"
+    },
+    "originalHistoricalHashesUnmodified": true,
+    "productionActions": 0,
+    "providerAcquisition": 0
   }
 }

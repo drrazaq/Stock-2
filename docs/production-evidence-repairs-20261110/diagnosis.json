@@ -1,0 +1,77 @@
+{
+  "scope": "DEVELOPMENT_AND_REVIEW_ONLY",
+  "productionEvidencePin": "40308ddf09304760855731836302d59a1710f42f",
+  "baselineSource": "5ba1606d5d6c981d913006396f24a56fb46d686b",
+  "baselineAcceptedComment": 6758155955,
+  "approvedRelease": {
+    "candidate": "d52499c454d2cdf472993e696d3a2ba8f4f77ef3",
+    "bindingSha256": "1a799a15b06ce6e36c466a37702ba72830552fc9972d8ebd3a96311425da2dd4",
+    "paths": 28,
+    "unchanged": true
+  },
+  "privacy": "No original owner messages, holdings, trades, message bodies, private record paths/digests or credentials are copied into this package. Read-only original hosted evidence retained in private task context; owner/Claude private conversation remains original-message custodian. Existing public hosted-log exposure is not erased or permission-cleared; cleanup/history/privacy migration requires separate authorization. Corrected premarket logs omit private bodies.",
+  "defects": [
+    {
+      "id": 1,
+      "name": "Wrong session",
+      "observed": "Premarket run42714171706/job129491252541 created22:41:52UTC Nov9; rendered around17:42NY. Public source treats every same-NY-date trade as premarket. Header day isNov9, matching invocation; saved source scan isNov6. Wrong before-open/session claim, not proof of a bad UTC conversion.",
+      "originalTimestampLimit": "Raw provider response/source UTC string and units are not retained in the inspected log. Converted NY trade clocks/ages and job clocks corroborate after-hours rendering; do not invent raw receipts.",
+      "approvedCoverage": "NONE: premarket-check.mjs is outside the exact28 paths and equals production source.",
+      "correction": "NYSE/DST phase admission before requests; explicit-zone source time; receipt/render clocks; stale/missing/future/wrong-session evidence UNKNOWN; premarket phase/freshness rechecked at every actual part/retry; no private body logging",
+      "tests": "Actual child process + loopback snapshots/Telegram, DST/midnight/holiday/early close, stale/naive/future-at-fetch, delayed fetch, multipart/retry expiry"
+    },
+    {
+      "id": 2,
+      "name": "Stale HOLD/stop and exit wording",
+      "approvedCoverage": "PARTIAL: open-check/intraday source-clock paths, dated close-exit wording and no automatic15-minute delay; standalone premarket/review/holdings consumers remain uncovered.",
+      "correction": "Reuse reviewed quoteEvidence:3-minute current reference,5-minute stop; no stale-close current assessment/stop recommendation; keep dated close-based holds/exits distinct; do not cancel prior exit on rebound quote; reject future exit flags; preserve rules and original records; actual send/retry evidence guard",
+      "tests": "Actual holdings/review/send with old/undated/fresh quotes, stale daily source, retained exit and no record mutation on UNKNOWN; privacy-safe fixtures"
+    },
+    {
+      "id": 3,
+      "name": "Missing nightly",
+      "observed": "Run42716422194/job129499026589 is schedule-triggered but hosted MODE=intraday at22:57:46UTC; guard says Market closed.Nothing to do. No daily assessment/save/delivery occurred. Retained signals sessionNov6/generatedNov7 remains. No daily invocation found in inspected bounded run census; cause of absence unresolved.",
+      "approvedCoverage": "No cron-delivery repair. Source warning/data freshness does not create invocation.",
+      "correction": "Preserve production sourceFreshness/health-line semantics and reviewed deadlines; remove blind-dispatch wording; health checks expected dated completed session, not coarse30weekday-hour OK.",
+      "recovery": "No dispatch proposed until a fresh run/writer census, exact loaded source, idempotent save/delivery consequences and bounded scope are independently reviewed. No recovery action authorized."
+    },
+    {
+      "id": 4,
+      "name": "Uncertain delivery",
+      "observed": "One durable Nov9 watcher row is UNCERTAIN, not ACKNOWLEDGED. No durable message ID/transport cause in that record. No replay, acknowledgment, offset reset or record change performed.",
+      "approvedCoverage": "Conservative no-blind-replay remains correct; cannot prove delivery from count or success of job.",
+      "correction": "No change to historical reservation/ACK state. Shared current-evidence callback checks each transport boundary; network ambiguity remains unacknowledged and is not retried.",
+      "tests": "Actual ambiguous loopback transport once only; partial ACK and explicit429 expiry; unchanged durable watcher/save/restart safeguards retained"
+    },
+    {
+      "id": 5,
+      "name": "Watcher coverage",
+      "observed": {
+        "configuredUsable": 317,
+        "configuredExpected": 331,
+        "withinMissing": 14,
+        "longestGapMinutes": 2,
+        "fullUsable": 317,
+        "fullExpected": 390,
+        "excludedMinutes": 59
+      },
+      "approvedCoverage": "PARTIAL: passStartedAt before snapshot/stop-work includes that latency in pacing; observation budget begins after pre-open wait, with admission/duplicate safeguards. Window remains09:30–15:00 inclusive; not final59minutes. Cannot attribute every missing minute to a single cause or promise zero gaps.",
+      "remaining": "Final-hour extension requires separately reviewed operating/resource coverage; existing unapproved development-full source is not authority to extend360-minute job or dispatch another unit. Provider stalls remain observed gaps, never invented catch-up heartbeats."
+    },
+    {
+      "id": 6,
+      "name": "Research populations/economics",
+      "approvedCoverage": "Existing provenance/duplicate/report safeguards do not authenticate securities, splits or fills.",
+      "correction": "Keep raw/logical populations and caps separate; preserve original ledger and legacy numerical formulas; label15:00 observation endpoint versus16:00 cash close, fractional-notional model, unknown identities/actions/fills and selected-day selection bias. Headlines are context, not causation. No economics or live gate overwritten.",
+      "terminalEvidence": "1000-dollar whole-share executable evaluation still needs instrument/corporate-action reconciliation, executable bid/ask, quantities, halts/no-fills and both3-dollar executed-side fees. Legacy modeled returns do not resolve these."
+    }
+  ],
+  "validation": {
+    "status": "PENDING_NODE_EXACT_COMMIT",
+    "v8": "Changed modules/tests syntax and actual calendar/nightly-incident aggregate replay PASS; not Node/Git validation",
+    "requiredNodeFiles": 320,
+    "requiredPython": "Existing repository behavior + incident verifier; full unchanged gated requirements retained",
+    "noWaivers": true
+  },
+  "releaseAction": "After focused review, compose a new explicitly bound source-only delta with exact approved28-path unit and accepted5ba follow-on on fresh main, verify preservation/build/inverse and operating consequences. Do not deploy branch wholesale, alter original binding, waive missing latest-ordinary-market-day16/16 baseline, or request operational approval before this concrete composition passes."
+}

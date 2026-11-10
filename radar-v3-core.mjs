@@ -153,22 +153,23 @@ export function scoreboard(ledger = []) {
 // ---- AFTER THE CLOSE
 // live = data/ignition-live.json (today's), ledger = all radar rows
 export function buildClose(day, live, ledger = [], ctx = {}) {
-  const text = ['OPPORTUNITY RADAR, AFTER THE CLOSE (' + day + ')'];
+  const text = ['OPPORTUNITY RADAR, AFTER THE CLOSE (' + day + ')','MODELED RESEARCH OBSERVATIONS: listing to the retained 15:00 New York endpoint, NOT the 16:00 cash close. Mixed-instrument identity and corporate-action/split reconciliation remain UNKNOWN; quote observations do not establish fills. Selected-day gains are not evidence of an edge.'];
   if (!live || live.day !== day) { text.push('The live watcher saved no results for today (not run, or not saved yet). Nothing to score.'); }
   else {
     const cov = live.coverage || {}; if (cov.firstMinute && cov.firstMinute > '09:35') text.push('WATCHER STARTED LATE (' + cov.firstMinute + '): the open was not watched.');
     const mine = ledger.filter(r => r.type === 'list' && r.d === day), close = new Map(ledger.filter(r => r.type === 'close' && r.d === day).map(r => [r.sym, r]));
-    text.push('', 'TODAY\'S RADAR LINES (listing price to 15:00, after 6 USD fees and spread):' + (mine.length ? '' : ' none were listed.'));
+    text.push('', 'TODAY\'S RADAR LINES (legacy fractional-notional model to 15:00; assumed 6 USD round-trip fee and spread):' + (mine.length ? '' : ' none were listed.'));
     for (const r of mine) { const c = close.get(r.sym), s = c ? scoreSameDay(r, c) : null;
-      text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
+      text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', legacy MODELED net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
     text.push('', 'D. RUNNERS WE MISSED TODAY (retrospective, not buys):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true));
     const ts = topSilence(live.tally), all = Object.values(live.tally || {}).reduce((a, b) => a + b, 0); if (ts) text.push('Top reason for silence today: ' + ts.words + ' (' + ts.n + ' of ' + all + ' movers of 15%+; ' + ts.kind + ').');
     text.push('', 'C. SIGNAL DELIVERY HISTORY today: ' + (Number.isInteger(live.alerts)&&live.alerts>=0?live.alerts:'unknown') + '. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.', ...alertDeliveryLines(live));
   }
   const sb = scoreboard(ledger), P = sb.panels;
   text.push('', 'RADAR SCORECARD (' + sb.sessions + ' session' + (sb.sessions === 1 ? '' : 's') + '; verdict after 10):');
-  for (const k of ['A', 'B']) { const p = P[k]; text.push('- ' + k + ': ' + (p && p.n ? p.n + ' lines, same day ' + pct(p.avgNet, 1) + ' net on average, ' + Math.round(p.win * 100) + '% positive' + (p.beatMkt !== null ? ', ' + Math.round(p.beatMkt * 100) + '% beat the average stock' : '') : 'no scored lines yet')
+  for (const k of ['A', 'B']) { const p = P[k]; text.push('- ' + k + ': ' + (p && p.n ? p.n + ' lines, same day ' + pct(p.avgNet, 1) + ' legacy modeled net on average, ' + Math.round(p.win * 100) + '% positive' + (p.beatMkt !== null ? ', ' + Math.round(p.beatMkt * 100) + '% beat the average stock' : '') : 'no scored lines yet')
     + (p && p.n5 ? '; 5 sessions ' + pct(p.avgNet5, 1) + ', ' + Math.round(p.beatSpy5 * 100) + '% beat SPY' : '')); }
+  text.push('Frozen legacy model uses 1,000 USD fractional notional, not executable whole shares. A compliant whole-share result needs quantity=floor((1,000-3)/executable ask), both 3 USD executed-side fees, executable exit/bid, halt/no-fill outcomes and corporate-action/identity evidence. No such performance conclusion is established here.');
   text.push('Nothing in this research summary is a current approved purchase. Cached delivery history is not authorization. Research only, not advice.');
   return text.join('\n');
 }

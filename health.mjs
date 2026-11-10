@@ -1,3 +1,4 @@
+import {nightlyScanEvidence} from './market-session.mjs';
 import {createHash} from 'node:crypto';
 import {readAlertState,saveAlertState,deliverAlertOnce} from './alert-delivery-state.mjs';
 import {readWatcherReport} from './watcher-reporting.mjs';
@@ -16,7 +17,7 @@ const stamp = (j) => { if (!j) return null; for (const k of ['updated', 'at', 'g
 // [file, plain name, how often it should update, max age in weekday hours (daily) or calendar days (weekly), extra content check]
 const ran = (j) => /^(NOT RUN|FAIL|ERROR)/i.test(String(j.status || '')) ? 'not run: ' + (j.why || j.status) : null;
 const CHECKS = [
-  ['data/signals.json', 'nightly scan (ACTIONS, buy list)', 'every weekday night', { biz: 30 }],
+  ['data/signals.json', 'nightly scan (ACTIONS, buy list)', 'every weekday night', { biz: 30, nightly:true }],
   ['data/smart-money.json', 'smart money (insiders, analysts)', 'every weekday', { biz: 30 }],
   ['data/sec-status.json', 'SEC company filings', 'every weekday', { biz: 30 }, (j) => j.ok ? null : 'the SEC refused or failed: ' + j.why],
   ['data/events-recent.json', 'SEC filings of the last 10 days', 'every weekday', { biz: 30 }],
@@ -52,7 +53,9 @@ const CHECKS = [
 ];
 const problems = [], ok = [];
 for (const [f, name, how, lim, check] of CHECKS) {
-  const j = readJson(f); if (j === undefined) { if (!lim.optional) problems.push(name + ': its file is missing (' + f + '). It should update ' + how + '.'); continue; }
+  const j = readJson(f);
+  if(lim.nightly){const n=nightlyScanEvidence(j,now);if(n.state==='CURRENT'||!n.due&&n.state==='PENDING')ok.push(name+' '+n.state+' for '+n.expected);else problems.push(name+' '+n.state+': expected completed session '+(n.expected||'UNKNOWN')+', saved session '+(n.have||'UNKNOWN')+'. Inspect invocation, assessment/save and delivery separately; no dispatch is authorized by this warning.');continue;}
+  if (j === undefined) { if (!lim.optional) problems.push(name + ': its file is missing (' + f + '). It should update ' + how + '.'); continue; }
   const t = stamp(j); if (!t) { problems.push(name + ': its file has no date (' + f + '), so its age cannot be checked. The output format may have changed.'); continue; }
   const age = lim.biz ? bizHours(t) : (now - t) / 864e5, stale = lim.biz ? age > lim.biz : age > lim.days;
   if (stale) problems.push(name + ': last result ' + new Date(t).toISOString().slice(0, 16).replace('T', ' ') + ' UTC; it should update ' + how + '. The job is probably failing.');

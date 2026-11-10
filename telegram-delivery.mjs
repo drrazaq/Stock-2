@@ -1,9 +1,10 @@
 import {deliverTelegramDurably} from './telegram-delivery-ledger.mjs';
 import fs from 'node:fs';
 // Telegram delivery must be acknowledged. A resolved HTTP request is not proof of delivery.
-export async function sendTelegramMessage({fetcher=fetch,base='https://api.telegram.org',token,chat,text,replyMarkup,timeoutMs=10000}) {
+export async function sendTelegramMessage({fetcher=fetch,base='https://api.telegram.org',token,chat,text,replyMarkup,timeoutMs=10000,currentEvidence}) {
  if(!token||!chat) return {ok:false,reason:'MISSING_CREDENTIALS'};
  if(typeof text!=='string'||!text.length||text.length>4096)return {ok:false,reason:'INVALID_TEXT_LENGTH'};
+ if(currentEvidence){try{if(currentEvidence(Date.now())!==true)return {ok:false,reason:'LOCAL_EVIDENCE_REFUSAL',definitelyUnsent:true};}catch{return {ok:false,reason:'LOCAL_EVIDENCE_REFUSAL',definitelyUnsent:true};}}
  try {
   const res=await fetcher(base+'/bot'+token+'/sendMessage',{method:'POST',signal:AbortSignal.timeout(timeoutMs),headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:chat,text,disable_web_page_preview:true,...(replyMarkup?{reply_markup:replyMarkup}:{})})});
   if(!res.ok) {let retryAfter=null;if(res.status===429){try{const b=await res.json();if(Number.isFinite(b?.parameters?.retry_after)&&b.parameters.retry_after>=0)retryAfter=b.parameters.retry_after;}catch{}}return {ok:false,reason:'HTTP_'+res.status,...(retryAfter!==null?{retryAfter}: {})};}
@@ -20,13 +21,13 @@ export function splitTelegramText(text,limit=3900){
 // Compatibility facade for scheduled reports and rich bot replies. API failure
 // becomes ok:false even if HTTP was 200; only explicit 429 is retried. An
 // ambiguous network outcome is never automatically resent.
-export async function telegramFetch(url,options,{fetcher=fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),recordFailure=true,research=false,retry429=true,durability=null}={}){
+export async function telegramFetch(url,options,{fetcher=fetch,sleep=ms=>new Promise(r=>setTimeout(r,ms)),recordFailure=true,research=false,retry429=true,durability=null,currentEvidence=null}={}){
  const u=new URL(url);if(!((u.protocol==='https:'&&u.hostname==='api.telegram.org')||(u.protocol==='http:'&&['127.0.0.1','localhost'].includes(u.hostname))))throw Error('invalid Telegram host');
  const m=/^\/bot([^/]+)\/sendMessage$/.exec(u.pathname);if(!m)throw Error('not a Telegram message endpoint');
  const body=JSON.parse(options.body);
  if(durability){
   const result=await deliverTelegramDurably({store:durability.store,scope:JSON.stringify([String(body.chat_id),durability.scope||'message']),eventId:durability.eventId,message:JSON.stringify([body.text,body.reply_markup??null,research]),
-   send:async()=>{const r=await telegramFetch(url,options,{fetcher,sleep,recordFailure,research,retry429});const b=await r.json();return {ok:r.ok,messageId:b?.result?.message_id,reason:b.description,deliveredParts:r.deliveredParts,totalParts:r.totalParts};}});
+   send:async()=>{const r=await telegramFetch(url,options,{fetcher,sleep,recordFailure,research,retry429,currentEvidence});const b=await r.json();return {ok:r.ok,messageId:b?.result?.message_id,reason:b.description,deliveredParts:r.deliveredParts,totalParts:r.totalParts};}});
   const response=result.ok?{ok:true,result:{message_id:result.messageId}}:{ok:false,description:result.reason};
   return {ok:result.ok,status:result.ok?200:409,json:async()=>response,text:async()=>JSON.stringify(response),deliveredParts:result.deliveredParts||0,totalParts:result.totalParts||0,deduplicated:result.deduplicated===true,deliveryReason:result.reason||null};
  }
@@ -34,7 +35,7 @@ export async function telegramFetch(url,options,{fetcher=fetch,sleep=ms=>new Pro
  const parts=splitTelegramText(text);let result={ok:false,reason:'INVALID_TEXT_LENGTH'},deliveredParts=0;
  for(let i=0;i<parts.length;i++){
   for(let attempt=0;attempt<3;attempt++){
-   result=await sendTelegramMessage({fetcher,base:u.origin,token:m[1],chat:body.chat_id,text:parts[i],replyMarkup:i===parts.length-1?body.reply_markup:null});
+   result=await sendTelegramMessage({fetcher,base:u.origin,token:m[1],chat:body.chat_id,text:parts[i],replyMarkup:i===parts.length-1?body.reply_markup:null,currentEvidence});
    if(result.ok||!retry429||result.reason!=='HTTP_429'||attempt===2)break;
    const wait=result.retryAfter??1;if(wait>5)break;await sleep(wait*1000);
   }
