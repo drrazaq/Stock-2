@@ -214,3 +214,54 @@ export function npyAt(co, asOf, mv) {
   const npy = (div + rep - iss) / mv; if (!isFinite(npy) || npy >= 0.4) return null;
   return { end: anchor.end, div, rep, iss, npy };
 }
+
+// ---- B-FCFN1 and B-V15BE (pre-registered 10 Nov 2026, value-lab.mjs header, before any run) ----
+// ONE QUARTER of a cash-flow-style item (operating cash flow, capex, net income) ending `end` (within 5 days), from figures known before
+// asOf: the 3-month figure if filed; else the longest year-to-date figure ending `end` (170-380 days; 10-Qs report cash flows year to
+// date, a 10-K reports the year) minus the figure with the SAME start that ended 80-100 days earlier. null if not known.
+function qFlow(P, end) {
+  const q = P.find(z => isQuarter(z) && near(z.e, end, 5)); if (q) return q.v;
+  for (const y of P.filter(z => z.d >= 170 && z.d <= 380 && near(z.e, end, 5)).sort((a, b) => b.d - a.d)) {
+    const p = P.find(z => z.s === y.s && z.d > 0 && y.d - z.d >= 80 && y.d - z.d <= 100); if (p) return y.v - p.v; }
+  return null;
+}
+export const quarterFlowAt = (facts, asOf, end) => qFlow(known(facts, asOf), end);
+// this quarter (ending `end`) and the same quarter a year earlier (a period end within 7 days of one year before), one tag, both known
+// before asOf: { now, prior, priorEnd } or null
+function yoyPair(facts, asOf, end) {
+  const P = known(facts, asOf), now = qFlow(P, end); if (now === null) return null;
+  const ends = [...new Set(P.map(z => z.e))].filter(e => near(e, shiftYear(end), 7)).sort((a, b) => Math.abs(days(a, shiftYear(end))) - Math.abs(days(b, shiftYear(end))));
+  for (const e of ends) { const prior = qFlow(P, e); if (prior !== null) return { now, prior, priorEnd: e }; }
+  return null;
+}
+// FCF NEWS (B-FCFN1, Lem, Koski and McVay): (this quarter's operating cash flow - capex) minus the same quarter a year earlier, over the
+// market value; the first operating-cash-flow tag and the first capex tag that give both quarters (capex year-ago end within 7 days of
+// the cash flow's). EARNINGS NEWS (the control): the same for net income. |news| >= 0.4 = a data error -> null.
+export function fcfNewsAt(co, asOf, end, mv) {
+  if (!(mv > 0)) return null;
+  const cfo = firstOf(co.cfo, f => yoyPair(f, asOf, end)); if (!cfo) return null;
+  const cap = firstOf(co.capex, f => { const r = yoyPair(f, asOf, end); return r && near(r.priorEnd, cfo.priorEnd, 7) ? r : null; }); if (!cap) return null;
+  const news = ((cfo.now - cap.now) - (cfo.prior - cap.prior)) / mv; return isFinite(news) && Math.abs(news) < 0.4 ? news : null;
+}
+export function niNewsAt(co, asOf, end, mv) {
+  if (!(mv > 0)) return null;
+  const ni = firstOf(co.ni, f => yoyPair(f, asOf, end)); if (!ni) return null;
+  const news = (ni.now - ni.prior) / mv; return isFinite(news) && Math.abs(news) < 0.4 ? news : null;
+}
+// CAUSAL TOP-10% CUT (B-FCFN1): the 90th percentile (value at index floor(0.9 x (n-1)) of the sorted pool) of the news of every eligible
+// filing in the 63 sessions BEFORE the formation session (never the same day or later); null under 200 values in the pool.
+export function trailingCut(sortedPool, q = 0.9, minN = 200) { return sortedPool.length >= minN ? sortedPool[Math.floor(q * (sortedPool.length - 1))] : null; }
+// V15 EXITS (B-V15BE). closes / opens: arrays by session; ma50: the 50-day average by session; te = the entry session (bought at its
+// open). Every check is on the CLOSE, the sale at the NEXT open: close <= 75% of the buy (the 25% stop); close >= 130% of its 50-day
+// average (SELL WITH PROFIT); be = true adds the break-even stop: after a close >= 115% of the buy, a later close under the buy price.
+// Otherwise the close of the 126th session (te + 125). No later open -> the sale is that close. null if the hold runs past the data.
+export function v15Exit(closes, opens, ma50, te, be, hold = 126) {
+  const e = opens[te]; if (!(e > 0)) return null; const last = te + hold - 1; if (last >= closes.length) return null; let armed = false;
+  for (let k = te; k <= last; k++) { const c = closes[k]; if (!(c > 0)) continue;
+    if (k === last) return { x: k, k: 'c', g: c / e - 1, why: 'time' };
+    const why = c <= 0.75 * e ? 'stop' : (be && armed && c < e) ? 'break-even' : (ma50[k] > 0 && c >= 1.3 * ma50[k]) ? 'profit' : null;
+    if (why) { const o = opens[k + 1]; return o > 0 ? { x: k + 1, k: 'o', g: o / e - 1, why } : { x: k, k: 'c', g: c / e - 1, why }; }
+    if (be && c >= 1.15 * e) armed = true; }
+  for (let k = last; k >= te; k--) { const c = closes[k]; if (c > 0) return { x: last, k: 'c', g: c / e - 1, why: 'time' }; }
+  return null;
+}

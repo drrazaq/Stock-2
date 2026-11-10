@@ -3378,8 +3378,8 @@
    "id": "B-V15BE",
    "family": "Exits and risk",
    "name": "LONGER HOLDS with a break-even stop after +15%",
-   "explain": "Same buy as V15 (F-score 8-9, above the 200-day). Exit variant registered as its own test: when the stock is 15% above the buy, the stop moves to the buy price; otherwise unchanged (25% stop, SELL WITH PROFIT 30%+ above the 50-day, review at 6 months). Compared with the V15 exits on the same buys; the live V15 rule is not changed.",
-   "status": "queued (Agent B)",
+   "explain": "PRE-REGISTERED 10 Nov 2026 (value-lab.mjs header, value-core v15Exit). Buys = V15 exactly (F-score 8-9 above the 200-day, else the 10 best, every 21 sessions; buy the next open). Exits on CLOSES (no intraday lows in the cache), sold at the next open: close <= 75% of the buy (25% stop), close >= 130% of its 50-day average (SELL WITH PROFIT), else the close of the 126th session; the variant adds a break-even stop: after a close >= 115% of the buy, a later close under the buy price. Average stock and SPY over the same windows. value-core judge (blocks of 126) plus, both halves: better than the same buys with the V15 live exits, and better than SPY over the same windows. The live V15 rule is not changed by any result.",
+   "status": "pre-registered 2026-11-10 (value lab); run once pending",
    "agent": "B",
    "note": "From the owner's sources of 23 Oct (morning). Pre-register one version before any run; judged at PROVEN and TRADABLE SMALL; must beat the average stock and the same stock on other days."
   },
@@ -33201,13 +33201,13 @@
    "family": "Quality and value",
    "name": "Free cash flow news drift after the 10-Q / 10-K",
    "agent": "B",
-   "status": "queued (Agent B)",
+   "status": "pre-registered 2026-11-10 (value lab); run once pending",
    "registered": "2026-11-03",
-   "explain": "At each 10-Q / 10-K filing (SEC acceptance time, entry the next open): FCF news = (this quarter's operating cash flow - capex) minus the same quarter a year earlier, over market value; top 10% of liquid non-financial filers that day group (monthly pool); hold 63 sessions. Must beat the average stock, the same stocks on other filings, and an earnings-news-only version (net income change, same scaling) on the same filings, both halves, value-core judge.",
+   "explain": "PRE-REGISTERED 10 Nov 2026 (value-lab.mjs header, value-core fcfNewsAt / niNewsAt / trailingCut). Events: each company's SEC filing day whose newest operating-cash-flow period was first filed that day, 1-120 days after the period end (an original 10-Q / 10-K). Buy the open of the session AFTER the filing day (companyfacts has no acceptance time), sell the close 63 sessions later. Eligible: liquid (5 USD+, 5M USD+ a day), non-financial, share count known. FCF news = (this quarter's operating cash flow - capex) minus the same quarter a year earlier, over market value at the formation close (YTD figures differenced; |news| >= 40% = data error). Pick: news > 0 and above the 90th percentile of all eligible filings formed in the 63 sessions BEFORE (200+ values; causal, replacing the 3 Nov 'monthly pool' wording, which would rank against later filings of the same month). value-core judge (tier 2 at block t 2.5, PROVEN at the bar) plus, both halves: better than the earnings-news-only version (net income change, same scaling and cut) and better than SPY bought the same dates. Same-stock-other-days = the stock's other eligible filings in the half that were not picked.",
    "sources": [
     "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5375954"
    ],
-   "note": "Web scout 3 Nov 2026. Lem, Koski and McVay (SSRN 2025): the market reacts to FCF news at the earnings announcement, more for growth firms and noisy earnings; the paper measures the reaction, NOT a later drift, so a drift test is a new trial. Data: SEC companyfacts quarterly cash flows (in value-cache) + filing dates: the system has it. Queue position 1 for Agent B."
+   "note": "Web scout 3 Nov 2026. Lem, Koski and McVay (SSRN 2025): the market reacts to FCF news at the earnings announcement, more for growth firms and noisy earnings; the paper measures the reaction, NOT a later drift, so a drift test is a new trial. Data: SEC companyfacts quarterly cash flows (in value-cache) + filing dates: the system has it. Queue position 1 for Agent B. 10 Nov 2026: exact rule pre-registered before any run (Agent B)."
   },
   {
    "id": "B-BBG1",
@@ -34591,6 +34591,34 @@
     ],
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.04 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -0.52 under 2.5 in the newer half"
    }
+  },
+  {
+   "id": "B-OE1",
+   "family": "Quality and value",
+   "name": "Owner's earnings yield (cash-based operating profit minus capex, over market value)",
+   "agent": "B",
+   "status": "queued (Agent B)",
+   "registered": "2026-11-10",
+   "explain": "Each 21-session formation: liquid non-financial stocks; owner earnings = TTM (revenue - cost of sales - SG&A + R&D - the change in receivables, inventory and prepaid + the change in payables, deferred revenue and accrued expenses) - TTM capex, over market value; top 10%, equal weight, hold 126 sessions; value-core judge plus: better than B-FCF1 and ANOM-CFOA picks on the same dates, both halves.",
+   "sources": [
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4794183",
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2587199"
+   ],
+   "note": "Web scout 10 Nov 2026 (Vyas 2024: owner earnings subsumes cash-based operating profitability; FF6 / q5 alpha, Sharpe 1.19, in sample). Close sibling of ANOM-CFOA (rejected) and B-FCF1 (not proven); cash-based profitability is reported about 26% weaker out of sample and 58% weaker after publication, so the prior is low. Data: SEC companyfacts (SG&A, R&D and working-capital tags would need adding to value-cache): the system can get it. Queue position 3."
+  },
+  {
+   "id": "B-DREV1",
+   "family": "Quality and value",
+   "name": "Deferred revenue growth (customers paying ahead)",
+   "agent": "B",
+   "status": "queued (Agent B)",
+   "registered": "2026-11-10",
+   "explain": "At each 10-Q / 10-K (entry the session after the filing day): the change in deferred revenue (ContractWithCustomerLiability, else DeferredRevenueCurrent + DeferredRevenueNoncurrent) over the last 4 quarters, over total assets; liquid non-financial companies with deferred revenue >= 2% of assets; top 10% by the causal 63-session cut used in B-FCFN1; hold 63; value-core judge plus: better than the same filings' revenue-growth top 10%, both halves.",
+   "sources": [
+    "https://portal.northernfinanceassociation.org/viewp.php?n=2240211204",
+    "https://www.federalreserve.gov/econres/feds/files/2021-037pap.pdf"
+   ],
+   "note": "Web scout 10 Nov 2026: deferred revenue change (Prakash and Sinha 2013) is in the replication lists (Chen and Zimmermann, Open Source Cross-Sectional Asset Pricing; the NFA Staleness Trap paper). Data: SEC companyfacts (tags to add). Queue position 4."
   }
  ]
 }
