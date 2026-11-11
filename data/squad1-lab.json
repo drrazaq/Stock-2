@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-11-10T03:29:46.203Z",
+ "generatedAt": "2026-11-11T01:07:40.512Z",
  "squad": 1,
  "philosophy": "information edge: official filings and data the market has not priced yet",
  "preRegistered": "squad1-core.mjs RULES (24 Oct 2026, before any run) + data/strategy-library.json SQ1-*",
  "window": [
   "2021-11-01",
-  "2026-11-09"
+  "2026-11-10"
  ],
  "bar": 4.1,
  "split": "2024-01-01",
@@ -19,37 +19,39 @@
    "purchases": 139898,
    "dataSetsTo": "2026-09-30",
    "forwardDays": 11,
-   "forwardDocsWithBuys": 122,
-   "forwardMissing": []
+   "forwardDocsWithBuys": 0,
+   "forwardMissing": [
+    "2026-11-10"
+   ]
   },
   "si": {
    "ok": true,
    "months": 61,
    "withData": 60,
    "fromAnomalyCache": 0,
-   "tried": 3,
+   "tried": 2,
    "note": "FINRA API: not a list for 2026-11"
   },
   "efts": {
    "ok": true,
-   "monthsFetchedNow": 78,
+   "monthsFetchedNow": 39,
    "missing": [],
-   "buybackHits": 6816,
-   "guidanceHits": 5846
+   "buybackHits": 6827,
+   "guidanceHits": 5858
   },
   "buyback": {
    "ok": true,
-   "documents": 5258,
+   "documents": 5268,
    "readNow": 10,
    "notRead": 0,
-   "withAmount": 4730,
-   "filings": 4078,
-   "size5": 1560,
-   "size3dip": 442
+   "withAmount": 4740,
+   "filings": 4087,
+   "size5": 1565,
+   "size3dip": 445
   },
   "guidance": {
    "ok": true,
-   "hits": 5846
+   "hits": 5858
   },
   "customer": {
    "ok": false,
@@ -74,24 +76,24 @@
   },
   "divs": {
    "ok": true,
-   "rows": 485710,
+   "rows": 485792,
    "at": "2026-11-06T01:38:50.799Z"
   },
   "price": {
    "ok": true,
-   "sessions": 1261
+   "sessions": 1262
   }
  },
  "signalCounts": {
   "SQ1-INSCLU": {
    "dataOk": true,
    "older": 298,
-   "newer": 347
+   "newer": 349
   },
   "SQ1-CEODIP": {
    "dataOk": true,
    "older": 354,
-   "newer": 351
+   "newer": 353
   },
   "SQ1-INSLOWSI": {
    "dataOk": true,
@@ -101,7 +103,7 @@
   "SQ1-BBAUTH": {
    "dataOk": true,
    "older": 342,
-   "newer": 495
+   "newer": 497
   },
   "SQ1-BBDIP": {
    "dataOk": true,
@@ -116,7 +118,7 @@
   "SQ1-GUIDEUP": {
    "dataOk": true,
    "older": 1039,
-   "newer": 1733
+   "newer": 1739
   },
   "SQ1-RECUP": {
    "dataOk": false,
@@ -130,8 +132,8 @@
   },
   "SQ1-SIAVOID": {
    "dataOk": true,
-   "older": 3080,
-   "newer": 5329
+   "older": 3083,
+   "newer": 5338
   }
  },
  "standard": "both halves (signal before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions, better than the same stock on its other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.1 -> PROVEN. Gross returns capped at +300% for trades and yardsticks alike (AUD-1). The avoid rule is never a buy.",
@@ -15455,7 +15457,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-10T03:29:46.203Z",
+  "at": "2026-11-11T01:07:40.512Z",
   "results": {
    "SQ1-RECUP": {
     "verdict": "NOT RUN",
