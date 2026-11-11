@@ -1,4 +1,4 @@
-import {createPrivateQuoteRetention} from './private-quote-retention.mjs';
+import {startPrivateQuoteRetention} from './private-quote-retention.mjs';
 import {watcherAdmission} from './watcher-schedule.mjs';
 import {publishWatcherReservation} from './watcher-message-publish.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
@@ -19,7 +19,7 @@ import {sessionFinished,preferSession,runIdentity,sessionEvidence} from './watch
 // Alpaca snapshots (IEX, free) for the whole snapshot universe; thin stocks may have no recent IEX trade (never alerted; the audit
 // says so). Volume stays the late Massive figure (can only undercount). Last fallback: Alpaca's top-50 gainers (PARTIAL coverage).
 // Read-only; never places an order.
-import { snapshots, feedUsed, snapshotFeed } from './alpaca-feed.mjs';
+import { snapshots, feedUsed, snapshotFeed, snapshotReceipt } from './alpaca-feed.mjs';
 import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot, validateClocks } from './snapshot-fields.mjs';   // (1 Nov) every field keeps its own provider clock and feed
 import { sendAlert } from './opp-mode.mjs';
 import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
@@ -58,8 +58,8 @@ if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.ex
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
 if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
 // Opt-in development binding only; no configuration or private storage is provisioned here.
-const PRIVATE_QUOTE_RETENTION=env.PRIVATE_QUOTE_RETENTION_ROOT?createPrivateQuoteRetention({root:env.PRIVATE_QUOTE_RETENTION_ROOT,checkout:process.cwd(),policySha256:env.PRIVATE_QUOTE_POLICY_SHA256,sourceSha:INCIDENT_SHA,runId:INCIDENT_RUN_ID}):null;
-if(PRIVATE_QUOTE_RETENTION)process.once('exit',()=>PRIVATE_QUOTE_RETENTION.close());
+const PRIVATE_QUOTE_RETENTION=startPrivateQuoteRetention({root:env.PRIVATE_QUOTE_RETENTION_ROOT,checkout:process.cwd(),policySha256:env.PRIVATE_QUOTE_POLICY_SHA256,sourceSha:INCIDENT_SHA,runId:INCIDENT_RUN_ID});
+if(env.PRIVATE_QUOTE_RETENTION_ROOT){console.log('private quote retention: '+JSON.stringify(PRIVATE_QUOTE_RETENTION.report()));process.once('exit',()=>PRIVATE_QUOTE_RETENTION.close());}
 const RUN_START = Date.now(); // Observation budget excludes the bounded pre-open wait.
 // ---- each stock's normal daily volume (average over the days it traded, 15+ of the last 20 needed), float, time listed
 const avgVol = new Map(), firstSeen = new Map(), avgRange5 = new Map(); let sessions = 0;   // avgRange5: average high-low range of the last 5 sessions (the 'ADR' idea, logged only)
@@ -91,14 +91,14 @@ const AH = () => ({ headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECR
 async function snapTop50() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
   try { const r = await fetch(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
-    const sj = await snapshots(ALPD, syms, AH(), fetch, PRIVATE_QUOTE_RETENTION?.capture); if(!sj)return null; const sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
-    const at = Date.now(); const rows=syms.map(s => validateClocks(alpacaSnapshot(s, sj[s] || {}, sip, at), at)); return rows.some(r=>r.price>0||r.prevC>0||r.open>0||r.vol>0)?rows:null; } catch (e) { return null; } }
+    const sj = await snapshots(ALPD, syms, AH(), undefined, PRIVATE_QUOTE_RETENTION.capture); if(!sj)return null; const sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
+    const at = PRIVATE_QUOTE_RETENTION.capture?snapshotReceipt(sj):Date.now(); const rows=syms.map(s => validateClocks(alpacaSnapshot(s, sj[s] || {}, sip, at), at)); return rows.some(r=>r.price>0||r.prevC>0||r.open>0||r.vol>0)?rows:null; } catch (e) { return null; } }
 async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
-    try { const sj = await snapshots(ALPD, part, AH(), fetch, PRIVATE_QUOTE_RETENTION?.capture); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
-      const at = Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = validateClocks(alpacaSnapshot(s, x || {}, sip, at), at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
+    try { const sj = await snapshots(ALPD, part, AH(), undefined, PRIVATE_QUOTE_RETENTION.capture); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
+      const at = PRIVATE_QUOTE_RETENTION.capture?snapshotReceipt(sj):Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = validateClocks(alpacaSnapshot(s, x || {}, sip, at), at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
   return out; }
 async function snap() {
@@ -287,14 +287,14 @@ async function radarSnap(m, scanned, live) {
     moverCount: ms.length, movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
   await sendRadarOnce();
 }
-const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
+const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,...(env.PRIVATE_QUOTE_RETENTION_ROOT?{privateQuoteRetention:PRIVATE_QUOTE_RETENTION.report()}:{}),heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
 process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
 saveObservationProgress();
 while (Date.now() - RUN_START < MAXMS) {
   const passStartedAt = Date.now(); // Include snapshot/stop-watch work in this pass, without inventing catch-up observations.
   MESSAGE_STATE.maintain();
   let m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
-  const rows = await snap(); m=clock(); if(m>900)break; loops++; const tStart = triggers.length;
+  const rows = await snap(); if(env.PRIVATE_QUOTE_RETENTION_ROOT){try{PRIVATE_QUOTE_RETENTION.publish();}catch{}console.log('private quote retention: '+JSON.stringify(PRIVATE_QUOTE_RETENTION.report()));} m=clock(); if(m>900)break; loops++; const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
     // (4 Nov) every held stock gets its own price evidence (ticker-bound response, provider clock, age); no row or a stale/undated one -> STOP CHECK UNKNOWN, never silently safe
@@ -374,7 +374,7 @@ const coverage = beat.length ? { countingBasis:'UNIQUE_USABLE_CONFIGURED_MINUTES
   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
 // Incident backport: archive on original observation basis before any canonical end-of-run publication.
-const incidentSnapshot={version:IG_VERSION,configuredWindow:{open:570,endExclusive:901},collectionVersion:"WATCHER_CONTEXT_V2",day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()};
+const incidentSnapshot={version:IG_VERSION,configuredWindow:{open:570,endExclusive:901},collectionVersion:"WATCHER_CONTEXT_V2",...(env.PRIVATE_QUOTE_RETENTION_ROOT?{privateQuoteRetention:PRIVATE_QUOTE_RETENTION.report()}:{}),day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()};
 const incidentArchive='data/ignition-runs/'+day;
 fs.mkdirSync(incidentArchive,{recursive:true});
 fs.writeFileSync(incidentArchive+'/'+INCIDENT_RUN_ID+'.json',JSON.stringify(incidentSnapshot),{flag:'wx'});

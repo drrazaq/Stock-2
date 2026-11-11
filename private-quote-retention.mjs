@@ -52,33 +52,58 @@ export function createPrivateQuoteRetention({root,checkout,policySha256,sourceSh
  root=privateRoot(root,checkout);const {p,identities}=policyAt(root,policySha256);
  if(!p.reviewedProducerShas.includes(sourceSha)||!Number.isFinite(now())||Date.parse(p.review.at)>now()||!/^[-a-zA-Z0-9_]{1,80}$/.test(runId))throw Error('UNREVIEWED_PRODUCER_OR_RUN');
  fs.mkdirSync(path.join(root,'.writer.lock'),{mode:0o700});
- let closed=false,stopped=false,rows=[],attempts=[],generation=0;
- // Existing state is never overwritten by a new run; recovery is read-only, not a writer resume.
- if(fs.existsSync(path.join(root,'current.json'))){fs.rmdirSync(path.join(root,'.writer.lock'));throw Error('FRESH_RUN_ROOT_REQUIRED');}
- const stop=reason=>{stopped=true;atomic(root,'current.json',bytes({kind:'PRIVATE_QUOTE_POINTER_V1',status:'UNAVAILABLE',reason,runId}));};
+ let closed=false,stopped=false,rows=0,attempts=0,generation=0,pending=false;const latest=new Map();
+ if(fs.existsSync(path.join(root,'current.json'))||fs.existsSync(path.join(root,'receipts.jsonl'))){fs.rmdirSync(path.join(root,'.writer.lock'));throw Error('FRESH_RUN_ROOT_REQUIRED');}
+ const stop=()=>{stopped=true;atomic(root,'current.json',bytes({kind:'PRIVATE_QUOTE_POINTER_V1',status:'UNAVAILABLE',reason:'CAPTURE_FAILED',runId}));};
+ const report=()=>({status:stopped?'STOPPED':closed?'CLOSED':generation?'RETAINING':'AWAITING_CYCLE',observations:rows,attempts,generations:generation});
  return {
+  root,report,
   capture(event){
    if(closed||stopped)throw Error('RETENTION_STOPPED');
    try{
     if(event.provider!=='ALPACA'||!['sip','iex'].includes(event.feed)||!stamp(event.receivedAt)||!stamp(event.requestStartedAt)||Date.parse(event.requestStartedAt)>Date.parse(event.receivedAt)||Date.parse(event.receivedAt)>now()||!['SUCCESS','HTTP_FAILURE','NETWORK_ERROR','INVALID_SNAPSHOT_JSON'].includes(event.outcome)||(event.outcome==='SUCCESS'&&(!event.payload||typeof event.payload!=='object'||Array.isArray(event.payload))))throw Error('RECEIPT_PROVENANCE');
-    const scoped=event.requestedSymbols||Object.keys(event.payload||{});if(!Array.isArray(scoped)||scoped.length>30000||new Set(scoped).size!==scoped.length||scoped.some(s=>typeof s!=='string'||!/^[-A-Z0-9.]{1,15}$/.test(s)))throw Error('REQUEST_SCOPE');
-    const entries=event.outcome==='SUCCESS'?scoped.map(s=>[s,event.payload[s]]):[];if(entries.some(([s])=>!/^[-A-Z0-9.]{1,15}$/.test(s)))throw Error('SYMBOL_SCHEMA');
-    const additions=entries.map(([s,r])=>normalized(s,r,event,identities));
-    if(rows.length+additions.length>30000||generation>=8)throw Error('RUN_ROW_OR_GENERATION_CAP');
-    // Keep malformed/missing/stale quote attempts as evidence. Reader must reject; never backfill a quote clock.
-    const next=[...rows,...additions],latest=new Map();for(const q of next){const old=latest.get(q.symbol);if(!old||q.at>old[0].at)latest.set(q.symbol,[q]);else if(q.at===old[0].at)old.push(q);}const nextAttempts=[...attempts,{provider:event.provider,feed:event.feed,requestStartedAt:event.requestStartedAt,receivedAt:event.receivedAt,outcome:event.outcome,httpStatus:Number.isInteger(event.httpStatus)?event.httpStatus:null,rows:additions.length}],book=bytes({kind:'RESEARCH_ONLY',sourceSha,runId,attempts:nextAttempts,observations:next,quotes:[...latest.values()].flat()}),compressed=zlib.gzipSync(book);
+    const scoped=event.requestedSymbols||Object.keys(event.payload||{});
+    if(!Array.isArray(scoped)||scoped.length>30000||new Set(scoped).size!==scoped.length||scoped.some(s=>typeof s!=='string'||!/^[-A-Z0-9.]{1,15}$/.test(s)))throw Error('REQUEST_SCOPE');
+    if(event.payload&&Object.keys(event.payload).some(s=>!scoped.includes(s)))throw Error('RESPONSE_SCOPE');
+    const additions=scoped.map(symbol=>({...normalized(symbol,event.payload?.[symbol],event,identities),captureOutcome:event.outcome}));
+    if(rows+additions.length>30000||attempts>=30000)throw Error('RUN_ROW_OR_ATTEMPT_CAP');
+    const attempt={provider:event.provider,feed:event.feed,requestStartedAt:event.requestStartedAt,receivedAt:event.receivedAt,outcome:event.outcome,httpStatus:Number.isInteger(event.httpStatus)?event.httpStatus:null,rows:additions.length};
+    const line=Buffer.concat([bytes({attempt,quotes:additions}),Buffer.from('\n')]);
+    if(line.length>MAXFILE||usage(root)+line.length+4096>MAX)throw Error('RUN_STORAGE_CAP');
+    const fd=fs.openSync(path.join(root,'receipts.jsonl'),fs.constants.O_WRONLY|fs.constants.O_CREAT|fs.constants.O_APPEND|fs.constants.O_NOFOLLOW,0o600);
+    try{fs.writeFileSync(fd,line);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}
+    for(const q of additions){const old=latest.get(q.symbol);if(!old||q.at>old[0].at)latest.set(q.symbol,[q]);else if(q.at===old[0].at){if(q.captureOutcome!=='SUCCESS'||old.every(x=>x.captureOutcome!=='SUCCESS'))latest.set(q.symbol,[q]);else old.push(q);}}
+    rows+=additions.length;attempts++;pending=true;return report();
+   }catch(error){stop();throw error;}
+  },
+  publish(){
+   if(closed||stopped)return report();if(!pending)return report();
+   try{
+    if(generation>=8)throw Error('RUN_GENERATION_CAP');
+    const book=bytes({kind:'RESEARCH_ONLY',sourceSha,runId,quotes:[...latest.values()].flat()}),compressed=zlib.gzipSync(book);
     if(book.length>16*1024*1024||compressed.length>MAXFILE)throw Error('ARCHIVE_CAP');
     const n=generation+1,archive='quotes-'+n+'.json.gz',manifest='join-'+n+'.json';
     const m=bytes({kind:'ASSESSMENT_PRIVATE_QUOTE_JOIN_V1',review:p.review,reviewedProducerShas:p.reviewedProducerShas,identity:p.identity,archives:[{path:archive,sha256:quoteHash(compressed)}]});
-    const pointer=bytes({kind:'PRIVATE_QUOTE_POINTER_V1',status:event.outcome==='SUCCESS'?'PUBLISHED':'UNAVAILABLE',runId,generation:n,manifest,manifestSha256:quoteHash(m),publishedAt:event.receivedAt,expiresAt:new Date(Date.parse(event.receivedAt)+120000).toISOString()});
-    // Includes retained older generations and staging; never delete evidence to meet cap.
+    const publishedMs=now(),publishedAt=new Date(publishedMs).toISOString();
+    const pointer=bytes({kind:'PRIVATE_QUOTE_POINTER_V1',status:'PUBLISHED',runId,generation:n,manifest,manifestSha256:quoteHash(m),publishedAt,expiresAt:new Date(publishedMs+120000).toISOString()});
     if(usage(root)+compressed.length+m.length+pointer.length+4096>MAX)throw Error('RUN_STORAGE_CAP');
     immutable(root,archive,compressed);immutable(root,manifest,m);atomic(root,'current.json',pointer);
-    rows=next;attempts=nextAttempts;generation=n;return {status:'PUBLISHED',rows:rows.length,generation,bytes:usage(root)};
-   }catch(error){stop('CAPTURE_FAILED');throw error;}
+    generation=n;pending=false;return report();
+   }catch(error){stop();throw error;}
   },
   close(){if(!closed){closed=true;fs.rmdirSync(path.join(root,'.writer.lock'));}},
  };
+}
+// An optional research recorder must never take down the scanner. Old locks are never stolen.
+export function startPrivateQuoteRetention(options){
+ if(!options?.root)return {capture:undefined,publish:()=>{},close:()=>{},report:()=>({status:'OFF'})};
+ try{
+  const base=privateRoot(options.root,options.checkout);policyAt(base,options.policySha256);
+  if(!/^[-a-zA-Z0-9_]{1,80}$/.test(options.runId))throw Error('RUN');
+  const root=path.join(base,options.runId);fs.mkdirSync(root,{mode:0o700});
+  for(const name of ['policy.json','identities.json'])immutable(root,name,file(base,name));
+  return createPrivateQuoteRetention({...options,root});
+ }catch{return {capture:undefined,publish:()=>{},close:()=>{},report:()=>({status:'DISABLED_INITIALIZATION_FAILED'})};}
 }
 export function readPrivateAssessmentQuote(symbol,{root,policySha256,now=Date.now()}={}){
  try{
@@ -95,15 +120,15 @@ export function readPrivateAssessmentQuote(symbol,{root,policySha256,now=Date.no
 // Export/restore is a byte-preserving offline recovery test, never a fresh quote or automatic remote upload.
 export function exportQuoteRecovery(root){
  if(fs.existsSync(path.join(root,'.writer.lock')))throw Error('WRITER_ACTIVE');
- const files=fs.readdirSync(root).sort().map(name=>{if(!/^(policy|identities|current|join-\d+)\.json$|^quotes-\d+\.json\.gz$/.test(name))throw Error('RECOVERY_UNEXPECTED_PATH');const b=file(root,name);return {name,sha256:quoteHash(b),data:b.toString('base64')};});
+ const files=fs.readdirSync(root).sort().map(name=>{if(!/^(policy|identities|current|join-\d+)\.json$|^quotes-\d+\.json\.gz$|^receipts\.jsonl$/.test(name))throw Error('RECOVERY_UNEXPECTED_PATH');const b=file(root,name,name==='receipts.jsonl'?MAX:MAXFILE);return {name,sha256:quoteHash(b),data:b.toString('base64')};});
  const b=bytes({kind:'PRIVATE_QUOTE_RECOVERY_V1',files});if(b.length>48*1024*1024)throw Error('RECOVERY_CAP');return {bytes:b,sha256:quoteHash(b)};
 }
 export function restoreQuoteRecovery({bundle,pinnedSha256,root,checkout}){
  if(bundle.length>48*1024*1024||quoteHash(bundle)!==pinnedSha256)throw Error('RECOVERY_PIN');
  root=privateRoot(root,checkout);if(fs.readdirSync(root).length)throw Error('RECOVERY_TARGET_NOT_EMPTY');
- const d=JSON.parse(bundle);if(d.kind!=='PRIVATE_QUOTE_RECOVERY_V1'||!Array.isArray(d.files)||d.files.length>19)throw Error('RECOVERY_SCHEMA');
+ const d=JSON.parse(bundle);if(d.kind!=='PRIVATE_QUOTE_RECOVERY_V1'||!Array.isArray(d.files)||d.files.length>20)throw Error('RECOVERY_SCHEMA');
  const seen=new Set(),checked=[];let total=0;
- for(const r of d.files){if(!/^(policy|identities|current|join-\d+)\.json$|^quotes-\d+\.json\.gz$/.test(r.name)||seen.has(r.name))throw Error('RECOVERY_PATH');seen.add(r.name);const b=Buffer.from(r.data,'base64');total+=b.length;if(b.length>MAXFILE||total>MAX||quoteHash(b)!==r.sha256)throw Error('RECOVERY_BYTES');checked.push([r.name,b]);}
+ for(const r of d.files){if(!/^(policy|identities|current|join-\d+)\.json$|^quotes-\d+\.json\.gz$|^receipts\.jsonl$/.test(r.name)||seen.has(r.name))throw Error('RECOVERY_PATH');seen.add(r.name);const b=Buffer.from(r.data,'base64');total+=b.length;if(b.length>(r.name==='receipts.jsonl'?MAX:MAXFILE)||total>MAX||quoteHash(b)!==r.sha256)throw Error('RECOVERY_BYTES');checked.push([r.name,b]);}
  if(!['policy.json','identities.json','current.json'].every(n=>seen.has(n)))throw Error('RECOVERY_INCOMPLETE');
  for(const [name,b]of checked)immutable(root,name,b);
  return {status:'RESTORED_ORIGINAL_BYTES',files:checked.length,currentObservation:false};

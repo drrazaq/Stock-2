@@ -3,10 +3,11 @@ import {marketSymbol} from './market-symbol.mjs';
 // of the response that produced it (snapshotFeed); feedUsed() summarises what was observed.
 export const COOLDOWN_CAP_MS=300000;
 // Request preference never substitutes for provenance of a different response.
-let preferred=null,observed=new Set(),metadata=new WeakMap(),cooldownUntil=0,evidence={requests:0,statuses:{},lastFailure:null,invalidSymbolInputs:0,requestedSymbolAttempts:0};
-export const resetFeed=()=>{preferred=null;observed=new Set();metadata=new WeakMap();cooldownUntil=0;evidence={requests:0,statuses:{},lastFailure:null,invalidSymbolInputs:0,requestedSymbolAttempts:0};};
+let preferred=null,observed=new Set(),metadata=new WeakMap(),receiptTimes=new WeakMap(),cooldownUntil=0,evidence={requests:0,statuses:{},lastFailure:null,invalidSymbolInputs:0,requestedSymbolAttempts:0};
+export const resetFeed=()=>{preferred=null;observed=new Set();metadata=new WeakMap();receiptTimes=new WeakMap();cooldownUntil=0;evidence={requests:0,statuses:{},lastFailure:null,invalidSymbolInputs:0,requestedSymbolAttempts:0};};
 export const feedUsed=()=>observed.size>1?'mixed':[...observed][0]||'unobserved';
 export const snapshotFeed=payload=>payload&&typeof payload==='object'?metadata.get(payload)||'unknown':'unknown';
+export const snapshotReceipt=payload=>receiptTimes.get(payload)??null;
 export const feedEvidence=()=>structuredClone(evidence);
 export async function snapshots(base,syms,opts={},fetcher=fetch,onReceipt=null) {
  let u;try{u=new URL(base);}catch{evidence.lastFailure='INVALID_PROVIDER_BASE';return null;}
@@ -18,7 +19,7 @@ export async function snapshots(base,syms,opts={},fetcher=fetch,onReceipt=null) 
  if(Date.now()<cooldownUntil){evidence.lastFailure='RATE_LIMIT_COOLDOWN';return null;}
  if(forced&&!['sip','iex'].includes(forced)){evidence.lastFailure='INVALID_FEED_CONFIGURATION';return null;}
  const ask=async feed=>{
-  const requestStartedAt=new Date(Date.now()).toISOString();const notify=async(outcome,payload=null,httpStatus=null)=>{if(onReceipt)try{await onReceipt({provider:'ALPACA',feed,requestStartedAt,receivedAt:new Date(Date.now()).toISOString(),outcome,httpStatus,requestedSymbols:[...syms],payload:payload?structuredClone(payload):null});}catch{evidence.retentionFailure='PRIVATE_RETENTION_FAILED';}};let response;evidence.requests++;evidence.requestedSymbolAttempts+=syms.length;
+  const requestStartedAt=new Date(Date.now()).toISOString();const notify=async(outcome,payload=null,httpStatus=null,receiptMs=Date.now())=>{if(onReceipt)try{await onReceipt({provider:'ALPACA',feed,requestStartedAt,receivedAt:new Date(receiptMs).toISOString(),outcome,httpStatus,requestedSymbols:[...syms],payload:payload?structuredClone(payload):null});}catch{evidence.retentionFailure='PRIVATE_RETENTION_FAILED';}};let response;evidence.requests++;evidence.requestedSymbolAttempts+=syms.length;
   try{response=await fetcher(base+'/v2/stocks/snapshots?feed='+feed+'&symbols='+syms.map(encodeURIComponent).join(','),{...opts,method:'GET',redirect:'error',signal:opts.signal||AbortSignal.timeout(10000)});}
   catch{evidence.lastFailure='NETWORK_ERROR';const k=feed+':NETWORK_ERROR';evidence.statuses[k]=(evidence.statuses[k]||0)+1;await notify('NETWORK_ERROR');return {status:null};}
   const key=feed+':'+response.status;evidence.statuses[key]=(evidence.statuses[key]||0)+1;
@@ -34,7 +35,7 @@ export async function snapshots(base,syms,opts={},fetcher=fetch,onReceipt=null) 
    // A null entry is an explicit no-data answer for that symbol, not a reason to discard the batch.
    for(const [symbol,row] of Object.entries(payload))if(row===null&&requestedSymbols.has(symbol))delete payload[symbol];
    if(Object.entries(payload).some(([symbol,row])=>!requestedSymbols.has(symbol)||!row||typeof row!=='object'||Array.isArray(row)||!['latestTrade','latestQuote','minuteBar','dailyBar','prevDailyBar'].some(k=>Object.hasOwn(row,k))))throw Error('invalid symbol snapshot');
-   await notify('SUCCESS',payload,response.status);
+   const receiptMs=Date.now();receiptTimes.set(payload,receiptMs);await notify('SUCCESS',payload,response.status,receiptMs);
    metadata.set(payload,feed);observed.add(feed);return {payload,status:response.status};
   }catch{evidence.lastFailure='INVALID_SNAPSHOT_JSON';await notify('INVALID_SNAPSHOT_JSON',null,response.status);return {status:response.status};}
  };
