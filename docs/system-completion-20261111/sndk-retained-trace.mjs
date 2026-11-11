@@ -1,0 +1,11 @@
+// Exact observed production caller, fixture-only top-level initialization. No daily run/fetch.
+import fs from 'node:fs';import path from 'node:path';import {fileURLToPath} from 'node:url';import {execFileSync} from 'node:child_process';
+import {loadScan,blocked} from '../../test/load-scan.mjs';
+const out=path.dirname(fileURLToPath(import.meta.url)),root='/workspace/production-observed-ead44d8d',pin='ead44d8df8ea07135953da85dff54bccbf514717';const files={};
+for(const p of ['data/discovery.json','data/leaders-universe.json','data/radar-universe.json','data/companies.json','data/smart-money.json','data/quality.json','data/fm-state.json','data/radar-day.json','data/watch-extra.json','data/intraday-radar.json','data/leaders.json'])if(fs.existsSync(path.join(root,p)))files[p]=JSON.parse(fs.readFileSync(path.join(root,p),'utf8'));
+for(const p of ['watchlist.txt','watch-extra.txt'])if(fs.existsSync(path.join(root,p)))files[p]=fs.readFileSync(path.join(root,p),'utf8');
+const loaded=await loadScan({root,files});const result={productionPin:pin,scope:'RETAINED_NOV10_INPUTS_ACTUAL_LIST_CALLER_NOT_NOV11_WATCHER',sources:{},providerRequestsBlocked:blocked.length};
+for(const key of ['DEFAULT','MAIN','DISC','RADAR','SMART','QEXTRA','FMOVERS','LEADU','QWIDE','LEADHELD','LIST']){const v=loaded.value(key),a=Array.isArray(v)?v:v instanceof Set?[...v]:[];result.sources[key]={n:a.length,containsSNDK:a.includes('SNDK')};}
+const signals=JSON.parse(fs.readFileSync(path.join(root,'data/signals.json')));result.signals={session:signals.session,generatedAt:signals.generatedAt,stocksSNDK:(signals.stocks||[]).some(x=>(x.sym||x.symbol)==='SNDK'),uniSNDK:(signals.uni||[]).some(x=>(x.sym||x.symbol)==='SNDK')};
+result.companyMembership=(files['data/companies.json']?.syms||[]).includes('SNDK');result.identityAndZAD='company membership not security class; no current ZAD mark joined';result.discoveryGateReason='NOT_RETAINED:13monthly samples and per-symbol rejection diagnostics missing; offHigh is not proven from later return';result.historyGate='600-bar gate is a separate tested-rule prerequisite AFTER list inclusion, not explanation for missing LIST';
+fs.writeFileSync(path.join(out,'sndk-retained-trace.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify(result));
