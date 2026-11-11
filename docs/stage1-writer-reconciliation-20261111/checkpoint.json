@@ -1,0 +1,132 @@
+{
+  "status": "COMPOSITION_PASS_WRITER_ACK_PENDING_NOT_OPERATIONAL_READY",
+  "source": "211cf16427f37ca73eeb061ea3d81ca11cb3835d",
+  "bindingSHA256": "afd2a30fb2b033c47ec73cdd892b7db71a241fc46171179b98a825b2532fdfad",
+  "canonicalNewTestedReference": "eb8806f5b84155d28d3ebdf0482981f55f0124fd",
+  "independentComposition": {
+    "candidate": "7e4d1096d806884339cb8b631c65b8c43dde0525",
+    "base": "d0e1a0416d503d1f82c9a290e526be4ce71b59c0",
+    "source": "211cf16427f37ca73eeb061ea3d81ca11cb3835d",
+    "changes": [
+      "market-session.mjs",
+      "premarket-check.mjs",
+      "scan.mjs",
+      "test/bot-commands.test.mjs",
+      "test/premarket-feed.test.mjs",
+      ".github/merge-alert-state.mjs",
+      "test/alert-merge-compatibility.test.mjs",
+      "test/premarket-standalone-evidence.test.mjs",
+      "test/recovery-floor.test.mjs"
+    ],
+    "drift": [],
+    "inverseDiff": [],
+    "rootInventory": 151,
+    "noTruncation": true
+  },
+  "sameCanonicalTree": true,
+  "preservedResearchCommit": {
+    "status": "ahead",
+    "ahead": 1,
+    "behind": 0,
+    "mergeBase": "4933429a9dab643200736c6c912067dbd5ca45ed",
+    "nonDataChanges": []
+  },
+  "independentHosted": {
+    "candidate": "7e4d1096d806884339cb8b631c65b8c43dde0525",
+    "run": 42995185572,
+    "job": 130437385338,
+    "rootFiles": 151,
+    "unique": 151,
+    "completeLogInspected": true,
+    "characters": 621571,
+    "failures": [],
+    "checkout": "2026-11-11T09:26:35.2074489Z 7e4d1096d806884339cb8b631c65b8c43dde0525",
+    "purpose": "DEVELOPMENT_CANDIDATE_NOT_PRODUCTION_F1"
+  },
+  "canonicalHosted": {
+    "candidate": "eb8806f5b84155d28d3ebdf0482981f55f0124fd",
+    "run": 42995198589,
+    "job": 130437429474,
+    "completeHostedLogRead": true,
+    "characters": 621441,
+    "rootFiles": 151,
+    "unique": 151,
+    "errors": [],
+    "checkout": "2026-11-11T09:26:43.0483789Z eb8806f5b84155d28d3ebdf0482981f55f0124fd"
+  },
+  "localOperatorReceipt": {
+    "files": 151,
+    "assertions": 1425,
+    "failed": 0,
+    "comment": 6792205076
+  },
+  "staticImportBoundary": [
+    {
+      "path": "research-core.mjs",
+      "imports": [],
+      "directStage1References": []
+    },
+    {
+      "path": "research-lab.mjs",
+      "imports": [
+        "./first-run.mjs",
+        "./value-core.mjs",
+        "./squad1-core.mjs",
+        "./research-core.mjs",
+        "./sec-time.mjs"
+      ],
+      "directStage1References": []
+    },
+    {
+      "path": "first-run.mjs",
+      "imports": [],
+      "directStage1References": []
+    },
+    {
+      "path": "value-core.mjs",
+      "imports": [],
+      "directStage1References": []
+    },
+    {
+      "path": "squad1-core.mjs",
+      "imports": [],
+      "directStage1References": []
+    },
+    {
+      "path": "sec-time.mjs",
+      "imports": [],
+      "directStage1References": []
+    }
+  ],
+  "writer": {
+    "task": "Stock-2 daily researcher",
+    "taskId": "trig_019mafCu5oc5M8nd1oYamVEm",
+    "session": "session_017cC8uVcNPV65aFERT9vduQ",
+    "authorization": "Operator inspected owner-created24Oct standing task/CLAUDE.md§6; prompt explicitly permits main code commits.4933429a was authorized under it.",
+    "nextFreshInvocation": "2026-11-12T08:37:00Z",
+    "peerInstruction": "Development-only further source/test/workflow/run-trigger changes; existing workflow data commits allowed; no delayed code action before end of proposed initial session.",
+    "actualAcknowledgment": "PENDING; delivered message is not ACK",
+    "settingsChanged": false,
+    "evidenceComments": [
+      6792205076,
+      6792269492,
+      6792249967,
+      6792310558,
+      6792493553,
+      6792563842
+    ]
+  },
+  "today": {
+    "oldAttempts": "CLOSED/DEFERRED; no production publication",
+    "latestSafeNewStart": "2026-11-11T09:30:00Z",
+    "newSessionAuthorized": false
+  },
+  "remaining": [
+    "Actual research-session ACK and named development branch/absence of delayed code actions",
+    "A4 new-reference dryrun if operator still preparing; no source-suite re-review",
+    "One mutually agreed exact re-pinned request and fresh owner approval/actual attendance"
+  ],
+  "productionWrites": [],
+  "workflowActions": [],
+  "privateInputsPublished": false
+}
