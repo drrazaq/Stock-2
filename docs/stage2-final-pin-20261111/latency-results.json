@@ -409,6 +409,59 @@
       "maxSec": 3224.0
     }
   },
+  "fridayAInverse1015to1100": {
+    "days": [
+      {
+        "day": "2026-11-04",
+        "dataCommits": 0,
+        "nonDataCommits": 0,
+        "dataAtUTC": []
+      },
+      {
+        "day": "2026-11-05",
+        "dataCommits": 0,
+        "nonDataCommits": 0,
+        "dataAtUTC": []
+      },
+      {
+        "day": "2026-11-06",
+        "dataCommits": 0,
+        "nonDataCommits": 0,
+        "dataAtUTC": []
+      },
+      {
+        "day": "2026-11-09",
+        "dataCommits": 0,
+        "nonDataCommits": 0,
+        "dataAtUTC": []
+      },
+      {
+        "day": "2026-11-10",
+        "dataCommits": 1,
+        "nonDataCommits": 0,
+        "dataAtUTC": [
+          "2026-11-10T10:16:01+00:00"
+        ]
+      },
+      {
+        "day": "2026-11-11",
+        "dataCommits": 0,
+        "nonDataCommits": 0,
+        "dataAtUTC": []
+      }
+    ],
+    "dataCount": 1,
+    "nonDataCount": 0,
+    "observedExposureMinutes": 270.0,
+    "withinDayCompleteDataGaps": {
+      "n": 0,
+      "minSec": null,
+      "p10Sec": null,
+      "medianSec": null,
+      "p90Sec": null,
+      "maxSec": null
+    }
+  },
   "inverse0645to0730": {
     "days": [
       {
@@ -759,10 +812,146 @@
       "IIDHypotheticalExpectedAttemptsWithCap3": 1.5888050949305121,
       "threeAttemptElapsedLowerBoundSec": 945.0,
       "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverse",
+      "assumedAttendedAdmissionSec": 0,
+      "assumedPreparationSec": 5.0,
+      "assumedParentReadToPushSec": 5.0,
+      "empiricalNoDataChangeTimeShare": 0.9996907854050712,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.0003093102381688,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0003093102085945,
+      "threeAttemptElapsedLowerBoundSec": 15.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverse",
+      "assumedAttendedAdmissionSec": 15,
+      "assumedPreparationSec": 5.0,
+      "assumedParentReadToPushSec": 20.0,
+      "empiricalNoDataChangeTimeShare": 0.9987562189054726,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.0012453300124533,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0012453280859386,
+      "threeAttemptElapsedLowerBoundSec": 60.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverse",
+      "assumedAttendedAdmissionSec": 30,
+      "assumedPreparationSec": 5.0,
+      "assumedParentReadToPushSec": 35.0,
+      "empiricalNoDataChangeTimeShare": 0.9978111319574734,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.00219366969602,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0021936591858343,
+      "threeAttemptElapsedLowerBoundSec": 105.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverse",
+      "assumedAttendedAdmissionSec": 60,
+      "assumedPreparationSec": 5.0,
+      "assumedParentReadToPushSec": 65.0,
+      "empiricalNoDataChangeTimeShare": 0.9961416824794433,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.0038732617943997,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.003873204134646,
+      "threeAttemptElapsedLowerBoundSec": 195.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverse",
+      "assumedAttendedAdmissionSec": 120,
+      "assumedPreparationSec": 5.0,
+      "assumedParentReadToPushSec": 125.0,
+      "empiricalNoDataChangeTimeShare": 0.996051779935275,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.0039638702969653,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0039638085064044,
+      "threeAttemptElapsedLowerBoundSec": 375.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverse",
+      "assumedAttendedAdmissionSec": 300,
+      "assumedPreparationSec": 5.0,
+      "assumedParentReadToPushSec": 305.0,
+      "empiricalNoDataChangeTimeShare": 0.9957550452331245,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.004263051226501,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0042629744078484,
+      "threeAttemptElapsedLowerBoundSec": 915.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverseSlowerPrep",
+      "assumedAttendedAdmissionSec": 0,
+      "assumedPreparationSec": 15.0,
+      "assumedParentReadToPushSec": 15.0,
+      "empiricalNoDataChangeTimeShare": 0.9990689013035382,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.0009319664492078,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0009319656412443,
+      "threeAttemptElapsedLowerBoundSec": 45.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverseSlowerPrep",
+      "assumedAttendedAdmissionSec": 15,
+      "assumedPreparationSec": 15.0,
+      "assumedParentReadToPushSec": 30.0,
+      "empiricalNoDataChangeTimeShare": 0.99812734082397,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.00187617260788,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0018761660284194,
+      "threeAttemptElapsedLowerBoundSec": 90.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverseSlowerPrep",
+      "assumedAttendedAdmissionSec": 30,
+      "assumedPreparationSec": 15.0,
+      "assumedParentReadToPushSec": 45.0,
+      "empiricalNoDataChangeTimeShare": 0.9971751412429378,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.0028328611898016,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0028328385840597,
+      "threeAttemptElapsedLowerBoundSec": 135.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverseSlowerPrep",
+      "assumedAttendedAdmissionSec": 60,
+      "assumedPreparationSec": 15.0,
+      "assumedParentReadToPushSec": 75.0,
+      "empiricalNoDataChangeTimeShare": 0.9961269841269841,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.0038880744470648,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0038880161249684,
+      "threeAttemptElapsedLowerBoundSec": 225.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverseSlowerPrep",
+      "assumedAttendedAdmissionSec": 120,
+      "assumedPreparationSec": 15.0,
+      "assumedParentReadToPushSec": 135.0,
+      "empiricalNoDataChangeTimeShare": 0.9960363872644574,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.0039793854785048,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0039793229614598,
+      "threeAttemptElapsedLowerBoundSec": 405.0,
+      "notAFutureSuccessGuarantee": true
+    },
+    {
+      "phase": "fridayAInverseSlowerPrep",
+      "assumedAttendedAdmissionSec": 300,
+      "assumedPreparationSec": 15.0,
+      "assumedParentReadToPushSec": 315.0,
+      "empiricalNoDataChangeTimeShare": 0.9957372466806429,
+      "IIDHypotheticalUncappedAttemptsToSuccess": 1.0042810021755912,
+      "IIDHypotheticalExpectedAttemptsWithCap3": 1.0042809243852189,
+      "threeAttemptElapsedLowerBoundSec": 945.0,
+      "notAFutureSuccessGuarantee": true
     }
   ],
   "baseline": {
     "freshFullSuiteDurationSec": 72.800765013,
+    "reviewerSameTreeFullSuiteDurationSec": 80.5,
+    "reviewerDurationProvenance": "Claude receipt6801163293, independently run on same tested tree",
+    "forwardPlanningPreparationSec": 120,
+    "actualPerAttemptSuiteTime": "logged by passed tool; historical q is NOT recomputed live",
     "modeledPreparationSec": 75.0,
     "unmeasuredGitWorktreeOverheadAssumptionSec": 2.199234986999997,
     "realAttendedAdmissionLatency": "NOT MEASURED; fixture admission is automatic/offline and cannot estimate operator/verifier turn latency",

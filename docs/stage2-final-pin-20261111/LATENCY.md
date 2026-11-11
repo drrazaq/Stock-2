@@ -9,7 +9,9 @@ Claude reconciled the prior table in6800976897: it used all commits including we
 | Actual forward window09:00–09:20 | Nov4,5,6,9,10,11:1,1,1,1,0,1;5 commits/120min | None: at most1/day |
 | Enclosing A09:00–12:00 | same dates:3,3,2,2,2,4;16/1080min |330s /2001.5s (10 gaps) |
 | Active laboratory mornings05:30–08:30 | Nov4,5,6,7,10,11:2,14,13,14,18,13;74/1080min |19s /467.5s (68 gaps) |
-| Potential inverse06:45–07:30 | same laboratory dates:0,8,8,1,8,5;30/270min |19s /259s (25 gaps) |
+| Saturday inverse06:45–07:30 | same laboratory dates:0,8,8,1,8,5;30/270min |19s /259s (25 gaps) |
+
+| Friday A inverse10:15–11:00 | Nov4,5,6,9,10,11:0,0,0,0,1,0;1/270min | None: at most1/day |
 
 All 688 completed data intervals pooled across the full history have min1s, median196.5s, p10=2s. Bursts and overnight gaps make a pooled median inappropriate for the particular20-minute forward window. Selected dates follow the proposed weekday forward and existing Tue–Sat laboratory schedule; no favorable-day exclusion. Six-day windows are small, Friday is represented only once, and repairs can change future activity. Non-data writes are STOP conditions, not tolerable retry arrivals.
 
@@ -17,14 +19,16 @@ All 688 completed data intervals pooled across the full history have min1s, medi
 
 For assumed parent-read-to-push latency L, empirical safe-start share q = sum over each historical interval max(gap-L,0) / sum(window duration-L). Window boundaries are included; starts must leave L before cutoff. This measures historical eligible time with no intervening **data commit timestamp**. It is not an observed attended-push success rate or future probability. Source details/formula are in latency.py.
 
-Observed fresh full suite:72.800765013s. Forward prep75s assumes another2.199234987s unmeasured overhead;120s is a slower scenario. Inverse prep5/15s is wholly assumed; no inverse local full suite is introduced. Actual network, operator/verifier reaction and session latency are **not measured**. Offline automatic FIFO rehearsal proves admission mechanics only.
+Observed Codex full suite:72.800765013s; Claude independently measured80.5s on the same tested tree (6801163293). Forward prep75s is a machine-specific illustrative baseline with2.199234987s assumed overhead, **not an upper bound**. **Use120s as the planning scenario**, still an assumption rather than a guaranteed bound. The passed tool logs actual per-attempt suite duration; historical q is not recomputed live. Inverse prep5/15s is wholly assumed; no inverse local full suite is introduced. Actual network, operator/verifier reaction and session latency are **not measured**. Offline automatic FIFO rehearsal proves admission mechanics only.
 
 | Scenario | assumed attended handoff30s |60s |120s |300s |
 |---|---:|---:|---:|---:|
 | Forward prep75s: q |.920 |.894 |.838 |.667 |
-| Forward prep120s: q |.881 |.853 |.797 |.634 |
+| Forward planning prep120s: q |.881 |.853 |.797 |.634 |
 | Inverse prep5s: q |.937 |.887 |.790 |.592 |
 | Inverse prep15s: q |.920 |.870 |.774 |.584 |
+
+Friday A inverse10:15–11:00 is also modeled separately, including explicit LATE only to11:00; it does not authorize using LATE automatically. At prep5s, q is0.997811/0.996142/0.996052/0.995755 for handoff30/60/120/300s. Saturday remains the busier binding risk case. Exact outputs include prep15s sensitivity.
 
 Only under the additional **independent, identically distributed** retry assumption is uncapped expected attempts 1/q: forward75s with30/60/120/300s handoff gives1.087/1.118/1.193/1.498; inverse5s gives1.067/1.128/1.267/1.689. Capped expected attempts used is1+(1-q)+(1-q)^2 (machine output includes every scenario). Real repeated retries are correlated and may hit bursts, failure, UNKNOWN, ND drift or cutoff. There is no established finite actual expectation to success: three attempts can terminate in STOP. These estimates cannot justify extra attempts or a deadline extension.
 
