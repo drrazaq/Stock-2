@@ -52,15 +52,15 @@ test('catalyst classes: source, direction and freshness are separate; a failed s
   const now = Date.parse('2026-10-29T14:00:00Z'), ok = { known: true, filings: [] }, noNews = { ok: true, items: [] };
   let c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00.000Z' }] }, news: noNews, nowMs: now });
   assert.equal(c.cls, 'VERIFIED'); assert.equal(c.source, 'SEC'); assert.equal(c.direction, 'AMBIGUOUS'); assert.equal(c.freshness, 'FRESH'); assert.match(c.text, /SEC 8-K item 8\.01 accepted 07:02 New York/);
-  c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00Z' }] }, news: { ok: true, items: [{ at: now - 3e6, source: 'GlobeNewswire', headline: 'X wins $40M Army contract' }] }, nowMs: now });
+  c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00Z' }] }, news: { ok: true, items: [{ at: now - 3e6, source: 'GlobeNewswire', headline: '$X wins $40M Army contract' }] }, nowMs: now });
   assert.equal(c.direction, 'AMBIGUOUS'); assert.equal(c.evidence.find(x=>x.headline)?.wordingDirection,'POSITIVE'); assert.match(c.text, /headline words alone do not verify/);   // positive only ever comes from wording, and says so
   c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K', items: '1.01,3.02', at: '2026-10-29T11:02:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
   c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '424B5', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
   c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K', items: '3.01', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'NEGATIVE');
-  c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now - 3600e3, source: 'Business Wire', headline: 'X announces pricing of $10M registered direct offering' }] }, nowMs: now });
+  c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now - 3600e3, source: 'Business Wire', headline: '$X announces pricing of $10M registered direct offering' }] }, nowMs: now });
   assert.equal(c.cls, 'UNCONFIRMED'); assert.equal(c.source, 'ISSUER_WIRE'); assert.equal(c.direction, 'DILUTION');
   c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now - 3600e3, source: 'Benzinga', headline: 'Stocks moving in pre-market' }] }, nowMs: now }); assert.equal(c.source, 'AGGREGATOR'); assert.equal(c.direction, 'UNKNOWN');assert.equal(c.unverifiedNews.length,1);
-  c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now - 40 * 3600e3, source: 'Reuters', headline: 'X wins contract' }] }, nowMs: now }); assert.equal(c.cls, 'RECYCLED'); assert.equal(c.freshness, 'RECYCLED');
+  c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now - 40 * 3600e3, source: 'Reuters', headline: '$X wins contract' }] }, nowMs: now }); assert.equal(c.cls, 'RECYCLED'); assert.equal(c.freshness, 'RECYCLED');
   c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K/A', items: '2.02', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.cls, 'RECYCLED'); assert.match(c.text, /amended filing/);
   c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now + 60e3, headline: 'future' }] }, nowMs: now }); assert.equal(c.cls, 'NONE');   // nothing after the check time counts
   assert.equal(classifyCatalyst({ symbol:"X", sec: { known: false }, news: noNews, nowMs: now }).cls, 'UNAVAILABLE');
