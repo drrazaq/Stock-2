@@ -38,7 +38,15 @@ Python standard library and git only. Every rule below is enforced in code.
      NOT_PUBLISHED    ONLY on an explicit porcelain non-fast-forward rejection of refs/heads/main, with X not in the remote
                       main and the 9 paths still in the starting state. Only this permits the next attempt.
      UNKNOWN          anything else. STOP, no retry.
-Exit codes: 0 PUBLISHED; 2 STOPPED (nothing published); 3 UNKNOWN; 4 PUBLISHED_DRIFT.
+     PUBLISHED_LATE   as PUBLISHED, but the publication was first observed on the remote only after the deadline: the
+                      publication FACT stands (never retried), its TIMING is UNKNOWN/LATE and status is UNVERIFIED.
+  Clocks: P = firstPushStart, the earliest forward push request (counting refused attempts) for F1 deadlines. Actual
+  publication time is bounded by remoteReadAt. D = the ORIGINAL qualifying failure decision (--decision); the inverse
+  deadline is <= D+30 and the receipt is due by D+85; inverse attempts never reset D. After the deadline only the
+  read-only reconciliation (120 s budget) runs; no write starts.
+  Inverse compatibility: the current main's non-data leaves (other than the 9) must equal the tested candidate's, so no
+  newer source that might call a Stage 1 helper is left behind by the 4 deletions. Data-only races remain allowed.
+Exit codes: 0 PUBLISHED; 2 STOPPED (nothing published); 3 UNKNOWN; 4 PUBLISHED_DRIFT; 5 PUBLISHED_LATE.
 Test hook: STAGE1_TEST_PREPUSH_SLEEP (seconds; inert unless set) simulates slow preparation for the deadline regression.
 """
 import argparse, datetime as dt, hashlib, json, os, shlex, subprocess, sys, tempfile, time
@@ -65,6 +73,10 @@ def leaves(deadline, tree):
     for line in git(deadline, 'ls-tree', '-r', '--full-tree', tree).stdout.splitlines():
         meta, path = line.split('\t', 1); mode, _t, sha = meta.split(); out[path] = (mode, sha)
     return out
+
+def blob_ok(deadline, v):  # bounded; checks SHA-256 AND byte length
+    b = subprocess.run(['git', 'cat-file', 'blob', v['gitBlobSHA1']], capture_output=True, timeout=min(3600, left(deadline))).stdout
+    return hashlib.sha256(b).hexdigest() == v['sha256'] and len(b) == v['bytes']
 
 non_data = lambda lv: {p: v for p, v in lv.items() if not p.startswith('data/')}
 
@@ -101,10 +113,15 @@ def main():
     for k in ('--binding', '--inverse', '--tested', '--deadline'): ap.add_argument(k, required=True)
     ap.add_argument('--mode', choices=['forward', 'inverse'], default='forward'); ap.add_argument('--cap', type=int, default=3)
     ap.add_argument('--remote', default='origin'); ap.add_argument('--dry-run', action='store_true')
+    ap.add_argument('--decision', help='inverse mode: the ORIGINAL qualifying decision time D (ISO UTC); --deadline must be <= D+30 min')
     ap.add_argument('--suite', default='node --test --test-concurrency=8 test/*.test.mjs')
     a = ap.parse_args()
     files = json.load(open(a.binding))['files']; inv = json.load(open(a.inverse))['restore']
     deadline = dt.datetime.fromisoformat(a.deadline.replace('Z', '+00:00')); I = ident(files)
+    if a.mode == 'inverse':  # D is fixed by the original failure decision; attempts never reset it
+        assert a.decision, '--decision D is required in inverse mode'
+        D0 = dt.datetime.fromisoformat(a.decision.replace('Z', '+00:00'))
+        assert deadline <= D0 + dt.timedelta(minutes=30), '--deadline exceeds D+30'
     assert len(files) == 9 and len(inv) == 9 and {r['path'] for r in inv} == set(files)
     inv_upd = {r['path']: None if r.get('sha') is None else (r['mode'], r['sha']) for r in inv}
     assert all(inv_upd[f] == I[f][0] for f in files), 'inverse file disagrees with binding before-identities'
@@ -123,15 +140,16 @@ def main():
                 T = write_tree(deadline, M, {f: I[f][1] for f in files}); Xl = leaves(deadline, T)
                 gates = {'nonDataEqualsTested': non_data(Xl) == tested_nd,
                          'diffExactly9': sorted(p for p in set(Ml) | set(Xl) if Ml.get(p) != Xl.get(p)) == sorted(files),
-                         'bindingIdentities': state(Xl, I) == 'AFTER' and all(
-                             hashlib.sha256(subprocess.run(['git', 'cat-file', 'blob', v['gitBlobSHA1']], capture_output=True).stdout).hexdigest() == v['sha256']
-                             for v in files.values()),
+                         'bindingIdentities': state(Xl, I) == 'AFTER' and all(blob_ok(deadline, v) for v in files.values()),
                          'inverseRestoresParent': write_tree(deadline, T, inv_upd) == git(deadline, 'rev-parse', M + '^{tree}').stdout.strip()}
             else:
                 T = write_tree(deadline, M, inv_upd); Xl = leaves(deadline, T)
                 gates = {'diffExactly9': sorted(p for p in set(Ml) | set(Xl) if Ml.get(p) != Xl.get(p)) == sorted(files),
                          'allNineBefore': state(Xl, I) == 'BEFORE',
-                         'otherLeavesKept': {p: v for p, v in Xl.items() if p not in files} == {p: v for p, v in Ml.items() if p not in files}}
+                         'otherLeavesKept': {p: v for p, v in Xl.items() if p not in files} == {p: v for p, v in Ml.items() if p not in files},
+                         # compatibility: no newer non-data code beside the release (a new caller of a Stage 1 helper would break)
+                         'nonDataCompatibleWithTested': {p: v for p, v in non_data(Ml).items() if p not in files} ==
+                                                        {p: v for p, v in tested_nd.items() if p not in files}}
             if not all(gates.values()): log(attempt=attempt, result='STOPPED', why='composition gate failed', main=M, gates=gates); return 2
             msg = 'Stage 1 release: premarket P and recovery floor (source 211cf164, binding afd2a30f)' if a.mode == 'forward' \
                   else 'Stage 1 inverse: restore pre-release 9 paths (binding afd2a30f), newer data and code kept'
@@ -148,7 +166,7 @@ def main():
                     if r.returncode != 0 or fails != 0 or tests == 0:
                         log(attempt=attempt, result='STOPPED', why='fresh suite did not pass on this candidate', main=M, candidate=X, gates=gates); return 2
                 finally:
-                    subprocess.run(['git', 'worktree', 'remove', '--force', wt], capture_output=True)
+                    subprocess.run(['git', 'worktree', 'remove', '--force', wt], capture_output=True, timeout=60)  # local cleanup, bounded
             log(attempt=attempt, main=M, candidate=X, tree=T, gates=gates)
             if a.dry_run: log(attempt=attempt, result='DRY_RUN'); return 2
             if os.environ.get('STAGE1_TEST_PREPUSH_SLEEP'): time.sleep(float(os.environ['STAGE1_TEST_PREPUSH_SLEEP']))
@@ -163,7 +181,7 @@ def main():
                 push = None; log(attempt=attempt, pushException=type(e).__name__)
             # R5 verdict; the remote read gets its own short budget (it may run after the deadline: read-only)
             rd = NOW() + dt.timedelta(seconds=120)
-            M2 = remote_main(rd, a.remote)
+            M2 = remote_main(rd, a.remote); read_at = NOW()  # remote read: an upper bound on any publication time
             if M2 is None: log(attempt=attempt, result='UNKNOWN', why='remote unreadable after push', firstPushStart=clock['firstPushStart']); return 3
             has_x = git(rd, 'merge-base', '--is-ancestor', X, M2, check=False).returncode == 0
             M2l = leaves(rd, M2); st2 = state(M2l, I)
@@ -171,11 +189,13 @@ def main():
             nff = push is not None and push.returncode != 0 and refline.startswith('!') and '[rejected]' in refline \
                   and ('non-fast-forward' in refline or 'fetch first' in refline)
             same_nd = (non_data(M2l) == non_data(Xl)) if a.mode == 'forward' else True
-            if has_x and st2 == target_state and same_nd: verdict, code = 'PUBLISHED', 0
+            timely = read_at <= deadline  # publication is proven timely only if it was observed on the remote before the deadline
+            if has_x and st2 == target_state and same_nd and timely: verdict, code = 'PUBLISHED', 0
+            elif has_x and st2 == target_state and same_nd: verdict, code = 'PUBLISHED_LATE', 5
             elif has_x: verdict, code = 'PUBLISHED_DRIFT', 4
             elif nff and st2 == start_state: verdict, code = 'NOT_PUBLISHED', None
             else: verdict, code = 'UNKNOWN', 3
-            log(attempt=attempt, result=verdict, remoteMain=M2, containsCandidate=has_x, boundState=st2, nonDataUnchanged=same_nd,
+            log(attempt=attempt, result=verdict, remoteReadAt=read_at.isoformat(timespec='milliseconds'), remoteMain=M2, containsCandidate=has_x, boundState=st2, nonDataUnchanged=same_nd,
                 pushRc=None if push is None else push.returncode, pushRef=refline[-200:], firstPushStart=clock['firstPushStart'])
             if code is not None: return code
             clock['unresolved'] = False  # NOT_PUBLISHED proven for this attempt

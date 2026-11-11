@@ -43,6 +43,7 @@ case "$step" in
   real-then-code-then-fail) git push --porcelain "$remote" "$spec" >/dev/null 2>&1; inject code >/dev/null 2>&1; exit 128;;
   real-then-hang) git push --porcelain "$remote" "$spec" >/dev/null 2>&1; sleep 90;;
   hang-without-push) sleep 90;;
+  accept-after-cutoff) (sleep 38; git push --porcelain "$remote" "$spec" >/dev/null 2>&1) >/dev/null 2>&1 & disown; echo "fatal: the remote end hung up unexpectedly" >&2; exit 128;;
   fail-without-push) echo "fatal: unable to access: Could not resolve host" >&2; exit 128;;
   hook-reject) printf '#!/bin/sh\necho protected >&2; exit 1\n' > "$W/r/hooks/pre-receive"; chmod +x "$W/r/hooks/pre-receive"; exec git push --porcelain "$remote" "$spec";;
   *) exec git push --porcelain "$remote" "$spec";;
@@ -54,7 +55,8 @@ check() {
   local name=$1 mode=$2 want=$3 final=$4 suite=${5:-$FAST} deadline=${6:-2099-01-01T00:00:00Z} out rc M0
   M0=$(git -C "$W/r" rev-parse refs/heads/main)
   out=$(cd "$W/op" && STAGE1_PUSH="$W/push.sh" timeout 900 python3 "$TOOL" --mode $mode --binding "$BIND" --inverse "$INV" --tested $TESTED \
-        --deadline "$deadline" --cap 3 --suite "$suite" 2>&1); rc=$?
+        --deadline "$deadline" --cap 3 --suite "$suite" ${DECISION:+--decision "$DECISION"} 2>&1); rc=$?
+  [ "$final" = LATE-AFTER ] && { sleep 45; final=AFTER; }
   local M=$(git -C "$W/r" rev-parse refs/heads/main) ok=1 detail=""
   [ "$rc" = "$want" ] || { ok=0; detail+=" rc=$rc(want $want)"; }
   python3 - "$W/r" "$M0" "$M" "$BASE" "$BIND" "$INV" "$final" "$mode" > "$W/v" 2>&1 <<'PY' || { ok=0; detail+=" $(cat $W/v)"; }
@@ -119,15 +121,20 @@ setup; PLAN=real; export STAGE1_TEST_PREPUSH_SLEEP=40
                                             check "F15 deadline crosses during preparation -> no push" forward 2 UNTOUCHED "$FAST" "$(soon 30)"
 unset STAGE1_TEST_PREPUSH_SLEEP
 setup; PLAN=real                            check "F16 suite fails on the candidate -> STOP"           forward 2 UNTOUCHED "false"
-setup; PLAN=real-then-hang                  check "F17 push lands then hangs past budget -> PUBLISHED" forward 0 AFTER "$FAST" "$(soon 40)"
+setup; PLAN=real-then-hang                  check "F17 push lands then hangs past budget -> PUBLISHED_LATE (timing UNKNOWN)" forward 5 AFTER "$FAST" "$(soon 40)"
 setup; PLAN=hang-without-push,real          check "F18 hang without push past budget -> UNKNOWN, no retry" forward 3 UNTOUCHED "$FAST" "$(soon 40)"
-# ---- inverse (forward already published, 1 data commit on top) ----
-setup; publish_forward; PLAN=real           check "I1 inverse clean"                                   inverse 0 BEFORE
-setup; publish_forward; PLAN=data-then-real,real check "I2 inverse data race -> retry"                 inverse 0 BEFORE
-setup; publish_forward; PLAN=data-then-real,data-then-real,data-then-real check "I3 inverse race x3 -> cap STOP" inverse 2 UNTOUCHED
-setup; publish_forward; PLAN=real-then-fail check "I4 inverse pushed, client error -> PUBLISHED"       inverse 0 BEFORE
-setup; publish_forward; PLAN=fail-without-push,real check "I5 inverse transport error -> UNKNOWN"      inverse 3 UNTOUCHED
-setup; publish_forward; inject content scan.mjs >/dev/null 2>&1; PLAN=real check "I6 main not AFTER -> STOP" inverse 2 UNTOUCHED
+setup; PLAN=accept-after-cutoff,real        check "F19 server accepts only AFTER the cutoff -> UNKNOWN, never timely, no retry" forward 3 LATE-AFTER "$FAST" "$(soon 40)"
+# ---- inverse (forward already published, 1 data commit on top); D = now, deadline <= D+30 ----
+export DECISION=$(soon 0); INVDL=$(soon 1500)
+setup; publish_forward; PLAN=real           check "I1 inverse clean"                                   inverse 0 BEFORE "$FAST" "$INVDL"
+setup; publish_forward; PLAN=data-then-real,real check "I2 inverse data race -> retry"                 inverse 0 BEFORE "$FAST" "$INVDL"
+setup; publish_forward; PLAN=data-then-real,data-then-real,data-then-real check "I3 inverse race x3 -> cap STOP" inverse 2 UNTOUCHED "$FAST" "$INVDL"
+setup; publish_forward; PLAN=real-then-fail check "I4 inverse pushed, client error -> PUBLISHED"       inverse 0 BEFORE "$FAST" "$INVDL"
+setup; publish_forward; PLAN=fail-without-push,real check "I5 inverse transport error -> UNKNOWN"      inverse 3 UNTOUCHED "$FAST" "$INVDL"
+setup; publish_forward; inject content scan.mjs >/dev/null 2>&1; PLAN=real check "I6 main not AFTER -> STOP" inverse 2 UNTOUCHED "$FAST" "$INVDL"
 setup; publish_forward; PLAN=real           check "I7 inverse deadline already passed -> STOP"         inverse 2 UNTOUCHED "$FAST" 2000-01-01T00:00:00Z
+setup; publish_forward; inject code >/dev/null 2>&1; PLAN=real check "I8 newer non-data code after release -> inverse STOP (compatibility unproven)" inverse 2 UNTOUCHED "$FAST" "$INVDL"
+setup; publish_forward; PLAN=real           check "I9 inverse deadline beyond D+30 -> refused before any action" inverse 1 UNTOUCHED "$FAST" "$(soon 3600)"
+unset DECISION
 echo "RESULT pass=$pass fail=$fail"
 [ $fail = 0 ]
