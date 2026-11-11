@@ -9,3 +9,5 @@ test('future or stale quote blocks',()=>{for(const age of [-1,121,null])assert.e
 test('no out-of-sample edge blocks all horizons',()=>{const r=assessTradePlan({...base,stats:{1:{...good,outOfSample:false},3:{...good,stressNet:-.01}}});assert.equal(r.decision,'NO BUY');});
 test('targets below entry or missing evidence cannot become buy',()=>{const r=assessTradePlan({...base,targets:{1:3,3:3.8},stats:{3:{...good,n:20}}});assert.equal(r.decision,'NO BUY');});
 test('net targets and stops include round trip fee',()=>{const r=assessTradePlan(base).preferred;assert.ok(r.netTarget>0);assert.ok(r.netStop<0);});
+
+test('entry fee reserved at the exact budget boundary',()=>{const r=assessTradePlan({...base,entry:100,stop:90,targets:{1:110}});assert.equal(r.plans[0].shares,9);assert.ok(9*100+3<=1000);assert.equal(assessTradePlan({...base,entry:997.01,stop:900}).reason,'INSUFFICIENT_CAPITAL');});

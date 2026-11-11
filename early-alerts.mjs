@@ -67,28 +67,39 @@ export function headlineDirection(h) {
   const t = String(h || ''); if (DIL_W.test(t)) return 'DILUTION'; const n = NEG_W.test(t), p = POS_W.test(t);
   return n && p ? 'MIXED' : n ? 'NEGATIVE' : p ? 'POSITIVE' : 'AMBIGUOUS';
 }
-export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours = 72 }) {
+// Routing metadata is not issuer association or proof of a material event.
+export function headlineAssociation(item,{symbol,issuerName}={}){
+ const text=String(item?.headline||'');const names=[issuerName].filter(x=>typeof x==='string'&&x.trim().length>=4);
+ const escaped=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+ const ticker=typeof symbol==='string'&&/^[A-Z][A-Z0-9.-]{0,9}$/.test(symbol)?new RegExp('(?:^|[^A-Za-z0-9])'+symbol.replaceAll('.','[.]')+'(?:$|[^A-Za-z0-9])'):null;
+ const associated=!!ticker?.test(text)||names.some(n=>text.toLowerCase().includes(n.toLowerCase()));
+ const roundup=/\b(stocks? (?:to watch|moving|making|gaining)|(?:pre[- ]?market|midday|after[- ]?hours) (?:movers|gainers)|roundup|these \d+ stocks)\b/i.test(text)||(/\b(and|among|including)\b/i.test(text)&&/\bstocks\b/i.test(text));
+ return {status:!associated?'UNVERIFIED_ISSUER':roundup?'UNVERIFIED_ROUNDUP_CLAIM':'ISSUER_MENTION_ONLY',eligibleForDirection:associated&&!roundup,claimVerified:false};
+}
+export function classifyCatalyst({ symbol, issuerName, sec, news, nowMs, hours = 24, recycledHours = 72 }) {
   const t0 = nowMs - hours * 3600e3, t1 = nowMs - recycledHours * 3600e3, ok = (t) => t !== null && t !== undefined && Number.isFinite(t) && t <= nowMs;
   const F = sec && sec.known ? (sec.filings || []).map(x => ({ ...x, t: x.at ? Date.parse(x.at) : null })).filter(x => ok(x.t) && x.t >= t1 && (EVENT_FORMS.test(x.form) || DIL_FORMS.test(x.form))).sort((a, b) => a.t - b.t) : [];
-  const N = news && news.ok ? (news.items || []).filter(x => ok(x.at) && x.at >= t1).sort((a, b) => a.at - b.at) : [];
-  const fF = F.filter(x => x.t >= t0 && !/\/A$/.test(x.form)), fN = N.filter(x => x.at >= t0);
+  const N = news && news.ok ? (news.items || []).filter(x => ok(x.at) && x.at >= t1).map(x=>({...x,association:headlineAssociation(x,{symbol,issuerName})})).sort((a, b) => a.at - b.at) : [];
+  const fF = F.filter(x => x.t >= t0 && !/\/A$/.test(x.form)), fN = N.filter(x => x.at >= t0 && x.association.eligibleForDirection);
   const combine = (ds) => ds.includes('DILUTION') ? 'DILUTION' : ds.includes('MIXED') || (ds.includes('NEGATIVE') && ds.includes('POSITIVE')) ? 'MIXED' : ds.includes('NEGATIVE') ? 'NEGATIVE' : ds.includes('POSITIVE') ? 'POSITIVE' : 'AMBIGUOUS';
-  const hDir = fN.length ? combine(fN.map(x => headlineDirection(x.headline))) : null;
+  const hDir = fN.length ? combine(fN.map(x => ['POSITIVE','MIXED'].includes(headlineDirection(x.headline))?'AMBIGUOUS':headlineDirection(x.headline))) : null;
   const evidence = [...F.map(x=>({source:'SEC',publicAt:new Date(x.t).toISOString(),form:x.form,items:x.items||'',sourceId:x.accession||null,url:x.url||null,direction:filingDirection(x)})),
-    ...N.map(x=>({source:WIRE.test(x.source||'')?'ISSUER_WIRE':'AGGREGATOR',publisher:x.source||null,publicAt:new Date(x.at).toISOString(),headline:x.headline,sourceId:x.id||null,url:x.url||null,direction:headlineDirection(x.headline)}))];
+    ...N.map(x=>({source:WIRE.test(x.source||'')?'ISSUER_WIRE':'AGGREGATOR',publisher:x.source||null,publicAt:new Date(x.at).toISOString(),headline:x.headline,sourceId:x.id||null,url:x.url||null,direction:x.association.eligibleForDirection?(['POSITIVE','MIXED'].includes(headlineDirection(x.headline))?'AMBIGUOUS':headlineDirection(x.headline)):'UNKNOWN',wordingDirection:headlineDirection(x.headline),issuerAssociation:x.association}))];
   const tag = (o) => ({ ...o, evidence, checkedAt:new Date(nowMs).toISOString(), sourceAvailability:{sec:sec?.known===true,news:news?.ok===true},
     filingEconomicClassification:F.some(x=>DIL_FORMS.test(x.form))?'UNREVIEWED':'NOT_ASSESSED',
     interpretation:'Direction is a rule-based interpretation, not verified economic impact or trade eligibility.',
-    text: o.text + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' [source ' + o.source + ', direction ' + o.direction + (['POSITIVE','MIXED'].includes(o.direction) ? ' (headline wording, not verified impact)' : '') + ', ' + o.freshness + ']' });
+    unverifiedNews:N.filter(x=>!x.association.eligibleForDirection),
+    text: o.text + (N.some(x=>!x.association.eligibleForDirection)?'; UNVERIFIED issuer/claim association: '+N.filter(x=>!x.association.eligibleForDirection).length+' headline(s) retained, not a company catalyst':'') + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' (headline words alone do not verify economic impact) [source ' + o.source + ', direction ' + o.direction + (['POSITIVE','MIXED'].includes(o.direction) ? ' (headline wording, not verified impact)' : '') + ', ' + o.freshness + ']' });
   if (fF.length) { const x = fF[0], fd = combine(fF.map(filingDirection)), dir = combine([fd, hDir]);
     return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyHM(x.t) + ' New York' + (fN.length ? '; headline ' + nyHM(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
   if (fN.length) { const x = fN[0], src = WIRE.test(x.source || '') ? 'ISSUER_WIRE' : 'AGGREGATOR';
     return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
-  if (F.length || N.length) { const x = F[0] || null, h = N[0] || null;
-    return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : headlineDirection(h.headline), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + new Date(x.t).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : '"' + h.headline + '"') }); }
-  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
+  if (F.length || N.some(x=>x.association.eligibleForDirection)) { const x = F[0] || null, h = N.find(x=>x.association.eligibleForDirection) || null;
+    return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : (['POSITIVE','MIXED'].includes(headlineDirection(h.headline))?'AMBIGUOUS':headlineDirection(h.headline)), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + new Date(x.t).toISOString().slice(5, 16).replace('T', ' ') + ' UTC' : '"' + h.headline + '"') }); }
+  if(N.length)return tag({cls:'UNCONFIRMED',source:'AGGREGATOR',direction:'UNKNOWN',freshness:'UNVERIFIED',text:'UNVERIFIED news retained; no issuer/claim-verified catalyst'});
+  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no issuer-verified headline in 72 h' : '; news not available either') });
   if (!news || !news.ok) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing in 72 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' });
-  return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing and no headline in 72 h' });
+  return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: N.length?'UNVERIFIED news retained; no issuer/claim-verified catalyst':'no SEC filing and no headline in 72 h' });
 }
 export const levelAllows = (level, kind) => (kind === 'lead' ? level === 'all' : kind === 'paper' ? level === 'all' || level === 'paper' : false);
 

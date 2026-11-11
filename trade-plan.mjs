@@ -9,7 +9,7 @@ export function assessTradePlan({symbol,entry,stop,targets,stats,capital=1000,fe
  if(!finite(quoteAgeSec)||quoteAgeSec<0||quoteAgeSec>120) return fail('STALE_QUOTE');
  if(!finite(entry)||entry<=0||!finite(stop)||stop<=0||stop>=entry) return fail('INVALID_ENTRY_STOP');
  if(!finite(capital)||capital<=feeRoundTrip||!finite(feeRoundTrip)||feeRoundTrip<0||!finite(spreadPct)||spreadPct<0||!finite(slippagePct)||slippagePct<0) return fail('INVALID_COSTS');
- const shares=Math.floor(capital/(entry*(1+spreadPct/2+slippagePct)));
+ const shares=Math.floor((capital-feeRoundTrip/2)/(entry*(1+spreadPct/2+slippagePct)));
  if(shares<1) return fail('INSUFFICIENT_CAPITAL');
  const plans=HORIZONS.map(sessions=>{
   const target=targets?.[sessions], r=stats?.[sessions];
