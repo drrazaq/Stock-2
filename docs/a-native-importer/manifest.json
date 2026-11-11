@@ -28,7 +28,7 @@
     "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
     "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
-    "ignition-watch.mjs": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
+    "ignition-watch.mjs": "46e5b623bc21bf815900ec2ad0df1b30a301209da0dd9f830bde1718081d1a8a",
     "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
     "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
     "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
@@ -165,5 +165,18 @@
     "scope": "Read-only terminal quotes/clocks/cost/missingness view in existing caller; no acquisition or policy gate change",
     "review": "PENDING",
     "report": "docs/a-first-capture-continuation/first-authentic-evaluation-plan.md"
+  },
+  "systemRepairDependencyRepin": {
+    "historicalManifestAt": "a4976e0270a41bd0eb5292b153ed819a60aaac37",
+    "changed": [
+      {
+        "path": "ignition-watch.mjs",
+        "before": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
+        "after": "46e5b623bc21bf815900ec2ad0df1b30a301209da0dd9f830bde1718081d1a8a",
+        "reason": "Current development radar/issuer subject and partial quote archival correction; unchanged entry/exit, research protocols, byte/request/deadline caps and frozen verdicts"
+      }
+    ],
+    "reviewStatus": "FOCUSED_REVIEW_REQUIRED",
+    "olderPublishedPinsRemainHistorical": true
   }
 }
