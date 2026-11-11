@@ -1,8 +1,23 @@
 {
   "base": "5fccc6ec3e18c426531a0398b5085e2621a6e192",
-  "candidate": "89f095a8320f9307d06dc97930733690885aa986",
+  "candidate": "3b79370d55ab2f5e0dc23fd9661ecab5583457ae",
   "status": "DEVELOPMENT_COMPOSITION_NOT_RELEASE_READY",
   "paths": [
+    {
+      "path": "data/company-investigations.json",
+      "beforeSha256": null,
+      "afterSha256": "25ea588ebe0e8dcc770345035cbd928965b90763abb4147e2c33e5e70ff600b0"
+    },
+    {
+      "path": "discover.mjs",
+      "beforeSha256": "10ca734376bc2a7213565114656e996f1d4fbcd90d01c39e08eb3a92b573eab4",
+      "afterSha256": "bfe395e78d6c2cff13047d6fcf1f9769ff225aadc0964f5428cfe36111bdb8d7"
+    },
+    {
+      "path": "discovery-runtime.mjs",
+      "beforeSha256": null,
+      "afterSha256": "2be4a6a825d12f7bac557be01457a334387de16fcac4cfa9034b98beeac3a430"
+    },
     {
       "path": "early-alerts.mjs",
       "beforeSha256": "367e6d546fd6e751cf3821052f4e458e4bad5295202dd827739af11ce1f2c231",
@@ -19,14 +34,54 @@
       "afterSha256": "a1e6f18a4374ab135d0f5855782b38d84e1ab0a37dec8f4432645da7e9cdca8c"
     },
     {
+      "path": "multi-angle-discovery.mjs",
+      "beforeSha256": null,
+      "afterSha256": "1572e01843d8ea806ab54e12b08307ae6ca223b80abf8b1687bcf95b838936eb"
+    },
+    {
+      "path": "radar-ledger.mjs",
+      "beforeSha256": "cade553f598c149e8bd7259f9d8d78970bab743df9e61f038ec45c26ddc905a3",
+      "afterSha256": "d67f4388419484e4eb5c89d5fea5be078d86e0b4c77fe2d94984e3bee79fbbda"
+    },
+    {
       "path": "radar-v3-core.mjs",
       "beforeSha256": "4d1c4f47d29c7463620454b35c22039e8c58d28b01737304f6be184f86eb1355",
-      "afterSha256": "d19792bd77884458ee73e5bfc381f1d7379b68c10202f57144fd4ee3e535adac"
+      "afterSha256": "29c28fa6dfd7a119cc405b051ac69abcf4e79d245f2d5cf9488451af6df171f1"
     },
     {
       "path": "scan.mjs",
       "beforeSha256": "98743f6aa707b7402aa58ba678950c8897a7a0d3745c0a1200ac67a2b80efc2f",
-      "afterSha256": "b42bf142d1e355f512d635facaead84845d8bea6ef8f8b6b7d486018fd5a3850"
+      "afterSha256": "3e54a30f11e85df66166834517437b0f151d549cdb20087370807852f5050e54"
+    },
+    {
+      "path": "source-contract.mjs",
+      "beforeSha256": null,
+      "afterSha256": "515f20341ff46ae1b3477fb0f98b0012e9f9fd1a0c2bc13142fd0395c4a3d31f"
+    },
+    {
+      "path": "test/assessment-context.test.mjs",
+      "beforeSha256": "e29a201db43994f00898bbb15d935154213f41255f55e303eb1768dd59d1cd84",
+      "afterSha256": "da16eabdcf6b324253d40b3ed0d45397f0edfda5886b0b094b97a2577c5c5761"
+    },
+    {
+      "path": "test/assessment-primary-context.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "53aa1b8b5a0517c4300b096f7cd90dc685dc47cf3d931cb03691c7fe265a4f5c"
+    },
+    {
+      "path": "test/assessment-save-paths.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "6c7dfaba9da5959c3758007d1c2b8243556833fe8885211c4c61d6f9656e9ae2"
+    },
+    {
+      "path": "test/assessment-triage.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "e6c91755b1db2e09679d466f57eb1f039173df148199cf67bfb297794ffc939d"
+    },
+    {
+      "path": "test/load-scan.mjs",
+      "beforeSha256": "f1323f5d354501e5611b5a2f77b0f12fffeb6d8272a0688b5e88eb9410dafa72",
+      "afterSha256": "82e9e9e5417d6715127052a4492847645ebe76701f523c17a505cbe0a19c602a"
     },
     {
       "path": "test/radar-issuer-scope.test.mjs",
@@ -41,7 +96,7 @@
     {
       "path": "test/radar-v3-core.test.mjs",
       "beforeSha256": "e3308073239d5a362e57234ecd1c9bdcddb1593c194f4f110bb6f0ab81d1da19",
-      "afterSha256": "46bc77109aaf92fbcaa04fa2cccd049af1b18a1918a957e45e4a5c10cc3d36ce"
+      "afterSha256": "3c22edd974e8abdad25d78cbdb0919584f9f5f26d64d643bc1c631fd7583a3b1"
     },
     {
       "path": "test/shadow.test.mjs",
@@ -57,12 +112,23 @@
       "path": "test/short-history-visibility.test.mjs",
       "beforeSha256": null,
       "afterSha256": "437083f1578988a2275b54bbe78077ed01111eda01695bfe7ffb8ffd9e7cef84"
+    },
+    {
+      "path": "tools/assessment-primary-examples.mjs",
+      "beforeSha256": null,
+      "afterSha256": "d6fa5818f987eec8c05700aac93cda7bab89641566aadd17bd1f41aa4a2fe825"
     }
   ],
-  "inverseRestoresExactBaseTree": true,
-  "unchangedDataAndWorkflows": true,
-  "focusedActualCallers": 25,
-  "existingSafeguards": 71,
-  "catalystLedger": 43,
+  "inverseRestoresExactPayloadAndAllNonPackagingPaths": true,
+  "excludedPackagingDocsPreserved": [
+    "docs/assessment-primary-join-20261111/EXAMPLES.json",
+    "docs/research-repairs-composition-20261111/README.md",
+    "docs/research-repairs-composition-20261111/inverse.patch",
+    "docs/research-repairs-composition-20261111/manifest.json",
+    "docs/research-repairs-composition-20261111/source.patch"
+  ],
+  "existingDataAndAllWorkflowsUnchanged": true,
+  "addedPublicPrimaryFactsOnly": "data/company-investigations.json",
+  "combinedActualBoundaryChecks": 148,
   "completeSuite": "PENDING"
 }
