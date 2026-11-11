@@ -1,0 +1,384 @@
+{
+  "status": "OFFLINE_DELTA_VALIDATION_PASS_NOT_OPERATIONAL_READY",
+  "originalStage1ToolSHA256": "8cb36bc3f624644578f35b05760bf958696fd41c8a63424a2ae2189fd1c54510",
+  "stage1Unchanged": true,
+  "toolSHA256": "22e734074629e12820fd1838b8d96902ee46a2e2ee8ced5db742918b69c59a0d",
+  "exerciseSHA256": "f7be64d21c8a40bff3c92937f5f7dfa742afff31c0a65bfa38eb4fc975cc8ad8",
+  "behaviorCases": 40,
+  "configurationCases": 10,
+  "admissionCases": 9,
+  "distinctCases": 59,
+  "unresolvedFailures": 0,
+  "historicalFixtureFailures": [
+    "FAIL  F5 newer non-data change -> gate STOP  rc=3(want 2)",
+    "FAIL  I10 inverse pushed, then unbound source drift -> PUBLISHED_DRIFT, no retry  Traceback (most recent call last):"
+  ],
+  "historicalDisposition": "Initial pre-admission run38/2 used watcher-guard.mjs as unbound though Stage2 binds it. Corrected five affected fixtures to truly unbound research-core.mjs; corrected5/5 receipt retained. Final frozen-tool complete40/0 run supersedes it. No failed run is called PASS.",
+  "cases": [
+    {
+      "case": "F1",
+      "status": "PASS",
+      "detail": "clean, FULL suite on the fresh candidate  rc=0  39 AFTER; inverse on final main exact on all39 incl.22 absent; other leaves kept"
+    },
+    {
+      "case": "F2",
+      "status": "PASS",
+      "detail": "data race -> NOT_PUBLISHED -> new parent  rc=0  39 AFTER; inverse on final main exact on all39 incl.22 absent; other leaves kept"
+    },
+    {
+      "case": "F3",
+      "status": "PASS",
+      "detail": "two data races -> attempt 3  rc=0  39 AFTER; inverse on final main exact on all39 incl.22 absent; other leaves kept"
+    },
+    {
+      "case": "F4",
+      "status": "PASS",
+      "detail": "race on every attempt -> cap STOP  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "F5",
+      "status": "PASS",
+      "detail": "newer non-data change -> gate STOP  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "F6",
+      "status": "PASS",
+      "detail": "pushed, client error -> PUBLISHED, no retry  rc=0  39 AFTER; inverse on final main exact on all39 incl.22 absent; other leaves kept"
+    },
+    {
+      "case": "F7",
+      "status": "PASS",
+      "detail": "pushed + later data, client error -> PUBLISHED  rc=0  39 AFTER; inverse on final main exact on all39 incl.22 absent; other leaves kept"
+    },
+    {
+      "case": "F8",
+      "status": "PASS",
+      "detail": "transport error, nothing sent -> UNKNOWN  rc=3  untouched (no release commit)"
+    },
+    {
+      "case": "F9",
+      "status": "PASS",
+      "detail": "non-NFF rejection -> UNKNOWN  rc=3  untouched (no release commit)"
+    },
+    {
+      "case": "F10",
+      "status": "PASS",
+      "detail": "bound content drift -> STOP  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "F11",
+      "status": "PASS",
+      "detail": "deadline already passed -> STOP  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "F12",
+      "status": "PASS",
+      "detail": "chmod-only bound drift -> STOP (R2)  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "F13",
+      "status": "PASS",
+      "detail": "pushed + mode drift after -> PUBLISHED_DRIFT  rc=4  published then drifted; recorded, not retried"
+    },
+    {
+      "case": "F14",
+      "status": "PASS",
+      "detail": "pushed + source drift after -> PUBLISHED_DRIFT  rc=4  published then drifted; recorded, not retried"
+    },
+    {
+      "case": "F15",
+      "status": "PASS",
+      "detail": "deadline crosses during preparation -> no push  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "F16",
+      "status": "PASS",
+      "detail": "suite fails on the candidate -> STOP  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "F17",
+      "status": "PASS",
+      "detail": "push lands then hangs past budget -> PUBLISHED_LATE (timing UNKNOWN)  rc=5  39 AFTER; inverse on final main exact on all39 incl.22 absent; other leaves kept"
+    },
+    {
+      "case": "F18",
+      "status": "PASS",
+      "detail": "hang without push past budget -> UNKNOWN, no retry  rc=3  untouched (no release commit)"
+    },
+    {
+      "case": "F19",
+      "status": "PASS",
+      "detail": "server accepts only AFTER the cutoff -> UNKNOWN, never timely, no retry  rc=3  39 AFTER; inverse on final main exact on all39 incl.22 absent; other leaves kept"
+    },
+    {
+      "case": "I1",
+      "status": "PASS",
+      "detail": "inverse clean  rc=0  39 BEFORE incl.22 absent; newer data and unbound leaves kept"
+    },
+    {
+      "case": "I2",
+      "status": "PASS",
+      "detail": "inverse data race -> retry  rc=0  39 BEFORE incl.22 absent; newer data and unbound leaves kept"
+    },
+    {
+      "case": "I3",
+      "status": "PASS",
+      "detail": "inverse race x3 -> cap STOP  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "I4",
+      "status": "PASS",
+      "detail": "inverse pushed, client error -> PUBLISHED  rc=0  39 BEFORE incl.22 absent; newer data and unbound leaves kept"
+    },
+    {
+      "case": "I5",
+      "status": "PASS",
+      "detail": "inverse transport error -> UNKNOWN  rc=3  untouched (no release commit)"
+    },
+    {
+      "case": "I6",
+      "status": "PASS",
+      "detail": "main not AFTER -> STOP  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "I7",
+      "status": "PASS",
+      "detail": "inverse deadline already passed -> STOP  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "I8",
+      "status": "PASS",
+      "detail": "newer non-data code after release -> inverse STOP (compatibility unproven)  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "I9",
+      "status": "PASS",
+      "detail": "inverse deadline beyond D+30 -> refused before any action  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "I10",
+      "status": "PASS",
+      "detail": "inverse pushed, then unbound source drift -> PUBLISHED_DRIFT, no retry  rc=4  inverse published then unbound source drifted; recorded, not retried"
+    },
+    {
+      "case": "L1",
+      "status": "PASS",
+      "detail": "explicitly LATE inverse publishes, never on-time PASS  rc=5  39 BEFORE incl.22 absent; newer data and unbound leaves kept"
+    },
+    {
+      "case": "L2",
+      "status": "PASS",
+      "detail": "LATE inverse data race retains originalD  rc=5  39 BEFORE incl.22 absent; newer data and unbound leaves kept"
+    },
+    {
+      "case": "L3",
+      "status": "PASS",
+      "detail": "LATE inverse keeps I8 source STOP  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "L4",
+      "status": "PASS",
+      "detail": "LATE inverse transport UNKNOWN no retry  rc=3  untouched (no release commit)"
+    },
+    {
+      "case": "L5",
+      "status": "PASS",
+      "detail": "LATE insufficient hosted allowance refused  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "L6",
+      "status": "PASS",
+      "detail": "LATE invocation before original cutoff refused  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "L7",
+      "status": "PASS",
+      "detail": "forward cannot use LATE authority  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "L8",
+      "status": "PASS",
+      "detail": "expired LATE cutoff no push  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "S1",
+      "status": "PASS",
+      "detail": "dependency blob drift before forward  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "S2",
+      "status": "PASS",
+      "detail": "dependency mode drift before forward  rc=2  untouched (no release commit)"
+    },
+    {
+      "case": "S3",
+      "status": "PASS",
+      "detail": "dependency drift before inverse  rc=2  untouched (no release commit)"
+    }
+  ],
+  "localFullSuite": {
+    "node": "v20.20.0",
+    "rootFiles": 168,
+    "tests": 1601,
+    "fail": 0,
+    "skipped": 0,
+    "durationMs": 72800.765013,
+    "tapSHA256": "8851e1c35752b582c9cafd4b62717bde0e5594588802b0fd720fa80078a35089",
+    "tapBytes": 371362,
+    "receipt": "LOCAL_ONLY full-suite.local.tap; complete hosted source log linked separately",
+    "executedFreshCandidate": "d06aa2b6ab9653309f3e2f3973ce95cec71339fb",
+    "tree": "07d02433c7dd8b0dfb889bd093a18168e72b9bd5",
+    "treeEqualsTested": true
+  },
+  "inventoryAdditionsBeyondClosed165": [
+    "test/research-svol.test.mjs",
+    "test/research-wiki.test.mjs",
+    "test/value-core-nov10.test.mjs"
+  ],
+  "hosted": {
+    "run": 43031714165,
+    "job": 130560162351,
+    "commit": "5fccc6ec3e18c426531a0398b5085e2621a6e192",
+    "characters": 718726,
+    "uniqueRootFiles": 168,
+    "filePassLines": 168,
+    "checkoutPresent": true,
+    "errors": [],
+    "missing": [],
+    "extra": [],
+    "purpose": "DEVELOPMENT_COMPOSITION_NOT_PRODUCTION_F1",
+    "jobConclusion": "success",
+    "completeLogRead": true
+  },
+  "objects": {
+    "main": "10a25bf67c506894a9da74d2ef0cab6aec75d169",
+    "baseHypotheticalStage1": "61698a6f0fa81d1c805396c37cf5b54e680413a1",
+    "testedStage2": "5fccc6ec3e18c426531a0398b5085e2621a6e192",
+    "stage1Tree": "95d1b686e77f79ce946af60e716b0748b2da70a2",
+    "stage2Tree": "07d02433c7dd8b0dfb889bd093a18168e72b9bd5",
+    "inverseTree": "95d1b686e77f79ce946af60e716b0748b2da70a2",
+    "boundCount": 46,
+    "writeCount": 39,
+    "inverseCount": 39,
+    "newPathsAbsentAfterInverse": 22,
+    "bindingSHA256": "f3b01676729edf833c210ca07487e4c895d29d3c0ee7acb18a97128e9dcb5577",
+    "note": "OFFLINE_COMPOSITION_NOT_INSTALLED_STAGE1_OR_RUNTIME_VERIFICATION",
+    "changes": [
+      ".github/merge-alert-state.mjs",
+      ".github/save-data.sh",
+      ".github/workflows/bot.yml",
+      ".github/workflows/ignition.yml",
+      "calendar.mjs",
+      "discover.mjs",
+      "econ-series.mjs",
+      "ignition-watch.mjs",
+      "scan.mjs",
+      "test/actions-reconciliation.test.mjs",
+      "test/actions-wording-d1-d4.test.mjs",
+      "test/alert-save-preservation.test.mjs",
+      "test/assessment-context.test.mjs",
+      "test/buynow-evidence.test.mjs",
+      "test/buynow-multipart.test.mjs",
+      "test/discover-sec-note.test.mjs",
+      "test/econ-calendar-exact-series.test.mjs",
+      "test/health-text-watcher-qualification.test.mjs",
+      "test/holdings-evidence-port.test.mjs",
+      "test/intraday-alert-evidence.test.mjs",
+      "test/intraday-alert-send-time.test.mjs",
+      "test/open-check-repair.test.mjs",
+      "test/price-readiness-clock-boundary.test.mjs",
+      "test/private-data.test.mjs",
+      "test/stop-alert-validity.test.mjs",
+      "test/telegram-live-no-replay.test.mjs",
+      "test/try-small-audit.test.mjs",
+      "test/unresolved-sells.test.mjs",
+      "test/watcher-cadence-review.test.mjs",
+      "test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs",
+      "test/watcher-guard-rollback-compat.test.mjs",
+      "test/watcher-guard.test.mjs",
+      "test/watcher-nov2-clock.test.mjs",
+      "test/watcher-nov2-fixture.mjs",
+      "test/watcher-nov2-guard.test.mjs",
+      "watcher-guard-core.mjs",
+      "watcher-guard-history.mjs",
+      "watcher-guard.mjs",
+      "watcher-schedule.mjs"
+    ]
+  },
+  "dates": {
+    "status": "ARITHMETIC_PASS_NOT_ATTENDANCE",
+    "noFallbackDate": true,
+    "SaturdayResearcherMarginAfterSessionMinutes": 7,
+    "SaturdayResearcherMarginAfterLateReceiptMinutes": 12,
+    "appointments": {
+      "A": {
+        "UTC": "2026-11-13T09:00:00+00:00",
+        "Kuwait": "2026-11-13T12:00:00+03:00"
+      },
+      "Pmax": {
+        "UTC": "2026-11-13T09:20:00+00:00",
+        "Kuwait": "2026-11-13T12:20:00+03:00"
+      },
+      "Dmax": {
+        "UTC": "2026-11-13T10:15:00+00:00",
+        "Kuwait": "2026-11-13T13:15:00+03:00"
+      },
+      "rec": {
+        "UTC": "2026-11-13T11:40:00+00:00",
+        "Kuwait": "2026-11-13T14:40:00+03:00"
+      },
+      "lateA": {
+        "UTC": "2026-11-13T11:00:00+00:00",
+        "Kuwait": "2026-11-13T14:00:00+03:00"
+      },
+      "lateAr": {
+        "UTC": "2026-11-13T11:55:00+00:00",
+        "Kuwait": "2026-11-13T14:55:00+03:00"
+      },
+      "endA": {
+        "UTC": "2026-11-13T12:00:00+00:00",
+        "Kuwait": "2026-11-13T15:00:00+03:00"
+      },
+      "B": {
+        "UTC": "2026-11-14T05:30:00+00:00",
+        "Kuwait": "2026-11-14T08:30:00+03:00"
+      },
+      "Bend": {
+        "UTC": "2026-11-14T06:30:00+00:00",
+        "Kuwait": "2026-11-14T09:30:00+03:00"
+      },
+      "DA": {
+        "UTC": "2026-11-14T06:45:00+00:00",
+        "Kuwait": "2026-11-14T09:45:00+03:00"
+      },
+      "pub": {
+        "UTC": "2026-11-14T07:15:00+00:00",
+        "Kuwait": "2026-11-14T10:15:00+03:00"
+      },
+      "receipt": {
+        "UTC": "2026-11-14T08:10:00+00:00",
+        "Kuwait": "2026-11-14T11:10:00+03:00"
+      },
+      "late": {
+        "UTC": "2026-11-14T07:30:00+00:00",
+        "Kuwait": "2026-11-14T10:30:00+03:00"
+      },
+      "later": {
+        "UTC": "2026-11-14T08:25:00+00:00",
+        "Kuwait": "2026-11-14T11:25:00+03:00"
+      },
+      "end": {
+        "UTC": "2026-11-14T08:30:00+00:00",
+        "Kuwait": "2026-11-14T11:30:00+03:00"
+      },
+      "writer": {
+        "UTC": "2026-11-14T08:37:00+00:00",
+        "Kuwait": "2026-11-14T11:37:00+03:00"
+      },
+      "p": {
+        "UTC": "2026-11-13T09:20:00+00:00",
+        "Kuwait": "2026-11-13T12:20:00+03:00"
+      }
+    }
+  }
+}

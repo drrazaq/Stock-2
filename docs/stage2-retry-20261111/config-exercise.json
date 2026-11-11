@@ -1,0 +1,77 @@
+{
+  "offlineOnly": true,
+  "pass": 10,
+  "fail": 0,
+  "cases": [
+    {
+      "case": "C1 cap zero",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: --cap must be between1 and3; no mode restart to renew total"
+    },
+    {
+      "case": "C2 cap four",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: --cap must be between1 and3; no mode restart to renew total"
+    },
+    {
+      "case": "C3 missing originalD",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: --decision originalD is required in inverse mode"
+    },
+    {
+      "case": "C4 future originalD",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: original decision must not be in the future"
+    },
+    {
+      "case": "C5 duplicate inverse",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: inverse paths must exactly match writePaths"
+    },
+    {
+      "case": "C6 inverse mismatches BEFORE",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: inverse disagrees with binding before-identities"
+    },
+    {
+      "case": "C7 overlapping dependency/write",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: write/dependency roles must partition bound paths"
+    },
+    {
+      "case": "C8 partial late authority",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: LATE recovery needs BOTH pinned cutoff arguments"
+    },
+    {
+      "case": "C9 missing UTC",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: timestamps must include UTC offset"
+    },
+    {
+      "case": "C10 originalD+30 violation",
+      "pass": true,
+      "rc": 2,
+      "noRemoteChange": true,
+      "diagnostic": "stage2_retry.py: error: --deadline exceeds originalD+30"
+    }
+  ]
+}
