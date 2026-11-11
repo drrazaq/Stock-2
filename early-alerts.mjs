@@ -70,7 +70,6 @@ export function headlineDirection(h) {
 // Routing metadata is not issuer association or proof of a material event.
 export function headlineAssociation(item,{symbol,issuerName}={}){
  const text=String(item?.headline||'');const names=[issuerName].filter(x=>typeof x==='string'&&x.trim().length>=4);
- const escaped=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
  const ticker=typeof symbol==='string'&&/^[A-Z][A-Z0-9.-]{0,9}$/.test(symbol)?new RegExp('(?:^|[^A-Za-z0-9])'+symbol.replaceAll('.','[.]')+'(?:$|[^A-Za-z0-9])'):null;
  const associated=!!ticker?.test(text)||names.some(n=>text.toLowerCase().includes(n.toLowerCase()));
  const roundup=/\b(stocks? (?:to watch|moving|making|gaining)|(?:pre[- ]?market|midday|after[- ]?hours) (?:movers|gainers)|roundup|these \d+ stocks)\b/i.test(text)||(/\b(and|among|including)\b/i.test(text)&&/\bstocks\b/i.test(text));
@@ -85,7 +84,7 @@ export function classifyCatalyst({ symbol, issuerName, sec, news, nowMs, hours =
   const hDir = fN.length ? combine(fN.map(x => ['POSITIVE','MIXED'].includes(headlineDirection(x.headline))?'AMBIGUOUS':headlineDirection(x.headline))) : null;
   const evidence = [...F.map(x=>({source:'SEC',publicAt:new Date(x.t).toISOString(),form:x.form,items:x.items||'',sourceId:x.accession||null,url:x.url||null,direction:filingDirection(x)})),
     ...N.map(x=>({source:WIRE.test(x.source||'')?'ISSUER_WIRE':'AGGREGATOR',publisher:x.source||null,publicAt:new Date(x.at).toISOString(),headline:x.headline,sourceId:x.id||null,url:x.url||null,direction:x.association.eligibleForDirection?(['POSITIVE','MIXED'].includes(headlineDirection(x.headline))?'AMBIGUOUS':headlineDirection(x.headline)):'UNKNOWN',wordingDirection:headlineDirection(x.headline),issuerAssociation:x.association}))];
-  const tag = (o) => ({ ...o, evidence, checkedAt:new Date(nowMs).toISOString(), sourceAvailability:{sec:sec?.known===true,news:news?.ok===true},
+  const tag = (o) => ({ ...o, subjectSymbol:symbol||null, evidence, checkedAt:new Date(nowMs).toISOString(), sourceAvailability:{sec:sec?.known===true,news:news?.ok===true},
     filingEconomicClassification:F.some(x=>DIL_FORMS.test(x.form))?'UNREVIEWED':'NOT_ASSESSED',
     interpretation:'Direction is a rule-based interpretation, not verified economic impact or trade eligibility.',
     unverifiedNews:N.filter(x=>!x.association.eligibleForDirection),

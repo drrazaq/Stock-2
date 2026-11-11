@@ -165,7 +165,7 @@
     "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "test/a-native-evidence-importer.test.mjs": "c1404e1aee5aa2a64c76267b02cee3afafa9b02010f355658b07bb54d95575ed",
     "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
-    "ignition-watch.mjs": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
+    "ignition-watch.mjs": "46e5b623bc21bf815900ec2ad0df1b30a301209da0dd9f830bde1718081d1a8a",
     "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
     "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
@@ -366,5 +366,18 @@
     "baselineFailure": "58f90530andb895, identical stale summary.files",
     "onlyInventoryDifference": "340to342; allpairs/statuses/strategy/production/assertions unchanged",
     "independentPlanCodeReview": "b895currentrequest preserved; inventory correction separately disclosed"
+  },
+  "systemRepairDependencyRepin": {
+    "historicalManifestAt": "a4976e0270a41bd0eb5292b153ed819a60aaac37",
+    "reviewStatus": "FOCUSED_REVIEW_REQUIRED",
+    "changed": [
+      {
+        "path": "ignition-watch.mjs",
+        "before": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
+        "after": "46e5b623bc21bf815900ec2ad0df1b30a301209da0dd9f830bde1718081d1a8a",
+        "reason": "Current development dependency repin for reviewed radar issuer/scope and partial archive correction; frozen strategy/firstRun/rules unchanged"
+      }
+    ],
+    "olderPublishedPinsRemainHistorical": true
   }
 }

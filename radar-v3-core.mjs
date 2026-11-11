@@ -47,7 +47,7 @@ export function halalMap(zad, marks = {}, now = Date.now()) {
 }
 export const halalWord =(sym, ctx = {}) => ((ctx.halal || {})[sym] === 'ok' ? 'halal (your ZAD mark)' : 'HALAL UNKNOWN: check ZAD first');
 export function catalystOf(sym, ctx = {}) {
-  if (ctx.cat && ctx.cat[sym]) return ctx.cat[sym];   // (28 Oct) the alert system's live catalyst check (SEC acceptance time + headline), when it ran
+  if (ctx.cat && ctx.cat[sym]) {const c=ctx.cat[sym];if(c&&typeof c==='object'&&c.subjectSymbol===sym&&typeof c.text==='string'&&Array.isArray(c.evidence))return c.text;return 'UNVERIFIED catalyst association (legacy or mismatched subject); original evidence retained';}   // (28 Oct) the alert system's live catalyst check (SEC acceptance time + headline), when it ran
   const ev = ((ctx.events || {})[sym] || []).filter(e => !DANGER.test(e.f));
   return ev.length ? 'SEC 8-K ' + ev.map(e => e.f.split(',')[0].toLowerCase() + ' ' + String(e.p).slice(5, 10)).slice(0, 2).join(', ')
     : 'NO VERIFIED CATALYST (no SEC 8-K in 10 days; headlines not checked)';
