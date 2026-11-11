@@ -80,12 +80,17 @@ jobs:
           RATE: ${{ vars.RATE || '8' }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
       - name: Inactive bounded bot handoff
+        continue-on-error: true
         if: success() || failure()
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: |
-          git show "$GITHUB_WORKFLOW_SHA:.github/bot-handoff.mjs" > "$RUNNER_TEMP/bot-handoff.mjs"
-          node "$RUNNER_TEMP/bot-handoff.mjs"
+          [ -f .github/bot-handoff-enabled ] || exit 0
+          if ! git show "$GITHUB_WORKFLOW_SHA:.github/bot-handoff.mjs" > "$RUNNER_TEMP/bot-handoff.mjs"; then
+            echo "bot handoff: extraction unavailable; no dispatch"
+            exit 0
+          fi
+          node "$RUNNER_TEMP/bot-handoff.mjs" || echo "bot handoff: helper error; no retry"
       # If anything above failed, tell the owner on Telegram straight away.
       - if: failure()
         env:

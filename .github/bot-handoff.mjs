@@ -85,4 +85,4 @@ export async function main(){
   canPost:()=>budget.remaining()>=65000,post:onStart=>request('/actions/workflows/bot.yml/dispatches','POST',onStart),wait:ms=>{if(budget.remaining()<ms)throw Error('TIME_BUDGET');return new Promise(resolve=>setTimeout(resolve,ms));},readback:()=>request('/actions/workflows/bot.yml/runs?branch=main&event=workflow_dispatch&per_page=100')};
  return runHandoff({enabled:true,runId:env.GITHUB_RUN_ID,attempt:env.GITHUB_RUN_ATTEMPT,loopStart:Number(env.BOT_RUN_START_MS)},io);
 }
-if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().then(x=>console.log('bot handoff: '+JSON.stringify(x))).catch(()=>{console.log('bot handoff: UNVERIFIED; no retry');process.exitCode=1;});
+if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().then(x=>console.log('bot handoff: '+JSON.stringify(x))).catch(()=>{console.log('bot handoff: UNVERIFIED; no retry');process.exitCode=0;});

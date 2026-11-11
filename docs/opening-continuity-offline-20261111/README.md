@@ -28,3 +28,5 @@ Required before activation: independent exact-source review, full exact-commit i
 Prospective acceptance uses retained first successful market-cycle evidence by 09:30 New York on ten consecutive trading days, with missing archives counted as failure and holidays/early closes/DST respected. Job-created time is not coverage. No collection or activation is authorized by this document.
 
 H1–H3 focused review corrections applied after the original0c702fa3 full local inventory completed PASS in150.164s, without restart/cancellation. New exact-commit validation is required and separately retained.
+
+H4: wrapper checks the local marker before extraction, is continue-on-error, and catches extraction/helper errors as logs only. Unexpected helper errors do not fail unrelated bot work or trigger the existing failure Telegram. Durable ambiguous reservations remain blocking. Actual bash -e fixtures prove marker-off invokes neither git nor node, and missing extraction logs without failing the step.
