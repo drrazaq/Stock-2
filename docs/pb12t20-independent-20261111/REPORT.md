@@ -1,6 +1,6 @@
 # PB12T20: original account evidence and fixed-commission evaluation
 
-**NOT PROVEN under its unchanged preregistration; exact executable portfolio performance INCONCLUSIVE.** This is the existing real-leader-dip model, not another B-FCFN1 variant. The economic question is whether a pullback in an established leader recovers enough to pay a fixed20% target before its126-session expiry. The original rule has no stop; no stop, target, entry ranking or slot rule was changed.
+**NOT PROVEN under its unchanged preregistration; exact executable portfolio performance INCONCLUSIVE.** The saved newer account is +51.10% versus SPY +47.98%, but only48.5% of original order shuffles beat SPY. It trails the saved newer halal-core SPUS return +57.98% by6.88percentage points. No robust advantage over simply holding the benchmark is established. Older/full SPUS are missing; newer SPUS is present. These are original summaries, not matching-fee benchmark execution reconstructions. There is no stop: the independently recalculated worst newer closed loss is about$428 on a$1,000slot. This is the existing real-leader-dip model, not another B-FCFN1 variant. The economic question is whether a pullback in an established leader recovers enough to pay a fixed20% target before its126-session expiry. The original rule has no stop; no stop, target, entry ranking or slot rule was changed.
 
 The contract was pinned at `b70be4b09` before arithmetic. `python docs/pb12t20-independent-20261111/evaluate.py` reads five exact Git objects at `406daae8`, validates hashes and performs no network/producer actions. All427 rows are reconciled by replay/window; they are **not427 independent bets**. Informational target variants and today's-ZAD-mark variant are not promoted or pooled.
 
@@ -16,12 +16,12 @@ Original within-day order sensitivity matters: newer200seeded shuffles beat SPY 
 
 Source and every retained closed primary row confirm the old primary charges0.4% per side; rounding matches within half a cent. That is **not$3 per order**. The new calculation uses$3 buy+$3 sell, whole shares, buy fee inside$1,000, with separately declared **assumed**0/10/25/50bps per-side spread/slippage. Shares never exceed the original selected quantity. This is conditional accounting on the saved selected trades, not a new account replay, fill evidence or a forecast.
 
-| Assumed per-side execution haircut | Older9closed P/L | Newer19closed P/L |
+| Assumed per-side execution haircut | Older9closed P/L (wins) | Newer19closed P/L (wins) |
 |---|---:|---:|
-|0bps|$358.30|$1,505.97|
-|10bps|$341.66|$1,470.44|
-|25bps|$316.69|$1,417.15|
-|50bps|$275.08|$1,234.51|
+|0bps|$358.30 (6/9)|$1,505.97 (15/19)|
+|10bps|$341.66 (6/9)|$1,470.44 (15/19)|
+|25bps|$316.69 (6/9)|$1,417.15 (15/19)|
+|50bps|$275.08 (5/9)|$1,234.51 (14/19)|
 
 These totals span years and multiple$1,000 allocations; **they are not returns on a single$1,000 portfolio**. At10bps older6/9win (Wilson95%35.4–87.9%), newer15/19(56.7–91.5%); intervals assume independent Bernoulli trials, an optimistic descriptive simplification for overlapping correlated positions. Older worst closed loss−$248.73, newer−$428.33. Removing two best produces **older−$25.95**, newer+$878.24. Concentration diagnostics do not authorize removing trades or selecting another target. No theoretical stop is used to cap losses.
 
