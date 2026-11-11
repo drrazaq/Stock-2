@@ -1,4 +1,4 @@
-# PROPOSAL PAYLOAD. This nested file is not installed in .github/workflows.
+# Reviewed private-reference source; inert until separately approved installation and phase.
 name: Bounded private reference only
 on:
   workflow_dispatch:
@@ -47,8 +47,9 @@ jobs:
         name: Single separately approved reference capture
         env:
           MASSIVE_REFERENCE_KEY: ${{ secrets.MASSIVE_REFERENCE_KEY }}
-          SEC_UA: drrazaq drrazaq@users.noreply.github.com
+          SEC_UA: ${{ secrets.SEC_UA }}
         run: |
+          set -euo pipefail
           node tools/reference-capture.mjs --capture
           python3 tools/reference-pack.py | tee runtime/recovery-receipt.txt
       - if: inputs.phase == 'capture'

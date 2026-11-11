@@ -1,0 +1,32 @@
+{
+  "kind": "OFFLINE_DETERMINISTIC_PRIVATE_INSTALL_BINDING_NOT_INSTALLED",
+  "baseCommit": "f39f28196e7c443313190fd8b79b7fd3efc067b0",
+  "baseTree": "24613d5ddec754172d987d3949e655f3062d7ffc",
+  "payloadFiles": 8,
+  "unchangedS1Files": 14,
+  "expectedTree": "72a968bc82d2dc8c592a835213192cdec482e096",
+  "expectedCommit": "6c4f3c3436788571dfbacfc51a9b3baaf33e6c83",
+  "author": {
+    "name": "Stock-2 reviewed setup",
+    "email": "actions@users.noreply.github.com",
+    "date": "2026-11-11T21:18:02Z"
+  },
+  "committer": {
+    "name": "Stock-2 reviewed setup",
+    "email": "actions@users.noreply.github.com",
+    "date": "2026-11-11T21:18:02Z"
+  },
+  "message": "Reviewed eight-file private reference setup; no enrollment or execution\n",
+  "gitBlobShas": {
+    ".github/workflows/reference-only.yml": "90cc8b8ce95fb702b86d50a0f84cf17e61612062",
+    "docs/reference-only-scope.json": "ea4234cbc7d1055b67bd206b8ba63cb736d01353",
+    "instrument-type.mjs": "479f38c4869751dfa6cf39a2389361258876cbb9",
+    "test/reference-capture.test.mjs": "7df99b6570e78ae46047f02012e32360515a22b9",
+    "tools/reference-capture.mjs": "dedaeeab4bacae5ebf4a3dfa15fa9818f9d54ea1",
+    "tools/reference-pack.py": "38ed2c0cef654222e68528efb48c5c4bd1ca6944",
+    "tools/reference-source-verify.py": "d4afb3923825c5845a86c82a99022bf4b055259b",
+    "tools/reference-verify.py": "17c3daf7c68e500a958f6e5f79add32ce7f60ab5"
+  },
+  "metadataMeaning": "Fixed preparation metadata for deterministic commit binding; NOT installation time. Actual installation time needs separate receipt.",
+  "futureOperation": "One ordinary NONFORCE git push of this exact commit to private main, only after approval and fresh main==base. Rejection/unknown STOP, no retry/rebase. Existing credential helper reused, no secret read or permission change."
+}
