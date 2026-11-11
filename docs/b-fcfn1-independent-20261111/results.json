@@ -1,0 +1,1285 @@
+{
+  "status": "NOT_PROVEN_MODELED_EVIDENCE_EXECUTION_AND_PIT_INCONCLUSIVE",
+  "unchangedFirstRun": {
+    "at": "2026-11-10T12:01:16.221Z",
+    "to": "2026-11-06",
+    "bar": 4.1,
+    "verdict": "NOT PROVEN",
+    "why": "block t 1.02 under 2.5 in the newer half; not better than the earnings-news-only version in the newer half (+5.6% vs +5.9% after cost)",
+    "results": {
+      "older": {
+        "n": 1106,
+        "days": 308,
+        "stocks": 530,
+        "avg": 0.0287,
+        "median": 0.0086,
+        "avgStress": 0.0247,
+        "ctrl": -0.0083,
+        "edge": 0.0347,
+        "tDay": 3.02,
+        "blocks": 10,
+        "tBlock": 2.74,
+        "vsOwn": 0.0575,
+        "ownCovered": 292,
+        "noTop2": 0.0252,
+        "best": 2.0623,
+        "worst": -0.9103,
+        "win": 0.5217
+      },
+      "newer": {
+        "n": 1124,
+        "days": 279,
+        "stocks": 589,
+        "avg": 0.0557,
+        "median": 0.0201,
+        "avgStress": 0.0517,
+        "ctrl": 0.0279,
+        "edge": 0.0265,
+        "tDay": 1.5,
+        "blocks": 9,
+        "tBlock": 1.02,
+        "vsOwn": 0.0546,
+        "ownCovered": 255,
+        "noTop2": 0.0507,
+        "best": 2.992,
+        "worst": -0.6658,
+        "win": 0.5329
+      },
+      "all": {
+        "n": 2230,
+        "days": 587,
+        "stocks": 824,
+        "avg": 0.0424,
+        "median": 0.0125,
+        "avgStress": 0.0384,
+        "ctrl": 0.0099,
+        "edge": 0.0308,
+        "tDay": 2.98,
+        "blocks": 18,
+        "tBlock": 2.77,
+        "vsOwn": 0.0562,
+        "ownCovered": 547,
+        "noTop2": 0.0398,
+        "best": 2.992,
+        "worst": -0.9103,
+        "win": 0.5274
+      }
+    },
+    "vsSameFilings": {
+      "older": {
+        "rule": 0.0287,
+        "earningsNewsOnly": 0.0085,
+        "allFilings": -0.0027,
+        "nEarningsNews": 1113,
+        "nAll": 11069
+      },
+      "newer": {
+        "rule": 0.0557,
+        "earningsNewsOnly": 0.0588,
+        "allFilings": 0.0344,
+        "nEarningsNews": 1213,
+        "nAll": 10838
+      }
+    },
+    "vsSpy": {
+      "older": {
+        "rule": 0.0287,
+        "spy": 0.0227
+      },
+      "newer": {
+        "rule": 0.0557,
+        "spy": 0.0479
+      }
+    },
+    "hold": 63,
+    "split": "2024-07-26",
+    "mode": "capBoth",
+    "worstDay": {
+      "d": "2023-11-15",
+      "avg": -0.752,
+      "n": 1
+    },
+    "earningsNewsOnly": {
+      "older": {
+        "n": 1113,
+        "days": 285,
+        "stocks": 550,
+        "avg": 0.0085,
+        "median": -0.008,
+        "avgStress": 0.0045,
+        "ctrl": -0.0067,
+        "edge": 0.021,
+        "tDay": 1.62,
+        "blocks": 10,
+        "tBlock": 0.94,
+        "vsOwn": null,
+        "ownCovered": 0,
+        "noTop2": 0.006,
+        "best": 1.521,
+        "worst": -0.9103,
+        "win": 0.4888
+      },
+      "newer": {
+        "n": 1213,
+        "days": 273,
+        "stocks": 650,
+        "avg": 0.0588,
+        "median": 0.007,
+        "avgStress": 0.0548,
+        "ctrl": 0.0285,
+        "edge": 0.0198,
+        "tDay": 1.07,
+        "blocks": 9,
+        "tBlock": 0.34,
+        "vsOwn": null,
+        "ownCovered": 0,
+        "noTop2": 0.054,
+        "best": 2.992,
+        "worst": -0.7967,
+        "win": 0.5128
+      },
+      "all": {
+        "n": 2326,
+        "days": 558,
+        "stocks": 895,
+        "avg": 0.0348,
+        "median": 0.0007,
+        "avgStress": 0.0308,
+        "ctrl": 0.0117,
+        "edge": 0.0205,
+        "tDay": 1.83,
+        "blocks": 18,
+        "tBlock": 1.08,
+        "vsOwn": null,
+        "ownCovered": 0,
+        "noTop2": 0.0322,
+        "best": 2.992,
+        "worst": -0.9103,
+        "win": 0.5013
+      }
+    },
+    "frozenAt": "2026-11-10T12:01:16.221Z"
+  },
+  "replayedRoundedRows": {
+    "older": {
+      "n": 1106,
+      "days": 308,
+      "stocks": 530,
+      "meanNet008": 0.028747920433996384,
+      "medianNet008": 0.00855,
+      "meanNet012": 0.024747920433996384,
+      "win": 0.5216998191681737,
+      "losses": 529,
+      "zero": 0,
+      "lossesBelow50Pct": 16,
+      "best": 2.0623,
+      "worst": -0.9103,
+      "removeTop2Mean": 0.0252018115942029,
+      "top5PctN": 56,
+      "top5PctContributionToSignedSum": 1.2265184681964572,
+      "remaining95PctMean": -0.006859238095238095,
+      "matchedAvgStockTradeWeightedNet": -0.00829891500904159,
+      "tradeWeightedCommonCostEdge": 0.037046835443037975,
+      "frozenConservativeDayEdge": 0.03465944527003426,
+      "frozenDayTReproduced": 3.0158453026887004,
+      "commonCostDayEdge": 0.04265944527003427,
+      "commonCostDayT": 3.711954609503517,
+      "sameStockDayEdge": 0.05749622202996775,
+      "sameStockCoveredDays": 292,
+      "topContributors": [
+        {
+          "symbol": "ANF",
+          "n": 4,
+          "sumModeledNet": 2.2976,
+          "mean": 0.5744
+        },
+        {
+          "symbol": "SMCI",
+          "n": 3,
+          "sumModeledNet": 2.283,
+          "mean": 0.761
+        },
+        {
+          "symbol": "TGTX",
+          "n": 1,
+          "sumModeledNet": 2.0623,
+          "mean": 2.0623
+        },
+        {
+          "symbol": "DFLI",
+          "n": 1,
+          "sumModeledNet": 1.9101,
+          "mean": 1.9101
+        },
+        {
+          "symbol": "MHO",
+          "n": 6,
+          "sumModeledNet": 1.5434,
+          "mean": 0.2572333333333333
+        },
+        {
+          "symbol": "CRK",
+          "n": 2,
+          "sumModeledNet": 1.2590999999999999,
+          "mean": 0.6295499999999999
+        },
+        {
+          "symbol": "VITL",
+          "n": 1,
+          "sumModeledNet": 1.1383,
+          "mean": 1.1383
+        },
+        {
+          "symbol": "POWL",
+          "n": 3,
+          "sumModeledNet": 1.0972,
+          "mean": 0.3657333333333333
+        },
+        {
+          "symbol": "CCL",
+          "n": 6,
+          "sumModeledNet": 1.0511,
+          "mean": 0.17518333333333333
+        },
+        {
+          "symbol": "ASPN",
+          "n": 2,
+          "sumModeledNet": 0.9982,
+          "mean": 0.4991
+        }
+      ],
+      "allRowNetWith2PctEachWayPlus008Mean": -0.011908860759493704,
+      "allRowNetWith2PctEachWayPlus012Mean": -0.015908860759493704
+    },
+    "newer": {
+      "n": 1124,
+      "days": 279,
+      "stocks": 589,
+      "meanNet008": 0.055733629893238434,
+      "medianNet008": 0.0201,
+      "meanNet012": 0.05173362989323843,
+      "win": 0.5329181494661922,
+      "losses": 525,
+      "zero": 0,
+      "lossesBelow50Pct": 10,
+      "best": 2.992,
+      "worst": -0.6658,
+      "removeTop2Mean": 0.05073716577540107,
+      "top5PctN": 57,
+      "top5PctContributionToSignedSum": 0.8349833824463722,
+      "remaining95PctMean": 0.009688284910965322,
+      "matchedAvgStockTradeWeightedNet": 0.027890480427046265,
+      "tradeWeightedCommonCostEdge": 0.02784314946619217,
+      "frozenConservativeDayEdge": 0.026520221846607503,
+      "frozenDayTReproduced": 1.5035925989363628,
+      "commonCostDayEdge": 0.03452022184660751,
+      "commonCostDayT": 1.9571612327534151,
+      "sameStockDayEdge": 0.05463004692519534,
+      "sameStockCoveredDays": 255,
+      "topContributors": [
+        {
+          "symbol": "SNDK",
+          "n": 1,
+          "sumModeledNet": 2.992,
+          "mean": 2.992
+        },
+        {
+          "symbol": "MXL",
+          "n": 2,
+          "sumModeledNet": 2.7706999999999997,
+          "mean": 1.3853499999999999
+        },
+        {
+          "symbol": "AGX",
+          "n": 3,
+          "sumModeledNet": 1.7335,
+          "mean": 0.5778333333333333
+        },
+        {
+          "symbol": "CODI",
+          "n": 4,
+          "sumModeledNet": 1.5087000000000002,
+          "mean": 0.37717500000000004
+        },
+        {
+          "symbol": "GRAL",
+          "n": 2,
+          "sumModeledNet": 1.4861,
+          "mean": 0.74305
+        },
+        {
+          "symbol": "FWRD",
+          "n": 3,
+          "sumModeledNet": 1.4515,
+          "mean": 0.48383333333333334
+        },
+        {
+          "symbol": "OUST",
+          "n": 3,
+          "sumModeledNet": 1.4091,
+          "mean": 0.4697
+        },
+        {
+          "symbol": "ATEC",
+          "n": 4,
+          "sumModeledNet": 1.3702,
+          "mean": 0.34255
+        },
+        {
+          "symbol": "GRPN",
+          "n": 2,
+          "sumModeledNet": 1.3413,
+          "mean": 0.67065
+        },
+        {
+          "symbol": "SEZL",
+          "n": 3,
+          "sumModeledNet": 1.3373,
+          "mean": 0.44576666666666664
+        }
+      ],
+      "allRowNetWith2PctEachWayPlus008Mean": 0.014018585583699636,
+      "allRowNetWith2PctEachWayPlus012Mean": 0.010018585583699635
+    },
+    "all": {
+      "n": 2230,
+      "days": 587,
+      "stocks": 824,
+      "meanNet008": 0.04234968609865471,
+      "medianNet008": 0.0125,
+      "meanNet012": 0.0383496860986547,
+      "win": 0.5273542600896861,
+      "losses": 1054,
+      "zero": 0,
+      "lossesBelow50Pct": 26,
+      "best": 2.992,
+      "worst": -0.9103,
+      "removeTop2Mean": 0.03982149910233393,
+      "top5PctN": 112,
+      "top5PctContributionToSignedSum": 0.969280959934265,
+      "remaining95PctMean": 0.001369735599622285,
+      "matchedAvgStockTradeWeightedNet": 0.009941838565022423,
+      "tradeWeightedCommonCostEdge": 0.03240784753363229,
+      "frozenConservativeDayEdge": 0.03079088762925732,
+      "frozenDayTReproduced": 2.9839143972846527,
+      "commonCostDayEdge": 0.03879088762925732,
+      "commonCostDayT": 3.7591864669210877,
+      "sameStockDayEdge": 0.05616007092993673,
+      "sameStockCoveredDays": 547,
+      "topContributors": [
+        {
+          "symbol": "SNDK",
+          "n": 1,
+          "sumModeledNet": 2.992,
+          "mean": 2.992
+        },
+        {
+          "symbol": "SMCI",
+          "n": 5,
+          "sumModeledNet": 2.3815,
+          "mean": 0.4763
+        },
+        {
+          "symbol": "MXL",
+          "n": 4,
+          "sumModeledNet": 2.3013,
+          "mean": 0.575325
+        },
+        {
+          "symbol": "ANF",
+          "n": 4,
+          "sumModeledNet": 2.2976,
+          "mean": 0.5744
+        },
+        {
+          "symbol": "GRPN",
+          "n": 6,
+          "sumModeledNet": 2.1966,
+          "mean": 0.3661
+        },
+        {
+          "symbol": "TGTX",
+          "n": 1,
+          "sumModeledNet": 2.0623,
+          "mean": 2.0623
+        },
+        {
+          "symbol": "AGX",
+          "n": 4,
+          "sumModeledNet": 1.9389,
+          "mean": 0.484725
+        },
+        {
+          "symbol": "POWL",
+          "n": 4,
+          "sumModeledNet": 1.9312,
+          "mean": 0.4828
+        },
+        {
+          "symbol": "DFLI",
+          "n": 1,
+          "sumModeledNet": 1.9101,
+          "mean": 1.9101
+        },
+        {
+          "symbol": "LEU",
+          "n": 4,
+          "sumModeledNet": 1.8702999999999999,
+          "mean": 0.46757499999999996
+        }
+      ],
+      "allRowNetWith2PctEachWayPlus008Mean": 0.0011595023300799787,
+      "allRowNetWith2PctEachWayPlus012Mean": -0.002840497669920021
+    }
+  },
+  "years": {
+    "2022": {
+      "n": 439,
+      "days": 111,
+      "stocks": 286,
+      "meanNet008": 0.02424123006833713,
+      "medianNet008": -0.0011,
+      "meanNet012": 0.02024123006833713,
+      "win": 0.49658314350797267,
+      "losses": 221,
+      "zero": 0,
+      "lossesBelow50Pct": 5,
+      "best": 2.0623,
+      "worst": -0.66,
+      "removeTop2Mean": 0.01723295194508009,
+      "top5PctN": 22,
+      "top5PctContributionToSignedSum": 1.4557268908747498,
+      "remaining95PctMean": -0.01163021582733813,
+      "matchedAvgStockTradeWeightedNet": -0.023680865603644647,
+      "tradeWeightedCommonCostEdge": 0.047922095671981774,
+      "frozenConservativeDayEdge": 0.027221130597689415,
+      "frozenDayTReproduced": 1.7098881971204638,
+      "commonCostDayEdge": 0.03522113059768942,
+      "commonCostDayT": 2.212406104224764,
+      "sameStockDayEdge": 0.017596234117111517,
+      "sameStockCoveredDays": 104,
+      "topContributors": [
+        {
+          "symbol": "TGTX",
+          "n": 1,
+          "sumModeledNet": 2.0623,
+          "mean": 2.0623
+        },
+        {
+          "symbol": "CRK",
+          "n": 2,
+          "sumModeledNet": 1.2590999999999999,
+          "mean": 0.6295499999999999
+        },
+        {
+          "symbol": "CVM",
+          "n": 1,
+          "sumModeledNet": 0.9435,
+          "mean": 0.9435
+        },
+        {
+          "symbol": "OXY",
+          "n": 3,
+          "sumModeledNet": 0.8401,
+          "mean": 0.2800333333333333
+        },
+        {
+          "symbol": "HRB",
+          "n": 1,
+          "sumModeledNet": 0.8108,
+          "mean": 0.8108
+        },
+        {
+          "symbol": "RXRX",
+          "n": 1,
+          "sumModeledNet": 0.7997,
+          "mean": 0.7997
+        },
+        {
+          "symbol": "VIR",
+          "n": 4,
+          "sumModeledNet": 0.7068,
+          "mean": 0.1767
+        },
+        {
+          "symbol": "BEAM",
+          "n": 1,
+          "sumModeledNet": 0.6882,
+          "mean": 0.6882
+        },
+        {
+          "symbol": "SLVM",
+          "n": 1,
+          "sumModeledNet": 0.6779,
+          "mean": 0.6779
+        },
+        {
+          "symbol": "EQT",
+          "n": 3,
+          "sumModeledNet": 0.605,
+          "mean": 0.20166666666666666
+        }
+      ],
+      "allRowNetWith2PctEachWayPlus008Mean": -0.01623881816963691,
+      "allRowNetWith2PctEachWayPlus012Mean": -0.02023881816963691
+    },
+    "2023": {
+      "n": 452,
+      "days": 130,
+      "stocks": 289,
+      "meanNet008": 0.03968296460176991,
+      "medianNet008": 0.0147,
+      "meanNet012": 0.03568296460176991,
+      "win": 0.5309734513274337,
+      "losses": 212,
+      "zero": 0,
+      "lossesBelow50Pct": 6,
+      "best": 1.9101,
+      "worst": -0.752,
+      "removeTop2Mean": 0.032079777777777777,
+      "top5PctN": 23,
+      "top5PctContributionToSignedSum": 0.9225944571743968,
+      "remaining95PctMean": 0.003236363636363636,
+      "matchedAvgStockTradeWeightedNet": 0.0026088495575221247,
+      "tradeWeightedCommonCostEdge": 0.037074115044247784,
+      "frozenConservativeDayEdge": 0.05221294291116123,
+      "frozenDayTReproduced": 2.416720669719885,
+      "commonCostDayEdge": 0.060212942911161235,
+      "commonCostDayT": 2.7870075043588547,
+      "sameStockDayEdge": 0.08567601026796148,
+      "sameStockCoveredDays": 123,
+      "topContributors": [
+        {
+          "symbol": "ANF",
+          "n": 4,
+          "sumModeledNet": 2.2976,
+          "mean": 0.5744
+        },
+        {
+          "symbol": "SMCI",
+          "n": 2,
+          "sumModeledNet": 2.2262,
+          "mean": 1.1131
+        },
+        {
+          "symbol": "DFLI",
+          "n": 1,
+          "sumModeledNet": 1.9101,
+          "mean": 1.9101
+        },
+        {
+          "symbol": "MHO",
+          "n": 4,
+          "sumModeledNet": 1.2027,
+          "mean": 0.300675
+        },
+        {
+          "symbol": "CDLX",
+          "n": 2,
+          "sumModeledNet": 0.9204,
+          "mean": 0.4602
+        },
+        {
+          "symbol": "COHR",
+          "n": 1,
+          "sumModeledNet": 0.8759,
+          "mean": 0.8759
+        },
+        {
+          "symbol": "CCL",
+          "n": 3,
+          "sumModeledNet": 0.8553999999999999,
+          "mean": 0.28513333333333335
+        },
+        {
+          "symbol": "AEO",
+          "n": 4,
+          "sumModeledNet": 0.8357,
+          "mean": 0.208925
+        },
+        {
+          "symbol": "PHM",
+          "n": 4,
+          "sumModeledNet": 0.7612,
+          "mean": 0.1903
+        },
+        {
+          "symbol": "GRPN",
+          "n": 1,
+          "sumModeledNet": 0.7135,
+          "mean": 0.7135
+        }
+      ],
+      "allRowNetWith2PctEachWayPlus008Mean": -0.0014026418532014924,
+      "allRowNetWith2PctEachWayPlus012Mean": -0.005402641853201492
+    },
+    "2024": {
+      "n": 438,
+      "days": 122,
+      "stocks": 313,
+      "meanNet008": 0.020944292237442923,
+      "medianNet008": 0.0139,
+      "meanNet012": 0.016944292237442923,
+      "win": 0.5365296803652968,
+      "losses": 203,
+      "zero": 0,
+      "lossesBelow50Pct": 7,
+      "best": 1.1703,
+      "worst": -0.9103,
+      "removeTop2Mean": 0.0157454128440367,
+      "top5PctN": 22,
+      "top5PctContributionToSignedSum": 1.6492434812941483,
+      "remaining95PctMean": -0.014317067307692307,
+      "matchedAvgStockTradeWeightedNet": 0.014159360730593607,
+      "tradeWeightedCommonCostEdge": 0.006784931506849317,
+      "frozenConservativeDayEdge": -0.004909907874457057,
+      "frozenDayTReproduced": -0.3249388571377786,
+      "commonCostDayEdge": 0.0030900921255429463,
+      "commonCostDayT": 0.2045030231520194,
+      "sameStockDayEdge": 0.02508471503155714,
+      "sameStockCoveredDays": 114,
+      "topContributors": [
+        {
+          "symbol": "BE",
+          "n": 3,
+          "sumModeledNet": 1.4324,
+          "mean": 0.47746666666666665
+        },
+        {
+          "symbol": "PCT",
+          "n": 2,
+          "sumModeledNet": 1.1561,
+          "mean": 0.57805
+        },
+        {
+          "symbol": "VITL",
+          "n": 1,
+          "sumModeledNet": 1.1383,
+          "mean": 1.1383
+        },
+        {
+          "symbol": "UI",
+          "n": 2,
+          "sumModeledNet": 1.0481,
+          "mean": 0.52405
+        },
+        {
+          "symbol": "AGX",
+          "n": 2,
+          "sumModeledNet": 0.8696,
+          "mean": 0.4348
+        },
+        {
+          "symbol": "SG",
+          "n": 1,
+          "sumModeledNet": 0.8543,
+          "mean": 0.8543
+        },
+        {
+          "symbol": "ALGT",
+          "n": 2,
+          "sumModeledNet": 0.8219,
+          "mean": 0.41095
+        },
+        {
+          "symbol": "KD",
+          "n": 3,
+          "sumModeledNet": 0.7642,
+          "mean": 0.2547333333333333
+        },
+        {
+          "symbol": "TVTX",
+          "n": 1,
+          "sumModeledNet": 0.764,
+          "mean": 0.764
+        },
+        {
+          "symbol": "EAT",
+          "n": 1,
+          "sumModeledNet": 0.7518,
+          "mean": 0.7518
+        }
+      ],
+      "allRowNetWith2PctEachWayPlus008Mean": -0.019406464320888203,
+      "allRowNetWith2PctEachWayPlus012Mean": -0.023406464320888203
+    },
+    "2025": {
+      "n": 513,
+      "days": 134,
+      "stocks": 368,
+      "meanNet008": 0.07140662768031189,
+      "medianNet008": 0.024,
+      "meanNet012": 0.06740662768031189,
+      "win": 0.5477582846003899,
+      "losses": 232,
+      "zero": 0,
+      "lossesBelow50Pct": 4,
+      "best": 2.992,
+      "worst": -0.5731,
+      "removeTop2Mean": 0.06259412915851272,
+      "top5PctN": 26,
+      "top5PctContributionToSignedSum": 0.6842698653621463,
+      "remaining95PctMean": 0.023748870636550307,
+      "matchedAvgStockTradeWeightedNet": 0.03848615984405458,
+      "tradeWeightedCommonCostEdge": 0.03292046783625731,
+      "frozenConservativeDayEdge": 0.03451623324576526,
+      "frozenDayTReproduced": 1.1798596591212698,
+      "commonCostDayEdge": 0.04251623324576526,
+      "commonCostDayT": 1.4533216329630474,
+      "sameStockDayEdge": 0.07572673175282234,
+      "sameStockCoveredDays": 125,
+      "topContributors": [
+        {
+          "symbol": "SNDK",
+          "n": 1,
+          "sumModeledNet": 2.992,
+          "mean": 2.992
+        },
+        {
+          "symbol": "GRPN",
+          "n": 1,
+          "sumModeledNet": 1.654,
+          "mean": 1.654
+        },
+        {
+          "symbol": "SEZL",
+          "n": 2,
+          "sumModeledNet": 1.6083999999999998,
+          "mean": 0.8041999999999999
+        },
+        {
+          "symbol": "GRAL",
+          "n": 2,
+          "sumModeledNet": 1.4861,
+          "mean": 0.74305
+        },
+        {
+          "symbol": "LEU",
+          "n": 2,
+          "sumModeledNet": 1.3153,
+          "mean": 0.65765
+        },
+        {
+          "symbol": "CDE",
+          "n": 2,
+          "sumModeledNet": 1.1553,
+          "mean": 0.57765
+        },
+        {
+          "symbol": "OUST",
+          "n": 1,
+          "sumModeledNet": 1.0502,
+          "mean": 1.0502
+        },
+        {
+          "symbol": "HLF",
+          "n": 1,
+          "sumModeledNet": 0.9908,
+          "mean": 0.9908
+        },
+        {
+          "symbol": "ENVX",
+          "n": 1,
+          "sumModeledNet": 0.9888,
+          "mean": 0.9888
+        },
+        {
+          "symbol": "STOK",
+          "n": 1,
+          "sumModeledNet": 0.9334,
+          "mean": 0.9334
+        }
+      ],
+      "allRowNetWith2PctEachWayPlus008Mean": 0.02907695600657413,
+      "allRowNetWith2PctEachWayPlus012Mean": 0.02507695600657413
+    },
+    "2026": {
+      "n": 388,
+      "days": 90,
+      "stocks": 303,
+      "meanNet008": 0.05169072164948454,
+      "medianNet008": 0.0072,
+      "meanNet012": 0.04769072164948454,
+      "win": 0.520618556701031,
+      "losses": 186,
+      "zero": 0,
+      "lossesBelow50Pct": 4,
+      "best": 2.7255,
+      "worst": -0.6658,
+      "removeTop2Mean": 0.04162979274611399,
+      "top5PctN": 20,
+      "top5PctContributionToSignedSum": 0.9430993218986836,
+      "remaining95PctMean": 0.003101086956521739,
+      "matchedAvgStockTradeWeightedNet": 0.014025257731958764,
+      "tradeWeightedCommonCostEdge": 0.037665463917525774,
+      "frozenConservativeDayEdge": 0.04709840521478642,
+      "frozenDayTReproduced": 1.6117512217217247,
+      "commonCostDayEdge": 0.05509840521478643,
+      "commonCostDayT": 1.8855186606609475,
+      "sameStockDayEdge": 0.07439385438069415,
+      "sameStockCoveredDays": 81,
+      "topContributors": [
+        {
+          "symbol": "MXL",
+          "n": 1,
+          "sumModeledNet": 2.7255,
+          "mean": 2.7255
+        },
+        {
+          "symbol": "CODI",
+          "n": 4,
+          "sumModeledNet": 1.5087000000000002,
+          "mean": 0.37717500000000004
+        },
+        {
+          "symbol": "NIQ",
+          "n": 3,
+          "sumModeledNet": 1.2595,
+          "mean": 0.4198333333333334
+        },
+        {
+          "symbol": "PAYS",
+          "n": 1,
+          "sumModeledNet": 1.2407,
+          "mean": 1.2407
+        },
+        {
+          "symbol": "HPE",
+          "n": 2,
+          "sumModeledNet": 1.1923000000000001,
+          "mean": 0.5961500000000001
+        },
+        {
+          "symbol": "FCEL",
+          "n": 1,
+          "sumModeledNet": 1.1211,
+          "mean": 1.1211
+        },
+        {
+          "symbol": "ABCL",
+          "n": 1,
+          "sumModeledNet": 1.0956,
+          "mean": 1.0956
+        },
+        {
+          "symbol": "AGL",
+          "n": 1,
+          "sumModeledNet": 0.984,
+          "mean": 0.984
+        },
+        {
+          "symbol": "NSP",
+          "n": 2,
+          "sumModeledNet": 0.8212999999999999,
+          "mean": 0.41064999999999996
+        },
+        {
+          "symbol": "DINO",
+          "n": 3,
+          "sumModeledNet": 0.8114,
+          "mean": 0.27046666666666663
+        }
+      ],
+      "allRowNetWith2PctEachWayPlus008Mean": 0.01013422276126942,
+      "allRowNetWith2PctEachWayPlus012Mean": 0.006134222761269421
+    }
+  },
+  "comparisons": {
+    "older": {
+      "frozen": {
+        "rule": 0.0287,
+        "earningsNewsOnly": 0.0085,
+        "allFilings": -0.0027,
+        "nEarningsNews": 1113,
+        "nAll": 11069
+      },
+      "spyGrossMean": 0.0227,
+      "ruleNetMinusGrossSpy": 0.005999999999999998,
+      "earningsNewsDifference": 0.0202,
+      "allFilingsDifference": 0.0314,
+      "originalBlockT": 2.74,
+      "originalBlocks": 10,
+      "originalBlockReplay": "NOT independently reconstructible: original full session-index array absent"
+    },
+    "newer": {
+      "frozen": {
+        "rule": 0.0557,
+        "earningsNewsOnly": 0.0588,
+        "allFilings": 0.0344,
+        "nEarningsNews": 1213,
+        "nAll": 10838
+      },
+      "spyGrossMean": 0.0479,
+      "ruleNetMinusGrossSpy": 0.007800000000000001,
+      "earningsNewsDifference": -0.0030999999999999986,
+      "allFilingsDifference": 0.0213,
+      "originalBlockT": 1.02,
+      "originalBlocks": 9,
+      "originalBlockReplay": "NOT independently reconstructible: original full session-index array absent"
+    }
+  },
+  "syntheticPriceOnlyEconomics": [
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 5,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 198,
+      "entryCashWithFee": 996.96,
+      "modeledMeanPnlDollars": 22.314919464737795,
+      "modeledMeanReturnOn1000": 0.022314919464737796,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 5,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 198,
+      "entryCashWithFee": 996.96,
+      "modeledMeanPnlDollars": 48.92390841992882,
+      "modeledMeanReturnOn1000": 0.04892390841992882,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 5,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 198,
+      "entryCashWithFee": 998.94,
+      "modeledMeanPnlDollars": 18.282158582278473,
+      "modeledMeanReturnOn1000": 0.01828215858227847,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 5,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 198,
+      "entryCashWithFee": 998.94,
+      "modeledMeanPnlDollars": 44.83771583274021,
+      "modeledMeanReturnOn1000": 0.04483771583274021,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 5,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 195,
+      "entryCashWithFee": 997.5,
+      "modeledMeanPnlDollars": -9.887362025316484,
+      "modeledMeanReturnOn1000": -0.009887362025316485,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 5,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 195,
+      "entryCashWithFee": 997.5,
+      "modeledMeanPnlDollars": 15.897483362989291,
+      "modeledMeanReturnOn1000": 0.015897483362989292,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 25,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 39,
+      "entryCashWithFee": 981.9,
+      "modeledMeanPnlDollars": 21.885905533453887,
+      "modeledMeanReturnOn1000": 0.021885905533453886,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 25,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 39,
+      "entryCashWithFee": 981.9,
+      "modeledMeanPnlDollars": 48.09172798932384,
+      "modeledMeanReturnOn1000": 0.048091727989323846,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 25,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 39,
+      "entryCashWithFee": 983.85,
+      "modeledMeanPnlDollars": 17.91424708860759,
+      "modeledMeanReturnOn1000": 0.017914247088607588,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 25,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 39,
+      "entryCashWithFee": 983.85,
+      "modeledMeanPnlDollars": 44.06744741103202,
+      "modeledMeanReturnOn1000": 0.044067447411032024,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 25,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 39,
+      "entryCashWithFee": 997.5,
+      "modeledMeanPnlDollars": -9.887362025316484,
+      "modeledMeanReturnOn1000": -0.009887362025316485,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 25,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 39,
+      "entryCashWithFee": 997.5,
+      "modeledMeanPnlDollars": 15.897483362989291,
+      "modeledMeanReturnOn1000": 0.015897483362989292,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 100,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 9,
+      "entryCashWithFee": 906.6,
+      "modeledMeanPnlDollars": 19.740835877034357,
+      "modeledMeanReturnOn1000": 0.019740835877034357,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 100,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 9,
+      "entryCashWithFee": 906.6,
+      "modeledMeanPnlDollars": 43.93082583629893,
+      "modeledMeanReturnOn1000": 0.04393082583629893,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 100,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 9,
+      "entryCashWithFee": 908.4,
+      "modeledMeanPnlDollars": 16.07468962025316,
+      "modeledMeanReturnOn1000": 0.01607468962025316,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 100,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 9,
+      "entryCashWithFee": 908.4,
+      "modeledMeanPnlDollars": 40.216105302491094,
+      "modeledMeanReturnOn1000": 0.0402161053024911,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 100,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 9,
+      "entryCashWithFee": 921.0,
+      "modeledMeanPnlDollars": -9.588334177215216,
+      "modeledMeanReturnOn1000": -0.009588334177215217,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 100,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 9,
+      "entryCashWithFee": 921.0,
+      "modeledMeanPnlDollars": 14.21306156583627,
+      "modeledMeanReturnOn1000": 0.01421306156583627,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 500,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 1,
+      "entryCashWithFee": 505.0,
+      "modeledMeanPnlDollars": 8.300464376130199,
+      "modeledMeanReturnOn1000": 0.008300464376130199,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 500,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 1,
+      "entryCashWithFee": 505.0,
+      "modeledMeanPnlDollars": 21.73934768683274,
+      "modeledMeanReturnOn1000": 0.02173934768683274,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 500,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 1,
+      "entryCashWithFee": 506.0,
+      "modeledMeanPnlDollars": 6.2637164556961995,
+      "modeledMeanReturnOn1000": 0.006263716455696199,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 500,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 1,
+      "entryCashWithFee": 506.0,
+      "modeledMeanPnlDollars": 19.675614056939498,
+      "modeledMeanReturnOn1000": 0.0196756140569395,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 500,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 1,
+      "entryCashWithFee": 513.0,
+      "modeledMeanPnlDollars": -7.993518987341787,
+      "modeledMeanReturnOn1000": -0.007993518987341786,
+      "filledRows": 1106,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 500,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 1,
+      "entryCashWithFee": 513.0,
+      "modeledMeanPnlDollars": 5.2294786476868165,
+      "modeledMeanReturnOn1000": 0.005229478647686817,
+      "filledRows": 1124,
+      "notTradedIfUnaffordable": false,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 1000,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 0,
+      "entryCashWithFee": 0,
+      "modeledMeanPnlDollars": null,
+      "modeledMeanReturnOn1000": null,
+      "filledRows": 0,
+      "notTradedIfUnaffordable": true,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 1000,
+      "assumedAdverseFractionEachSide": 0.004,
+      "wholeShares": 0,
+      "entryCashWithFee": 0,
+      "modeledMeanPnlDollars": null,
+      "modeledMeanReturnOn1000": null,
+      "filledRows": 0,
+      "notTradedIfUnaffordable": true,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 1000,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 0,
+      "entryCashWithFee": 0,
+      "modeledMeanPnlDollars": null,
+      "modeledMeanReturnOn1000": null,
+      "filledRows": 0,
+      "notTradedIfUnaffordable": true,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 1000,
+      "assumedAdverseFractionEachSide": 0.006,
+      "wholeShares": 0,
+      "entryCashWithFee": 0,
+      "modeledMeanPnlDollars": null,
+      "modeledMeanReturnOn1000": null,
+      "filledRows": 0,
+      "notTradedIfUnaffordable": true,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "older",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 1000,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 0,
+      "entryCashWithFee": 0,
+      "modeledMeanPnlDollars": null,
+      "modeledMeanReturnOn1000": null,
+      "filledRows": 0,
+      "notTradedIfUnaffordable": true,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    },
+    {
+      "half": "newer",
+      "SYNTHETIC_unchangedReferenceEntryPrice": 1000,
+      "assumedAdverseFractionEachSide": 0.02,
+      "wholeShares": 0,
+      "entryCashWithFee": 0,
+      "modeledMeanPnlDollars": null,
+      "modeledMeanReturnOn1000": null,
+      "filledRows": 0,
+      "notTradedIfUnaffordable": true,
+      "notActualExecutionOrEstimatedPriceDistribution": true
+    }
+  ],
+  "rounding": "four-decimal row returns: +/-0.00005 per row; no raw price reconstruction",
+  "uncertainty": "Reproduced day t is not independent-trade evidence: 63-session holds overlap. Retain original block t1.02/9blocks in newer half; no new proof test or threshold."
+}
