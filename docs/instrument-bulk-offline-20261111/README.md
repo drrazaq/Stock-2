@@ -1,0 +1,7 @@
+# Inactive bulk-reference extension
+
+Extends the existing instrument reader/preparer; no network collector, workflow, new key, file binding or acquisition is executed. The old per-ticker contract and limits remain unchanged. Newkind is REVIEWED_OFFICIAL_INSTRUMENT_BULK_V1. Official-page URLs/hashes/record indices are retained honestly; bulk rows are never fabricated as per-ticker responses.
+
+Fixtures follow the official documented response schema, including its Agilent2021example, which itself is rejected as a current capture. Other symbols/FIGIs/reviews are explicitly synthetic. The14page/14000record fixture checks issuer versus instrument counts without quadratic full-book parsing. Source clocks, byte/hash review, ordering, missing/conflicting class/CIK, cross-page duplicate IDs, no alias guessing, hard expiry and the actual reference-aware SEC boundary are exercised. Current issuer CIK is returned from the already performed normal lookup; no extra GET is added. Old legacy/capture tests are preserved.
+
+Run Node20 `--test test/instrument-bulk-offline.test.mjs test/instrument-reference-preparation.test.mjs tests/instrument-type.test.mjs test/radar-issuer-scope.test.mjs test/guarded-static-closure.test.mjs`.35PASS,0realrequests. Complete new-source validation/composition and independent review remain required before any future binding. The request is explicitly not execution-ready because private runtime/key enrollment and source/processor terms/spending/recovery are not established. No current reference or live result is claimed.
