@@ -56,7 +56,7 @@ test('midday: an empty day still says 0 approved, no leads, and why; a late watc
   assert.doesNotMatch(t, /NO MARKET DATA/);
   assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Received 0 instruments \(0/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. VERIFIED COMMON-STOCK RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. SIGNAL DELIVERY HISTORY: 0 watcher messages/);
 });
-test('midday: tested alerts are counted as approved', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. SIGNAL DELIVERY HISTORY: 2 watcher messages/));
+test('midday: retained watcher messages are delivery history, never approval', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. SIGNAL DELIVERY HISTORY: 2 watcher messages/));
 
 test('scorecard: same-day net after costs vs the market; 5-session net vs SPY', () => {
   const L = [{ type: 'list', d: '2026-10-28', panel: 'A', sym: 'X', px: 10 }, { type: 'close', d: '2026-10-28', sym: 'X', px: 11, mkt: 0.01 },
