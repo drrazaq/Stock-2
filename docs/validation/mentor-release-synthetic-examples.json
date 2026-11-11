@@ -1,0 +1,144 @@
+{
+  "kind": "SYNTHETIC_NOT_FINANCIAL_RECORDS",
+  "genuineCases": 0,
+  "examples": [
+    {
+      "id": "synthetic-known-source-fill",
+      "name": "Hypothetical fill with an already archived source contract",
+      "position": {
+        "src": "leader dip",
+        "entry": 100,
+        "target": 120,
+        "ldHold": 126,
+        "boughtSession": "2026-11-02",
+        "mentorContract": {
+          "version": "LEADER_DIP_CONTRACT_V1",
+          "status": "CAPTURED_SOURCE_NOT_AUTHENTICATED",
+          "source": {
+            "rule": "SQ11-PB12",
+            "day": "2026-10-30",
+            "close": 100,
+            "generatedAt": "2026-10-30T22:00:00Z",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "entryPolicy": "NEXT_SESSION_OPEN_ONLY",
+          "hold": 126,
+          "targetPct": 0.2,
+          "stopBasis": "NONE_REGISTERED",
+          "exitPolicy": "SESSION_126_CLOSE",
+          "costModel": {
+            "roundTrip": 0.008,
+            "stress": 0.012
+          },
+          "fingerprint": "99f93851044b3ea6a9126e941b140cb5c74915b9c547d097c8a97aeb14fa2cf5"
+        }
+      },
+      "quantity": 5,
+      "clock": "2026-11-02T14:30:00Z",
+      "source": {
+        "rule": "SQ11-PB12",
+        "day": "2026-10-30",
+        "close": 100,
+        "generatedAt": "2026-10-30T22:00:00Z",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "text": "MENTOR ZZQ — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)\n1. Position: 5 whole shares; recorded entry $100.00; bought 2 Nov 2026.\n2. Owner overlay: $120.00 (20% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.\n3. Tested exit reference: 4 May 2027 at 16:00 New York CLOSE.\n4. Size/risk: $500.00 recorded; $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.\n5. Limits: Original input checksum is not provider authentication. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.\n6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.\nNo new BUY or HOLD approval.\nDetails:\nEntry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.\nSource: 2026-10-30 close $100.00 (reference, not executable price). No executable price/range is established.\nA touched daily high does not prove a limit fill.\nHistorical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit."
+    },
+    {
+      "id": "legacy",
+      "name": "Legacy holding: original source identity missing",
+      "position": {
+        "src": "leader dip",
+        "entry": 100,
+        "target": 120,
+        "ldHold": 126,
+        "boughtSession": "2026-11-02",
+        "mentorContract": null
+      },
+      "quantity": 5,
+      "clock": "2026-11-03T16:00:00Z",
+      "source": {
+        "rule": "SQ11-PB12",
+        "day": "2026-10-30",
+        "close": 100,
+        "generatedAt": "2026-10-30T22:00:00Z",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "text": "MENTOR ZZQ — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)\n1. Position: 5 whole shares; recorded entry $100.00; bought 2 Nov 2026.\n2. Owner overlay: $120.00 (20% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.\n3. Tested exit reference: 4 May 2027 at 16:00 New York CLOSE.\n4. Size/risk: $500.00 recorded; $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.\n5. Limits: Original signal not on file; this is missing history, not a contradiction. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.\n6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.\nNo new BUY or HOLD approval.\nDetails:\nOriginal signal not on file. Recorded buy date: 2 Nov 2026. It does not establish an original signal date or an exact opening fill.\nEntry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.\nNo executable price/range is established.\nA touched daily high does not prove a limit fill.\nHistorical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit."
+    },
+    {
+      "id": "expired",
+      "name": "Source lead after its registered next-open entry has expired",
+      "position": null,
+      "quantity": null,
+      "clock": "2026-11-03T16:00:00Z",
+      "producer": true,
+      "source": {
+        "rule": "SQ11-PB12",
+        "day": "2026-10-30",
+        "close": 100,
+        "generatedAt": "2026-10-30T22:00:00Z",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "text": "MENTOR ZZQ — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)\n1. Lead: $100.00 reference close on 30 Oct 2026; not an executable price.\n2. Entry: 2 Nov 2026 New York OPEN only; expired; do not treat this as a current entry.\n3. Tested exit reference: 126 sessions, counting the buy day; no filled-position exit date established.\n4. Size/risk: $1,000 per slot, 3 slots. Base has no stop: full notional can be lost, plus costs.\n5. Limits: Selection and execution are not verified. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.\n6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.\nNo new BUY or HOLD approval.\nDetails:\nEntry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.\nSource: 2026-10-30 close $100.00 (reference, not executable price). No executable price/range is established.\nA touched daily high does not prove a limit fill.\nHistorical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit."
+    },
+    {
+      "id": "missing",
+      "name": "No matching source or holding evidence",
+      "position": null,
+      "quantity": null,
+      "clock": "2026-11-03T16:00:00Z",
+      "source": {
+        "rule": "SQ11-PB12",
+        "day": "2026-10-30",
+        "close": 100,
+        "generatedAt": "2026-10-30T22:00:00Z",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "text": "MENTOR ZZQ — no LEADER DIP signal or holding on file.\nExplanation only; NOT PROVEN. No new BUY or HOLD approval."
+    },
+    {
+      "id": "contradictory",
+      "name": "Stored stop/target differs from the frozen reference",
+      "position": {
+        "src": "leader dip",
+        "entry": 100,
+        "target": 150,
+        "ldHold": 126,
+        "boughtSession": "2026-11-02",
+        "mentorContract": {
+          "version": "LEADER_DIP_CONTRACT_V1",
+          "status": "CAPTURED_SOURCE_NOT_AUTHENTICATED",
+          "source": {
+            "rule": "SQ11-PB12",
+            "day": "2026-10-30",
+            "close": 100,
+            "generatedAt": "2026-10-30T22:00:00Z",
+            "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "entryPolicy": "NEXT_SESSION_OPEN_ONLY",
+          "hold": 126,
+          "targetPct": 0.2,
+          "stopBasis": "NONE_REGISTERED",
+          "exitPolicy": "SESSION_126_CLOSE",
+          "costModel": {
+            "roundTrip": 0.008,
+            "stress": 0.012
+          },
+          "fingerprint": "99f93851044b3ea6a9126e941b140cb5c74915b9c547d097c8a97aeb14fa2cf5"
+        },
+        "stop": 90
+      },
+      "quantity": 5,
+      "clock": "2026-11-03T16:00:00Z",
+      "source": {
+        "rule": "SQ11-PB12",
+        "day": "2026-10-30",
+        "close": 100,
+        "generatedAt": "2026-10-30T22:00:00Z",
+        "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+      },
+      "text": "MENTOR ZZQ — LEADER DIP (NOT PROVEN; EXPLANATION ONLY)\n1. Position: 5 whole shares; recorded entry $100.00; bought 2 Nov 2026.\n2. Owner overlay: $150.00 (50% vs recorded entry) target on file; order/fill unverified. The target study is not adopted.\n3. Tested exit reference: 4 May 2027 at 16:00 New York CLOSE.\n4. Size/risk: $500.00 recorded; $1,000 per slot, 3 slots. Base has no stop; recorded stop $90.00 is an untested variant: full notional can be lost, plus costs.\n5. Limits: Check recorded plan differences below. Current ZAD, identity, BBO, fees/slippage and portfolio capacity are unverified.\n6. Timing: bot reminder says next open; the tested exit is the close. Neither rule is changed here.\nNo new BUY or HOLD approval.\nDetails:\nCheck: Stored target differs from the unadopted +20% overlay.\nCheck: The recorded stop is a variant outside the tested no-stop rule.\nEntry rule (not independently verified): prior-month top 20% by 12–1 momentum among 300 largest eligible US companies; first close at least 12% below its 50-session highest close, still above its 200-session average; previous close less than 12% below its own 50-session high.\nSource: 2026-10-30 close $100.00 (reference, not executable price). No executable price/range is established.\nA touched daily high does not prove a limit fill.\nHistorical costs: 0.8% round trip; 1.2% stress. Actual costs/fills remain unknown. Halts, gaps, dilution and unavailable quotes can prevent an exit."
+    }
+  ]
+}

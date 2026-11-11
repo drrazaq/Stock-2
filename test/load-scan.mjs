@@ -33,6 +33,7 @@ export async function loadScan({ files = {}, env = {} } = {}) {
   const src = fs.readFileSync(process.env.SCAN_SRC || path.join(REPO, 'scan.mjs'), 'utf8').trimEnd().split('\n');
   const last = src.pop(); if (!/^await \(MODE ===/.test(last)) throw new Error('scan.mjs no longer ends with its main call; update test/load-scan.mjs: ' + last.slice(0, 80));
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
+  for(const name of ['mentor-plan.mjs','market-session.mjs'])fs.copyFileSync(path.join(REPO,name),path.join(dir,name));
   fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
   // (4 Nov) local modules scan.mjs imports statically (e.g. './stop-watch.mjs') are copied beside the copy, from the same tree
   const srcDir = path.dirname(process.env.SCAN_SRC ? path.resolve(process.env.SCAN_SRC) : path.join(REPO, 'scan.mjs'));
