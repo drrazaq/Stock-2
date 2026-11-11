@@ -1,0 +1,515 @@
+diff --git a/early-alerts.mjs b/early-alerts.mjs
+index a3260f3d..6e639f1b 100644
+--- a/early-alerts.mjs
++++ b/early-alerts.mjs
+@@ -72,23 +72,49 @@ export function headlineDirection(h) {
+   const t = String(h || ''); if (DIL_W.test(t)) return 'DILUTION'; const n = NEG_W.test(t), p = POS_W.test(t);
+   return n && p ? 'AMBIGUOUS' : n ? 'NEGATIVE' : p ? 'POSITIVE' : 'AMBIGUOUS';
+ }
+-export function classifyCatalyst({ sec, news, nowMs, hours = 24, recycledHours = 72 }) {
++// Routing metadata is not issuer association or proof of a material event.
++export function headlineAssociation(item,{symbol,issuerName}={}){
++ const text=String(item?.headline||'');
++ const normalise=x=>String(x||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
++ const issuer=normalise(issuerName).replace(/(?:\s+(?:incorporated|inc|corporation|corp|limited|ltd|plc|company|co))+$/g,'').trim();
++ const nameMatch=issuer.length>=4&&(' '+normalise(text)+' ').includes(' '+issuer+' ');
++ const valid=typeof symbol==='string'&&/^[A-Z][A-Z0-9.-]{0,9}$/.test(symbol), escaped=valid?symbol.replaceAll('.','[.]'):'';
++ // Short/common-word tickers require explicit financial notation or the issuer name.
++ const ambiguous=valid&&(symbol.length<=2||new Set(['ALL','NOW','FOR','ARE','HAS','ON','IT','SEE','CAN','CAR','ONE']).has(symbol));
++ const ticker=valid?new RegExp(ambiguous?'(?:\\$|(?:NYSE|NASDAQ|AMEX)\\s*:\\s*)'+escaped+'(?:$|[^A-Za-z0-9])':'(?:^|[^A-Za-z0-9])'+escaped+'(?:$|[^A-Za-z0-9])'):null;
++ const associated=nameMatch||!!ticker?.test(text);
++ const roundup=/\b(stocks? (?:to watch|moving|making|gaining)|(?:pre[- ]?market|midday|after[- ]?hours) (?:movers|gainers)|roundup|these \d+ stocks)\b/i.test(text)||(/\b(and|among|including)\b/i.test(text)&&/\bstocks\b/i.test(text));
++ return {status:!associated?'UNVERIFIED_ISSUER':roundup?'UNVERIFIED_ROUNDUP_CLAIM':'ISSUER_MENTION_ONLY',eligibleForDirection:associated&&!roundup,claimVerified:false};
++}
++export function classifyCatalyst({ symbol, issuerName, sec, news, nowMs, hours = 24, recycledHours = 72 }) {
+   const t0 = nowMs - hours * 3600e3, t1 = nowMs - recycledHours * 3600e3, ok = (t) => t !== null && t !== undefined && Number.isFinite(t) && t <= nowMs;
+   const F = sec && sec.known ? (sec.filings || []).map(x => ({ ...x, t: x.at ? Date.parse(x.at) : null })).filter(x => ok(x.t) && x.t >= t1 && (EVENT_FORMS.test(x.form) || DIL_FORMS.test(x.form))).sort((a, b) => a.t - b.t) : [];
+-  const N = news && news.ok ? (news.items || []).filter(x => ok(x.at) && x.at >= t1).sort((a, b) => a.at - b.at) : [];
+-  const fF = F.filter(x => x.t >= t0 && !/\/A$/.test(x.form)), fN = N.filter(x => x.at >= t0);
+-  const worst = (ds) => ['DILUTION', 'NEGATIVE', 'POSITIVE', 'AMBIGUOUS'].find(d => ds.includes(d)) || 'UNKNOWN';
+-  const hDir = fN.length ? (() => { const ds = fN.map(x => headlineDirection(x.headline)); return ds.includes('DILUTION') ? 'DILUTION' : ds.includes('NEGATIVE') && ds.includes('POSITIVE') ? 'AMBIGUOUS' : worst(ds); })() : null;
+-  const tag = (o) => ({ ...o, filingEconomicClassification:F.some(x=>DIL_FORMS.test(x.form))?'UNREVIEWED':'NOT_ASSESSED', text: o.text + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' [source ' + o.source + ', direction ' + o.direction + (o.direction === 'POSITIVE' ? ' (headline wording, not verified)' : '') + ', ' + o.freshness + ']' });
+-  if (fF.length) { const x = fF[0], fd = worst(fF.map(filingDirection)), dir = fd !== 'AMBIGUOUS' ? fd : hDir && hDir !== 'AMBIGUOUS' ? hDir : 'AMBIGUOUS';
+-    return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyStamp(x.t) + (fN.length ? '; headline ' + nyStamp(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
++  const N = news && news.ok ? (news.items || []).filter(x => ok(x.at) && x.at >= t1).map(x=>({...x,association:headlineAssociation(x,{symbol,issuerName})})).sort((a, b) => a.at - b.at) : [];
++  const fF = F.filter(x => x.t >= t0 && !/\/A$/.test(x.form)), fN = N.filter(x => x.at >= t0 && x.association.eligibleForDirection);
++  const combine = (ds) => ds.includes('DILUTION') ? 'DILUTION' : ds.includes('MIXED') || (ds.includes('NEGATIVE') && ds.includes('POSITIVE')) ? 'MIXED' : ds.includes('NEGATIVE') ? 'NEGATIVE' : ds.includes('POSITIVE') ? 'POSITIVE' : 'AMBIGUOUS';
++  const hDir = fN.length ? combine(fN.map(x => ['POSITIVE','MIXED'].includes(headlineDirection(x.headline))?'AMBIGUOUS':headlineDirection(x.headline))) : null;
++  const evidence = [...F.map(x=>({source:'SEC',publicAt:new Date(x.t).toISOString(),form:x.form,items:x.items||'',sourceId:x.accession||null,url:x.url||null,direction:filingDirection(x)})),
++    ...N.map(x=>({source:WIRE.test(x.source||'')?'ISSUER_WIRE':'AGGREGATOR',publisher:x.source||null,publicAt:new Date(x.at).toISOString(),headline:x.headline,sourceId:x.id||null,url:x.url||null,direction:x.association.eligibleForDirection?(['POSITIVE','MIXED'].includes(headlineDirection(x.headline))?'AMBIGUOUS':headlineDirection(x.headline)):'UNKNOWN',wordingDirection:headlineDirection(x.headline),issuerAssociation:x.association}))];
++  const tag = (o) => ({ ...o, subjectSymbol:symbol||null, evidence, checkedAt:new Date(nowMs).toISOString(), sourceAvailability:{sec:sec?.known===true,news:news?.ok===true},
++    filingEconomicClassification:F.some(x=>DIL_FORMS.test(x.form))?'UNREVIEWED':'NOT_ASSESSED',
++    interpretation:'Direction is a rule-based interpretation, not verified economic impact or trade eligibility.',
++    unverifiedNews:N.filter(x=>!x.association.eligibleForDirection),
++    text: o.text + (N.some(x=>!x.association.eligibleForDirection)?'; UNVERIFIED issuer/claim association: '+N.filter(x=>!x.association.eligibleForDirection).length+' headline(s) retained, not a company catalyst':'') + (F.some(x=>DIL_FORMS.test(x.form))?'; registration/prospectus economics UNREVIEWED; protective block unchanged':'') + ' (headline words alone do not verify economic impact) [source ' + o.source + ', direction ' + o.direction + (['POSITIVE','MIXED'].includes(o.direction) ? ' (headline wording, not verified impact)' : '') + ', ' + o.freshness + ']' });
++  if (fF.length) { const x = fF[0], fd = combine(fF.map(filingDirection)), dir = combine([fd, hDir]);
++    return tag({ cls: 'VERIFIED', source: 'SEC', direction: dir, freshness: 'FRESH', text: 'SEC ' + x.form + (x.items ? ' item ' + x.items : '') + ' accepted ' + nyStamp(x.t) + (fN.length ? '; headline ' + nyHM(fN[0].at) + ' (' + (fN[0].source || 'news') + '): "' + fN[0].headline + '"' : '') }); }
+   if (fN.length) { const x = fN[0], src = WIRE.test(x.source || '') ? 'ISSUER_WIRE' : 'AGGREGATOR';
+-    return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyStamp(x.at) + ' (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
+-  if (F.length || N.length) { const x = F[0] || null, h = N[0] || null;
+-    return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : headlineDirection(h.headline), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + nyStamp(x.t) : '"' + h.headline + '"') }); }
+-  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no headline in 72 h' : '; news not available either') });
++    return tag({ cls: 'UNCONFIRMED', source: src, direction: hDir, freshness: 'FRESH', text: 'earliest headline ' + nyHM(x.at) + ' New York (' + (x.source || 'news') + '): "' + x.headline + '"' }); }
++  if (F.length || N.some(x=>x.association.eligibleForDirection)) { const x = F[0] || null, h = N.find(x=>x.association.eligibleForDirection) || null;
++    return tag({ cls: 'RECYCLED', source: x ? 'SEC' : WIRE.test((h && h.source) || '') ? 'ISSUER_WIRE' : 'AGGREGATOR', direction: x ? filingDirection(x) : (['POSITIVE','MIXED'].includes(headlineDirection(h.headline))?'AMBIGUOUS':headlineDirection(h.headline)), freshness: 'RECYCLED', text: 'only older news (24-72 h' + (x && /\/A$/.test(x.form) ? ', an amended filing' : '') + '): ' + (x ? 'SEC ' + x.form + ' accepted ' + nyStamp(x.t) : '"' + h.headline + '"') }); }
++  if(N.length)return tag({cls:'UNCONFIRMED',source:'AGGREGATOR',direction:'UNKNOWN',freshness:'UNVERIFIED',text:'UNVERIFIED news retained; no issuer/claim-verified catalyst'});
++  if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no issuer-verified headline in 72 h' : '; news not available either') });
+   if (!news || !news.ok) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing in 72 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' });
+-  return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing and no headline in 72 h' });
++  return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: N.length?'UNVERIFIED news retained; no issuer/claim-verified catalyst':'no SEC filing and no headline in 72 h' });
++}
++// Public radar uses a bounded subject-bound summary, not raw provider-news objects.
++export function publicCatalystSummary(c){
++ if(!c||typeof c!=='object')return null;
++ return {subjectSymbol:c.subjectSymbol||null,cls:c.cls,source:c.source,direction:c.direction,freshness:c.freshness,text:String(c.text||'').slice(0,512),checkedAt:c.checkedAt||null,evidence:(c.evidence||[]).map(e=>({source:e.source,publicAt:e.publicAt,form:e.form,items:e.items,sourceId:e.sourceId,issuerAssociation:e.issuerAssociation})),sourceAvailability:c.sourceAvailability};
+ }
+ export const levelAllows = (level, kind) => (kind === 'lead' ? level === 'all' : kind === 'paper' ? level === 'all' || level === 'paper' : false);
+ 
+@@ -136,14 +162,14 @@ export function createEarlyAlerts(opts) {
+           const hard = hardReason({ price: c.price, halalFail: opts.notHalal(c.sym), lottery: (opts.lottery || {})[c.sym], sec: await secOf(c.sym) });
+           row.instrument=S.sec[c.sym]?.instrument||{status:'UNKNOWN'}; row.collectionVersion='WATCHER_CONTEXT_V2'; row.rankingCohort=opts.collectionCohort||'LEGACY_FROZEN_20261028'; row.approvedBuyEligible=false; row.performanceScope='LEGACY_MIXED_INSTRUMENT_RESEARCH'; c.instrument=row.instrument;
+           if (hard) { row.decision = 'HARD: ' + hard; continue; }
+-          if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catText = c.cat.text; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
++          if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catObj = publicCatalystSummary(c.cat); row.catText = c.cat.text; row.catEvidence = row.catObj.evidence; row.catCheckedAt = c.cat.checkedAt; row.catSources = c.cat.sourceAvailability; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
+           if (!levelAllows(S.level, kind)) { row.decision = 'MUTED: alerts ' + S.level; continue; }
+           if (S.sent[kind] + out.length >= (kind === 'lead' ? LEAD.perDay : PAPER.perDay)) { row.decision = 'LIMIT: ' + (kind === 'lead' ? LEAD.perDay : PAPER.perDay) + ' a day reached'; continue; }
+           if (kind === 'paper') { const r = (opts.record || {})[c.rule + '/close']; c.record = r; c.history = ((opts.lab || {})[c.rule + '/close'] || {}).verdict; c.halalOk = opts.halalOk(c.sym); }
+           out.push({ row, c }); }
+         if (!out.length) continue;
+         const text = kind === 'lead' ? leadText(out.map(x => x.c), { halalOk: opts.halalOk }) : paperText(out.map(x => x.c));
+-        const labelled=text+'\nRESEARCH ONLY. Instrument identity may be UNKNOWN; unverified instruments are retained as context and are excluded from verified common-stock performance claims. This is never approved BUY eligibility.';
++        const labelled=text+'\nUNVERIFIED DISCOVERY CONTEXT when identity is UNKNOWN; excluded from verified common-stock radar A/B. RESEARCH ONLY. Instrument identity may be UNKNOWN; unverified instruments are retained as context and are excluded from verified common-stock performance claims. This is never approved BUY eligibility.';
+         const r = await opts.send(labelled).catch(e => ({ ok: false, why: e.message })), at = opts.now();
+         for (const x of out) { x.row.decision = r && r.ok ? 'SENT' : 'SEND FAILED' + (r && r.why ? ': ' + r.why : ''); x.row.sentM = at; x.row.latencyMin = at - x.row.m; }
+         if (r && r.ok) S.sent[kind] += out.length; } },
+diff --git a/ignition-watch.mjs b/ignition-watch.mjs
+index 30ba447b..29fe7c7e 100644
+--- a/ignition-watch.mjs
++++ b/ignition-watch.mjs
+@@ -23,7 +23,7 @@ import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot, validateClocks } fr
+ import { sendAlert } from './opp-mode.mjs';
+ import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
+ import { stopHits } from './stop-watch.mjs';
+-import { createEarlyAlerts, alertLevel, classifyCatalyst } from './early-alerts.mjs';
++import { createEarlyAlerts, alertLevel, classifyCatalyst, publicCatalystSummary } from './early-alerts.mjs';
+ import { createShadow, spreadPct } from './shadow-stream.mjs';
+ import { parseAtom, nyMinuteOf } from './edgar-feed.mjs';
+ import { dEligible, hash, FROZEN as RANK } from './rank-models.mjs';
+@@ -131,10 +131,10 @@ async function secRiskIssuer(sym) {
+   const H = { headers: { 'User-Agent': SEC_UA, 'Accept': 'application/json' } };
+   try { if (!TICK) { const r = await request(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
+     const cik = TICK[sym]; if (!cik) return {known:false,tags:[],status:'NO_ISSUER_RECORD',sourceFailure:false};
+-    const r = await request(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
++    const r = await request(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const issuer = await r.json(), R = issuer.filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
+     for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null, accession: (R.accessionNumber || [])[k] || null, url: (R.accessionNumber || [])[k] && (R.primaryDocument || [])[k] ? 'https://www.sec.gov/Archives/edgar/data/' + Number(cik) + '/' + R.accessionNumber[k].replace(/-/g, '') + '/' + encodeURIComponent(R.primaryDocument[k]) : null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
+       if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) {const acc=String((R.accessionNumber||[])[k]||''),valid=/^\d{10}-\d{2}-\d{6}$/.test(acc);blockingFilings.push({form:f,filingDate:R.filingDate[k],accession:valid?acc:null,acceptedAt:(R.acceptanceDateTime||[])[k]||null,indexUrl:valid?'https://www.sec.gov/Archives/edgar/data/'+Number(cik)+'/'+acc.replace(/-/g,'')+'/'+acc+'-index.html':null,economicClassification:'UNREVIEWED',blockUnchanged:true});tags.add('registration/prospectus ('+f+'); economic classification UNREVIEWED');} if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
+-    return {known:true,tags:[...tags],filings,blockingFilings,status:'SEC_KNOWN',sourceFailure:false}; } catch (e) { return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } }
++    return {known:true,symbol:sym,issuerName:issuer.name||null,tags:[...tags],filings,blockingFilings,status:'SEC_KNOWN',sourceFailure:false}; } catch (e) { return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } }
+ async function secRisk(sym) { return instrumentAwareSec(sym,secRiskIssuer,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256}); }
+ // headlines (Finnhub company news, the owner's existing key; official API): only for the few stocks an early alert is about to name
+ async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no FINNHUB_KEY' };
+@@ -210,7 +210,7 @@ async function tgSend(text) {
+ }
+ const INSTRUMENT_COHORT=env.IG_INSTRUMENT_REFERENCE_FILE?'INSTRUMENT_CLASSIFIED_V2:'+(env.IG_INSTRUMENT_REFERENCE_SHA256||'UNPINNED'):'LEGACY_FROZEN_20261028';
+ const EA = createEarlyAlerts({ day, collectionCohort:INSTRUMENT_COHORT, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
+-  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
++  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ symbol:sym,issuerName:sec?.issuerName, sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
+ const SR = createShadow({ day });
+ const shadowRows=SR.rows.bind(SR); SR.rows=()=>shadowRows().map(row=>({...row,instrument:row.instrument||{status:'UNKNOWN',reason:'LEGACY_OBSERVATION_IDENTITY_UNESTABLISHED'},performanceScope:'LEGACY_MIXED_INSTRUMENT_RESEARCH',approvedBuyEligible:false}));
+ for(const method of ['early','trigger','filing','control']){const original=SR[method].bind(SR);SR[method]=(...args)=>{original(...args);const row=SR.book.get(args[0].sym);if(row&&!row.instrument){row.instrument=EA.S.sec[row.sym]?.instrument||readInstrumentType(row.sym,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256});row.instrumentRecordedAt=new Date().toISOString();row.collectionVersion='WATCHER_CONTEXT_V2';row.rankingCohort=INSTRUMENT_COHORT;}};}
+@@ -276,11 +276,11 @@ async function radarSnap(m, scanned, live) {
+   RADAR.mkt = medChg();
+   // (28 Oct fix) the live SEC check for every stock the radar may name (cached by the alert system when it already ran); a lead needs it
+   const sec = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)])) { if (!EA.S.sec[s]) EA.S.sec[s] = await secRisk(s).catch(() => ({ known: false, tags: [] })); sec[s] = { known: EA.S.sec[s].known, tags: EA.S.sec[s].tags || [],instrument:EA.S.sec[s].instrument||{status:'UNKNOWN'},status:EA.S.sec[s].status,sourceFailure:EA.S.sec[s].sourceFailure===true }; }
+-  const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catText) cat[r.sym] = r.catText;
++  const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catObj) cat[r.sym] = publicCatalystSummary(r.catObj);
+   { let nq = 0; for (const s of [...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)]) { if (cat[s] || !sec[s] || !sec[s].known || sec[s].tags.length) continue;   // the radar's own catalyst check for names it may list
+-      const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = classifyCatalyst({ sec: EA.S.sec[s], news, nowMs: Date.now() }).text; } }
++      const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = publicCatalystSummary(classifyCatalyst({ symbol:s,issuerName:EA.S.sec[s]?.issuerName, sec: EA.S.sec[s], news, nowMs: Date.now() })); } }
+   fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, mkt: RADAR.mkt, tally: tl, sec, cat,
+-    movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
++    moverCount: ms.length, movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
+   await sendRadarOnce();
+ }
+ const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
+diff --git a/instrument-type.mjs b/instrument-type.mjs
+index 83c48d75..67fa07be 100644
+--- a/instrument-type.mjs
++++ b/instrument-type.mjs
+@@ -26,7 +26,26 @@ export function readInstrumentType(symbol,{file,pinnedSha256,now=Date.now()}={})
+ }
+ export async function instrumentAwareSec(symbol,lookup,options={}){
+  const instrument=readInstrumentType(symbol,options);
+- if(instrument.policyExcluded)return {known:false,tags:[],status:'INSTRUMENT_POLICY_EXCLUDED',sourceFailure:false,policyExcluded:true,admissionBlocked:true,instrument};
++ const reviewed=researchInstrumentScope(symbol,instrument);
++ if(reviewed.policyExcluded)return {known:false,tags:[],status:'INSTRUMENT_POLICY_EXCLUDED',sourceFailure:false,policyExcluded:true,admissionBlocked:true,instrument:reviewed};
+  let sec;try{sec=await lookup(symbol);}catch{sec={known:false,tags:[]};}
+  return {...sec,instrument,admissionBlocked:instrument.status!=='ELIGIBLE_COMMON_STOCK'||sec?.status==='NO_ISSUER_RECORD',sourceFailure:sec?.sourceFailure??sec?.known!==true,status:sec?.status==='NO_ISSUER_RECORD'?'NO_ISSUER_RECORD':sec?.known===true?(instrument.status==='ELIGIBLE_COMMON_STOCK'?'SEC_KNOWN':'INSTRUMENT_IDENTITY_UNKNOWN'):'SEC_UNAVAILABLE'};
+ }
++
++// Reviewed public issuer/exchange facts, not a complete or point-in-time universe.
++// Instrument restrictions do not constitute a ZAD decision. Unknown stays unknown.
++export const REVIEWED_RESEARCH_EXCLUSIONS=Object.freeze({
++ ZXZZT:{kind:'TEST_SECURITY',sourceUrl:'https://www.txse.com/alerts/5059533f-8b82-4a4f-944c-7b126dbb7176',sourceDate:'2026-07-06'},
++ CRWX:{kind:'LEVERAGED_ETF',underlying:'CRWV',sourceUrl:'https://www.cboe.com/us/equities/listings/listed_products/symbols/CRWX/'},
++ CWVX:{kind:'LEVERAGED_ETF',underlying:'CRWV',sourceUrl:'https://www.tradretfs.com/cwvx'},
++ CRWG:{kind:'LEVERAGED_ETF',underlying:'CRWV',sourceUrl:'https://leverageshares.com/us/etfs/leverage-shares-2x-long-crwv-daily-etf'},
++ AXTU:{kind:'LEVERAGED_ETF',underlying:'AXTI',sourceUrl:'https://www.cboe.com/us/equities/listings/listed_products/symbols/AXTU'},
++ BDRY:{kind:'FREIGHT_FUTURES_ETF',sourceUrl:'https://amplifyetfs.com/bdry/'}
++});
++export function researchInstrumentScope(symbol,instrument){
++ const known=REVIEWED_RESEARCH_EXCLUSIONS[symbol];
++ if(known)return {status:'POLICY_EXCLUDED',...known,evidence:'PUBLIC_PRIMARY_REVIEW_6802098006',verifiedAt:'2026-11-11',policyExcluded:true};
++ if(instrument?.status==='POLICY_EXCLUDED'&&instrument.policyExcluded===true)return {...instrument,status:'POLICY_EXCLUDED'};
++ if(instrument?.status==='ELIGIBLE_COMMON_STOCK'&&instrument.securityId&&instrument.referenceSha256)return {...instrument,status:'ELIGIBLE_COMMON_STOCK',policyExcluded:false};
++ return {status:'UNKNOWN',policyExcluded:false,reason:'NO_VERIFIED_SECURITY_CLASS',securityId:null};
++}
+diff --git a/radar-v3-core.mjs b/radar-v3-core.mjs
+index 0d0ead25..083992b1 100644
+--- a/radar-v3-core.mjs
++++ b/radar-v3-core.mjs
+@@ -1,3 +1,4 @@
++import {researchInstrumentScope} from './instrument-type.mjs';
+ // DAILY OPPORTUNITY RADAR (V3.0, owner approved 28 Oct 2026: "do 1, 2, 3"). Pure functions, no network, no files; opportunity-radar.mjs
+ // reads and writes. Research and routing only: it adds NO buy rule, lowers NO gate and places NO order.
+ // WHY: the audit (docs/v3-opportunity-audit-2026-10-28.md) found the system SAW the day's runners (BRAI, AEYE, OWLS on 27 Oct) but the
+@@ -27,6 +28,8 @@ const usd = (x) => (x >= 10 ? '$' + x.toFixed(2) : '$' + x.toFixed(x >= 1 ? 2 :
+ export const DANGER = /DELIST|DILUTION|OFFERING|RESTATE/;
+ // ctx: { halal: {SYM: 'ok'|'fail'}, events: {SYM: [{f, p}]}, lottery: {SYM: oneDayJump} }
+ export function blockOf(sym, price, ctx = {}) {
++  const instrument=researchInstrumentScope(sym,ctx.sec?.[sym]?.instrument||ctx.instruments?.[sym]);
++  if(instrument.policyExcluded)return 'excluded instrument: '+instrument.kind+(instrument.underlying?' (underlying '+instrument.underlying+')':'');
+   if (!(price >= 1)) return 'under 1 USD';
+   if ((ctx.halal || {})[sym] === 'fail') return 'NOT HALAL (ZAD)';
+   const ev = ((ctx.events || {})[sym] || []).filter(e => DANGER.test(e.f));
+@@ -47,7 +50,7 @@ export function halalMap(zad, marks = {}, now = Date.now()) {
+ }
+ export const halalWord =(sym, ctx = {}) => ((ctx.halal || {})[sym] === 'ok' ? 'halal (your ZAD mark)' : 'HALAL UNKNOWN: check ZAD first');
+ export function catalystOf(sym, ctx = {}) {
+-  if (ctx.cat && ctx.cat[sym]) return ctx.cat[sym];   // (28 Oct) the alert system's live catalyst check (SEC acceptance time + headline), when it ran
++  if (ctx.cat && ctx.cat[sym]) {const c=ctx.cat[sym];if(c&&typeof c==='object'&&c.subjectSymbol===sym&&typeof c.text==='string'&&Array.isArray(c.evidence))return c.text;return 'UNVERIFIED catalyst association (legacy or mismatched subject); original evidence retained';}   // (28 Oct) the alert system's live catalyst check (SEC acceptance time + headline), when it ran
+   const ev = ((ctx.events || {})[sym] || []).filter(e => !DANGER.test(e.f));
+   return ev.length ? 'SEC 8-K ' + ev.map(e => e.f.split(',')[0].toLowerCase() + ' ' + String(e.p).slice(5, 10)).slice(0, 2).join(', ')
+     : 'NO VERIFIED CATALYST (no SEC 8-K in 10 days; headlines not checked)';
+@@ -82,10 +85,14 @@ export function closestRule(record = {}, lab = {}) {
+ 
+ // D lists 1 USD+ movers only (sub-1 USD warrants and pennies are counted, never listed: no rule may trade them), and a move over +300%
+ // is flagged as a likely split or data error, not explained (V3.0: verify corporate actions before telling any story about a move)
+-export function runnerLines(movers = [], n = 5, withAfter = false) {
++export function runnerLines(movers = [], n = 5, withAfter = false, ctx = {}) {
++  const raw=movers, excluded=raw.filter(m=>researchInstrumentScope(m.sym,ctx.sec?.[m.sym]?.instrument||ctx.instruments?.[m.sym]).policyExcluded);
++  movers=raw.filter(m=>!researchInstrumentScope(m.sym,ctx.sec?.[m.sym]?.instrument||ctx.instruments?.[m.sym]).policyExcluded);
+   const big = movers.filter(m => m.code !== 'UNDER_1_USD').sort((a, b) => b.maxUp - a.maxUp), under = movers.length - movers.filter(m => m.code !== 'UNDER_1_USD').length, out = [];
+   for (const m of big.slice(0, n)) out.push('- ' + m.sym + ' up to ' + pct(m.maxUp) + (m.maxUp > 3 ? ' (LIKELY A SPLIT OR DATA ERROR: check before reading anything into it)' : '') + ' (first seen ' + m.firstSeen + ' at ' + pct(m.firstSeenUp)
+     + (withAfter ? '; ' + pct(m.afterFirstSeen && m.afterFirstSeen.last) + ' from there to 15:00' : '') + '): ' + (CODE_WORDS[m.code] || m.code) + '.');
++  for(let i=0;i<Math.min(big.length,n);i++){const scope=researchInstrumentScope(big[i].sym,ctx.sec?.[big[i].sym]?.instrument||ctx.instruments?.[big[i].sym]);if(scope.status==='UNKNOWN')out[i]+=' Identity UNKNOWN: unverified instrument movement, not a verified missed company opportunity.';}
++  if(excluded.length)out.push('Excluded from company-opportunity view: '+excluded.map(m=>{const x=researchInstrumentScope(m.sym);return m.sym+' ['+(x.kind||'non-common instrument')+(x.underlying?'; underlying '+x.underlying:'')+']';}).join('; ')+'. Original observations retained.');
+   if (under) out.push('  (+' + under + ' under 1 USD, mostly warrants and pennies: not listed, never tradable by these rules)');
+   return out;
+ }
+@@ -95,7 +102,7 @@ export function runnerLines(movers = [], n = 5, withAfter = false) {
+ //         early: [{sym, change, rvT, price, score, firstMinute}], now: {SYM: {px, chg}}, tally, mkt }
+ export function buildMidday(snap, ctx0 = {}) {
+   const ctx = { ...ctx0, ...(snap.sec ? { sec: snap.sec } : {}), ...(snap.cat ? { cat: snap.cat } : {}) };
+-  const now = snap.now || {}, rows = [], blocked = [], text = [];
++  const now = snap.now || {}, rows = [], blocked = [], text = [], unverified = [];
+   const fm = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+   text.push('OPPORTUNITY RADAR ' + snap.at + ' New York (' + snap.day + '). Research list: nothing in A or B is an approved buy.');
+   if (snap.firstMinute && snap.firstMinute > '09:35') text.push('WATCHER STARTED LATE today (' + snap.firstMinute + '): the open was not watched.');
+@@ -104,34 +111,39 @@ export function buildMidday(snap, ctx0 = {}) {
+   const seenB = new Set(), B = [];
+   for (const h of (snap.hits || []).slice().sort((a, b) => a.m - b.m)) { if (seenB.has(h.sym)) continue; seenB.add(h.sym);
+     const blk = blockOf(h.sym, h.price, ctx); if (blk) { blocked.push(h.sym + ' (' + blk + ')'); continue; }
++    if(researchInstrumentScope(h.sym,ctx.sec?.[h.sym]?.instrument||ctx.instruments?.[h.sym]).status==='UNKNOWN'){unverified.push({sym:h.sym,px:h.price,origin:'rule hit '+h.rule});continue;}
+     const r = (ctx.record || {})[h.rule + '/close'], hv = (((ctx.lab || {})[h.rule + '/close']) || {}).verdict || 'not tested', n = now[h.sym] || {};
+     B.push({ h, r, hv, n, rank: r && r.n >= 20 ? r.avg : -1 }); }
+   B.sort((a, b) => b.rank - a.rank);
+   text.push('', 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED + ')' + (B.length ? ':' : ': none before 11:00.'));
+   for (const x of B.slice(0, 5)) { const { h, r, hv, n } = x;
+     text.push('- ' + h.sym + ': ' + h.rule + ' at ' + fm(h.m) + ' ' + usd(h.price) + (n.px > 0 ? ', now ' + usd(n.px) + ' (' + pct(n.px / h.price - 1) + ' since)' : '') + '. ' + halalWord(h.sym, ctx) + '.',
+-      '  Rule record: ' + (r ? r.n + ' paper trades on ' + (r.days || 0) + ' days, ' + pct(r.avg, 1) + ' a trade after costs' : 'no paper record yet') + '; 5-year test ' + hv + '.',
+-      '  For +2% net on 1,000 USD it needs ' + pct(netHurdle(h.price), 1) + ' gross. ' + catalystOf(h.sym, ctx) + '.');
++      '  Rule record: ' + (r ? r.n + ' paper trades on ' + (r.days || 0) + ' days, ' + pct(r.avg, 1) + ' a trade after costs' : 'no paper record yet') + '; minute-bar history verdict ' + hv + '.',
++      '  Instrument: '+researchInstrumentScope(h.sym,ctx.sec?.[h.sym]?.instrument||ctx.instruments?.[h.sym]).status+'. For +2% modeled net on 1,000 USD it needs ' + pct(netHurdle(h.price), 1) + ' gross. ' + catalystOf(h.sym, ctx) + '.');
+     rows.push({ type: 'list', d: snap.day, at: snap.at, panel: 'B', sym: h.sym, px: n.px > 0 ? n.px : h.price, rule: h.rule }); }
+   // A: early-wave observations not already in B, not extended (+2% to +20% now), not blocked
+   const A = [];
+   for (const e of (snap.early || []).slice().sort((a, b) => (b.score - a.score) || ((b.rvT || 0) - (a.rvT || 0)))) {
+     if (seenB.has(e.sym) || A.some(a => a.sym === e.sym)) continue; const n = now[e.sym] || {}, px = n.px > 0 ? n.px : e.price, chg = n.chg !== undefined ? n.chg : e.change;
+     if (!(chg >= 0.02 && chg <= 0.20)) continue; const blk = blockOf(e.sym, px, ctx); if (blk) { blocked.push(e.sym + ' (' + blk + ')'); continue; }
++    if(researchInstrumentScope(e.sym,ctx.sec?.[e.sym]?.instrument||ctx.instruments?.[e.sym]).status==='UNKNOWN'){if(!unverified.some(x=>x.sym===e.sym))unverified.push({sym:e.sym,px,origin:'early-wave observation'});continue;}
+     A.push({ sym: e.sym, px, chg, rvT: e.rvT, first: e.firstMinute }); if (A.length >= 5) break; }
+-  text.push('', 'A. LIVE RESEARCH LEADS (' + NOT_APPROVED + ')' + (A.length ? ':' : ': none right now.'));
++  text.push('', 'A. VERIFIED COMMON-STOCK RESEARCH LEADS (' + NOT_APPROVED + ')' + (A.length ? ':' : ': none right now.'));
+   for (const a of A) { text.push('- ' + a.sym + ' ' + pct(a.chg) + ' at ' + usd(a.px) + (a.rvT ? ', volume pace ' + a.rvT.toFixed(1) + 'x normal' : '') + ' (seen ' + a.first + '). ' + halalWord(a.sym, ctx) + '.',
+-      '  ' + catalystOf(a.sym, ctx) + '. Needs ' + pct(netHurdle(a.px), 1) + ' gross for +2% net.' + (a.px < 5 ? ' Under 5 USD: wide spreads, halts, gaps.' : ''));
++      '  Instrument: '+researchInstrumentScope(a.sym,ctx.sec?.[a.sym]?.instrument||ctx.instruments?.[a.sym]).status+'. ' + catalystOf(a.sym, ctx) + '. Needs ' + pct(netHurdle(a.px), 1) + ' gross for +2% net.' + (a.px < 5 ? ' Under 5 USD: wide spreads, halts, gaps.' : ''));
+     rows.push({ type: 'list', d: snap.day, at: snap.at, panel: 'A', sym: a.sym, px: a.px }); }
++  text.push('', 'U. UNVERIFIED DISCOVERY — security class UNKNOWN; not ordinary-stock opportunities ('+unverified.length+' records):');
++  for(const x of unverified.slice(0,5)){text.push('- '+x.sym+' '+usd(x.px)+'; '+x.origin+'; identity UNKNOWN. '+halalWord(x.sym,ctx)+'. '+catalystOf(x.sym,ctx));rows.push({type:'discovery-unverified',d:snap.day,at:snap.at,panel:'U',sym:x.sym,px:x.px,instrumentStatus:'UNKNOWN'});}
+   if (blocked.length) text.push('BLOCKED by hard rules (not leads): ' + blocked.slice(0, 6).join('; ') + (blocked.length > 6 ? '; +' + (blocked.length - 6) + ' more' : '') + '.');
+   // C
+   const cr = closestRule(ctx.record, ctx.lab);
+   text.push('', 'C. APPROVED SIGNALS: ' + (snap.alerts > 0 ? snap.alerts + ' tested alert' + (snap.alerts > 1 ? 's' : '') + ' sent today (see those messages).' : '0 so far today.'));
+   if (!(snap.alerts > 0) && cr) text.push('  Closest: ' + cr.rule + ' (' + cr.n + ' paper trades on ' + cr.days + ' days, ' + pct(cr.avg, 1) + ' a trade). Missing: ' + cr.missing.join('; ') + '.');
+   // D
+-  text.push('', 'D. RUNNERS SO FAR (retrospective, not buys)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers));
++  text.push('', 'D. OBSERVED INSTRUMENT MOVEMENTS (retrospective, not company opportunities)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers,5,false,ctx));
++  const scopeCounts={verified:0,unknown:0,excluded:0};for(const m of snap.movers||[]){const k=researchInstrumentScope(m.sym,ctx.sec?.[m.sym]?.instrument||ctx.instruments?.[m.sym]);scopeCounts[k.policyExcluded?'excluded':k.status==='ELIGIBLE_COMMON_STOCK'?'verified':'unknown']++;}text.push('Mover identity denominator: '+scopeCounts.verified+' verified common stocks, '+scopeCounts.unknown+' UNKNOWN instruments, '+scopeCounts.excluded+' excluded; raw '+(snap.movers||[]).length+'. Not whole-universe coverage.');
+   const ts = topSilence(snap.tally);
+-  text.push('', 'Scanned ' + (snap.scanned ?? '?') + ' stocks (' + (snap.live ?? '?') + ' with a fresh price). 15%+ movers: ' + (snap.movers || []).length + '. Rule hits: ' + (snap.hits || []).length + '. Approved: ' + (snap.alerts || 0) + '.'
++  text.push('', 'Received ' + (snap.scanned ?? '?') + ' instruments (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a fresh price). 15%+ movers: ' + (snap.moverCount ?? (snap.movers || []).length) + ' (showing ' + (snap.movers || []).length + '). Rule hits: ' + (snap.hits || []).length + '.'
+     + (ts ? ' Top reason for silence: ' + ts.words + ' (' + ts.n + ', ' + ts.kind + ').' : ''));
+   text.push('Chasing: stocks already up 20%+ when first seen fell a median 19% to the close (469 cases, 14-27 Oct). Check ZAD. Research only, not advice.');
+   return { text: text.join('\n'), rows };
+@@ -164,7 +176,7 @@ export function buildClose(day, live, ledger = [], ctx = {}) {
+     text.push('', 'TODAY\'S RADAR LINES (listing price to 15:00, after 6 USD fees and spread):' + (mine.length ? '' : ' none were listed.'));
+     for (const r of mine) { const c = close.get(r.sym), s = c ? scoreSameDay(r, c) : null;
+       text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
+-    text.push('', 'D. RUNNERS WE MISSED TODAY (retrospective, not buys):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true));
++    text.push('', 'D. OBSERVED INSTRUMENT MOVEMENTS TODAY (not verified missed company opportunities):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true,ctx));
+     const ts = topSilence(live.tally), all = Object.values(live.tally || {}).reduce((a, b) => a + b, 0); if (ts) text.push('Top reason for silence today: ' + ts.words + ' (' + ts.n + ' of ' + all + ' movers of 15%+; ' + ts.kind + ').');
+     text.push('', 'C. APPROVED SIGNALS today: ' + (live.alerts || 0) + '. Tested buys for the next session come in ACTIONS tonight.');
+   }
+diff --git a/scan.mjs b/scan.mjs
+index 693a7346..44d9614f 100644
+--- a/scan.mjs
++++ b/scan.mjs
+@@ -239,7 +239,7 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
+   const stopLabel = P && typeof P.stop === 'number' && Number.isFinite(P.stop) && P.stop > 0 ? 'stop ' + price(P.stop) : P && (P.src === 'leader dip' || /no stop by design/i.test(P.stopWhy || '')) ? 'no stop by design' : 'stop NOT SET';
+   const exit = P ? posLine(sym, P, null).replace(sym + ': ', '') + (leaderTimeExit ? '; ' + leaderTimeExit : '') : st && st.assessmentEntry ? 'Original caller conclusion: ' + clean(st.assessmentEntry) : q ? 'Stored quick rule: invalidation ' + (q.stop > 0 ? money(q.stop) : 'UNKNOWN') + (q.t1 > 0 ? ', target ' + money(q.t1) : '; no target supplied') + '; hold ' + (q.maxHold || q.days || 'UNKNOWN') + ' sessions' : 'No adopted exit supplied here; retain the existing rule, never infer one from a research rank';
+   const entry = P ? 'Existing holding; no new entry or add authorized by this card' : st && st.assessmentEntry ? clean(st.assessmentEntry) : q ? 'Stored quick entry ' + price(q.buyLo) + ' to ' + price(q.buyHi) + '; existing gates still decide' : st && st.trigger > 0 ? 'Existing scanner needs a daily close above ' + money(st.trigger) + '; existing gates still decide' : st && st.rule ? clean(st.rule) + '; no new entry condition added' : 'No adopted entry rule supplied';
+-  const track = q ? (q.n ?? 'UNKNOWN') + ' stored historical cases, win rate ' + (typeof q.win === 'number' && Number.isFinite(q.win) ? Math.round(q.win * 100) + '%' : 'UNKNOWN') + '; not authentic fills or prospective approval' : st ? (st.n ?? 'UNKNOWN') + ' stored cases; ' + (st.proven === true ? 'stored test pass, other gates still apply' : st.proven === false ? 'NOT PROVEN' : 'verdict UNKNOWN') : 'No linked strategy outcome chain supplied';
++  const track = q ? (q.n ?? 'UNKNOWN') + ' stored historical cases, win rate ' + (typeof q.win === 'number' && Number.isFinite(q.win) ? Math.round(q.win * 100) + '%' : 'UNKNOWN') + '; not authentic fills or prospective approval' : st ? (st.n ?? 'UNKNOWN') + ' stored cases; ' + (st.proven === true ? (Number.isFinite(st.n)&&st.n<30?'producer pass label below existing30-case command threshold; NOT established validation':'stored test pass, other gates still apply') : st.proven === false ? 'NOT PROVEN' : 'verdict UNKNOWN') : 'No linked strategy outcome chain supplied';
+   const pct = v => typeof v === 'number' && Number.isFinite(v) ? pcs(v) : 'UNKNOWN';
+   const half = (n, name) => { n = n || {}; return name + ' n=' + (n.n ?? 'UNKNOWN') + ', model ' + pct(n.avg) + ' vs control ' + pct(n.ctrl) + ', SPY raw ' + pct(n.spy) + (typeof n.worst === 'number' && Number.isFinite(n.worst) ? ', worst model trade ' + pct(n.worst) : ''); };
+   const line = (r) => { const R = r.results || {}, need = [20, 60, 120].includes(r.hold) ? 0.005 * r.hold / 20 : null;
+@@ -2022,6 +2022,7 @@ function tipBoard(sig) {
+ function checkOne(sym, sig) {
+   if (!sig) return 'No scan has run yet.';
+   const q = (sig.quick || []).find(x => x.sym === sym), st = (sig.stocks || []).find(x => x.sym === sym), qOk = q && q.n >= 30 && okEv(q.n, netOf(q.avgPct, q.last), q.win), stOk = st && st.state === 'Buy watch' && (st.n || 0) >= 30 && okEv(st.n || 0, netOf(st.avgPct || 0, st.last), st.win);
++  if(st?.diagnosticOnly)return [sym+': NO TESTED ENTRY EVALUATED',sym+', saved '+sig.session+' close: '+money(st.last),st.why,'No adopted entry/exit is attached to this diagnostic. No test failed; the existing test was not run.',myHalal(sym)==='fail'?'NO BUY: existing ZAD exclusion.':L.HALAL_TEXT[myHalal(sym)]||'ZAD UNKNOWN'].join('\n');
+   const word = qOk || stOk ? 'BUY: a tested setup is open. Send  today  for the prices.' : st && st.state === 'Buy watch' ? 'WATCH ONLY: entry signal, but under 30 tested trades (early evidence). Paper only.' : q ? 'WATCH: quick setup with too little proof. Paper only.' : st && st.state === 'Blocked' ? 'NO BUY: blocked by earnings or news.' : st && st.proven && st.trigger ? 'WATCH: needs a daily close above ~' + money(st.trigger) + '.' : 'NO BUY: no tested setup.';
+   const gv1 = gateVerdict(sym, sig), lines = [sym + ': ' + (myHalal(sym) === 'fail' ? 'NO BUY: you marked it NOT halal in ZAD.' : gv1 && /^BUY/.test(word) ? 'NO BUY (paper only): ' + gv1 + '.' : word), sym + ', from the ' + sig.session + ' close'];
+   if (q) lines.push('Quick trade setup: entry ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ', invalidation ' + money(q.stop) + (q.t1 ? ', target 1 ' + money(q.t1) : '') + '. Past result ' + Math.round(q.win * 100) + '% wins over ' + q.n + ' trades.');
+@@ -2182,7 +2183,7 @@ function findTicker(text, sig, pos) {
+   const m = text.match(/\b(?:sell|buy|check|about|hunt|find)\s+([A-Za-z]{1,5})\b/i); return m && okT(m[1].toUpperCase()) ? m[1].toUpperCase() : null;
+ }
+ const universe = (sig) => { const ind = {}; for (const c of ((DISCMETA && DISCMETA.candidates) || [])) if (c.industry) ind[c.sym] = c.industry;
+-  return [...((sig && sig.stocks) || []), ...((sig && sig.uni) || [])].map(x => ({ ...x, sector: SECTORS_OF[x.sym] || ind[x.sym] || 'Other' })); };
++  return [...((sig && sig.stocks) || []), ...((sig && sig.uni) || [])].filter(x=>!x.diagnosticOnly).map(x => ({ ...x, sector: SECTORS_OF[x.sym] || ind[x.sym] || 'Other' })); };
+ const supportLine = (x, sig) => { const gv = gateVerdict(x.sym, sig); if (gv && ((x.state === 'Buy watch' && x.buyLo) || ((sig && sig.quick) || []).some(k => k.sym === x.sym))) return x.sym + ': setup, PAPER ONLY (' + gv + ')'; return supportLine0(x, sig); };
+ const supportLine0 = (x, sig) => { const q = ((sig && sig.quick) || []).find(k => k.sym === x.sym);
+   return x.state === 'Buy watch' && x.buyLo ? x.sym + ': ENTRY CONFIRMED. BUY ' + money(x.buyLo) + ' to ' + money(x.buyHi) + ' | STOP ' + money(x.stop) + ' | SELL ' + (x.target ? money(x.target) : 'below ~' + money(x.exitBelow))
+@@ -3213,7 +3214,7 @@ async function natural(text, sig, pos) {
+   if (tk && pos[tk] && /\b(more|add|adding|average|averaging|double)\b/i.test(text) && !/\bsell\b/i.test(text)) return addReply(tk, pos);
+   if (/\bsell\b|\bexit\b|take profit|get out/i.test(text)) return tk ? sellReply(tk, sig, pos) : hotList(sig);
+   if (!tk && /\bbuy\b|\bhunt\b|\brecommend/i.test(text)) return hotList(sig);
+-  if (tk && /\bbuy\b|\bhunt\b|\bfind\b|look (for|at|into)|what about|how about|\bentry\b|\bworth\b/i.test(text)) { const known = sig && ((sig.quick || []).some(x => x.sym === tk) || (sig.stocks || []).some(x => x.sym === tk)); return known ? checkOne(tk, sig) : checkLive(tk); }
++  if (tk && /\bbuy\b|\bhunt\b|\bfind\b|look (for|at|into)|what about|how about|\bentry\b|\bworth\b/i.test(text)) { const known = sig && ((sig.quick || []).some(x => x.sym === tk) || (sig.stocks || []).some(x => x.sym === tk && !x.diagnosticOnly)); return known ? checkOne(tk, sig) : checkLive(tk); }
+   return null;
+ }
+ // (4 Nov) SOURCE FRESHNESS: one rule shared by the watchdog and the SYSTEM HEALTH line. The expected close is the latest US session that
+@@ -3552,7 +3553,7 @@ async function tgCommands(sig) {
+     if (/^(options?|\u062E\u064A\u0627\u0631\u0627\u062A)\s*\??\s*$/i.test(text)) { out.push(optionsText()); continue; }
+     if ((k = text.match(/^(?:snapshot|snap|map|web|chain|study|research)\s+(?:of\s+)?([a-z.\-]{1,6})\b/i))) { out.push(await stockMap(k[1].toUpperCase(), sig, pos)); continue; }
+     if ((k = text.match(/^(?:check|ask|about|add(?!\s+more\b)|analy[sz]e)\s+([a-z.\-]{1,6})\b/i))) {   // 'add more SYM PRICE N shares' is a buy record (ADDED below), not 'check MORE'
+-    const sy = k[1].toUpperCase(), known = sig && ((sig.quick || []).some(x => x.sym === sy) || (sig.stocks || []).some(x => x.sym === sy)); out.push(sixAngles(sy, sig, pos) + '\n\n' + (known ? checkOne(sy, sig) + '\n' + (await deepInfo(sy).catch(() => [])).join('\n') : await checkLive(sy)) + '\n\n' + (await stockMap(sy, sig, pos, true).catch(() => ''))); continue; }
++    const sy = k[1].toUpperCase(), known = sig && ((sig.quick || []).some(x => x.sym === sy) || (sig.stocks || []).some(x => x.sym === sy && !x.diagnosticOnly)); out.push(sixAngles(sy, sig, pos) + '\n\n' + (known ? checkOne(sy, sig) + '\n' + (await deepInfo(sy).catch(() => [])).join('\n') : await checkLive(sy)) + '\n\n' + (await stockMap(sy, sig, pos, true).catch(() => ''))); continue; }
+     if ((k = text.match(/^(?:remove|delete|unwatch)\s+([a-z.\-]{1,6})\b/i))) { const sy = k[1].toUpperCase(), a = readExtra(); if (a.includes(sy)) { fs.writeFileSync(EXTRA_FILE, JSON.stringify(a.filter(x => x !== sy))); out.push('Removed ' + sy + ' from my nightly scan.'); } else out.push(sy + ' was not one of the stocks you added.'); continue; }
+     // ADDED: more shares of a stock you already hold. The average price and share count are updated; the stop stays.
+     if ((k = text.match(/^(?:i\s+)?(?:added|add more|bought more|bought extra)\s+([a-z.\-]{1,6})\s+(?:at\s+)?(\d+(?:\.\d+)?)/i))) {
+@@ -4004,6 +4005,7 @@ async function daily() {
+       { const P = myPos[sym], c = d.candles, i = c.length - 1; if (P && (P.src === 'try small' || P.src === 'leader dip') && i >= 0) { const { held, fl } = P.src === 'leader dip' ? ldipCloseFlags(P, c) : trySmallCloseFlags(P, c);
+         if (fl.length) { P.exitFlag = { d: c[i].d, why: fl[0].replace(/ Sell.*$/, '') }; posVerdict[sym] = fl[0].replace(/ Sell.*$/, '').toLowerCase(); } else delete P.exitFlag;
+         myLines.push(posLine(sym, P, d.last) + (fl.length ? '\n  ' + fl.join('\n  ') : '\n  no exit signal at this close') + '\n  held ' + held + ' session' + (held === 1 ? '' : 's')); } }
++      if (!myPos[sym]) stocks.push({sym,last:d.last,state:'No action',why:'Loaded '+d.candles.length+' daily bars; the existing tested-entry path requires 600. No tested entry is evaluated; this is not a rejected company thesis.',halal:myHalal(sym),rule:null,proven:false,trigger:null,readiness:'INSUFFICIENT_TESTED_HISTORY',availableBars:d.candles.length,requiredBars:600,diagnosticOnly:true});
+       continue; }
+     const c = d.candles, i = c.length - 1, ind = L.indicators(c, mkt), T = L.trendStats(c, ind, mom6), halal = myHalal(sym);
+     if (!only && !WIDE.has(sym) && i > 140) { const e2 = ind.e[L.CFG.TREND], e5 = ind.e[50], j = i - 5; wk.push({ sym, chg: c[i].c / c[j].c - 1, up: T.up, wasUp: c[j].c > e2[j] && e5[j] > e2[j] && c[j].c / c[j - 126].c - 1 > 0 }); }
+@@ -4293,14 +4295,14 @@ async function daily() {
+   fs.writeFileSync('data/models.json', JSON.stringify(models, null, 1));
+   { const n = await zoyaCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym), ...Object.keys(myPos)]); if (env.ZOYA_KEY) console.log('Zoya halal checks:', n, zoyaLive() ? '(live)' : '(sandbox)'); }
+   { const n = await halalExtCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym)]); if (n) console.log('other halal checks:', n); }
+-  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.length, tested: Object.keys(loaded).length, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
++  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.filter(x=>!x.diagnosticOnly).length, diagnosticCount:stocks.filter(x=>x.diagnosticOnly).length, diagnosticScope:'ALL_UNHELD_LOADED_LIST_NAMES', tested: Object.keys(loaded).length, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
+   fs.writeFileSync('data/alert-state.json', JSON.stringify({ day: '', sent: {} }));
+   { const n = ledgerAppend(); if (n) console.log('research ledger: ' + n + ' new result' + (n > 1 ? 's' : '') + ' logged'); }
+   try { switchPaper(loaded); } catch (e) { console.log('switch paper: ' + e.message); }
+   try { await alpacaPaper(readJson('data/signals.json', null), loaded, session); } catch (e) { console.log('Alpaca paper error: ' + e.message); }
+ 
+   const buys = stocks.filter(s => s.state === 'Buy watch'), near = stocks.filter(s => s.state !== 'Buy watch' && s.trigger && s.trigger / s.last < 1.03).sort((a, b) => a.trigger / a.last - b.trigger / b.last).slice(0, 8);
+-  const msg = ['Daily scan, ' + session + ' close', 'All prices below are from that close. They do not update. Live prices come in the market-hours alerts.', 'Market: ' + (mktUp ? 'uptrend' : 'downtrend') + (VR.known ? ', volatility ' + (VR.high ? 'HIGH (top fifth of the past year): suggested sizes are halved' : 'normal') : '') + '. Scanned ' + stocks.length + ' stocks' + (QEXTRA.length ? ', plus ' + QEXTRA.length + ' large companies for quick trades' : '') + (QWIDE.length ? ', plus ' + QWIDE.filter(x => loaded[x]).length + ' of the most traded strong companies (wider hunt, quick trades)' : '') + (WIDE.size ? ', plus ' + WIDE.size + ' more liquid companies from the whole market (all rules)' : '') + '.' + (errors.length ? ' ' + errors.length + ' failed to load.' : ''), '', 'ENTRY CONFIRMED (' + buys.length + ')'];
++  const msg = ['Daily scan, ' + session + ' close', 'All prices below are from that close. They do not update. Live prices come in the market-hours alerts.', 'Market: ' + (mktUp ? 'uptrend' : 'downtrend') + (VR.known ? ', volatility ' + (VR.high ? 'HIGH (top fifth of the past year): suggested sizes are halved' : 'normal') : '') + '. Scanned ' + stocks.filter(x=>!x.diagnosticOnly).length + ' scored stocks; '+stocks.filter(x=>x.diagnosticOnly).length+' loaded names have insufficient tested history' + (QEXTRA.length ? ', plus ' + QEXTRA.length + ' large companies for quick trades' : '') + (QWIDE.length ? ', plus ' + QWIDE.filter(x => loaded[x]).length + ' of the most traded strong companies (wider hunt, quick trades)' : '') + (WIDE.size ? ', plus ' + WIDE.size + ' more liquid companies from the whole market (all rules)' : '') + '.' + (errors.length ? ' ' + errors.length + ' failed to load.' : ''), '', 'ENTRY CONFIRMED (' + buys.length + ')'];
+   for (const s of buys) msg.push(s.sym + (DISC.has(s.sym) ? ' (discovery candidate)' : '') + ' closed ' + money(s.last) + '\n  buy range ' + money(s.buyLo) + ' to ' + money(s.buyHi) + ' at the next open\n  stop ' + money(s.stop) + (s.target ? ', target ' + money(s.target) + (s.hit !== null && s.hit !== undefined ? ' (reached in ' + Math.round(s.hit * 100) + '% of past trades)' : '') : ', no fixed target') + ', exit on a close below ~' + money(s.exitBelow) + (s.days ? '\n  typical holding time ' + s.days + ' trading days' : '') + '\n  ' + (s.earn || 'earnings date NOT CHECKED') + '\n  ' + L.HALAL_TEXT[s.halal] + '\n  ' + s.why);
+   if (!buys.length) msg.push('None today.');
+   else msg.push('Manual review only. Check earnings dates and halal status before acting.');
+@@ -4404,7 +4406,7 @@ async function daily() {
+       const parts = []; for (const x of mine.slice(0, 10)) { try { parts.push(await reviewReply(x, sg, loadPos())); } catch (e) {} }
+       if (parts.length) await telegram('WEEKLY REVIEW OF YOUR STOCKS (automatic, every Friday close)\n\n' + parts.join('\n\n') + '\n' + FOOT); } }
+   }
+-  console.log('daily scan done:', stocks.length, 'stocks,', buys.length, 'buy watch,', fresh.length, 'journal entries');
++  console.log('daily scan done:', stocks.filter(x=>!x.diagnosticOnly).length, 'scored stocks,',stocks.filter(x=>x.diagnosticOnly).length,'history diagnostics,', buys.length, 'buy watch,', fresh.length, 'journal entries');
+ }
+ 
+ // (6 Nov) ONE HOLDING ACTION for the market-hours summary, in the order ACTIONS (planText) uses: a stop reached, a filing (event) sell,
+diff --git a/test/radar-issuer-scope.test.mjs b/test/radar-issuer-scope.test.mjs
+new file mode 100644
+index 00000000..35f195a8
+--- /dev/null
++++ b/test/radar-issuer-scope.test.mjs
+@@ -0,0 +1,33 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {spawnSync} from 'node:child_process';
++import {researchInstrumentScope,instrumentAwareSec} from '../instrument-type.mjs';import {buildMidday,buildClose} from '../radar-v3-core.mjs';import {classifyCatalyst,headlineAssociation,createEarlyAlerts,publicCatalystSummary} from '../early-alerts.mjs';
++const symbols=['ZXZZT','CRWX','CWVX','CRWG','AXTU','BDRY'];
++const snap={day:'2026-11-11',at:'11:15',firstMinute:'10:02',scanned:7,live:7,alerts:0,movers:[...symbols,'MYST'].map(sym=>({sym,maxUp:.5,firstSeen:'10:02',firstSeenUp:.3,code:'NO_RULE_FIT'})),hits:[],early:[...symbols,'MYST'].map(sym=>({sym,price:10,change:.04,score:90,firstMinute:'10:02'})),now:{},tally:{NO_RULE_FIT:7}};
++test('reviewed exclusions are exact instruments, not a suffix guess or halal ruling',async()=>{for(const s of symbols){assert.equal(researchInstrumentScope(s).policyExcluded,true);let called=false;const x=await instrumentAwareSec(s,async()=>{called=true;return {known:true}});assert.equal(called,false);assert.equal(x.policyExcluded,true);}assert.equal(researchInstrumentScope('NEWX').status,'UNKNOWN');assert.equal(researchInstrumentScope('CRWV').status,'UNKNOWN');assert.equal(researchInstrumentScope('CRWX').underlying,'CRWV');assert.equal(researchInstrumentScope('CWVX').underlying,'CRWV');assert.equal(researchInstrumentScope('CRWG').underlying,'CRWV');});
++test('actual radar core keeps unknown apart, excludes all six from opportunity rows and reports exact denominators',()=>{const before=JSON.stringify(snap),r=buildMidday(snap);assert.equal(JSON.stringify(snap),before);assert.deepEqual(r.rows.map(x=>[x.sym,x.type]),[['MYST','discovery-unverified']]);assert.match(r.text,/0 verified common stocks, 1 UNKNOWN instruments, 6 excluded; raw 7/);for(const s of symbols)assert.doesNotMatch(r.text,new RegExp('- '+s+'(?: up|:)'));assert.match(r.text,/underlying CRWV/);assert.match(r.text,/U\. UNVERIFIED DISCOVERY/);assert.match(buildClose(snap.day,{day:snap.day,missed:snap.movers,alerts:0},[]),/not verified missed company opportunities/);});
++test('actual opportunity-radar process persists unknown separately without rewriting the snapshot or calling external services',()=>{const dir=fs.mkdtempSync(path.join(os.tmpdir(),'radar-scope-'));fs.mkdirSync(path.join(dir,'data'));const file=path.join(dir,'data/radar-v3-snap.json');fs.writeFileSync(file,JSON.stringify(snap));const preload=path.join(dir,'clock.mjs');fs.writeFileSync(preload,`const D=Date;globalThis.Date=class extends D{constructor(...x){super(...(x.length?x:['2026-11-11T16:15:00Z']));}static now(){return D.parse('2026-11-11T16:15:00Z')}};globalThis.fetch=()=>{throw Error('external access forbidden')};`);const r=spawnSync(process.execPath,['--import',preload,path.resolve('opportunity-radar.mjs'),'midday'],{cwd:dir,env:{PATH:process.env.PATH},encoding:'utf8'});assert.equal(r.status,0,r.stderr);assert.match(r.stdout,/1 UNKNOWN instruments, 6 excluded/);const rows=fs.readFileSync(path.join(dir,'data/radar-v3-ledger.jsonl'),'utf8').trim().split('\n').map(JSON.parse);assert.equal(rows.length,1);assert.equal(rows[0].type,'discovery-unverified');assert.equal(rows[0].sym,'MYST');assert.deepEqual(JSON.parse(fs.readFileSync(file)),snap);});
++const now=Date.parse('2026-11-11T16:15:00Z'),sec={known:true,filings:[{form:'8-K',items:'8.01',at:'2026-11-11T12:00:00Z'}]};
++const news=headline=>({ok:true,items:[{at:now-60000,source:'fixture',headline,url:'https://example.invalid/retained-fixture'}]});
++test('FOSL does not inherit Ralph Lauren positive wording beside its 8-K',()=>{const r=classifyCatalyst({symbol:'FOSL',issuerName:'Fossil Group',sec,news:news('Ralph Lauren raises guidance after strong results'),nowMs:now});assert.equal(r.direction,'AMBIGUOUS');assert.equal(r.unverifiedNews.length,1);assert.equal(r.evidence[1].issuerAssociation.status,'UNVERIFIED_ISSUER');assert.equal(r.evidence[1].direction,'UNKNOWN');assert.match(r.text,/UNVERIFIED issuer\/claim/);assert.doesNotMatch(r.text,/headline .*Ralph Lauren/);});
++test('roundups and mere ticker mentions do not establish a positive economic catalyst',()=>{assert.equal(headlineAssociation({headline:'YMAT among stocks moving in premarket'},{symbol:'YMAT'}).eligibleForDirection,false);const r=classifyCatalyst({symbol:'FOSL',sec,news:news('FOSL wins a new contract'),nowMs:now});assert.equal(r.direction,'AMBIGUOUS');assert.equal(r.evidence[1].wordingDirection,'POSITIVE');assert.equal(r.evidence[1].issuerAssociation.claimVerified,false);});
++test('recycled unrelated news stays unverified and positive text cannot erase dilution',()=>{const n=news('Ralph Lauren raises guidance');n.items[0].at=now-40*3600000;assert.equal(classifyCatalyst({symbol:'FOSL',sec:{known:true,filings:[]},news:n,nowMs:now}).cls,'UNCONFIRMED');assert.equal(classifyCatalyst({symbol:'FOSL',sec:{known:true,filings:[{...sec.filings[0],items:'3.02'}]},news:news('FOSL wins contract'),nowMs:now}).direction,'DILUTION');});
++
++test('actual radar renderer refuses unbound retained catalyst strings and mismatched structured subjects',()=>{const base={...snap,early:[{sym:'MYST',price:10,change:.04,score:90,firstMinute:'10:02'}],movers:[]};for(const cat of [{MYST:'POSITIVE Ralph Lauren headline'},{MYST:{subjectSymbol:'RALPH',evidence:[],text:'POSITIVE Ralph Lauren'}}]){const r=buildMidday({...base,cat});assert.match(r.text,/UNVERIFIED catalyst association/);assert.doesNotMatch(r.text,/Ralph Lauren/);}});
++
++test('normalised legal issuer names bind without manufacturing economic direction',()=>{
++ for(const [symbol,issuerName,headline] of [['FOSL','FOSSIL GROUP, INC.','Fossil Group shares jump after earnings'],['SNDK','SANDISK CORPORATION','SanDisk soars after earnings']]){
++ assert.equal(headlineAssociation({headline},{symbol,issuerName}).status,'ISSUER_MENTION_ONLY');
++ const c=classifyCatalyst({symbol,issuerName,sec:{known:true,filings:[]},news:news(headline),nowMs:now});assert.equal(c.direction,'AMBIGUOUS');}
++ assert.equal(headlineAssociation({headline:'Fossil fuels rally'},{symbol:'FOSL',issuerName:'Fossil Group Inc.'}).status,'UNVERIFIED_ISSUER');
++});
++test('common-word tickers need explicit ticker notation or issuer association',()=>{
++ assert.equal(headlineAssociation({headline:'IT spending increases'},{symbol:'IT',issuerName:'Gartner Inc.'}).status,'UNVERIFIED_ISSUER');
++ for(const headline of ['$IT raises guidance','NYSE: IT raises guidance','Gartner raises guidance'])assert.equal(headlineAssociation({headline},{symbol:'IT',issuerName:'Gartner Inc.'}).status,'ISSUER_MENTION_ONLY');
++ assert.equal(headlineAssociation({headline:'BRKXB rises'},{symbol:'BRK.B'}).status,'UNVERIFIED_ISSUER');
++ assert.equal(headlineAssociation({headline:'BRK.B rises'},{symbol:'BRK.B'}).status,'ISSUER_MENTION_ONLY');
++});
++test('actual alert caller retains structured bound catalyst for radar without raw news expansion',async()=>{
++ const sent=[],EA=createEarlyAlerts({day:snap.day,level:'all',now:()=>600,notHalal:()=>false,halalOk:()=>false,secRisk:async()=>({...sec,tags:[]}),send:async t=>(sent.push(t),{ok:true}),catalyst:async()=>classifyCatalyst({symbol:'FOSL',issuerName:'Fossil Group Inc.',sec,news:news('FOSL raises guidance'),nowMs:now})});
++ EA.noteLead({sym:'FOSL',m:600,price:10,chg:.04,score:90,rvT:3,dollarVol:2e6,live:true});await EA.process();
++ const row=EA.S.seen['lead|FOSL'];assert.equal(row.decision,'SENT');assert.equal(row.catObj.subjectSymbol,'FOSL');assert.equal(row.catObj.cls,'VERIFIED');assert.equal(row.catObj.unverifiedNews,undefined);assert.ok(row.catObj.evidence.every(e=>!('headline' in e)&&!('url' in e)));
++ const ctx={...snap,early:[{sym:'FOSL',price:10,change:.04,score:90,firstMinute:'10:02'}],movers:[],cat:{FOSL:publicCatalystSummary(row.catObj)}};const rendered=buildMidday(ctx);assert.match(rendered.text,/SEC 8-K/);assert.doesNotMatch(rendered.text,/UNVERIFIED catalyst association/);assert.match(sent[0],/UNVERIFIED DISCOVERY CONTEXT/);
++});
+diff --git a/test/radar-ledger.test.mjs b/test/radar-ledger.test.mjs
+index f31bdfde..6589ddc9 100644
+--- a/test/radar-ledger.test.mjs
++++ b/test/radar-ledger.test.mjs
+@@ -12,14 +12,14 @@ for(const cut of [0,1,20,99,10000])test('pending append recovery at prefix '+cut
+ test('malformed unjournaled bytes preserved and refused',()=>{const {dir,file}=fixture();try{fs.writeFileSync(file,'{"broken":');const bytes=fs.readFileSync(file);assert.throws(()=>appendRadarRows(file,[row]));assert.deepEqual(fs.readFileSync(file),bytes);}finally{fs.rmSync(dir,{recursive:true,force:true});}});
+ test('raw and corrected frozen scorecard remain separate',()=>{const rows=[row,{...row},{type:'close',d:row.d,sym:row.sym,px:11}];const raw=scoreboard(rows),v=radarLedgerView(rows),corrected=scoreboard(v.rows);assert.equal(v.rawLists,2);assert.equal(v.logicalLists,1);assert.equal(v.exactRepeats,1);assert.equal(raw.panels.B.n,2);assert.equal(corrected.panels.B.n,1);});
+ import http from 'node:http';
+-test('actual radar caller: rejection/retry, concurrent restarts, partial recovery and scored counts',async()=>{const {dir}=fixture();fs.mkdirSync(path.join(dir,'data'));for(const f of fs.readdirSync(root).filter(x=>x.endsWith('.mjs')))fs.copyFileSync(path.join(root,f),path.join(dir,f));const day=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'}),snap={day,at:'11:15',mode:'live',firstMinute:'09:30',scanned:100,live:90,alerts:0,mkt:.001,tally:{},sec:{ZZQ:{known:true,tags:[]},ZZR:{known:true,tags:[]}},cat:{},movers:[],hits:[{sym:'ZZQ',rule:'IG1',m:600,price:10}],early:[{sym:'ZZR',change:.06,rvT:3,price:12,score:90,firstMinute:'10:05'}],now:{ZZQ:{px:10.5,chg:.05},ZZR:{px:12.2,chg:.07}}};fs.writeFileSync(path.join(dir,'data/radar-v3-snap.json'),JSON.stringify(snap));let calls=0;const bodies=[],server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{calls++;bodies.push(b);if(calls===1){res.writeHead(400);res.end(JSON.stringify({ok:false,error_code:400}));}else res.end(JSON.stringify({ok:true,result:{message_id:calls}}));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));const env={PATH:process.env.PATH,TG_BASE:'http://127.0.0.1:'+server.address().port,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_RADAR_RESERVED:'1'},run=mode=>exec(process.execPath,['opportunity-radar.mjs',mode],{cwd:dir,env}),file=path.join(dir,'data/radar-v3-ledger.jsonl');try{const first=await run('midday');assert.match(first.stdout,/"definitelyUnsent":true/);const before=fs.readFileSync(file);assert.equal(readRadarLedger(file).length,2);await Promise.all([run('midday'),run('midday'),run('midday')]);assert.deepEqual(fs.readFileSync(file),before);
++test('actual radar caller: rejection/retry, concurrent restarts, partial recovery and scored counts',async()=>{const {dir}=fixture();fs.mkdirSync(path.join(dir,'data'));for(const f of fs.readdirSync(root).filter(x=>x.endsWith('.mjs')))fs.copyFileSync(path.join(root,f),path.join(dir,f));const day=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'}),snap={day,at:'11:15',mode:'live',firstMinute:'09:30',scanned:100,live:90,alerts:0,mkt:.001,tally:{},sec:{ZZQ:{known:true,tags:[],instrument:{status:'ELIGIBLE_COMMON_STOCK',securityId:'SYNTHETIC001',referenceSha256:'a'.repeat(64)}},ZZR:{known:true,tags:[],instrument:{status:'ELIGIBLE_COMMON_STOCK',securityId:'SYNTHETIC001',referenceSha256:'a'.repeat(64)}}},cat:{},movers:[],hits:[{sym:'ZZQ',rule:'IG1',m:600,price:10}],early:[{sym:'ZZR',change:.06,rvT:3,price:12,score:90,firstMinute:'10:05'}],now:{ZZQ:{px:10.5,chg:.05},ZZR:{px:12.2,chg:.07}}};fs.writeFileSync(path.join(dir,'data/radar-v3-snap.json'),JSON.stringify(snap));let calls=0;const bodies=[],server=http.createServer((req,res)=>{let b='';req.on('data',x=>b+=x);req.on('end',()=>{calls++;bodies.push(b);if(calls===1){res.writeHead(400);res.end(JSON.stringify({ok:false,error_code:400}));}else res.end(JSON.stringify({ok:true,result:{message_id:calls}}));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));const env={PATH:process.env.PATH,TG_BASE:'http://127.0.0.1:'+server.address().port,TG_TOKEN:'synthetic',TG_CHAT:'42',IG_RADAR_RESERVED:'1'},run=mode=>exec(process.execPath,['opportunity-radar.mjs',mode],{cwd:dir,env}),file=path.join(dir,'data/radar-v3-ledger.jsonl');try{const first=await run('midday');assert.match(first.stdout,/"definitelyUnsent":true/);const before=fs.readFileSync(file);assert.equal(readRadarLedger(file).length,2);await Promise.all([run('midday'),run('midday'),run('midday')]);assert.deepEqual(fs.readFileSync(file),before);
+ // Synthetic interruption with durable intent and a partial append; rerun actual caller.
+ const rows=readRadarLedger(file),append=Buffer.from(JSON.stringify(rows[1])+'\n'),prefix=Buffer.from(JSON.stringify(rows[0])+'\n');fs.writeFileSync(file,Buffer.concat([prefix,append.subarray(0,20)]));fs.writeFileSync(file+'.pending.json',JSON.stringify({version:1,size:prefix.length,prefix:sha(prefix),append:append.toString('base64')}));await run('midday');assert.deepEqual(fs.readFileSync(file),before);
+ const closeRows=rows.map(r=>({type:'close',d:r.d,sym:r.sym,px:r.px*1.1,mkt:.01}));fs.appendFileSync(file,closeRows.map(r=>JSON.stringify(r)).join('\n')+'\n');assert.equal(scoreboard(readRadarLedger(file)).panels.B.n,1);assert.equal(scoreboard(readRadarLedger(file)).panels.A.n,1);await run('close');assert.match(bodies.join('\n'),/logical listed 2/);assert.match(bodies.join('\n'),/EXACT_REPEAT_CORRECTION_V1/);
+ // Corrupt unrelated bytes: do not send or overwrite evidence.
+ fs.appendFileSync(file,'{bad');const preserved=fs.readFileSync(file),n=calls,refused=await run('midday');assert.match(refused.stdout,/"definitelyUnsent":true/);assert.equal(calls,n);assert.deepEqual(fs.readFileSync(file),preserved);
+ }finally{server.close();fs.rmSync(dir,{recursive:true,force:true});}});
+-test('actual caller write-boundary failures and killed worker recover without duplicate research',async()=>{for(const boundary of ['intent','publish-intent','partial-append','after-append','before-unlink','after-unlink']){const {dir}=fixture();try{fs.mkdirSync(path.join(dir,'data'));for(const f of fs.readdirSync(root).filter(x=>x.endsWith('.mjs')))fs.copyFileSync(path.join(root,f),path.join(dir,f));const day=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});fs.writeFileSync(path.join(dir,'data/radar-v3-snap.json'),JSON.stringify({day,at:'11:15',mode:'live',scanned:1,live:1,tally:{},sec:{ZZQ:{known:true,tags:[]}},hits:[{sym:'ZZQ',rule:'IG1',m:600,price:10}],early:[],now:{ZZQ:{px:10.5,chg:.05}}}));
++test('actual caller write-boundary failures and killed worker recover without duplicate research',async()=>{for(const boundary of ['intent','publish-intent','partial-append','after-append','before-unlink','after-unlink']){const {dir}=fixture();try{fs.mkdirSync(path.join(dir,'data'));for(const f of fs.readdirSync(root).filter(x=>x.endsWith('.mjs')))fs.copyFileSync(path.join(root,f),path.join(dir,f));const day=new Date().toLocaleDateString('en-CA',{timeZone:'America/New_York'});fs.writeFileSync(path.join(dir,'data/radar-v3-snap.json'),JSON.stringify({day,at:'11:15',mode:'live',scanned:1,live:1,tally:{},sec:{ZZQ:{known:true,tags:[],instrument:{status:'ELIGIBLE_COMMON_STOCK',securityId:'SYNTHETIC001',referenceSha256:'a'.repeat(64)}}},hits:[{sym:'ZZQ',rule:'IG1',m:600,price:10}],early:[],now:{ZZQ:{px:10.5,chg:.05}}}));
+ // Inject into the real ledger worker, not the caller's business logic. No production test flag.
+ const preload=path.join(dir,'fault.mjs');fs.writeFileSync(preload,`import fs from 'node:fs';if(process.argv[2]==='--append'){const boundary=${JSON.stringify(boundary)},fds=new Map(),open=fs.openSync,write=fs.writeFileSync,rename=fs.renameSync,unlink=fs.unlinkSync;fs.openSync=(p,...a)=>{const fd=open(p,...a);fds.set(fd,String(p));return fd;};fs.writeFileSync=(fd,b,...a)=>{const p=fds.get(fd)||String(fd);if(boundary==='intent'&&p.endsWith('.pending.json.tmp'))throw Error('injected intent');if(p.endsWith('radar-v3-ledger.jsonl')){if(boundary==='partial-append'){write(fd,Buffer.from(b).subarray(0,17),...a);process.kill(process.pid,'SIGKILL');}write(fd,b,...a);if(boundary==='after-append')throw Error('injected after append');return;}return write(fd,b,...a);};fs.renameSync=(a,b)=>{rename(a,b);if(boundary==='publish-intent'&&String(b).endsWith('.pending.json'))throw Error('injected published intent');};fs.unlinkSync=p=>{if(String(p).endsWith('.pending.json')){if(boundary==='before-unlink')throw Error('injected before unlink');unlink(p);if(boundary==='after-unlink')throw Error('injected after unlink');return;}return unlink(p);};}`);
+ const env={PATH:process.env.PATH,IG_RADAR_RESERVED:'1'},first=await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env:{...env,NODE_OPTIONS:'--import='+preload}});assert.match(first.stdout,/"definitelyUnsent":true/,boundary);await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env});const file=path.join(dir,'data/radar-v3-ledger.jsonl');assert.equal(readRadarLedger(file).filter(x=>x.type==='list').length,1,boundary);const before=fs.readFileSync(file);await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env});assert.deepEqual(fs.readFileSync(file),before,boundary);
+diff --git a/test/radar-v3-core.test.mjs b/test/radar-v3-core.test.mjs
+index 9ab44886..6687eeca 100644
+--- a/test/radar-v3-core.test.mjs
++++ b/test/radar-v3-core.test.mjs
+@@ -6,7 +6,7 @@ import test from 'node:test';
+ import assert from 'node:assert/strict';
+ import { radarOn, netHurdle, netOf, blockOf, halalMap, catalystOf, closestRule, topSilence, buildMidday, buildClose, scoreboard, NOT_APPROVED } from '../radar-v3-core.mjs';
+ 
+-const ctx = { halal: { GOOD: 'ok', BAD: 'fail' }, events: { DIL: [{ sym: 'DIL', f: 'OFFERING', p: '2026-10-27T08:00-04:00' }], NEWSY: [{ sym: 'NEWSY', f: 'CONTRACT', p: '2026-10-27T07:00-04:00' }] },
++const ctx = { instruments:Object.fromEntries(['GOOD','NEWSY'].map(s=>[s,{status:'ELIGIBLE_COMMON_STOCK',securityId:'SYNTHETIC001',referenceSha256:'a'.repeat(64)}])), halal: { GOOD: 'ok', BAD: 'fail' }, events: { DIL: [{ sym: 'DIL', f: 'OFFERING', p: '2026-10-27T08:00-04:00' }], NEWSY: [{ sym: 'NEWSY', f: 'CONTRACT', p: '2026-10-27T07:00-04:00' }] },
+   lottery: { JUMP: 0.5 }, record: { 'IG1/close': { n: 68, days: 8, avg: 0.021, stress: 0.012 }, 'IG5/close': { n: 60, days: 9, avg: -0.05, stress: -0.06 } }, lab: { 'IG1/close': { verdict: 'REJECTED' } } };
+ const snap = (o = {}) => ({ day: '2026-10-28', at: '11:15', firstMinute: '09:26', scanned: 12700, live: 5400, alerts: 0, tally: { UNDER_1_USD: 3, GAPPED_AT_OPEN: 5 },
+   movers: [{ sym: 'RUNR', code: 'GAPPED_AT_OPEN', maxUp: 0.6, firstSeen: '09:31', firstSeenUp: 0.5 }],
+@@ -39,9 +39,9 @@ test('silence reason picks the biggest code and its kind', () => { const t = top
+ 
+ test('midday: labelled panels, hard blocks shown as BLOCKED never as leads, one line per stock, extended stocks left out', () => {
+   const r = buildMidday(snap(), ctx), t = r.text;
+-  for (const p of ['A. LIVE RESEARCH LEADS (' + NOT_APPROVED, 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED, 'C. APPROVED SIGNALS: 0 so far today', 'D. RUNNERS SO FAR']) assert.ok(t.includes(p), p);
++  for (const p of ['A. VERIFIED COMMON-STOCK RESEARCH LEADS (' + NOT_APPROVED, 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED, 'C. APPROVED SIGNALS: 0 so far today', 'D. OBSERVED INSTRUMENT MOVEMENTS']) assert.ok(t.includes(p), p);
+   assert.match(t, /- GOOD: IG1 at 09:49 \$3\.10, now \$3\.40/); assert.equal((t.match(/- GOOD:/g) || []).length, 1);
+-  assert.match(t, /5-year test REJECTED/); assert.match(t, /halal \(your ZAD mark\)/);
++  assert.match(t, /minute-bar history verdict REJECTED/); assert.match(t, /halal \(your ZAD mark\)/);
+   assert.match(t, /- NEWSY \+4%.*HALAL UNKNOWN/); assert.match(t, /SEC 8-K contract/);
+   assert.match(t, /BLOCKED by hard rules \(not leads\):.*BAD \(NOT HALAL/); assert.match(t, /DIL \(SEC danger filing: offering\)/); assert.match(t, /JUMP \(AVOID list/); assert.match(t, /PENNY \(under 1 USD\)/);
+   assert.doesNotMatch(t, /- HOT /); assert.doesNotMatch(t, /- PENNY /); assert.doesNotMatch(t, /- BAD:/);
+@@ -54,7 +54,7 @@ test('midday: an empty day still says 0 approved, no leads, and why; a late watc
+   const t = buildMidday(snap({ firstMinute: '11:10', hits: [], early: [], movers: [], tally: {} }), {}).text;
+   assert.match(t, /WATCHER STARTED LATE today \(11:10\)/);
+   assert.doesNotMatch(t, /NO MARKET DATA/);
+-  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Scanned 0 stocks \(5400/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. LIVE RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. APPROVED SIGNALS: 0 so far today\./);
++  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Received 0 instruments \(0/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. VERIFIED COMMON-STOCK RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. APPROVED SIGNALS: 0 so far today/);
+ });
+ test('midday: tested alerts are counted as approved', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. APPROVED SIGNALS: 2 tested alerts sent today/));
+ 
+@@ -76,7 +76,7 @@ test('after the close: scores today, lists missed runners with reasons, says whe
+ });
+ 
+ test('(28 Oct fix) with the live SEC check in the snapshot: a share-sale filing or a failed / missing check blocks a lead; the live catalyst is shown', () => {
+-  const t = buildMidday(snap({ hits: [], sec: { NEWSY: { known: true, tags: [] }, SHR: { known: true, tags: ['share sale / registration (S-1)'] } }, cat: { NEWSY: 'VERIFIED: SEC 8-K item 8.01 accepted 07:02 New York' },
++  const t = buildMidday(snap({ hits: [], sec: { NEWSY: { known: true, tags: [] }, SHR: { known: true, tags: ['share sale / registration (S-1)'] } }, cat: { NEWSY: {subjectSymbol:'NEWSY',evidence:[],text:'VERIFIED: SEC 8-K item 8.01 accepted 07:02 New York'} },
+     early: [{ sym: 'NEWSY', change: 0.04, rvT: 3, price: 12, score: 90, firstMinute: '09:40' }, { sym: 'SHR', change: 0.05, rvT: 3, price: 12, score: 91, firstMinute: '09:40' }, { sym: 'NOCHK', change: 0.05, rvT: 3, price: 12, score: 92, firstMinute: '09:40' }] }), ctx).text;
+   assert.match(t, /- NEWSY \+4%/); assert.match(t, /VERIFIED: SEC 8-K item 8\.01 accepted 07:02/);
+   assert.doesNotMatch(t, /- SHR /); assert.match(t, /SHR \(SEC danger filing: share sale/); assert.doesNotMatch(t, /- NOCHK /); assert.match(t, /NOCHK \(SEC check failed or not done\)/);
+diff --git a/test/shadow.test.mjs b/test/shadow.test.mjs
+index 7f708bd6..8d596c82 100644
+--- a/test/shadow.test.mjs
++++ b/test/shadow.test.mjs
+@@ -50,21 +50,21 @@ test('filter table: a gate is judged only on the candidates it alone rejects; ha
+ });
+ test('catalyst classes: source, direction and freshness are separate; a failed source is UNAVAILABLE, never NONE; no reason is invented', () => {
+   const now = Date.parse('2026-10-29T14:00:00Z'), ok = { known: true, filings: [] }, noNews = { ok: true, items: [] };
+-  let c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00.000Z' }] }, news: noNews, nowMs: now });
++  let c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00.000Z' }] }, news: noNews, nowMs: now });
+   assert.equal(c.cls, 'VERIFIED'); assert.equal(c.source, 'SEC'); assert.equal(c.direction, 'AMBIGUOUS'); assert.equal(c.freshness, 'FRESH'); assert.match(c.text, /SEC 8-K item 8\.01 accepted Oct 29 07:02 New York/);
+-  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00Z' }] }, news: { ok: true, items: [{ at: now - 3e6, source: 'GlobeNewswire', headline: 'X wins $40M Army contract' }] }, nowMs: now });
+-  assert.equal(c.direction, 'POSITIVE'); assert.match(c.text, /headline wording, not verified/);   // positive only ever comes from wording, and says so
+-  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '1.01,3.02', at: '2026-10-29T11:02:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
+-  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '424B5', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
+-  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', items: '3.01', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'NEGATIVE');
+-  c = classifyCatalyst({ sec: ok, news: { ok: true, items: [{ at: now - 3600e3, source: 'Business Wire', headline: 'X announces pricing of $10M registered direct offering' }] }, nowMs: now });
++  c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K', items: '8.01', at: '2026-10-29T11:02:00Z' }] }, news: { ok: true, items: [{ at: now - 3e6, source: 'GlobeNewswire', headline: '$X wins $40M Army contract' }] }, nowMs: now });
++  assert.equal(c.direction, 'AMBIGUOUS'); assert.equal(c.evidence.find(x=>x.headline)?.wordingDirection,'POSITIVE'); assert.match(c.text, /headline words alone do not verify/);   // positive only ever comes from wording, and says so
++  c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K', items: '1.01,3.02', at: '2026-10-29T11:02:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
++  c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '424B5', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'DILUTION');
++  c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K', items: '3.01', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.direction, 'NEGATIVE');
++  c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now - 3600e3, source: 'Business Wire', headline: '$X announces pricing of $10M registered direct offering' }] }, nowMs: now });
+   assert.equal(c.cls, 'UNCONFIRMED'); assert.equal(c.source, 'ISSUER_WIRE'); assert.equal(c.direction, 'DILUTION');
+-  c = classifyCatalyst({ sec: ok, news: { ok: true, items: [{ at: now - 3600e3, source: 'Benzinga', headline: 'Stocks moving in pre-market' }] }, nowMs: now }); assert.equal(c.source, 'AGGREGATOR'); assert.equal(c.direction, 'AMBIGUOUS');
+-  c = classifyCatalyst({ sec: ok, news: { ok: true, items: [{ at: now - 40 * 3600e3, source: 'Reuters', headline: 'X wins contract' }] }, nowMs: now }); assert.equal(c.cls, 'RECYCLED'); assert.equal(c.freshness, 'RECYCLED');
+-  c = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K/A', items: '2.02', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.cls, 'RECYCLED'); assert.match(c.text, /amended filing/);
+-  c = classifyCatalyst({ sec: ok, news: { ok: true, items: [{ at: now + 60e3, headline: 'future' }] }, nowMs: now }); assert.equal(c.cls, 'NONE');   // nothing after the check time counts
+-  assert.equal(classifyCatalyst({ sec: { known: false }, news: noNews, nowMs: now }).cls, 'UNAVAILABLE');
+-  assert.match(classifyCatalyst({ sec: ok, news: { ok: false, why: 'HTTP 429' }, nowMs: now }).text, /news source unavailable \(HTTP 429\)/);
++  c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now - 3600e3, source: 'Benzinga', headline: 'Stocks moving in pre-market' }] }, nowMs: now }); assert.equal(c.source, 'AGGREGATOR'); assert.equal(c.direction, 'UNKNOWN');assert.equal(c.unverifiedNews.length,1);
++  c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now - 40 * 3600e3, source: 'Reuters', headline: '$X wins contract' }] }, nowMs: now }); assert.equal(c.cls, 'RECYCLED'); assert.equal(c.freshness, 'RECYCLED');
++  c = classifyCatalyst({ symbol:"X", sec: { known: true, filings: [{ form: '8-K/A', items: '2.02', at: '2026-10-29T12:00:00Z' }] }, news: noNews, nowMs: now }); assert.equal(c.cls, 'RECYCLED'); assert.match(c.text, /amended filing/);
++  c = classifyCatalyst({ symbol:"X", sec: ok, news: { ok: true, items: [{ at: now + 60e3, headline: 'future' }] }, nowMs: now }); assert.equal(c.cls, 'NONE');   // nothing after the check time counts
++  assert.equal(classifyCatalyst({ symbol:"X", sec: { known: false }, news: noNews, nowMs: now }).cls, 'UNAVAILABLE');
++  assert.match(classifyCatalyst({ symbol:"X", sec: ok, news: { ok: false, why: 'HTTP 429' }, nowMs: now }).text, /news source unavailable \(HTTP 429\)/);
+ });
+ 
+ test('(owner item 6) spread counted once: ask entry pays half going in, half coming out; last-trade entry pays both halves; stress adds slippage', () => {
+diff --git a/test/short-history-command.test.mjs b/test/short-history-command.test.mjs
+new file mode 100644
+index 00000000..c030273d
+--- /dev/null
++++ b/test/short-history-command.test.mjs
+@@ -0,0 +1,2 @@
++import test from 'node:test';import assert from 'node:assert/strict';import http from 'node:http';import {loadScan,blocked} from './load-scan.mjs';
++test('actual check command keeps on-demand history and never calls an untested diagnostic a failed rule',async()=>{let update=true;const messages=[];const bars=[];for(let d=new Date('2023-01-01T00:00:00Z');d<=new Date('2026-11-10T00:00:00Z');d.setUTCDate(d.getUTCDate()+1))if(![0,6].includes(d.getUTCDay()))bars.push({datetime:d.toISOString().slice(0,10),open:'10',high:'10.1',low:'9.9',close:'10',volume:'1000000'});const server=http.createServer((req,res)=>{let body='';req.on('data',b=>body+=b);req.on('end',()=>{res.setHeader('content-type','application/json');const u=new URL(req.url,'http://local');let out={};if(u.pathname==='/time_series')out={status:'ok',values:bars.slice(-500)};else if(u.pathname.endsWith('/getUpdates')){out={ok:true,result:update?[{update_id:1,message:{message_id:1,chat:{id:42},from:{id:42},text:'check SNDK'}}]:[]};update=false;}else if(u.pathname.endsWith('/sendMessage')){messages.push(JSON.parse(body).text);out={ok:true,result:{message_id:messages.length}};}res.end(JSON.stringify(out));});});await new Promise(r=>server.listen(0,'127.0.0.1',r));try{const base='http://127.0.0.1:'+server.address().port,row={sym:'SNDK',last:10,state:'No action',why:'Loaded500dailybars;existingtestrequires600.',halal:'unknown',rule:null,proven:false,trigger:null,readiness:'INSUFFICIENT_TESTED_HISTORY',availableBars:500,requiredBars:600,diagnosticOnly:true},sig={session:'2026-11-10',stocks:[row],uni:[],quick:[]};const s=await loadScan({env:{TD_BASE:base,TG_BASE:base,SEC_BASE:base,TG_TOKEN:'synthetic-token',TG_CHAT:'42',NO_CROWD:'1',RATE:'10000'},files:{'data/watch-extra.json':['SNDK'],'data/signals.json':sig}});await s.fn('tgCommands')(sig);assert.ok(messages.length);const text=messages.join('\n');assert.match(text,/analysed now from/);assert.match(text,/500\/600 completed daily bars/);assert.doesNotMatch(text,/NaN|Rule: null|did not pass its tests/);assert.deepEqual(blocked,[]);}finally{server.closeAllConnections();server.close();}});
+diff --git a/test/short-history-visibility.test.mjs b/test/short-history-visibility.test.mjs
+new file mode 100644
+index 00000000..eb50c287
+--- /dev/null
++++ b/test/short-history-visibility.test.mjs
+@@ -0,0 +1,4 @@
++// Synthetic actual daily caller: visibility only; no economic test or historical SNDK diagnosis.
++import test from 'node:test';import assert from 'node:assert/strict';import http from 'node:http';import {loadScan,blocked} from './load-scan.mjs';
++const bars=[];for(let d=new Date('2023-01-01T00:00:00Z');d<=new Date('2026-11-10T00:00:00Z');d.setUTCDate(d.getUTCDate()+1))if(![0,6].includes(d.getUTCDay()))bars.push({datetime:d.toISOString().slice(0,10),open:'10',high:'10.1',low:'9.9',close:'10',volume:'1000000'});
++for(const n of [500,599,600])test('actual nightly preserves '+n+'-bar requested company visibility without a new entry rule',async()=>{const server=http.createServer((req,res)=>{res.setHeader('content-type','application/json');const u=new URL(req.url,'http://local');res.end(JSON.stringify(u.pathname==='/time_series'?{status:'ok',values:bars.slice(u.searchParams.get('symbol')==='SNDK'?-n:-850)}:{}));});await new Promise(r=>server.listen(0,'127.0.0.1',r));try{const s=await loadScan({env:{TD_BASE:'http://127.0.0.1:'+server.address().port,NO_CROWD:'1',RATE:'10000',FORCE:'1',NO_WIDE:'1'},files:{'data/watch-extra.json':['SNDK']}});s.value('LIST').splice(0,s.value('LIST').length,'SPY','SNDK');await s.fn('daily')();const result=s.readJson('data/signals.json'),r=result.stocks.find(x=>x.sym==='SNDK');assert.ok(r);if(n<600){assert.equal(r.availableBars,n);assert.equal(r.requiredBars,600);assert.equal(r.readiness,'INSUFFICIENT_TESTED_HISTORY');assert.equal(r.proven,false);assert.equal(r.trigger,null);assert.equal(r.rule,null);assert.equal(r.state,'No action');assert.equal(r.halal,'unknown');assert.equal(result.diagnosticCount,1);assert.equal(s.fn('universe')(result).some(x=>x.sym==='SNDK'),false);const check=s.fn('checkOne')('SNDK',result);assert.match(check,/existing tested-entry path requires 600/);assert.doesNotMatch(check,/NaN|Rule: null|did not pass/);const live=await s.fn('natural')('what about SNDK',result,{});assert.match(live,/analysed now from/);assert.match(live,new RegExp('This response contains '+n+'/600 completed daily bars'));assert.match(live,/not a strategy rejection or a test of every other lane/);assert.doesNotMatch(live,/NaN|Rule: null|did not pass/);}else assert.notEqual(r.readiness,'INSUFFICIENT_TESTED_HISTORY');assert.equal(blocked.length,0);assert.deepEqual(result.errors,[]);}finally{server.closeAllConnections();server.close();}});
