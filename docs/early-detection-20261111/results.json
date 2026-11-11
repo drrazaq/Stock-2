@@ -1,0 +1,307 @@
+{
+ "inputs": {
+  "data/ignition-runs/2026-11-02/41456912382-1.json": "ac086343948ec23f61a95f3e3ca7a8ac0890231badc5835510628a1b2eb509d3",
+  "data/ignition-runs/2026-11-02/41456912382-1.shadow.jsonl.gz": "51bb5781f16cb3cdefef968a77eb0b47a5f9bbb709abf384c57eb170924652bc",
+  "data/ignition-runs/2026-11-03/41648541757-1.json": "bb169be88e900d3d1ca7b5a4d094413eddba3bad6d0332ae39a0b500e3aaa915",
+  "data/ignition-runs/2026-11-03/41648541757-1.shadow.jsonl.gz": "c11798c72d6ba4cdaa1bd57ce3967e496de96fb28bcdd1755fc956ad112eab24",
+  "data/ignition-runs/2026-11-04/41845636679-1.json": "eb2b10ecc35aaa567def6899cc7e01e8fa23829b15ec33cc1693e566e512f085",
+  "data/ignition-runs/2026-11-04/41845636679-1.shadow.jsonl.gz": "de72910abbf8a8229545ddbbc8855df08f85ce78fbc78ae1912969c5dfd70a30",
+  "data/ignition-runs/2026-11-05/42042506576-1.json": "76b844eecbb203e6fdf9cb77b9bddb3267b71f43368f36901c364c1fadc25c93",
+  "data/ignition-runs/2026-11-05/42042506576-1.shadow.jsonl.gz": "f571141bbcf730d33a5f1547a3e1b4fda07edb51ebd6ca283c753e77c5a2ff08",
+  "data/ignition-runs/2026-11-06/42231862220-1.json": "73f8ee6be338a5dfaf982c3fd5bdd78b50fa546d793e5b0ee6d76c247446593f",
+  "data/ignition-runs/2026-11-06/42231862220-1.shadow.jsonl.gz": "a37868c9a5a741608d711fdedb79a88baa60ad2d2da4fe82670c313b28f1244c",
+  "data/ignition-runs/2026-11-09/42632637138-1.json": "e7921cd74605bd964ef2f5a800ddad8cb7085855d7ba7866dd4e7127c90b1323",
+  "data/ignition-runs/2026-11-09/42632637138-1.shadow.jsonl.gz": "a2faf224d97e7e64144cf8d5284321fd11773c60f4c426246de028f7e70a2cf9",
+  "data/ignition-runs/2026-11-10/42832152178-1.json": "1fd2463035f0b3a45c2f3c8391145e07b0c38e296b6d5e48591c47fcc7582e95",
+  "data/ignition-runs/2026-11-10/42832152178-1.shadow.jsonl.gz": "6f6d47855640968a3b1a75fb1bbacac9e9973d60d0c2bf2f42516863fe9a4897"
+ },
+ "partA": {
+  "missedMovers": 2027,
+  "byCode": {
+   "UNDER_1_USD": 596,
+   "GAPPED_AT_OPEN": 403,
+   "LOW_VOLUME": 353,
+   "VOLUME_FIGURE_LATE": 244,
+   "CAUGHT_RULE_NOT_PASSED": 226,
+   "AFTER_11_00": 204,
+   "VISIBLE_TOO_LATE": 1
+  },
+  "bySession": {
+   "PREOPEN": 1762,
+   "REGULAR": 265
+  },
+  "byPrice": {
+   "STALE": 847,
+   "NEVER_FRESH": 601,
+   "FRESH": 579
+  },
+  "byLiquidity": {
+   "LT_2M": 935,
+   "UNKNOWN": 752,
+   "GE_2M": 340
+  },
+  "byCatalyst": {
+   "NO_RETAINED_FILING_RECORD": 1918,
+   "FILING_BEFORE_FIRST_SIGHT": 105,
+   "FILING_AFTER": 4
+  },
+  "catalystXprice": {
+   "FILING_AFTER|FRESH": 2,
+   "FILING_AFTER|STALE": 2,
+   "FILING_BEFORE_FIRST_SIGHT|FRESH": 63,
+   "FILING_BEFORE_FIRST_SIGHT|STALE": 42,
+   "NO_RETAINED_FILING_RECORD|FRESH": 514,
+   "NO_RETAINED_FILING_RECORD|NEVER_FRESH": 601,
+   "NO_RETAINED_FILING_RECORD|STALE": 803
+  },
+  "filingForms": {
+   "8-K 2.02,9.01": 49,
+   "6-K ": 16,
+   "8-K 2.02,7.01,9.01": 15,
+   "8-K 7.01,9.01": 5,
+   "8-K 7.01,8.01,9.01": 3,
+   "8-K 3.02": 2,
+   "8-K 2.02": 2,
+   "8-K 8.01,9.01": 2,
+   "8-K 3.01,9.01": 2,
+   "8-K 1.02,7.01,9.01": 1,
+   "6-K/A ": 1,
+   "8-K 3.03,5.03,5.07,8.01,9.01": 1
+  },
+  "regularSessionEligible": 8
+ },
+ "partB": {
+  "rows": 16412,
+  "groups": {
+   "E": 1353,
+   "NONE": 15044,
+   "LATE_FILING": 15
+  },
+  "pooled": {
+   "E": {
+    "n": 1353,
+    "runners": 106,
+    "rate": 0.0783
+   },
+   "NONE": {
+    "n": 15044,
+    "runners": 1221,
+    "rate": 0.0812
+   },
+   "diff": -0.0028,
+   "p": 0.754947
+  },
+  "byDay": {
+   "2026-11-02": {
+    "E": {
+     "n": 147,
+     "runners": 5,
+     "rate": 0.034
+    },
+    "NONE": {
+     "n": 2002,
+     "runners": 90,
+     "rate": 0.045
+    },
+    "diff": -0.0109,
+    "p": 0.678966
+   },
+   "2026-11-03": {
+    "E": {
+     "n": 173,
+     "runners": 9,
+     "rate": 0.052
+    },
+    "NONE": {
+     "n": 1432,
+     "runners": 148,
+     "rate": 0.1034
+    },
+    "diff": -0.0513,
+    "p": 0.029936
+   },
+   "2026-11-04": {
+    "E": {
+     "n": 214,
+     "runners": 25,
+     "rate": 0.1168
+    },
+    "NONE": {
+     "n": 3790,
+     "runners": 158,
+     "rate": 0.0417
+    },
+    "diff": 0.0751,
+    "p": 9e-06
+   },
+   "2026-11-05": {
+    "E": {
+     "n": 362,
+     "runners": 22,
+     "rate": 0.0608
+    },
+    "NONE": {
+     "n": 830,
+     "runners": 124,
+     "rate": 0.1494
+    },
+    "diff": -0.0886,
+    "p": 8e-06
+   },
+   "2026-11-06": {
+    "E": {
+     "n": 120,
+     "runners": 9,
+     "rate": 0.075
+    },
+    "NONE": {
+     "n": 2022,
+     "runners": 314,
+     "rate": 0.1553
+    },
+    "diff": -0.0803,
+    "p": 0.017265
+   },
+   "2026-11-09": {
+    "E": {
+     "n": 197,
+     "runners": 27,
+     "rate": 0.1371
+    },
+    "NONE": {
+     "n": 4012,
+     "runners": 310,
+     "rate": 0.0773
+    },
+    "diff": 0.0598,
+    "p": 0.004512
+   },
+   "2026-11-10": {
+    "E": {
+     "n": 140,
+     "runners": 9,
+     "rate": 0.0643
+    },
+    "NONE": {
+     "n": 956,
+     "runners": 77,
+     "rate": 0.0805
+    },
+    "diff": -0.0163,
+    "p": 0.614552
+   }
+  },
+  "strata": {
+   "session=PREOPEN": {
+    "E": {
+     "n": 72,
+     "runners": 48,
+     "rate": 0.6667
+    },
+    "NONE": {
+     "n": 565,
+     "runners": 306,
+     "rate": 0.5416
+    },
+    "diff": 0.1251,
+    "p": 0.044994
+   },
+   "session=REGULAR": {
+    "E": {
+     "n": 1281,
+     "runners": 58,
+     "rate": 0.0453
+    },
+    "NONE": {
+     "n": 14479,
+     "runners": 915,
+     "rate": 0.0632
+    },
+    "diff": -0.0179,
+    "p": 0.009169
+   },
+   "liquidity=GE_2M": {
+    "E": {
+     "n": 967,
+     "runners": 52,
+     "rate": 0.0538
+    },
+    "NONE": {
+     "n": 6330,
+     "runners": 286,
+     "rate": 0.0452
+    },
+    "diff": 0.0086,
+    "p": 0.249624
+   },
+   "liquidity=LT_2M": {
+    "E": {
+     "n": 383,
+     "runners": 52,
+     "rate": 0.1358
+    },
+    "NONE": {
+     "n": 8611,
+     "runners": 882,
+     "rate": 0.1024
+    },
+    "diff": 0.0333,
+    "p": 0.039871
+   },
+   "liquidity=UNKNOWN": {
+    "E": {
+     "n": 3,
+     "runners": 2,
+     "rate": 0.6667
+    },
+    "NONE": {
+     "n": 103,
+     "runners": 53,
+     "rate": 0.5146
+    },
+    "diff": 0.1521,
+    "p": 1.0
+   },
+   "under1=False": {
+    "E": {
+     "n": 1351,
+     "runners": 106,
+     "rate": 0.0785
+    },
+    "NONE": {
+     "n": 15044,
+     "runners": 1221,
+     "rate": 0.0812
+    },
+    "diff": -0.0027,
+    "p": 0.754957
+   },
+   "under1=True": {
+    "E": {
+     "n": 2,
+     "runners": 0,
+     "rate": 0.0
+    },
+    "NONE": {
+     "n": 0,
+     "runners": 0,
+     "rate": null
+    },
+    "diff": null,
+    "p": null
+   }
+  },
+  "lateFiling": {
+   "n": 15,
+   "runners": 3,
+   "rate": 0.2
+  },
+  "controlR0": {
+   "n": 56,
+   "runners": 0,
+   "rate": 0.0
+  },
+  "daysSameDirection": 5,
+  "verdict": "NO EVIDENCE"
+ }
+}
