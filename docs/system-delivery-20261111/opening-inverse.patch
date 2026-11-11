@@ -1,6 +1,6 @@
 diff --git a/.github/bot-handoff.mjs b/.github/bot-handoff.mjs
 deleted file mode 100644
-index 223ae5a5..00000000
+index 7afe77ea..00000000
 --- a/.github/bot-handoff.mjs
 +++ /dev/null
 @@ -1,88 +0,0 @@
@@ -91,9 +91,9 @@ index 223ae5a5..00000000
 -  canPost:()=>budget.remaining()>=65000,post:onStart=>request('/actions/workflows/bot.yml/dispatches','POST',onStart),wait:ms=>{if(budget.remaining()<ms)throw Error('TIME_BUDGET');return new Promise(resolve=>setTimeout(resolve,ms));},readback:()=>request('/actions/workflows/bot.yml/runs?branch=main&event=workflow_dispatch&per_page=100')};
 - return runHandoff({enabled:true,runId:env.GITHUB_RUN_ID,attempt:env.GITHUB_RUN_ATTEMPT,loopStart:Number(env.BOT_RUN_START_MS)},io);
 -}
--if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().then(x=>console.log('bot handoff: '+JSON.stringify(x))).catch(()=>{console.log('bot handoff: UNVERIFIED; no retry');process.exitCode=1;});
+-if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().then(x=>console.log('bot handoff: '+JSON.stringify(x))).catch(()=>{console.log('bot handoff: UNVERIFIED; no retry');process.exitCode=0;});
 diff --git a/.github/workflows/bot.yml b/.github/workflows/bot.yml
-index b83e4c3f..bfd9ff2c 100644
+index f149723c..bfd9ff2c 100644
 --- a/.github/workflows/bot.yml
 +++ b/.github/workflows/bot.yml
 @@ -43,9 +43,6 @@ jobs:
@@ -106,26 +106,31 @@ index b83e4c3f..bfd9ff2c 100644
            end=$(( $(date +%s) + 330*60 )); last_full=0; : > run.log
            while [ "$(date +%s)" -lt "$end" ]; do
              git pull -q --rebase -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
-@@ -79,13 +76,6 @@ jobs:
+@@ -79,18 +76,6 @@ jobs:
            TG_CHAT: ${{ secrets.TG_CHAT }}
            RATE: ${{ vars.RATE || '8' }}
            PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
 -      - name: Inactive bounded bot handoff
+-        continue-on-error: true
 -        if: success() || failure()
 -        env:
 -          GITHUB_TOKEN: ${{ github.token }}
 -        run: |
--          git show "$GITHUB_WORKFLOW_SHA:.github/bot-handoff.mjs" > "$RUNNER_TEMP/bot-handoff.mjs"
--          node "$RUNNER_TEMP/bot-handoff.mjs"
+-          [ -f .github/bot-handoff-enabled ] || exit 0
+-          if ! git show "$GITHUB_WORKFLOW_SHA:.github/bot-handoff.mjs" > "$RUNNER_TEMP/bot-handoff.mjs"; then
+-            echo "bot handoff: extraction unavailable; no dispatch"
+-            exit 0
+-          fi
+-          node "$RUNNER_TEMP/bot-handoff.mjs" || echo "bot handoff: helper error; no retry"
        # If anything above failed, tell the owner on Telegram straight away.
        - if: failure()
          env:
 diff --git a/test/bot-handoff.test.mjs b/test/bot-handoff.test.mjs
 deleted file mode 100644
-index 0ea7749c..00000000
+index 401da9ec..00000000
 --- a/test/bot-handoff.test.mjs
 +++ /dev/null
-@@ -1,38 +0,0 @@
+@@ -1,46 +0,0 @@
 -import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {execFileSync}from'node:child_process';import {createHash}from'node:crypto';
 -import {runHandoff,parseHandoffLedger,appendHandoffLine,statusSuccessor,casLedger,makeDeadline,main}from'../.github/bot-handoff.mjs';
 -const now=Date.parse('2026-11-11T18:00:00Z'),base={enabled:true,runId:'100',attempt:'1',loopStart:now-3600001},row=(kind='RESERVED',status)=>({id:'99/1',day:'2026-11-10',at:'2026-11-10T18:00:00Z',kind,...(status?{status}:{nonce:'old'})});
@@ -162,5 +167,13 @@ index 0ea7749c..00000000
 -test('actual immutable loaded helper refuses changed working-tree helper before any API or push',()=>{
 - const dir=fs.mkdtempSync(path.join(os.tmpdir(),'handoff-loaded-'));const sha=b=>createHash('sha256').update(b).digest('hex');const git=(...a)=>execFileSync('git',a,{cwd:dir,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
 - try{fs.mkdirSync(path.join(dir,'.github/workflows'),{recursive:true});const original=fs.readFileSync(new URL('../.github/bot-handoff.mjs',import.meta.url));fs.writeFileSync(path.join(dir,'.github/bot-handoff.mjs'),original);fs.writeFileSync(path.join(dir,'.github/workflows/bot.yml'),'synthetic loaded workflow');fs.writeFileSync(path.join(dir,'.github/bot-handoff-enabled'),'enabled');git('init');git('config','user.name','test');git('config','user.email','test');git('add','.');git('commit','-m','loaded');const h=git('rev-parse','HEAD'),loaded=path.join(dir,'loaded.mjs');fs.writeFileSync(loaded,execFileSync('git',['show',h+':.github/bot-handoff.mjs'],{cwd:dir}));fs.appendFileSync(path.join(dir,'.github/bot-handoff.mjs'),'\n// newer unexecuted source');const output=execFileSync(process.execPath,[loaded],{cwd:dir,encoding:'utf8',env:{...process.env,GITHUB_ACTIONS:'true',GITHUB_REF_NAME:'main',GITHUB_REPOSITORY:'synthetic/repo',GITHUB_TOKEN:'synthetic-never-used',GITHUB_WORKFLOW_SHA:h,BOT_HANDOFF_WORKFLOW_SHA256:sha('synthetic loaded workflow'),BOT_HANDOFF_HELPER_SHA256:sha(original)}});assert.match(output,/EXECUTING_SOURCE_CHANGED_NO_DISPATCH/);assert.doesNotMatch(output,/"dispatchAttempted":true/);assert.equal(git('rev-parse','HEAD'),h);
+- }finally{fs.rmSync(dir,{recursive:true,force:true});}
+-});
+-
+-test('actual workflow shell is inert marker-off, and extraction failure cannot turn bot job red',()=>{
+- const text=fs.readFileSync(new URL('../.github/workflows/bot.yml',import.meta.url),'utf8'),step=text.split('- name: Inactive bounded bot handoff')[1].split('# If anything')[0];assert.match(step,/continue-on-error: true/);const script=step.split('        run: |\n')[1].split('\n').map(s=>s.startsWith('          ')?s.slice(10):s).join('\n');const dir=fs.mkdtempSync(path.join(os.tmpdir(),'handoff-shell-'));try{
+-  const bin=path.join(dir,'bin');fs.mkdirSync(bin);for(const name of ['git','node'])fs.writeFileSync(path.join(bin,name),'#!/bin/sh\necho '+name+' >> "$CALLS"\nexit 1\n',{mode:0o700});const calls=path.join(dir,'calls'),env={...process.env,PATH:bin+':/usr/bin:/bin',CALLS:calls,RUNNER_TEMP:dir,GITHUB_WORKFLOW_SHA:'unavailable'};
+-  execFileSync('/bin/bash',['-e','-c',script],{cwd:dir,env});assert.equal(fs.existsSync(calls),false);assert.equal(fs.existsSync(path.join(dir,'bot-handoff.mjs')),false);
+-  fs.mkdirSync(path.join(dir,'.github'));fs.writeFileSync(path.join(dir,'.github/bot-handoff-enabled'),'enabled');const out=execFileSync('/bin/bash',['-e','-c',script],{cwd:dir,env,encoding:'utf8'});assert.match(out,/extraction unavailable; no dispatch/);assert.equal(fs.readFileSync(calls,'utf8'),'git\n');
 - }finally{fs.rmSync(dir,{recursive:true,force:true});}
 -});
