@@ -1,0 +1,40 @@
+# From installed files to useful assessments
+
+## Installed, not activated
+
+The owner-approved single setup push succeeded on 11 November 2026. Remote commit is **6c4f3c3436788571dfbacfc51a9b3baaf33e6c83**, sole parent **f39f28196e7c443313190fd8b79b7fd3efc067b0**, tree **72a968bc82d2dc8c592a835213192cdec482e096**. Exact complete tree readback matches the offline verified tree: all 14 originals unchanged, only eight reviewed additions, 22 files. Source pack 13,154 bytes; one non-force push; two GETs plus two ls-remote reads. Actions was left disabled, based on preserved owner evidence; no settings API claim. Nothing executed. See INSTALL_RECEIPT.json in the private-reference-decision directory.
+
+Owner can now independently open the private commit page and compare commit **6c4f3c3** and parent **f39f281**. No key or file upload is needed for that check.
+
+## Remaining owner actions and what each enables
+
+These are a consolidated dependency list, NOT authorization or instructions to execute now. Routine code/research review continues without owner relay.
+
+| Gate | Exact owner action, separately approved | Evidence/capability delivered | What it does not deliver |
+|---|---|---|---|
+| Reference enrollment | Privately confirm the existing Massive key belongs to the entitled account; provide it directly as MASSIVE_REFERENCE_KEY and the existing monitored SEC contact as SEC_UA. Never send either through chat. No new key or production extraction. | Isolated access for the fixed reference-only client. | No collection, quotes or proven tradability. |
+| Hosting admission and rehearsal | Demonstrate effective $0 overage stop plus included compute/storage headroom; approve private Actions enablement and one synthetic phase on the exact pinned source. | Complete hosted rehearsal receipt without provider calls; checks the actual host/client/packing boundary. | No real data or automatic capture. |
+| Single reference capture | Approve one fixed 14 Massive + one SEC GET capture after rehearsal and present-now checks. Preserve 13-second spacing, five-second request timeout, 210-second provider phase and 24 MiB caps. | Dated, privately retained reference originals; classify ordinary companies, verified test securities, leveraged products and unresolved identities. Separate multiple products sharing an underlying. | No BBO, current trading status, liquidity, fill capacity, historical point-in-time identity or financial data. Reference has the reviewed seven-day validity; no recurring acquisition. |
+| Independent custody | Approve the bounded artifact download/owner-held private copy and same-private-repo recovery branch upload; then separate-runner verification. One private artifact, one-day expiry, one ZIP up to 20 MiB; recovery target capture-end + six hours. Owner accepts persistence in private Git history. | Evidence recoverable outside the original runner, member hashes and complete/partial outcome. | No encryption solution for holdings/messages, no extension of capture deadline, no blind repeat. |
+| Reference integration/release | After actual evidence and independent review, approve only the exact necessary consumer/release delta. | Verified types can remove confirmed inappropriate instruments from ordinary-company queues; unknowns remain investigable. | Not a qualified trade or permission to weaken gates. |
+| Current quotes — separate package | Decide private storage, retention, permitted existing endpoint/feed and any acquisition/release bounds for a separately reviewed normal-ingestion capture/rolling pin. No quote acquisition is approved here. | Provider quote time, actual receipt time, session, issuer/security identity, feed, bid/ask, available displayed size and conditions, preserved before canonical selection; minimal reader already validated. | Historical prices cannot recreate past observed quotes. Displayed size does not prove fills. Reference capture does not fix absent quote receipts. |
+| Research-specific evidence | Only after a frozen study identifies an indispensable missing input, approve its smallest exact acquisition if existing evidence cannot supply it. | Point-in-time financial/news/expectation or executable-price chains needed by that particular study. | No blanket data permission, profitable claim or rescue of rejected rules. |
+| Final owner decision | Reuse existing ZAD marks; owner supplies a final ZAD decision only where missing/expired/identity unresolved. Execute trades manually if desired. | A candidate can be shown as qualified only when its exact rule, evidence, quote readiness, costs and ZAD conditions pass. | UNKNOWN is neither not-halal nor approval. No automatic trade. |
+
+## What already works in development, and what remains
+
+The passed assessment caller separates business evidence from entry readiness and retained rule evidence. The new d2852739 quote reader fails UNKNOWN on bad clocks, session, identity or provenance; it does not convert daily closes into current HOLD/stop claims. All 50 selected candidates lack a joinable current retained quote chain. This is a retention gap, not 50 join defects. An immutable pin ages out after 120 seconds; a rolling private producer is not implemented or approved.
+
+Short horizon (hours–10 sessions): ordinary-company discovery, verified catalyst linkage and the actual assessment caller can produce dated investigative leads and exact retained rule conditions. Genuine contemporaneous quotes/identity plus rule-matched outcome chains are required for entry/executable performance. ORB5 remains REJECTED, not an opportunity list.
+
+Mid horizon (two weeks–six months): source-grounded business assessments can show revenue, cash/debt/dilution, contrary evidence and dated invalidations. OSCR/KNSA financial extraction passed the bounded second-reading review; no runtime insertion or current recommendation occurred. OSCR still needs its private ZAD gate and unresolved year-on-year share bridge. B-FCFN1 adverse verdicts remain unchanged. Original information-availability dates and comparison data are not reconstructed from later downloads.
+
+Long horizon (six–18 months): primary-source customer spending, supplier exposure, financing obligations and realized revenue/cash milestones support conditional business theses. Valuation and execution readiness remain explicit missing inputs where absent; illustrative supply-chain cases are not an unbiased strategy sample. No adopted long-horizon entry/exit rule is invented to turn a thesis into BUY.
+
+Across horizons, a usable card must carry security/business identity, dated primary evidence and contrary case, price clock/session, exact adopted entry/exit or NONE, horizon, whole-share $1,000 budget, $3 each executed order plus spread/slippage, and existing ZAD status. A previously rejected rule cannot qualify merely because its stock rose. Stocks lacking a rule remain investigation leads with a specific next evidence condition.
+
+## Research completed; next valid work
+
+The independent SQ2-ORB5 audit covers all 6,438 retained observations. Older/newer mean modeled returns are −0.809%/−0.728%, medians −1.345%/−1.350%; REJECTED/STOP is preserved. Equal-cost relative-control correction does not make absolute results positive. Exact whole-share economics are unscorable without original USD entry/exit, quotes and complete execution chains. The net-strategy/gross-control comparison inconsistency is documented; no frozen verdict was rewritten.
+
+Continue development/source investigations on their branches, preserving unresolved identity and dated ZAD evidence. The next valid evidence step for the selected universe is the separately gated reference capture above; the next quote step is a separately reviewed private retention producer using already-authorized normal ingestion, if technically/contractually available. Neither waits on encryption setup or changes Stage 1. No optional family, new framework, production action or acquisition is included.
