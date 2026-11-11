@@ -1,3 +1,4 @@
+import {watcherAdmission} from './watcher-schedule.mjs';
 import {publishWatcherReservation} from './watcher-message-publish.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
 import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
@@ -47,11 +48,15 @@ const clock = () => env.IG_FAKE_MIN ? +env.IG_FAKE_MIN + (env.IG_FAKE_STEP ? loo
 PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
 const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
 const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+const ADMISSION=watcherAdmission({eventName:env.GITHUB_EVENT_NAME,schedule:env.IG_SCHEDULE,day,minute:clock(),earliestMinute:FAST&&env.IG_FAKE_MIN?0:550});
+console.log('watcher admission: '+ADMISSION.reason+' '+JSON.stringify(ADMISSION));
+if(!ADMISSION.run)process.exit(0);
 const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
 if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExclusive:901})){MESSAGE_STATE.maintain();const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(dir+'/'+INCIDENT_RUN_ID+'-delivery-recovery.json',JSON.stringify({day,runId:INCIDENT_RUN_ID,messageDelivery:MESSAGE_STATE.report()}),{flag:'wx'});console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
 if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
 if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
+const RUN_START = Date.now(); // Observation budget excludes the bounded pre-open wait.
 // ---- each stock's normal daily volume (average over the days it traded, 15+ of the last 20 needed), float, time listed
 const avgVol = new Map(), firstSeen = new Map(), avgRange5 = new Map(); let sessions = 0;   // avgRange5: average high-low range of the last 5 sessions (the 'ADR' idea, logged only)
 try { const S = JSON.parse(zlib.gunzipSync(fs.readFileSync(CDIR + '/fm.json.gz')).toString()), D = Object.keys(S.days).sort(); sessions = D.length;
@@ -82,14 +87,14 @@ const AH = () => ({ headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECR
 async function snapTop50() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
   try { const r = await fetch(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
-    const sj = (await snapshots(ALPD, syms, AH())) || {}, sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
-    const at = Date.now(); return syms.map(s => alpacaSnapshot(s, sj[s] || {}, sip, at)); } catch (e) { return null; } }
+    const sj = await snapshots(ALPD, syms, AH()); if(!sj)return null; const sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
+    const at = Date.now(); const rows=syms.map(s => validateClocks(alpacaSnapshot(s, sj[s] || {}, sip, at), at)); return rows.some(r=>r.price>0||r.prevC>0||r.open>0||r.vol>0)?rows:null; } catch (e) { return null; } }
 async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
     try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
-      const at = Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x || {}, sip, at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
+      const at = Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = validateClocks(alpacaSnapshot(s, x || {}, sip, at), at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
   return out; }
 async function snap() {
@@ -97,12 +102,12 @@ async function snap() {
   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
   if (m && m.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
   if (m && m.length) { const live = await alpacaAll(m.filter(r => r.prevC >= 1).map(r => r.sym));
-    if (live) { let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, now)) n++; if (x && r.volumeBasis === 'SIP_DAILY_BAR_ASOF_UNSTATED') sv++; }
+    if (live) { const mergeAt=Date.now(); let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, mergeAt)) n++; if (x && r.volumeBasis === 'SIP_DAILY_BAR_ASOF_UNSTATED') sv++; }
       const feeds = [...new Set([...live.values()].map(x => x.priceFeed))], feedLabel = feeds.length === 1 ? feeds[0] : feeds.length ? 'mixed' : feedUsed();   // this minute's responses, not the whole day's
       src = 'alpaca live prices (' + feedLabel.toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (sv ? 'SIP daily volume (provider states no as-of time) for ' + sv : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
   const a = await snapTop50();
   if (!a || !a.length) { src = m && m.length ? 'massive (late ' + Math.round(late) + ' min)' : 'none'; mode = m && m.length ? 'FULL_SNAPSHOT_LATE' : 'NO_USABLE_MARKET_DATA'; return m || []; }
-  src = 'alpaca top-50 gainers only'; mode = 'PARTIAL_TOP50_FALLBACK';
+  src = m && m.length ? 'alpaca top-50 response merged with retained Massive universe (per-field freshness measured)' : 'alpaca top-50 gainers only (per-field freshness measured)'; mode = 'PARTIAL_TOP50_FALLBACK';
   const byM = new Map((m || []).map(r => [r.sym, r]));
   // Field set unchanged (price/prevC/open/volume, no quote fields). Every field passes the normal per-field clock validation: a future
   // clock never vouches for its value, and between this response and Massive the newer valid clock wins (as in the main merge).
@@ -281,10 +286,11 @@ async function radarSnap(m, scanned, live) {
 const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
 process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
 saveObservationProgress();
-while (Date.now() - START < MAXMS) {
+while (Date.now() - RUN_START < MAXMS) {
+  const passStartedAt = Date.now(); // Include snapshot/stop-watch work in this pass, without inventing catch-up observations.
   MESSAGE_STATE.maintain();
-  const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
-  const rows = await snap(); loops++; const tStart = triggers.length;
+  let m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
+  const rows = await snap(); m=clock(); if(m>900)break; loops++; const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
     // (4 Nov) every held stock gets its own price evidence (ticker-bound response, provider clock, age); no row or a stale/undated one -> STOP CHECK UNKNOWN, never silently safe
@@ -348,14 +354,18 @@ while (Date.now() - START < MAXMS) {
   if (m >= 675 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
   else if(m>=675&&RADAR.done&&MESSAGE_STATE.has('midday-radar')&&MESSAGE_STATE.state('midday-radar')==='UNSENT'){await sendRadarOnce();}
   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
-  const wait = 60000 - (Date.now() - nowMs); if (wait > 0) await sleep(wait);
+  const wait = 60000 - (Date.now() - passStartedAt); if (wait > 0) await sleep(wait);
 }
 const movers = Object.values(vis).filter(v => v.maxC >= 0.15), missed = buildMissed();
 const tally = {}; for (const x of missed) tally[x.code] = (tally[x.code] || 0) + 1;
 const modes = {}; for (const b of beat) modes[b.mode] = (modes[b.mode] || 0) + 1;
 const med = (a) => { const s = a.filter(x => x !== null && x !== undefined).sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
-const scheduled = Math.max(1, Math.min(900, clock()) - 570);   // (outside review, 22 Oct) coverage counts from the 09:30 open, so a late start shows as missed minutes
-const coverage = beat.length ? { minutesWatched: beat.length, firstMinute: fmtM(beat[0].m), lastMinute: fmtM(beat[beat.length - 1].m), minutesCompletedRate: +(Math.min(1, beat.length / scheduled)).toFixed(3), modes,
+// Raw heartbeats stay immutable. Coverage is unique usable configured receipt minutes, not loop count.
+const scheduled = Math.max(0, Math.min(900, clock()) - 570 + 1);
+const configuredBeats=beat.filter(b=>Number.isInteger(b.m)&&b.m>=570&&b.m<=900);
+const observedMinutes=new Set(configuredBeats.map(b=>b.m));
+const usableMinutes=new Set(configuredBeats.filter(b=>b.received>0&&b.evaluated>0).map(b=>b.m));
+const coverage = beat.length ? { countingBasis:'UNIQUE_USABLE_CONFIGURED_MINUTES_V1',minutesWatched:usableMinutes.size,observedMinutes:observedMinutes.size,rawObservations:beat.length,duplicateMinuteObservations:configuredBeats.length-observedMinutes.size,configuredExpectedMinutes:scheduled,firstMinute:fmtM(beat[0].m),lastMinute:fmtM(beat[beat.length-1].m),minutesCompletedRate:scheduled?+(Math.min(1,usableMinutes.size/scheduled)).toFixed(3):null,modes,
   receivedMedian: med(beat.map(b => b.received)), evaluatedMedian: med(beat.map(b => b.evaluated)), liveMedian: med(beat.map(b => b.live)), liveRate: med(beat.map(b => b.evaluated ? +(b.live / b.evaluated).toFixed(3) : null)),
   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
