@@ -1,3 +1,407 @@
+diff --git a/data/company-investigations.json b/data/company-investigations.json
+new file mode 100644
+index 00000000..29c764d5
+--- /dev/null
++++ b/data/company-investigations.json
+@@ -0,0 +1,57 @@
++{
++  "kind": "REVIEWED_COMPANY_INVESTIGATIONS_V1",
++  "records": {
++    "CRWV": {
++      "symbol": "CRWV",
++      "issuer": "CoreWeave, Inc.",
++      "summary": "Q3 revenue $3.661bn; operating income $207m versus net interest $846m. CFO $1.975bn less cash PPE $9.441bn = -$7.466bn. $132.5bn backlog is conditional future revenue, not cash; expected $9bn customer prepayments are prospective. Named SSD partner is Solidigm, not Sandisk.",
++      "contrary": "Delivery/collections or affordable funding fail; backlog and capacity spending need to turn into durable cash returns.",
++      "nextEvidence": "Actual customer prepayments, financing terms, capacity delivery and cash realization; full valuation needs current capitalization and price.",
++      "publishedDate": "2026-11-10",
++      "receiptAt": "2026-11-11T17:20:27.028004+00:00",
++      "sourceUrl": "https://investors.coreweave.com/news/news-details/2026/CoreWeave-Reports-Strong-Third-Quarter-2026-Results/default.aspx",
++      "sourceSha256": "aab871775cf1f22c1563b3f63c718f0786a696fc8a6979d5832592aa664bdb43",
++      "reviewedAt": "2026-11-11T18:18:12Z",
++      "reviewComment": "https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6803780465"
++    },
++    "AXTI": {
++      "symbol": "AXTI",
++      "issuer": "AXT, Inc.",
++      "summary": "Q3 revenue $73.4m versus $28.0m; gross margin56%; net income $25.7m. Basic weighted shares63.827m versus43.842m (+45.59%); cash $485.472m excludes restricted $41.2m. Cash balance increase is not proof of operating cash conversion.",
++      "contrary": "Financing/dilution, export permits and utilization; invalidate if growth fails to produce sustainable per-share cash. Existing owner ZAD exclusion remains separate and binding.",
++      "nextEvidence": "Operating versus financing cash-flow bridge and realized shipments; do not infer orders from a leveraged fund move.",
++      "publishedDate": "2026-10-29",
++      "receiptAt": "2026-11-11T17:20:27.582723+00:00",
++      "sourceUrl": "https://investors.axt.com/Investors/news/news-details/2026/AXT-Inc--Announces-Third-Quarter-2026-Financial-Results/default.aspx",
++      "sourceSha256": "11dbba9698a98980796918a814d1d7d6659142e37644e71325463303245001b3",
++      "reviewedAt": "2026-11-11T18:18:12Z",
++      "reviewComment": "https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6803780465"
++    },
++    "FOSL": {
++      "symbol": "FOSL",
++      "issuer": "Fossil Group, Inc.",
++      "summary": "Q3 sales $271.2m (+0.4%); operating income about $25m; net income $11.7m. Inventory $189.2m rose13.4%; cash $77m, debt $208m. $34.7m ABL availability is not cash. Margin recovery is reported; positive-FCF guidance remains prospective.",
++      "contrary": "Margin reversal or inventory failing to convert into cash; leverage and weak sales growth. Ralph Lauren news is not Fossil evidence.",
++      "nextEvidence": "Dated cash flow, inventory and debt progress; fresh prices and unchanged rule trigger, not a chase entry.",
++      "publishedDate": "2026-11-10",
++      "receiptAt": "2026-11-11T17:20:27.965627+00:00",
++      "sourceUrl": "https://www.sec.gov/Archives/edgar/data/883569/000088356926000069/q32026ex991.htm",
++      "sourceSha256": "c1ff05186344f6f4c1c02e442d63ec6ff186a0cffa9a331f27066e461dff9650",
++      "reviewedAt": "2026-11-11T18:18:12Z",
++      "reviewComment": "https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6803780465"
++    },
++    "SNDK": {
++      "symbol": "SNDK",
++      "issuer": "Sandisk Corporation",
++      "summary": "October29 release / October30 10-Q: FiscalQ1 revenue $11.0bn; net income $8.101bn; CFO $6.363bn; equity-security gain $513m, receivables cash use $1.877bn. CFO less cash PPE $54m = $6.309bn before JV/funding caveats. 8-for-1 adjusted trading expected Nov20; Nov11 prices remain pre-split.",
++      "contrary": "Cycle/pricing normalization, working capital and JV funding; invalidate if demand fails to become durable cash returns. No direct Solidigm contract inferred.",
++      "nextEvidence": "Cycle-normalized margins, JV commitments, complete valuation and correctly split-based fresh execution evidence. Historical scanner omission still lacks original bar count.",
++      "publishedDate": "2026-10-30",
++      "receiptAt": "2026-11-11T17:51:35.605322+00:00",
++      "sourceUrl": "https://investor.sandisk.com/static-files/c31aa9f9-d8e1-43e5-8642-360f5d0dad15",
++      "sourceSha256": "c10f8e33e881a50eb060644bcd71a40854fe4babff752b411d07740b5aedd873",
++      "reviewedAt": "2026-11-11T18:18:12Z",
++      "reviewComment": "https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6803780465"
++    }
++  }
++}
+diff --git a/discover.mjs b/discover.mjs
+index 93d5bc2a..47e969e4 100644
+--- a/discover.mjs
++++ b/discover.mjs
+@@ -1,3 +1,5 @@
++import {appendRadarRows,readRadarLedger} from './radar-ledger.mjs';
++import {frozenAssessmentQueue,assessmentCycleRows} from './discovery-runtime.mjs';
+ // Discovery engine for the US stock signal board. Runs on GitHub Actions.
+ // Each night it sweeps the WHOLE US market for strong price trends, then checks the strongest against official SEC filings
+ // (revenue growth, profit trend, debt, cash) and writes a short list of small, fast-growing companies to data/discovery.json.
+@@ -356,9 +358,9 @@ for (const c of top) {
+ }
+ 
+ // ---- 4. Journal and honest follow-up: how did earlier candidates do against the S&P 500?
+-const journal = fs.existsSync('data/discovery-journal.jsonl') ? fs.readFileSync('data/discovery-journal.jsonl', 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)) : [];
++const journal = readRadarLedger('data/discovery-journal.jsonl').filter(x=>x.type!=='assessment'&&x.type!=='assessment-cycle');
+ const seen = new Set(journal.map(x => x.sym)), fresh = top.filter(c => !seen.has(c.sym));
+-for (const c of fresh) fs.appendFileSync('data/discovery-journal.jsonl', JSON.stringify({ sym: c.sym, d: first.date, price: c.price, spy: spyNow, score: c.score }) + '\n');
++appendRadarRows('data/discovery-journal.jsonl',fresh.map(c=>({ sym: c.sym, d: first.date, price: c.price, spy: spyNow, score: c.score })));
+ const aged = journal.filter(x => Date.parse(first.date) - Date.parse(x.d) >= 28 * 86400000 && closes[0].get(x.sym) && x.spy && spyNow).map(x => ({ ret: closes[0].get(x.sym).c / x.price - 1, spy: spyNow / x.spy - 1 }));
+ const record = aged.length ? { n: aged.length, avgReturn: aged.reduce((a, x) => a + x.ret, 0) / aged.length, avgSpy: aged.reduce((a, x) => a + x.spy, 0) / aged.length, beat: aged.filter(x => x.ret > x.spy).length / aged.length } : null;
+ 
+@@ -387,3 +389,19 @@ if (fresh.length) {
+   msg.push('', 'Candidates to research, not buy signals. Most fast movers fall back. Not financial advice, not a halal ruling.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
+   await telegram(msg.join('\n'));
+ }
++
++// Sole publishing path for assessment cycles: discovery's existing workflow
++// concurrency serializes producers. Bot/scanner consumers never append here.
++{
++ const journal=readRadarLedger('data/discovery-journal.jsonl');
++ const input={cutoff:new Date(now).toISOString(),
++  signals:readJson('data/signals.json',{}),discovery:readJson('data/discovery.json',{}),
++  earnings:readJson('data/earnings-recent.json',{}),events:readJson('data/events-recent.json',{}),
++  quality:readJson('data/quality.json',{}),horizons:readJson('data/horizons.json',{}),
++  radar:readJson('data/radar-universe.json',{}),leaders:readJson('data/leaders-universe.json',{}),
++  excludedSymbols:readJson('data/zad-list.json',{}).notHalal||[],
++  seenAssessmentIds:journal.filter(r=>r.type==='assessment').map(r=>r.id)};
++ const queue=frozenAssessmentQueue(input,journal);
++ if(!queue.frozen)appendRadarRows('data/discovery-journal.jsonl',assessmentCycleRows(queue));
++ console.log('assessment cycle',queue.cycleKey,queue.frozen?'already frozen':'recorded once');
++}
+diff --git a/discovery-runtime.mjs b/discovery-runtime.mjs
+new file mode 100644
+index 00000000..c6a25bc5
+--- /dev/null
++++ b/discovery-runtime.mjs
+@@ -0,0 +1,293 @@
++// Observation-only ingress and prospective timing measurement. Never imports
++// order, Telegram, strategy-promotion or recommendation code; never runs labs.
++import {createHash} from 'node:crypto';
++import {LANES,assembleMultiAngle} from './multi-angle-discovery.mjs';
++import {isFreshPriceAge} from './ignition-gates.mjs';
++import {marketSymbol} from './market-symbol.mjs';
++import {SOURCE_STATUS,closeLagSessions,isDay,latestCompletedSession} from './source-contract.mjs';
++const clock=x=>typeof x==='string'&&/T.*(Z|[+-]\d{2}:\d{2})$/.test(x)&&Number.isFinite(Date.parse(x));
++const symbol=x=>typeof x==='string'&&marketSymbol(x)===x;
++// Provider statuses this package adds; absent ones are LEGACY_UNSTATED (labelled, never read as observed).
++const ADDED_PRODUCERS=new Set(['ALPHA_VANTAGE','FMP','PRICE_CACHE','LAB_TODAY_FILES','SPY_BARS']);
++const PRODUCER_STATUSES=new Set(['OBSERVED','UNKNOWN','NOT_FETCHED','PARTIAL_OR_UNKNOWN','CONFLICT',...SOURCE_STATUS]);
++// Daily-close producers: a close older than the previous completed session is stale (sessions, not calendar hours).
++const CLOSE_LAG_LIMIT=1;
++const observationIdentity=(source,row,sym)=>[source.path,sym,row.sourceId||row.id||row.url||row.rule||'',row.p||row.d||row.filed||row.signalDay||'',row.h||row.f||row.chain||''];
++const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
++const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
++export const DISCOVERY_SOURCES=Object.freeze([
++ {lane:'NEWS_CATALYST',path:'data/news-log.jsonl',hours:72},
++ {lane:'SEC_EVENT',path:'data/events-recent.json',hours:240},
++ {lane:'INSIDER_CLUSTER',path:'data/insider-study.json',hours:168},
++ {lane:'EARNINGS_SURPRISE',path:'data/earnings-recent.json',hours:72},
++ {lane:'INDUSTRY_RIPPLE',path:'data/chain-ripple.json',hours:72},
++ {lane:'SUPPLY_SHIFT',path:'data/share-supply.json',hours:168},
++ {lane:'TECHNICAL_BUILDUP',path:'data/discovery2-today.json',hours:72},
++ {lane:'MARKET_DISLOCATION',path:'data/comeback-today.json',hours:72}
++]);
++
++// Research attention over EXISTING outputs. This is neither a strategy score nor
++// trade admission. Source facts, not subsequent returns, determine the queue.
++export const ASSESSMENT_TRIAGE_VERSION='EXISTING_HORIZON_ATTENTION_V1';
++// Session identities, never Sunday/output-generation clocks. New event/report
++// dates are relevant input versions; a refresh of an unchanged study is not.
++export function assessmentCycleKey(input={}){
++ const session=d=>d?.session||d?.to||null;
++ return hash([ASSESSMENT_TRIAGE_VERSION,
++  ['signals','discovery','quality','horizons','radar','leaders'].map(k=>[k,session(input[k])]),
++  [...new Set((input.events?.events||[]).map(r=>r?.p).filter(clock))].sort(),
++  [...new Set((input.earnings?.reports||[]).map(r=>r?.d).filter(isDay))].sort(),
++  ...(/^SCANNER_RULE_DEFINITION_V1:\d+:[a-f0-9]{64}$/.test(input.signals?.ruleIdentityVersion||'')?[[input.signals.ruleIdentityVersion]]:[])]);
++}
++export function frozenAssessmentQueue(input={},journal=[]){
++ const cycleKey=assessmentCycleKey(input),hits=journal.filter(r=>r.type==='assessment-cycle'&&r.cycleKey===cycleKey);
++ if(hits.length>1)throw Error('CONFLICTING_ASSESSMENT_CYCLE_RECEIPTS');
++ if(hits.length===1){
++  const q=hits[0].queue;
++  if(!q||q.cycleKey!==cycleKey||q.version!==ASSESSMENT_TRIAGE_VERSION||!q.batches||
++   Object.values(q.batches).some(a=>!Array.isArray(a)||a.length>2||a.some(r=>r.id!==hash([ASSESSMENT_TRIAGE_VERSION,r.horizon,r.symbol,r.evidenceVersion]))))
++   throw Error('INVALID_ASSESSMENT_CYCLE_RECEIPT');
++  return {...q,frozen:true,sourceFreshness:assessmentSourceStatus(input.signals,input.cutoff)};
++ }
++ // Display size never changes selection. Existing recorded versions can defer
++ // earlier investigations only when a NEW producer cycle is first selected.
++ return {...triageAssessments({...input,perHorizon:2}),cycleKey,frozen:false};
++}
++export function assessmentCycleRows(queue){
++ if(!/^[a-f0-9]{64}$/.test(queue.cycleKey||''))throw Error('MISSING_ASSESSMENT_CYCLE_KEY');
++ const {decisions,invalid,...snapshot}=queue;
++ return [{type:'assessment-cycle',version:1,cycleKey:queue.cycleKey,recordedAt:queue.cutoff,queue:snapshot},...assessmentJournalRows(queue)];
++}
++
++const ruleCanonical=x=>x&&typeof x==='object'?Array.isArray(x)?x.map(ruleCanonical):Object.fromEntries(Object.keys(x).sort().map(k=>[k,ruleCanonical(x[k])])):x;
++export function makeScannerAssessmentRule({logicVersion,sourceHash,variant,config,targetOverlay=null,ruleText,variantKey}={}){
++ if(!Number.isInteger(logicVersion)||!/^[a-f0-9]{64}$/.test(sourceHash||'')||!object(variant)||!object(config)||typeof ruleText!=='string'||!ruleText||typeof variantKey!=='string'||!variantKey)return null;
++ if(!['cross','pull','brk','brk20'].includes(variant.fam)||!Number.isFinite(variant.mult)||variant.mult<=0||!(variant.tp===null||Number.isFinite(variant.tp)&&variant.tp>0)||typeof variant.mf!=='boolean')return null;
++ if(!Number.isInteger(variant.fast)||variant.fast<=0||!Number.isInteger(variant.slow)||variant.slow<=0||!(variant.maxHold===undefined||Number.isInteger(variant.maxHold)&&variant.maxHold>0)||![config.ATR,config.TREND,config.TIME_STOP_DAYS,config.FLAT_R].every(Number.isFinite))return null;
++ if(!variant.tp&&targetOverlay!==null&&(!object(targetOverlay)||!['none','all','half'].includes(targetOverlay.mode)||targetOverlay.mode==='none'&&targetOverlay.x!==null||targetOverlay.mode!=='none'&&(!Number.isFinite(targetOverlay.x)||targetOverlay.x<=0)))return null;
++ const overlay=variant.tp?null:targetOverlay&&{mode:targetOverlay.mode??null,x:targetOverlay.x??null};
++ const definition=ruleCanonical({schema:'SCANNER_RULE_DEFINITION_V1',logicVersion,sourceHash,variantKey,variant:JSON.parse(JSON.stringify(variant)),config:JSON.parse(JSON.stringify(config)),ruleText,
++  exitPolicy:{modeled:'index.html#logic:followTrade/exitAt',holding:'index.html#logic:exitCheck',level:'index.html#logic:sellLevel',displayTarget:overlay},
++  scope:'RETAINED_SCANNER_RULE_AND_DISPLAY_POLICY_NOT_ADMISSION'});
++ return {definition,ruleId:'SCANNER_RULE_SHA256:'+hash(definition),ruleVersion:'SCANNER_RULE_DEFINITION_V1:'+logicVersion+':'+sourceHash};
++}
++export function assessmentRuleIdentity(row){
++ if(!row||!row.rule&&!row.key&&!row.assessmentRule)return {ruleIdentityState:'NO_ADOPTED_RULE_SUPPLIED',ruleId:null,ruleVersion:null,ruleDefinition:null,legacyRuleKey:row?.key||null};
++ const d=row?.assessmentRule?.definition,b=d&&makeScannerAssessmentRule({logicVersion:d.logicVersion,sourceHash:d.sourceHash,variant:d.variant,config:d.config,targetOverlay:d.exitPolicy?.displayTarget,ruleText:d.ruleText,variantKey:d.variantKey});
++ const valid=b&&JSON.stringify(b.definition)===JSON.stringify(ruleCanonical(d))&&b.ruleId===row.assessmentRule.ruleId&&b.ruleVersion===row.assessmentRule.ruleVersion&&row.rule===d.ruleText&&(!row.key||row.key===d.variantKey);
++ return valid?{ruleIdentityState:'IDENTIFIED',ruleId:b.ruleId,ruleVersion:b.ruleVersion,ruleDefinition:b.definition,legacyRuleKey:row.key||null,ruleIdentityBasis:'ACTUAL_SCANNER_DEFINITION_VERSION_NOT_ADOPTION'}:
++  {ruleIdentityState:'RULE_UNKEYED',ruleId:null,ruleVersion:null,ruleDefinition:null,legacyRuleKey:row?.key||null,ruleIdentityBasis:'MISSING_OR_CONFLICTING_ACTUAL_DEFINITION_VERSION'};
++}
++
++export function assessmentSourceStatus(signals,cutoff){
++ if(!clock(cutoff))throw Error('INVALID_ASSESSMENT_CUTOFF');
++ const now=Date.parse(cutoff),session=signals?.session||null,lag=closeLagSessions(session,now);
++ return {session,expectedCompletedSession:latestCompletedSession(now),completedSessionLag:lag,
++  status:clock(signals?.generatedAt)&&Date.parse(signals.generatedAt)>now?'UNKNOWN_FUTURE_OUTPUT_CLOCK':lag===null?'UNKNOWN':lag<0?'FUTURE_SOURCE':lag===0?'LATEST_COMPLETED_CLOSE_REFERENCE':'STALE_COMPLETED_CLOSE_REFERENCE',
++  generatedAt:signals?.generatedAt||null,generatedClock:!clock(signals?.generatedAt)?'UNKNOWN':Date.parse(signals.generatedAt)>now?'FUTURE':'DATED_OUTPUT_NOT_QUOTE_RECEIPT',
++  executableQuote:'UNKNOWN',intradayInvocation:'NOT_ESTABLISHED_BY_DAILY_OUTPUT'};
++}
++export function triageAssessments({signals={},discovery={},earnings={},events={},quality={},horizons={},radar={},leaders={},cutoff,reviewedSymbols=[],seenAssessmentIds=[],excludedSymbols=[],perHorizon=2}={}){
++ if(!clock(cutoff)||![1,2,3].includes(perHorizon))throw Error('INVALID_ASSESSMENT_TRIAGE_SCOPE');
++ const now=Date.parse(cutoff),array=x=>Array.isArray(x)?x:[],all=[],pools={SHORT:[],MID:[],LONG:[]};
++ const dates=d=>({generatedAt:d?.generatedAt||null,session:d?.session||d?.to||null});
++ const add=(source,rows,meta,project)=>{if(rows.length>20000)throw Error('ASSESSMENT_INPUT_ROW_CAP');for(const r of rows){const s=typeof r==='string'?r:r?.sym||r?.symbol;all.push({symbol:s,source,meta,facts:project&&r&&typeof r==='object'?JSON.parse(JSON.stringify(project(r))):{}});}};
++ add('signals',array(signals.stocks),dates(signals),r=>({state:r.state,rule:r.rule,key:r.key,proven:r.proven,assessmentRule:r.assessmentRule,last:r.last,trigger:r.trigger,buyLo:r.buyLo,buyHi:r.buyHi,stop:r.stop,target:r.target,maxHold:r.maxHold,exitBelow:r.exitBelow,hardBlock:r.hardBlock}));
++ add('discovery',array(discovery.candidates),dates(discovery),r=>({name:r.name,price:r.price,quarter:r.quarter,revGrowth:r.revGrowth,profitTrend:r.profitTrend,hardBlock:r.hardBlock}));
++ add('earnings',array(earnings.reports),dates(earnings),r=>({day:r.d,actual:r.a,estimate:r.e,timing:r.t}));
++ add('SEC',array(events.events),dates(events),r=>({publication:r.p,form:r.f,sourceId:r.sourceId||null}));
++ add('quality',array(quality.today),dates(quality),r=>({rank:r.q,growth:r.growth,dilution:r.dilute}));
++ add('quality-rank',Object.keys(quality.rank||{}),dates(quality));
++ add('radar',array(radar.syms),dates(radar));add('leaders',array(leaders.syms),dates(leaders));
++ for(const [setup,syms]of Object.entries(horizons.today||{}))add('horizons',array(syms),dates(horizons),()=>({setup}));
++ const by=new Map(),invalid=[];for(const r of all){if(!symbol(r.symbol)){invalid.push({source:r.source,reason:'INVALID_SYMBOL'});continue;}if(!by.has(r.symbol))by.set(r.symbol,[]);by.get(r.symbol).push(r);}
++ const excluded=new Set(excludedSymbols),reviewed=new Set(reviewedSymbols),seen=new Set(seenAssessmentIds);
++ const eligibleSource=r=>!r.meta.generatedAt||clock(r.meta.generatedAt)&&Date.parse(r.meta.generatedAt)<=now;
++ const offer=(h,r,priority,time=0)=>{if(!eligibleSource(r))return;pools[h].push({symbol:r.symbol,priority,time,source:r.source});};
++ for(const r of all){if(!symbol(r.symbol))continue;
++  if(r.source==='signals'&&r.facts.state==='Buy watch')offer('SHORT',r,0);
++  if(r.source==='SEC'&&clock(r.facts.publication)){const t=Date.parse(r.facts.publication);if(t<=now&&now-t<=240*3600000)offer('SHORT',r,1,t);}
++  if(r.source==='earnings'&&isDay(r.facts.day)){const t=Date.parse(r.facts.day+'T00:00:00Z');if(t<=now&&now-t<=(72+24)*3600000)offer('MID',r,0,t);}
++  if(r.source==='horizons')offer('MID',r,1);
++  if(r.source==='quality')offer('LONG',r,0,Number.isFinite(r.facts.rank)?r.facts.rank:0);
++  if(r.source==='discovery')offer('LONG',r,1);
++ }
++ const decisions=[],batches={};for(const [h,pool]of Object.entries(pools)){
++  pool.sort((a,b)=>a.priority-b.priority||b.time-a.time||a.symbol.localeCompare(b.symbol));const used=new Set();batches[h]=[];
++  for(const r of pool){if(used.has(r.symbol))continue;used.add(r.symbol);const facts=by.get(r.symbol),evidenceVersion=hash(facts.map(({symbol,source,meta,facts})=>({symbol,source,session:meta.session,facts}))),id=hash([ASSESSMENT_TRIAGE_VERSION,h,r.symbol,evidenceVersion]);
++   const reason=excluded.has(r.symbol)?'EXISTING_EXCLUSION':reviewed.has(r.symbol)?'ALREADY_INVESTIGATED_THIS_BATCH':seen.has(id)?'ASSESSMENT_VERSION_ALREADY_RECORDED':batches[h].length>=perHorizon?'DEFERRED_BATCH_CAP':'SELECTED';
++   const row={...r,horizon:h,id,evidenceVersion,decision:reason,identity:'UNKNOWN_NOT_A_VERIFIED_ISSUER_COUNT',facts};decisions.push(row);if(reason==='SELECTED')batches[h].push(row);
++  }
++ }
++ return {version:ASSESSMENT_TRIAGE_VERSION,cutoff,policy:'Existing trigger first / dated SEC; recent earnings then existing horizon setups; existing quality percentile then business shortlist. Newest source date, lexical ties. Research attention only; no return fields used.',sourceFreshness:assessmentSourceStatus(signals,cutoff),
++  population:{rawRows:all.length,uniqueSymbolLabels:by.size,invalidRows:invalid.length,verifiedEligibleIssuers:0,verifiedEligibleInstruments:0,identityUnknownSymbols:by.size,issuerInstrumentDedup:'UNRESOLVED_NO_AUTHENTICATED_REFERENCE_JOIN',producerSweptCount:discovery.swept??null,producerStrongCount:discovery.strong??null,
++   sources:Object.fromEntries([...new Set(all.map(x=>x.source))].map(s=>{const a=all.filter(x=>x.source===s);return[s,{rows:a.length,uniqueSymbolLabels:new Set(a.filter(x=>symbol(x.symbol)).map(x=>x.symbol)).size,asOf:a[0]?.meta||null}]}))},
++  batches,decisions,counts:Object.fromEntries(['SELECTED','EXISTING_EXCLUSION','ALREADY_INVESTIGATED_THIS_BATCH','ASSESSMENT_VERSION_ALREADY_RECORDED','DEFERRED_BATCH_CAP'].map(k=>[k,decisions.filter(x=>x.decision===k).length])),invalid};
++}
++export function assessmentJournalRows(queue){
++ return Object.values(queue.batches).flat().map(r=>({type:'assessment',version:1,cycleKey:queue.cycleKey||null,id:r.id,symbol:r.symbol,horizon:r.horizon,recordedAt:queue.cutoff,evidenceVersion:r.evidenceVersion,triageVersion:queue.version,
++  decision:'INVESTIGATE_OR_WAIT_NOT_ENTRY',sourceReferences:r.facts.map(x=>({source:x.source,...x.meta})),
++  ...assessmentRuleIdentity(r.facts.find(x=>x.source==='signals')?.facts),
++  sourceSession:queue.sourceFreshness.session,
++  quote:'UNKNOWN',execution:'NOT_OBSERVED',outcome:'UNRESOLVED',control:'UNLINKED',costConvention:{budget:1000,feeEachExecutedSide:3,wholeShares:true},
++  caveat:'Assessment recording time is not original detection/receipt, a trade, or an outcome. No owner holdings/ZAD records stored.'}));
++}
++// Only exact, already computed outcome witnesses may join. Never use a later
++// price or aggregate performance to fill an individual missing chain.
++export function linkAssessmentOutcomes(assessments,outcomes=[]){
++ return assessments.map(a=>{const binding=assessmentRuleIdentity({rule:a.ruleDefinition?.ruleText,assessmentRule:{definition:a.ruleDefinition,ruleId:a.ruleId,ruleVersion:a.ruleVersion}});const identified=a.ruleIdentityState==='IDENTIFIED'&&binding.ruleIdentityState==='IDENTIFIED';const hits=identified?outcomes.filter(o=>o.assessmentId===a.id&&o.evidenceVersion===a.evidenceVersion&&o.ruleId===a.ruleId&&o.ruleVersion===a.ruleVersion&&o.horizon===a.horizon):[];
++  const o=hits.length===1?hits[0]:null;return {assessmentId:a.id,symbol:a.symbol,horizon:a.horizon,status:!identified?(a.ruleIdentityState==='NO_ADOPTED_RULE_SUPPLIED'?'UNRESOLVED_NO_ADOPTED_RULE_SUPPLIED':'UNRESOLVED_RULE_UNKEYED_OR_LEGACY_VERSION'):!o?'UNRESOLVED_NO_UNIQUE_VERSIONED_OUTCOME':o.status,
++   economicBasis:o?.economicBasis||'UNKNOWN',fixedControl:o?.controlVersion||'UNKNOWN',netAfterCosts:identified&&o?.completeChain===true&&o?.controlVersion&&o?.economicBasis==='AUTHENTIC_EXECUTION'&&o?.reviewStatus==='INDEPENDENT_COMPLETE_CHAIN_REVIEWED'&&/^[a-f0-9]{64}$/.test(o?.witnessId||'')?o.netAfterCosts??null:null,
++   sourceWitness:o?.witnessId||null};});
++}
++function rowsOf(lane,doc) {
++ const fields={SEC_EVENT:'events',INSIDER_CLUSTER:'recent',EARNINGS_SURPRISE:'reports',INDUSTRY_RIPPLE:'todayMovers',SUPPLY_SHIFT:'now',TECHNICAL_BUILDUP:'buys'};
++ if(fields[lane]&&!Array.isArray(doc[fields[lane]]))throw Error('missing or invalid rows');
++ switch(lane) {
++  case 'SEC_EVENT':return doc.events||[];
++  case 'INSIDER_CLUSTER':return (doc.recent||[]).filter(r=>object(r)&&Number.isInteger(r.n)&&r.n>=2);
++  case 'EARNINGS_SURPRISE':return (doc.reports||[]).filter(r=>object(r)&&Number.isFinite(r.a)&&Number.isFinite(r.e)&&r.a!==r.e);
++  case 'INDUSTRY_RIPPLE':return doc.todayMovers||[];
++  case 'SUPPLY_SHIFT':return doc.now||[];
++  case 'TECHNICAL_BUILDUP':return doc.buys||[];
++  case 'MARKET_DISLOCATION':if(!object(doc.methods))throw Error('invalid methods');return Object.entries(doc.methods||{}).flatMap(([rule,m])=>!object(m)?[null]:m.newSignals===undefined?[]:Array.isArray(m.newSignals)?m.newSignals.map(r=>object(r)?{...r,rule}:null):[null]);
++  default:return [];
++ }
++}
++export function collectDiscovery({readText,cutoff,live=[]}) {
++ if(!clock(cutoff))throw new TypeError('discovery cutoff needs timezone');
++ const at=Date.parse(cutoff),observations=[...live],sources=[{lane:'PRE_IGNITION',status:'LIVE_RUNTIME',rows:live.filter(x=>x.lane==='PRE_IGNITION').length}];
++ for(const source of DISCOVERY_SOURCES){
++  let text;try{text=readText(source.path);}catch{sources.push({...source,status:'MISSING',rows:0});continue;}
++  try{
++   if(typeof text!=='string'||Buffer.byteLength(text,'utf8')>8*1024*1024){sources.push({...source,status:'INPUT_BUDGET_OR_TYPE_BLOCKED',rows:0});continue;}
++   let rows,generated,preRejected=0,malformedLines=0,inputRows=null,inputTruncated=0,parsedObjects=0,producerStatus=null,revokedReportedIds=[];const revokedSourceIds=[];const rejectionReasons={};
++   const reject=reason=>{preRejected++;rejectionReasons[reason]=(rejectionReasons[reason]||0)+1;};
++   if(source.lane==='NEWS_CATALYST'){
++    const lines=text.split(/\r?\n/).filter(x=>x.trim());inputRows=lines.length;inputTruncated=Math.max(0,lines.length-10000);rows=[];
++    const quarantinedIds=new Set();for(const line of lines.slice(-10000)){try{const r=JSON.parse(line);if(r?.recordType==='SOURCE_REVISION_QUARANTINE'&&['string','number'].includes(typeof r.reportedId))quarantinedIds.add(String(r.reportedId));}catch{}}
++    for(const line of lines.slice(-10000)){
++     let row;try{row=JSON.parse(line);}catch{malformedLines++;reject('MALFORMED_JSON_LINE');continue;}
++     if(!object(row)){reject('NON_OBJECT_ROW');continue;}parsedObjects++;
++     if(row.sourceId!=null&&quarantinedIds.has(String(row.sourceId))){revokedSourceIds.push(hash(observationIdentity(source,row,row.sym)));reject('SOURCE_REVISION_CONFLICT');continue;}
++     if(typeof row.h!=='string'||!row.h.trim()||!symbol(row.sym)){reject('NOT_A_VALID_HEADLINE_RECORD');continue;}
++     if(typeof row.t!=='number'||!Number.isFinite(row.t)||row.t<=0||row.t>8640000000000000){reject('INVALID_PUBLICATION_CLOCK');continue;}
++     if(row.t>at||at-row.t>source.hours*3600000){reject(row.t>at?'FUTURE_PUBLICATION':'STALE_PUBLICATION');continue;}
++     if(row.at!==undefined&&(!clock(row.at)||Date.parse(row.at)>at||Date.parse(row.at)<row.t)){reject('INVALID_OR_FUTURE_INGESTION_CLOCK');continue;}
++     rows.push(row);
++    }
++    if(!parsedObjects&&preRejected){sources.push({...source,status:'MALFORMED',rows:0,inputRows,rejected:preRejected,malformedLines,truncated:inputTruncated,rejectionReasons});continue;}
++    rows.sort((a,b)=>b.t-a.t);
++   }else{const doc=JSON.parse(text);if(!object(doc))throw Error('invalid source object');if(doc.error||doc.errors||doc.ok===false)throw Error('source error envelope');generated=doc.generatedAt!==undefined?doc.generatedAt:doc.updated;rows=rowsOf(source.lane,doc);if(Array.isArray(doc.quarantinedSourceIds))revokedReportedIds=doc.quarantinedSourceIds.filter(x=>typeof x==='string').slice(0,1000);if(['SEC_EVENT','EARNINGS_SURPRISE','INSIDER_CLUSTER','INDUSTRY_RIPPLE','SUPPLY_SHIFT','TECHNICAL_BUILDUP','MARKET_DISLOCATION'].includes(source.lane)){producerStatus={};for(const name of source.lane==='SEC_EVENT'?['SEC','OPENFDA']:source.lane==='INSIDER_CLUSTER'?['SEC_FORM4']:source.lane==='INDUSTRY_RIPPLE'?['CHAIN_ANALYSIS']:source.lane==='SUPPLY_SHIFT'?['SEC_INDEX','SEC_TICKERS']:source.lane==='TECHNICAL_BUILDUP'?['SEC_INDEX','PRICE_CACHE']:source.lane==='MARKET_DISLOCATION'?['LAB_TODAY_FILES','SPY_BARS']:['FINNHUB_CALENDAR','ALPHA_VANTAGE','FMP']){const v=doc.sourceStatus?.[name];producerStatus[name]={status:object(v)&&PRODUCER_STATUSES.has(v.status)?v.status:v===undefined&&ADDED_PRODUCERS.has(name)?'LEGACY_UNSTATED':'UNKNOWN'};}}if((source.lane==='INSIDER_CLUSTER'&&doc.sourceStatus?.SEC_FORM4?.status==='UNKNOWN')||(source.lane==='INDUSTRY_RIPPLE'&&doc.sourceStatus?.CHAIN_ANALYSIS?.status==='UNKNOWN')||(source.lane==='SUPPLY_SHIFT'&&['SEC_INDEX','SEC_TICKERS'].some(k=>doc.sourceStatus?.[k]?.status==='UNKNOWN'))||(source.lane==='TECHNICAL_BUILDUP'&&doc.sourceStatus?.SEC_INDEX?.status==='UNKNOWN')
++    ||(source.lane==='TECHNICAL_BUILDUP'&&doc.sourceStatus?.PRICE_CACHE!==undefined&&producerStatus.PRICE_CACHE.status!=='OBSERVED')
++    ||(source.lane==='MARKET_DISLOCATION'&&doc.sourceStatus?.LAB_TODAY_FILES!==undefined&&!['OBSERVED','EMPTY'].includes(producerStatus.LAB_TODAY_FILES.status))
++    ||(source.lane==='EARNINGS_SURPRISE'&&doc.sourceStatus?.FINNHUB_CALENDAR?.status==='UNKNOWN')){preRejected+=rows.length;rows=[];}}
++   if(!Array.isArray(rows))throw Error('invalid rows');
++   if(source.lane!=='NEWS_CATALYST'&&!clock(generated)){sources.push({...source,status:'MISSING_OUTPUT_TIMESTAMP',rows:rows.length});continue;}
++   if(generated&&(Date.parse(generated)>at||at-Date.parse(generated)>source.hours*3600000)){sources.push({...source,status:Date.parse(generated)>at?'FUTURE':'STALE',rows:rows.length});continue;}
++   let accepted=0,rejected=preRejected,rowErrors=0;
++   for(const row of rows.slice(0,500)){
++    try{
++    if(!object(row)){rejected++;continue;}
++    if(row.revisionStatus==='CONFLICT'){rejected++;continue;}
++    const sym=row.sym||row.symbol;if(!symbol(sym)){rejected++;continue;}
++    // A finite number can still exceed JavaScript's representable date range.
++    // Reject that row without making every valid headline in the file unavailable.
++    const newsTime=source.lane==='NEWS_CATALYST'&&typeof row.t==='number'&&Number.isFinite(row.t)&&Math.abs(row.t)<=8640000000000000?row.t:null;
++    const rawPublic=newsTime!==null?new Date(newsTime).toISOString():source.lane==='SEC_EVENT'?(row.publicationAt??row.p):null;
++    // Generated output time is conservative availability of DERIVED analysis;
++    // it is never passed off as the original earnings/insider publication time.
++    if(source.lane==='SEC_EVENT'&&rawPublic!==undefined&&!clock(rawPublic)){rejected++;continue;}
++    if(row.sourceDataDay!==undefined){const d=row.sourceDataDay,ms=typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)?Date.parse(d+'T00:00:00Z'):NaN;if(!Number.isFinite(ms)||new Date(ms).toISOString().slice(0,10)!==d||ms>at||at-ms>source.hours*3600000){rejected++;continue;}}
++    if(row.derivedAvailableAt!==undefined&&!clock(row.derivedAvailableAt)){rejected++;continue;}
++    // Earnings rows carrying their report day: a report older than the lane window is not a fresh catalyst, whatever the
++    // file's generatedAt says (day precision: one extra day of tolerance for the unknown time of day).
++    if(source.lane==='EARNINGS_SURPRISE'&&row.publicationDay!==undefined){const d=row.publicationDay,ms=isDay(d)?Date.parse(d+'T00:00:00Z'):NaN;if(!Number.isFinite(ms)||ms>at||at-ms>(source.hours+24)*3600000){rejected++;continue;}}
++    if(row.lastCloseDay!==undefined){const lag=closeLagSessions(row.lastCloseDay,at);if(lag===null||lag<0||lag>CLOSE_LAG_LIMIT){rejected++;continue;}}
++    const primary=clock(rawPublic),asOf=primary?rawPublic:row.derivedAvailableAt??generated;
++    if(source.lane==='SEC_EVENT'&&row.firstObservedAt!=null&&(!clock(row.firstObservedAt)||Date.parse(row.firstObservedAt)>at||primary&&Date.parse(row.firstObservedAt)<Date.parse(rawPublic))){rejected++;continue;}
++    if(!clock(asOf)||Date.parse(asOf)>at||at-Date.parse(asOf)>source.hours*3600000){rejected++;continue;}
++    const eventKey=observationIdentity(source,row,sym);
++    observations.push({symbol:sym,lane:source.lane,asOf,observedAt:cutoff,sourceId:hash(eventKey),
++     description:source.lane+': '+String(row.h||row.rule||row.f||row.chain||'derived collector observation').slice(0,400),
++     publicationBasis:primary?'SOURCE_PUBLIC_TIMESTAMP':'DERIVED_OUTPUT_AVAILABLE',
++     caveat:primary?'Source report; materiality/direction not established by lane presence':'Original public event time unavailable; generatedAt is derived output availability only',
++     sourcePath:source.path,sourceCapturedAt:source.lane==='NEWS_CATALYST'?row.at:source.lane==='SEC_EVENT'?(clock(row.firstObservedAt)?row.firstObservedAt:null):(source.lane==='SUPPLY_SHIFT'&&clock(row.firstObservedAt)?row.firstObservedAt:row.derivedAvailableAt??generated),
++     ...(source.lane!=='SEC_EVENT'?{reportedSourceId:row.sourceId||row.id||null,sourceRevisionId:row.sourceRevisionId||null,sourceIdentityBasis:row.sourceIdentityBasis||'UNVERIFIED',sourceDataDay:row.sourceDataDay||null,reportedPublicationDay:row.publicationDay||null,sourceClockBasis:row.sourceClockBasis||'UNKNOWN',priceBasis:row.priceBasis||'UNKNOWN'}:{}),
++     ...(source.lane==='SEC_EVENT'?{reportedSourceId:row.sourceId||null,sourceNamespace:row.sourceNamespace||'UNKNOWN',outputAvailableAt:generated}:{} ),
++     ...(source.lane==='EARNINGS_SURPRISE'&&row.timing!==undefined?{earnings:{provider:row.src||null,timing:row.timing,reactionSession:row.reactionSession??null,reactionStatus:row.reactionStatus||'UNKNOWN',reactionCandidates:Array.isArray(row.reactionCandidates)?row.reactionCandidates.slice(0,2):null,corroboratedBy:Array.isArray(row.corroboratedBy)?row.corroboratedBy.slice(0,4):[],epsUnit:row.epsUnit||'UNKNOWN'}}:{}),
++     ...(row.lastCloseDay!==undefined?{lastCloseDay:row.lastCloseDay,closeLagSessions:closeLagSessions(row.lastCloseDay,at)}:{})});accepted++;
++    }catch{rejected++;rowErrors++;}
++   }
++   sources.push({...source,status:'READ',revokedSourceIds,revokedReportedIds,rows:rows.length,accepted,rejected,...(rowErrors?{rowErrors}:{}),truncated:inputTruncated+Math.max(0,rows.length-500),generatedAt:generated||null,...(producerStatus?{producerStatus}:{}),...(source.lane==='NEWS_CATALYST'?{inputRows,malformedLines,rejectionReasons,partial:rejected>0||inputTruncated>0}:{} )});
++  }catch{sources.push({...source,status:'MALFORMED',rows:0});}
++ }
++ return {observations,sources};
++}
++export const discoveryState=()=>({observations:{},crossings:{},firstFresh:{},capacityDroppedAttempts:0,funnel:{attempts:0,accepted:0,duplicates:0,invalid:0,unknownPrice:0},suppressed:{},sourceReliability:{}});
++export function updateDiscovery(state,{observations,rows,cutoff,sources=[]}) {
++ if(!clock(cutoff))throw new TypeError('discovery cutoff needs timezone');
++ state.funnel||={attempts:0,accepted:0,duplicates:0,invalid:0,unknownPrice:0};state.suppressed||={};state.sourceReliability||={};
++ for(const source of sources){const r=state.sourceReliability[source.lane]||={cycles:0,statusCounts:{},acceptedAttempts:0,rejectedAttempts:0,truncatedAttempts:0};r.cycles++;r.statusCounts[source.status]=(r.statusCounts[source.status]||0)+1;r.acceptedAttempts+=source.accepted||0;r.rejectedAttempts+=source.rejected||0;r.truncatedAttempts+=source.truncated||0;
++  for(const o of Object.values(state.observations))if(o.lane===source.lane&&(source.revokedSourceIds?.includes(o.sourceId)||source.revokedReportedIds?.includes(String(o.reportedSourceId)))){o.sourceConflict=true;o.sourceConflictReason='SOURCE_REVISION_CONFLICT';}
++  if(source.upstream){r.upstreamStatusCounts||={};r.upstreamStatusCounts[source.upstream.status]=(r.upstreamStatusCounts[source.upstream.status]||0)+1;r.lastUpstream={...source.upstream};}
++  if(source.producerStatus){r.producerStatusCounts||={};for(const name of ['SEC','OPENFDA','FINNHUB_CALENDAR','SEC_FORM4','CHAIN_ANALYSIS','SEC_INDEX','SEC_TICKERS','ALPHA_VANTAGE','FMP','PRICE_CACHE','LAB_TODAY_FILES','SPY_BARS']){const v=source.producerStatus[name];if(!v)continue;const counts=r.producerStatusCounts[name]||={};counts[v.status]=(counts[v.status]||0)+1;}r.lastProducerStatus=structuredClone(source.producerStatus);}
++  if(source.origin){r.originCounts||={};r.originCounts[source.origin]=(r.originCounts[source.origin]||0)+1;}
++ }
++ const suppress=(o,reason)=>{const key=hash([o?.symbol,o?.lane,o?.sourceId,reason]);if(!state.suppressed[key]&&Object.keys(state.suppressed).length<5000)state.suppressed[key]={symbol:o?.symbol||null,lane:o?.lane||null,sourceId:o?.sourceId||null,reason,firstObservedAt:cutoff};};
++ const now=Date.parse(cutoff),fresh=new Map();
++ if(clock(state.lastCycleAt)&&now<Date.parse(state.lastCycleAt)){state.rejectedOutOfOrderCycles=(state.rejectedOutOfOrderCycles||0)+1;return [];}
++ state.lastCycleAt=cutoff;
++ state.priceCoverage||={cycles:0,noFreshPriceCycles:0,quoteAttempts:0,freshQuoteAttempts:0};state.priceCoverage.cycles++;state.priceCoverage.quoteAttempts+=rows.length;
++ for(const r of rows){
++  if(!symbol(r.sym)||!Number.isFinite(r.price)||r.price<=0||!Number.isFinite(r.prevC)||r.prevC<=0||!Number.isFinite(r.t)||!isFreshPriceAge(r.t>0?(now-r.t)/60000:null))continue;
++  const change=r.price/r.prevC-1;if(!Number.isFinite(change))continue;fresh.set(r.sym,{price:r.price,change,bid:r.bid??null,ask:r.ask??null,quoteAgeSec:Number.isFinite(r.qt)&&r.qt>0?(now-r.qt)/1000:null,priceAsOf:new Date(r.t).toISOString()});
++  if(!state.firstFresh[r.sym])state.firstFresh[r.sym]={at:cutoff,change};
++  const crossings=state.crossings[r.sym]||(state.crossings[r.sym]={});
++  for(const level of [5,10,15,20,25])if(change>=level/100&&!crossings[level])crossings[level]={at:cutoff,change,sourceStates:sources.map(s=>({lane:s.lane,status:s.status}))};
++ }
++ state.priceCoverage.freshQuoteAttempts+=fresh.size;if(!fresh.size)state.priceCoverage.noFreshPriceCycles++;
++ // Follow only actually observed fresh prices. Gaps remain gaps; this is
++ // last-trade path measurement, not executable returns or an intrabar low.
++ for(const o of Object.values(state.observations)){
++  const q=fresh.get(o.symbol);if(!q||o.priceAtDetection===null||Date.parse(cutoff)<=Date.parse(o.observedAt))continue;
++  const f=o.followup||={peak:o.priceAtDetection,trough:o.priceAtDetection,maxDrawdown:0};
++  f.peak=Math.max(f.peak,q.price);f.trough=Math.min(f.trough,q.price);f.maxDrawdown=Math.min(f.maxDrawdown,q.price/f.peak-1);f.lastPrice=q.price;f.lastObservedAt=cutoff;f.observedRise=f.peak/o.priceAtDetection-1;f.worstVsDetection=f.trough/o.priceAtDetection-1;
++ }
++ const added=[];let count=Object.keys(state.observations).length;
++ for(const o of observations){
++  state.funnel.attempts++;
++  const valid=assembleMultiAngle([o],{cutoff});
++  if(valid.count!==1){state.funnel.invalid++;suppress(o,valid.ignored.future?'FUTURE_OR_INVALID_CHRONOLOGY':valid.ignored.unknownLane?'UNKNOWN_LANE':'INVALID_EVIDENCE');continue;}
++  const key=hash([o.symbol,o.lane,o.sourceId]);if(state.observations[key]){const prior=state.observations[key];if(o.sourceRevisionId&&prior.sourceRevisionId&&o.sourceRevisionId!==prior.sourceRevisionId){prior.sourceConflict=true;prior.sourceConflictReason='SOURCE_REVISION_CONFLICT';}state.funnel.duplicates++;continue;}
++  if(count>=20000){state.capacityDroppedAttempts=(state.capacityDroppedAttempts||0)+1;suppress(o,'SESSION_CAPACITY_LIMIT');continue;}
++  const q=fresh.get(o.symbol);
++  const record={...o,eventId:key,observedAt:cutoff,priceAtDetection:q?.price??null,changeAtDetection:q?.change??null,quoteAtDetection:q||null,classification:'RESEARCH ONLY',status:'NOT AN APPROVED BUY'};
++  if(!q){state.funnel.unknownPrice++;suppress(o,'NO_FRESH_PRICE_AT_FIRST_DETECTION');}
++  if(q?.change>=.05)suppress(o,'ALREADY_EXTENDED_AT_FIRST_DETECTION');
++  state.observations[key]=record;added.push(record);count++;state.funnel.accepted++;
++ }
++ return added;
++}
++export function discoveryReport(state,{cutoff,sources,completeSession=false}) {
++ const allRecords=Object.values(state.observations),records=allRecords.filter(x=>!x.sourceConflict),board=assembleMultiAngle(records,{cutoff});
++ const lanes=LANES.map(l=>{
++  const a=records.filter(x=>x.lane===l.id),bySymbol=new Map();for(const x of a)if(!bySymbol.has(x.symbol)||x.observedAt<bySymbol.get(x.symbol).observedAt)bySymbol.set(x.symbol,x);
++  const first=[...bySymbol.values()],before=first.filter(x=>x.changeAtDetection!==null&&x.changeAtDetection<.05&&state.crossings[x.symbol]?.[10]&&Date.parse(x.observedAt)<Date.parse(state.crossings[x.symbol][10].at));
++  const thresholds=[5,10,20,25].map(percent=>{const crossing=first.filter(x=>state.crossings[x.symbol]?.[percent]),before=crossing.filter(x=>x.changeAtDetection!==null&&x.changeAtDetection<percent/100&&Date.parse(x.observedAt)<Date.parse(state.crossings[x.symbol][percent].at));return {percent,observedCrossings:crossing.length,detectionsBeforeCrossing:before.length,earlyBelowPlus5BeforeCrossing:before.filter(x=>x.changeAtDetection<.05).length,leadMinutes:before.map(x=>(Date.parse(state.crossings[x.symbol][percent].at)-Date.parse(x.observedAt))/60000),noObservedCrossing:first.length-crossing.length};});
++  return {lane:l.id,events:a.length,thresholds,symbols:first.length,pricedAtDetection:first.filter(x=>x.priceAtDetection!==null).length,
++   beforeObservedPlus10:before.length,leadMinutes:before.map(x=>+( (Date.parse(state.crossings[x.symbol][10].at)-Date.parse(x.observedAt))/60000).toFixed(3)),
++   alreadyPlus5AtDetection:first.filter(x=>x.changeAtDetection!==null&&x.changeAtDetection>=.05).length,
++   noObservedPlus10Yet:first.filter(x=>!state.crossings[x.symbol]?.[10]).length};
++ });
++ const missed=Object.entries(state.crossings).filter(([,x])=>x[10]).flatMap(([symbol,c])=>{
++  const a=records.filter(x=>x.symbol===symbol),early=a.some(x=>x.changeAtDetection!==null&&x.changeAtDetection<.05&&Date.parse(x.observedAt)<Date.parse(c[10].at));if(early)return [];
++  const reason=!a.length?'NO_DISCOVERY_OBSERVED':a.every(x=>x.changeAtDetection===null)?'NO_FRESH_DETECTION_PRICE':a.every(x=>Date.parse(x.observedAt)>=Date.parse(c[10].at))?'DISCOVERY_AT_OR_AFTER_OBSERVED_MOVE':'ALREADY_EXTENDED_AT_DETECTION';
++  return [{symbol,reason,firstObservedPlus10:c[10]}];
++ });
++ return {...board,sources,lanes,completeSession,funnel:state.funnel||null,priceCoverage:state.priceCoverage||null,sourceReliability:state.sourceReliability||{},suppressionReasons:Object.values(state.suppressed||{}),
++  observedRecordCount:allRecords.length,sourceConflictCount:allRecords.length-records.length,conflictedDetections:allRecords.filter(x=>x.sourceConflict).slice(0,1000),detectionCount:records.length,displayedDetections:Math.min(records.length,1000),detections:records.slice(0,1000),missedCount:missed.length,missedCandidates:missed.slice(0,100),dedupScope:'CURRENT_SESSION',
++  capacityDroppedAttempts:state.capacityDroppedAttempts||0,observedPlus10Symbols:Object.keys(state.crossings).filter(s=>state.crossings[s][10]).length,
++  rejectedOutOfOrderCycles:state.rejectedOutOfOrderCycles||0,identityScope:'CURRENT_SESSION_SYMBOL; independent security identity remains unverified',
++  measurementNote:'Prospective first-ingestion vs first OBSERVED fresh +10% crossing, requiring detection below +5%. Unknown/stale prices earn no lead credit. No observed crossing is unresolved, not a false-positive verdict. Lane breadth is correlated evidence, not independent confirmation, profitability or BUY eligibility.'};
++}
 diff --git a/early-alerts.mjs b/early-alerts.mjs
 index a3260f3d..6e639f1b 100644
 --- a/early-alerts.mjs
@@ -164,8 +568,85 @@ index 83c48d75..67fa07be 100644
 + if(instrument?.status==='ELIGIBLE_COMMON_STOCK'&&instrument.securityId&&instrument.referenceSha256)return {...instrument,status:'ELIGIBLE_COMMON_STOCK',policyExcluded:false};
 + return {status:'UNKNOWN',policyExcluded:false,reason:'NO_VERIFIED_SECURITY_CLASS',securityId:null};
 +}
+diff --git a/multi-angle-discovery.mjs b/multi-angle-discovery.mjs
+new file mode 100644
+index 00000000..2ad20fa6
+--- /dev/null
++++ b/multi-angle-discovery.mjs
+@@ -0,0 +1,49 @@
++// MULTI-ANGLE DISCOVERY REGISTRY (research only; no orders, recommendations or implicit validation).
++// This layer preserves independent ways to surface a stock before or during a move.
++// Inputs are point-in-time observations supplied by their respective collectors.
++// Missing data NEVER becomes a negative finding; no synthetic evidence is created.
++export const LANES = Object.freeze([
++  {id:'PRE_IGNITION',name:'Early unusual activity',source:'pre-ignition-discovery.mjs',horizon:'intraday'},
++  {id:'NEWS_CATALYST',name:'Company news observations (materiality unverified)',source:'news-watch.mjs / catalyst-core.mjs',horizon:'intraday to 10 sessions'},
++  {id:'SEC_EVENT',name:'Dated SEC catalyst',source:'catalyst-core.mjs / catalyst-integrity.mjs',horizon:'1 to 60 sessions'},
++  {id:'INSIDER_CLUSTER',name:'Multiple open-market insider purchases',source:'insider-study.mjs',horizon:'20 to 60 sessions'},
++  {id:'EARNINGS_SURPRISE',name:'Earnings surprise and reaction',source:'earnings-study.mjs',horizon:'1 to 40 sessions'},
++  {id:'INDUSTRY_RIPPLE',name:'Customer/supplier or industry demand',source:'chain-core.mjs / chain-ripple.mjs',horizon:'1 to 60 sessions'},
++  {id:'SUPPLY_SHIFT',name:'Shares outstanding or float change',source:'share-supply.mjs',horizon:'1 to 60 sessions'},
++  {id:'TECHNICAL_BUILDUP',name:'Compression, trend, volume or relative strength',source:'discovery2-core.mjs',horizon:'intraday to 60 sessions'},
++  {id:'MARKET_DISLOCATION',name:'Post-event overreaction or reversal',source:'comeback-core.mjs',horizon:'1 to 60 sessions'}
++]);
++const allowed=new Set(LANES.map(x=>x.id));
++const symOk=s=>typeof s==='string' && /^[A-Z][A-Z0-9.\-]{0,9}$/.test(s);
++const finite=x=>typeof x==='number' && Number.isFinite(x);
++const timeOk=t=>typeof t==='string' && Number.isFinite(Date.parse(t));
++// Evidence: {symbol,lane,asOf,observedAt,sourceId,description,score?}
++// asOf is when evidence became PUBLIC; observedAt is when scanner captured it.
++export function assembleMultiAngle(observations=[],{cutoff,limit=100}={}) {
++  if (!timeOk(cutoff)) throw new TypeError('cutoff must be an ISO timestamp');
++  const at=Date.parse(cutoff), grouped=new Map(), ignored={invalid:0,future:0,unknownLane:0};
++  for(const o of observations) {
++    if (!o || !symOk(o.symbol) || !timeOk(o.asOf) || !timeOk(o.observedAt) ||
++      typeof o.sourceId!=='string' || !o.sourceId.trim() || typeof o.description!=='string' || !o.description.trim()) {ignored.invalid++;continue;}
++    if(!allowed.has(o.lane)) {ignored.unknownLane++;continue;}
++    // Both publication time AND collector time must precede the decision cutoff.
++    if(Date.parse(o.asOf)>at || Date.parse(o.observedAt)>at || Date.parse(o.observedAt)<Date.parse(o.asOf)) {ignored.future++;continue;}
++    const score=finite(o.score)?Math.max(0,Math.min(100,o.score)):null;
++    const row=grouped.get(o.symbol)||{symbol:o.symbol,lanes:new Map()};
++    const prior=row.lanes.get(o.lane);
++    const ev={lane:o.lane,asOf:o.asOf,observedAt:o.observedAt,sourceId:o.sourceId,description:o.description,score,
++      publicationBasis:o.publicationBasis||null,caveat:o.caveat||null,sourcePath:o.sourcePath||null,
++      sourceOrigin:o.sourceOrigin||null,upstreamStatus:o.upstreamStatus||null,sourceCapturedAt:o.sourceCapturedAt||null,reportedSourceId:o.reportedSourceId||null,sourceNamespace:o.sourceNamespace||null,outputAvailableAt:o.outputAvailableAt||null};
++    // Keep most recent evidence per lane; never count repeated headlines as independent confirmation.
++    if(!prior || Date.parse(ev.observedAt)>Date.parse(prior.observedAt))row.lanes.set(o.lane,ev);
++    grouped.set(o.symbol,row);
++  }
++  const candidates=[...grouped.values()].map(x=>{
++    const evidence=[...x.lanes.values()].sort((a,b)=>a.lane.localeCompare(b.lane));
++    const independentLanes=evidence.length;
++    return {symbol:x.symbol,independentLanes,laneCount:evidence.length,distinctSourceCount:new Set(evidence.map(e=>e.sourceId)).size,evidence,evidenceIndependence:'UNVERIFIED_CORRELATED_LANES',classification:'RESEARCH ONLY',
++      status:'NOT AN APPROVED BUY'};
++  }).sort((a,b)=>b.independentLanes-a.independentLanes || a.symbol.localeCompare(b.symbol));
++  return {cutoff,candidates:candidates.slice(0,Math.max(0,Math.floor(limit))),count:candidates.length,ignored,
++    note:'Lane count measures route breadth; source authenticity, materiality and statistical independence are unverified. It is not predicted returns or a trading score.'};
++}
+diff --git a/radar-ledger.mjs b/radar-ledger.mjs
+index bdc4829f..96d64cda 100644
+--- a/radar-ledger.mjs
++++ b/radar-ledger.mjs
+@@ -7,7 +7,7 @@ import {fileURLToPath} from 'node:url';
+ const sha=b=>createHash('sha256').update(b).digest('hex');
+ const canonical=x=>x&&typeof x==='object'?Array.isArray(x)?'['+x.map(canonical).join(',')+']':'{'+Object.keys(x).sort().map(k=>JSON.stringify(k)+':'+canonical(x[k])).join(',')+'}':JSON.stringify(x);
+ // No invented day/symbol enrollment rule. Missing source time cannot be merged safely.
+-export function observationKey(r){return r?.type==='list'&&/^\d{4}-\d{2}-\d{2}$/.test(r.d)&&(Number.isFinite(r.at)||(typeof r.at==='string'&&/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(r.at)))&&['A','B'].includes(r.panel)&&typeof r.sym==='string'&&r.sym.length&&Number.isFinite(r.px)&&r.px>0?sha(canonical(r)):null;}
++export function observationKey(r){if(r?.type==='assessment-cycle'&&r.version===1&&/^[a-f0-9]{64}$/.test(r.cycleKey||'')&&r.queue?.cycleKey===r.cycleKey&&Number.isFinite(Date.parse(r.recordedAt)))return 'assessment-cycle:'+r.cycleKey;if(r?.type==='assessment'&&r.version===1&&/^[a-f0-9]{64}$/.test(r.id||'')&&/^[a-f0-9]{64}$/.test(r.evidenceVersion||'')&&['SHORT','MID','LONG'].includes(r.horizon)&&typeof r.symbol==='string'&&r.symbol.length&&Number.isFinite(Date.parse(r.recordedAt))&&r.triageVersion==='EXISTING_HORIZON_ATTENTION_V1'&&r.id===sha(JSON.stringify([r.triageVersion,r.horizon,r.symbol,r.evidenceVersion])))return 'assessment:'+r.id;return r?.type==='list'&&/^\d{4}-\d{2}-\d{2}$/.test(r.d)&&(Number.isFinite(r.at)||(typeof r.at==='string'&&/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(r.at)))&&['A','B'].includes(r.panel)&&typeof r.sym==='string'&&r.sym.length&&Number.isFinite(r.px)&&r.px>0?sha(canonical(r)):null;}
+ export function radarLedgerView(rows){const seen=new Set(),out=[];let exactRepeats=0,unknownIdentity=0;for(const r of rows){const k=observationKey(r);if(r.type==='list'&&!k)unknownIdentity++;if(k&&seen.has(k)){exactRepeats++;continue;}if(k)seen.add(k);out.push(r);}return {rows:out,rawLists:rows.filter(r=>r.type==='list').length,logicalLists:out.filter(r=>r.type==='list').length,exactRepeats,unknownIdentity,version:'EXACT_REPEAT_CORRECTION_V1'};}
+ export function readRadarLedger(file){if(!fs.existsSync(file))return [];const text=fs.readFileSync(file,'utf8');return text.split('\n').filter(x=>x.trim()).map(x=>JSON.parse(x));}
+ function syncWrite(file,bytes,flags='w'){const fd=fs.openSync(file,flags);try{fs.writeFileSync(fd,bytes);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}}
+@@ -16,7 +16,7 @@ function syncDir(dir){const fd=fs.openSync(dir,'r');try{fs.fsyncSync(fd);}finall
+ // append prefix; neither recovery nor correction truncates/replaces ledger bytes.
+ function lockedAppend(file,rows){const pending=file+'.pending.json',dir=path.dirname(file);fs.mkdirSync(dir,{recursive:true});
+  const recover=()=>{if(!fs.existsSync(pending))return;const p=JSON.parse(fs.readFileSync(pending,'utf8')),b=fs.existsSync(file)?fs.readFileSync(file):Buffer.alloc(0),addition=Buffer.from(p.append,'base64');if(p.version!==1||!Number.isSafeInteger(p.size)||p.size<0||b.length<p.size||sha(b.subarray(0,p.size))!==p.prefix||b.length>p.size+addition.length||!b.subarray(p.size).equals(addition.subarray(0,b.length-p.size)))throw Error('radar pending append conflicts with preserved ledger; manual evidence review required');if(b.length<p.size+addition.length)syncWrite(file,addition.subarray(b.length-p.size),'a');else {const fd=fs.openSync(file,'r');try{fs.fsyncSync(fd);}finally{fs.closeSync(fd);}}fs.unlinkSync(pending);syncDir(dir);};
+- recover();const existing=readRadarLedger(file),seen=new Set(existing.map(observationKey).filter(Boolean)),fresh=[];for(const row of rows){const k=observationKey(row);if(row.type==='list'&&!k)throw Error('new radar observation missing complete identity');if(k&&seen.has(k))continue;if(k)seen.add(k);fresh.push(row);}if(!fresh.length)return {appended:0};
++ recover();const existing=readRadarLedger(file),seen=new Set(existing.map(observationKey).filter(Boolean)),fresh=[];for(const row of rows){const k=observationKey(row);if(['list','assessment','assessment-cycle'].includes(row.type)&&!k)throw Error('new research observation missing complete identity');if(k&&seen.has(k))continue;if(k)seen.add(k);fresh.push(row);}if(!fresh.length)return {appended:0};
+  const before=fs.existsSync(file)?fs.readFileSync(file):Buffer.alloc(0);if(before.length&&before[before.length-1]!==10)throw Error('unterminated ledger without recoverable intent; preserving original bytes');const append=Buffer.from(fresh.map(x=>JSON.stringify(x)).join('\n')+'\n'),intent={version:1,size:before.length,prefix:sha(before),append:append.toString('base64')};
+  const temp=pending+'.tmp';syncWrite(temp,JSON.stringify(intent)+'\n');fs.renameSync(temp,pending);syncDir(dir);recover();return {appended:fresh.length};}
+ export function appendRadarRows(file,rows){file=path.resolve(file);fs.mkdirSync(path.dirname(file),{recursive:true});const lock=file+'.lock';return JSON.parse(execFileSync('flock',['--exclusive','--wait','5',lock,process.execPath,fileURLToPath(import.meta.url),'--append',file],{input:JSON.stringify(rows),encoding:'utf8',timeout:15000,stdio:['pipe','pipe','pipe']}));}
 diff --git a/radar-v3-core.mjs b/radar-v3-core.mjs
-index 0d0ead25..083992b1 100644
+index 0d0ead25..bcebdc9f 100644
 --- a/radar-v3-core.mjs
 +++ b/radar-v3-core.mjs
 @@ -1,3 +1,4 @@
@@ -173,6 +654,15 @@ index 0d0ead25..083992b1 100644
  // DAILY OPPORTUNITY RADAR (V3.0, owner approved 28 Oct 2026: "do 1, 2, 3"). Pure functions, no network, no files; opportunity-radar.mjs
  // reads and writes. Research and routing only: it adds NO buy rule, lowers NO gate and places NO order.
  // WHY: the audit (docs/v3-opportunity-audit-2026-10-28.md) found the system SAW the day's runners (BRAI, AEYE, OWLS on 27 Oct) but the
+@@ -5,7 +6,7 @@
+ // in four panels, each line labelled:
+ //   A. LIVE RESEARCH LEADS   stocks moving +2% to +20% on rising volume pace (the early-wave observation lane), not yet extended
+ //   B. SHORT SETUPS (PAPER)  intraday rule hits (IG1-IG9) with each rule's own live paper record and history verdict
+-//   C. APPROVED SIGNALS      only alerts from rules that passed every gate (zero is allowed and said plainly)
++//   C. SIGNAL DELIVERY HISTORY      cached delivery counts, never current purchase approval
+ //   D. RUNNERS WE MISSED     the day's biggest movers and the first reason in the pipeline that stopped them
+ // Every A and B line says NOT AN APPROVED BUY. Hard rules are never bypassed: under 1 USD, NOT HALAL (ZAD), SEC danger filings and the
+ // one-day-jump AVOID list are shown as BLOCKED with the reason, never as a lead.
 @@ -27,6 +28,8 @@ const usd = (x) => (x >= 10 ? '$' + x.toFixed(2) : '$' + x.toFixed(x >= 1 ? 2 :
  export const DANGER = /DELIST|DILUTION|OFFERING|RESTATE/;
  // ctx: { halal: {SYM: 'ok'|'fail'}, events: {SYM: [{f, p}]}, lottery: {SYM: oneDayJump} }
@@ -191,7 +681,29 @@ index 0d0ead25..083992b1 100644
    const ev = ((ctx.events || {})[sym] || []).filter(e => !DANGER.test(e.f));
    return ev.length ? 'SEC 8-K ' + ev.map(e => e.f.split(',')[0].toLowerCase() + ' ' + String(e.p).slice(5, 10)).slice(0, 2).join(', ')
      : 'NO VERIFIED CATALYST (no SEC 8-K in 10 days; headlines not checked)';
-@@ -82,10 +85,14 @@ export function closestRule(record = {}, lab = {}) {
+@@ -58,7 +61,7 @@ export const CODE_WORDS = {
+   ALERTED: 'alerted', UNDER_1_USD: 'under 1 USD (hard rule)', SEC_CHECK_UNAVAILABLE: 'SEC check failed (safety block)', SEC_BLOCKED: 'SEC danger filing (safety block)',
+   NOT_HALAL: 'NOT HALAL (ZAD)', LOTTERY_AVOID: 'on the one-day-jump AVOID list', ALERT_CAP_REACHED: 'daily alert cap reached', NO_LIVE_PRICE_AT_SIGNAL: 'no fresh price at the signal',
+   VOLUME_FIGURE_LATE: 'volume figure late (data)', CAUGHT_PAPER_GATE_NOT_MET: 'a rule caught it; paper record not strong enough (promotion gate)',
+-  CAUGHT_RULE_NOT_PASSED: 'a rule caught it; rule failed its 5-year test (promotion gate)', GAPPED_AT_OPEN: 'gapped up before the open (timing)',
++  CAUGHT_RULE_NOT_PASSED: 'a rule caught it; rule failed its minute-bar history verdict (promotion gate)', GAPPED_AT_OPEN: 'gapped up before the open (timing)',
+   NOT_VISIBLE_LIVE: 'never had a fresh price (data)', VISIBLE_TOO_LATE: 'first fresh price came after +25% (data)', NO_VOLUME_HISTORY: 'no volume history',
+   AFTER_11_00: 'move came after 11:00 New York (rule window)', LOW_VOLUME: 'volume too low for the rules', NO_RULE_FIT: 'no rule fits this shape',
+ };
+@@ -71,21 +74,25 @@ export function topSilence(tally = {}) {
+   return { code: e[0][0], n: e[0][1], kind: SILENCE_KIND[e[0][0]] || 'other', words: (CODE_WORDS[e[0][0]] || e[0][0]).replace(/ \([^)]*\)$/, '') };   // the kind is said separately
+ }
+ 
+-// closest rule to approval: the best positive live paper record, with its 5-year history verdict (lab) and what is still missing
++// closest rule to approval: the best positive live paper record, with its minute-bar history verdict (lab) and what is still missing
+ export function closestRule(record = {}, lab = {}) {
+   const c = Object.entries(record).filter(([k, r]) => /\/close$/.test(k) && r && r.n > 0 && r.avg > 0).sort((a, b) => b[1].n * b[1].avg - a[1].n * a[1].avg)[0];
+   if (!c) return null; const [k, r] = c, rule = k.split('/')[0], hv = ((lab[k] || {}).verdict) || 'not tested', miss = [];
+-  if (hv !== 'PROMISING') miss.push('its 5-year history test (' + hv + ')'); if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
++  if (hv !== 'PROMISING') miss.push('its minute-bar history test (' + hv + ')'); if (hv === 'REJECTED') return {rule,n:r.n,days:r.days||0,avg:r.avg,stress:r.stress,history:hv,missing:miss}; if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
+   if (!(r.stress > 0)) miss.push('a profit at the stress cost');
+   return { rule, n: r.n, days: r.days || 0, avg: r.avg, stress: r.stress, history: hv, missing: miss };
+ }
  
  // D lists 1 USD+ movers only (sub-1 USD warrants and pennies are counted, never listed: no rule may trade them), and a move over +300%
  // is flagged as a likely split or data error, not explained (V3.0: verify corporate actions before telling any story about a move)
@@ -216,7 +728,7 @@ index 0d0ead25..083992b1 100644
    const fm = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
    text.push('OPPORTUNITY RADAR ' + snap.at + ' New York (' + snap.day + '). Research list: nothing in A or B is an approved buy.');
    if (snap.firstMinute && snap.firstMinute > '09:35') text.push('WATCHER STARTED LATE today (' + snap.firstMinute + '): the open was not watched.');
-@@ -104,34 +111,39 @@ export function buildMidday(snap, ctx0 = {}) {
+@@ -104,36 +111,41 @@ export function buildMidday(snap, ctx0 = {}) {
    const seenB = new Set(), B = [];
    for (const h of (snap.hits || []).slice().sort((a, b) => a.m - b.m)) { if (seenB.has(h.sym)) continue; seenB.add(h.sym);
      const blk = blockOf(h.sym, h.price, ctx); if (blk) { blocked.push(h.sym + ' (' + blk + ')'); continue; }
@@ -250,7 +762,8 @@ index 0d0ead25..083992b1 100644
    if (blocked.length) text.push('BLOCKED by hard rules (not leads): ' + blocked.slice(0, 6).join('; ') + (blocked.length > 6 ? '; +' + (blocked.length - 6) + ' more' : '') + '.');
    // C
    const cr = closestRule(ctx.record, ctx.lab);
-   text.push('', 'C. APPROVED SIGNALS: ' + (snap.alerts > 0 ? snap.alerts + ' tested alert' + (snap.alerts > 1 ? 's' : '') + ' sent today (see those messages).' : '0 so far today.'));
+-  text.push('', 'C. APPROVED SIGNALS: ' + (snap.alerts > 0 ? snap.alerts + ' tested alert' + (snap.alerts > 1 ? 's' : '') + ' sent today (see those messages).' : '0 so far today.'));
++  text.push('', 'C. SIGNAL DELIVERY HISTORY: '+(Number.isInteger(snap.alerts)&&snap.alerts>=0?snap.alerts:'unknown')+' watcher messages. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.',...alertDeliveryLines(snap));
    if (!(snap.alerts > 0) && cr) text.push('  Closest: ' + cr.rule + ' (' + cr.n + ' paper trades on ' + cr.days + ' days, ' + pct(cr.avg, 1) + ' a trade). Missing: ' + cr.missing.join('; ') + '.');
    // D
 -  text.push('', 'D. RUNNERS SO FAR (retrospective, not buys)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers));
@@ -260,22 +773,71 @@ index 0d0ead25..083992b1 100644
 -  text.push('', 'Scanned ' + (snap.scanned ?? '?') + ' stocks (' + (snap.live ?? '?') + ' with a fresh price). 15%+ movers: ' + (snap.movers || []).length + '. Rule hits: ' + (snap.hits || []).length + '. Approved: ' + (snap.alerts || 0) + '.'
 +  text.push('', 'Received ' + (snap.scanned ?? '?') + ' instruments (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a fresh price). 15%+ movers: ' + (snap.moverCount ?? (snap.movers || []).length) + ' (showing ' + (snap.movers || []).length + '). Rule hits: ' + (snap.hits || []).length + '.'
      + (ts ? ' Top reason for silence: ' + ts.words + ' (' + ts.n + ', ' + ts.kind + ').' : ''));
-   text.push('Chasing: stocks already up 20%+ when first seen fell a median 19% to the close (469 cases, 14-27 Oct). Check ZAD. Research only, not advice.');
+-  text.push('Chasing: stocks already up 20%+ when first seen fell a median 19% to the close (469 cases, 14-27 Oct). Check ZAD. Research only, not advice.');
++  text.push('Retrospective movements are not a validated chase strategy or current entries. Research only; check current evidence and ZAD.');
    return { text: text.join('\n'), rows };
-@@ -164,7 +176,7 @@ export function buildClose(day, live, ledger = [], ctx = {}) {
+ }
+ 
+@@ -164,14 +176,38 @@ export function buildClose(day, live, ledger = [], ctx = {}) {
      text.push('', 'TODAY\'S RADAR LINES (listing price to 15:00, after 6 USD fees and spread):' + (mine.length ? '' : ' none were listed.'));
      for (const r of mine) { const c = close.get(r.sym), s = c ? scoreSameDay(r, c) : null;
        text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
 -    text.push('', 'D. RUNNERS WE MISSED TODAY (retrospective, not buys):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true));
 +    text.push('', 'D. OBSERVED INSTRUMENT MOVEMENTS TODAY (not verified missed company opportunities):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true,ctx));
      const ts = topSilence(live.tally), all = Object.values(live.tally || {}).reduce((a, b) => a + b, 0); if (ts) text.push('Top reason for silence today: ' + ts.words + ' (' + ts.n + ' of ' + all + ' movers of 15%+; ' + ts.kind + ').');
-     text.push('', 'C. APPROVED SIGNALS today: ' + (live.alerts || 0) + '. Tested buys for the next session come in ACTIONS tonight.');
+-    text.push('', 'C. APPROVED SIGNALS today: ' + (live.alerts || 0) + '. Tested buys for the next session come in ACTIONS tonight.');
++    text.push('', 'C. SIGNAL DELIVERY HISTORY today: '+(Number.isInteger(live.alerts)&&live.alerts>=0?live.alerts:'unknown')+'. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.',...alertDeliveryLines(live));
    }
+   const sb = scoreboard(ledger), P = sb.panels;
+   text.push('', 'RADAR SCORECARD (' + sb.sessions + ' session' + (sb.sessions === 1 ? '' : 's') + '; verdict after 10):');
+   for (const k of ['A', 'B']) { const p = P[k]; text.push('- ' + k + ': ' + (p && p.n ? p.n + ' lines, same day ' + pct(p.avgNet, 1) + ' net on average, ' + Math.round(p.win * 100) + '% positive' + (p.beatMkt !== null ? ', ' + Math.round(p.beatMkt * 100) + '% beat the average stock' : '') : 'no scored lines yet')
+     + (p && p.n5 ? '; 5 sessions ' + pct(p.avgNet5, 1) + ', ' + Math.round(p.beatSpy5 * 100) + '% beat SPY' : '')); }
+-  text.push('Nothing here is an approved buy unless it says APPROVED. Research only, not advice.');
++  text.push('Nothing in this research summary is a current approved purchase. Cached delivery history is not authorization. Research only, not advice.');
+   return text.join('\n');
+ }
++
++// HISTORY-03 B01/D15: counters describe retained observations, never current BUY approval.
++// This view does not alter limits, message reservations, frozen scoring, or historical rows.
++export function alertDeliveryCounts(triggers=[], legacyTotal=null) {
++ const out={version:1,scope:'RETAINED_TRIGGER_OBSERVATIONS',ruleQualified:{recorded:0,sent:0,unsent:0,uncertain:0},earlyPaper:{recorded:0,sent:0,unsent:0,uncertain:0},legacyUnclassified:null,conflicts:0,invalidRecords:0};
++ const events=new Map();
++ for(const t of triggers){if(!t||!['RULE_QUALIFIED','EARLY_PAPER'].includes(t.deliveryKind))continue;
++  if(typeof t.d!=='string'||!/^\d{4}-\d\d-\d\d$/.test(t.d)||typeof t.sym!=='string'||!t.sym||typeof t.rule!=='string'||!t.rule||!Number.isInteger(t.m)||t.m<0||t.m>=1440){out.invalidRecords++;continue;}
++  const id=JSON.stringify([t.d,t.sym,t.rule,t.m]);const x={kind:t.deliveryKind,state:t.deliveryState||'UNCERTAIN'},old=events.get(id);
++  if(!old)events.set(id,x);else if(old.kind!==x.kind||old.state!==x.state){events.set(id,{kind:old.kind,state:'CONFLICT'});out.conflicts++;}
++ }
++ for(const x of events.values()){const row=x.kind==='EARLY_PAPER'?out.earlyPaper:out.ruleQualified;row.recorded++;if(x.state==='ACKNOWLEDGED')row.sent++;else if(x.state==='UNSENT')row.unsent++;else row.uncertain++;}
++ const known=out.ruleQualified.sent+out.earlyPaper.sent;
++ if(Number.isSafeInteger(legacyTotal)&&legacyTotal>=0){out.legacyUnclassified=Math.max(0,legacyTotal-known);out.legacyCountMismatch=known>legacyTotal;}
++ return out;
++}
++export function alertDeliveryLines(snapshot={}) {
++ const c=snapshot.alertCounts,n=v=>Number.isSafeInteger(v)&&v>=0;
++ const valid=r=>r&&['recorded','sent','unsent','uncertain'].every(k=>n(r[k]))&&r.sent+r.unsent+r.uncertain===r.recorded;
++ if(c?.version!==1||c.scope!=='RETAINED_TRIGGER_OBSERVATIONS'||!valid(c.ruleQualified)||!valid(c.earlyPaper)||!(c.legacyUnclassified===null||n(c.legacyUnclassified)))return ['Legacy unsplit total: '+(n(snapshot.alerts)?snapshot.alerts:'unknown')+' watcher messages reported; rule-qualified/paper and delivery-state breakdown UNKNOWN.'];
++ const line=(label,r)=>label+': '+r.recorded+' recorded, '+r.sent+' sent (acknowledged), '+r.unsent+' unsent, '+r.uncertain+' uncertain.';
++ return [line('HISTORY/PAPER-GATE QUALIFIED',c.ruleQualified),line('EARLY PAPER ALERTS (NOT PROVEN)',c.earlyPaper),
++  'Scope: retained trigger observations; '+(c.legacyUnclassified===null?'legacy delivery total unknown':c.legacyUnclassified+' legacy deliveries unclassified')+(c.legacyCountMismatch?'; legacy counter mismatch':'')+'. These are delivery records, not current purchase or ZAD approval.'];
++}
 diff --git a/scan.mjs b/scan.mjs
-index 693a7346..44d9614f 100644
+index 693a7346..2567313f 100644
 --- a/scan.mjs
 +++ b/scan.mjs
-@@ -239,7 +239,7 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
+@@ -1,3 +1,5 @@
++import {makeScannerAssessmentRule,assessmentRuleIdentity,frozenAssessmentQueue,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes} from './discovery-runtime.mjs';
++import {readRadarLedger} from './radar-ledger.mjs';
+ import {marketClock,completedMarketSession} from './market-session.mjs';
+ import {isDeepStrictEqual} from 'node:util';
+ const validPlanPrice=x=>typeof x==='number'&&Number.isFinite(x)&&x>0;
+@@ -234,12 +236,14 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
+   const lead = array(D && D.candidates).find(x => x && x.sym === sym), names = readJson0('data/names.json') || {};
+   const issuer = typeof names[sym] === 'string' ? names[sym] : lead && lead.name || 'issuer name UNKNOWN';
+   const er = readJson0('data/events-recent.json'), events = array(er && er.events).filter(x => x && x.sym === sym).slice(-2);
++  const reports=array(readJson0('data/earnings-recent.json')?.reports).filter(x=>x&&x.sym===sym).sort((a,b)=>String(b.d||'').localeCompare(String(a.d||''))).slice(0,2);
++  const earningsLead=reports.length?reports.map(x=>'report day '+clean(x.d||'UNKNOWN')+', cached actual '+clean(x.a??'UNKNOWN')+' vs estimate '+clean(x.e??'UNKNOWN')+', timing '+clean(x.t||'UNKNOWN')).join('; ')+'; EPS unit/basis, comparable expectation vintage and original receipt UNKNOWN; not a verified surprise or an entry':'No earnings lead supplied; not evidence that none exists';
+   const evidence = events.length ? events.map(x => clean(x.p || 'UNKNOWN publication date') + ' ' + clean(x.f || 'unclassified filing')).join('; ') + '; original observation/receipt and incrementality UNKNOWN' : 'No dated catalyst witness supplied (not evidence of no catalyst); original observation/receipt UNKNOWN';
+   const leaderTimeExit = P && P.src === 'leader dip' ? 'time exit after ' + (P.ldHold || LDIP_HOLD) + ' sessions (about ' + (P.boughtSession || P.since ? ldipExitDay(P.boughtSession || P.since, P.ldHold || LDIP_HOLD) : 'UNKNOWN date') + ')' : '';
    const stopLabel = P && typeof P.stop === 'number' && Number.isFinite(P.stop) && P.stop > 0 ? 'stop ' + price(P.stop) : P && (P.src === 'leader dip' || /no stop by design/i.test(P.stopWhy || '')) ? 'no stop by design' : 'stop NOT SET';
    const exit = P ? posLine(sym, P, null).replace(sym + ': ', '') + (leaderTimeExit ? '; ' + leaderTimeExit : '') : st && st.assessmentEntry ? 'Original caller conclusion: ' + clean(st.assessmentEntry) : q ? 'Stored quick rule: invalidation ' + (q.stop > 0 ? money(q.stop) : 'UNKNOWN') + (q.t1 > 0 ? ', target ' + money(q.t1) : '; no target supplied') + '; hold ' + (q.maxHold || q.days || 'UNKNOWN') + ' sessions' : 'No adopted exit supplied here; retain the existing rule, never infer one from a research rank';
    const entry = P ? 'Existing holding; no new entry or add authorized by this card' : st && st.assessmentEntry ? clean(st.assessmentEntry) : q ? 'Stored quick entry ' + price(q.buyLo) + ' to ' + price(q.buyHi) + '; existing gates still decide' : st && st.trigger > 0 ? 'Existing scanner needs a daily close above ' + money(st.trigger) + '; existing gates still decide' : st && st.rule ? clean(st.rule) + '; no new entry condition added' : 'No adopted entry rule supplied';
@@ -284,7 +846,80 @@ index 693a7346..44d9614f 100644
    const pct = v => typeof v === 'number' && Number.isFinite(v) ? pcs(v) : 'UNKNOWN';
    const half = (n, name) => { n = n || {}; return name + ' n=' + (n.n ?? 'UNKNOWN') + ', model ' + pct(n.avg) + ' vs control ' + pct(n.ctrl) + ', SPY raw ' + pct(n.spy) + (typeof n.worst === 'number' && Number.isFinite(n.worst) ? ', worst model trade ' + pct(n.worst) : ''); };
    const line = (r) => { const R = r.results || {}, need = [20, 60, 120].includes(r.hold) ? 0.005 * r.hold / 20 : null;
-@@ -2022,6 +2022,7 @@ function tipBoard(sig) {
+@@ -257,16 +261,30 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
+   const rank = Q && Q.rank && Q.rank[sym], qr = Q && Q.results ? Object.values(Q.results).filter(r => r && /^Quality/.test(r.name || '')) : [];
+   const quality = typeof rank === 'number' && Number.isFinite(rank) ? 'retained quality percentile ' + (100 * rank).toFixed(1) + '; investigate business/valuation, not a buy signal' : 'quality rank UNKNOWN';
+   const px = st && st.last > 0 ? st.last : lead && lead.price > 0 ? lead.price : null;
++  // Independently reviewed primary facts add company context, never admission or a new rule.
++  const primaryFile=readJson0('data/company-investigations.json'), candidate=primaryFile?.records?.[sym];
++  const primaryTime=v=>typeof v==='string'&&Number.isFinite(Date.parse(v))&&Date.parse(v)<=Date.now();
++  const primary=primaryFile?.kind==='REVIEWED_COMPANY_INVESTIGATIONS_V1'&&candidate?.symbol===sym&&primaryTime(candidate.reviewedAt)&&primaryTime(candidate.publishedDate)&&primaryTime(candidate.receiptAt)&&Date.parse(candidate.publishedDate)<=Date.parse(candidate.receiptAt)&&Date.parse(candidate.receiptAt)<=Date.parse(candidate.reviewedAt)&&/^[a-f0-9]{64}$/.test(candidate.sourceSha256||'')&&typeof candidate.sourceUrl==='string'&&/^https:\/\//.test(candidate.sourceUrl)&&typeof candidate.reviewComment==='string'&&/^https:\/\/github[.]com\/drrazaq\/Stock-2\/pull\/1#issuecomment-\d+$/.test(candidate.reviewComment)?candidate:null;
++  const primaryLine=primary?'PRIMARY COMPANY INVESTIGATION | '+clean(primary.issuer)+': '+clean(primary.summary,500)+' | Contrary/invalidation: '+clean(primary.contrary,350)+' | Next fact: '+clean(primary.nextEvidence,300)+' | Published '+clean(primary.publishedDate)+', received '+clean(primary.receiptAt)+', reviewed '+clean(primary.reviewedAt)+'; source '+clean(primary.sourceUrl,400)+'; SHA256 '+primary.sourceSha256+'. Primary context is not current trading or valuation approval.':'PRIMARY COMPANY INVESTIGATION | No reviewed, clock-consistent subject-bound record supplied; investigate the dated issuer filing, not an inferred positive headline.';
++  const sourceStatus=assessmentSourceStatus(sig,new Date(Date.now()).toISOString()),ruleIdentity=assessmentRuleIdentity(st);
++  let trace=[];try{trace=readRadarLedger('data/discovery-journal.jsonl').filter(r=>r.type==='assessment'&&r.symbol===sym).slice(-3);}catch{}
++  const lineage=trace.length?trace.map(r=>'assessment '+clean(r.id,64)+'; cycle '+clean(r.cycleKey||'LEGACY_UNSTATED',64)+'; evidence '+clean(r.evidenceVersion,64)+'; rule '+clean(r.ruleId||'NONE',100)+'; version '+clean(r.ruleVersion||'UNKEYED / original version unavailable',120)+' ('+clean(r.ruleIdentityState||'LEGACY_UNKEYED')+')').join(' | '):'No producer-recorded assessment ID supplied; source context is not a completed investigation or outcome';
+   if (compact) return 'ASSESSMENT SUMMARY — ' + sym + ': ' + clean(decision, 64) + (P ? ' | held, ' + stopLabel : '') + ' | mid ' + (rows.length ? [...new Set(rows.map(r => clean(r.verdict || 'UNKNOWN')))].join('/') : 'UNKNOWN') + ' | long ' + (typeof rank === 'number' && Number.isFinite(rank) ? (rank * 100).toFixed(1) + ' percentile; research only' : 'UNKNOWN') + ' | saved close ' + clean(sig && sig.session || D && D.session || 'UNKNOWN', 10) + ' | no new entry; details: check ' + sym;
+   return [
+-    'ASSESSMENT CONTEXT — ' + sym + ' / ' + clean(issuer) + ' (information; this card grants no BUY approval)',
++    'ASSESSMENT CONTEXT — ' + sym + ' / ' + clean(primary?.issuer||issuer) + ' (information; this card grants no BUY approval)',
++    'Evidence readiness: business '+(primary?'REVIEWED_PRIMARY_FACTS; THESIS_NOT_VALIDATED':lead?'DATED_DISCOVERY_LEAD_NOT_VALIDATED':'UNKNOWN / no business rejection inferred')+'; valuation UNKNOWN / no causal valuation supplied; entry rule '+(P?'EXISTING_HOLDING_RULE':st||q?'STORED_RULE_NOT_CURRENT_ADMISSION':'MISSING')+'; executable price UNKNOWN; ZAD '+clean(myHalal(sym))+'.',
+     'Identity: ticker only; stable point-in-time security identity UNKNOWN. ZAD: ' + clean(myHalal(sym)) + '; ZAD is final authority.',
++    'Source freshness: '+sourceStatus.status+'; expected completed close '+(sourceStatus.expectedCompletedSession||'UNKNOWN')+'; saved '+(sourceStatus.session||'UNKNOWN')+'. A current completed close is not a current quote; intraday invocation and executable readiness are not established by this file.',
+     'SHORT ACTION | existing assessment: ' + clean(decision) + ' | horizon ' + (P ? P.src === 'leader dip' ? (P.ldHold || LDIP_HOLD) + ' sessions' : P.maxHold || (P.kind === 'leader' ? 'trend rule; no fixed hold' : 'existing holding rule') : q && (q.maxHold || q.days) || 'stored scanner rule, duration UNKNOWN') + '. Entry: ' + entry + '. Exit: ' + clean(exit) + '.',
++    'Trace: '+lineage+'.',
++    'Retained scanner rule: '+(st?.proven===false?'rule NOT PROVEN':st?.proven===true?(Number.isFinite(st.n)&&st.n<30?'producer pass label; fewer than existing30-case command threshold; rule NOT PROVEN':'stored test pass only; no current entry approval'):'UNKNOWN / no rule verdict supplied')+'; identity '+ruleIdentity.ruleIdentityState+'; version '+(ruleIdentity.ruleVersion||'UNKNOWN / not retroactively inferred')+'.',
+     'Short evidence: scan close ' + clean(sig && sig.session || 'UNKNOWN') + ' (date only; not receipt time). Record: ' + track + '.',
+     'MID TERM | ' + (rows.length ? 'INVESTIGATE / WAIT; no entry granted here. ' + rows.map(line).join(' | ') + '. Existing research entry: next open after ' + setups.map(k => rules[k] || k).join('; ') + '; close 25% below entry exits next open, otherwise original 20/60/120-session hold. These are research definitions, not adopted orders.' : 'WAIT / UNKNOWN: no linked horizon setup supplied; no entry or exit invented.') + ' Source horizons.json: ' + stamp(H && H.generatedAt) + ', prices through ' + clean(H && H.to || 'UNKNOWN') + '.',
+     'LONG TERM | INVESTIGATE / NO BUY APPROVAL: ' + quality + '. ' + (qr.length ? qr.map(r => clean(r.verdict || 'UNKNOWN') + ' at ' + r.months + ' months; ' + half(r.results && r.results.older, 'older') + ' | ' + half(r.results && r.results.newer, 'newer') + (r.why ? '; ' + clean(r.why) : '')).join('; ') : 'No linked quality test supplied') + '. No adopted individual-stock entry/exit supplied by this rank. Source quality.json: ' + stamp(Q && Q.generatedAt) + ', prices through ' + clean(Q && Q.to || 'UNKNOWN') + '.',
+     'Known-then evidence (events-recent.json; not an original receipt): ' + evidence + '. Business lead: ' + (lead ? clean(lead.profitTrend || 'discovery candidate') + (typeof lead.revGrowth === 'number' ? ', reported revenue growth ' + pcs(lead.revGrowth) : '') + '; discovery.json ' + stamp(D.generatedAt) + ', close ' + clean(D.session || 'UNKNOWN') : 'no discovery business evidence supplied') + '.',
+-    'Price/execution: ' + (px ? 'saved close ' + money(px) + ', not current executable price; ' : '') + 'live BBO, conditions, displayed size, fills and quantity UNKNOWN. Research assumption: $1,000 whole shares, $3 each executed side; actual after-cost result UNKNOWN. Displayed size would not prove fill capacity.',
++    'Earnings investigation: '+earningsLead+'.',
++    primaryLine,
++    'Price/execution: ' + (px ? 'saved close ' + money(px) + ', not current executable price; ' : '') + 'live BBO, conditions, displayed size, fills and executable quantity UNKNOWN. '+(st?.buyLo>0?'Recorded lower entry '+money(st.buyLo)+' permits at most '+Math.max(0,Math.floor((1000-3)/st.buyLo))+' whole shares before spread/slippage; no order implied. ':'')+'Research assumption: $1,000 whole shares, $3 each executed side; actual after-cost result UNKNOWN. Displayed size would not prove fill capacity.',
+     'Risks/next check: ' + (lead && (lead.hardBlock || lead.bio && lead.bio.text) ? 'Existing discovery warning: ' + clean(lead.hardBlock || lead.bio.text) + '. ' : '') + 'horizons may disagree; favorable comparisons do not erase SPY losses, severe drawdowns or failed gates; SPY is the stored raw benchmark, not a matched-fee execution result; unavailable stored benchmark/worst fields are UNKNOWN. Financing/dilution, expected-vs-new information and original filing vintages remain unresolved unless separately evidenced. Reassess on the next completed scan/new dated disclosure, or fresh price for the EXISTING position rule; no timing promise. No exit or live gate changed.'
+   ].join('\n');
+ }
+@@ -589,6 +607,14 @@ function autolabText() { const AL = readJson0('data/autolab.json'); if (!AL || A
+     '', 'Only PROVEN LIVE rules (30+ paper trades, profitable, better than an average stock) appear in your ACTIONS. Check ZAD. Research only.'].join('\n'); }
+ // OPPORTUNITY BOARD: everything worth knowing today, wider than the tested buys, each with an honest evidence label.
+ //   [TESTED] passed its 5-year test   [EARLY] promising, too few trades yet   [PAPER] on live paper   [INFO] no test supports buying it
++function researchAssessmentCycle(sig,{cutoff=new Date(Date.now()).toISOString(),reviewedSymbols=[]}={}){
++  let journal;try{journal=readRadarLedger('data/discovery-journal.jsonl');}catch{return {error:'ASSESSMENT JOURNAL UNREADABLE; originals preserved; no selection recorded'};}
++  let queue;try{queue=frozenAssessmentQueue({signals:sig||{},discovery:readJson0('data/discovery.json')||{},earnings:readJson0('data/earnings-recent.json')||{},events:readJson0('data/events-recent.json')||{},quality:readJson0('data/quality.json')||{},horizons:readJson0('data/horizons.json')||{},radar:readJson0('data/radar-universe.json')||{},leaders:readJson0('data/leaders-universe.json')||{},
++    cutoff,reviewedSymbols,seenAssessmentIds:journal.filter(x=>x.type==='assessment').map(x=>x.id),excludedSymbols:Object.keys(HALALM()).filter(sym=>myHalal(sym)==='fail')},journal);}catch{return {error:'ASSESSMENT CYCLE UNVERIFIED; original journal preserved; no new selection'};}
++  const records=queue.frozen?assessmentJournalRows(queue):[],persistence=queue.frozen?'READ_ONLY_FROZEN_PRODUCER_BATCH':'READ_ONLY_NOT_FROZEN: awaiting existing discovery producer';
++  const outcomes=readJson0('data/outcomes.json');
++  return {queue,records,persistence,feedback:linkAssessmentOutcomes(journal.filter(x=>x.type==='assessment'),Array.isArray(outcomes?.assessmentOutcomes)?outcomes.assessmentOutcomes:[])};
++}
+ function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 = (x) => money(x).replace(/\.00$/, ''), Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), mine = loadPos(), skip = (s0) => bad.has(s0) || mine[s0];
+   const researchZad = sym => 'recorded owner ZAD mark: ' + myHalal(sym) + '; not an approved entry';
+   // 1. what moved today (the whole market, from the live watcher)
+@@ -614,6 +640,13 @@ function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 =
+     if (q.length) out.push('TOP QUALITY COMPANIES [' + (pass ? 'TESTED on history, paper next' : 'INFO') + ']: ' + q.map(x => x.sym).join(', '), ''); }
+   { const AL = readJson0('data/autolab.json'), c = AL && AL.candidates ? Object.values(AL.candidates).filter(x => x.today && x.today.length) : [];
+     if (c.length) out.push('AUTOLAB [PAPER] (rules the system invented, passed 3 gates):', ...c.slice(0, N).map(x => '- ' + x.name + ': ' + x.today.filter(s0 => !skip(s0)).slice(0, 5).join(', ')), ''); }
++  { const cycle=researchAssessmentCycle(sig);
++    if(cycle.error)out.push(cycle.error);
++    else {const q=cycle.queue;out.push('BOUNDED INVESTIGATION QUEUE — attention, not live eligibility. '+q.sourceFreshness.status+'; '+q.population.uniqueSymbolLabels+' unique ticker labels, verified eligible issuer count UNKNOWN.');
++      for(const [h,rows]of Object.entries(q.batches))out.push(h+': '+(!q.frozen?'awaiting producer-frozen batch; no new investigation selected by this reply':rows.length?rows.slice(0,short?1:2).map(r=>r.symbol+' [INVESTIGATE / WAIT; '+(r.facts.find(x=>x.source==='signals')?.facts.proven===false?'rule NOT PROVEN; ':'')+r.source+'; version '+r.evidenceVersion.slice(0,10)+']').join('; '):'no candidate in this frozen source cycle'));
++      out.push(cycle.persistence+'; feedback '+cycle.feedback.filter(x=>x.status.startsWith('UNRESOLVED')).length+' unresolved. No model aggregate or later price is an individual executable outcome.');
++    }
++  }
+   if (!out.length) return short ? '' : 'OPPORTUNITIES: no extra research leads; this is not a buy list.';
+   return ['RESEARCH WATCHLIST (information only; no approved entries or buy ranges)', '', ...out, '[TESTED] historical test only | [EARLY] NOT PROVEN | [PAPER] research observations, not admitted prospective cases | [INFO] context only. No item is an approved entry; current ZAD, evidence and executable-quote gates still apply.' + (short ? ' Full board: send  opportunities' : '')].join('\n'); }
+ // MISSED RUNNERS: why the 15%+ movers of the last weeks were not caught, grouped by cause, and what would fix the biggest cause.
+@@ -786,6 +819,10 @@ if (!m) { console.error('index.html has no logic block. Upload the latest index.
+ const tmp = path.join(os.tmpdir(), 'logic-' + Date.now() + '.cjs'); fs.writeFileSync(tmp, m[1]);
+ const L = createRequire(import.meta.url)(tmp);
+ 
++const ASSESSMENT_LOGIC_SOURCE_HASH=crypto.createHash('sha256').update(m[1]).digest('hex');
++function scannerAssessmentRule(learned){
++ return makeScannerAssessmentRule({logicVersion:L.LOGIC_VERSION,sourceHash:ASSESSMENT_LOGIC_SOURCE_HASH,variant:learned.v,config:L.CFG,targetOverlay:learned.tgt||null,ruleText:L.ruleText(learned.v),variantKey:L.vkey(learned.v)});
++}
+ const readJson0 = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
+ // SETTINGS WRITES (review S-4, 22 Oct): every write was readJson(settings, {}) -> one key -> write, so a file that failed to parse was
+ // replaced by {} and the decision, focus, quiet, tier2 and fee were lost silently. readSettings() gives {} only when the file is missing
+@@ -2022,6 +2059,7 @@ function tipBoard(sig) {
  function checkOne(sym, sig) {
    if (!sig) return 'No scan has run yet.';
    const q = (sig.quick || []).find(x => x.sym === sym), st = (sig.stocks || []).find(x => x.sym === sym), qOk = q && q.n >= 30 && okEv(q.n, netOf(q.avgPct, q.last), q.win), stOk = st && st.state === 'Buy watch' && (st.n || 0) >= 30 && okEv(st.n || 0, netOf(st.avgPct || 0, st.last), st.win);
@@ -292,7 +927,7 @@ index 693a7346..44d9614f 100644
    const word = qOk || stOk ? 'BUY: a tested setup is open. Send  today  for the prices.' : st && st.state === 'Buy watch' ? 'WATCH ONLY: entry signal, but under 30 tested trades (early evidence). Paper only.' : q ? 'WATCH: quick setup with too little proof. Paper only.' : st && st.state === 'Blocked' ? 'NO BUY: blocked by earnings or news.' : st && st.proven && st.trigger ? 'WATCH: needs a daily close above ~' + money(st.trigger) + '.' : 'NO BUY: no tested setup.';
    const gv1 = gateVerdict(sym, sig), lines = [sym + ': ' + (myHalal(sym) === 'fail' ? 'NO BUY: you marked it NOT halal in ZAD.' : gv1 && /^BUY/.test(word) ? 'NO BUY (paper only): ' + gv1 + '.' : word), sym + ', from the ' + sig.session + ' close'];
    if (q) lines.push('Quick trade setup: entry ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ', invalidation ' + money(q.stop) + (q.t1 ? ', target 1 ' + money(q.t1) : '') + '. Past result ' + Math.round(q.win * 100) + '% wins over ' + q.n + ' trades.');
-@@ -2182,7 +2183,7 @@ function findTicker(text, sig, pos) {
+@@ -2182,7 +2220,7 @@ function findTicker(text, sig, pos) {
    const m = text.match(/\b(?:sell|buy|check|about|hunt|find)\s+([A-Za-z]{1,5})\b/i); return m && okT(m[1].toUpperCase()) ? m[1].toUpperCase() : null;
  }
  const universe = (sig) => { const ind = {}; for (const c of ((DISCMETA && DISCMETA.candidates) || [])) if (c.industry) ind[c.sym] = c.industry;
@@ -301,7 +936,7 @@ index 693a7346..44d9614f 100644
  const supportLine = (x, sig) => { const gv = gateVerdict(x.sym, sig); if (gv && ((x.state === 'Buy watch' && x.buyLo) || ((sig && sig.quick) || []).some(k => k.sym === x.sym))) return x.sym + ': setup, PAPER ONLY (' + gv + ')'; return supportLine0(x, sig); };
  const supportLine0 = (x, sig) => { const q = ((sig && sig.quick) || []).find(k => k.sym === x.sym);
    return x.state === 'Buy watch' && x.buyLo ? x.sym + ': ENTRY CONFIRMED. BUY ' + money(x.buyLo) + ' to ' + money(x.buyHi) + ' | STOP ' + money(x.stop) + ' | SELL ' + (x.target ? money(x.target) : 'below ~' + money(x.exitBelow))
-@@ -3213,7 +3214,7 @@ async function natural(text, sig, pos) {
+@@ -3213,7 +3251,7 @@ async function natural(text, sig, pos) {
    if (tk && pos[tk] && /\b(more|add|adding|average|averaging|double)\b/i.test(text) && !/\bsell\b/i.test(text)) return addReply(tk, pos);
    if (/\bsell\b|\bexit\b|take profit|get out/i.test(text)) return tk ? sellReply(tk, sig, pos) : hotList(sig);
    if (!tk && /\bbuy\b|\bhunt\b|\brecommend/i.test(text)) return hotList(sig);
@@ -310,7 +945,7 @@ index 693a7346..44d9614f 100644
    return null;
  }
  // (4 Nov) SOURCE FRESHNESS: one rule shared by the watchdog and the SYSTEM HEALTH line. The expected close is the latest US session that
-@@ -3552,7 +3553,7 @@ async function tgCommands(sig) {
+@@ -3552,7 +3590,7 @@ async function tgCommands(sig) {
      if (/^(options?|\u062E\u064A\u0627\u0631\u0627\u062A)\s*\??\s*$/i.test(text)) { out.push(optionsText()); continue; }
      if ((k = text.match(/^(?:snapshot|snap|map|web|chain|study|research)\s+(?:of\s+)?([a-z.\-]{1,6})\b/i))) { out.push(await stockMap(k[1].toUpperCase(), sig, pos)); continue; }
      if ((k = text.match(/^(?:check|ask|about|add(?!\s+more\b)|analy[sz]e)\s+([a-z.\-]{1,6})\b/i))) {   // 'add more SYM PRICE N shares' is a buy record (ADDED below), not 'check MORE'
@@ -319,7 +954,7 @@ index 693a7346..44d9614f 100644
      if ((k = text.match(/^(?:remove|delete|unwatch)\s+([a-z.\-]{1,6})\b/i))) { const sy = k[1].toUpperCase(), a = readExtra(); if (a.includes(sy)) { fs.writeFileSync(EXTRA_FILE, JSON.stringify(a.filter(x => x !== sy))); out.push('Removed ' + sy + ' from my nightly scan.'); } else out.push(sy + ' was not one of the stocks you added.'); continue; }
      // ADDED: more shares of a stock you already hold. The average price and share count are updated; the stop stays.
      if ((k = text.match(/^(?:i\s+)?(?:added|add more|bought more|bought extra)\s+([a-z.\-]{1,6})\s+(?:at\s+)?(\d+(?:\.\d+)?)/i))) {
-@@ -4004,6 +4005,7 @@ async function daily() {
+@@ -4004,6 +4042,7 @@ async function daily() {
        { const P = myPos[sym], c = d.candles, i = c.length - 1; if (P && (P.src === 'try small' || P.src === 'leader dip') && i >= 0) { const { held, fl } = P.src === 'leader dip' ? ldipCloseFlags(P, c) : trySmallCloseFlags(P, c);
          if (fl.length) { P.exitFlag = { d: c[i].d, why: fl[0].replace(/ Sell.*$/, '') }; posVerdict[sym] = fl[0].replace(/ Sell.*$/, '').toLowerCase(); } else delete P.exitFlag;
          myLines.push(posLine(sym, P, d.last) + (fl.length ? '\n  ' + fl.join('\n  ') : '\n  no exit signal at this close') + '\n  held ' + held + ' session' + (held === 1 ? '' : 's')); } }
@@ -327,7 +962,16 @@ index 693a7346..44d9614f 100644
        continue; }
      const c = d.candles, i = c.length - 1, ind = L.indicators(c, mkt), T = L.trendStats(c, ind, mom6), halal = myHalal(sym);
      if (!only && !WIDE.has(sym) && i > 140) { const e2 = ind.e[L.CFG.TREND], e5 = ind.e[50], j = i - 5; wk.push({ sym, chg: c[i].c / c[j].c - 1, up: T.up, wasUp: c[j].c > e2[j] && e5[j] > e2[j] && c[j].c / c[j - 126].c - 1 > 0 }); }
-@@ -4293,14 +4295,14 @@ async function daily() {
+@@ -4070,7 +4109,7 @@ async function daily() {
+           P.tChecked = c[i].d; } }
+       const paused = L.isPaused(resolved.filter(y => !y.t.open && y.x.kind !== 'quick').map(y => y.t.r));
+       const v = L.applyGates(L.verdict(c, ind, Lr, null, d.last, paused), { dollarVol: T.dollarVol, halal, limit: null }), trig = L.buyTrigger(c, ind, Lr), dist = Lr.v.mult * ind.atr[i];
+-      const row = { sym, last: d.last, state: v.word, why: v.why, halal, rule: L.ruleText(Lr.v), proven: Lr.proven, uptrend: T.up, mom6: +T.mom6.toFixed(4), trigger: trig.price ? +trig.price.toFixed(4) : null };
++      const row = { sym, last: d.last, state: v.word, why: v.why, halal, rule: L.ruleText(Lr.v), assessmentRule:scannerAssessmentRule(Lr), proven: Lr.proven, uptrend: T.up, mom6: +T.mom6.toFixed(4), trigger: trig.price ? +trig.price.toFixed(4) : null };
+       if (v.act) Object.assign(row, { buyLo: d.last, buyHi: +(d.last + 0.5 * ind.atr[i]).toFixed(4), stop: +(d.last - dist).toFixed(4), target: Lr.v.tp ? +(d.last + Lr.v.tp * dist).toFixed(4) : Lr.tgt && Lr.tgt.mode !== 'none' && Lr.tgt.x ? +(d.last * (1 + Lr.tgt.x)).toFixed(4) : null, half: !Lr.v.tp && Lr.tgt && Lr.tgt.mode === 'half', tgtNote: Lr.v.tp ? 'target ' + Lr.v.tp + 'x the stop distance, chosen by the walk-forward test' : Lr.tgt ? Lr.tgt.verdict + (Lr.tgt.mode !== 'none' && Lr.tgt.oosAvg !== null ? ' (' + pcs(Lr.tgt.oosAvg) + ' a trade with it vs ' + pcs(Lr.tgt.baseAvg) + ' without)' : '') : null, exitBelow: +L.sellLevel({ v: Lr.v }, c, ind).toFixed(4), hit: Lr.hitRate, days: Lr.medDays, n: Lr.test ? Lr.test.n : null, win: Lr.test ? Lr.test.winRate : null, avgPct: Lr.avgPct, pcts: Lr.oosPct || null, r10: Lr.reach10 ?? null, r20: Lr.reach20 ?? null, key: Lr.key, maxHold: Lr.v.maxHold || null, reg: Lr.regime || null });
+       stocks.push(row);
+       if (BIOBLOCK.has(sym)) { if (v.act) { blocked.push(sym + ': a tested rule fired, but ' + BIOBLOCK.get(sym)); row.state = 'Blocked'; } else if (DISC.has(sym)) blocked.push(sym + ' (discovery pick): ' + BIOBLOCK.get(sym)); }
+@@ -4293,14 +4332,14 @@ async function daily() {
    fs.writeFileSync('data/models.json', JSON.stringify(models, null, 1));
    { const n = await zoyaCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym), ...Object.keys(myPos)]); if (env.ZOYA_KEY) console.log('Zoya halal checks:', n, zoyaLive() ? '(live)' : '(sandbox)'); }
    { const n = await halalExtCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym)]); if (n) console.log('other halal checks:', n); }
@@ -344,7 +988,7 @@ index 693a7346..44d9614f 100644
    for (const s of buys) msg.push(s.sym + (DISC.has(s.sym) ? ' (discovery candidate)' : '') + ' closed ' + money(s.last) + '\n  buy range ' + money(s.buyLo) + ' to ' + money(s.buyHi) + ' at the next open\n  stop ' + money(s.stop) + (s.target ? ', target ' + money(s.target) + (s.hit !== null && s.hit !== undefined ? ' (reached in ' + Math.round(s.hit * 100) + '% of past trades)' : '') : ', no fixed target') + ', exit on a close below ~' + money(s.exitBelow) + (s.days ? '\n  typical holding time ' + s.days + ' trading days' : '') + '\n  ' + (s.earn || 'earnings date NOT CHECKED') + '\n  ' + L.HALAL_TEXT[s.halal] + '\n  ' + s.why);
    if (!buys.length) msg.push('None today.');
    else msg.push('Manual review only. Check earnings dates and halal status before acting.');
-@@ -4404,7 +4406,7 @@ async function daily() {
+@@ -4404,7 +4443,7 @@ async function daily() {
        const parts = []; for (const x of mine.slice(0, 10)) { try { parts.push(await reviewReply(x, sg, loadPos())); } catch (e) {} }
        if (parts.length) await telegram('WEEKLY REVIEW OF YOUR STOCKS (automatic, every Friday close)\n\n' + parts.join('\n\n') + '\n' + FOOT); } }
    }
@@ -353,6 +997,451 @@ index 693a7346..44d9614f 100644
  }
  
  // (6 Nov) ONE HOLDING ACTION for the market-hours summary, in the order ACTIONS (planText) uses: a stop reached, a filing (event) sell,
+diff --git a/source-contract.mjs b/source-contract.mjs
+new file mode 100644
+index 00000000..7be19ccc
+--- /dev/null
++++ b/source-contract.mjs
+@@ -0,0 +1,195 @@
++// SOURCE CONTRACT (MARKET-03 / CATALYST-03, Claude, 2 Nov 2026). Shared, pure helpers for provider ingress:
++// symbol identity, units, clocks, New York session, earnings timing, price adjustment basis and revisions.
++// Rules of this module:
++//  - It never guesses. An alias, unit, zone or timing it cannot establish is returned as an explicit non-OK status,
++//    never coerced into a plausible value. Dot and dash share classes stay distinct (market-symbol.mjs).
++//  - Missing, unavailable, malformed, conflicting, stale and future evidence keep different statuses, so a source
++//    failure can never read as a successful empty check.
++//  - It reads no files, makes no requests and has no strategy inputs, gates or thresholds.
++import {createHash} from 'node:crypto';
++import {marketSymbol} from './market-symbol.mjs';
++import {marketSession} from './market-session.mjs';
++
++export const SOURCE_STATUS=Object.freeze(['OBSERVED','EMPTY','PARTIAL','NOT_FETCHED','MISSING','UNAVAILABLE','REFUSED','RATE_LIMITED','MALFORMED','IDENTITY_MISMATCH','CONFLICT','STALE','FUTURE','UNKNOWN']);
++const object=x=>x!==null&&typeof x==='object'&&!Array.isArray(x);
++export const canonicalJson=x=>JSON.stringify(x,(k,v)=>object(v)?Object.fromEntries(Object.keys(v).sort().map(key=>[key,v[key]])):v);
++export const digest=x=>createHash('sha256').update(canonicalJson(x)).digest('hex');
++
++// ---- symbol identity -----------------------------------------------------------------------------------------------
++// Class shares: no provider's separator convention is treated as verified, so a class symbol is kept exactly as the
++// provider wrote it (BRK.B and BRK-B are two different keys) and labelled; nothing maps one onto the other.
++export function providerSymbol(raw,{provider='UNKNOWN',requested=null}={}){
++ if(raw===undefined||raw===null||raw==='')return {status:'MISSING',symbol:null,provider,raw:raw??null};
++ // Mixed case is a provider notation (Massive writes preferreds as XYZpA); upper-casing it would silently alias another ticker.
++ if(typeof raw==='string'&&/[a-z]/.test(raw)&&/[A-Z]/.test(raw))return {status:'INVALID',symbol:null,provider,raw:raw.slice(0,32),reason:'MIXED_CASE_PROVIDER_NOTATION'};
++ const symbol=marketSymbol(raw);
++ if(!symbol)return {status:'INVALID',symbol:null,provider,raw:typeof raw==='string'?raw.slice(0,32):String(raw).slice(0,32)};
++ if(requested!==null){const want=marketSymbol(requested);if(!want||want!==symbol)return {status:'IDENTITY_MISMATCH',symbol:null,provider,raw:String(raw).slice(0,32),requested:String(requested).slice(0,32)};}
++ const classShare=/[.\-]/.test(symbol);
++ return {status:'OK',symbol,provider,classShare,identityBasis:classShare?'PROVIDER_CLASS_SYMBOL_UNMAPPED':'PROVIDER_TICKER_NOT_SECURITY_ID'};
++}
++
++// ---- strict numbers and units --------------------------------------------------------------------------------------
++const MISSING_TOKENS=new Set(['','none','null','n/a','na','-','--','nan']);
++export function strictNumber(x,{min=-Infinity,max=Infinity}={}){
++ if(x===undefined||x===null)return {status:'MISSING',value:null};
++ if(typeof x==='string'){const s=x.trim();if(MISSING_TOKENS.has(s.toLowerCase()))return {status:'MISSING',value:null};
++  if(!/^[+-]?(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?$/i.test(s))return {status:'INVALID',value:null};x=Number(s);}
++ if(typeof x!=='number'||!Number.isFinite(x))return {status:'INVALID',value:null};
++ if(x<min||x>max)return {status:'OUT_OF_RANGE',value:null};
++ return {status:'OK',value:x};
++}
++
++// ---- clocks --------------------------------------------------------------------------------------------------------
++const MIN_MS=Date.parse('2000-01-01T00:00:00Z'),MAX_MS=Date.parse('2100-01-01T00:00:00Z');
++// A JS Date holds |ms| <= 8.64e15; outside that, Date/Intl formatting throws. Every formatter below checks first.
++const inRange=ms=>typeof ms==='number'&&Number.isFinite(ms)&&Math.abs(ms)<=8.64e15;
++// Review R1 (Codex, 1 Nov): an impossible day (month 13 or 00, day 32, 30 Feb) is false, never a thrown RangeError.
++const validDay=d=>{if(typeof d!=='string'||!/^\d{4}-\d{2}-\d{2}$/.test(d))return false;const ms=Date.parse(d+'T00:00:00Z');return inRange(ms)&&new Date(ms).toISOString().slice(0,10)===d;};
++export const isDay=validDay;
++export function nyParts(ms){
++ if(!inRange(ms))return {day:null,minute:null};
++ const p={};for(const x of new Intl.DateTimeFormat('en-CA',{timeZone:'America/New_York',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(ms)))p[x.type]=x.value;
++ return {day:p.year+'-'+p.month+'-'+p.day,minute:+p.hour*60+ +p.minute};
++}
++// kind: 'epoch_s' | 'epoch_ms' | 'iso' (explicit Z or +hh:mm required) | 'date' (YYYY-MM-DD, day precision)
++export function parseSourceTime(value,{kind,at,maxFutureMs=0,maxAgeMs=null}={}){
++ const now=typeof at==='string'?Date.parse(at):at;
++ if(!inRange(now))throw new TypeError('parseSourceTime needs an explicit observation clock');
++ if(value===undefined||value===null||value==='')return {status:'MISSING'};
++ let ms,precision='INSTANT',basis;
++ if(kind==='epoch_s'||kind==='epoch_ms'){
++  if(typeof value!=='number'||!Number.isFinite(value)||value<=0)return {status:'INVALID'};
++  // A seconds clock read as milliseconds (or the reverse) lands decades away; report the unit, never rescale.
++  if(kind==='epoch_s'&&value>1e11||kind==='epoch_ms'&&value<1e11)return {status:'UNIT_MISMATCH'};
++  ms=kind==='epoch_s'?value*1000:value;basis='UTC_EPOCH';
++ }else if(kind==='iso'){
++  if(typeof value!=='string')return {status:'INVALID'};
++  const m=value.match(/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,9})?)?(Z|[+-]\d{2}:\d{2})?$/);
++  if(!m||!validDay(m[1])||+m[2]>23||+m[3]>59||m[4]!==undefined&&+m[4]>59)return {status:'INVALID'};
++  if(!m[5])return {status:'AMBIGUOUS_ZONE'};
++  ms=Date.parse(value);basis='EXPLICIT_OFFSET';
++ }else if(kind==='date'){
++  if(!validDay(value))return {status:'INVALID'};
++  ms=Date.parse(value+'T00:00:00Z');precision='DAY';basis='DATE_ONLY';
++ }else throw new TypeError('unknown time kind');
++ if(!Number.isFinite(ms)||ms<MIN_MS||ms>=MAX_MS)return {status:'INVALID'};
++ if(precision==='DAY'){
++  const today=nyParts(now).day;if(value>today)return {status:'FUTURE',day:value,precision,basis};
++  if(maxAgeMs!==null&&Date.parse(today+'T00:00:00Z')-ms>maxAgeMs)return {status:'STALE',day:value,precision,basis};
++  return {status:'OK',day:value,precision,basis};
++ }
++ const iso=new Date(ms).toISOString();
++ if(ms>now+maxFutureMs)return {status:'FUTURE',iso,precision,basis};
++ if(maxAgeMs!==null&&now-ms>maxAgeMs)return {status:'STALE',iso,precision,basis};
++ return {status:'OK',iso,ms,precision,basis,nyDay:nyParts(ms).day};
++}
++
++// ---- New York session --------------------------------------------------------------------------------------------
++// Phases use the exchange calendar in market-session.mjs; a day outside it is CALENDAR_UNKNOWN, never assumed open.
++export function sessionPhase(ms){
++ if(!inRange(ms))return {phase:'INVALID'};
++ const {day,minute}=nyParts(ms),s=marketSession(day);
++ if(!s.known)return {phase:'CALENDAR_UNKNOWN',day};
++ if(s.closed)return {phase:'CLOSED',day};
++ const halfDay=s.close<960,phase=minute<240?'OVERNIGHT':minute<s.open?'PREMARKET':minute<s.close?'REGULAR':minute<1200?'AFTER_HOURS':'OVERNIGHT';
++ return {phase,day,halfDay,openMinute:s.open,closeMinute:s.close};
++}
++export function nextSession(day,{inclusive=false}={}){
++ if(!validDay(day))return null;let d=day;
++ for(let i=0;i<15;i++){if(!(inclusive&&i===0))d=new Date(Date.parse(d+'T12:00:00Z')+864e5).toISOString().slice(0,10);const s=marketSession(d);if(!s.known)return null;if(!s.closed)return d;}
++ return null;
++}
++
++// ---- earnings timing -----------------------------------------------------------------------------------------------
++const TIMING={FINNHUB:{bmo:'BMO',amc:'AMC',dmh:'DMH'},ALPHA_VANTAGE:{'pre-market':'BMO','post-market':'AMC'}};
++export function earningsTiming(provider,raw){
++ const t=typeof raw==='string'?TIMING[provider]?.[raw.trim().toLowerCase()]:null;
++ return t||'UNKNOWN';
++}
++// First regular session whose prices can reflect a report. UNKNOWN timing is not resolved by guessing: both
++// candidate sessions are returned (the Nasdaq/no-time case in CLAUDE.md open items).
++export function reactionSession(day,timing){
++ if(!validDay(day))return {status:'INVALID'};
++ if(!marketSession(day).known)return {status:'CALENDAR_UNKNOWN'};
++ const same=nextSession(day,{inclusive:true}),next=nextSession(day);
++ if(!same||!next)return {status:'CALENDAR_UNKNOWN'};
++ const tradingDay=!marketSession(day).closed;
++ if(timing==='BMO'||timing==='DMH')return {status:'OK',session:same};
++ if(timing==='AMC')return {status:'OK',session:tradingDay?next:same};
++ return {status:'AMBIGUOUS',session:null,candidates:tradingDay?[same,next]:[same]};
++}
++
++// ---- price adjustment basis ----------------------------------------------------------------------------------------
++export function adjustmentBasis({provider,adjusted}={}){
++ if(['MASSIVE','POLYGON'].includes(provider)){if(adjusted===true)return 'SPLIT_ADJUSTED_AS_OF_FETCH';if(adjusted===false)return 'RAW_UNADJUSTED';}
++ if(provider==='LAB_REPORTED')return 'LAB_REPORTED_BASIS_UNVERIFIED';
++ return 'UNKNOWN';
++}
++
++// ---- revisions -----------------------------------------------------------------------------------------------------
++// A generic, bounded revision book. The first content seen for a key is the original; any different content later
++// latches CONFLICT for that key permanently (a later reversion does not clear it). Capacity and chronology failures
++// are explicit statuses, never silent admission.
++export function validRevisionBook(book){
++ return object(book)&&Object.entries(book).every(([k,e])=>/^[a-f0-9]{64}$/.test(k)&&object(e)&&['OBSERVED','CONFLICT'].includes(e.status)&&/^[a-f0-9]{64}$/.test(e.first)&&object(e.revisions)&&!!e.revisions[e.first]&&Object.values(e.revisions).every(v=>object(v)&&Number.isFinite(Date.parse(v.firstObservedAt))));
++}
++export function observeRevision(book,{key,content,at,capacity=10000,maxRevisions=16}){
++ if(!object(book)||typeof key!=='string'||!key||!Number.isFinite(Date.parse(at)))throw new TypeError('REVISION_BOOK_UNREADABLE');
++ const id=digest(key),rev=digest(content);let e=book[id];
++ if(e&&!validRevisionBook({[id]:e}))throw new TypeError('REVISION_BOOK_UNREADABLE');
++ if(!e){if(Object.keys(book).length>=capacity)return {status:'CAPACITY',id,revision:rev};e=book[id]={status:'OBSERVED',first:rev,revisions:{[rev]:{firstObservedAt:at}}};return {status:'FIRST',id,revision:rev,firstObservedAt:at};}
++ if(Date.parse(at)<Date.parse(e.revisions[e.first].firstObservedAt))return {status:'CHRONOLOGY',id,revision:rev};
++ if(e.revisions[rev]&&e.status==='OBSERVED')return {status:'SAME',id,revision:rev,firstObservedAt:e.revisions[e.first].firstObservedAt};
++ if(!e.revisions[rev]&&Object.keys(e.revisions).length<maxRevisions)e.revisions[rev]={firstObservedAt:at};
++ e.status='CONFLICT';
++ return {status:'CONFLICT',id,revision:rev,original:e.first,firstObservedAt:e.revisions[e.first].firstObservedAt};
++}
++
++// ---- combining provider statuses ---------------------------------------------------------------------------------
++// A lane is OBSERVED only when every required provider observed; any failure keeps the lane non-OBSERVED.
++export function combineStatus(statuses){
++ const s=statuses.filter(Boolean);if(!s.length)return 'NOT_FETCHED';
++ if(s.every(x=>x==='OBSERVED'||x==='EMPTY'))return s.every(x=>x==='EMPTY')?'EMPTY':'OBSERVED';
++ if(s.includes('CONFLICT'))return 'CONFLICT';
++ if(s.some(x=>x==='OBSERVED'||x==='EMPTY'||x==='PARTIAL'))return 'PARTIAL';
++ return 'UNKNOWN';
++}
++
++// ---- bounded JSON transport ------------------------------------------------------------------------------------------
++// One request, no redirect, a hard deadline even if the fetcher ignores AbortSignal, a counted byte cap and distinct
++// failure statuses. A refused/limited/oversized/unparseable answer is never returned as an observed empty body.
++export const JSON_SOURCE_LIMITS=Object.freeze({bytes:4194304,timeoutMs:15000});
++export async function readJsonSource(fetcher,url,{maxBytes=JSON_SOURCE_LIMITS.bytes,timeoutMs=JSON_SOURCE_LIMITS.timeoutMs}={}){
++ const controller=new AbortController(),requestedAt=new Date().toISOString();let timer,reader;
++ const out=(status,extra={})=>({status,requestedAt,receivedAt:new Date().toISOString(),body:null,...extra});
++ const deadline=new Promise((_,reject)=>{timer=setTimeout(()=>{controller.abort();reject(Error('SOURCE_TIMEOUT'));},timeoutMs);});
++ const task=async()=>{
++  const r=await fetcher(url,{redirect:'error',signal:controller.signal});
++  if(!r.ok){try{r.body?.cancel?.()?.catch?.(()=>{});}catch{}return out(r.status===429?'RATE_LIMITED':[401,402,403].includes(r.status)?'REFUSED':'HTTP_ERROR',{httpStatus:r.status});}
++  let text;
++  if(r.body?.getReader){reader=r.body.getReader();const parts=[];let bytes=0;
++   for(;;){const p=await reader.read();if(p.done)break;bytes+=p.value.byteLength;if(bytes>maxBytes)return out('BODY_LIMIT',{httpStatus:r.status});parts.push(Buffer.from(p.value));}
++   try{text=new TextDecoder('utf-8',{fatal:true}).decode(Buffer.concat(parts));}catch{return out('INVALID_JSON',{httpStatus:r.status});}}
++  else return out('INVALID_JSON',{httpStatus:r.status});
++  let body;try{body=JSON.parse(text);}catch{return out('INVALID_JSON',{httpStatus:r.status});}
++  return out('OK',{httpStatus:r.status,body});
++ };
++ try{return await Promise.race([task(),deadline]);}catch(e){return out(e.message==='SOURCE_TIMEOUT'?'TIMEOUT':'NETWORK_ERROR');}
++ finally{clearTimeout(timer);controller.abort();try{reader?.cancel()?.catch(()=>{});}catch{}}
++}
++
++// ---- daily-close freshness ---------------------------------------------------------------------------------------------
++// The newest regular session whose close has happened at `ms` (New York calendar). Weekends and holidays do not age a close:
++// Friday's close is current until Monday's close. Outside the known calendar the answer is null (unknown), never a guess.
++export function latestCompletedSession(ms){
++ if(!inRange(ms))return null;const {day,minute}=nyParts(ms);let d=day;
++ for(let i=0;i<15;i++){const s=marketSession(d);if(!s.known)return null;if(!s.closed&&(d<day||minute>=s.close))return d;d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);}
++ return null;
++}
++// Sessions between a data day and the latest completed session (0 = current close). null when the calendar cannot say.
++export function closeLagSessions(day,ms){
++ const latest=latestCompletedSession(ms);if(!latest||!validDay(day))return null;if(day>latest)return -1;
++ let n=0,d=latest;while(d>day&&n<60){d=new Date(Date.parse(d+'T12:00:00Z')-864e5).toISOString().slice(0,10);const s=marketSession(d);if(!s.known)return null;if(!s.closed)n++;}
++ return d===day||d<day?n:null;
++}
+diff --git a/test/assessment-context.test.mjs b/test/assessment-context.test.mjs
+index 9a9c413f..464525e0 100644
+--- a/test/assessment-context.test.mjs
++++ b/test/assessment-context.test.mjs
+@@ -8,7 +8,7 @@ function files(extra={}){return {'data/settings.json':{focus:true},'data/names.j
+ const sig={session:'2026-11-06',stocks:[{sym:'ZZQ',last:25,mom6:0,state:'Wait',n:8,proven:false,trigger:27,rule:'existing daily-close trigger',why:'no entry',halal:'unknown'}],quick:[],leaders:[]};
+ async function run(extra,fn){const old=Date.now;Date.now=()=>T;try{const S=await loadScan({files:files(extra)});await fn(S);}finally{Date.now=old;}}
+ test('actual known-stock caller exposes favorable and adverse horizons without admitting the lead',()=>run({},async S=>{
+- const t=S.fn('checkOne')('ZZQ',sig);examples.push({case:'favorable mid-term comparison, rejected long-term test, unapproved short entry',caller:'checkOne',stock:'ZZQ',output:t});assert.match(t,/ZZQ: NO BUY: no tested setup/);assert.match(t,/ASSESSMENT CONTEXT.*ZZQ.*Synthetic issuer/);assert.match(t,/SHORT ACTION/);assert.match(t,/MID TERM.*NOT PROVEN.*\+2\.0% vs control \+0\.3%/);assert.match(t,/LONG TERM.*93\.0.*REJECTED/);assert.match(t,/SPY raw \+2\.9%/);assert.match(t,/worst model trade -82\.0%/);assert.match(t,/original avg-stock margin 1\.5 points: older NOT MET, newer met/);assert.match(t,/2026-11-05.*original observation\/receipt.*UNKNOWN/);assert.match(t,/ZAD: unknown/);assert.match(t,/\$1,000 whole shares, \$3 each executed side/);assert.match(t,/displayed size, fills and quantity UNKNOWN/);assert.doesNotMatch(t,/^ZZQ: BUY/m);
++ const t=S.fn('checkOne')('ZZQ',sig);examples.push({case:'favorable mid-term comparison, rejected long-term test, unapproved short entry',caller:'checkOne',stock:'ZZQ',output:t});assert.match(t,/ZZQ: NO BUY: no tested setup/);assert.match(t,/ASSESSMENT CONTEXT.*ZZQ.*Synthetic issuer/);assert.match(t,/SHORT ACTION/);assert.match(t,/MID TERM.*NOT PROVEN.*\+2\.0% vs control \+0\.3%/);assert.match(t,/LONG TERM.*93\.0.*REJECTED/);assert.match(t,/SPY raw \+2\.9%/);assert.match(t,/worst model trade -82\.0%/);assert.match(t,/original avg-stock margin 1\.5 points: older NOT MET, newer met/);assert.match(t,/2026-11-05.*original observation\/receipt.*UNKNOWN/);assert.match(t,/ZAD: unknown/);assert.match(t,/\$1,000 whole shares, \$3 each executed side/);assert.match(t,/displayed size, fills and executable quantity UNKNOWN/);assert.doesNotMatch(t,/^ZZQ: BUY/m);
+ }));
+ test('stale, future and missing context is dated/UNKNOWN, never manufactured eligibility',()=>run({'data/horizons.json':{status:'OK',generatedAt:'2027-01-01T00:00:00Z',today:{},results:{}},'data/quality.json':{status:'OK',rank:{},results:{}},'data/events-recent.json':{events:[]}},async S=>{
+  const t=S.fn('assessmentContext')('ZZQ',null,{},'WAIT');examples.push({case:'stale/future/missing evidence',caller:'assessmentContext via existing consumers',stock:'ZZQ',output:t});assert.match(t,/UNKNOWN \(future timestamp/);assert.match(t,/quality rank UNKNOWN/);assert.match(t,/No dated catalyst witness supplied \(not evidence of no catalyst\)/);assert.match(t,/original observation\/receipt UNKNOWN/);assert.match(t,/No adopted entry rule supplied/);assert.match(t,/live BBO.*UNKNOWN/);
+diff --git a/test/assessment-primary-context.test.mjs b/test/assessment-primary-context.test.mjs
+new file mode 100644
+index 00000000..8d851693
+--- /dev/null
++++ b/test/assessment-primary-context.test.mjs
+@@ -0,0 +1,10 @@
++// Actual existing detail/discovery callers. Synthetic source facts never become a trade.
++import test from 'node:test';import assert from 'node:assert/strict';import path from 'node:path';import {loadScan,blocked} from './load-scan.mjs';
++const root=path.resolve('.'),now=Date.parse('2026-11-11T18:30:00Z');
++const record=()=>({symbol:'ZZQ',issuer:'Synthetic issuer',summary:'Verified report: revenue rose; cash conversion still unresolved.',contrary:'Funding/dilution can defeat the thesis.',nextEvidence:'Inspect the next cash-flow statement.',publishedDate:'2026-11-10',receiptAt:'2026-11-11T17:00:00Z',reviewedAt:'2026-11-11T18:00:00Z',sourceUrl:'https://www.sec.gov/Archives/edgar/data/1/fixture.htm',sourceSha256:'a'.repeat(64),reviewComment:'https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6803780465'});
++const signal={session:'2026-11-10',generatedAt:'2026-11-11T01:00:00Z',stocks:[{sym:'ZZQ',last:10,state:'No action',why:'No new cross',rule:'Existing rule unchanged',proven:false,n:16}],uni:[],quick:[]};
++async function run(r,check){const old=Date.now;Date.now=()=>now;try{const s=await loadScan({files:{'data/company-investigations.json':{kind:'REVIEWED_COMPANY_INVESTIGATIONS_V1',records:{ZZQ:r}},'data/discovery.json':{session:'2026-11-10',generatedAt:'2026-11-11T01:00:00Z',candidates:[{sym:'ZZQ',name:'Synthetic issuer',price:10,revGrowth:.1}]}}});await check(s);}finally{Date.now=old;process.chdir(root);}}
++test('actual detail joins primary source clocks and contrary case, without changing rule/price/ZAD',()=>run(record(),s=>{const before=JSON.stringify(signal),text=s.fn('checkOne')('ZZQ',signal);assert.match(text,/PRIMARY COMPANY INVESTIGATION.*revenue rose/);assert.match(text,/Contrary\/invalidation: Funding/);assert.match(text,/Published 2026-11-10, received 2026-11-11T17:00:00Z/);assert.match(text,/SHORT ACTION/);assert.match(text,/MID TERM/);assert.match(text,/LONG TERM/);assert.match(text,/not current executable price/);assert.match(text,/\$3 each executed side/);assert.match(text,/ZAD/);assert.equal(JSON.stringify(signal),before);assert.equal(blocked.length,0);}));
++test('wrong subject, future/reversed clocks, missing original hash or review never become reviewed facts',async()=>{for(const patch of [{symbol:'WRONG'},{receiptAt:'2026-11-12T00:00:00Z'},{publishedDate:'2026-11-12'},{reviewedAt:'2026-11-10T00:00:00Z'},{sourceSha256:null},{reviewComment:null}])await run({...record(),...patch},s=>{const t=s.fn('assessmentContext')('ZZQ',signal);assert.match(t,/No reviewed, clock-consistent subject-bound record/);assert.doesNotMatch(t,/Verified report/);});});
++test('actual discovery opportunities compact path remains bounded and points to existing detail',()=>run(record(),s=>{const text=s.fn('opportunitiesText')(signal,false);assert.match(text,/details: check ZZQ/);assert.doesNotMatch(text,/Verified report/);assert.equal(blocked.length,0);}));
++test('producer proven label below existing30-case command threshold is not rendered as established validation',()=>run(record(),s=>{const sig=structuredClone(signal);sig.stocks[0].proven=true;const t=s.fn('assessmentContext')('ZZQ',sig);assert.match(t,/fewer than existing30-case command threshold; rule NOT PROVEN/);assert.equal(sig.stocks[0].proven,true);}));
+diff --git a/test/assessment-save-paths.test.mjs b/test/assessment-save-paths.test.mjs
+new file mode 100644
+index 00000000..26eff19a
+--- /dev/null
++++ b/test/assessment-save-paths.test.mjs
+@@ -0,0 +1,41 @@
++// Cross-runner save paths, real temporary Git repositories, no network/provider.
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {execFileSync} from 'node:child_process';import {fileURLToPath} from 'node:url';
++const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
++const git=(cwd,...args)=>execFileSync('git',args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe']});
++const read=p=>fs.readFileSync(path.join(root,p),'utf8');
++const bot=read('.github/workflows/bot.yml'),discovery=read('.github/workflows/discover.yml');
++const saveBot=bot.match(/          save\(\) \{([\s\S]*?)\n          \}/)?.[0].split('\n').map(x=>x.slice(10)).join('\n');
++const saveDiscovery=discovery.slice(discovery.indexOf('          git config user.name'),discovery.indexOf('      # If anything above failed')).split('\n').map(x=>x.startsWith('          ')?x.slice(10):x).join('\n');
++assert.ok(saveBot?.includes('git pull -q --rebase'));assert.ok(saveDiscovery.includes('git pull --rebase -X theirs'));
++const source=read('discover.mjs'),start=source.indexOf("{\n const journal=readRadarLedger('data/discovery-journal.jsonl');"),end=source.indexOf("\n}\n",start)+2,producer=source.slice(start,end);
++assert.ok(start>0&&producer.includes('assessmentCycleRows(queue)'));
++for(const order of ['bot-first','discovery-first'])test('actual '+order+' saves preserve discovery and assessment rows',()=>{
++ const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'assessment-git-save-'));
++ try{
++ const remote=path.join(tmp,'origin.git'),seed=path.join(tmp,'seed');
++ fs.mkdirSync(seed);git(tmp,'init','--bare',remote);git(seed,'init','-b','main');git(seed,'config','user.name','test');git(seed,'config','user.email','test@example.invalid');
++ fs.mkdirSync(path.join(seed,'data'));fs.writeFileSync(path.join(seed,'data/discovery-journal.jsonl'),'{"sym":"OLD","d":"2020-01-01","price":1,"spy":1}\n');
++ fs.writeFileSync(path.join(seed,'data/signals.json'),JSON.stringify({session:'2026-11-06',stocks:[{sym:'AAA',state:'Buy watch',rule:'retained rule'}]}));
++ fs.writeFileSync(path.join(seed,'data/quality.json'),JSON.stringify({to:'2026-11-06',today:[{sym:'CCC',q:.9}]}));
++ fs.writeFileSync(path.join(seed,'data/earnings-recent.json'),JSON.stringify({reports:[{sym:'BBB',d:'2026-11-06',a:-1,e:-.5}]}));
++ fs.mkdirSync(path.join(seed,'.github'));fs.writeFileSync(path.join(seed,'.github/merge-alert-state.mjs'),read('.github/merge-alert-state.mjs'));
++ git(seed,'add','.');git(seed,'commit','-m','seed');git(seed,'remote','add','origin',remote);git(seed,'push','-u','origin','main');git(tmp,'--git-dir='+remote,'symbolic-ref','HEAD','refs/heads/main');
++ const dirs={};for(const n of ['bot','discovery']){dirs[n]=path.join(tmp,n);git(tmp,'clone',remote,dirs[n]);git(dirs[n],'config','user.name','test');git(dirs[n],'config','user.email','test@example.invalid');}
++ // Actual discover.mjs producer block, importing the candidate implementation.
++ const moduleURL=p=>'file://'+path.join(root,p);
++ const js="import fs from 'node:fs';import {appendRadarRows,readRadarLedger} from "+JSON.stringify(moduleURL('radar-ledger.mjs'))+";import {frozenAssessmentQueue,assessmentCycleRows} from "+JSON.stringify(moduleURL('discovery-runtime.mjs'))+";const now=Date.parse('2026-11-09T17:18:16Z');const readJson=(p,d)=>{try{return JSON.parse(fs.readFileSync(p,'utf8'))}catch{return d}};"+producer;
++ execFileSync(process.execPath,['--input-type=module','-e',js],{cwd:dirs.discovery});
++ execFileSync(process.execPath,['--input-type=module','-e',js],{cwd:dirs.discovery});
++ fs.appendFileSync(path.join(dirs.discovery,'data/discovery-journal.jsonl'),'{"sym":"NEW","d":"2026-11-06","price":2,"spy":600}\n');
++ // Read-only bot caller is checked in assessment-triage actual-caller test.
++ // Its real save path still publishes unrelated Telegram state concurrently.
++ fs.writeFileSync(path.join(dirs.bot,'data/tg-state.json'),'{"offset":42}\n');
++ const commands={bot:saveBot+'\nsave\n',discovery:saveDiscovery};
++ for(const n of (order==='bot-first'?['bot','discovery']:['discovery','bot']))execFileSync('bash',['-e','-c',commands[n]],{cwd:dirs[n],encoding:'utf8',timeout:30000});
++ const result=git(seed,'--git-dir='+remote,'show','main:data/discovery-journal.jsonl'),rows=result.trim().split('\n').map(JSON.parse);
++ assert.equal(rows.filter(r=>r.type==='assessment-cycle').length,1);
++ assert.equal(rows.filter(r=>r.type==='assessment').length,3);
++ assert.equal(rows.filter(r=>r.sym==='OLD').length,1);assert.equal(rows.filter(r=>r.sym==='NEW').length,1);
++ assert.equal(JSON.parse(git(seed,'--git-dir='+remote,'show','main:data/tg-state.json')).offset,42);
++ }finally{fs.rmSync(tmp,{recursive:true,force:true});}
++});
+diff --git a/test/assessment-triage.test.mjs b/test/assessment-triage.test.mjs
+new file mode 100644
+index 00000000..11d05543
+--- /dev/null
++++ b/test/assessment-triage.test.mjs
+@@ -0,0 +1,105 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from'node:fs';import os from'node:os';import path from'node:path';import {fileURLToPath}from'node:url';import {execFile}from'node:child_process';import {promisify}from'node:util';
++import {triageAssessments,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes,assessmentCycleKey,frozenAssessmentQueue,assessmentCycleRows,makeScannerAssessmentRule,assessmentRuleIdentity}from'../discovery-runtime.mjs';
++import {appendRadarRows,readRadarLedger}from'../radar-ledger.mjs';
++import {loadScan,blocked}from'./load-scan.mjs';
++const T='2026-11-09T17:18:16Z',root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
++const input=()=>({cutoff:T,signals:{session:'2026-11-06',generatedAt:'2026-11-07T01:00:00Z',stocks:[{sym:'AAA',state:'Buy watch',rule:'frozen',key:'frozen',last:20},{sym:'BBB',state:'No action',last:10}]},earnings:{reports:[{sym:'CCC',d:'2026-11-06',a:1,e:.5},{sym:'DDD',d:'2026-11-06',a:.2,e:.3}]},quality:{generatedAt:'2026-11-08T06:00:00Z',today:[{sym:'EEE',q:.9},{sym:'FFF',q:.8}],rank:{EEE:.9}},events:{events:[{sym:'BBB',p:'2026-11-06T22:00:00Z',f:'EARN'}]}});
++test('population distinguishes overlapping rows, ticker labels and unverified issuer counts',()=>{const x=input();x.events.events.push({sym:'AAA',p:'2026-11-06T21:00:00Z'},null);const q=triageAssessments(x);assert.equal(q.population.uniqueSymbolLabels,6);assert.equal(q.population.verifiedEligibleIssuers,0);assert.equal(q.population.identityUnknownSymbols,6);assert.equal(q.population.invalidRows,1);assert.equal(q.population.sources.SEC.rows,3);assert.equal(q.decisions.filter(r=>r.symbol==='AAA'&&r.horizon==='SHORT').length,1);});
++test('attention selection is horizon bounded, includes negative earnings and cannot use subsequent returns',()=>{const x=input(),q=triageAssessments(x);assert.deepEqual(Object.values(q.batches).map(a=>a.map(r=>r.symbol)),[['AAA','BBB'],['CCC','DDD'],['EEE','FFF']]);x.signals.stocks[0].subsequentReturn=999;x.earnings.reports[1].subsequentReturn=-.99;assert.deepEqual(triageAssessments(x).batches,q.batches);x.reviewedSymbols=['AAA'];x.excludedSymbols=['CCC'];const z=triageAssessments(x);assert.equal(z.counts.EXISTING_EXCLUSION,1);assert.equal(z.counts.ALREADY_INVESTIGATED_THIS_BATCH,1);assert.equal(z.batches.MID[0].symbol,'DDD');});
++test('fresh completed session differs from live quote, then becomes stale after Monday close',()=>{assert.equal(assessmentSourceStatus(input().signals,T).status,'LATEST_COMPLETED_CLOSE_REFERENCE');assert.equal(assessmentSourceStatus(input().signals,'2026-11-09T21:01:00Z').status,'STALE_COMPLETED_CLOSE_REFERENCE');assert.equal(assessmentSourceStatus(input().signals,T).executableQuote,'UNKNOWN');assert.equal(assessmentSourceStatus({...input().signals,generatedAt:'2026-11-10T00:00:00Z'},T).status,'UNKNOWN_FUTURE_OUTPUT_CLOCK');assert.equal(assessmentSourceStatus({...input().signals,session:'2026-11-10'},T).status,'FUTURE_SOURCE');assert.equal(assessmentSourceStatus(input().signals,'2028-01-03T12:00:00Z').status,'UNKNOWN');});
++test('future output clock cannot seed attention candidates',()=>{const x=input();x.quality.generatedAt='2027-01-01T00:00:00Z';assert.equal(triageAssessments(x).batches.LONG.length,0);});
++test('existing journal preserves legacy bytes, deduplicates assessment versions and refuses corrupt append',()=>{const d=fs.mkdtempSync(path.join(os.tmpdir(),'assessment-journal-'));try{const f=path.join(d,'journal.jsonl'),old='{"sym":"OLD","d":"2020-01-01","price":1,"spy":1}\n';fs.writeFileSync(f,old);const rows=assessmentJournalRows(triageAssessments(input()));assert.ok(rows.every(x=>x.sym===undefined&&x.d===undefined&&x.price===undefined));assert.ok(!new Set([JSON.parse(old),...rows].map(x=>x.sym)).has('AAA'));assert.equal(appendRadarRows(f,rows).appended,6);assert.equal(appendRadarRows(f,rows).appended,0);assert.ok(fs.readFileSync(f,'utf8').startsWith(old));assert.equal(readRadarLedger(f).length,7);const before=fs.readFileSync(f);assert.throws(()=>appendRadarRows(f,[{...rows[0],evidenceVersion:'0'.repeat(64)}]));assert.deepEqual(fs.readFileSync(f),before);fs.writeFileSync(f,'{"sym":"BROKEN"');assert.throws(()=>appendRadarRows(f,rows));assert.equal(fs.readFileSync(f,'utf8'),'{"sym":"BROKEN"');}finally{fs.rmSync(d,{recursive:true,force:true});}});
++test('concurrent legacy discovery and assessment saves retain both under the existing lock',async()=>{const d=fs.mkdtempSync(path.join(os.tmpdir(),'assessment-race-'));try{const f=path.join(d,'journal.jsonl'),rows=assessmentJournalRows(triageAssessments(input()));const run=promisify(execFile),src=path.join(root,'radar-ledger.mjs');await Promise.all([rows,[{sym:'LEGACY',d:'2026-11-06',price:10,spy:600}]].map(a=>run(process.execPath,['--input-type=module','-e',`import {appendRadarRows} from ${JSON.stringify(src)}; appendRadarRows(${JSON.stringify(f)},${JSON.stringify(a)});`])));assert.equal(readRadarLedger(f).length,7);assert.equal(readRadarLedger(f).filter(x=>x.sym==='LEGACY').length,1);}finally{fs.rmSync(d,{recursive:true,force:true});}});
++test('exact outcome versions retain losses, no-fills and missing cases; cannot turn an aggregate/label into performance',async()=>{const S=await loadScan();try{
++ const x=input(),L=S.value('L'),v=L.BASE,b=S.fn('scannerAssessmentRule')({v,tgt:null});
++ x.signals.stocks=['AAA','BBB','CCC','DDD','EEE','FFF'].map(sym=>({sym,state:sym==='AAA'?'Buy watch':'No action',rule:L.ruleText(v),assessmentRule:b,key:L.vkey(v)}));
++ const a=assessmentJournalRows(triageAssessments(x)),outcomes=a.slice(0,3).map((r,i)=>({assessmentId:r.id,evidenceVersion:r.evidenceVersion,ruleId:r.ruleId,ruleVersion:r.ruleVersion,horizon:r.horizon,status:['LOSS','NO_FILL','MISSING'][i],economicBasis:'MODELED',netAfterCosts:999}));
++ const joined=linkAssessmentOutcomes(a,outcomes);assert.deepEqual(joined.slice(0,3).map(x=>x.status),['LOSS','NO_FILL','MISSING']);assert.ok(joined.every(x=>x.netAfterCosts===null));outcomes[0].evidenceVersion='wrong';assert.match(linkAssessmentOutcomes(a,outcomes)[0].status,/UNRESOLVED/);
++ }finally{process.chdir(root);}});
++test('actual opportunities caller is read-only across repeated full and compact replies',async()=>{const old=Date.now;Date.now=()=>Date.parse(T);try{const x=input(),S=await loadScan({files:{'data/signals.json':x.signals,'data/earnings-recent.json':x.earnings,'data/events-recent.json':x.events,'data/quality.json':x.quality,'data/discovery-journal.jsonl':'{"sym":"OLD","d":"2026-11-06","price":10,"spy":600}\n'}});const text=S.fn('opportunitiesText')(x.signals,false);assert.match(text,/BOUNDED INVESTIGATION QUEUE/);for(const h of ['SHORT','MID','LONG'])assert.match(text,new RegExp(h+':'));assert.match(text,/READ_ONLY_NOT_FROZEN/);const again=S.fn('opportunitiesText')(x.signals,false);assert.equal(again,text);S.fn('opportunitiesText')(x.signals,true);const rows=S.read('data/discovery-journal.jsonl').trim().split('\n').map(JSON.parse);assert.equal(rows.length,1);assert.ok(rows.filter(x=>x.type==='assessment').every(x=>!('owner' in x)&&!('halal' in x)&&!('holdings' in x)));assert.match(S.fn('assessmentContext')('AAA',x.signals,{},'WAIT'),/current completed close is not a current quote/);assert.match(S.fn('assessmentContext')('CCC',x.signals,{},'WAIT'),/cached actual 1 vs estimate 0.5.*not a verified surprise/);assert.equal(blocked.length,0);}finally{Date.now=old;process.chdir(root);}});
++
++test('one producer cycle freezes the same batch; regeneration clocks cannot make completed names new',()=>{
++ const x=input(),q=frozenAssessmentQueue(x),journal=assessmentCycleRows(q);
++ const changed=structuredClone(x);changed.quality.generatedAt='2026-11-09T12:00:00Z';
++ assert.equal(assessmentCycleKey(changed),q.cycleKey);
++ assert.deepEqual(Object.values(triageAssessments(changed).batches).flat().map(r=>r.id),Object.values(triageAssessments(x).batches).flat().map(r=>r.id));
++ // New symbols/ranks within the same session cannot expand a persisted cycle.
++ changed.quality.today.unshift({sym:'ZZZ',q:1});changed.seenAssessmentIds=journal.filter(r=>r.type==='assessment').map(r=>r.id);
++ const repeat=frozenAssessmentQueue(changed,journal);
++ assert.equal(repeat.frozen,true);assert.deepEqual(repeat.batches,q.batches);
++ assert.equal(Object.values(repeat.batches).flat().length,6);
++ changed.signals.session='2026-11-09';assert.notEqual(assessmentCycleKey(changed),q.cycleKey);
++});
++test('cycle + assessment append is idempotent, preserves originals and distinguishes derived rule from absent rule',()=>{
++ const d=fs.mkdtempSync(path.join(os.tmpdir(),'assessment-cycle-'));try{
++ const f=path.join(d,'journal.jsonl'),before='{"sym":"LEGACY","d":"2020-01-01","price":1,"spy":1}\n';
++ fs.writeFileSync(f,before);const x=input();delete x.signals.stocks[0].key;
++ const q=frozenAssessmentQueue(x),rows=assessmentCycleRows(q);
++ assert.equal(rows[1].ruleIdentityState,'RULE_UNKEYED');
++ assert.equal(rows[1].ruleId,null);
++ assert.equal(rows.find(r=>r.symbol==='CCC').ruleIdentityState,'NO_ADOPTED_RULE_SUPPLIED');
++ assert.equal(appendRadarRows(f,rows).appended,7);
++ assert.equal(appendRadarRows(f,rows).appended,0);
++ assert.ok(fs.readFileSync(f,'utf8').startsWith(before));
++ const frozen=frozenAssessmentQueue(x,readRadarLedger(f));assert.equal(frozen.frozen,true);assert.deepEqual(frozen.batches,q.batches);
++ }finally{fs.rmSync(d,{recursive:true,force:true});}
++});
++
++test('actual reply withholds a time-varying unfrozen preview and later reuses producer selection',async()=>{
++ const old=Date.now;Date.now=()=>Date.parse(T);try{
++ const x=input(),S=await loadScan({files:{'data/signals.json':x.signals,'data/earnings-recent.json':x.earnings,'data/events-recent.json':x.events,'data/quality.json':x.quality}});
++ const before=S.fn('opportunitiesText')(x.signals,false);assert.match(before,/awaiting producer-frozen batch/);
++ assert.doesNotMatch(before,/AAA \[INVESTIGATE|CCC \[INVESTIGATE/);
++ const q=frozenAssessmentQueue(x);S.write('data/discovery-journal.jsonl',assessmentCycleRows(q));
++ const first=S.fn('opportunitiesText')(x.signals,false);assert.match(first,/AAA \[INVESTIGATE/);
++ const original=S.read('data/discovery-journal.jsonl');Date.now=()=>Date.parse('2026-11-13T17:18:16Z');
++ const later=S.fn('opportunitiesText')(x.signals,false);assert.match(later,/AAA \[INVESTIGATE/);assert.match(later,/CCC \[INVESTIGATE/);
++ assert.equal(S.read('data/discovery-journal.jsonl'),original);
++ }finally{Date.now=old;process.chdir(root);}
++});
++
++test('actual scanner definition binds parameters, exits and implementation version without adopting the rule',async()=>{
++ const S=await loadScan();try{
++ const L=S.value('L'),v=L.VARIANTS.find(v=>v.fam==='cross'&&v.fast===10&&v.slow===30&&v.mult===1.5&&v.tp===3&&!v.mf&&!v.maxHold);
++ const build=variant=>S.fn('scannerAssessmentRule')({v:variant,tgt:null}),a=build(v);
++ assert.equal(a.definition.logicVersion,L.LOGIC_VERSION);assert.equal(a.definition.variantKey,L.vkey(v));
++ assert.equal(a.definition.variant.mult,1.5);assert.equal(a.definition.config.ATR,L.CFG.ATR);
++ assert.equal(a.definition.exitPolicy.modeled,'index.html#logic:followTrade/exitAt');
++ assert.deepEqual(build({...v}),a);assert.deepEqual(build(Object.fromEntries(Object.entries(v).reverse())),a);
++ const unTargeted={...v,tp:null};const t1=S.fn('scannerAssessmentRule')({v:unTargeted,tgt:{mode:'all',x:.1}}),t2=S.fn('scannerAssessmentRule')({v:unTargeted,tgt:{mode:'half',x:.1}});assert.notEqual(t1.ruleId,t2.ruleId);assert.equal(S.fn('scannerAssessmentRule')({v:unTargeted,tgt:{mode:'half',x:null}}),null);
++ for(const patch of [{mult:2},{tp:2},{mf:true},{maxHold:20},{fast:9,slow:21}])assert.notEqual(build({...v,...patch}).ruleId,a.ruleId);
++ const next=makeScannerAssessmentRule({...{logicVersion:L.LOGIC_VERSION+1,sourceHash:'f'.repeat(64),variant:v,config:L.CFG,ruleText:L.ruleText(v),variantKey:L.vkey(v)}});
++ assert.notEqual(next.ruleId,a.ruleId);assert.notEqual(next.ruleVersion,a.ruleVersion);
++ assert.equal(assessmentRuleIdentity({rule:L.ruleText(v)}).ruleIdentityState,'RULE_UNKEYED');
++ assert.equal(assessmentRuleIdentity({}).ruleIdentityState,'NO_ADOPTED_RULE_SUPPLIED');
++ assert.equal(assessmentRuleIdentity({rule:L.ruleText(v),assessmentRule:a}).ruleIdentityState,'IDENTIFIED');
++ const tampered=structuredClone(a);tampered.definition.variant.mult=2;
++ assert.equal(assessmentRuleIdentity({rule:L.ruleText(v),assessmentRule:tampered}).ruleIdentityState,'RULE_UNKEYED');
++ }finally{process.chdir(root);}
++});
++test('newly recorded rows join only exact rule/version/evidence and never retrofit legacy identities',async()=>{
++ const x=input(),oldClock=Date.now;Date.now=()=>Date.parse(T);try{
++ const S=await loadScan({files:{'data/signals.json':x.signals,'data/earnings-recent.json':x.earnings,'data/events-recent.json':x.events,'data/quality.json':x.quality}});
++ const L=S.value('L'),v=L.BASE,definition=S.fn('scannerAssessmentRule')({v,tgt:null});
++ x.signals.stocks[0]={sym:'AAA',state:'Buy watch',rule:L.ruleText(v),proven:false,assessmentRule:definition};
++ const q=frozenAssessmentQueue(x),a=assessmentJournalRows(q).find(r=>r.symbol==='AAA');
++ const out={assessmentId:a.id,evidenceVersion:a.evidenceVersion,ruleId:a.ruleId,ruleVersion:a.ruleVersion,horizon:a.horizon,status:'LOSS',economicBasis:'AUTHENTIC_EXECUTION',completeChain:true,controlVersion:'fixed-control-v1',reviewStatus:'INDEPENDENT_COMPLETE_CHAIN_REVIEWED',witnessId:'a'.repeat(64),netAfterCosts:-23};
++ assert.equal(linkAssessmentOutcomes([a],[out])[0].netAfterCosts,-23);
++ for(const patch of [{ruleId:'wrong'},{ruleVersion:'wrong'},{ruleVersion:undefined},{evidenceVersion:'wrong'},{assessmentId:'wrong'},{horizon:'LONG'}]){
++  const feedback=linkAssessmentOutcomes([a],[{...out,...patch}])[0];assert.match(feedback.status,/UNRESOLVED/);assert.equal(feedback.netAfterCosts,null);
++ }
++ assert.match(linkAssessmentOutcomes([a],[out,out])[0].status,/UNRESOLVED/);
++ const legacy={...a};delete legacy.ruleVersion;delete legacy.ruleIdentityState;delete legacy.ruleDefinition;
++ const original=JSON.stringify(legacy);assert.equal(linkAssessmentOutcomes([legacy],[out])[0].netAfterCosts,null);assert.equal(JSON.stringify(legacy),original);
++ const before=S.read('data/settings.json');S.write('data/signals.json',x.signals);S.write('data/discovery-journal.jsonl',assessmentCycleRows(q));
++ const replay=S.fn('researchAssessmentCycle')(x.signals);assert.equal(replay.queue.cycleKey,q.cycleKey);assert.equal(replay.queue.frozen,true);
++ const text=S.fn('opportunitiesText')(x.signals,false);assert.match(text,/AAA \[INVESTIGATE \/ WAIT; rule NOT PROVEN/);
++ assert.equal(S.read('data/settings.json'),before);
++ }finally{Date.now=oldClock;process.chdir(root);}
++});
++
++test('binding rollout preserves the pinned legacy cycle until real versioned inputs arrive',()=>{
++ const x=input();assert.equal(assessmentCycleKey(x),'3ec0fdfc4050ebcffc18bbf9531650e06a8b370a3db6027855af4fad556e9d01');
++ x.quality.generatedAt='2026-11-09T12:00:00Z';assert.equal(assessmentCycleKey(x),'3ec0fdfc4050ebcffc18bbf9531650e06a8b370a3db6027855af4fad556e9d01');
++ x.signals.ruleIdentityVersion='SCANNER_RULE_DEFINITION_V1:16:'+'a'.repeat(64);assert.notEqual(assessmentCycleKey(x),'3ec0fdfc4050ebcffc18bbf9531650e06a8b370a3db6027855af4fad556e9d01');
++});
+diff --git a/test/load-scan.mjs b/test/load-scan.mjs
+index b13b1bc8..5a59d19e 100644
+--- a/test/load-scan.mjs
++++ b/test/load-scan.mjs
+@@ -17,7 +17,7 @@ if (!globalThis.__scanTestFetchGuard) {
+ }
+ // one-time migrations in scan.mjs are marked done, so they never rewrite a fixture
+ const DONE = { stopPlan1018: '2026-10-18T00:00:00.000Z', stopRestore1022: '2026-10-22T00:00:00.000Z', tradesMig1022: '2026-10-22T00:00:00.000Z' };
+-const SECRETS = ['TG_TOKEN', 'TG_CHAT', 'TG_BASE', 'FH_BASE', 'TD_BASE', 'FINNHUB_KEY', 'ALPACA_KEY', 'ALPACA_SECRET', 'MASSIVE_KEY', 'FMP_KEY', 'ZOYA_KEY', 'PRIVATE_KEY', 'GITHUB_WORKFLOW'];
++const SECRETS = ['TG_TOKEN', 'TG_CHAT', 'TG_BASE', 'FH_BASE', 'TD_BASE', 'FINNHUB_KEY', 'ALPACA_KEY', 'ALPACA_SECRET', 'MASSIVE_KEY', 'FMP_KEY', 'ZOYA_KEY', 'PRIVATE_KEY', 'PRIVATE_DATA_TOKEN', 'GITHUB_REPOSITORY', 'GITHUB_REF_NAME', 'GITHUB_WORKFLOW','STOCK2_ENABLE_PAPER_ORDERS','ALPACA_BASE'];
+ let seq = 0; const DIRS = [];
+ process.on('exit', () => { process.chdir(os.tmpdir()); for (const d of DIRS) try { fs.rmSync(d, { recursive: true, force: true }); } catch (e) {} });
+ 
+@@ -29,24 +29,36 @@ export function writeFixture(dir, name, data) {
+ }
+ 
+ // files: { 'data/signals.json': {...}, 'data/my-trades.jsonl': [rows], ... }; settings are merged over the migration flags.
+-export async function loadScan({ files = {}, env = {} } = {}) {
+-  const src = fs.readFileSync(process.env.SCAN_SRC || path.join(REPO, 'scan.mjs'), 'utf8').trimEnd().split('\n');
++export async function loadScan({ files = {}, env = {}, root = REPO } = {}) {
++  const sourceRepo=path.resolve(root);
++  const src = fs.readFileSync(process.env.SCAN_SRC || path.join(sourceRepo, 'scan.mjs'), 'utf8').trimEnd().split('\n');
+   const last = src.pop(); if (!/^await \(MODE ===/.test(last)) throw new Error('scan.mjs no longer ends with its main call; update test/load-scan.mjs: ' + last.slice(0, 80));
+   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-test-')); DIRS.push(dir);
+-  fs.copyFileSync(path.join(REPO, 'index.html'), path.join(dir, 'index.html'));
+-  // (4 Nov) local modules scan.mjs imports statically (e.g. './stop-watch.mjs') are copied beside the copy, from the same tree
+-  const srcDir = path.dirname(process.env.SCAN_SRC ? path.resolve(process.env.SCAN_SRC) : path.join(REPO, 'scan.mjs'));
+-  for (const m of new Set([...src.join('\n').matchAll(/^import [^;]*? from '\.\/([\w.-]+\.mjs)';/gm)].map(x => x[1]))) { const f = fs.existsSync(path.join(srcDir, m)) ? path.join(srcDir, m) : path.join(REPO, m); fs.copyFileSync(f, path.join(dir, m)); }
++  // Copy the transitive local static-module closure, not a fragile seed list.
++  const copied=new Set();
++  const copyImports=(text,parent)=>{
++    for(const m of text.matchAll(/^import(?:\s+.+?\s+from)?\s*['"](\.[^'"]+\.mjs)['"]/gm)){
++      const file=path.resolve(parent,m[1]),relative=path.relative(sourceRepo,file);
++      if(relative.startsWith('..'+path.sep)||path.isAbsolute(relative))throw Error('fixture import escapes repository');
++      if(copied.has(file))continue;copied.add(file);
++      const body=fs.readFileSync(file,'utf8'),target=path.join(dir,relative);
++      fs.mkdirSync(path.dirname(target),{recursive:true});fs.writeFileSync(target,body);
++      copyImports(body,path.dirname(file));
++    }
++  };
++  copyImports(src.join('\n'),sourceRepo);
++  fs.copyFileSync(path.join(sourceRepo, 'index.html'), path.join(dir, 'index.html'));
+   fs.mkdirSync(path.join(dir, 'data'));
+   // a string is written as is (a test of a settings file that does not parse); an object is merged over the migration flags
+   const st0 = files['data/settings.json']; writeFixture(dir, 'data/settings.json', typeof st0 === 'string' ? st0 : { ...DONE, ...(st0 || {}) });
++  writeFixture(dir,'data/zad-list.json',{notHalal:[]}); // Explicit valid fixture, not production missing-file behavior.
+   for (const [k, v] of Object.entries(files)) if (k !== 'data/settings.json') writeFixture(dir, k, v);
+   const file = path.join(dir, 'scan-under-test-' + (++seq) + '.mjs');
+   fs.writeFileSync(file, src.join('\n') + '\nexport const __get = (name) => eval(name);\n');
+   for (const k of SECRETS) delete process.env[k];
+   Object.assign(process.env, { TWELVE_KEY: 'x', BOT_ONLY: '1', MODE: 'chat' }, env);
+   process.chdir(dir);
+-  const mod = await import(pathToFileURL(file).href);
++  let mod;try{mod=await import(pathToFileURL(file).href);}catch(error){process.chdir(REPO);throw error;}
+   const fn = (name) => { const f = mod.__get(name); if (typeof f !== 'function') throw new Error(name + ' is not a function in scan.mjs'); return f; };
+   return { dir, fn, value: (name) => mod.__get(name), write: (name, data) => writeFixture(dir, name, data), read: (name) => fs.readFileSync(path.join(dir, name), 'utf8'), readJson: (name) => JSON.parse(fs.readFileSync(path.join(dir, name), 'utf8')) };
+ }
 diff --git a/test/radar-issuer-scope.test.mjs b/test/radar-issuer-scope.test.mjs
 new file mode 100644
 index 00000000..35f195a8
@@ -414,7 +1503,7 @@ index f31bdfde..6589ddc9 100644
  const preload=path.join(dir,'fault.mjs');fs.writeFileSync(preload,`import fs from 'node:fs';if(process.argv[2]==='--append'){const boundary=${JSON.stringify(boundary)},fds=new Map(),open=fs.openSync,write=fs.writeFileSync,rename=fs.renameSync,unlink=fs.unlinkSync;fs.openSync=(p,...a)=>{const fd=open(p,...a);fds.set(fd,String(p));return fd;};fs.writeFileSync=(fd,b,...a)=>{const p=fds.get(fd)||String(fd);if(boundary==='intent'&&p.endsWith('.pending.json.tmp'))throw Error('injected intent');if(p.endsWith('radar-v3-ledger.jsonl')){if(boundary==='partial-append'){write(fd,Buffer.from(b).subarray(0,17),...a);process.kill(process.pid,'SIGKILL');}write(fd,b,...a);if(boundary==='after-append')throw Error('injected after append');return;}return write(fd,b,...a);};fs.renameSync=(a,b)=>{rename(a,b);if(boundary==='publish-intent'&&String(b).endsWith('.pending.json'))throw Error('injected published intent');};fs.unlinkSync=p=>{if(String(p).endsWith('.pending.json')){if(boundary==='before-unlink')throw Error('injected before unlink');unlink(p);if(boundary==='after-unlink')throw Error('injected after unlink');return;}return unlink(p);};}`);
  const env={PATH:process.env.PATH,IG_RADAR_RESERVED:'1'},first=await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env:{...env,NODE_OPTIONS:'--import='+preload}});assert.match(first.stdout,/"definitelyUnsent":true/,boundary);await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env});const file=path.join(dir,'data/radar-v3-ledger.jsonl');assert.equal(readRadarLedger(file).filter(x=>x.type==='list').length,1,boundary);const before=fs.readFileSync(file);await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env});assert.deepEqual(fs.readFileSync(file),before,boundary);
 diff --git a/test/radar-v3-core.test.mjs b/test/radar-v3-core.test.mjs
-index 9ab44886..6687eeca 100644
+index 9ab44886..f6d9a6d9 100644
 --- a/test/radar-v3-core.test.mjs
 +++ b/test/radar-v3-core.test.mjs
 @@ -6,7 +6,7 @@ import test from 'node:test';
@@ -426,28 +1515,50 @@ index 9ab44886..6687eeca 100644
    lottery: { JUMP: 0.5 }, record: { 'IG1/close': { n: 68, days: 8, avg: 0.021, stress: 0.012 }, 'IG5/close': { n: 60, days: 9, avg: -0.05, stress: -0.06 } }, lab: { 'IG1/close': { verdict: 'REJECTED' } } };
  const snap = (o = {}) => ({ day: '2026-10-28', at: '11:15', firstMinute: '09:26', scanned: 12700, live: 5400, alerts: 0, tally: { UNDER_1_USD: 3, GAPPED_AT_OPEN: 5 },
    movers: [{ sym: 'RUNR', code: 'GAPPED_AT_OPEN', maxUp: 0.6, firstSeen: '09:31', firstSeenUp: 0.5 }],
-@@ -39,9 +39,9 @@ test('silence reason picks the biggest code and its kind', () => { const t = top
+@@ -32,20 +32,20 @@ test('halal map: ZAD list fills in, a newer own mark wins, marks older than 90 d
+ });
+ test('closest rule names its history verdict and what is missing; a rejected rule is never called approvable', () => {
+   const c = closestRule(ctx.record, ctx.lab); assert.equal(c.rule, 'IG1'); assert.equal(c.history, 'REJECTED');
+-  assert.ok(c.missing.some(x => /REJECTED/.test(x))); assert.ok(c.missing.some(x => /2 more trading days/.test(x)));
++  assert.ok(c.missing.some(x => /REJECTED/.test(x))); assert.ok(!c.missing.some(x => /more trading days/.test(x))); // REJECTED cannot be repaired by waiting
+   assert.equal(closestRule({ 'IG5/close': { n: 60, days: 9, avg: -0.05 } }, {}), null);
+ });
+ test('silence reason picks the biggest code and its kind', () => { const t = topSilence({ UNDER_1_USD: 3, GAPPED_AT_OPEN: 5, ALERTED: 9 }); assert.equal(t.code, 'GAPPED_AT_OPEN'); assert.equal(t.kind, 'timing problem'); assert.equal(topSilence({}), null); });
  
  test('midday: labelled panels, hard blocks shown as BLOCKED never as leads, one line per stock, extended stocks left out', () => {
    const r = buildMidday(snap(), ctx), t = r.text;
 -  for (const p of ['A. LIVE RESEARCH LEADS (' + NOT_APPROVED, 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED, 'C. APPROVED SIGNALS: 0 so far today', 'D. RUNNERS SO FAR']) assert.ok(t.includes(p), p);
-+  for (const p of ['A. VERIFIED COMMON-STOCK RESEARCH LEADS (' + NOT_APPROVED, 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED, 'C. APPROVED SIGNALS: 0 so far today', 'D. OBSERVED INSTRUMENT MOVEMENTS']) assert.ok(t.includes(p), p);
++  for (const p of ['A. VERIFIED COMMON-STOCK RESEARCH LEADS (' + NOT_APPROVED, 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED, 'C. SIGNAL DELIVERY HISTORY: 0 watcher messages', 'D. OBSERVED INSTRUMENT MOVEMENTS']) assert.ok(t.includes(p), p);
    assert.match(t, /- GOOD: IG1 at 09:49 \$3\.10, now \$3\.40/); assert.equal((t.match(/- GOOD:/g) || []).length, 1);
 -  assert.match(t, /5-year test REJECTED/); assert.match(t, /halal \(your ZAD mark\)/);
 +  assert.match(t, /minute-bar history verdict REJECTED/); assert.match(t, /halal \(your ZAD mark\)/);
    assert.match(t, /- NEWSY \+4%.*HALAL UNKNOWN/); assert.match(t, /SEC 8-K contract/);
    assert.match(t, /BLOCKED by hard rules \(not leads\):.*BAD \(NOT HALAL/); assert.match(t, /DIL \(SEC danger filing: offering\)/); assert.match(t, /JUMP \(AVOID list/); assert.match(t, /PENNY \(under 1 USD\)/);
    assert.doesNotMatch(t, /- HOT /); assert.doesNotMatch(t, /- PENNY /); assert.doesNotMatch(t, /- BAD:/);
-@@ -54,7 +54,7 @@ test('midday: an empty day still says 0 approved, no leads, and why; a late watc
+-  assert.match(t, /Closest: IG1.*Missing: its 5-year history test \(REJECTED\)/); assert.match(t, /RUNR up to \+60%.*gapped up before the open/);
++  assert.match(t, /Closest: IG1.*Missing: its minute-bar history test \(REJECTED\)/); assert.match(t, /RUNR up to \+60%.*gapped up before the open/);
+   assert.match(t, /Top reason for silence: gapped up before the open \(5, timing problem\)/);
+   assert.doesNotMatch(t.split(NOT_APPROVED).join(''), /\bBUY\b/);   // the only BUY word is inside the label assert.doesNotMatch(t, /index fund/i);
+   assert.deepEqual(r.rows.map(x => x.panel + x.sym), ['BGOOD', 'ANEWSY']); assert.equal(r.rows[0].px, 3.4);
+@@ -54,9 +54,9 @@ test('midday: an empty day still says 0 approved, no leads, and why; a late watc
    const t = buildMidday(snap({ firstMinute: '11:10', hits: [], early: [], movers: [], tally: {} }), {}).text;
    assert.match(t, /WATCHER STARTED LATE today \(11:10\)/);
    assert.doesNotMatch(t, /NO MARKET DATA/);
 -  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Scanned 0 stocks \(5400/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. LIVE RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. APPROVED SIGNALS: 0 so far today\./);
-+  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Received 0 instruments \(0/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. VERIFIED COMMON-STOCK RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. APPROVED SIGNALS: 0 so far today/);
++  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Received 0 instruments \(0/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. VERIFIED COMMON-STOCK RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. SIGNAL DELIVERY HISTORY: 0 watcher messages/);
  });
- test('midday: tested alerts are counted as approved', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. APPROVED SIGNALS: 2 tested alerts sent today/));
+-test('midday: tested alerts are counted as approved', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. APPROVED SIGNALS: 2 tested alerts sent today/));
++test('midday: tested alerts are counted as approved', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. SIGNAL DELIVERY HISTORY: 2 watcher messages/));
  
-@@ -76,7 +76,7 @@ test('after the close: scores today, lists missed runners with reasons, says whe
+ test('scorecard: same-day net after costs vs the market; 5-session net vs SPY', () => {
+   const L = [{ type: 'list', d: '2026-10-28', panel: 'A', sym: 'X', px: 10 }, { type: 'close', d: '2026-10-28', sym: 'X', px: 11, mkt: 0.01 },
+@@ -71,12 +71,12 @@ test('after the close: scores today, lists missed runners with reasons, says whe
+   const t = buildClose('2026-10-28', live, L, {});
+   assert.match(t, /- A X: \$10\.00 to \$11\.00, net \+9\.1% \(\+8\.1% vs the average stock\)/); assert.doesNotMatch(t, /- OPENZ/); assert.match(t, /\+1 under 1 USD, mostly warrants/); assert.match(t, /- BRAI up to \+95% \(first seen 09:49 at \+47%; \+28% from there to 15:00\): a rule caught it/);
+   assert.match(t, /MSGR up to \+1290% \(LIKELY A SPLIT OR DATA ERROR/); assert.match(t, /Top reason for silence today: under 1 USD \(4 of 4 movers/);
+-  assert.match(t, /C\. APPROVED SIGNALS today: 0/); assert.match(t, /RADAR SCORECARD \(1 session; verdict after 10\)/);
++  assert.match(t, /C\. SIGNAL DELIVERY HISTORY today: 0/); assert.match(t, /RADAR SCORECARD \(1 session; verdict after 10\)/);
+   assert.match(buildClose('2026-10-29', live, [], {}), /saved no results for today/);
  });
  
  test('(28 Oct fix) with the live SEC check in the snapshot: a share-sale filing or a failed / missing check blocks a lead; the live catalyst is shown', () => {
@@ -513,3 +1624,22 @@ index 00000000..eb50c287
 +import test from 'node:test';import assert from 'node:assert/strict';import http from 'node:http';import {loadScan,blocked} from './load-scan.mjs';
 +const bars=[];for(let d=new Date('2023-01-01T00:00:00Z');d<=new Date('2026-11-10T00:00:00Z');d.setUTCDate(d.getUTCDate()+1))if(![0,6].includes(d.getUTCDay()))bars.push({datetime:d.toISOString().slice(0,10),open:'10',high:'10.1',low:'9.9',close:'10',volume:'1000000'});
 +for(const n of [500,599,600])test('actual nightly preserves '+n+'-bar requested company visibility without a new entry rule',async()=>{const server=http.createServer((req,res)=>{res.setHeader('content-type','application/json');const u=new URL(req.url,'http://local');res.end(JSON.stringify(u.pathname==='/time_series'?{status:'ok',values:bars.slice(u.searchParams.get('symbol')==='SNDK'?-n:-850)}:{}));});await new Promise(r=>server.listen(0,'127.0.0.1',r));try{const s=await loadScan({env:{TD_BASE:'http://127.0.0.1:'+server.address().port,NO_CROWD:'1',RATE:'10000',FORCE:'1',NO_WIDE:'1'},files:{'data/watch-extra.json':['SNDK']}});s.value('LIST').splice(0,s.value('LIST').length,'SPY','SNDK');await s.fn('daily')();const result=s.readJson('data/signals.json'),r=result.stocks.find(x=>x.sym==='SNDK');assert.ok(r);if(n<600){assert.equal(r.availableBars,n);assert.equal(r.requiredBars,600);assert.equal(r.readiness,'INSUFFICIENT_TESTED_HISTORY');assert.equal(r.proven,false);assert.equal(r.trigger,null);assert.equal(r.rule,null);assert.equal(r.state,'No action');assert.equal(r.halal,'unknown');assert.equal(result.diagnosticCount,1);assert.equal(s.fn('universe')(result).some(x=>x.sym==='SNDK'),false);const check=s.fn('checkOne')('SNDK',result);assert.match(check,/existing tested-entry path requires 600/);assert.doesNotMatch(check,/NaN|Rule: null|did not pass/);const live=await s.fn('natural')('what about SNDK',result,{});assert.match(live,/analysed now from/);assert.match(live,new RegExp('This response contains '+n+'/600 completed daily bars'));assert.match(live,/not a strategy rejection or a test of every other lane/);assert.doesNotMatch(live,/NaN|Rule: null|did not pass/);}else assert.notEqual(r.readiness,'INSUFFICIENT_TESTED_HISTORY');assert.equal(blocked.length,0);assert.deepEqual(result.errors,[]);}finally{server.closeAllConnections();server.close();}});
+diff --git a/tools/assessment-primary-examples.mjs b/tools/assessment-primary-examples.mjs
+new file mode 100644
+index 00000000..8e249eca
+--- /dev/null
++++ b/tools/assessment-primary-examples.mjs
+@@ -0,0 +1,13 @@
++// Reuse actual existing assessment caller with exact retained data; no provider or production writes.
++import fs from 'node:fs';import path from 'node:path';import {execFileSync}from'node:child_process';import {createHash}from'node:crypto';import {loadScan,blocked}from'../test/load-scan.mjs';
++const root=process.cwd(),ref='406daae866aae922a7be985a87261244db63623c',cutoff='2026-11-11T18:30:00Z',files={},hashes={};
++for(const name of ['signals.json','discovery.json','events-recent.json','earnings-recent.json','horizons.json','quality.json','zad-list.json','halal.json','names.json']){
++ const b=execFileSync('git',['show',ref+':data/'+name],{maxBuffer:16*1024*1024});hashes[name]=createHash('sha256').update(b).digest('hex');files['data/'+name]=JSON.parse(b);
++}
++files['data/company-investigations.json']=JSON.parse(fs.readFileSync('data/company-investigations.json'));
++const original=Date.now;Date.now=()=>Date.parse(cutoff);
++try{const s=await loadScan({files});const symbols=['FOSL','CRWV','AXTI','SNDK','MPWR'],records=symbols.map(symbol=>({symbol,detail:s.fn('assessmentContext')(symbol,files['data/signals.json'],{},'INVESTIGATE / WAIT: retained evidence only; no current entry granted')}));
++ if(blocked.length)throw Error('unexpected network attempt');
++ const result={label:'RETAINED_INPUT_DEMONSTRATION_NOT_CURRENT_RECOMMENDATIONS',callerSource:'passed5ba1606d with separate primary-context delta',retainedRef:ref,cutoff,meaning:'Cutoff is replay time, not historical detection. No position/trade/message/private account inputs loaded.',sourceHashes:hashes,records,externalRequests:0,productionWrites:0};
++ process.chdir(root);fs.writeFileSync(path.join(root,'docs/assessment-primary-join-20261111/EXAMPLES.json'),JSON.stringify(result,null,2)+'\n');console.log(JSON.stringify({symbols,externalRequests:0,productionWrites:0}));
++}finally{Date.now=original;process.chdir(root);}
