@@ -9,7 +9,7 @@
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
-    "docs/a-native-source-join/manifest.json": "d6d2cd36cfa71d7099046be1df6ed5eca9225661ddd363e09d16d012effae3fe",
+    "docs/a-native-source-join/manifest.json": "4529c898adf279173b1c213f708f2e2a93272566742f372d12a8464c69db6d4e",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
     "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
@@ -201,15 +201,21 @@
   },
   "systemRepairDependencyRepin": {
     "historicalManifestAt": "a4976e0270a41bd0eb5292b153ed819a60aaac37",
-    "reviewStatus": "FOCUSED_REVIEW_REQUIRED",
     "changed": [
       {
         "path": "ignition-watch.mjs",
         "before": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
         "after": "46e5b623bc21bf815900ec2ad0df1b30a301209da0dd9f830bde1718081d1a8a",
         "reason": "Current development dependency repin for reviewed radar issuer/scope and partial archive correction; no frozen strategy/firstRun/rule change"
+      },
+      {
+        "path": "docs/a-native-source-join/manifest.json",
+        "before": "d6d2cd36cfa71d7099046be1df6ed5eca9225661ddd363e09d16d012effae3fe",
+        "after": "4529c898adf279173b1c213f708f2e2a93272566742f372d12a8464c69db6d4e",
+        "reason": "Explicit current dependency repin; original package remains at a497; no strategy, acquisition, caps, authority, deadlines or assertions relaxed"
       }
     ],
+    "reviewStatus": "FOCUSED_REVIEW_REQUIRED",
     "olderPublishedPinsRemainHistorical": true
   }
 }

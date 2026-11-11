@@ -18,7 +18,7 @@ test('[CURRENT POLICY] radar panels A and B are labelled NOT AN APPROVED BUY and
   const RC = await mod('radar-v3-core.mjs'), { ctx, snap } = await lift('test/radar-v3-core.test.mjs', ['ctx', 'snap']);
   const t = RC.buildMidday(snap(), ctx).text;
   assert.match(t, /B\. SHORT SETUPS \(PAPER, NOT AN APPROVED BUY\)/);
-  assert.match(t, /A\. LIVE RESEARCH LEADS \(NOT AN APPROVED BUY\)/);
+  assert.match(t, /A\. VERIFIED COMMON-STOCK RESEARCH LEADS \(NOT AN APPROVED BUY\)/);
   for (const s of ['BAD', 'DIL', 'JUMP']) assert.doesNotMatch(t.split('BLOCKED by hard rules')[0], new RegExp('^- ' + s + '\\b', 'm'), s + ' must not be a lead');
   assert.match(t, /BLOCKED by hard rules \(not leads\):/);
   assert.match(t, /history (?:test |verdict )?REJECTED/, 'a rejected rule shows its verdict next to its paper record');

@@ -81,12 +81,14 @@ export const CONTRACTS={
 };
 
 const hostRe=/https?:\/\/([a-z0-9.\-]+\.(?:com|io|gov|org|markets|net|co))(?=[\/'"`?\s)]|$)/gi;
+// Reviewed instrument exclusions carry citations, not fetch endpoints. Scope by file and host.
+const INSTRUMENT_CITATIONS=new Set(['amplifyetfs.com','leverageshares.com','www.cboe.com','www.tradretfs.com','www.txse.com']);
 export function buildMatrix(root=ROOT){
  const files=execFileSync('git',['ls-files','*.mjs'],{cwd:root,encoding:'utf8'}).split('\n').filter(f=>f&&!/^(test|tests|docs)\//.test(f));
  const pairs=[];
  for(const file of files){const src=fs.readFileSync(path.join(root,file),'utf8'),hosts=new Set();for(const m of src.matchAll(hostRe))hosts.add(m[1].toLowerCase());
   for(const host of [...hosts].sort()){
-   const kind=OPS.has(host)?'OPS':REFERENCE.test(host)?'REFERENCE_ONLY':PROVIDER[host]?'PROVIDER':'UNCLASSIFIED';
+   const kind=OPS.has(host)?'OPS':(REFERENCE.test(host)||(file==='instrument-type.mjs'&&INSTRUMENT_CITATIONS.has(host)))?'REFERENCE_ONLY':PROVIDER[host]?'PROVIDER':'UNCLASSIFIED';
    if(kind!=='PROVIDER'){pairs.push({file,host,kind});continue;}
    const provider=PROVIDER[host],role=roleOf(file),contract=CONTRACTS[file+'|'+provider]||null;
    pairs.push({file,host,kind,provider,role,contract:contract||(role==='FROZEN_RESEARCH_PRODUCER'?'OUT_OF_SCOPE_FROZEN_INPUTS':role==='DIAGNOSTIC_TOOL'?'DIAGNOSTIC_NOT_A_DECISION_PATH':'NOT_REVIEWED')});}

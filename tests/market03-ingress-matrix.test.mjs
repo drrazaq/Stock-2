@@ -18,3 +18,7 @@ test('inactive A adapters are explicit partial contracts, never frozen-input or 
  for(const file of ['a-authenticated-collector.mjs','a-sip-window-client.mjs']){const rows=buildMatrix(root).pairs.filter(p=>p.file===file&&p.kind==='PROVIDER');assert.equal(rows.length,1);assert.equal(rows[0].role,'INACTIVE_RESEARCH_ADAPTER');assert.equal(rows[0].contract.identity,'P');assert.equal(rows[0].contract.units,'P');}
  assert.equal(buildMatrix(root).pairs.find(p=>p.file==='a-sip-window-client.mjs'&&p.host==='docs.alpaca.markets').kind,'REFERENCE_ONLY');
 });
+
+test('instrument exclusion citations are reference-only, not acquisition endpoints',()=>{
+ const rows=buildMatrix(root).pairs.filter(p=>p.file==='instrument-type.mjs');assert.equal(rows.length,5);assert.ok(rows.every(p=>p.kind==='REFERENCE_ONLY'));
+});

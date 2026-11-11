@@ -22,7 +22,7 @@ test('B01/D15 the actual midday footer never reclassifies a legacy count as appr
  const out=buildMidday(snap,{record:{},lab:{}}).text;
  assert.match(out,/Legacy unsplit total: 9/);assert.match(out,/breakdown UNKNOWN/);
  assert.doesNotMatch(out,/Approved:\s*9|APPROVED SIGNALS|9 approved|9 tested alerts sent/i);
- assert.match(out,/10 stocks \(8 with a fresh price\)/);
+ assert.match(out,/10 instruments \(8 with a fresh price\)/);
 });
 test('X03/B12 actual close guidance does not promote cached history or paper outcomes to tested buys',()=>{
  const out=buildClose('2026-10-30',{day:'2026-10-30',alerts:9},[],{});
