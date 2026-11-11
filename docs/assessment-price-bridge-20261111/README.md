@@ -1,0 +1,25 @@
+# A: retained quote → actual assessment reader, development only
+
+Base1133190e; no main/Stage1/Stage2/113 edits, provider requests, collection or production publication. The new reader only reads an explicitly pinned manifest and existing private normalized archives. No default quote source or network. The original signals/trade inputs and admission logic stay unchanged. New on-demand rows now retain scannerAssessmentRule(Lr), already used by the nightly producer; old rows are never rewritten.
+
+## Inspected archives, not presumed data
+
+Fresh source snapshot923f4ac3.22canonical/per-run shadow archives,41,321rows across11sessions Oct28–Nov11,7,741ticker labels. Both canonical and run copies are counted as archive rows, not independent observations. Selected50names:46have any legacy shadow row;24haveNov11legacy rows. Absolute quote timestamps, quote receipt clocks and displayed sizes are absent. Legacy bid/ask+rounded qAgeSec+NYminute do not reconstruct exact quote/receipt times. instrumentRecordedAt timestamps identity recording, NOT quote receipt. All2,040Nov11canonical candidate identities areUNKNOWN. No modern.paper-quotes archive is retained, and production lacks that producer. Full per-file hashes/size/session/field counts are in archive-inventory.json, no raw provider values are republished.
+
+Current joins:0/50, unknown identity50/50 under the authenticated join contract;6knownproducts separatelyexcluded. Missing acceptable retained archive50/50; NOT50softwarejoinerrors. Legacy same-day presence24/50 does not cure missing clocks/size/identity. November10closes remain daily references, not current quotes. Source snapshot is contemporaneous inspection, not a reconstruction of originally known data.
+
+Development's existing research-quote-followups producer (not deployed) records bid/ask, absolutequoteAsOf/at receipt, source/feed/securityId and nullable size fields. It has no quoteconditions/adjustment basis, and source metadata is explicitly UNVERIFIED. More importantly, current snapshot normalization does not retain size fields. New reader never invents them or promotes shape-only identity evidence. Existing file is written at run completion; this join does not create a live publication channel, record more quotes or authorize moving licensed raw files into public Git. Near-current availability remains a separate actual data/publication dependency.
+
+## Exact join contract
+
+The externally configured ASSESSMENT_QUOTE_MANIFEST + SHA256 pin names at most8existing archives and a reviewed issuer/security identity document, under the manifest's private directory. Compressed≤4MiB each, decompressed≤16MiB each, total≤32MiB;≤30,000quote rows/identity records, bounded manifest128KiB. Symlinks/path escapes/hash mismatch/malformed/legacy schema failUNKNOWN. Review records attest origin/issuer mapping; hashes alone never authenticate source. Approved producer SHAs are explicit; changing a live writer, capture, transport or private publication needs its own review/authority.
+
+Current context requires regular NY session (halfday/DST aware), same session for quote andreceipt, providerquote≤receipt≤now, quote-at-receipt age≤120s, receiptage≤120s, totalquoteage≤120s. Identity was reviewed/known before quote, valid then andnow, one securityId/issuerCIK/common-stock class; quote securityId must match. Provider/feed and reviewed normalized archive source are explicit. Missing identity/provenance yieldsUNKNOWN, not ticker fallback. Conflicting latest quotes failUNKNOWN.
+
+A valid observed BBO may be PARTIAL when size/conditions/adjustment basis are missing. Present size fields remain displayed liquidity, never fill capacity; missing quote conditions remainUNKNOWN. The separately retained trade print/daily close/rule input is not replaced by a quote or midpoint. No quote-derived HOLD/stop/BUY claim, no fill, no historical backfill and no entry approval. Plain words are rendered through actualassessmentContext; absent configuration leaves current production behavior unknown/unchanged.
+
+## Rule-key root cause (not repaired by today's text)
+
+In all25RULE_UNKEYEDsample rows, the retained Nov10signals stock has rule text but no assessmentRule definition/version. The actual historical production nightly scanner did not emit that field. The113development nightly producer already DOES, at its actual learned-row construction. It cannot retroactively supply the exact old variant/source/config/target overlay; matching current rule text is insufficient. Separately, on-demandcheckLive in113 dropped the binding when it created assessmentRow from an actual new Lr; this bounded delta adds scannerAssessmentRule(Lr) there. Actual-caller fixture confirms IDENTIFIED on that NEW row and unchanged legacy signals bytes. No historical ID inferred.
+
+The other25NO_ADOPTED_RULE_SUPPLIED names have no stored scanner rule row/definition at all in the retained signals input. This is not a dropped key; a fundamentally interesting issuer/product/lead is not an adopted trading rule. No new rule is introduced. Pure history visibility and unrelated mid/long rules remain separate.
