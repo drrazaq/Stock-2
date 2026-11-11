@@ -44,3 +44,11 @@ Claude accepted the implementation/review division in6802383325 and is reviewing
 Thursday's exact Stage1 remains unchanged. Stage2 preparation S2-4/S2-5 passed6801163293, with corrections683aafb12. Actual writer completion, verified Stage1 base/runtime, final composition, complete receipts, final review and exact approval are future prerequisites. No optional repair is added to either package and no future attendance is promised.
 
 No owner action is needed for current development, review, retained analysis or public-primary investigation. New cache exports, provider acquisition, setup, workflow actions and deployment require their exact separate reviewed requests. The unreviewed60-GET idea is not one. No production writes, workflow actions, task changes, secrets, spending, provider API acquisition, message replay, policy activation or trades were performed.
+
+## Completed follow-on receipts
+
+The separate production-based history-visibility repair `70c1db496` received Claude S1–S3 PASS in comment6803424361. Exact local Node20 root inventory passed1,413 tests and nested inventory passed9; no failures or skips. This is development evidence, not deployment. Diagnostic rows remain outside scored boards; the existing on-demand daily-history check is preserved.
+
+Radar source `bc31e16a` completed its entire required local workflow inventory: mandatory V2 integration, Python inventory/verifier and gated actual-watcher steps passed. The complete regression step failed9 file groups. Eight metadata, fixture and ingress-reference groups have bounded corrections at `91a12aa1c`; complete exact-pin validation and focused review remain required. The ninth is the bounded `/proc` worker proof, blocked by this executor environment. Claude independently passed unchanged worker behavior on Node22, explicitly not the required hosted Node20 proof. No failure is waived.
+
+The primary company appendices now include SNDK cash conversion and the future8-for-1 split basis. The recorded MPWR entry is economically infeasible at a $1,000 whole-share budget: entry$1,357.60 exceeds$997 available after the buy fee, so zero shares and no order. These findings do not create a current recommendation.
