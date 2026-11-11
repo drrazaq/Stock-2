@@ -1,0 +1,15 @@
+# One setup-only approval request — reviewed, not executed
+
+Independent route/hash/source review: PR1 comments6807300522 and6807310338. Final public payload at40ab886f; raw-object witness added36a49109 without changing any payload byte. All8file fingerprints: payload.manifest.json; independent deterministic binding: install-binding.json.
+
+**Proposed approval wording:**
+
+> Approve setup-only installation of the reviewed eight new source files into drrazaq/Stock-2-research-private by Codex through the existing Git connection: one ordinary non-force push of commit6c4f3c3436788571dfbacfc51a9b3baaf33e6c83, parentf39f28196e7c443313190fd8b79b7fd3efc067b0, resulting tree72a968bc82d2dc8c592a835213192cdec482e096. Preserve all14existing S1files; total22files. Actions remains disabled. No keys/secrets, settings/permissions, workflow runs, rehearsal, capture, recovery upload, deletion or other repository changes are authorized. Read-only verification is limited to12GETs; source transfer≤2MiB. Stop without retry/rebase if fresh head differs, push is rejected/UNKNOWN, file permission fails or readback mismatches. I will confirm the exact commit SHA and parent read-only on the normal private GitHub commit page.
+
+This authorizes only a proposed future source append after approval and fresh readiness; it grants no future unattended attendance. Existing private/public repositories and all App selections remain unchanged. No production credential is read/changed, no new key/account is made and no provider or production action occurs.
+
+Before the single push, Codex reconfirms actual tool availability, exact remote f39head, prepared commit hash/tree/parent and payload bytes. Git has accepted only this exact parent-child fast-forward graph; no force flag or second push. Server refusal for workflow-file permission is an explicit possible STOP, not permission to change a grant. Git-mutation/admin/Actions/settings/secrets APIs are not used.
+
+After the attempt, bounded read-only remote reconciliation records SHA, tree, parent and all8new/original14blob checks. Owner's browser-observed COMMIT SHA/parent matches the independently calculated hash; it does not rely on finding a tree SHA in the UI. Codex's readback is the second receipt; Claude has no direct private read and that limitation is explicit. On UNKNOWN, readback may establish published, not published or conflicting; no blind resend. No automatic reversal, deletion, history rewrite or data cleanup is authorized.
+
+**Remaining stages are NOT approved by this wording.** Enrollment of existing Massive key and monitoredSEC_UA (two private secret names), Actions enablement/synthetic rehearsal, one15GETcapture, owner-held recovery upload and distinct-runner verification each need separate approval. $0controls/headroom must be demonstrated before any billable phase; current budget screenshots alone are not proof. Fixed author/committer date is preparation metadata, not installation time; actual receipt records the real observed installation time separately.
