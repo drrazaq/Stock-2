@@ -23,7 +23,7 @@ import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot, validateClocks } fr
 import { sendAlert } from './opp-mode.mjs';
 import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
 import { stopHits } from './stop-watch.mjs';
-import { createEarlyAlerts, alertLevel, classifyCatalyst } from './early-alerts.mjs';
+import { createEarlyAlerts, alertLevel, classifyCatalyst, publicCatalystSummary } from './early-alerts.mjs';
 import { createShadow, spreadPct } from './shadow-stream.mjs';
 import { parseAtom, nyMinuteOf } from './edgar-feed.mjs';
 import { dEligible, hash, FROZEN as RANK } from './rank-models.mjs';
@@ -131,10 +131,10 @@ async function secRiskIssuer(sym) {
   const H = { headers: { 'User-Agent': SEC_UA, 'Accept': 'application/json' } };
   try { if (!TICK) { const r = await request(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
     const cik = TICK[sym]; if (!cik) return {known:false,tags:[],status:'NO_ISSUER_RECORD',sourceFailure:false};
-    const r = await request(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
+    const r = await request(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const issuer = await r.json(), R = issuer.filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
     for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null, accession: (R.accessionNumber || [])[k] || null, url: (R.accessionNumber || [])[k] && (R.primaryDocument || [])[k] ? 'https://www.sec.gov/Archives/edgar/data/' + Number(cik) + '/' + R.accessionNumber[k].replace(/-/g, '') + '/' + encodeURIComponent(R.primaryDocument[k]) : null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
       if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) {const acc=String((R.accessionNumber||[])[k]||''),valid=/^\d{10}-\d{2}-\d{6}$/.test(acc);blockingFilings.push({form:f,filingDate:R.filingDate[k],accession:valid?acc:null,acceptedAt:(R.acceptanceDateTime||[])[k]||null,indexUrl:valid?'https://www.sec.gov/Archives/edgar/data/'+Number(cik)+'/'+acc.replace(/-/g,'')+'/'+acc+'-index.html':null,economicClassification:'UNREVIEWED',blockUnchanged:true});tags.add('registration/prospectus ('+f+'); economic classification UNREVIEWED');} if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
-    return {known:true,tags:[...tags],filings,blockingFilings,status:'SEC_KNOWN',sourceFailure:false}; } catch (e) { return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } }
+    return {known:true,symbol:sym,issuerName:issuer.name||null,tags:[...tags],filings,blockingFilings,status:'SEC_KNOWN',sourceFailure:false}; } catch (e) { return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } }
 async function secRisk(sym) { return instrumentAwareSec(sym,secRiskIssuer,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256}); }
 // headlines (Finnhub company news, the owner's existing key; official API): only for the few stocks an early alert is about to name
 async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no FINNHUB_KEY' };
@@ -210,7 +210,7 @@ async function tgSend(text) {
 }
 const INSTRUMENT_COHORT=env.IG_INSTRUMENT_REFERENCE_FILE?'INSTRUMENT_CLASSIFIED_V2:'+(env.IG_INSTRUMENT_REFERENCE_SHA256||'UNPINNED'):'LEGACY_FROZEN_20261028';
 const EA = createEarlyAlerts({ day, collectionCohort:INSTRUMENT_COHORT, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
-  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
+  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ symbol:sym,issuerName:sec?.issuerName, sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
 const SR = createShadow({ day });
 const shadowRows=SR.rows.bind(SR); SR.rows=()=>shadowRows().map(row=>({...row,instrument:row.instrument||{status:'UNKNOWN',reason:'LEGACY_OBSERVATION_IDENTITY_UNESTABLISHED'},performanceScope:'LEGACY_MIXED_INSTRUMENT_RESEARCH',approvedBuyEligible:false}));
 for(const method of ['early','trigger','filing','control']){const original=SR[method].bind(SR);SR[method]=(...args)=>{original(...args);const row=SR.book.get(args[0].sym);if(row&&!row.instrument){row.instrument=EA.S.sec[row.sym]?.instrument||readInstrumentType(row.sym,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256});row.instrumentRecordedAt=new Date().toISOString();row.collectionVersion='WATCHER_CONTEXT_V2';row.rankingCohort=INSTRUMENT_COHORT;}};}
@@ -276,11 +276,11 @@ async function radarSnap(m, scanned, live) {
   RADAR.mkt = medChg();
   // (28 Oct fix) the live SEC check for every stock the radar may name (cached by the alert system when it already ran); a lead needs it
   const sec = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)])) { if (!EA.S.sec[s]) EA.S.sec[s] = await secRisk(s).catch(() => ({ known: false, tags: [] })); sec[s] = { known: EA.S.sec[s].known, tags: EA.S.sec[s].tags || [],instrument:EA.S.sec[s].instrument||{status:'UNKNOWN'},status:EA.S.sec[s].status,sourceFailure:EA.S.sec[s].sourceFailure===true }; }
-  const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catText) cat[r.sym] = r.catText;
+  const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catObj) cat[r.sym] = publicCatalystSummary(r.catObj);
   { let nq = 0; for (const s of [...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)]) { if (cat[s] || !sec[s] || !sec[s].known || sec[s].tags.length) continue;   // the radar's own catalyst check for names it may list
-      const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = classifyCatalyst({ sec: EA.S.sec[s], news, nowMs: Date.now() }).text; } }
+      const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = publicCatalystSummary(classifyCatalyst({ symbol:s,issuerName:EA.S.sec[s]?.issuerName, sec: EA.S.sec[s], news, nowMs: Date.now() })); } }
   fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, mkt: RADAR.mkt, tally: tl, sec, cat,
-    movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
+    moverCount: ms.length, movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
   await sendRadarOnce();
 }
 const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
