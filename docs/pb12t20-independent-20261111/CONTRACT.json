@@ -1,0 +1,16 @@
+{
+  "sourceRef": "406daae866aae922a7be985a87261244db63623c",
+  "primary": "REPLAY-PB12T20",
+  "frozenRegistration": "2026-10-27; account-replay-core SECOND REPLAY",
+  "pins": {
+    "account-replay-core.mjs": "99fcc18b0fbbd51b1c8ea29f8747c34ab43c46f1d3c8465c4f07075e29903141",
+    "account-replay-lab.mjs": "1902ee1d8044341838c2741a8022fc8f8b2668b948c1d62fa2f100a4cbe5c6f4",
+    "data/account-replay-pb12t20.json": "0389cd1cf9c50044434a9506045bc100010ab43401710f7540ec0c7b97fe4b53",
+    "data/account-replay-pb12t20-trades.jsonl": "b016bf28f7b645335cf99efe1f4ebef6a0698ef48c8887fd54d4339dcbdf7f82",
+    "data/agent-a-ldx-lab.json": "f83915c815401a94de57c61e0c51a68aa45b70e68ad44fa445b413e7af1c85d0"
+  },
+  "scope": "All retained original primary windows, independently and without pooling overlapping windows. Original signals/20pct target/no stop/126-session expiry/three1000USDslots unchanged. Related variants retained as information, no selection.",
+  "costs": "$3 per executed side, whole shares,1000 budget including buy fee. Fixed quote-cost sensitivity0/10/25/50bps per side; assumptions NOT observed spreads/slippage. Unsold final marks have no sell commission.",
+  "method": "Reconcile all427 rows and original summaries. Recalculate conditional retained selected trades only at original px0/px1 with fixed shares and separately fee-reserved share sizing. Do not claim full account rerun if changed costs alter cash/slots/rule-off or if unselected candidates and daily marks absent. Wilson95pct intervals; concentration, losses, open positions, original year/drawdown/time/order sensitivity.",
+  "terminal": "Original preregistered both-halves70pct wins + beatSPY cannot be replaced by attractive per-trade mean. Separate modeled economics from executable performance; no new filters or exits."
+}
