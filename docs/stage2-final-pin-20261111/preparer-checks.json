@@ -1,0 +1,57 @@
+{
+  "status": "PREPARATION_CONTROL_PASS_NOT_FUTURE_SOURCE_TEST",
+  "noRefChanges": true,
+  "cases": [
+    {
+      "case": "actual current main is not installed Stage1",
+      "result": "EXPECTED_STOP",
+      "why": "actual Stage1 identity absent/drifted; NEVER overlay it: .github/merge-alert-state.mjs,market-session.mjs,premarket-check.mjs,scan.mjs,test/alert-merge-compatibility.test.mjs,test/bot-commands.test.mjs,test/premarket-feed.test.mjs,test/premarket-standalone-evidence.test.mjs,test/recovery-floor.test.mjs"
+    },
+    {
+      "case": "EXISTING hypothetical Stage1 object ONLY; not future final pin",
+      "result": "COMPOSITION_PROOF_PASS",
+      "tree": "07d02433c7dd8b0dfb889bd093a18168e72b9bd5",
+      "localCandidateCreated": false
+    },
+    {
+      "case": "known subsequent data-only heads",
+      "result": "PASS",
+      "audit": {
+        "status": "CLEAR_DATA_ONLY_OR_IDENTICAL_NOT_WRITE_ADMISSION",
+        "finalParent": "10a25bf67c506894a9da74d2ef0cab6aec75d169",
+        "currentMain": "d276bbcb1c23923255f976f2f9e2aa06857c7c34",
+        "nonDataCommits": [],
+        "note": "All entries count, even a later revert restoring identical leaves. Actual writer/census/presence gates remain external."
+      }
+    },
+    {
+      "case": "known source writer4933429a",
+      "result": "EXPECTED_STOP",
+      "audit": {
+        "status": "STOP_NONDATA_SINCE_FINAL",
+        "finalParent": "58c56cad6de7a646abb2ef62fda0cca40e45e7f1",
+        "currentMain": "d276bbcb1c23923255f976f2f9e2aa06857c7c34",
+        "nonDataCommits": [
+          {
+            "sha": "4933429a9dab643200736c6c912067dbd5ca45ed",
+            "committerAt": "2026-11-11T08:56:58Z",
+            "nonDataPaths": [
+              ".github/workflows/research-lab.yml",
+              "research-core.mjs",
+              "research-lab.mjs",
+              "run-research-now.txt",
+              "test/research-core.test.mjs",
+              "test/research-svol.test.mjs",
+              "test/research-tender.test.mjs"
+            ]
+          }
+        ],
+        "note": "All entries count, even a later revert restoring identical leaves. Actual writer/census/presence gates remain external."
+      }
+    },
+    {
+      "case": "mutable ref rejected",
+      "result": "EXPECTED_STOP"
+    }
+  ]
+}
