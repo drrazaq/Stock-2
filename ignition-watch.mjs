@@ -331,9 +331,14 @@ process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
 saveObservationProgress();
 while (Date.now() - RUN_START < MAXMS) {
   MESSAGE_STATE.maintain();
-  const m = clock(); if (m > SEGMENT_END || (m===SEGMENT_END && SEGMENT_END<SESSION.close)) break; // Include one close-boundary scan; do not count it as an extra regular minute. if (m < 568) { await sleep(30000); continue; }
+  let m = clock(); if (m > SEGMENT_END || (m===SEGMENT_END && SEGMENT_END<SESSION.close)) break; // Close-boundary scan is context, never an extra regular minute.
+  if (m < 568) { await sleep(30000); continue; }
   const cycleStart=Date.now();requests.length=0;discoveryLive.length=0;
-  const rows = await snap(); loops++; const tStart = triggers.length;
+  const rows = await snap(); const receivedMinute=clock(); loops++;
+  // Attribute observation to receipt, never an earlier minute whose fetch crossed a boundary.
+  if(receivedMinute!==m)m=receivedMinute;
+  if(m>SEGMENT_END||(m===SEGMENT_END&&SEGMENT_END<SESSION.close)){console.log('snapshot arrived after configured observation boundary; no cycle scored');saveObservationProgress();break;}
+  const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
     const pxNow = {}, tNow = Date.now(); for (const r of rows) if (HELD.pos[r.sym] && r.price > 0 && isFreshPriceAge(r.t > 0 ? (tNow - r.t) / 60000 : null)) pxNow[r.sym] = r.price;

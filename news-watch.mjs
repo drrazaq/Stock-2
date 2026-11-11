@@ -94,7 +94,7 @@ const MACRO = /\b(tariffs?|trade war|sanctions?|export (controls?|curbs?|ban)|fe
 const TIER1 = /\b(tariffs?|export (controls?|curbs?|ban)|emergency rate|surprise (rate )?(cut|hike)|declares? war|invasion|missile strike|trade war)\b/i;   // 'sanctions' dropped 22 Oct: daily routine headlines (a law firm, a shipping company) fired MARKET SHOCK on a +0.5% day
 const GEN = await fh('/news?category=general'), MS = readJson('data/macro-state.json', {}), today = iso(now);
 if (MS.day !== today) { MS.day = today; MS.sent = []; MS.heads = []; }
-{ const beforeSent=[...MS.sent],beforeHeads=[...MS.heads]; const spy = await fh('/quote?symbol=SPY'), dp = spy && Number.isFinite(spy.dp) && Number.isFinite(spy.c) && spy.c>0 && Number.isFinite(spy.t) && now-spy.t*1000>=0 && now-spy.t*1000<=180000 ? spy.dp : null;
+{ const beforeSent=[...MS.sent],beforeHeads=[...MS.heads]; const spy = await fh('/quote?symbol=SPY'), spyObservedAt=Date.now(), dp = spy && Number.isFinite(spy.dp) && Number.isFinite(spy.c) && spy.c>0 && Number.isFinite(spy.t) && spyObservedAt-spy.t*1000>=0 && spyObservedAt-spy.t*1000<=180000 ? spy.dp : null;
   const heads = (Array.isArray(GEN) ? GEN : []).filter(x => x && x.headline && typeof x.datetime==='number' && Number.isFinite(x.datetime) && x.datetime*1000<=now && x.datetime * 1000 >= now - 6 * 3600e3 && MACRO.test(x.headline + ' ' + (x.summary || '')) && !MS.heads.includes(x.id || x.headline) && !delivery.unknown['macro-head|'+(x.id||x.headline)]).sort((a, b) => b.datetime - a.datetime);
   const lvl = dp === null ? null : dp <= -2.5 ? 'down2.5' : dp <= -1.5 ? 'down1.5' : dp >= 2.5 ? 'up2.5' : dp >= 1.5 ? 'up1.5' : null;
   const t1 = heads.filter(x => TIER1.test(x.headline)), why = [];
@@ -128,7 +128,7 @@ if (alerts.length) fs.appendFileSync('data/news-log.jsonl', alerts.map(a => JSON
 if (alerts.length) { const by = new Map(); for (const a of alerts) { if (!by.has(a.sym)) by.set(a.sym, []); by.get(a.sym).push(a); }
   const deliveredKeys=[];
   const lines = ['NEWS DECISIONS (' + new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).format(new Date(now)) + ' Kuwait)'], dec = [];
-  for (const [sym, A] of [...by].slice(0, 8)) { const j = await fh('/quote?symbol=' + encodeURIComponent(sym)), qq = j && Number.isFinite(j.c) && j.c>0 && Number.isFinite(j.t) && now-j.t*1000>=0 && now-j.t*1000<=180000 ? { c: j.c, dp: Number.isFinite(j.dp)?j.dp:0 } : null, p = pos[sym];
+  for (const [sym, A] of [...by].slice(0, 8)) { const j = await fh('/quote?symbol=' + encodeURIComponent(sym)), quoteObservedAt=Date.now(), qq = j && Number.isFinite(j.c) && j.c>0 && Number.isFinite(j.t) && quoteObservedAt-j.t*1000>=0 && quoteObservedAt-j.t*1000<=180000 ? { c: j.c, dp: Number.isFinite(j.dp)?j.dp:0 } : null, p = pos[sym];
     const why = A[0].th.join(', ') + ': "' + A[0].h.slice(0, 90) + (A[0].h.length > 90 ? '…' : '') + '"', px = qq ? ' (now ' + qq.c + ', ' + (qq.dp >= 0 ? '+' : '') + (qq.dp || 0).toFixed(1) + '% today)' : '';
     let d;
     if(p&&!qq)d='PRICE UNVERIFIED: check your broker; keep its stop order. No current-price SELL/HOLD inference.';

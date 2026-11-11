@@ -15,11 +15,11 @@ const now=()=>local(env.GH_BASE)&&env.GUARD_TEST_NOW?Date.parse(env.GUARD_TEST_N
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 if (!REPO || !TOKEN) { console.log('watcher guard: no GITHUB_TOKEN / GITHUB_REPOSITORY (only runs inside GitHub Actions)'); process.exit(0); }
 if(env.GITHUB_ACTIONS&&env.GITHUB_REF_NAME!=='main'&&!local(env.GH_BASE)){console.log('branch guard: live I/O disabled');process.exit(0);}
-const n = nyParts(now()); const session=marketSession(n.d); if (session.closed || n.min < 545 || n.min > session.close+5) process.exit(0);   // nothing to do outside 9:05-15:00 New York: no GitHub call
+const n = nyParts(now()); const session=marketSession(n.d); if (session.closed || n.min < 545 || n.min > session.close+5) process.exit(0);   // Development full-session caller: check through configured cash close +5; older callers retain their own endpoint.
 const H = { headers: { Authorization: 'Bearer ' + TOKEN, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } };
 const history=await readGuardHistory({base:API_BASE+'/repos/'+REPO,headers:H.headers,day:n.d,nowMs:now()});
 const rawRuns=history.rawRuns,runs=history.runs;
-const S0=readJson('data/watcher-guard.json',{}),out=guardDecide(now(),runs,S0,undefined,{historyComplete:history.complete});
+const S0=readJson('data/watcher-guard.json',{}),out=guardDecide(now(),runs,S0,undefined,{historyComplete:history.complete,endMinute:session.close});
 out.state.history={complete:history.complete,errorCode:history.errorCode,reads:history.reads};
 const beats=[];
 for(const run of rawRuns.filter(r=>r.status==='in_progress'&&/^\d+$/.test(String(r.id)))) {

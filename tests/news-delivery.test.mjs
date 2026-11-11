@@ -7,7 +7,7 @@ import os from 'node:os';
 import path from 'node:path';
 import {spawn,spawnSync} from 'node:child_process';
 const root=path.resolve(import.meta.dirname,'..');
-async function fixture(t,{stale=false,future=false,macro=false,unknown=false,premarket=false,unacknowledged=false,corrupt=false,sourceFailure=null,generalNews=false,remoteJournal=false,crashAfterSend=false,journalFailure=null,journalRace=false,companyId=1}={}){
+async function fixture(t,{stale=false,future=false,macro=false,unknown=false,premarket=false,unacknowledged=false,corrupt=false,sourceFailure=null,generalNews=false,remoteJournal=false,crashAfterSend=false,journalFailure=null,journalRace=false,companyId=1,quoteDelay=0}={}){
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'news-delivery-'));fs.mkdirSync(path.join(dir,'data'));
  const put=(name,value)=>fs.writeFileSync(path.join(dir,'data',name),JSON.stringify(value));
  put('my-positions.json',macro?{}:{AAA:{entry:10,stop:9}});
@@ -25,7 +25,7 @@ async function fixture(t,{stale=false,future=false,macro=false,unknown=false,pre
   else if(u.pathname==='/news')body=generalNews?[{id:2,headline,datetime:publication}]:[];
   else if(u.pathname==='/company-news'&&sourceFailure){res.statusCode=sourceFailure;body={error:'fixture source failure'};}
   else if(u.pathname==='/company-news')body=[{id:companyId,headline,datetime:publication}];
-  else if(u.pathname==='/quote')body={c:8,dp:u.searchParams.get('symbol')==='SPY'?(macro?-3:0):-20,t:Math.floor(Date.now()/1000)-30-(stale?3600:0)};
+  else if(u.pathname==='/quote'){if(quoteDelay)await new Promise(r=>setTimeout(r,quoteDelay));body={c:8,dp:u.searchParams.get('symbol')==='SPY'?(macro?-3:0):-20,t:Math.floor(Date.now()/1000)-(quoteDelay?0:30)-(stale?3600:0)};}
   res.setHeader('Content-Type','application/json');res.end(JSON.stringify(body));});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));t.after(()=>{server.close();fs.rmSync(dir,{recursive:true,force:true});});
  const base='http://127.0.0.1:'+server.address().port;
@@ -90,3 +90,5 @@ test('market-shock research names the selected historical population and is neve
  const f=await fixture(t,{macro:true});f.write('mday-study.json',{all:{newer:0.01},rows:[{k:'bigDown',verdict:'NOT PROVEN',newer:{avg:0.016,n:50}}]});f.ack();await f.run();
  const text=f.messages.find(x=>x.includes('MARKET SHOCK'));assert.ok(text);assert.match(text,/past test trades of pre-selected stocks/);assert.match(text,/50 historical test trades, not prospective cases/);assert.match(text,/NOT PROVEN/);assert.match(text,/not an expected return/);assert.doesNotMatch(text,/system’s tested buys|Decided by the system from/);
 });
+
+test('quote received after startup still identifies the adopted stop crossing',async t=>{const f=await fixture(t,{quoteDelay:1200});f.ack();await f.run();assert.ok(f.messages.some(x=>/STOP|stop/i.test(x)));assert.ok(f.messages.every(x=>!x.includes('PRICE UNVERIFIED')));});

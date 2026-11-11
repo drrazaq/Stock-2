@@ -38,7 +38,9 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - if: steps.season.outputs.run == 'true'
-        run: git restore --source="${{ github.sha }}" -- '*.mjs'
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.sha }}"
+          git restore --source="${{ github.sha }}" -- '*.mjs'
       - if: steps.season.outputs.run == 'true'
         uses: actions/setup-node@v4
         with:
@@ -128,7 +130,9 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
       - if: steps.season.outputs.run == 'true'
-        run: git restore --source="${{ github.sha }}" -- '*.mjs'
+        run: |
+          git fetch --no-tags --depth=1 origin "${{ github.sha }}"
+          git restore --source="${{ github.sha }}" -- '*.mjs'
       - if: steps.season.outputs.run == 'true'
         uses: actions/setup-node@v4
         with:
