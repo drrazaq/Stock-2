@@ -1,0 +1,31 @@
+# Completed private quote development and reference decision
+
+## Production and authority
+
+No production change, provider request, credential/settings change, live collection or trade. Private setup is closed at owner-verified6c4f3c3/parentf39f281. Today's Stage1, Stage2 and1133190e remain unchanged. This work is separate development, not release readiness or future attendance.
+
+## Completed quote capability
+
+Exact published source74e693852a8eb4dd1985128494c6b5cf4b531754, base7301955e/d2852739. Existing Alpaca snapshot ingestion now has an opt-in private receipt recorder; watcher uses unique per-run directories and continues with a visible disabled diagnostic if configuration fails. All requests/partial failures are journaled before normal price normalization. Original quote/request/receipt clocks, NY sessions, reviewed security/issuer binding, feed, bid/ask, native/displayed sizes, conditions/basis and expiry remain distinct. Current Alpaca sizes are shares (not100x). A failed part makes only its own symbols unknown. No new endpoint, symbol, feed, retry or GET was added.
+
+Publication is once per watcher cycle: append-only journal plus immutable generation and atomic pointer. The actual assessmentContext invokes the original readAssessmentQuote/joinAssessmentQuote through that policy/hash-bound pointer. Same-host synthetic end-to-end includes actual watcher process, missing/stale/future/cross-session/identity failures, partial fields, unchanged trade/daily-rule inputs, failed initialization, clock delay, cap stops, duplicate locks, interrupted publication and byte-preserving outside-original-directory recovery. A quote future at original receipt stays rejected even if recording delays normal return. Recovery does not renew any timestamp or entry permission.
+
+Independent source review6808479811 closedQ1–Q4 and acceptedQ5. Complete exact74e69385 local inventory:176/176 filesPASS, Node20.20.0,153.13seconds. Initial7301955 failure and full log preserved; no assertion waived. Receipt/hash/results in QUOTE_PRODUCER_VALIDATION.json. This is local development validation, not a hosted release receipt. Independent reviewer full-receipt closure follows separately.
+
+Remaining measured limits:30,000 observations,30,000 attempts,8CYCLE generations,32MiB retained files. Four complete6,600-symbol cycles fit the row cap; a fifth stops. Synthetic132parts/26,400observations used14,059,936bytes; per-part median36.1ms/p9581.5ms/max120.8ms and32.6–53.8ms cycle publication on this filesystem. No full-session, hosted-latency or genuine fill-capacity claim. A smaller selected-universe or different retention design is not silently added.
+
+Runtime configuration requires a real independently reviewed policy/identity pin, approved private host/storage/retention and separately reviewed transport between jobs. Assessment root is the SPECIFIC root/<runId>, not the base directory. Failed initialization can leave an orphan directory with copied policy/identity; it is preserved, not automatically cleaned. Nightly or a bot on another runner cannot read this ephemeral host's pointer. Current authentic selected-universe quote coverage remains0/50: no data was acquired. Real identity authentication and licensed private publication remain activation prerequisites, not tests to waive.
+
+## One reviewed reference request
+
+Claude independently accepted OPERATIONS_REQUEST.md at93ceaf12 in6808356396. It is the single owner decision; no later phase was approved by installing files. Owner browser is operator; Codex verifies complete private logs read-only; Claude's private access limitation is explicit. Three phase dispatches only, contents:read, same immutable6c4f3c3, twelve runner-minutes maximum, effective$0overage protection and quota headroom required.
+
+Owner actions after separate approval: privately verify existing account/key entitlement and monitoredSECcontact; enroll exactlyMASSIVE_REFERENCE_KEY andSEC_UA directly in private SecretsUI; enable only private Actions; run one syntheticrehearsal and waitPASS; run one boundedcapture after present-now reconfirmation; privately retain downloaded innerZIP and upload exactlyone recoveryZIP on its own branch; run one separate-runner recovery and get complete receipt. No key in chat, new key, production-secret export, provider upgrade, automatic rerun or deletion. Exact fields/steps/STOP clauses are in the reviewed request. Recovery needs an actual attended interval within capture-end+6hours/before1dayexpiry; acquisition remains210seconds,15GETs,24MiB. No continuous agent availability is assumed.
+
+Reference capture gives originals for subsequent private security-type/FIGI/CIK analysis. It does not itself establish test-security, leverage or underlying relationships (reviewed exclusions/primary sources do), complete authenticated identity, current tradability, BBO, actual fills or historical financial availability. Quote retention solves the separate loss-of-observation-clocks problem on normally authorized ingestion. Neither supplies a missing adopted rule or ZAD decision. Consumer activation/deployment requires its own exact review and approval.
+
+## Economic work completed alongside implementation
+
+KNSA additional arithmetic uses only the previously accepted quarter-bound extraction: revenue/share+51.088%, basic shares+4.655%, margin10.193→16.556%, netincome/share+145.399%. See KNSA_DERIVED.json and reproducible knsa-derived.py. This is a company-business observation, not a strategy test or return. No return outcome selected, no threshold/exit tuned, no runtime insertion. Original CFO/royalty obligations, contemporaneous market expectations and current identity-bound execution evidence are missing; existing privateZAD remains final. OSCR's ZAD gate was not bypassed. ORB5 remains REJECTED and all other frozen unfavorable conclusions are preserved.
+
+Short horizon: qualified entries still require current identity-bound quotes and exact adopted conditions; no inventedBUY. Mid horizon: per-share business improvement can motivate cash-realization investigation, not automaticentry. Long horizon: demand durability, obligations, valuation and clinical concentration need actual evidence; no newly invented long-term exit rule. No generic watchlist or software-test count is substituted for economics.
