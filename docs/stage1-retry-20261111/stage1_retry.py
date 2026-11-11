@@ -31,8 +31,8 @@ Python standard library and git only. Every rule below is enforced in code.
        is not delayed.
   R4 Push: `git push --porcelain REMOTE X:refs/heads/main`. Never forced, no rebase, no data restore.
   R5 Verdict = push output + a fresh remote read (ls-remote, fetch, ancestry, full bound-path identity, non-data leaves):
-     PUBLISHED        X is an ancestor of the remote main, the 9 paths are in the target state, and (forward) the remote
-                      main's non-data leaves equal X's.
+     PUBLISHED        X is an ancestor of the remote main, the 9 paths are in the target state, and the remote main's
+                      non-data leaves equal X's (both modes).
      PUBLISHED_DRIFT  X is an ancestor, but the bound paths or non-data leaves have changed since. Status is UNVERIFIED.
                       Never retried; it goes to the reviewed recovery decision.
      NOT_PUBLISHED    ONLY on an explicit porcelain non-fast-forward rejection of refs/heads/main, with X not in the remote
@@ -188,7 +188,7 @@ def main():
             refline = next((l for l in (push.stdout if push else '').splitlines() if ':refs/heads/main' in l), '')
             nff = push is not None and push.returncode != 0 and refline.startswith('!') and '[rejected]' in refline \
                   and ('non-fast-forward' in refline or 'fetch first' in refline)
-            same_nd = (non_data(M2l) == non_data(Xl)) if a.mode == 'forward' else True
+            same_nd = non_data(M2l) == non_data(Xl)  # both modes: no non-data drift since the published commit
             timely = read_at <= deadline  # publication is proven timely only if it was observed on the remote before the deadline
             if has_x and st2 == target_state and same_nd and timely: verdict, code = 'PUBLISHED', 0
             elif has_x and st2 == target_state and same_nd: verdict, code = 'PUBLISHED_LATE', 5

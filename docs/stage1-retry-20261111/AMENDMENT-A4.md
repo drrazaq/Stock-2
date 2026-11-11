@@ -1,4 +1,4 @@
-# Stage 1 amendment A4 (rev3): finite non-force publication and inverse with data-only recomposition
+# Stage 1 amendment A4 (rev4): finite non-force publication and inverse with data-only recomposition
 
 Proposal only; it authorizes nothing.
 
@@ -12,7 +12,7 @@ Proposal only; it authorizes nothing.
 
 ## Tool
 
-`stage1_retry.py`, sha256 `4521840a8722e844f13129e8577494541ce8664df39e6c5393f781f894f9b92b`. Python standard library and git only. Every rule is enforced in code.
+`stage1_retry.py`, sha256 `8cb36bc3f624644578f35b05760bf958696fd41c8a63424a2ae2189fd1c54510`. Python standard library and git only. Every rule is enforced in code.
 
 | Rule | What the tool does |
 |---|---|
@@ -31,7 +31,7 @@ Proposal only; it authorizes nothing.
 
 | Verdict | Condition | Exit code |
 |---|---|---|
-| **PUBLISHED** | X is an ancestor of the remote main, the 9 paths are in the target state, (forward) the non-data leaves still equal X's, **and this was observed on the remote before the deadline**. | 0 |
+| **PUBLISHED** | X is an ancestor of the remote main, the 9 paths are in the target state, the non-data leaves still equal X's (both modes), **and this was observed on the remote before the deadline**. | 0 |
 | **PUBLISHED_LATE** | As PUBLISHED, but first observed on the remote only **after** the deadline. The publication FACT stands and is never retried; its TIMING is UNKNOWN/LATE and status is UNVERIFIED. | 5 |
 | **PUBLISHED_DRIFT** | X is an ancestor, but the bound paths or non-data leaves changed afterwards. Status is UNVERIFIED. Never retried; it goes to the reviewed recovery decision. | 4 |
 | **NOT_PUBLISHED** | **Only** on an explicit porcelain non-fast-forward rejection of `refs/heads/main`, with X absent from the remote main and all 9 paths still in the starting state. The only verdict that permits the next attempt. | (next attempt) |
@@ -43,7 +43,7 @@ Exit code 2 means STOPPED: nothing published, and a gate, the cap or the deadlin
 
 ## Offline exercise
 
-`offline-exercise.sh` (sha256 `cfb3af4d234b459d1a6c5ba0bf5909595f2600c9d46d9d366d2c988f1750beda`), log in `offline-exercise.log`: **28/28 PASS**.
+`offline-exercise.sh` (sha256 `bfcb085a2c0a9b7245f13a1753d29e458ef33535ce62b556c9b609896065246c`), logs: `offline-exercise.log` (rev3 run, 28/28 PASS) and `offline-exercise-rev4-inverse.log` (rev4 run of all inverse cases I1–I10, 10/10 PASS). **29/29 distinct cases pass.** Rev4 changed only the inverse post-publication comparison, so forward cases F1–F19 keep their rev3 receipts.
 
 - **Setup.** A local bare repository stands in for GitHub; no network and no real remote. Every scenario starts from the real main `1239510a`.
 - **Checks in every scenario:**
@@ -91,6 +91,7 @@ Exit code 2 means STOPPED: nothing published, and a gate, the cap or the deadlin
 | I7 deadline passed | STOP |
 | **I8 newer non-data code after the release** | STOP, compatibility unproven |
 | **I9 inverse deadline beyond D+30** | refused before any action |
+| **I10 inverse published, then unbound source drift** | PUBLISHED_DRIFT, no retry |
 
 ## Session timing
 
@@ -112,3 +113,25 @@ The absolute latest T is 09:30 UTC.
 **Replacement read-only runtime checkpoint:** Wednesday 21:15–22:00 UTC (Thursday 00:15–01:00 Kuwait). It is within 20 h of P, the A3 nightly-overlap rule applies, and no write is made there.
 
 If today's band is missed, the next weekday uses the same arithmetic. No attendance is assumed.
+
+## Exact invocation (pinned)
+
+Forward, run from a clone of `drrazaq/Stock-2` with `origin` = GitHub. `STAGE1_TEST_PREPUSH_SLEEP` and `STAGE1_PUSH` must be **unset**:
+
+```
+python3 docs/stage1-retry-20261111/stage1_retry.py --mode forward \
+  --binding docs/combined-successor-20261110/binding-stage1.json --inverse docs/combined-successor-20261110/inverse-stage1.json \
+  --tested 11c56c0abbce4946f1c3bfcfc1eda8decd88a906 --deadline <T+20 UTC> --cap 3
+```
+
+- The binding and inverse files are read from `590bf434`; the binding is sha256 `afd2a30f…`.
+- The default `--suite` is the full `node --test --test-concurrency=8 test/*.test.mjs`.
+
+Inverse, used only after a recorded decision D:
+
+```
+python3 docs/stage1-retry-20261111/stage1_retry.py --mode inverse <same binding/inverse/tested> \
+  --decision <D UTC> --deadline <= D+30 UTC> --cap 3
+```
+
+Every JSON line the tool prints is posted for the verifier.

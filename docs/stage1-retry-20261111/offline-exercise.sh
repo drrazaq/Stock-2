@@ -52,6 +52,7 @@ EOF
 chmod +x "$W/push.sh"
 # check <name> <mode> <expected exit> <expected remote: AFTER|BEFORE|DRIFTED-AFTER|UNTOUCHED> [suite] [deadline]
 check() {
+  [ -n "${ONLY:-}" ] && [[ "$1" != $ONLY* ]] && return 0
   local name=$1 mode=$2 want=$3 final=$4 suite=${5:-$FAST} deadline=${6:-2099-01-01T00:00:00Z} out rc M0
   M0=$(git -C "$W/r" rev-parse refs/heads/main)
   out=$(cd "$W/op" && STAGE1_PUSH="$W/push.sh" timeout 900 python3 "$TOOL" --mode $mode --binding "$BIND" --inverse "$INV" --tested $TESTED \
@@ -93,6 +94,9 @@ elif final=='BEFORE':
     new=set(L)-set(L0)-set(files); assert all(p.startswith('data/') for p in new), 'unexpected new leaves'
     assert {p:v for p,v in L.items() if p not in files and p in L0}=={p:v for p,v in L0.items() if p not in files}, 'inverse changed unbound leaves'
     print('9 BEFORE incl. 4 absent; newer data and unbound leaves kept')
+elif final=='DRIFTED-BEFORE':
+    assert st(L)=={'B'}, 'not all 9 BEFORE'; assert len(rel)==1 and rel[0].startswith('Stage 1 inverse'), 'inverse commits %s'%rel
+    print('inverse published then unbound source drifted; recorded, not retried')
 elif final=='DRIFTED-AFTER':
     assert len(rel)==1, 'expected exactly one published release, got %d'%len(rel); print('published then drifted; recorded, not retried')
 else:
@@ -133,6 +137,7 @@ setup; publish_forward; PLAN=real-then-fail check "I4 inverse pushed, client err
 setup; publish_forward; PLAN=fail-without-push,real check "I5 inverse transport error -> UNKNOWN"      inverse 3 UNTOUCHED "$FAST" "$INVDL"
 setup; publish_forward; inject content scan.mjs >/dev/null 2>&1; PLAN=real check "I6 main not AFTER -> STOP" inverse 2 UNTOUCHED "$FAST" "$INVDL"
 setup; publish_forward; PLAN=real           check "I7 inverse deadline already passed -> STOP"         inverse 2 UNTOUCHED "$FAST" 2000-01-01T00:00:00Z
+setup; publish_forward; PLAN=real-then-code-then-fail check "I10 inverse pushed, then unbound source drift -> PUBLISHED_DRIFT, no retry" inverse 4 DRIFTED-BEFORE "$FAST" "$INVDL"
 setup; publish_forward; inject code >/dev/null 2>&1; PLAN=real check "I8 newer non-data code after release -> inverse STOP (compatibility unproven)" inverse 2 UNTOUCHED "$FAST" "$INVDL"
 setup; publish_forward; PLAN=real           check "I9 inverse deadline beyond D+30 -> refused before any action" inverse 1 UNTOUCHED "$FAST" "$(soon 3600)"
 unset DECISION
