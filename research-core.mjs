@@ -161,6 +161,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'dst') { ch += preRegisterDst(LB); continue; }
     if (R.family === 'oc') { ch += preRegisterOc(LB); continue; }
     if (R.family === 'wiki') { ch += preRegisterWiki(LB); continue; }
+    if (R.family === 'svol') { ch += preRegisterSvol(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -1041,4 +1042,66 @@ export function preRegisterWiki(LB) { if (!LB || !Array.isArray(LB.strategies)) 
   for (const id of WIKI_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-10 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Article mapping, view counts, score, ranking, spike rule, timing and data rule fixed in research-core.mjs (IDEA 14) before any run.', sources: WIKI_SOURCES, hold: R.hold, note: WIKI_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 15 (pre-registered 11 Nov 2026, before any run): FINRA DAILY SHORT SALE VOLUME (shorting flows) ----------------
+// Sources: Wang, Yan and Zheng, "Shorting flows, public disclosure, and market efficiency", Journal of Financial Economics 135(1), 2020,
+// 191-212: with FINRA's daily short volume public in real time (2010-2015), heavily shorted stocks still underperformed lightly shorted
+// ones by 12.6% a year (equal weight, t 6.0); stocks sorted each day on the prior 5 days, skip a day, hold 20 days; PERSISTENT shorting
+// over a longer window predicts more than a short burst. Diether, Lee and Werner, "Short-Sale Strategies and Return Predictability",
+// Review of Financial Studies 22(2), 2009 (Reg SHO 2005): high short-selling activity predicts negative returns. NEW information line in
+// this library: nothing tests daily short-sale VOLUME (short INTEREST, twice a month, is ANOM-SI* / SQ1-SIAVOID). Long only: the
+// lightly shorted side is the buy; the heavily shorted side is an AVOID check only (never a buy).
+// DATA (official, free, no key): FINRA Reg SHO consolidated daily short sale volume files
+// cdn.finra.org/equity/regsho/daily/CNMSshvolYYYYMMDD.txt ('Date|Symbol|ShortVolume|ShortExemptVolume|TotalVolume|Market'), one per
+// session, 2021-07-01 (in practice: the first session of the 5-year price window) to the last close; published the same evening (about 6 pm New York). Short ratio of a stock on a session =
+// ShortVolume / TotalVolume (FINRA-reported volume; TotalVolume > 0). Symbol = the ticker as traded that day, matched to the price
+// cache's ticker of the same day (same point-in-time convention as the price data; dead stocks kept). Stored only for stocks LIQUID that
+// session (system rule), so a score uses liquid sessions only (stated). STATED LIMITS: FINRA volume is off-exchange (TRF/ADF/ORF) only and
+// includes market-maker shorting, so the ratio is noisy (it averages about half); no risk adjustment (the yardstick is the average stock).
+// TIMING: weekly. At the FIRST session k of each calendar week (a session whose previous session was in an earlier week), using files of
+// sessions before k only (published by the evening of k-1), every stock liquid on k-1 gets a score; percentile within that week's
+// cross-section (500+ stocks needed, else the week is skipped); buy at the OPEN of k; sell the CLOSE hold sessions later. One open trade
+// per stock per rule.
+//   RQ-SVOL-LOW21   score = mean short ratio of the 5 sessions k-5..k-1 (4+ of them with data); BUY the bottom 20% (percentile <= 0.20),
+//                   hold 21 sessions (the paper's 20-day hold).
+//   RQ-SVOL-LOW63P  PERSISTENT: score = mean short ratio of the 63 sessions k-63..k-1 (50+ with data); BUY the bottom 20%, hold 63 sessions.
+//   RQ-SVOL-HIGH21  AVOID check: the TOP 20% of the 5-session score, 21 sessions; judged before costs on both sides (avoid verdict).
+// Gates, costs, halves and verdicts: the shared judge of this file (same as IDEAS 6-14).
+// DATA RULE (fixed now): no verdict until (a) 97%+ of the sessions from 2021-07-01 to the last close have a FINRA file read, (b) 85%+ of
+// liquid stock-sessions from 2021-11-01 have a FINRA row, (c) 200+ weekly cross-sections with 500+ ranked stocks.
+export const SVOL = { from: '2021-07-01', signalFrom: '2021-11-01', short: 5, shortMin: 4, long: 63, longMin: 50, low: 0.20, high: 0.80, minCross: 500 };
+export const SVOL_DATA = { files: 0.97, rows: 0.85, weeks: 200 };
+RULES['RQ-SVOL-LOW21'] = { kind: 'buy', hold: 21, side: 'low', win: 'short', family: 'svol', name: 'Lightly shorted stocks (FINRA daily short volume, bottom 20% of the last 5 days), hold 1 month',
+  rule: 'At the first session of each week, score every liquid stock by its mean FINRA short ratio (ShortVolume / TotalVolume, Reg SHO consolidated daily file) of the 5 sessions before (4+ with data); buy the bottom 20% of that week\'s cross-section (500+ stocks needed) at the open of that session; sell the close 21 sessions later.' };
+RULES['RQ-SVOL-LOW63P'] = { kind: 'buy', hold: 63, side: 'low', win: 'long', family: 'svol', name: 'Persistently lightly shorted stocks (FINRA short volume, bottom 20% of the last 63 days), hold 3 months',
+  rule: 'As RQ-SVOL-LOW21 with the mean short ratio of the 63 sessions before (50+ with data); buy the bottom 20%; sell the close 63 sessions later.' };
+RULES['RQ-SVOL-HIGH21'] = { kind: 'avoid', hold: 21, side: 'high', win: 'short', family: 'svol', name: 'AVOID check: heavily shorted stocks (FINRA short volume, top 20% of the last 5 days), 21 sessions',
+  rule: 'As RQ-SVOL-LOW21, the TOP 20% of the 5-session score; 21 sessions; judged before costs on both sides against the average stock. Never a buy.' };
+export const SVOL_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'svol');
+for (const id of SVOL_IDS) { if (!IDS.includes(id)) IDS.push(id); if (RULES[id].kind === 'buy' && !BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+export const svolUrl = (d) => 'https://cdn.finra.org/equity/regsho/daily/CNMSshvol' + d.replace(/-/g, '') + '.txt';
+// file text -> Map symbol -> ratio (ShortVolume / TotalVolume); header, trailer and bad rows skipped; a symbol listed twice: volumes summed
+export function svolParse(text) { const sv = new Map(), tv = new Map(); if (typeof text !== 'string') return new Map();
+  for (const line of text.split(/\r?\n/)) { const f = line.split('|'); if (f.length < 5 || !/^\d{8}$/.test(f[0])) continue; const s = f[1].trim().toUpperCase(), a = +f[2], b = +f[4];
+    if (!/^[A-Z][A-Z.\-]{0,9}$/.test(s) || !(a >= 0) || !(b > 0)) continue; sv.set(s, (sv.get(s) || 0) + a); tv.set(s, (tv.get(s) || 0) + b); }
+  const out = new Map(); for (const [s, b] of tv) { const r = sv.get(s) / b; if (r >= 0 && r <= 1) out.set(s, r); } return out; }
+// first session of each calendar week (Monday-based): indexes t >= 1 of sorted session dates D
+export function weekStarts(D) { const out = [], wk = (d) => { const ms = Date.parse(d + 'T00:00:00Z'), wd = (new Date(ms).getUTCDay() + 6) % 7; return Math.floor((ms / 864e5 - wd + 3) / 7); };
+  for (let t = 1; t < D.length; t++) if (wk(D[t]) !== wk(D[t - 1])) out.push(t); return out; }
+// mean of the values at sessions k-n..k-1 (get(u) -> ratio or null/undefined); null unless min+ values
+export function svolScore(get, k, n, min) { let s = 0, m = 0; for (let u = k - n; u <= k - 1; u++) { if (u < 0) continue; const r = get(u); if (r === null || r === undefined || !isFinite(r)) continue; s += r; m++; } return m >= min ? s / m : null; }
+export const svolRank = (list) => wikiRank(list, SVOL.minCross);
+export const svolSide = (p) => p === null || p === undefined ? null : p <= SVOL.low ? 'low' : p >= SVOL.high ? 'high' : null;
+export function svolDataRule({ sessions, files, liqRows, liqWithRow, weeks }) { const r = { files: sessions ? files / sessions : 0, rows: liqRows ? liqWithRow / liqRows : 0 }, why = [];
+  if (!(r.files >= SVOL_DATA.files)) why.push('sessions with a FINRA file ' + (r.files * 100).toFixed(1) + '% (97% needed)');
+  if (!(r.rows >= SVOL_DATA.rows)) why.push('liquid stock-sessions with a FINRA row ' + (r.rows * 100).toFixed(1) + '% (85% needed)');
+  if (!(weeks >= SVOL_DATA.weeks)) why.push('weekly cross-sections with 500+ stocks ' + weeks + ' (200 needed)');
+  return { ok: !why.length, ratios: { files: r4(r.files), rows: r4(r.rows) }, weeks, why: why.join('; ') || null }; }
+const SVOL_SOURCES = ['https://www.sciencedirect.com/science/article/pii/S0304405X19301436', 'https://ideas.repec.org/a/eee/jfinec/v135y2020i1p191-212.html', 'https://doi.org/10.1093/rfs/hhn047', 'https://www.finra.org/finra-data/browse-catalog/short-sale-volume-data/daily-short-sale-volume-files'];
+const SVOL_NOTE = 'Daily researcher 2026-11-11: Wang, Yan and Zheng (2020, Journal of Financial Economics) "Shorting flows, public disclosure, and market efficiency": with FINRA daily short volume public, heavily shorted stocks underperformed lightly shorted ones by 12.6% a year (2010-2015), persistent shorting most; Diether, Lee and Werner (2009, RFS). New information line (official FINRA Reg SHO consolidated daily short sale volume files). Long only: lightly shorted = buy; heavily shorted = AVOID check only. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 11 Nov 2026.';
+export function preRegisterSvol(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of SVOL_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-11 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' File source, ratio, weekly timing, windows, ranking, liquidity and data rule fixed in research-core.mjs (IDEA 15) before any run.', sources: SVOL_SOURCES, hold: R.hold, note: SVOL_NOTE }); ch++; }
   return ch; }
