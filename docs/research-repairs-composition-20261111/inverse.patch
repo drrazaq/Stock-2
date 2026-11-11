@@ -1,6 +1,6 @@
 diff --git a/data/company-investigations.json b/data/company-investigations.json
 deleted file mode 100644
-index 29c764d5..00000000
+index 633cb938..00000000
 --- a/data/company-investigations.json
 +++ /dev/null
 @@ -1,57 +0,0 @@
@@ -24,7 +24,7 @@ index 29c764d5..00000000
 -      "symbol": "AXTI",
 -      "issuer": "AXT, Inc.",
 -      "summary": "Q3 revenue $73.4m versus $28.0m; gross margin56%; net income $25.7m. Basic weighted shares63.827m versus43.842m (+45.59%); cash $485.472m excludes restricted $41.2m. Cash balance increase is not proof of operating cash conversion.",
--      "contrary": "Financing/dilution, export permits and utilization; invalidate if growth fails to produce sustainable per-share cash. Existing owner ZAD exclusion remains separate and binding.",
+-      "contrary": "Financing/dilution, export permits and utilization; invalidate if growth fails to produce sustainable per-share cash. ZAD not-halal list exclusion remains separate and binding.",
 -      "nextEvidence": "Operating versus financing cash-flow bridge and realized shipments; do not infer orders from a leveraged fund move.",
 -      "publishedDate": "2026-10-29",
 -      "receiptAt": "2026-11-11T17:20:27.582723+00:00",
@@ -1197,7 +1197,7 @@ index 7be19ccc..00000000
 - return d===day||d<day?n:null;
 -}
 diff --git a/test/assessment-context.test.mjs b/test/assessment-context.test.mjs
-index 464525e0..9a9c413f 100644
+index 6f016958..9a9c413f 100644
 --- a/test/assessment-context.test.mjs
 +++ b/test/assessment-context.test.mjs
 @@ -8,7 +8,7 @@ function files(extra={}){return {'data/settings.json':{focus:true},'data/names.j
@@ -1209,6 +1209,22 @@ index 464525e0..9a9c413f 100644
  }));
  test('stale, future and missing context is dated/UNKNOWN, never manufactured eligibility',()=>run({'data/horizons.json':{status:'OK',generatedAt:'2027-01-01T00:00:00Z',today:{},results:{}},'data/quality.json':{status:'OK',rank:{},results:{}},'data/events-recent.json':{events:[]}},async S=>{
   const t=S.fn('assessmentContext')('ZZQ',null,{},'WAIT');examples.push({case:'stale/future/missing evidence',caller:'assessmentContext via existing consumers',stock:'ZZQ',output:t});assert.match(t,/UNKNOWN \(future timestamp/);assert.match(t,/quality rank UNKNOWN/);assert.match(t,/No dated catalyst witness supplied \(not evidence of no catalyst\)/);assert.match(t,/original observation\/receipt UNKNOWN/);assert.match(t,/No adopted entry rule supplied/);assert.match(t,/live BBO.*UNKNOWN/);
+@@ -35,15 +35,3 @@ test('actual holdings lists distinguish designed no-stop from missing manual sto
+  }finally{Date.now=old;await new Promise(r=>server.close(r));}
+ });
+ test('all assessment work stayed local',()=>assert.deepEqual(blocked,[]));
+-
+-test('business readiness and producer lineage remain separate from entry, execution and ZAD',()=>run({'data/discovery-journal.jsonl':[{
+- type:'assessment',id:'a'.repeat(64),symbol:'ZZQ',cycleKey:'b'.repeat(64),evidenceVersion:'c'.repeat(64),
+- ruleId:'DERIVED_RULE_SPEC_SHA256:'+'d'.repeat(64),ruleIdentityBasis:'DERIVED_FROM_RETAINED_RULE_TEXT_NOT_ADOPTION'
+-}]},async S=>{
+- const t=S.fn('assessmentContext')('ZZQ',sig,{},'WAIT');
+- assert.match(t,/business DATED_DISCOVERY_LEAD_NOT_VALIDATED; valuation UNKNOWN/);
+- assert.match(t,/executable price UNKNOWN; ZAD/);assert.match(t,/Retained scanner rule: rule NOT PROVEN/);
+- assert.ok(t.includes('assessment '+'a'.repeat(64)));assert.ok(t.includes('cycle '+'b'.repeat(64)));
+- assert.ok(t.includes('evidence '+'c'.repeat(64)));assert.match(t,/LEGACY_UNKEYED/);
+- assert.doesNotMatch(t,/BUYING_RESEARCH/);
+-}));
 diff --git a/test/assessment-primary-context.test.mjs b/test/assessment-primary-context.test.mjs
 deleted file mode 100644
 index 8d851693..00000000
@@ -1501,7 +1517,7 @@ index 6589ddc9..f31bdfde 100644
  const preload=path.join(dir,'fault.mjs');fs.writeFileSync(preload,`import fs from 'node:fs';if(process.argv[2]==='--append'){const boundary=${JSON.stringify(boundary)},fds=new Map(),open=fs.openSync,write=fs.writeFileSync,rename=fs.renameSync,unlink=fs.unlinkSync;fs.openSync=(p,...a)=>{const fd=open(p,...a);fds.set(fd,String(p));return fd;};fs.writeFileSync=(fd,b,...a)=>{const p=fds.get(fd)||String(fd);if(boundary==='intent'&&p.endsWith('.pending.json.tmp'))throw Error('injected intent');if(p.endsWith('radar-v3-ledger.jsonl')){if(boundary==='partial-append'){write(fd,Buffer.from(b).subarray(0,17),...a);process.kill(process.pid,'SIGKILL');}write(fd,b,...a);if(boundary==='after-append')throw Error('injected after append');return;}return write(fd,b,...a);};fs.renameSync=(a,b)=>{rename(a,b);if(boundary==='publish-intent'&&String(b).endsWith('.pending.json'))throw Error('injected published intent');};fs.unlinkSync=p=>{if(String(p).endsWith('.pending.json')){if(boundary==='before-unlink')throw Error('injected before unlink');unlink(p);if(boundary==='after-unlink')throw Error('injected after unlink');return;}return unlink(p);};}`);
  const env={PATH:process.env.PATH,IG_RADAR_RESERVED:'1'},first=await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env:{...env,NODE_OPTIONS:'--import='+preload}});assert.match(first.stdout,/"definitelyUnsent":true/,boundary);await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env});const file=path.join(dir,'data/radar-v3-ledger.jsonl');assert.equal(readRadarLedger(file).filter(x=>x.type==='list').length,1,boundary);const before=fs.readFileSync(file);await exec(process.execPath,['opportunity-radar.mjs','midday'],{cwd:dir,env});assert.deepEqual(fs.readFileSync(file),before,boundary);
 diff --git a/test/radar-v3-core.test.mjs b/test/radar-v3-core.test.mjs
-index f6d9a6d9..9ab44886 100644
+index 618e6b52..9ab44886 100644
 --- a/test/radar-v3-core.test.mjs
 +++ b/test/radar-v3-core.test.mjs
 @@ -6,7 +6,7 @@ import test from 'node:test';
@@ -1545,7 +1561,7 @@ index f6d9a6d9..9ab44886 100644
 -  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Received 0 instruments \(0/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. VERIFIED COMMON-STOCK RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. SIGNAL DELIVERY HISTORY: 0 watcher messages/);
 +  assert.match(buildMidday(snap({ scanned: 0, mode: 'NO_USABLE_MARKET_DATA', hits: [], early: [] }), {}).text, /NO MARKET DATA right now.*data problem, not a quiet market[\s\S]*Scanned 0 stocks \(5400/); assert.match(t, /B\. SHORT SETUPS.*: none before 11:00\./); assert.match(t, /A\. LIVE RESEARCH LEADS.*: none right now\./); assert.match(t, /C\. APPROVED SIGNALS: 0 so far today\./);
  });
--test('midday: tested alerts are counted as approved', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. SIGNAL DELIVERY HISTORY: 2 watcher messages/));
+-test('midday: retained watcher messages are delivery history, never approval', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. SIGNAL DELIVERY HISTORY: 2 watcher messages/));
 +test('midday: tested alerts are counted as approved', () => assert.match(buildMidday(snap({ alerts: 2 }), ctx).text, /C\. APPROVED SIGNALS: 2 tested alerts sent today/));
  
  test('scorecard: same-day net after costs vs the market; 5-session net vs SPY', () => {
