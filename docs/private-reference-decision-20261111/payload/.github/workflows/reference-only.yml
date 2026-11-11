@@ -1,0 +1,71 @@
+# PROPOSAL PAYLOAD. This nested file is not installed in .github/workflows.
+name: Bounded private reference only
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        type: choice
+        options: [rehearsal, capture, recovery]
+        required: true
+      expected_main_sha:
+        type: string
+        required: true
+      recovery_commit:
+        type: string
+        required: false
+      expected_recovery_sha256:
+        type: string
+        required: false
+permissions:
+  contents: read
+concurrency:
+  group: private-reference-only
+  cancel-in-progress: false
+jobs:
+  reference:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: ${{ inputs.phase == 'capture' && 6 || 3 }}
+    env:
+      EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20
+      - name: Verify reviewed immutable source
+        run: python3 tools/reference-source-verify.py
+      - if: inputs.phase == 'rehearsal'
+        name: Synthetic transport rehearsal — no provider credential
+        run: |
+          node --version
+          node --test test/reference-capture.test.mjs
+      - if: inputs.phase == 'capture'
+        name: Single separately approved reference capture
+        env:
+          MASSIVE_REFERENCE_KEY: ${{ secrets.MASSIVE_REFERENCE_KEY }}
+          SEC_UA: drrazaq drrazaq@users.noreply.github.com
+        run: |
+          node tools/reference-capture.mjs --capture
+          python3 tools/reference-pack.py | tee runtime/recovery-receipt.txt
+      - if: inputs.phase == 'capture'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owner-reference-recovery
+          path: runtime/owner-recovery.zip
+          retention-days: 1
+          if-no-files-found: error
+      - if: inputs.phase == 'recovery'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.recovery_commit }}
+          path: owner-restored
+          persist-credentials: false
+      - if: inputs.phase == 'recovery'
+        name: Verify owner-held copy on different runner — no provider credential
+        env:
+          RECOVERY_SHA256: ${{ inputs.expected_recovery_sha256 }}
+        run: python3 tools/reference-verify.py owner-restored/owner-recovery.zip "$RECOVERY_SHA256"
