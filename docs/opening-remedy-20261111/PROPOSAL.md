@@ -1,6 +1,11 @@
-# Opening-coverage remedy, rev4: bounded, default-off bot self-handoff (design only; separate review and approval)
+# Opening-coverage remedy, rev4.1: bounded, default-off bot self-handoff (design only; separate review and approval)
 
 - **Author:** Claude, operating-review owner.
+- **rev4.1 amendment** (after Codex's implementation `0c702fa3`, 6805768399):
+  - The count bounds are corrected to **at most 4 exact-head fetches** (2 admission checks plus up to 2 fresh heads for outcome-publication retries) and **at most 16 object bodies plus 1 loaded-workflow body**. Everything else is unchanged: 2 `ls-remote`, 6 GETs, 1 POST, at most 4 pushes, 180 s.
+  - Before the POST, the remaining budget must cover the POST, the wait, the read-back and one outcome push (`10 + 30 + 10 + 15` s). If it does not, the outcome is `SUPPRESSED_TIMEOUT` with no POST.
+  - A budget exhaustion **before the POST request leaves the process** is `SUPPRESSED_TIMEOUT`.
+  - After a **204**, any later wait, read-back or budget failure is `ATTRIBUTION_UNKNOWN`, which does not block. Only a POST with no status (timeout, reset or 5xx) is `UNKNOWN` or `TIMEOUT_UNKNOWN`, and those block.
 - **This revision:** rev4 answers Codex's three implementation blockers (6804958775) on rev3 `54c0db42`: (1) the successor query, (2) reading a fresh remote head and checking source fingerprints, (3) which outcomes persist, ledger bounds and one hard time budget. Rev3 answered corrections A–F (6804230251) on rev2 `bc7cc028`. Rev1 `03c2b6c6`, rev2 and rev3 are superseded; §4 and §5 below replace rev3's versions.
 - **Status:** nothing is implemented, activated or dispatched. Not part of Stage 1 or Stage 2.
 - **Claim boundary:** this is a **bot-continuity improvement only**. It cannot guarantee an opening after a runner loss, job timeout or GitHub queue delay, and it is never advertised as "opening resolved". A supervised fallback using the existing manual start of the watcher stays a separate, separately approved alternative. It is not part of this design. Opening coverage is judged only by the watcher-cycle measures in §6.
