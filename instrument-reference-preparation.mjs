@@ -26,7 +26,7 @@ export function prepareBulkInstrumentReference({pages,issuer,review,now=Date.now
  const ordered=[...intervals].sort((a,b)=>Date.parse(a.requestAt)-Date.parse(b.requestAt));if(ordered.some((p,i)=>i&&Date.parse(p.requestAt)-Date.parse(ordered[i-1].requestAt)<13000))throw Error('BULK_REQUEST_SPACING');
  const map=JSON.parse(issuer.bytes),issuers=Object.values(map);if(!map||Array.isArray(map)||issuers.length>20000)throw Error('BULK_ISSUER_MAP_UNKNOWN');
  const issuerByTicker=new Map();for(const row of issuers){const list=issuerByTicker.get(row?.ticker)||[];list.push(row);issuerByTicker.set(row?.ticker,list);}
- const filtered=[],issues=[],ids=new Map();let previous='',next=null,stored=issuer.bytes.length;
+ const filtered=[],issues=[],ids=new Set(),tickers=new Set();let previous='',orderAnomalies=0,next=null,stored=issuer.bytes.length;
  const joinCounts={matched:0,conflict:0,missing:0,notRequiredForNonCommon:0};
  for(let i=0;i<pages.length;i++){
   const p=pages[i];if(!Buffer.isBuffer(p.bytes)||p.bytes.length>1024*1024||review.pageSha256[i]!==sha(p.bytes))throw Error('BULK_ORIGINAL_HASH_OR_BYTES');stored+=p.bytes.length;
@@ -37,7 +37,7 @@ export function prepareBulkInstrumentReference({pages,issuer,review,now=Date.now
   if((i<pages.length-1)!==!!next)throw Error('BULK_PAGINATION_INCOMPLETE');
   const records=[];
   for(let index=0;index<raw.results.length;index++){
-   const x=raw.results[index];if(typeof x?.ticker!=='string'||!/^[A-Z][A-Z0-9.\-]{0,9}$/.test(x.ticker)||x.ticker<=previous)throw Error('BULK_DUPLICATE_OR_REGRESSING_TICKER');previous=x.ticker;
+   const x=raw.results[index];if(typeof x?.ticker!=='string'||!x.ticker||tickers.has(x.ticker))throw Error('BULK_DUPLICATE_OR_MISSING_TICKER');tickers.add(x.ticker);if(previous&&x.ticker<=previous)orderAnomalies++;previous=x.ticker;
    const r=Object.fromEntries(['ticker','name','market','locale','active','type','cik','composite_figi','share_class_figi','last_updated_utc'].filter(k=>k in x).map(k=>[k,x[k]]));
    if(typeof r.name==='string')r.name=r.name.slice(0,256);
    const mapped=issuerByTicker.get(x.ticker)||[],cik=typeof x.cik==='string'&&/^\d{1,10}$/.test(x.cik)?String(+x.cik):null;
@@ -45,7 +45,7 @@ export function prepareBulkInstrumentReference({pages,issuer,review,now=Date.now
    else if(!cik||cik==='0'||!mapped.length){r.issuerJoin='MISSING';joinCounts.missing++;}
    else if(mapped.length!==1||String(+mapped[0].cik_str)!==cik){r.issuerJoin='CONFLICT';joinCounts.conflict++;}
    else{r.issuerJoin='MATCHED';joinCounts.matched++;}
-   const figi=x.share_class_figi||x.composite_figi;if(x.type==='CS'&&typeof figi==='string'){const old=ids.get(figi);if(old){r.securityIdentityConflict=true;old.securityIdentityConflict=true;}else ids.set(figi,r);}
+   const figi=x.share_class_figi||x.composite_figi;if(typeof figi==='string'&&figi){if(ids.has(figi))throw Error('BULK_DUPLICATE_SECURITY_ID');ids.add(figi);}
    records.push(r);issues.push({symbol:x.ticker,page:i,index,issuerJoin:r.issuerJoin});
   }
   filtered.push({url,requestAt:p.requestAt,receiptAt:p.receiptAt,bodySha256:sha(p.bytes),requestId:typeof raw.request_id==='string'?raw.request_id:null,nextUrl:redactedNext,records});
@@ -56,7 +56,7 @@ export function prepareBulkInstrumentReference({pages,issuer,review,now=Date.now
  // Exercise the real outer consumer without O(N²) full-book hashing/parsing.
  for(const issue of [issues[0],issues.at(-1)].filter(Boolean)){const t=instrumentType(issue.symbol,{bytes:candidateBytes,pinnedSha256,now});if(t.status!==issue.status)throw Error('BULK_CONSUMER_PARITY_FAILED');}
  const eligible=issues.filter(x=>x.status==='ELIGIBLE_COMMON_STOCK').map(x=>filtered[x.page].records[x.index]);
- const report={kind:'BULK_PREPARED_NOT_ACTIVATED',pages:pages.length,records:issues.length,missingSourceUpdateTimes:filtered.flatMap(p=>p.records).filter(r=>!r.last_updated_utc).length,verifiedCommonStockSecurityIds:new Set(eligible.map(r=>r.share_class_figi||r.composite_figi)).size,verifiedCommonStockIssuerCiks:new Set(eligible.map(r=>String(+r.cik))).size,joinCounts,issues,firstRequestAt:new Date(first).toISOString(),lastReceiptAt:new Date(last).toISOString(),originalBytes:stored,candidateBytes:candidateBytes.length,externalRequests:0,limitations:'Current reference bracket only; <=7day expiry, no historical knowledge/tradability/quotes/ZAD or automatic refresh/binding.'};
+ const report={kind:'BULK_PREPARED_NOT_ACTIVATED',pages:pages.length,records:issues.length,orderAnomalies,missingSourceUpdateTimes:filtered.flatMap(p=>p.records).filter(r=>!r.last_updated_utc).length,verifiedCommonStockSecurityIds:new Set(eligible.map(r=>r.share_class_figi||r.composite_figi)).size,verifiedCommonStockIssuerCiks:new Set(eligible.map(r=>String(+r.cik))).size,joinCounts,issues,firstRequestAt:new Date(first).toISOString(),lastReceiptAt:new Date(last).toISOString(),originalBytes:stored,candidateBytes:candidateBytes.length,externalRequests:0,limitations:'Current reference bracket only; <=7day expiry, no historical knowledge/tradability/quotes/ZAD or automatic refresh/binding.'};
  if(stored+candidateBytes.length+Buffer.byteLength(JSON.stringify(report))+1024*1024>24*1024*1024)throw Error('BULK_STORAGE_BOUND_EXCEEDED');
  return {candidateBytes,candidateSha256:pinnedSha256,report};
 }

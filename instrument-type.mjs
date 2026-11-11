@@ -68,14 +68,14 @@ const bulkClock=v=>typeof v==='string'&&/T.*(Z|[+-]\d\d:\d\d)$/.test(v)&&Number.
 export function bulkInstrumentType(symbol,ref,{pinnedSha256,now=Date.now()}={}){
  const fail=reason=>unknown(reason);
  if(!Number.isFinite(now)||ref?.kind!==BULK_REFERENCE_KIND||!Array.isArray(ref.pages)||!ref.pages.length||ref.pages.length>14||ref.complete!==true||ref.review?.status!=='INDEPENDENT_PROVENANCE_REVIEWED'||!bulkClock(ref.issuerReceiptAt)||Date.parse(ref.issuerReceiptAt)>now||now-Date.parse(ref.issuerReceiptAt)>7*86400000||!bulkClock(ref.review.at)||Date.parse(ref.review.at)>now)return fail('BULK_REFERENCE_UNVERIFIED');
- let prior='',expected=null,firstAt=null,lastAt=null,total=0,found=[];
+ const tickers=new Set(),ids=new Set();let expected=null,firstAt=null,lastAt=null,total=0,found=[];
  try{for(let i=0;i<ref.pages.length;i++){
   const p=ref.pages[i],url=bulkReferenceUrl(p.url,{first:i===0});
   if(i&&url!==expected||!bulkClock(p.requestAt)||!bulkClock(p.receiptAt)||Date.parse(p.receiptAt)<Date.parse(p.requestAt)||Date.parse(p.receiptAt)>now||now-Date.parse(p.receiptAt)>7*86400000||!/^[a-f0-9]{64}$/.test(p.bodySha256||'')||!Array.isArray(p.records)||p.records.length>1000)return fail('BULK_PAGE_OR_CLOCK_UNKNOWN');
   if(i&&(Date.parse(p.requestAt)-lastAt<0||Date.parse(p.requestAt)-Date.parse(ref.pages[i-1].requestAt)<13000))return fail('BULK_PAGE_OR_CLOCK_UNKNOWN');
   firstAt??=Date.parse(p.requestAt);lastAt=Date.parse(p.receiptAt);expected=p.nextUrl?bulkReferenceUrl(p.nextUrl):null;
   if((i<ref.pages.length-1)!==!!expected)return fail('BULK_PAGINATION_INCOMPLETE');
-  for(let k=0;k<p.records.length;k++){const r=p.records[k];if(typeof r?.ticker!=='string'||!/^[A-Z][A-Z0-9.\-]{0,9}$/.test(r.ticker)||r.ticker<=prior)return fail('BULK_DUPLICATE_OR_REGRESSING_TICKER');prior=r.ticker;total++;if(r.ticker===symbol)found.push({r,p,index:k});}
+  for(let k=0;k<p.records.length;k++){const r=p.records[k];if(typeof r?.ticker!=='string'||!r.ticker||tickers.has(r.ticker))return fail('BULK_DUPLICATE_OR_MISSING_TICKER');tickers.add(r.ticker);const identity=r.share_class_figi||r.composite_figi;if(typeof identity==='string'&&identity){if(ids.has(identity))return fail('BULK_DUPLICATE_SECURITY_ID');ids.add(identity);}total++;if(r.ticker===symbol)found.push({r,p,index:k});}
  }}catch{return fail('BULK_ORIGIN_UNKNOWN');}
  if(total>14000||lastAt-firstAt>210000||Date.parse(ref.review.at)<lastAt||found.length!==1)return fail(found.length?'BULK_REFERENCE_UNVERIFIED':'MISSING_REFERENCE_IDENTITY');
  return bulkRecordType(found[0],{pinnedSha256,now,ref});
@@ -83,6 +83,7 @@ export function bulkInstrumentType(symbol,ref,{pinnedSha256,now=Date.now()}={}){
 // Used only after original-page validation by the consumer or offline assembler.
 export function bulkRecordType({r:x,p,index},{pinnedSha256,now=Date.now(),ref}={}){
  const fail=reason=>unknown(reason),identity=x.share_class_figi||x.composite_figi;
+ if(typeof x.ticker!=='string'||!/^[A-Z][A-Z0-9.\-]{0,9}$/.test(x.ticker))return fail('UNSUPPORTED_TICKER_NOTATION');
  if(x.market!=='stocks'||x.locale!=='us'||x.active!==true||typeof identity!=='string'||!/^[A-Z0-9]{12}$/.test(identity)||x.last_updated_utc&&(!bulkClock(x.last_updated_utc)||Date.parse(x.last_updated_utc)>now))return fail('UNSUPPORTED_OR_AMBIGUOUS_SECURITY_IDENTITY');
  const common={type:x.type,securityId:identity,cik:x.cik||null,sourceUrl:p.url,sourcePageSha256:p.bodySha256,sourceRecordIndex:index,observedAt:p.receiptAt,referenceSha256:pinnedSha256,sourceFailure:false,referenceContract:BULK_REFERENCE_KIND,identityScope:'CLASS_AS_OBSERVED; NOT_CURRENT_TRADABILITY_OR_EXECUTION'};
  if(x.type==='CS')return x.issuerJoin==='MATCHED'&&typeof x.cik==='string'&&/^\d{1,10}$/.test(x.cik)&&Number(x.cik)>0&&!x.securityIdentityConflict&&/^[a-f0-9]{64}$/.test(ref.issuerSha256||'')?{...common,status:'ELIGIBLE_COMMON_STOCK',policyExcluded:false,reason:'OFFICIAL_COMMON_STOCK_TYPE; NOT_ZAD_OR_EXECUTION_APPROVAL'}:{...fail('BULK_ISSUER_'+(x.issuerJoin||'UNVERIFIED')),...common};
