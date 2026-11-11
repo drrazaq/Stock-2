@@ -1,5 +1,5 @@
 import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {spawnSync} from 'node:child_process';
-import {researchInstrumentScope,instrumentAwareSec} from '../instrument-type.mjs';import {buildMidday,buildClose} from '../radar-v3-core.mjs';import {classifyCatalyst,headlineAssociation} from '../early-alerts.mjs';
+import {researchInstrumentScope,instrumentAwareSec} from '../instrument-type.mjs';import {buildMidday,buildClose} from '../radar-v3-core.mjs';import {classifyCatalyst,headlineAssociation,createEarlyAlerts,publicCatalystSummary} from '../early-alerts.mjs';
 const symbols=['ZXZZT','CRWX','CWVX','CRWG','AXTU','BDRY'];
 const snap={day:'2026-11-11',at:'11:15',firstMinute:'10:02',scanned:7,live:7,alerts:0,movers:[...symbols,'MYST'].map(sym=>({sym,maxUp:.5,firstSeen:'10:02',firstSeenUp:.3,code:'NO_RULE_FIT'})),hits:[],early:[...symbols,'MYST'].map(sym=>({sym,price:10,change:.04,score:90,firstMinute:'10:02'})),now:{},tally:{NO_RULE_FIT:7}};
 test('reviewed exclusions are exact instruments, not a suffix guess or halal ruling',async()=>{for(const s of symbols){assert.equal(researchInstrumentScope(s).policyExcluded,true);let called=false;const x=await instrumentAwareSec(s,async()=>{called=true;return {known:true}});assert.equal(called,false);assert.equal(x.policyExcluded,true);}assert.equal(researchInstrumentScope('NEWX').status,'UNKNOWN');assert.equal(researchInstrumentScope('CRWV').status,'UNKNOWN');assert.equal(researchInstrumentScope('CRWX').underlying,'CRWV');assert.equal(researchInstrumentScope('CWVX').underlying,'CRWV');assert.equal(researchInstrumentScope('CRWG').underlying,'CRWV');});
@@ -12,3 +12,22 @@ test('roundups and mere ticker mentions do not establish a positive economic cat
 test('recycled unrelated news stays unverified and positive text cannot erase dilution',()=>{const n=news('Ralph Lauren raises guidance');n.items[0].at=now-40*3600000;assert.equal(classifyCatalyst({symbol:'FOSL',sec:{known:true,filings:[]},news:n,nowMs:now}).cls,'UNCONFIRMED');assert.equal(classifyCatalyst({symbol:'FOSL',sec:{known:true,filings:[{...sec.filings[0],items:'3.02'}]},news:news('FOSL wins contract'),nowMs:now}).direction,'DILUTION');});
 
 test('actual radar renderer refuses unbound retained catalyst strings and mismatched structured subjects',()=>{const base={...snap,early:[{sym:'MYST',price:10,change:.04,score:90,firstMinute:'10:02'}],movers:[]};for(const cat of [{MYST:'POSITIVE Ralph Lauren headline'},{MYST:{subjectSymbol:'RALPH',evidence:[],text:'POSITIVE Ralph Lauren'}}]){const r=buildMidday({...base,cat});assert.match(r.text,/UNVERIFIED catalyst association/);assert.doesNotMatch(r.text,/Ralph Lauren/);}});
+
+test('normalised legal issuer names bind without manufacturing economic direction',()=>{
+ for(const [symbol,issuerName,headline] of [['FOSL','FOSSIL GROUP, INC.','Fossil Group shares jump after earnings'],['SNDK','SANDISK CORPORATION','SanDisk soars after earnings']]){
+ assert.equal(headlineAssociation({headline},{symbol,issuerName}).status,'ISSUER_MENTION_ONLY');
+ const c=classifyCatalyst({symbol,issuerName,sec:{known:true,filings:[]},news:news(headline),nowMs:now});assert.equal(c.direction,'AMBIGUOUS');}
+ assert.equal(headlineAssociation({headline:'Fossil fuels rally'},{symbol:'FOSL',issuerName:'Fossil Group Inc.'}).status,'UNVERIFIED_ISSUER');
+});
+test('common-word tickers need explicit ticker notation or issuer association',()=>{
+ assert.equal(headlineAssociation({headline:'IT spending increases'},{symbol:'IT',issuerName:'Gartner Inc.'}).status,'UNVERIFIED_ISSUER');
+ for(const headline of ['$IT raises guidance','NYSE: IT raises guidance','Gartner raises guidance'])assert.equal(headlineAssociation({headline},{symbol:'IT',issuerName:'Gartner Inc.'}).status,'ISSUER_MENTION_ONLY');
+ assert.equal(headlineAssociation({headline:'BRKXB rises'},{symbol:'BRK.B'}).status,'UNVERIFIED_ISSUER');
+ assert.equal(headlineAssociation({headline:'BRK.B rises'},{symbol:'BRK.B'}).status,'ISSUER_MENTION_ONLY');
+});
+test('actual alert caller retains structured bound catalyst for radar without raw news expansion',async()=>{
+ const sent=[],EA=createEarlyAlerts({day:snap.day,level:'all',now:()=>600,notHalal:()=>false,halalOk:()=>false,secRisk:async()=>({...sec,tags:[]}),send:async t=>(sent.push(t),{ok:true}),catalyst:async()=>classifyCatalyst({symbol:'FOSL',issuerName:'Fossil Group Inc.',sec,news:news('FOSL raises guidance'),nowMs:now})});
+ EA.noteLead({sym:'FOSL',m:600,price:10,chg:.04,score:90,rvT:3,dollarVol:2e6,live:true});await EA.process();
+ const row=EA.S.seen['lead|FOSL'];assert.equal(row.decision,'SENT');assert.equal(row.catObj.subjectSymbol,'FOSL');assert.equal(row.catObj.cls,'VERIFIED');assert.equal(row.catObj.unverifiedNews,undefined);assert.ok(row.catObj.evidence.every(e=>!('headline' in e)&&!('url' in e)));
+ const ctx={...snap,early:[{sym:'FOSL',price:10,change:.04,score:90,firstMinute:'10:02'}],movers:[],cat:{FOSL:publicCatalystSummary(row.catObj)}};const rendered=buildMidday(ctx);assert.match(rendered.text,/SEC 8-K/);assert.doesNotMatch(rendered.text,/UNVERIFIED catalyst association/);assert.match(sent[0],/UNVERIFIED DISCOVERY CONTEXT/);
+});

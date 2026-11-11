@@ -69,9 +69,15 @@ export function headlineDirection(h) {
 }
 // Routing metadata is not issuer association or proof of a material event.
 export function headlineAssociation(item,{symbol,issuerName}={}){
- const text=String(item?.headline||'');const names=[issuerName].filter(x=>typeof x==='string'&&x.trim().length>=4);
- const ticker=typeof symbol==='string'&&/^[A-Z][A-Z0-9.-]{0,9}$/.test(symbol)?new RegExp('(?:^|[^A-Za-z0-9])'+symbol.replaceAll('.','[.]')+'(?:$|[^A-Za-z0-9])'):null;
- const associated=!!ticker?.test(text)||names.some(n=>text.toLowerCase().includes(n.toLowerCase()));
+ const text=String(item?.headline||'');
+ const normalise=x=>String(x||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+ const issuer=normalise(issuerName).replace(/(?:\s+(?:incorporated|inc|corporation|corp|limited|ltd|plc|company|co))+$/g,'').trim();
+ const nameMatch=issuer.length>=4&&(' '+normalise(text)+' ').includes(' '+issuer+' ');
+ const valid=typeof symbol==='string'&&/^[A-Z][A-Z0-9.-]{0,9}$/.test(symbol), escaped=valid?symbol.replaceAll('.','[.]'):'';
+ // Short/common-word tickers require explicit financial notation or the issuer name.
+ const ambiguous=valid&&(symbol.length<=2||new Set(['ALL','NOW','FOR','ARE','HAS','ON','IT','SEE','CAN','CAR','ONE']).has(symbol));
+ const ticker=valid?new RegExp(ambiguous?'(?:\\$|(?:NYSE|NASDAQ|AMEX)\\s*:\\s*)'+escaped+'(?:$|[^A-Za-z0-9])':'(?:^|[^A-Za-z0-9])'+escaped+'(?:$|[^A-Za-z0-9])'):null;
+ const associated=nameMatch||!!ticker?.test(text);
  const roundup=/\b(stocks? (?:to watch|moving|making|gaining)|(?:pre[- ]?market|midday|after[- ]?hours) (?:movers|gainers)|roundup|these \d+ stocks)\b/i.test(text)||(/\b(and|among|including)\b/i.test(text)&&/\bstocks\b/i.test(text));
  return {status:!associated?'UNVERIFIED_ISSUER':roundup?'UNVERIFIED_ROUNDUP_CLAIM':'ISSUER_MENTION_ONLY',eligibleForDirection:associated&&!roundup,claimVerified:false};
 }
@@ -99,6 +105,11 @@ export function classifyCatalyst({ symbol, issuerName, sec, news, nowMs, hours =
   if (!sec || !sec.known) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: (sec?.status==='NO_ISSUER_RECORD'?'no verified issuer mapping (not a transport failure)':'the SEC check failed') + (news && news.ok ? '; no issuer-verified headline in 72 h' : '; news not available either') });
   if (!news || !news.ok) return tag({ cls: 'UNAVAILABLE', source: 'UNAVAILABLE', direction: 'UNKNOWN', freshness: 'NONE', text: 'no SEC filing in 72 h; news source unavailable (' + ((news && news.why) || 'not checked') + ')' });
   return tag({ cls: 'NONE', source: 'NONE', direction: 'UNKNOWN', freshness: 'NONE', text: N.length?'UNVERIFIED news retained; no issuer/claim-verified catalyst':'no SEC filing and no headline in 72 h' });
+}
+// Public radar uses a bounded subject-bound summary, not raw provider-news objects.
+export function publicCatalystSummary(c){
+ if(!c||typeof c!=='object')return null;
+ return {subjectSymbol:c.subjectSymbol||null,cls:c.cls,source:c.source,direction:c.direction,freshness:c.freshness,text:String(c.text||'').slice(0,512),checkedAt:c.checkedAt||null,evidence:(c.evidence||[]).map(e=>({source:e.source,publicAt:e.publicAt,form:e.form,items:e.items,sourceId:e.sourceId,issuerAssociation:e.issuerAssociation})),sourceAvailability:c.sourceAvailability};
 }
 export const levelAllows = (level, kind) => (kind === 'lead' ? level === 'all' : kind === 'paper' ? level === 'all' || level === 'paper' : false);
 
@@ -146,14 +157,14 @@ export function createEarlyAlerts(opts) {
           const hard = hardReason({ price: c.price, halalFail: opts.notHalal(c.sym), lottery: (opts.lottery || {})[c.sym], sec: await secOf(c.sym) });
           row.instrument=S.sec[c.sym]?.instrument||{status:'UNKNOWN'}; row.collectionVersion='WATCHER_CONTEXT_V2'; row.rankingCohort=opts.collectionCohort||'LEGACY_FROZEN_20261028'; row.approvedBuyEligible=false; row.performanceScope='LEGACY_MIXED_INSTRUMENT_RESEARCH'; c.instrument=row.instrument;
           if (hard) { row.decision = 'HARD: ' + hard; continue; }
-          if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catText = c.cat.text; row.catEvidence = c.cat.evidence; row.catCheckedAt = c.cat.checkedAt; row.catSources = c.cat.sourceAvailability; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
+          if (opts.catalyst) { c.cat = await opts.catalyst(c.sym, S.sec[c.sym]).catch(() => null); if (c.cat) { row.cat = c.cat.cls; row.catSource = c.cat.source; row.catDir = c.cat.direction; row.catFresh = c.cat.freshness; row.catObj = publicCatalystSummary(c.cat); row.catText = c.cat.text; row.catEvidence = c.cat.evidence; row.catCheckedAt = c.cat.checkedAt; row.catSources = c.cat.sourceAvailability; } }   // (28 Oct, owner approved) catalyst check inside alerts; every eligible candidate, sent or not, so the scorecard can compare
           if (!levelAllows(S.level, kind)) { row.decision = 'MUTED: alerts ' + S.level; continue; }
           if (S.sent[kind] + out.length >= (kind === 'lead' ? LEAD.perDay : PAPER.perDay)) { row.decision = 'LIMIT: ' + (kind === 'lead' ? LEAD.perDay : PAPER.perDay) + ' a day reached'; continue; }
           if (kind === 'paper') { const r = (opts.record || {})[c.rule + '/close']; c.record = r; c.history = ((opts.lab || {})[c.rule + '/close'] || {}).verdict; c.halalOk = opts.halalOk(c.sym); }
           out.push({ row, c }); }
         if (!out.length) continue;
         const text = kind === 'lead' ? leadText(out.map(x => x.c), { halalOk: opts.halalOk }) : paperText(out.map(x => x.c));
-        const labelled=text+'\nRESEARCH ONLY. Instrument identity may be UNKNOWN; unverified instruments are retained as context and are excluded from verified common-stock performance claims. This is never approved BUY eligibility.';
+        const labelled=text+'\nUNVERIFIED DISCOVERY CONTEXT when identity is UNKNOWN; excluded from verified common-stock radar A/B. RESEARCH ONLY. Instrument identity may be UNKNOWN; unverified instruments are retained as context and are excluded from verified common-stock performance claims. This is never approved BUY eligibility.';
         const r = await opts.send(labelled).catch(e => ({ ok: false, why: e.message })), at = opts.now();
         for (const x of out) { x.row.decision = r && r.ok ? 'SENT' : 'SEND FAILED' + (r && r.why ? ': ' + r.why : ''); x.row.sentM = at; x.row.latencyMin = at - x.row.m; }
         if (r && r.ok) S.sent[kind] += out.length; } },

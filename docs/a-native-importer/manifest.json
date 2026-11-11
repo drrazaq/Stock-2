@@ -16,7 +16,7 @@
     "test/a-native-importer-package.test.mjs": "d75358a497bc3acb838170c94e4af11772e509a9b542e5f0b4f6881aff323f28",
     "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
-    "tools/market03-ingress-matrix.mjs": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7",
+    "tools/market03-ingress-matrix.mjs": "4932af0b0c0776de5d196cf46cef3bd8ba8a3aaacdb3d68903d4e26e329d46d2",
     ".github/workflows/tests.yml": "b4dac395cc70301565fcdef737361de2c7dee4edae5df66a8ac09c145a1ed5e0"
   },
   "productionProtected": {
@@ -28,7 +28,7 @@
     "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
     "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
-    "ignition-watch.mjs": "46e5b623bc21bf815900ec2ad0df1b30a301209da0dd9f830bde1718081d1a8a",
+    "ignition-watch.mjs": "61ce32115593478ad91e283f9c6adc2351df21a7975cbdd050b16cf2b61d8bff",
     "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
     "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
     "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
@@ -170,10 +170,16 @@
     "historicalManifestAt": "a4976e0270a41bd0eb5292b153ed819a60aaac37",
     "changed": [
       {
+        "path": "tools/market03-ingress-matrix.mjs",
+        "before": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7",
+        "after": "4932af0b0c0776de5d196cf46cef3bd8ba8a3aaacdb3d68903d4e26e329d46d2",
+        "reason": "Explicit current dependency repin; original package remains at a497; no strategy, acquisition, caps, authority, deadlines or assertions relaxed"
+      },
+      {
         "path": "ignition-watch.mjs",
         "before": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
-        "after": "46e5b623bc21bf815900ec2ad0df1b30a301209da0dd9f830bde1718081d1a8a",
-        "reason": "Current development radar/issuer subject and partial quote archival correction; unchanged entry/exit, research protocols, byte/request/deadline caps and frozen verdicts"
+        "after": "61ce32115593478ad91e283f9c6adc2351df21a7975cbdd050b16cf2b61d8bff",
+        "reason": "Explicit current dependency repin; original package remains at a497; no strategy, acquisition, caps, authority, deadlines or assertions relaxed"
       }
     ],
     "reviewStatus": "FOCUSED_REVIEW_REQUIRED",

@@ -29,7 +29,7 @@ import { sendAlert } from './opp-mode.mjs';
 import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
 import { detectPreIgnition, recordPreIgnition, finishPreIgnition } from './pre-ignition-discovery.mjs';
 import { stopHits } from './stop-watch.mjs';
-import { createEarlyAlerts, alertLevel, classifyCatalyst } from './early-alerts.mjs';
+import { createEarlyAlerts, alertLevel, classifyCatalyst, publicCatalystSummary } from './early-alerts.mjs';
 import { createShadow, spreadPct } from './shadow-stream.mjs';
 import { parseAtom, nyMinuteOf } from './edgar-feed.mjs';
 import { dEligible, hash, FROZEN as RANK } from './rank-models.mjs';
@@ -305,9 +305,9 @@ async function radarSnap(m, scanned, live) {
   RADAR.mkt = medChg();
   // (28 Oct fix) the live SEC check for every stock the radar may name (cached by the alert system when it already ran); a lead needs it
   const sec = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)])) { if (!EA.S.sec[s]) EA.S.sec[s] = await secRisk(s).catch(() => ({ known: false, tags: [] })); sec[s] = { known: EA.S.sec[s].known, tags: EA.S.sec[s].tags || [],instrument:EA.S.sec[s].instrument||{status:'UNKNOWN'},status:EA.S.sec[s].status,sourceFailure:EA.S.sec[s].sourceFailure===true }; }
-  const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catText) cat[r.sym] = r.catText;
+  const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catObj) cat[r.sym] = publicCatalystSummary(r.catObj);
   { let nq = 0; for (const s of [...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)]) { if (cat[s] || !sec[s] || !sec[s].known || sec[s].tags.length) continue;   // the radar's own catalyst check for names it may list
-      const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = classifyCatalyst({ symbol:s,issuerName:EA.S.sec[s]?.issuerName, sec: EA.S.sec[s], news, nowMs: Date.now() }); } }
+      const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = publicCatalystSummary(classifyCatalyst({ symbol:s,issuerName:EA.S.sec[s]?.issuerName, sec: EA.S.sec[s], news, nowMs: Date.now() })); } }
   fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, alertCounts:alertDeliveryCounts(triggers,alerts), mkt: RADAR.mkt, tally: tl, sec, cat,
     moverCount: ms.length, movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
   await sendRadarOnce();

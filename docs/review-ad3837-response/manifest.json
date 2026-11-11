@@ -15,7 +15,7 @@
     "test/review-ad3837-disposition.test.mjs": "128383740f6a6d8d0b50293067814528574d5ca6f2155a9d1abfe653532eb441",
     "test/review-ad3837-package.test.mjs": "3813239e5d924470f4e3bab7ed5cc0712a9457d0a5133a599c36793a9cf14d31",
     "test/bc-research-rehearsal.test.mjs": "01f46dfccb2a9ce0aeebf80fce2f945f4b0a661e251646d12917e23d3c65e342",
-    "tools/market03-ingress-matrix.mjs": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7",
+    "tools/market03-ingress-matrix.mjs": "4932af0b0c0776de5d196cf46cef3bd8ba8a3aaacdb3d68903d4e26e329d46d2",
     ".github/workflows/tests.yml": "b4dac395cc70301565fcdef737361de2c7dee4edae5df66a8ac09c145a1ed5e0",
     "docs/research-bc/current-disposition.json": "efc64a9dc99f32044111a24800a72e83ba09e93030fe219bfafebd235670fb78",
     "docs/research-bc/README.md": "053e433c12833b6a6f343e2802dc29c77931cd7d4e6903909cdd5c9f20c93bf1",
@@ -62,7 +62,7 @@
   },
   "productionAndResearchProtected": {
     "scan.mjs": "463d69b124a950b29b1ae52e4c3ac594c19dd927183ce049fb052c6cefa5f933",
-    "ignition-watch.mjs": "46e5b623bc21bf815900ec2ad0df1b30a301209da0dd9f830bde1718081d1a8a",
+    "ignition-watch.mjs": "61ce32115593478ad91e283f9c6adc2351df21a7975cbdd050b16cf2b61d8bff",
     "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
     "market-session.mjs": "2a90c4ea0477a023d0428b319e6d9ed5daf1d89203f0152055fa20b67dacab21",
@@ -199,9 +199,15 @@
     "historicalManifestAt": "a4976e0270a41bd0eb5292b153ed819a60aaac37",
     "changed": [
       {
+        "path": "tools/market03-ingress-matrix.mjs",
+        "before": "56c2bb226c4faec3205841974ad6dfb52de5b5795fbafb9752c25b7317b007b7",
+        "after": "4932af0b0c0776de5d196cf46cef3bd8ba8a3aaacdb3d68903d4e26e329d46d2",
+        "reason": "Explicit current dependency repin; original package remains at a497; no strategy, acquisition, caps, authority, deadlines or assertions relaxed"
+      },
+      {
         "path": "ignition-watch.mjs",
         "before": "27ac05b298605a071e3d7806ff265e6cbcdbe1f204efd78c55d67cbbb287bfaf",
-        "after": "46e5b623bc21bf815900ec2ad0df1b30a301209da0dd9f830bde1718081d1a8a",
+        "after": "61ce32115593478ad91e283f9c6adc2351df21a7975cbdd050b16cf2b61d8bff",
         "reason": "Explicit current dependency repin; original package remains at a497; no strategy, acquisition, caps, authority, deadlines or assertions relaxed"
       }
     ],
