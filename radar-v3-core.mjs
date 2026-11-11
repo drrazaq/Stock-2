@@ -6,7 +6,7 @@ import {researchInstrumentScope} from './instrument-type.mjs';
 // in four panels, each line labelled:
 //   A. LIVE RESEARCH LEADS   stocks moving +2% to +20% on rising volume pace (the early-wave observation lane), not yet extended
 //   B. SHORT SETUPS (PAPER)  intraday rule hits (IG1-IG9) with each rule's own live paper record and history verdict
-//   C. APPROVED SIGNALS      only alerts from rules that passed every gate (zero is allowed and said plainly)
+//   C. SIGNAL DELIVERY HISTORY      cached delivery counts, never current purchase approval
 //   D. RUNNERS WE MISSED     the day's biggest movers and the first reason in the pipeline that stopped them
 // Every A and B line says NOT AN APPROVED BUY. Hard rules are never bypassed: under 1 USD, NOT HALAL (ZAD), SEC danger filings and the
 // one-day-jump AVOID list are shown as BLOCKED with the reason, never as a lead.
@@ -61,7 +61,7 @@ export const CODE_WORDS = {
   ALERTED: 'alerted', UNDER_1_USD: 'under 1 USD (hard rule)', SEC_CHECK_UNAVAILABLE: 'SEC check failed (safety block)', SEC_BLOCKED: 'SEC danger filing (safety block)',
   NOT_HALAL: 'NOT HALAL (ZAD)', LOTTERY_AVOID: 'on the one-day-jump AVOID list', ALERT_CAP_REACHED: 'daily alert cap reached', NO_LIVE_PRICE_AT_SIGNAL: 'no fresh price at the signal',
   VOLUME_FIGURE_LATE: 'volume figure late (data)', CAUGHT_PAPER_GATE_NOT_MET: 'a rule caught it; paper record not strong enough (promotion gate)',
-  CAUGHT_RULE_NOT_PASSED: 'a rule caught it; rule failed its 5-year test (promotion gate)', GAPPED_AT_OPEN: 'gapped up before the open (timing)',
+  CAUGHT_RULE_NOT_PASSED: 'a rule caught it; rule failed its minute-bar history verdict (promotion gate)', GAPPED_AT_OPEN: 'gapped up before the open (timing)',
   NOT_VISIBLE_LIVE: 'never had a fresh price (data)', VISIBLE_TOO_LATE: 'first fresh price came after +25% (data)', NO_VOLUME_HISTORY: 'no volume history',
   AFTER_11_00: 'move came after 11:00 New York (rule window)', LOW_VOLUME: 'volume too low for the rules', NO_RULE_FIT: 'no rule fits this shape',
 };
@@ -74,11 +74,11 @@ export function topSilence(tally = {}) {
   return { code: e[0][0], n: e[0][1], kind: SILENCE_KIND[e[0][0]] || 'other', words: (CODE_WORDS[e[0][0]] || e[0][0]).replace(/ \([^)]*\)$/, '') };   // the kind is said separately
 }
 
-// closest rule to approval: the best positive live paper record, with its 5-year history verdict (lab) and what is still missing
+// closest rule to approval: the best positive live paper record, with its minute-bar history verdict (lab) and what is still missing
 export function closestRule(record = {}, lab = {}) {
   const c = Object.entries(record).filter(([k, r]) => /\/close$/.test(k) && r && r.n > 0 && r.avg > 0).sort((a, b) => b[1].n * b[1].avg - a[1].n * a[1].avg)[0];
   if (!c) return null; const [k, r] = c, rule = k.split('/')[0], hv = ((lab[k] || {}).verdict) || 'not tested', miss = [];
-  if (hv !== 'PROMISING') miss.push('its 5-year history test (' + hv + ')'); if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
+  if (hv !== 'PROMISING') miss.push('its minute-bar history test (' + hv + ')'); if (hv === 'REJECTED') return {rule,n:r.n,days:r.days||0,avg:r.avg,stress:r.stress,history:hv,missing:miss}; if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
   if (!(r.stress > 0)) miss.push('a profit at the stress cost');
   return { rule, n: r.n, days: r.days || 0, avg: r.avg, stress: r.stress, history: hv, missing: miss };
 }
@@ -137,7 +137,7 @@ export function buildMidday(snap, ctx0 = {}) {
   if (blocked.length) text.push('BLOCKED by hard rules (not leads): ' + blocked.slice(0, 6).join('; ') + (blocked.length > 6 ? '; +' + (blocked.length - 6) + ' more' : '') + '.');
   // C
   const cr = closestRule(ctx.record, ctx.lab);
-  text.push('', 'C. APPROVED SIGNALS: ' + (snap.alerts > 0 ? snap.alerts + ' tested alert' + (snap.alerts > 1 ? 's' : '') + ' sent today (see those messages).' : '0 so far today.'));
+  text.push('', 'C. SIGNAL DELIVERY HISTORY: '+(Number.isInteger(snap.alerts)&&snap.alerts>=0?snap.alerts:'unknown')+' watcher messages. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.',...alertDeliveryLines(snap));
   if (!(snap.alerts > 0) && cr) text.push('  Closest: ' + cr.rule + ' (' + cr.n + ' paper trades on ' + cr.days + ' days, ' + pct(cr.avg, 1) + ' a trade). Missing: ' + cr.missing.join('; ') + '.');
   // D
   text.push('', 'D. OBSERVED INSTRUMENT MOVEMENTS (retrospective, not company opportunities)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers,5,false,ctx));
@@ -145,7 +145,7 @@ export function buildMidday(snap, ctx0 = {}) {
   const ts = topSilence(snap.tally);
   text.push('', 'Received ' + (snap.scanned ?? '?') + ' instruments (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a fresh price). 15%+ movers: ' + (snap.moverCount ?? (snap.movers || []).length) + ' (showing ' + (snap.movers || []).length + '). Rule hits: ' + (snap.hits || []).length + '.'
     + (ts ? ' Top reason for silence: ' + ts.words + ' (' + ts.n + ', ' + ts.kind + ').' : ''));
-  text.push('Chasing: stocks already up 20%+ when first seen fell a median 19% to the close (469 cases, 14-27 Oct). Check ZAD. Research only, not advice.');
+  text.push('Retrospective movements are not a validated chase strategy or current entries. Research only; check current evidence and ZAD.');
   return { text: text.join('\n'), rows };
 }
 
@@ -178,12 +178,36 @@ export function buildClose(day, live, ledger = [], ctx = {}) {
       text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
     text.push('', 'D. OBSERVED INSTRUMENT MOVEMENTS TODAY (not verified missed company opportunities):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true,ctx));
     const ts = topSilence(live.tally), all = Object.values(live.tally || {}).reduce((a, b) => a + b, 0); if (ts) text.push('Top reason for silence today: ' + ts.words + ' (' + ts.n + ' of ' + all + ' movers of 15%+; ' + ts.kind + ').');
-    text.push('', 'C. APPROVED SIGNALS today: ' + (live.alerts || 0) + '. Tested buys for the next session come in ACTIONS tonight.');
+    text.push('', 'C. SIGNAL DELIVERY HISTORY today: '+(Number.isInteger(live.alerts)&&live.alerts>=0?live.alerts:'unknown')+'. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.',...alertDeliveryLines(live));
   }
   const sb = scoreboard(ledger), P = sb.panels;
   text.push('', 'RADAR SCORECARD (' + sb.sessions + ' session' + (sb.sessions === 1 ? '' : 's') + '; verdict after 10):');
   for (const k of ['A', 'B']) { const p = P[k]; text.push('- ' + k + ': ' + (p && p.n ? p.n + ' lines, same day ' + pct(p.avgNet, 1) + ' net on average, ' + Math.round(p.win * 100) + '% positive' + (p.beatMkt !== null ? ', ' + Math.round(p.beatMkt * 100) + '% beat the average stock' : '') : 'no scored lines yet')
     + (p && p.n5 ? '; 5 sessions ' + pct(p.avgNet5, 1) + ', ' + Math.round(p.beatSpy5 * 100) + '% beat SPY' : '')); }
-  text.push('Nothing here is an approved buy unless it says APPROVED. Research only, not advice.');
+  text.push('Nothing in this research summary is a current approved purchase. Cached delivery history is not authorization. Research only, not advice.');
   return text.join('\n');
+}
+
+// HISTORY-03 B01/D15: counters describe retained observations, never current BUY approval.
+// This view does not alter limits, message reservations, frozen scoring, or historical rows.
+export function alertDeliveryCounts(triggers=[], legacyTotal=null) {
+ const out={version:1,scope:'RETAINED_TRIGGER_OBSERVATIONS',ruleQualified:{recorded:0,sent:0,unsent:0,uncertain:0},earlyPaper:{recorded:0,sent:0,unsent:0,uncertain:0},legacyUnclassified:null,conflicts:0,invalidRecords:0};
+ const events=new Map();
+ for(const t of triggers){if(!t||!['RULE_QUALIFIED','EARLY_PAPER'].includes(t.deliveryKind))continue;
+  if(typeof t.d!=='string'||!/^\d{4}-\d\d-\d\d$/.test(t.d)||typeof t.sym!=='string'||!t.sym||typeof t.rule!=='string'||!t.rule||!Number.isInteger(t.m)||t.m<0||t.m>=1440){out.invalidRecords++;continue;}
+  const id=JSON.stringify([t.d,t.sym,t.rule,t.m]);const x={kind:t.deliveryKind,state:t.deliveryState||'UNCERTAIN'},old=events.get(id);
+  if(!old)events.set(id,x);else if(old.kind!==x.kind||old.state!==x.state){events.set(id,{kind:old.kind,state:'CONFLICT'});out.conflicts++;}
+ }
+ for(const x of events.values()){const row=x.kind==='EARLY_PAPER'?out.earlyPaper:out.ruleQualified;row.recorded++;if(x.state==='ACKNOWLEDGED')row.sent++;else if(x.state==='UNSENT')row.unsent++;else row.uncertain++;}
+ const known=out.ruleQualified.sent+out.earlyPaper.sent;
+ if(Number.isSafeInteger(legacyTotal)&&legacyTotal>=0){out.legacyUnclassified=Math.max(0,legacyTotal-known);out.legacyCountMismatch=known>legacyTotal;}
+ return out;
+}
+export function alertDeliveryLines(snapshot={}) {
+ const c=snapshot.alertCounts,n=v=>Number.isSafeInteger(v)&&v>=0;
+ const valid=r=>r&&['recorded','sent','unsent','uncertain'].every(k=>n(r[k]))&&r.sent+r.unsent+r.uncertain===r.recorded;
+ if(c?.version!==1||c.scope!=='RETAINED_TRIGGER_OBSERVATIONS'||!valid(c.ruleQualified)||!valid(c.earlyPaper)||!(c.legacyUnclassified===null||n(c.legacyUnclassified)))return ['Legacy unsplit total: '+(n(snapshot.alerts)?snapshot.alerts:'unknown')+' watcher messages reported; rule-qualified/paper and delivery-state breakdown UNKNOWN.'];
+ const line=(label,r)=>label+': '+r.recorded+' recorded, '+r.sent+' sent (acknowledged), '+r.unsent+' unsent, '+r.uncertain+' uncertain.';
+ return [line('HISTORY/PAPER-GATE QUALIFIED',c.ruleQualified),line('EARLY PAPER ALERTS (NOT PROVEN)',c.earlyPaper),
+  'Scope: retained trigger observations; '+(c.legacyUnclassified===null?'legacy delivery total unknown':c.legacyUnclassified+' legacy deliveries unclassified')+(c.legacyCountMismatch?'; legacy counter mismatch':'')+'. These are delivery records, not current purchase or ZAD approval.'];
 }

@@ -1,3 +1,5 @@
+import {makeScannerAssessmentRule,assessmentRuleIdentity,frozenAssessmentQueue,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes} from './discovery-runtime.mjs';
+import {readRadarLedger} from './radar-ledger.mjs';
 import {marketClock,completedMarketSession} from './market-session.mjs';
 import {isDeepStrictEqual} from 'node:util';
 const validPlanPrice=x=>typeof x==='number'&&Number.isFinite(x)&&x>0;
@@ -234,6 +236,8 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
   const lead = array(D && D.candidates).find(x => x && x.sym === sym), names = readJson0('data/names.json') || {};
   const issuer = typeof names[sym] === 'string' ? names[sym] : lead && lead.name || 'issuer name UNKNOWN';
   const er = readJson0('data/events-recent.json'), events = array(er && er.events).filter(x => x && x.sym === sym).slice(-2);
+  const reports=array(readJson0('data/earnings-recent.json')?.reports).filter(x=>x&&x.sym===sym).sort((a,b)=>String(b.d||'').localeCompare(String(a.d||''))).slice(0,2);
+  const earningsLead=reports.length?reports.map(x=>'report day '+clean(x.d||'UNKNOWN')+', cached actual '+clean(x.a??'UNKNOWN')+' vs estimate '+clean(x.e??'UNKNOWN')+', timing '+clean(x.t||'UNKNOWN')).join('; ')+'; EPS unit/basis, comparable expectation vintage and original receipt UNKNOWN; not a verified surprise or an entry':'No earnings lead supplied; not evidence that none exists';
   const evidence = events.length ? events.map(x => clean(x.p || 'UNKNOWN publication date') + ' ' + clean(x.f || 'unclassified filing')).join('; ') + '; original observation/receipt and incrementality UNKNOWN' : 'No dated catalyst witness supplied (not evidence of no catalyst); original observation/receipt UNKNOWN';
   const leaderTimeExit = P && P.src === 'leader dip' ? 'time exit after ' + (P.ldHold || LDIP_HOLD) + ' sessions (about ' + (P.boughtSession || P.since ? ldipExitDay(P.boughtSession || P.since, P.ldHold || LDIP_HOLD) : 'UNKNOWN date') + ')' : '';
   const stopLabel = P && typeof P.stop === 'number' && Number.isFinite(P.stop) && P.stop > 0 ? 'stop ' + price(P.stop) : P && (P.src === 'leader dip' || /no stop by design/i.test(P.stopWhy || '')) ? 'no stop by design' : 'stop NOT SET';
@@ -257,16 +261,30 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
   const rank = Q && Q.rank && Q.rank[sym], qr = Q && Q.results ? Object.values(Q.results).filter(r => r && /^Quality/.test(r.name || '')) : [];
   const quality = typeof rank === 'number' && Number.isFinite(rank) ? 'retained quality percentile ' + (100 * rank).toFixed(1) + '; investigate business/valuation, not a buy signal' : 'quality rank UNKNOWN';
   const px = st && st.last > 0 ? st.last : lead && lead.price > 0 ? lead.price : null;
+  // Independently reviewed primary facts add company context, never admission or a new rule.
+  const primaryFile=readJson0('data/company-investigations.json'), candidate=primaryFile?.records?.[sym];
+  const primaryTime=v=>typeof v==='string'&&Number.isFinite(Date.parse(v))&&Date.parse(v)<=Date.now();
+  const primary=primaryFile?.kind==='REVIEWED_COMPANY_INVESTIGATIONS_V1'&&candidate?.symbol===sym&&primaryTime(candidate.reviewedAt)&&primaryTime(candidate.publishedDate)&&primaryTime(candidate.receiptAt)&&Date.parse(candidate.publishedDate)<=Date.parse(candidate.receiptAt)&&Date.parse(candidate.receiptAt)<=Date.parse(candidate.reviewedAt)&&/^[a-f0-9]{64}$/.test(candidate.sourceSha256||'')&&typeof candidate.sourceUrl==='string'&&/^https:\/\//.test(candidate.sourceUrl)&&typeof candidate.reviewComment==='string'&&/^https:\/\/github[.]com\/drrazaq\/Stock-2\/pull\/1#issuecomment-\d+$/.test(candidate.reviewComment)?candidate:null;
+  const primaryLine=primary?'PRIMARY COMPANY INVESTIGATION | '+clean(primary.issuer)+': '+clean(primary.summary,500)+' | Contrary/invalidation: '+clean(primary.contrary,350)+' | Next fact: '+clean(primary.nextEvidence,300)+' | Published '+clean(primary.publishedDate)+', received '+clean(primary.receiptAt)+', reviewed '+clean(primary.reviewedAt)+'; source '+clean(primary.sourceUrl,400)+'; SHA256 '+primary.sourceSha256+'. Primary context is not current trading or valuation approval.':'PRIMARY COMPANY INVESTIGATION | No reviewed, clock-consistent subject-bound record supplied; investigate the dated issuer filing, not an inferred positive headline.';
+  const sourceStatus=assessmentSourceStatus(sig,new Date(Date.now()).toISOString()),ruleIdentity=assessmentRuleIdentity(st);
+  let trace=[];try{trace=readRadarLedger('data/discovery-journal.jsonl').filter(r=>r.type==='assessment'&&r.symbol===sym).slice(-3);}catch{}
+  const lineage=trace.length?trace.map(r=>'assessment '+clean(r.id,64)+'; cycle '+clean(r.cycleKey||'LEGACY_UNSTATED',64)+'; evidence '+clean(r.evidenceVersion,64)+'; rule '+clean(r.ruleId||'NONE',100)+'; version '+clean(r.ruleVersion||'UNKEYED / original version unavailable',120)+' ('+clean(r.ruleIdentityState||'LEGACY_UNKEYED')+')').join(' | '):'No producer-recorded assessment ID supplied; source context is not a completed investigation or outcome';
   if (compact) return 'ASSESSMENT SUMMARY — ' + sym + ': ' + clean(decision, 64) + (P ? ' | held, ' + stopLabel : '') + ' | mid ' + (rows.length ? [...new Set(rows.map(r => clean(r.verdict || 'UNKNOWN')))].join('/') : 'UNKNOWN') + ' | long ' + (typeof rank === 'number' && Number.isFinite(rank) ? (rank * 100).toFixed(1) + ' percentile; research only' : 'UNKNOWN') + ' | saved close ' + clean(sig && sig.session || D && D.session || 'UNKNOWN', 10) + ' | no new entry; details: check ' + sym;
   return [
-    'ASSESSMENT CONTEXT — ' + sym + ' / ' + clean(issuer) + ' (information; this card grants no BUY approval)',
+    'ASSESSMENT CONTEXT — ' + sym + ' / ' + clean(primary?.issuer||issuer) + ' (information; this card grants no BUY approval)',
+    'Evidence readiness: business '+(primary?'REVIEWED_PRIMARY_FACTS; THESIS_NOT_VALIDATED':lead?'DATED_DISCOVERY_LEAD_NOT_VALIDATED':'UNKNOWN / no business rejection inferred')+'; valuation UNKNOWN / no causal valuation supplied; entry rule '+(P?'EXISTING_HOLDING_RULE':st||q?'STORED_RULE_NOT_CURRENT_ADMISSION':'MISSING')+'; executable price UNKNOWN; ZAD '+clean(myHalal(sym))+'.',
     'Identity: ticker only; stable point-in-time security identity UNKNOWN. ZAD: ' + clean(myHalal(sym)) + '; ZAD is final authority.',
+    'Source freshness: '+sourceStatus.status+'; expected completed close '+(sourceStatus.expectedCompletedSession||'UNKNOWN')+'; saved '+(sourceStatus.session||'UNKNOWN')+'. A current completed close is not a current quote; intraday invocation and executable readiness are not established by this file.',
     'SHORT ACTION | existing assessment: ' + clean(decision) + ' | horizon ' + (P ? P.src === 'leader dip' ? (P.ldHold || LDIP_HOLD) + ' sessions' : P.maxHold || (P.kind === 'leader' ? 'trend rule; no fixed hold' : 'existing holding rule') : q && (q.maxHold || q.days) || 'stored scanner rule, duration UNKNOWN') + '. Entry: ' + entry + '. Exit: ' + clean(exit) + '.',
+    'Trace: '+lineage+'.',
+    'Retained scanner rule: '+(st?.proven===false?'rule NOT PROVEN':st?.proven===true?(Number.isFinite(st.n)&&st.n<30?'producer pass label; fewer than existing30-case command threshold; rule NOT PROVEN':'stored test pass only; no current entry approval'):'UNKNOWN / no rule verdict supplied')+'; identity '+ruleIdentity.ruleIdentityState+'; version '+(ruleIdentity.ruleVersion||'UNKNOWN / not retroactively inferred')+'.',
     'Short evidence: scan close ' + clean(sig && sig.session || 'UNKNOWN') + ' (date only; not receipt time). Record: ' + track + '.',
     'MID TERM | ' + (rows.length ? 'INVESTIGATE / WAIT; no entry granted here. ' + rows.map(line).join(' | ') + '. Existing research entry: next open after ' + setups.map(k => rules[k] || k).join('; ') + '; close 25% below entry exits next open, otherwise original 20/60/120-session hold. These are research definitions, not adopted orders.' : 'WAIT / UNKNOWN: no linked horizon setup supplied; no entry or exit invented.') + ' Source horizons.json: ' + stamp(H && H.generatedAt) + ', prices through ' + clean(H && H.to || 'UNKNOWN') + '.',
     'LONG TERM | INVESTIGATE / NO BUY APPROVAL: ' + quality + '. ' + (qr.length ? qr.map(r => clean(r.verdict || 'UNKNOWN') + ' at ' + r.months + ' months; ' + half(r.results && r.results.older, 'older') + ' | ' + half(r.results && r.results.newer, 'newer') + (r.why ? '; ' + clean(r.why) : '')).join('; ') : 'No linked quality test supplied') + '. No adopted individual-stock entry/exit supplied by this rank. Source quality.json: ' + stamp(Q && Q.generatedAt) + ', prices through ' + clean(Q && Q.to || 'UNKNOWN') + '.',
     'Known-then evidence (events-recent.json; not an original receipt): ' + evidence + '. Business lead: ' + (lead ? clean(lead.profitTrend || 'discovery candidate') + (typeof lead.revGrowth === 'number' ? ', reported revenue growth ' + pcs(lead.revGrowth) : '') + '; discovery.json ' + stamp(D.generatedAt) + ', close ' + clean(D.session || 'UNKNOWN') : 'no discovery business evidence supplied') + '.',
-    'Price/execution: ' + (px ? 'saved close ' + money(px) + ', not current executable price; ' : '') + 'live BBO, conditions, displayed size, fills and quantity UNKNOWN. Research assumption: $1,000 whole shares, $3 each executed side; actual after-cost result UNKNOWN. Displayed size would not prove fill capacity.',
+    'Earnings investigation: '+earningsLead+'.',
+    primaryLine,
+    'Price/execution: ' + (px ? 'saved close ' + money(px) + ', not current executable price; ' : '') + 'live BBO, conditions, displayed size, fills and executable quantity UNKNOWN. '+(st?.buyLo>0?'Recorded lower entry '+money(st.buyLo)+' permits at most '+Math.max(0,Math.floor((1000-3)/st.buyLo))+' whole shares before spread/slippage; no order implied. ':'')+'Research assumption: $1,000 whole shares, $3 each executed side; actual after-cost result UNKNOWN. Displayed size would not prove fill capacity.',
     'Risks/next check: ' + (lead && (lead.hardBlock || lead.bio && lead.bio.text) ? 'Existing discovery warning: ' + clean(lead.hardBlock || lead.bio.text) + '. ' : '') + 'horizons may disagree; favorable comparisons do not erase SPY losses, severe drawdowns or failed gates; SPY is the stored raw benchmark, not a matched-fee execution result; unavailable stored benchmark/worst fields are UNKNOWN. Financing/dilution, expected-vs-new information and original filing vintages remain unresolved unless separately evidenced. Reassess on the next completed scan/new dated disclosure, or fresh price for the EXISTING position rule; no timing promise. No exit or live gate changed.'
   ].join('\n');
 }
@@ -589,6 +607,14 @@ function autolabText() { const AL = readJson0('data/autolab.json'); if (!AL || A
     '', 'Only PROVEN LIVE rules (30+ paper trades, profitable, better than an average stock) appear in your ACTIONS. Check ZAD. Research only.'].join('\n'); }
 // OPPORTUNITY BOARD: everything worth knowing today, wider than the tested buys, each with an honest evidence label.
 //   [TESTED] passed its 5-year test   [EARLY] promising, too few trades yet   [PAPER] on live paper   [INFO] no test supports buying it
+function researchAssessmentCycle(sig,{cutoff=new Date(Date.now()).toISOString(),reviewedSymbols=[]}={}){
+  let journal;try{journal=readRadarLedger('data/discovery-journal.jsonl');}catch{return {error:'ASSESSMENT JOURNAL UNREADABLE; originals preserved; no selection recorded'};}
+  let queue;try{queue=frozenAssessmentQueue({signals:sig||{},discovery:readJson0('data/discovery.json')||{},earnings:readJson0('data/earnings-recent.json')||{},events:readJson0('data/events-recent.json')||{},quality:readJson0('data/quality.json')||{},horizons:readJson0('data/horizons.json')||{},radar:readJson0('data/radar-universe.json')||{},leaders:readJson0('data/leaders-universe.json')||{},
+    cutoff,reviewedSymbols,seenAssessmentIds:journal.filter(x=>x.type==='assessment').map(x=>x.id),excludedSymbols:Object.keys(HALALM()).filter(sym=>myHalal(sym)==='fail')},journal);}catch{return {error:'ASSESSMENT CYCLE UNVERIFIED; original journal preserved; no new selection'};}
+  const records=queue.frozen?assessmentJournalRows(queue):[],persistence=queue.frozen?'READ_ONLY_FROZEN_PRODUCER_BATCH':'READ_ONLY_NOT_FROZEN: awaiting existing discovery producer';
+  const outcomes=readJson0('data/outcomes.json');
+  return {queue,records,persistence,feedback:linkAssessmentOutcomes(journal.filter(x=>x.type==='assessment'),Array.isArray(outcomes?.assessmentOutcomes)?outcomes.assessmentOutcomes:[])};
+}
 function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 = (x) => money(x).replace(/\.00$/, ''), Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), mine = loadPos(), skip = (s0) => bad.has(s0) || mine[s0];
   const researchZad = sym => 'recorded owner ZAD mark: ' + myHalal(sym) + '; not an approved entry';
   // 1. what moved today (the whole market, from the live watcher)
@@ -614,6 +640,13 @@ function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 =
     if (q.length) out.push('TOP QUALITY COMPANIES [' + (pass ? 'TESTED on history, paper next' : 'INFO') + ']: ' + q.map(x => x.sym).join(', '), ''); }
   { const AL = readJson0('data/autolab.json'), c = AL && AL.candidates ? Object.values(AL.candidates).filter(x => x.today && x.today.length) : [];
     if (c.length) out.push('AUTOLAB [PAPER] (rules the system invented, passed 3 gates):', ...c.slice(0, N).map(x => '- ' + x.name + ': ' + x.today.filter(s0 => !skip(s0)).slice(0, 5).join(', ')), ''); }
+  { const cycle=researchAssessmentCycle(sig);
+    if(cycle.error)out.push(cycle.error);
+    else {const q=cycle.queue;out.push('BOUNDED INVESTIGATION QUEUE — attention, not live eligibility. '+q.sourceFreshness.status+'; '+q.population.uniqueSymbolLabels+' unique ticker labels, verified eligible issuer count UNKNOWN.');
+      for(const [h,rows]of Object.entries(q.batches))out.push(h+': '+(!q.frozen?'awaiting producer-frozen batch; no new investigation selected by this reply':rows.length?rows.slice(0,short?1:2).map(r=>r.symbol+' [INVESTIGATE / WAIT; '+(r.facts.find(x=>x.source==='signals')?.facts.proven===false?'rule NOT PROVEN; ':'')+r.source+'; version '+r.evidenceVersion.slice(0,10)+']').join('; '):'no candidate in this frozen source cycle'));
+      out.push(cycle.persistence+'; feedback '+cycle.feedback.filter(x=>x.status.startsWith('UNRESOLVED')).length+' unresolved. No model aggregate or later price is an individual executable outcome.');
+    }
+  }
   if (!out.length) return short ? '' : 'OPPORTUNITIES: no extra research leads; this is not a buy list.';
   return ['RESEARCH WATCHLIST (information only; no approved entries or buy ranges)', '', ...out, '[TESTED] historical test only | [EARLY] NOT PROVEN | [PAPER] research observations, not admitted prospective cases | [INFO] context only. No item is an approved entry; current ZAD, evidence and executable-quote gates still apply.' + (short ? ' Full board: send  opportunities' : '')].join('\n'); }
 // MISSED RUNNERS: why the 15%+ movers of the last weeks were not caught, grouped by cause, and what would fix the biggest cause.
@@ -786,6 +819,10 @@ if (!m) { console.error('index.html has no logic block. Upload the latest index.
 const tmp = path.join(os.tmpdir(), 'logic-' + Date.now() + '.cjs'); fs.writeFileSync(tmp, m[1]);
 const L = createRequire(import.meta.url)(tmp);
 
+const ASSESSMENT_LOGIC_SOURCE_HASH=crypto.createHash('sha256').update(m[1]).digest('hex');
+function scannerAssessmentRule(learned){
+ return makeScannerAssessmentRule({logicVersion:L.LOGIC_VERSION,sourceHash:ASSESSMENT_LOGIC_SOURCE_HASH,variant:learned.v,config:L.CFG,targetOverlay:learned.tgt||null,ruleText:L.ruleText(learned.v),variantKey:L.vkey(learned.v)});
+}
 const readJson0 = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
 // SETTINGS WRITES (review S-4, 22 Oct): every write was readJson(settings, {}) -> one key -> write, so a file that failed to parse was
 // replaced by {} and the decision, focus, quiet, tier2 and fee were lost silently. readSettings() gives {} only when the file is missing
@@ -4072,7 +4109,7 @@ async function daily() {
           P.tChecked = c[i].d; } }
       const paused = L.isPaused(resolved.filter(y => !y.t.open && y.x.kind !== 'quick').map(y => y.t.r));
       const v = L.applyGates(L.verdict(c, ind, Lr, null, d.last, paused), { dollarVol: T.dollarVol, halal, limit: null }), trig = L.buyTrigger(c, ind, Lr), dist = Lr.v.mult * ind.atr[i];
-      const row = { sym, last: d.last, state: v.word, why: v.why, halal, rule: L.ruleText(Lr.v), proven: Lr.proven, uptrend: T.up, mom6: +T.mom6.toFixed(4), trigger: trig.price ? +trig.price.toFixed(4) : null };
+      const row = { sym, last: d.last, state: v.word, why: v.why, halal, rule: L.ruleText(Lr.v), assessmentRule:scannerAssessmentRule(Lr), proven: Lr.proven, uptrend: T.up, mom6: +T.mom6.toFixed(4), trigger: trig.price ? +trig.price.toFixed(4) : null };
       if (v.act) Object.assign(row, { buyLo: d.last, buyHi: +(d.last + 0.5 * ind.atr[i]).toFixed(4), stop: +(d.last - dist).toFixed(4), target: Lr.v.tp ? +(d.last + Lr.v.tp * dist).toFixed(4) : Lr.tgt && Lr.tgt.mode !== 'none' && Lr.tgt.x ? +(d.last * (1 + Lr.tgt.x)).toFixed(4) : null, half: !Lr.v.tp && Lr.tgt && Lr.tgt.mode === 'half', tgtNote: Lr.v.tp ? 'target ' + Lr.v.tp + 'x the stop distance, chosen by the walk-forward test' : Lr.tgt ? Lr.tgt.verdict + (Lr.tgt.mode !== 'none' && Lr.tgt.oosAvg !== null ? ' (' + pcs(Lr.tgt.oosAvg) + ' a trade with it vs ' + pcs(Lr.tgt.baseAvg) + ' without)' : '') : null, exitBelow: +L.sellLevel({ v: Lr.v }, c, ind).toFixed(4), hit: Lr.hitRate, days: Lr.medDays, n: Lr.test ? Lr.test.n : null, win: Lr.test ? Lr.test.winRate : null, avgPct: Lr.avgPct, pcts: Lr.oosPct || null, r10: Lr.reach10 ?? null, r20: Lr.reach20 ?? null, key: Lr.key, maxHold: Lr.v.maxHold || null, reg: Lr.regime || null });
       stocks.push(row);
       if (BIOBLOCK.has(sym)) { if (v.act) { blocked.push(sym + ': a tested rule fired, but ' + BIOBLOCK.get(sym)); row.state = 'Blocked'; } else if (DISC.has(sym)) blocked.push(sym + ' (discovery pick): ' + BIOBLOCK.get(sym)); }

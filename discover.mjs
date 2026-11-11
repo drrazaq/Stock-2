@@ -1,3 +1,5 @@
+import {appendRadarRows,readRadarLedger} from './radar-ledger.mjs';
+import {frozenAssessmentQueue,assessmentCycleRows} from './discovery-runtime.mjs';
 // Discovery engine for the US stock signal board. Runs on GitHub Actions.
 // Each night it sweeps the WHOLE US market for strong price trends, then checks the strongest against official SEC filings
 // (revenue growth, profit trend, debt, cash) and writes a short list of small, fast-growing companies to data/discovery.json.
@@ -356,9 +358,9 @@ for (const c of top) {
 }
 
 // ---- 4. Journal and honest follow-up: how did earlier candidates do against the S&P 500?
-const journal = fs.existsSync('data/discovery-journal.jsonl') ? fs.readFileSync('data/discovery-journal.jsonl', 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)) : [];
+const journal = readRadarLedger('data/discovery-journal.jsonl').filter(x=>x.type!=='assessment'&&x.type!=='assessment-cycle');
 const seen = new Set(journal.map(x => x.sym)), fresh = top.filter(c => !seen.has(c.sym));
-for (const c of fresh) fs.appendFileSync('data/discovery-journal.jsonl', JSON.stringify({ sym: c.sym, d: first.date, price: c.price, spy: spyNow, score: c.score }) + '\n');
+appendRadarRows('data/discovery-journal.jsonl',fresh.map(c=>({ sym: c.sym, d: first.date, price: c.price, spy: spyNow, score: c.score })));
 const aged = journal.filter(x => Date.parse(first.date) - Date.parse(x.d) >= 28 * 86400000 && closes[0].get(x.sym) && x.spy && spyNow).map(x => ({ ret: closes[0].get(x.sym).c / x.price - 1, spy: spyNow / x.spy - 1 }));
 const record = aged.length ? { n: aged.length, avgReturn: aged.reduce((a, x) => a + x.ret, 0) / aged.length, avgSpy: aged.reduce((a, x) => a + x.spy, 0) / aged.length, beat: aged.filter(x => x.ret > x.spy).length / aged.length } : null;
 
@@ -386,4 +388,20 @@ if (fresh.length) {
   if (record) msg.push('', 'Earlier candidates after 4+ weeks: ' + pct(record.avgReturn) + ' on average, S&P 500 ' + pct(record.avgSpy) + ' (' + record.n + ' stocks).');
   msg.push('', 'Candidates to research, not buy signals. Most fast movers fall back. Not financial advice, not a halal ruling.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
   await telegram(msg.join('\n'));
+}
+
+// Sole publishing path for assessment cycles: discovery's existing workflow
+// concurrency serializes producers. Bot/scanner consumers never append here.
+{
+ const journal=readRadarLedger('data/discovery-journal.jsonl');
+ const input={cutoff:new Date(now).toISOString(),
+  signals:readJson('data/signals.json',{}),discovery:readJson('data/discovery.json',{}),
+  earnings:readJson('data/earnings-recent.json',{}),events:readJson('data/events-recent.json',{}),
+  quality:readJson('data/quality.json',{}),horizons:readJson('data/horizons.json',{}),
+  radar:readJson('data/radar-universe.json',{}),leaders:readJson('data/leaders-universe.json',{}),
+  excludedSymbols:readJson('data/zad-list.json',{}).notHalal||[],
+  seenAssessmentIds:journal.filter(r=>r.type==='assessment').map(r=>r.id)};
+ const queue=frozenAssessmentQueue(input,journal);
+ if(!queue.frozen)appendRadarRows('data/discovery-journal.jsonl',assessmentCycleRows(queue));
+ console.log('assessment cycle',queue.cycleKey,queue.frozen?'already frozen':'recorded once');
 }
