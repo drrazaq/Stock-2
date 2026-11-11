@@ -15,7 +15,7 @@ The actual researchAssessmentCycle/opportunitiesText reader initially reports RE
 | Zero whole shares at recorded lower entry |1|MPWR entry1357.60 exceeds997afterbuyfee; zero order. Do not solve with fractional shares or altered budget.|
 | Machine identity UNKNOWN |44|Reviewed authenticated reference/class/issuer binding; partial primary identity is context pending full contract. Six known products remain excluded from ordinary-stock scope.|
 
-Counts overlap, and are not a sequential funnel or lost-profit estimate. Four cards carry reviewed primary facts, which are NOT validated theses.49no-mid counts do not imply49bad businesses. Business quality, rule performance, entry readiness, ZAD and execution remain separate.
+Rule identity is25RULE_UNKEYED and25NO_ADOPTED_RULE_SUPPLIED. No historical rule identity was invented. Counts overlap, and are not a sequential funnel or lost-profit estimate. Four cards carry reviewed primary facts, which are NOT validated theses.49no-mid counts do not imply49bad businesses. Business quality, rule performance, entry readiness, ZAD and execution remain separate.
 
 Concrete list output also retains OSCR/KNSA/LFST/PLMR/CLOV/CHYM/SI/KINS business leads and CNNE/RNG/CARG/ASAN/OIS/TALO/CROX/DBX quality context. These are producer claims/retained closes, not newly verified improvements. In particular SI and unfamiliar identities require investigation, not ticker-name inference. The six test/fund products do NOT occur in the actual ordinary watchlist in this replay. Their separate cards are adverse diagnostic context. AD/ARRY uncertainty is not repaired by guessing; VGZ/ACRE retain missing deal/entry/ZAD distinctions.
 
