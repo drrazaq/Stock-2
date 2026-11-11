@@ -1,0 +1,166 @@
+diff --git a/.github/bot-handoff.mjs b/.github/bot-handoff.mjs
+new file mode 100644
+index 00000000..223ae5a5
+--- /dev/null
++++ b/.github/bot-handoff.mjs
+@@ -0,0 +1,88 @@
++// Inactive until separately approved marker activation. Repo metadata only:
++// no market/provider keys, Telegram, orders, workflow cancellation or settings.
++import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {createHash,randomUUID}from'node:crypto';import{execFile}from'node:child_process';import{promisify}from'node:util';import{performance}from'node:perf_hooks';import{fileURLToPath}from'node:url';
++const exec=promisify(execFile),LEDGER='data/bot-handoffs.jsonl',MARKER='.github/bot-handoff-enabled',SOURCES=['.github/workflows/bot.yml','.github/bot-handoff.mjs'];
++const digest=b=>createHash('sha256').update(b).digest('hex'),day=ms=>new Date(ms).toLocaleDateString('en-CA',{timeZone:'America/New_York'}),validClock=x=>typeof x==='string'&&Number.isFinite(Date.parse(x));
++const outcomes=new Set(['SUPPRESSED_AFTER_RESERVATION','SUPPRESSED_SOURCE_CHANGED','SUPPRESSED_TIMEOUT','DISPATCH_CORRELATED','ATTRIBUTION_UNKNOWN','DISPATCH_REFUSED','UNKNOWN','TIMEOUT_UNKNOWN']);
++export function parseHandoffLedger(text,now=Date.now()){
++ if(Buffer.byteLength(text)>4*1024*1024)throw Error('UNKNOWN_LEDGER');const lines=text.split('\n').filter(Boolean);if(lines.length>8192)throw Error('UNKNOWN_LEDGER');
++ const rows=[],reservations=new Map(),finished=new Map(),reconciled=new Set();
++ for(const line of lines){if(Buffer.byteLength(line)>=512)throw Error('UNKNOWN_LEDGER');const r=JSON.parse(line);if(!['RESERVED','OUTCOME','RECONCILED'].includes(r.kind)||!/^\d+\/\d+$/.test(r.id||'')||!validClock(r.at)||Date.parse(r.at)>now||r.day!==day(Date.parse(r.at)))throw Error('UNKNOWN_LEDGER');
++  if(r.kind==='RESERVED'){if(reservations.has(r.id))throw Error('UNKNOWN_LEDGER');reservations.set(r.id,r);}
++  if(r.kind==='OUTCOME'){if(!outcomes.has(r.status)||finished.has(r.id))throw Error('UNKNOWN_LEDGER');finished.set(r.id,r);}
++  if(r.kind==='RECONCILED'){if(typeof r.by!=='string'||!r.by||typeof r.evidence!=='string'||!r.evidence||reconciled.has(r.id))throw Error('UNKNOWN_LEDGER');reconciled.add(r.id);}
++  rows.push(r);
++ }
++ if([...finished.keys(),...reconciled].some(id=>!reservations.has(id)))throw Error('UNKNOWN_LEDGER');
++ for(const d of new Set(rows.map(r=>r.day)))if(rows.filter(r=>r.day===d).length>18||[...reservations.values()].filter(r=>r.day===d).length>6)throw Error('UNKNOWN_LEDGER');
++ const pending=[...reservations].filter(([id])=>!reconciled.has(id)&&(!finished.has(id)||['UNKNOWN','TIMEOUT_UNKNOWN'].includes(finished.get(id).status))).map(([id])=>id);
++ return {rows,reservations,finished,pending};
++}
++export function appendHandoffLine(text,row){const line=JSON.stringify(row);if(Buffer.byteLength(line)>=512)throw Error('UNKNOWN_LEDGER');return text+(text&&!text.endsWith('\n')?'\n':'')+line+'\n';}
++export function statusSuccessor(pages,currentId){
++ if(!Array.isArray(pages)||pages.length!==5)return {unknown:true};const all=[];
++ for(const p of pages){if(p.error||!Number.isInteger(p.total_count)||p.total_count<0||p.total_count>100||/rel\s*=\s*"?next/i.test(p.link||'')||!Array.isArray(p.workflow_runs)||p.workflow_runs.length!==p.total_count)return {unknown:true};all.push(...p.workflow_runs);}
++ const current=pages[1].workflow_runs.find(r=>String(r.id)===currentId&&r.status==='in_progress');if(!current||!Number.isInteger(current.workflow_id))return {unknown:true};
++ if(all.some(r=>r.head_branch!=='main'||r.workflow_id!==current.workflow_id||!['queued','in_progress','waiting','requested','pending'].includes(r.status)))return {unknown:true};
++ return {present:all.some(r=>String(r.id)!==currentId),workflowId:current.workflow_id};
++}
++// Real orchestration, with bounded I/O ports for offline tests. It never retries a POST.
++export async function runHandoff(context,io){
++ const id=context.runId+'/'+context.attempt,stamp=()=>({id,day:day(io.now()),at:new Date(io.now()).toISOString()});
++ let reservation=null,posted=false;
++ const finish=async status=>{if(reservation){const r={...stamp(),kind:'OUTCOME',status};try{await io.outcome(r);}catch{return {status:'OUTCOME_UNPUBLISHED_UNKNOWN',dispatchAttempted:posted};}}return {status,dispatchAttempted:posted};};
++ try{
++  if(!context.enabled)return {status:'DISABLED',dispatchAttempted:false};
++  if(!/^\d+$/.test(context.runId||'')||!/^\d+$/.test(context.attempt||'')||!Number.isFinite(context.loopStart)||io.now()-context.loopStart<3600000)return {status:'EARLY_EXIT_NO_HANDOFF',dispatchAttempted:false};
++  const first=await io.fresh();if(!first.marker)return {status:'SUPPRESSED',dispatchAttempted:false};if(!first.sourceMatches)return {status:'SOURCE_CHANGED_NO_DISPATCH',dispatchAttempted:false};
++  const book=parseHandoffLedger(first.ledger,io.now());if(book.reservations.has(id))return {status:'ALREADY_RECORDED',dispatchAttempted:false};if(book.pending.length)return {status:'BLOCKED_PENDING',dispatchAttempted:false};
++  const d=day(io.now()),today=book.rows.filter(r=>r.day===d),reserved=[...book.reservations.values()];
++  if(reserved.filter(r=>r.day===d).length>=6||today.length+2>18||book.rows.length+2>8192||Buffer.byteLength(first.ledger)>4*1024*1024-1024)return {status:'EXHAUSTED',dispatchAttempted:false};
++  if(reserved.some(r=>io.now()-Date.parse(r.at)<7200000))return {status:'SPACING_HOLD',dispatchAttempted:false};
++  const active=statusSuccessor(await io.statusPages(),context.runId);if(active.unknown)return {status:'UNKNOWN_HISTORY_NO_DISPATCH',dispatchAttempted:false};if(active.present)return {status:'SKIPPED_SUCCESSOR_PRESENT',dispatchAttempted:false};
++  const r={...stamp(),kind:'RESERVED',nonce:io.nonce?.()||randomUUID()};
++  const pushed=await io.reserve(first,r);if(!pushed){const observed=await io.fresh();const b=parseHandoffLedger(observed.ledger,io.now());if(b.reservations.get(id)?.nonce!==r.nonce)return {status:'RESERVATION_UNPUBLISHED_NO_DISPATCH',dispatchAttempted:false};reservation=r;return finish('SUPPRESSED_AFTER_RESERVATION');}reservation=r;
++  const last=await io.fresh();const updated=parseHandoffLedger(last.ledger,io.now());if(!updated.reservations.has(id)||updated.reservations.get(id).nonce!==r.nonce)return finish('UNKNOWN');
++  if(updated.pending.some(x=>x!==id))return finish('SUPPRESSED_AFTER_RESERVATION');if(!last.marker)return finish('SUPPRESSED_AFTER_RESERVATION');if(!last.sourceMatches)return finish('SUPPRESSED_SOURCE_CHANGED');
++  if(io.canPost&&!io.canPost())return finish('SUPPRESSED_TIMEOUT');
++  const at=io.now();let code;try{code=await io.post(()=>{posted=true;});}catch(e){return finish(posted?'UNKNOWN':e?.name==='TimeoutError'||/TIME_BUDGET/.test(e?.message||'')?'SUPPRESSED_TIMEOUT':'SUPPRESSED_AFTER_RESERVATION');}
++  if(code===204){let p;try{await io.wait(30000);p=await io.readback(at);}catch{return finish('ATTRIBUTION_UNKNOWN');}
++   const candidates=Array.isArray(p?.workflow_runs)?p.workflow_runs.filter(x=>x.event==='workflow_dispatch'&&x.head_branch==='main'&&x.workflow_id===active.workflowId&&validClock(x.created_at)&&Date.parse(x.created_at)>=Math.floor(at/1000)*1000&&Date.parse(x.created_at)<=io.now()):[];
++   return finish(Number.isInteger(p?.total_count)&&p.total_count===p?.workflow_runs?.length&&p.total_count<=100&&!/rel\s*=\s*"?next/i.test(p?.link||'')&&candidates.length===1?'DISPATCH_CORRELATED':'ATTRIBUTION_UNKNOWN');}
++  return finish(code>=400&&code<500?'DISPATCH_REFUSED':'UNKNOWN');
++ }catch(e){const timeout=e?.name==='TimeoutError'||/TIME_BUDGET|ETIMEDOUT/.test(e?.message||'');return reservation?finish(posted?(timeout?'TIMEOUT_UNKNOWN':'UNKNOWN'):(timeout?'SUPPRESSED_TIMEOUT':'SUPPRESSED_AFTER_RESERVATION')):{status:timeout?'TIMEOUT_NO_DISPATCH':'UNVERIFIED_NO_DISPATCH',dispatchAttempted:false};}
++}
++export function makeDeadline(seconds=180){const end=performance.now()+seconds*1000;return {remaining:()=>Math.max(0,end-performance.now()),timeout(ms){const n=Math.min(ms,end-performance.now());if(n<=0)throw Error('TIME_BUDGET');return Math.max(1,Math.floor(n));}};}
++const gitOptions=(budget,extra={})=>({encoding:'utf8',maxBuffer:6*1024*1024,timeout:budget.timeout(20000),...extra});
++export async function ledgerCommit(root,head,text,budget){
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'bot-handoff-index-'));const env={...process.env,GIT_INDEX_FILE:path.join(dir,'index'),GIT_AUTHOR_NAME:'scanner handoff',GIT_AUTHOR_EMAIL:'actions@users.noreply.github.com',GIT_COMMITTER_NAME:'scanner handoff',GIT_COMMITTER_EMAIL:'actions@users.noreply.github.com'};
++ const g=async args=>(await exec('git',args,gitOptions(budget,{cwd:root,env}))).stdout.trim();
++ try{await g(['read-tree',head]);
++  // execFile has no stdin input option: use a temporary owned ledger file for hash-object.
++  const file=path.join(dir,'ledger');fs.writeFileSync(file,text,{mode:0o600});const oid=await g(['hash-object','-w',file]);await g(['update-index','--add','--cacheinfo','100644,'+oid+','+LEDGER]);const tree=await g(['write-tree']);
++  const msg=path.join(dir,'message');fs.writeFileSync(msg,'bounded bot handoff metadata\n');const commit=await g(['commit-tree',tree,'-p',head,'-F',msg]);const changed=await g(['diff-tree','--no-commit-id','--name-only','-r',head,commit]);if(changed!==LEDGER)throw Error('SCOPE_MISMATCH');return commit;
++ }finally{fs.rmSync(dir,{recursive:true,force:true});}
++}
++export async function casLedger(root,head,text,budget){const commit=await ledgerCommit(root,head,text,budget);try{await exec('git',['push','origin',commit+':refs/heads/main'],gitOptions(budget,{cwd:root,timeout:budget.timeout(15000)}));return true;}catch{return false;}}
++export async function main(){
++ const root=process.cwd(),env=process.env;
++ if(!fs.existsSync(path.join(root,MARKER)))return {status:'DISABLED',dispatchAttempted:false};
++ if(env.GITHUB_ACTIONS!=='true'||env.GITHUB_REF_NAME!=='main'||!env.GITHUB_TOKEN||!/^\w[\w.-]*\/[\w.-]+$/.test(env.GITHUB_REPOSITORY||''))return {status:'NO_ACTIONS_CONTEXT',dispatchAttempted:false};
++ const budget=makeDeadline(),g=async(args,ms=10000)=>(await exec('git',args,gitOptions(budget,{cwd:root,timeout:budget.timeout(ms)}))).stdout;
++ const localSources=Object.fromEntries(SOURCES.map(p=>[p,digest(fs.readFileSync(path.join(root,p)))]));
++ const witnesses=[env.BOT_HANDOFF_WORKFLOW_SHA256,env.BOT_HANDOFF_HELPER_SHA256];
++ if(!/^[a-f0-9]{40}$/.test(env.GITHUB_WORKFLOW_SHA||''))return {status:'LOADED_WORKFLOW_UNKNOWN_NO_DISPATCH',dispatchAttempted:false};
++ const loadedWorkflow=await g(['show',env.GITHUB_WORKFLOW_SHA+':'+SOURCES[0]]);if(digest(loadedWorkflow)!==localSources[SOURCES[0]])return {status:'LOADED_WORKFLOW_CHANGED_NO_DISPATCH',dispatchAttempted:false};if(SOURCES.some((p,i)=>!(/^[a-f0-9]{64}$/).test(witnesses[i]||'')||localSources[p]!==witnesses[i]))return {status:'EXECUTING_SOURCE_CHANGED_NO_DISPATCH',dispatchAttempted:false};let reads=0,fetches=0,getCount=0,pushCount=0,last=null;
++ const fresh=async(check=true)=>{if(++fetches>4)throw Error('FETCH_BUDGET');let expected=null;if(check){if(++reads>2)throw Error('REF_BUDGET');expected=(await g(['ls-remote','origin','refs/heads/main'])).split(/\s/)[0];}
++  await g(['fetch','--no-tags','--depth=1','origin','refs/heads/main'],20000);const head=(await g(['rev-parse','FETCH_HEAD'])).trim();if(expected&&head!==expected)throw Error('HEAD_MOVED');
++  const read=async p=>{const entry=(await g(['ls-tree',head,'--',p])).trim();if(!entry)return null;if(!/^100644 blob [a-f0-9]+\t/.test(entry))throw Error('UNREADABLE_TREE_PATH');return g(['show',head+':'+p]);};const marker=await read(MARKER),sourceBodies=await Promise.all(SOURCES.map(read)),ledger=(await read(LEDGER))??'';
++  last={head,marker:marker?.trim()==='enabled',sourceMatches:sourceBodies.every((b,i)=>b!==null&&digest(b)===localSources[SOURCES[i]]),ledger};return last;};
++ const request=async(url,method='GET',onStart)=>{if(method==='GET'&&++getCount>6)throw Error('GET_BUDGET');const pending=fetch('https://api.github.com/repos/'+env.GITHUB_REPOSITORY+url,{method,redirect:'manual',signal:AbortSignal.timeout(budget.timeout(10000)),headers:{Authorization:'Bearer '+env.GITHUB_TOKEN,Accept:'application/vnd.github+json','Content-Type':'application/json'},...(method==='POST'?{body:JSON.stringify({ref:'main'})}:{})});onStart?.();const r=await pending;if(method==='POST')return r.status;
++  if(!r.ok)throw Error('HISTORY_UNAVAILABLE');const chunks=[];let size=0;for await(const chunk of r.body){size+=chunk.length;if(size>2*1024*1024){await r.body.cancel().catch(()=>{});throw Error('HISTORY_OVERSIZE');}chunks.push(chunk);}return {...JSON.parse(Buffer.concat(chunks).toString('utf8')),link:r.headers.get('link')||''};};
++ const io={now:()=>Date.now(),fresh:()=>fresh(true),statusPages:()=>Promise.all(['queued','in_progress','waiting','requested','pending'].map(s=>request('/actions/workflows/bot.yml/runs?branch=main&status='+s+'&per_page=100'))),
++  reserve:async(state,row)=>{if(++pushCount>1)throw Error('RESERVATION_BUDGET');return casLedger(root,state.head,appendHandoffLine(state.ledger,row),budget);},
++  outcome:async row=>{for(let n=0;n<3;n++){const s=n?await fresh(false):last,book=parseHandoffLedger(s.ledger);if(book.finished.has(row.id)){if(JSON.stringify(book.finished.get(row.id))===JSON.stringify(row))return;throw Error('OUTCOME_CONFLICT');}if(!book.reservations.has(row.id))throw Error('RESERVATION_MISSING');if(++pushCount>4)throw Error('PUSH_BUDGET');if(await casLedger(root,s.head,appendHandoffLine(s.ledger,row),budget))return;}throw Error('OUTCOME_UNPUBLISHED');},
++  canPost:()=>budget.remaining()>=65000,post:onStart=>request('/actions/workflows/bot.yml/dispatches','POST',onStart),wait:ms=>{if(budget.remaining()<ms)throw Error('TIME_BUDGET');return new Promise(resolve=>setTimeout(resolve,ms));},readback:()=>request('/actions/workflows/bot.yml/runs?branch=main&event=workflow_dispatch&per_page=100')};
++ return runHandoff({enabled:true,runId:env.GITHUB_RUN_ID,attempt:env.GITHUB_RUN_ATTEMPT,loopStart:Number(env.BOT_RUN_START_MS)},io);
++}
++if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url))main().then(x=>console.log('bot handoff: '+JSON.stringify(x))).catch(()=>{console.log('bot handoff: UNVERIFIED; no retry');process.exitCode=1;});
+diff --git a/.github/workflows/bot.yml b/.github/workflows/bot.yml
+index bfd9ff2c..b83e4c3f 100644
+--- a/.github/workflows/bot.yml
++++ b/.github/workflows/bot.yml
+@@ -43,6 +43,9 @@ jobs:
+           # privacy migration stage 1 (28 Oct): keep a copy of the owner's private files in the private repository. Does nothing
+           # without the PRIVATE_DATA_TOKEN secret or before the connection check passed; never stops the bot.
+           mirror() { bash .github/private-data.sh mirror >> run.log 2>&1 || true; }
++          echo "BOT_HANDOFF_WORKFLOW_SHA256=$(sha256sum .github/workflows/bot.yml | cut -d' ' -f1)" >> "$GITHUB_ENV"
++          echo "BOT_HANDOFF_HELPER_SHA256=$(sha256sum .github/bot-handoff.mjs | cut -d' ' -f1)" >> "$GITHUB_ENV"
++          echo "BOT_RUN_START_MS=$(node -e 'console.log(Date.now())')" >> "$GITHUB_ENV"
+           end=$(( $(date +%s) + 330*60 )); last_full=0; : > run.log
+           while [ "$(date +%s)" -lt "$end" ]; do
+             git pull -q --rebase -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
+@@ -76,6 +79,13 @@ jobs:
+           TG_CHAT: ${{ secrets.TG_CHAT }}
+           RATE: ${{ vars.RATE || '8' }}
+           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
++      - name: Inactive bounded bot handoff
++        if: success() || failure()
++        env:
++          GITHUB_TOKEN: ${{ github.token }}
++        run: |
++          git show "$GITHUB_WORKFLOW_SHA:.github/bot-handoff.mjs" > "$RUNNER_TEMP/bot-handoff.mjs"
++          node "$RUNNER_TEMP/bot-handoff.mjs"
+       # If anything above failed, tell the owner on Telegram straight away.
+       - if: failure()
+         env:
+diff --git a/test/bot-handoff.test.mjs b/test/bot-handoff.test.mjs
+new file mode 100644
+index 00000000..0ea7749c
+--- /dev/null
++++ b/test/bot-handoff.test.mjs
+@@ -0,0 +1,38 @@
++import test from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {execFileSync}from'node:child_process';import {createHash}from'node:crypto';
++import {runHandoff,parseHandoffLedger,appendHandoffLine,statusSuccessor,casLedger,makeDeadline,main}from'../.github/bot-handoff.mjs';
++const now=Date.parse('2026-11-11T18:00:00Z'),base={enabled:true,runId:'100',attempt:'1',loopStart:now-3600001},row=(kind='RESERVED',status)=>({id:'99/1',day:'2026-11-10',at:'2026-11-10T18:00:00Z',kind,...(status?{status}:{nonce:'old'})});
++function fixture(){
++ let ledger='',clock=now,freshCount=0;const calls={posts:0,reserves:0,outcomes:0,waits:0};const current={id:100,workflow_id:22,head_branch:'main',status:'in_progress'},pages=()=>['queued','in_progress','waiting','requested','pending'].map(s=>({total_count:s==='in_progress'?1:0,workflow_runs:s==='in_progress'?[current]:[]}));
++ const io={now:()=>clock,nonce:()=> 'fixed',fresh:async()=>{freshCount++;return {marker:true,sourceMatches:true,head:'head',ledger};},statusPages:async()=>pages(),reserve:async(s,r)=>{calls.reserves++;ledger=appendHandoffLine(ledger,r);return true;},outcome:async r=>{calls.outcomes++;ledger=appendHandoffLine(ledger,r);},post:async onStart=>{onStart();calls.posts++;return 204;},wait:async ms=>{calls.waits++;clock+=ms;},readback:async at=>({total_count:1,workflow_runs:[{id:101,workflow_id:22,head_branch:'main',event:'workflow_dispatch',created_at:new Date(at+1000).toISOString()}]})};
++ return {io,calls,pages,get ledger(){return ledger;},set ledger(v){ledger=v;},get freshCount(){return freshCount;}};
++}
++test('default-off actual entry does no Git/provider/workflow I/O',async()=>{const previous=process.cwd(),dir=fs.mkdtempSync(path.join(os.tmpdir(),'handoff-off-'));try{process.chdir(dir);assert.deepEqual(await main(),{status:'DISABLED',dispatchAttempted:false});}finally{process.chdir(previous);fs.rmSync(dir,{recursive:true,force:true});}});
++test('actual orchestration publishes reservation before exactly one POST, then correlated not causal',async()=>{const f=fixture(),r=await runHandoff(base,f.io);assert.equal(r.status,'DISPATCH_CORRELATED');assert.equal(f.calls.posts,1);assert.equal(f.calls.reserves,1);assert.equal(f.calls.outcomes,1);assert.equal(f.freshCount,2);assert.deepEqual(parseHandoffLedger(f.ledger,now+30000).pending,[]);});
++test('disabled, missing/future/young loop witness never dispatch',async()=>{for(const context of [{...base,enabled:false},{...base,loopStart:NaN},{...base,loopStart:now},{...base,loopStart:now+1}]){const f=fixture();await runHandoff(context,f.io);assert.equal(f.calls.posts,0);assert.equal(f.freshCount,0);}});
++test('current run must be in in_progress; pagination, unknown states and absent current block',async()=>{for(const mutate of [p=>p[1].workflow_runs=[],p=>p[0].total_count=101,p=>p[0].link='<x>; rel="next"',p=>p[1].workflow_runs[0].workflow_id=undefined,p=>p[1].workflow_runs[0].status='queued']){const f=fixture(),p=f.pages();mutate(p);f.io.statusPages=async()=>p;assert.equal((await runHandoff(base,f.io)).status,'UNKNOWN_HISTORY_NO_DISPATCH');assert.equal(f.calls.posts,0);}});
++test('older queued successor is respected without event/time filters',async()=>{const f=fixture(),p=f.pages();p[0]={total_count:1,workflow_runs:[{id:98,workflow_id:22,head_branch:'main',status:'queued',event:'schedule',created_at:'2026-11-10T12:00:00Z'}]};f.io.statusPages=async()=>p;assert.equal((await runHandoff(base,f.io)).status,'SKIPPED_SUCCESSOR_PRESENT');assert.equal(f.calls.reserves,0);});
++test('unresolved reservations and UNKNOWN block across days; explicit reconciliation required',async()=>{for(const status of [null,'UNKNOWN','TIMEOUT_UNKNOWN']){const f=fixture();f.ledger=appendHandoffLine('',row());if(status)f.ledger=appendHandoffLine(f.ledger,row('OUTCOME',status));assert.equal((await runHandoff(base,f.io)).status,'BLOCKED_PENDING');assert.equal(f.calls.posts,0);f.ledger=appendHandoffLine(f.ledger,{...row('RECONCILED'),by:'reviewer',evidence:'reviewed receipt'});assert.equal((await runHandoff(base,f.io)).status,'DISPATCH_CORRELATED');}});
++test('refused, reset, 5xx and timeout never replay POST; ambiguity persists',async()=>{for(const mode of [403,500,'reset','timeout']){const f=fixture();f.io.post=async onStart=>{onStart();f.calls.posts++;if(typeof mode==='number')return mode;throw Object.assign(Error(mode),{name:mode==='timeout'?'TimeoutError':'Error'});};const r=await runHandoff(base,f.io);assert.equal(r.status,mode===403?'DISPATCH_REFUSED':'UNKNOWN');assert.equal(f.calls.posts,1);assert.equal(parseHandoffLedger(f.ledger,now).pending.length,mode===403?0:1);}});
++test('204 absent/multiple/truncated/unavailable attribution is explicit, never retried',async()=>{for(const value of [{total_count:0,workflow_runs:[]},{total_count:101,workflow_runs:[]},null]){const f=fixture();f.io.readback=async()=>{if(value===null)throw Error('offline');return value;};assert.equal((await runHandoff(base,f.io)).status,'ATTRIBUTION_UNKNOWN');assert.equal(f.calls.posts,1);}});
++test('reservation push ambiguity readback suppresses even own published reservation; peer blocks',async()=>{for(const published of [false,true]){const f=fixture(),reserve=f.io.reserve;f.io.reserve=async(s,r)=>{if(published)await reserve(s,r);return false;};const r=await runHandoff(base,f.io);assert.equal(r.status,published?'SUPPRESSED_AFTER_RESERVATION':'RESERVATION_UNPUBLISHED_NO_DISPATCH');assert.equal(f.calls.posts,0);}});
++test('fresh marker/source loss after reservation prevents POST and records suppression',async()=>{for(const field of ['marker','sourceMatches']){const f=fixture(),fresh=f.io.fresh;let n=0;f.io.fresh=async()=>({...await fresh(),...(++n===2?{[field]:false}:{})});assert.match((await runHandoff(base,f.io)).status,/SUPPRESSED/);assert.equal(f.calls.posts,0);assert.equal(f.calls.outcomes,1);}});
++test('malformed, oversize and over-line ledgers never truncate or ignore unknown history',async()=>{for(const ledger of ['bad json',' '.repeat(4*1024*1024+1),Array(8194).fill('{}').join('\n'),appendHandoffLine('',{...row(),at:'2027-01-01T00:00:00Z'})]){const f=fixture();f.ledger=ledger;assert.equal((await runHandoff(base,f.io)).status,'UNVERIFIED_NO_DISPATCH');assert.equal(f.calls.posts,0);}});
++test('duplicate current attempt, spacing and daily six-slot budget suppress',async()=>{for(const kind of ['duplicate','spacing','six']){const f=fixture();if(kind==='duplicate')f.ledger=appendHandoffLine('',{...row(),id:'100/1'});else{for(let n=0;n<(kind==='six'?6:1);n++){const at=new Date(now-(kind==='six'?n+2:1)*3600000).toISOString(),r={id:(200+n)+'/1',day:'2026-11-11',at,kind:'RESERVED',nonce:'n'};f.ledger=appendHandoffLine(f.ledger,r);f.ledger=appendHandoffLine(f.ledger,{...r,kind:'OUTCOME',status:'DISPATCH_REFUSED'});}}assert.equal((await runHandoff(base,f.io)).status,kind==='duplicate'?'ALREADY_RECORDED':kind==='six'?'EXHAUSTED':'SPACING_HOLD');assert.equal(f.calls.posts,0);}});
++test('outcome publication failure leaves a blocking reservation, never falsely confirmed',async()=>{const f=fixture();f.io.outcome=async()=>{throw Error('race');};assert.equal((await runHandoff(base,f.io)).status,'OUTCOME_UNPUBLISHED_UNKNOWN');assert.deepEqual(parseHandoffLedger(f.ledger,now+30000).pending,['100/1']);});
++test('real Git nonforce CAS rejects rival head and preserves all newer data; no rebase/force',async()=>{
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'handoff-cas-')),remote=path.join(dir,'remote.git'),a=path.join(dir,'a'),b=path.join(dir,'b');
++ const git=(cwd,...args)=>execFileSync('git',args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
++ try{git(dir,'init','--bare',remote);git(dir,'clone',remote,a);for(const k of ['user.name','user.email'])git(a,'config',k,'test');fs.writeFileSync(path.join(a,'newer.txt'),'preserve');git(a,'add','.');git(a,'commit','-m','seed');git(a,'branch','-M','main');git(a,'push','origin','main');git(dir,'clone','--branch','main',remote,b);const h=git(a,'rev-parse','HEAD');const ledger=appendHandoffLine('',row());assert.equal(await casLedger(a,h,ledger,makeDeadline()),true);assert.equal(await casLedger(b,h,ledger+'\n',makeDeadline()),false);git(b,'fetch','origin','main');assert.equal(git(b,'show','FETCH_HEAD:newer.txt'),'preserve');assert.equal(git(b,'diff-tree','--no-commit-id','--name-only','-r',h,'FETCH_HEAD'),'data/bot-handoffs.jsonl');assert.equal(git(a,'status','--porcelain'),'');}finally{fs.rmSync(dir,{recursive:true,force:true});}
++});
++test('workflow wrapper is disabled absent marker, records actual loop start/source before loop, isolates token',()=>{const text=fs.readFileSync(new URL('../.github/workflows/bot.yml',import.meta.url),'utf8');assert.ok(text.indexOf('BOT_RUN_START_MS=')<text.indexOf('while ['));assert.match(text,/BOT_HANDOFF_WORKFLOW_SHA256/);assert.match(text,/if: success\(\) \|\| failure\(\)/);const step=text.split('- name: Inactive bounded bot handoff')[1].split('# If anything')[0];assert.match(step,/GITHUB_TOKEN/);assert.doesNotMatch(step,/secrets\.|always\(/);assert.equal(fs.existsSync(new URL('../.github/bot-handoff-enabled',import.meta.url)),false);});
++
++test('pre-POST insufficient budget suppresses with no attempted dispatch; post204 wait failure is attribution only',async()=>{
++ const before=fixture();before.io.canPost=()=>false;const r=await runHandoff(base,before.io);assert.equal(r.status,'SUPPRESSED_TIMEOUT');assert.equal(r.dispatchAttempted,false);assert.equal(before.calls.posts,0);assert.equal(parseHandoffLedger(before.ledger,now).pending.length,0);
++ const during=fixture();during.io.post=async()=>{throw Error('TIME_BUDGET');};const d=await runHandoff(base,during.io);assert.equal(d.status,'SUPPRESSED_TIMEOUT');assert.equal(d.dispatchAttempted,false);
++ const after=fixture();after.io.wait=async()=>{throw Error('TIME_BUDGET');};const a=await runHandoff(base,after.io);assert.equal(a.status,'ATTRIBUTION_UNKNOWN');assert.equal(a.dispatchAttempted,true);assert.equal(after.calls.posts,1);assert.equal(parseHandoffLedger(after.ledger,now).pending.length,0);
++});
++test('actual immutable loaded helper refuses changed working-tree helper before any API or push',()=>{
++ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'handoff-loaded-'));const sha=b=>createHash('sha256').update(b).digest('hex');const git=(...a)=>execFileSync('git',a,{cwd:dir,encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();
++ try{fs.mkdirSync(path.join(dir,'.github/workflows'),{recursive:true});const original=fs.readFileSync(new URL('../.github/bot-handoff.mjs',import.meta.url));fs.writeFileSync(path.join(dir,'.github/bot-handoff.mjs'),original);fs.writeFileSync(path.join(dir,'.github/workflows/bot.yml'),'synthetic loaded workflow');fs.writeFileSync(path.join(dir,'.github/bot-handoff-enabled'),'enabled');git('init');git('config','user.name','test');git('config','user.email','test');git('add','.');git('commit','-m','loaded');const h=git('rev-parse','HEAD'),loaded=path.join(dir,'loaded.mjs');fs.writeFileSync(loaded,execFileSync('git',['show',h+':.github/bot-handoff.mjs'],{cwd:dir}));fs.appendFileSync(path.join(dir,'.github/bot-handoff.mjs'),'\n// newer unexecuted source');const output=execFileSync(process.execPath,[loaded],{cwd:dir,encoding:'utf8',env:{...process.env,GITHUB_ACTIONS:'true',GITHUB_REF_NAME:'main',GITHUB_REPOSITORY:'synthetic/repo',GITHUB_TOKEN:'synthetic-never-used',GITHUB_WORKFLOW_SHA:h,BOT_HANDOFF_WORKFLOW_SHA256:sha('synthetic loaded workflow'),BOT_HANDOFF_HELPER_SHA256:sha(original)}});assert.match(output,/EXECUTING_SOURCE_CHANGED_NO_DISPATCH/);assert.doesNotMatch(output,/"dispatchAttempted":true/);assert.equal(git('rev-parse','HEAD'),h);
++ }finally{fs.rmSync(dir,{recursive:true,force:true});}
++});
