@@ -34702,7 +34702,7 @@
    "name": "Lightly shorted stocks (FINRA daily short volume, bottom 20% of the last 5 days), hold 1 month",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-11 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "At the first session of each week, score every liquid stock by its mean FINRA short ratio (ShortVolume / TotalVolume, Reg SHO consolidated daily file) of the 5 sessions before (4+ with data); buy the bottom 20% of that week's cross-section (500+ stocks needed) at the open of that session; sell the close 21 sessions later. File source, ratio, weekly timing, windows, ranking, liquidity and data rule fixed in research-core.mjs (IDEA 15) before any run.",
    "sources": [
     "https://www.sciencedirect.com/science/article/pii/S0304405X19301436",
@@ -34711,7 +34711,45 @@
     "https://www.finra.org/finra-data/browse-catalog/short-sale-volume-data/daily-short-sale-volume-files"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-11-11: Wang, Yan and Zheng (2020, Journal of Financial Economics) \"Shorting flows, public disclosure, and market efficiency\": with FINRA daily short volume public, heavily shorted stocks underperformed lightly shorted ones by 12.6% a year (2010-2015), persistent shorting most; Diether, Lee and Werner (2009, RFS). New information line (official FINRA Reg SHO consolidated daily short sale volume files). Long only: lightly shorted = buy; heavily shorted = AVOID check only. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 11 Nov 2026."
+   "note": "Daily researcher 2026-11-11: Wang, Yan and Zheng (2020, Journal of Financial Economics) \"Shorting flows, public disclosure, and market efficiency\": with FINRA daily short volume public, heavily shorted stocks underperformed lightly shorted ones by 12.6% a year (2010-2015), persistent shorting most; Diether, Lee and Werner (2009, RFS). New information line (official FINRA Reg SHO consolidated daily short sale volume files). Long only: lightly shorted = buy; heavily shorted = AVOID check only. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 11 Nov 2026.",
+   "tested": "2026-11-10",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     21520,
+     28197
+    ],
+    "avg": [
+     -0.0084,
+     0.0037
+    ],
+    "stress": [
+     -0.0124,
+     -0.0003
+    ],
+    "edge": [
+     -0.0067,
+     -0.0054
+    ],
+    "vsOwn": [
+     -0.0074,
+     0.0033
+    ],
+    "noTop2": [
+     -0.0085,
+     0.0035
+    ],
+    "tBlock": [
+     -4.68,
+     -3.94
+    ],
+    "win": [
+     0.4592,
+     0.4826
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -4.68 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t -3.94 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-SVOL-LOW63P",
@@ -34719,7 +34757,7 @@
    "name": "Persistently lightly shorted stocks (FINRA short volume, bottom 20% of the last 63 days), hold 3 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-11 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-SVOL-LOW21 with the mean short ratio of the 63 sessions before (50+ with data); buy the bottom 20%; sell the close 63 sessions later. File source, ratio, weekly timing, windows, ranking, liquidity and data rule fixed in research-core.mjs (IDEA 15) before any run.",
    "sources": [
     "https://www.sciencedirect.com/science/article/pii/S0304405X19301436",
@@ -34728,7 +34766,45 @@
     "https://www.finra.org/finra-data/browse-catalog/short-sale-volume-data/daily-short-sale-volume-files"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-11-11: Wang, Yan and Zheng (2020, Journal of Financial Economics) \"Shorting flows, public disclosure, and market efficiency\": with FINRA daily short volume public, heavily shorted stocks underperformed lightly shorted ones by 12.6% a year (2010-2015), persistent shorting most; Diether, Lee and Werner (2009, RFS). New information line (official FINRA Reg SHO consolidated daily short sale volume files). Long only: lightly shorted = buy; heavily shorted = AVOID check only. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 11 Nov 2026."
+   "note": "Daily researcher 2026-11-11: Wang, Yan and Zheng (2020, Journal of Financial Economics) \"Shorting flows, public disclosure, and market efficiency\": with FINRA daily short volume public, heavily shorted stocks underperformed lightly shorted ones by 12.6% a year (2010-2015), persistent shorting most; Diether, Lee and Werner (2009, RFS). New information line (official FINRA Reg SHO consolidated daily short sale volume files). Long only: lightly shorted = buy; heavily shorted = AVOID check only. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 11 Nov 2026.",
+   "tested": "2026-11-10",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     5054,
+     6668
+    ],
+    "avg": [
+     -0.0026,
+     0.0325
+    ],
+    "stress": [
+     -0.0066,
+     0.0285
+    ],
+    "edge": [
+     -0.0008,
+     0.0005
+    ],
+    "vsOwn": [
+     -0.0214,
+     -0.0004
+    ],
+    "noTop2": [
+     -0.0033,
+     0.0317
+    ],
+    "tBlock": [
+     -0.06,
+     0.1
+    ],
+    "win": [
+     0.4717,
+     0.5193
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.06 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.1 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-SVOL-HIGH21",
@@ -34736,7 +34812,7 @@
    "name": "AVOID check: heavily shorted stocks (FINRA short volume, top 20% of the last 5 days), 21 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-11 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "As RQ-SVOL-LOW21, the TOP 20% of the 5-session score; 21 sessions; judged before costs on both sides against the average stock. Never a buy. File source, ratio, weekly timing, windows, ranking, liquidity and data rule fixed in research-core.mjs (IDEA 15) before any run.",
    "sources": [
     "https://www.sciencedirect.com/science/article/pii/S0304405X19301436",
@@ -34745,7 +34821,45 @@
     "https://www.finra.org/finra-data/browse-catalog/short-sale-volume-data/daily-short-sale-volume-files"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-11-11: Wang, Yan and Zheng (2020, Journal of Financial Economics) \"Shorting flows, public disclosure, and market efficiency\": with FINRA daily short volume public, heavily shorted stocks underperformed lightly shorted ones by 12.6% a year (2010-2015), persistent shorting most; Diether, Lee and Werner (2009, RFS). New information line (official FINRA Reg SHO consolidated daily short sale volume files). Long only: lightly shorted = buy; heavily shorted = AVOID check only. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 11 Nov 2026."
+   "note": "Daily researcher 2026-11-11: Wang, Yan and Zheng (2020, Journal of Financial Economics) \"Shorting flows, public disclosure, and market efficiency\": with FINRA daily short volume public, heavily shorted stocks underperformed lightly shorted ones by 12.6% a year (2010-2015), persistent shorting most; Diether, Lee and Werner (2009, RFS). New information line (official FINRA Reg SHO consolidated daily short sale volume files). Long only: lightly shorted = buy; heavily shorted = AVOID check only. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun; forward paper from 11 Nov 2026.",
+   "tested": "2026-11-10",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "n": [
+     21557,
+     27775
+    ],
+    "avg": [
+     -0.0096,
+     -0.0003
+    ],
+    "stress": [
+     -0.0136,
+     -0.0043
+    ],
+    "edge": [
+     -0.0072,
+     -0.0093
+    ],
+    "vsOwn": [
+     -0.0036,
+     0.0046
+    ],
+    "noTop2": [
+     -0.0098,
+     -0.0005
+    ],
+    "tBlock": [
+     -4.85,
+     -4.8
+    ],
+    "win": [
+     0.4531,
+     0.4797
+    ],
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
   }
  ]
 }
