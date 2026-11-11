@@ -9,7 +9,7 @@
     "a-close-source.mjs": "e666d8142c54aeedc4d23eda0950600b9c58d4cfe1a8ed4ca9d926c7223b24a7",
     "test/a-fenced-recovery.test.mjs": "a5721f6c868debced11b60ced42481c6691834fd4e208de0d9ff9a9c26a0913f",
     "docs/a-fence-recovery/fixtures/a-fenced-store-7ee.source": "7ddff2773a6a7b82a9b4d090575978630303d827ca814ec16c54c3a0ef164065",
-    "docs/a-native-source-join/manifest.json": "ce47d837e07b6d334efe6e3196fd22026fe2e5348860ec83ca33b624abea0cfd",
+    "docs/a-native-source-join/manifest.json": "e4a1dceb07dc3cf4a0f009ec0f56d0dc4d7f88c7093a44d477ff0921db9978eb",
     "a-authenticated-collector.mjs": "97344305e5f8c8acf7c2a76e56354017fe70ca47e9d76fd91c1bd378b5fdbde7",
     "a-evidence-contract.mjs": "3b928644abbaebfde3f93a0302eb6976d8fbd8f19979c9313742d10ad4d2a2b4",
     "test/a-native-source-package.test.mjs": "215b8c9c14bdfc88b5fad170905bdf12474cc3650569854139a051bc66984791",
@@ -24,7 +24,7 @@
     "reclaim-research-workflow.mjs": "cd969d23a02eb8c39d2d02a82095daab43aa79cca351881a28815c04e9802844",
     "reclaim-research-runner.mjs": "a4f81d843216265927780790eef7ef765be81f9f9f5cd89108015c657b119478",
     "zad-compliance.mjs": "06dce9ca3a6cb8f360d8c7a796def9883e04f7911e047e16d930cc57cce5689f",
-    "scan.mjs": "9b8f836f2fc5640c4faa52aaee76ed44c682fa23c9fc87a3fa6ec20e408d947a",
+    "scan.mjs": "40b9947d64c2f177fe66298b4e069ceb21c4d0b1e2a8307d88a67b454a34d59e",
     "ignition-watch.mjs": "569c0bf33e32b837469a28713cdfaab2e8a7023f0d674c476240190ba3593151",
     "edgar-feed.mjs": "2d717261096dc3aab4a98f298cc3d20dbfd241fc2666efbc3cb3796939801d17",
     "native-sec-events.mjs": "ea2a4dbcf65b5417c189f9517df9bc001f927a470454451f5337d2c811f8499e",
@@ -229,5 +229,24 @@
   "discoveryAssessmentContinuation": {
     "request": "6746514530",
     "scope": "Dependent current fingerprints only; original assertions, strategy rules and historical base evidence retained. Offline review, not activation."
+  },
+  "systemRepairDependencyRepin": {
+    "historicalManifestAt": "a4976e0270a41bd0eb5292b153ed819a60aaac37",
+    "changed": [
+      {
+        "path": "scan.mjs",
+        "before": "9b8f836f2fc5640c4faa52aaee76ed44c682fa23c9fc87a3fa6ec20e408d947a",
+        "after": "40b9947d64c2f177fe66298b4e069ceb21c4d0b1e2a8307d88a67b454a34d59e",
+        "reason": "Explicit current dependency repin; original package remains at a497; no strategy, acquisition, caps, authority, deadlines or assertions relaxed"
+      },
+      {
+        "path": "docs/a-native-source-join/manifest.json",
+        "before": "ce47d837e07b6d334efe6e3196fd22026fe2e5348860ec83ca33b624abea0cfd",
+        "after": "e4a1dceb07dc3cf4a0f009ec0f56d0dc4d7f88c7093a44d477ff0921db9978eb",
+        "reason": "Explicit current dependency repin; original package remains at a497; no strategy, acquisition, caps, authority, deadlines or assertions relaxed"
+      }
+    ],
+    "reviewStatus": "FOCUSED_REVIEW_REQUIRED",
+    "olderPublishedPinsRemainHistorical": true
   }
 }
