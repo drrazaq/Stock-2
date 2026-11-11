@@ -3820,6 +3820,7 @@ async function daily() {
     const d = loaded[sym]; if (!d) continue;
     const only = QONLY.has(sym);
     if (d.candles.length < 600) { if (DISC.has(sym)) refLine(sym, d);
+      if (!myPos[sym]) stocks.push({sym,last:d.last,state:'No action',why:'Loaded '+d.candles.length+' daily bars; the existing tested-entry path requires 600. No tested entry is evaluated; this is not a rejected company thesis.',halal:myHalal(sym),rule:null,proven:false,trigger:null,readiness:'INSUFFICIENT_TESTED_HISTORY',availableBars:d.candles.length,requiredBars:600,diagnosticOnly:true});
       // (audit 24 Oct) a TRY SMALL holding with under ~2.5 years of history (e.g. a 2025 listing) skipped every exit check below:
       // its stop-at-the-close and its time exit were never flagged, so the SELL never reached ACTIONS. The two lane exits only:
       { const P = myPos[sym], c = d.candles, i = c.length - 1; if (P && (P.src === 'try small' || P.src === 'leader dip') && i >= 0) { const { held, fl } = P.src === 'leader dip' ? ldipCloseFlags(P, c) : trySmallCloseFlags(P, c);
