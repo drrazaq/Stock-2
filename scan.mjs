@@ -3820,12 +3820,12 @@ async function daily() {
     const d = loaded[sym]; if (!d) continue;
     const only = QONLY.has(sym);
     if (d.candles.length < 600) { if (DISC.has(sym)) refLine(sym, d);
-      if (!myPos[sym]) stocks.push({sym,last:d.last,state:'No action',why:'Loaded '+d.candles.length+' daily bars; the existing tested-entry path requires 600. No tested entry is evaluated; this is not a rejected company thesis.',halal:myHalal(sym),rule:null,proven:false,trigger:null,readiness:'INSUFFICIENT_TESTED_HISTORY',availableBars:d.candles.length,requiredBars:600,diagnosticOnly:true});
       // (audit 24 Oct) a TRY SMALL holding with under ~2.5 years of history (e.g. a 2025 listing) skipped every exit check below:
       // its stop-at-the-close and its time exit were never flagged, so the SELL never reached ACTIONS. The two lane exits only:
       { const P = myPos[sym], c = d.candles, i = c.length - 1; if (P && (P.src === 'try small' || P.src === 'leader dip') && i >= 0) { const { held, fl } = P.src === 'leader dip' ? ldipCloseFlags(P, c) : trySmallCloseFlags(P, c);
         if (fl.length) { P.exitFlag = { d: c[i].d, why: fl[0].replace(/ Sell.*$/, '') }; posVerdict[sym] = fl[0].replace(/ Sell.*$/, '').toLowerCase(); } else delete P.exitFlag;
         myLines.push(posLine(sym, P, d.last) + (fl.length ? '\n  ' + fl.join('\n  ') : '\n  no exit signal at this close') + '\n  held ' + held + ' session' + (held === 1 ? '' : 's')); } }
+      if (!myPos[sym]) stocks.push({sym,last:d.last,state:'No action',why:'Loaded '+d.candles.length+' daily bars; the existing tested-entry path requires 600. No tested entry is evaluated; this is not a rejected company thesis.',halal:myHalal(sym),rule:null,proven:false,trigger:null,readiness:'INSUFFICIENT_TESTED_HISTORY',availableBars:d.candles.length,requiredBars:600,diagnosticOnly:true});
       continue; }
     const c = d.candles, i = c.length - 1, ind = L.indicators(c, mkt), T = L.trendStats(c, ind, mom6), halal = myHalal(sym);
     if (!only && !WIDE.has(sym) && i > 140) { const e2 = ind.e[L.CFG.TREND], e5 = ind.e[50], j = i - 5; wk.push({ sym, chg: c[i].c / c[j].c - 1, up: T.up, wasUp: c[j].c > e2[j] && e5[j] > e2[j] && c[j].c / c[j - 126].c - 1 > 0 }); }
