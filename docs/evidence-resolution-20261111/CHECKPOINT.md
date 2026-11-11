@@ -16,7 +16,7 @@ The ONE missing activation package is private normal-ingestion capture plus roll
 
 PrivateS1repo remainsf39/14files/0workflows. Claude's current session cannotreachit; hisinstallerroute wasNO-GO. Codex's EXISTING Git connection was read-only verified toreach exactf39; no new grantor writeprobe. Corrected route uses CODEXinstaller, Claudeindependentpublicsource/hashcomputation and ownerordinarycommitUIconfirmation.
 
-EXACTfuturecommit6c4f3c3436788571dfbacfc51a9b3baaf33e6c83 (6c4f3c3), parentf39f28196e7c443313190fd8b79b7fd3efc067b0 (f39f281), tree72a968bc82d2dc8c592a835213192cdec482e096.8newfiles/29,105bytes; preserve14existing,22total. Claude independently rebuiltall8blobs/tree/commit/rawbytes in6807300522/6807310338. Preparationmetadata is not installationtime. FinalW1/W2plainapprovalwording is in docs/private-reference-decision-20261111/SETUP_ONLY_APPROVAL.md.
+EXACTfuturecommit6c4f3c3436788571dfbacfc51a9b3baaf33e6c83 (6c4f3c3), parentf39f28196e7c443313190fd8b79b7fd3efc067b0 (f39f281), tree72a968bc82d2dc8c592a835213192cdec482e096.8newfiles/29,105bytes; preserve14existing,22total. Claude independently rebuiltall8blobs/tree/commit/rawbytes in6807300522/6807310338. Preparationmetadata is not installationtime. Claude confirmed final W1/W2 wording in6807602833. Final plain approval wording is in docs/private-reference-decision-20261111/SETUP_ONLY_APPROVAL.md.
 
 Setup-only requestedscope:1ordinarynonforce sourcepush≤2MiB, freshheadmustf39;≤12readGET+2lsremote; noforce/retry/rebase.403/workflowpermissionrefusal/UNKNOWN/drift stops; onlyboundedreadonlyreconciliation.0admin/settings/secrets/runs/capture/deletion/otherrepochanges. Actions staysdisabled. No installation hasoccurred.
 
@@ -28,7 +28,7 @@ Captureboundsunchanged:≤14Massivepages+1SECGET,15total,13sstartspacing/5sreque
 
 SQ2-ORB5 original6,438rowaudit reproducedindependentlybyClaude6807500284:older/newermeans−0.809%/−0.728%atoriginal0.8%modelcost+embeddedslippage,medians−1.345%/−1.350%,losses1,558/2,625. OriginalREJECTED/STOPstands. Realcontrolconventionbug/conservatism:netstrategycomparedtogrosscontrol; equal-cost/sliprelative diagnostic+.554pp/+.675pp doesNOTcreatepositiveabsoluteexpectancy or changefrozenverdicts. Exact$1,000whole-share/$3resultsremainNULLwithoutUSDprices/BBO/exitchains. No winnersselectedortuning. B-FCFN1/RPO63/PB12/earningsverdictsunchanged.
 
-OSCR/KNSA privateoriginals second-readagainstall3receiptSHAhashes, separateHTMLtableparser. Corrected11whole-cell/row/quarter-YTD/year-columnchecks plus3adversefailures; no globalnumericpresenceassertion. Claude's reviewisEXTRACTIONONLYbecausehisnetworkblocksoriginals; no independent-sourceauthenticationupgrade. Factsstayuninsertedpendingthatlimitedreview. CurrentZAD/private marks/quoteidentity/entryconditions andOSCRsharebridge gaps remainexplicit.
+OSCR/KNSA privateoriginals second-readagainstall3receiptSHAhashes, separateHTMLtableparser. Corrected11whole-cell/row/quarter-YTD/year-columnchecks plus3adversefailures; no globalnumericpresenceassertion. Claude's reviewisEXTRACTIONONLYbecausehisnetworkblocksoriginals; no independent-sourceauthenticationupgrade. Claude accepted the corrected extraction in comment6807602833 at the bounded strength of a Codex second reading. This closes the presence-only finding; runtime insertion remains separate and has not occurred. CurrentZAD/private marks/quoteidentity/entryconditions andOSCRsharebridge gaps remainexplicit.
 
 ## Validation preserved and remaining external facts
 
