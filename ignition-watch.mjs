@@ -1,3 +1,4 @@
+import {createPrivateQuoteRetention} from './private-quote-retention.mjs';
 import {watcherAdmission} from './watcher-schedule.mjs';
 import {publishWatcherReservation} from './watcher-message-publish.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
@@ -56,6 +57,9 @@ if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExc
 if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
 if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
+// Opt-in development binding only; no configuration or private storage is provisioned here.
+const PRIVATE_QUOTE_RETENTION=env.PRIVATE_QUOTE_RETENTION_ROOT?createPrivateQuoteRetention({root:env.PRIVATE_QUOTE_RETENTION_ROOT,checkout:process.cwd(),policySha256:env.PRIVATE_QUOTE_POLICY_SHA256,sourceSha:INCIDENT_SHA,runId:INCIDENT_RUN_ID}):null;
+if(PRIVATE_QUOTE_RETENTION)process.once('exit',()=>PRIVATE_QUOTE_RETENTION.close());
 const RUN_START = Date.now(); // Observation budget excludes the bounded pre-open wait.
 // ---- each stock's normal daily volume (average over the days it traded, 15+ of the last 20 needed), float, time listed
 const avgVol = new Map(), firstSeen = new Map(), avgRange5 = new Map(); let sessions = 0;   // avgRange5: average high-low range of the last 5 sessions (the 'ADR' idea, logged only)
@@ -87,13 +91,13 @@ const AH = () => ({ headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECR
 async function snapTop50() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
   try { const r = await fetch(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
-    const sj = await snapshots(ALPD, syms, AH()); if(!sj)return null; const sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
+    const sj = await snapshots(ALPD, syms, AH(), fetch, PRIVATE_QUOTE_RETENTION?.capture); if(!sj)return null; const sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
     const at = Date.now(); const rows=syms.map(s => validateClocks(alpacaSnapshot(s, sj[s] || {}, sip, at), at)); return rows.some(r=>r.price>0||r.prevC>0||r.open>0||r.vol>0)?rows:null; } catch (e) { return null; } }
 async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
-    try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
+    try { const sj = await snapshots(ALPD, part, AH(), fetch, PRIVATE_QUOTE_RETENTION?.capture); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
       const at = Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = validateClocks(alpacaSnapshot(s, x || {}, sip, at), at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
   return out; }
