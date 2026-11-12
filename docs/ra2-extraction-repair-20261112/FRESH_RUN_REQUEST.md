@@ -1,6 +1,6 @@
 # Proposed correction plus one fresh bounded R-A2 run
 
-Original approval/run43219642941 is exhausted and preserved as an operational extraction failure, with no authentic outcomes. No second run has been authorized or attempted. Claude6824269543 accepts the focused correction/pins and independently completes the exact-remount root-context full-chain rehearsal. Present this new request after fresh head and current operator/verifier attendance checks.
+Original approval/run43219642941 is exhausted and preserved as an operational extraction failure, with no authentic outcomes. No second run has been authorized or attempted. Claude6824269543 accepts the focused correction/pins and independently completes the exact-remount root-context full-chain rehearsal. Claude6824317746 confirms the exact request and present operator acceptance at13:01UTC; main remainsa5febe9d. Codex is present read-only verifier. Immediate pre-action head/window/attendance checks remain mandatory.
 
 Proposed new deadline: **2026-11-12T13:30:00Z**. Owner approval must arrive by13:25UTC while the operator/verifier are present; both actions must fit before13:30Z and within30minutes of approval. This is a new requested window, not an extension of the expired13:00Z approval.
 
