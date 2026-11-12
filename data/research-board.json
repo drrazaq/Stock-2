@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-12T03:42:58.421Z",
+ "generatedAt": "2026-11-12T09:39:00.174Z",
  "lastClose": "2026-11-11",
  "paperStart": "2026-10-26",
  "cost": 0.008,
@@ -1312,6 +1312,99 @@
    "kind": "avoid",
    "hold": 21,
    "family": "svol",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
+  },
+  "RQ-PRE-W1": {
+   "name": "Top-1% 12-month winners bought 5 sessions before their earnings report, sold the close before it",
+   "kind": "buy",
+   "hold": 5,
+   "family": "pre",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "NOT PROVEN",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 0.34 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t 0.34 under 2.5 in the newer half"
+   }
+  },
+  "RQ-PRE-W10": {
+   "name": "Top-10% 12-month winners bought 5 sessions before their earnings report, sold the close before it",
+   "kind": "buy",
+   "hold": 5,
+   "family": "pre",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "REJECTED",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.85 under 2.5 in the older half; lost money after 1.2% costs in the newer half; block t 0.26 under 2.5 in the newer half"
+   }
+  },
+  "RQ-PRE-POST1": {
+   "name": "AVOID check: top-1% 12-month winners in the 5 sessions after their earnings reaction",
+   "kind": "avoid",
+   "hold": 5,
+   "family": "pre",
    "dataOk": true,
    "signals": 0,
    "waiting": 0,

@@ -34867,7 +34867,7 @@
    "name": "Top-1% 12-month winners bought 5 sessions before their earnings report, sold the close before it",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-12 (daily researcher); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "explain": "At the close 6 sessions before the reaction session r of an earnings 8-K (item 2.02, first of its 30-day group), rank every liquid stock by its 12-month return (close / close 252 sessions earlier - 1; 500+ stocks); if the reporting stock is liquid and in the top 1% (percentile >= 0.99), buy the open of r-5 and sell the close of r-1 (never held through the report). Announcement grouping, reaction timing, 12-month ranking, cut-offs, windows and data rule fixed in research-core.mjs (IDEA 16) before any run.",
    "sources": [
     "https://doi.org/10.1007/s11142-009-9104-9",
@@ -34875,7 +34875,45 @@
     "https://alphaarchitect.com/go-long-make-money-go-short-make-money-all-good/"
    ],
    "hold": 5,
-   "note": "Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) \"Limited attention and the earnings announcement returns of past stock market winners\": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) \"Limited attention and the earnings announcement returns of past stock market winners\": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-11",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     75,
+     232
+    ],
+    "avg": [
+     -0.0003,
+     -0.004
+    ],
+    "stress": [
+     -0.0043,
+     -0.008
+    ],
+    "edge": [
+     0.0055,
+     0.0005
+    ],
+    "vsOwn": [
+     0.0022,
+     -0.0005
+    ],
+    "noTop2": [
+     -0.0045,
+     -0.0096
+    ],
+    "tBlock": [
+     0.34,
+     0.34
+    ],
+    "win": [
+     0.56,
+     0.4095
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; loses without its 2 best in the older half; block t 0.34 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t 0.34 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-PRE-W10",
@@ -34883,7 +34921,7 @@
    "name": "Top-10% 12-month winners bought 5 sessions before their earnings report, sold the close before it",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-12 (daily researcher); 5-year one-shot pending",
+   "status": "tested: rejected; forward paper lane from 26 Oct 2026",
    "explain": "As RQ-PRE-W1 with the top 10% (percentile >= 0.90). Announcement grouping, reaction timing, 12-month ranking, cut-offs, windows and data rule fixed in research-core.mjs (IDEA 16) before any run.",
    "sources": [
     "https://doi.org/10.1007/s11142-009-9104-9",
@@ -34891,7 +34929,45 @@
     "https://alphaarchitect.com/go-long-make-money-go-short-make-money-all-good/"
    ],
    "hold": 5,
-   "note": "Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) \"Limited attention and the earnings announcement returns of past stock market winners\": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) \"Limited attention and the earnings announcement returns of past stock market winners\": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-11",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "REJECTED",
+    "n": [
+     791,
+     2227
+    ],
+    "avg": [
+     -0.0084,
+     0.003
+    ],
+    "stress": [
+     -0.0124,
+     -0.001
+    ],
+    "edge": [
+     -0.0071,
+     0.0018
+    ],
+    "vsOwn": [
+     -0.005,
+     0.0059
+    ],
+    "noTop2": [
+     -0.01,
+     0.0021
+    ],
+    "tBlock": [
+     -0.85,
+     0.26
+    ],
+    "win": [
+     0.426,
+     0.4935
+    ],
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.85 under 2.5 in the older half; lost money after 1.2% costs in the newer half; block t 0.26 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-PRE-POST1",
@@ -34899,7 +34975,7 @@
    "name": "AVOID check: top-1% 12-month winners in the 5 sessions after their earnings reaction",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-12 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Same ranking as RQ-PRE-W1 (at r-6, top 1%); bought the open of r+1, sold the close of r+5; judged before costs on both sides against the average stock. Never a buy. Announcement grouping, reaction timing, 12-month ranking, cut-offs, windows and data rule fixed in research-core.mjs (IDEA 16) before any run.",
    "sources": [
     "https://doi.org/10.1007/s11142-009-9104-9",
@@ -34907,7 +34983,45 @@
     "https://alphaarchitect.com/go-long-make-money-go-short-make-money-all-good/"
    ],
    "hold": 5,
-   "note": "Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) \"Limited attention and the earnings announcement returns of past stock market winners\": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) \"Limited attention and the earnings announcement returns of past stock market winners\": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-11",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "n": [
+     75,
+     232
+    ],
+    "avg": [
+     -0.0111,
+     -0.0029
+    ],
+    "stress": [
+     -0.0151,
+     -0.0069
+    ],
+    "edge": [
+     -0.0023,
+     -0.005
+    ],
+    "vsOwn": [
+     0.0037,
+     -0.0063
+    ],
+    "noTop2": [
+     -0.0206,
+     -0.0119
+    ],
+    "tBlock": [
+     0.07,
+     -1.24
+    ],
+    "win": [
+     0.4267,
+     0.4267
+    ],
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
   }
  ]
 }
