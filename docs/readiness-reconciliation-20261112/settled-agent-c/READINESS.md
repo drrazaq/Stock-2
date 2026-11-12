@@ -16,7 +16,7 @@ Independent GitHub reads confirm all three Agent C lab runs completed/success:
 
 The actual newer sequence includes FINRA parser repair51ae6c4e, triggerda8e5383, frozen result7db11787 and reportee617dbf. Report states C-IC1 REJECTED, C-SI1/C-SI1-DTC NOT PROVEN, no new tier or trading authority. These are reported authentic study results, not an independent economic re-audit here. No frozen study/evaluator was rerun. E3's quarterly-input/current-pick gap is a documented research follow-up, not release scope.
 
-Source writer state is settled at **5f697c5c374a5640f6e63a56275b6a367f0208fc**. Compatible data writers remain: bot43211282305 and Movers radar43216984670. They can advance main; fresh exact-parent admission remains mandatory immediately before any authorized push. Their presence does not imply source-session activity, but settlement is not a promise that main will stay unchanged.
+Source writer closure is at **ee617dbf65494454897a0f3a6a20c96cfbc470ab**; current compatible data-only base is **5f697c5c374a5640f6e63a56275b6a367f0208fc**. Compatible data writers remain: bot43211282305 and Movers radar43216984670. They can advance main; fresh exact-parent admission remains mandatory immediately before any authorized push. Their presence does not imply source-session activity, but settlement is not a promise that main will stay unchanged.
 
 ## Fresh mechanical pins — local preparation
 
@@ -38,8 +38,12 @@ Stage1 bot successor onfc02212a is only partial loaded-code runtime evidence whi
 
 Before presenting the single owner request: Claude must re-hash these fresh records and acknowledge current operator availability; Codex must refresh head and read-only verification availability. Proposed deadline must be new, exact UTC, within approval+30min; old12:25Z cutoff is withdrawn and never extended. No future attendance promise or authority transfers between packages.
 
-## Final narrow confirmation
+## Earlier narrow confirmation — superseded parent
 
-Claude6823690630 at12:33UTC independently re-hashed both raw commits, reproduced one-path installation/inverse trees, re-executed actual-base/candidate composition and confirmed scanner noreply identities. He accepts the present operator role for exactly one push and one dispatch with latest_start_utc2026-11-12T13:00:00Z. Approval must arrive by12:55UTC with actual operator/verifier presence; both actions must fit before13:00Z. Head/source drift, late approval, absent attendance or UNKNOWN means STOP with no rebase/retry. Codex is present read-only verifier. No approval or operation has occurred. See APPROVAL_REQUEST.md for the single exact scope.
+Claude6823690630 at12:33UTC independently re-hashed the earlier47438d3e/cf7a46ce raw commits, reproduced one-path installation/inverse trees, re-executed actual-base/candidate composition and confirmed scanner noreply identities. He accepts the present operator role for exactly one push and one dispatch with latest_start_utc2026-11-12T13:00:00Z. Approval must arrive by12:55UTC with actual operator/verifier presence; both actions must fit before13:00Z. Head/source drift, late approval, absent attendance or UNKNOWN means STOP with no rebase/retry. Codex is present read-only verifier. No approval or operation has occurred. See APPROVAL_REQUEST.md for the single exact scope.
 
 Data-only refresh after main Movers commit5f697c5c: earlier47438d3e/ee617dbf request held before owner presentation. Current records supersede it; fresh narrow re-hash requested, no evaluator/source review restart and no operation. Source-session closure stays at ee617dbf; new base adds only compatible data.
+
+## Current final confirmation at12:34:20Z
+
+Claude6823740320 re-hashed current installa5febe9d/inverse01e3d8ee, checked one-path scope/trees/noreply and confirmed main5f697c5c and present operator acceptance. Codex is present read-only verifier. Cutoffs unchanged: direct owner approval by12:55Z; one push+one dispatch before13:00Z and within30minapproval; latest_start_utc2026-11-12T13:00:00Z. Any parent/source drift isSTOP, no silent rebase/retry. Claude requires approval DIRECTLY in the existing release-session chat because shared-account PR comments cannot authenticate the owner. No agent approval relay is substituted. Full exact request is in APPROVAL_REQUEST.md.

@@ -2,6 +2,12 @@
 
 Preparation only. No installation, dispatch, acquisition, settings change or trading is approved. Evidence inspected approximately 11:25–11:32 UTC; refresh mutable facts before any action.
 
+## Final current readiness12:34:20Z
+
+AgentC closed6823643620; subsequent Movers commit5f697c5c was verified data-only. Current noreply installa5febe9d/inverse01e3d8ee are independently confirmed by Claude6823740320 on exactparent5f697c5c, present operator acceptance; Codex is read-only verifier. Single exact request: settled-agent-c/APPROVAL_REQUEST.md. Direct owner approval in existing Claude release chat by12:55Z, one ordinarypush+onedispatch before13:00Z/within30minapproval, job cutoff13:00Z; stop on any drift/UNKNOWN/absence/expiry. No operation/approval inferred. Earlier47438d3e draft was held before owner presentation; earlier12:25 draft stays withdrawn. Billing/evaluator/private-development closures preserved, no repeated tests.
+
+Older snapshots below are historical and superseded where facts differ.
+
 ## Current readiness at12:33UTC — supersedes earlier snapshots
 
 AgentC source closure6823643620 is positive: actual session IDLE, no pending AgentC code writer, actual19Nov re-arm. All3lab runs succeeded; parser/trigger/result/report chain reconciled, reported rules remain REJECTED/NOT PROVEN. Compatible bot/radar data writers still require exact-parent refresh.
