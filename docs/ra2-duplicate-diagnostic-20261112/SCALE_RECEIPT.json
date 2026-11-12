@@ -1,0 +1,91 @@
+{
+  "kind": "SYNTHETIC_NEW_COVERAGE_DIAGNOSTIC_RESOURCE_REHEARSAL_NOT_MARKET_EVIDENCE",
+  "rows": 6882120,
+  "sessions": 1260,
+  "tickerLabels": 5462,
+  "duplicateOccurrences": 125,
+  "compressedBytes": 17196739,
+  "uncompressedBytes": 175480200,
+  "elapsedIncludingGenerationSeconds": 58.03086138500021,
+  "childCpuSeconds": 57.559216,
+  "peakChildRssKiB": 32000,
+  "exitCode": 0,
+  "sourceUnchanged": true,
+  "sourceHashes": {
+    "DIAGNOSTIC_CONTRACT.json": "04372532d1e69780e3b4d958d824cbae7f588880d5f8cfa7e1651576d91f9d83",
+    "scale_rehearsal.py": "5f3ffbc9cb2e29862d8f99b02d0df2f362b8979b808d94125491cce81f77c74a",
+    "select_cache.py": "c993a48adf131d136c0f7c851c976e33be56dbe9675fd3dbb94cf42fea2e4514",
+    "diagnose.py": "eda2e70b98b191acfcd21f632a18c8c01f6870df563540d92ab49503555e7db6",
+    "test_diagnose.py": "ae0ec08852727c1e1b3f48e02eceac103c0ea4b66768cd06ecd9e95e6b2d6184",
+    "SOURCE_BINDING.json": "c4c0ac0532db4b750595c7d7ea1e16739a8dd48f28e329eeadefee8cb66d1532",
+    "frozen/AMENDMENT.json": "9833ebf143257deb06515002ecdb7a9cd502e9b87c9bcf5921efff4bc2c1e875",
+    "frozen/analyze.py": "40d56bde738127e3446593365f7616d644da566d6184a14e74600d3b5f1e51cc",
+    "frozen/stream_cache.py": "c4ef5083163ab48b57b81290375fd49917ab6cfc75b2d08359de96c8eb1e9ed3",
+    "frozen/evaluate.py": "26d4c24f41c56fdadd892bcff56aae72097d723e8e7518bbf7778cb29a6390ef",
+    "frozen/CONTRACT.json": "837604a64cacfa06fddd217380aa838e03313b4f94f0aed4f902c290ce8d3c87",
+    "frozen/OWN_POOL_ADDENDUM.json": "5081d6febc528e207ec77c0c970b36146b56469b625d6dc0b18361c0b005cf5d",
+    "frozen/MISSINGNESS_ADDENDUM.json": "ffab4fdfefb69677b6f264f92b35092b26fa54e2fbd617c10c81be187d3cf258"
+  },
+  "stdout": "{\"status\": \"COVERAGE_ONLY_CLASSIFIED_NOT_REPAIRED\", \"reportSha256\": \"9ad7697d4023706d518e7bb39a9e95c162fc065fc836edf2569c7c9a06d62088\", \"outcomesAccessed\": false, \"providerRequests\": 0}\n",
+  "aggregateHashes": {
+    "coverage.json": "e6ccf6a54386287d4210a71e98140f93da5013a44c6e5a0a7f0b5cf466bbbe6a",
+    "diagnostic.json": "9ad7697d4023706d518e7bb39a9e95c162fc065fc836edf2569c7c9a06d62088"
+  },
+  "diagnostic": {
+    "affectedDateXAtMetadata": {
+      "xAtAbsentOrInvalid": 125
+    },
+    "affectedDates": 125,
+    "affectedTickerLabels": 1,
+    "backfilledVsFresh": "NOT_IDENTIFIABLE_FROM_XAT_ALONE; reviewed producer sets xAt on both, no original main fetch clock retained",
+    "canonicalization": "NONE; no rows selected/dropped/merged",
+    "conflictingKeysByField": {
+      "c": 125,
+      "h": 125,
+      "l": 125,
+      "o": 125,
+      "v": 0
+    },
+    "counts": {
+      "affectedDayLabelKeys": 125,
+      "duplicateOccurrences": 125,
+      "withinMainExtraOccurrences": 0,
+      "withinTailExtraOccurrences": 0
+    },
+    "crossPartitionCloseRatioBuckets": {
+      "nearSimpleFactorPattern_NOT_AUTHENTICATED_SPLIT": 125
+    },
+    "crossPartitionCurrentQualifiesCounts": {
+      "allTailCurrentlyFailQualifies": 125,
+      "anyMainCurrentlyQualifies": 125,
+      "anyTailCurrentlyQualifies": 0
+    },
+    "frozenCoverageStatus": "INCONCLUSIVE",
+    "groupClassification": {
+      "conflictingRelevantValues": 125,
+      "decodedTypeAndValueIdentical": 0,
+      "invalidOrNonfiniteUnresolved": 0,
+      "numericEquivalentRepresentationDiffers": 0
+    },
+    "groupOrigins": {
+      "crossPartition": 125,
+      "withinMainOnly": 0,
+      "withinTailOnly": 0
+    },
+    "key": "EXACT_DAY_AND_LITERAL_TICKER_STRING_SHARED_MAIN_TAIL",
+    "kind": "DUPLICATE_CLASSIFICATION_AGGREGATES_V1",
+    "lagMeaning": "Inferred fetch-path proxy only, NOT lineage, basis authentication or input selection",
+    "normalization": "NONE; no alias/case/whitespace/share-class mapping",
+    "orderIndependentPrivateAuditCommitmentSha256": "4829c0657e1c0127af0802842f31240b294bb389ce9bc698991fd65d59cc79d0",
+    "outcomesAccessed": false,
+    "providerRequests": 0,
+    "rawRowByteIdentity": "NOT_ESTABLISHED; decoded JSON cannot prove source byte identity",
+    "retainedInputSha256": "c9e9978680e011dc0d601208d1af31ad0ad4551fe860f454d73a05f832483128",
+    "splitAdjustmentOrIssuerLineage": "NOT_AUTHENTICATED; simple factor pattern is not an authenticated split or cause",
+    "status": "COVERAGE_ONLY_CLASSIFIED_NOT_REPAIRED",
+    "xAtLagDuplicateOccurrenceBuckets": {
+      "unknown": 125
+    }
+  },
+  "limits": "No original CPU/memory/stream/row/output limit raised; lower entropy and different identity distribution than authentic cache; not performance evidence"
+}
