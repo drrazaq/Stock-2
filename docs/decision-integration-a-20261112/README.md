@@ -1,0 +1,33 @@
+# Development delta A — separate from Stage 2
+
+Base864bd2cbd23c56e5cbd2b22174129808ac1a56fb. Authority: owner6819897222. No main, workflow, credentials, provider requests, live sends, installation or activation. Loopback synthetic services only. Existing source/release PASS reviews stay closed except these changed dependencies.
+
+## Implemented actual caller chain
+
+`tgCommands` → existing `natural` exact `check SYM` / `review SYM`, ONLY when `ASSESSMENT_RESEARCH_ROOT` is externally set → private book producer/reader → existing private BBO/official instrument readers → actual owner ZAD marks → existing trace. No opt-in leaves existing commands/output unchanged. No new entry admission or BUY authority.
+
+The actual public discovery journal contains versioned assessment rows from the existing producer. `publishPrivateAssessmentBook` binds its exact bytes to a separately pinned reviewed evaluated-rule input. It validates original scanner definition/ID/version using the existing identity verifier, assessment ID, evidence version, definition hash, source hash, clocks and population/quote/reference witnesses. No legacy rule is re-keyed; no setup is derived from a selected lead. COMPLETE requires a reviewed complete-population witness; a missing/incorrect population is PARTIAL. This is a binding/consumption implementation, not a newly invented rule evaluator. Authentic evaluated-input bytes and independent coverage review remain real evidence prerequisites; the prototype does not create those facts from an arbitrary queue.
+
+Scanner identity is preserved as-is, including the original parameters and exit policy. The private reader reconstructs the book from the original pinned evaluation and journal before trusting it, so a rehashed pointer cannot legitimize an edited book. All records remain unadopted research evidence here. Exact failed verdicts, missing conditions and concrete private quote rejection reason are retained.
+
+`reviewReply` fills structured `evidence.disposition` from its actual determined verdict/checks, without prose parsing or changing its legacy text. Fresh existing stop SELL survives absent new-entry BBO/identity/research approval. HOLD must pass existing holding evidence checks. An unverified prior exit is explicit reconciliation, not a replacement HOLD or new SELL. Unknown quantity stays UNKNOWN; no new expiry/stop policy is invented. Existing observation/source-session clocks and validation closures remain authoritative.
+
+The command card registers with existing `telegram` → existing `telegramLive`, which refreshes/checks the card at each actual attempt/part/retry. A changed/expired decision refuses locally rather than sending the older claim. Reservations are durable BEFORE a network attempt; only complete acknowledged delivery marks CONFIRMED_SENT. Partial/incomplete/ambiguous delivery is UNCERTAIN with no replay. Definite unsent refusal is eligible for a later re-proposal; 429 uses the existing retry policy and freshness guard. If final persistence fails, RESERVED remains a replay barrier and result is UNKNOWN. Never-sent proposals do not count as delivery. No new sender or offset reset.
+
+## Private custody / concurrency
+
+Private assessment root is separate from the quote root, absolute, non-symlink, outside the checkout,0700; private files0600. Pinned `assessment-policy.json` names exact evaluation hash and independent review. Runtime does not provision policy, secrets, directories or configuration. Strict file allowlist; at most400 evaluated records,16MiB journal input,4MiB evaluation/book,8 immutable books/16MiB book storage,4MiB/4096 delivery rows. Publication reserves4MiB for delivery within48MiB total assessment-root maximum. No automatic rotation, deletion, lock stealing or cap expansion.
+
+Atomic immutable book/pointer publication; exclusive lock for book publication and append/fsync reservation transitions. A stale lock, malformed partial journal, reservation conflict or custody failure stops the affected publication/send. Source-only rollback leaves all private evidence intact; do not copy private book, quote hashes, ZAD-derived state or delivery rows to public data. Public `data/research-assessments.json` remains synthetic legacy-prototype input only, never the integrated command source.
+
+Actual bot/discovery Git save/rebase paths preserve public journal additions and unrelated state. Because private joins are outside the checkout, neither save can publish or reset them; the two real temporary-Git save order tests assert unchanged private UNCERTAIN bytes and absent private paths in the remote tree. A second actual Node process sees the durable uncertainty barrier. No workflow change is required or made.
+
+## Validation and outputs
+
+Affected actual-caller/privacy/holding/save matrix passed73 tests. Full existing required per-file Node20 inventory is running, with its final receipt to follow; no full PASS claimed until complete. EXAMPLES.json is entirely synthetic, including all quote/ZAD/holdings. It shows actual command output and loopback ACK/UNKNOWN handling, not real owner context, live delivery, a fill or strategy success. Normal tests do not overwrite tracked outputs.
+
+One initial fixture expected one message but the existing first-time menu also sent; fixture now seeds the actual MENU_V. Another exposed a genuine mixed clock in the new caller (new Date versus Date.now); caller uses Date.now consistently. Original failure logs retained locally; no existing assertion waived. Full inventory covers the changed private helper export/import closure too.
+
+## Remaining deployment/evidence boundaries
+
+This package is development integration, not activation or Stage2 content. Real private root/policy/evaluated witnesses/issuer identity/BBO/owner custody are not provisioned. Separate hosted jobs do not share a private directory. See PRIVATE_EVIDENCE_PROPOSAL.md for the existing-service staged route and exact unavailable live-owner transport dependency. An authentic snapshot cannot reconstruct original historical observations. After-cost strategy proof, ZAD authority and live admission remain distinct.

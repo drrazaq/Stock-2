@@ -133,3 +133,6 @@ export function restoreQuoteRecovery({bundle,pinnedSha256,root,checkout}){
  for(const [name,b]of checked)immutable(root,name,b);
  return {status:'RESTORED_ORIGINAL_BYTES',files:checked.length,currentObservation:false};
 }
+
+// Reused by the separately opted-in private assessment book; producer behavior unchanged.
+export {privateRoot as validatedPrivateRoot,file as boundedPrivateFile,atomic as atomicPrivateFile};

@@ -1,0 +1,40 @@
+{
+  "kind": "ENTIRELY_SYNTHETIC_COMMAND_AND_SEND_FIXTURES",
+  "examples": [
+    {
+      "case": "actual check, full synthetic evaluated inputs",
+      "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ",
+      "delivery": "CONFIRMED_SENT"
+    },
+    {
+      "case": "ambiguous",
+      "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ",
+      "delivery": "UNCERTAIN"
+    },
+    {
+      "case": "refused",
+      "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ",
+      "delivery": "PROPOSED_NOT_SENT"
+    },
+    {
+      "case": "429",
+      "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ",
+      "delivery": "PROPOSED_NOT_SENT"
+    },
+    {
+      "case": "real review caller, synthetic held stop, absent entry quote",
+      "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | SELL ZZQ | quantity UNKNOWN; STOP LEVEL REACHED | STOP LEVEL REACHED: ZZQ traded at or below your stop 8.00: last price 7.00 (FINNHUB, Nov 11 15:29 New York, 60 s old) (bought 10.00, -30.0%). If your broker stop order has filled, you are already out: do not sell again;  | holding basis 2026-11-10; observation 2026-11-11T20:29:00.000Z | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+    },
+    {
+      "case": "retained public journal row through actual command; private evidence absent; not current recommendation",
+      "sourcePin": "3aa893f52022a03a7fbac783599691e87c86abd8",
+      "authenticRow": {
+        "symbol": "OABI",
+        "type": "LEGACY_UNKEYED",
+        "horizon": null,
+        "evidenceVersion": null
+      },
+      "text": "WAIT OABI | VERIFIED_MATCHING_IDENTITY_REQUIRED | evidence DATA_UNAVAILABLE | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check OABI"
+    }
+  ]
+}

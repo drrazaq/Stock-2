@@ -1,4 +1,4 @@
-import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate} from './research-assessment.mjs';
+import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery} from './research-assessment.mjs';
 import {readInstrumentType,researchInstrumentScope} from './instrument-type.mjs';
 import {readPrivateAssessmentQuote} from './private-quote-retention.mjs';
 import {readAssessmentQuote,assessmentQuoteText} from './assessment-quote-context.mjs';
@@ -235,13 +235,38 @@ function researchDecisionPrototype(sym,{asOf,existingExit}={}) {
  const record=readJson0('data/research-assessments.json')?.records?.[sym];
  return conciseResearchDecisionText({symbol:sym,record,asOf,existingExit});
 }
+function privateAssessmentOptions(now=Date.now()){return {root:env.ASSESSMENT_RESEARCH_ROOT,policySha256:env.ASSESSMENT_RESEARCH_POLICY_SHA256,checkout:process.cwd(),now};}
 function researchDecisionTracePrototype(sym,{asOf,existingExit,previous}={}) {
- const now=Date.now(),book=readJson0('data/research-assessments.json'),record=book?.records?.[sym];
+ const now=Date.now();let book,record;
+ if(env.ASSESSMENT_RESEARCH_ROOT){const privateEntry=readPrivateAssessment(sym,privateAssessmentOptions(now));book={coverage:privateEntry.coverage};record=privateEntry.record;}else{book=readJson0('data/research-assessments.json');record=book?.records?.[sym];}
  const quote=process.env.ASSESSMENT_PRIVATE_QUOTE_ROOT?readPrivateAssessmentQuote(sym,{root:process.env.ASSESSMENT_PRIVATE_QUOTE_ROOT,policySha256:process.env.ASSESSMENT_PRIVATE_QUOTE_POLICY_SHA256,now}):readAssessmentQuote(sym,{manifestFile:process.env.ASSESSMENT_QUOTE_MANIFEST,pinnedSha256:process.env.ASSESSMENT_QUOTE_MANIFEST_SHA256,now});
  const instrument=researchInstrumentScope(sym,readInstrumentType(sym,{file:process.env.ASSESSMENT_INSTRUMENT_REFERENCE,pinnedSha256:process.env.ASSESSMENT_INSTRUMENT_REFERENCE_SHA256,now}));
  const card=traceResearchDecision({symbol:sym,record,quote,instrument,zad:myHalal(sym),coverage:book?.coverage,asOf,now,existingExit});
  return {...researchDecisionUpdate(previous,card,{now}),card};
 }
+const researchReports=new Map();
+async function integratedResearchReply(sym,sig,pos={}){
+ if(!env.ASSESSMENT_RESEARCH_ROOT)return null;
+ const options=privateAssessmentOptions();
+ try{publishPrivateAssessmentBook(fs.readFileSync('data/discovery-journal.jsonl'),options);}catch{/* Missing evaluated input is a concrete gap; never use public fixture book. */}
+ let holding=null,legacy=null;
+ if(pos[sym]){const evidence={};legacy=await reviewReply(sym,sig,pos,evidence);holding=evidence.disposition;if(!holding)return legacy;}
+ const current=()=>researchDecisionTracePrototype(sym,{asOf:new Date(Date.now()).toISOString(),existingExit:holding}).card;
+ let card;try{card=current();}catch{return legacy||'ASSESSMENT UNAVAILABLE: private evidence unreadable; no action supported.';}
+ let previous;try{previous=readAssessmentDelivery(sym,options);}catch{return 'ASSESSMENT UNAVAILABLE: private delivery evidence unreadable; existing holding instructions remain; reconcile before sending.';}
+ const update=researchDecisionUpdate(previous,card);
+ if(!update.shouldRender)return update.reason==='UNCHANGED'?'':'ASSESSMENT DELIVERY UNCERTAIN: reconcile the earlier message; existing holding instructions remain; no replay.';
+ if(researchReports.size>=64&&!researchReports.has(card.text))return legacy||'ASSESSMENT UNAVAILABLE: evidence report limit; no new action supported.';
+ researchReports.set(card.text,{symbol:sym,card,current,options});return card.text;
+}
+function beginResearchSend(text){
+ const contexts=[...researchReports.entries()].filter(([body])=>text.includes(body)).map(([,x])=>x),reservations=[];
+ try{for(const c of contexts){const r=reserveAssessmentDelivery(c.symbol,c.card,{...c.options,now:Date.now()});reservations.push({context:c,reservation:r});}return {reservations,contexts};}
+ catch{for(const x of reservations)try{settleAssessmentDelivery(x.reservation,'PROPOSED_NOT_SENT',{...x.context.options,now:Date.now()});}catch{}throw Error('PRIVATE_ASSESSMENT_RESERVATION_REFUSED');}
+}
+function refreshResearchSend(text,session,now){let out=text;for(const c of session.contexts){const fresh=c.current(),a=researchDecisionUpdate(null,c.card,{now}),b=researchDecisionUpdate(null,fresh,{now});if(a.nextState.key!==b.nextState.key||c.card.expiry&&Date.parse(c.card.expiry)<=now)throw Error('ASSESSMENT_EVIDENCE_CHANGED_OR_EXPIRED');out=out.replace(c.card.text,fresh.text);}return out;}
+function finishResearchSend(session,status){for(const x of session?.reservations||[])settleAssessmentDelivery(x.reservation,status,{...x.context.options,now:Date.now()});}
+
 function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current action supplied', compact = false) {
   const clean = (v, limit = 240) => { const t = String(v !== null && typeof v === 'object' ? 'UNKNOWN' : v ?? '').replace(/[\r\n]+/g, ' '); return t.length <= limit ? t : t.slice(0, limit).replace(/\s+\S*$/, '') + '…'; };
   const stamp = (v) => { const t = Date.parse(v || ''); return !Number.isFinite(t) ? 'UNKNOWN date' : t > Date.now() ? 'UNKNOWN (future timestamp ' + clean(v) + ')' : clean(v) + ' (' + Math.floor((Date.now() - t) / 36e5) + ' h old; saved context, not a live quote)'; };
@@ -1166,26 +1191,30 @@ const tgParts = (text) => { const parts = []; let rest = text; while (rest.lengt
 // nothing), judged at that moment; it owns any once-a-day marking. Only the first part of each rendering is sent, so a retry or a later
 // part never carries a claim judged before an earlier wait. Delivery semantics are otherwise those of telegram() (3 tries, recorded refusal).
 async function telegramLive(render, buttons) {
-  const sent = [];
+  const sent = [];let researchSession=null,researchAttempt=false,researchUnknown=false,researchComplete=false;
+  try{
   if (!env.TG_TOKEN || !env.TG_CHAT) { const t = await render(Date.now(), sent); if (t) console.log('[no Telegram secrets, message not sent; private body omitted]'); return sent; }
   for (let n = 0, a = 0; n < 60; n++) {
-    const out = await render(Date.now(), sent), text = out && typeof out === 'object' ? out.text : out, noButtons = !!(out && typeof out === 'object' && out.noButtons);
+    const out = await render(Date.now(), sent);let text = out && typeof out === 'object' ? out.text : out;const noButtons = !!(out && typeof out === 'object' && out.noButtons);
     if (!text || !text.trim()) return sent;
     let current=false;try{current=holdingSendEvidence(String(text),Date.now());}catch{}if(!current){sent.deliveryState=sent.length?'UNKNOWN':'REFUSED';sent.localEvidenceRefusal=true;return sent;}
+    try{if(!researchSession)researchSession=beginResearchSend(String(text));text=refreshResearchSend(String(text),researchSession,Date.now());}catch{sent.deliveryState=sent.length?'UNKNOWN':'REFUSED';sent.localEvidenceRefusal=true;return sent;}
     const parts = tgParts(text), part = parts[0], last = parts.length === 1;
-    try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true, ...(buttons && buttons.length && last && !noButtons ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
+    try { researchAttempt=true;const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true, ...(buttons && buttons.length && last && !noButtons ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
       if (r.status === 429 && a < 2) { a++; let w = 5; try { w = Math.min(30, +((await r.json()).parameters || {}).retry_after || 5); } catch (e) {} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }
-      if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram refusal; part not acknowledged', r.status); tgFailed(r.status, why, part); sent.deliveryState = sent.length || r.status >= 500 ? 'UNKNOWN' : 'REFUSED'; return sent; }
-      let ack; try { ack = await r.json(); } catch { sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
-      if (!ack || ack.ok !== true || !Number.isSafeInteger(ack.result?.message_id)) { sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
-      sent.push(part); a = 0; if (last) return sent; await sleep(FAST ? 0 : 700); }
-    catch (e) { console.error('Telegram delivery UNKNOWN; connection failure, no replay'); tgFailed('UNKNOWN', 'connection failed after send attempt; no replay', part); sent.deliveryState = 'UNKNOWN'; return sent; }
+      if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram refusal; part not acknowledged', r.status); tgFailed(r.status, why, part); sent.deliveryState = sent.length || r.status >= 500 ? 'UNKNOWN' : 'REFUSED';researchUnknown=sent.deliveryState==='UNKNOWN'; return sent; }
+      let ack; try { ack = await r.json(); } catch { researchUnknown=true;sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
+      if (!ack || ack.ok !== true || !Number.isSafeInteger(ack.result?.message_id)) { researchUnknown=true;sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
+      sent.push(part); a = 0; if (last){researchComplete=true;return sent;} await sleep(FAST ? 0 : 700); }
+    catch (e) { researchUnknown=true;console.error('Telegram delivery UNKNOWN; connection failure, no replay'); tgFailed('UNKNOWN', 'connection failed after send attempt; no replay', part); sent.deliveryState = 'UNKNOWN'; return sent; }
   }
   return sent;
+  }finally{try{finishResearchSend(researchSession,researchComplete?'CONFIRMED_SENT':researchUnknown||sent.length?'UNCERTAIN':'PROPOSED_NOT_SENT');}catch{sent.deliveryState='UNKNOWN';}}
 }
 // the not-yet-sent remainder of a whole message rendered again: skip the lines of the parts already sent (parts end at line breaks)
 const tgRemainder = (full, sent) => { if (!full) return full; let lines = full.split('\n'); for (const p of sent) { lines = lines.slice(p.split('\n').length); while (lines.length && lines[0] === '') lines.shift(); } return lines.join('\n'); };
 async function telegram(text, buttons, currentEvidence) {
+ if([...researchReports.keys()].some(body=>String(text).includes(body))){const sent=await telegramLive((now,parts)=>{if(currentEvidence&&currentEvidence(now)!==true)return null;return tgRemainder(text,parts);},buttons);return {ok:sent.deliveryState===undefined&&sent.length>0,deliveryState:sent.deliveryState,deliveredParts:sent.length,localEvidenceRefusal:sent.localEvidenceRefusal};}
   const given=currentEvidence;
   const valid=now=>holdingSendEvidence(String(text),now)&&(!given||given(now)===true);
   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent; private body omitted]'); return {ok:false,reason:'MISSING_CREDENTIALS',deliveredParts:0}; }
@@ -2405,13 +2434,19 @@ function observedHoldingPrice(sym,quote,now=Date.now()){
  const regular=n=>marketClock(n).phase==='REGULAR',reference=regular(now)?quoteEvidence(sym,quote,now,5):{state:'UNKNOWN',why:'outside the regular session'},stop=regular(now)?quoteEvidence(sym,quote,now,5):{state:'UNKNOWN',why:'outside the regular session'};
  return {current:reference.state==='OK',price:reference.state==='OK'?reference.price:null,stop,validCurrent:n=>regular(n)&&quoteEvidence(sym,quote,n,5).state==='OK',validStop:n=>regular(n)&&quoteEvidence(sym,quote,n,5).state==='OK'};
 }
+function holdingDisposition(sym,verdict,why,evidence,P){
+ const valid=now=>Array.isArray(evidence.checks)&&evidence.checks.length>0&&evidence.checks.every(check=>check(now)===true);
+ const status=/^(SELL(?:$|[ (])|STOP LEVEL REACHED)/.test(verdict)?'SELL':/^HOLD(?:$|[ (,])/.test(verdict)?'HOLD':'UNVERIFIED';
+ let quantity=null;try{const n=privRead()?.shares?.[sym];if(Number.isInteger(n)&&n>0)quantity=n;}catch{}
+ return {authority:'ACTUAL_HOLDING_REVIEW',symbol:sym,status,quantity,reason:why,condition:verdict,sourceSession:evidence.closeSession||null,observedAt:Number.isFinite(evidence.observed?.stop?.t)?new Date(evidence.observed.stop.t).toISOString():null,horizon:'Existing holding rule; unchanged',currentEvidence:valid};
+}
 async function reviewReply(sym, sig, pos, evidence = {}) {
   const d = await loadDaily(sym);
   if (!d || d.candles.length < 260) {
     const candles=d?.candles||[],closeSession=candles.at(-1)?.d,closeCurrent=closeBasisCurrent(closeSession),checks=closeCurrent?[n=>closeBasisCurrent(closeSession,n)]:[];
     let q=null;if(validStop(pos[sym]?.stop)&&marketClock(Date.now()).phase==='REGULAR'){try{q=await liveQ(sym);}catch{}}
     const observed=observedHoldingPrice(sym,q);Object.assign(evidence,{candles,closeSession,closeCurrent,observed,checks});
-    if(validStop(pos[sym]?.stop)&&observed.stop.state==='OK'&&observed.stop.price<=pos[sym].stop){checks.push(observed.validStop);return rememberHoldingEvidence('HOLD OR SELL: '+sym+' → STOP LEVEL REACHED\nPrice '+money(observed.stop.price)+' (dated stop observation '+nyStamp(observed.stop.t)+')\nWhy: '+stopText('hit',sym,pos[sym],observed.stop)+'\nDaily strategy assessment UNKNOWN: insufficient history.',checks);}
+    if(validStop(pos[sym]?.stop)&&observed.stop.state==='OK'&&observed.stop.price<=pos[sym].stop){checks.push(observed.validStop);evidence.disposition=holdingDisposition(sym,'STOP LEVEL REACHED',stopText('hit',sym,pos[sym],observed.stop),evidence,pos[sym]);return rememberHoldingEvidence('HOLD OR SELL: '+sym+' → STOP LEVEL REACHED\nPrice '+money(observed.stop.price)+' (dated stop observation '+nyStamp(observed.stop.t)+')\nWhy: '+stopText('hit',sym,pos[sym],observed.stop)+'\nDaily strategy assessment UNKNOWN: insufficient history.',checks);}
     return sym + ': not enough price history to study (one year needed). Check the ticker.';
   }
   const spy = await loadDaily('SPY'), sMap = new Map((spy ? spy.candles : []).map(x => [x.d, x.c]));
@@ -2466,6 +2501,7 @@ async function reviewReply(sym, sig, pos, evidence = {}) {
   if (!P) out.push('', 'I am not tracking it. Send:  bought ' + sym + ' YOUR-PRICE SHARES   and I will watch the stop every day and tell you when to sell.');
   else if (!sysTrade && (verdict === 'HOLD' || verdict.startsWith('HOLD,') || verdict === 'HOLD WITH STOP')) out.push('', 'To set this stop: stop ' + sym + ' ' + Math.max(trail, P.stop || 0).toFixed(2));
   out.push('Tested on its own history, not a promise. Not financial advice, not a halal ruling.');
+  if(P)evidence.disposition=holdingDisposition(sym,verdict,why,evidence,P);
   return rememberHoldingEvidence(out.join('\n'),evidence.checks);
 }
 // Is this stock on today's tested BUY list? (a tested rule fired on it at the last close) -> its buy range and stop
@@ -3250,6 +3286,7 @@ function sourceReply(src, sig) {
     'A source naming a stock is a lead. Only a line starting ENTRY CONFIRMED, QUICK TRADE or BUY WATCH carries prices from your tested rules.'].join('\n');
 }
 async function natural(text, sig, pos) {
+ if(env.ASSESSMENT_RESEARCH_ROOT){const command=text.match(/^\s*(?:check|review)\s+([a-z.\-]{1,6})\s*$/i);if(command)return integratedResearchReply(command[1].toUpperCase(),sig,pos);}
   // a pasted tip list (2+ tickers with buy words, Arabic or English) is logged as tips, even when it names a known source
   { const tk = (western(text).match(/\b[A-Z]{2,5}\b/g) || []).filter(x => !NOT_TICKERS.has(x)); if (new Set(tk).size >= 2 && /\u0634\u0631\u0627\u0621|\u0627\u0642\u0644 \u0645\u0646|\u0623\u0642\u0644 \u0645\u0646|\u062A\u0648\u0635\u064A|\bbuy\b|\bbelow\b|\btarget\b/i.test(text)) return null; }
   if (/^\s*(health|system health|status check|sell|sells|sell check|why sell|what (to|should i) sell|which stocks to sell)\s*\??\s*$/i.test(text)) return null;   // menu words (audit 22 Oct)
@@ -3545,7 +3582,7 @@ async function tgCommands(sig) {
       if (hm) { const sym = hm[0].toUpperCase(), mk = HALALM(); mk[sym] = { s: hm[1] ? 'fail' : 'ok', d: ny(Date.now()).d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
         out.push(sym + (hm[1] ? ': marked NOT HALAL (ZAD). I will not offer it as a buy anywhere: plan, BUY NOW, radar or checks.' + (pos[sym] ? ' You hold it: decide yourself whether to sell.' : '') : ': marked HALAL (checked in ZAD). Thank you.') + ' To change it: halal ' + sym + (hm[1] ? ' yes' : ' no')); continue; } }
     if (/^traders?\s*$/i.test(text)) { out.push(tradersText()); continue; }
-    if (!(m.forward_origin || m.forward_from_chat)) { const nl = await natural(text, sig, pos); if (nl) { out.push(nl); continue; } }   // a forwarded message is someone else's words: treat it as a tip, not as your question
+    if (!(m.forward_origin || m.forward_from_chat)) { const nl = await natural(text, sig, pos); if (nl!==null&&nl!==undefined) { if(nl)out.push(nl); continue; } }   // a forwarded message is someone else's words: treat it as a tip, not as your question
     if (/^(sources?|tips?)\s*$/i.test(text)) { out.push(tipBoard(sig)); continue; }
     if ((k = m.text.trim().match(/^follow\s+(.+)$/i))) {       // follow NAME UCxxxxxxxx   (or a channel link containing the ID)
       let id = (k[1].match(/UC[\w-]{20,24}/) || [])[0];

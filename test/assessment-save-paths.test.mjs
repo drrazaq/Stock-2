@@ -13,6 +13,7 @@ for(const order of ['bot-first','discovery-first'])test('actual '+order+' saves 
  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'assessment-git-save-'));
  try{
  const remote=path.join(tmp,'origin.git'),seed=path.join(tmp,'seed');
+ const privateRoot=path.join(tmp,'private-assessment');fs.mkdirSync(privateRoot,{mode:0o700});const privateFile=path.join(privateRoot,'assessment-delivery.jsonl'),privateBytes='{\"kind\":\"SYNTHETIC_PRIVATE_ONLY\",\"delivery\":\"UNCERTAIN\"}\n';fs.writeFileSync(privateFile,privateBytes,{mode:0o600});
  fs.mkdirSync(seed);git(tmp,'init','--bare',remote);git(seed,'init','-b','main');git(seed,'config','user.name','test');git(seed,'config','user.email','test@example.invalid');
  fs.mkdirSync(path.join(seed,'data'));fs.writeFileSync(path.join(seed,'data/discovery-journal.jsonl'),'{"sym":"OLD","d":"2020-01-01","price":1,"spy":1}\n');
  fs.writeFileSync(path.join(seed,'data/signals.json'),JSON.stringify({session:'2026-11-06',stocks:[{sym:'AAA',state:'Buy watch',rule:'retained rule'}]}));
@@ -33,6 +34,7 @@ for(const order of ['bot-first','discovery-first'])test('actual '+order+' saves 
  const commands={bot:saveBot+'\nsave\n',discovery:saveDiscovery};
  for(const n of (order==='bot-first'?['bot','discovery']:['discovery','bot']))execFileSync('bash',['-e','-c',commands[n]],{cwd:dirs[n],encoding:'utf8',timeout:30000});
  const result=git(seed,'--git-dir='+remote,'show','main:data/discovery-journal.jsonl'),rows=result.trim().split('\n').map(JSON.parse);
+ assert.equal(fs.readFileSync(privateFile,'utf8'),privateBytes,'private delivery witness unchanged by both real save/rebase boundaries');assert.doesNotMatch(git(seed,'--git-dir='+remote,'ls-tree','-r','--name-only','main'),/assessment-delivery|research-assessments|private-assessment/);
  assert.equal(rows.filter(r=>r.type==='assessment-cycle').length,1);
  assert.equal(rows.filter(r=>r.type==='assessment').length,3);
  assert.equal(rows.filter(r=>r.sym==='OLD').length,1);assert.equal(rows.filter(r=>r.sym==='NEW').length,1);
