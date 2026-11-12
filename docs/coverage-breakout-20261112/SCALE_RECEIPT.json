@@ -1,15 +1,16 @@
 {
   "sourceHashes": {
-    "evaluate.py": "65d0371269027dc56b20cb412e9b446c1af0b4039f260b533b84d249170066de",
+    "evaluate.py": "26d4c24f41c56fdadd892bcff56aae72097d723e8e7518bbf7778cb29a6390ef",
     "stream_cache.py": "c4ef5083163ab48b57b81290375fd49917ab6cfc75b2d08359de96c8eb1e9ed3",
     "analyze.py": "40d56bde738127e3446593365f7616d644da566d6184a14e74600d3b5f1e51cc",
     "CONTRACT.json": "837604a64cacfa06fddd217380aa838e03313b4f94f0aed4f902c290ce8d3c87",
     "AMENDMENT.json": "9833ebf143257deb06515002ecdb7a9cd502e9b87c9bcf5921efff4bc2c1e875",
-    "MISSINGNESS_ADDENDUM.json": "ffab4fdfefb69677b6f264f92b35092b26fa54e2fbd617c10c81be187d3cf258"
+    "MISSINGNESS_ADDENDUM.json": "ffab4fdfefb69677b6f264f92b35092b26fa54e2fbd617c10c81be187d3cf258",
+    "OWN_POOL_ADDENDUM.json": "5081d6febc528e207ec77c0c970b36146b56469b625d6dc0b18361c0b005cf5d"
   },
   "sourceStableThroughout": true,
-  "peakChildRssKiB": 561436,
-  "childCpuSeconds": 133.013137,
+  "peakChildRssKiB": 568732,
+  "childCpuSeconds": 142.321621,
   "kind": "SYNTHETIC_RESOURCE_REHEARSAL_NOT_MARKET_EVIDENCE",
   "sessions": 1260,
   "mainRows": 7559840,
@@ -18,7 +19,7 @@
   "compressedBytes": 81753555,
   "uncompressedBytes": 442350000,
   "exitCode": 0,
-  "elapsedIncludingGenerationSeconds": 135.081,
+  "elapsedIncludingGenerationSeconds": 144.37,
   "syntheticTerminalAbsence": "One synthetic main ticker has no later retained bars afterday1100, to exercise both model scenarios; not actual delisting",
   "shapeLimit": "Matches approximate row count, not actual symbols, entropy, prices or signal density; no profitable inference",
   "noProviderCalls": true,
@@ -183,11 +184,14 @@
             "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
             "executablePerformance": null,
             "smallStock2pctEachSide": null,
+            "ownPooledRows": 0,
+            "ownPooledProxyRows": 0,
+            "ownWorstStockProxyShare": 0,
             "controlProxyShares": {
               "average": null,
               "base": null,
               "spy": null,
-              "ownWorstStock": 0
+              "ownPooled": null
             },
             "noFurtherBarControlCounts": {
               "average": 0,
@@ -196,6 +200,7 @@
               "baseDenominator": 0,
               "spy": 0,
               "spyDenominator": 0,
+              "ownOtherDatesDenominator": 0,
               "ownOtherDates": 0
             },
             "averageControlNoEntryCount": 0
@@ -247,11 +252,14 @@
             "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
             "executablePerformance": null,
             "smallStock2pctEachSide": null,
+            "ownPooledRows": 0,
+            "ownPooledProxyRows": 0,
+            "ownWorstStockProxyShare": 0,
             "controlProxyShares": {
               "average": null,
               "base": null,
               "spy": null,
-              "ownWorstStock": 0
+              "ownPooled": null
             },
             "noFurtherBarControlCounts": {
               "average": 0,
@@ -260,6 +268,7 @@
               "baseDenominator": 0,
               "spy": 0,
               "spyDenominator": 0,
+              "ownOtherDatesDenominator": 0,
               "ownOtherDates": 0
             },
             "averageControlNoEntryCount": 0
@@ -442,11 +451,14 @@
             "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
             "executablePerformance": null,
             "smallStock2pctEachSide": null,
+            "ownPooledRows": 0,
+            "ownPooledProxyRows": 0,
+            "ownWorstStockProxyShare": 0,
             "controlProxyShares": {
               "average": null,
               "base": null,
               "spy": null,
-              "ownWorstStock": 0
+              "ownPooled": null
             },
             "noFurtherBarControlCounts": {
               "average": 0,
@@ -455,6 +467,7 @@
               "baseDenominator": 0,
               "spy": 0,
               "spyDenominator": 0,
+              "ownOtherDatesDenominator": 0,
               "ownOtherDates": 0
             },
             "averageControlNoEntryCount": 0
@@ -506,11 +519,14 @@
             "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
             "executablePerformance": null,
             "smallStock2pctEachSide": null,
+            "ownPooledRows": 0,
+            "ownPooledProxyRows": 0,
+            "ownWorstStockProxyShare": 0,
             "controlProxyShares": {
               "average": null,
               "base": null,
               "spy": null,
-              "ownWorstStock": 0
+              "ownPooled": null
             },
             "noFurtherBarControlCounts": {
               "average": 0,
@@ -519,6 +535,7 @@
               "baseDenominator": 0,
               "spy": 0,
               "spyDenominator": 0,
+              "ownOtherDatesDenominator": 0,
               "ownOtherDates": 0
             },
             "averageControlNoEntryCount": 0

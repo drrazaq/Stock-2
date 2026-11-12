@@ -33,7 +33,7 @@ jobs:
           PYCODE
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
         with:
-          ref: 11746275f001ec6e99d9f4b3f5873d2a03c5f54e
+          ref: df40877247232af7972bfd17c36dac5618719cd1
           persist-credentials: false
           sparse-checkout: docs/coverage-breakout-20261112/
           sparse-checkout-cone-mode: false
@@ -68,7 +68,7 @@ jobs:
           test '${{ steps.retained-cache.outputs.cache-matched-key }}' = '${{ steps.cache-version.outputs.key }}'
           sudo mount -o remount,ro study-cache
           mkdir -p /tmp/route-a-output
-          sudo unshare --net env -i PATH=/usr/bin:/bin /usr/bin/python3 docs/coverage-breakout-20261112/evaluate.py --input study-cache/grouped.json.gz --output-dir /tmp/route-a-output
+          sudo unshare --net env -i PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 docs/coverage-breakout-20261112/evaluate.py --input study-cache/grouped.json.gz --output-dir /tmp/route-a-output
       - name: Retain only aggregate coverage and diagnostic
         timeout-minutes: 1
         if: ${{ success() }}

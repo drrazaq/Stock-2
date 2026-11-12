@@ -1,6 +1,6 @@
 diff --git a/.github/workflows/bounded-retained-cache-breakout-ra2.yml b/.github/workflows/bounded-retained-cache-breakout-ra2.yml
 new file mode 100644
-index 0000000000000000000000000000000000000000..9b5817d078a30202cf18554ffb9fa5c99f1ed2a0
+index 0000000000000000000000000000000000000000..26c3db8993594a288960a976610c51d033f5c449
 --- /dev/null
 +++ b/.github/workflows/bounded-retained-cache-breakout-ra2.yml
 @@ -0,0 +1,82 @@
@@ -39,7 +39,7 @@ index 0000000000000000000000000000000000000000..9b5817d078a30202cf18554ffb9fa5c9
 +          PYCODE
 +      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 +        with:
-+          ref: 11746275f001ec6e99d9f4b3f5873d2a03c5f54e
++          ref: df40877247232af7972bfd17c36dac5618719cd1
 +          persist-credentials: false
 +          sparse-checkout: docs/coverage-breakout-20261112/
 +          sparse-checkout-cone-mode: false
@@ -74,7 +74,7 @@ index 0000000000000000000000000000000000000000..9b5817d078a30202cf18554ffb9fa5c9
 +          test '${{ steps.retained-cache.outputs.cache-matched-key }}' = '${{ steps.cache-version.outputs.key }}'
 +          sudo mount -o remount,ro study-cache
 +          mkdir -p /tmp/route-a-output
-+          sudo unshare --net env -i PATH=/usr/bin:/bin /usr/bin/python3 docs/coverage-breakout-20261112/evaluate.py --input study-cache/grouped.json.gz --output-dir /tmp/route-a-output
++          sudo unshare --net env -i PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 docs/coverage-breakout-20261112/evaluate.py --input study-cache/grouped.json.gz --output-dir /tmp/route-a-output
 +      - name: Retain only aggregate coverage and diagnostic
 +        timeout-minutes: 1
 +        if: ${{ success() }}
