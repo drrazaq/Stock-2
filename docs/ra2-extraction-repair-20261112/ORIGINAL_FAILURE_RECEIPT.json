@@ -1,0 +1,111 @@
+{
+  "kind": "READ_ONLY_AUTHORIZED_SINGLE_RUN_FAILURE_RECEIPT",
+  "runId": 43219642941,
+  "runAttempt": 1,
+  "event": "workflow_dispatch",
+  "headSha": "a5febe9d5003cf9ab1f468af55fe37a1ea5999a7",
+  "workflowSha256": "cba1b08e98273cf2f57fb871f72a3b9cb42700b3369db3dd41d69bc951737bfa",
+  "analyzerCheckout": "df40877247232af7972bfd17c36dac5618719cd1",
+  "runStartedAt": "2026-11-12T12:37:44Z",
+  "actualJobStartedAt": "2026-11-12T12:37:48Z",
+  "jobCompletedAt": "2026-11-12T12:37:55Z",
+  "jobStartPlus25": "2026-11-12T13:02:48+00:00",
+  "conservativeRunStartPlus25": "2026-11-12T13:02:44+00:00",
+  "verifiedAt": "2026-11-12T12:42:07.547999+00:00",
+  "withinDeadline": true,
+  "status": "VERIFIED_OPERATIONAL_FAILURE_NO_ECONOMIC_RESULT",
+  "cache": {
+    "key": "leaders-study-42455753549",
+    "cacheId": 10186971868,
+    "selectedCompressedBytes": 119475894,
+    "downloadedBytes": 119475894,
+    "metadataGETs": 1,
+    "restore": "FAILURE_TAR_EXIT_2",
+    "diagnostic": "Cannot utime / Cannot change mode on study-cache mountpoint; Operation not permitted",
+    "rawInputIntegrity": "NOT_ESTABLISHED_BY_SUCCESSFUL_RESTORE_OR_ANALYZER"
+  },
+  "analysis": {
+    "ran": false,
+    "networkNamespaceActuallyExercised": false,
+    "coverageJson": null,
+    "diagnosticJson": null,
+    "historicalVerdict": "NOT_EVALUATED",
+    "strategyInference": "NONE"
+  },
+  "artifacts": {
+    "count": 0,
+    "aggregateHashes": null,
+    "absenceReason": "restore failure caused evaluator and upload steps to be skipped"
+  },
+  "logs": {
+    "zipBytes": 12808,
+    "zipSha256": "e7ca71840c7718da1cb3564976fac16297e999b3b9233f84da84998b06aa27d5",
+    "crcTest": "PASS",
+    "allEntriesRead": true,
+    "entries": [
+      {
+        "path": "0_coverage.txt",
+        "bytes": 16010,
+        "sha256": "216a39283adeeb43d21c7ce981d8e5769febfed8ca3ecdefc71aae9cc916e405",
+        "lines": 197
+      },
+      {
+        "path": "coverage/system.txt",
+        "bytes": 600,
+        "sha256": "ba7e30de926e147b52c49ad6bf6403415e2195635281ab8b111835c178e7a7b0",
+        "lines": 8
+      },
+      {
+        "path": "coverage/1_Set up job.txt",
+        "bytes": 2308,
+        "sha256": "7d5a87396a8e7379acf5ead8c12143bc61584cd2df5d37648978085508efcd10",
+        "lines": 35
+      },
+      {
+        "path": "coverage/2_Enforce approved latest start.txt",
+        "bytes": 919,
+        "sha256": "0e5a269a8d58356688296a578d49ed7c95292861f61573402e4d6fa23d3b7301",
+        "lines": 13
+      },
+      {
+        "path": "coverage/3_Run actions_checkout@11bd71901bbe5b1630ceea73d27597364c9af683.txt",
+        "bytes": 7812,
+        "sha256": "9c0aa250e2c7768f56e8a5c9669d0d2c5c3e1768126235bc406ef38900bad8c8",
+        "lines": 99
+      },
+      {
+        "path": "coverage/4_Observe one bounded cache version.txt",
+        "bytes": 528,
+        "sha256": "1c3bfa00c5b8a0d0d391263e7018ac9a9d098c3c2bcf585afec986c8170622bd",
+        "lines": 7
+      },
+      {
+        "path": "coverage/5_Bound temporary storage before restore.txt",
+        "bytes": 555,
+        "sha256": "75dcf203911d1e9ec2f7b864a8ae93d855c15d04e36c11eb5bf927d1348227d8",
+        "lines": 7
+      },
+      {
+        "path": "coverage/6_Run actions_cache_restore@5a3ec84eff668545956fd18022155c47e93e2684.txt",
+        "bytes": 2199,
+        "sha256": "7d03130be3dd206084190b8714e7165435bd107c9a4fcac321b3e7775ffb52fe",
+        "lines": 24
+      },
+      {
+        "path": "coverage/16_Post Run actions_checkout@11bd71901bbe5b1630ceea73d27597364c9af683.txt",
+        "bytes": 1260,
+        "sha256": "367f1081e8027854b9c28e023f8e98d497e7ebd1f16e8c274ffec435aae3b560",
+        "lines": 10
+      },
+      {
+        "path": "coverage/17_Complete job.txt",
+        "bytes": 450,
+        "sha256": "b68341eba95e3b421ba6c5fcf6711b9872851f4b1a1b2e0c43558ffdee700ea1",
+        "lines": 2
+      }
+    ]
+  },
+  "actionsByVerifier": "GitHub reads/log download/local receipt only; no dispatch/retry/cancel/workflow/code/main write",
+  "independentClaudeReceipt": "https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6823893586",
+  "rootCauseConfidence": "mountpoint permission failure directly observed; root-owned sudo tmpfs inference supported by workflow, runtime uid/stat not logged"
+}

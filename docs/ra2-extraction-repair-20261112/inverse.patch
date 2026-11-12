@@ -1,0 +1,15 @@
+diff --git a/.github/workflows/bounded-retained-cache-breakout-ra2.yml b/.github/workflows/bounded-retained-cache-breakout-ra2.yml
+index 434141c2..7272fb38 100644
+--- a/.github/workflows/bounded-retained-cache-breakout-ra2.yml
++++ b/.github/workflows/bounded-retained-cache-breakout-ra2.yml
+@@ -48,8 +48,8 @@ jobs:
+         run: |
+           set -euo pipefail
+           mkdir -p study-cache /tmp/route-a-transfer
+-          sudo mount -t tmpfs -o "size=512m,nodev,nosuid,noexec,mode=0755,uid=$(id -u),gid=$(id -g)" tmpfs study-cache
+-          sudo mount -t tmpfs -o "size=512m,nodev,nosuid,noexec,mode=0755,uid=$(id -u),gid=$(id -g)" tmpfs /tmp/route-a-transfer
++          sudo mount -t tmpfs -o size=512m,nodev,nosuid,noexec,mode=1777 tmpfs study-cache
++          sudo mount -t tmpfs -o size=512m,nodev,nosuid,noexec,mode=1777 tmpfs /tmp/route-a-transfer
+       - uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684
+         id: retained-cache
+         timeout-minutes: 2

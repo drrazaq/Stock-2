@@ -1,0 +1,236 @@
+{
+  "kind": "SYNTHETIC_REAL_TMPFS_TAR_EVALUATOR_PUBLICATION_NOT_MARKET_EVIDENCE",
+  "uid": 1001,
+  "gid": 1001,
+  "tools": {
+    "tar": "tar (GNU tar) 1.34",
+    "zstd": "*** Zstandard CLI (64-bit) v1.5.4, by Yann Collet ***",
+    "python": "3.12.16 (main, Nov  5 2026, 07:58:44) [GCC 12.2.0]",
+    "kernel": "6.18.57"
+  },
+  "sourceHashes": {
+    "evaluate.py": "26d4c24f41c56fdadd892bcff56aae72097d723e8e7518bbf7778cb29a6390ef",
+    "analyze.py": "40d56bde738127e3446593365f7616d644da566d6184a14e74600d3b5f1e51cc",
+    "stream_cache.py": "c4ef5083163ab48b57b81290375fd49917ab6cfc75b2d08359de96c8eb1e9ed3",
+    "CONTRACT.json": "837604a64cacfa06fddd217380aa838e03313b4f94f0aed4f902c290ce8d3c87",
+    "AMENDMENT.json": "9833ebf143257deb06515002ecdb7a9cd502e9b87c9bcf5921efff4bc2c1e875",
+    "MISSINGNESS_ADDENDUM.json": "ffab4fdfefb69677b6f264f92b35092b26fa54e2fbd617c10c81be187d3cf258",
+    "OWN_POOL_ADDENDUM.json": "5081d6febc528e207ec77c0c970b36146b56469b625d6dc0b18361c0b005cf5d"
+  },
+  "cases": [
+    {
+      "name": "complete_synthetic",
+      "archiveSha256": "25dbbbca9eabe80d61bc05f6d68f5cf5ccb1badccdb93822dd2e511b71e4239a",
+      "compressedArchiveBytes": 3149,
+      "cachedDirectoryMetadata": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o1755",
+        "mtimeNs": 1609459200000000000,
+        "filesystem": "overlayfs"
+      },
+      "original": {
+        "mountOptions": "size=512m,nodev,nosuid,noexec,mode=1777",
+        "before": {
+          "uid": 0,
+          "gid": 0,
+          "mode": "0o1777",
+          "mtimeNs": 1794488169180965185,
+          "filesystem": "tmpfs"
+        },
+        "transferBefore": {
+          "uid": 0,
+          "gid": 0,
+          "mode": "0o1777",
+          "mtimeNs": 1794488169180965185,
+          "filesystem": "tmpfs"
+        },
+        "command": [
+          "/usr/bin/tar",
+          "-xf",
+          "/work/complete_synthetic/original/transfer/cache.tzst",
+          "-P",
+          "-C",
+          "/work/complete_synthetic/original",
+          "--use-compress-program",
+          "unzstd"
+        ],
+        "exitCode": 2,
+        "stdout": "",
+        "stderr": "/usr/bin/tar: study-cache: Cannot utime: Operation not permitted\n/usr/bin/tar: study-cache: Cannot change mode to rwxr-xr-t: Operation not permitted\n/usr/bin/tar: Exiting with failure status due to previous errors\n",
+        "after": {
+          "uid": 0,
+          "gid": 0,
+          "mode": "0o1777",
+          "mtimeNs": 1794488169189107252,
+          "filesystem": "tmpfs"
+        }
+      },
+      "fixed": {
+        "mountOptions": "size=512m,nodev,nosuid,noexec,mode=0755,uid=1001,gid=1001",
+        "before": {
+          "uid": 1001,
+          "gid": 1001,
+          "mode": "0o755",
+          "mtimeNs": 1794488169196965122,
+          "filesystem": "tmpfs"
+        },
+        "transferBefore": {
+          "uid": 1001,
+          "gid": 1001,
+          "mode": "0o755",
+          "mtimeNs": 1794488169196965122,
+          "filesystem": "tmpfs"
+        },
+        "command": [
+          "/usr/bin/tar",
+          "-xf",
+          "/work/complete_synthetic/fixed/transfer/cache.tzst",
+          "-P",
+          "-C",
+          "/work/complete_synthetic/fixed",
+          "--use-compress-program",
+          "unzstd"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "",
+        "after": {
+          "uid": 1001,
+          "gid": 1001,
+          "mode": "0o755",
+          "mtimeNs": 1609459200000000000,
+          "filesystem": "tmpfs"
+        },
+        "productionRemountInRootlessContainer": {
+          "exitCode": 32,
+          "stderr": "mount: /work/complete_synthetic/fixed/study-cache: mount point not mounted or bad option.\n       dmesg(1) may have more information after failed mount system call.\n"
+        },
+        "localNamespaceRemountAdaptation": "read-only bind of same restored tmpfs, preserving underlying size/nodev/nosuid/noexec; production remount separately verified by Claude",
+        "readOnlyWriteRejected": true,
+        "mountReadback": "tmpfs  rw,nosuid,nodev,noexec,relatime,size=524288k,mode=755,uid=100999,gid=100999\ntmpfs  ro,relatime,size=524288k,mode=755,uid=100999,gid=100999",
+        "evaluatorStdout": "{\"status\": \"INCONCLUSIVE\", \"reportSha256\": \"e8441b9db08557a33e63480a6c7d974508931943045e87c6a2f65f2fb10c64d2\", \"providerRequests\": 0}\n",
+        "coverageStatus": "PASS_LEGACY_STRUCTURAL_ONLY",
+        "outcomesAccessed": true,
+        "diagnosticStatus": "INCONCLUSIVE",
+        "aggregateHashes": {
+          "coverage.json": "31ceca253ce68efd000dd9e65c5b537284a68e4bb89228340f45827df04bdfc0",
+          "diagnostic.json": "e8441b9db08557a33e63480a6c7d974508931943045e87c6a2f65f2fb10c64d2"
+        },
+        "localPublicationSha256": "dc75d347fea8cdfe691d5f18a72d75369c7e14a7d94b63c2cd130c41258e46f5",
+        "publication": "LOCAL_AGGREGATES_ONLY_NOT_HOSTED_UPLOAD"
+      }
+    },
+    {
+      "name": "missing_session",
+      "archiveSha256": "d5658794e8ea43955a4a0af348adf00647fb7381aa64877c1b1a95bbb8710d75",
+      "compressedArchiveBytes": 3180,
+      "cachedDirectoryMetadata": {
+        "uid": 0,
+        "gid": 0,
+        "mode": "0o1755",
+        "mtimeNs": 1609459200000000000,
+        "filesystem": "overlayfs"
+      },
+      "original": {
+        "mountOptions": "size=512m,nodev,nosuid,noexec,mode=1777",
+        "before": {
+          "uid": 0,
+          "gid": 0,
+          "mode": "0o1777",
+          "mtimeNs": 1794488170036961793,
+          "filesystem": "tmpfs"
+        },
+        "transferBefore": {
+          "uid": 0,
+          "gid": 0,
+          "mode": "0o1777",
+          "mtimeNs": 1794488170036961793,
+          "filesystem": "tmpfs"
+        },
+        "command": [
+          "/usr/bin/tar",
+          "-xf",
+          "/work/missing_session/original/transfer/cache.tzst",
+          "-P",
+          "-C",
+          "/work/missing_session/original",
+          "--use-compress-program",
+          "unzstd"
+        ],
+        "exitCode": 2,
+        "stdout": "",
+        "stderr": "/usr/bin/tar: study-cache: Cannot utime: Operation not permitted\n/usr/bin/tar: study-cache: Cannot change mode to rwxr-xr-t: Operation not permitted\n/usr/bin/tar: Exiting with failure status due to previous errors\n",
+        "after": {
+          "uid": 0,
+          "gid": 0,
+          "mode": "0o1777",
+          "mtimeNs": 1794488170044961762,
+          "filesystem": "tmpfs"
+        }
+      },
+      "fixed": {
+        "mountOptions": "size=512m,nodev,nosuid,noexec,mode=0755,uid=1001,gid=1001",
+        "before": {
+          "uid": 1001,
+          "gid": 1001,
+          "mode": "0o755",
+          "mtimeNs": 1794488170048961746,
+          "filesystem": "tmpfs"
+        },
+        "transferBefore": {
+          "uid": 1001,
+          "gid": 1001,
+          "mode": "0o755",
+          "mtimeNs": 1794488170048961746,
+          "filesystem": "tmpfs"
+        },
+        "command": [
+          "/usr/bin/tar",
+          "-xf",
+          "/work/missing_session/fixed/transfer/cache.tzst",
+          "-P",
+          "-C",
+          "/work/missing_session/fixed",
+          "--use-compress-program",
+          "unzstd"
+        ],
+        "exitCode": 0,
+        "stdout": "",
+        "stderr": "",
+        "after": {
+          "uid": 1001,
+          "gid": 1001,
+          "mode": "0o755",
+          "mtimeNs": 1609459200000000000,
+          "filesystem": "tmpfs"
+        },
+        "productionRemountInRootlessContainer": {
+          "exitCode": 32,
+          "stderr": "mount: /work/missing_session/fixed/study-cache: mount point not mounted or bad option.\n       dmesg(1) may have more information after failed mount system call.\n"
+        },
+        "localNamespaceRemountAdaptation": "read-only bind of same restored tmpfs, preserving underlying size/nodev/nosuid/noexec; production remount separately verified by Claude",
+        "readOnlyWriteRejected": true,
+        "mountReadback": "tmpfs  rw,nosuid,nodev,noexec,relatime,size=524288k,mode=755,uid=100999,gid=100999\ntmpfs  ro,relatime,size=524288k,mode=755,uid=100999,gid=100999",
+        "evaluatorStdout": "{\"status\": \"INCONCLUSIVE\", \"reportSha256\": \"bf1ec3eaf53d74e2ca1b16a927f24db10c8925091fca2efcf4c0e566d838dd36\", \"providerRequests\": 0}\n",
+        "coverageStatus": "INCONCLUSIVE",
+        "outcomesAccessed": false,
+        "diagnosticStatus": "INCONCLUSIVE",
+        "aggregateHashes": {
+          "coverage.json": "75533e32d08adb7125944c29993ad429701e63bb9a2ac9faafea4650176e99fd",
+          "diagnostic.json": "bf1ec3eaf53d74e2ca1b16a927f24db10c8925091fca2efcf4c0e566d838dd36"
+        },
+        "localPublicationSha256": "cd76827d78d5252d334840f53e341658d079f66b7971a0dd89761201f107cf2a",
+        "publication": "LOCAL_AGGREGATES_ONLY_NOT_HOSTED_UPLOAD"
+      }
+    }
+  ],
+  "sourceUnchanged": true,
+  "providerRequests": 0,
+  "network": "Docker --network none plus evaluator unshare --net",
+  "limitations": [
+    "Local privileged rootless-Docker mount/user semantics, not an actual GitHub-hosted runner or authenticated cache/artifact service",
+    "Synthetic cache only; same retained tar command/decompressor, not a new authentic-data run",
+    "Published aggregate ZIP is local; hosted artifact upload remains unexecuted"
+  ]
+}
