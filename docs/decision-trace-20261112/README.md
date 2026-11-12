@@ -18,4 +18,4 @@ The update helper only proposes an update; uncertain/reserved delivery requires 
 
 ## Validation
 
-Focused new matrix: 16/16 passed with actual producer and scanner callers, no external request or send. Accepted adapter/context tests passed separately. Full required per-file Node20 inventory is running; its final receipt will be appended before claiming complete validation. Closed unaffected source reviews remain valid; this changed delta is separately reviewable.
+Focused new matrix: 16/16 passed with actual producer and scanner callers, no external request or send. Accepted adapter/context tests passed separately. Full required Node20.20.0 per-file inventory: 178/178 files passed, zero skipped/failed files. VALIDATION.json pins all changed source hashes and every file exit. No Python test files are present or changed. Local software evidence is not hosted release evidence or operational readiness. Closed unaffected source reviews remain valid; this changed delta is separately reviewable.
