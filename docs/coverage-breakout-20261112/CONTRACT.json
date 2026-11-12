@@ -1,0 +1,78 @@
+{
+  "id": "DAILY-REPEATED-LEVEL-CAPFREE-10-V1",
+  "kind": "FROZEN_NEW_RESEARCH_SPECIFICATION_NOT_SOCIAL_STRATEGY_REPLICATION",
+  "frozenAt": "2026-11-12T07:35:04.184037+00:00",
+  "rationale": "Test whether repeated prior resistance contacts add information to a daily volume breakout; prior generic breakouts failed. This is a weak-prior incremental test, not a new economic family or assumed edge.",
+  "nearest": [
+    "DEC2-ZANGER",
+    "SQ6-3WT",
+    "A-VP2",
+    "A-CP1",
+    "SQ2-QBO"
+  ],
+  "searchAccounting": "One new fixed variant plus its prespecified component controls; related and failed versions remain part of the search burden. No threshold optimization or exit rescue.",
+  "cap": "NO CAP FILTER. Whole liquid ordinary-stock population with dated identity. Neither small-cap replication nor a dollar-volume surrogate for market cap.",
+  "range": {
+    "warmupFrom": "2022-01-03",
+    "signalFrom": "2023-01-03",
+    "signalThrough": "2026-09-30",
+    "outcomesThrough": "2026-10-30",
+    "splitDate": "2024-01-01"
+  },
+  "eligibility": {
+    "ordinaryCommonStockOnly": true,
+    "minRawClose": 5,
+    "minMeanRawDollarVolume20": 5000000,
+    "pointInTimeIdentityRequired": true,
+    "noCurrentSurvivorList": true
+  },
+  "signal": {
+    "level": "Maximum split-consistent adjusted high over prior60 completed regular sessions, excluding signal bar",
+    "touchTolerance": 0.01,
+    "minTouches": 3,
+    "minTouchSpacingSessions": 5,
+    "touchChoice": "Greedy oldest-to-newest prior-session highs within1% below frozen level; spacing at least5 sessions; no future pivot/retest",
+    "breakout": "completed regular close strictly above prior level and no more than5% above; prior close at/below that same level; close above current50-session SMA",
+    "volume": "signal volume at least1.5 times prior20-session average on a consistent split basis",
+    "levelLookback": 60,
+    "sma": 50,
+    "volumeLookback": 20
+  },
+  "entry": "Next regular session open only after completed signal close. Expires at that open. Missing/open halt has NO_FILL_OR_UNKNOWN, never shifted to later price. One independent open position per stock per variant.",
+  "exit": {
+    "holdSessions": 10,
+    "fixed": "Regular close of10th session counting entry as1; no stop, target, intraday retest or discretionary exit. Missing/delisted settlement remains UNKNOWN, no last-mark sale."
+  },
+  "costs": {
+    "budget": 1000,
+    "feeEachExecutedSide": 3,
+    "adversePriceFractionsEachSide": [
+      0,
+      0.005,
+      0.02
+    ],
+    "shares": "floor((1000-3)/(raw entry open*(1+adverse))); no fractional shares or uninvested-cash leverage",
+    "limitations": "Daily OHLC modeled fills are not executable proof; displayed size is not fill capacity; historical ZAD UNKNOWN. Additional orders would each cost3 but this fixed model has one buy and one sell."
+  },
+  "comparisons": [
+    "Identical daily base/volume breakout with only touch-count requirement removed, same fixed10-session exit",
+    "Average eligible stock at same entry/exit sessions with identical whole-share costs",
+    "Same stock on other eligible non-signal dates with same fixed exit",
+    "SPY and IWM on same entry/exit windows with identical costs",
+    "Same-industry same-date eligible controls where genuine dated classification exists; otherwise UNKNOWN",
+    "Untouched exact DEC2-ZANGER original frozen study, contextual only; no exit substitution or head-to-head equivalence claim"
+  ],
+  "evaluation": "Chronological older signals before2024 and newer signals from2024; both already explored market periods, NOT untouched confirmation. Report n, mean, median, losses, worst, without best2 and best5%, concentration, overlapping capital demand. Unknown outcomes preserved separately; no promotion, portfolio return/drawdown or t-test from incomplete/dependent trades.",
+  "coverageFirst": "Default run is COVERAGE ONLY. No signal enumeration or outcome calculation in requested run. Any subsequent analysis requires reviewed PASS coverage and a separate bounded approval; this contract prevents post-coverage threshold selection.",
+  "limits": {
+    "compressedBytes": 268435456,
+    "uncompressedBytes": 1073741824,
+    "maxSessions": 1600,
+    "maxRows": 12000000,
+    "maxSymbols": 16000,
+    "cpuSeconds": 180,
+    "addressSpaceBytes": 4294967296,
+    "coverageOutputBytes": 131072,
+    "providerRequests": 0
+  }
+}
