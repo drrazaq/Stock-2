@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-11T06:19:45.564Z",
- "lastClose": "2026-11-10",
+ "generatedAt": "2026-11-12T07:11:20.514Z",
+ "lastClose": "2026-11-11",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Squad 12: events in the 300 largest US companies (SQ12-*). newSignals = signals on the last close (buy at the next open, hold 63 sessions). Nothing here is a buy by itself: a rule needs a frozen 5-year verdict that qualifies (data/squad12-lab.json firstRun). Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
@@ -8,15 +8,7 @@
    "name": "Big company: earnings gap-up of 3%+ that closes in the upper half of the day",
    "hold": 63,
    "tier": "NOT PROVEN",
-   "newSignals": [
-    {
-     "sym": "TTWO",
-     "close": 224.64,
-     "halal": "unknown",
-     "rank": 285,
-     "ev": "2026-11-09 16:10 NY 0001628280-26-072175"
-    }
-   ]
+   "newSignals": []
   },
   "SQ12-EARN52H": {
    "name": "Big company closes at a new 52-week high on its earnings reaction day",
@@ -28,50 +20,19 @@
    "name": "Big company 10-Q: revenue AND diluted EPS both up 10%+ on the same quarter last year",
    "hold": 63,
    "tier": "NOT PROVEN",
-   "newSignals": [
-    {
-     "sym": "NUE",
-     "close": 256.47,
-     "halal": "unknown",
-     "rank": 186,
-     "ev": "10-Q 2026-11-10 q 2026-10-03 rev +32.0% eps +120.5%"
-    }
-   ]
+   "newSignals": []
   },
   "SQ12-ACCEL2": {
    "name": "Big company whose revenue growth accelerated two quarters in a row (10-Q / 10-K)",
    "hold": 63,
    "tier": "REJECTED",
-   "newSignals": [
-    {
-     "sym": "NUE",
-     "close": 256.47,
-     "halal": "unknown",
-     "rank": 186,
-     "ev": "10-Q 2026-11-10 q 2026-10-03 growth +32.0% > +23.0% > +21.3%"
-    },
-    {
-     "sym": "TDG",
-     "close": 1225.54,
-     "halal": "unknown",
-     "rank": 177,
-     "ev": "10-K 2026-11-10 q 2026-09-30 growth +22.6% > +22.5% > +18.3%"
-    }
-   ]
+   "newSignals": []
   },
   "SQ12-RAISECONF": {
    "name": "Big company raises its guidance (8-K) and the market confirms with a higher close",
    "hold": 63,
    "tier": "NOT PROVEN",
-   "newSignals": [
-    {
-     "sym": "CEG",
-     "close": 267.76,
-     "halal": "unknown",
-     "rank": 126,
-     "ev": "8-K 2026-11-09 0001868275-26-000116"
-    }
-   ]
+   "newSignals": []
   },
   "SQ12-INVDAY": {
    "name": "Big company investor / analyst day (8-K) followed by a higher close",
