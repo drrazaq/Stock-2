@@ -1,0 +1,1527 @@
+{
+  "status": "ACTUAL_BASE_SOURCE_AND_DEPENDENCY_EQUIVALENCE_PASS_NOT_RUNTIME_OR_FINAL_PIN",
+  "actualStage1": "7db2c83b574bbe0d85d4c9972ad2230a36004816",
+  "stage2Tree": "0cec6b37843f52a8c6b7d473fd68c76c02914023",
+  "reference": "5fccc6ec3e18c426531a0398b5085e2621a6e192",
+  "entireNonDataLeafSetIdentical": true,
+  "scheduledWorkflowCount": 60,
+  "boundConsumers": [
+    {
+      "workflow": ".github/workflows/bot.yml",
+      "workflowBlob": "bfd9ff2ced184d13107b68ee6cabf436342705d0",
+      "schedules": [
+        "*/30 * * * *"
+      ],
+      "boundReferences": [
+        ".github/merge-alert-state.mjs",
+        "market-session.mjs",
+        "scan.mjs",
+        "watcher-guard-core.mjs",
+        "watcher-guard-history.mjs",
+        "watcher-guard.mjs",
+        "watcher-schedule.mjs",
+        ".github/workflows/bot.yml"
+      ],
+      "literalClosure": [
+        ".github/merge-alert-state.mjs",
+        ".github/private-data.sh",
+        "market-session.mjs",
+        "scan.mjs",
+        "stop-watch.mjs",
+        "watcher-guard-core.mjs",
+        "watcher-guard-history.mjs",
+        "watcher-guard.mjs",
+        "watcher-schedule.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/calendar.yml",
+      "workflowBlob": "1fd6a4a7d2636b0514b7962aed0d385dbfda52f3",
+      "schedules": [
+        "45 20 * * 1-5",
+        "30 5 * * 0"
+      ],
+      "boundReferences": [
+        "calendar.mjs",
+        "econ-series.mjs",
+        "market-session.mjs"
+      ],
+      "literalClosure": [
+        "calendar.mjs",
+        "econ-series.mjs",
+        "health.mjs",
+        "market-session.mjs",
+        "shares.mjs",
+        "watcher-reporting.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/comeback.yml",
+      "workflowBlob": "30aa00583e854d439ae80872c61cfccf8725067f",
+      "schedules": [
+        "35 1 * * 2-6",
+        "45 17 * * 0"
+      ],
+      "boundReferences": [
+        "market-session.mjs",
+        "scan.mjs"
+      ],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "comeback-core.mjs",
+        "comeback-lab.mjs",
+        "library-merge.mjs",
+        "market-session.mjs",
+        "scan.mjs",
+        "stop-watch.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/discover.yml",
+      "workflowBlob": "e70dc9bae7117a7178aa1a169692779c0d9d6c23",
+      "schedules": [
+        "30 5 * * 2-6"
+      ],
+      "boundReferences": [
+        "discover.mjs"
+      ],
+      "literalClosure": [
+        "discover.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/ignition.yml",
+      "workflowBlob": "280d1ee0ed50ce6b3d936703529267227e50e584",
+      "schedules": [
+        "10 13 * * 1-5",
+        "10 14 * * 1-5"
+      ],
+      "boundReferences": [
+        "ignition-watch.mjs",
+        "market-session.mjs",
+        "watcher-schedule.mjs",
+        ".github/workflows/ignition.yml"
+      ],
+      "literalClosure": [
+        "alpaca-feed.mjs",
+        "blocked-runner-policy.mjs",
+        "early-alerts.mjs",
+        "early-wave-discovery.mjs",
+        "edgar-feed.mjs",
+        "ignition-core.mjs",
+        "ignition-gates.mjs",
+        "ignition-watch.mjs",
+        "instrument-type.mjs",
+        "market-session.mjs",
+        "market-symbol.mjs",
+        "missed-runners.mjs",
+        "opp-mode.mjs",
+        "radar-v3-core.mjs",
+        "rank-models.mjs",
+        "ranking-cohort.mjs",
+        "sec-time.mjs",
+        "session-coverage.mjs",
+        "shadow-eval.mjs",
+        "shadow-stream.mjs",
+        "snapshot-fields.mjs",
+        "stop-watch.mjs",
+        "watcher-message-publish.mjs",
+        "watcher-messages.mjs",
+        "watcher-schedule.mjs",
+        "watcher-session.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/leaders-study.yml",
+      "workflowBlob": "36da34fcd2cc67a0060509fcd5f9bbc4c638d262",
+      "schedules": [
+        "0 6 * * 0"
+      ],
+      "boundReferences": [
+        "calendar.mjs",
+        "econ-series.mjs"
+      ],
+      "literalClosure": [
+        "agent-a-core.mjs",
+        "agent-a-lab.mjs",
+        "autolab.mjs",
+        "blocked-runner-policy.mjs",
+        "calendar.mjs",
+        "catalyst-core.mjs",
+        "catalyst-lab.mjs",
+        "chain-core.mjs",
+        "chain-decoder.mjs",
+        "chain-ripple.mjs",
+        "chains.mjs",
+        "discovery2-core.mjs",
+        "discovery2.mjs",
+        "e16-absorption.mjs",
+        "earnings-study.mjs",
+        "econ-series.mjs",
+        "events-study.mjs",
+        "ew-stack.mjs",
+        "exits.mjs",
+        "fastmover-lab.mjs",
+        "first-run.mjs",
+        "fulfilling.mjs",
+        "gov-awards.mjs",
+        "gov-awards2.mjs",
+        "horizons.mjs",
+        "hunting-lab.mjs",
+        "ignition-core.mjs",
+        "ignition-gates.mjs",
+        "ignition-paper.mjs",
+        "insider-study.mjs",
+        "leaders-study.mjs",
+        "league-bar.mjs",
+        "league.mjs",
+        "library-merge.mjs",
+        "missed-runners.mjs",
+        "octopus.mjs",
+        "orb-study.mjs",
+        "pattern-lab.mjs",
+        "quality.mjs",
+        "rebalance.mjs",
+        "rebuy.mjs",
+        "regime-gate.mjs",
+        "score-study.mjs",
+        "sec-time.mjs",
+        "sequence-study.mjs",
+        "share-supply.mjs",
+        "shares.mjs",
+        "stops.mjs",
+        "swing-lab.mjs",
+        "tip-score.mjs",
+        "winners-study.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/main.yml",
+      "workflowBlob": "c7e3a283091beb6f9873e8733c4e87eb7489bf26",
+      "schedules": [
+        "30 21 * * 1-5",
+        "10,40 13-20 * * 1-5"
+      ],
+      "boundReferences": [
+        ".github/save-data.sh",
+        "market-session.mjs",
+        "scan.mjs"
+      ],
+      "literalClosure": [
+        ".github/private-data.sh",
+        ".github/save-data.sh",
+        "market-session.mjs",
+        "scan.mjs",
+        "stop-watch.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/opportunity-radar.yml",
+      "workflowBlob": "a1f4bb87236d254f3c3942bf44173cd3c5c835f2",
+      "schedules": [
+        "40 20 * * 1-5"
+      ],
+      "boundReferences": [
+        "market-session.mjs"
+      ],
+      "literalClosure": [
+        "early-alerts.mjs",
+        "market-session.mjs",
+        "opportunity-radar.mjs",
+        "radar-ledger.mjs",
+        "radar-v3-core.mjs",
+        "rank-models.mjs",
+        "ranking-cohort.mjs",
+        "session-coverage.mjs",
+        "shadow-eval.mjs",
+        "shadow-outcomes.mjs",
+        "watcher-session.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/premarket.yml",
+      "workflowBlob": "6f8d4bc96d1e571ec8b1abb2c5a35816969f5cf4",
+      "schedules": [
+        "40 12 * * 1-5"
+      ],
+      "boundReferences": [
+        "market-session.mjs",
+        "premarket-check.mjs"
+      ],
+      "literalClosure": [
+        "alpaca-feed.mjs",
+        "market-session.mjs",
+        "market-symbol.mjs",
+        "premarket-check.mjs",
+        "stop-watch.mjs"
+      ],
+      "reviewRequired": true
+    }
+  ],
+  "allScheduledWorkflowCensusIdenticalToPassedReference": true,
+  "inverseRestoresExactParentAndItsDependencyClosure": "bfe058678599f6eb77d80292bec8a12de5143927",
+  "unchangedBoundDependencies": [
+    "market-session.mjs",
+    "premarket-check.mjs",
+    "test/alert-merge-compatibility.test.mjs",
+    "test/bot-commands.test.mjs",
+    "test/premarket-feed.test.mjs",
+    "test/premarket-standalone-evidence.test.mjs",
+    "test/recovery-floor.test.mjs"
+  ],
+  "inverseDeletedPaths": [
+    "econ-series.mjs",
+    "test/alert-save-preservation.test.mjs",
+    "test/assessment-context.test.mjs",
+    "test/buynow-evidence.test.mjs",
+    "test/buynow-multipart.test.mjs",
+    "test/discover-sec-note.test.mjs",
+    "test/econ-calendar-exact-series.test.mjs",
+    "test/health-text-watcher-qualification.test.mjs",
+    "test/holdings-evidence-port.test.mjs",
+    "test/intraday-alert-evidence.test.mjs",
+    "test/intraday-alert-send-time.test.mjs",
+    "test/open-check-repair.test.mjs",
+    "test/telegram-live-no-replay.test.mjs",
+    "test/watcher-cadence-review.test.mjs",
+    "test/watcher-guard-core-pre-repair-6e72a8d0.fixture.mjs",
+    "test/watcher-guard-rollback-compat.test.mjs",
+    "test/watcher-nov2-clock.test.mjs",
+    "test/watcher-nov2-fixture.mjs",
+    "test/watcher-nov2-guard.test.mjs",
+    "watcher-guard-history.mjs",
+    "watcher-schedule.mjs",
+    "test/price-readiness-clock-boundary.test.mjs"
+  ],
+  "newModuleOrWorkflowDependencyReviewRequiredNow": false,
+  "futureWriterChangesStillRequireBothDirectionReview": true,
+  "census": [
+    {
+      "workflow": ".github/workflows/Smart-money.yml",
+      "workflowBlob": "d6e99e90deac3b891dacc1895778863268555b92",
+      "schedules": [
+        "20 11 * * 1-5",
+        "30 9 * * 0"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "earnings-study.mjs",
+        "events-study.mjs",
+        "first-run.mjs",
+        "sec-time.mjs",
+        "smart-money.mjs",
+        "tip-sources.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/Tiprank.yml",
+      "workflowBlob": "423a79db87ad26f4a6246a65291d58930e783f1c",
+      "schedules": [
+        "30 22 * * 1,4"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "tipranks.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/angles-lab.yml",
+      "workflowBlob": "b44c7b498a65b8229b5aad94e994ad8c579990f3",
+      "schedules": [
+        "41 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "angles-core.mjs",
+        "angles-lab.mjs",
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/anomaly-lab.yml",
+      "workflowBlob": "4b7b22acabcd7fbe07544e0bf3ce2e2dd3974175",
+      "schedules": [
+        "47 13 * * 0",
+        "25 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "anomaly-lab.mjs",
+        "first-run.mjs",
+        "library-merge.mjs",
+        "sec-time.mjs",
+        "squad28-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/bot.yml",
+      "workflowBlob": "bfd9ff2ced184d13107b68ee6cabf436342705d0",
+      "schedules": [
+        "*/30 * * * *"
+      ],
+      "boundReferences": [
+        ".github/merge-alert-state.mjs",
+        "market-session.mjs",
+        "scan.mjs",
+        "watcher-guard-core.mjs",
+        "watcher-guard-history.mjs",
+        "watcher-guard.mjs",
+        "watcher-schedule.mjs",
+        ".github/workflows/bot.yml"
+      ],
+      "literalClosure": [
+        ".github/merge-alert-state.mjs",
+        ".github/private-data.sh",
+        "market-session.mjs",
+        "scan.mjs",
+        "stop-watch.mjs",
+        "watcher-guard-core.mjs",
+        "watcher-guard-history.mjs",
+        "watcher-guard.mjs",
+        "watcher-schedule.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/calendar.yml",
+      "workflowBlob": "1fd6a4a7d2636b0514b7962aed0d385dbfda52f3",
+      "schedules": [
+        "45 20 * * 1-5",
+        "30 5 * * 0"
+      ],
+      "boundReferences": [
+        "calendar.mjs",
+        "econ-series.mjs",
+        "market-session.mjs"
+      ],
+      "literalClosure": [
+        "calendar.mjs",
+        "econ-series.mjs",
+        "health.mjs",
+        "market-session.mjs",
+        "shares.mjs",
+        "watcher-reporting.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/comeback.yml",
+      "workflowBlob": "30aa00583e854d439ae80872c61cfccf8725067f",
+      "schedules": [
+        "35 1 * * 2-6",
+        "45 17 * * 0"
+      ],
+      "boundReferences": [
+        "market-session.mjs",
+        "scan.mjs"
+      ],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "comeback-core.mjs",
+        "comeback-lab.mjs",
+        "library-merge.mjs",
+        "market-session.mjs",
+        "scan.mjs",
+        "stop-watch.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/confluence-lab.yml",
+      "workflowBlob": "e4662c679242790be9ba696b1bfea40da157bdce",
+      "schedules": [
+        "50 23 * * 1-5",
+        "30 2 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "confluence-core.mjs",
+        "confluence-lab.mjs",
+        "confluence-signals.mjs",
+        "first-run.mjs",
+        "library-merge.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/deals.yml",
+      "workflowBlob": "939ca6edfb879fb9d6d2ed91fb1b74e221d1f703",
+      "schedules": [
+        "50 11 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "deals.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/decoded-lab.yml",
+      "workflowBlob": "743dd9bc86a8387019c54cc68285c5f8bedc21d8",
+      "schedules": [
+        "40 22 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "decoded-core.mjs",
+        "decoded-lab.mjs",
+        "decoded2-core.mjs",
+        "first-run.mjs",
+        "library-merge.mjs",
+        "sec-time.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/discover.yml",
+      "workflowBlob": "e70dc9bae7117a7178aa1a169692779c0d9d6c23",
+      "schedules": [
+        "30 5 * * 2-6"
+      ],
+      "boundReferences": [
+        "discover.mjs"
+      ],
+      "literalClosure": [
+        "discover.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/expert-lab.yml",
+      "workflowBlob": "2358877748edb4b1359aa442d7a0fed6c894709d",
+      "schedules": [
+        "50 22 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "expert-core.mjs",
+        "expert-lab.mjs",
+        "expert-probe.mjs",
+        "first-run.mjs",
+        "library-merge.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/fastmover-intraday.yml",
+      "workflowBlob": "cf7d51b69cefccae2139e0f3940a5d2242242675",
+      "schedules": [
+        "0 5 * * 6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "fastmover-lab.mjs",
+        "ignition-core.mjs",
+        "ignition-gates.mjs",
+        "ignition-paper.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/follow-lane.yml",
+      "workflowBlob": "cd852acb70932948c759c5db8b685964a7d50216",
+      "schedules": [
+        "5 21 * * 1-5",
+        "0 14 * * 0"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "follow-lane.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/hold-lab.yml",
+      "workflowBlob": "8b75a37d68a14ebe7559bfadf060eb20a10e02bb",
+      "schedules": [
+        "47 13 * * 0"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "hold-core.mjs",
+        "hold-lab.mjs",
+        "library-merge.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/ignition.yml",
+      "workflowBlob": "280d1ee0ed50ce6b3d936703529267227e50e584",
+      "schedules": [
+        "10 13 * * 1-5",
+        "10 14 * * 1-5"
+      ],
+      "boundReferences": [
+        "ignition-watch.mjs",
+        "market-session.mjs",
+        "watcher-schedule.mjs",
+        ".github/workflows/ignition.yml"
+      ],
+      "literalClosure": [
+        "alpaca-feed.mjs",
+        "blocked-runner-policy.mjs",
+        "early-alerts.mjs",
+        "early-wave-discovery.mjs",
+        "edgar-feed.mjs",
+        "ignition-core.mjs",
+        "ignition-gates.mjs",
+        "ignition-watch.mjs",
+        "instrument-type.mjs",
+        "market-session.mjs",
+        "market-symbol.mjs",
+        "missed-runners.mjs",
+        "opp-mode.mjs",
+        "radar-v3-core.mjs",
+        "rank-models.mjs",
+        "ranking-cohort.mjs",
+        "sec-time.mjs",
+        "session-coverage.mjs",
+        "shadow-eval.mjs",
+        "shadow-stream.mjs",
+        "snapshot-fields.mjs",
+        "stop-watch.mjs",
+        "watcher-message-publish.mjs",
+        "watcher-messages.mjs",
+        "watcher-schedule.mjs",
+        "watcher-session.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/intraday-radar.yml",
+      "workflowBlob": "945a8e4e7b2d805c23e8896970ac6b023b952635",
+      "schedules": [
+        "5,20,35,50 13-21 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "intraday-radar.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/leaders-study.yml",
+      "workflowBlob": "36da34fcd2cc67a0060509fcd5f9bbc4c638d262",
+      "schedules": [
+        "0 6 * * 0"
+      ],
+      "boundReferences": [
+        "calendar.mjs",
+        "econ-series.mjs"
+      ],
+      "literalClosure": [
+        "agent-a-core.mjs",
+        "agent-a-lab.mjs",
+        "autolab.mjs",
+        "blocked-runner-policy.mjs",
+        "calendar.mjs",
+        "catalyst-core.mjs",
+        "catalyst-lab.mjs",
+        "chain-core.mjs",
+        "chain-decoder.mjs",
+        "chain-ripple.mjs",
+        "chains.mjs",
+        "discovery2-core.mjs",
+        "discovery2.mjs",
+        "e16-absorption.mjs",
+        "earnings-study.mjs",
+        "econ-series.mjs",
+        "events-study.mjs",
+        "ew-stack.mjs",
+        "exits.mjs",
+        "fastmover-lab.mjs",
+        "first-run.mjs",
+        "fulfilling.mjs",
+        "gov-awards.mjs",
+        "gov-awards2.mjs",
+        "horizons.mjs",
+        "hunting-lab.mjs",
+        "ignition-core.mjs",
+        "ignition-gates.mjs",
+        "ignition-paper.mjs",
+        "insider-study.mjs",
+        "leaders-study.mjs",
+        "league-bar.mjs",
+        "league.mjs",
+        "library-merge.mjs",
+        "missed-runners.mjs",
+        "octopus.mjs",
+        "orb-study.mjs",
+        "pattern-lab.mjs",
+        "quality.mjs",
+        "rebalance.mjs",
+        "rebuy.mjs",
+        "regime-gate.mjs",
+        "score-study.mjs",
+        "sec-time.mjs",
+        "sequence-study.mjs",
+        "share-supply.mjs",
+        "shares.mjs",
+        "stops.mjs",
+        "swing-lab.mjs",
+        "tip-score.mjs",
+        "winners-study.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/macro-lab.yml",
+      "workflowBlob": "9f3c8f5bc244639b751d555fb8f01513128599c0",
+      "schedules": [
+        "17 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "angles-core.mjs",
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "library-merge.mjs",
+        "macro-core.mjs",
+        "macro-lab.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/main.yml",
+      "workflowBlob": "c7e3a283091beb6f9873e8733c4e87eb7489bf26",
+      "schedules": [
+        "30 21 * * 1-5",
+        "10,40 13-20 * * 1-5"
+      ],
+      "boundReferences": [
+        ".github/save-data.sh",
+        "market-session.mjs",
+        "scan.mjs"
+      ],
+      "literalClosure": [
+        ".github/private-data.sh",
+        ".github/save-data.sh",
+        "market-session.mjs",
+        "scan.mjs",
+        "stop-watch.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/ml-lab.yml",
+      "workflowBlob": "5ffec2a5cf3205af8c9fc12b991ef543ed1b08e6",
+      "schedules": [
+        "40 23 * * 1-5",
+        "10 14 * * 6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "library-merge.mjs",
+        "ml-core.mjs",
+        "ml-lab.mjs",
+        "test/ml-core.test.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/movers.yml",
+      "workflowBlob": "3e666059a42619455668597caf9c857feba17aba",
+      "schedules": [
+        "0 4 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "fastmover-lab.mjs",
+        "ignition-core.mjs",
+        "ignition-gates.mjs",
+        "ignition-paper.mjs",
+        "movers.mjs",
+        "octopus.mjs",
+        "sec-time.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/news.yml",
+      "workflowBlob": "73e02b7d651634fbe7e9a48eaf4204818a996e4b",
+      "schedules": [
+        "*/15 11-20 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "news-watch.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/opportunity-radar.yml",
+      "workflowBlob": "a1f4bb87236d254f3c3942bf44173cd3c5c835f2",
+      "schedules": [
+        "40 20 * * 1-5"
+      ],
+      "boundReferences": [
+        "market-session.mjs"
+      ],
+      "literalClosure": [
+        "early-alerts.mjs",
+        "market-session.mjs",
+        "opportunity-radar.mjs",
+        "radar-ledger.mjs",
+        "radar-v3-core.mjs",
+        "rank-models.mjs",
+        "ranking-cohort.mjs",
+        "session-coverage.mjs",
+        "shadow-eval.mjs",
+        "shadow-outcomes.mjs",
+        "watcher-session.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/options-lab.yml",
+      "workflowBlob": "d39b4c7c7b24cfe08e6dd4404d50b89ad60321f9",
+      "schedules": [
+        "0 12 * * 6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "library-merge.mjs",
+        "options-core.mjs",
+        "options-lab.mjs",
+        "quality.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/premarket.yml",
+      "workflowBlob": "6f8d4bc96d1e571ec8b1abb2c5a35816969f5cf4",
+      "schedules": [
+        "40 12 * * 1-5"
+      ],
+      "boundReferences": [
+        "market-session.mjs",
+        "premarket-check.mjs"
+      ],
+      "literalClosure": [
+        "alpaca-feed.mjs",
+        "market-session.mjs",
+        "market-symbol.mjs",
+        "premarket-check.mjs",
+        "stop-watch.mjs"
+      ],
+      "reviewRequired": true
+    },
+    {
+      "workflow": ".github/workflows/research-lab.yml",
+      "workflowBlob": "f36b8c580fa286d31e398f42fec5d587341c965c",
+      "schedules": [
+        "17 22 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "library-merge.mjs",
+        "research-core.mjs",
+        "research-lab.mjs",
+        "sec-time.mjs",
+        "squad1-core.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad1-lab.yml",
+      "workflowBlob": "f7fd87c9f9f92ab6c69d7fbb1b97b91e6c348f29",
+      "schedules": [
+        "5 21 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "library-merge.mjs",
+        "squad1-core.mjs",
+        "squad1-lab.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad10-lab.yml",
+      "workflowBlob": "1ca210e76db0ae64913e1d1cbf165a6af057d362",
+      "schedules": [
+        "17 16 * * 0",
+        "25 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad10-core.mjs",
+        "squad10-lab.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad11-lab.yml",
+      "workflowBlob": "3514cfd7ce7e34b43443584fe0fc8baf08430661",
+      "schedules": [
+        "52 15 * * 0",
+        "58 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad11-core.mjs",
+        "squad11-lab.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "squad6-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad12-lab.yml",
+      "workflowBlob": "237672801153867ffde443f7029d77956a22334e",
+      "schedules": [
+        "13 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "sec-time.mjs",
+        "squad1-core.mjs",
+        "squad12-core.mjs",
+        "squad12-lab.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad13-lab.yml",
+      "workflowBlob": "5e59c07936efed12f968857b5f2b74caf6819436",
+      "schedules": [
+        "53 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad13-core.mjs",
+        "squad13-lab.mjs",
+        "squad4-core.mjs",
+        "squad8-core.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad14-lab.yml",
+      "workflowBlob": "1095e658feedf4e1dcfacd7eedc14d3ca45fa039",
+      "schedules": [
+        "7 16 * * 0",
+        "4 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad11-core.mjs",
+        "squad14-core.mjs",
+        "squad14-lab.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "squad6-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad15-lab.yml",
+      "workflowBlob": "49238631d21ff0c128ba95f55984ffb680a580f5",
+      "schedules": [
+        "41 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad15-core.mjs",
+        "squad15-lab.mjs",
+        "squad4-core.mjs",
+        "squad6-core.mjs",
+        "squad6-lab.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad15b-lab.yml",
+      "workflowBlob": "22aed69332320554a44346b5585fa5e033fecbb0",
+      "schedules": [
+        "7 15 * * 1-5",
+        "7 17 * * 1-5",
+        "7 19 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "library-merge.mjs",
+        "squad15b-core.mjs",
+        "squad15b-lab.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad16-lab.yml",
+      "workflowBlob": "860c676b32858f5ade65f585eba068354491cce6",
+      "schedules": [
+        "23 16 * * 0",
+        "19 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad10-core.mjs",
+        "squad11-core.mjs",
+        "squad14-core.mjs",
+        "squad16-core.mjs",
+        "squad16-lab.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "squad6-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad17-lab.yml",
+      "workflowBlob": "fac15d4627c3455f272e5edb2894e0235b6be80c",
+      "schedules": [
+        "29 16 * * 0",
+        "31 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad10-core.mjs",
+        "squad17-core.mjs",
+        "squad17-lab.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad18-lab.yml",
+      "workflowBlob": "57219224ff292d11939a0b748c4dcc7681e957d7",
+      "schedules": [
+        "7 16 * * 0",
+        "12 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad10-core.mjs",
+        "squad11-core.mjs",
+        "squad18-core.mjs",
+        "squad18-lab.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "squad6-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad19-lab.yml",
+      "workflowBlob": "91f6795e41e6d7635e65f4fef32cb6e9e8d0640f",
+      "schedules": [
+        "41 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "ignition-core.mjs",
+        "library-merge.mjs",
+        "runner-hunter-core.mjs",
+        "runner-hunter-study.mjs",
+        "squad19-core.mjs",
+        "squad19-lab.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad2-lab.yml",
+      "workflowBlob": "f2ff4f3c320fd4daae2fecfb9b4aba22cc60de8c",
+      "schedules": [
+        "17 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "decoded-core.mjs",
+        "first-run.mjs",
+        "league-bar.mjs",
+        "library-merge.mjs",
+        "squad2-core.mjs",
+        "squad2-lab.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad20-lab.yml",
+      "workflowBlob": "40f94678426d9c75282b85cefa6a7fa4bc6d758f",
+      "schedules": [
+        "37 16 * * 0",
+        "42 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad11-core.mjs",
+        "squad20-core.mjs",
+        "squad20-lab.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "squad6-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad21-lab.yml",
+      "workflowBlob": "9fe75c7434319e898d3dfbb6edce7f1ddf612a00",
+      "schedules": [
+        "35 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad21-core.mjs",
+        "squad21-lab.mjs",
+        "squad4-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad22-lab.yml",
+      "workflowBlob": "e20d9bab5b91fa75eed027ff6740a4c2dff24fdc",
+      "schedules": [
+        "50 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad22-core.mjs",
+        "squad22-lab.mjs",
+        "squad4-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad23-lab.yml",
+      "workflowBlob": "18156d72384577bae28911107d5556eb19298b1e",
+      "schedules": [
+        "43 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad10-core.mjs",
+        "squad23-core.mjs",
+        "squad23-lab.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad24-lab.yml",
+      "workflowBlob": "2128799fa7e912886f1e0f6d95e914d2cbf78745",
+      "schedules": [
+        "50 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "sec-time.mjs",
+        "squad21-core.mjs",
+        "squad24-audit-core.mjs",
+        "squad24-core.mjs",
+        "squad24-lab.mjs",
+        "squad4-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad25-lab.yml",
+      "workflowBlob": "25ee6855cc77bd8e47cedb228d0e779f47f426ce",
+      "schedules": [
+        "41 23 * * 1-5",
+        "47 11 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "sec-time.mjs",
+        "squad25-audit-core.mjs",
+        "squad25-core.mjs",
+        "squad25-lab.mjs",
+        "squad4-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad26-lab.yml",
+      "workflowBlob": "cbc078f8bc168b1d67c459779ff7da375893690b",
+      "schedules": [
+        "17 */2 * * *"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "sec-time.mjs",
+        "squad21-core.mjs",
+        "squad24-core.mjs",
+        "squad26-core.mjs",
+        "squad26-lab.mjs",
+        "squad4-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad26-watch.yml",
+      "workflowBlob": "fb541e263e01987e913bd298992f9911905d56ea",
+      "schedules": [
+        "50 7 * * 1-5",
+        "30 13 * * 1-5",
+        "10 19 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "sec-time.mjs",
+        "squad21-core.mjs",
+        "squad24-core.mjs",
+        "squad26-core.mjs",
+        "squad26-watch.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad27-lab.yml",
+      "workflowBlob": "83fdf9c09b918c2f77db90e920689038af5837b9",
+      "schedules": [
+        "41 4 * * 1"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "library-merge.mjs",
+        "squad27-core.mjs",
+        "squad27-lab.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad28-lab.yml",
+      "workflowBlob": "fa2b6f6a48eb062470d8d979d75dc97e8d270be6",
+      "schedules": [
+        "20 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "sec-time.mjs",
+        "squad21-core.mjs",
+        "squad28-core.mjs",
+        "squad28-lab.mjs",
+        "squad4-core.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad29-lab.yml",
+      "workflowBlob": "5c4a1b9b789bc619982a1c338383094edab57ae2",
+      "schedules": [
+        "41 10 * * 1-5",
+        "23 22 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "sec-time.mjs",
+        "squad29-core.mjs",
+        "squad29-lab.mjs",
+        "squad4-core.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad4-lab.yml",
+      "workflowBlob": "c691ed35e44684a16450fc31c9e255bf465947b7",
+      "schedules": [
+        "37 15 * * 0",
+        "50 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad4-core.mjs",
+        "squad4-lab.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad5-lab.yml",
+      "workflowBlob": "ab8b4ec59d4eb75f797662a3e58f18f7fe2ab8ad",
+      "schedules": [
+        "47 15 * * 0",
+        "55 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad10-core.mjs",
+        "squad4-core.mjs",
+        "squad5-core.mjs",
+        "squad5-lab.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad6-lab.yml",
+      "workflowBlob": "da8bcb903a60c6e031d2ffa9d29cadd9d7a9fadb",
+      "schedules": [
+        "47 15 * * 0",
+        "56 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "squad4-core.mjs",
+        "squad6-core.mjs",
+        "squad6-lab.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad7-lab.yml",
+      "workflowBlob": "086970d73393eaea0280217841bbe7df4849886e",
+      "schedules": [
+        "05 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "library-merge.mjs",
+        "squad1-core.mjs",
+        "squad7-core.mjs",
+        "squad7-lab.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad8-lab.yml",
+      "workflowBlob": "08d27770fed40504992fd075e684541f0563afeb",
+      "schedules": [
+        "41 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "library-merge.mjs",
+        "squad8-core.mjs",
+        "squad8-lab.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/squad9-lab.yml",
+      "workflowBlob": "af335ade86f00f09568f975f7a7662e0a9d68dcb",
+      "schedules": [
+        "20 0 * * 2-6"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "library-merge.mjs",
+        "squad9-core.mjs",
+        "squad9-lab.mjs",
+        "value-core.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/tipster-lab.yml",
+      "workflowBlob": "544e0119653781801b8ec01df456f0507e1ec094",
+      "schedules": [
+        "17 14 * * 0",
+        "40 23 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "anomaly-core.mjs",
+        "decoded-core.mjs",
+        "first-run.mjs",
+        "hold-core.mjs",
+        "library-merge.mjs",
+        "tipster-core.mjs",
+        "tipster-lab.mjs",
+        "value-core.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/value-lab.yml",
+      "workflowBlob": "1e34b39642a42efbceef81ffa95878b232b28474",
+      "schedules": [
+        "17 13 * * 0"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "library-merge.mjs",
+        "value-core.mjs",
+        "value-lab.mjs",
+        "yardstick.mjs"
+      ],
+      "reviewRequired": false
+    },
+    {
+      "workflow": ".github/workflows/winners-autopsy.yml",
+      "workflowBlob": "85e421dc4bb0bcbf1a9dcb61a8d452dcaef5d69b",
+      "schedules": [
+        "20 22 * * 1-5"
+      ],
+      "boundReferences": [],
+      "literalClosure": [
+        "first-run.mjs",
+        "library-merge.mjs",
+        "value-core.mjs",
+        "winners-autopsy-core.mjs",
+        "winners-autopsy-lab.mjs"
+      ],
+      "reviewRequired": false
+    }
+  ]
+}
