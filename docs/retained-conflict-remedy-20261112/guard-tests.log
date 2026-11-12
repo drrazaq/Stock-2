@@ -1,0 +1,16 @@
+{"kind":"SYNTHETIC_GUARD_OVERHEAD_NOT_MARKET_EVIDENCE","rows":6882120,"validGuardMs":489.270759}
+✔ conflicting cross main/tail is rejected unchanged; no price or source preference (1.287228ms)
+✔ identical duplicates and repeated labels within either partition also stop (0.306204ms)
+✔ literal labels and cross-day reuse remain distinct; legacy missing tail remains unchanged (0.258904ms)
+✔ schema failures are generic and never expose a label/day/value (0.376748ms)
+✔ actual producer startup stops retained conflicts before any provider read or save (3.849706ms)
+✔ actual save boundary refuses a newly introduced overlap before write; valid save unchanged (2.166991ms)
+✔ near-observed row-count guard cost with duplicate at the end; caps not raised (943.584054ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1031.197475

@@ -1,0 +1,183 @@
+{
+  "kind": "READ_ONLY_COVERAGE_DIAGNOSTIC_VERIFIED",
+  "run": 43229095892,
+  "attempt": 1,
+  "headSha": "7da76ab698cfbb22ddadcb5a3abbb12fc3dac1f8",
+  "runtimeSource": "0adcdc062a6012d9ca6f7226c454a0220193812d",
+  "workflowSha256": "e4f32d0f09ec117f087772f2fe6494c139479fd1cb930dd506473ff2afcade31",
+  "actualStart": "2026-11-12T13:38:08Z",
+  "completedAt": "2026-11-12T13:39:19Z",
+  "deadline": "2026-11-12T14:03:08+00:00",
+  "conservativeDeadline": "2026-11-12T14:02:36Z",
+  "verifiedAt": "2026-11-12T13:42:20.753993+00:00",
+  "withinDeadline": true,
+  "logs": {
+    "zipBytes": 15559,
+    "zipSha256": "9af6c62b7bd98d94a55b2b18eff4847e9381687231a8c5a9d8ed1187170d4c5c",
+    "allEntriesRead": true,
+    "index": [
+      {
+        "path": "0_coverage.txt",
+        "bytes": 18997,
+        "sha256": "b91d0cb8a0d5637aa5d33befbaf82f8436a157a26af521ba5605b820d692e3d1"
+      },
+      {
+        "path": "coverage/system.txt",
+        "bytes": 600,
+        "sha256": "3efa13aef14e94dc6d36fcf9c04340b751ec286538289f8d3be5281e3df8fcc8"
+      },
+      {
+        "path": "coverage/1_Set up job.txt",
+        "bytes": 2306,
+        "sha256": "b6c613098c8cb2184e18fa51115f49e2daae991c4570eb1fd1a2dd54d51f5a0b"
+      },
+      {
+        "path": "coverage/2_Enforce approved latest start.txt",
+        "bytes": 919,
+        "sha256": "4ff744ebba62e37b2faf5df61f73f1549f504ec6d0cb96b6a90760b2109ff9cc"
+      },
+      {
+        "path": "coverage/3_Run actions_checkout@11bd71901bbe5b1630ceea73d27597364c9af683.txt",
+        "bytes": 7811,
+        "sha256": "fcec810f0254058d011c6497cbaea8af19f4a59b654e0d1bf90d4a7504ebd0a6"
+      },
+      {
+        "path": "coverage/4_Observe one bounded cache version.txt",
+        "bytes": 542,
+        "sha256": "4dcdd605f0586b2c90fc6dc594afcc86c1fbce57c7301dba22f516c4d383f22f"
+      },
+      {
+        "path": "coverage/5_Bound temporary storage before restore.txt",
+        "bytes": 611,
+        "sha256": "7fc533f708e4521c91fafe8d351b62f8d922d51eb6a6edb44aee97e3d3929876"
+      },
+      {
+        "path": "coverage/6_Run actions_cache_restore@5a3ec84eff668545956fd18022155c47e93e2684.txt",
+        "bytes": 1747,
+        "sha256": "5339147cabf3e169709624ece76cfb8ec88a2c16a00cdfb0eebee636b75794c5"
+      },
+      {
+        "path": "coverage/7_Read-only input and disconnected COVERAGE-ONLY duplicate classifier.txt",
+        "bytes": 932,
+        "sha256": "730ab0b26e0bffe0ef197f049a70293ef75ae50e55912f914efff6d0720c042b"
+      },
+      {
+        "path": "coverage/8_Retain only aggregate coverage and diagnostic.txt",
+        "bytes": 2380,
+        "sha256": "8d0735daadcf1352a348e2123f18845065c5ddc0c83b1ea7e1466318623b3a69"
+      },
+      {
+        "path": "coverage/16_Post Run actions_checkout@11bd71901bbe5b1630ceea73d27597364c9af683.txt",
+        "bytes": 1260,
+        "sha256": "3cd9ee33d5a3a930cceaa852bfd36ed80a2f9647d05bcd540ad18f2de947bad6"
+      },
+      {
+        "path": "coverage/17_Complete job.txt",
+        "bytes": 516,
+        "sha256": "9c0df9eedfb30524db435347a4d4aadaf5385a0cf85d30655eab538f5c6d661e"
+      }
+    ]
+  },
+  "artifact": {
+    "id": 13948179399,
+    "zipBytes": 1772,
+    "zipSha256": "e390c321ca98860300ae99959a802d5fb8024c5365b0f31ebb34623fdd21a678",
+    "expiresAt": "2026-11-13T13:39:14Z",
+    "files": {
+      "coverage.json": {
+        "bytes": 556,
+        "sha256": "5b618453704476f1d96b6a1a6859d443b8346b477352583b325a5409e4b53766"
+      },
+      "diagnostic.json": {
+        "bytes": 1930,
+        "sha256": "62068a42cdd8ac36b170658db2a29307fd4008a0a39effd18d5f4a77f496df6b"
+      }
+    }
+  },
+  "coverage": {
+    "calendarBasis": "frozen computed regular-session calendar, not original provider clock",
+    "counts": {
+      "badNumericRows": 0,
+      "duplicateSymbolDays": 125,
+      "missingTailDays": 0,
+      "rows": 6882012,
+      "sessions": 1260,
+      "tailRows": 2552524,
+      "tickerLabels": 8475
+    },
+    "exactContract": "INCONCLUSIVE",
+    "first": "2021-11-01",
+    "inputSha256": "3a1fd0bd7f599b0084e7ee359e480a6c86705b434d27337dfa029b23ce584f2b",
+    "issues": [
+      "DUPLICATE_SYMBOL_DAY"
+    ],
+    "kind": "PRE_OUTCOME_COVERAGE",
+    "last": "2026-11-06",
+    "outcomesAccessed": false,
+    "rawDollarPITIdentitySettlements": "NOT_AUTHENTICATED",
+    "status": "INCONCLUSIVE"
+  },
+  "diagnostic": {
+    "affectedDateXAtMetadata": {
+      "validXAtPresent": 101,
+      "xAtAfterBarDay": 101
+    },
+    "affectedDates": 101,
+    "affectedTickerLabels": 5,
+    "backfilledVsFresh": "NOT_IDENTIFIABLE_FROM_XAT_ALONE; fresh and backfill paths set xAt, split pass overwrites it, no original main fetch clock retained",
+    "canonicalization": "NONE; no rows selected/dropped/merged",
+    "conflictingKeysByField": {
+      "c": 124,
+      "h": 124,
+      "l": 124,
+      "o": 124,
+      "v": 123
+    },
+    "counts": {
+      "affectedDayLabelKeys": 125,
+      "duplicateOccurrences": 125,
+      "withinMainExtraOccurrences": 0,
+      "withinTailExtraOccurrences": 0
+    },
+    "crossPartitionCloseRatioBuckets": {
+      "equalClose": 1,
+      "nearSimpleFactorPattern_NOT_AUTHENTICATED_SPLIT": 81,
+      "otherCloseRatio": 43
+    },
+    "crossPartitionCurrentQualifiesCounts": {
+      "allTailCurrentlyFailQualifies": 125,
+      "anyMainCurrentlyQualifies": 125,
+      "anyTailCurrentlyQualifies": 0
+    },
+    "frozenCoverageStatus": "INCONCLUSIVE",
+    "groupClassification": {
+      "conflictingRelevantValues": 125,
+      "decodedTypeAndValueIdentical": 0,
+      "invalidOrNonfiniteUnresolved": 0,
+      "numericEquivalentRepresentationDiffers": 0
+    },
+    "groupOrigins": {
+      "crossPartition": 125,
+      "withinMainOnly": 0,
+      "withinTailOnly": 0
+    },
+    "key": "EXACT_DAY_AND_LITERAL_TICKER_STRING_SHARED_MAIN_TAIL",
+    "kind": "DUPLICATE_CLASSIFICATION_AGGREGATES_V1",
+    "lagMeaning": "Mutable metadata age only, NOT lineage, original fetch path, basis authentication or input selection",
+    "normalization": "NONE; no alias/case/whitespace/share-class mapping",
+    "orderIndependentPrivateAuditCommitmentSha256": "70e8e5fa8bf43a8e4d3fadafd4c7a6f3b2d7db2715caa36e2a70f4b9219932be",
+    "outcomesAccessed": false,
+    "providerRequests": 0,
+    "rawRowByteIdentity": "NOT_ESTABLISHED; decoded JSON cannot prove source byte identity",
+    "retainedInputSha256": "3a1fd0bd7f599b0084e7ee359e480a6c86705b434d27337dfa029b23ce584f2b",
+    "splitAdjustmentOrIssuerLineage": "NOT_AUTHENTICATED; simple factor pattern is not an authenticated split or cause",
+    "status": "COVERAGE_ONLY_CLASSIFIED_NOT_REPAIRED",
+    "xAtLagDuplicateOccurrenceBuckets": {
+      "11to60days": 1,
+      "over60days": 124
+    }
+  },
+  "productionWritesByVerifier": false,
+  "furtherOperations": "NONE",
+  "dataRemedy": "Identical-row canonicalization ruled out; allconflicts unresolved, no rows selected/excluded; producer prevention development only"
+}

@@ -1,0 +1,35 @@
+--- a/leaders-study.mjs
++++ b/leaders-study.mjs
+@@ -30,7 +30,31 @@
+ let store = { days: {}, gone: [], ref: null };
+ try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(CACHE)).toString()); } catch (e) { console.log('no cache yet: building from scratch'); }
+ store.days = store.days || {}; store.gone = store.gone || [];
+-const save = () => fs.writeFileSync(CACHE, zlib.gzipSync(JSON.stringify(store)));
++// Reject an ambiguous cache before provider reads and before persistence. Never
++// choose main/tail, normalize labels or rewrite a retained conflicting record.
++function assertCacheDayLabelUniqueness(days) {
++  if (!days || typeof days !== 'object' || Array.isArray(days)) throw new Error('CACHE_DAY_SCHEMA');
++  for (const day of Object.keys(days)) {
++    const row = days[day], seen = new Set();
++    if (!row || typeof row !== 'object' || Array.isArray(row)) throw new Error('CACHE_DAY_SCHEMA');
++    // Missing legacy tails remain eligible for the existing backfill, but a
++    // present tail must have the original literal label array.
++    for (const part of [row, row.x]) {
++      if (part === undefined || part === null) continue;
++      if (!part || !Array.isArray(part.T)) throw new Error('CACHE_LABEL_ARRAY_SCHEMA');
++      for (const label of part.T) {
++        if (typeof label !== 'string' || !label) throw new Error('CACHE_LABEL_SCHEMA');
++        if (seen.has(label)) throw new Error('CACHE_DAY_LABEL_CONFLICT_UNRESOLVED');
++        seen.add(label);
++      }
++    }
++  }
++}
++assertCacheDayLabelUniqueness(store.days);
++const save = () => {
++  assertCacheDayLabelUniqueness(store.days);
++  fs.writeFileSync(CACHE, zlib.gzipSync(JSON.stringify(store)));
++};
+ let calls = 0;
+ async function api(path) {             // free plan: 5 calls a minute
+   for (let a = 0; a < 4; a++) {
