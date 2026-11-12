@@ -1,3 +1,457 @@
+diff --git a/docs/decision-trace-20261112/EXAMPLES.json b/docs/decision-trace-20261112/EXAMPLES.json
+index ec42ba1a..356a1daa 100644
+--- a/docs/decision-trace-20261112/EXAMPLES.json
++++ b/docs/decision-trace-20261112/EXAMPLES.json
+@@ -16,6 +16,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -47,7 +49,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -56,7 +58,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "WAIT",
+-        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED",
++        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED: ISSUER_IDENTITY_UNKNOWN_OR_CONFLICTING",
+         "coverage": "PARTIAL_COVERAGE",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -67,6 +69,8 @@
+         "missing": [
+           "FRESH_COMPLETE_QUOTE_REQUIRED"
+         ],
++        "quoteRejectionReason": "ISSUER_IDENTITY_UNKNOWN_OR_CONFLICTING",
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -77,7 +81,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED: ISSUER_IDENTITY_UNKNOWN_OR_CONFLICTING | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -99,6 +103,8 @@
+           "QUOTE_IDENTITY_MISMATCH",
+           "PARTIAL_COVERAGE"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -117,7 +123,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | VERIFIED_MATCHING_IDENTITY_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | VERIFIED_MATCHING_IDENTITY_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -126,7 +132,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "WAIT",
+-        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED",
++        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED: PRIVATE_POINTER_OR_POLICY_UNVERIFIED",
+         "coverage": "PARTIAL_COVERAGE",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -137,6 +143,8 @@
+         "missing": [
+           "FRESH_COMPLETE_QUOTE_REQUIRED"
+         ],
++        "quoteRejectionReason": "PRIVATE_POINTER_OR_POLICY_UNVERIFIED",
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -147,7 +155,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED: PRIVATE_POINTER_OR_POLICY_UNVERIFIED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -156,7 +164,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "WAIT",
+-        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED",
++        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED: PRIVATE_POINTER_EXPIRED_OR_FUTURE",
+         "coverage": "PARTIAL_COVERAGE",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:32:01.000Z",
+@@ -168,6 +176,8 @@
+           "FRESH_COMPLETE_QUOTE_REQUIRED",
+           "PARTIAL_COVERAGE"
+         ],
++        "quoteRejectionReason": "PRIVATE_POINTER_EXPIRED_OR_FUTURE",
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -178,7 +188,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:32:01.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED: PRIVATE_POINTER_EXPIRED_OR_FUTURE | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:32:01.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -198,6 +208,8 @@
+         "missing": [
+           "CURRENT_EXACT_RULE_EVIDENCE_REQUIRED"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -216,7 +228,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | CURRENT_EXACT_RULE_EVIDENCE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | CURRENT_EXACT_RULE_EVIDENCE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -237,6 +249,8 @@
+           "CURRENT_EXACT_RULE_EVIDENCE_REQUIRED",
+           "PARTIAL_COVERAGE"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -255,7 +269,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | CURRENT_EXACT_RULE_EVIDENCE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | CURRENT_EXACT_RULE_EVIDENCE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -275,6 +289,8 @@
+         "missing": [
+           "ZAD_UNKNOWN"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "UNKNOWN",
+         "entry": null,
+         "quantity": null,
+@@ -293,7 +309,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | ZAD_UNKNOWN | evidence ADEQUATELY_OBSERVED | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | ZAD_UNKNOWN | evidence ADEQUATELY_OBSERVED | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -311,6 +327,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "FAIL",
+         "entry": null,
+         "quantity": null,
+@@ -329,7 +347,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "NO BUY ZZQ | Existing ZAD mark blocks a new entry | evidence ADEQUATELY_OBSERVED | ZAD FAIL | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | NO BUY ZZQ | Existing ZAD mark blocks a new entry | evidence ADEQUATELY_OBSERVED | ZAD FAIL | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -347,6 +365,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -378,7 +398,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -396,6 +416,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -427,7 +449,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -447,6 +469,8 @@
+         "missing": [
+           "NO_AFFORDABLE_WHOLE_SHARE"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -465,7 +489,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "NO BUY ZZQ | No affordable whole share after reserving the entry fee | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | NO BUY ZZQ | No affordable whole share after reserving the entry fee | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -485,6 +509,8 @@
+         "missing": [
+           "PARTIAL_COVERAGE"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -503,7 +529,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | PARTIAL_COVERAGE | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | PARTIAL_COVERAGE | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -521,6 +547,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -539,7 +567,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | No qualifying setup observed under the exact retained rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | No qualifying setup observed under the exact retained rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -562,6 +590,8 @@
+           "CURRENT_EXACT_RULE_EVIDENCE_REQUIRED",
+           "COVERAGE_UNAVAILABLE"
+         ],
++        "quoteRejectionReason": "PRIVATE_POINTER_OR_POLICY_UNVERIFIED",
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -590,6 +620,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -621,7 +653,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "NO BUY ZZQ | Exact rule failed; pass on this setup | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | NO BUY ZZQ | Exact rule failed; pass on this setup | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -630,7 +662,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "HOLDING_EXIT_UNVERIFIED",
+-        "reason": "Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision",
++        "reason": "Supplied holding exit is unverified — check holding; Existing rule",
+         "coverage": "ADEQUATELY_OBSERVED",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -639,6 +671,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -670,7 +704,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; Existing rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -679,7 +713,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "HOLDING_EXIT_UNVERIFIED",
+-        "reason": "Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision",
++        "reason": "Supplied holding exit is unverified — check holding; Existing rule",
+         "coverage": "ADEQUATELY_OBSERVED",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -688,6 +722,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -719,7 +755,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; Existing rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -728,7 +764,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "HOLDING_EXIT_UNVERIFIED",
+-        "reason": "Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision",
++        "reason": "Supplied holding exit is unverified — check holding; Existing rule",
+         "coverage": "ADEQUATELY_OBSERVED",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -737,6 +773,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -768,7 +806,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; Existing rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -777,7 +815,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "HOLDING_EXIT_UNVERIFIED",
+-        "reason": "Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision",
++        "reason": "Supplied holding exit is unverified — check holding; Existing rule",
+         "coverage": "ADEQUATELY_OBSERVED",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -786,6 +824,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -817,7 +857,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; Existing rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -840,6 +880,8 @@
+           "PARTIAL_COVERAGE",
+           "ZAD_UNKNOWN"
+         ],
++        "quoteRejectionReason": "PRIVATE_POINTER_OR_POLICY_UNVERIFIED",
++        "holdingEvidence": null,
+         "zad": "UNKNOWN",
+         "entry": null,
+         "quantity": 2,
+@@ -850,7 +892,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "SELL ZZQ | quantity 2; Previously established close-based time exit | Existing authorized holding condition reached | evidence PARTIAL_COVERAGE | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | SELL ZZQ | quantity 2; Previously established close-based time exit | Existing authorized holding condition reached | evidence PARTIAL_COVERAGE | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -868,6 +910,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -899,7 +943,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     }
 diff --git a/private-quote-retention.mjs b/private-quote-retention.mjs
 index 17b40002..2b87e5b5 100644
 --- a/private-quote-retention.mjs
@@ -289,7 +743,7 @@ index 26eff19a..ff8f6a29 100644
   assert.equal(rows.filter(r=>r.sym==='OLD').length,1);assert.equal(rows.filter(r=>r.sym==='NEW').length,1);
 diff --git a/test/decision-integration.test.mjs b/test/decision-integration.test.mjs
 new file mode 100644
-index 00000000..abb4a070
+index 00000000..31d8075a
 --- /dev/null
 +++ b/test/decision-integration.test.mjs
 @@ -0,0 +1,28 @@
@@ -318,6 +772,19 @@ index 00000000..abb4a070
 +test('actual multipart caller expires after the first ACK, leaves all reserved cards UNCERTAIN and never replays',async t=>{const f=await fixture(t,{advance:121000});const text=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);const r=await f.S.fn('telegram')(text+'\n\n'+'SYNTHETIC long footer\n'.repeat(500));assert.equal(r.ok,false);assert.equal(f.sent.length,1);assert.equal(readAssessmentDelivery('ZZQ',{...f.options,now:f.clock.now}).delivery,'UNCERTAIN');});
 +test('actual reviewReply structured stop SELL survives absent entry quote and preserves legacy no-opt-in output',async t=>{const f=await fixture(t,{holding:true,quote:false});const evidence={},legacy=await f.S.fn('reviewReply')('ZZQ',f.sig,f.pos,evidence);assert.equal(evidence.disposition.status,'SELL');assert.equal(evidence.disposition.authority,'ACTUAL_HOLDING_REVIEW');assert.match(legacy,/STOP LEVEL REACHED/);const card=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(card,/SELL ZZQ/);assert.match(card,/quantity UNKNOWN/);assert.match(card,/STOP LEVEL REACHED/);assert.doesNotMatch(card,/WAIT ZZQ|NO BUY ZZQ/);examples.push({case:'real review caller, synthetic held stop, absent entry quote',text:card});process.env.ASSESSMENT_RESEARCH_ROOT='';const legacyAgain=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.equal(legacyAgain,legacy);});
 +test('reservation race and unknown delivery survive an actual second Node process',async t=>{const f=await fixture(t),card=f.S.fn('researchDecisionTracePrototype')('ZZQ',{asOf:new Date(NOW).toISOString()}).card,r=reserveAssessmentDelivery('ZZQ',card,f.options);assert.throws(()=>reserveAssessmentDelivery('ZZQ',card,f.options));assert.match(await f.S.fn('natural')('check ZZQ',f.sig,f.pos),/DELIVERY UNCERTAIN/);settleAssessmentDelivery(r,'UNCERTAIN',f.options);assert.throws(()=>settleAssessmentDelivery(r,'CONFIRMED_SENT',f.options));assert.equal(readAssessmentDelivery('ZZQ',f.options).delivery,'UNCERTAIN');const restart=execFileSync(process.execPath,['--input-type=module','-e',"import{readAssessmentDelivery}from"+JSON.stringify('file://'+path.join(ROOT,'research-assessment.mjs'))+";console.log(readAssessmentDelivery('ZZQ',"+JSON.stringify(f.options)+").delivery)"],{encoding:'utf8'});assert.equal(restart.trim(),'UNCERTAIN');});
-+test('actual command with retained public journal evidence remains a missing-evidence assessment, never a fabricated current setup',async t=>{const f=await fixture(t);const raw=execFileSync('git',['show','3aa893f52022a03a7fbac783599691e87c86abd8:data/discovery-journal.jsonl'],{cwd:ROOT,maxBuffer:32*1024*1024});const row=raw.toString().split('\n').filter(Boolean).map(JSON.parse).find(x=>(x.symbol||x.sym)&&(x.symbol||x.sym)!=='ZZQ');assert.ok(row,'retained public journal record required');const retainedSymbol=row.symbol||row.sym;const retained=Buffer.from(JSON.stringify(row)+'\n');f.S.write('data/discovery-journal.jsonl',retained.toString());const before=f.S.read('data/discovery-journal.jsonl'),text=await f.S.fn('natural')('check '+retainedSymbol,f.sig,{});assert.match(text,/WAIT/);assert.match(text,/DATA_UNAVAILABLE|PARTIAL_COVERAGE/);assert.doesNotMatch(text,/ADEQUATELY_OBSERVED|SELL|BUY NOW/);assert.equal(f.S.read('data/discovery-journal.jsonl'),before);assert.equal(f.requests.length,0);examples.push({case:'retained public journal row through actual command; private evidence absent; not current recommendation',sourcePin:'3aa893f52022a03a7fbac783599691e87c86abd8',authenticRow:{id:row.id,symbol:retainedSymbol,type:row.type||'LEGACY_UNKEYED',horizon:row.horizon||null,evidenceVersion:row.evidenceVersion||null},text});});
++test('actual command with retained public journal evidence remains a missing-evidence assessment, never a fabricated current setup',async t=>{const f=await fixture(t);const archived=JSON.parse(fs.readFileSync(path.join(ROOT,'test/fixtures/retained-discovery-3aa.json'),'utf8'));assert.equal(archived.sourcePin,'3aa893f52022a03a7fbac783599691e87c86abd8');const row=JSON.parse(archived.originalLine);assert.ok(row,'retained public journal record required');const retainedSymbol=row.symbol||row.sym;const retained=Buffer.from(JSON.stringify(row)+'\n');f.S.write('data/discovery-journal.jsonl',retained.toString());const before=f.S.read('data/discovery-journal.jsonl'),text=await f.S.fn('natural')('check '+retainedSymbol,f.sig,{});assert.match(text,/WAIT/);assert.match(text,/DATA_UNAVAILABLE|PARTIAL_COVERAGE/);assert.doesNotMatch(text,/ADEQUATELY_OBSERVED|SELL|BUY NOW/);assert.equal(f.S.read('data/discovery-journal.jsonl'),before);assert.equal(f.requests.length,0);examples.push({case:'retained public journal row through actual command; private evidence absent; not current recommendation',sourcePin:'3aa893f52022a03a7fbac783599691e87c86abd8',authenticRow:{id:row.id,symbol:retainedSymbol,type:row.type||'LEGACY_UNKEYED',horizon:row.horizon||null,evidenceVersion:row.evidenceVersion||null},text});});
 +test('actual held review never escapes an uncertain private reservation through the legacy text fallback',async t=>{const f=await fixture(t,{holding:true,quote:false,mode:'ambiguous'}),text=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(text,/SELL ZZQ/);await f.S.fn('telegram')(text);assert.equal(readAssessmentDelivery('ZZQ',f.options).delivery,'UNCERTAIN');const again=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(again,/DELIVERY UNCERTAIN/);assert.doesNotMatch(again,/STOP LEVEL REACHED|SELL ZZQ|HOLD OR SELL/);assert.match(again,/existing holding instructions remain/i);assert.equal(f.sent.length,1);});
 +test.after(()=>{if(process.env.INTEGRATION_FIXTURE_EXPORT)fs.writeFileSync(process.env.INTEGRATION_FIXTURE_EXPORT,JSON.stringify({kind:'ENTIRELY_SYNTHETIC_COMMAND_AND_SEND_FIXTURES',examples},null,2)+'\n');assert.equal(blocked.length,0);});
+diff --git a/test/fixtures/retained-discovery-3aa.json b/test/fixtures/retained-discovery-3aa.json
+new file mode 100644
+index 00000000..a77fef89
+--- /dev/null
++++ b/test/fixtures/retained-discovery-3aa.json
+@@ -0,0 +1,7 @@
++{
++  "kind": "AUTHENTIC_RETAINED_PUBLIC_JOURNAL_ROW_NOT_A_CURRENT_ASSESSMENT",
++  "sourcePin": "3aa893f52022a03a7fbac783599691e87c86abd8",
++  "sourcePath": "data/discovery-journal.jsonl",
++  "sourceFileSha256": "467a6e49161d6bc02f5e36c27f9a750bb7aca09c94a3d2463a6da58525ca592e",
++  "originalLine": "{\"sym\":\"OABI\",\"d\":\"2026-10-02\",\"price\":4.87,\"spy\":769.64,\"score\":431}"
++}

@@ -1,5 +1,5 @@
 {
-  "kind": "DEVELOPMENT_SOURCE_ONLY_BINDING_NOT_DEPLOYMENT",
+  "kind": "DEVELOPMENT_SOURCE_AND_REQUIRED_FIXTURE_BINDING_NOT_DEPLOYMENT",
   "base": "864bd2cbd23c56e5cbd2b22174129808ac1a56fb",
   "paths": [
     {
@@ -33,15 +33,30 @@
     {
       "path": "test/decision-integration.test.mjs",
       "beforeSha256": null,
-      "afterSha256": "124db43f049888b2f79a60556a5a835964d045db0561a6436289f7eb99a4bcb6",
-      "gitBlob": "abb4a07034054d009ef118086d47a8a6091fb35d",
+      "afterSha256": "89a2d835d238593912928004d082ffe691b5be7ecaabd6810e1d2934a1143f94",
+      "gitBlob": "31d8075aa2c6258dce5a0e4b5482f4425d6cf888",
+      "inverse": "remove this new source/test only"
+    },
+    {
+      "path": "docs/decision-trace-20261112/EXAMPLES.json",
+      "beforeSha256": "8f7bc262c6a895855f280ff7a729eb64d36bc5392bb3416e1b99a9da570fb992",
+      "afterSha256": "c239da5fe38556b5d067ed93276051eaf014a98ae5d5bdac2d1460531d999b7f",
+      "gitBlob": "356a1daa89271cfde02ea1ed0456a1009cc82429",
+      "inverse": "restore exact original bytes"
+    },
+    {
+      "path": "test/fixtures/retained-discovery-3aa.json",
+      "beforeSha256": null,
+      "afterSha256": "50d3e004f3ddd7f45d4f9c635b82a17024b5c58fffa30e1925426bee0a54d773",
+      "gitBlob": "a77fef8969e98045e92199216d14848b9e30b722",
       "inverse": "remove this new source/test only"
     }
   ],
-  "pathCount": 5,
-  "sourceOverlayTree": "e7524a3378f39e2bc2b688d423cb8a2e0f8d1bbc",
+  "pathCount": 7,
+  "sourceOverlayTree": "44a05edbb906fa537e5784d8b73be37634fd7fef",
   "sourceOnlyInverseRestoresFullBaseTree": "6969544ab1b01c928285ad881cb50424922d6923",
-  "sourcePatchSha256": "75d9fedb8452af23ee02c02521ecfe7a0b0507ec3b19f06b9a64bac6bb7f7794",
-  "inversePatchSha256": "35f9b1fcc9aa1e135a7e81455deade80cf959749beae4591b34a0c26ca666a07",
-  "productionDataOrWorkflowChanges": false
+  "sourcePatchSha256": "6d0101b91227ca61e47f202ed71a06fba029802542b6152c62c05843009be448",
+  "inversePatchSha256": "6f00996b79230d3603f4ed933015f99cec860c1a3069084dbd6987abb7b7d0b5",
+  "productionDataOrWorkflowChanges": false,
+  "requiredFixture": "docs/decision-trace-20261112/EXAMPLES.json is read by existing test; binding must include it"
 }
