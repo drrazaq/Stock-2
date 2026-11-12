@@ -24,7 +24,7 @@ Actual bot/discovery Git save/rebase paths preserve public journal additions and
 
 ## Validation and outputs
 
-Affected actual-caller/privacy/holding/save matrix passed78 tests after Claude A1–A7 corrections. Full existing required per-file Node20 inventory is running, with its final receipt to follow; no full PASS claimed until complete. EXAMPLES.json is entirely synthetic, including all quote/ZAD/holdings. It shows actual command output and loopback ACK/UNKNOWN handling, not real owner context, live delivery, a fill or strategy success. Normal tests do not overwrite tracked outputs.
+Affected actual-caller/privacy/holding/save matrix passed78 tests after Claude A1–A7 corrections. Final exact18fa0f45 required per-file Node20.20.0 inventory:179/179PASS,0failed/skipped files; all7 bound source/fixture hashes unchanged before/after the full run. VALIDATION.json retains every test-file SHA/exit. EXAMPLES.json is entirely synthetic, including all quote/ZAD/holdings. It shows actual command output and loopback ACK/UNKNOWN handling, not real owner context, live delivery, a fill or strategy success. Normal tests do not overwrite tracked outputs.
 
 One initial fixture expected one message but the existing first-time menu also sent; fixture now seeds the actual MENU_V. Another exposed a genuine mixed clock in the new caller (new Date versus Date.now); caller uses Date.now consistently. Original failure logs retained locally; no existing assertion waived. Full inventory covers the changed private helper export/import closure too.
 
