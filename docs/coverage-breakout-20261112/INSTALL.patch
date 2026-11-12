@@ -1,11 +1,11 @@
-diff --git a/.github/workflows/bounded-retained-cache-coverage-ra1.yml b/.github/workflows/bounded-retained-cache-coverage-ra1.yml
+diff --git a/.github/workflows/bounded-retained-cache-breakout-ra2.yml b/.github/workflows/bounded-retained-cache-breakout-ra2.yml
 new file mode 100644
-index 0000000000000000000000000000000000000000..0853b0579cc387cd1333d892af9912abdb4ddb16
+index 0000000000000000000000000000000000000000..9b5817d078a30202cf18554ffb9fa5c99f1ed2a0
 --- /dev/null
-+++ b/.github/workflows/bounded-retained-cache-coverage-ra1.yml
-@@ -0,0 +1,80 @@
++++ b/.github/workflows/bounded-retained-cache-breakout-ra2.yml
+@@ -0,0 +1,82 @@
 +# REVIEW DRAFT ONLY: not installed under .github/workflows.
-+name: Bounded retained-cache coverage R-A1
++name: Bounded retained-cache breakout R-A2
 +on:
 +  workflow_dispatch:
 +    inputs:
@@ -17,12 +17,12 @@ index 0000000000000000000000000000000000000000..0853b0579cc387cd1333d892af9912ab
 +  contents: read
 +  actions: read
 +concurrency:
-+  group: bounded-retained-cache-coverage-ra1
++  group: bounded-retained-cache-breakout-ra2
 +  cancel-in-progress: false
 +jobs:
 +  coverage:
 +    runs-on: ubuntu-latest
-+    timeout-minutes: 10
++    timeout-minutes: 12
 +    steps:
 +      - name: Enforce approved latest start
 +        timeout-minutes: 1
@@ -39,7 +39,7 @@ index 0000000000000000000000000000000000000000..0853b0579cc387cd1333d892af9912ab
 +          PYCODE
 +      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
 +        with:
-+          ref: 3ea32366a20c32209ce48d886c502ec3814253d8
++          ref: 11746275f001ec6e99d9f4b3f5873d2a03c5f54e
 +          persist-credentials: false
 +          sparse-checkout: docs/coverage-breakout-20261112/
 +          sparse-checkout-cone-mode: false
@@ -67,20 +67,22 @@ index 0000000000000000000000000000000000000000..0853b0579cc387cd1333d892af9912ab
 +          path: study-cache
 +          key: ${{ steps.cache-version.outputs.key }}
 +          fail-on-cache-miss: true
-+      - name: Read-only input and disconnected coverage analyzer
-+        timeout-minutes: 4
++      - name: Read-only input and disconnected coverage-gated evaluator
++        timeout-minutes: 6
 +        run: |
 +          set -euo pipefail
 +          test '${{ steps.retained-cache.outputs.cache-matched-key }}' = '${{ steps.cache-version.outputs.key }}'
 +          sudo mount -o remount,ro study-cache
 +          mkdir -p /tmp/route-a-output
-+          sudo unshare --net env -i PATH=/usr/bin:/bin /usr/bin/python3 docs/coverage-breakout-20261112/analyze.py --input study-cache/grouped.json.gz --output /tmp/route-a-output/coverage.json
-+      - name: Retain only aggregate coverage
++          sudo unshare --net env -i PATH=/usr/bin:/bin /usr/bin/python3 docs/coverage-breakout-20261112/evaluate.py --input study-cache/grouped.json.gz --output-dir /tmp/route-a-output
++      - name: Retain only aggregate coverage and diagnostic
 +        timeout-minutes: 1
 +        if: ${{ success() }}
 +        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
 +        with:
-+          name: bounded-route-a1-coverage
-+          path: /tmp/route-a-output/coverage.json
++          name: bounded-route-a2-result
++          path: |
++            /tmp/route-a-output/coverage.json
++            /tmp/route-a-output/diagnostic.json
 +          retention-days: 1
 +          if-no-files-found: error
