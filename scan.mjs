@@ -1,3 +1,5 @@
+import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate} from './research-assessment.mjs';
+import {readInstrumentType,researchInstrumentScope} from './instrument-type.mjs';
 import {readPrivateAssessmentQuote} from './private-quote-retention.mjs';
 import {readAssessmentQuote,assessmentQuoteText} from './assessment-quote-context.mjs';
 import {makeScannerAssessmentRule,assessmentRuleIdentity,frozenAssessmentQueue,assessmentJournalRows,assessmentSourceStatus,linkAssessmentOutcomes} from './discovery-runtime.mjs';
@@ -228,6 +230,18 @@ function horizonLine(sym) { const HZ = readJson0('data/horizons.json'); if (!HZ 
     return (rs[0] ? rs[0].name : k) + ' -> ' + (best ? 'TESTED BUY for ' + best.months + ' month' + (best.months > 1 ? 's' : '') + ' (' + pcs(best.results.newer.avg) + ' vs an average stock ' + pcs(best.results.newer.ctrl) + ')' + ((EX) => EX && EX.results && EX.results[k] && EX.results[k].best !== 'HOLD60' ? ', SELL: ' + EX.results[k].exits[EX.results[k].best].name + ' (tested better exit)' : ', SELL: after ' + best.months + ' month' + (best.months > 1 ? 's' : '') + ' or a close 25% under your buy')(readJson0('data/exits.json')) : 'tested, no edge (' + rs.map(r => r.months + 'm ' + r.verdict.toLowerCase()).join(', ') + ')'); }).join('; ') + '.'; }
 // Assessment context is a read-only presentation of existing decisions and saved research.
 // It neither ranks opportunities nor admits entries, changes exits, or fetches additional data.
+// Explicit development callers only; no command/send/live activation.
+function researchDecisionPrototype(sym,{asOf,existingExit}={}) {
+ const record=readJson0('data/research-assessments.json')?.records?.[sym];
+ return conciseResearchDecisionText({symbol:sym,record,asOf,existingExit});
+}
+function researchDecisionTracePrototype(sym,{asOf,existingExit,previous}={}) {
+ const now=Date.now(),book=readJson0('data/research-assessments.json'),record=book?.records?.[sym];
+ const quote=process.env.ASSESSMENT_PRIVATE_QUOTE_ROOT?readPrivateAssessmentQuote(sym,{root:process.env.ASSESSMENT_PRIVATE_QUOTE_ROOT,policySha256:process.env.ASSESSMENT_PRIVATE_QUOTE_POLICY_SHA256,now}):readAssessmentQuote(sym,{manifestFile:process.env.ASSESSMENT_QUOTE_MANIFEST,pinnedSha256:process.env.ASSESSMENT_QUOTE_MANIFEST_SHA256,now});
+ const instrument=researchInstrumentScope(sym,readInstrumentType(sym,{file:process.env.ASSESSMENT_INSTRUMENT_REFERENCE,pinnedSha256:process.env.ASSESSMENT_INSTRUMENT_REFERENCE_SHA256,now}));
+ const card=traceResearchDecision({symbol:sym,record,quote,instrument,zad:myHalal(sym),coverage:book?.coverage,asOf,now,existingExit});
+ return {...researchDecisionUpdate(previous,card,{now}),card};
+}
 function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current action supplied', compact = false) {
   const clean = (v, limit = 240) => { const t = String(v !== null && typeof v === 'object' ? 'UNKNOWN' : v ?? '').replace(/[\r\n]+/g, ' '); return t.length <= limit ? t : t.slice(0, limit).replace(/\s+\S*$/, '') + '…'; };
   const stamp = (v) => { const t = Date.parse(v || ''); return !Number.isFinite(t) ? 'UNKNOWN date' : t > Date.now() ? 'UNKNOWN (future timestamp ' + clean(v) + ')' : clean(v) + ' (' + Math.floor((Date.now() - t) / 36e5) + ' h old; saved context, not a live quote)'; };
@@ -287,6 +301,7 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
     'Known-then evidence (events-recent.json; not an original receipt): ' + evidence + '. Business lead: ' + (lead ? clean(lead.profitTrend || 'discovery candidate') + (typeof lead.revGrowth === 'number' ? ', reported revenue growth ' + pcs(lead.revGrowth) : '') + '; discovery.json ' + stamp(D.generatedAt) + ', close ' + clean(D.session || 'UNKNOWN') : 'no discovery business evidence supplied') + '.',
     'Earnings investigation: '+earningsLead+'.',
     primaryLine,
+    'RESEARCH RULE CONTEXT | '+researchRuleAssessment(readJson0('data/research-assessments.json')?.records?.[sym]).label+'; no rule adoption or entry authority.',
     assessmentQuoteText(quoteContext),
     'Price/execution: ' + (px ? 'saved close ' + money(px) + ', not current executable price; ' : '') + (quoteContext.currentBbo?'retained BBO context above; fills and executable quantity UNKNOWN. ':'live BBO, conditions, displayed size, fills and executable quantity UNKNOWN. ')+(st?.buyLo>0?'Recorded lower entry '+money(st.buyLo)+' permits at most '+Math.max(0,Math.floor((1000-3)/st.buyLo))+' whole shares before spread/slippage; no order implied. ':'')+'Research assumption: $1,000 whole shares, $3 each executed side; actual after-cost result UNKNOWN. Displayed size would not prove fill capacity.',
     'Risks/next check: ' + (lead && (lead.hardBlock || lead.bio && lead.bio.text) ? 'Existing discovery warning: ' + clean(lead.hardBlock || lead.bio.text) + '. ' : '') + 'horizons may disagree; favorable comparisons do not erase SPY losses, severe drawdowns or failed gates; SPY is the stored raw benchmark, not a matched-fee execution result; unavailable stored benchmark/worst fields are UNKNOWN. Financing/dilution, expected-vs-new information and original filing vintages remain unresolved unless separately evidenced. Reassess on the next completed scan/new dated disclosure, or fresh price for the EXISTING position rule; no timing promise. No exit or live gate changed.'
