@@ -1,0 +1,82 @@
+# Bounded retained-cache research; procedure review 6818651632; exact owner approval required.
+name: Bounded retained-cache breakout R-A2
+on:
+  workflow_dispatch:
+    inputs:
+      latest_start_utc:
+        description: Owner-approved latest start in UTC, no extension
+        required: true
+        type: string
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: bounded-retained-cache-breakout-ra2
+  cancel-in-progress: false
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Enforce approved latest start
+        timeout-minutes: 1
+        env:
+          LATEST_START_UTC: ${{ inputs.latest_start_utc }}
+        run: |
+          python3 - <<'PYCODE'
+          import datetime,os
+          value=os.environ["LATEST_START_UTC"]
+          assert value.endswith("Z"), "UTC_Z_REQUIRED"
+          cutoff=datetime.datetime.fromisoformat(value.replace("Z","+00:00"))
+          now=datetime.datetime.now(datetime.timezone.utc)
+          assert 0 <= (cutoff-now).total_seconds() <= 1800, "START_WINDOW_INVALID_OR_EXPIRED"
+          PYCODE
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: df40877247232af7972bfd17c36dac5618719cd1
+          persist-credentials: false
+          sparse-checkout: docs/coverage-breakout-20261112/
+          sparse-checkout-cone-mode: false
+      - name: Observe one bounded cache version
+        id: cache-version
+        timeout-minutes: 1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 docs/coverage-breakout-20261112/select_cache.py
+      - name: Bound temporary storage before restore
+        timeout-minutes: 1
+        run: |
+          set -euo pipefail
+          mkdir -p study-cache /tmp/route-a-transfer
+          sudo mount -t tmpfs -o size=512m,nodev,nosuid,noexec,mode=1777 tmpfs study-cache
+          sudo mount -t tmpfs -o size=512m,nodev,nosuid,noexec,mode=1777 tmpfs /tmp/route-a-transfer
+      - uses: actions/cache/restore@5a3ec84eff668545956fd18022155c47e93e2684
+        id: retained-cache
+        timeout-minutes: 2
+        env:
+          RUNNER_TEMP: /tmp/route-a-transfer
+          TMPDIR: /tmp/route-a-transfer
+          SEGMENT_DOWNLOAD_TIMEOUT_MINS: '1'
+        with:
+          path: study-cache
+          key: ${{ steps.cache-version.outputs.key }}
+          fail-on-cache-miss: true
+      - name: Read-only input and disconnected coverage-gated evaluator
+        timeout-minutes: 6
+        run: |
+          set -euo pipefail
+          test '${{ steps.retained-cache.outputs.cache-matched-key }}' = '${{ steps.cache-version.outputs.key }}'
+          sudo mount -o remount,ro study-cache
+          mkdir -p /tmp/route-a-output
+          sudo unshare --net env -i PATH=/usr/bin:/bin PYTHONDONTWRITEBYTECODE=1 /usr/bin/python3 docs/coverage-breakout-20261112/evaluate.py --input study-cache/grouped.json.gz --output-dir /tmp/route-a-output
+      - name: Retain only aggregate coverage and diagnostic
+        timeout-minutes: 1
+        if: ${{ success() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: bounded-route-a2-result
+          path: |
+            /tmp/route-a-output/coverage.json
+            /tmp/route-a-output/diagnostic.json
+          retention-days: 1
+          if-no-files-found: error
