@@ -1957,7 +1957,7 @@
    "family": "Insiders",
    "name": "Insider cluster + contract",
    "explain": "2+ insiders buying and an 8-K 1.01 within the same 10 days; hold 20 days.",
-   "status": "pre-registered 2026-11-12 (agent-c3-core.mjs header, exact rule); built agent-c3-lab.mjs; one-shot pending",
+   "status": "tested: rejected (agent-c3-lab, frozen 2026-11-12)",
    "agent": "C",
    "note": "From the outside review of 20 Oct (see project doc Agent inbox).",
    "study": "agent-c3-lab.mjs -> data/agent-c3-lab.json firstRun",
@@ -1966,7 +1966,15 @@
     "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search, 8-K item 1.01)"
    ],
    "rule": "Insider cluster (2+ different officers/directors/other with Form 4 open-market purchases filed in 5 sessions, no opportunistic filter) and a plain 8-K item 1.01 (not 2.02) of the same stock with |cluster session - 8-K reaction session| <= 9; buy the open after both are public (max of the session after the cluster filing date and the 8-K reaction session + 1), liquid, hold 20, no stop, one signal per stock per 60 sessions. Gates + S&P 500 gate; TRY SMALL bar reported.",
-   "preRegistered": "2026-11-12"
+   "preRegistered": "2026-11-12",
+   "tested": "2026-11-12",
+   "result": {
+    "verdict": "REJECTED",
+    "level": "NONE",
+    "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.1 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.93 under 2.5 in the newer half; not better than the S&P 500 over the same sessions in the older half (-1.5%); not better than the S&P 500 over the same sessions in the newer half (-2.4%)",
+    "older": "121 trades, 100 days, avg -1.1% (stress -1.5%), edge -0.6%, t -0.1",
+    "newer": "154 trades, 130 days, avg -1.8% (stress -2.1%), edge -2.1%, t -1.93"
+   }
   },
   {
    "id": "E19",
@@ -2603,7 +2611,7 @@
    "family": "Share supply",
    "name": "High short interest (avoid)",
    "explain": "Short interest over 20% of shares outstanding at the last FINRA/exchange settlement date: avoid 20 sessions. Official FINRA bi-monthly short interest files (free), point in time by publication date.",
-   "status": "pre-registered 2026-11-12 (agent-c3-core.mjs header, exact rule); built agent-c3-lab.mjs; one-shot pending",
+   "status": "tested: not proven (agent-c3-lab, frozen 2026-11-12)",
    "agent": "C",
    "note": "Agent C outside research, 20 Oct. Published: Boehmer, Jones and Zhang 2008 (JF) and Boehmer, Huszar and Jordan 2010 (JFE): heavily shorted stocks underperform. Avoid rule only; needs a FINRA file loader in the study workflow.",
    "study": "agent-c3-lab.mjs -> data/agent-c3-lab.json firstRun",
@@ -2613,7 +2621,15 @@
     "Boehmer, Huszar and Jordan 2010, Journal of Financial Economics 96(1), The good news in short interest"
    ],
    "rule": "FINRA settlement file (exchange-listed rows, no split flag): short position / SEC share count known 30 days before entry > 20% (over 100% = data error, dropped); entry the open of settlement session + 9 (publication lag), liquid; flagged stock vs the average liquid stock over 20 sessions (avoid test, costs cancel); C-S8 avoid gates with t = the weaker of day t and 20-session block t; data stop: 95% of expected files.",
-   "preRegistered": "2026-11-12"
+   "preRegistered": "2026-11-12",
+   "tested": "2026-11-12",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "level": "NONE",
+    "why": "could be luck in the older half (t -2.88, -4.10 needed); not clearly worse than the same stock on its other days in the older half (t -0.3); could be luck in the newer half (t -1.05, -4.10 needed); not clearly worse than the same stock on its other days in the newer half (t 2.01)",
+    "older": "1191 cases, 51 days, edge -3.8% vs the average stock, t -2.88",
+    "newer": "2234 cases, 66 days, edge -1.1% vs the average stock, t -1.05"
+   }
   },
   {
    "id": "C-13F1",
@@ -35044,14 +35060,22 @@
    "agent": "C",
    "name": "High days-to-cover (avoid)",
    "explain": "Hong, Li, Ni, Scheinkman and Yan 2015 (NBER w21166): days-to-cover predicts poor returns better than the short ratio. Version of C-SI1 (agent-c3-core.mjs).",
-   "status": "pre-registered 2026-11-12 (agent-c3-core.mjs header, exact rule); built agent-c3-lab.mjs; one-shot pending",
+   "status": "tested: not proven (agent-c3-lab, frozen 2026-11-12)",
    "study": "agent-c3-lab.mjs -> data/agent-c3-lab.json firstRun",
    "sources": [
     "https://www.nber.org/papers/w21166",
     "https://www.finra.org/finra-data/browse-catalog/equity-short-interest/files"
    ],
    "rule": "Same files and timing as C-SI1; flag = FINRA days-to-cover in the top 10% of the liquid exchange-listed stocks of that file (200+ rows needed); avoid 20 sessions; same avoid gates.",
-   "preRegistered": "2026-11-12"
+   "preRegistered": "2026-11-12",
+   "tested": "2026-11-12",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "level": "NONE",
+    "why": "could be luck in the older half (t -1.29, -4.10 needed); not clearly worse than the same stock on its other days in the older half (t -0.92); could be luck in the newer half (t -0.07, -4.10 needed); not clearly worse than the same stock on its other days in the newer half (t -0.37); not worse without its 2 worst cases in the newer half",
+    "older": "7609 cases, 51 days, edge -0.6% vs the average stock, t -1.29",
+    "newer": "10200 cases, 66 days, edge -0.0% vs the average stock, t -0.07"
+   }
   },
   {
    "id": "C-INSLAG1",
