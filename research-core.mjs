@@ -162,6 +162,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'oc') { ch += preRegisterOc(LB); continue; }
     if (R.family === 'wiki') { ch += preRegisterWiki(LB); continue; }
     if (R.family === 'svol') { ch += preRegisterSvol(LB); continue; }
+    if (R.family === 'pre') { ch += preRegisterPre(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -1104,4 +1105,61 @@ export function preRegisterSvol(LB) { if (!LB || !Array.isArray(LB.strategies)) 
   for (const id of SVOL_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-11 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' File source, ratio, weekly timing, windows, ranking, liquidity and data rule fixed in research-core.mjs (IDEA 15) before any run.', sources: SVOL_SOURCES, hold: R.hold, note: SVOL_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 16 (pre-registered 12 Nov 2026, before any run): PRE-EARNINGS RUN-UP OF PAST WINNERS (limited attention) ----------------
+// Source: Aboody, Lehavy and Trueman, "Limited attention and the earnings announcement returns of past stock market winners", Review of
+// Accounting Studies 15(2), 2010, 317-344 (doi 10.1007/s11142-009-9104-9): stocks with the strongest prior 12-month returns (top 1%,
+// price $5+) earned a market-adjusted +1.58% in the five trading days before their earnings announcements (days -4..0) and -1.86% in the
+// five days after (+1..+5), 1971-2005; individual investors' attention is the stated cause; reported significant after transaction costs.
+// NOT a repeat: ANOM-EAP (Frazzini-Lamont premium, ALL reports, held THROUGH the report on the Nasdaq calendar) is rejected; this rule is
+// conditioned on 12-month winners, sells BEFORE the report, and uses only official SEC data. Cost check (11 Nov): published +1.58% per
+// 5-day trade is above the 0.8% cost, so it can pass in principle. Long only: the pre-report run-up is the buy; the post-report window is
+// an AVOID check (never a buy, never a short).
+// DATA (official): the idea-3 / idea-5 cache of 8-K lists (data.sec.gov submissions; acceptance time + items, from 2021-09-01). An
+// ANNOUNCEMENT = the first item-2.02 8-K of a group (later 2.02s within 30 days are the same announcement; research-core eatAnnouncements).
+// REACTION session r = research-core reactionDate (New York acceptance before 16:00 -> that date's session or the next; 16:00 or later ->
+// the next session). STATED LIMIT: the entry uses the ACTUAL report date, assumed known 6+ sessions ahead (companies publish their
+// earnings dates weeks ahead; the same assumption as ANOM-EAP); unscheduled pre-announcements cannot be told apart in the SEC data.
+// WINNER (fixed now): at the signal session t = r-6, 12-month return = close(t) / close(t-252) - 1 (close or the dead-stock row; if
+// t-252 has no close, the nearest earlier close within 5 sessions; none -> not ranked). Percentile among ALL stocks LIQUID on t (system rule:
+// $5+, 20-day average $5M+ traded) with a 12-month return; 500+ needed, else that day is skipped. The stock itself must be liquid on t.
+// The price window starts 2021-11-01, so the first rankable signal is about 2022-11 (the older half is ~14 months: stated in the report).
+//   RQ-PRE-W1     BUY a top-1% winner (percentile >= 0.99) at the open of r-5; SELL at the close of r-1 (5 sessions; never held through
+//                 the report).
+//   RQ-PRE-W10    the same for the top 10% (percentile >= 0.90): a broader check that the effect is not just a few names.
+//   RQ-PRE-POST1  AVOID check: the top-1% winners from the open of r+1 to the close of r+5 (after the reaction session; the paper's
+//                 post window); judged before costs on both sides (avoid verdict). Never a buy.
+// One open trade per stock per rule. Gates, costs, halves and verdicts: the shared judge of this file (same as IDEAS 6-15).
+// DATA RULE (fixed now): no verdict until (a) the idea-5 8-K data rule holds (95%+ of companies read, 85%+ of liquid stock-months mapped),
+// (b) 15,000+ announcements whose signal session is ranked (fewer = the reader is broken: fix it, no verdict).
+// PAPER LANE: none at first (future report dates are not in the SEC data); one would be added (official calendar only) if a rule passes.
+export const PRE = { back: 252, slack: 5, lead: 6, minCross: 500, w1: 0.99, w10: 0.90, from: '2021-11-01' };
+export const PRE_DATA = { ranked: 15000 };
+RULES['RQ-PRE-W1'] = { kind: 'buy', hold: 5, side: 'pre', cut: 0.99, family: 'pre', name: 'Top-1% 12-month winners bought 5 sessions before their earnings report, sold the close before it',
+  rule: 'At the close 6 sessions before the reaction session r of an earnings 8-K (item 2.02, first of its 30-day group), rank every liquid stock by its 12-month return (close / close 252 sessions earlier - 1; 500+ stocks); if the reporting stock is liquid and in the top 1% (percentile >= 0.99), buy the open of r-5 and sell the close of r-1 (never held through the report).' };
+RULES['RQ-PRE-W10'] = { kind: 'buy', hold: 5, side: 'pre', cut: 0.90, family: 'pre', name: 'Top-10% 12-month winners bought 5 sessions before their earnings report, sold the close before it',
+  rule: 'As RQ-PRE-W1 with the top 10% (percentile >= 0.90).' };
+RULES['RQ-PRE-POST1'] = { kind: 'avoid', hold: 5, side: 'post', cut: 0.99, family: 'pre', name: 'AVOID check: top-1% 12-month winners in the 5 sessions after their earnings reaction',
+  rule: 'Same ranking as RQ-PRE-W1 (at r-6, top 1%); bought the open of r+1, sold the close of r+5; judged before costs on both sides against the average stock. Never a buy.' };
+export const PRE_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'pre');
+for (const id of PRE_IDS) { if (!IDS.includes(id)) IDS.push(id); if (RULES[id].kind === 'buy' && !BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// 12-month return at session t: px(u) -> close or null; earlier close looked up within `slack` sessions before t-back
+export function preMom(px, t, back = PRE.back, slack = PRE.slack) { const c = px(t); if (!(c > 0)) return null; const b = t - back; if (b < 0) return null;
+  for (let u = b; u >= Math.max(0, b - slack); u--) { const z = px(u); if (z > 0) return c / z - 1; } return null; }
+export const preRank = (list) => wikiRank(list, PRE.minCross);
+// sessions of a trade for reaction session r: { t (signal), k (entry), x (exit) } or null if out of range
+export function preWindow(r, side, T) { if (!(r >= 0)) return null; if (side === 'pre') { const t = r - PRE.lead, k = r - 5, x = r - 1; return t >= 1 ? { t, k, x } : null; }
+  if (side === 'post') { const t = r - PRE.lead, k = r + 1, x = r + 5; return t >= 1 && x < T ? { t, k, x } : t >= 1 ? { t, k, x, future: true } : null; } return null; }
+export function preDataRule({ subsOk, ciks, liqMonths, liqMapped, ranked }) { const r = { subs: ciks ? subsOk / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.subs >= EAT_DATA.subs)) why.push('8-K lists read ' + (r.subs * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= EAT_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(ranked >= PRE_DATA.ranked)) why.push('announcements with a ranked signal session ' + ranked + ' (15,000 needed: reader check)');
+  return { ok: !why.length, ratios: { subs: r4(r.subs), map: r4(r.map) }, ranked, why: why.join('; ') || null }; }
+const PRE_SOURCES = ['https://doi.org/10.1007/s11142-009-9104-9', 'https://ideas.repec.org/a/spr/reaccs/v15y2010i2d10.1007_s11142-009-9104-9.html', 'https://alphaarchitect.com/go-long-make-money-go-short-make-money-all-good/'];
+const PRE_NOTE = 'Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) "Limited attention and the earnings announcement returns of past stock market winners": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun.';
+export function preRegisterPre(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of PRE_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-12 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Announcement grouping, reaction timing, 12-month ranking, cut-offs, windows and data rule fixed in research-core.mjs (IDEA 16) before any run.', sources: PRE_SOURCES, hold: R.hold, note: PRE_NOTE }); ch++; }
   return ch; }

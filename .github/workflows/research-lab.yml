@@ -20,7 +20,7 @@ name: Research lab
 # read once into research-cache/oc.json.gz; paper via companyconcept. Idea 14 (10 Nov 2026): WIKIPEDIA ATTENTION (RQ-WIKI-*; Pyun 2024, Da, Engelberg
 # and Gao 2011): Wikidata CIK (P5531) -> English article map (research-cache/wiki-map.json) + Wikimedia Pageviews API daily user views
 # (research-cache/wiki.json.gz, extended each run; also the paper lane). Idea 15 (11 Nov 2026): FINRA DAILY SHORT SALE VOLUME (RQ-SVOL-*; Wang, Yan and Zheng 2020):
-# FINRA Reg SHO consolidated daily files (cdn.finra.org, official, free), liquid stocks only, research-cache/svol.json.gz (extended each run; also the paper lane). The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
+# FINRA Reg SHO consolidated daily files (cdn.finra.org, official, free), liquid stocks only, research-cache/svol.json.gz (extended each run; also the paper lane). Idea 16 (12 Nov 2026): PRE-EARNINGS RUN-UP OF PAST WINNERS (RQ-PRE-*; Aboody, Lehavy and Trueman 2010): the idea-5 item-2.02 dates + 12-month returns from the price cache; no new reads, no paper lane yet. The price cache and Squad 1's cache (point-in-time ticker <-> CIK pairs) are RESTORED READ ONLY; only
 # research-cache is saved. Commits only its own output files and its own library entries. Never places an order.
 # Start by hand: change run-research-now.txt (or run the workflow).
 on:

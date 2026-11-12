@@ -34860,6 +34860,54 @@
     ],
     "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
    }
+  },
+  {
+   "id": "RQ-PRE-W1",
+   "family": "Daily researcher (RQ)",
+   "name": "Top-1% 12-month winners bought 5 sessions before their earnings report, sold the close before it",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-12 (daily researcher); 5-year one-shot pending",
+   "explain": "At the close 6 sessions before the reaction session r of an earnings 8-K (item 2.02, first of its 30-day group), rank every liquid stock by its 12-month return (close / close 252 sessions earlier - 1; 500+ stocks); if the reporting stock is liquid and in the top 1% (percentile >= 0.99), buy the open of r-5 and sell the close of r-1 (never held through the report). Announcement grouping, reaction timing, 12-month ranking, cut-offs, windows and data rule fixed in research-core.mjs (IDEA 16) before any run.",
+   "sources": [
+    "https://doi.org/10.1007/s11142-009-9104-9",
+    "https://ideas.repec.org/a/spr/reaccs/v15y2010i2d10.1007_s11142-009-9104-9.html",
+    "https://alphaarchitect.com/go-long-make-money-go-short-make-money-all-good/"
+   ],
+   "hold": 5,
+   "note": "Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) \"Limited attention and the earnings announcement returns of past stock market winners\": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-PRE-W10",
+   "family": "Daily researcher (RQ)",
+   "name": "Top-10% 12-month winners bought 5 sessions before their earnings report, sold the close before it",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-12 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-PRE-W1 with the top 10% (percentile >= 0.90). Announcement grouping, reaction timing, 12-month ranking, cut-offs, windows and data rule fixed in research-core.mjs (IDEA 16) before any run.",
+   "sources": [
+    "https://doi.org/10.1007/s11142-009-9104-9",
+    "https://ideas.repec.org/a/spr/reaccs/v15y2010i2d10.1007_s11142-009-9104-9.html",
+    "https://alphaarchitect.com/go-long-make-money-go-short-make-money-all-good/"
+   ],
+   "hold": 5,
+   "note": "Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) \"Limited attention and the earnings announcement returns of past stock market winners\": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-PRE-POST1",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: top-1% 12-month winners in the 5 sessions after their earnings reaction",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-12 (daily researcher); 5-year one-shot pending",
+   "explain": "Same ranking as RQ-PRE-W1 (at r-6, top 1%); bought the open of r+1, sold the close of r+5; judged before costs on both sides against the average stock. Never a buy. Announcement grouping, reaction timing, 12-month ranking, cut-offs, windows and data rule fixed in research-core.mjs (IDEA 16) before any run.",
+   "sources": [
+    "https://doi.org/10.1007/s11142-009-9104-9",
+    "https://ideas.repec.org/a/spr/reaccs/v15y2010i2d10.1007_s11142-009-9104-9.html",
+    "https://alphaarchitect.com/go-long-make-money-go-short-make-money-all-good/"
+   ],
+   "hold": 5,
+   "note": "Daily researcher 2026-11-12: Aboody, Lehavy and Trueman (2010, Review of Accounting Studies) \"Limited attention and the earnings announcement returns of past stock market winners\": top-1% 12-month winners earned +1.58% market-adjusted in the 5 days before earnings and -1.86% in the 5 days after (1971-2005). Different from ANOM-EAP (all reports, held through the report, rejected). Official SEC 8-K item 2.02 dates. Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
   }
  ]
 }
