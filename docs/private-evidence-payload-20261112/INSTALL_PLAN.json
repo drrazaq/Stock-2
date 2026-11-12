@@ -242,5 +242,10 @@
     "tools/quote-phase.mjs",
     "tools/recovery-check.mjs"
   ],
-  "authorization": "NONE; any future installed commit must be built on then-fresh private head with noreply identity and independently verified; no private provider evidence or credentials included"
+  "authorization": "NONE; any future installed commit must be built on then-fresh private head with noreply identity and independently verified; no private provider evidence or credentials included",
+  "preApprovalEvidenceRequirements": {
+    "retention": "Both recovery ZIPs persist in private Git history indefinitely. The exact issuing-account/provider licence and hosted-use terms must explicitly permit indefinite private repository retention of quote/reference bytes before any capture or recovery-upload approval. A one-day artifact retention or branch deletion is not an expiry/erasure guarantee. If not established: STOP, no recovery upload/acquisition; no alternative platform is authorized.",
+    "admissionFlags": "The separately reviewed approval text must cite actual dated evidence for every assertion: independent issuer review, issuing account/feed entitlement plus indefinite Git retention/hosted terms, secret-name enrollment metadata, owner billing6822689925 and fresh phase-time storage reservation, exact source/input pins and window. Hash/boolean/comment URL format alone do not authenticate these claims. Keep private receipts/terms/account evidence private; public comments use safe references only.",
+    "mobile": "Owner must extract twice: outer GitHub artifact ZIP, then inner synthetic-owner-access.zip; open UTF8 fixture and privately confirm ID, absolute expiry and SHA256SUMS match."
+  }
 }
