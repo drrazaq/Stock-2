@@ -1,4 +1,4 @@
-import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery} from './research-assessment.mjs';
+import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery,reconcileAssessmentDelivery} from './research-assessment.mjs';
 import {readInstrumentType,researchInstrumentScope} from './instrument-type.mjs';
 import {readPrivateAssessmentQuote} from './private-quote-retention.mjs';
 import {readAssessmentQuote,assessmentQuoteText} from './assessment-quote-context.mjs';
@@ -247,25 +247,29 @@ function researchDecisionTracePrototype(sym,{asOf,existingExit,previous}={}) {
 const researchReports=new Map();
 async function integratedResearchReply(sym,sig,pos={}){
  if(!env.ASSESSMENT_RESEARCH_ROOT)return null;
- const options=privateAssessmentOptions();
- try{publishPrivateAssessmentBook(fs.readFileSync('data/discovery-journal.jsonl'),options);}catch{/* Missing evaluated input is a concrete gap; never use public fixture book. */}
+ const options=privateAssessmentOptions();let bookStatus='';
+ try{publishPrivateAssessmentBook(fs.readFileSync('data/discovery-journal.jsonl'),options);}catch(e){bookStatus='BOOK_STALE: '+(/LOCK_HELD_OR_STALE/.test(e.message)?'LOCK HELD OR STALE — reconcile; no automatic takeover':'current journal/evaluation publication unavailable; prior book retains original expiry');}
  let holding=null,legacy=null;
  if(pos[sym]){const evidence={};legacy=await reviewReply(sym,sig,pos,evidence);holding=evidence.disposition;if(!holding)return legacy;}
  const current=()=>researchDecisionTracePrototype(sym,{asOf:new Date(Date.now()).toISOString(),existingExit:holding}).card;
  let card;try{card=current();}catch{return legacy||'ASSESSMENT UNAVAILABLE: private evidence unreadable; no action supported.';}
- let previous;try{previous=readAssessmentDelivery(sym,options);}catch{return 'ASSESSMENT UNAVAILABLE: private delivery evidence unreadable; existing holding instructions remain; reconcile before sending.';}
+ let previous;try{previous=readAssessmentDelivery(sym,options);}catch{return [legacy,'ASSESSMENT DELIVERY UNAVAILABLE: private evidence unreadable; reconcile before any research-card replay.'].filter(Boolean).join('\n\n');}
  const update=researchDecisionUpdate(previous,card);
- if(!update.shouldRender)return update.reason==='UNCHANGED'?'':'ASSESSMENT DELIVERY UNCERTAIN: reconcile the earlier message; existing holding instructions remain; no replay.';
+ if(!update.shouldRender&&update.reason!=='UNCHANGED')return [legacy,bookStatus,'ASSESSMENT DELIVERY UNCERTAIN: reconcile the earlier research card; existing holding instructions remain; no research-card replay.'].filter(Boolean).join('\n\n');
  if(researchReports.size>=64&&!researchReports.has(card.text))return legacy||'ASSESSMENT UNAVAILABLE: evidence report limit; no new action supported.';
- researchReports.set(card.text,{symbol:sym,card,current,options});return card.text;
+ researchReports.set(card.text,{symbol:sym,card,current,options,holding,legacy});return [legacy,bookStatus,card.text,update.reason==='UNCHANGED'?'Explicit request: unchanged since '+previous.at:null].filter(Boolean).join('\n\n');
 }
 function beginResearchSend(text){
- const contexts=[...researchReports.entries()].filter(([body])=>text.includes(body)).map(([,x])=>x),reservations=[];
- try{for(const c of contexts){const r=reserveAssessmentDelivery(c.symbol,c.card,{...c.options,now:Date.now()});reservations.push({context:c,reservation:r});}return {reservations,contexts};}
- catch{for(const x of reservations)try{settleAssessmentDelivery(x.reservation,'PROPOSED_NOT_SENT',{...x.context.options,now:Date.now()});}catch{}throw Error('PRIVATE_ASSESSMENT_RESERVATION_REFUSED');}
+ const contexts=[...researchReports.entries()].filter(([body])=>text.includes(body)).map(([,x])=>({...x})),reservations=[];
+ for(const c of contexts){try{const r=reserveAssessmentDelivery(c.symbol,c.card,{...c.options,now:Date.now(),explicitRequest:true});reservations.push({context:c,reservation:r});}catch(e){c.blocked=true;c.failure=/LOCK_HELD_OR_STALE/.test(e.message)?'LOCK HELD OR STALE — reconcile; no automatic takeover':'research delivery reservation unavailable; reconcile';}}
+ return {reservations,contexts,acknowledged:false};
 }
-function refreshResearchSend(text,session,now){let out=text;for(const c of session.contexts){const fresh=c.current(),a=researchDecisionUpdate(null,c.card,{now}),b=researchDecisionUpdate(null,fresh,{now});if(a.nextState.key!==b.nextState.key||c.card.expiry&&Date.parse(c.card.expiry)<=now)throw Error('ASSESSMENT_EVIDENCE_CHANGED_OR_EXPIRED');out=out.replace(c.card.text,fresh.text);}return out;}
-function finishResearchSend(session,status){for(const x of session?.reservations||[])settleAssessmentDelivery(x.reservation,status,{...x.context.options,now:Date.now()});}
+function refreshResearchSend(text,session,now){let out=text;for(const c of session.contexts){
+ if(c.holding&&['SELL','HOLD'].includes(c.holding.status)&&c.holding.currentEvidence(now)!==true)throw Error('HOLDING_EVIDENCE_EXPIRED');
+ if(!c.blocked){try{const fresh=c.current(),a=researchDecisionUpdate(null,c.card,{now}),b=researchDecisionUpdate(null,fresh,{now});if(a.nextState.key!==b.nextState.key||c.card.expiry&&Date.parse(c.card.expiry)<=now)throw Error('ASSESSMENT_EVIDENCE_CHANGED_OR_EXPIRED');out=out.replace(c.card.text,fresh.text);}catch{c.blocked=true;c.failure='research card changed or expired; request a fresh assessment';}}
+ if(c.blocked)out=out.replace(c.card.text,'RESEARCH CARD UNAVAILABLE: '+c.failure+'. Existing holding guidance and unrelated replies remain independently checked.');
+ }return out;}
+function finishResearchSend(session,status){for(const x of session?.reservations||[])settleAssessmentDelivery(x.reservation,x.context.blocked?(session.acknowledged?'UNCERTAIN':'PROPOSED_NOT_SENT'):status,{...x.context.options,now:Date.now()});}
 
 function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current action supplied', compact = false) {
   const clean = (v, limit = 240) => { const t = String(v !== null && typeof v === 'object' ? 'UNKNOWN' : v ?? '').replace(/[\r\n]+/g, ' '); return t.length <= limit ? t : t.slice(0, limit).replace(/\s+\S*$/, '') + '…'; };
@@ -1205,7 +1209,7 @@ async function telegramLive(render, buttons) {
       if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram refusal; part not acknowledged', r.status); tgFailed(r.status, why, part); sent.deliveryState = sent.length || r.status >= 500 ? 'UNKNOWN' : 'REFUSED';researchUnknown=sent.deliveryState==='UNKNOWN'; return sent; }
       let ack; try { ack = await r.json(); } catch { researchUnknown=true;sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
       if (!ack || ack.ok !== true || !Number.isSafeInteger(ack.result?.message_id)) { researchUnknown=true;sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
-      sent.push(part); a = 0; if (last){researchComplete=true;return sent;} await sleep(FAST ? 0 : 700); }
+      sent.push(part);if(researchSession)researchSession.acknowledged=true; a = 0; if (last){researchComplete=true;return sent;} await sleep(FAST ? 0 : 700); }
     catch (e) { researchUnknown=true;console.error('Telegram delivery UNKNOWN; connection failure, no replay'); tgFailed('UNKNOWN', 'connection failed after send attempt; no replay', part); sent.deliveryState = 'UNKNOWN'; return sent; }
   }
   return sent;
@@ -2436,7 +2440,7 @@ function observedHoldingPrice(sym,quote,now=Date.now()){
 }
 function holdingDisposition(sym,verdict,why,evidence,P){
  const valid=now=>Array.isArray(evidence.checks)&&evidence.checks.length>0&&evidence.checks.every(check=>check(now)===true);
- const status=/^(SELL(?:$|[ (])|STOP LEVEL REACHED)/.test(verdict)?'SELL':/^HOLD(?:$|[ (,])/.test(verdict)?'HOLD':'UNVERIFIED';
+ const status=['SELL','SELL (its tested exit fired)','STOP LEVEL REACHED'].includes(verdict)?'SELL':/^HOLD(?:$|[ (,])/.test(verdict)?'HOLD':'UNVERIFIED';
  let quantity=null;try{const n=privRead()?.shares?.[sym];if(Number.isInteger(n)&&n>0)quantity=n;}catch{}
  return {authority:'ACTUAL_HOLDING_REVIEW',symbol:sym,status,quantity,reason:why,condition:verdict,sourceSession:evidence.closeSession||null,observedAt:Number.isFinite(evidence.observed?.stop?.t)?new Date(evidence.observed.stop.t).toISOString():null,horizon:'Existing holding rule; unchanged',currentEvidence:valid};
 }
@@ -3286,7 +3290,7 @@ function sourceReply(src, sig) {
     'A source naming a stock is a lead. Only a line starting ENTRY CONFIRMED, QUICK TRADE or BUY WATCH carries prices from your tested rules.'].join('\n');
 }
 async function natural(text, sig, pos) {
- if(env.ASSESSMENT_RESEARCH_ROOT){const command=text.match(/^\s*(?:check|review)\s+([a-z.\-]{1,6})\s*$/i);if(command)return integratedResearchReply(command[1].toUpperCase(),sig,pos);}
+ if(env.ASSESSMENT_RESEARCH_ROOT){const reconcile=text.match(/^\s*reconcile\s+([a-z.\-]{1,6})\s*$/i);if(reconcile){try{const root=env.ASSESSMENT_RESEARCH_ROOT,file=path.join(root,'resolution.json');const st=fs.lstatSync(file);if(!st.isFile()||st.isSymbolicLink()||(st.mode&0o077)||st.size>65536)throw Error('unsafe witness');reconcileAssessmentDelivery(reconcile[1].toUpperCase(),fs.readFileSync(file),privateAssessmentOptions());return 'Research delivery reconciled from the exact pinned owner witness; no message replay or trade performed.';}catch{return 'RECONCILIATION UNAVAILABLE: exact pinned owner witness/token/key required; uncertainty retained.';}}const command=text.match(/^\s*(?:check|review)\s+([a-z.\-]{1,6})\s*$/i);if(command)return integratedResearchReply(command[1].toUpperCase(),sig,pos);}
   // a pasted tip list (2+ tickers with buy words, Arabic or English) is logged as tips, even when it names a known source
   { const tk = (western(text).match(/\b[A-Z]{2,5}\b/g) || []).filter(x => !NOT_TICKERS.has(x)); if (new Set(tk).size >= 2 && /\u0634\u0631\u0627\u0621|\u0627\u0642\u0644 \u0645\u0646|\u0623\u0642\u0644 \u0645\u0646|\u062A\u0648\u0635\u064A|\bbuy\b|\bbelow\b|\btarget\b/i.test(text)) return null; }
   if (/^\s*(health|system health|status check|sell|sells|sell check|why sell|what (to|should i) sell|which stocks to sell)\s*\??\s*$/i.test(text)) return null;   // menu words (audit 22 Oct)
@@ -3582,7 +3586,7 @@ async function tgCommands(sig) {
       if (hm) { const sym = hm[0].toUpperCase(), mk = HALALM(); mk[sym] = { s: hm[1] ? 'fail' : 'ok', d: ny(Date.now()).d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
         out.push(sym + (hm[1] ? ': marked NOT HALAL (ZAD). I will not offer it as a buy anywhere: plan, BUY NOW, radar or checks.' + (pos[sym] ? ' You hold it: decide yourself whether to sell.' : '') : ': marked HALAL (checked in ZAD). Thank you.') + ' To change it: halal ' + sym + (hm[1] ? ' yes' : ' no')); continue; } }
     if (/^traders?\s*$/i.test(text)) { out.push(tradersText()); continue; }
-    if (!(m.forward_origin || m.forward_from_chat)) { const nl = await natural(text, sig, pos); if (nl!==null&&nl!==undefined) { if(nl)out.push(nl); continue; } }   // a forwarded message is someone else's words: treat it as a tip, not as your question
+    if (!(m.forward_origin || m.forward_from_chat)) { const nl = await natural(text, sig, pos); if (nl) { out.push(nl); continue; } }   // a forwarded message is someone else's words: treat it as a tip, not as your question
     if (/^(sources?|tips?)\s*$/i.test(text)) { out.push(tipBoard(sig)); continue; }
     if ((k = m.text.trim().match(/^follow\s+(.+)$/i))) {       // follow NAME UCxxxxxxxx   (or a channel link containing the ID)
       let id = (k[1].match(/UC[\w-]{20,24}/) || [])[0];
