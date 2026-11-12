@@ -61,4 +61,24 @@ class Checks(unittest.TestCase):
   def mocked(sym,px,dates,c,scenario='HARSH'):return [{'s':sym,'t':0,'e':1,'x':10,'g':None,'status':'NO_FILL_OR_UNKNOWN','proxy':False,'base':True,'repeat':True},{'s':sym,'t':1,'e':2,'x':11,'g':.1,'status':'MODELED_RESOLVED','proxy':False,'base':True,'repeat':True}]
   with patch.object(E,'stock_events',side_effect=mocked):r=E.evaluate(P,D,C,A)
   h=r['halves']['repeat']['older'];self.assertEqual(h['attempts'],2);self.assertEqual(h['noFillOrUnknownEntry'],1);self.assertEqual(h['n'],1);self.assertEqual(r['concurrency']['maximumPositions'],1)
+ def test_own_control_gate_uses_pooled_rows_not_one_worst_stock(self):
+  D=E.sessions('2023-01-03','2024-12-31');P={('S'+str(i)):p(len(D)) for i in range(51)};P['SPY']=p(len(D))
+  def mocked(sym,px,dates,c,scenario='HARSH'):
+   rows=[]
+   for t in range(0,len(D)-10,10):
+    proxy=sym=='S0' and t==0
+    rows += [{'s':sym,'t':t,'e':t+1,'x':t+10,'g':(.1 if int(sym[1:])<4 else .2)+t*.00001,'status':'MODELED_RESOLVED','proxy':False,'base':True,'repeat':int(sym[1:])<4},{'s':sym,'t':t+1,'e':t+2,'x':t+11,'g':-1. if proxy and scenario=='HARSH' else 0.,'status':'NO_FURTHER_BAR_STRESS_PROXY_NOT_PROVEN_DELISTING' if proxy else 'MODELED_RESOLVED','proxy':proxy,'base':False,'repeat':False}]
+   return rows
+  with patch.object(E,'stock_events',side_effect=mocked):r=E.evaluate(P,D,C,A)
+  h=r['halves']['repeat']['older'];self.assertGreater(h['ownWorstStockProxyShare'],.02);self.assertLess(h['controlProxyShares']['ownPooled'],.02);self.assertEqual(h['ownPooledProxyRows'],1);self.assertGreater(h['ownPooledRows'],50);self.assertNotEqual(r['status'],'INCONCLUSIVE')
+ def test_pooled_own_control_above_two_percent_stays_inconclusive(self):
+  D=E.sessions('2023-01-03','2024-12-31');P={('S'+str(i)):p(len(D)) for i in range(51)};P['SPY']=p(len(D))
+  def mocked(sym,px,dates,c,scenario='HARSH'):
+   rows=[]
+   for t in range(0,len(D)-10,10):
+    proxy=int(sym[1:])<4 and t==0
+    rows += [{'s':sym,'t':t,'e':t+1,'x':t+10,'g':(.1 if int(sym[1:])<4 else .2)+t*.00001,'status':'MODELED_RESOLVED','proxy':False,'base':True,'repeat':int(sym[1:])<4},{'s':sym,'t':t+1,'e':t+2,'x':t+11,'g':-1. if proxy else 0.,'status':'NO_FURTHER_BAR_STRESS_PROXY_NOT_PROVEN_DELISTING' if proxy else 'MODELED_RESOLVED','proxy':proxy,'base':False,'repeat':False}]
+   return rows
+  with patch.object(E,'stock_events',side_effect=mocked):r=E.evaluate(P,D,C,A)
+  self.assertGreater(r['halves']['repeat']['older']['controlProxyShares']['ownPooled'],.02);self.assertEqual(r['status'],'INCONCLUSIVE')
 if __name__=='__main__':unittest.main()

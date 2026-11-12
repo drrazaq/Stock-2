@@ -5,7 +5,7 @@ root=pathlib.Path(__file__).resolve().parent;D=sessions('2021-11-01','2026-11-06
 
 def pack(n,prefix,price,volume):
  return {'T':[prefix+str(i).zfill(5) for i in range(n)],'o':[price+(i%1000)*.001 for i in range(n)],'h':[price+1+(i%1000)*.001 for i in range(n)],'l':[price-1+(i%1000)*.001 for i in range(n)],'c':[price+(i%1000)*.001 for i in range(n)],'v':[volume+i for i in range(n)]}
-source_hashes={f:hashlib.sha256((root/f).read_bytes()).hexdigest() for f in ['evaluate.py','stream_cache.py','analyze.py','CONTRACT.json','AMENDMENT.json','MISSINGNESS_ADDENDUM.json']}
+source_hashes={f:hashlib.sha256((root/f).read_bytes()).hexdigest() for f in ['evaluate.py','stream_cache.py','analyze.py','CONTRACT.json','AMENDMENT.json','MISSINGNESS_ADDENDUM.json','OWN_POOL_ADDENDUM.json']}
 row=pack(main,'M',10,1000000);row['x']=pack(tail,'X',2,100);encoded=json.dumps(row,separators=(',',':')).encode();cut=1100;after={k:([*v[1:]] if k!='x' else v) for k,v in row.items()};encoded_after=json.dumps(after,separators=(',',':')).encode();start=time.monotonic()
 with tempfile.TemporaryDirectory(prefix='stock2-synthetic-scale-') as d:
  f=pathlib.Path(d)/'grouped.json.gz'
