@@ -1,0 +1,158 @@
+{
+  "kind": "BEFORE_OUTCOMES_CONDITIONAL_REVIEW_AMENDMENT",
+  "frozenAt": "2026-11-12T06:24:56.786Z",
+  "contractCommit": "cb3a6eefa87bb333c25a5c2be31b391b449d8ab6",
+  "contractSha256": "915d0af17ca8135715b0b29527ff311a86b93fd387e6383ea93169a7465d6099",
+  "review": 6816297761,
+  "inputs": {
+    "data/squad28-paper.jsonl": {
+      "status": "RETAINED",
+      "sha256": "4f79c6106de7ca66d565efb832a049d1891ff305c2ca7ef3c344d74fa7ac8b28",
+      "bytes": 1133
+    },
+    "data/squad24-paper.jsonl": {
+      "status": "NOT_RETAINED",
+      "meaning": "Not proof no signals existed; do not manufacture zero observations."
+    },
+    "data/squad22-paper.jsonl": {
+      "status": "RETAINED",
+      "sha256": "52d3e6d22fb0d8d395a7c6cb02f69f79fa5952eee54a4e811b5c15fe19ea8a7a",
+      "bytes": 21228
+    },
+    "data/anomaly-paper.jsonl": {
+      "status": "RETAINED",
+      "sha256": "1fd0e6a06fc469082f6c782e96b76c57114c17ee2fefa7a4a23e97b58187b5a6",
+      "bytes": 3321457
+    },
+    "data/research-paper.jsonl": {
+      "status": "RETAINED",
+      "sha256": "cd16fa1d56529282b0f6d3f8e67d03e62a30fad8692cfd66570a6c48848894e1",
+      "bytes": 776511
+    },
+    "data/squad19-paper.jsonl": {
+      "status": "RETAINED",
+      "sha256": "798863a8559f0635c545709de7c1584ca739d9d265c1485b325e8b8b73c3fa46",
+      "bytes": 2132
+    },
+    "data/swing-paper.jsonl": {
+      "status": "NOT_RETAINED",
+      "meaning": "Not proof no signals existed; do not manufacture zero observations."
+    },
+    "data/squad16-paper.jsonl": {
+      "status": "RETAINED",
+      "sha256": "9b3a62d757d999fce625813edc9a3f1e9f6eb23e0b50d3814e95cf0e8be3f101",
+      "bytes": 30218
+    },
+    "data/squad4-paper.jsonl": {
+      "status": "RETAINED",
+      "sha256": "421688136f5eea4d8ebde76a71fadcdefa4c5a29eaa883610da85b6154c98925",
+      "bytes": 139907
+    },
+    "data/squad24-board.json": {
+      "status": "RETAINED",
+      "sha256": "438a335524c3b83d97b5b61e7265e054fc8b6c872896fe68ea91cf42bc2ae83f",
+      "bytes": 596
+    },
+    "data/squad19-board.json": {
+      "status": "RETAINED",
+      "sha256": "9e40474f7da6e2b51ce798cb510db2d5a410d87598e936339588db1ca55ce7f6",
+      "bytes": 758
+    },
+    "data/squad28-links.json": {
+      "status": "RETAINED",
+      "sha256": "93ca6a0d65d2bfe0788aef2e2a8ad6897fc11a6f62532db05e4c59f625b5290d",
+      "bytes": 688871
+    },
+    "data/squad28-linkcheck-v2.json": {
+      "status": "RETAINED",
+      "sha256": "1af6318d808b77a641317ec0ecbbb2bdb98dd5c0527023b62a1bbf72f37edbe4",
+      "bytes": 28032
+    },
+    "data/squad24-audit-evidence.json": {
+      "status": "RETAINED",
+      "sha256": "f7c4d786e4c60b0f6284c17f26a7d68af413ee282cd2665f90e7a96d66cb6820",
+      "bytes": 971467
+    },
+    "swing-lab.mjs": {
+      "status": "RETAINED",
+      "sha256": "1bf5f58aa60152da9bbfc7afcbaeae7bbde7da5c4890a7d09a113029d49ef1cf",
+      "bytes": 14891
+    },
+    "squad19-lab.mjs": {
+      "status": "RETAINED",
+      "sha256": "1d80fc36799eb681cb1573be44438004de71d3dfb5127df320db5b292b614e70",
+      "bytes": 53441
+    }
+  },
+  "selection824to20": "Selected economic channels from the existing library by mechanism/source/data feasibility, before measuring new outcomes. Names/known prior literature are already public; no claim blinded discovery or new tests. The 19 exact IDs are already tested and count prior search burden; 12 rejected versions are retired, not rerun. The row-ready rejected RD/GPVAL versions will NOT be re-sliced to rescue them. This batch screens existing mechanisms; next batch must be genuinely new exact hypotheses.",
+  "bindings": {
+    "A-SW1": {
+      "source": "swing-lab.mjs",
+      "sha256": "1bf5f58aa60152da9bbfc7afcbaeae7bbde7da5c4890a7d09a113029d49ef1cf",
+      "alias": "SW1",
+      "entry": "Close above200-day SMA and RSI2<10; next-session open; one trade perstock under original source overlap gates.",
+      "exit": "First close above5-day SMA checked from entry session, otherwise5-session close. No new stop/target.",
+      "hold": 5
+    },
+    "CAT-HUNTER-SUB5": {
+      "source": "squad19-core.mjs",
+      "sha256": "ce56199c0165b771e277496c7e5f1d54dbc066da374346af2d029c7d32fb9578",
+      "definition": {
+        "band": [
+          1,
+          5
+        ],
+        "dv": 1000000,
+        "name": "Under-5 primary-source catalyst hunter (FDA designation or positive topline 8-K), clean supply, hold 10 / stop 25%",
+        "rule": "Raw close 1-5 USD on the signal session t, 20-day average traded value >= 1M USD. Signal: an 8-K public in session t whose text contains an FDA designation phrase (Breakthrough Device/Therapy, Fast Track, Orphan Drug, Rare Pediatric Disease designation) [type A], or a positive-topline / primary-endpoint-met phrase in an 8-K carrying item 8.01 or 2.02 [type C]. Exclude: reverse split in the 60 days before t; 424B5 / S-1 / S-1/A / S-3 / S-3/A public in sessions t-19..t; any close-to-close move of 15%+ (either way) in t-21..t-1; already up 40%+ on the prior close when public (open for a pre-open filing, close for a filing in the session). Buy t+1 open; sell at the close of session 10 (entry day = 1) or a 25% stop under the fill."
+      },
+      "hold": 10
+    },
+    "SQ4-RDCOMP": {
+      "definition": {
+        "name": "R&D-heavy compounder with rising margins",
+        "plan": "G",
+        "short": "R&D 10%+ of revenue, revenue +15%+, gross AND operating margin up on a year earlier; hold 12 months, 35% stop, trail after +100%",
+        "rule": "Monthly: TTM R&D / TTM revenue >= 10%; TTM revenue growth >= 15%; TTM gross margin above a year earlier; TTM operating margin (OperatingIncomeLoss / revenue) above a year earlier. Buy every match. PLAN G: 1 unit at the next open; sell at the next open after a close at which the position is worth <= 65% of the money in (35% disaster stop); once a close has put it at +100% or more, sell at the next open after a close under its 50-session average; else sell at the close of session 252."
+      },
+      "hold": 252,
+      "plan": "G; no additional tranches"
+    },
+    "SQ4-GROWLEAD": {
+      "definition": {
+        "name": "Growth leader at a new high",
+        "plan": "G",
+        "short": "revenue +30%+ and accelerating, gross margin rising, within 5% of the 52-week high; hold 12 months, 35% disaster stop, 50-day trail after +100%",
+        "rule": "Monthly: TTM revenue growth >= 30%; latest quarter YoY growth above the prior quarter YoY growth; TTM gross margin above the TTM a year earlier; close >= 95% of the 52-week high. Buy every match. PLAN G: 1 unit at the next open; sell at the next open after a close at which the position is worth <= 65% of the money in (35% disaster stop); once a close has put it at +100% or more, sell at the next open after a close under its 50-session average; else sell at the close of session 252."
+      },
+      "hold": 252,
+      "plan": "G; no additional tranches"
+    },
+    "SQ16-GPVAL": {
+      "definition": {
+        "name": "Novy-Marx profitable value (gross profit / assets rank + book / market rank, 50 of the 500 largest, quarterly)",
+        "kind": "basket",
+        "review": "quarterly",
+        "uni": 500,
+        "n": 50,
+        "target": 50,
+        "block": 63,
+        "replication": "partial",
+        "source": {
+          "who": "Robert Novy-Marx (2013) The other side of value: the gross profitability premium, JFE 108(1) (Alpha Architect summary)",
+          "url": "https://alphaarchitect.com/combining-value-and-profitability-factors-to-improve-performance/",
+          "claim": "profitability 0.31%/month, value 0.41%/month, combined 0.71%/month long-short 1962-2010 (Sharpe 0.85); works \"even among the largest, most liquid stocks\"",
+          "costs": "gross of costs",
+          "oos": "later: value lost ~60% 2017-2020 while profitability held; the library's all-stock ANOM-GP was rejected"
+        },
+        "rule": "Quarterly review. Universe: the 500 largest, financials out. GP/A = TTM gross profit (or revenue - cost of revenue) / latest total assets; B/M = latest stockholders' equity / market value; both known and equity > 0. Score = percentile rank of GP/A + percentile rank of B/M (each 0..1 within the eligible set); hold the 50 highest (ties: higher GP/A), equal weight; sold when no longer among the 50.",
+        "deviations": "Long only (the paper is long-short); quarterly instead of annual / monthly; a fixed 50 instead of the top tercile / decile."
+      },
+      "rebalance": "Quarterly; sell when absent from top50, not a fixed252-day holding."
+    }
+  },
+  "forwardProtocol": "First priority: all retained signal/result rows for each exactID, joined onlybyexactid+method+symbol+signaldate; duplicates/conflicts explicit. Prospective eligible only if late=false and dated recordedAfter strictly before entryDate; same-day/absent clock remains UNKNOWN (day labels not subday receipts). Outcomes marked retrospective/backfilled never pooled into eligible forward. Historical recorded ZAD remains missing/unknown asobserved, never currentmarks. Missing file/notimplemented lane is NOT zero observed signals. Require30resolved/10formationdays plus original fullproof conditions; otherwise INCONCLUSIVE. Do not fabricate immature outcomes. Mark-price fallback/delist proceeds/no-fills unknown.",
+  "retrospectiveProtocol": "Only narrow completeness/concentration/control checks on non-rejected row-ready SUPDRIFT and GROWLEAD. FirstRun cohort never inferred merely from equal counts. All other original summaries disclosed but not called independently replicated. No 12rejected-version reruns or hold/thresholdchanges.",
+  "economics": "Missing USDfillprices means executablewhole-share economicsNULL. Do not invent100USDprices. Clearly labelled mathematical affordable-single-order bounds may be shown only after documented modelgross ratio reconstruction; no-fill affordability/outcomegaps prevent promotion.",
+  "nextBatchCondition": "Three genuine new exact mechanisms need novelty screen and frozen rule/data question: delivery-to-cash; unit-price/volume economics beyondinventorycuts; current namedcustomer-supplier exposures sourcedissuerbyissuer. READY only for demonstrably available documentary analysis; markettests BLOCKED pending exactmissingPIT/executablefields. Never renamefailedvariants orcount sourcevalidation asmarketbacktest."
+}
