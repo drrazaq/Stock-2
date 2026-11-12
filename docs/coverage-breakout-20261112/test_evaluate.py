@@ -56,4 +56,9 @@ class Checks(unittest.TestCase):
   def r(status):return {'status':status,'anyProxyRows':1}
   with patch.object(E,'evaluate',side_effect=[r('RETIRED_ON_LEGACY_CONSERVATIVE_STRESS'),r('FORWARD_PAPER_ONLY_NOT_PROVEN')]):x=E.evaluate_scenarios({},[],C,A)
   self.assertEqual(x['status'],'INCONCLUSIVE_MISSINGNESS_SENSITIVE');self.assertEqual(x['exactContract'],'INCONCLUSIVE');self.assertIsNone(x['execution'])
+ def test_no_fill_does_not_reserve_capital_or_block_next_signal(self):
+  D=E.sessions('2023-01-03','2024-12-31');P={'S0':p(len(D)),'SPY':p(len(D))}
+  def mocked(sym,px,dates,c,scenario='HARSH'):return [{'s':sym,'t':0,'e':1,'x':10,'g':None,'status':'NO_FILL_OR_UNKNOWN','proxy':False,'base':True,'repeat':True},{'s':sym,'t':1,'e':2,'x':11,'g':.1,'status':'MODELED_RESOLVED','proxy':False,'base':True,'repeat':True}]
+  with patch.object(E,'stock_events',side_effect=mocked):r=E.evaluate(P,D,C,A)
+  h=r['halves']['repeat']['older'];self.assertEqual(h['attempts'],2);self.assertEqual(h['noFillOrUnknownEntry'],1);self.assertEqual(h['n'],1);self.assertEqual(r['concurrency']['maximumPositions'],1)
 if __name__=='__main__':unittest.main()

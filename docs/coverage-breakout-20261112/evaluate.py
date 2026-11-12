@@ -135,7 +135,8 @@ def evaluate(P,D,c,a,scenario='HARSH'):
     if z[variant] and z['e']>busy:
      selected[variant].append(z)
      if len(selected[variant])>a['limits']['maxEventsEachVariant']:raise ValueError('EVENT_CAP')
-     busy=z['x'];unknown[variant]+=z['g'] is None
+     if z['g'] is not None:busy=z['x']
+     unknown[variant]+=z['g'] is None
  avg={t:mean(v) for t,v in market.items() if len(v)>=50};base={t:mean(v) for t,v in baseall.items()};spy={};spy_proxy={};spy_terminal={}
  if 'SPY' in P:
   p=P['SPY'];spy_proxy={};spy_terminal={}
@@ -168,6 +169,7 @@ def evaluate(P,D,c,a,scenario='HARSH'):
    if not h['yearSpyDifferences'] or any(v is None or v<=0 for v in h['yearSpyDifferences'].values()):reasons.append(half+':SPY_YEAR_GATE')
  events=collections.Counter();positive=collections.Counter()
  for z in selected['repeat']:
+  if z['g'] is None:continue
   events[z['e']]+=1;events[z['x']+1]-=1
   if z['g'] is not None and z['g']>.008:positive[z['s']]+=z['g']-.008
  cap=mx=0
