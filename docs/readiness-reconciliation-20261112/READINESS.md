@@ -2,6 +2,16 @@
 
 Preparation only. No installation, dispatch, acquisition, settings change or trading is approved. Evidence inspected approximately 11:25–11:32 UTC; refresh mutable facts before any action.
 
+## Extraction repair continuation at13:00UTC
+
+Original authorizedrun43219642941 failed cache extraction before analysis; full read-only receipt6823915995 was completed withinstart+25min and preserved unchanged. No authentic historical finding exists. Owner6823984435 authorized development repair only; prior run authority is exhausted.
+
+Genuine tmpfs+UID1001+zstdtar reproduced directory metadataexit2; runner-owned0755tmpfs fixed extraction. Frozen evaluator/aggregate local rehearsals included structuralPASS with INCONCLUSIVE diagnostic and missing-sessionINCONCLUSIVE; sourcehashes stable. Claude6824269543 independently accepts exacttwo-line workflow fix, noreplypins and real-root FULLchain with exactroremount. RootlessDocker bindadaptation/plaintar limitation and locallypublished aggregates remain explicit; no hosteduploadsuccess claimed.
+
+Correctionpackage221afa7e: install8c792476 on actuala5febe9d, inverse05299318 restores prior installedworkflow, newblob434141c2/SHA25679adce98...08d2b. Stage2nondata path count14 unchanged; correctedblob must be used at actualFINAL/scopedrecovery. New bounded request under ../ra2-extraction-repair-20261112/FRESH_RUN_REQUEST.md, proposedlateststart13:30Z/approvalby13:25Z. Actual presentattendance and freshhead gate required. No correctionpush/secondrun performed; billing/evaluator/private-development closures preserved.
+
+Earlier snapshots below are historical and superseded where facts differ.
+
 ## Final current readiness12:34:20Z
 
 AgentC closed6823643620; subsequent Movers commit5f697c5c was verified data-only. Current noreply installa5febe9d/inverse01e3d8ee are independently confirmed by Claude6823740320 on exactparent5f697c5c, present operator acceptance; Codex is read-only verifier. Single exact request: settled-agent-c/APPROVAL_REQUEST.md. Direct owner approval in existing Claude release chat by12:55Z, one ordinarypush+onedispatch before13:00Z/within30minapproval, job cutoff13:00Z; stop on any drift/UNKNOWN/absence/expiry. No operation/approval inferred. Earlier47438d3e draft was held before owner presentation; earlier12:25 draft stays withdrawn. Billing/evaluator/private-development closures preserved, no repeated tests.
