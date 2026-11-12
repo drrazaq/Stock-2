@@ -1,0 +1,117 @@
+{
+  "kind": "NEW_RETAINED_ROWS_NOT_NEW_BACKTEST",
+  "base": "7db2c83b574bbe0d85d4c9972ad2230a36004816",
+  "head": "3aa893f52022a03a7fbac783599691e87c86abd8",
+  "files": {
+    "data/squad12-paper.jsonl": {
+      "baseSha256": "80acb10a1567c21d5cdb70ac97eaad3391f9736047fa0163031cf3f8257af130",
+      "headSha256": "3115e0f128fa870f4f69ba05191b96a35f6dc61c128afdef189549dcfc23ad75",
+      "oldRows": 164,
+      "newRows": 1,
+      "types": {
+        "signal": 1
+      },
+      "oldPrefixPreserved": true
+    },
+    "data/squad14-paper.jsonl": {
+      "baseSha256": "004d4c7df75264b40fbc507125a6f06b5851955e65e0b29d7bf9d00f025f3afa",
+      "headSha256": "91aa374da9a3d69ca164ede5949bca9bb348ada2ad43d72ce7b7187d0b22dbfa",
+      "oldRows": 55,
+      "newRows": 1,
+      "types": {
+        "signal": 1
+      },
+      "oldPrefixPreserved": true
+    },
+    "data/squad23-paper.jsonl": {
+      "baseSha256": "92ffc2190026183993a3f2bf709726f062b8ec91322c6a70865c3410f50eefd5",
+      "headSha256": "99b045483e62840848bff913065e2aa884b228616a88674b5155b675af4bcb63",
+      "oldRows": 60,
+      "newRows": 5,
+      "types": {
+        "mark": 5
+      },
+      "oldPrefixPreserved": true
+    }
+  },
+  "paperUpdates": [
+    {
+      "method": "SQ12-REVEPS",
+      "signalSession": "2026-10-30",
+      "recordedAfter": "2026-11-11",
+      "clockStatus": "LATE_BACKFILL",
+      "newResolvedOutcome": false
+    },
+    {
+      "method": "SQ14-PB12P5",
+      "signalSession": "2026-11-11",
+      "recordedAfter": "2026-11-11",
+      "clockStatus": "DATE_LABEL_ONLY_NOT_AUTHENTICATED_CAPTURE",
+      "newResolvedOutcome": false
+    }
+  ],
+  "newModelMarks": [
+    {
+      "method": "SQ23-NEXT30",
+      "previousSession": "2026-11-10",
+      "session": "2026-11-11",
+      "storedIndexRatioPct": {
+        "alone": 2.503651157938669,
+        "combo7030": 1.9191974265307277,
+        "basket1": 1.6646366220056885
+      },
+      "interpretation": "Arithmetic on stored rounded model-index snapshots only; same-vintage account continuity not authenticated; not executable/forward-account returns"
+    },
+    {
+      "method": "SQ23-MIDQ",
+      "previousSession": "2026-11-10",
+      "session": "2026-11-11",
+      "storedIndexRatioPct": {
+        "alone": 0.339113680154135,
+        "combo7030": 1.21764739196919,
+        "basket1": 1.6646366220056885
+      },
+      "interpretation": "Arithmetic on stored rounded model-index snapshots only; same-vintage account continuity not authenticated; not executable/forward-account returns"
+    },
+    {
+      "method": "SQ23-WORLD",
+      "previousSession": "2026-11-10",
+      "session": "2026-11-11",
+      "storedIndexRatioPct": {
+        "alone": 2.058533377178562,
+        "combo7030": 1.7815091635097646,
+        "basket1": 1.6650204599971907
+      },
+      "interpretation": "Arithmetic on stored rounded model-index snapshots only; same-vintage account continuity not authenticated; not executable/forward-account returns"
+    },
+    {
+      "method": "SQ23-GOLD",
+      "previousSession": "2026-11-10",
+      "session": "2026-11-11",
+      "storedIndexRatioPct": {
+        "alone": -1.1340158854047155,
+        "combo7030": 0.791544222201157,
+        "basket1": 1.6646366220056885
+      },
+      "interpretation": "Arithmetic on stored rounded model-index snapshots only; same-vintage account continuity not authenticated; not executable/forward-account returns"
+    },
+    {
+      "method": "SQ23-NEXT30-MOM",
+      "previousSession": "2026-11-10",
+      "session": "2026-11-11",
+      "storedIndexRatioPct": {
+        "alone": 3.628146381269226,
+        "combo7030": 2.2054650125679087,
+        "basket1": 1.6661470781807575
+      },
+      "interpretation": "Arithmetic on stored rounded model-index snapshots only; same-vintage account continuity not authenticated; not executable/forward-account returns"
+    }
+  ],
+  "limitations": [
+    "No new resolved outcomes in these appended rows",
+    "Private halal fields/stock identities/holdings omitted",
+    "Basket marks are full-history resimulation equity levels, not authenticated persisted forward positions; old entries not rewritten does not establish same input vintage",
+    "Native basket model0.4%per-side turnover/0.6%stress is not $3/order whole-share economics; order-level quantities absent",
+    "No PnL significance, new trading rule, ZAD approval or BUY inferred"
+  ]
+}

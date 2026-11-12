@@ -1,0 +1,79 @@
+{
+  "sourcePin": "3aa893f52022a03a7fbac783599691e87c86abd8",
+  "hashes": {
+    "data/squad15-paper.jsonl": "3e59f0248cc41bdde36a17116b80b50eb8a7d8190d6e116399d53697acbb472c",
+    "data/squad15b-paper.jsonl": "ab6542bf917ebc07a936d8be38cdb007c9a46daed87d966fe4425ef5f013f6f5",
+    "data/squad15-lab.json": "cc4031fb4ec191bbe09929e4b6ca6efe3b4e5430a1329a4621ba4b8172f0bd46",
+    "squad15-lab.mjs": "d0e674bfab40d7c393c9422752e1cc587f9de6d2a2bd8bad1c57a38b27d02687",
+    "squad15b-core.mjs": "1a86eef3a828473421ac04829e4d08dc7ce1df754b981545c893368143b67c90"
+  },
+  "lanes": {
+    "data/squad15-paper.jsonl": {
+      "rows": 54,
+      "rowTypes": {
+        "signal": 27,
+        "entry": 27
+      },
+      "distinctUnderlyingSignalDays": 9,
+      "signalsByRule": {
+        "SQ15-PB12-ATM": 9,
+        "SQ15-PB12-ITM": 9,
+        "SQ15-REPL": 9
+      },
+      "entryRecords": 27,
+      "modeledEntries": 27,
+      "resultRecords": 0,
+      "quoteAndCaptureClocksInModeledEntries": 0,
+      "entrySpreadPctOfMid": {
+        "n": 27,
+        "minimum": 1.919658727337354,
+        "maximum": 14.193548387096763
+      },
+      "skips": {},
+      "authenticExecutableOutcomeChains": 0
+    },
+    "data/squad15b-paper.jsonl": {
+      "rows": 17,
+      "rowTypes": {
+        "signal": 15,
+        "entry": 2
+      },
+      "distinctUnderlyingSignalDays": 8,
+      "signalsByRule": {
+        "SQ15-PB12-300": 8,
+        "SQ15-PB12-2000": 7
+      },
+      "entryRecords": 2,
+      "modeledEntries": 0,
+      "resultRecords": 0,
+      "quoteAndCaptureClocksInModeledEntries": 0,
+      "entrySpreadPctOfMid": {
+        "n": 0,
+        "minimum": null,
+        "maximum": null
+      },
+      "skips": {
+        "EXCLUDED: not ZAD-halal-ok (unknown)": 11,
+        "SKIP: no affordable contract": 2,
+        "EXCLUDED: not ZAD-halal-ok (fail)": 2
+      },
+      "authenticExecutableOutcomeChains": 0
+    }
+  },
+  "frozenVerdicts": {
+    "SQ15-PB12-ATM": "NOT PROVEN",
+    "SQ15-PB12-ITM": "NOT PROVEN",
+    "SQ15-MOM-ATM": "NOT PROVEN",
+    "SQ15-MOM-ITM": "NOT PROVEN",
+    "SQ15-REPL": "NOT PROVEN",
+    "SQ15-DIP": "INFORMATION (TOO FEW CASES)"
+  },
+  "privacy": "No individual stock, option contract, owner ZAD mark or holding republished",
+  "limits": [
+    "Historical daily option bars plus later measured spread proxy are not historical executable NBBO",
+    "Forward labels do not prove an eligible execution: oldlane dropsquote.t and keeps no original capturetime; entry planneddate is not receipt",
+    "No0closed sample can prove profitability; 27 entries are modeled quote observations ofunknownclock, not trades or qualified opportunities",
+    "Budgetlane has0fills, not a losing economic result",
+    "Fee5USD/contract/side provisional; not3USDstock-order fee; official exactZADtier/product/Sharia/fee evidence still needed; no brokerlevel inference"
+  ]
+}

@@ -1,0 +1,7 @@
+from decimal import Decimal as D
+import json,pathlib
+x={'source':'https://www.sec.gov/Archives/edgar/data/1447669/000144766926000106/twloq326ex991.htm','publicDate':'2026-10-29','readDate':'2026-11-12','units':'USD millions unless shares/EPS noted','quarters':{}}
+for year,cfo,software,ppe,sbc,ni,shares in [('2026','389.164','14.585','4.950','153.916','161.157','161.7'),('2025','263.563','13.812','2.235','158.169','37.248','159.2')]:
+ c,s,p,b,n,q=map(D,[cfo,software,ppe,sbc,ni,shares]);fcf=c-s-p;x['quarters'][year]={'cfo':str(c),'capitalizedSoftware':str(s),'longLivedAssetPurchases':str(p),'fcf':str(fcf),'sbc':str(b),'fcfLessSbcSensitivity':str(fcf-b),'netIncome':str(n),'dilutedWeightedAverageSharesMillions':str(q),'cfoToNi':str(c/n),'note':'FCF less SBC is an ownership-cost sensitivity, not GAAP cash flow or a trading return'}
+x['dilutedWeightedShareChangePct']=str((D('161.7')/D('159.2')-1)*100);x['reportedRevenueBridge']={'GAAP':'1559.536','incrementalCarrierFeesExcluded':'53.128','acquisitionExcluded':'1.760','organic':'1504.648'};assert D('1559.536')-D('53.128')-D('1.760')==D('1504.648');x['periodCaution']='YTD937.077tax-valuation-allowance release is not a Q3cashreceipt;9monthCFO914.755 is not quarterly389.164';x['originalBytes']='Not newly downloaded; public primary web reading only. No original Oct decision-time receipt authenticated.'
+pathlib.Path(__file__).with_name('TWLO_CALCULATIONS.json').write_text(json.dumps(x,indent=2)+'\n');print('PASS source table arithmetic and quarter/YTD separation; no price/return acquisition')
