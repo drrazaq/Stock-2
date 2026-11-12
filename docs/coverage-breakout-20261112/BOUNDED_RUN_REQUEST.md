@@ -1,0 +1,33 @@
+# R-A1 consolidated bounded request — independent review required before owner approval
+
+## Exact proposed operation
+
+Proposed operator **Claude**, subject to actual acceptance and present-now access. Codex performs read-only hosted-log/result verification; no unattended/future attendance assumed. Owner need not keep a16-hour session alive. This job cannot change a trading decision and needs no production recovery intervention if it fails.
+
+Authorize only after Claude accepts this exact package and fresh readiness establishes no release/writer/recovery conflict, current main single-path composition, read access to Actions cache metadata, and owner's existing enforceable Actions$0 spending control. Source/contract/selector/tests immutable pin is recorded in MANIFEST.json. Isolated workflow template checks out that pin, not mutable main. New file destination `.github/workflows/bounded-retained-cache-coverage-ra1.yml` only; template blob/hash in MANIFEST.json is binding. Existing Stage1/Stage2 workflows and approved source/data remain untouched.
+
+**One approval, two explicit actions:**
+1. One ordinary non-force installation push whose sole changed path is that exact new workflow file. Claude must first build and show its actual fresh-main commit/parent/tree and single-path inverse candidate, preserving all newer code/data. No push if its parent/path diff or template hash differs. Use reviewed `[skip ci]` message to avoid unrelated push Tests. No trigger-file push, existing lab edit, source promotion or unrelated workflow action. This review draft does not yet name that future installation commit; therefore it is **not executable owner approval text today**. Claude must include the prepared exact installation candidate in the final consolidated owner request, not ask approval for a placeholder.
+2. Exactly one manual dispatch of this isolated workflow, on that installed commit/main if still present and unchanged, using `latest_start_utc` equal to the owner-approved cutoff (at most approval+30min). No second dispatch/retry/cancel, schedule, lab trigger, task-setting or permission-setting change. If dispatch publication is UNKNOWN, establish run state read-only and do not repeat. A delayed runner rejects the expired cutoff before cache access; no moving deadline. Workflow emits no PASS of strategy economics.
+
+No outcome evaluation is included. Analyzer coverage-only API guarantees no signal/return enumeration, even if the cache unexpectedly contains more fields; such provenance needs independent parser/review, not a manual boolean bypass. This is an explicit narrower R-A1 decision than a full trading test. The frozen10-session cap-free specification prevents selecting favorable thresholds from this observation. Its historical market-cap filter remains absent, and it is not the owner's small-cap screen.
+
+## Boundaries and counts (complete closure in ACTION_CLOSURE.md)
+
+- One job, wall timeout10min; admission rejects expired cutoff or cutoff more than30min ahead. No new automation or future run.
+- **Zero provider/SEC/broker/Telegram requests**, no provider credentials, no holdings/trades/ZAD files. Only ≤2 GitHub cache-metadata GETs; one exact cache restore; one sparse immutable source checkout; one aggregate artifact upload plus normal GitHub action/job/log transport. Restore/upload may make internal segment/retry requests; not misrepresented as a total2GET run.
+- Latest main-scope `leaders-study-*` version chosen by metadata time, not returns; whole-cache compressed size≤256MiB; no older fallback or prefix restore. Extracted input and transfer scratch each hard-limited512MiB tmpfs. Analyzer file≤256MiB compressed/1GiB decompressed,4GiB address space,180CPU seconds,1600sessions/12mrows/16ktickerlabels. Temporary mounts and network namespace are expressly included; if unavailable, fail without weakening them.
+- Output only≤128KiB aggregate coverage JSON, one-day artifact retention; raw cache remains on existing runner and is never exported/committed. No cache save, main data/result/library writes, histories/offset edits or private access grant. Normal source/OS/GitHub bookkeeping is additional ephemeral runner overhead; not falsely included in the two512MiB data mounts.
+- Incremental spend$0 only with actual owner evidence of the existing billing control/allowance. No purchases/upgrades/provider messages or new credentials. No raw vendor data shared with models/others; applicable existing hosted-processing/source terms remain gates.
+
+## Receipts and failures
+
+At dispatch record candidate/parent/tree, workflow blob, source pin, approval/cutoff, actual operator and dispatch/run identity. At actual job startS require complete hosted-job log and hashed coverage artifact receipt by **S+25minutes**, with actual verifier present; do not promise this beforehand. Missing/unavailable/late verifier or receipts leave this research run **UNVERIFIED**, with no new dispatch, rule adoption or operational recovery action. Logs/status can be inspected from retained evidence later; retain the expired/failed attempt honestly. Owner approval of one attempt does not authorize deadline extension or rerun.
+
+Cache absent/oversize/metadata denied/incomplete/version changed, mount/namespace failure, malformed data or caps hit → stop with complete failure evidence; missing input handled by analyzer → INCONCLUSIVE aggregate report. A successful inspector job remains INCONCLUSIVE coverage, never a profitable-result claim. No production state depends on it. Do not delete workflow/cache/artifact or automatically reverse install. Any undo/removal requires separate authorization and fresh composition that preserves intervening work.
+
+## Expected capability and exact remaining owner decision
+
+This can establish actual retained-data coverage and identify whether broader evaluation is blocked by archive shape, date gaps, tail rows or provenance. It cannot alone authenticate raw-dollar fills, historical cap, dead-company settlements, historical ZAD or deliver a qualified BUY. A separate outcome implementation/approval is required after coverage review; the86-GET pilot stays a lower-priority, separately approved fallback.
+
+After independent acceptance, Claude should present **one** concrete install+single-run request with the exact fresh installation and inverse commits, existing$0 evidence, cutoff and actual attended verifier agreement. Until then: no owner setup, secret enrollment, workflow installation/dispatch, provider acquisition or operational action. Preparation and synthetic checks only are authorized now.
