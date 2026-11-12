@@ -266,8 +266,8 @@ function beginResearchSend(text){
 }
 function refreshResearchSend(text,session,now){let out=text;for(const c of session.contexts){
  if(c.holding&&['SELL','HOLD'].includes(c.holding.status)&&c.holding.currentEvidence(now)!==true)throw Error('HOLDING_EVIDENCE_EXPIRED');
- if(!c.blocked){try{const fresh=c.current(),a=researchDecisionUpdate(null,c.card,{now}),b=researchDecisionUpdate(null,fresh,{now});if(a.nextState.key!==b.nextState.key||c.card.expiry&&Date.parse(c.card.expiry)<=now)throw Error('ASSESSMENT_EVIDENCE_CHANGED_OR_EXPIRED');out=out.replace(c.card.text,fresh.text);}catch{c.blocked=true;c.failure='research card changed or expired; request a fresh assessment';}}
- if(c.blocked)out=out.replace(c.card.text,'RESEARCH CARD UNAVAILABLE: '+c.failure+'. Existing holding guidance and unrelated replies remain independently checked.');
+ if(!c.blocked){try{const fresh=c.current(),a=researchDecisionUpdate(null,c.card,{now}),b=researchDecisionUpdate(null,fresh,{now});if(a.nextState.key!==b.nextState.key||c.card.expiry&&Date.parse(c.card.expiry)<=now)throw Error('ASSESSMENT_EVIDENCE_CHANGED_OR_EXPIRED');out=out.replaceAll(c.card.text,fresh.text);}catch{c.blocked=true;c.failure='research card changed or expired; request a fresh assessment';}}
+ if(c.blocked)out=out.replaceAll(c.card.text,'RESEARCH CARD UNAVAILABLE: '+c.failure+'. Existing holding guidance and unrelated replies remain independently checked.');
  }return out;}
 function finishResearchSend(session,status){for(const x of session?.reservations||[])settleAssessmentDelivery(x.reservation,x.context.blocked?(session.acknowledged?'UNCERTAIN':'PROPOSED_NOT_SENT'):status,{...x.context.options,now:Date.now()});}
 

@@ -2,6 +2,7 @@
 import {createHash,randomUUID} from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
+import {marketSymbol} from './market-symbol.mjs';
 import {assessmentRuleIdentity} from './discovery-runtime.mjs';
 import {validatedPrivateRoot,boundedPrivateFile,atomicPrivateFile} from './private-quote-retention.mjs';
 const text=(x,n=220)=>typeof x==='string'?x.replace(/[\r\n]+/g,' ').slice(0,n):'';
@@ -103,7 +104,7 @@ export function bindEvaluatedAssessments(journalBytes,evaluationBytes,{now=Date.
   if(a.ruleIdentityState!=='IDENTIFIED'||rule.ruleIdentityState!=='IDENTIFIED'||a.symbol!==v.symbol||a.ruleId!==v.ruleId||a.ruleVersion!==v.ruleVersion||a.evidenceVersion!==v.evidenceVersion||!hex(a.evidenceVersion)||v.definitionSha256!==hashBytes(Buffer.from(JSON.stringify(canonical(a.ruleDefinition))))||!hex(v.sourceSha256))throw Error('EXACT_RULE_EVIDENCE_BINDING');
   if(!stamp(v.observedAt)||!stamp(v.expiresAt)||Date.parse(v.observedAt)>now||Date.parse(v.expiresAt)<=Date.parse(v.observedAt)||!['QUALIFYING','NO_SETUP','UNKNOWN'].includes(v.setup))throw Error('EVALUATION_CLOCK_OR_SETUP');
   if(seen.has(a.symbol))throw Error('AMBIGUOUS_SYMBOL_EVALUATION');seen.add(a.symbol);
-  const complete=v.population?.status==='COMPLETE'&&Array.isArray(v.population.symbols)&&v.population.symbols.length>0&&v.population.symbols.length<=400&&new Set(v.population.symbols).size===v.population.symbols.length&&v.population.symbols.includes(a.symbol)&&v.population.sha256===digest(v.population.symbols)&&hex(v.quoteArchiveSha256)&&hex(v.identityReferenceSha256);
+  const complete=v.population?.status==='COMPLETE'&&Array.isArray(v.population.symbols)&&v.population.symbols.length>0&&v.population.symbols.length<=400&&v.population.symbols.every(x=>typeof x==='string'&&marketSymbol(x)===x)&&new Set(v.population.symbols).size===v.population.symbols.length&&v.population.symbols.includes(a.symbol)&&v.population.sha256===digest(v.population.symbols)&&hex(v.quoteArchiveSha256)&&hex(v.identityReferenceSha256);
   const record={id:a.ruleId,version:a.ruleVersion,definition:a.ruleDefinition,verdict:v.verdict||'NOT PROVEN',adopted:false,synthetic:e.synthetic===true,evidence:{symbol:a.symbol,ruleVersion:a.ruleVersion,evidenceVersion:a.evidenceVersion,sourceSha256:v.sourceSha256,observedAt:v.observedAt,expiresAt:v.expiresAt,setup:v.setup},journalBinding:{assessmentId:a.id,horizon:a.horizon,journalSha256:hashBytes(journalBytes)}};
   const coverage={status:complete?'COMPLETE':'PARTIAL',symbol:a.symbol,ruleVersion:a.ruleVersion,evidenceVersion:a.evidenceVersion,version:digest(v),quoteArchiveSha256:v.quoteArchiveSha256,identityReferenceSha256:v.identityReferenceSha256,review:e.review,observedAt:v.observedAt,expiresAt:v.expiresAt};
   entries.push({symbol:a.symbol,record,coverage});

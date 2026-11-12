@@ -464,21 +464,22 @@ index 2b87e5b5..17b40002 100644
 -// Reused by the separately opted-in private assessment book; producer behavior unchanged.
 -export {privateRoot as validatedPrivateRoot,file as boundedPrivateFile,atomic as atomicPrivateFile};
 diff --git b/research-assessment.mjs a/research-assessment.mjs
-index 1742c37e..816c7569 100644
+index 86df4f7e..816c7569 100644
 --- b/research-assessment.mjs
 +++ a/research-assessment.mjs
-@@ -1,9 +1,5 @@
+@@ -1,10 +1,5 @@
  // Development-only research presentation. No rule adoption, trading gate or side effect.
 -import {createHash,randomUUID} from 'node:crypto';
 -import fs from 'node:fs';
 -import path from 'node:path';
+-import {marketSymbol} from './market-symbol.mjs';
 -import {assessmentRuleIdentity} from './discovery-runtime.mjs';
 -import {validatedPrivateRoot,boundedPrivateFile,atomicPrivateFile} from './private-quote-retention.mjs';
 +import {createHash} from 'node:crypto';
  const text=(x,n=220)=>typeof x==='string'?x.replace(/[\r\n]+/g,' ').slice(0,n):'';
  const positive=x=>typeof x==='number'&&Number.isFinite(x)&&x>0;
  const digest=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
-@@ -11,8 +7,6 @@ export function researchRuleAssessment(record){
+@@ -12,8 +7,6 @@ export function researchRuleAssessment(record){
   if(!record||typeof record!=='object')return {state:'NO_RESEARCH_RULE',label:'No research rule supplied',actionAuthority:false};
   // An external ID or a legacy verdict does not authenticate the rule definition.
   const d=record.definition,identified=typeof record.id==='string'&&record.id.length>0&&d&&typeof d==='object'&&!Array.isArray(d)&&typeof d.entry==='string'&&d.entry.trim()&&typeof d.exit==='string'&&d.exit.trim()&&d.parameters&&typeof d.parameters==='object'&&!Array.isArray(d.parameters);
@@ -487,7 +488,7 @@ index 1742c37e..816c7569 100644
   const version=identified?digest(canonical(d)):null;
   const matches=identified&&record.version===version;
   const state=!identified?'UNKEYED_RESEARCH_RULE':!matches?'RULE_VERSION_UNVERIFIED':/^(?:tested:\s*)?(?:rejected|failed(?: discovery)?|stop)(?:$|[\s(_;:-])/i.test(typeof record.verdict==='string'?record.verdict.trim():'')?'FAILED_RESEARCH_RULE':record.adopted!==true?'UNADOPTED_RESEARCH_RULE':'UNPROVEN_RESEARCH_RULE';
-@@ -24,12 +18,10 @@ export function conciseResearchDecision({symbol,record,asOf,now=Date.now(),exist
+@@ -25,12 +18,10 @@ export function conciseResearchDecision({symbol,record,asOf,now=Date.now(),exist
   const rule=researchRuleAssessment(record),at=Date.parse(asOf||''),validClock=typeof asOf==='string'&&/T.*(?:Z|[+-]\d\d:\d\d)$/.test(asOf)&&Number.isFinite(at)&&Number.isFinite(now)&&at<=now;
   // Only preserve an explicitly supplied, still-valid existing holding exit. Never derive a sell from research.
   const e=existingExit,until=Date.parse(e?.expiresAt||''),observed=Date.parse(e?.evidenceAt||'');
@@ -503,7 +504,7 @@ index 1742c37e..816c7569 100644
  }
  export function conciseResearchDecisionText(input){const r=conciseResearchDecision(input);return [r.status+' '+r.symbol,r.quantity?'quantity '+r.quantity:null,r.exit?'exit '+r.exit:null,'as of '+(r.asOf||'UNKNOWN')+(r.expiresAt?'; expires '+r.expiresAt:'; action expiry not established'),r.horizon,r.costs,r.reason,'ZAD '+r.zad,'Details: '+r.details].filter(Boolean).join(' | ');}
  
-@@ -47,7 +39,6 @@ export function traceResearchDecision({symbol,record,quote,instrument,zad,covera
+@@ -48,7 +39,6 @@ export function traceResearchDecision({symbol,record,quote,instrument,zad,covera
   if(!assessed)missing.push('ASSESSMENT_CLOCK_UNAVAILABLE');
   if(!identity)missing.push('VERIFIED_MATCHING_IDENTITY_REQUIRED');
   if(!quoteReady)missing.push('FRESH_COMPLETE_QUOTE_REQUIRED');
@@ -511,7 +512,7 @@ index 1742c37e..816c7569 100644
   if(q.currentBbo&&!matchingQuoteIdentity)missing.push('QUOTE_IDENTITY_MISMATCH');
   if(!artifact)missing.push('CURRENT_EXACT_RULE_EVIDENCE_REQUIRED');
   const cover=coverage?.status==='COMPLETE'&&coverage.symbol===symbol&&coverage.ruleVersion===rule.ruleVersion&&coverage.evidenceVersion===a?.evidenceVersion&&coverage.quoteArchiveSha256===q.archiveSha256&&coverage.identityReferenceSha256===instrument?.referenceSha256&&coverage.review?.status==='INDEPENDENT_PROVENANCE_REVIEWED'&&/^https:\/\/github\.com\/drrazaq\/Stock-2\/pull\/1#issuecomment-\d+$/.test(coverage.review.comment||'')&&clock(coverage.review.at)<=observedAt&&typeof coverage.version==='string'&&/^[a-f0-9]{64}$/.test(coverage.version)&&fresh(coverage.observedAt,coverage.expiresAt)&&clock(coverage.observedAt)<=observedAt;
-@@ -60,12 +51,12 @@ export function traceResearchDecision({symbol,record,quote,instrument,zad,covera
+@@ -61,12 +51,12 @@ export function traceResearchDecision({symbol,record,quote,instrument,zad,covera
   const any=!!record||q.currentBbo===true||instrument?.status==='ELIGIBLE_COMMON_STOCK';
   const coverageState=!any?'DATA_UNAVAILABLE':missing.some(x=>x!=='ZAD_UNKNOWN')?'PARTIAL_COVERAGE':'ADEQUATELY_OBSERVED';
   const blocked=instrument?.policyExcluded===true||zadState==='FAIL'||rule.state==='FAILED_RESEARCH_RULE'||affordable===0;
@@ -528,7 +529,7 @@ index 1742c37e..816c7569 100644
   return card;
  }
  export function researchDecisionUpdate(previous,card,{now=Date.now()}={}){
-@@ -76,60 +67,3 @@ export function researchDecisionUpdate(previous,card,{now=Date.now()}={}){
+@@ -77,60 +67,3 @@ export function researchDecisionUpdate(previous,card,{now=Date.now()}={}){
   const shouldRender=!previous||unconfirmed||previous.key!==key||expired;
   return {shouldRender,reason:!previous?'INITIAL':unconfirmed?'NOT_CONFIRMED_SENT':expired?'EXPIRED':previous.key!==key?'MEANINGFUL_CHANGE':'UNCHANGED',nextState:shouldRender?{key,expiry:card.expiry,expiryReported:expired?previous.expiry:previous?.expiryReported||null,delivery:'PROPOSED_NOT_SENT'}:previous,noSend:true};
  }
@@ -559,7 +560,7 @@ index 1742c37e..816c7569 100644
 -  if(a.ruleIdentityState!=='IDENTIFIED'||rule.ruleIdentityState!=='IDENTIFIED'||a.symbol!==v.symbol||a.ruleId!==v.ruleId||a.ruleVersion!==v.ruleVersion||a.evidenceVersion!==v.evidenceVersion||!hex(a.evidenceVersion)||v.definitionSha256!==hashBytes(Buffer.from(JSON.stringify(canonical(a.ruleDefinition))))||!hex(v.sourceSha256))throw Error('EXACT_RULE_EVIDENCE_BINDING');
 -  if(!stamp(v.observedAt)||!stamp(v.expiresAt)||Date.parse(v.observedAt)>now||Date.parse(v.expiresAt)<=Date.parse(v.observedAt)||!['QUALIFYING','NO_SETUP','UNKNOWN'].includes(v.setup))throw Error('EVALUATION_CLOCK_OR_SETUP');
 -  if(seen.has(a.symbol))throw Error('AMBIGUOUS_SYMBOL_EVALUATION');seen.add(a.symbol);
--  const complete=v.population?.status==='COMPLETE'&&Array.isArray(v.population.symbols)&&v.population.symbols.length>0&&v.population.symbols.length<=400&&new Set(v.population.symbols).size===v.population.symbols.length&&v.population.symbols.includes(a.symbol)&&v.population.sha256===digest(v.population.symbols)&&hex(v.quoteArchiveSha256)&&hex(v.identityReferenceSha256);
+-  const complete=v.population?.status==='COMPLETE'&&Array.isArray(v.population.symbols)&&v.population.symbols.length>0&&v.population.symbols.length<=400&&v.population.symbols.every(x=>typeof x==='string'&&marketSymbol(x)===x)&&new Set(v.population.symbols).size===v.population.symbols.length&&v.population.symbols.includes(a.symbol)&&v.population.sha256===digest(v.population.symbols)&&hex(v.quoteArchiveSha256)&&hex(v.identityReferenceSha256);
 -  const record={id:a.ruleId,version:a.ruleVersion,definition:a.ruleDefinition,verdict:v.verdict||'NOT PROVEN',adopted:false,synthetic:e.synthetic===true,evidence:{symbol:a.symbol,ruleVersion:a.ruleVersion,evidenceVersion:a.evidenceVersion,sourceSha256:v.sourceSha256,observedAt:v.observedAt,expiresAt:v.expiresAt,setup:v.setup},journalBinding:{assessmentId:a.id,horizon:a.horizon,journalSha256:hashBytes(journalBytes)}};
 -  const coverage={status:complete?'COMPLETE':'PARTIAL',symbol:a.symbol,ruleVersion:a.ruleVersion,evidenceVersion:a.evidenceVersion,version:digest(v),quoteArchiveSha256:v.quoteArchiveSha256,identityReferenceSha256:v.identityReferenceSha256,review:e.review,observedAt:v.observedAt,expiresAt:v.expiresAt};
 -  entries.push({symbol:a.symbol,record,coverage});
@@ -590,7 +591,7 @@ index 1742c37e..816c7569 100644
 -// Explicit owner-reviewed recovery only; never resets uncertainty from elapsed time/new evidence.
 -export function reconcileAssessmentDelivery(symbol,resolutionBytes,options){const s=privateAssessmentScope(options);if(!Buffer.isBuffer(resolutionBytes)||resolutionBytes.length>65536||!hex(s.policy.resolutionSha256)||hashBytes(resolutionBytes)!==s.policy.resolutionSha256)throw Error('PINNED_OWNER_RESOLUTION_REQUIRED');const w=JSON.parse(resolutionBytes);if(w.kind!=='OWNER_ASSESSMENT_DELIVERY_RESOLUTION_V1'||w.symbol!==symbol||!reviewOK(w.review,options.now??Date.now())||!['DEFINITELY_NOT_SENT','ACKNOWLEDGED_DELIVERED'].includes(w.disposition)||w.disposition==='ACKNOWLEDGED_DELIVERED'&&!Number.isSafeInteger(w.messageId))throw Error('OWNER_RESOLUTION_SCHEMA');return locked(s,()=>{const prior=deliveryRows(s).filter(x=>x.symbol===symbol).at(-1);if(!prior||!['RESERVED','UNCERTAIN'].includes(prior.delivery)||prior.token!==w.token||prior.key!==w.key)throw Error('OWNER_RESOLUTION_BINDING');const row={...prior,delivery:w.disposition==='DEFINITELY_NOT_SENT'?'PROPOSED_NOT_SENT':'CONFIRMED_SENT',at:new Date(options.now??Date.now()).toISOString(),resolution:{sha256:hashBytes(resolutionBytes),previous:prior.delivery,witness:w}};appendDelivery(s,row);return row;});}
 diff --git b/scan.mjs a/scan.mjs
-index f283cd00..b9cd6ea6 100644
+index 467a2368..b9cd6ea6 100644
 --- b/scan.mjs
 +++ a/scan.mjs
 @@ -1,4 +1,4 @@
@@ -635,8 +636,8 @@ index f283cd00..b9cd6ea6 100644
 -}
 -function refreshResearchSend(text,session,now){let out=text;for(const c of session.contexts){
 - if(c.holding&&['SELL','HOLD'].includes(c.holding.status)&&c.holding.currentEvidence(now)!==true)throw Error('HOLDING_EVIDENCE_EXPIRED');
-- if(!c.blocked){try{const fresh=c.current(),a=researchDecisionUpdate(null,c.card,{now}),b=researchDecisionUpdate(null,fresh,{now});if(a.nextState.key!==b.nextState.key||c.card.expiry&&Date.parse(c.card.expiry)<=now)throw Error('ASSESSMENT_EVIDENCE_CHANGED_OR_EXPIRED');out=out.replace(c.card.text,fresh.text);}catch{c.blocked=true;c.failure='research card changed or expired; request a fresh assessment';}}
-- if(c.blocked)out=out.replace(c.card.text,'RESEARCH CARD UNAVAILABLE: '+c.failure+'. Existing holding guidance and unrelated replies remain independently checked.');
+- if(!c.blocked){try{const fresh=c.current(),a=researchDecisionUpdate(null,c.card,{now}),b=researchDecisionUpdate(null,fresh,{now});if(a.nextState.key!==b.nextState.key||c.card.expiry&&Date.parse(c.card.expiry)<=now)throw Error('ASSESSMENT_EVIDENCE_CHANGED_OR_EXPIRED');out=out.replaceAll(c.card.text,fresh.text);}catch{c.blocked=true;c.failure='research card changed or expired; request a fresh assessment';}}
+- if(c.blocked)out=out.replaceAll(c.card.text,'RESEARCH CARD UNAVAILABLE: '+c.failure+'. Existing holding guidance and unrelated replies remain independently checked.');
 - }return out;}
 -function finishResearchSend(session,status){for(const x of session?.reservations||[])settleAssessmentDelivery(x.reservation,x.context.blocked?(session.acknowledged?'UNCERTAIN':'PROPOSED_NOT_SENT'):status,{...x.context.options,now:Date.now()});}
 -
@@ -741,10 +742,10 @@ index ff8f6a29..26eff19a 100644
   assert.equal(rows.filter(r=>r.sym==='OLD').length,1);assert.equal(rows.filter(r=>r.sym==='NEW').length,1);
 diff --git b/test/decision-integration.test.mjs a/test/decision-integration.test.mjs
 deleted file mode 100644
-index f8848f7a..00000000
+index 7cff25cb..00000000
 --- b/test/decision-integration.test.mjs
 +++ /dev/null
-@@ -1,30 +0,0 @@
+@@ -1,31 +0,0 @@
 -import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import os from'node:os';import path from'node:path';import http from'node:http';import{createHash}from'node:crypto';import{execFileSync}from'node:child_process';
 -import{createPrivateQuoteRetention,readPrivateAssessmentQuote,quoteHash}from'../private-quote-retention.mjs';import{makeScannerAssessmentRule}from'../discovery-runtime.mjs';import{bindEvaluatedAssessments,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery,reconcileAssessmentDelivery}from'../research-assessment.mjs';import{loadScan,blocked}from'./load-scan.mjs';
 -const ROOT=path.resolve('.'),NOW=Date.parse('2026-11-11T20:30:00Z'),at=n=>new Date(NOW+n*1000).toISOString(),canon=x=>Array.isArray(x)?x.map(canon):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,canon(x[k])])):x,hash=x=>createHash('sha256').update(JSON.stringify(canon(x))).digest('hex');const examples=[];
@@ -764,7 +765,7 @@ index f8848f7a..00000000
 - t.after(()=>{writer?.close();Date.now=oldNow;process.chdir(ROOT);server.close();fs.rmSync(tmp,{recursive:true,force:true});});return{S,ar,qr,tmp,clock,sent,requests,rule,row,journal,evaluation,options,eb,sig,pos};
 -}
 -test('actual check command: evaluated journal→private book→real readers→existing sender ACK and duplicate suppression',async t=>{const f=await fixture(t),before=f.S.read('data/discovery-journal.jsonl');await f.S.fn('tgCommands')(f.sig);assert.equal(f.sent.length,1,JSON.stringify(f.sent));assert.match(f.sent[0],/SYNTHETIC FIXTURE/);assert.match(f.sent[0],/WAIT ZZQ/);assert.match(f.sent[0],/ADEQUATELY_OBSERVED/);assert.equal(readAssessmentDelivery('ZZQ',f.options).delivery,'CONFIRMED_SENT');assert.equal(f.S.read('data/discovery-journal.jsonl'),before);const card=f.S.fn('researchDecisionTracePrototype')('ZZQ',{asOf:new Date(f.clock.now).toISOString()}).card;assert.equal(card.ruleVersion,f.row.ruleVersion);assert.equal(card.ruleState,'UNADOPTED_RESEARCH_RULE');assert.equal(card.researchScenario.referenceWholeShares,49);assert.equal(card.buyAuthority,false);const requestedAgain=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);assert.match(requestedAgain,/Explicit request: unchanged since/);assert.match(requestedAgain,/WAIT ZZQ/);await f.S.fn('telegram')(requestedAgain);assert.equal(f.sent.length,2,'explicit request receives a fresh response; proactive repeat suppression remains separate');assert.equal(fs.existsSync(path.join(f.S.dir,'data/research-assessments.json')),false);examples.push({case:'actual check, full synthetic evaluated inputs',text:f.sent[0],delivery:'CONFIRMED_SENT'});});
--test('exact journal/evaluation bindings reject mismatched rule, source hash, evidence, population and legacy identities',async t=>{const f=await fixture(t);for(const field of['ruleId','ruleVersion','evidenceVersion','definitionSha256','assessmentId']){const e=structuredClone(f.evaluation);e.evaluations[0][field]='mismatch';assert.throws(()=>bindEvaluatedAssessments(f.journal,Buffer.from(JSON.stringify(e)),{now:NOW}));}const old={...f.row,ruleIdentityState:'RULE_UNKEYED'};assert.throws(()=>bindEvaluatedAssessments(Buffer.from(JSON.stringify(old)+'\n'),f.eb,{now:NOW}));const e=structuredClone(f.evaluation);e.evaluations[0].population.sha256='wrong';const b=bindEvaluatedAssessments(f.journal,Buffer.from(JSON.stringify(e)),{now:NOW});assert.equal(b.entries[0].coverage.status,'PARTIAL');});
+-test('exact journal/evaluation bindings reject mismatched rule, source hash, evidence, population and legacy identities',async t=>{const f=await fixture(t);for(const field of['ruleId','ruleVersion','evidenceVersion','definitionSha256','assessmentId']){const e=structuredClone(f.evaluation);e.evaluations[0][field]='mismatch';assert.throws(()=>bindEvaluatedAssessments(f.journal,Buffer.from(JSON.stringify(e)),{now:NOW}));}const old={...f.row,ruleIdentityState:'RULE_UNKEYED'};assert.throws(()=>bindEvaluatedAssessments(Buffer.from(JSON.stringify(old)+'\n'),f.eb,{now:NOW}));const malformed=structuredClone(f.evaluation);malformed.evaluations[0].population.symbols=['ZZQ',7];malformed.evaluations[0].population.sha256=hash(['ZZQ',7]);assert.equal(bindEvaluatedAssessments(f.journal,Buffer.from(JSON.stringify(malformed)),{now:NOW}).entries[0].coverage.status,'PARTIAL','malformed population cannot claim COMPLETE');const e=structuredClone(f.evaluation);e.evaluations[0].population.sha256='wrong';const b=bindEvaluatedAssessments(f.journal,Buffer.from(JSON.stringify(e)),{now:NOW});assert.equal(b.entries[0].coverage.status,'PARTIAL');});
 -test('private root hash, symlink, permissions, derived-book tampering and stale writer lock fail closed',async t=>{const f=await fixture(t);assert.equal(readPrivateAssessment('ZZQ',{...f.options,policySha256:'0'.repeat(64)}).record,null);const book=fs.readdirSync(f.ar).find(x=>/^book-[a-f0-9]+\.json$/.test(x)),p=path.join(f.ar,book);fs.chmodSync(p,0o644);assert.equal(readPrivateAssessment('ZZQ',f.options).record,null);fs.chmodSync(p,0o600);fs.mkdirSync(path.join(f.ar,'.assessment-writer.lock'),{mode:0o700});assert.throws(()=>publishPrivateAssessmentBook(f.journal,f.options));fs.rmdirSync(path.join(f.ar,'.assessment-writer.lock'));const tampered=JSON.parse(fs.readFileSync(p));tampered.entries[0].record.adopted=true;const bad=Buffer.from(JSON.stringify(tampered)),badHash=quoteHash(bad),badName='book-'+badHash+'.json';fs.writeFileSync(path.join(f.ar,badName),bad,{mode:0o600});fs.writeFileSync(path.join(f.ar,'book-current.json'),JSON.stringify({kind:'PRIVATE_ASSESSMENT_POINTER_V1',path:badName,sha256:badHash}),{mode:0o600});assert.equal(readPrivateAssessment('ZZQ',f.options).record,null,'rehashed pointer cannot forge book derivation');const target=path.join(f.tmp,'symlink');fs.symlinkSync(f.ar,target);assert.equal(readPrivateAssessment('ZZQ',{...f.options,root:target}).record,null);assert.throws(()=>publishPrivateAssessmentBook(f.journal,{...f.options,root:f.S.dir,checkout:f.S.dir}));});
 -for(const mode of['ambiguous','refused','429'])test('actual sender '+mode+' preserves durable uncertainty or safe unsent eligibility without replay',async t=>{const f=await fixture(t,{mode,advance:mode==='429'?121000:0});const text=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);const r=await f.S.fn('telegram')(text);assert.equal(r.ok,mode==='429');assert.equal(f.sent.length,mode==='429'?2:1);const d=readAssessmentDelivery('ZZQ',{...f.options,now:f.clock.now});assert.equal(d.delivery,mode==='ambiguous'||mode==='429'?'UNCERTAIN':'PROPOSED_NOT_SENT');if(mode==='ambiguous'){const again=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);assert.match(again,/DELIVERY UNCERTAIN/);assert.equal(f.sent.length,1);}examples.push({case:mode,text,delivery:d.delivery});});
 -test('actual multipart caller expires after the first ACK, leaves all reserved cards UNCERTAIN and never replays',async t=>{const f=await fixture(t,{advance:121000});const text=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);const r=await f.S.fn('telegram')(text+'\n\n'+'SYNTHETIC long footer\n'.repeat(500));assert.equal(r.ok,true);assert.ok(f.sent.length>1);assert.equal(f.sent.filter(x=>x.includes('WAIT ZZQ')).length,1,'expired card is not repeated; plain remaining text can complete');assert.equal(readAssessmentDelivery('ZZQ',{...f.options,now:f.clock.now}).delivery,'UNCERTAIN');});
@@ -774,6 +775,7 @@ index f8848f7a..00000000
 -test('actual held review never escapes an uncertain private reservation through the legacy text fallback',async t=>{const f=await fixture(t,{holding:true,quote:false,mode:'ambiguous'}),text=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(text,/SELL ZZQ/);await f.S.fn('telegram')(text);assert.equal(readAssessmentDelivery('ZZQ',f.options).delivery,'UNCERTAIN');const again=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(again,/DELIVERY UNCERTAIN/);assert.match(again,/HOLD OR SELL.*STOP LEVEL REACHED/);assert.doesNotMatch(again,/SYNTHETIC FIXTURE — NOT A RECOMMENDATION \| SELL/,'explicit fresh holding review is preserved but the uncertain research card is not replayed');assert.match(again,/existing holding instructions remain/i);assert.equal(f.sent.length,1);});
 -test('research lock failure cannot block an explicit holding SELL or an unrelated reply; stale metadata is visible',async t=>{const f=await fixture(t,{holding:true,quote:false});const text=await f.S.fn('natural')('review ZZQ',f.sig,f.pos),lock=path.join(f.ar,'.assessment-writer.lock');fs.mkdirSync(lock,{mode:0o700});fs.writeFileSync(path.join(lock,'owner.json'),JSON.stringify({owner:'synthetic killed process',pid:999999,createdAt:at(-600)}),{mode:0o600});const r=await f.S.fn('telegram')(text+'\n\nUNRELATED SYNTHETIC REPLY');assert.equal(r.ok,true);assert.match(f.sent.join('\n'),/HOLD OR SELL.*STOP LEVEL REACHED/);assert.match(f.sent.join('\n'),/LOCK HELD OR STALE/);assert.match(f.sent.join('\n'),/UNRELATED SYNTHETIC REPLY/);assert.doesNotMatch(f.sent.join('\n'),/SYNTHETIC FIXTURE — NOT A RECOMMENDATION \| SELL/);assert.ok(fs.existsSync(lock),'no lock stealing');const again=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(again,/BOOK_STALE/);});
 -test('explicit reconcile needs pinned exact owner witness; bare commands/new keys never clear uncertainty',async t=>{const f=await fixture(t),card=f.S.fn('researchDecisionTracePrototype')('ZZQ',{asOf:new Date(NOW).toISOString()}).card,r=reserveAssessmentDelivery('ZZQ',card,f.options);settleAssessmentDelivery(r,'UNCERTAIN',f.options);assert.match(await f.S.fn('natural')('reconcile ZZQ',f.sig,f.pos),/RECONCILIATION UNAVAILABLE/);const w={kind:'OWNER_ASSESSMENT_DELIVERY_RESOLUTION_V1',symbol:'ZZQ',key:r.key,token:r.token,disposition:'DEFINITELY_NOT_SENT',review:{status:'INDEPENDENT_PROVENANCE_REVIEWED',at:at(-1),comment:'https://github.com/drrazaq/Stock-2/pull/1#issuecomment-1'}},b=Buffer.from(JSON.stringify(w));assert.throws(()=>reconcileAssessmentDelivery('ZZQ',b,f.options));const pol=JSON.parse(fs.readFileSync(path.join(f.ar,'assessment-policy.json')));pol.resolutionSha256=quoteHash(b);const pb=Buffer.from(JSON.stringify(pol));fs.writeFileSync(path.join(f.ar,'assessment-policy.json'),pb,{mode:0o600});fs.writeFileSync(path.join(f.ar,'resolution.json'),b,{mode:0o600});const o={...f.options,policySha256:quoteHash(pb)};process.env.ASSESSMENT_RESEARCH_POLICY_SHA256=o.policySha256;assert.match(await f.S.fn('natural')('reconcile ZZQ',f.sig,f.pos),/reconciled from the exact pinned owner witness/);const row=readAssessmentDelivery('ZZQ',o);assert.equal(row.delivery,'PROPOSED_NOT_SENT');assert.equal(row.resolution.previous,'UNCERTAIN');assert.equal(row.resolution.sha256,quoteHash(b));assert.match(await f.S.fn('natural')('reconcile ZZQ',f.sig,f.pos),/UNAVAILABLE/,'same witness cannot reset a later/new reservation');assert.equal(f.sent.length,0);});
+-test('all repeated copies of a blocked card are stripped from the actual outgoing bundle',async t=>{const f=await fixture(t),text=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);fs.mkdirSync(path.join(f.ar,'.assessment-writer.lock'),{mode:0o700});const r=await f.S.fn('telegram')(text+'\n\n'+text+'\n\nUNRELATED REPLY');assert.equal(r.ok,true);assert.match(f.sent.join('\n'),/UNRELATED REPLY/);assert.doesNotMatch(f.sent.join('\n'),/WAIT ZZQ/);});
 -test.after(()=>{if(process.env.INTEGRATION_FIXTURE_EXPORT)fs.writeFileSync(process.env.INTEGRATION_FIXTURE_EXPORT,JSON.stringify({kind:'ENTIRELY_SYNTHETIC_COMMAND_AND_SEND_FIXTURES',examples},null,2)+'\n');assert.equal(blocked.length,0);});
 diff --git b/test/fixtures/retained-discovery-3aa.json a/test/fixtures/retained-discovery-3aa.json
 deleted file mode 100644
