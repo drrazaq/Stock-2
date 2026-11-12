@@ -68,8 +68,14 @@ None of these caches has a retained manifest, receipt or completeness proof that
   | 10 Nov | 09:15 | 09:28 | 90 | 0 | 181 | 149 (vs 142 in retained shadow) |
   | 11 Nov | 10:02 | 10:02 | 58 | 1 | 0 | 0 |
 
+- **149 vs 142 on 10 Nov (counting units differ).**
+  - `ignition-watch.mjs:242-243` increments `EF.decided` once per decided filing, before calling `SR.filing`.
+  - The shadow stream keeps one row per symbol (`shadow-stream.mjs:24`), and `filing()` returns early once that row already has a filing (`shadow-stream.mjs:42-45`).
+  - So the shadow store retains only the first filing per symbol per day. This is a coalescing path that can explain the gap, but it does not show which 7 events were dropped, because no event list is retained.
+  - The stored stream therefore cannot be claimed to contain every filing event. The first-filing-per-day records and rules stay as frozen; no repair or retest is proposed.
+  - The join against the retained receipts is complete for the available files. The original event ledger cannot be recovered from aggregates.
 - 11 Nov is Veterans Day, which is possibly an SEC non-filing day; that calendar is not verified here. Counts are not complete clock proof, and a zero is not proof of a feed failure. **The 11 Nov zero remains unclassified.**
-- **Next action (offline only):** join the retained receipts against shadow coverage. No new requests.
+- **Remaining wait:** model maturity and source proof only.
 
 
 **Corrected relationship to R-A2.** The parked R-A2 raw-plus-splits panel is **not** a shared input for rows 2–5. r1 was wrong to say so. That proposal:
