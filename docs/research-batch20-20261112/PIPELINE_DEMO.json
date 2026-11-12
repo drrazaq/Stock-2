@@ -1,0 +1,120 @@
+{
+  "kind": "DEVELOPMENT_DEMO_NOT_CURRENT_RECOMMENDATION",
+  "sourceCommit": "d2852739d96490e11e6e2ae79965b311627d9b07",
+  "fixture": "Synthetic discovery/session; retained reviewed SNDK facts; no current price or owner marks",
+  "actualCallers": [
+    "researchAssessmentCycle",
+    "assessmentContext"
+  ],
+  "queue": {
+    "queue": {
+      "version": "EXISTING_HORIZON_ATTENTION_V1",
+      "cutoff": "2026-11-12T06:50:00.000Z",
+      "policy": "Existing trigger first / dated SEC; recent earnings then existing horizon setups; existing quality percentile then business shortlist. Newest source date, lexical ties. Research attention only; no return fields used.",
+      "sourceFreshness": {
+        "session": "2026-11-11",
+        "expectedCompletedSession": "2026-11-11",
+        "completedSessionLag": 0,
+        "status": "LATEST_COMPLETED_CLOSE_REFERENCE",
+        "generatedAt": "2026-11-12T01:00:00Z",
+        "generatedClock": "DATED_OUTPUT_NOT_QUOTE_RECEIPT",
+        "executableQuote": "UNKNOWN",
+        "intradayInvocation": "NOT_ESTABLISHED_BY_DAILY_OUTPUT"
+      },
+      "population": {
+        "rawRows": 1,
+        "uniqueSymbolLabels": 1,
+        "invalidRows": 0,
+        "verifiedEligibleIssuers": 0,
+        "verifiedEligibleInstruments": 0,
+        "identityUnknownSymbols": 1,
+        "issuerInstrumentDedup": "UNRESOLVED_NO_AUTHENTICATED_REFERENCE_JOIN",
+        "producerSweptCount": null,
+        "producerStrongCount": null,
+        "sources": {
+          "discovery": {
+            "rows": 1,
+            "uniqueSymbolLabels": 1,
+            "asOf": {
+              "generatedAt": "2026-11-12T01:00:00Z",
+              "session": "2026-11-11"
+            }
+          }
+        }
+      },
+      "batches": {
+        "SHORT": [],
+        "MID": [],
+        "LONG": [
+          {
+            "symbol": "SNDK",
+            "priority": 1,
+            "time": 0,
+            "source": "discovery",
+            "horizon": "LONG",
+            "id": "649c2a4a26e056e87e93070df243876940fdad76ba67260121829050fda988de",
+            "evidenceVersion": "f3a46ee363d834a06960ca61ca397dcc0485f0ddd6008cbfe4defed67889b746",
+            "decision": "SELECTED",
+            "identity": "UNKNOWN_NOT_A_VERIFIED_ISSUER_COUNT",
+            "facts": [
+              {
+                "symbol": "SNDK",
+                "source": "discovery",
+                "meta": {
+                  "generatedAt": "2026-11-12T01:00:00Z",
+                  "session": "2026-11-11"
+                },
+                "facts": {
+                  "name": "Sandisk Corporation"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "decisions": [
+        {
+          "symbol": "SNDK",
+          "priority": 1,
+          "time": 0,
+          "source": "discovery",
+          "horizon": "LONG",
+          "id": "649c2a4a26e056e87e93070df243876940fdad76ba67260121829050fda988de",
+          "evidenceVersion": "f3a46ee363d834a06960ca61ca397dcc0485f0ddd6008cbfe4defed67889b746",
+          "decision": "SELECTED",
+          "identity": "UNKNOWN_NOT_A_VERIFIED_ISSUER_COUNT",
+          "facts": [
+            {
+              "symbol": "SNDK",
+              "source": "discovery",
+              "meta": {
+                "generatedAt": "2026-11-12T01:00:00Z",
+                "session": "2026-11-11"
+              },
+              "facts": {
+                "name": "Sandisk Corporation"
+              }
+            }
+          ]
+        }
+      ],
+      "counts": {
+        "SELECTED": 1,
+        "EXISTING_EXCLUSION": 0,
+        "ALREADY_INVESTIGATED_THIS_BATCH": 0,
+        "ASSESSMENT_VERSION_ALREADY_RECORDED": 0,
+        "DEFERRED_BATCH_CAP": 0
+      },
+      "invalid": [],
+      "cycleKey": "8625e4c97cc835e33051607bf89e8946224a7c0298b109f81d414c1e62246597",
+      "frozen": false
+    },
+    "records": [],
+    "persistence": "READ_ONLY_NOT_FROZEN: awaiting existing discovery producer",
+    "feedback": []
+  },
+  "text": "ASSESSMENT CONTEXT — SNDK / Sandisk Corporation (information; this card grants no BUY approval)\nEvidence readiness: business REVIEWED_PRIMARY_FACTS; THESIS_NOT_VALIDATED; valuation UNKNOWN / no causal valuation supplied; entry rule MISSING; executable price UNKNOWN; ZAD unknown.\nIdentity: ticker only; stable point-in-time security identity UNKNOWN. ZAD: unknown; ZAD is final authority.\nSource freshness: LATEST_COMPLETED_CLOSE_REFERENCE; expected completed close 2026-11-11; saved 2026-11-11. A current completed close is not a current quote; intraday invocation and executable readiness are not established by this file.\nSHORT ACTION | existing assessment: WAIT: documentary research; no adopted entry rule | horizon stored scanner rule, duration UNKNOWN. Entry: No adopted entry rule supplied. Exit: No adopted exit supplied here; retain the existing rule, never infer one from a research rank.\nTrace: No producer-recorded assessment ID supplied; source context is not a completed investigation or outcome.\nRetained scanner rule: UNKNOWN / no rule verdict supplied; identity NO_ADOPTED_RULE_SUPPLIED; version UNKNOWN / not retroactively inferred.\nShort evidence: scan close 2026-11-11 (date only; not receipt time). Record: No linked strategy outcome chain supplied.\nMID TERM | WAIT / UNKNOWN: no linked horizon setup supplied; no entry or exit invented. Source horizons.json: UNKNOWN date, prices through UNKNOWN.\nLONG TERM | INVESTIGATE / NO BUY APPROVAL: quality rank UNKNOWN. No linked quality test supplied. No adopted individual-stock entry/exit supplied by this rank. Source quality.json: UNKNOWN date, prices through UNKNOWN.\nKnown-then evidence (events-recent.json; not an original receipt): No dated catalyst witness supplied (not evidence of no catalyst); original observation/receipt UNKNOWN. Business lead: discovery candidate; discovery.json 2026-11-12T01:00:00Z (5 h old; saved context, not a live quote), close 2026-11-11.\nEarnings investigation: No earnings lead supplied; not evidence that none exists.\nPRIMARY COMPANY INVESTIGATION | Sandisk Corporation: October29 release / October30 10-Q: FiscalQ1 revenue $11.0bn; net income $8.101bn; CFO $6.363bn; equity-security gain $513m, receivables cash use $1.877bn. CFO less cash PPE $54m = $6.309bn before JV/funding caveats. 8-for-1 adjusted trading expected Nov20; Nov11 prices remain pre-split. | Contrary/invalidation: Cycle/pricing normalization, working capital and JV funding; invalidate if demand fails to become durable cash returns. No direct Solidigm contract inferred. | Next fact: Cycle-normalized margins, JV commitments, complete valuation and correctly split-based fresh execution evidence. Historical scanner omission still lacks original bar count. | Published 2026-10-30, received 2026-11-11T17:51:35.605322+00:00, reviewed 2026-11-11T18:18:12Z; source https://investor.sandisk.com/static-files/c31aa9f9-d8e1-43e5-8642-360f5d0dad15; SHA256 c10f8e33e881a50eb060644bcd71a40854fe4babff752b411d07740b5aedd873. Primary context is not current trading or valuation approval.\nRetained quote context: UNKNOWN (ARCHIVE_JOIN_NOT_CONFIGURED). No quote replaces a trade print or daily rule input.\nPrice/execution: live BBO, conditions, displayed size, fills and executable quantity UNKNOWN. Research assumption: $1,000 whole shares, $3 each executed side; actual after-cost result UNKNOWN. Displayed size would not prove fill capacity.\nRisks/next check: horizons may disagree; favorable comparisons do not erase SPY losses, severe drawdowns or failed gates; SPY is the stored raw benchmark, not a matched-fee execution result; unavailable stored benchmark/worst fields are UNKNOWN. Financing/dilution, expected-vs-new information and original filing vintages remain unresolved unless separately evidenced. Reassess on the next completed scan/new dated disclosure, or fresh price for the EXISTING position rule; no timing promise. No exit or live gate changed.",
+  "networkCalls": 0,
+  "writes": "temporary fixture only; caller journal unchanged",
+  "researchRuleBoundary": "SQ4-GROWLEAD and new research rules are NOT adopted scanner rules. No trade outcome fabricated."
+}
