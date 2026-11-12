@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-11-10",
+ "updated": "2026-11-12",
  "strategies": [
   {
    "id": "T1",
@@ -1957,9 +1957,16 @@
    "family": "Insiders",
    "name": "Insider cluster + contract",
    "explain": "2+ insiders buying and an 8-K 1.01 within the same 10 days; hold 20 days.",
-   "status": "queued (Agent C)",
+   "status": "pre-registered 2026-11-12 (agent-c3-core.mjs header, exact rule); built agent-c3-lab.mjs; one-shot pending",
    "agent": "C",
-   "note": "From the outside review of 20 Oct (see project doc Agent inbox)."
+   "note": "From the outside review of 20 Oct (see project doc Agent inbox).",
+   "study": "agent-c3-lab.mjs -> data/agent-c3-lab.json firstRun",
+   "sources": [
+    "https://www.sec.gov/data-research/sec-markets-data/insider-transactions-data-sets",
+    "https://efts.sec.gov/LATEST/search-index (EDGAR full-text search, 8-K item 1.01)"
+   ],
+   "rule": "Insider cluster (2+ different officers/directors/other with Form 4 open-market purchases filed in 5 sessions, no opportunistic filter) and a plain 8-K item 1.01 (not 2.02) of the same stock with |cluster session - 8-K reaction session| <= 9; buy the open after both are public (max of the session after the cluster filing date and the 8-K reaction session + 1), liquid, hold 20, no stop, one signal per stock per 60 sessions. Gates + S&P 500 gate; TRY SMALL bar reported.",
+   "preRegistered": "2026-11-12"
   },
   {
    "id": "E19",
@@ -2596,9 +2603,17 @@
    "family": "Share supply",
    "name": "High short interest (avoid)",
    "explain": "Short interest over 20% of shares outstanding at the last FINRA/exchange settlement date: avoid 20 sessions. Official FINRA bi-monthly short interest files (free), point in time by publication date.",
-   "status": "queued (Agent C)",
+   "status": "pre-registered 2026-11-12 (agent-c3-core.mjs header, exact rule); built agent-c3-lab.mjs; one-shot pending",
    "agent": "C",
-   "note": "Agent C outside research, 20 Oct. Published: Boehmer, Jones and Zhang 2008 (JF) and Boehmer, Huszar and Jordan 2010 (JFE): heavily shorted stocks underperform. Avoid rule only; needs a FINRA file loader in the study workflow."
+   "note": "Agent C outside research, 20 Oct. Published: Boehmer, Jones and Zhang 2008 (JF) and Boehmer, Huszar and Jordan 2010 (JFE): heavily shorted stocks underperform. Avoid rule only; needs a FINRA file loader in the study workflow.",
+   "study": "agent-c3-lab.mjs -> data/agent-c3-lab.json firstRun",
+   "sources": [
+    "https://www.finra.org/finra-data/browse-catalog/equity-short-interest/files",
+    "Boehmer, Jones and Zhang 2008, Journal of Finance 63(2), Which Shorts Are Informed?",
+    "Boehmer, Huszar and Jordan 2010, Journal of Financial Economics 96(1), The good news in short interest"
+   ],
+   "rule": "FINRA settlement file (exchange-listed rows, no split flag): short position / SEC share count known 30 days before entry > 20% (over 100% = data error, dropped); entry the open of settlement session + 9 (publication lag), liquid; flagged stock vs the average liquid stock over 20 sessions (avoid test, costs cancel); C-S8 avoid gates with t = the weaker of day t and 20-session block t; data stop: 95% of expected files.",
+   "preRegistered": "2026-11-12"
   },
   {
    "id": "C-13F1",
@@ -35022,6 +35037,57 @@
     ],
     "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
    }
+  },
+  {
+   "id": "C-SI1-DTC",
+   "family": "Share supply",
+   "agent": "C",
+   "name": "High days-to-cover (avoid)",
+   "explain": "Hong, Li, Ni, Scheinkman and Yan 2015 (NBER w21166): days-to-cover predicts poor returns better than the short ratio. Version of C-SI1 (agent-c3-core.mjs).",
+   "status": "pre-registered 2026-11-12 (agent-c3-core.mjs header, exact rule); built agent-c3-lab.mjs; one-shot pending",
+   "study": "agent-c3-lab.mjs -> data/agent-c3-lab.json firstRun",
+   "sources": [
+    "https://www.nber.org/papers/w21166",
+    "https://www.finra.org/finra-data/browse-catalog/equity-short-interest/files"
+   ],
+   "rule": "Same files and timing as C-SI1; flag = FINRA days-to-cover in the top 10% of the liquid exchange-listed stocks of that file (200+ rows needed); avoid 20 sessions; same avoid gates.",
+   "preRegistered": "2026-11-12"
+  },
+  {
+   "id": "C-INSLAG1",
+   "family": "Insiders",
+   "name": "Insider-trade alpha is mostly gone by the Form 4 filing (evidence note)",
+   "explain": "Ozlen and Batumoglu (SSRN 5966834, Dec 2025): on Russell 2000 Form 4s, 70-80% of the alpha appears between the trade date and the next session, before the filing is public; entering on the filing date leaves a mostly confirmatory signal.",
+   "status": "not built: evidence note, no rule (agrees with E3 / C-INS2 / C-INS3-20 results; every system insider test already enters after the filing date)",
+   "agent": "C",
+   "source": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=5966834",
+   "data": "has: SEC Form 4 data sets (filing dates)",
+   "queue": "none",
+   "note": "WEB SCOUT 12 Nov 2026 (Agent C). Registered so it is not scouted again; a reason to keep insider buys as paper only."
+  },
+  {
+   "id": "C-10B5P",
+   "family": "Insiders",
+   "name": "Non-preplanned insider buys after the 2023 Rule 10b5-1 amendments",
+   "explain": "Ma (SSRN 7194898, 2025): after the 2022 amendments, preplanned (10b5-1) trades lose predictive power; non-preplanned trades still predict, but only short term. Rule (to pre-register later): Form 4 open-market purchases NOT marked as 10b5-1 trades, 2+ insiders in 5 sessions, hold 20.",
+   "status": "queued (Agent C), needs data, low",
+   "agent": "C",
+   "source": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=7194898",
+   "data": "needs: the Form 4 10b5-1 checkbox (only from April 2023), so the older half (before 2024) is about 9 months: too short for two halves until about 2027",
+   "queue": "low (after C-13FCON1)",
+   "note": "WEB SCOUT 12 Nov 2026 (Agent C)."
+  },
+  {
+   "id": "C-PNEWS1",
+   "family": "News",
+   "name": "Pure news (news text purged of what stock characteristics predict)",
+   "explain": "Didisheim, Kelly, Pourmohammadi and Tian (NBER w35093, Apr 2026): after removing the part of news text predictable from stock characteristics, the remaining news predicts returns up to 18 months, more than any anomaly in the Jensen et al. universe; investors underreact to negative-tone and quantitative topics.",
+   "status": "needs data",
+   "agent": "C",
+   "source": "https://www.nber.org/papers/w35093",
+   "data": "needs: a dated news-text archive for the whole market (5 years) and a text model; the system has none (no paid data, no scraping)",
+   "queue": "none until a free official news archive exists",
+   "note": "WEB SCOUT 12 Nov 2026 (Agent C). Registered so it is not scouted again."
   }
  ]
 }
