@@ -1,0 +1,792 @@
+{
+  "kind": "BOUNDED_BATCH20_RETAINED_ECONOMIC_EVALUATION_NOT_NEW_FRAMEWORK",
+  "frozenAt": "2026-11-12T06:15:37.450Z",
+  "inputRef": "7db2c83b574bbe0d85d4c9972ad2230a36004816",
+  "authorizationComment": 6816034636,
+  "selected": [
+    {
+      "batchId": "B20-01",
+      "mechanism": "Customer-to-supplier earnings transmission",
+      "economicFamily": "Supply-chain demand",
+      "exactExistingId": "SQ28-SUPDRIFT",
+      "lab": "squad28",
+      "sourceRule": {
+        "kind": "buy",
+        "family": "event",
+        "hold": 20,
+        "block": 20,
+        "name": "Supplier drift after its major customer's strong earnings (SUE top 30%, positive reaction day)",
+        "papers": [
+          "Pandit, Wasley & Zach (2011) Information Externalities along the Supply Chain: The Economic Determinants of Suppliers' Stock Price Reaction to Their Major Customers' Earnings Announcements, Contemporary Accounting Research 28(4)",
+          "Cohen & Frazzini (2008) Economic Links and Predictable Returns, Journal of Finance 63(4)",
+          "Menzly & Ozbas (2010) Market Segmentation and Cross-predictability of Returns, Journal of Finance 65(4)"
+        ],
+        "sources": [
+          "https://doi.org/10.1111/j.1911-3846.2011.01088.x",
+          "https://ideas.repec.org/a/bla/jfinan/v63y2008i4p1977-2011.html",
+          "https://doi.org/10.1111/j.1540-6261.2010.01570.x"
+        ]
+      },
+      "libraryDefinition": {
+        "id": "SQ28-SUPDRIFT",
+        "name": "Supplier drift after its major customer's strong earnings (SUE top 30%, positive reaction day)",
+        "explain": "LINKS: a supplier's own 10-K (filed before the day, point in time; the supplier's latest 10-K must show it, at most 400 days old) names a US-listed customer (one of the 1,000 most traded stocks at a quarter start; its CIK and legal name from Massive) in a major-customer revenue sentence with a first percentage >= 10%; strict names (legal name minus corporate form, no acronyms, no person names, no hand aliases), found by EDGAR full-text search and verified on the document text; 50 random links hand-checked before any return. EVENT: the customer reports (Nasdaq calendar) with SUE = (actual - consensus EPS) / close in the top 30% of liquid reports of the previous 63 sessions (ANOM-SUE definition). ENTRY: the supplier at the next open after the customer's reaction session, if close 3 USD+, 20-day traded value 2M USD+, and no own report (Nasdaq calendar or 10-Q/10-K filing) in sessions r-4..r+20. EXIT: 20 sessions, 20% stop. One open trade per stock. Placebo: the same supplier on a random non-event session of the same quarter (seed 28), reported as a yardstick. AND the customer's reaction-session return > 0. Paper(s): Pandit, Wasley & Zach (2011) Information Externalities along the Supply Chain: The Economic Determinants of Suppliers' Stock Price Reaction to Their Major Customers' Earnings Announcements, Contemporary Accounting Research 28(4); Cohen & Frazzini (2008) Economic Links and Predictable Returns, Journal of Finance 63(4); Menzly & Ozbas (2010) Market Segmentation and Cross-predictability of Returns, Journal of Finance 65(4).",
+        "sources": [
+          "https://doi.org/10.1111/j.1911-3846.2011.01088.x",
+          "https://ideas.repec.org/a/bla/jfinan/v63y2008i4p1977-2011.html",
+          "https://doi.org/10.1111/j.1540-6261.2010.01570.x"
+        ],
+        "rule": null,
+        "libraryCheck": "SQ1-CUSTMOM (monthly customer momentum; 47 hand-chosen customers, 10% not enforced: rejected), N4 (not proven), CHAIN-READ1 (same-layer read-through: rejected), ANOM-SUE (own surprise: not proven). New: event-driven read-through from the CUSTOMER's surprise to its 10%+ suppliers (Pandit, Wasley & Zach 2011)."
+      },
+      "falsification": "Official dated customer exposure may transmit demand news gradually; reverse if verified suppliers do not outperform unaffected/date-matched companies after costs.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-02",
+      "mechanism": "Economically material new customer agreement",
+      "economicFamily": "Commercial orders",
+      "exactExistingId": "SQ24-MEGADEAL",
+      "lab": "squad24",
+      "sourceRule": {
+        "kind": "buy",
+        "family": "event",
+        "hold": 10,
+        "block": 10,
+        "name": "Small company (1-10 USD) signs a dollar-stated deal >= 20% of its market value with a top-100 US-listed company (8-K 1.01); buy the open after the reaction session, hold 10, 25% stop",
+        "rule": "see squad24-core.mjs header RULE (the exact text, pre-registered 27 Oct 2026 before any result)"
+      },
+      "libraryDefinition": {
+        "id": "SQ24-MEGADEAL",
+        "name": "Small company (1-10 USD) signs a dollar-stated deal >= 20% of its market value with a top-100 US-listed company (8-K 1.01); buy the open after the reaction session, hold 10, 25% stop",
+        "explain": "RULE (squad24-core.mjs header, exact): an 8-K listing Item 1.01 whose main document / EX-99 / EX-10 names, as a counterparty in a deal sentence that is not a financing sentence (credit / loan / underwriting / sales-agent / lender wording), a company on a FROZEN list of the 100 largest US-listed companies by market value at the latest quarter start (data/squad24-megacaps.json, CIK + legal name + up to 2 hand-written aliases, SHA-256 in the header; never-listed namesakes such as OpenAI excluded, SpaceX only after its own 2026 listing; an alias followed by an extra name word such as a country or \"International Ltd\" fails). Filing session from the SEC acceptance time (sec-time.mjs: before 16:00 = that day, after = next session). At the close of that session: close 1-10 USD, 20-day average traded value >= 0.5M USD (dead stocks included); no 15%+ close-to-close move up or down in the 21 sessions before; no reverse split in 60 days; no 424B5 / S-1 / S-1/A / S-3 / S-3/A in the 20 sessions to the filing session. The filing must state a dollar value and the LARGEST stated value (not per share / unit; trillions ignored) must be >= 20% of the market value at that close (shares known 30 days earlier). Buy the next open; sell the close of session 10 or at a 25% stop. Costs 0.8% / 1.2% and a 2%-each-way slippage version (an extra gate). Yardsticks: the average 1-10 USD stock on the same days; the same stock on other days; per year vs SPY. Information: the average liquid stock; a first-open variant.",
+        "sources": [
+          "https://efts.sec.gov/LATEST/search-index",
+          "https://www.sec.gov/Archives/edgar/full-index/"
+        ],
+        "rule": null,
+        "libraryCheck": "SQ21-CONTRACT10D (any named counterparty, bought 1-10 sessions later: rejected), DEC2-CONTRACT (rejected), CAT-HUNTER-SUB5 and same-day jump chasing (squad 19: rejected). New: the counterparty must be a top-100 US-listed company, a stated dollar value >= 20% of the filer's market value, a quiet stock before, entry the open after the reaction session, 10-session hold."
+      },
+      "falsification": "An enforceable material customer commitment can revise expected revenue; fails if financing/publicity is misclassified or economics vanish after gaps and costs.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-03",
+      "mechanism": "Contract delivery converting to revenue and cash",
+      "economicFamily": "Commercial realization",
+      "exactExistingId": null,
+      "lab": null,
+      "sourceRule": null,
+      "libraryDefinition": null,
+      "falsification": "Fulfillment reduces execution risk independently of announcement publicity; fails if dated delivery/cash evidence has no incremental information versus original contract and sector controls.",
+      "ruleIdentityStatus": "NO_EXISTING_FROZEN_TRADE_RULE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-04",
+      "mechanism": "Cash-conversion inflection",
+      "economicFamily": "Earnings quality",
+      "exactExistingId": "SQ22-CASHCONV",
+      "lab": "squad22",
+      "sourceRule": {
+        "family": "Value",
+        "hold": 126,
+        "block": 126,
+        "name": "Cash-conversion inflection: operating cash flow / net income rising 2 quarters to 1.0+, gross margin up, no dilution (SEC filing date)",
+        "papers": [
+          {
+            "cite": "Sloan (1996) Do Stock Prices Fully Reflect Information in Accruals and Cash Flows about Future Earnings? The Accounting Review 71(3)",
+            "url": "https://www.jstor.org/stable/248290"
+          },
+          {
+            "cite": "Piotroski (2000) Value Investing, Journal of Accounting Research 38 (cash flow > net income as one of 9 checks)",
+            "url": "https://doi.org/10.2307/2672906"
+          }
+        ],
+        "lib": "ANOM-ACC (accrual level decile: rejected), ANOM-CFOA (cash profitability level: rejected), V15 (F-score uptrend: live). New: a filing-date EVENT of a two-quarter rise in cash conversion to 1.0+, with gross margin up and diluted shares flat; must beat V15 on the same sessions."
+      },
+      "libraryDefinition": {
+        "id": "SQ22-CASHCONV",
+        "name": "Cash-conversion inflection: operating cash flow / net income rising 2 quarters to 1.0+, gross margin up, no dilution (SEC filing date)",
+        "explain": "RULE (squad22-core.mjs header RULE 1, exact): on the SEC filing date F that first makes a new quarter end E0 known (companyfacts filed dates; usable the day after): TTM operating cash flow / TTM net income at E2 < E1 < E0 (3 months apart) strictly rising and >= 1.0 at E0, TTM net income > 0 at all three; TTM gross margin at E0 above a year earlier; weighted diluted shares of the E0 period up <= 2% on a year earlier. Liquid (close 5 USD+, 20-day traded value 5M USD+) the session before entry. Buy the next open after F; stop 35% under the entry; else sell at the close of the 126th session. Extra gate: beat V15 picks bought and sold on the same sessions in both halves. Yardsticks: average stock same days; same stock other days; per year vs SPY.",
+        "sources": [
+          "https://www.jstor.org/stable/248290",
+          "https://doi.org/10.2307/2672906"
+        ],
+        "rule": null,
+        "libraryCheck": "ANOM-ACC (accrual level decile: rejected), ANOM-CFOA (cash profitability level: rejected), V15 (F-score uptrend: live). New: a filing-date EVENT of a two-quarter rise in cash conversion to 1.0+, with gross margin up and diluted shares flat; must beat V15 on the same sessions."
+      },
+      "falsification": "Improving cash conversion may reveal persistent earnings quality; fails on restatement/lookahead or no incremental return against earnings-only controls.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-05",
+      "mechanism": "Joint earnings and revenue expectations reset",
+      "economicFamily": "Expectations",
+      "exactExistingId": "ANOM-SUESURGE",
+      "lab": "anomaly",
+      "sourceRule": {
+        "family": "earn",
+        "hold": 60,
+        "name": "Earnings AND revenue surprise together (SUE + SURGE)",
+        "papers": [
+          {
+            "cite": "Jegadeesh & Livnat (2006) Revenue surprises and stock returns, Journal of Accounting and Economics 41(1-2)",
+            "url": "https://doi.org/10.1016/j.jacceco.2005.10.002"
+          }
+        ],
+        "reported": "drift is largest when earnings and revenue surprises agree",
+        "replication": "revenue-surprise drift replicates (CZ RevenueSurprise)",
+        "refs": [
+          {
+            "cite": "Chen & Zimmermann (2022) Open Source Cross-Sectional Asset Pricing, Critical Finance Review 11(2)",
+            "url": "https://www.openassetpricing.com"
+          }
+        ],
+        "rule": "SUE in the top 30% (rolling 63 sessions) AND SURGE (the quarter's revenue minus the same quarter a year earlier minus the mean of that seasonal change over up to 8 earlier quarters, over its standard deviation; at least 4 earlier changes; SEC quarterly revenue) in the top 30%; buy the open of the first session after both r and the SEC filing with the quarter's revenue (filed within 10 sessions of r, else skipped); hold 60.",
+        "lib": "B-EM1 (beat streak + rising growth: rejected) is different"
+      },
+      "libraryDefinition": {
+        "id": "ANOM-SUESURGE",
+        "name": "Earnings AND revenue surprise together (SUE + SURGE)",
+        "explain": "SUE in the top 30% (rolling 63 sessions) AND SURGE (the quarter's revenue minus the same quarter a year earlier minus the mean of that seasonal change over up to 8 earlier quarters, over its standard deviation; at least 4 earlier changes; SEC quarterly revenue) in the top 30%; buy the open of the first session after both r and the SEC filing with the quarter's revenue (filed within 10 sessions of r, else skipped); hold 60. Paper(s): Jegadeesh & Livnat (2006) Revenue surprises and stock returns, Journal of Accounting and Economics 41(1-2). Reported: drift is largest when earnings and revenue surprises agree. Replication: revenue-surprise drift replicates (CZ RevenueSurprise).",
+        "sources": [
+          "https://doi.org/10.1016/j.jacceco.2005.10.002",
+          "https://www.openassetpricing.com"
+        ],
+        "rule": null,
+        "libraryCheck": "B-EM1 (beat streak + rising growth: rejected) is different"
+      },
+      "falsification": "Agreement of earnings and sales news can change expected profitability; fails against simpler earnings/market controls or authentic announcement vintages.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-06",
+      "mechanism": "Inventory-cycle normalization",
+      "economicFamily": "Investment cycles",
+      "exactExistingId": "RQ-INV-LOW126",
+      "lab": "research",
+      "sourceRule": {
+        "kind": "buy",
+        "hold": 126,
+        "side": "bottom",
+        "family": "inv",
+        "name": "Inventory cut (inventory change vs a year before, per average assets) in the bottom 20%, hold 6 months",
+        "rule": "Buy the next open after a 10-Q/10-K whose inventory (us-gaap InventoryNet) minus the inventory a year before, divided by average total assets, is in the bottom 20% (percentile <= 0.20 vs all such filings of the prior 365 days; filed within 120 days of the balance date; year-ago inventory > 0; assets 10M USD+); stock liquid; sell the close 126 sessions later."
+      },
+      "libraryDefinition": {
+        "id": "RQ-INV-LOW126",
+        "name": "Inventory cut (inventory change vs a year before, per average assets) in the bottom 20%, hold 6 months",
+        "explain": "Buy the next open after a 10-Q/10-K whose inventory (us-gaap InventoryNet) minus the inventory a year before, divided by average total assets, is in the bottom 20% (percentile <= 0.20 vs all such filings of the prior 365 days; filed within 120 days of the balance date; year-ago inventory > 0; assets 10M USD+); stock liquid; sell the close 126 sessions later. Measure, event timing, year-ago match, average-assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 8) before any run.",
+        "sources": [
+          "https://doi.org/10.1023/A:1020274002135",
+          "https://www3.ntu.edu.sg/home/HuaiZhang/inventory%20paper-RAST.pdf"
+        ],
+        "rule": null,
+        "libraryCheck": null
+      },
+      "falsification": "Lean inventories can reduce future write-downs/capital needs; fails if inventory cuts reflect collapsing demand or do not beat industry/simple controls.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-07",
+      "mechanism": "Opportunistic insider information",
+      "economicFamily": "Ownership information",
+      "exactExistingId": "ANOM-INSIDER",
+      "lab": "anomaly",
+      "sourceRule": {
+        "family": "insider",
+        "hold": 21,
+        "name": "Opportunistic insider purchases (routine buyers removed)",
+        "papers": [
+          {
+            "cite": "Cohen, Malloy & Pomorski (2012) Decoding Inside Information, Journal of Finance 67(3)",
+            "url": "https://www.nber.org/papers/w16454"
+          }
+        ],
+        "reported": "opportunistic buys earn ~0.8% a month abnormal; routine trades nothing",
+        "replication": "replicated in later insider studies; CZ include insider-buying signals",
+        "refs": [
+          {
+            "cite": "Chen & Zimmermann (2022) Open Source Cross-Sectional Asset Pricing, Critical Finance Review 11(2)",
+            "url": "https://www.openassetpricing.com"
+          }
+        ],
+        "rule": "SEC Form 4 open-market purchase (code P) by an insider who traded in each of the 3 previous calendar years but NOT in the same calendar month in all 3 (a routine trader = traded in the same month 3 years running); buy the next open after the filing date; hold 21; one open trade per stock.",
+        "lib": "E3 (insider cluster: not proven), C-INS2 (rejected), C-INS3 (queued, this idea with clusters). One-shot of the paper's single-trade version"
+      },
+      "libraryDefinition": {
+        "id": "ANOM-INSIDER",
+        "name": "Opportunistic insider purchases (routine buyers removed)",
+        "explain": "SEC Form 4 open-market purchase (code P) by an insider who traded in each of the 3 previous calendar years but NOT in the same calendar month in all 3 (a routine trader = traded in the same month 3 years running); buy the next open after the filing date; hold 21; one open trade per stock. Paper(s): Cohen, Malloy & Pomorski (2012) Decoding Inside Information, Journal of Finance 67(3). Reported: opportunistic buys earn ~0.8% a month abnormal; routine trades nothing. Replication: replicated in later insider studies; CZ include insider-buying signals.",
+        "sources": [
+          "https://www.nber.org/papers/w16454",
+          "https://www.openassetpricing.com"
+        ],
+        "rule": null,
+        "libraryCheck": "E3 (insider cluster: not proven), C-INS2 (rejected), C-INS3 (queued, this idea with clusters). One-shot of the paper's single-trade version"
+      },
+      "falsification": "Non-routine open-market purchases may reveal private business confidence; fails when transaction codes/public clocks or after-cost controls remove the effect.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-08",
+      "mechanism": "Activist governance intervention",
+      "economicFamily": "Governance",
+      "exactExistingId": "ANOM-13D",
+      "lab": "anomaly",
+      "sourceRule": {
+        "family": "edgar",
+        "hold": 63,
+        "name": "Activist 13D filing",
+        "papers": [
+          {
+            "cite": "Brav, Jiang, Partnoy & Thomas (2008) Hedge Fund Activism, Corporate Governance, and Firm Performance, Journal of Finance 63(4)",
+            "url": "https://doi.org/10.1111/j.1540-6261.2008.01373.x"
+          }
+        ],
+        "reported": "+7% abnormal around the filing, no reversal over the next year",
+        "replication": "confirmed (Bebchuk, Brav & Jiang 2015)",
+        "refs": [],
+        "rule": "Original SC 13D / SCHEDULE 13D (not amendments) in the EDGAR quarterly index; subject = the one listed company on the filing; buy the next open after the filing date; hold 63; one open trade per stock. (Not every 13D is an activist: passive 5% holders file 13G.)",
+        "lib": "E4 (queued). First run"
+      },
+      "libraryDefinition": {
+        "id": "ANOM-13D",
+        "name": "Activist 13D filing",
+        "explain": "Original SC 13D / SCHEDULE 13D (not amendments) in the EDGAR quarterly index; subject = the one listed company on the filing; buy the next open after the filing date; hold 63; one open trade per stock. (Not every 13D is an activist: passive 5% holders file 13G.) Paper(s): Brav, Jiang, Partnoy & Thomas (2008) Hedge Fund Activism, Corporate Governance, and Firm Performance, Journal of Finance 63(4). Reported: +7% abnormal around the filing, no reversal over the next year. Replication: confirmed (Bebchuk, Brav & Jiang 2015).",
+        "sources": [
+          "https://doi.org/10.1111/j.1540-6261.2008.01373.x"
+        ],
+        "rule": null,
+        "libraryCheck": "E4 (queued). First run"
+      },
+      "falsification": "An outside active owner can change capital allocation; fails if original filings are passive/ambiguous or matched outcomes do not support it. SQ22-13D is a rejected duplicate, not another hypothesis.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-09",
+      "mechanism": "Actual repurchase payout yield",
+      "economicFamily": "Capital allocation",
+      "exactExistingId": "ANOM-BBY",
+      "lab": "anomaly",
+      "sourceRule": {
+        "family": "facts",
+        "hold": 63,
+        "name": "Buyback yield (actual repurchases)",
+        "papers": [
+          {
+            "cite": "Boudoukh, Michaely, Richardson & Roberts (2007) On the Importance of Measuring Payout Yield, Journal of Finance 62(2)",
+            "url": "https://doi.org/10.1111/j.1540-6261.2007.01226.x"
+          },
+          {
+            "cite": "Ikenberry, Lakonishok & Vermaelen (1995) Market underreaction to open market share repurchases, JFE 39(2-3)",
+            "url": "https://doi.org/10.1016/0304-405X(95)00826-Z"
+          }
+        ],
+        "reported": "payout yield incl. buybacks predicts returns; announcement drift +12% over 4 years (1980-90)",
+        "replication": "payout yield replicates (CZ NetPayoutYield); announcement drift weaker after 2000",
+        "refs": [
+          {
+            "cite": "Chen & Zimmermann (2022) Open Source Cross-Sectional Asset Pricing, Critical Finance Review 11(2)",
+            "url": "https://www.openassetpricing.com"
+          }
+        ],
+        "rule": "Monthly, all liquid stocks: TTM PaymentsForRepurchaseOfCommonStock / (share count known x close); top 10% among repurchasers; hold 63. (Announcement dates need a news feed: see ANOM-BBANN.)",
+        "lib": "E8 (buyback announcements: queued), V17 (net payout yield: queued). Measured from what was actually spent"
+      },
+      "libraryDefinition": {
+        "id": "ANOM-BBY",
+        "name": "Buyback yield (actual repurchases)",
+        "explain": "Monthly, all liquid stocks: TTM PaymentsForRepurchaseOfCommonStock / (share count known x close); top 10% among repurchasers; hold 63. (Announcement dates need a news feed: see ANOM-BBANN.) Paper(s): Boudoukh, Michaely, Richardson & Roberts (2007) On the Importance of Measuring Payout Yield, Journal of Finance 62(2); Ikenberry, Lakonishok & Vermaelen (1995) Market underreaction to open market share repurchases, JFE 39(2-3). Reported: payout yield incl. buybacks predicts returns; announcement drift +12% over 4 years (1980-90). Replication: payout yield replicates (CZ NetPayoutYield); announcement drift weaker after 2000.",
+        "sources": [
+          "https://doi.org/10.1111/j.1540-6261.2007.01226.x",
+          "https://doi.org/10.1016/0304-405X(95)00826-Z",
+          "https://www.openassetpricing.com"
+        ],
+        "rule": null,
+        "libraryCheck": "E8 (buyback announcements: queued), V17 (net payout yield: queued). Measured from what was actually spent"
+      },
+      "falsification": "Executed payouts may reveal cash generation/undervaluation; fails if issuance offsets payouts or it adds nothing beyond value/quality controls.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-10",
+      "mechanism": "Spin-off forced-selling release",
+      "economicFamily": "Institutional flows",
+      "exactExistingId": "SQ22-SPINOFF",
+      "lab": "squad22",
+      "sourceRule": {
+        "family": "Value",
+        "hold": 126,
+        "block": 126,
+        "name": "Spin-off bought on its 21st regular-way session (after index-fund selling), hold 126, stop 35%",
+        "papers": [
+          {
+            "cite": "Cusatis, Miles & Woolridge (1993) Restructuring through spinoffs, Journal of Financial Economics 33(3)",
+            "url": "https://doi.org/10.1016/0304-405X(93)90011-Z"
+          },
+          {
+            "cite": "Greenblatt (1997) You Can Be a Stock Market Genius (forced selling of spin-offs by index funds)",
+            "url": null
+          }
+        ],
+        "lib": "ANOM-SPIN (10-12B, 2nd session: TOO FEW CASES 21 / 17), E7 / DEC2-SPINOFF (queued / needs data). New: entry after the forced-selling window, 10-12G added, liquid 5 USD / 5M USD. Count first."
+      },
+      "libraryDefinition": {
+        "id": "SQ22-SPINOFF",
+        "name": "Spin-off bought on its 21st regular-way session (after index-fund selling), hold 126, stop 35%",
+        "explain": "RULE (squad22-core.mjs header RULE 2, exact): a CIK filing an original Form 10-12B / 10-12G (EDGAR master index) whose point-in-time ticker first trades on/after the filing date and within 400 days (first regular-way session s1; delisted kept). Buy the open of s1+20 if at s1+19 close 5 USD+ and 20-session traded value 5M USD+; stop 35%; else sell at the close of the 126th session. COUNT FIRST: under 20 cases in a half -> TOO FEW CASES, no return computed.",
+        "sources": [
+          "https://doi.org/10.1016/0304-405X(93)90011-Z"
+        ],
+        "rule": null,
+        "libraryCheck": "ANOM-SPIN (10-12B, 2nd session: TOO FEW CASES 21 / 17), E7 / DEC2-SPINOFF (queued / needs data). New: entry after the forced-selling window, 10-12G added, liquid 5 USD / 5M USD. Count first."
+      },
+      "falsification": "Mandated parent/index-holder sales may temporarily depress a separately traded business; fails if distributions/start dates or matched costs remove the effect.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-11",
+      "mechanism": "Regulatory/clinical commercial milestone",
+      "economicFamily": "Regulatory milestones",
+      "exactExistingId": "CAT-HUNTER-SUB5",
+      "lab": "squad19",
+      "sourceRule": null,
+      "libraryDefinition": {
+        "id": "CAT-HUNTER-SUB5",
+        "name": "Under-5 primary-source catalyst hunter (FDA designation or positive topline 8-K), clean supply, hold 10 / stop 25%",
+        "explain": "Raw close 1-5 USD on the signal session t, 20-day average traded value >= 1M USD. Signal: an 8-K public in session t whose text contains an FDA designation phrase (Breakthrough Device/Therapy, Fast Track, Orphan Drug, Rare Pediatric Disease designation) [type A], or a positive-topline / primary-endpoint-met phrase in an 8-K carrying item 8.01 or 2.02 [type C]. Exclude: reverse split in the 60 days before t; 424B5 / S-1 / S-1/A / S-3 / S-3/A public in sessions t-19..t; any close-to-close move of 15%+ (either way) in t-21..t-1; already up 40%+ on the prior close when public (open for a pre-open filing, close for a filing in the session). Buy t+1 open; sell at the close of session 10 (entry day = 1) or a 25% stop under the fill. Deviations and data: squad19-core.mjs DAILY section header.",
+        "sources": [],
+        "rule": null,
+        "libraryCheck": "DEC-CRASH, DEC2-CONTRACT, C-CT1, E13/E16, catalyst lane CAT-*"
+      },
+      "falsification": "A meaningful approval or clinical result may improve commercialization probability; designation and trial result are not approval and must remain separate; fails on event validity or executable costs.",
+      "ruleIdentityStatus": "EXISTING_LIBRARY_RULE_SOURCE_BINDING_REQUIRES_TRACE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-12",
+      "mechanism": "Cash-tender deal completion spread",
+      "economicFamily": "Deal risk",
+      "exactExistingId": "RQ-TENDER-3-15",
+      "lab": "research",
+      "sourceRule": {
+        "kind": "buy",
+        "hold": 120,
+        "side": "tender",
+        "family": "tender",
+        "spread": [
+          0.03,
+          0.15
+        ],
+        "name": "Cash tender offer target, spread 3-15%, held to the deal close (max 120 sessions)",
+        "rule": "Buy the next open after an original SC TO-T (third-party all-cash tender offer) when offer / filing-day close - 1 is 3% to 15% and the target is liquid; sell at the last close before it stops trading (deal closed), at the first close 10%+ under the filing-day close (deal break), or 120 sessions after entry."
+      },
+      "libraryDefinition": {
+        "id": "RQ-TENDER-3-15",
+        "name": "Cash tender offer target, spread 3-15%, held to the deal close (max 120 sessions)",
+        "explain": "Buy the next open after an original SC TO-T (third-party all-cash tender offer) when offer / filing-day close - 1 is 3% to 15% and the target is liquid; sell at the last close before it stops trading (deal closed), at the first close 10%+ under the filing-day close (deal break), or 120 sessions after entry. Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.",
+        "sources": [
+          "https://www.johnhcochrane.com/s/mitchell-pulvino-characteristics-of-risk-and-return-JF.pdf",
+          "https://doi.org/10.1111/0022-1082.00402",
+          "https://doi.org/10.1016/S0304-405X(02)00072-7"
+        ],
+        "rule": null,
+        "libraryCheck": null
+      },
+      "falsification": "A cash spread compensates completion/time risk; fails if executable settlement, break losses and fees erase it. Stock swaps are excluded.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-13",
+      "mechanism": "News-shock information diffusion",
+      "economicFamily": "Information diffusion",
+      "exactExistingId": "RQ-ISC-21",
+      "lab": "research",
+      "sourceRule": {
+        "kind": "buy",
+        "hold": 21,
+        "side": "isc",
+        "news": "any",
+        "family": "isc",
+        "name": "Information shock: a jump of 4+ sigma (and 4%+) above the average stock on an 8-K news day, hold 1 month",
+        "rule": "Buy the next open after a session where the stock beat the average liquid stock by max(4 x its own 60-session sigma, 4%) and an original 8-K of the company was accepted for that session (before 16:00 New York, or after the prior close); stock liquid, 5 USD+; sell the close 21 sessions later."
+      },
+      "libraryDefinition": {
+        "id": "RQ-ISC-21",
+        "name": "Information shock: a jump of 4+ sigma (and 4%+) above the average stock on an 8-K news day, hold 1 month",
+        "explain": "Buy the next open after a session where the stock beat the average liquid stock by max(4 x its own 60-session sigma, 4%) and an original 8-K of the company was accepted for that session (before 16:00 New York, or after the prior close); stock liquid, 5 USD+; sell the close 21 sessions later. Shock size, sigma window, news window and data rule fixed in research-core.mjs (IDEA 3) before any run.",
+        "sources": [
+          "https://doi.org/10.1016/j.jfineco.2016.06.011",
+          "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2891216",
+          "https://ideas.repec.org/a/eee/jfinec/v124y2017i1p43-64.html"
+        ],
+        "rule": null,
+        "libraryCheck": null
+      },
+      "falsification": "A large issuer-specific information shock may diffuse slowly; duplicate/overlap with earnings drift is explicitly screened; fails against earnings and non-news controls.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-14",
+      "mechanism": "Short-term liquidity provision",
+      "economicFamily": "Liquidity",
+      "exactExistingId": "A-SW1",
+      "lab": "swing",
+      "sourceRule": null,
+      "libraryDefinition": {
+        "id": "A-SW1",
+        "name": "2-day RSI under 10 in an uptrend, sell at the first close above the 5-day average (max 5 sessions)",
+        "explain": "2-day RSI under 10 in an uptrend, sell at the first close above the 5-day average (max 5 sessions). Pre-registered 20 Oct 2026 (swing-lab.mjs).",
+        "sources": [],
+        "rule": null,
+        "libraryCheck": null
+      },
+      "falsification": "Temporary selling pressure can reverse when intermediaries absorb inventory; price RSI is a proxy, not evidence of exogenous liquidity demand; fails after spreads/gaps/controls.",
+      "ruleIdentityStatus": "EXISTING_LIBRARY_RULE_SOURCE_BINDING_REQUIRES_TRACE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-15",
+      "mechanism": "Profitable value mispricing",
+      "economicFamily": "Valuation",
+      "exactExistingId": "SQ16-GPVAL",
+      "lab": "squad16",
+      "sourceRule": {
+        "name": "Novy-Marx profitable value (gross profit / assets rank + book / market rank, 50 of the 500 largest, quarterly)",
+        "kind": "basket",
+        "review": "quarterly",
+        "uni": 500,
+        "n": 50,
+        "target": 50,
+        "block": 63,
+        "replication": "partial",
+        "source": {
+          "who": "Robert Novy-Marx (2013) The other side of value: the gross profitability premium, JFE 108(1) (Alpha Architect summary)",
+          "url": "https://alphaarchitect.com/combining-value-and-profitability-factors-to-improve-performance/",
+          "claim": "profitability 0.31%/month, value 0.41%/month, combined 0.71%/month long-short 1962-2010 (Sharpe 0.85); works \"even among the largest, most liquid stocks\"",
+          "costs": "gross of costs",
+          "oos": "later: value lost ~60% 2017-2020 while profitability held; the library's all-stock ANOM-GP was rejected"
+        },
+        "rule": "Quarterly review. Universe: the 500 largest, financials out. GP/A = TTM gross profit (or revenue - cost of revenue) / latest total assets; B/M = latest stockholders' equity / market value; both known and equity > 0. Score = percentile rank of GP/A + percentile rank of B/M (each 0..1 within the eligible set); hold the 50 highest (ties: higher GP/A), equal weight; sold when no longer among the 50.",
+        "deviations": "Long only (the paper is long-short); quarterly instead of annual / monthly; a fixed 50 instead of the top tercile / decile."
+      },
+      "libraryDefinition": {
+        "id": "SQ16-GPVAL",
+        "name": "Novy-Marx profitable value (gross profit / assets rank + book / market rank, 50 of the 500 largest, quarterly)",
+        "explain": "RULE: Quarterly review. Universe: the 500 largest, financials out. GP/A = TTM gross profit (or revenue - cost of revenue) / latest total assets; B/M = latest stockholders' equity / market value; both known and equity > 0. Score = percentile rank of GP/A + percentile rank of B/M (each 0..1 within the eligible set); hold the 50 highest (ties: higher GP/A), equal weight; sold when no longer among the 50. DEVIATIONS from the published method: Long only (the paper is long-short); quarterly instead of annual / monthly; a fixed 50 instead of the top tercile / decile. Common (squad16-core.mjs header): universe = the N largest US operating companies by point-in-time market value at each review close (Squad 5 / 11 / 14 market value: SEC share count known 30+ days earlier x the close, dead stocks included, the historical Form 3/4/5 ticker map, US domicile, one ticker per company); SEC XBRL facts filed before the review only (TTM periods ended within 200 days). Baskets: bought at the next open after the review that selects them, held while selected, sold at the next open after the first review that drops them; sleeve rules hold each pick one year. Judged per REVIEW PERIOD (each stock held from the open after review j to the open after review j+1 is one trade, as Squad 5 periodPieces), so holdings still open today do not bias the result; every period pays the full 0.8% cost (1.2% stress); the portfolio test pays only real trades. Judged once (first complete run frozen in data/squad16-lab.json firstRun) with hold-core judgeHold on both halves (entry before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock at the same moments (both capped at +300%, AUD-1), better than the same stock held as long on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks per half, block t >= 2.5, return per year of capital tied up above SPY on the same days in both halves; baskets also as one account (0.4% per side) vs SPY and SPUS per half (gates scan.mjs).",
+        "sources": [
+          "https://alphaarchitect.com/combining-value-and-profitability-factors-to-improve-performance/"
+        ],
+        "rule": null,
+        "libraryCheck": "ANOM-GP (GP/A alone, all liquid stocks, top 10%, hold 63: rejected); value alone V-series; the combination on the 500 largest is new."
+      },
+      "falsification": "Cash-generating profitable businesses may be undervalued relative to assets; fails against simple profitability/value controls and implementable small-account costs.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-16",
+      "mechanism": "Overinvestment and asset growth",
+      "economicFamily": "Investment cycles",
+      "exactExistingId": "ANOM-AG",
+      "lab": "anomaly",
+      "sourceRule": {
+        "family": "facts",
+        "hold": 63,
+        "name": "Low asset growth",
+        "papers": [
+          {
+            "cite": "Cooper, Gulen & Schill (2008) Asset Growth and the Cross-Section of Stock Returns, Journal of Finance 63(4)",
+            "url": "https://doi.org/10.1111/j.1540-6261.2008.01370.x"
+          }
+        ],
+        "reported": "low-growth decile beat high by ~20% a year equal-weighted (1968-2003)",
+        "replication": "replicates but much smaller value-weighted (HXZ I/A)",
+        "refs": [
+          {
+            "cite": "Hou, Xue & Zhang (2020) Replicating Anomalies, Review of Financial Studies 33(5)",
+            "url": "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html"
+          },
+          {
+            "cite": "Chen & Zimmermann (2022) Open Source Cross-Sectional Asset Pricing, Critical Finance Review 11(2)",
+            "url": "https://www.openassetpricing.com"
+          }
+        ],
+        "rule": "Monthly, non-financial: latest total assets / total assets about a year earlier (the balance sheet 330-400 days before the latest) - 1; bottom 10% of liquid stocks; hold 63.",
+        "lib": "none"
+      },
+      "libraryDefinition": {
+        "id": "ANOM-AG",
+        "name": "Low asset growth",
+        "explain": "Monthly, non-financial: latest total assets / total assets about a year earlier (the balance sheet 330-400 days before the latest) - 1; bottom 10% of liquid stocks; hold 63. Paper(s): Cooper, Gulen & Schill (2008) Asset Growth and the Cross-Section of Stock Returns, Journal of Finance 63(4). Reported: low-growth decile beat high by ~20% a year equal-weighted (1968-2003). Replication: replicates but much smaller value-weighted (HXZ I/A).",
+        "sources": [
+          "https://doi.org/10.1111/j.1540-6261.2008.01370.x",
+          "https://ideas.repec.org/a/oup/rfinst/v33y2020i5p2019-2133..html",
+          "https://www.openassetpricing.com"
+        ],
+        "rule": null,
+        "libraryCheck": "none"
+      },
+      "falsification": "Aggressive expansion may lower subsequent marginal returns; low asset growth is a long-only proxy, fails if distress/sector exposure explains it.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-17",
+      "mechanism": "Intangible reinvestment realization",
+      "economicFamily": "Reinvestment",
+      "exactExistingId": "SQ4-RDCOMP",
+      "lab": "squad4",
+      "sourceRule": {
+        "name": "R&D-heavy compounder with rising margins",
+        "plan": "G",
+        "short": "R&D 10%+ of revenue, revenue +15%+, gross AND operating margin up on a year earlier; hold 12 months, 35% stop, trail after +100%",
+        "rule": "Monthly: TTM R&D / TTM revenue >= 10%; TTM revenue growth >= 15%; TTM gross margin above a year earlier; TTM operating margin (OperatingIncomeLoss / revenue) above a year earlier. Buy every match. PLAN G: 1 unit at the next open; sell at the next open after a close at which the position is worth <= 65% of the money in (35% disaster stop); once a close has put it at +100% or more, sell at the next open after a close under its 50-session average; else sell at the close of session 252."
+      },
+      "libraryDefinition": {
+        "id": "SQ4-RDCOMP",
+        "name": "R&D-heavy compounder with rising margins",
+        "explain": "R&D 10%+ of revenue, revenue +15%+, gross AND operating margin up on a year earlier; hold 12 months, 35% stop, trail after +100%. RULE: Monthly: TTM R&D / TTM revenue >= 10%; TTM revenue growth >= 15%; TTM gross margin above a year earlier; TTM operating margin (OperatingIncomeLoss / revenue) above a year earlier. Buy every match. PLAN G: 1 unit at the next open; sell at the next open after a close at which the position is worth <= 65% of the money in (35% disaster stop); once a close has put it at +100% or more, sell at the next open after a close under its 50-session average; else sell at the close of session 252. Universe at the close of t: US-listed common stocks with an SEC company number (historical ticker map from the SEC Form 3/4/5 data sets, else the SEC ticker list), one ticker per company (the most traded), close >= 5 USD and 20-session average traded value >= 5M USD; dead and delisted stocks included. Fundamentals: SEC XBRL company facts point in time (filed BEFORE t; latest period ended <= 200 days before t). TTM revenue growth = TTM vs the TTM a year earlier (same tag); accelerating = the latest quarter YoY growth above the prior quarter YoY growth; gross margin = gross profit (else revenue - cost of revenue) / revenue, TTM, vs the TTM a year earlier; near the 52-week high = close >= 95% of the highest close of the last 252 sessions. Formation = the first session of each month (monthly overlapping cohorts); buy at the next open; one open position per stock per rule. Cost 0.8% per unit (1.2% stress). Judged once (first complete run frozen) at the tier-2 standard: both halves (signal before / from 2024-01-01; the first signal is possible about 12 months into the data, Oct 2022, so the older half is Oct 2022 - Dec 2023): > 0 after 0.8% and 1.2%, better than the average liquid stock over the same unit-weighted days, better than the same stocks with the same plan on their other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 on 63-session blocks; plus return per year of capital tied up above SPY over the same days in both halves. Returns uncapped on both sides (a path with a near-whole 3x-50x one-day jump = an unadjusted split is left out on both sides); the +300% cap on both sides is reported as a sensitivity. Reported: return per year vs SPUS / HLAL, payoff distribution, share of profit from the top 5% of picks, information plans FORGET (no stop), STOP_ONLY, TWO_YEARS (504 sessions, no stop).",
+        "sources": [],
+        "rule": null,
+        "libraryCheck": "Overlaps: TIP-THEME / TIP-DIPLEAD (tipster lab: industry leaders by market cap, dips), ANOM-52WH / ANOM-RESMOM / DEC-FROG (momentum near highs), ANOM-RD (R&D for its size: rejected), ANOM-QMJ / ANOM-GP (quality: rejected), B-FCF1 / V15 (quality value), HOLD-AVGDOWN (adding on dips), WIN-001..003 (short-term winners autopsy). New here: 12-month holds of GROWTH profiles (revenue acceleration, margin trend, rule of 40, insider ownership, IPO age) with a disaster stop and a trailing exit after +100%."
+      },
+      "falsification": "Expensed innovation investment plus improving margins may signal compounding; fails if historical vintages or failures/dilution erase returns.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-18",
+      "mechanism": "Tax-expense information about latent profits",
+      "economicFamily": "Tax information",
+      "exactExistingId": "RQ-TAX-126",
+      "lab": "research",
+      "sourceRule": {
+        "kind": "buy",
+        "hold": 126,
+        "side": "top",
+        "family": "tax",
+        "name": "Tax expense surprise in the top 20%, hold 6 months",
+        "rule": "As RQ-TAX-63, hold 126 sessions."
+      },
+      "libraryDefinition": {
+        "id": "RQ-TAX-126",
+        "name": "Tax expense surprise in the top 20%, hold 6 months",
+        "explain": "As RQ-TAX-63, hold 126 sessions. Measure, quarter filter, year-ago match, assets scaling, ranking and data rule fixed in research-core.mjs (IDEA 6) before any run.",
+        "sources": [
+          "https://doi.org/10.1111/j.1475-679X.2011.00409.x",
+          "https://ideas.repec.org/a/bla/joares/v49y2011i3p791-821.html",
+          "https://repec.som.yale.edu/icfpub/publications/2531.pdf"
+        ],
+        "rule": null,
+        "libraryCheck": null
+      },
+      "falsification": "Tax expense changes may reveal profitability beyond reported income; fails with deferred/discrete tax confounds or no increment over earnings controls.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-19",
+      "mechanism": "Management advancing earnings release timing",
+      "economicFamily": "Management disclosure timing",
+      "exactExistingId": "RQ-EAT-ADV-21",
+      "lab": "research",
+      "sourceRule": {
+        "kind": "buy",
+        "hold": 21,
+        "side": "adv",
+        "family": "eat",
+        "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 1 month",
+        "rule": "Buy the open of the session after the reaction session of an earnings 8-K (item 2.02) whose date is 7+ calendar days earlier than the company's year-ago announcement date + 364 days (year-ago = closest announcement within +-30 days of date - 364; filings within 30 days = one announcement); stock liquid on the reaction session; sell the close 21 sessions later."
+      },
+      "libraryDefinition": {
+        "id": "RQ-EAT-ADV-21",
+        "name": "Earnings reported a week or more EARLIER than a year before (advancer), hold 1 month",
+        "explain": "Buy the open of the session after the reaction session of an earnings 8-K (item 2.02) whose date is 7+ calendar days earlier than the company's year-ago announcement date + 364 days (year-ago = closest announcement within +-30 days of date - 364; filings within 30 days = one announcement); stock liquid on the reaction session; sell the close 21 sessions later. Grouping, year-ago match, shift thresholds, timing and data rule fixed in research-core.mjs (IDEA 5) before any run.",
+        "sources": [
+          "https://doi.org/10.1017/S0022109018000492",
+          "https://dspace.mit.edu/handle/1721.1/122364",
+          "https://doi.org/10.1016/S0165-4101(02)00048-6"
+        ],
+        "rule": null,
+        "libraryCheck": null
+      },
+      "falsification": "Advancing a preannounced reporting date may signal confidence; actual annual date shift is an imperfect proxy and must not be called announced schedule revision.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    },
+    {
+      "batchId": "B20-20",
+      "mechanism": "Demand growth and operating leverage leadership",
+      "economicFamily": "Growth fundamentals",
+      "exactExistingId": "SQ4-GROWLEAD",
+      "lab": "squad4",
+      "sourceRule": {
+        "name": "Growth leader at a new high",
+        "plan": "G",
+        "short": "revenue +30%+ and accelerating, gross margin rising, within 5% of the 52-week high; hold 12 months, 35% disaster stop, 50-day trail after +100%",
+        "rule": "Monthly: TTM revenue growth >= 30%; latest quarter YoY growth above the prior quarter YoY growth; TTM gross margin above the TTM a year earlier; close >= 95% of the 52-week high. Buy every match. PLAN G: 1 unit at the next open; sell at the next open after a close at which the position is worth <= 65% of the money in (35% disaster stop); once a close has put it at +100% or more, sell at the next open after a close under its 50-session average; else sell at the close of session 252."
+      },
+      "libraryDefinition": {
+        "id": "SQ4-GROWLEAD",
+        "name": "Growth leader at a new high",
+        "explain": "revenue +30%+ and accelerating, gross margin rising, within 5% of the 52-week high; hold 12 months, 35% disaster stop, 50-day trail after +100%. RULE: Monthly: TTM revenue growth >= 30%; latest quarter YoY growth above the prior quarter YoY growth; TTM gross margin above the TTM a year earlier; close >= 95% of the 52-week high. Buy every match. PLAN G: 1 unit at the next open; sell at the next open after a close at which the position is worth <= 65% of the money in (35% disaster stop); once a close has put it at +100% or more, sell at the next open after a close under its 50-session average; else sell at the close of session 252. Universe at the close of t: US-listed common stocks with an SEC company number (historical ticker map from the SEC Form 3/4/5 data sets, else the SEC ticker list), one ticker per company (the most traded), close >= 5 USD and 20-session average traded value >= 5M USD; dead and delisted stocks included. Fundamentals: SEC XBRL company facts point in time (filed BEFORE t; latest period ended <= 200 days before t). TTM revenue growth = TTM vs the TTM a year earlier (same tag); accelerating = the latest quarter YoY growth above the prior quarter YoY growth; gross margin = gross profit (else revenue - cost of revenue) / revenue, TTM, vs the TTM a year earlier; near the 52-week high = close >= 95% of the highest close of the last 252 sessions. Formation = the first session of each month (monthly overlapping cohorts); buy at the next open; one open position per stock per rule. Cost 0.8% per unit (1.2% stress). Judged once (first complete run frozen) at the tier-2 standard: both halves (signal before / from 2024-01-01; the first signal is possible about 12 months into the data, Oct 2022, so the older half is Oct 2022 - Dec 2023): > 0 after 0.8% and 1.2%, better than the average liquid stock over the same unit-weighted days, better than the same stocks with the same plan on their other days, > 0 without the 2 best, 20+ trades and 3+ blocks, block t >= 2.5 on 63-session blocks; plus return per year of capital tied up above SPY over the same days in both halves. Returns uncapped on both sides (a path with a near-whole 3x-50x one-day jump = an unadjusted split is left out on both sides); the +300% cap on both sides is reported as a sensitivity. Reported: return per year vs SPUS / HLAL, payoff distribution, share of profit from the top 5% of picks, information plans FORGET (no stop), STOP_ONLY, TWO_YEARS (504 sessions, no stop).",
+        "sources": [],
+        "rule": null,
+        "libraryCheck": "Overlaps: TIP-THEME / TIP-DIPLEAD (tipster lab: industry leaders by market cap, dips), ANOM-52WH / ANOM-RESMOM / DEC-FROG (momentum near highs), ANOM-RD (R&D for its size: rejected), ANOM-QMJ / ANOM-GP (quality: rejected), B-FCF1 / V15 (quality value), HOLD-AVGDOWN (adding on dips), WIN-001..003 (short-term winners autopsy). New here: 12-month holds of GROWTH profiles (revenue acceleration, margin trend, rule of 40, insider ownership, IPO age) with a disaster stop and a trailing exit after +100%."
+      },
+      "falsification": "Revenue acceleration with margin improvement may persist into earnings/cash; fails with failed growers included, vintage-aware inputs and costs.",
+      "ruleIdentityStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "duplicatePolicy": "All prior versions count; never retune/relabel a rejected version. Related versions are screened and reported, not counted as independent confirmation."
+    }
+  ],
+  "inputs": {
+    "anomaly-core.mjs": {
+      "sha256": "c761ea1296ca625e742d6a17b6006171548498ae02ffadd7dd467dc919932b02",
+      "bytes": 56074
+    },
+    "anomaly-lab.mjs": {
+      "sha256": "297222b237f8d059d53f50696b1b46f6512949fb417af43a2de54016a649226a",
+      "bytes": 80576
+    },
+    "data/agent-league.json": {
+      "sha256": "2934d99ceeefed486a4cca027d6d6eb9a9b9df134baf98deebe6d8562f61ca01",
+      "bytes": 4242
+    },
+    "data/anomaly-lab.json": {
+      "sha256": "045e87e0cc015b431c602cca5683a1375bffda2a633aeb994ffb5664aaf82ca7",
+      "bytes": 129698
+    },
+    "data/experiments.jsonl": {
+      "sha256": "e84efc62542110811a7648f7f32b03691b997ea280548afac68e79a930c4f583",
+      "bytes": 65819
+    },
+    "data/research-lab.json": {
+      "sha256": "179508a238cb6024f73b063d15a540a14df12b357518526176cc15adf9a3db9d",
+      "bytes": 141627
+    },
+    "data/squad16-lab.json": {
+      "sha256": "d6d77b63f4f3d85c7f6ea583ab19a99214e7f6961adf04e32572b6cee8ee7a0c",
+      "bytes": 1573110
+    },
+    "data/squad19-lab.json": {
+      "sha256": "51890317de4a9168a142b0cb59bad439894cc349083a614f56274d788b18f2bd",
+      "bytes": 777204
+    },
+    "data/squad22-lab.json": {
+      "sha256": "37b5cce8fe9b99996775093e27fb11990a313a134637d340ca0fcbb31aef3877",
+      "bytes": 20749
+    },
+    "data/squad24-lab.json": {
+      "sha256": "e7a70c8db314a563e3d11e36b986a35da818d039c5b9d7ab59a4755c0c6d3152",
+      "bytes": 373064
+    },
+    "data/squad28-lab.json": {
+      "sha256": "bf8fd1a2b39986860a80edaab89416524367070183f1a296ee585468e725f0a8",
+      "bytes": 229842
+    },
+    "data/squad4-lab.json": {
+      "sha256": "ff0b7295b9ee1332737d573f4416220a6a9210069b61b2bd66c0a33a87cfd67d",
+      "bytes": 942794
+    },
+    "data/strategy-library.json": {
+      "sha256": "36247c25429a0ed3f2fb2184e127d0be0896f720dfe360f3efea7fcef5c06b94",
+      "bytes": 1858952
+    },
+    "data/swing-lab.json": {
+      "sha256": "e6761f27601e9c19a1beab38ad2985bc8ed0a7a0f923c61e031f8a0f8fb89a77",
+      "bytes": 26535
+    },
+    "research-core.mjs": {
+      "sha256": "829048c9c88cffe9254789acea139ff066b460cbb4d4460bb27c4f27c0451958",
+      "bytes": 150351
+    },
+    "research-lab.mjs": {
+      "sha256": "446ff90291bf9a41a374df81a7a15d2b7533577c53ae09fb9f86848bfef4c26f",
+      "bytes": 143870
+    },
+    "squad16-core.mjs": {
+      "sha256": "086efe4df30c6249d064477ed80ab681a0d925f01f16cb0c2f6e1ecff1c43859",
+      "bytes": 45300
+    },
+    "squad16-lab.mjs": {
+      "sha256": "fd57fa2a502435ea6be6a86b63e573791bfac95a486b6b055b25c2c34b03a98a",
+      "bytes": 68773
+    },
+    "squad19-core.mjs": {
+      "sha256": "ce56199c0165b771e277496c7e5f1d54dbc066da374346af2d029c7d32fb9578",
+      "bytes": 51732
+    },
+    "squad19-lab.mjs": {
+      "sha256": "1d80fc36799eb681cb1573be44438004de71d3dfb5127df320db5b292b614e70",
+      "bytes": 53441
+    },
+    "squad22-core.mjs": {
+      "sha256": "bd3b29019a30cd5b2cd3253aca36c9b8cab7ece16ec0c9db2b4099c3f9b87b0b",
+      "bytes": 34970
+    },
+    "squad22-lab.mjs": {
+      "sha256": "466486bd2a79641e244630a785c17132f843e926ff8d66102f6341005cc8852b",
+      "bytes": 44623
+    },
+    "squad24-core.mjs": {
+      "sha256": "995b8f1d1382d8bebe15937ca9c17d42bc4f04f7a60e71ab0ca94b0f1511913c",
+      "bytes": 29319
+    },
+    "squad24-lab.mjs": {
+      "sha256": "636ebaee5e6018539a9b87671e853d7c71a5d4679fb730dfb910d5d1405d7276",
+      "bytes": 69163
+    },
+    "squad28-core.mjs": {
+      "sha256": "b0f7d9ac12d56eb3ee758f9161385db49cc1f6f565a21dd95938d2028fed6239",
+      "bytes": 34371
+    },
+    "squad28-lab.mjs": {
+      "sha256": "32aed99b50b05fb3caf9054178c57b6e27d325013dd85336ca7c1cd420c2f0a0",
+      "bytes": 56293
+    },
+    "squad4-core.mjs": {
+      "sha256": "b04bdf687f83a4d240a87ec3b9521f98a359d9d0dc624e73c0637433341bb0a7",
+      "bytes": 37576
+    },
+    "squad4-lab.mjs": {
+      "sha256": "13fe81eb641c46d9644d1f5f27d4ed14b752c05a42086c570cfb79f94709b2d9",
+      "bytes": 67462
+    },
+    "swing-lab.mjs": {
+      "sha256": "1bf5f58aa60152da9bbfc7afcbaeae7bbde7da5c4890a7d09a113029d49ef1cf",
+      "bytes": 14891
+    },
+    "value-core.mjs": {
+      "sha256": "ac27f7da868ccae4195166ec847f674124819e947901bc5c50799d4e7b7b70be",
+      "bytes": 24607
+    }
+  },
+  "protocol": {
+    "selection": "Mechanism/source/data feasibility before new outcome calculation. Prior published/frozen results already exist; this is retrospective independent evidence review, NOT new untouched confirmation.",
+    "ruleChanges": "NONE; actual existing source parameters/entries/exits/holds preserved; M03 has no adopted rule and cannot run a fabricated trading test.",
+    "variants": "Twenty triage candidates are not twenty independent trials/families. Report overlaps/variants/search burden; no new proof threshold or rescued verdict.",
+    "cohort": "All retained rows for each selected exact rule; if tail-capped/incomplete or generated after firstRun, label retained monitoring/tail, never frozen full-cohort replication. Original firstRun and correctedRun stay separate.",
+    "timeSplit": "Use original rule split/hold; no alternative split chosen from results. No available unseen confirmation sample is presumed.",
+    "analysis": "Mean/median/losses/worst/stress/drop-top2/drop-top5percent/concentration/date-customer-symbol clustering, original controls and original verdicts. Portfolio concurrency is lower-bound for incomplete cohorts; no feasible-return/DD claim without actual prices/marks.",
+    "costs": "Whole shares,1000USD reference,3USD per executed order/side. Preserve original model cost/slippage/gap rules and exact order count. USD entry/exit/BBO/halts/no-fill/settlement absent => executable economics NULL; no invented prices. Fee scenarios/affordable-trade bounds are labelled mathematical sensitivity, never fills.",
+    "control": "Existing untouched market/sector/average-stock/same-stock/customer placebo controls; preserve original cost-convention differences. Missing controls NULL, no softening or selected winners.",
+    "stopping": "No tuning, no new acquisition, no original verdict overwrite, no live promotion; STOP failed exact versions. INCONCLUSIVE for missing evidence. Promising raw model => only bounded next evidence, never BUY.",
+    "provenance": "Original paper vs owner hypothesis vs primary business fact vs replicated model result kept separate. Provider historical fundamentals/identity/corporate actions/acceptance clocks not assumed point-in-time. No current ZAD backfill into historical outcomes.",
+    "budget": "One batch-specific offline analysis, maximum2hours engineering/analysis plus focused review; no monetary budget, market calls, workflow action or task changes.",
+    "release": "Interrupt research for an actual attended Stage1/recovery handoff; Stage2 final/writer gates unchanged. No production writes, source promotion, private quote activation or orders."
+  }
+}
