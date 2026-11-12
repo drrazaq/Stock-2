@@ -37,3 +37,7 @@ DeltaA accepted source18fa0f45/179-file receipt remains frozen. Private payload 
 Stage1 bot successor onfc02212a is only partial loaded-code runtime evidence while in progress; completion/save/delivery still pending. R-A2 runs independently; it neither asserts Stage1 runtime PASS nor installs Stage2/DeltaA.
 
 Before presenting the single owner request: Claude must re-hash these fresh records and acknowledge current operator availability; Codex must refresh head and read-only verification availability. Proposed deadline must be new, exact UTC, within approval+30min; old12:25Z cutoff is withdrawn and never extended. No future attendance promise or authority transfers between packages.
+
+## Final narrow confirmation
+
+Claude6823690630 at12:33UTC independently re-hashed both raw commits, reproduced one-path installation/inverse trees, re-executed actual-base/candidate composition and confirmed scanner noreply identities. He accepts the present operator role for exactly one push and one dispatch with latest_start_utc2026-11-12T13:00:00Z. Approval must arrive by12:55UTC with actual operator/verifier presence; both actions must fit before13:00Z. Head/source drift, late approval, absent attendance or UNKNOWN means STOP with no rebase/retry. Codex is present read-only verifier. No approval or operation has occurred. See APPROVAL_REQUEST.md for the single exact scope.

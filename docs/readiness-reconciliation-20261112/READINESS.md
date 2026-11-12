@@ -2,6 +2,14 @@
 
 Preparation only. No installation, dispatch, acquisition, settings change or trading is approved. Evidence inspected approximately 11:25–11:32 UTC; refresh mutable facts before any action.
 
+## Current readiness at12:33UTC — supersedes earlier snapshots
+
+AgentC source closure6823643620 is positive: actual session IDLE, no pending AgentC code writer, actual19Nov re-arm. All3lab runs succeeded; parser/trigger/result/report chain reconciled, reported rules remain REJECTED/NOT PROVEN. Compatible bot/radar data writers still require exact-parent refresh.
+
+Fresh noreply install47438d3e/inversecf7a46ce on actualee617dbf are independently hash/composition-confirmed by Claude6823690630. Same one-file7272fb38 workflow, same frozen analyzer, no source scope expansion.13intervening nondata paths/14withR-A2;46bindings/39writes/scopedinverse preserved. Billing6822689925 remains closed. Claude accepts present operator role; Codex is read-only verifier. One new exact approval request is ready in settled-agent-c/APPROVAL_REQUEST.md: approval by12:55Z, both actions before13:00Z/within30min, workflow start cutoff13:00Z; no operation before approval, no authority carryover on drift/UNKNOWN/absence/expiry. Old12:25 draft stays withdrawn and historical.
+
+Private development closures remain accepted6823092829, operational evidence/phase gates unchanged. Stage1 runtime remains partial, not declared complete. No installation/dispatch/main change occurred here.
+
 ## Latest reconciliation at approximately12:04UTC — authoritative current status
 
 Owner billing evidence6822689925 is accepted for R-A2 by Claude6822697498. No repeated screenshots or new billing fact are needed. Noreply install154a1ed8/inversee0b59e30 were focused-confirmed6822788718; current raw exports/docs contain no personal address. Historical exposure remains at db7982b0 metadata and its install.commit/inverse.commit paths; no history rewrite authorized or performed.
