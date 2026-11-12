@@ -2,6 +2,14 @@
 
 Preparation only. No installation, dispatch, acquisition, settings change or trading is approved. Evidence inspected approximately 11:25–11:32 UTC; refresh mutable facts before any action.
 
+## Duplicate diagnosis at13:31UTC — current continuation
+
+Owner6824593530 authorized retained-evidence diagnosis only. Both agents confirm no authentic duplicate rows/cache are retained locally; aggregates/logs cannot classify125occurrences or identify authentic assemblycause. Literalday+tickerkey is unchanged/correct, noaliasnormalizationbug. Actualproducer-source fixtures show later-tail-backfill overlap can be conflicting or identical aftersplitadjustment; samepayloadproviderduplicates are anotherpossiblepath. xAt is also overwritten bysplitpass and cannot authenticate fetchlineage. No datarepair/canonicalization justifiedyet.
+
+Minimalcoverage-only diagnostic development ACCEPTED6824969700 afterindependent13tests/frozen-source/pin review.4actualsourcefixtures and6,882,120-row capacityrehearsal57.56CPU-seconds/32000KiB withinoriginalbounds; no outcomes/rawrowexport/datarewrite. Runtime source0adcdc06, localinstall7da76ab6/inverse61edb98e onactual8c792476, existingworkflowM only;14nondata paths andStage2scopedrecovery/FINAL obligations unchanged. Newproposedrequest ../ra2-duplicate-diagnostic-20261112/RUN_REQUEST.md needs freshattendance/head and directownerapproval; proposedcutoff14:00Z/approvalby13:55Z. Earlierapprovals areexhausted; no run/installation occurredhere.
+
+Earlier snapshots below are historical and superseded where facts differ.
+
 ## Extraction repair continuation at13:00UTC
 
 Original authorizedrun43219642941 failed cache extraction before analysis; full read-only receipt6823915995 was completed withinstart+25min and preserved unchanged. No authentic historical finding exists. Owner6823984435 authorized development repair only; prior run authority is exhausted.
