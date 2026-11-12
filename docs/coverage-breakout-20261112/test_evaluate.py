@@ -17,7 +17,7 @@ class Checks(unittest.TestCase):
   events=E.stock_events('ZZQ',q,D,C);z=next(x for x in events if x['t']==60);self.assertTrue(z['base']);self.assertTrue(z['repeat']);self.assertEqual(z['e'],61);self.assertEqual(z['x'],70)
   q['h'][61]=1000;new=next(x for x in E.stock_events('ZZQ',q,D,C) if x['t']==60);self.assertEqual(z['repeat'],new['repeat']);self.assertEqual(z['base'],new['base'])
  def test_missing_exit_preserved_not_sold_last_mark(self):
-  q=p();D=['2023-01-03']*100;q['c'][70]=float('nan');z=next(x for x in E.stock_events('ZZQ',q,D,C) if x['t']==60);self.assertEqual(z['status'],'UNRESOLVED_EXIT');self.assertIsNone(z['g'])
+  q=p();D=['2023-01-03']*100;q['c'][70]=float('nan');z=next(x for x in E.stock_events('ZZQ',q,D,C) if x['t']==60);self.assertEqual(z['status'],'GAP_MARK_PROXY_NOT_EXECUTED_EXIT');self.assertEqual(z['exactExitStatus'],'UNKNOWN');self.assertTrue(z['proxy']);self.assertEqual(z['markSession'],71)
  def test_fee_bounds_are_conditional_and_not_softened(self):
   lo,hi=E.conditional_bounds(0,0);self.assertLess(lo,-.006);self.assertLess(hi,-.006);self.assertLess(E.conditional_bounds(0,.02)[1],hi)
  def test_actual_main_no_outcomes_when_coverage_fails(self):
@@ -28,7 +28,7 @@ class Checks(unittest.TestCase):
   q=p();q['c'][70]=100.;D=['2023-01-03']*100;z=next(x for x in E.stock_events('ZZQ',q,D,C) if x['t']==60);self.assertEqual(z['g'],3)
  def test_positive_raw_mean_does_not_beat_stronger_base_or_market(self):
   D=E.sessions('2023-01-03','2024-12-31');P={('S'+str(i)):p(len(D)) for i in range(51)};P['SPY']=p(len(D))
-  def mocked(sym,px,dates,c):
+  def mocked(sym,px,dates,c,scenario='HARSH'):
    a=[]
    for t in range(0,len(D)-10,10):
     g=(.10 if sym=='S0' else .20)+(t%30)*.0001
@@ -36,9 +36,24 @@ class Checks(unittest.TestCase):
    return a
   with patch.object(E,'stock_events',side_effect=mocked):r=E.evaluate(P,D,C,A)
   self.assertEqual(r['status'],'RETIRED_ON_LEGACY_PANEL');self.assertGreater(r['halves']['repeat']['older']['avg'],0);self.assertLess(r['halves']['repeat']['older']['pairedBaseDifference'],0);self.assertIsNone(r['executablePerformance'])
- def test_unknown_selected_exit_cannot_disappear_into_rejection_or_success(self):
+ def test_terminal_absence_lowers_stress_mean_but_not_claimed_actual_delisting(self):
+  q=p();q['c'][70:]=[float('nan')]*30;g,status,proxy,mark=E.mark_outcome(q,61,70);self.assertEqual(g,-1);self.assertIn('NOT_PROVEN_DELISTING',status);self.assertTrue(proxy);self.assertIsNone(mark)
+ def test_later_gap_mark_is_bounded_not_new_exit_policy(self):
+  q=p();q['c'][70:76]=[float('nan')]*6;g,status,proxy,mark=E.mark_outcome(q,61,70);self.assertEqual(g,-1);self.assertEqual(status,'GAP_BEYOND5_STRESS_PROXY');self.assertTrue(proxy);self.assertIsNone(mark)
+ def test_proxy_fraction_counts_and_stress_result_preserve_exact_unknown(self):
   D=E.sessions('2023-01-03','2024-12-31');P={('S'+str(i)):p(len(D)) for i in range(51)};P['SPY']=p(len(D))
-  def mocked(sym,px,dates,c):return [{'s':sym,'t':t,'e':t+1,'x':t+10,'g':None if sym=='S0' and t==0 else .1,'status':'UNRESOLVED_EXIT' if sym=='S0' and t==0 else 'MODELED_RESOLVED','base':True,'repeat':sym=='S0'} for t in range(0,len(D)-10,10)]
+  def mocked(sym,px,dates,c,scenario='HARSH'):
+   rows=[]
+   for t in range(0,len(D)-10,10):
+    proxy=sym=='S0' and t==0
+    rows += [{'s':sym,'t':t,'e':t+1,'x':t+10,'g':-1. if proxy else (.1 if int(sym[1:])<4 else .2)+t*.00001,'status':'NO_FURTHER_BAR_STRESS_LOSS_NOT_PROVEN_DELISTING' if proxy else 'MODELED_RESOLVED','proxy':proxy,'exactExitStatus':'UNKNOWN' if proxy else 'MODELED_RESOLVED','base':True,'repeat':int(sym[1:])<4},{'s':sym,'t':t+1,'e':t+2,'x':t+11,'g':0.,'status':'MODELED_RESOLVED','proxy':False,'base':False,'repeat':False}]
+   return rows
   with patch.object(E,'stock_events',side_effect=mocked):r=E.evaluate(P,D,C,A)
-  self.assertEqual(r['status'],'INCONCLUSIVE');self.assertEqual(r['halves']['repeat']['older']['unknown'],1)
+  h=r['halves']['repeat']['older'];self.assertEqual(h['proxyOutcomes'],1);self.assertLessEqual(h['proxyShare'],.02);self.assertLess(h['avg'],.092);self.assertIsNone(h['conditionalWholeShareBounds']);self.assertEqual(r['exactContract'],'INCONCLUSIVE');self.assertEqual(r['status'],'RETIRED_ON_LEGACY_CONSERVATIVE_STRESS')
+ def test_last_mark_is_scenario_not_claim_of_cash_recovery(self):
+  q=p();q['c'][70:]=[float('nan')]*30;h=E.mark_outcome(q,61,70,'HARSH');b=E.mark_outcome(q,61,70,'LAST_RETAINED_MARK');self.assertEqual(h[0],-1);self.assertEqual(b[0],0);self.assertTrue(h[2] and b[2]);self.assertEqual(b[3],69)
+ def test_verdict_flip_is_missingness_sensitive_not_a_winner(self):
+  def r(status):return {'status':status,'anyProxyRows':1}
+  with patch.object(E,'evaluate',side_effect=[r('RETIRED_ON_LEGACY_CONSERVATIVE_STRESS'),r('FORWARD_PAPER_ONLY_NOT_PROVEN')]):x=E.evaluate_scenarios({},[],C,A)
+  self.assertEqual(x['status'],'INCONCLUSIVE_MISSINGNESS_SENSITIVE');self.assertEqual(x['exactContract'],'INCONCLUSIVE');self.assertIsNone(x['execution'])
 if __name__=='__main__':unittest.main()

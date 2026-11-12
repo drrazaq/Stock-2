@@ -1,222 +1,553 @@
 {
   "sourceHashes": {
-    "evaluate.py": "df38e1549e866818d5b1b0a2f7c00187e5900a86716ab191017dc4b4dc885945",
+    "evaluate.py": "65d0371269027dc56b20cb412e9b446c1af0b4039f260b533b84d249170066de",
     "stream_cache.py": "c4ef5083163ab48b57b81290375fd49917ab6cfc75b2d08359de96c8eb1e9ed3",
     "analyze.py": "40d56bde738127e3446593365f7616d644da566d6184a14e74600d3b5f1e51cc",
     "CONTRACT.json": "837604a64cacfa06fddd217380aa838e03313b4f94f0aed4f902c290ce8d3c87",
-    "AMENDMENT.json": "9833ebf143257deb06515002ecdb7a9cd502e9b87c9bcf5921efff4bc2c1e875"
+    "AMENDMENT.json": "9833ebf143257deb06515002ecdb7a9cd502e9b87c9bcf5921efff4bc2c1e875",
+    "MISSINGNESS_ADDENDUM.json": "ffab4fdfefb69677b6f264f92b35092b26fa54e2fbd617c10c81be187d3cf258"
   },
   "sourceStableThroughout": true,
-  "peakChildRssKiB": 553784,
-  "childCpuSeconds": 83.071177,
+  "peakChildRssKiB": 561436,
+  "childCpuSeconds": 133.013137,
   "kind": "SYNTHETIC_RESOURCE_REHEARSAL_NOT_MARKET_EVIDENCE",
   "sessions": 1260,
-  "mainRows": 7560000,
+  "mainRows": 7559840,
   "tailRows": 2552760,
-  "totalRows": 10112760,
-  "compressedBytes": 81765407,
-  "uncompressedBytes": 442355760,
+  "totalRows": 10112600,
+  "compressedBytes": 81753555,
+  "uncompressedBytes": 442350000,
   "exitCode": 0,
-  "elapsedIncludingGenerationSeconds": 85.017,
+  "elapsedIncludingGenerationSeconds": 135.081,
+  "syntheticTerminalAbsence": "One synthetic main ticker has no later retained bars afterday1100, to exercise both model scenarios; not actual delisting",
   "shapeLimit": "Matches approximate row count, not actual symbols, entropy, prices or signal density; no profitable inference",
   "noProviderCalls": true,
   "diagnostic": {
-    "kind": "LEGACY_PANEL_DIAGNOSTIC_NOT_EXACT_OWNER_STRATEGY",
+    "kind": "TWO_LEGACY_SENSITIVITY_SCENARIOS_NOT_EXECUTABLE_PERFORMANCE",
     "status": "INCONCLUSIVE",
-    "reasons": [
-      "older:INSUFFICIENT_SAMPLE",
-      "newer:INSUFFICIENT_SAMPLE"
-    ],
-    "halves": {
-      "base": {
-        "older": {
-          "n": 0,
-          "resolved": 0,
-          "unknown": 0,
-          "days": 0,
-          "blocks": 0,
-          "avg": null,
-          "median": null,
-          "avgStress": null,
-          "losses": 0,
-          "winRate": null,
-          "worst": null,
-          "withoutBest2": null,
-          "withoutBest5pct": null,
-          "edgeLegacyNetVsGross": null,
-          "tBlock": null,
-          "vsOwn": null,
-          "ownCovered": 0,
-          "pairedBaseDifference": null,
-          "pairedBaseCovered": 0,
-          "pairedBaseBlockT": null,
-          "spyNetVsGross": null,
-          "spyCovered": 0,
-          "yearSpyDifferences": {},
-          "conditionalWholeShareBounds": {
-            "0": [
-              null,
-              null
-            ],
-            "0.005": [
-              null,
-              null
-            ],
-            "0.02": [
-              null,
-              null
-            ]
+    "harsh": {
+      "kind": "LEGACY_PANEL_DIAGNOSTIC_NOT_EXACT_OWNER_STRATEGY",
+      "scenario": "HARSH",
+      "anyProxyRows": 9,
+      "status": "INCONCLUSIVE",
+      "reasons": [
+        "older:CONTROL_PROXY_SHARE_OVER2PCT_OR_MISSING",
+        "older:INSUFFICIENT_SAMPLE",
+        "newer:CONTROL_PROXY_SHARE_OVER2PCT_OR_MISSING",
+        "newer:INSUFFICIENT_SAMPLE"
+      ],
+      "halves": {
+        "base": {
+          "older": {
+            "n": 0,
+            "attempts": 0,
+            "resolvedOrStressModeled": 0,
+            "noFillOrUnknownEntry": 0,
+            "proxyOutcomes": 0,
+            "noFurtherBarCount": 0,
+            "gapBeyond5Count": 0,
+            "gapWithin5Count": 0,
+            "proxyShare": null,
+            "days": 0,
+            "blocks": 0,
+            "avg": null,
+            "median": null,
+            "avgStress": null,
+            "losses": 0,
+            "winRate": null,
+            "worst": null,
+            "withoutBest2": null,
+            "withoutBest5pct": null,
+            "edgeLegacyNetVsGross": null,
+            "tBlock": null,
+            "vsOwn": null,
+            "ownCovered": 0,
+            "pairedBaseDifference": null,
+            "pairedBaseCovered": 0,
+            "pairedBaseBlockT": null,
+            "spyNetVsGross": null,
+            "spyCovered": 0,
+            "yearSpyDifferences": {},
+            "conditionalWholeShareBounds": {
+              "0": [
+                null,
+                null
+              ],
+              "0.005": [
+                null,
+                null
+              ],
+              "0.02": [
+                null,
+                null
+              ]
+            },
+            "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
+            "executablePerformance": null,
+            "smallStock2pctEachSide": null
           },
-          "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
-          "executablePerformance": null,
-          "smallStock2pctEachSide": null
+          "newer": {
+            "n": 0,
+            "attempts": 0,
+            "resolvedOrStressModeled": 0,
+            "noFillOrUnknownEntry": 0,
+            "proxyOutcomes": 0,
+            "noFurtherBarCount": 0,
+            "gapBeyond5Count": 0,
+            "gapWithin5Count": 0,
+            "proxyShare": null,
+            "days": 0,
+            "blocks": 0,
+            "avg": null,
+            "median": null,
+            "avgStress": null,
+            "losses": 0,
+            "winRate": null,
+            "worst": null,
+            "withoutBest2": null,
+            "withoutBest5pct": null,
+            "edgeLegacyNetVsGross": null,
+            "tBlock": null,
+            "vsOwn": null,
+            "ownCovered": 0,
+            "pairedBaseDifference": null,
+            "pairedBaseCovered": 0,
+            "pairedBaseBlockT": null,
+            "spyNetVsGross": null,
+            "spyCovered": 0,
+            "yearSpyDifferences": {},
+            "conditionalWholeShareBounds": {
+              "0": [
+                null,
+                null
+              ],
+              "0.005": [
+                null,
+                null
+              ],
+              "0.02": [
+                null,
+                null
+              ]
+            },
+            "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
+            "executablePerformance": null,
+            "smallStock2pctEachSide": null
+          }
         },
-        "newer": {
-          "n": 0,
-          "resolved": 0,
-          "unknown": 0,
-          "days": 0,
-          "blocks": 0,
-          "avg": null,
-          "median": null,
-          "avgStress": null,
-          "losses": 0,
-          "winRate": null,
-          "worst": null,
-          "withoutBest2": null,
-          "withoutBest5pct": null,
-          "edgeLegacyNetVsGross": null,
-          "tBlock": null,
-          "vsOwn": null,
-          "ownCovered": 0,
-          "pairedBaseDifference": null,
-          "pairedBaseCovered": 0,
-          "pairedBaseBlockT": null,
-          "spyNetVsGross": null,
-          "spyCovered": 0,
-          "yearSpyDifferences": {},
-          "conditionalWholeShareBounds": {
-            "0": [
-              null,
-              null
-            ],
-            "0.005": [
-              null,
-              null
-            ],
-            "0.02": [
-              null,
-              null
-            ]
+        "repeat": {
+          "older": {
+            "n": 0,
+            "attempts": 0,
+            "resolvedOrStressModeled": 0,
+            "noFillOrUnknownEntry": 0,
+            "proxyOutcomes": 0,
+            "noFurtherBarCount": 0,
+            "gapBeyond5Count": 0,
+            "gapWithin5Count": 0,
+            "proxyShare": null,
+            "days": 0,
+            "blocks": 0,
+            "avg": null,
+            "median": null,
+            "avgStress": null,
+            "losses": 0,
+            "winRate": null,
+            "worst": null,
+            "withoutBest2": null,
+            "withoutBest5pct": null,
+            "edgeLegacyNetVsGross": null,
+            "tBlock": null,
+            "vsOwn": null,
+            "ownCovered": 0,
+            "pairedBaseDifference": null,
+            "pairedBaseCovered": 0,
+            "pairedBaseBlockT": null,
+            "spyNetVsGross": null,
+            "spyCovered": 0,
+            "yearSpyDifferences": {},
+            "conditionalWholeShareBounds": {
+              "0": [
+                null,
+                null
+              ],
+              "0.005": [
+                null,
+                null
+              ],
+              "0.02": [
+                null,
+                null
+              ]
+            },
+            "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
+            "executablePerformance": null,
+            "smallStock2pctEachSide": null,
+            "controlProxyShares": {
+              "average": null,
+              "base": null,
+              "spy": null,
+              "ownWorstStock": 0
+            },
+            "noFurtherBarControlCounts": {
+              "average": 0,
+              "averageDenominator": 0,
+              "base": 0,
+              "baseDenominator": 0,
+              "spy": 0,
+              "spyDenominator": 0,
+              "ownOtherDates": 0
+            },
+            "averageControlNoEntryCount": 0
           },
-          "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
-          "executablePerformance": null,
-          "smallStock2pctEachSide": null
+          "newer": {
+            "n": 0,
+            "attempts": 0,
+            "resolvedOrStressModeled": 0,
+            "noFillOrUnknownEntry": 0,
+            "proxyOutcomes": 0,
+            "noFurtherBarCount": 0,
+            "gapBeyond5Count": 0,
+            "gapWithin5Count": 0,
+            "proxyShare": null,
+            "days": 0,
+            "blocks": 0,
+            "avg": null,
+            "median": null,
+            "avgStress": null,
+            "losses": 0,
+            "winRate": null,
+            "worst": null,
+            "withoutBest2": null,
+            "withoutBest5pct": null,
+            "edgeLegacyNetVsGross": null,
+            "tBlock": null,
+            "vsOwn": null,
+            "ownCovered": 0,
+            "pairedBaseDifference": null,
+            "pairedBaseCovered": 0,
+            "pairedBaseBlockT": null,
+            "spyNetVsGross": null,
+            "spyCovered": 0,
+            "yearSpyDifferences": {},
+            "conditionalWholeShareBounds": {
+              "0": [
+                null,
+                null
+              ],
+              "0.005": [
+                null,
+                null
+              ],
+              "0.02": [
+                null,
+                null
+              ]
+            },
+            "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
+            "executablePerformance": null,
+            "smallStock2pctEachSide": null,
+            "controlProxyShares": {
+              "average": null,
+              "base": null,
+              "spy": null,
+              "ownWorstStock": 0
+            },
+            "noFurtherBarControlCounts": {
+              "average": 0,
+              "averageDenominator": 0,
+              "base": 0,
+              "baseDenominator": 0,
+              "spy": 0,
+              "spyDenominator": 0,
+              "ownOtherDates": 0
+            },
+            "averageControlNoEntryCount": 0
+          }
         }
       },
-      "repeat": {
-        "older": {
-          "n": 0,
-          "resolved": 0,
-          "unknown": 0,
-          "days": 0,
-          "blocks": 0,
-          "avg": null,
-          "median": null,
-          "avgStress": null,
-          "losses": 0,
-          "winRate": null,
-          "worst": null,
-          "withoutBest2": null,
-          "withoutBest5pct": null,
-          "edgeLegacyNetVsGross": null,
-          "tBlock": null,
-          "vsOwn": null,
-          "ownCovered": 0,
-          "pairedBaseDifference": null,
-          "pairedBaseCovered": 0,
-          "pairedBaseBlockT": null,
-          "spyNetVsGross": null,
-          "spyCovered": 0,
-          "yearSpyDifferences": {},
-          "conditionalWholeShareBounds": {
-            "0": [
-              null,
-              null
-            ],
-            "0.005": [
-              null,
-              null
-            ],
-            "0.02": [
-              null,
-              null
-            ]
+      "concurrency": {
+        "maximumPositions": 0,
+        "referenceNotional": 0,
+        "accountReturn": null,
+        "portfolioDrawdown": null
+      },
+      "concentration": {
+        "largestPositiveShare": null,
+        "top5PositiveShare": null
+      },
+      "proxyMeaning": "Gap marks and -100% no-further-bar values are symmetric conservative stress assumptions, NOT actual fills, proven delistings or actual cash recoveries; exact exit economics remain UNKNOWN",
+      "identityAndRawDollarLimits": "Adjusted ticker panel includesADRs/reusednames/oncequalifiedbias; NOT authenticatedPITordinarysmallcap universe or actualfills",
+      "exactContract": "INCONCLUSIVE",
+      "executablePerformance": null,
+      "historicZad": "UNKNOWN",
+      "zangerReference": "Untouched publishedDEC2-ZANGER frozenREJECTED older-.0088/newer-.0103; not replicated or new head-to-head exit claim",
+      "iwmCoverage": "UNKNOWN_MISSING"
+    },
+    "lastRetainedMark": {
+      "kind": "LEGACY_PANEL_DIAGNOSTIC_NOT_EXACT_OWNER_STRATEGY",
+      "scenario": "LAST_RETAINED_MARK",
+      "anyProxyRows": 9,
+      "status": "INCONCLUSIVE",
+      "reasons": [
+        "older:CONTROL_PROXY_SHARE_OVER2PCT_OR_MISSING",
+        "older:INSUFFICIENT_SAMPLE",
+        "newer:CONTROL_PROXY_SHARE_OVER2PCT_OR_MISSING",
+        "newer:INSUFFICIENT_SAMPLE"
+      ],
+      "halves": {
+        "base": {
+          "older": {
+            "n": 0,
+            "attempts": 0,
+            "resolvedOrStressModeled": 0,
+            "noFillOrUnknownEntry": 0,
+            "proxyOutcomes": 0,
+            "noFurtherBarCount": 0,
+            "gapBeyond5Count": 0,
+            "gapWithin5Count": 0,
+            "proxyShare": null,
+            "days": 0,
+            "blocks": 0,
+            "avg": null,
+            "median": null,
+            "avgStress": null,
+            "losses": 0,
+            "winRate": null,
+            "worst": null,
+            "withoutBest2": null,
+            "withoutBest5pct": null,
+            "edgeLegacyNetVsGross": null,
+            "tBlock": null,
+            "vsOwn": null,
+            "ownCovered": 0,
+            "pairedBaseDifference": null,
+            "pairedBaseCovered": 0,
+            "pairedBaseBlockT": null,
+            "spyNetVsGross": null,
+            "spyCovered": 0,
+            "yearSpyDifferences": {},
+            "conditionalWholeShareBounds": {
+              "0": [
+                null,
+                null
+              ],
+              "0.005": [
+                null,
+                null
+              ],
+              "0.02": [
+                null,
+                null
+              ]
+            },
+            "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
+            "executablePerformance": null,
+            "smallStock2pctEachSide": null
           },
-          "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
-          "executablePerformance": null,
-          "smallStock2pctEachSide": null
+          "newer": {
+            "n": 0,
+            "attempts": 0,
+            "resolvedOrStressModeled": 0,
+            "noFillOrUnknownEntry": 0,
+            "proxyOutcomes": 0,
+            "noFurtherBarCount": 0,
+            "gapBeyond5Count": 0,
+            "gapWithin5Count": 0,
+            "proxyShare": null,
+            "days": 0,
+            "blocks": 0,
+            "avg": null,
+            "median": null,
+            "avgStress": null,
+            "losses": 0,
+            "winRate": null,
+            "worst": null,
+            "withoutBest2": null,
+            "withoutBest5pct": null,
+            "edgeLegacyNetVsGross": null,
+            "tBlock": null,
+            "vsOwn": null,
+            "ownCovered": 0,
+            "pairedBaseDifference": null,
+            "pairedBaseCovered": 0,
+            "pairedBaseBlockT": null,
+            "spyNetVsGross": null,
+            "spyCovered": 0,
+            "yearSpyDifferences": {},
+            "conditionalWholeShareBounds": {
+              "0": [
+                null,
+                null
+              ],
+              "0.005": [
+                null,
+                null
+              ],
+              "0.02": [
+                null,
+                null
+              ]
+            },
+            "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
+            "executablePerformance": null,
+            "smallStock2pctEachSide": null
+          }
         },
-        "newer": {
-          "n": 0,
-          "resolved": 0,
-          "unknown": 0,
-          "days": 0,
-          "blocks": 0,
-          "avg": null,
-          "median": null,
-          "avgStress": null,
-          "losses": 0,
-          "winRate": null,
-          "worst": null,
-          "withoutBest2": null,
-          "withoutBest5pct": null,
-          "edgeLegacyNetVsGross": null,
-          "tBlock": null,
-          "vsOwn": null,
-          "ownCovered": 0,
-          "pairedBaseDifference": null,
-          "pairedBaseCovered": 0,
-          "pairedBaseBlockT": null,
-          "spyNetVsGross": null,
-          "spyCovered": 0,
-          "yearSpyDifferences": {},
-          "conditionalWholeShareBounds": {
-            "0": [
-              null,
-              null
-            ],
-            "0.005": [
-              null,
-              null
-            ],
-            "0.02": [
-              null,
-              null
-            ]
+        "repeat": {
+          "older": {
+            "n": 0,
+            "attempts": 0,
+            "resolvedOrStressModeled": 0,
+            "noFillOrUnknownEntry": 0,
+            "proxyOutcomes": 0,
+            "noFurtherBarCount": 0,
+            "gapBeyond5Count": 0,
+            "gapWithin5Count": 0,
+            "proxyShare": null,
+            "days": 0,
+            "blocks": 0,
+            "avg": null,
+            "median": null,
+            "avgStress": null,
+            "losses": 0,
+            "winRate": null,
+            "worst": null,
+            "withoutBest2": null,
+            "withoutBest5pct": null,
+            "edgeLegacyNetVsGross": null,
+            "tBlock": null,
+            "vsOwn": null,
+            "ownCovered": 0,
+            "pairedBaseDifference": null,
+            "pairedBaseCovered": 0,
+            "pairedBaseBlockT": null,
+            "spyNetVsGross": null,
+            "spyCovered": 0,
+            "yearSpyDifferences": {},
+            "conditionalWholeShareBounds": {
+              "0": [
+                null,
+                null
+              ],
+              "0.005": [
+                null,
+                null
+              ],
+              "0.02": [
+                null,
+                null
+              ]
+            },
+            "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
+            "executablePerformance": null,
+            "smallStock2pctEachSide": null,
+            "controlProxyShares": {
+              "average": null,
+              "base": null,
+              "spy": null,
+              "ownWorstStock": 0
+            },
+            "noFurtherBarControlCounts": {
+              "average": 0,
+              "averageDenominator": 0,
+              "base": 0,
+              "baseDenominator": 0,
+              "spy": 0,
+              "spyDenominator": 0,
+              "ownOtherDates": 0
+            },
+            "averageControlNoEntryCount": 0
           },
-          "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
-          "executablePerformance": null,
-          "smallStock2pctEachSide": null
+          "newer": {
+            "n": 0,
+            "attempts": 0,
+            "resolvedOrStressModeled": 0,
+            "noFillOrUnknownEntry": 0,
+            "proxyOutcomes": 0,
+            "noFurtherBarCount": 0,
+            "gapBeyond5Count": 0,
+            "gapWithin5Count": 0,
+            "proxyShare": null,
+            "days": 0,
+            "blocks": 0,
+            "avg": null,
+            "median": null,
+            "avgStress": null,
+            "losses": 0,
+            "winRate": null,
+            "worst": null,
+            "withoutBest2": null,
+            "withoutBest5pct": null,
+            "edgeLegacyNetVsGross": null,
+            "tBlock": null,
+            "vsOwn": null,
+            "ownCovered": 0,
+            "pairedBaseDifference": null,
+            "pairedBaseCovered": 0,
+            "pairedBaseBlockT": null,
+            "spyNetVsGross": null,
+            "spyCovered": 0,
+            "yearSpyDifferences": {},
+            "conditionalWholeShareBounds": {
+              "0": [
+                null,
+                null
+              ],
+              "0.005": [
+                null,
+                null
+              ],
+              "0.02": [
+                null,
+                null
+              ]
+            },
+            "boundsAssumptions": "Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills",
+            "executablePerformance": null,
+            "smallStock2pctEachSide": null,
+            "controlProxyShares": {
+              "average": null,
+              "base": null,
+              "spy": null,
+              "ownWorstStock": 0
+            },
+            "noFurtherBarControlCounts": {
+              "average": 0,
+              "averageDenominator": 0,
+              "base": 0,
+              "baseDenominator": 0,
+              "spy": 0,
+              "spyDenominator": 0,
+              "ownOtherDates": 0
+            },
+            "averageControlNoEntryCount": 0
+          }
         }
-      }
+      },
+      "concurrency": {
+        "maximumPositions": 0,
+        "referenceNotional": 0,
+        "accountReturn": null,
+        "portfolioDrawdown": null
+      },
+      "concentration": {
+        "largestPositiveShare": null,
+        "top5PositiveShare": null
+      },
+      "proxyMeaning": "Gap marks and -100% no-further-bar values are symmetric conservative stress assumptions, NOT actual fills, proven delistings or actual cash recoveries; exact exit economics remain UNKNOWN",
+      "identityAndRawDollarLimits": "Adjusted ticker panel includesADRs/reusednames/oncequalifiedbias; NOT authenticatedPITordinarysmallcap universe or actualfills",
+      "exactContract": "INCONCLUSIVE",
+      "executablePerformance": null,
+      "historicZad": "UNKNOWN",
+      "zangerReference": "Untouched publishedDEC2-ZANGER frozenREJECTED older-.0088/newer-.0103; not replicated or new head-to-head exit claim",
+      "iwmCoverage": "UNKNOWN_MISSING"
     },
-    "concurrency": {
-      "maximumPositions": 0,
-      "referenceNotional": 0,
-      "accountReturn": null,
-      "portfolioDrawdown": null
-    },
-    "concentration": {
-      "largestPositiveShare": null,
-      "top5PositiveShare": null
-    },
-    "identityAndRawDollarLimits": "Adjusted ticker panel includesADRs/reusednames/oncequalifiedbias; NOT authenticatedPITordinarysmallcap universe or actualfills",
     "exactContract": "INCONCLUSIVE",
-    "executablePerformance": null,
-    "historicZad": "UNKNOWN",
-    "zangerReference": "Untouched publishedDEC2-ZANGER frozenREJECTED older-.0088/newer-.0103; not replicated or new head-to-head exit claim",
-    "iwmCoverage": "UNKNOWN_MISSING",
+    "economicMechanism": "INCONCLUSIVE_WHEN_PROXY_RECOVERIES_UNKNOWN",
+    "execution": null,
+    "lastMarkWarning": "Not an executed sale or mathematical upper bound on cash-merger/settlement recovery; exact missing exits stay UNKNOWN",
+    "noAdoption": true,
     "outcomesAccessed": true
   }
 }

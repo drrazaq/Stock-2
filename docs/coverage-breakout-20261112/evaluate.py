@@ -69,7 +69,19 @@ def load_panel(path,D,syms):
     for k in ('o','h','c','v'):P[s][k][t]=r[k][j]
  return P
 
-def stock_events(s,p,D,c):
+def mark_outcome(p,e,x,scenario='HARSH'):
+ O,C,V=(p[k] for k in ('o','c','v'));T=len(C)
+ if not finite(O[e]) or O[e]<=0 or not finite(V[e]) or V[e]<=0:return None,'NO_FILL_OR_UNKNOWN',False,None
+ def available(j):return finite(C[j]) and C[j]>0 and finite(V[j]) and V[j]>0
+ if available(x):return min(C[x]/O[e]-1,3),'MODELED_RESOLVED',False,x
+ for j in range(x+1,min(T,x+6)):
+  if available(j):return min(C[j]/O[e]-1,3),'GAP_MARK_PROXY_NOT_EXECUTED_EXIT',True,j
+ later=any(available(j) for j in range(x+6,T))
+ last=next((j for j in range(x-1,e-1,-1) if available(j)),None)
+ g=min(C[last]/O[e]-1,3) if scenario=='LAST_RETAINED_MARK' and last is not None else -1.
+ return g,'GAP_BEYOND5_STRESS_PROXY' if later else 'NO_FURTHER_BAR_STRESS_PROXY_NOT_PROVEN_DELISTING',True,last if scenario=='LAST_RETAINED_MARK' else None
+
+def stock_events(s,p,D,c,scenario='HARSH'):
  T=len(D);C,H,O,V=(p[k] for k in ('c','h','o','v'));pc=[0.];pv=[0.];pd=[0.];valid=[0];mq=collections.deque();events=[]
  for i in range(T):
   ok=all(finite(a[i]) and a[i]>0 for a in (C,H,O)) and finite(V[i]) and V[i]>=0
@@ -79,15 +91,13 @@ def stock_events(s,p,D,c):
   if valid[t]-valid[t-60]!=60 or valid[t+1]-valid[t]!=1:continue
   if C[t]<5 or (pd[t]-pd[t-20])/20<5000000:continue
   e=t+1;x=t+10
-  if not finite(O[e]) or O[e]<=0 or not finite(V[e]) or V[e]<=0:g=None;status='NO_FILL_OR_UNKNOWN'
-  elif not finite(C[x]) or C[x]<=0 or not finite(V[x]) or V[x]<=0:g=None;status='UNRESOLVED_EXIT'
-  else:g=min(C[x]/O[e]-1,3);status='MODELED_RESOLVED'
+  g,status,proxy,mark_t=mark_outcome(p,e,x,scenario)
   level=max(H[t-60:t]);base=C[t]>level and C[t]<=level*1.05 and C[t-1]<=level and C[t]>(pc[t+1]-pc[t-49])/50 and V[t]>=1.5*(pv[t]-pv[t-20])/20
   touches=0;last=-99
   if base:
    for j in range(t-60,t):
     if level*.99<=H[j]<=level and j-last>=5:touches+=1;last=j
-  events.append({'s':s,'t':t,'e':e,'x':x,'g':g,'status':status,'base':base,'repeat':base and touches>=3})
+  events.append({'s':s,'t':t,'e':e,'x':x,'g':g,'status':status,'proxy':proxy,'markSession':mark_t,'exactExitStatus':'UNKNOWN' if proxy else status,'base':base,'repeat':base and touches>=3})
  return events
 
 def conditional_bounds(g,slip):
@@ -106,30 +116,32 @@ def stats(rows,D,avg,own,base,spy,slip=0):
  paired_blocks=collections.defaultdict(list)
  for t,z in paired_day.items():paired_blocks[t//10].append(mean(z))
  sortedv=sorted(v,reverse=True);bounds={str(s):[mean([conditional_bounds(z['g'],s)[j] for z in resolved]) for j in (0,1)] for s in (0,.005,.02)}
- return {'n':len(rows),'resolved':len(v),'unknown':len(rows)-len(v),'days':len(byday),'blocks':len(blocks),'avg':rd(mean(v)),'median':rd(statistics.median(v) if v else None),'avgStress':rd(mean([x-.004 for x in v])),'losses':sum(x<0 for x in v),'winRate':rd(sum(x>0 for x in v)/len(v)) if v else None,'worst':rd(min(v) if v else None),'withoutBest2':rd(mean(sortedv[2:])),'withoutBest5pct':rd(mean(sortedv[max(1,math.ceil(len(v)*.05)):])),'edgeLegacyNetVsGross':rd(mean([mean(x) for x in byday.values()])),'tBlock':tstat([mean(x) for x in blocks.values()]) if len(blocks)>=3 else None,'vsOwn':rd(mean(ow)),'ownCovered':len(ow),'pairedBaseDifference':rd(mean(paired)),'pairedBaseCovered':len(paired),'pairedBaseBlockT':tstat([mean(x) for x in paired_blocks.values()]) if len(paired_blocks)>=3 else None,'spyNetVsGross':rd(mean(sp)),'spyCovered':len(sp),'yearSpyDifferences':{y:rd(mean(a)) for y,a in year.items()},'conditionalWholeShareBounds':bounds,'boundsAssumptions':'Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills','executablePerformance':None}
-def evaluate(P,D,c,a):
- market=collections.defaultdict(list);market_n=collections.Counter();baseall=collections.defaultdict(list);selected={'base':[],'repeat':[]};unknown=collections.Counter();own={'base':{},'repeat':{}}
+ return {'n':len(v),'attempts':len(rows),'resolvedOrStressModeled':len(v),'noFillOrUnknownEntry':len(rows)-len(v),'proxyOutcomes':sum(z.get('proxy',False) for z in resolved),'noFurtherBarCount':sum(z['status'].startswith('NO_FURTHER_BAR') for z in resolved),'gapBeyond5Count':sum(z['status'].startswith('GAP_BEYOND5') for z in resolved),'gapWithin5Count':sum(z['status'].startswith('GAP_MARK') for z in resolved),'proxyShare':sum(z.get('proxy',False) for z in resolved)/len(v) if v else None,'days':len(byday),'blocks':len(blocks),'avg':rd(mean(v)),'median':rd(statistics.median(v) if v else None),'avgStress':rd(mean([x-.004 for x in v])),'losses':sum(x<0 for x in v),'winRate':rd(sum(x>0 for x in v)/len(v)) if v else None,'worst':rd(min(v) if v else None),'withoutBest2':rd(mean(sortedv[2:])),'withoutBest5pct':rd(mean(sortedv[max(1,math.ceil(len(v)*.05)):])),'edgeLegacyNetVsGross':rd(mean([mean(x) for x in byday.values()])),'tBlock':tstat([mean(x) for x in blocks.values()]) if len(blocks)>=3 else None,'vsOwn':rd(mean(ow)),'ownCovered':len(ow),'pairedBaseDifference':rd(mean(paired)),'pairedBaseCovered':len(paired),'pairedBaseBlockT':tstat([mean(x) for x in paired_blocks.values()]) if len(paired_blocks)>=3 else None,'spyNetVsGross':rd(mean(sp)),'spyCovered':len(sp),'yearSpyDifferences':{y:rd(mean(a)) for y,a in year.items()},'conditionalWholeShareBounds':None if any(z.get('proxy') for z in resolved) else bounds,'boundsAssumptions':'Every raw entry affordable<=997; split-consistent normalized ratio; two orders; legacy0.8% flat execution cost PLUS6USD fees PLUS stated adverse fractions; NOT actual quantities or fills','executablePerformance':None}
+def evaluate(P,D,c,a,scenario='HARSH'):
+ market=collections.defaultdict(list);market_n=collections.Counter();market_proxy=collections.Counter();market_no_entry=collections.Counter();market_terminal=collections.Counter();base_terminal=collections.Counter();baseall=collections.defaultdict(list);base_proxy=collections.Counter();selected={'base':[],'repeat':[]};unknown=collections.Counter();own={'base':{},'repeat':{}};own_proxy={'base':{},'repeat':{}};own_terminal={'base':{},'repeat':{}}
  for s,p in P.items():
   if s in ('SPY','IWM'):continue
-  events=stock_events(s,p,D,c)
+  events=stock_events(s,p,D,c,scenario=scenario)
   for z in events:
-   market_n[z['t']]+=1
-   if z['g'] is not None:market[z['t']].append(z['g'])
-   if z['base'] and z['g'] is not None:baseall[z['t']].append(z['g'])
+   if z['g'] is not None:
+    market_n[z['t']]+=1;market[z['t']].append(z['g']);market_proxy[z['t']]+=z.get('proxy',False);market_terminal[z['t']]+=z['status'].startswith('NO_FURTHER_BAR')
+   else:market_no_entry[z['t']]+=1
+   if z['base'] and z['g'] is not None:baseall[z['t']].append(z['g']);base_proxy[z['t']]+=z.get('proxy',False);base_terminal[z['t']]+=z['status'].startswith('NO_FURTHER_BAR')
   for variant in ('base','repeat'):
    busy=-1
    for half in (True,False):
-    other=[z['g'] for z in events if not z[variant] and z['g'] is not None and (D[z['t']]<'2024-01-01')==half];own[variant][s,half]=mean(other)
+    other=[z['g'] for z in events if not z[variant] and z['g'] is not None and (D[z['t']]<'2024-01-01')==half];own[variant][s,half]=mean(other);own_proxy[variant][s,half]=sum(z.get('proxy',False) for z in events if not z[variant] and z['g'] is not None and (D[z['t']]<'2024-01-01')==half)/len(other) if other else None;own_terminal[variant][s,half]=sum(z['status'].startswith('NO_FURTHER_BAR') for z in events if not z[variant] and z['g'] is not None and (D[z['t']]<'2024-01-01')==half)
    for z in events:
     if z[variant] and z['e']>busy:
      selected[variant].append(z)
      if len(selected[variant])>a['limits']['maxEventsEachVariant']:raise ValueError('EVENT_CAP')
      busy=z['x'];unknown[variant]+=z['g'] is None
- avg={t:mean(v) for t,v in market.items() if len(v)>=50 and len(v)==market_n[t]};base={t:mean(v) for t,v in baseall.items()};spy={}
+ avg={t:mean(v) for t,v in market.items() if len(v)>=50};base={t:mean(v) for t,v in baseall.items()};spy={};spy_proxy={};spy_terminal={}
  if 'SPY' in P:
-  p=P['SPY']
+  p=P['SPY'];spy_proxy={};spy_terminal={}
   for t in market:
-   if finite(p['o'][t+1]) and p['o'][t+1]>0 and finite(p['c'][t+10]) and p['c'][t+10]>0:spy[t]=min(p['c'][t+10]/p['o'][t+1]-1,3)
+   g,status,proxy,mark_t=mark_outcome(p,t+1,t+10,scenario)
+   if g is not None:spy[t]=g;spy_proxy[t]=proxy;spy_terminal[t]=status.startswith('NO_FURTHER_BAR')
  result={};reasons=[]
  for variant in ('base','repeat'):
   R={}
@@ -137,7 +149,14 @@ def evaluate(P,D,c,a):
    rows=[z for z in selected[variant] if (D[z['t']]<'2024-01-01')==(half=='older')];h=stats(rows,D,avg,own[variant],base,spy);h['smallStock2pctEachSide']=stats(rows,D,avg,own[variant],base,spy,.02)['avg'];R[half]=h
   result[variant]=R
  for half,h in result['repeat'].items():
-  if h['unknown'] or h['ownCovered']<h['resolved'] or h['spyCovered']<h['resolved'] or h['pairedBaseCovered']<h['resolved'] or h['days']<len({z['t'] for z in selected['repeat'] if (D[z['t']]<'2024-01-01')==(half=='older')}):reasons.append(half+':MISSING_SELECTED_OUTCOME_OR_CONTROL')
+  if h['ownCovered']<h['resolvedOrStressModeled'] or h['spyCovered']<h['resolvedOrStressModeled'] or h['pairedBaseCovered']<h['resolvedOrStressModeled'] or h['days']<len({z['t'] for z in selected['repeat'] if z['g'] is not None and (D[z['t']]<'2024-01-01')==(half=='older')}):reasons.append(half+':MISSING_SELECTED_OUTCOME_OR_CONTROL')
+  selected_half=[z for z in selected['repeat'] if (D[z['t']]<'2024-01-01')==(half=='older')];formation=set(z['t'] for z in selected_half if z['g'] is not None)
+  market_den=sum(market_n[t] for t in formation);base_den=sum(len(baseall[t]) for t in formation)
+  h['controlProxyShares']={'average':sum(market_proxy[t] for t in formation)/market_den if market_den else None,'base':sum(base_proxy[t] for t in formation)/base_den if base_den else None,'spy':sum(spy_proxy.get(t,False) for t in formation)/len(formation) if formation else None,'ownWorstStock':max((own_proxy['repeat'].get((z['s'],half=='older')) or 0 for z in selected_half),default=0)}
+  h['noFurtherBarControlCounts']={'average':sum(market_terminal[t] for t in formation),'averageDenominator':market_den,'base':sum(base_terminal[t] for t in formation),'baseDenominator':base_den,'spy':sum(spy_terminal.get(t,False) for t in formation),'spyDenominator':len(formation),'ownOtherDates':sum(own_terminal['repeat'].get((sym,half=='older'),0) for sym in {z['s'] for z in selected_half})}
+  h['averageControlNoEntryCount']=sum(market_no_entry[t] for t in formation)
+  if h['proxyShare'] is not None and h['proxyShare']>.02:reasons.append(half+':SELECTED_PROXY_SHARE_OVER2PCT')
+  if any(v is None or v>.02 for v in h['controlProxyShares'].values()):reasons.append(half+':CONTROL_PROXY_SHARE_OVER2PCT_OR_MISSING')
   if h['n']<20 or h['days']<10 or h['blocks']<3:reasons.append(half+':INSUFFICIENT_SAMPLE')
  missing=bool(reasons)
  if not missing:
@@ -153,9 +172,20 @@ def evaluate(P,D,c,a):
   if z['g'] is not None and z['g']>.008:positive[z['s']]+=z['g']-.008
  cap=mx=0
  for t in sorted(events):cap+=events[t];mx=max(mx,cap)
- return {'kind':'LEGACY_PANEL_DIAGNOSTIC_NOT_EXACT_OWNER_STRATEGY','status':'INCONCLUSIVE' if missing else 'RETIRED_ON_LEGACY_PANEL' if reasons else 'FORWARD_PAPER_ONLY_NOT_PROVEN','reasons':reasons,'halves':result,'concurrency':{'maximumPositions':mx,'referenceNotional':mx*1000,'accountReturn':None,'portfolioDrawdown':None},'concentration':{'largestPositiveShare':max(positive.values())/sum(positive.values()) if positive else None,'top5PositiveShare':sum(sorted(positive.values(),reverse=True)[:5])/sum(positive.values()) if positive else None},'identityAndRawDollarLimits':'Adjusted ticker panel includesADRs/reusednames/oncequalifiedbias; NOT authenticatedPITordinarysmallcap universe or actualfills','exactContract':'INCONCLUSIVE','executablePerformance':None,'historicZad':'UNKNOWN','zangerReference':'Untouched publishedDEC2-ZANGER frozenREJECTED older-.0088/newer-.0103; not replicated or new head-to-head exit claim','iwmCoverage':'PRESENT' if 'IWM' in P else 'UNKNOWN_MISSING'}
+ return {'kind':'LEGACY_PANEL_DIAGNOSTIC_NOT_EXACT_OWNER_STRATEGY','scenario':scenario,'anyProxyRows':sum(market_proxy.values()),'status':'INCONCLUSIVE' if missing else ('RETIRED_ON_LEGACY_CONSERVATIVE_STRESS' if any(z.get('proxy') for z in selected['repeat']) else 'RETIRED_ON_LEGACY_PANEL') if reasons else 'FORWARD_PAPER_ONLY_NOT_PROVEN','reasons':reasons,'halves':result,'concurrency':{'maximumPositions':mx,'referenceNotional':mx*1000,'accountReturn':None,'portfolioDrawdown':None},'concentration':{'largestPositiveShare':max(positive.values())/sum(positive.values()) if positive else None,'top5PositiveShare':sum(sorted(positive.values(),reverse=True)[:5])/sum(positive.values()) if positive else None},'proxyMeaning':'Gap marks and -100% no-further-bar values are symmetric conservative stress assumptions, NOT actual fills, proven delistings or actual cash recoveries; exact exit economics remain UNKNOWN','identityAndRawDollarLimits':'Adjusted ticker panel includesADRs/reusednames/oncequalifiedbias; NOT authenticatedPITordinarysmallcap universe or actualfills','exactContract':'INCONCLUSIVE','executablePerformance':None,'historicZad':'UNKNOWN','zangerReference':'Untouched publishedDEC2-ZANGER frozenREJECTED older-.0088/newer-.0103; not replicated or new head-to-head exit claim','iwmCoverage':'PRESENT' if 'IWM' in P else 'UNKNOWN_MISSING'}
+def evaluate_scenarios(P,D,c,a):
+ harsh=evaluate(P,D,c,a,'HARSH')
+ last=evaluate(P,D,c,a,'LAST_RETAINED_MARK') if harsh['anyProxyRows'] else {**harsh,'scenario':'LAST_RETAINED_MARK','sameAsHarshBecauseNoProxyRows':True}
+ passed=lambda r:r['status']=='FORWARD_PAPER_ONLY_NOT_PROVEN'
+ failed=lambda r:r['status'].startswith('RETIRED_ON_LEGACY')
+ if passed(harsh) and passed(last):status='FORWARD_PAPER_ONLY_NOT_PROVEN'
+ elif failed(harsh) and failed(last):status='RETIRED_ON_LEGACY_PANEL'
+ elif (passed(harsh) and failed(last)) or (failed(harsh) and passed(last)):status='INCONCLUSIVE_MISSINGNESS_SENSITIVE'
+ else:status='INCONCLUSIVE'
+ return {'kind':'TWO_LEGACY_SENSITIVITY_SCENARIOS_NOT_EXECUTABLE_PERFORMANCE','status':status,'harsh':harsh,'lastRetainedMark':last,'exactContract':'INCONCLUSIVE','economicMechanism':'INCONCLUSIVE_WHEN_PROXY_RECOVERIES_UNKNOWN' if harsh['anyProxyRows'] else 'LEGACY_MODEL_ONLY','execution':None,'lastMarkWarning':'Not an executed sale or mathematical upper bound on cash-merger/settlement recovery; exact missing exits stay UNKNOWN','noAdoption':True}
+
 def main():
- ap=argparse.ArgumentParser();ap.add_argument('--input',required=True);ap.add_argument('--output-dir',required=True);args=ap.parse_args();c=json.loads((HERE/'CONTRACT.json').read_text());a=json.loads((HERE/'AMENDMENT.json').read_text());resource.setrlimit(resource.RLIMIT_AS,(a['limits']['memoryBytes'],a['limits']['memoryBytes']));resource.setrlimit(resource.RLIMIT_CPU,(a['limits']['cpuSeconds'],a['limits']['cpuSeconds']));out=pathlib.Path(args.output_dir);out.mkdir(parents=True,exist_ok=True)
+ ap=argparse.ArgumentParser();ap.add_argument('--input',required=True);ap.add_argument('--output-dir',required=True);args=ap.parse_args();c=json.loads((HERE/'CONTRACT.json').read_text());a=json.loads((HERE/'AMENDMENT.json').read_text());addendum=json.loads((HERE/'MISSINGNESS_ADDENDUM.json').read_text());assert addendum['maxProxyShare']==.02 and addendum['gapMarkMaxSessions']==5 and addendum['scenarios']==['HARSH','LAST_RETAINED_MARK'];resource.setrlimit(resource.RLIMIT_AS,(a['limits']['memoryBytes'],a['limits']['memoryBytes']));resource.setrlimit(resource.RLIMIT_CPU,(a['limits']['cpuSeconds'],a['limits']['cpuSeconds']));out=pathlib.Path(args.output_dir);out.mkdir(parents=True,exist_ok=True)
  if (out/'coverage.json').exists() or (out/'diagnostic.json').exists():raise ValueError('OUTPUT_ALREADY_EXISTS')
  try:
   cov,D,syms=coverage(args.input,c)
@@ -166,7 +196,7 @@ def main():
   else:
    P=load_panel(args.input,D,syms)
    if filehash(args.input)!=cov['inputSha256']:raise ValueError('INPUT_CHANGED')
-   r=evaluate(P,D,c,a);r['outcomesAccessed']=True
+   r=evaluate_scenarios(P,D,c,a);r['outcomesAccessed']=True
  except (OSError,ValueError,TypeError,MemoryError) as e:r={'status':'INCONCLUSIVE','outcomesAccessed':False,'issues':['INPUT_OR_RESOURCE_FAILURE',type(e).__name__]}
  b=(json.dumps(r,indent=2,allow_nan=False)+'\n').encode()
  if len(b)>a['limits']['reportBytes']:raise ValueError('REPORT_CAP')

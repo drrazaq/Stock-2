@@ -1,0 +1,16 @@
+{
+  "revision": "F1_PRE_OUTCOME_CORRECTION",
+  "review": "6818171468,6818234869; Codex qualifications6818228608/6818297490",
+  "scope": "Supersedes AMENDMENT missingness and terminal clauses only. No authentic outcome examined. All signal, eligibility, cost, control, holding-period and stricter4.1 thresholds unchanged.",
+  "maxProxyShare": 0.02,
+  "gapMarkMaxSessions": 5,
+  "scenarios": ["HARSH", "LAST_RETAINED_MARK"],
+  "entry": "Missing eligible entry open expires, counted NO_FILL_OR_UNKNOWN; excluded symmetrically from filled rule/control means, never shifted to later entry. Attempts and no-fill counts remain visible.",
+  "exit": "Exact fixed10th-session exit stays UNKNOWN when absent. First available later close within5sessions is GAP_MARK_PROXY_NOT_EXECUTED_EXIT in both scenarios; not a new trading exit. Beyond5 or no later retained bar remains missing actual evidence.",
+  "HARSH": "Beyond-bound/no-further retained bar uses -100% normalized STRESS loss symmetrically, not proof of death, delisting or zero cash settlement.",
+  "LAST_RETAINED_MARK": "Use last retained close at/before missing exit as a symmetric sensitivity mark, not an executed sale or rigorous upper bound. Cash mergers/ticker changes/settlements can be higher or lower. Actual recoveries remain UNKNOWN.",
+  "controls": "Same treatment for selected/base/average/own/SPY. Each half reports selected proxy rate, average/base row-weighted proxy shares, SPY proxy share, worst selected-stock own-control proxy share, no-further-bar counts/population denominators and entry no-fill counts. Above2% in any required selected/control pool -> INCONCLUSIVE. Missing controls/minimum sample still -> INCONCLUSIVE.",
+  "bounds": "Two-executed-order whole-share bounds NULL whenever selected proxy rows occur. Actual order quantities and settlement/fill economics remain NULL in all cases.",
+  "decision": "Both scenarios fail complete legacy gates -> RETIRED_ON_LEGACY_PANEL for this implementation on these modeled scenarios only; if proxies exist, real economic mechanism/settlement remains INCONCLUSIVE. Both pass -> FORWARD_PAPER_ONLY_NOT_PROVEN. Pass/fail flip -> INCONCLUSIVE_MISSINGNESS_SENSITIVE. Other missing/sample/proxy-ceiling failure -> INCONCLUSIVE. Never reject original owner small-cap social method from this different cap-free daily variant.",
+  "statistics": "Own-control dates overlap each other and the signal window, so they are descriptive and not an independent sample. Both stock-vs-average blockt4.1 and paired-base blockt4.1 are deliberately stricter than2.5; no later switch to lower bar. Existing824IDs/211ledgerrows and neighbor failures remain search burden."
+}
