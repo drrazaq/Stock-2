@@ -1,35 +1,41 @@
 diff --git a/leaders-study.mjs b/leaders-study.mjs
-index 7f590e6b..5dd37bf2 100644
+index 7f590e6b..bcf45032 100644
 --- a/leaders-study.mjs
 +++ b/leaders-study.mjs
-@@ -30,7 +30,31 @@ fs.mkdirSync(CACHE_DIR, { recursive: true }); fs.mkdirSync('data', { recursive:
+@@ -30,7 +30,37 @@ fs.mkdirSync(CACHE_DIR, { recursive: true }); fs.mkdirSync('data', { recursive:
  let store = { days: {}, gone: [], ref: null };
  try { store = JSON.parse(zlib.gunzipSync(fs.readFileSync(CACHE)).toString()); } catch (e) { console.log('no cache yet: building from scratch'); }
  store.days = store.days || {}; store.gone = store.gone || [];
 -const save = () => fs.writeFileSync(CACHE, zlib.gzipSync(JSON.stringify(store)));
-+// Reject an ambiguous cache before provider reads and before persistence. Never
-+// choose main/tail, normalize labels or rewrite a retained conflicting record.
-+function assertCacheDayLabelUniqueness(days) {
++// Observe retained ambiguous keys without choosing a bar or rewriting input.
++// Reject only new/increased duplicate keys before a new cache is persisted.
++function cacheDayLabelDuplicateCounts(days) {
 +  if (!days || typeof days !== 'object' || Array.isArray(days)) throw new Error('CACHE_DAY_SCHEMA');
++  const duplicates = new Map();
 +  for (const day of Object.keys(days)) {
-+    const row = days[day], seen = new Set();
++    const row = days[day], counts = new Map();
 +    if (!row || typeof row !== 'object' || Array.isArray(row)) throw new Error('CACHE_DAY_SCHEMA');
-+    // Missing legacy tails remain eligible for the existing backfill, but a
-+    // present tail must have the original literal label array.
 +    for (const part of [row, row.x]) {
 +      if (part === undefined || part === null) continue;
 +      if (!part || !Array.isArray(part.T)) throw new Error('CACHE_LABEL_ARRAY_SCHEMA');
 +      for (const label of part.T) {
 +        if (typeof label !== 'string' || !label) throw new Error('CACHE_LABEL_SCHEMA');
-+        if (seen.has(label)) throw new Error('CACHE_DAY_LABEL_CONFLICT_UNRESOLVED');
-+        seen.add(label);
++        counts.set(label, (counts.get(label) || 0) + 1);
 +      }
 +    }
++    for (const [label, n] of counts) if (n > 1) duplicates.set(JSON.stringify([day, label]), n);
++  }
++  return duplicates;
++}
++function assertNoNewCacheOverlap(days, retained) {
++  for (const [key, n] of cacheDayLabelDuplicateCounts(days)) {
++    if (n > (retained.get(key) || 0)) throw new Error('NEW_CACHE_DAY_LABEL_CONFLICT_UNRESOLVED');
 +  }
 +}
-+assertCacheDayLabelUniqueness(store.days);
++const retainedDuplicateCounts = cacheDayLabelDuplicateCounts(store.days);
++if (retainedDuplicateCounts.size) console.log('cache retained unresolved duplicate keys:', retainedDuplicateCounts.size, '(no repair or economic validation)');
 +const save = () => {
-+  assertCacheDayLabelUniqueness(store.days);
++  assertNoNewCacheOverlap(store.days, retainedDuplicateCounts);
 +  fs.writeFileSync(CACHE, zlib.gzipSync(JSON.stringify(store)));
 +};
  let calls = 0;

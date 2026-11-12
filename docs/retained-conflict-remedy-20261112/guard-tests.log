@@ -1,16 +1,20 @@
-{"kind":"SYNTHETIC_GUARD_OVERHEAD_NOT_MARKET_EVIDENCE","rows":6882120,"validGuardMs":489.270759}
-✔ conflicting cross main/tail is rejected unchanged; no price or source preference (1.287228ms)
-✔ identical duplicates and repeated labels within either partition also stop (0.306204ms)
-✔ literal labels and cross-day reuse remain distinct; legacy missing tail remains unchanged (0.258904ms)
-✔ schema failures are generic and never expose a label/day/value (0.376748ms)
-✔ actual producer startup stops retained conflicts before any provider read or save (3.849706ms)
-✔ actual save boundary refuses a newly introduced overlap before write; valid save unchanged (2.166991ms)
-✔ near-observed row-count guard cost with duplicate at the end; caps not raised (943.584054ms)
-ℹ tests 7
+{"kind":"SYNTHETIC_GUARD_ONLY_OVERHEAD","rows":6882120,"elapsedMs":682.39309}
+✔ retained conflicting keys are observed unchanged, not rejected or repaired (1.443178ms)
+✔ new cross-array, identical and within-array duplicates all refuse new writes (0.796931ms)
+✔ increased multiplicity is refused even for an already-conflicted key (0.273375ms)
+✔ literal labels, cross-day reuse and missing legacy tails are unchanged (0.221709ms)
+✔ ordinary rolling-window removal is not a selection performed by the guard (0.545959ms)
+✔ schema failures are generic and do not expose labels or days (0.375586ms)
+✔ actual producer startup flags retained conflicts without stopping or acquiring (3.663807ms)
+✔ actual save preserves old conflicts but refuses a newly introduced overlap before disk write (3.749184ms)
+✔ valid fresh-day output and prices remain byte-for-byte unchanged through save (2.044619ms)
+✔ near-observed guard scan remains bounded local overhead, no data processing claimed (1248.988788ms)
+✔ same-response contradictory provider labels can create cross-array only duplicates (1.670114ms)
+ℹ tests 11
 ℹ suites 0
-ℹ pass 7
+ℹ pass 11
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 1031.197475
+ℹ duration_ms 1339.198603
