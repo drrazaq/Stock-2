@@ -2,12 +2,16 @@
 
 This replaces the withdrawn R-A1 coverage-only request. No workflow has been installed or dispatched. The original exact raw-price/PIT contract remains INCONCLUSIVE; the pre-outcome amendment authorizes no action by itself.
 
+## Operational admission: preserve Stage 2
+
+Claude accepted package mechanics in6818651632, but installation is a non-data commit to main. Before Stage 2's protected M_FINAL snapshot, that would invalidate its audited data-only/no-change path and force changed-final build/review. The protected recovery also runs through Saturday14Nov2026 08:30UTC. Therefore **do not ask for installation/run approval or perform either operation until Stage2 is actually published and its required recovery/receipt gates are closed, or it is formally abandoned**. Merely reaching08:30 is not proof of closure. No earlier operation is included, no Stage2 scope is expanded, and no future operator/verifier availability is promised. Rebuild on actual fresh main after that gate before presenting the single approval request. The objects below are reviewed preparation, not approval-ready future parents.
+
 ## Concrete package
 
 - Analyzer, helpers and frozen amendment: **df40877247232af7972bfd17c36dac5618719cd1**.
-- Prepared installation: **32743901e49cf9a3995ee37e229a8ccfa5bdf865**, parent **66e89c63bf0dd466240f7e004313d1219d81c5f9**, tree **4b6ae86dce88c08c38d4959b4d517e8b3d52e38a**.
-- Sole changed path: `.github/workflows/bounded-retained-cache-breakout-ra2.yml`; blob **26c3db8993594a288960a976610c51d033f5c449**, SHA256 **7e26a8f58f6a80a885f9e6847bfb37592873923d47cec7f10b57a83cf7892e7c**.
-- Prepared inverse: **2c11f074e7c1797c1f56d36ccb0fe5a9ba4f0fda**, restoring the original tree **5fbdf1a8c70c5e843e0c127427314b3c8cf1c684**.
+- Prepared installation: **fb614c158c62dc837d13a1fb3c6a31c93e3e4445**, parent **66e89c63bf0dd466240f7e004313d1219d81c5f9**, tree **8bc122a22080b0c4b6f5031a69973d8c2daf2e9a**.
+- Sole changed path: `.github/workflows/bounded-retained-cache-breakout-ra2.yml`; blob **7272fb38743a2214e7872dae351b57e97069bb73**, SHA256 **cba1b08e98273cf2f57fb871f72a3b9cb42700b3369db3dd41d69bc951737bfa**.
+- Prepared inverse: **152b1b9653c0195bbcc03f607a3b340aeb4bc840**, restoring the original tree **5fbdf1a8c70c5e843e0c127427314b3c8cf1c684**.
 
 These installation/inverse commits exist only as local preparation. Full patch and raw commit records permit independent reproduction. No production ref moved. Do not use the older R-A1 candidates. If main has moved, stop and prepare a composition preserving intervening code/data before the final owner request; do not silently rebase an approved commit.
 
