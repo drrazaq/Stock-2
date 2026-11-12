@@ -1,20 +1,20 @@
 {
   "authorization": "LOCAL PREPARATION ONLY; no remote install or dispatch",
   "writerWitness": "https://github.com/drrazaq/Stock-2/pull/1#issuecomment-6823643620",
-  "base": "ee617dbf65494454897a0f3a6a20c96cfbc470ab",
+  "base": "5f697c5c374a5640f6e63a56275b6a367f0208fc",
   "workflowPath": ".github/workflows/bounded-retained-cache-breakout-ra2.yml",
   "workflowBlob": "7272fb38743a2214e7872dae351b57e97069bb73",
   "workflowSha256": "cba1b08e98273cf2f57fb871f72a3b9cb42700b3369db3dd41d69bc951737bfa",
-  "install": "47438d3e6b8b81b37991361bf3b2a5e377a80e85",
-  "installTree": "1db4f5c7f3ebf52df25fba1a33d8bf74df0d3b76",
-  "inverse": "cf7a46ce468900e93fbde897e267966b403fca70",
-  "inverseTree": "4af1990a24c3af267701fc676d6c8d13d5dfb4bc",
+  "install": "a5febe9d5003cf9ab1f468af55fe37a1ea5999a7",
+  "installTree": "e59bd1ea922882743d58e677b6434581f23c3f7c",
+  "inverse": "01e3d8eeecebed93be27e402ff9ef6f441f8eacd",
+  "inverseTree": "82edd5e518d7d0f10bb4ba478990214b569459dd",
   "stage2WithoutRA2": {
     "status": "COMPOSITION_ONLY_NOT_WRITER_SETTLEMENT_OR_APPROVAL",
-    "actualMain": "ee617dbf65494454897a0f3a6a20c96cfbc470ab",
+    "actualMain": "5f697c5c374a5640f6e63a56275b6a367f0208fc",
     "oldTestedReference": "5fccc6ec3e18c426531a0398b5085e2621a6e192",
-    "tree": "f339ecae67f467c99d23a5cf133c8d5e81e0c4bb",
-    "inverseTree": "4af1990a24c3af267701fc676d6c8d13d5dfb4bc",
+    "tree": "d26d75ecf8771eeaf87136ff592c6236b1034504",
+    "inverseTree": "82edd5e518d7d0f10bb4ba478990214b569459dd",
     "bound": 46,
     "writes": 39,
     "inverse": 39,
@@ -234,10 +234,10 @@
   },
   "stage2WithRA2": {
     "status": "COMPOSITION_ONLY_NOT_WRITER_SETTLEMENT_OR_APPROVAL",
-    "actualMain": "47438d3e6b8b81b37991361bf3b2a5e377a80e85",
+    "actualMain": "a5febe9d5003cf9ab1f468af55fe37a1ea5999a7",
     "oldTestedReference": "5fccc6ec3e18c426531a0398b5085e2621a6e192",
-    "tree": "8fc58858c0f8da404e97833ab572b0d21a491917",
-    "inverseTree": "1db4f5c7f3ebf52df25fba1a33d8bf74df0d3b76",
+    "tree": "682e67b013337851c84c6babc11b43965d90dc17",
+    "inverseTree": "e59bd1ea922882743d58e677b6434581f23c3f7c",
     "bound": 46,
     "writes": 39,
     "inverse": 39,
@@ -455,5 +455,10 @@
       "test/winners-autopsy-core.test.mjs"
     ],
     "writerCompletionRuntimeAndHostedEvidence": "MUST be supplied separately from actual future records; never inferred here"
+  },
+  "dataOnlyRefresh": {
+    "previousBase": "ee617dbf65494454897a0f3a6a20c96cfbc470ab",
+    "previousInstall": "47438d3e6b8b81b37991361bf3b2a5e377a80e85",
+    "reason": "Movers data-only commit, source closure unchanged"
   }
 }

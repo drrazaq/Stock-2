@@ -16,17 +16,17 @@ Independent GitHub reads confirm all three Agent C lab runs completed/success:
 
 The actual newer sequence includes FINRA parser repair51ae6c4e, triggerda8e5383, frozen result7db11787 and reportee617dbf. Report states C-IC1 REJECTED, C-SI1/C-SI1-DTC NOT PROVEN, no new tier or trading authority. These are reported authentic study results, not an independent economic re-audit here. No frozen study/evaluator was rerun. E3's quarterly-input/current-pick gap is a documented research follow-up, not release scope.
 
-Source writer state is settled at **ee617dbf65494454897a0f3a6a20c96cfbc470ab**. Compatible data writers remain: bot43211282305 and Movers radar43216984670. They can advance main; fresh exact-parent admission remains mandatory immediately before any authorized push. Their presence does not imply source-session activity, but settlement is not a promise that main will stay unchanged.
+Source writer state is settled at **5f697c5c374a5640f6e63a56275b6a367f0208fc**. Compatible data writers remain: bot43211282305 and Movers radar43216984670. They can advance main; fresh exact-parent admission remains mandatory immediately before any authorized push. Their presence does not imply source-session activity, but settlement is not a promise that main will stay unchanged.
 
 ## Fresh mechanical pins — local preparation
 
-- Install **47438d3e6b8b81b37991361bf3b2a5e377a80e85**, parent **ee617dbf65494454897a0f3a6a20c96cfbc470ab**.
-- Install tree **1db4f5c7f3ebf52df25fba1a33d8bf74df0d3b76**.
-- Inverse **cf7a46ce468900e93fbde897e267966b403fca70**, parent the install; restores tree **4af1990a24c3af267701fc676d6c8d13d5dfb4bc**, exactly actual base tree.
+- Install **a5febe9d5003cf9ab1f468af55fe37a1ea5999a7**, parent **5f697c5c374a5640f6e63a56275b6a367f0208fc**.
+- Install tree **e59bd1ea922882743d58e677b6434581f23c3f7c**.
+- Inverse **01e3d8eeecebed93be27e402ff9ef6f441f8eacd**, parent the install; restores tree **82edd5e518d7d0f10bb4ba478990214b569459dd**, exactly actual base tree.
 - Sole addition/deletion `.github/workflows/bounded-retained-cache-breakout-ra2.yml`, unchanged blob **7272fb38743a2214e7872dae351b57e97069bb73**, SHA256 **cba1b08e98273cf2f57fb871f72a3b9cb42700b3369db3dd41d69bc951737bfa**.
 - Author/committer both established scanner noreply. Raw records and binary patches adjacent; no personal contact text.
 
-Frozen Stage2 preparer re-executed on actual base and local install:46bindings/39writes/39inverse entries each. Trees **f339ecae67f467c99d23a5cf133c8d5e81e0c4bb** without R-A2, **8fc58858c0f8da404e97833ab572b0d21a491917** with it. Each scoped inverse restores its actual parent exactly, preserving all unrelated Agent C/researcher/R-A2 paths. Non-data comparison against C0 now13 paths without R-A2/14 with it. No overlap with the39writes. New push/manual writer agent-c3-lab.yml enters writer census; no new schedule. Actual FINAL still requires composed checks including research-pre and agent-c3-core, whole-leaf comparison, workflow/dependency closures and focused review. Fixed Friday/Saturday cutoffs remain unchanged. These checks are composition evidence, not FINAL writer settlement, hosted PASS or production approval.
+Frozen Stage2 preparer re-executed on actual base and local install:46bindings/39writes/39inverse entries each. Trees **d26d75ecf8771eeaf87136ff592c6236b1034504** without R-A2, **682e67b013337851c84c6babc11b43965d90dc17** with it. Each scoped inverse restores its actual parent exactly, preserving all unrelated Agent C/researcher/R-A2 paths. Non-data comparison against C0 now13 paths without R-A2/14 with it. No overlap with the39writes. New push/manual writer agent-c3-lab.yml enters writer census; no new schedule. Actual FINAL still requires composed checks including research-pre and agent-c3-core, whole-leaf comparison, workflow/dependency closures and focused review. Fixed Friday/Saturday cutoffs remain unchanged. These checks are composition evidence, not FINAL writer settlement, hosted PASS or production approval.
 
 ## Other gates preserved
 
@@ -41,3 +41,5 @@ Before presenting the single owner request: Claude must re-hash these fresh reco
 ## Final narrow confirmation
 
 Claude6823690630 at12:33UTC independently re-hashed both raw commits, reproduced one-path installation/inverse trees, re-executed actual-base/candidate composition and confirmed scanner noreply identities. He accepts the present operator role for exactly one push and one dispatch with latest_start_utc2026-11-12T13:00:00Z. Approval must arrive by12:55UTC with actual operator/verifier presence; both actions must fit before13:00Z. Head/source drift, late approval, absent attendance or UNKNOWN means STOP with no rebase/retry. Codex is present read-only verifier. No approval or operation has occurred. See APPROVAL_REQUEST.md for the single exact scope.
+
+Data-only refresh after main Movers commit5f697c5c: earlier47438d3e/ee617dbf request held before owner presentation. Current records supersede it; fresh narrow re-hash requested, no evaluator/source review restart and no operation. Source-session closure stays at ee617dbf; new base adds only compatible data.
