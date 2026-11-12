@@ -51,6 +51,17 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 20
+      - if: inputs.phase == 'recovery'
+        name: Trusted inline recovery-child gate before executing checked-out tools
+        run: |
+          python3 - <<'PY'
+          import os,re,subprocess
+          expected=os.environ['EXPECTED_MAIN_SHA']
+          assert re.fullmatch('[a-f0-9]{40}',expected)
+          assert expected==os.environ['GITHUB_WORKFLOW_SHA']
+          assert subprocess.check_output(['git','show','-s','--format=%P','HEAD'],text=True).strip()==expected
+          assert subprocess.check_output(['git','diff','--name-status',expected,'HEAD'],text=True).strip()=='A\tquote-owner-recovery.zip'
+          PY
       - name: Verify exact source and bounded start
         run: python3 tools/evidence-source-verify.py
       - if: inputs.phase == 'rehearsal'

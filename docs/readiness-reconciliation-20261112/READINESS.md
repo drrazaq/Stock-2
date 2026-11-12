@@ -2,6 +2,20 @@
 
 Preparation only. No installation, dispatch, acquisition, settings change or trading is approved. Evidence inspected approximately 11:25–11:32 UTC; refresh mutable facts before any action.
 
+## Latest reconciliation at approximately12:04UTC — authoritative current status
+
+Owner billing evidence6822689925 is accepted for R-A2 by Claude6822697498. No repeated screenshots or new billing fact are needed. Noreply install154a1ed8/inversee0b59e30 were focused-confirmed6822788718; current raw exports/docs contain no personal address. Historical exposure remains at db7982b0 metadata and its install.commit/inverse.commit paths; no history rewrite authorized or performed.
+
+**R-A2 NOT READY for an approval request now:** AgentC added five non-data paths at0f134b5a/b21a1d33 and lab writer43213858329 is in progress. The previously confirmed pins are stale and the12:25Z draft is withdrawn before presentation. Obtain actual lab conclusion/data push and AgentC IDLE/no-pending-writer handoff, then prepare the same one-file addition on the fresh head and obtain a narrow re-hash/current attendance before presenting one new exact bounded approval. Earlier execution remains a sequencing option; no new technical prohibition or approval is inferred.
+
+Current-main offline composition atb21a1d33 succeeds46/39/39, tree01b80d8c, inverse628ca7de exactly the actual parent tree (AGENT_C_COMPOSITION.json). Twelve changed non-data paths now require FINAL checks, including agent-c3-core and research-pre. Add push-triggered writer agent-c3-lab.yml to the writer census; it is not scheduled. No FINAL writer-settlement/full validation claim is made.
+
+Bot successor43211282305 is in progress onfc02212a; checkout/setup steps succeeded. This closes the earlier no-successor observation only and is a partial Stage1 loaded-code witness, not completed runtime/save/delivery PASS. Fixed Stage2 deadlines and recovery obligations remain unchanged.
+
+Private source development candidate is now concrete under ../private-evidence-payload-20261112: reference synthetic artifact extension, bounded two-symbol quote adapter, same-runner accepted DeltaA reader, static ASOF report and byte-preserving recovery;21syntheticPASS plus8affectedPASS after trusted inline recovery gate. Exact byte/beforeBlob/inverse plan and receipts are present. Nothing is installed/run; focused independent source verdict is pending. Enrollment metadata403, authentic input/issuer/entitlement evidence, phase-time25MiB storage headroom, actual enablement/operator/mobile proof and separate phase approvals remain operational gates. User financial screenshots stay private.
+
+The dated sections below preserve the earlier observations, superseded by this latest reconciliation where facts changed.
+
 ## Recovered checkpoint and custody
 
 The replacement workspace initially had no checkout, project files or project processes in its accessible workspace directories. This does **not** establish the frozen workspace had no unpublished work. Its unpublished state remains UNKNOWN. Recovered published work is retained in two checkouts and detached Stage2/R-A2 worktrees; no old files were overwritten. No AGENTS.md was found. CLAUDE.md was read; its October system descriptions are historical and do not override newer owner instructions or release evidence.

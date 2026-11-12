@@ -68,5 +68,9 @@ test('actual source verifier binds approved HEAD and recovery-only child; drift 
  const git=(...a)=>execFileSync('git',a,{cwd:tmp,env,stdio:['ignore','pipe','pipe']}).toString().trim();git('init','-q');git('add','.');git('commit','-qm','Synthetic private source fixture');const head=git('rev-parse','HEAD');
  const run=more=>execFileSync('python3',['tools/evidence-source-verify.py'],{cwd:tmp,env:{...env,EXPECTED_MAIN_SHA:head,GITHUB_WORKFLOW_SHA:head,GITHUB_RUN_ATTEMPT:'1',GITHUB_REF_NAME:'main',EVIDENCE_PHASE:'rehearsal',LATEST_START_UTC:new Date(Date.now()+60000).toISOString(),...more},stdio:'pipe'});
  run();assert.throws(()=>run({GITHUB_RUN_ATTEMPT:'2'}));fs.writeFileSync(path.join(tmp,'quote-owner-recovery.zip'),'SYNTHETIC');git('add','quote-owner-recovery.zip');git('commit','-qm','Synthetic owner recovery child');run({EVIDENCE_PHASE:'recovery'});
+ const workflow=fs.readFileSync('.github/workflows/quote-evidence.yml','utf8');
+ const inline=workflow.split('name: Trusted inline recovery-child gate before executing checked-out tools')[1].split("python3 - <<'PY'\n")[1].split('\n          PY')[0].split('\n').map(l=>l.slice(10)).join('\n');
+ const trusted=()=>execFileSync('python3',['-c',inline],{cwd:tmp,env:{...env,EXPECTED_MAIN_SHA:head,GITHUB_WORKFLOW_SHA:head},stdio:'pipe'});trusted();
  fs.appendFileSync(path.join(tmp,'tools/quote-phase.mjs'),'\n// altered\n');assert.throws(()=>run({EVIDENCE_PHASE:'recovery'}));
+ git('add','tools/quote-phase.mjs');git('commit','-qm','Synthetic altered source must fail trusted recovery gate');assert.throws(trusted);
 });
