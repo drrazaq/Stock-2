@@ -2,7 +2,7 @@
 
 **Why necessary:** both workspaces retain only authentic aggregate counts/logs, not the125duplicate rows or their lineage. Source fixtures prove multiple possible causes but cannot classify authentic duplicates. A bounded observation is required to distinguish identical records, representation differences and conflicts before proposing any data rule. This request permits no economic rerun or canonicalization.
 
-Claude6824969700 ACCEPTS development code/contract/pins after independent13/13tests; immediate current head/operator/verifier checks remain required. New proposed window: owner direct approval by **2026-11-12T13:55:00Z**, both actions before **2026-11-12T14:00:00Z** and within30minutes of approval, workflow `latest_start_utc=2026-11-12T14:00:00Z`. This is a fresh request; all earlier run approvals are exhausted and no deadline is extended.
+Claude6824969700 ACCEPTS development code/contract/pins after independent13/13tests; Claude6825002588 confirms exact request/current operator acceptance at13:31UTC and main8c792476; Codex is present read-only verifier. Immediate pre-action head/window/attendance checks remain mandatory. New proposed window: owner direct approval by **2026-11-12T13:55:00Z**, both actions before **2026-11-12T14:00:00Z** and within30minutes of approval, workflow `latest_start_utc=2026-11-12T14:00:00Z`. This is a fresh request; all earlier run approvals are exhausted and no deadline is extended.
 
 Approve Claude to perform exactly two actions through the existing direct owner release-chat channel:
 
