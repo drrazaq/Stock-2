@@ -1,0 +1,12 @@
+# New read-only lead, not a repeated archive search
+
+Claude identified existing Leaders fair test run42455753549/job128654280679 (8Nov2026). Codex independently fetched its hostedlog through existing read-only access. No workflow/providercallwasstarted.
+
+-06:41:17–18UTC: restored keyleaders-study-41281582224,119,225,376bytes (~114MB).
+-06:41:35: producerreported12,209tickerreference labels,complete byitsownlistcriterion. This doesnotestablishPITordinary-shareidentityorunbiaseddeadmembership.
+-06:41:55–56:5,663officialsplits,0heuristicrepairs thatrun;2,552,524tailrowsforpreviouslyqualifiednames.
+-06:42:07:1,260sessions1Nov2021–6Nov2026,+14added,40calls **inthatcache-buildingstep**.40isnotatotalGETcountfortheentireworkflow. Existingresearch-labclosurehasadditionalproviders/saves/mainwritesandisnotused.
+
+Thisdatedreceiptdoesnotprovecurrentcachepresenceorlatestcontents. Itdoesestablishthatcoverage-onlyre-observationispoorvalue; R-A1requestwithdrawn. Rawgroupedpricesremainadjustedtruewithheuristicrepair,nodividendsoractualdollar-fillchain;refincludesCS/ADRCactive/delisted,symbolregexexcludesdottedclasses,never-qualifiednamesmissing,tickerreusepossible. Explicitpre-outcomeAMENDMENTframeslegacydiagnosticatthesameevidencestandardasoldstudies,neverasexactordinarysmallcap/executableperformance.
+
+Fullhostedlogisnotrepublished. Onlyderivednonprivatecoveragefactsaregiven; unrelatedoldoutcomeswerenotusedtotunethefrozenvariant.

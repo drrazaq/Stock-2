@@ -1,0 +1,120 @@
+{
+  "source": "7db2c83b574bbe0d85d4c9972ad2230a36004816",
+  "librarySha256": "36247c25429a0ed3f2fb2184e127d0be0896f720dfe360f3efea7fcef5c06b94",
+  "leagueSha256": "2934d99ceeefed486a4cca027d6d6eb9a9b9df134baf98deebe6d8562f61ca01",
+  "leagueBar": 4.1,
+  "nearest": [
+    {
+      "id": "A-VP2",
+      "name": "Volume profile: breakout through a thin zone (LVN)",
+      "status": "tested: rejected",
+      "study": "pattern-lab.mjs -> data/pattern-lab.json (run once, first run frozen)",
+      "result": {
+        "best": "VP2_20",
+        "t": -8.45,
+        "tOlder": -5.33,
+        "edge": -0.0122,
+        "edgeOlder": -0.0072,
+        "vsSpy": -0.0162,
+        "vsSpyOlder": -0.0153,
+        "vsOwn": -0.0085,
+        "n": [
+          34765,
+          37287
+        ],
+        "bar": 3.87,
+        "why": "VP2_20 REJECTED: not better than an average stock in the older half (-0.7%) | VP2_5 REJECTED: not better than an average stock in the older half (-0.8%)"
+      }
+    },
+    {
+      "id": "A-CP1",
+      "name": "Cup-and-handle and double-bottom (objective daily-bar versions)",
+      "status": "queued (Agent A)"
+    },
+    {
+      "id": "DEC2-ZANGER",
+      "name": "Zanger breakout: base high taken on 1.5x volume within 5%, 7% stop, out if no day-one acceleration, 25% sold at +15%, rest on the 21-day EMA",
+      "status": "live paper (decoded lane, batch 2)",
+      "study": "decoded-lab.mjs -> data/decoded-history.json (run once as written, first complete run frozen; information only, the paper lane runs regardless)",
+      "result": {
+        "verdict": "REJECTED",
+        "n": [
+          1289,
+          3874
+        ],
+        "avg": [
+          -0.0088,
+          -0.0103
+        ],
+        "stress": [
+          -0.0128,
+          -0.0143
+        ],
+        "edge": [
+          -0.0113,
+          -0.0118
+        ],
+        "vsOwn": [
+          -0.0122,
+          -0.0092
+        ],
+        "noTop2": [
+          -0.01,
+          -0.0109
+        ],
+        "tBlock": [
+          -2.58,
+          -7.15
+        ],
+        "win": 0.1526,
+        "avgWin": 0.1005,
+        "avgLoss": -0.0298,
+        "pf": 0.6077,
+        "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -2.58 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -7.15 under 2.5 in the newer half"
+      }
+    },
+    {
+      "id": "SQ6-3WT",
+      "name": "O'Neil / IBD three-weeks-tight breakout (buy over the 3-week high, 8% stop, +20% target)",
+      "status": "tested: rejected; forward paper lane from 26 Oct 2026",
+      "study": "squad6-lab.mjs -> data/squad6-lab.json (run once as written, first complete run frozen)",
+      "result": {
+        "verdict": "REJECTED",
+        "n": [
+          385,
+          1069
+        ],
+        "avg": [
+          -0.0136,
+          -0.0015
+        ],
+        "stress": [
+          -0.0176,
+          -0.0055
+        ],
+        "edge": [
+          -0.0107,
+          -0.0183
+        ],
+        "vsOwn": [
+          -0.0517,
+          -0.0298
+        ],
+        "noTop2": [
+          -0.0149,
+          -0.0024
+        ],
+        "tBlock": [
+          -0.71,
+          -3.2
+        ],
+        "win": [
+          0.3299,
+          0.3667
+        ],
+        "newerBetter": false,
+        "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.71 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -3.2 under 2.5 in the newer half"
+      }
+    }
+  ]
+}

@@ -1,0 +1,57 @@
+{
+  "id": "LEGACY-PANEL-REPEATED-TOUCH-10-V1",
+  "reviewBasis": "6817782685 /6817826954; original exact CONTRACT remains INCONCLUSIVE and unchanged",
+  "purpose": "Incremental test of repeated-touch condition on the same legacy evidence standard used by failed breakout neighbors; not exact small-cap replication, current opportunities or executable performance",
+  "beforeAuthenticOutcomes": true,
+  "changesExplicit": [
+    "Eligibility uses split-adjusted close>=5 and prior20-session mean adjusted close*volume>=5m as a bar-computable liquidity measure, NOT raw-dollar eligibility or historical cap",
+    "Universe is retained once-qualified ticker panel (CS/ADRC active+delisted list refreshed later); ADR, reused-ticker, missing-never-qualified and dotted-class exclusions remain biases",
+    "Adjusted next-open/10th-close normalized returns are modeled; raw-dollar quantities unknown and only conditional whole-share fee bounds permitted",
+    "No same-industry claim without original dated classifications; SPY from retained cache only, IWM may be absent and is UNKNOWN",
+    "No new source acquisition, split repair, filtering of extreme winners, optimized parameters or library write"
+  ],
+  "unchangedSignalAndExit": "CONTRACT parameters exactly: prior60 high,3 touches within1%,5session spacing,1.5x prior20volume,close above50SMA and priorlevel at most5%,nextopen only,fixed10sessionclose",
+  "costs": {
+    "base": 0.008,
+    "stress": 0.012,
+    "smallStockAdverseEachSide": 0.02,
+    "wholeShareBudget": 1000,
+    "feeEachExecutedSide": 3,
+    "grossGainCapBothTradeAndAllControls": 3
+  },
+  "controls": "Average eligible stock with>=50members same dates; same-stock other eligible non-signal dates in same chronological half; SPY samewindow/performationyear; decisive repeated minus no-touch-requirement base events on SAME formation dates with same eligibility/exit. Control population is counterfactual, not a feasible portfolio.",
+  "gates": {
+    "halves": "formation before2024 /from2024",
+    "nEachHalf": 20,
+    "formationDaysEachHalf": 10,
+    "blocksEachHalf": 3,
+    "blockSessions": 10,
+    "minBlockT": 2.5,
+    "leagueBarPinned": 4.1,
+    "profitBaseAndStress": true,
+    "positiveWithoutBest2": true,
+    "beatsAverage": true,
+    "beatsOwnOtherDates": true,
+    "beatsSpyEachFormationYear": true,
+    "positivePairedBaseDifference": true,
+    "smallStockStressPositive": true,
+    "pairedBaseMinBlockT": 4.1
+  },
+  "legacyAsymmetry": "Preserve legacy day edge=gross trade-0.008-gross average-stock for block t; also report equal-cost paired differences separately. SPY raw is not a matched-fee fill benchmark. No annual account CAGR inferred.",
+  "missingness": "Structural/calendar/array/range caps stop BEFORE signal/outcome enumeration. Missing entry yields NO_FILL_OR_UNKNOWN; missing/delisted exit stays UNRESOLVED, never last-close sell. Any unresolved selected outcome/control leaves verdict INCONCLUSIVE, not discarded. No cap/identity ambiguity is relabeled actual economic failure.",
+  "terminal": "Fail complete modeled gates -> RETIRED_ON_LEGACY_PANEL for THIS cap-free daily variant only, original owner small-cap/intraday social description remains unevaluated. Pass all gates -> FORWARD_PAPER_ONLY_NOT_PROVEN; no adoption/BUY/executable claim. Insufficient sample or missing coverage/control -> INCONCLUSIVE. Raw-dollar exact contract remains INCONCLUSIVE in every case. Candidate(b) original small-cap/social method is not retired by a different cap-free daily variant.",
+  "multipleTesting": "One prespecified variant, component control and stress scenarios are dependent, not independent discoveries; prior824IDs/211experimentrows and all neighbor failures retained. League4.1 not lowered; future confirmation requires30resolved/10formationdays and all execution gates. No rerun tuning.",
+  "limits": {
+    "memoryBytes": 4294967296,
+    "cpuSeconds": 240,
+    "wallJobMinutes": 12,
+    "maxEventsEachVariant": 200000,
+    "maxRows": 12000000,
+    "maxSessions": 1600,
+    "maxTickerLabels": 16000,
+    "reportBytes": 1048576
+  },
+  "calendar": "Deterministic NYSE regular-session calendar2022\u20132026 with standard observed holidays,GoodFriday,Juneteenth from2022 and9Jan2025 national mourning. Exact expected-session mismatch stops diagnostic; no inferred holiday or compressed missing session. Calendar implementation is frozen/reviewed, not a recovered provider receipt.",
+  "frozenAt": "2026-11-12T07:54:02.564911+00:00",
+  "conditionalBounds": "Condition every raw entry affordable<=997, split-consistent ratio, exactly2executedorders; legacy0.8% flat execution cost PLUS$6 fees PLUS0/0.5%/2% per-side adverse-price scenarios. These are not exact quantities; zero/all-unaffordable possibilities remain unmeasured."
+}
