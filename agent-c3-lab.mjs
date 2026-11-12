@@ -194,8 +194,8 @@ let finReq = 0, nextF = 0; async function finra(date) { const f = SC + '/finra/'
 const FILES = []; { const ms = months(SI.from); let expected = 0, found = 0, lastFound = null; const groups = [];
   for (const m of ms) for (const g of settleCandidates(m)) groups.push(g);
   for (const g of groups) { if (g[g.length - 1] > iso(Date.now() - 864e5)) continue; let got = null; for (const d of g) { if (d > iso(Date.now())) continue; const x = await finra(d); if (x) { got = x; break; } } if (got) { FILES.push(got); lastFound = got.date; } }
-  for (const g of groups) if (lastFound && g[g.length - 1] <= lastFound) expected++; found = FILES.length;
-  const first = FILES[0]; STATUS.finra = { ok: found >= SI.minFiles * expected && !!first && first.rows.length > 1000, files: found, expected, first: first ? first.date : null, last: lastFound, requests: finReq,
+  const due = iso(Date.now() - 12 * 864e5); for (const g of groups) if (g[g.length - 1] <= due) expected++; found = FILES.length;
+  const first = FILES[0]; STATUS.finra = { due, ok: found >= SI.minFiles * expected && !!first && first.rows.length > 1000, files: found, expected, first: first ? first.date : null, last: lastFound, requests: finReq,
     firstListedRows: first ? first.rows.length : 0, firstAllRows: first ? first.all : 0, markets: first ? [...new Set(first.rows.map(r => r[4]))].slice(0, 12) : [] };
   log('FINRA: ' + JSON.stringify(STATUS.finra)); }
 const SI_SIG = [], DTC_SIG = [], SI_DROP = { noStock: 0, notLiquid: 0, split: 0, noShares: 0, dataError: 0, tooLate: 0, dtcFileSkipped: 0 }, RATIOS = [];

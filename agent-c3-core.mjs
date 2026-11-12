@@ -58,8 +58,13 @@
 //   DATA STOP: fewer than 95% of the expected settlement files (2 a month, Nov 2021 to the last one found) or no exchange-listed rows in
 //   the first file -> NEEDS DATA, no return computed.
 //   A pass is an AVOID / SELL-warning candidate for forward paper only, never a short and never a buy.
+//   DATA-READING FIX (12 Nov 2026, after DIAG 1, which computed NO return): FINRA files from Sep 2026 put every field in double quotes,
+//   so the v1 parser read no header and those files were missing; the coverage check counted expected files only up to the last file
+//   read, which hid the gap. v2 strips the quotes, and the expected files now run to the last settlement group that ended 12+ days
+//   before the run. No threshold, lag, hold, gate or date changed.
 export const COST = 0.008, SPLIT = '2024-01-01', CAP = 3;
 export const IC = { window: 5, minPeople: 2, matchGap: 9, hold: 20, gap: 60, fromDate: '2021-06-01' };
+export const FINRA_PARSER = 2;
 export const SI = { minRatio: 0.20, maxRatio: 1.0, pubLag: 9, hold: 20, dtcTop: 0.10, minRows: 200, minFiles: 0.95, from: '2021-11-01' };
 export const RULE_IDS = ['C-IC1', 'C-SI1', 'C-SI1-DTC'];
 export const AVOID_IDS = ['C-SI1', 'C-SI1-DTC'];
@@ -84,11 +89,12 @@ export function icSignals(clusters, contracts, { matchGap = IC.matchGap, gap = I
 
 // ---------------- C-SI1: FINRA file ----------------
 // text of one shrtYYYYMMDD.csv -> { rows: [{ sym, settle, short, split, adv, dtc, mkt }], header: bool }
+const unq = (x) => String(x).replace(/^\s*"(.*)"\s*$/, '$1');
 export function parseFinra(text) { const L = String(text || '').split(/\r?\n/).filter(Boolean); if (!L.length) return { rows: [], header: false };
-  const H = L[0].split('|'), ix = (k) => H.indexOf(k), need = ['symbolCode', 'marketClassCode', 'currentShortPositionQuantity', 'settlementDate'];
+  const H = L[0].split('|').map(unq), ix = (k) => H.indexOf(k), need = ['symbolCode', 'marketClassCode', 'currentShortPositionQuantity', 'settlementDate'];
   if (!need.every(k => ix(k) >= 0)) return { rows: [], header: false };
   const [a, b, c, s, sp, adv, dtc] = ['symbolCode', 'marketClassCode', 'currentShortPositionQuantity', 'settlementDate', 'stockSplitFlag', 'averageDailyVolumeQuantity', 'daysToCoverQuantity'].map(ix), rows = [];
-  for (const l of L.slice(1)) { const r = l.split('|'); const sym = String(r[a] || '').trim().toUpperCase(); if (!sym) continue;
+  for (const l of L.slice(1)) { const r = l.split('|').map(unq); const sym = String(r[a] || '').trim().toUpperCase(); if (!sym) continue;
     rows.push({ sym, mkt: String(r[b] || '').trim().toUpperCase(), short: +r[c], settle: String(r[s] || '').trim().slice(0, 10), split: sp >= 0 ? String(r[sp] || '').trim() : '', adv: adv >= 0 ? +r[adv] : NaN, dtc: dtc >= 0 ? +r[dtc] : NaN }); }
   return { rows, header: true }; }
 export const isListed = (mkt) => !!mkt && mkt !== 'OTC' && mkt !== 'OTCBB' && mkt !== 'OTHER' && mkt !== 'U';

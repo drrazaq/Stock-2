@@ -25,6 +25,8 @@ test('FINRA file: header, listed rows, split flag, DTC', () => {
   assert.equal(p.rows[1].split, 'S');
   assert.equal(p.rows.filter(r => isListed(r.mkt)).length, 2);
   assert.equal(parseFinra('a|b\n1|2').header, false);
+  const q = parseFinra('"symbolCode"|"marketClassCode"|"currentShortPositionQuantity"|"stockSplitFlag"|"daysToCoverQuantity"|"settlementDate"\n"AAPL"|"NNM"|"131591865"|""|"3.71"|"2026-10-15"');
+  assert.equal(q.header, true); assert.deepEqual([q.rows[0].sym, q.rows[0].short, q.rows[0].dtc, q.rows[0].split, q.rows[0].settle], ['AAPL', 131591865, 3.71, '', '2026-10-15']);
 });
 
 test('short ratio flag and data errors', () => {
