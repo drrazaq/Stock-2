@@ -21,3 +21,7 @@ All8 existing SQ15 registry entries reconciled. Six original firstRuns: five NOT
 Budget ledger17rows=15signals+2 skipped-entry records;0fills/0results. Thirteen signals were screened out by existing owner eligibility, two lacked an affordable contract; individual marks are not republished. Some observations have quote-timing/rejection machinery, but there is no position/outcome chain. This is missing execution evidence, not an economic loss or profitable result. Historical rows are not rewritten.
 
 Both lanes assume$5percontractperside, provisional and distinct from$3stock-order fees. The smallest remaining non-secret evidence is current official ZAD Level2 long-call permission/product terms, options fee/order/exercise/expiry charges and whether Sharia approval covers the exact contract or only the underlying. Previously reviewed official-site/app evidence does not establish these. No options engine, new collector, recommendation, permission inference or acquisition is authorized.
+
+## Independent review limit — Claude6819217554
+
+Claude independently reproduced all three result artifacts byte-for-byte and accepted the paper/options findings. TWLO arithmetic is independently checked; the SEC exhibit returned403 in Claude's environment, so the source figures, reported/organic growth and guidance are Codex-read, not independently second-read. This does not change WAIT or establish price/valuation/ZAD readiness.
