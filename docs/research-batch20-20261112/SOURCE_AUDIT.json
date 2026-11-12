@@ -1,0 +1,37 @@
+{
+  "kind": "RETAINED_SOURCE_QUALITY_PROVENANCE_NOT_NEW_RETURN_TEST",
+  "supplierLinks": {
+    "rows": 844,
+    "currentRetainedFileSha256": "93ca6a0d65d2bfe0788aef2e2a8ad6897fc11a6f62532db05e4c59f625b5290d",
+    "currentStoredHandCheck": {
+      "precision": 0.9,
+      "result": "v3 extractor: 45 of 50 correct = 90% (>= 90%: the run may proceed). Earlier checks: v1 35/50, v2 39/50 (data/squad28-linkcheck-v1.json, -v2.json)."
+    },
+    "oldV2": {
+      "linksSha": "bef53f242fe25d6ed101b3a3444774533a4c150bc647467de5936fe93787412e",
+      "precision": 0.78,
+      "meaning": "Different rejected source version, not the v3 file used by frozen returns"
+    },
+    "limitations": "45of50 historical document matches is not perfect or current identity/exposure validation;150sourcechecks across3versions are not150markettests. No peer is automatically supplier."
+  },
+  "contractAudit": {
+    "fileSha256": "f7c4d786e4c60b0f6284c17f26a7d68af413ee282cd2665f90e7a96d66cb6820",
+    "summary": {
+      "events": 272,
+      "notRead": 0,
+      "extractorAccepted": 70,
+      "sizeOk": 19,
+      "countedFamilyAndSize": 15,
+      "families": {
+        "NO PARTY HIT": 202,
+        "COMMERCIAL_CUSTOMER": 7,
+        "EQUITY_INVESTMENT_BY_GIANT": 8,
+        "LICENSE": 25,
+        "UNCLEAR": 24,
+        "INCIDENTAL": 3,
+        "ACQUISITION": 3
+      }
+    },
+    "limitations": "272source-audit records not automatically same264frozenreturnevents. No applying15posthocacceptedrecords to oldreturnsto rescue it; no newcommercialcontract profitability claim."
+  }
+}

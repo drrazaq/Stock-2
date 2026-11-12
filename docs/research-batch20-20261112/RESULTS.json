@@ -1,0 +1,2400 @@
+{
+  "kind": "BATCH20_COMPLETED_RETAINED_EVIDENCE_NOT_TWENTY_NEW_BACKTESTS",
+  "contractSha256": "915d0af17ca8135715b0b29527ff311a86b93fd387e6383ea93169a7465d6099",
+  "amendmentSha256": "b0651f421b7a1a1818f765bb94a07ebdbba5df35317bfeb3b0ebcb1f4a8c2b6a",
+  "analyzerSha256": "fea2f521e119d691f4c82a79f23af172fd0e5ecfcc897c6951af008e9b05f359",
+  "inputRef": "7db2c83b574bbe0d85d4c9972ad2230a36004816",
+  "inventory": {
+    "libraryRows": 824,
+    "uniqueIds": 824,
+    "familyLabelsNotMechanisms": 89,
+    "experimentRows": 211,
+    "uniqueWhereName": 180,
+    "sumReportedTriedNotUniqueTests": 8329,
+    "selectedChannels": 20,
+    "alreadyTestedExactIds": 19,
+    "newValidatedEconomicEdges": 0
+  },
+  "hypotheses": [
+    {
+      "batchId": "B20-01",
+      "mechanism": "Customer-to-supplier earnings transmission",
+      "id": "SQ28-SUPDRIFT",
+      "family": "Supply-chain demand",
+      "frozenVerdict": "TOO FEW CASES",
+      "frozenWhy": "fewer than 20 cases or 3 blocks in a half (75 cases, 12 blocks / 11 cases, 10 blocks)",
+      "frozenResults": {
+        "older": {
+          "n": 75,
+          "days": 18,
+          "stocks": 37,
+          "avg": -0.0379,
+          "median": -0.0305,
+          "avgStress": -0.0419,
+          "ctrl": -0.0413,
+          "edge": 0.0563,
+          "tDay": 1.99,
+          "blocks": 12,
+          "tBlock": 1.67,
+          "vsOwn": 0.0331,
+          "ownCovered": 18,
+          "noTop2": -0.0482,
+          "best": 0.3519,
+          "worst": -0.2258,
+          "win": 0.28
+        },
+        "newer": {
+          "n": 11,
+          "days": 10,
+          "stocks": 9,
+          "avg": 0.0535,
+          "median": 0.0037,
+          "avgStress": 0.0495,
+          "ctrl": -0.0097,
+          "edge": 0.0583,
+          "tDay": 0.6,
+          "blocks": 10,
+          "tBlock": 0.6,
+          "vsOwn": 0.0529,
+          "ownCovered": 10,
+          "noTop2": -0.047,
+          "best": 0.9189,
+          "worst": -0.2139,
+          "win": 0.5455
+        },
+        "all": {
+          "n": 86,
+          "days": 28,
+          "stocks": 44,
+          "avg": -0.0262,
+          "median": -0.0274,
+          "avgStress": -0.0302,
+          "ctrl": -0.0373,
+          "edge": 0.057,
+          "tDay": 1.49,
+          "blocks": 22,
+          "tBlock": 1.23,
+          "vsOwn": 0.0402,
+          "ownCovered": 28,
+          "noTop2": -0.0419,
+          "best": 0.9189,
+          "worst": -0.2258,
+          "win": 0.314
+        }
+      },
+      "frozenAt": "2026-10-27T09:32:03.297Z",
+      "hold": 20,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 1,
+        "resolved": 0,
+        "unresolved": 1,
+        "signalTimingClasses": {
+          "PROSPECTIVE": 1
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-11-02",
+        "lastSignal": "2026-11-02"
+      },
+      "retainedDiagnostic": {
+        "status": "INDEPENDENT_RETAINED_ROW_DIAGNOSTIC_NOT_NEW_HOLDOUT",
+        "rows": 86,
+        "net": {
+          "n": 86,
+          "mean": -0.02618139534883721,
+          "median": -0.027450000000000002,
+          "losses": 59,
+          "zero": 0,
+          "worst": -0.2258,
+          "best": 0.9189,
+          "withoutBest2": -0.041933333333333336,
+          "withoutBest5pct": -0.05146543209876544,
+          "best5pctCount": 5,
+          "best5pctShareOfPositiveGains": 0.6916943281858854
+        },
+        "nativeStress1p2PercentAggregate": {
+          "n": 86,
+          "mean": -0.030181395348837212,
+          "median": -0.03145,
+          "losses": 61,
+          "zero": 0,
+          "worst": -0.2298,
+          "best": 0.9149,
+          "withoutBest2": -0.04593333333333333,
+          "withoutBest5pct": -0.055465432098765435,
+          "best5pctCount": 5,
+          "best5pctShareOfPositiveGains": 0.711430285757144
+        },
+        "originalCostConvention": "net = rounded(model gross - 0.008); original embedded price/mark/slippage assumptions remain. Stress changes only original flat cost to0.012.",
+        "rowLineage": "Not automatically the firstRun cohort. Later generated rows and missing frozen trade IDs preclude firstRun replication.",
+        "exactWholeShareReturn": null,
+        "portfolioReturnOrDrawdown": null,
+        "avgStock": {
+          "n": 86,
+          "meanControl": -0.03725232558139535,
+          "pairedMeanDifference": 0.01107093023255814,
+          "basis": "Both reported net of0.008; original underlying execution/slippage may differ, not verified executable matching"
+        },
+        "sameStock": {
+          "n": 86,
+          "meanControl": -0.0010813953488372089,
+          "pairedMeanDifference": -0.025099999999999997,
+          "basis": "Both reported net of0.008; original underlying execution/slippage may differ, not verified executable matching"
+        },
+        "spy": {
+          "n": 86,
+          "meanControl": -0.016311627906976746,
+          "pairedMeanDifference": -0.009869767441860465,
+          "basis": "SPY gross; strategy net: NOT an equal-cost or whole-share comparison"
+        },
+        "existingCustomerDatePlacebo": {
+          "n": 81,
+          "meanDifference": -0.016496296296296297
+        },
+        "concentration": {
+          "symbols": 44,
+          "largestPositiveContributor": "NKTR",
+          "largestShareOfPositiveGains": 0.3315413479578583,
+          "top5SymbolShareOfPositiveGains": 0.7339442921056429,
+          "formationMonths": 23,
+          "customers": 19
+        },
+        "capitalDemand": {
+          "maxConcurrentRetainedPositions": 24,
+          "referenceNotionalUsd": 24000,
+          "method": "Buy-open before sell-close on same date; lower bound for incomplete cohort, not owner budget or feasible portfolio P&L"
+        },
+        "singleOrderFeeSensitivity": {
+          "0": {
+            "meanLowerConditionalBound": -0.04146595639534883,
+            "meanUpperConditionalBound": 0.0022756796511627935,
+            "assumptions": "All trades affordable, one buy+one sell, dollar prices UNKNOWN; invested cash between498.5and997, plus3eachside. Reconstruct reported modelgross as roundednet+0.008, preserve original embedded assumptions, then add stated extra adverse fraction eachside. Mathematical bounds, NOT actual execution or a substitute for missing prices."
+          },
+          "0.005": {
+            "meanLowerConditionalBound": -0.04945925941513354,
+            "meanUpperConditionalBound": -0.004341064326622629,
+            "assumptions": "All trades affordable, one buy+one sell, dollar prices UNKNOWN; invested cash between498.5and997, plus3eachside. Reconstruct reported modelgross as roundednet+0.008, preserve original embedded assumptions, then add stated extra adverse fraction eachside. Mathematical bounds, NOT actual execution or a substitute for missing prices."
+          },
+          "0.02": {
+            "meanLowerConditionalBound": -0.07427815611035114,
+            "meanUpperConditionalBound": -0.02249289409484726,
+            "assumptions": "All trades affordable, one buy+one sell, dollar prices UNKNOWN; invested cash between498.5and997, plus3eachside. Reconstruct reported modelgross as roundednet+0.008, preserve original embedded assumptions, then add stated extra adverse fraction eachside. Mathematical bounds, NOT actual execution or a substitute for missing prices."
+          }
+        }
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "INCONCLUSIVE_ORIGINAL_VERDICT_UNCHANGED_NO_EXECUTABLE_CONFIRMATION"
+    },
+    {
+      "batchId": "B20-02",
+      "mechanism": "Economically material new customer agreement",
+      "id": "SQ24-MEGADEAL",
+      "family": "Commercial orders",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "block t 0.28 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.38 under 2.5 in the newer half; loses with 2% slippage each way in the older half (-2.8%); loses with 2% slippage each way in the newer half (-4.2%); return per year of capital tied up -5.7% not above the S&P 500 on the same days in the newer half (22.3%)",
+      "frozenResults": {
+        "older": {
+          "n": 108,
+          "days": 97,
+          "stocks": 91,
+          "avg": 0.0121,
+          "median": -0.0067,
+          "avgStress": 0.0081,
+          "ctrl": -0.0034,
+          "edge": 0.0112,
+          "tDay": 0.82,
+          "blocks": 47,
+          "tBlock": 0.28,
+          "vsOwn": 0.0209,
+          "ownCovered": 97,
+          "noTop2": 0.0003,
+          "best": 0.6509,
+          "worst": -0.3186,
+          "win": 0.4537
+        },
+        "newer": {
+          "n": 156,
+          "days": 141,
+          "stocks": 126,
+          "avg": -0.0022,
+          "median": -0.0129,
+          "avgStress": -0.0062,
+          "ctrl": 0.0016,
+          "edge": -0.0077,
+          "tDay": -0.6,
+          "blocks": 68,
+          "tBlock": -1.38,
+          "vsOwn": 0.0014,
+          "ownCovered": 141,
+          "noTop2": -0.0117,
+          "best": 0.8838,
+          "worst": -0.3254,
+          "win": 0.4423
+        },
+        "all": {
+          "n": 264,
+          "days": 238,
+          "stocks": 202,
+          "avg": 0.0036,
+          "median": -0.009,
+          "avgStress": -0.0004,
+          "ctrl": -0.0004,
+          "edge": 0,
+          "tDay": 0,
+          "blocks": 115,
+          "tBlock": -0.89,
+          "vsOwn": 0.0093,
+          "ownCovered": 238,
+          "noTop2": -0.0022,
+          "best": 0.8838,
+          "worst": -0.3254,
+          "win": 0.447
+        }
+      },
+      "frozenAt": "2026-10-27T05:35:58.063Z",
+      "hold": 10,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "NOT_RETAINED_OR_NO_IMPLEMENTED_LANE",
+        "signals": null,
+        "resolved": null,
+        "eligibleProspectiveResolved": null,
+        "economicVerdict": "INCONCLUSIVE_NO_RETAINED_FORWARD_LANE"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-03",
+      "mechanism": "Contract delivery converting to revenue and cash",
+      "id": null,
+      "family": "Commercial realization",
+      "frozenVerdict": null,
+      "frozenWhy": null,
+      "frozenResults": null,
+      "frozenAt": null,
+      "hold": null,
+      "ruleDefinitionStatus": "NO_EXISTING_FROZEN_TRADE_RULE",
+      "forward": {
+        "status": "NOT_RETAINED_OR_NO_IMPLEMENTED_LANE",
+        "signals": null,
+        "resolved": null,
+        "eligibleProspectiveResolved": null,
+        "economicVerdict": "INCONCLUSIVE_NO_RETAINED_FORWARD_LANE"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "INCONCLUSIVE_NO_FROZEN_TRADE_RULE_OR_COMPLETE_EVENT_CHAIN"
+    },
+    {
+      "batchId": "B20-04",
+      "mechanism": "Cash-conversion inflection",
+      "id": "SQ22-CASHCONV",
+      "family": "Earnings quality",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -1.7 under 2.5 in the newer half; not better than V15 picks bought and sold on the same sessions in the newer half (-6.5% a trade over 559 trades); return per year of capital tied up 6.7% not above the S&P 500 on the same days in the newer half (18.2%)",
+      "frozenResults": {
+        "older": {
+          "n": 367,
+          "days": 151,
+          "stocks": 316,
+          "avg": 0.0871,
+          "median": 0.0569,
+          "avgStress": 0.0831,
+          "ctrl": 0.0263,
+          "edge": 0.0525,
+          "tDay": 4.14,
+          "blocks": 5,
+          "tBlock": 3.14,
+          "vsOwn": 0.0528,
+          "ownCovered": 149,
+          "noTop2": 0.0824,
+          "best": 0.953,
+          "worst": -0.421,
+          "win": 0.6322
+        },
+        "newer": {
+          "n": 559,
+          "days": 226,
+          "stocks": 444,
+          "avg": 0.0317,
+          "median": 0.0107,
+          "avgStress": 0.0277,
+          "ctrl": 0.059,
+          "edge": -0.0404,
+          "tDay": -2.82,
+          "blocks": 6,
+          "tBlock": -1.7,
+          "vsOwn": -0.0256,
+          "ownCovered": 226,
+          "noTop2": 0.0263,
+          "best": 1.7504,
+          "worst": -0.4499,
+          "win": 0.5224
+        },
+        "all": {
+          "n": 926,
+          "days": 377,
+          "stocks": 623,
+          "avg": 0.0537,
+          "median": 0.0287,
+          "avgStress": 0.0497,
+          "ctrl": 0.046,
+          "edge": -0.0032,
+          "tDay": -0.31,
+          "blocks": 10,
+          "tBlock": -0.79,
+          "vsOwn": 0.0056,
+          "ownCovered": 375,
+          "noTop2": 0.0504,
+          "best": 1.7504,
+          "worst": -0.4499,
+          "win": 0.5659
+        }
+      },
+      "frozenAt": "2026-10-25T12:43:56.843Z",
+      "hold": 126,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 49,
+        "resolved": 0,
+        "unresolved": 49,
+        "signalTimingClasses": {
+          "LATE_OR_BACKFILLED": 48,
+          "PROSPECTIVE": 1
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-10-27",
+        "lastSignal": "2026-11-09"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-05",
+      "mechanism": "Joint earnings and revenue expectations reset",
+      "id": "ANOM-SUESURGE",
+      "family": "Expectations",
+      "frozenVerdict": "NOT PROVEN",
+      "frozenWhy": "not better than the same stocks on their other days in the older half; block t 1.23 under 2.5 in the older half; block t 0.23 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 898,
+          "days": 218,
+          "stocks": 583,
+          "avg": 0.0153,
+          "median": 0.0065,
+          "avgStress": 0.0113,
+          "ctrl": -0.0123,
+          "edge": 0.0227,
+          "tDay": 2.34,
+          "blocks": 10,
+          "tBlock": 1.23,
+          "vsOwn": -0.0389,
+          "ownCovered": 212,
+          "noTop2": 0.0129,
+          "best": 1.1555,
+          "worst": -0.6912,
+          "win": 0.5111
+        },
+        "newer": {
+          "n": 1406,
+          "days": 319,
+          "stocks": 818,
+          "avg": 0.0473,
+          "median": 0.0235,
+          "avgStress": 0.0433,
+          "ctrl": 0.0306,
+          "edge": 0.0026,
+          "tDay": 0.22,
+          "blocks": 12,
+          "tBlock": 0.23,
+          "vsOwn": 0.002,
+          "ownCovered": 315,
+          "noTop2": 0.0449,
+          "best": 2.0424,
+          "worst": -0.746,
+          "win": 0.5526
+        },
+        "all": {
+          "n": 2304,
+          "days": 537,
+          "stocks": 1108,
+          "avg": 0.0348,
+          "median": 0.0142,
+          "avgStress": 0.0308,
+          "ctrl": 0.0139,
+          "edge": 0.0108,
+          "tDay": 1.37,
+          "blocks": 21,
+          "tBlock": 0.89,
+          "vsOwn": -0.0145,
+          "ownCovered": 527,
+          "noTop2": 0.0333,
+          "best": 2.0424,
+          "worst": -0.746,
+          "win": 0.5365
+        }
+      },
+      "frozenAt": "2026-10-23T20:20:21.074Z",
+      "hold": 60,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "NO_COMPATIBLE_SELECTED_RULE_RECORDS",
+        "retainedOtherRows": 12921,
+        "signals": 0,
+        "resolved": 0,
+        "eligibleProspectiveResolved": 0,
+        "economicVerdict": "INCONCLUSIVE_SELECTED_LANE_UNOBSERVED_NOT_PROOF_ZERO_OPPORTUNITIES"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "INCONCLUSIVE_ORIGINAL_VERDICT_UNCHANGED_NO_EXECUTABLE_CONFIRMATION"
+    },
+    {
+      "batchId": "B20-06",
+      "mechanism": "Inventory-cycle normalization",
+      "id": "RQ-INV-LOW126",
+      "family": "Investment cycles",
+      "frozenVerdict": "NOT PROVEN",
+      "frozenWhy": "block t 0.48 under 2.5 in the older half; block t -0.51 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 1006,
+          "days": 259,
+          "stocks": 736,
+          "avg": 0.0179,
+          "median": 0.0118,
+          "avgStress": 0.0139,
+          "ctrl": 0.0146,
+          "edge": 0.0094,
+          "tDay": 0.68,
+          "blocks": 5,
+          "tBlock": 0.48,
+          "vsOwn": 0.0005,
+          "ownCovered": 202,
+          "noTop2": 0.0153,
+          "best": 1.4343,
+          "worst": -0.9746,
+          "win": 0.5219
+        },
+        "newer": {
+          "n": 687,
+          "days": 259,
+          "stocks": 470,
+          "avg": 0.0904,
+          "median": 0.0211,
+          "avgStress": 0.0864,
+          "ctrl": 0.0657,
+          "edge": 0.0021,
+          "tDay": 0.09,
+          "blocks": 6,
+          "tBlock": -0.51,
+          "vsOwn": 0.0498,
+          "ownCovered": 229,
+          "noTop2": 0.0828,
+          "best": 2.992,
+          "worst": -0.9874,
+          "win": 0.5357
+        },
+        "all": {
+          "n": 1693,
+          "days": 518,
+          "stocks": 941,
+          "avg": 0.0474,
+          "median": 0.0162,
+          "avgStress": 0.0434,
+          "ctrl": 0.0353,
+          "edge": 0.0057,
+          "tDay": 0.42,
+          "blocks": 10,
+          "tBlock": -0.29,
+          "vsOwn": 0.0267,
+          "ownCovered": 431,
+          "noTop2": 0.0442,
+          "best": 2.992,
+          "worst": -0.9874,
+          "win": 0.5275
+        }
+      },
+      "frozenAt": "2026-11-03T09:22:24.109Z",
+      "hold": 126,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 62,
+        "resolved": 0,
+        "unresolved": 62,
+        "signalTimingClasses": {
+          "PROSPECTIVE": 29,
+          "LATE_OR_BACKFILLED": 33
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-11-03",
+        "lastSignal": "2026-11-10"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "INCONCLUSIVE_ORIGINAL_VERDICT_UNCHANGED_NO_EXECUTABLE_CONFIRMATION"
+    },
+    {
+      "batchId": "B20-07",
+      "mechanism": "Opportunistic insider information",
+      "id": "ANOM-INSIDER",
+      "family": "Ownership information",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.25 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; block t 0.05 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 746,
+          "days": 353,
+          "stocks": 435,
+          "avg": -0.0104,
+          "median": -0.0153,
+          "avgStress": -0.0144,
+          "ctrl": -0.0132,
+          "edge": -0.0069,
+          "tDay": -1.13,
+          "blocks": 27,
+          "tBlock": -1.25,
+          "vsOwn": -0.0086,
+          "ownCovered": 338,
+          "noTop2": -0.0125,
+          "best": 0.9063,
+          "worst": -0.8601,
+          "win": 0.4424
+        },
+        "newer": {
+          "n": 823,
+          "days": 411,
+          "stocks": 471,
+          "avg": 0.003,
+          "median": -0.0015,
+          "avgStress": -0.001,
+          "ctrl": -0.0015,
+          "edge": -0.0087,
+          "tDay": -1.58,
+          "blocks": 34,
+          "tBlock": 0.05,
+          "vsOwn": 0.001,
+          "ownCovered": 405,
+          "noTop2": 0.0004,
+          "best": 1.3065,
+          "worst": -0.8276,
+          "win": 0.4897
+        },
+        "all": {
+          "n": 1569,
+          "days": 764,
+          "stocks": 772,
+          "avg": -0.0034,
+          "median": -0.0072,
+          "avgStress": -0.0074,
+          "ctrl": -0.0071,
+          "edge": -0.0079,
+          "tDay": -1.92,
+          "blocks": 60,
+          "tBlock": -1.2,
+          "vsOwn": -0.0034,
+          "ownCovered": 743,
+          "noTop2": -0.0048,
+          "best": 1.3065,
+          "worst": -0.8601,
+          "win": 0.4672
+        }
+      },
+      "frozenAt": "2026-10-23T20:20:21.074Z",
+      "hold": 21,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "NO_COMPATIBLE_SELECTED_RULE_RECORDS",
+        "retainedOtherRows": 12921,
+        "signals": 0,
+        "resolved": 0,
+        "eligibleProspectiveResolved": 0,
+        "economicVerdict": "INCONCLUSIVE_SELECTED_LANE_UNOBSERVED_NOT_PROOF_ZERO_OPPORTUNITIES"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-08",
+      "mechanism": "Activist governance intervention",
+      "id": "ANOM-13D",
+      "family": "Governance",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -3.18 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -1.15 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 253,
+          "days": 184,
+          "stocks": 226,
+          "avg": -0.0565,
+          "median": -0.0451,
+          "avgStress": -0.0605,
+          "ctrl": -0.0328,
+          "edge": -0.0386,
+          "tDay": -3.18,
+          "blocks": 9,
+          "tBlock": -3.18,
+          "vsOwn": -0.0245,
+          "ownCovered": 171,
+          "noTop2": -0.0612,
+          "best": 0.5473,
+          "worst": -0.7031,
+          "win": 0.3874
+        },
+        "newer": {
+          "n": 364,
+          "days": 250,
+          "stocks": 325,
+          "avg": 0.0021,
+          "median": -0.0095,
+          "avgStress": -0.0019,
+          "ctrl": 0.0244,
+          "edge": -0.0339,
+          "tDay": -1.95,
+          "blocks": 11,
+          "tBlock": -1.15,
+          "vsOwn": 0.0104,
+          "ownCovered": 241,
+          "noTop2": -0.0108,
+          "best": 3.0598,
+          "worst": -0.8387,
+          "win": 0.478
+        },
+        "all": {
+          "n": 617,
+          "days": 434,
+          "stocks": 512,
+          "avg": -0.0219,
+          "median": -0.0259,
+          "avgStress": -0.0259,
+          "ctrl": 0.0009,
+          "edge": -0.0359,
+          "tDay": -3.19,
+          "blocks": 19,
+          "tBlock": -2.58,
+          "vsOwn": -0.0041,
+          "ownCovered": 412,
+          "noTop2": -0.0296,
+          "best": 3.0598,
+          "worst": -0.8387,
+          "win": 0.4408
+        }
+      },
+      "frozenAt": "2026-10-23T20:20:21.074Z",
+      "hold": 63,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 8,
+        "resolved": 0,
+        "unresolved": 8,
+        "signalTimingClasses": {
+          "LATE_OR_BACKFILLED": 7,
+          "PROSPECTIVE": 1
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-10-26",
+        "lastSignal": "2026-11-10"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-09",
+      "mechanism": "Actual repurchase payout yield",
+      "id": "ANOM-BBY",
+      "family": "Capital allocation",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "not better than the same stocks on their other days in the older half; block t 1.38 under 2.5 in the older half; not better than the average stock in the newer half; block t -1.29 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 2020,
+          "days": 25,
+          "stocks": 239,
+          "avg": 0.0059,
+          "median": -0.0047,
+          "avgStress": 0.0019,
+          "ctrl": -0.0178,
+          "edge": 0.0153,
+          "tDay": 1.83,
+          "blocks": 9,
+          "tBlock": 1.38,
+          "vsOwn": -0.0541,
+          "ownCovered": 25,
+          "noTop2": 0.0029,
+          "best": 4.589,
+          "worst": -0.6784,
+          "win": 0.4906
+        },
+        "newer": {
+          "n": 2978,
+          "days": 31,
+          "stocks": 358,
+          "avg": 0.0256,
+          "median": 0.006,
+          "avgStress": 0.0216,
+          "ctrl": 0.0269,
+          "edge": -0.0108,
+          "tDay": -1.82,
+          "blocks": 11,
+          "tBlock": -1.29,
+          "vsOwn": 0.008,
+          "ownCovered": 31,
+          "noTop2": 0.0236,
+          "best": 4.0344,
+          "worst": -0.6573,
+          "win": 0.5138
+        },
+        "all": {
+          "n": 4998,
+          "days": 56,
+          "stocks": 463,
+          "avg": 0.0176,
+          "median": 0.0018,
+          "avgStress": 0.0136,
+          "ctrl": 0.0088,
+          "edge": 0.0009,
+          "tDay": 0.16,
+          "blocks": 19,
+          "tBlock": 0.21,
+          "vsOwn": -0.0197,
+          "ownCovered": 56,
+          "noTop2": 0.0159,
+          "best": 4.589,
+          "worst": -0.6784,
+          "win": 0.5044
+        }
+      },
+      "frozenAt": "2026-10-23T20:20:21.074Z",
+      "hold": 63,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 101,
+        "resolved": 0,
+        "unresolved": 101,
+        "signalTimingClasses": {
+          "PROSPECTIVE": 101
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-11-02",
+        "lastSignal": "2026-11-02"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-10",
+      "mechanism": "Spin-off forced-selling release",
+      "id": "SQ22-SPINOFF",
+      "family": "Institutional flows",
+      "frozenVerdict": "TOO FEW CASES",
+      "frozenWhy": "fewer than 20 cases or 3 blocks in a half (26 cases, 5 blocks / 16 cases, 5 blocks)",
+      "frozenResults": {
+        "older": {
+          "n": 26,
+          "days": 23,
+          "stocks": 26,
+          "avg": 0.0415,
+          "median": 0.0361,
+          "avgStress": 0.0375,
+          "ctrl": -0.0198,
+          "edge": 0.0284,
+          "tDay": 0.45,
+          "blocks": 5,
+          "tBlock": 0.5,
+          "vsOwn": -0.1024,
+          "ownCovered": 13,
+          "noTop2": -0.0326,
+          "best": 1.2298,
+          "worst": -0.3661,
+          "win": 0.5385
+        },
+        "newer": {
+          "n": 16,
+          "days": 16,
+          "stocks": 16,
+          "avg": 0.235,
+          "median": 0.1305,
+          "avgStress": 0.231,
+          "ctrl": 0.0436,
+          "edge": 0.1834,
+          "tDay": 1.67,
+          "blocks": 5,
+          "tBlock": 1.98,
+          "vsOwn": 0.0323,
+          "ownCovered": 11,
+          "noTop2": 0.119,
+          "best": 1.1194,
+          "worst": -0.358,
+          "win": 0.6875
+        },
+        "all": {
+          "n": 42,
+          "days": 39,
+          "stocks": 42,
+          "avg": 0.1152,
+          "median": 0.0735,
+          "avgStress": 0.1112,
+          "ctrl": 0.0044,
+          "edge": 0.092,
+          "tDay": 1.56,
+          "blocks": 9,
+          "tBlock": 1.47,
+          "vsOwn": -0.0407,
+          "ownCovered": 24,
+          "noTop2": 0.0622,
+          "best": 1.2298,
+          "worst": -0.3661,
+          "win": 0.5952
+        }
+      },
+      "frozenAt": "2026-10-25T12:43:56.843Z",
+      "hold": 126,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 1,
+        "resolved": 0,
+        "unresolved": 1,
+        "signalTimingClasses": {
+          "PROSPECTIVE": 1
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-10-28",
+        "lastSignal": "2026-10-28"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "INCONCLUSIVE_ORIGINAL_VERDICT_UNCHANGED_NO_EXECUTABLE_CONFIRMATION"
+    },
+    {
+      "batchId": "B20-11",
+      "mechanism": "Regulatory/clinical commercial milestone",
+      "id": "CAT-HUNTER-SUB5",
+      "family": "Regulatory milestones",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "loses after 2% slippage each way in the older half; loses after 3% each way in the older half; not better than the average stock of its band in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.9859 under 2.5 in the older half; loses after 2% slippage each way in the newer half; loses after 3% each way in the newer half; not better than the average stock of its band in the newer half; not better than the same stocks on their other days in the newer half; loses without its 2 best in the newer half; block t -1.0433 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 203,
+          "stocks": 112,
+          "avg2": -0.0524,
+          "avg3": -0.0712,
+          "avgHouse": -0.0217,
+          "avgHouseStress": -0.0257,
+          "median2": -0.0719,
+          "win": 0.3103,
+          "ctrl": -0.0224,
+          "edge": -0.0292,
+          "vsOwn": -0.0036,
+          "noTop2": -0.0599,
+          "worst3": [
+            -0.3507,
+            -0.2939,
+            -0.2794
+          ],
+          "best": 0.851,
+          "blocks": 27,
+          "tBlock": -1.9859
+        },
+        "newer": {
+          "n": 284,
+          "stocks": 117,
+          "avg2": -0.0306,
+          "avg3": -0.0498,
+          "avgHouse": 0.001,
+          "avgHouseStress": -0.003,
+          "median2": -0.0507,
+          "win": 0.3732,
+          "ctrl": -0.0084,
+          "edge": -0.0222,
+          "vsOwn": -0.0031,
+          "noTop2": -0.0359,
+          "worst3": [
+            -0.2794,
+            -0.2794,
+            -0.2794
+          ],
+          "best": 0.7775,
+          "blocks": 36,
+          "tBlock": -1.0433
+        }
+      },
+      "frozenAt": "2026-10-25T07:39:46.484Z",
+      "hold": 10,
+      "ruleDefinitionStatus": "EXISTING_LIBRARY_RULE_SOURCE_BINDING_REQUIRES_TRACE",
+      "forward": {
+        "status": "NO_COMPATIBLE_SELECTED_RULE_RECORDS",
+        "retainedOtherRows": 16,
+        "signals": 0,
+        "resolved": 0,
+        "eligibleProspectiveResolved": 0,
+        "economicVerdict": "INCONCLUSIVE_SELECTED_LANE_UNOBSERVED_NOT_PROOF_ZERO_OPPORTUNITIES"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-12",
+      "mechanism": "Cash-tender deal completion spread",
+      "id": "RQ-TENDER-3-15",
+      "family": "Deal risk",
+      "frozenVerdict": "TOO FEW CASES",
+      "frozenWhy": "fewer than 20 cases or 3 blocks in a half (2 cases, 2 blocks / 4 cases, 3 blocks)",
+      "frozenResults": {
+        "older": {
+          "n": 2,
+          "days": 2,
+          "stocks": 2,
+          "avg": 0.0292,
+          "median": 0.0292,
+          "avgStress": 0.0252,
+          "ctrl": -0.0636,
+          "edge": 0.0848,
+          "tDay": 2.17,
+          "blocks": 2,
+          "tBlock": null,
+          "vsOwn": -0.1672,
+          "ownCovered": 1,
+          "noTop2": null,
+          "best": 0.0385,
+          "worst": 0.0198,
+          "win": 1
+        },
+        "newer": {
+          "n": 4,
+          "days": 4,
+          "stocks": 4,
+          "avg": -0.0132,
+          "median": 0.006,
+          "avgStress": -0.0172,
+          "ctrl": -0.0344,
+          "edge": 0.0132,
+          "tDay": 0.17,
+          "blocks": 3,
+          "tBlock": -0.35,
+          "vsOwn": -0.1076,
+          "ownCovered": 4,
+          "noTop2": -0.0734,
+          "best": 0.0636,
+          "worst": -0.1286,
+          "win": 0.5
+        },
+        "all": {
+          "n": 6,
+          "days": 6,
+          "stocks": 6,
+          "avg": 0.0009,
+          "median": 0.025,
+          "avgStress": -0.0031,
+          "ctrl": -0.0442,
+          "edge": 0.037,
+          "tDay": 0.71,
+          "blocks": 5,
+          "tBlock": 0.26,
+          "vsOwn": -0.1195,
+          "ownCovered": 5,
+          "noTop2": -0.0242,
+          "best": 0.0636,
+          "worst": -0.1286,
+          "win": 0.6667
+        }
+      },
+      "frozenAt": "2026-10-26T09:26:47.379Z",
+      "hold": 120,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "NO_COMPATIBLE_SELECTED_RULE_RECORDS",
+        "retainedOtherRows": 1925,
+        "signals": 0,
+        "resolved": 0,
+        "eligibleProspectiveResolved": 0,
+        "economicVerdict": "INCONCLUSIVE_SELECTED_LANE_UNOBSERVED_NOT_PROOF_ZERO_OPPORTUNITIES"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "INCONCLUSIVE_ORIGINAL_VERDICT_UNCHANGED_NO_EXECUTABLE_CONFIRMATION"
+    },
+    {
+      "batchId": "B20-13",
+      "mechanism": "News-shock information diffusion",
+      "id": "RQ-ISC-21",
+      "family": "Information diffusion",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "not better than the average stock in the older half; block t -0.48 under 2.5 in the older half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -2.17 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 2458,
+          "days": 416,
+          "stocks": 1516,
+          "avg": 0.0063,
+          "median": -0.0004,
+          "avgStress": 0.0023,
+          "ctrl": -0.0063,
+          "edge": -0.0013,
+          "tDay": -0.26,
+          "blocks": 24,
+          "tBlock": -0.48,
+          "vsOwn": 0.0057,
+          "ownCovered": 403,
+          "noTop2": 0.0054,
+          "best": 1.4599,
+          "worst": -0.5862,
+          "win": 0.4992
+        },
+        "newer": {
+          "n": 4320,
+          "days": 601,
+          "stocks": 2057,
+          "avg": 0.0003,
+          "median": -0.0034,
+          "avgStress": -0.0037,
+          "ctrl": 0.0019,
+          "edge": -0.013,
+          "tDay": -3,
+          "blocks": 34,
+          "tBlock": -2.17,
+          "vsOwn": 0.0088,
+          "ownCovered": 599,
+          "noTop2": -0.0001,
+          "best": 1.0805,
+          "worst": -0.9909,
+          "win": 0.4782
+        },
+        "all": {
+          "n": 6778,
+          "days": 1017,
+          "stocks": 2465,
+          "avg": 0.0025,
+          "median": -0.0027,
+          "avgStress": -0.0015,
+          "ctrl": -0.0011,
+          "edge": -0.0082,
+          "tDay": -2.53,
+          "blocks": 57,
+          "tBlock": -2.12,
+          "vsOwn": 0.0076,
+          "ownCovered": 1002,
+          "noTop2": 0.0021,
+          "best": 1.4599,
+          "worst": -0.9909,
+          "win": 0.4858
+        }
+      },
+      "frozenAt": "2026-10-27T09:27:40.050Z",
+      "hold": 21,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 235,
+        "resolved": 0,
+        "unresolved": 235,
+        "signalTimingClasses": {
+          "PROSPECTIVE": 235
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-10-27",
+        "lastSignal": "2026-11-11"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-14",
+      "mechanism": "Short-term liquidity provision",
+      "id": "A-SW1",
+      "family": "Liquidity",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "not better than an average stock in the older half (-0.64%); could be luck in the older half (t -11.83, 3.88 needed); lost money after costs in the older half; did not beat the S&P 500 in the older half (-0.78%); not clearly better than the same stock on its other days in the older half (+0.03%, t 0.35); loses without its 2 best trades in the older half; not better than an average stock in the newer half (-0.78%); could be luck in the newer half (t -14.17, 3.88 needed); lost money after costs in the newer half; did not beat the S&P 500 in the newer half (-0.87%); not clearly better than the same stock on its other days in the newer half (-0.14%, t -1.82); loses without its 2 best trades in the newer half; loses at 1.2% costs",
+      "frozenResults": {
+        "older": {
+          "n": 41190,
+          "days": 524,
+          "stocks": 2009,
+          "held": 3.3,
+          "avg": -0.0043,
+          "ctrl": 0.0019,
+          "edge": -0.0064,
+          "t": -11.83,
+          "vsSpy": -0.0078,
+          "tSpy": -12.72,
+          "vsOwn": 0.0003,
+          "tOwn": 0.35,
+          "win": 0.513,
+          "noTop2": -0.0043
+        },
+        "newer": {
+          "n": 50840,
+          "days": 516,
+          "stocks": 2363,
+          "held": 3.3,
+          "avg": -0.0049,
+          "ctrl": 0.0016,
+          "edge": -0.0078,
+          "t": -14.17,
+          "vsSpy": -0.0087,
+          "tSpy": -14.23,
+          "vsOwn": -0.0014,
+          "tOwn": -1.82,
+          "win": 0.511,
+          "noTop2": -0.005
+        },
+        "stress": {
+          "n": 50840,
+          "days": 516,
+          "stocks": 2363,
+          "held": 3.3,
+          "avg": -0.0089,
+          "ctrl": 0.0016,
+          "edge": -0.0118,
+          "t": -21.45,
+          "vsSpy": -0.0127,
+          "tSpy": -20.8,
+          "vsOwn": -0.0014,
+          "tOwn": -1.82,
+          "win": 0.443,
+          "noTop2": -0.009
+        },
+        "lowCostOlder": {
+          "n": 41190,
+          "days": 524,
+          "stocks": 2009,
+          "held": 3.3,
+          "avg": 0.0012,
+          "ctrl": 0.0019,
+          "edge": -0.0009,
+          "t": -1.62,
+          "vsSpy": -0.0023,
+          "tSpy": -3.73,
+          "vsOwn": 0.0003,
+          "tOwn": 0.35,
+          "win": 0.613,
+          "noTop2": 0.0012
+        },
+        "lowCostNewer": {
+          "n": 50840,
+          "days": 516,
+          "stocks": 2363,
+          "held": 3.3,
+          "avg": 0.0006,
+          "ctrl": 0.0016,
+          "edge": -0.0023,
+          "t": -4.16,
+          "vsSpy": -0.0032,
+          "tSpy": -5.2,
+          "vsOwn": -0.0014,
+          "tOwn": -1.82,
+          "win": 0.597,
+          "noTop2": 0.0005
+        }
+      },
+      "frozenAt": null,
+      "hold": 5,
+      "ruleDefinitionStatus": "EXISTING_LIBRARY_RULE_SOURCE_BINDING_REQUIRES_TRACE",
+      "forward": {
+        "status": "NOT_RETAINED_OR_NO_IMPLEMENTED_LANE",
+        "signals": null,
+        "resolved": null,
+        "eligibleProspectiveResolved": null,
+        "economicVerdict": "INCONCLUSIVE_NO_RETAINED_FORWARD_LANE"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-15",
+      "mechanism": "Profitable value mispricing",
+      "id": "SQ16-GPVAL",
+      "family": "Valuation",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "not better than the same stocks held as long on their other days in the older half; block t 1.44 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks held as long on their other days in the newer half; block t -2.03 under 2.5 in the newer half; return per year of capital tied up 3.0% not above the S&P 500 on the same days in the older half (5.9%); return per year of capital tied up 2.3% not above the S&P 500 on the same days in the newer half (15.9%)",
+      "frozenResults": {
+        "older": {
+          "n": 450,
+          "days": 9,
+          "stocks": 96,
+          "avg": 0.0076,
+          "median": -0.0072,
+          "avgStress": 0.0036,
+          "ctrl": -0.0154,
+          "edge": 0.0149,
+          "tDay": 1.44,
+          "blocks": 9,
+          "tBlock": 1.44,
+          "vsOwn": -0.0238,
+          "ownCovered": 9,
+          "noTop2": 0.004,
+          "best": 0.9372,
+          "worst": -0.4686,
+          "win": 0.4756
+        },
+        "newer": {
+          "n": 500,
+          "days": 10,
+          "stocks": 107,
+          "avg": 0.0057,
+          "median": -0.004,
+          "avgStress": 0.0017,
+          "ctrl": 0.019,
+          "edge": -0.0213,
+          "tDay": -2.03,
+          "blocks": 10,
+          "tBlock": -2.03,
+          "vsOwn": -0.0245,
+          "ownCovered": 10,
+          "noTop2": 0.0033,
+          "best": 0.6218,
+          "worst": -0.465,
+          "win": 0.488
+        },
+        "all": {
+          "n": 950,
+          "days": 19,
+          "stocks": 137,
+          "avg": 0.0066,
+          "median": -0.0048,
+          "avgStress": 0.0026,
+          "ctrl": 0.0027,
+          "edge": -0.0041,
+          "tDay": -0.49,
+          "blocks": 19,
+          "tBlock": -0.49,
+          "vsOwn": -0.0242,
+          "ownCovered": 19,
+          "noTop2": 0.0049,
+          "best": 0.9372,
+          "worst": -0.4686,
+          "win": 0.4821
+        }
+      },
+      "frozenAt": "2026-10-24T11:31:21.907Z",
+      "hold": 64,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "NO_COMPATIBLE_SELECTED_RULE_RECORDS",
+        "retainedOtherRows": 130,
+        "signals": 0,
+        "resolved": 0,
+        "eligibleProspectiveResolved": 0,
+        "economicVerdict": "INCONCLUSIVE_SELECTED_LANE_UNOBSERVED_NOT_PROOF_ZERO_OPPORTUNITIES"
+      },
+      "retainedDiagnostic": {
+        "status": "RETIRED_ORIGINAL_REJECTED_VERSION_NOT_RE_SLICED",
+        "retainedRows": 600,
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-16",
+      "mechanism": "Overinvestment and asset growth",
+      "id": "ANOM-AG",
+      "family": "Investment cycles",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.02 under 2.5 in the older half; block t 0.11 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 3493,
+          "days": 25,
+          "stocks": 594,
+          "avg": -0.0177,
+          "median": -0.036,
+          "avgStress": -0.0217,
+          "ctrl": -0.0199,
+          "edge": -0.0054,
+          "tDay": -0.51,
+          "blocks": 9,
+          "tBlock": -0.02,
+          "vsOwn": -0.021,
+          "ownCovered": 25,
+          "noTop2": -0.0195,
+          "best": 3.3436,
+          "worst": -0.8933,
+          "win": 0.4374
+        },
+        "newer": {
+          "n": 5035,
+          "days": 31,
+          "stocks": 760,
+          "avg": 0.0363,
+          "median": -0.0057,
+          "avgStress": 0.0323,
+          "ctrl": 0.0257,
+          "edge": 0.002,
+          "tDay": 0.25,
+          "blocks": 11,
+          "tBlock": 0.11,
+          "vsOwn": 0.0679,
+          "ownCovered": 31,
+          "noTop2": 0.0344,
+          "best": 4.8325,
+          "worst": -0.9961,
+          "win": 0.4918
+        },
+        "all": {
+          "n": 8528,
+          "days": 56,
+          "stocks": 1026,
+          "avg": 0.0141,
+          "median": -0.0192,
+          "avgStress": 0.0101,
+          "ctrl": 0.007,
+          "edge": -0.0013,
+          "tDay": -0.21,
+          "blocks": 19,
+          "tBlock": 0.05,
+          "vsOwn": 0.0282,
+          "ownCovered": 56,
+          "noTop2": 0.0131,
+          "best": 4.8325,
+          "worst": -0.9961,
+          "win": 0.4695
+        }
+      },
+      "frozenAt": "2026-10-23T20:20:21.074Z",
+      "hold": 63,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 165,
+        "resolved": 0,
+        "unresolved": 165,
+        "signalTimingClasses": {
+          "PROSPECTIVE": 165
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-11-02",
+        "lastSignal": "2026-11-02"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-17",
+      "mechanism": "Intangible reinvestment realization",
+      "id": "SQ4-RDCOMP",
+      "family": "Reinvestment",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "not better than the average stock in the older half; block t -0.61 under 2.5 in the older half; block t 0.84 under 2.5 in the newer half; return per year of capital tied up 2.5% not above the S&P 500 on the same days in the older half (21.0%)",
+      "frozenResults": {
+        "older": {
+          "n": 220,
+          "days": 14,
+          "stocks": 173,
+          "avg": 0.018,
+          "median": -0.1084,
+          "avgStress": 0.014,
+          "ctrl": 0.0451,
+          "edge": -0.0294,
+          "tDay": -0.68,
+          "blocks": 5,
+          "tBlock": -0.61,
+          "vsOwn": 0.0166,
+          "ownCovered": 14,
+          "noTop2": 0.0043,
+          "best": 1.5845,
+          "worst": -0.881,
+          "win": 0.4273
+        },
+        "newer": {
+          "n": 282,
+          "days": 22,
+          "stocks": 200,
+          "avg": 0.2488,
+          "median": -0.001,
+          "avgStress": 0.2448,
+          "ctrl": 0.0874,
+          "edge": 0.0945,
+          "tDay": 1.76,
+          "blocks": 8,
+          "tBlock": 0.84,
+          "vsOwn": 0.0224,
+          "ownCovered": 22,
+          "noTop2": 0.2083,
+          "best": 6.3272,
+          "worst": -0.8346,
+          "win": 0.4965
+        },
+        "all": {
+          "n": 502,
+          "days": 36,
+          "stocks": 288,
+          "avg": 0.1476,
+          "median": -0.052,
+          "avgStress": 0.1436,
+          "ctrl": 0.0689,
+          "edge": 0.0463,
+          "tDay": 1.22,
+          "blocks": 12,
+          "tBlock": 0.87,
+          "vsOwn": 0.0201,
+          "ownCovered": 36,
+          "noTop2": 0.1246,
+          "best": 6.3272,
+          "worst": -0.881,
+          "win": 0.4661
+        }
+      },
+      "frozenAt": "2026-10-24T06:16:18.699Z",
+      "hold": 252,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 89,
+        "resolved": 2,
+        "unresolved": 87,
+        "signalTimingClasses": {
+          "CLOCK_UNKNOWN": 89
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 2,
+            "mean": -0.5229999999999999,
+            "median": -0.5229999999999999,
+            "losses": 2,
+            "zero": 0,
+            "worst": -0.5307,
+            "best": -0.5153,
+            "withoutBest2": null,
+            "withoutBest5pct": -0.5307,
+            "best5pctCount": 1,
+            "best5pctShareOfPositiveGains": null
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-11-02",
+        "lastSignal": "2026-11-02"
+      },
+      "retainedDiagnostic": {
+        "status": "RETIRED_ORIGINAL_REJECTED_VERSION_NOT_RE_SLICED",
+        "retainedRows": 519,
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-18",
+      "mechanism": "Tax-expense information about latent profits",
+      "id": "RQ-TAX-126",
+      "family": "Tax information",
+      "frozenVerdict": "NOT PROVEN",
+      "frozenWhy": "not better than the same stocks on their other days in the older half; block t 0.22 under 2.5 in the older half; block t 0.39 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 1568,
+          "days": 258,
+          "stocks": 1117,
+          "avg": 0.0155,
+          "median": 0.0027,
+          "avgStress": 0.0115,
+          "ctrl": -0.004,
+          "edge": 0.0013,
+          "tDay": 0.1,
+          "blocks": 5,
+          "tBlock": 0.22,
+          "vsOwn": -0.0769,
+          "ownCovered": 220,
+          "noTop2": 0.0125,
+          "best": 2.992,
+          "worst": -0.9381,
+          "win": 0.5045
+        },
+        "newer": {
+          "n": 2029,
+          "days": 299,
+          "stocks": 1329,
+          "avg": 0.082,
+          "median": 0.0281,
+          "avgStress": 0.078,
+          "ctrl": 0.0705,
+          "edge": 0.0068,
+          "tDay": 0.37,
+          "blocks": 6,
+          "tBlock": 0.39,
+          "vsOwn": 0.0029,
+          "ownCovered": 279,
+          "noTop2": 0.0792,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.55
+        },
+        "all": {
+          "n": 3597,
+          "days": 557,
+          "stocks": 1729,
+          "avg": 0.053,
+          "median": 0.0173,
+          "avgStress": 0.049,
+          "ctrl": 0.038,
+          "edge": 0.0043,
+          "tDay": 0.37,
+          "blocks": 10,
+          "tBlock": 0.4,
+          "vsOwn": -0.0323,
+          "ownCovered": 499,
+          "noTop2": 0.0514,
+          "best": 2.992,
+          "worst": -1.008,
+          "win": 0.5302
+        }
+      },
+      "frozenAt": "2026-11-01T09:22:32.655Z",
+      "hold": 126,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 284,
+        "resolved": 0,
+        "unresolved": 284,
+        "signalTimingClasses": {
+          "PROSPECTIVE": 206,
+          "LATE_OR_BACKFILLED": 78
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-10-30",
+        "lastSignal": "2026-11-10"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "INCONCLUSIVE_ORIGINAL_VERDICT_UNCHANGED_NO_EXECUTABLE_CONFIRMATION"
+    },
+    {
+      "batchId": "B20-19",
+      "mechanism": "Management advancing earnings release timing",
+      "id": "RQ-EAT-ADV-21",
+      "family": "Management disclosure timing",
+      "frozenVerdict": "REJECTED",
+      "frozenWhy": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -0.25 under 2.5 in the older half; lost money after 0.8% costs in the newer half; lost money after 1.2% costs in the newer half; not better than the average stock in the newer half; loses without its 2 best in the newer half; block t -0.4 under 2.5 in the newer half",
+      "frozenResults": {
+        "older": {
+          "n": 613,
+          "days": 185,
+          "stocks": 488,
+          "avg": -0.0087,
+          "median": -0.0224,
+          "avgStress": -0.0127,
+          "ctrl": -0.0088,
+          "edge": -0.0014,
+          "tDay": -0.12,
+          "blocks": 17,
+          "tBlock": -0.25,
+          "vsOwn": 0.0085,
+          "ownCovered": 185,
+          "noTop2": -0.0133,
+          "best": 1.4599,
+          "worst": -0.6905,
+          "win": 0.4078
+        },
+        "newer": {
+          "n": 1299,
+          "days": 420,
+          "stocks": 938,
+          "avg": -0.0059,
+          "median": -0.0138,
+          "avgStress": -0.0099,
+          "ctrl": -0.0015,
+          "edge": -0.0089,
+          "tDay": -1.34,
+          "blocks": 34,
+          "tBlock": -0.4,
+          "vsOwn": 0.0011,
+          "ownCovered": 419,
+          "noTop2": -0.008,
+          "best": 1.5616,
+          "worst": -0.8743,
+          "win": 0.4488
+        },
+        "all": {
+          "n": 1912,
+          "days": 605,
+          "stocks": 1246,
+          "avg": -0.0068,
+          "median": -0.0157,
+          "avgStress": -0.0108,
+          "ctrl": -0.0038,
+          "edge": -0.0066,
+          "tDay": -1.14,
+          "blocks": 51,
+          "tBlock": -0.48,
+          "vsOwn": 0.0033,
+          "ownCovered": 604,
+          "noTop2": -0.0084,
+          "best": 1.5616,
+          "worst": -0.8743,
+          "win": 0.4357
+        }
+      },
+      "frozenAt": "2026-10-31T09:18:08.506Z",
+      "hold": 21,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 24,
+        "resolved": 0,
+        "unresolved": 24,
+        "signalTimingClasses": {
+          "PROSPECTIVE": 24
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-10-30",
+        "lastSignal": "2026-11-10"
+      },
+      "retainedDiagnostic": {
+        "status": "NO_RETAINED_RAW_COHORT",
+        "metrics": null
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "STOP_EXACT_VERSION_RETIRED_NO_RESCUE"
+    },
+    {
+      "batchId": "B20-20",
+      "mechanism": "Demand growth and operating leverage leadership",
+      "id": "SQ4-GROWLEAD",
+      "family": "Growth fundamentals",
+      "frozenVerdict": "NOT PROVEN",
+      "frozenWhy": "not better than the same stocks with the same plan on their other days in the older half; block t 0.03 under 2.5 in the older half; not better than the same stocks with the same plan on their other days in the newer half; block t 0.6 under 2.5 in the newer half; return per year of capital tied up 15.3% not above the S&P 500 on the same days in the older half (18.9%); return per year of capital tied up 12.1% not above the S&P 500 on the same days in the newer half (15.8%)",
+      "frozenResults": {
+        "older": {
+          "n": 49,
+          "days": 10,
+          "stocks": 48,
+          "avg": 0.1238,
+          "median": -0.0492,
+          "avgStress": 0.1198,
+          "ctrl": 0.0242,
+          "edge": 0.0413,
+          "tDay": 0.54,
+          "blocks": 5,
+          "tBlock": 0.03,
+          "vsOwn": -0.0896,
+          "ownCovered": 10,
+          "noTop2": 0.0332,
+          "best": 2.5309,
+          "worst": -0.4446,
+          "win": 0.4694
+        },
+        "newer": {
+          "n": 54,
+          "days": 17,
+          "stocks": 53,
+          "avg": 0.0838,
+          "median": 0.0221,
+          "avgStress": 0.0798,
+          "ctrl": 0.0718,
+          "edge": 0.0118,
+          "tDay": 0.13,
+          "blocks": 7,
+          "tBlock": 0.6,
+          "vsOwn": -0.2261,
+          "ownCovered": 17,
+          "noTop2": 0.0402,
+          "best": 1.2983,
+          "worst": -0.5582,
+          "win": 0.5185
+        },
+        "all": {
+          "n": 103,
+          "days": 27,
+          "stocks": 96,
+          "avg": 0.1028,
+          "median": -0.0002,
+          "avgStress": 0.0988,
+          "ctrl": 0.0492,
+          "edge": 0.0227,
+          "tDay": 0.37,
+          "blocks": 11,
+          "tBlock": 0.71,
+          "vsOwn": -0.1755,
+          "ownCovered": 27,
+          "noTop2": 0.0602,
+          "best": 2.5309,
+          "worst": -0.5582,
+          "win": 0.4951
+        }
+      },
+      "frozenAt": "2026-10-24T06:16:18.699Z",
+      "hold": 252,
+      "ruleDefinitionStatus": "IDENTIFIED_EXISTING_SOURCE",
+      "forward": {
+        "status": "RETAINED_PAPER_ROWS_NOT_EXECUTED_TRADES",
+        "signals": 2,
+        "resolved": 0,
+        "unresolved": 2,
+        "signalTimingClasses": {
+          "CLOCK_UNKNOWN": 2
+        },
+        "duplicateSignals": 0,
+        "duplicateResults": 0,
+        "conflictingSignals": 0,
+        "conflictingResults": 0,
+        "unmatchedOrIdentityMismatchedResults": 0,
+        "eligibleProspectiveResolved": 0,
+        "eligibleFormationDays": 0,
+        "gate30on10": false,
+        "returnStatsByTimingClass": {
+          "PROSPECTIVE": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "LATE_OR_BACKFILLED": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          },
+          "CLOCK_UNKNOWN": {
+            "n": 0,
+            "mean": null,
+            "median": null,
+            "losses": 0
+          }
+        },
+        "economicVerdict": "INCONCLUSIVE_BELOW_FORWARD_EVIDENCE_FLOOR",
+        "execution": "NULL_NO_ENTRY_EXIT_USD_BBO_OR_FILL_CHAIN",
+        "historicalZad": "Retained signal mark not promoted to historical certification; no current-mark backfill",
+        "firstSignal": "2026-11-02",
+        "lastSignal": "2026-11-02"
+      },
+      "retainedDiagnostic": {
+        "status": "INDEPENDENT_RETAINED_ROW_DIAGNOSTIC_NOT_NEW_HOLDOUT",
+        "rows": 108,
+        "net": {
+          "n": 108,
+          "mean": 0.1151861111111111,
+          "median": 0.010750000000000001,
+          "losses": 54,
+          "zero": 0,
+          "worst": -0.5582,
+          "best": 2.5309,
+          "withoutBest2": 0.07483584905660377,
+          "withoutBest5pct": 0.03042941176470588,
+          "best5pctCount": 6,
+          "best5pctShareOfPositiveGains": 0.3194223485820443
+        },
+        "nativeStress1p2PercentAggregate": {
+          "n": 108,
+          "mean": 0.1111861111111111,
+          "median": 0.006750000000000001,
+          "losses": 54,
+          "zero": 0,
+          "worst": -0.5622,
+          "best": 2.5269,
+          "withoutBest2": 0.07083584905660377,
+          "withoutBest5pct": 0.026429411764705875,
+          "best5pctCount": 6,
+          "best5pctShareOfPositiveGains": 0.32097322896524627
+        },
+        "originalCostConvention": "net = rounded(model gross - 0.008); original embedded price/mark/slippage assumptions remain. Stress changes only original flat cost to0.012.",
+        "rowLineage": "Not automatically the firstRun cohort. Later generated rows and missing frozen trade IDs preclude firstRun replication.",
+        "exactWholeShareReturn": null,
+        "portfolioReturnOrDrawdown": null,
+        "avgStock": {
+          "n": 108,
+          "meanControl": 0.05075833333333333,
+          "pairedMeanDifference": 0.06442777777777778,
+          "basis": "Both reported net of0.008; original underlying execution/slippage may differ, not verified executable matching"
+        },
+        "sameStock": {
+          "n": 108,
+          "meanControl": 0.2818009259259259,
+          "pairedMeanDifference": -0.1666148148148148,
+          "basis": "Both reported net of0.008; original underlying execution/slippage may differ, not verified executable matching"
+        },
+        "spy": {
+          "n": 108,
+          "meanControl": 0.12592962962962964,
+          "pairedMeanDifference": -0.010743518518518522,
+          "basis": "SPY gross; strategy net: NOT an equal-cost or whole-share comparison"
+        },
+        "concentration": {
+          "symbols": 100,
+          "largestPositiveContributor": "SMCI",
+          "largestShareOfPositiveGains": 0.08658955068135087,
+          "top5SymbolShareOfPositiveGains": 0.34232791742362817,
+          "formationMonths": 28,
+          "customers": 0
+        },
+        "capitalDemand": {
+          "maxConcurrentRetainedPositions": 39,
+          "referenceNotionalUsd": 39000,
+          "method": "Buy-open before sell-close on same date; lower bound for incomplete cohort, not owner budget or feasible portfolio P&L"
+        },
+        "singleOrderFeeSensitivity": {
+          "status": "INCONCLUSIVE_UNRESOLVED_EXIT_ORDER_COUNTS_ALL_LOSSES_RETAINED_IN_NATIVE_STATS"
+        }
+      },
+      "executableWholeShareResults": null,
+      "missingExecutionFields": [
+        "original USD entry and exit references",
+        "entry/exit BBO, units and admissible order timestamps",
+        "halts/no-fills/last tradable exit and delisting proceeds",
+        "point-in-time security/corporate-action mapping",
+        "actual number of executed orders",
+        "historical ZAD status not current inference"
+      ],
+      "selectionOrPITLimits": "Original universe and original fundamental/consensus/acceptance vintages cannot be independently replayed from summaries. No new holdout, no new significance claim.",
+      "disposition": "INCONCLUSIVE_ORIGINAL_VERDICT_UNCHANGED_NO_EXECUTABLE_CONFIRMATION"
+    }
+  ],
+  "newProviderRequests": 0,
+  "productionActions": 0,
+  "historicalVerdictChanges": 0,
+  "noCurrentBuy": true
+}
