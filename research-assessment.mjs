@@ -9,7 +9,7 @@ export function researchRuleAssessment(record){
  const d=record.definition,identified=typeof record.id==='string'&&record.id.length>0&&d&&typeof d==='object'&&!Array.isArray(d)&&typeof d.entry==='string'&&d.entry.trim()&&typeof d.exit==='string'&&d.exit.trim()&&d.parameters&&typeof d.parameters==='object'&&!Array.isArray(d.parameters);
  const version=identified?digest(canonical(d)):null;
  const matches=identified&&record.version===version;
- const state=!identified?'UNKEYED_RESEARCH_RULE':!matches?'RULE_VERSION_UNVERIFIED':/^(REJECTED|FAILED|STOP)$/.test(record.verdict)?'FAILED_RESEARCH_RULE':record.adopted!==true?'UNADOPTED_RESEARCH_RULE':'UNPROVEN_RESEARCH_RULE';
+ const state=!identified?'UNKEYED_RESEARCH_RULE':!matches?'RULE_VERSION_UNVERIFIED':/^(?:tested:\s*)?(?:rejected|failed(?: discovery)?|stop)(?:$|[\s(_;:-])/i.test(typeof record.verdict==='string'?record.verdict.trim():'')?'FAILED_RESEARCH_RULE':record.adopted!==true?'UNADOPTED_RESEARCH_RULE':'UNPROVEN_RESEARCH_RULE';
  return {state,ruleId:identified?record.id:null,ruleVersion:matches?version:null,label:state+'; rule NOT PROVEN',actionAuthority:false,entry:matches?text(d.entry):null,exit:matches?text(d.exit):null,holdSessions:matches&&Number.isInteger(d.holdSessions)&&d.holdSessions>0?d.holdSessions:null,verdict:matches?text(record.verdict):'UNKNOWN',note:'Research evidence only; adoption and live gates remain with the existing caller'};
 }
 function canonical(x){if(Array.isArray(x))return x.map(canonical);if(x&&typeof x==='object')return Object.fromEntries(Object.keys(x).sort().map(k=>[k,canonical(x[k])]));return x;}
