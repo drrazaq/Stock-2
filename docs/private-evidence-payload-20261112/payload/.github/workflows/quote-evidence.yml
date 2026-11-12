@@ -1,0 +1,112 @@
+# Development payload only; no operational authorization is carried by this file.
+name: Bounded private quote evidence
+on:
+  workflow_dispatch:
+    inputs:
+      phase:
+        type: choice
+        options: [rehearsal, capture, recovery]
+        required: true
+      expected_main_sha:
+        type: string
+        required: true
+      latest_start_utc:
+        type: string
+        required: true
+      evidence_commit:
+        type: string
+        required: false
+      admission_sha256:
+        type: string
+        required: false
+      recovery_commit:
+        type: string
+        required: false
+      recovery_sha256:
+        type: string
+        required: false
+permissions:
+  contents: read
+concurrency:
+  group: bounded-private-quote-evidence
+  cancel-in-progress: false
+jobs:
+  evidence:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    env:
+      EXPECTED_MAIN_SHA: ${{ inputs.expected_main_sha }}
+      LATEST_START_UTC: ${{ inputs.latest_start_utc }}
+      EVIDENCE_PHASE: ${{ inputs.phase }}
+      EVIDENCE_INPUT: ${{ runner.temp }}/evidence-input/evidence-input
+      EVIDENCE_OUTPUT: ${{ runner.temp }}/quote-export
+      QUOTE_PRIVATE_ROOT: ${{ runner.temp }}/quote-private
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.phase == 'recovery' && inputs.recovery_commit || github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 20
+      - name: Verify exact source and bounded start
+        run: python3 tools/evidence-source-verify.py
+      - if: inputs.phase == 'rehearsal'
+        name: Offline synthetic transport and custody tests
+        run: node --test test/bounded-evidence.test.mjs
+      - if: inputs.phase == 'capture'
+        name: Require immutable private input commit
+        env:
+          EVIDENCE_COMMIT: ${{ inputs.evidence_commit }}
+        run: |
+          python3 - <<'PY'
+          import re,os
+          assert re.fullmatch('[a-f0-9]{40}',os.environ['EVIDENCE_COMMIT'])
+          PY
+      - if: inputs.phase == 'capture'
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ inputs.evidence_commit }}
+          path: evidence-input-checkout
+          sparse-checkout: evidence-input
+          persist-credentials: false
+      - if: inputs.phase == 'capture'
+        name: Stage only hash-bound inputs outside source checkout
+        run: |
+          python3 - <<'PY'
+          import pathlib,os,shutil
+          src=pathlib.Path('evidence-input-checkout/evidence-input'); dst=pathlib.Path(os.environ['EVIDENCE_INPUT'])
+          assert not dst.exists() and not src.is_symlink()
+          names={'admission.json','policy.json','identities.json','assessment-policy.json','evaluation.json','journal.jsonl','instrument-reference.json'}
+          assert set(p.name for p in src.iterdir())==names
+          assert all(p.is_file() and not p.is_symlink() and p.stat().st_size<=16*1024*1024 for p in src.iterdir())
+          assert sum(p.stat().st_size for p in src.iterdir())<=24*1024*1024
+          dst.mkdir(parents=True,mode=0o700)
+          for p in src.iterdir(): shutil.copyfile(p,dst/p.name);(dst/p.name).chmod(0o600)
+          PY
+      - if: inputs.phase == 'capture'
+        name: Exactly two-symbol bounded quote capture and same-runner reader
+        env:
+          ADMISSION_SHA256: ${{ inputs.admission_sha256 }}
+          RESEARCH_ALPACA_KEY: ${{ secrets.RESEARCH_ALPACA_KEY }}
+          RESEARCH_ALPACA_SECRET: ${{ secrets.RESEARCH_ALPACA_SECRET }}
+        run: node tools/quote-phase.mjs capture
+      - if: inputs.phase == 'capture'
+        name: Pack bounded private recovery without credentials
+        run: python3 tools/evidence-custody.py pack "$EVIDENCE_OUTPUT" "$RUNNER_TEMP/quote-owner-recovery.zip"
+      - if: inputs.phase == 'capture'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: owner-quote-recovery
+          path: ${{ runner.temp }}/quote-owner-recovery.zip
+          retention-days: 1
+          if-no-files-found: error
+      - if: inputs.phase == 'recovery'
+        name: Distinct-runner byte and original-reader recovery verification
+        env:
+          RECOVERY_SHA256: ${{ inputs.recovery_sha256 }}
+        run: |
+          python3 tools/evidence-custody.py recover quote-owner-recovery.zip "$RECOVERY_SHA256" "$RUNNER_TEMP/restored-export"
+          node tools/recovery-check.mjs "$RUNNER_TEMP/restored-export" "$RUNNER_TEMP/restored-private"
