@@ -1,3 +1,4 @@
+import {isDeepStrictEqual} from 'node:util';
 const validPlanPrice=x=>typeof x==='number'&&Number.isFinite(x)&&x>0;
 // Cloud scanner for the US stock signal board. Runs on GitHub Actions (free), so it works while your phone is off.
 // It reuses the exact rules inside index.html, writes data/signals.json and an append-only journal, and sends Telegram alerts.
@@ -847,7 +848,7 @@ function buyDayNote() {
 function timingNote() { const T = readJson0('data/timing-study.json'); if (!T || !T.buy) return null;
   const w = (x) => x === 'CLOSE' ? 'in the last 15 minutes before the close (' + kwt(945, sessDay()) + ' Kuwait)' : x === 'OPEN' ? 'at the open, after the first 15 minutes (' + kwt(585, sessDay()) + ' Kuwait)' : 'at the open, after the first 15 minutes (' + kwt(585, sessDay()) + ' Kuwait; tested: no difference from the close)';
   const pre = T.buy === 'CLOSE' || T.sell === 'CLOSE';   // acting near the close needs an alert before the close, which the scheduled jobs cannot send yet
-  return 'WHEN: buy ' + (T.buy === 'CLOSE' ? 'at the open after the first 15 minutes (tested: buying in the last minutes of the signal day did better, but that needs a pre-close alert, planned with the always-on server)' : w(T.buy)) + '; sell on a rule exit ' + (T.sell === 'CLOSE' ? 'at the open (near the close did better, same pre-close alert needed)' : w(T.sell)) + '. Stops: any time. Never in pre-market or after-hours.'; }
+  return 'WHEN: buy ' + (T.buy === 'CLOSE' ? 'at the open after the first 15 minutes (tested: buying in the last minutes of the signal day did better, but that needs a pre-close alert, planned with the always-on server)' : w(T.buy)) + '; sell on a rule exit ' + (T.sell === 'CLOSE' ? 'at the next regular-session open (daily comparison preferred the close, but the required pre-close alert is unavailable)' : T.sell === 'OPEN' ? 'at the next regular-session open (daily open-price comparison preferred the open; no 15-minute sell delay was tested)' : 'at the next regular-session open (daily open-versus-close comparison did not meet the preference threshold; this does not establish equivalence or test a 15-minute sell delay)') + '. Stops: any time. Never in pre-market or after-hours.'; }
 function timingText() { const T = readJson0('data/timing-study.json'); if (!T || !T.older) return 'The timing study runs with the nightly scan. Ask again tomorrow.';
   const l = (h, k) => T[h][k].n ? pcs(T[h][k].avg) + ' (' + T[h][k].n + ')' : 'n/a';
   return ['WHEN TO BUY AND SELL (tested on the unseen trades of the rules the system offers, after costs; older | newer half)',
@@ -1030,19 +1031,27 @@ async function loadWide(syms, loaded, now) {
 // (28 Oct, owner item 6) a message Telegram refused (or that never got through after 3 tries) is recorded in data/tg-failures.jsonl; the
 // SYSTEM HEALTH line of ACTIONS counts the last 24 hours, so a failed delivery is never silent.
 function tgFailed(status, why, text) { try { fs.appendFileSync('data/tg-failures.jsonl', JSON.stringify({ at: new Date().toISOString(), status, why: String(why || '').slice(0, 200), head: String(text || '').split('\n')[0].slice(0, 80) }) + '\n'); } catch (e) {} }
-async function telegram(text, buttons) {   // buttons: optional rows of { text, data } shown under the last part
-  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent]\n' + text); return; }
+async function telegram(text, buttons, currentEvidence) {
+  const given=currentEvidence;
+  const valid=now=>!given||given(now)===true;
+  if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent; private body omitted]'); return {ok:false,reason:'MISSING_CREDENTIALS',deliveredParts:0}; }
   const parts = []; { let rest = text; while (rest.length > 3800) { let cut = rest.lastIndexOf('\n\n', 3800); if (cut < 1500) cut = rest.lastIndexOf('\n', 3800); if (cut < 1500) cut = 3800; parts.push(rest.slice(0, cut)); rest = rest.slice(cut).replace(/^\n+/, ''); } parts.push(rest); }   // split long messages between paragraphs, never mid-word
-  for (let i = 0; i < parts.length; i++) {
-    for (let a = 0; a < 3; a++) {   // a dropped connection is retried, so a message is not lost and the run does not stop
-      try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: parts[i], disable_web_page_preview: true, ...(buttons && buttons.length && i === parts.length - 1 ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
-        if (r.status === 429 && a < 2) { let w = 5; try { w = Math.min(30, +((await r.json()).parameters || {}).retry_after || 5); } catch (e) {} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }   // (28 Oct) too many messages: wait as told, retry
-        if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram error', r.status, why); tgFailed(r.status, why, parts[i]); }   // (28 Oct) a refused message is recorded, so SYSTEM HEALTH can say so
-        break; }
-      catch (e) { console.error('Telegram connection error, retrying', e.message); if (a === 2) tgFailed('network', e.message, parts[i]); await sleep(FAST ? 50 : 3000); }
+  for(let i=0;i<parts.length;i++){
+    for(let a=0;a<3;a++){
+      let evidenceOK=false;try{evidenceOK=valid(Date.now())===true;}catch{}
+      if(!evidenceOK)return {ok:false,reason:'PRICE_EVIDENCE_EXPIRED',localEvidenceRefusal:true,definitelyUnsentPart:true,deliveredParts:i};
+      let r;
+      try{r=await fetch(TG+'/bot'+env.TG_TOKEN+'/sendMessage',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:env.TG_CHAT,text:parts[i],disable_web_page_preview:true,...(buttons&&buttons.length&&i===parts.length-1?{reply_markup:{inline_keyboard:buttons.map(row=>row.map(b=>({text:b.text,callback_data:String(b.data).slice(0,64)})))}}:{})})});}
+      catch{tgFailed('UNKNOWN','connection outcome unknown; no replay',parts[i]);return {ok:false,reason:'NETWORK_ERROR',deliveryState:'UNKNOWN',deliveredParts:i};}
+      if(r.status===429&&a<2){let w=5;try{w=Math.min(30,+((await r.json()).parameters||{}).retry_after||5);}catch{}await sleep(FAST?10:w*1000);continue;}
+      if(!r.ok){let why='';try{why=(await r.text()).slice(0,200);}catch{}tgFailed(r.status,why,parts[i]);return {ok:false,reason:'HTTP_'+r.status,deliveryState:i||r.status>=500?'UNKNOWN':'REFUSED',definitelyUnsentPart:r.status>=400&&r.status<500,deliveredParts:i};}
+      let ack;try{ack=await r.json();}catch{}
+      if(ack?.ok!==true||!Number.isSafeInteger(ack.result?.message_id)){tgFailed('UNKNOWN','incomplete Telegram ACK; no replay',parts[i]);return {ok:false,reason:'NOT_ACKNOWLEDGED',deliveryState:'UNKNOWN',deliveredParts:i};}
+      break;
     }
-    if (i + 1 < parts.length) await sleep(FAST ? 0 : 700);   // keeps the parts in order on your phone
+    if(i+1<parts.length)await sleep(FAST?0:700);
   }
+  return {ok:true,deliveredParts:parts.length};
 }
 const FOOT = '\nTested signals, not instructions. Not financial advice, not a halal ruling.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : '');
 
@@ -1057,8 +1066,22 @@ const POS_FILE = 'data/my-positions.json';
 function guideTargets(P) { if (P && P.guide) { delete P.t1; delete P.t2; delete P.guide; delete P.aw; }
   if (P && P.kind === 'quick' && P.t1 && !P.ownT && (!P.tmode || !P.tnote)) { delete P.t1; delete P.t2; delete P.tmode; }   // a quick-trade target saved before the target study existed was never tested
   return P; }
-const loadPos = () => { const p = readJson(POS_FILE, {}); for (const k of Object.keys(p)) guideTargets(p[k]); return p; };
-const savePos = (p) => fs.writeFileSync(POS_FILE, JSON.stringify(p, null, 1));
+const loadPos = () => {
+  let raw;try{raw=fs.readFileSync(POS_FILE,'utf8');}catch(e){if(e.code==='ENOENT')return {};throw e;}
+  let p;try{p=JSON.parse(raw);}catch{throw Error('POSITION_STATE_UNREADABLE: original bytes retained');}
+  if(!p||typeof p!=='object'||Array.isArray(p))throw Error('POSITION_STATE_UNREADABLE: original bytes retained');
+  for(const k of Object.keys(p))guideTargets(p[k]);return p;
+};
+const savePos = (p) => {
+  if(!p||typeof p!=='object'||Array.isArray(p))throw Error('POSITION_CANDIDATE_INVALID');
+  const bytes=JSON.stringify(p,null,1),value=JSON.parse(bytes);
+  let raw;try{raw=fs.readFileSync(POS_FILE,'utf8');}catch(e){if(e.code!=='ENOENT')throw e;}
+  if(raw!==undefined){let previous;try{previous=JSON.parse(raw);}catch{throw Error('POSITION_STATE_UNREADABLE: original bytes retained');}
+    if(!previous||typeof previous!=='object'||Array.isArray(previous))throw Error('POSITION_STATE_UNREADABLE: original bytes retained');
+    if(isDeepStrictEqual(previous,value))return; // Poll/retry without an edit must preserve original bytes, formatting and provenance.
+  }
+  fs.writeFileSync(POS_FILE,bytes);
+};
 // STOP PLAN of 18 Oct (stop study: 35% under the buy for own picks), applied ONCE to the positions still held. The owner still
 // places the same stops at his broker (they show UNCONFIRMED until he sends  stop placed ).
 { const ST = readSettings(); if (ST && !ST.stopPlan1018) { try { const p = JSON.parse(fs.readFileSync(POS_FILE, 'utf8')), plan = { RKLB: 48.74, RELL: 13.77, APP: 204.68, CCJ: 56.30 };
