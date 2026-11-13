@@ -73,12 +73,21 @@ jobs:
           path: ev-cache
           key: events-cache-${{ github.run_id }}
       - if: always()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "events study (owner watch list universe)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           SAVE_GUARD_PHASE=stage node .github/save-privacy-guard.mjs   # P0: stages data/ except every private path (owner files pulled above stay unstaged)
           git diff --cached --quiet || git commit -m "smart money $(date -u +%FT%RZ)"
           for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "events study (owner watch list universe)" events-recent.json events-study.json sec-ciks.json
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

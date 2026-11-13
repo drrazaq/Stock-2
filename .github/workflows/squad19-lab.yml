@@ -31,6 +31,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require squad19-lab.json squad19-paper.jsonl
       - id: r
         shell: bash
         run: |
@@ -54,6 +57,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require squad19-lab.json squad19-paper.jsonl
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -99,6 +105,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require squad19-lab.json squad19-paper.jsonl
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -138,6 +147,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require squad19-lab.json squad19-paper.jsonl
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -181,6 +193,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require squad19-lab.json squad19-paper.jsonl
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -213,7 +228,8 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 300 run.log | cut -c1-2000 > data/squad19-run.log 2>/dev/null || true
-          FILES="data/squad19-lab.json data/squad19-today.json data/squad19-board.json data/squad19-paper.jsonl data/squad19-run.log"
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "squad19 (owner marks)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
+          FILES=""
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
@@ -228,6 +244,12 @@ jobs:
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the squad19 lab result"; exit 1; }
           [ "$LF" = 0 ] || exit 1   # P0: registry not stored privately (or a failed run): the job fails visibly
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "squad19 (owner marks)" squad19-lab.json squad19-today.json squad19-board.json squad19-paper.jsonl squad19-run.log squad19-rh1-fm.json squad19-rh1-fm.md squad19-rh1-raw.json squad19-rh1-raw.md squad19-rh1-run.log squad19-diag.json
   rh1:
     needs: route
     if: needs.route.outputs.stage == 'rh1'
@@ -244,6 +266,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require squad19-lab.json squad19-paper.jsonl
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -273,11 +298,14 @@ jobs:
           SEC_UA: ${{ secrets.SEC_UA }}
       - if: always()
         shell: bash
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
           cp run.log data/squad19-rh1-run.log 2>/dev/null || true
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "squad19 (owner marks)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/squad19-rh1-fm.json data/squad19-rh1-fm.md data/squad19-rh1-raw.json data/squad19-rh1-raw.md data/squad19-rh1-run.log data/squad19-diag.json"
+          FILES=""
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           git reset -q --hard && git clean -fdq data && git pull -q --rebase
@@ -286,6 +314,12 @@ jobs:
           git diff --cached --quiet || git commit -m "squad19 RH1 $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save RH1"; exit 1; }
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "squad19 (owner marks)" squad19-lab.json squad19-today.json squad19-board.json squad19-paper.jsonl squad19-run.log squad19-rh1-fm.json squad19-rh1-fm.md squad19-rh1-raw.json squad19-rh1-raw.md squad19-rh1-run.log squad19-diag.json
   judge:
     needs: route
     if: needs.route.outputs.stage == 'judge'
@@ -302,6 +336,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require squad19-lab.json squad19-paper.jsonl
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -323,7 +360,8 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 200 run.log | cut -c1-2000 > data/squad19-run.log 2>/dev/null || true
-          FILES="data/squad19-lab.json data/squad19-today.json data/squad19-run.log"
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "squad19 (owner marks)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
+          FILES=""
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
@@ -338,6 +376,12 @@ jobs:
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the squad19 judge result"; exit 1; }
           [ "$LF" = 0 ] || exit 1   # P0: registry not stored privately (or a failed run): the job fails visibly
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "squad19 (owner marks)" squad19-lab.json squad19-today.json squad19-board.json squad19-paper.jsonl squad19-run.log squad19-rh1-fm.json squad19-rh1-fm.md squad19-rh1-raw.json squad19-rh1-raw.md squad19-rh1-run.log squad19-diag.json
   paper:
     needs: route
     if: needs.route.outputs.stage == 'paper'
@@ -354,6 +398,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require squad19-lab.json squad19-paper.jsonl
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -372,10 +419,13 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           SEC_UA: ${{ secrets.SEC_UA }}
       - shell: bash
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "squad19 (owner marks)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/squad19-paper.jsonl data/squad19-today.json data/squad19-board.json"
+          FILES=""
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           git reset -q --hard && git clean -fdq data && git pull -q --rebase
@@ -384,3 +434,9 @@ jobs:
           git diff --cached --quiet || git commit -m "squad19 paper $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the squad19 paper lane"; exit 1; }
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "squad19 (owner marks)" squad19-lab.json squad19-today.json squad19-board.json squad19-paper.jsonl squad19-run.log squad19-rh1-fm.json squad19-rh1-fm.md squad19-rh1-raw.json squad19-rh1-raw.md squad19-rh1-run.log squad19-diag.json

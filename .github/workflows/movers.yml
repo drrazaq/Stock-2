@@ -23,6 +23,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require fastmover-paper.json
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -64,14 +67,23 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
-      - run: |
+      - env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: |
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "movers / fast movers (owner fail marks filter)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           SAVE_GUARD_PHASE=stage node .github/save-privacy-guard.mjs   # P0: stages data/ except every private path (owner files pulled above stay unstaged)
           git diff --cached --quiet || git commit -m "movers $(date -u +%FT%RZ)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository" | tee -a run.log; exit 1; }
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
       # If anything above failed, tell the owner on Telegram straight away.
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "movers / fast movers (owner fail marks filter)" fastmover-lab.json fastmover-paper.json ignition-lab.json ignition-results.json
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

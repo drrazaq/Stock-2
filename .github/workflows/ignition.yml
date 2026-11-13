@@ -28,6 +28,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require ignition-paper.jsonl radar-v3-ledger.jsonl opp-ledger.jsonl ignition-days.jsonl
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -64,14 +67,18 @@ jobs:
         continue-on-error: true
         run: MR_LEDGER_ONLY=1 node missed-runners.mjs 2>&1 | tee -a run.log
       - if: always() && steps.ready.outputs.run == 'true'
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "live watcher (owner fail marks filter)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
           set -euo pipefail
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/ignition-live.json data/ignition-paper.jsonl data/premarket.jsonl data/ignition-days.jsonl data/vol-curve.json data/ignition-missed-history.jsonl data/early-wave-obs.jsonl data/radar-v3-ledger.jsonl data/radar-v3-snap.json data/opp-ledger.jsonl data/opp-days.jsonl; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; true
+          for f in; do [ -f "$f" ] && git add "$f"; done; [ -d data/shadow ] && git add data/shadow; [ -d data/ignition-runs ] && git add data/ignition-runs; true
           git diff --cached --quiet || git commit -m "ignition $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: watcher publication unconfirmed"; exit 1; }
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
       - if: failure() && steps.ready.outputs.run == 'true'
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
@@ -92,3 +99,8 @@ jobs:
             runtime/watcher-message-state/
           retention-days: 7
           if-no-files-found: warn
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "live watcher (owner fail marks filter)" ignition-live.json ignition-paper.jsonl premarket.jsonl ignition-days.jsonl vol-curve.json ignition-missed-history.jsonl early-wave-obs.jsonl radar-v3-ledger.jsonl radar-v3-snap.json opp-ledger.jsonl opp-days.jsonl

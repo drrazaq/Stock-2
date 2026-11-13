@@ -23,6 +23,11 @@ jobs:
           ref: main
       - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
         run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
+      - name: Private owner files (P0; private mode only; fail-closed if they cannot be read)
+        if: hashFiles('.github/private-data-mode') != ''
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -53,14 +58,23 @@ jobs:
           key: verify-cache-${{ github.run_id }}
       - if: success() || failure()
         shell: bash
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "verify lab (computed from private ledgers)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           [ -f data/verify-lab.json ] || { echo "Error: no verify result"; exit 1; }
           cp data/verify-lab.json "$RUNNER_TEMP/verify-lab.json"
           git reset -q --hard && git pull -q --rebase
           cp "$RUNNER_TEMP/verify-lab.json" data/verify-lab.json
-          git add data/verify-lab.json
+          true   # P0: its outputs are private (saved above)
           git diff --cached --quiet || git commit -m "verify lab $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the verify result"; exit 1; }
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "verify lab (computed from private ledgers)" verify-lab.json

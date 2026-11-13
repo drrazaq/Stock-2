@@ -35,14 +35,23 @@ jobs:
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
-      - run: |
+      - env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: |
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "intraday radar (universe minus owner fail marks)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           SAVE_GUARD_PHASE=stage node .github/save-privacy-guard.mjs   # P0: stages data/ except every private path (owner files pulled above stay unstaged)
           git diff --cached --quiet || git commit -m "radar $(date -u +%FT%RZ)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository" | tee -a run.log; exit 1; }
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
       # If anything above failed, tell the owner on Telegram straight away.
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "intraday radar (universe minus owner fail marks)" intraday-radar.json radar-paper.json radar-day.json radar-sectors.json radar-record.json intraday-missed.jsonl
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

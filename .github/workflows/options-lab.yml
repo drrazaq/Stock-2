@@ -27,6 +27,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Required history (P0; private mode only; missing = UNKNOWN, never a fresh first run)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-data.sh require options-lab.json
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -71,7 +74,8 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -c 20000 run.log > data/options-lab-run.log 2>/dev/null || true   # the Actions log cannot be read from outside, so its tail is committed
-          FILES="data/options-lab.json data/options-lab-run.log"
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "options lab (quality universe filtered by owner fail marks)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
+          FILES=""
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
@@ -86,8 +90,14 @@ jobs:
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the options lab result"; exit 1; }
           [ "$LF" = 0 ] || exit 1   # P0: registry not stored privately (or a failed run): the job fails visibly
+          [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
       - if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
           name: options-lab-log
           path: run.log
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "options lab (quality universe filtered by owner fail marks)" options-lab.json options-lab-run.log quality.json

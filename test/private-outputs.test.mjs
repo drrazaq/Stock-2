@@ -56,3 +56,22 @@ test('workflows: producers save through the contract, steps that also run on fai
   for (const p of fs.readdirSync(path.join(REPO, '.github/workflows'))) { const y = fs.readFileSync(path.join(REPO, '.github/workflows', p), 'utf8');
     if (y.includes('run: bash .github/private-data.sh pull')) assert.match(y, /private-data\.sh pull && touch "\$RUNNER_TEMP\/private-pulled-ok"/, p + ': pull writes the marker'); }
 });
+
+test('every private producer save (all classes): token in its own step env, saved AFTER the producer and after in-step data writes, failure is visible, retention step present, no duplicate step keys', () => {
+  const dir = path.join(REPO, '.github/workflows'); let n = 0;
+  for (const p of fs.readdirSync(dir).filter(f => f.endsWith('.yml'))) { const y = fs.readFileSync(path.join(dir, p), 'utf8');
+    const steps = y.split(/\n(?=      - )/);
+    for (const s of steps.filter(s => s.startsWith("      - "))) { const keys = [...s.matchAll(/^(?:      - |        )([a-z][a-z-]*):/gm)].map(m => m[1]);
+      for (const k of new Set(keys)) assert.equal(keys.filter(x => x === k).length, 1, p + ': duplicate step key ' + k + ' (a later key silently replaces the earlier one)'); }
+    for (const s of steps.filter(s => /private-outputs\.sh save /.test(s))) { n++;
+      assert.match(s, /(?:\n        |^      - )env:\n(?:          [^\n]*\n)*?          PRIVATE_DATA_TOKEN: \$\{\{ secrets\.PRIVATE_DATA_TOKEN \}\}/, p + ': the save step has the private token');
+      const after = s.slice(s.indexOf('private-outputs.sh save '));
+      assert.doesNotMatch(after, /\bnode\s+(?!\.github\/)[^\s|]+\.mjs/, p + ': a producer runs AFTER the private save in the same step (its outputs would not be saved)');
+      assert.doesNotMatch(after.split(/git reset|git add|SAVE_GUARD_PHASE|for f in \$FILES/)[0], /(?:>\s*data\/|\bcp [^ ]+ data\/)/, p + ': a data file is written after the private save, before the publish');
+      if (/LF=0/.test(s)) assert.match(s, /\[ "\$LF" = 0 \] \|\| exit 1/, p + ': a failed registry save fails the job');   // registry-only saves keep their failed copy inline (test/private-registry)
+      if (!/PF=0/.test(s)) continue;
+      assert.match(after, /\[ "\$PF" = 0 \] \|\| exit 1/, p + ': a failed private save fails the job');
+      assert.match(y, /- if: failure\(\)\n\s+env:\n\s+PRIVATE_DATA_TOKEN[^\n]*\n\s+run: bash \.github\/private-outputs\.sh retain-failed/, p + ': failure retention step'); }
+  }
+  assert.ok(n >= 60, 'the contract covers every private save step (' + n + ')');
+});
