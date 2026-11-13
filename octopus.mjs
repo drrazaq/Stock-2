@@ -15,6 +15,7 @@
 // Input: the whole-market 5-year price cache (study-cache/grouped.json.gz, stocks that later collapsed included) and, when
 // present, the SEC event cache (ev-cache/events-cache.json.gz). Output: data/octopus.json, data/octopus-paper.json.
 import fs from 'node:fs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 import zlib from 'node:zlib';
 import crypto from 'node:crypto';
 import { secNY } from './sec-time.mjs';   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
@@ -163,7 +164,7 @@ if (MODE === 'daily') {
     live ? 'Both gates passed: these may be considered as buys (your stop, your halal check, your decision).' : 'Not a buy list yet: ' + (pass ? 'needs 30+ positive live paper picks over 10+ days.' : 'the 5-year test has not passed.')];
   fs.writeFileSync(DAILY, JSON.stringify(DP));
   console.log(msg.join('\n'));
-  if (pass && env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {});
+  if (pass && env.TG_TOKEN && env.TG_CHAT) await deliver({ cls: 'QUIET', sender: 'octopus:daily', text: msg.join('\n'), ownerOptIn: ownerQuietOff(), send: () => fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n'), disable_web_page_preview: true }) }).catch(() => {}) });
   process.exit(0);
 }
 

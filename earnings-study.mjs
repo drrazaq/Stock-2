@@ -15,6 +15,7 @@
 //   average stock, same stock on other days, without the 2 best trades; see MODE=study below) and a frozen first run.
 //   Verdict saved in data/earnings-study.json.
 import fs from 'node:fs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 import zlib from 'node:zlib';
 const env = process.env, MODE = env.MODE === 'study' ? 'study' : 'fetch';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -196,4 +197,4 @@ const msg = ['EARNINGS SURPRISE DRIFT, fair test ' + D[T - 1], 'Earnings history
   'Research, not an order. Not financial advice, not a halal ruling.'];
 console.log(msg.join('\n'));
 const changed = PREV.verdict !== out.verdict;
-if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || changed)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || changed)) await deliver({ cls: 'QUIET', sender: 'earnings-study:summary', text: msg.join('\n').slice(0, 3900), ownerOptIn: ownerQuietOff(), send: () => fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {}) });

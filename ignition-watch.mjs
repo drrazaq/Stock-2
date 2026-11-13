@@ -1,4 +1,5 @@
 import {startPrivateQuoteRetention} from './private-quote-retention.mjs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 import {watcherAdmission} from './watcher-schedule.mjs';
 import {publishWatcherReservation} from './watcher-message-publish.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
@@ -175,7 +176,7 @@ async function maybeAlert(r, t, R, chg, rd, rv, M, extra, liveOnly) {
   alerts++; if (early) earlyAlerts++; t.alerted = true; t.early = early; flag(r.sym, 'alerted', 'ALERTED (' + R.id + (early ? ', early paper' : '') + ')');
   const ex = ok.sort((a, b) => ((PREC[b.rule + '/' + b.exit] || {}).avg || 0) - ((PREC[a.rule + '/' + a.exit] || {}).avg || 0))[0], pr = PREC[ex.rule + '/' + ex.exit], stop = R.orb ? extra.orL : R.pull ? Math.max(extra.stop * 0.995, r.price * 0.88) : r.price * 0.92, hist = !liveOnly && ex.results ? ex.results.newer : null;
   if (!sendAlert({ early }, (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')); } catch (e) { return {}; } })())) return;   // recorded as an early paper alert (t.alerted), not sent: opportunities only
-  await tg([(early ? 'EARLY WAVE ALERT [PAPER, NOT PROVEN] | only ' + pr.n + ' paper trades on ' + (pr.days || '?') + ' day(s). Ride it only with the minimum 1,000 USD and the stop.' : 'IGNITION ALERT | FAST DAY TRADE, separate from the tested swing buys in ACTIONS'), r.sym + ' ' + pc(chg) + ' at ' + fmtM(clock()) + ' New York (' + kuwait(clock()) + ' Kuwait, ' + (rd < 1 ? 'live' : Math.round(rd) + ' min old') + ' price). Coverage: ' + mode,
+  await (async (txt) => deliver({ cls: 'QUIET', sender: 'ignition:fast-trade', text: txt, ownerOptIn: ownerQuietOff(), send: () => tg(txt) }))([(early ? 'EARLY WAVE ALERT [PAPER, NOT PROVEN] | only ' + pr.n + ' paper trades on ' + (pr.days || '?') + ' day(s). Ride it only with the minimum 1,000 USD and the stop.' : 'IGNITION ALERT | FAST DAY TRADE, separate from the tested swing buys in ACTIONS'), r.sym + ' ' + pc(chg) + ' at ' + fmtM(clock()) + ' New York (' + kuwait(clock()) + ' Kuwait, ' + (rd < 1 ? 'live' : Math.round(rd) + ' min old') + ' price). Coverage: ' + mode,
     'Price ' + r.price.toFixed(2) + ' | volume ' + (rv === null ? 'n/a' : rv.toFixed(1) + 'x a normal day (late figure)') + (M.float ? ' | float ' + (M.float / 1e6).toFixed(1) + 'M shares' : '') + (M.age !== null && M.age < 250 ? ' | traded only ' + M.age + ' sessions' : '') + ' | SEC: no share sale or delisting notice in 30 days',
     'BUY only up to ' + (r.price * 1.03).toFixed(2) + ' (3% above now; higher = skip). STOP ' + stop.toFixed(2) + '. EXIT: ' + ex.exitName + ' (sell before 11 pm Kuwait at the latest).',
     'Rule: ' + R.name + '. ' + (hist ? 'History test: ' + Math.round(hist.win * 100) + '% won, average ' + pc(hist.avg) + ' (' + hist.n + ' trades). ' : 'Forward-tested only. ') + 'Live paper: ' + pr.n + ' trades, ' + pc(pr.avg) + ' (' + pc(pr.stress) + ' at 1.5x costs).',
@@ -213,7 +214,7 @@ async function tgSend(text) {
  MESSAGE_STATE.finish(key,result);return result;
 }
 const INSTRUMENT_COHORT=env.IG_INSTRUMENT_REFERENCE_FILE?'INSTRUMENT_CLASSIFIED_V2:'+(env.IG_INSTRUMENT_REFERENCE_SHA256||'UNPINNED'):'LEGACY_FROZEN_20261028';
-const EA = createEarlyAlerts({ day, collectionCohort:INSTRUMENT_COHORT, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
+const EA = createEarlyAlerts({ day, collectionCohort:INSTRUMENT_COHORT, level: alertLevel(readJson('data/settings.json', {})), send: (text) => deliver({ cls: 'QUIET', sender: 'ignition:early-alert', text, ownerOptIn: ['all','paper'].includes(readJson('data/settings.json', {}).alerts), send: () => tgSend(text) }), secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
   lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ symbol:sym,issuerName:sec?.issuerName, sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
 const SR = createShadow({ day });
 const shadowRows=SR.rows.bind(SR); SR.rows=()=>shadowRows().map(row=>({...row,instrument:row.instrument||{status:'UNKNOWN',reason:'LEGACY_OBSERVATION_IDENTITY_UNESTABLISHED'},performanceScope:'LEGACY_MIXED_INSTRUMENT_RESEARCH',approvedBuyEligible:false}));

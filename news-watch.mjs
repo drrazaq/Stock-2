@@ -6,6 +6,7 @@
 // it matches words, not meaning, so some alerts will be false alarms. It never buys or sells. Your stop still protects you.
 // Sources: Finnhub company news, general market news, peers, company profile and quotes (official API). No scraping.
 import fs from 'node:fs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const FH = local(env.FH_BASE) || 'https://finnhub.io/api/v1', TG = local(env.TG_BASE) || 'https://api.telegram.org', FAST = Boolean(local(env.FH_BASE));
 const sleep = (ms) => new Promise(r => setTimeout(r, FAST ? 0 : ms)), readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
@@ -77,7 +78,7 @@ if (MS.day !== today) { MS.day = today; MS.sent = []; MS.heads = []; }
       ...(show.length ? ['Why (headlines):', ...show.map(x => '- "' + String(x.headline).slice(0, 160) + '" (' + (x.source || '') + ')')] : ['No big headline found yet; the move may be flows, data or rumours.']), '',
       r ? 'What the 5-year test found when the S&P 500 had ' + (k === 'bigDown' ? 'a big drop (1.5%+)' : 'a big rise (1.5%+)') + ' that day: the system’s tested buys made ' + pcx(r.newer.avg) + ' a trade on average (' + r.newer.n + ' unseen trades) vs ' + (allN !== null ? pcx(allN) : 'n/a') + ' on all days: ' + r.verdict + '.' : 'The market has not moved 1.5% yet; this is a heads-up on the news only.',
       'Decided by the system from the 5-year market-day test. Not financial advice.'];
-    if (env.TG_TOKEN && env.TG_CHAT) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: lines.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+    if (env.TG_TOKEN && env.TG_CHAT) await deliver({ cls: 'QUIET', sender: 'news-watch:market-news', text: lines.join('\n').slice(0, 3900), ownerOptIn: ownerQuietOff(), send: () => fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: lines.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {}) });
     else console.log(lines.join('\n'));
     fs.appendFileSync('data/macro-log.jsonl', JSON.stringify({ at: new Date(now).toISOString(), dp, kind: k, why, heads: show.map(x => x.headline) }) + '\n'); }
   MS.lastDp = dp; MS.at = new Date(now).toISOString(); fs.writeFileSync('data/macro-state.json', JSON.stringify(MS)); }

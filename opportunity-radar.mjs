@@ -1,4 +1,5 @@
 import {appendRadarRows,readRadarLedger,radarLedgerView} from './radar-ledger.mjs';
+import { deliver } from './notify-route.mjs';
 import {chooseDailySummary} from './watcher-session.mjs';
 // DAILY OPPORTUNITY RADAR runner (rules and wording in radar-v3-core.mjs). Research and routing only; never places an order.
 //   node opportunity-radar.mjs midday   called by ignition-watch.mjs at about 11:15 New York, after it writes data/radar-v3-snap.json
@@ -14,6 +15,9 @@ const readJson = (f, d = null) => { try { return JSON.parse(fs.readFileSync(f, '
 const readLines = (f) => { try { return fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(l => JSON.parse(l)); } catch (e) { return []; } };
 const nyDay = () => new Date().toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
 async function telegram(text) {
+  return deliver({ cls: 'QUIET', sender: 'opportunity-radar', text, ownerOptIn: readJson('data/settings.json', {}).radar === true, send: () => pushTelegram(text) });
+}
+async function pushTelegram(text) {
   text+='\nInstrument identity may be UNKNOWN. Mixed-instrument RESEARCH ONLY; not verified common-stock performance or admitted prospective evidence.';
   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[radar]\n' + text); return {ok:false,definitelyUnsent:true}; }
   const parts = []; let cur = ''; for (const l of text.split('\n')) { if ((cur + l).length > 3800) { parts.push(cur); cur = ''; } cur += l + '\n'; } if (cur) parts.push(cur);

@@ -18,6 +18,7 @@
 //   data/sec-ciks.json (ticker -> SEC number and industry code) and data/events-recent.json (the last 10 days of events).
 // MODE=study (Sunday, leaders-study workflow, after the price cache is loaded): the fair test -> data/events-study.json.
 import fs from 'node:fs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 import zlib from 'node:zlib';
 import { secNY, nyStamp } from './sec-time.mjs';
 import { freezeEach, latestBlock } from './first-run.mjs';   // run once: first judged verdict frozen (22 Oct 2026)   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
@@ -340,4 +341,4 @@ const msg = ['EVENT STUDY (company news -> what the stock did next), fair test '
   pass.length ? 'PASSED: ' + pass.map(([, x]) => x.name).join('; ') + '. These now go on the nightly list as "event drift" buys (paper account follows them too).' : 'Nothing passed yet, so nothing changes in your ACTIONS. The test repeats every Sunday as the SEC history fills in.',
   'Research, not an order. Not financial advice, not a halal ruling.'];
 console.log(msg.join('\n'));
-if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length || warns.length)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length || warns.length)) await deliver({ cls: 'QUIET', sender: 'events-study:summary', text: msg.join('\n').slice(0, 3900), ownerOptIn: ownerQuietOff(), send: () => fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {}) });

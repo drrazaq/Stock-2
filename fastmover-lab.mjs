@@ -16,6 +16,7 @@
 //    Only rules that passed the five-year test are sent to you as a DAY-TRADE LIST.
 // MODE=study: Sunday (leaders-study workflow, paid Massive plan). MODE=live: weekdays 7 am Kuwait (movers workflow).
 import fs from 'node:fs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 import zlib from 'node:zlib';
 const env = process.env, MODE = ['live', 'intraday'].includes(env.MODE) ? env.MODE : 'study';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -176,7 +177,7 @@ if (MODE === 'intraday') {
     variants + ' rule/exit versions were tested, so ' + Math.max(1, Math.round(variants * 0.05)) + ' could pass by luck alone: a pass still needs 30+ positive live paper trades (at 1.5x costs) before any alert.',
     pass.length ? 'PASSED THE HISTORY TEST: ' + pass.map(x => x.rule + '/' + x.exit).join(', ') + '. Now on live paper.' : 'Nothing passed yet: the live watcher logs every ignition on PAPER only.', 'Research, not an order. Not financial advice, not a halal ruling.'];
   console.log(msg.join('\n'));
-  if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+  if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length)) await deliver({ cls: 'QUIET', sender: 'fastmover-lab:intraday-study', text: msg.join('\n').slice(0, 3900), ownerOptIn: ownerQuietOff(), send: () => fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {}) });
   process.exit(0);
 }
 
@@ -243,7 +244,7 @@ if (MODE === 'study') {
     pass.length ? 'PASSED: ' + pass.map(x => x.name).join('; ') + '. From tomorrow its candidates come each morning as a DAY-TRADE LIST (paper record keeps checking).' : 'Nothing passed. Each morning the candidates are still logged on PAPER, so a rule can prove itself on new days. Nothing changes in ACTIONS.',
     'Note the gap between "best moment of the day" and the real result: that is the money a chart shows but a trader rarely gets.', 'Research, not an order. Not financial advice, not a halal ruling.'];
   console.log(msg.join('\n'));
-  if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length)) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+  if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || pass.length)) await deliver({ cls: 'QUIET', sender: 'fastmover-lab:study', text: msg.join('\n').slice(0, 3900), ownerOptIn: ownerQuietOff(), send: () => fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {}) });
   process.exit(0);
 }
 
@@ -288,5 +289,5 @@ if (list.length && env.TG_TOKEN && env.TG_CHAT) {
   const msg = ['DAY-TRADE LIST for ' + nextDay + ' (rules that passed the 5-year fast-mover test; paper keeps checking them)', '',
     ...list.map(x => x.sym + ' (closed ' + x.prev + ', ' + pc(x.chg) + ' yesterday): BUY AT THE OPEN only if it opens between ' + x.lo + ' and ' + x.hi + '. STOP 8% under your price. SELL AT THE CLOSE (before 11 pm Kuwait), same day.\n  rule: ' + name(x.rule) + ' | tested: ' + (t(x.rule) ? Math.round(t(x.rule).newer.win * 100) + '% won, average ' + pc(t(x.rule).newer.avg) + ' a trade' : 'n/a')),
     '', 'Check ZAD first. 1,000 USD per trade at most: these are the riskiest trades in the system. Not financial advice, not a halal ruling.'];
-  await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+  await deliver({ cls: 'QUIET', sender: 'fastmover-lab:day-trade-list', text: msg.join('\n').slice(0, 3900), ownerOptIn: ownerQuietOff(), send: () => fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {}) });
 }

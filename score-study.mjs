@@ -5,6 +5,7 @@
 //   newer half are judged separately. If the top 20 win in both, the current top 20 are shown as a monthly basket (paper first).
 // Uses the price cache built by leaders-study.mjs (same weekly job). No data calls. Read-only.
 import fs from 'node:fs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 import zlib from 'node:zlib';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
 
@@ -90,5 +91,5 @@ const msg = ['STOCK SCORE, ' + D[T - 1], 'Every liquid US company scored 0 to 10
   done.length ? '\nPAPER BASKETS FINISHED: ' + done.length + ', average ' + pc(done.reduce((a, b) => a + b.result, 0) / done.length) + ' a month vs S&P 500 ' + pc(done.filter(b => b.spy !== null).reduce((a, b) => a + b.spy, 0) / Math.max(1, done.filter(b => b.spy !== null).length)) : '\nPaper baskets: the first one is recorded today and judged in a month.',
   'About ' + Math.round((res.older.months + res.newer.months) / 12) + ' years of monthly tests (plus 6 months to warm up), one market climate; price measures only (no company figures in this history). Research, not an order. Not financial advice, not a halal ruling.'];
 fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), status: 'OK', verdict, useKey, variant, results: res, top, scores: Object.fromEntries(now.map(r => [r.s, r.score])), text: msg.join('\n') }));
-if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || verdict === 'PROMISING')) await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {});
+if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || verdict === 'PROMISING')) await deliver({ cls: 'QUIET', sender: 'score-study:summary', text: msg.join('\n').slice(0, 3900), ownerOptIn: ownerQuietOff(), send: () => fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: msg.join('\n').slice(0, 3900), disable_web_page_preview: true }) }).catch(() => {}) });
 console.log(msg.join('\n'));

@@ -6,6 +6,7 @@
 // record decides. Prices are single live quotes taken at each run (no minute bars, no live volume, no VWAP). Coverage is the
 // prepared list (about 320 stocks), never the whole market. Read-only: no broker access, no orders.
 import fs from 'node:fs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
 
 const env = process.env;
@@ -261,7 +262,7 @@ function context() {   // what conditions the wins came from. Information only: 
 }
 const COVER = 'Coverage: ' + quotes.length + ' strong-trend stocks quoted live at ' + tstamp + '. Not the whole market.';
 const NOTE = 'A manual decision, not an order. A card says BUY only when its kind of setup has earned it on paper (30+ trades, profit after costs, still positive lately). Paper trades assume a fill at the quote; real fills can be worse.';
-if (marketOpen && reviewCards.length && (!QUIET || reviewCards.some(c => c.includes('\n  BUY:')))) await telegram('EARLY-WAVE RADAR' + (reviewCards.some(c => c.includes('\n  BUY:')) ? ': BUY' : ': REVIEW (paper only)') + '\n' + tstamp + '\n\n' + reviewCards.join('\n\n') + '\n\n' + NOTE + '\nPAPER RECORD\n' + ledger() + '\n' + COVER + '\nNot financial advice, not a halal ruling.');
+if (marketOpen && reviewCards.length && (!QUIET || reviewCards.some(c => c.includes('\n  BUY:')))) await (async (txt) => deliver({ cls: 'QUIET', sender: 'intraday-radar:review-buy', text: txt, ownerOptIn: ownerQuietOff(), send: () => telegram(txt) }))('EARLY-WAVE RADAR' + (reviewCards.some(c => c.includes('\n  BUY:')) ? ': BUY' : ': REVIEW (paper only)') + '\n' + tstamp + '\n\n' + reviewCards.join('\n\n') + '\n\n' + NOTE + '\nPAPER RECORD\n' + ledger() + '\n' + COVER + '\nNot financial advice, not a halal ruling.');
 if (marketOpen && watchCards.length && !QUIET) await telegram('EARLY-WAVE RADAR: PRE-WAVE WATCH (real catalyst, not yet a buy review)\n' + tstamp + '\n\n' + watchCards.join('\n\n') + '\n\nI will message again only if one of these confirms.\n' + COVER);
 // (28 Oct) Kuwait time of 9:30 New York on that New York day: Kuwait is UTC+3 all year, New York moves on 1 Nov (never a fixed string)
 const openKuwait = (d) => { const noon = new Date(d + 'T12:00:00Z'), h = +new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', hour: '2-digit', hourCycle: 'h23' }).format(noon), k = 570 - (h - 12) * 60 + 180; return (Math.floor(k / 60) % 12 || 12) + ':' + String(k % 60).padStart(2, '0') + ' pm'; };

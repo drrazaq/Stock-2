@@ -4,6 +4,7 @@
 // way. A rule that passes goes on paper on the new days that arrive each week; only a passing paper record could ever make it
 // a BUY. Uses the price cache built by leaders-study.mjs (same weekly job). No data calls. Read-only.
 import fs from 'node:fs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
 import zlib from 'node:zlib';
 const QUIET = (() => { try { return JSON.parse(fs.readFileSync('data/settings.json', 'utf8')).quiet !== false; } catch (e) { return true; } })();   // quiet mode (default): research messages are kept in the files, not sent
@@ -368,5 +369,5 @@ const msg = ['HUNTING LAB, ' + D[T - 1], RULES.length + ' new ways to catch move
   'Daily prices only; fills at the open or the stated level are assumed. Research, not an order. Not financial advice, not a halal ruling.'];
 fs.writeFileSync(OUT, JSON.stringify({ generatedAt: new Date().toISOString(), status: 'OK', from: D[0], to: D[T - 1], splitAt: D[mid], exitTest: EX, scoreTest: SCT, persistence: PER, quickFilters: QF, rules: rows, base: { older: bOld, newer: bNew }, text: msg.join('\n') }, null, 1));
 if (env.TG_TOKEN && env.TG_CHAT && (!QUIET || QF.best || /PREDICTS/.test(SCT.verdict) || rows.some(r => r.verdict === 'PROMISING' || r.market.risingOnly) || Object.values(FP.rules).some(p => p.status === 'GRADUATED'))) { let rest = msg.join('\n'); const parts = []; while (rest.length > 3800) { let cut = rest.lastIndexOf('\n\n', 3800); if (cut < 1500) cut = rest.lastIndexOf('\n', 3800); if (cut < 1500) cut = 3800; parts.push(rest.slice(0, cut)); rest = rest.slice(cut).replace(/^\n+/, ''); } parts.push(rest);
-  for (const part of parts) { await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) }).catch(() => {}); await new Promise(r => setTimeout(r, 700)); } }
+  for (const part of parts) { await deliver({ cls: 'QUIET', sender: 'hunting-lab:study', text: part, ownerOptIn: ownerQuietOff(), send: () => fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true }) }).catch(() => {}) }); await new Promise(r => setTimeout(r, 700)); } }
 console.log(msg.join('\n'));

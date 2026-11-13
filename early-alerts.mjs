@@ -171,7 +171,7 @@ export function createEarlyAlerts(opts) {
         const text = kind === 'lead' ? leadText(out.map(x => x.c), { halalOk: opts.halalOk }) : paperText(out.map(x => x.c));
         const labelled=text+'\nUNVERIFIED DISCOVERY CONTEXT when identity is UNKNOWN; excluded from verified common-stock radar A/B. RESEARCH ONLY. Instrument identity may be UNKNOWN; unverified instruments are retained as context and are excluded from verified common-stock performance claims. This is never approved BUY eligibility.';
         const r = await opts.send(labelled).catch(e => ({ ok: false, why: e.message })), at = opts.now();
-        for (const x of out) { x.row.decision = r && r.ok ? 'SENT' : 'SEND FAILED' + (r && r.why ? ': ' + r.why : ''); x.row.sentM = at; x.row.latencyMin = at - x.row.m; }
+        for (const x of out) { x.row.decision = r && r.routed === 'report' ? 'REPORTED (private report, not pushed)' : r && r.ok ? 'SENT' : 'SEND FAILED' + (r && r.why ? ': ' + r.why : ''); x.row.sentM = at; x.row.latencyMin = at - x.row.m; }
         if (r && r.ok) S.sent[kind] += out.length; } },
     // end of the session: one row per candidate with its 15:00 price and net result after the 6 USD round trip and the spread
     finish(lastPx = {}, mkt = null, approved = 0) {

@@ -1,4 +1,5 @@
 import {publicLeadInputs,publicLeadResearchCard} from './public-source-research.mjs';
+import { deliver, ownerQuietOff } from './notify-route.mjs';
 import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery,reconcileAssessmentDelivery} from './research-assessment.mjs';
 import {readInstrumentType,researchInstrumentScope} from './instrument-type.mjs';
 import {readPrivateAssessmentQuote} from './private-quote-retention.mjs';
@@ -808,7 +809,7 @@ async function sundayScoreboard(now = Date.now()) { try {
   const k = new Date(now), day = k.toLocaleDateString('en-US', { timeZone: 'Asia/Kuwait', weekday: 'short' }), hr = +k.toLocaleString('en-GB', { timeZone: 'Asia/Kuwait', hour: '2-digit', hourCycle: 'h23' }), d = k.toLocaleDateString('en-CA', { timeZone: 'Asia/Kuwait' });
   if (day !== 'Sun' || hr < 8 || !env.TG_TOKEN || !env.TG_CHAT) return;
   if (readJson('data/tg-state.json', { offset: 0 }).scoreboardSent === d) return;
-  await telegram(scoreboardText() + '\n' + FOOT);
+  await (async (txt) => deliver({ cls: 'QUIET', sender: 'scan:sunday-scoreboard', text: txt, ownerOptIn: ownerQuietOff(), send: () => telegram(txt) }))(scoreboardText() + '\n' + FOOT);
   const st = readJson('data/tg-state.json', { offset: 0 }); st.scoreboardSent = d; fs.writeFileSync('data/tg-state.json', JSON.stringify(st)); console.log('Sunday scoreboard sent');
 } catch (e) { console.log('Sunday scoreboard failed: ' + e.message); } }
 // SPY CLOSES (review S-3, 22 Oct): written by every nightly scan from the SPY candles it already loaded, so the scoreboard has the S&P 500
@@ -4496,7 +4497,7 @@ async function daily() {
   if (QUIET()) { const sg = readJson('data/signals.json', null);
     { const at = await actionsText(sg, loadPos(), null, 'ACTIONS FOR THE NEXT SESSION (' + session + ' close). Market opens ' + kwt(570, sessionPlus(session, 1)) + ' Kuwait on ' + sessionPlus(session, 1) + '.');   // (28 Oct) buttons only for this message's own TODAY'S ACTIONS buys
     await telegram(at + (healthBad ? '\n\nWARNING: over a fifth of the prices failed to load tonight. Treat this as incomplete.' : '') + ([2, 4, 5].includes(new Date(session + 'T12:00:00Z').getUTCDay()) ? '\n\n' + (new Date(session + 'T12:00:00Z').getUTCDay() === 5 ? 'WEEKLY ' : 'MID-WEEK ') + scorecardText() : '') + '\n\nAfter you act, tap a button: I ask you to confirm the shares and price before anything is recorded.', tradeButtons(sg, loadPos(), 5, at)); }
-    if (new Date(session + 'T12:00:00Z').getUTCDay() === 5 && fs.existsSync('data/options-shadow.json')) await telegram(optionsText());   // options: its own separate weekly message, never inside ACTIONS
+    if (new Date(session + 'T12:00:00Z').getUTCDay() === 5 && fs.existsSync('data/options-shadow.json')) await (async (txt) => deliver({ cls: 'QUIET', sender: 'scan:options-weekly', text: txt, ownerOptIn: ownerQuietOff(), send: () => telegram(txt) }))(optionsText());   // options: its own separate weekly message, never inside ACTIONS
   }
   else {
   // ---- The last message of the night: one short plan. Everything above it is background.
