@@ -150,3 +150,13 @@ test('actual agent-a-lab save block: a FAILED private save stops before reset/cl
   assert.match(r.stdout, /stopping BEFORE any reset\/clean/); assert.equal(R(w.pub, 'data/agent-a-lab.json'), '{"fresh":1}\n', 'the unconfirmed output is still in place');
   assert.doesNotMatch(r.stdout, /registry merged|registry merge/, 'no registry merge after a failed save');
 });
+
+test('no workflow uploads a private file, private directory, private-* cache or runtime owner state as an artifact (public-repo artifacts are downloadable)', () => {
+  const dir = path.join(REPO, '.github/workflows'), priv = fs.readFileSync(path.join(REPO, '.github/private-files.txt'), 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#'));
+  const isPriv = (p) => { const r = p.replace(/^\.\//, ''); if (r.startsWith('runtime/') || r === 'data' || r === 'data/' || /^data\/\*/.test(r)) return true; if (!r.startsWith('data/')) return false; const n = r.slice(5);
+    return n.startsWith('private-') || priv.some(e => e.endsWith('/') ? (n === e || n === e.slice(0, -1) || n.startsWith(e)) : n === e || n.startsWith(e + '.')) || ['shadow', 'ignition-runs', 'shadow-outcomes'].some(d => n === d || n.startsWith(d + '/')); };
+  for (const p of fs.readdirSync(dir).filter(f => f.endsWith('.yml'))) { const y = fs.readFileSync(path.join(dir, p), 'utf8');
+    for (const m of y.matchAll(/uses: actions\/upload-artifact@[^\n]*\n(?:\s+[^\n]*\n)*?\s+path: (\|\n(?:\s{12,}[^\n]*\n)+|[^\n]+)/g)) {
+      const paths = m[1].replace(/^\|\n/, '').split('\n').map(x => x.trim()).filter(Boolean);
+      for (const x of paths) assert.ok(!isPriv(x), p + ': artifact path ' + x + ' is private'); } }
+});

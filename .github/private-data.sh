@@ -18,10 +18,35 @@ REPO=${PRIVATE_DATA_REPO:-drrazaq/stock-2-private-data}
 URL=${PRIVATE_DATA_URL:-https://github.com/$REPO.git}
 DIR=${PRIVATE_DATA_DIR:-${RUNNER_TEMP:-/tmp}/private-data}
 TOKEN=${PRIVATE_DATA_TOKEN:-}
-FILES=$(grep -vE '^\s*(#|$)' "$ROOT/.github/private-files.txt")
-# two-pass scan private caches (data/private-*): present locally after a scan, or in the private repository after a pull
-FILES="$FILES $(cd "$ROOT/data" 2>/dev/null && ls -1 private-* 2>/dev/null | tr '\n' ' ') $(cd "$DIR/data" 2>/dev/null && ls -1 private-* 2>/dev/null | tr '\n' ' ')"
 say() { echo "private data: $*"; }
+# The declared private set (.github/private-files.txt): file names, plus EXACTLY three allowlisted directory entries written with one
+# trailing slash (Codex 6853502834), plus the two-pass private caches data/private-*. A directory entry expands to the REGULAR files under
+# data/<dir> on BOTH sides (this checkout and the private clone); a symlink anywhere in it, a non-regular entry, an unsafe path part or a
+# breach of the admission bounds stops the operation (nothing is pruned or truncated). list_files runs at start AND again after the
+# private clone is opened, so a fresh runner's pull installs every private-* file and every directory file from the private repository.
+PRIVATE_DIRS_ALLOWED=" shadow/ ignition-runs/ shadow-outcomes/ "
+DIR_MAX_FILES=${PRIVATE_DIR_MAX_FILES:-20000}; DIR_MAX_BYTES=${PRIVATE_DIR_MAX_BYTES:-536870912}   # per directory per side: 20,000 files, 512 MiB
+SAFE_PART='^[A-Za-z0-9._-]+$'
+expand_dir() {   # $1 side root (…/data), $2 dir name without slash -> prints relative paths; exit 1 on any violation
+  local base="$1/$2" n=0 b=0 rel part
+  [ -e "$base" ] || [ -L "$base" ] || return 0
+  [ -L "$base" ] && { say "Error: data/$2 is a symlink; refusing (nothing copied)"; return 1; }
+  [ -d "$base" ] || { say "Error: data/$2 is not a directory; refusing"; return 1; }
+  [ -z "$(find -P "$base" ! -type f ! -type d -print -quit)" ] || { say "Error: data/$2 holds a symlink or special file; refusing (nothing copied)"; return 1; }
+  while IFS= read -r rel; do [ -n "$rel" ] || continue
+    IFS=/ read -ra PARTS <<< "$rel"; for part in "${PARTS[@]}"; do { [ -n "$part" ] && [ "$part" != . ] && [ "$part" != .. ] && [[ "$part" =~ $SAFE_PART ]]; } || { say "Error: unsafe path under data/$2; refusing"; return 1; }; done
+    n=$((n+1)); b=$((b+$(stat -c %s "$base/$rel"))); echo "$2/$rel"
+  done < <(cd "$base" && find -P . -type f | sed 's#^\./##' | LC_ALL=C sort)
+  [ "$n" -le "$DIR_MAX_FILES" ] && [ "$b" -le "$DIR_MAX_BYTES" ] || { say "Error: ADMISSION: data/$2 holds $n files / $b bytes, over the bound ($DIR_MAX_FILES files / $DIR_MAX_BYTES bytes); stopping (nothing pruned or truncated)"; return 1; }
+}
+list_files() { local e d x; FILES=""; local dirs=""
+  for e in $(grep -vE '^\s*(#|$)' "$ROOT/.github/private-files.txt"); do
+    case "$e" in */) case "$PRIVATE_DIRS_ALLOWED" in *" $e "*) dirs="$dirs ${e%/}";; *) say "Error: directory entry $e is not one of the allowlisted private directories; refusing"; return 1;; esac;;
+      *) FILES="$FILES $e";; esac; done
+  FILES="$FILES $(cd "$ROOT/data" 2>/dev/null && ls -1 private-* 2>/dev/null | tr '\n' ' ') $(cd "$DIR/data" 2>/dev/null && ls -1 private-* 2>/dev/null | tr '\n' ' ')"
+  for d in $dirs; do for x in "$ROOT/data" "$DIR/data"; do x=$(expand_dir "$x" "$d") || { [ -n "$x" ] && echo "$x" | grep '^private data:'; return 1; }; FILES="$FILES $(echo "$x" | tr '\n' ' ')"; done; done
+  FILES=$(echo $FILES | tr ' ' '\n' | awk 'NF && !seen[$0]++' | tr '\n' ' '); }
+list_files || exit 1
 if [ -z "$TOKEN" ] && [ -z "${PRIVATE_DATA_URL:-}" ]; then
   say "not connected (no PRIVATE_DATA_TOKEN secret), nothing done"; [ "$MODE" = check ] || [ "$MODE" = pull ] && exit 1; exit 0
 fi
@@ -45,7 +70,7 @@ sum() { (cd "$1" && for f in $FILES; do [ -f "data/$f" ] && sha256sum "data/$f";
 # copies it, so a lab's unmerged run copy can never overwrite the newest registry (check still copies it: that is the custody seeding)
 REGISTRY_ONLY_MERGED=" strategy-library.json "
 copy_in() { mkdir -p "$DIR/data" || return 1; local f bad=0
-  for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; [ "$MODE" = push ] && case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac; cp "$ROOT/data/$f" "$DIR/data/$f" || { say "Error: could not copy $f into the private clone"; bad=1; }; done
+  for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; [ "$MODE" = push ] && case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac; { mkdir -p "$(dirname "$DIR/data/$f")" && cp "$ROOT/data/$f" "$DIR/data/$f"; } || { say "Error: could not copy $f into the private clone"; bad=1; }; done
   return $bad; }
 # PENDING: an owner update made on this runner whose private save is not yet verified. It is created BEFORE anything else in push (so a
 # failure before the copy, the commit or the push keeps it) and removed only by a verified save. While it exists, pull never overwrites
@@ -65,6 +90,7 @@ commit_push() {
 case "$MODE" in
   check)
     open || { say "Error: cannot READ the private repository $REPO (token missing, expired, or not given access to it)"; exit 1; }
+    list_files || exit 1
     say "read OK"
     if [ -n "$TOKEN" ] && [ -z "${PRIVATE_DATA_URL:-}" ]; then   # the API check (expiry, private) needs github.com; local tests skip it
       H=$(curl -s -D - -o "$DIR.api" -H "Authorization: Bearer $TOKEN" "https://api.github.com/repos/$REPO" 2>/dev/null)
@@ -84,6 +110,7 @@ case "$MODE" in
     [ -f "$DIR/.mirrored" ] && [ "$(cat "$DIR/.mirrored")" = "$(sum "$ROOT")" ] && exit 0   # unchanged since the last copy: no network
     [ -n "$(find "$DIR.wait" -mmin -10 2>/dev/null)" ] && exit 0   # not ready 10 minutes ago: try again later, not every 30 s
     open || { say "mirror skipped: private repository not reachable"; touch "$DIR.wait"; exit 0; }
+    list_files || exit 1
     [ -f "$DIR/CONNECTION-CHECK.md" ] || { say "mirror waits for the connection check (private-data-check.yml)"; touch "$DIR.wait"; exit 0; }
     rm -f "$DIR.wait"
     copy_in || { say "mirror skipped: a copy failed"; exit 0; }; commit_push "mirror $(date -u +%FT%RZ)" && sum "$ROOT" > "$DIR/.mirrored"; exit 0 ;;
@@ -94,6 +121,7 @@ case "$MODE" in
     fi
     [ -e "$DIR.install-incomplete" ] && say "an earlier install was incomplete; this pull must complete before any owner file is used"
     open || { say "Error: cannot read the private repository; stopping so nothing runs without your holdings"; exit 1; }
+    list_files || exit 1   # the clone is now current: include its private-* caches and directory files
     for f in $REQUIRED; do [ -f "$DIR/data/$f" ] || { say "Error: the private repository has no data/$f; stopping"; exit 1; }; done
     # stage every file first (each copy checked), then install by rename: a failed copy installs NOTHING (no mixed old/new state)
     # staging is never under data/ (a leftover is never published); .git is the same filesystem, so mv is a rename
@@ -115,7 +143,7 @@ case "$MODE" in
     rm -rf "$BAK"
     aside_failed=0
     for f in $FILES; do if [ -f "$DIR/data/$f" ]; then :   # installed above
-      elif [ -f "$ROOT/data/$f" ]; then case "$f" in private-*) ;; *) if mv -f "$ROOT/data/$f" "$ROOT/data/private-stale-$f"; then say "optional $f is absent privately; the local copy was set aside (not used as current)"
+      elif [ -f "$ROOT/data/$f" ]; then case "$f" in private-*) ;; *) if mv -f "$ROOT/data/$f" "$ROOT/data/private-stale-${f//\//__}"; then say "optional $f is absent privately; the local copy was set aside (not used as current)"
         else aside_failed=1; say "Error: optional $f is absent privately but its stale local copy could not be set aside"; fi;; esac; fi; done
     rm -rf "$STG"
     # a stale optional copy that stays at its current name must never be consumed: the install stays INCOMPLETE and the pull fails

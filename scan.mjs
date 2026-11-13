@@ -3568,7 +3568,9 @@ function waysText() { return ['YOUR WAYS TO TRADE (each one separate; you place 
 // P0 Route A (development): after the private-data cutover an owner update is durable only once the private repository save is verified
 // (the bot's save step, after this process). A reply to a command that changed an owner file therefore says it is recorded HERE and that
 // private storage is confirmed separately; a failure sends one SAVE FAILED warning (bot.yml). Nothing is replayed; the owner never repeats it.
-function ownerFilesDigest() { try { return fs.readFileSync('.github/private-files.txt', 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')).map(f => { try { return f + ':' + crypto.createHash('sha256').update(fs.readFileSync('data/' + f)).digest('hex'); } catch { return f + ':none'; } }).join('|'); } catch { return ''; } }
+function ownerFilesDigest() { try { return fs.readFileSync('.github/private-files.txt', 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')).map(f => { try { return f + ':' + crypto.createHash('sha256').update(f.endsWith('/') ? privateDirDigestInput('data/' + f.slice(0, -1)) : fs.readFileSync('data/' + f)).digest('hex'); } catch { return f + ':none'; } }).join('|'); } catch { return ''; } }
+// a private directory entry: every regular file under it (sorted path + bytes); symlinks are never followed
+function privateDirDigestInput(dir) { const parts = []; const walk = (d, rel) => { for (const e of fs.readdirSync(d, { withFileTypes: true }).sort((a, b) => a.name < b.name ? -1 : a.name > b.name ? 1 : 0)) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) walk(path.join(d, e.name), r); else if (e.isFile()) parts.push(r + '\n' + crypto.createHash('sha256').update(fs.readFileSync(path.join(d, e.name))).digest('hex')); } }; walk(dir, ''); return parts.join('\n'); }
 const OWNER_SAVE_NOTE = 'Recorded on this run. Private storage is confirmed separately: if it fails you get one SAVE FAILED message. Do not repeat the command.';
 async function tgCommands(sig) {
   const ownerBefore = fs.existsSync('.github/private-data-mode') ? ownerFilesDigest() : null;

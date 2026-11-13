@@ -91,18 +91,8 @@ jobs:
           WHY=$(grep -iE "error|missing|rejected|refused|cannot|limit|HTTP [45][0-9][0-9]" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
           curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true
 
-      - if: always() && steps.ready.outputs.run == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: watcher-evidence-${{ github.run_id }}-${{ github.run_attempt }}
-          path: |
-            data/ignition-runs/
-            data/radar-v3-snap.json
-            data/radar-v3-ledger.jsonl
-            data/radar-v3-ledger.jsonl.pending.json
-            runtime/watcher-message-state/
-          retention-days: 7
-          if-no-files-found: warn
+      # P0: no watcher-evidence artifact. Artifacts of a public repository are downloadable, and this one carried owner-derived files
+      # (the radar ledger and snapshot, the run archives, the message state). That evidence is kept through the private route instead.
       # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
       - if: failure()
         env:

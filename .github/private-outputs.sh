@@ -43,7 +43,7 @@ case "$MODE" in
     gate; n=0
     for f in "$@"; do [ -f "$ROOT/data/$f" ] || continue
       if [ -f "$BL/data/$f" ] && cmp -s "$ROOT/data/$f" "$BL/data/$f"; then continue; fi   # unchanged since hydration
-      mv -f "$ROOT/data/$f" "$ROOT/data/private-failed-pass-$stamp""__""$f" && n=$((n+1)) || { note "Error: could not quarantine $f"; exit 1; }; done
+      mv -f "$ROOT/data/$f" "$ROOT/data/private-failed-pass-$stamp""__""${f//\//__}" && n=$((n+1)) || { note "Error: could not quarantine $f"; exit 1; }; done
     [ "$n" -gt 0 ] || { note "producer failed; it changed no owner-derived output since hydration"; exit 1; }
     store_quarantine "$n" ;;
   retain-copy)

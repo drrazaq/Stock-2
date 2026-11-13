@@ -16,7 +16,9 @@ import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path'
 
 const ROOT = process.cwd(), DATA = path.join(ROOT, 'data');
 const PRIVATE_NAMES = new Set(fs.readFileSync(path.join(ROOT, '.github/private-files.txt'), 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')));
-const isPrivate = (name) => PRIVATE_NAMES.has(name) || name.startsWith('private-');
+// a directory entry ('shadow/', Codex 6853502834) makes the directory root AND every descendant private
+const PRIVATE_DIRS = [...PRIVATE_NAMES].filter(e => e.endsWith('/')).map(e => e.slice(0, -1));
+export const isPrivate = (name) => PRIVATE_NAMES.has(name) || name.startsWith('private-') || PRIVATE_DIRS.some(d => name === d || name.startsWith(d + '/'));
 const privateName = (name) => 'private-' + name.replace(/\//g, '__');
 
 // ---- Public-pass INPUT/SOURCE MAP (positive; reviewed 13 Nov 2026, Codex 6851464418). Nothing is trusted by default.
