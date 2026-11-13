@@ -7,6 +7,8 @@
 #   install-dir NAME DIR     data/NAME (a .tar.gz archive) -> DIR, after checking EVERY entry (regular files and directories only; no
 #                            absolute path, no '..', no link or special file) and the bounds. Exit 3 when absent.
 #   stage-dir DIR NAME       DIR (regular files/dirs only) -> deterministic data/NAME archive (sorted, fixed mtime/owner, gzip -n), atomic.
+#                            Hard-linked files are stored as their bytes (--hard-dereference), so every staged archive passes install-dir.
+#   stage-* on a missing admitted source exits 3 (UNKNOWN) with the canonical copy untouched (Codex 6857344324).
 # Admission (Codex 6856898125): install-* first REVOKES this job's receipt for NAME, sets aside any bytes already at the module path
 # (unchanged, moved outside it, never exported, staged or deleted), installs, and writes the receipt (NAME -> the exact installed path) only
 # after a fully successful install. stage-* refuses (exit 1, nothing staged) unless the receipt exists and names that same path, so an
@@ -39,7 +41,7 @@ case "$MODE" in
     admit "$N" "$D" ;;
   stage-file) S=${2:-}; N=${3:-}; [[ "$N" =~ $NAMEOK ]] && [ -n "$S" ] || { say "usage"; exit 2; }
     admitted "$N" "$S"
-    [ -f "$S" ] && [ ! -L "$S" ] || { say "no cache file to stage for $N (nothing written)"; exit 0; }
+    [ -f "$S" ] && [ ! -L "$S" ] || { say "UNKNOWN: the admitted cache file $S is missing or not a regular file; $N NOT staged (canonical bytes untouched, a lost cache is never reported as saved)"; exit 3; }
     [ "$(size "$S")" -le "$MAXC" ] || { say "Error: $N exceeds the bound; stopping (not truncated)"; exit 1; }
     cp "$S" "$ROOT/data/$N.tmp.$$" && mv -f "$ROOT/data/$N.tmp.$$" "$ROOT/data/$N" || { say "Error: cannot stage $N"; exit 1; } ;;
   install-dir) N=${2:-}; D=${3:-}; [[ "$N" =~ $NAMEOK ]] && [ -n "$D" ] || { say "usage"; exit 2; }
@@ -55,11 +57,11 @@ case "$MODE" in
     admit "$N" "$D" ;;
   stage-dir) S=${2:-}; N=${3:-}; [[ "$N" =~ $NAMEOK ]] && [ -n "$S" ] || { say "usage"; exit 2; }
     admitted "$N" "$S"
-    [ -d "$S" ] && [ ! -L "$S" ] || { say "no cache directory to stage for $N (nothing written)"; exit 0; }
+    [ -d "$S" ] && [ ! -L "$S" ] || { say "UNKNOWN: the admitted cache directory $S is missing or not a directory; $N NOT staged (canonical bytes untouched, a lost cache is never reported as saved)"; exit 3; }
     [ -z "$(find -P "$S" ! -type f ! -type d -print -quit)" ] || { say "Error: $S holds a link or special file; stopping"; exit 1; }
     n=$(find -P "$S" | wc -l); u=$(find -P "$S" -type f -printf '%s\n' | awk '{s+=$1} END {print s+0}')
     [ "$n" -le "$MAXN" ] && [ "$u" -le "$MAXU" ] || { say "Error: $S is over the bound ($n entries, $u bytes); stopping (not pruned)"; exit 1; }
-    T="$ROOT/data/$N.tmp.$$"; ( set -o pipefail; cd "$S" && find . -mindepth 1 -print0 | LC_ALL=C sort -z | tar --null --no-recursion --mtime=@0 --owner=0 --group=0 --numeric-owner -cf - -T - | gzip -n > "$T" ) || { rm -f "$T"; say "Error: cannot archive $S"; exit 1; }   # pipefail: a failed tar is never accepted
+    T="$ROOT/data/$N.tmp.$$"; ( set -o pipefail; cd "$S" && find . -mindepth 1 -print0 | LC_ALL=C sort -z | tar --null --no-recursion --hard-dereference --mtime=@0 --owner=0 --group=0 --numeric-owner -cf - -T - | gzip -n > "$T" ) || { rm -f "$T"; say "Error: cannot archive $S"; exit 1; }   # pipefail: a failed tar is never accepted
     [ "$(size "$T")" -le "$MAXC" ] || { rm -f "$T"; say "Error: $N archive exceeds the bound; stopping (not truncated)"; exit 1; }
     mv -f "$T" "$ROOT/data/$N" || { say "Error: cannot stage $N"; exit 1; } ;;
   *) echo "usage: private-cache.sh install-file NAME DEST | stage-file SRC NAME | install-dir NAME DIR | stage-dir DIR NAME"; exit 2 ;;

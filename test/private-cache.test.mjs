@@ -64,6 +64,18 @@ test('admission (Codex 6856898125): stage needs this job\'s successful install o
   // 6. no job-local admission directory: the helper stops
   r = spawnSync('bash', ['.github/private-cache.sh', 'install-file', 'squad29-cache.tar.gz', 'q'], { cwd: d, encoding: 'utf8', env: { PATH: process.env.PATH } }); assert.equal(r.status, 1); assert.match(r.stdout, /admission directory/);
 });
+test('stage boundary (Codex 6857344324): a staged tree with hard links installs back exactly; a lost admitted source is UNKNOWN, never a silent success', () => {
+  const d = box(), t = path.join(d, 'squad29-cache'); seedDir(d, 'squad29-cache.tar.gz'); assert.equal(pc(d, ['install-dir', 'squad29-cache.tar.gz', 'squad29-cache']).status, 0);
+  fs.writeFileSync(path.join(t, 'a'), 'AA'); fs.linkSync(path.join(t, 'a'), path.join(t, 'b'));
+  assert.equal(pc(d, ['stage-dir', 'squad29-cache', 'squad29-cache.tar.gz']).status, 0); const arc = fs.readFileSync(path.join(d, 'data/squad29-cache.tar.gz'));
+  fs.rmSync(t, { recursive: true }); const r = pc(d, ['install-dir', 'squad29-cache.tar.gz', 'squad29-cache']); assert.equal(r.status, 0, r.stdout);
+  assert.equal(fs.readFileSync(path.join(t, 'a'), 'utf8'), 'AA'); assert.equal(fs.readFileSync(path.join(t, 'b'), 'utf8'), 'AA');
+  fs.rmSync(t, { recursive: true }); let s = pc(d, ['stage-dir', 'squad29-cache', 'squad29-cache.tar.gz']); assert.equal(s.status, 3); assert.match(s.stdout, /UNKNOWN.*NOT staged/);
+  assert.deepEqual(fs.readFileSync(path.join(d, 'data/squad29-cache.tar.gz')), arc, 'canonical archive untouched');
+  fs.writeFileSync(path.join(d, 'data/evr-sec.json.gz'), 'P'); assert.equal(pc(d, ['install-file', 'evr-sec.json.gz', 'fm-cache/evr-sec.json.gz']).status, 0);
+  fs.rmSync(path.join(d, 'fm-cache/evr-sec.json.gz')); s = pc(d, ['stage-file', 'fm-cache/evr-sec.json.gz', 'evr-sec.json.gz']); assert.equal(s.status, 3); assert.match(s.stdout, /UNKNOWN.*NOT staged/);
+  assert.equal(fs.readFileSync(path.join(d, 'data/evr-sec.json.gz'), 'utf8'), 'P');
+});
 test('install-dir refuses archives with a link, an absolute path or a parent traversal before extracting anything', () => {
   for (const kind of ['link', 'parent', 'abs']) { const d = box(), w = path.join(d, 'w'); fs.mkdirSync(path.join(w, 'in'), { recursive: true }); fs.writeFileSync(path.join(w, 'in/ok.json'), 'ok');
     if (kind === 'link') { fs.symlinkSync('/etc/hostname', path.join(w, 'in/l')); execSync('tar -czf ' + path.join(d, 'data/x.tar.gz') + ' -C ' + path.join(w, 'in') + ' .'); }
