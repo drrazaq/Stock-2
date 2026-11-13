@@ -7,6 +7,9 @@ const refuse=code=>{throw Error(code);};
 function git(cwd,...args){try{return execFileSync('git',args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe']});}catch{refuse('PUBLIC_SAVE_GIT_METADATA_UNAVAILABLE');}}
 const nul=s=>s.split('\0').filter(Boolean);
 const PRIVATE_DIRECTORIES=new Set(['shadow','ignition-runs','shadow-outcomes']);
+// Reservation keys identify held-symbol stop messages. Their publisher owns this namespace in the PRIVATE remote; generic directory
+// copying still has exactly three allowlisted entries. Protect legacy public paths even when no manifest entry or cutover marker exists.
+const PRIVATE_RESERVATION_ROOTS=['data/watcher-message-state'];
 function privatePaths(file){let raw;try{raw=fs.readFileSync(file,'utf8');}catch{refuse('PUBLIC_SAVE_PRIVATE_MANIFEST_UNAVAILABLE');}
  const names=raw.split('\n').map(x=>x.trim()).filter(x=>x&&!x.startsWith('#'));
  const entries=names.map(x=>({name:x.endsWith('/')?x.slice(0,-1):x,dir:x.endsWith('/')}));
@@ -14,7 +17,7 @@ function privatePaths(file){let raw;try{raw=fs.readFileSync(file,'utf8');}catch{
    (dir?!PRIVATE_DIRECTORIES.has(name):PRIVATE_DIRECTORIES.has(name))))refuse('PUBLIC_SAVE_PRIVATE_MANIFEST_INVALID');
  // Git exclusions use the directory root without a slash, protecting a root symlink/file too. Metadata checks cover every descendant,
  // including reverted/merged outgoing history; the helper that copies directory bytes separately rejects physical symlinks.
- const paths=entries.map(x=>'data/'+x.name),listed=new Set(paths),prefixes=entries.filter(x=>x.dir).map(x=>'data/'+x.name+'/');
+ const paths=[...entries.map(x=>'data/'+x.name),...PRIVATE_RESERVATION_ROOTS],listed=new Set(paths),prefixes=[...entries.filter(x=>x.dir).map(x=>'data/'+x.name+'/'),...PRIVATE_RESERVATION_ROOTS.map(x=>x+'/')];
  return {paths,isPrivate:p=>listed.has(p)||prefixes.some(prefix=>p.startsWith(prefix))||p.startsWith('data/private-')};}
 function isKnownPublicOrigin(raw){
  let host='',repo='';try{if(/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)){const u=new URL(raw);host=u.hostname;repo=u.pathname;}else{const m=raw.match(/^(?:[^@]+@)?([^:/]+):(.+)$/);if(m){host=m[1];repo=m[2];}}}catch{return false;}

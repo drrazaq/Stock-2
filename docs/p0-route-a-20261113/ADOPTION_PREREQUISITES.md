@@ -46,3 +46,8 @@ exists. Codex 6852935516 / 6852885259 / 6852749074.
 - The watcher path changes (ignition-watch.mjs, ignition, bot, main, premarket) need their own exact Stage 1 review; never Friday
   authority.
 - OPEN dispositions in CONSUMER_MATRIX.md (hold-lab owner field, squad29 holdings) must be closed before adoption.
+- ADOPTION ORDER (verified 13 Nov with a local fixture): Codex's mandatory watcher-state backstop (guard 01d818bc) refuses public
+  reservation pushes even without the private-mode marker. In a job with the pre-push hook (ignition installs it), the PRE-cutover public
+  publisher then returns PUBLICATION_UNCONFIRMED: privacy-safe (fail closed, nothing published), but the watcher withholds stop messages.
+  So the backstop must be adopted together with (not before) the private reservation route, custody admission and the marker, or the
+  owner must accept withheld watcher stop messages for the interval.

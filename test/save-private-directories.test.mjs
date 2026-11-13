@@ -14,12 +14,12 @@ const ENV={...process.env,GIT_AUTHOR_NAME:'t',GIT_AUTHOR_EMAIL:'t@t',GIT_COMMITT
 const g=(cwd,...args)=>execFileSync('git',args,{cwd,env:ENV,encoding:'utf8',stdio:['ignore','pipe','pipe']});
 const put=(d,f,s)=>{fs.mkdirSync(path.dirname(path.join(d,f)),{recursive:true});fs.writeFileSync(path.join(d,f),s);};
 const MANIFEST='my-positions.json\nshadow/\nignition-runs/\nshadow-outcomes/\n';
-function world(oldPrivate=false){
+function world(oldPrivate=false,oldRoot='shadow'){
  const top=fs.mkdtempSync(path.join(os.tmpdir(),'directory-guard-')),origin=path.join(top,'origin.git'),job=path.join(top,'job');
  g(top,'init','-q','--bare','-b','main',origin);g(top,'clone','-q',origin,job);
  put(job,'.github/private-files.txt',MANIFEST);put(job,'.github/save-privacy-guard.mjs',fs.readFileSync(MODULE));
  put(job,'.github/hooks/pre-push',fs.readFileSync(path.join(ROOT,'.github/hooks/pre-push')));fs.chmodSync(path.join(job,'.github/hooks/pre-push'),0o755);
- put(job,'data/public.json','{"v":0}\n');if(oldPrivate)put(job,'data/shadow/old.json','old synthetic evidence');
+ put(job,'data/public.json','{"v":0}\n');if(oldPrivate)put(job,'data/'+oldRoot+'/old.json','old synthetic evidence');
  g(job,'add','-A');g(job,'commit','-qm','baseline');g(job,'push','-qu','origin','main');g(job,'config','core.hooksPath','.github/hooks');
  return {top,origin,job,base:g(job,'rev-parse','HEAD').trim()};
 }
@@ -64,5 +64,25 @@ test('exact-bound private role still saves a nested directory through the native
   guardPublicSave({cwd:w.job,manifest:path.join(w.job,'.github/private-files.txt'),phase:'stage',env});g(w.job,'commit','-qm','private result');
   execFileSync('git',['push'],{cwd:w.job,env,stdio:['ignore','pipe','pipe']});
   assert.equal(g(w.top,'--git-dir',w.origin,'show','main:data/ignition-runs/day/result.json'),'synthetic private result');
+ }finally{fs.rmSync(w.top,{recursive:true,force:true});}
+});
+test('legacy watcher reservations are excluded without a manifest entry or marker; a similarly named public file remains public',()=>{
+ const w=world();try{assert.ok(!MANIFEST.includes('watcher-message-state'));
+  put(w.job,'data/watcher-message-state/2026-11-12/'+('a'.repeat(64))+'.json','synthetic SENT reservation');
+  put(w.job,'data/public.json','{"v":1}\n');put(w.job,'data/watcher-message-state-public.json','public');g(w.job,'add','data');guard(w);
+  assert.deepEqual(g(w.job,'diff','--cached','--name-only').trim().split('\n'),['data/public.json','data/watcher-message-state-public.json']);
+ }finally{fs.rmSync(w.top,{recursive:true,force:true});}
+});
+test('native hook refuses outgoing legacy watcher reservation history even after the final tree reverts it',()=>{
+ const w=world();try{const f='data/watcher-message-state/2026-11-12/'+('b'.repeat(64))+'.json';put(w.job,f,'synthetic UNKNOWN reservation');
+  g(w.job,'add','data');g(w.job,'commit','-qm','legacy reservation');g(w.job,'rm','-q',f);g(w.job,'commit','-qm','remove visible reservation');
+  assert.throws(()=>g(w.job,'push'),/PRIVATE_HISTORY_OUTGOING/);assert.equal(head(w),w.base);
+ }finally{fs.rmSync(w.top,{recursive:true,force:true});}
+});
+test('legacy watcher reservation deletion still requires a separate exact cleanup decision',()=>{
+ const w=world(true,'watcher-message-state');try{g(w.job,'rm','-q','--cached','data/watcher-message-state/old.json');
+  assert.throws(()=>guard(w),/PRIVATE_REMOVAL_REQUIRES_MIGRATION/);
+  assert.equal(fs.readFileSync(path.join(w.job,'data/watcher-message-state/old.json'),'utf8'),'old synthetic evidence');
+  assert.equal(g(w.job,'diff','--cached','--name-only','--diff-filter=D').trim(),'data/watcher-message-state/old.json');
  }finally{fs.rmSync(w.top,{recursive:true,force:true});}
 });

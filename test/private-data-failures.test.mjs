@@ -125,3 +125,19 @@ test('pull: an optional stale copy that cannot be set aside fails the pull (nonz
 // Codex 6854282762 (verbatim): the automatic PENDING recovery keeps genuine owner intent AND newer unrelated private state.
 test('pending-save retry must not turn an unchanged stale owner mark into new write intent',()=>{const w=world();W(w.pub,'.github/private-data-mode','on');init(w);assert.equal(run(w,'pull').status,0);const other=tmp('pending-owner-bot-');sh('git clone -q '+w.bare+' o && cd o && printf \'{"AAA":{"s":"fail"}}\\n\' > data/halal.json && git add -A && git -c commit.gpgsign=false commit -qm newer && git push -q',other);const first=run(w,'push');/* adapted (delta save): an unchanged copy is no write intent, so the first save succeeds writing nothing stale instead of being refused */assert.equal(first.status,0,first.stdout);assert.match(remote(w,'halal.json'),/fail/,'first save safely preserves newer mark');fs.writeFileSync(w.dir+'.pending','forced: exercise the automatic retry path');const next=run(w,'pull');assert.match(remote(w,'halal.json'),/fail/,'automatic pending retry must still preserve the newer authoritative mark');assert.match(R(w.pub,'data/halal.json'),/fail/,'next pull installs authoritative mark');});
 test('pending recovery keeps genuine unsaved position intent while preserving newer unrelated private marks',()=>{const w=world();W(w.pub,'.github/private-data-mode','on');init(w);assert.equal(run(w,'pull').status,0);W(w.pub,'data/my-positions.json','{"AAA":{"entry":10},"CCC":{"entry":7}}\n');const other=tmp('pending-mixed-bot-');sh('git clone -q '+w.bare+' o && cd o && printf \'{"AAA":{"s":"fail"}}\\n\' > data/halal.json && git add -A && git -c commit.gpgsign=false commit -qm newer && git push -q',other);W(w.bare,'hooks/pre-receive','#!/bin/sh\nexit 1\n');fs.chmodSync(path.join(w.bare,'hooks/pre-receive'),0o755);assert.notEqual(run(w,'push').status,0);assert.doesNotMatch(remote(w,'my-positions.json'),/CCC/,'intent not yet stored');fs.rmSync(path.join(w.bare,'hooks/pre-receive'));run(w,'pull');assert.match(remote(w,'my-positions.json'),/CCC/,'genuine unsaved owner intent must survive');assert.match(remote(w,'halal.json'),/fail/,'unrelated newer owner marks must survive the same recovery');});
+
+// Codex 6854953656: a second save must not turn the unchanged local (pre-merge) holdings into new intent; the hydration receipt is immutable.
+test('subsequent save after a merged save keeps the newer remote value; the hydration receipt is never mutated', () => {
+  const w = world(); W(w.pub, '.github/private-data-mode', 'on');
+  W(w.pub, 'data/my-positions.json', JSON.stringify({ AAA: { entry: 10, stop: 9 }, MMM: { entry: 1 }, NNN: { entry: 2 }, OOO: { entry: 3 }, PPP: { entry: 4 }, ZZZ: { entry: 20, stop: 18 } }, null, 1) + '\n');
+  init(w); assert.equal(run(w, 'pull').status, 0);
+  const receipt = fs.readFileSync(w.dir + '.baseline/data/my-positions.json', 'utf8');
+  W(w.pub, 'data/my-positions.json', R(w.pub, 'data/my-positions.json').replace('"stop": 18', '"stop": 19'));   // genuine local intent
+  const other = tmp('subsequent-bot-'); sh('git clone -q ' + w.bare + ' o && cd o && sed -i \'s/"stop": 9/"stop": 11/\' data/my-positions.json && git -c commit.gpgsign=false commit -qam newer && git push -q', other);
+  const first = run(w, 'push'); assert.equal(first.status, 0, first.stdout + first.stderr);
+  assert.match(remote(w, 'my-positions.json'), /"stop": 11/); assert.match(remote(w, 'my-positions.json'), /"stop": 19/);
+  const second = run(w, 'push'); assert.equal(second.status, 0, second.stdout + second.stderr);
+  assert.match(remote(w, 'my-positions.json'), /"stop": 11/, 'the unchanged local copy never lowers the newer remote value');
+  assert.match(remote(w, 'my-positions.json'), /"stop": 19/, 'the genuine intent stays');
+  assert.equal(fs.readFileSync(w.dir + '.baseline/data/my-positions.json', 'utf8'), receipt, 'hydration receipt immutable');
+});

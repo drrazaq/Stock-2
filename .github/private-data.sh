@@ -20,6 +20,10 @@ DIR=${PRIVATE_DATA_DIR:-${RUNNER_TEMP:-/tmp}/private-data}
 TOKEN=${PRIVATE_DATA_TOKEN:-}
 # the IMMUTABLE hydration receipt (written by every successful pull): $RUNNER_TEMP/private-baseline on a runner, else next to the clone
 BL=${PRIVATE_BASELINE_DIR:-${RUNNER_TEMP:+$RUNNER_TEMP/private-baseline}}; BL=${BL:-$DIR.baseline}
+# INTENT baseline (Codex 6854953656): what this job last hydrated OR last submitted, per file. Write intent = ROOT differs from it. It
+# starts as a copy of the hydration receipt and, after a verified save, records the SUBMITTED bytes (never the merged remote bytes), so an
+# unchanged local copy is never new intent again; the hydration receipt itself stays immutable (failure retention compares against it).
+INT="$BL-intent"
 say() { echo "private data: $*"; }
 # The declared private set (.github/private-files.txt): file names, plus EXACTLY three allowlisted directory entries written with one
 # trailing slash (Codex 6853502834), plus the two-pass private caches data/private-*. A directory entry expands to the REGULAR files under
@@ -89,7 +93,7 @@ RUNLOG_NAME="private-runlog-$(printf '%s-%s' "${GITHUB_WORKFLOW:-job}" "${GITHUB
 COPIED=""
 copy_in() { mkdir -p "$DIR/data" || return 1; local f bad=0; COPIED=""
   for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; [ "$MODE" = push ] && case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac
-    [ "$MODE" = push ] && [ -f "$BL/RECEIPT" ] && [ -f "$BL/data/$f" ] && cmp -s "$ROOT/data/$f" "$BL/data/$f" && continue
+    [ "$MODE" = push ] && [ -f "$INT/RECEIPT" ] && [ -f "$INT/data/$f" ] && cmp -s "$ROOT/data/$f" "$INT/data/$f" && continue
     COPIED="$COPIED $f"; { mkdir -p "$(dirname "$DIR/data/$f")" && cp "$ROOT/data/$f" "$DIR/data/$f"; } || { say "Error: could not copy $f into the private clone"; bad=1; }; done
   return $bad; }
 # PENDING: an owner update made on this runner whose private save is not yet verified. It is created BEFORE anything else in push (so a
@@ -179,7 +183,8 @@ case "$MODE" in
       printf 'commit=%s
 files=%s
 at=%s
-' "$(gitp rev-parse HEAD 2>/dev/null)" "$k" "$(date -u +%FT%TZ)" > "$BL/RECEIPT" && chmod -R a-w "$BL" || { say "Error: cannot record the hydration receipt; stopping"; exit 1; }; fi
+' "$(gitp rev-parse HEAD 2>/dev/null)" "$k" "$(date -u +%FT%TZ)" > "$BL/RECEIPT" && chmod -R a-w "$BL" || { say "Error: cannot record the hydration receipt; stopping"; exit 1; }
+      { chmod -R u+w "$INT" 2>/dev/null; rm -rf "$INT"; cp -a "$BL" "$INT" && chmod -R u+w "$INT"; } || { say "Error: cannot record the hydration receipt; stopping"; exit 1; }; fi
     say "pulled $k files" ;;
   push-quarantine)   # push-quarantine: store ONLY new data/private-failed-pass-* files from this runner. Plumbing on a private temporary index
     # over the fetched private branch: no canonical file (owner files, outputs, registry) is ever copied, staged or changed, and the clone's
@@ -224,8 +229,10 @@ at=%s
       [ "$(gitp rev-parse "origin/$BR:data/$f" 2>/dev/null)" = "$(git hash-object "$ROOT/data/$f")" ] && continue
       case "$CONFLICT_MERGED" in *" $f "*) m=$((m+1)); say "$f was merged with a newer private copy (save-data.sh rule)";; *) say "Error: private file $f differs from this job's copy"; bad=1;; esac; done
     [ "$bad" = 0 ] || exit 1; rm -f "$PENDING"
-    # the receipt advances to what is now stored, so a later save in this job does not treat these bytes as new intent again
-    if [ -f "$BL/RECEIPT" ]; then chmod -R u+w "$BL" 2>/dev/null; for f in $COPIED; do mkdir -p "$(dirname "$BL/data/$f")" && gitp show "origin/$BR:data/$f" > "$BL/data/$f" 2>/dev/null || { rm -f "$BL/RECEIPT"; break; }; done; chmod -R a-w "$BL" 2>/dev/null; fi
+    # the INTENT baseline records the bytes this save SUBMITTED (not the merged remote bytes): unchanged local copies are no new intent.
+    # The hydration receipt is never modified. If the intent record cannot be written it is dropped (the next save then copies every
+    # present file, as without a receipt; content verification still checks it).
+    if [ -f "$INT/RECEIPT" ]; then for f in $COPIED; do mkdir -p "$(dirname "$INT/data/$f")" && cp "$ROOT/data/$f" "$INT/data/$f" || { rm -f "$INT/RECEIPT"; break; }; done; fi
     say "private save verified: $n changed files ($m merged with a newer private copy)" ;;
   require)   # require FILE...: research writers' REQUIRED HISTORY admission (Codex 6852935516). In private mode, after a successful pull, a
     # missing private frozen record or registry is UNKNOWN, never a fresh empty first run: exit 1 so the producer does not run (and
