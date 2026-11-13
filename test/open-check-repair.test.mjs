@@ -30,9 +30,9 @@ async function run(t, { now = ON_TIME, pos, quotes, sig = SIG, calendar = true }
     res.statusCode = 404; res.end('{}'); }); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
   const base = 'http://127.0.0.1:' + server.address().port;
-  // P0 Route A: the scan record is split; owner verdicts live in the paired private file. The date-only generatedAt keeps this fixture's
-  // original 'undated scan' semantics (not current) while pairing exactly.
-  const { posVerdict: fixturePV = {}, ...pubSig } = sig, at = pubSig.generatedAt || pubSig.session;
+  // P0 Route A: the scan record is split; owner verdicts live in the paired private file. Midnight UTC of the session date is zoned (it pairs)
+  // but precedes the session's close, so the fixture keeps its original 'not current' semantics.
+  const { posVerdict: fixturePV = {}, ...pubSig } = sig, at = pubSig.generatedAt || pubSig.session + 'T00:00:00.000Z';
   const files = { 'data/my-positions.json': pos, 'data/signals.json': { ...pubSig, generatedAt: at }, 'data/signals-private.json': { v: 1, session: pubSig.session, generatedAt: at, posVerdict: fixturePV }, 'data/tg-state.json': { offset: 42 } }; if (calendar) files['market-session.mjs'] = SESSION_SRC;
   const S = await loadScan({ files,
     env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });

@@ -12,8 +12,12 @@ export const SIGNALS_PRIVATE_FIELDS = Object.freeze(['posVerdict', 'tipBoard', '
 const object = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
 export const SIGNALS_PRIVATE_LIMITS = Object.freeze({ fileBytes: 8 * 1024 * 1024, listRows: 5000, reasonChars: 400, verdicts: 2000 });
 const SYM = /^[A-Z][A-Z0-9.\-]{0,9}$/, SESSION = /^\d{4}-\d{2}-\d{2}$/, STAMP = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2}))?$/;
-const validSession = (x) => typeof x === 'string' && SESSION.test(x) && Number.isFinite(Date.parse(x + 'T00:00:00Z'));
-const validStamp = (x) => typeof x === 'string' && STAMP.test(x) && Number.isFinite(Date.parse(x));
+// Exact calendar round-trip (Date.parse would normalise an impossible 2026-02-30 to March 2).
+const validSession = (x) => typeof x === 'string' && SESSION.test(x) && (() => { const d = new Date(x + 'T00:00:00Z'); return Number.isFinite(d.getTime()) && d.toISOString().slice(0, 10) === x; })();
+// Current pairing needs a ZONED date-time; a date-only stamp can only ever be historical/unknown.
+const ZONED = /^(\d{4}-\d{2}-\d{2})T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/;
+const validZoned = (x) => typeof x === 'string' && ZONED.test(x) && validSession(x.slice(0, 10)) && Number.isFinite(Date.parse(x));
+const validStamp = (x) => typeof x === 'string' && STAMP.test(x) && validSession(x.slice(0, 10)) && Number.isFinite(Date.parse(x));
 const reason = (x, L) => typeof x === 'string' && x.trim().length > 0 && x.length <= L.reasonChars;
 // posVerdict: { SYMBOL: non-empty bounded reason string }; a non-string value would otherwise become a fabricated '[object Object]' SELL.
 const verdictMap = (m, L) => object(m) && Object.keys(m).length <= L.verdicts && Object.entries(m).every(([k, v]) => SYM.test(k) && reason(v, L));
@@ -25,7 +29,7 @@ export function hydrateSignals(sig, readPrivate = defaultReadPrivate, L = SIGNAL
   // Every private-only field is stripped from the public input first: a public copy (legacy or not) is never current private evidence.
   const base = { ...sig }; for (const k of SIGNALS_PRIVATE_FIELDS) delete base[k];
   let pv = null; try { pv = readPrivate(); } catch {}
-  const paired = object(pv) && pv.v === 1 && validSession(sig.session) && validStamp(sig.generatedAt) && pv.session === sig.session && pv.generatedAt === sig.generatedAt;
+  const paired = object(pv) && pv.v === 1 && validSession(sig.session) && validZoned(sig.generatedAt) && pv.session === sig.session && pv.generatedAt === sig.generatedAt;
   const valid = paired && verdictMap(pv.posVerdict, L) && SIGNALS_PRIVATE_FIELDS.every(k => pv[k] === undefined || FIELD_OK[k](pv[k], L));
   if (!valid) {
     const out = { ...base, posVerdictUnavailable: true };

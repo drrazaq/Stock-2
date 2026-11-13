@@ -100,3 +100,10 @@ test('legacy-only saved exit (no private record, no lastAct) is kept as HISTORIC
   assert.doesNotMatch(a.line, /^ZZP: SELL/);
   assert.match(S.fn('retainedHoldingContext')('ZZP', { entry: 12 }, sig), /HISTORICAL RECORDED EXIT/);
 });
+
+test('impossible calendar dates and date-only stamps never pair as current (Codex 6850475346)', async () => {
+  const { hydrateSignals } = await import('../signals-read.mjs');
+  const imp = { session: '2026-02-30', generatedAt: '2026-02-30T21:40:00.000Z' }; assert.equal(hydrateSignals({ ...imp }, () => ({ v: 1, ...imp, posVerdict: { ZZQ: 'time exit' } })).posVerdictUnavailable, true);
+  const day = { session: '2026-11-12', generatedAt: '2026-11-12' }; assert.equal(hydrateSignals({ ...day }, () => ({ v: 1, ...day, posVerdict: { ZZQ: 'time exit' } })).posVerdictUnavailable, true);
+  const leg = hydrateSignals({ ...day, posVerdict: { ZZQ: 'time exit' } }, () => { throw Error('none'); }); assert.equal(leg.legacyExitHistory.generatedAt, '2026-11-12', 'a date-only legacy stamp stays as historical metadata');
+});
