@@ -63,7 +63,8 @@ test('retain-failed on a nested directory output: flat quarantine name, stored b
 test('two-pass runner: a listed directory makes its root and every descendant private (prefix rule)', async () => {
   const { isPrivate } = await import('../scan-passes.mjs');
   const listed = fs.readFileSync(path.join(REPO, '.github/private-files.txt'), 'utf8').split('\n').map(l => l.trim());
-  for (const d of ['shadow', 'ignition-runs', 'shadow-outcomes']) if (listed.includes(d + '/')) { assert.ok(isPrivate(d)); assert.ok(isPrivate(d + '/2026-11-12/x.json')); }
+  for (const d of ['shadow', 'ignition-runs', 'shadow-outcomes']) { assert.ok(listed.includes(d + '/'), 'the REAL manifest declares ' + d + '/'); assert.ok(isPrivate(d)); assert.ok(isPrivate(d + '/2026-11-12/x.json')); }
+  assert.equal(listed.filter(l => l.endsWith('/')).length, 3, 'exactly three directory entries');
   assert.ok(!isPrivate('shadowx.json') && !isPrivate('shadow-report-public.json'), 'no accidental prefix match without the slash');
 });
 
