@@ -85,20 +85,37 @@ case "$MODE" in
       say "an earlier owner update is not yet stored privately; retrying its save before any pull"
       bash "$0" push || { say "Error: earlier owner update still NOT stored privately; local owner files kept (newest), pull refused, owner commands paused"; exit 3; }
     fi
+    [ -e "$DIR.install-incomplete" ] && say "an earlier install was incomplete; this pull must complete before any owner file is used"
     open || { say "Error: cannot read the private repository; stopping so nothing runs without your holdings"; exit 1; }
     for f in $REQUIRED; do [ -f "$DIR/data/$f" ] || { say "Error: the private repository has no data/$f; stopping"; exit 1; }; done
     # stage every file first (each copy checked), then install by rename: a failed copy installs NOTHING (no mixed old/new state)
     # staging is never under data/ (a leftover is never published); .git is the same filesystem, so mv is a rename
     if [ -d "$ROOT/.git" ]; then STG="$ROOT/.git/private-pull.$$"; else STG="$DIR.stage.$$"; fi; rm -rf "$STG"; mkdir -p "$STG" || { say "Error: cannot stage the pull"; exit 1; }
     k=0; for f in $FILES; do [ -f "$DIR/data/$f" ] || continue; mkdir -p "$(dirname "$STG/$f")" && cp "$DIR/data/$f" "$STG/$f" || { say "Error: could not copy $f from the private clone; nothing installed"; rm -rf "$STG"; exit 1; }; k=$((k+1)); done
-    for f in $FILES; do if [ -f "$STG/$f" ]; then mv -f "$STG/$f" "$ROOT/data/$f" || { say "Error: could not install $f"; rm -rf "$STG"; exit 1; }
+    # install: back up every current file first, then rename; on any failure roll every installed file back. INCOMPLETE marks an install
+    # whose rollback also failed: every later pull refuses until a complete install succeeds, so a partial set is never consumed as current.
+    INCOMPLETE="$DIR.install-incomplete"; date -u +%FT%TZ > "$INCOMPLETE" || { say "Error: cannot record the install"; rm -rf "$STG"; exit 1; }
+    BAK="$STG.bak"; rm -rf "$BAK"; mkdir -p "$BAK" || { say "Error: cannot back up the owner files"; rm -rf "$STG"; exit 1; }
+    for f in $FILES; do [ -f "$STG/$f" ] && [ -f "$ROOT/data/$f" ] && { mkdir -p "$(dirname "$BAK/$f")" && cp -p "$ROOT/data/$f" "$BAK/$f" || { say "Error: cannot back up the owner files; nothing installed"; rm -rf "$STG" "$BAK"; rm -f "$INCOMPLETE"; exit 1; }; }; done
+    done_list=""; failed=0
+    for f in $FILES; do [ -f "$STG/$f" ] || continue; if mv -f "$STG/$f" "$ROOT/data/$f"; then done_list="$done_list $f"; else failed=1; break; fi; done
+    if [ "$failed" = 1 ]; then rb=0
+      for f in $done_list; do if [ -f "$BAK/$f" ]; then cp -p "$BAK/$f" "$ROOT/data/$f" || rb=1; else rm -f "$ROOT/data/$f" || rb=1; fi; done
+      rm -rf "$STG" "$BAK"
+      if [ "$rb" = 0 ]; then rm -f "$INCOMPLETE"; say "Error: an owner file could not be installed; every installed file was rolled back (nothing new is current)"; else say "Error: install failed AND rollback failed; owner files are marked incomplete and every pull refuses until a complete install"; fi
+      exit 1; fi
+    rm -rf "$BAK"
+    for f in $FILES; do if [ -f "$DIR/data/$f" ]; then :   # installed above
       elif [ -f "$ROOT/data/$f" ]; then case "$f" in private-*) ;; *) mv -f "$ROOT/data/$f" "$ROOT/data/private-stale-$f" && say "optional $f is absent privately; the local copy was set aside (not used as current)";; esac; fi; done
-    rm -rf "$STG"; say "pulled $k files" ;;
+    rm -rf "$STG"; rm -f "$INCOMPLETE"; say "pulled $k files" ;;
   push)
     date -u +%FT%TZ > "$PENDING" || { say "Error: cannot record the pending owner update"; exit 1; }   # first: any later failure keeps it
     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }
     copy_in || { say "Error: private save NOT confirmed (copy failed); your update is kept on this runner and will be retried"; exit 1; }
-    ( cd "$DIR" && SAVE_PRIVATE_REPO=1 SAVE_PRIVATE_EXPECTED_ORIGIN="$URL" SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "bot $(date -u +%FT%RZ)" ) | sed 's/^/private data: /'
+    # the shared save's own status decides first (a guard refusal, e.g. PRIVATE_SAVE_EXACT_ORIGIN_REQUIRED, or a failed push): no read-back
+    # can relabel a refused save as verified (Codex 6851930599). Its output goes to the job's own log through this pipe; pipefail is set.
+    if ! ( cd "$DIR" && SAVE_PRIVATE_REPO=1 SAVE_PRIVATE_EXPECTED_ORIGIN="$URL" SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "bot $(date -u +%FT%RZ)" ) | sed 's/^/private data: /'; then
+      say "Error: private save NOT confirmed (the shared save refused or failed); your update is kept on this runner and will be retried"; exit 1; fi
     # P0 Route A: success only when the save landed: the private repository's branch, read back from the remote, equals the commit this
     # save made, and EVERY declared private file present in this job is committed there (after the save-data.sh conflict rules, e.g. a
     # newer bot copy of the positions wins). The caller sets PRIVATE_SAVE_OK=1 only on this exit 0.

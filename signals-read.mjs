@@ -52,6 +52,13 @@ export function hydrateSignals(sig, readPrivate = defaultReadPrivate, L = SIGNAL
   if (!base.tipBoard) base.tipBoard = { sources: [], tips: [] };
   return base;
 }
+// The ONE pairing decision for owner context (scan.mjs reuses it; Codex 6852112825): the full private scan record belongs to the published
+// scan only when both carry an exact calendar session and a zoned generatedAt and both are equal. Anything else (missing, malformed,
+// calendar-invalid, unpaired) is not current full private evidence.
+export function pairedFullPrivate(sig, readFull = defaultReadFull) {
+  let full = null; try { full = readFull(); } catch { return false; }
+  return object(sig) && object(full) && validSession(sig.session) && validZoned(sig.generatedAt) && full.session === sig.session && full.generatedAt === sig.generatedAt;
+}
 export function readSignals(file = 'data/signals.json') { try { return hydrateSignals(JSON.parse(fs.readFileSync(file, 'utf8'))); } catch { return null; } }
 export function privateSignalsRecord({ session, generatedAt, fields }) {
   const rec = { v: 1, session, generatedAt }; for (const k of SIGNALS_PRIVATE_FIELDS) if (fields[k] !== undefined) rec[k] = fields[k]; return rec;

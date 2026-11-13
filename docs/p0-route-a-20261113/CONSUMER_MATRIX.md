@@ -29,3 +29,23 @@ Generated from the development tree by grep of `data/<file>` references in root 
 4. **Open: consumers whose PUBLIC outputs may embed private-derived content** (each needs its own projection review, as squad11 had): the lab modules that read `halal.json` and publish halal-derived labels or statistics; `events-study.mjs` (merges `watch-extra.json` into its universe); modules reading `my-positions.json` (`calendar`, `hold-lab`, `smart-money`, `squad29-*`, `news-watch`, `ignition-watch`); modules reading `tips.jsonl` / `opinions.jsonl` / `market-calls.jsonl` (`smart-money`, `tip-score`, `tip-sources`).
 5. **Open: history.** Files committed publicly before the cutover remain in public git history; removing them from history is an owner decision outside this development scope.
 6. **Before cutover**, `data/signals-private.json` is saved publicly like the other private-list files (no regression versus the previous public `signals.json`); it becomes private only with the cutover.
+
+## Private outputs: destination and failed-pass retention class (13 Nov 2026, Codex 6852016986)
+
+Destination after a COMPLETED private pass; retention class if the private pass FAILS (scan-passes.mjs `isCritical`). CRITICAL records are
+always retained whole; OPTIONAL files are size-bounded (4 MiB each, 32 MiB per failure) and each skip is named in the private log.
+Diagnostics go to the private log only (data/private-scan-stdout.log); the public job log carries generic status.
+
+| Output (as written inside the pass) | Producer | Destination after a completed pass | Failed-pass class |
+|---|---|---|---|
+| owner files on .github/private-files.txt (holdings, trades, settings, marks, sell notices, actions-sells, tips, opinions, market calls, watch-extra, basket state, leader-dip ledger, signals-private) | scan.mjs daily | in place (newer concurrent copy wins; scan copy to private-conflict-*) | CRITICAL |
+| alert-state.json, tg-state.json, tg-failures.jsonl | scan.mjs send paths | alert-state: data/private-alert-state.json (owner state); tg-*: in place | CRITICAL (send state) |
+| watcher-message-state/** | watcher reservations | unchanged by the nightly | CRITICAL |
+| tier2-ledger.jsonl, options-shadow.json, skipped.jsonl | scan.mjs (TRY SMALL lane, options shadow, owner skip commands) | data/private-<name> (owner state; owner context reads/writes it via dataPath) | CRITICAL (owner execution/closure/command records) |
+| other OWNER_STATE_OUTPUTS (outcomes, models, lessons, journal, leaders, studies, fm-state, names, sectors, sic-extra, spy-closes, engine-history, experiments, switch-paper, options-probe) | scan.mjs daily | data/private-<name>, installed every completed pass | OPTIONAL (model/cache) |
+| signals.json (private pass) | scan.mjs daily | data/private-signals.json (full private record; paired by session + zoned generatedAt) | OPTIONAL |
+| anything else the pass writes | scan.mjs | data/private-<name> | OPTIONAL |
+
+Still on the producer queue (not yet split): lab outputs carrying a per-symbol halal field, discovery2 / follow-lane reads of the tier2
+ledger, news logs, events-study watch-extra, other stdout and artifacts. When an owner portion of those moves to a private file it is
+added to OWNER_EVENT_LEDGERS (critical) if it records owner executions, SELLs, closures or commands.

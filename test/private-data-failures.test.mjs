@@ -12,12 +12,14 @@ const sh = (cmd, cwd) => execSync(cmd, { cwd, env: ENV0, stdio: ['ignore', 'pipe
 const W = (dir, f, s) => { fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true }); fs.writeFileSync(path.join(dir, f), s); };
 const R = (dir, f) => { try { return fs.readFileSync(path.join(dir, f), 'utf8'); } catch { return null; } };
 const REAL_CP = execSync('command -v cp', { encoding: 'utf8', shell: '/bin/bash' }).trim();
+const REAL_MV = execSync('command -v mv', { encoding: 'utf8', shell: '/bin/bash' }).trim();
 function world() {
   const pub = tmp('pdf-pub-'), bare = tmp('pdf-priv-'), seed = tmp('pdf-seed-'), dir = path.join(tmp('pdf-run-'), 'private-data'), shim = tmp('pdf-shim-');
   for (const f of ['.github/private-data.sh', '.github/private-files.txt', '.github/save-data.sh', '.github/merge-alert-state.mjs', '.github/save-privacy-guard.mjs']) W(pub, f, fs.readFileSync(path.join(REPO, f)));
   W(pub, 'data/my-positions.json', '{"AAA":{"entry":10}}\n'); W(pub, 'data/halal.json', '{"AAA":{"s":"ok"}}\n'); W(pub, 'data/settings.json', '{"focus":true}\n');
   sh('git init -q --bare -b main ' + bare, seed); sh('git init -q -b main && echo x > README.md && git add -A && git -c commit.gpgsign=false commit -qm init && git remote add origin ' + bare + ' && git push -q origin main', seed);
-  W(shim, 'cp', '#!/bin/bash\nfor a in "$@"; do case "$a" in *"$FAIL_CP") [ -n "$FAIL_CP" ] && { echo "cp: synthetic failure" >&2; exit 1; };; esac; done\nexec ' + REAL_CP + ' "$@"\n'); fs.chmodSync(path.join(shim, 'cp'), 0o755);
+  W(shim, 'cp', '#!/bin/bash\nsrc=; for a in "$@"; do case "$a" in -*) ;; *) src=$a; break;; esac; done\nfor a in "$@"; do case "$a" in *"$FAIL_CP") [ -n "$FAIL_CP" ] && { echo "cp: synthetic failure" >&2; exit 1; };; esac; done\ncase "$src" in *"$FAIL_CP_SRC"*) [ -n "$FAIL_CP_SRC" ] && { echo "cp: synthetic failure" >&2; exit 1; };; esac\nexec ' + REAL_CP + ' "$@"\n'); fs.chmodSync(path.join(shim, 'cp'), 0o755);
+  W(shim, 'mv', '#!/bin/bash\nsrc=; for a in "$@"; do case "$a" in -*) ;; *) src=$a; break;; esac; done\ncase "$src" in *"$FAIL_MV") [ -n "$FAIL_MV" ] && { echo "mv: synthetic failure" >&2; exit 1; };; esac\nexec ' + REAL_MV + ' "$@"\n'); fs.chmodSync(path.join(shim, 'mv'), 0o755);
   return { pub, bare, dir, shim };
 }
 const run = (w, mode, extra = {}) => spawnSync('bash', ['.github/private-data.sh', mode], { cwd: w.pub, encoding: 'utf8', env: { ...ENV0, PATH: w.shim + ':' + ENV0.PATH, PRIVATE_DATA_URL: w.bare, PRIVATE_DATA_DIR: w.dir, ...extra } });
@@ -69,4 +71,29 @@ test('bot: pull exit 3 pauses owner commands (not consumed) while protective che
   assert.ok(y.indexOf('node scan.mjs', at) > at, 'the protective full check still runs after a paused pull');
   const scan = fs.readFileSync(path.join(REPO, 'scan.mjs'), 'utf8'), t = scan.indexOf('async function tgCommands('), g = scan.indexOf('getUpdates', t);
   assert.ok(scan.slice(t, g).includes('if (env.OWNER_MUTATIONS_PAUSED)'), 'paused before any Telegram read');
+});
+
+test('push: a refusal by the shared save (EXACT_ORIGIN: another declared address than the clone) is never relabelled verified (Codex 6851790645)', () => {
+  const w = world(); init(w); assert.equal(run(w, 'pull').status, 0);
+  const other = tmp('pdf-other-bare-'); sh('git init -q --bare -b main ' + other, os.tmpdir());
+  const r = run(w, 'push', { PRIVATE_DATA_URL: other });
+  assert.notEqual(r.status, 0, r.stdout); assert.match(r.stdout, /private save NOT confirmed \(the shared save refused or failed\)/); assert.doesNotMatch(r.stdout, /private save verified/);
+  assert.ok(fs.existsSync(w.dir + '.pending'), 'pending kept');
+});
+test('pull: an install failure part-way rolls every installed file back; nothing new is current', () => {
+  const w = world(); init(w); assert.equal(run(w, 'pull').status, 0);
+  const other = tmp('pdf-other-'); sh('git clone -q ' + w.bare + ' o && cd o && for f in my-positions settings halal; do printf \'{"NEW":1}\\n\' > data/$f.json; done && git add -A && git -c commit.gpgsign=false commit -qm bot && git push -q', other);
+  const before = Object.fromEntries(['my-positions.json', 'settings.json', 'halal.json'].map(f => [f, R(w.pub, 'data/' + f)]));
+  const r = run(w, 'pull', { FAIL_MV: 'halal.json' }); assert.equal(r.status, 1); assert.match(r.stdout, /every installed file was rolled back/);
+  for (const [f, v] of Object.entries(before)) assert.equal(R(w.pub, 'data/' + f), v, f + ' rolled back');
+  assert.ok(!fs.existsSync(w.dir + '.install-incomplete'));
+  assert.equal(run(w, 'pull').status, 0); for (const f of Object.keys(before)) assert.match(R(w.pub, 'data/' + f), /NEW/);
+});
+test('pull: install AND rollback failure leaves an incomplete marker; the failure is visible and the next complete pull clears it', () => {
+  const w = world(); init(w); assert.equal(run(w, 'pull').status, 0);
+  const other = tmp('pdf-other-'); sh('git clone -q ' + w.bare + ' o && cd o && for f in my-positions settings halal; do printf \'{"NEW":2}\\n\' > data/$f.json; done && git add -A && git -c commit.gpgsign=false commit -qm bot && git push -q', other);
+  const r = run(w, 'pull', { FAIL_MV: 'halal.json', FAIL_CP_SRC: '.bak/' }); assert.equal(r.status, 1); assert.match(r.stdout, /rollback failed; owner files are marked incomplete/);
+  assert.ok(fs.existsSync(w.dir + '.install-incomplete'));
+  const r2 = run(w, 'pull'); assert.equal(r2.status, 0); assert.match(r2.stdout, /an earlier install was incomplete/); assert.ok(!fs.existsSync(w.dir + '.install-incomplete'));
+  for (const f of ['my-positions.json', 'settings.json', 'halal.json']) assert.match(R(w.pub, 'data/' + f), /NEW/);
 });

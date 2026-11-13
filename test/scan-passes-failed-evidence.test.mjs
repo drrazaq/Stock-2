@@ -43,7 +43,7 @@ for (const mode of ['fail', 'kill']) test('private pass ' + (mode === 'kill' ? '
     assert.match(rd(dir, stamp + '__my-positions.json'), /PRIVATE_SECRET event/, 'owner event retained in quarantine only');
     for (const f of publicNames(dir)) assert.doesNotMatch(rd(dir, f), /PRIVATE_SECRET|failed-pass/, 'public path ' + f);
     assert.doesNotMatch(r.stdout, /PRIVATE_SECRET/, 'orchestrator stdout carries no private payload');
-    assert.match(r.stdout, /kept privately as UNRESOLVED quarantine evidence/); assert.ok(meta.critical.includes("sell-notices.jsonl"), "the sent SELL record is critical");
+    assert.match(r.stdout, /evidence was retained privately as UNRESOLVED quarantine \(details in the private log\)/); assert.doesNotMatch(r.stdout, /private-failed-pass-|critical\)|sell-notices/, "no owner-derived diagnostics in the public log"); assert.match(rd(dir, "private-scan-stdout.log"), /kept privately as UNRESOLVED quarantine evidence/); assert.ok(meta.critical.includes("sell-notices.jsonl"), "the sent SELL record is critical");
   } finally { fs.rmSync(dir, { recursive: true, force: true }); } });
 test('quarantine is never restored as state: a later pass sees no failed-pass or conflict file, and owner state comes only from a completed pass', () => {
   const dir = world(); try {
@@ -56,7 +56,7 @@ test('quarantine is never restored as state: a later pass sees no failed-pass or
   } finally { fs.rmSync(dir, { recursive: true, force: true }); } });
 test('size bounds apply to OPTIONAL files only: a large critical owner/SELL record is kept, a large model/cache file is skipped by name', () => {
   const dir = world(); try {
-    const r = run(dir, 'fail big bigcritical'); assert.match(r.stdout, /optional files over the size bound NOT kept: big\.bin/);
+    const r = run(dir, 'fail big bigcritical'); assert.match(rd(dir, 'private-scan-stdout.log'), /optional files over the size bound NOT kept: big\.bin/); assert.doesNotMatch(r.stdout, /big\.bin/);
     const idx = ls(dir).find(f => f.startsWith(FAILED_PREFIX) && f.endsWith('.json') && !f.includes('__')), meta = JSON.parse(rd(dir, idx));
     assert.deepEqual(meta.skipped.map(s => s.r), ['big.bin']); assert.ok(meta.critical.includes('sell-notices.jsonl') && meta.critical.includes('my-trades.jsonl'));
     assert.equal(fs.statSync(path.join(dir, 'data', idx.slice(0, -5) + '__my-trades.jsonl')).size, 5 << 20, 'a 5 MiB critical owner record is retained whole');
@@ -66,7 +66,7 @@ test('capacity full: nothing unresolved is pruned; the next night does NOT run t
     for (let i = 0; i < 3; i++) assert.notEqual(run(dir, 'fail').status, 0);
     const sets0 = ls(dir).filter(f => f.startsWith(FAILED_PREFIX)), before = rd(dir, 'my-positions.json');
     const r = run(dir, '');   // a night that WOULD succeed and change owner state
-    assert.equal(r.status, 6, 'explicit admission refusal status'); assert.match(r.stdout, /PRIVATE PASS NOT RUN: 3 unresolved failed-pass evidence sets/);
+    assert.equal(r.status, 6, 'explicit admission refusal status'); assert.match(r.stdout, /PRIVATE PASS NOT RUN: retained private evidence is at capacity/); assert.doesNotMatch(r.stdout, /3 unresolved/); assert.match(rd(dir, 'private-scan-stdout.log'), /PRIVATE PASS NOT RUN: 3 unresolved failed-pass evidence sets/);
     assert.match(r.stdout, /Not produced tonight: the owner nightly/); assert.match(r.stdout, /Separate protective paths .* are not affected/);
     assert.equal(rd(dir, 'my-positions.json'), before, 'no private computation ran'); assert.ok(!ls(dir).includes('private-box-list.json'));
     assert.deepEqual(ls(dir).filter(f => f.startsWith(FAILED_PREFIX)), sets0, 'every earlier set is kept byte for byte (no pruning)');
@@ -119,4 +119,16 @@ test('main.yml: after a failed scan the evidence goes only through the private r
     r = sh(); assert.equal(r.status, 0); assert.match(r.stdout, /stored in the private repository/); assert.match(fs.readFileSync(path.join(d, 'pushed.txt'), 'utf8'), /push/);
     fs.writeFileSync(path.join(d, '.github/private-data.sh'), 'exit 1\n'); r = sh(); assert.equal(r.status, 1, 'private save failed: fails visibly'); assert.match(r.stdout, /NOT stored privately/);
   } finally { fs.rmSync(d, { recursive: true, force: true }); }
+});
+
+test('admission also counts ALL retained evidence (resolved sets included): a total ceiling, never pruning', () => {
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'adm-total-')); try {
+    const st = '2026-11-10T21-50-00-000Z'; fs.writeFileSync(path.join(d, FAILED_PREFIX + st + '.json'), '{}'); fs.writeFileSync(path.join(d, FAILED_PREFIX + st + '__x.json'), Buffer.alloc(5000));
+    fs.writeFileSync(path.join(d, FAILED_PREFIX + st + '.disposition.json'), JSON.stringify({ resolved: true }));
+    const lim = { unresolvedSets: 3, unresolvedBytes: 1 << 30, retainedBytes: (1 << 20) + 3000 };
+    const a = privateAdmission(d, lim); assert.equal(a.ok, false); assert.match(a.reason, /all retained failed-pass evidence \(resolved included\)/);
+    assert.ok(fs.existsSync(path.join(d, FAILED_PREFIX + st + '__x.json')), 'nothing deleted');
+  } finally { fs.rmSync(d, { recursive: true, force: true }); } });
+test('owner event ledgers (TRY SMALL, options shadow, owner skips) are critical, never size-skipped', () => {
+  for (const r of ['tier2-ledger.jsonl', 'options-shadow.json', 'skipped.jsonl']) assert.ok(isCritical(r), r);
 });

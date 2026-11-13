@@ -36,3 +36,23 @@ test('the owner-mapped set equals the private-pass owner-state outputs, and unkn
   for (const n of ['private-unknown-outcomes.json', 'private-stale-tips.jsonl', 'private-conflict-outcomes.json', 'private-failed-pass-x.json']) assert.match(n, NOT_STATE);
   assert.deepEqual(blocked, []);
 });
+// Codex 6851917256 / 6852102057 / 6852112825: the live quick-trade record in signals.json.
+const QR = { n: 40, days: 12, stocks: 25, avgPct: 0.03, avgSpy: 0, winRate: 0.7 }, MAN = { 'data/public-pass-manifest.json': { v: 1, files: {} } };
+const PUB = { ...SIG, quickRecord: QR }, PV = { v: 1, session: SIG.session, generatedAt: SIG.generatedAt, posVerdict: {}, tipBoard: { sources: [], tips: [] }, leaders: [], pead: [], evt: [], peadFunnel: {} };
+const quickWorks = (S) => S.fn('workingKinds')().size > 0;
+test('control (legacy, no manifest): the favourable quick record makes the quick kind working', async () => {
+  const S = await loadScan({ files: { 'data/signals.json': PUB } }); assert.equal(quickWorks(S), true);
+});
+test('two-pass live + paired full private record with a NEGATIVE quick record: quick kind not working', async () => {
+  const S = await loadScan({ files: { ...MAN, 'data/signals.json': PUB, 'data/signals-private.json': PV, 'data/private-signals.json': { ...PUB, quickRecord: { ...QR, avgPct: -0.02 } } } });
+  assert.equal(quickWorks(S), false);
+});
+test('two-pass live + full private record REMOVED: fails closed, never admitted from the favourable public subset', async () => {
+  const S = await loadScan({ files: { ...MAN, 'data/signals.json': PUB, 'data/signals-private.json': PV } });
+  assert.equal(quickWorks(S), false); assert.equal(S.fn('readJson0')('data/signals.json').quickRecord, undefined); assert.equal(S.fn('readJson0')('data/signals.json').ownerEvidenceUnknown, true);
+});
+test('two-pass live + calendar-invalid pair (2026-02-30) with a positive private ledger: UNKNOWN, no POSITIVE owner row', async () => {
+  const BAD = { ...SIG, session: '2026-02-30', generatedAt: '2026-02-30T21:40:00.000Z' };
+  const S = await loadScan({ files: { ...base, ...MAN, 'data/signals.json': BAD, 'data/private-signals.json': BAD, 'data/private-tier2-ledger.jsonl': rows30(0.09) } });
+  const r = tier2Row(S); assert.ok(!r || !/^POSITIVE/.test(r.verdict)); assert.equal(quickWorks(S), false);
+});

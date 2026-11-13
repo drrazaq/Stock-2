@@ -3,7 +3,7 @@ import { deliver, ownerQuietOff } from './notify-route.mjs';
 import { installFetchCache } from './fetch-cache.mjs';
 // Two-pass nightly scan (scan-passes.mjs): the public pass records market responses, the private pass replays them. Off unless both are set.
 if (process.env.SCAN_FETCH_CACHE && process.env.SCAN_FETCH_CACHE_MODE) installFetchCache(process.env.SCAN_FETCH_CACHE, process.env.SCAN_FETCH_CACHE_MODE);
-import { hydrateSignals as hydrateSignalsShared, privateSignalsRecord, SIGNALS_PRIVATE_FILE } from './signals-read.mjs';
+import { hydrateSignals as hydrateSignalsShared, privateSignalsRecord, SIGNALS_PRIVATE_FILE, pairedFullPrivate } from './signals-read.mjs';
 import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery,reconcileAssessmentDelivery} from './research-assessment.mjs';
 import {readInstrumentType,researchInstrumentScope} from './instrument-type.mjs';
 import {readPrivateAssessmentQuote} from './private-quote-retention.mjs';
@@ -36,10 +36,15 @@ const OWNER_MAPPED = new Set(['alert-state.json', 'dow-study.json', 'engine-hist
 const OWNER_UNKNOWN_LOGGED = new Set();
 function ownerTwoPass() { return !process.env.SCAN_PASS && fs.existsSync('data/public-pass-manifest.json'); }
 let OWNER_CTX = null;   // per process (each bot/intraday cycle is a fresh process): the private record must PAIR with the published signals
-function ownerContextPaired() { if (OWNER_CTX !== null) return OWNER_CTX;
-  try { const a = JSON.parse(fs.readFileSync('data/private-signals.json', 'utf8')), b = JSON.parse(fs.readFileSync('data/signals.json', 'utf8'));
-    OWNER_CTX = !!(a && b && a.generatedAt && a.generatedAt === b.generatedAt && a.session === b.session); } catch { OWNER_CTX = false; }
+function ownerContextPaired() { if (OWNER_CTX !== null) return OWNER_CTX;   // the shared strict decision (exact calendar session, zoned stamp, equal pair)
+  try { OWNER_CTX = pairedFullPrivate(JSON.parse(fs.readFileSync('data/signals.json', 'utf8'))); } catch { OWNER_CTX = false; }
   return OWNER_CTX; }
+// Owner eligibility evidence carried in signals.json (the live quick-trade record). In owner context after the two-pass is live, it counts
+// only from the paired full private record; the public projection's smaller subset never makes anything eligible (fail closed). Protective
+// fields (exit verdicts, legacy exit history) keep their own paired hydration in signals-read.mjs.
+const SIGNALS_ELIGIBILITY_FIELDS = ['quickRecord', 'quickPaused'];
+function ownerSignals(v) { if (!v || typeof v !== 'object' || !ownerTwoPass() || ownerContextPaired()) return v;
+  const o = { ...v }; for (const k of SIGNALS_ELIGIBILITY_FIELDS) delete o[k]; o.ownerEvidenceUnknown = true; return o; }
 function dataPath(f) { const m = /^data\/([^/]+)$/.exec(f); if (!m || !OWNER_MAPPED.has(m[1]) || !ownerTwoPass()) return f;
   return ownerContextPaired() ? 'data/private-' + m[1] : 'data/private-unknown-' + m[1]; }   // unknown context: writes go to a scratch copy that is never state
 function ownerStateKnown(f) { if (!/^data\/private-/.test(f) || !ownerTwoPass()) return true;
@@ -826,7 +831,8 @@ function scRowKind(e) { e = String(e || ''); if (/^Quick trades/.test(e)) return
 // Alpaca row of another kind). Now it is lifted only for the kind whose OWN live record is POSITIVE under the full live bar (30+ trades,
 // 10+ distinct days, 20+ stocks; a record whose days or stocks are unknown has not shown the bar). The octopus row is a rejected idea
 // kept on paper and never lifts FOCUS.
-function workingKinds() { const W = new Set(); try { scorecardText(); for (const r of SC_ROWS) { if (!/^POSITIVE/.test(r.verdict || '') || !(r.n >= 30 && r.days >= 10 && r.stocks >= 20)) continue;
+function workingKinds() { const W = new Set(); if (ownerTwoPass() && !ownerContextPaired()) return W;   // no paired full private evidence: no engine kind is proven (fail closed)
+  try { scorecardText(); for (const r of SC_ROWS) { if (!/^POSITIVE/.test(r.verdict || '') || !(r.n >= 30 && r.days >= 10 && r.stocks >= 20)) continue;
   const k = scRowKind(r.engine); if (k && k !== 'octopus') W.add(k); } } catch (e) { W.clear(); } return W; }
 // SUNDAY SCOREBOARD (review S-2, 22 Oct): the scoreboard with the owner's 90-day decision was attached only to an ACTIONS message built on
 // a UTC Sunday, and nothing builds one on Sundays. The bot's full check (every 5 minutes) now sends it once every Sunday, Kuwait time,
@@ -900,7 +906,7 @@ const ASSESSMENT_LOGIC_SOURCE_HASH=crypto.createHash('sha256').update(m[1]).dige
 function scannerAssessmentRule(learned){
  return makeScannerAssessmentRule({logicVersion:L.LOGIC_VERSION,sourceHash:ASSESSMENT_LOGIC_SOURCE_HASH,variant:learned.v,config:L.CFG,targetOverlay:learned.tgt||null,ruleText:L.ruleText(learned.v),variantKey:L.vkey(learned.v)});
 }
-const readJson0 = (f) => { try { if (!ownerStateKnown(f)) return null; const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? hydrateSignals(v) : v; } catch { return null; } };
+const readJson0 = (f) => { try { if (!ownerStateKnown(f)) return null; const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? ownerSignals(hydrateSignals(v)) : v; } catch { return null; } };
 // P0 Route A (13 Nov 2026, development): the per-holding exit verdicts (posVerdict) and the tip board (built from the owner's private
 // tips) are owner-derived, so the nightly scan writes them to the PRIVATE file data/signals-private.json (listed in .github/private-files.txt), never into the public signals.json. Every reader of
 // signals.json gets them back here, but only when the private file belongs to the SAME scan (session + generatedAt). Missing, unreadable
@@ -1020,7 +1026,7 @@ const QONLY = new Set([...QEXTRA, ...FMOVERS, ...LEADU, ...QWIDE]), LEADHELD = (
 for (const x of LEADHELD) if (!MAIN.includes(x)) QONLY.add(x);
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const readJson = (f, d) => { try { if (!ownerStateKnown(f)) return d; const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? hydrateSignals(v) : v; } catch { return d; } };
+const readJson = (f, d) => { try { if (!ownerStateKnown(f)) return d; const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? ownerSignals(hydrateSignals(v)) : v; } catch { return d; } };
 const money = (x) => x.toFixed(2);
 fs.mkdirSync('data', { recursive: true });
 
