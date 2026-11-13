@@ -6,6 +6,10 @@ on:
 permissions:
   contents: write
 concurrency: radar
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   radar:
     runs-on: ubuntu-latest
@@ -29,7 +33,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           node intraday-radar.mjs 2>&1 | tee run.log

@@ -10,6 +10,10 @@ on:
 permissions:
   contents: write
 concurrency: options-survey
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   survey:
     runs-on: ubuntu-latest
@@ -31,14 +35,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           node options-survey.mjs 2>&1 | tee run.log
         env:
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |

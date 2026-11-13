@@ -11,6 +11,10 @@ on:
 permissions:
   contents: write
 concurrency: discovery2
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   engine:
     runs-on: ubuntu-latest
@@ -53,7 +57,7 @@ jobs:
           path: cat-cache
           key: cat-cache-none
           restore-keys: cat-cache-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         timeout-minutes: 100
         run: |
           set -o pipefail
@@ -62,7 +66,7 @@ jobs:
         env:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       - if: success() || failure()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
@@ -79,18 +83,14 @@ jobs:
           # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
           LF=0; if [ "${{ success() }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
           elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || { LF=1; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry merge NOT stored (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; }
-          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
+          else echo "- research registry: NOT published and NOT durable (not in private mode)" >> "$GITHUB_STEP_SUMMARY"; fi
           for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "discovery engine v2 $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the discovery engine result"; exit 1; }
           [ "$LF" = 0 ] || exit 1   # P0: registry not stored privately (or a failed run): the job fails visibly
           [ "$PF" = 0 ] || exit 1   # P0: owner-derived outputs not stored privately (or a failed run): the job fails visibly
-      - if: success() || failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: discovery2-log
-          path: run.log
+      # P0: no run-log/data artifact (public-repo artifacts are downloadable; step output is private)
       # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
       - if: failure()
         env:

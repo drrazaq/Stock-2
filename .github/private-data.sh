@@ -75,6 +75,17 @@ REGISTRY_ONLY_MERGED=" strategy-library.json "
 # receipt, or is new) is write intent. An unchanged local copy is never written back, so it can never revert a newer private value written
 # meanwhile by another writer (a PENDING retry included); a genuine unsaved owner change is still saved. Without a receipt (no pull in this
 # runner) every present file is copied, as before. COPIED lists the files this save claims; only those are verified.
+# PARTIAL private run-log tail (Codex 6854715808): the private step shell (.github/private-shell.sh) logs every step OUTSIDE the checkout.
+# At each private save, and with each quarantine, a BOUNDED tail is kept as a private file, labelled PARTIAL with its as-of time and the
+# number of omitted lines. It is never complete evidence and never replaces the owner/quote/event files and their own contract.
+RUNLOG_MAX_LINES=2000; RUNLOG_MAX_BYTES=524288
+runlog_tail() {   # $1 destination path; returns 1 when there is no private step log in this job
+  local L="${RUNNER_TEMP:-/tmp}/private-step-logs/job.log" total
+  [ -f "$L" ] && [ ! -L "$L" ] || return 1
+  total=$(wc -l < "$L")
+  { printf 'PARTIAL private run log, as of %s: the last %s of %s lines, at most %s bytes (anything earlier is NOT retained here)\n' "$(date -u +%FT%TZ)" "$([ "$total" -lt "$RUNLOG_MAX_LINES" ] && echo "$total" || echo "$RUNLOG_MAX_LINES")" "$total" "$RUNLOG_MAX_BYTES"
+    tail -n "$RUNLOG_MAX_LINES" "$L" | tail -c "$RUNLOG_MAX_BYTES"; } > "$1.tmp" && mv -f "$1.tmp" "$1"; }
+RUNLOG_NAME="private-runlog-$(printf '%s-%s' "${GITHUB_WORKFLOW:-job}" "${GITHUB_JOB:-run}" | tr -c 'A-Za-z0-9._-' '-' | cut -c1-80).log"
 COPIED=""
 copy_in() { mkdir -p "$DIR/data" || return 1; local f bad=0; COPIED=""
   for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; [ "$MODE" = push ] && case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac
@@ -176,6 +187,7 @@ at=%s
     [ -d "$DIR/.git" ] || { say "Error: quarantine without a pulled private clone; nothing stored"; exit 1; }
     bound || { say "Error: the private clone is not bound to the declared private repository; nothing stored"; exit 1; }
     Q=$(cd "$ROOT/data" 2>/dev/null && ls -1 | grep -E '^private-failed-pass-' ); [ -n "$Q" ] || { say "no quarantine to store"; exit 1; }
+    runlog_tail "$ROOT/data/private-failed-pass-$(date -u +%Y-%m-%dT%H-%M-%S-000Z)__$RUNLOG_NAME" && Q=$(cd "$ROOT/data" && ls -1 | grep -E '^private-failed-pass-')   # with its PARTIAL run-log tail
     BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1; IDX="$DIR.qindex.$$"
     for i in 1 2 3 4 5; do rm -f "$IDX"
       gitp fetch -q origin 2>/dev/null || { sleep "${SAVE_SLEEP:-5}"; continue; }
@@ -191,6 +203,7 @@ at=%s
     rm -f "$IDX"; say "Error: quarantine NOT stored privately after 5 tries; it stays on this runner only"; exit 1 ;;
   push)
     date -u +%FT%TZ > "$PENDING" || { say "Error: cannot record the pending owner update"; exit 1; }   # first: any later failure keeps it
+    runlog_tail "$ROOT/data/$RUNLOG_NAME" && FILES="$FILES $RUNLOG_NAME"   # the PARTIAL run-log tail travels with this save
     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }
     bound || { say "Error: private save NOT confirmed (the private clone is not bound to the declared private repository); your update is kept"; exit 1; }
     copy_in || { say "Error: private save NOT confirmed (copy failed); your update is kept on this runner and will be retried"; exit 1; }

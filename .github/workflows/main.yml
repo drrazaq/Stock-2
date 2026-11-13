@@ -7,6 +7,10 @@ on:
 permissions:
   contents: write
 concurrency: scanner
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   scan:
     runs-on: ubuntu-latest
@@ -25,14 +29,14 @@ jobs:
       # P0 Route A (development, not installed): after the private-data cutover the owner's files come ONLY from the private repository.
       # private-data.sh pull fails closed (exit 1) when it cannot read them, so no job runs on missing holdings or marks.
       - name: Private owner files
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
         run: |
           if [ -e .github/private-data-mode ]; then bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"; else echo "private data: not in private mode"; fi
       # The nightly scan runs as two isolated passes (scan-passes.mjs): only the public pass's output and stdout are public; the private
       # pass's output stays private (data/private-*, owner files, data/private-scan-stdout.log). The intraday checks keep the single pass.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           if [ "$MODE" = daily ]; then node scan-passes.mjs 2>&1 | tee run.log; else node scan.mjs 2>&1 | tee run.log; fi

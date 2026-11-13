@@ -15,6 +15,10 @@ permissions:
 concurrency: squad19-lab
 env:
   SHARDS: '8'
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   route:
     runs-on: ubuntu-latest
@@ -38,7 +42,7 @@ jobs:
         if: hashFiles('.github/private-data-mode') != ''
         run: bash .github/private-outputs.sh admit
       - id: r
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         run: |
           if [ "${{ github.event_name }}" = "schedule" ]; then echo "stage=paper" >> "$GITHUB_OUTPUT";
           elif git diff --name-only HEAD~1 HEAD | grep -q 'run-squad19-judge.txt'; then echo "stage=judge" >> "$GITHUB_OUTPUT";
@@ -74,7 +78,7 @@ jobs:
           path: sq19-daily
           key: sq19-daily-v1-${{ github.run_id }}
           restore-keys: sq19-daily-v1-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           node squad19-lab.mjs plan 2>&1 | tee plan.log
@@ -88,9 +92,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: sq19-plan
-          path: |
-            sq19-work/plan.json.gz
-            plan.log
+          path: sq19-work/plan.json.gz
           retention-days: 5
   shard:
     needs: plan
@@ -123,7 +125,7 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: sq19-plan
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         timeout-minutes: 320
         run: |
           set -o pipefail
@@ -137,9 +139,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: sq19-shard-${{ matrix.shard }}
-          path: |
-            sq19-work/shard-${{ matrix.shard }}.json.gz
-            shard.log
+          path: sq19-work/shard-${{ matrix.shard }}.json.gz
           retention-days: 5
   daily:
     needs: plan
@@ -170,7 +170,7 @@ jobs:
           path: sq19-daily
           key: sq19-daily-v1-${{ github.run_id }}
           restore-keys: sq19-daily-v1-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           node squad19-lab.mjs daily 2>&1 | tee daily.log
@@ -185,9 +185,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: sq19-daily-out
-          path: |
-            sq19-work/daily-out.json
-            daily.log
+          path: sq19-work/daily-out.json
           retention-days: 5
   report:
     needs: [plan, shard, daily]
@@ -219,7 +217,7 @@ jobs:
         with:
           pattern: sq19-*
           merge-multiple: true
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           mkdir -p sq19-work; ls -la sq19-work
@@ -236,7 +234,7 @@ jobs:
           path: sq19-work
           key: sq19-rows-v1-${{ github.run_id }}
       - if: success() || failure()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
@@ -254,7 +252,7 @@ jobs:
           # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
           LF=0; if [ "${{ success() }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
           elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || { LF=1; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry merge NOT stored (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; }
-          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
+          else echo "- research registry: NOT published and NOT durable (not in private mode)" >> "$GITHUB_STEP_SUMMARY"; fi
           for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "squad19 lab $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
@@ -301,13 +299,13 @@ jobs:
           path: fm-cache
           key: fm-cache-none
           restore-keys: fm-cache-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         continue-on-error: true
         run: |
           { ls -la fm-cache; ls sq19-daily | wc -l; free -g; } 2>&1 | tee run.log
           node -e "const z=require('zlib'),fs=require('fs');const s=JSON.parse(z.gunzipSync(fs.readFileSync('fm-cache/fm.json.gz')));const D=Object.keys(s.days).sort();console.log('fm cache',D.length,'sessions',D[0],D[D.length-1],'minPx',s.minPx,'gone',(s.gone||[]).length)" 2>&1 | tee -a run.log
           node runner-hunter-study.mjs --cache fm-cache/fm.json.gz --out-json data/squad19-rh1-fm.json --out-md data/squad19-rh1-fm.md 2>&1 | tail -n 20 | tee -a run.log
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         continue-on-error: true
         run: |
           node squad19-lab.mjs rh1raw 2>&1 | tail -n 30 | tee -a run.log
@@ -316,7 +314,7 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           SEC_UA: ${{ secrets.SEC_UA }}
       - if: always()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
@@ -371,12 +369,12 @@ jobs:
           path: sq19-work
           key: sq19-rows-v1-none
           restore-keys: sq19-rows-v1-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           ls -la sq19-work
           node squad19-lab.mjs judge 2>&1 | tee run.log
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
@@ -394,7 +392,7 @@ jobs:
           # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
           LF=0; if [ "${{ success() }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
           elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || { LF=1; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry merge NOT stored (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; }
-          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
+          else echo "- research registry: NOT published and NOT durable (not in private mode)" >> "$GITHUB_STEP_SUMMARY"; fi
           for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "squad19 judge $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
@@ -431,7 +429,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           if node -e "import('./squad19-core.mjs').then(m=>process.exit(m.RULE_IDS.length?0:1))"; then
@@ -445,7 +443,7 @@ jobs:
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           SEC_UA: ${{ secrets.SEC_UA }}
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |

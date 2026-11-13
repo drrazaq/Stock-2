@@ -16,6 +16,10 @@ on:
 permissions:
   contents: write
 concurrency: squad15b-lab
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   lane:
     runs-on: ubuntu-latest
@@ -38,7 +42,7 @@ jobs:
         with:
           node-version: 20
       - run: bash .github/private-data.sh require strategy-library.json && cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"   # P0: a missing private registry is UNKNOWN, never a fresh one
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           node squad15b-lab.mjs 2>&1 | tee run.log
@@ -46,7 +50,7 @@ jobs:
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
       - if: success() || failure()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
@@ -62,7 +66,7 @@ jobs:
           # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
           LF=0; if [ "${{ success() }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
           elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || { LF=1; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry merge NOT stored (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; }
-          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
+          else echo "- research registry: NOT published and NOT durable (not in private mode)" >> "$GITHUB_STEP_SUMMARY"; fi
           for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "squad 15b lane $(date -u +%FT%H:%MZ)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done

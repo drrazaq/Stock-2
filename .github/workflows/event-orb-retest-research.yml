@@ -24,6 +24,10 @@ concurrency:
   group: stock2-event-orb-retest-research
   cancel-in-progress: false
 
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   research:
     runs-on: ubuntu-latest
@@ -95,16 +99,7 @@ jobs:
             fm-cache/evr-sec.json.gz
             fm-cache/evr-min.json.gz
           key: evr-cache-${{ github.run_id }}
-      - name: Keep the run log and the bar manifest as an artifact (not committed)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: stock2-event-orb-retest-${{ github.run_id }}
-          path: |
-            run.log
-            data/event-orb-retest-15d-bars.json
-          if-no-files-found: ignore
-          retention-days: 30
+      # P0: no run-log/data artifact (public-repo artifacts are downloadable; step output is private)
       - name: Commit the data outputs
         if: always()
         env:
@@ -118,7 +113,7 @@ jobs:
           # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
           LF=0; if [ "${{ success() }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
           elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || { LF=1; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry merge NOT stored (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; }
-          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
+          else echo "- research registry: NOT published and NOT durable (not in private mode)" >> "$GITHUB_STEP_SUMMARY"; fi
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           git diff --cached --quiet || git commit -m "event ORB retest research $(date -u +%FT%RZ)"

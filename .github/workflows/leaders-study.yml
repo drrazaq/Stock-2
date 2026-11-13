@@ -9,6 +9,10 @@ on:
 permissions:
   contents: write
 concurrency: leaders-study
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   study:
     runs-on: ubuntu-latest
@@ -42,7 +46,7 @@ jobs:
           path: study-cache
           key: leaders-study-${{ github.run_id }}
           restore-keys: leaders-study-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           node leaders-study.mjs 2>&1 | tee run.log
@@ -51,7 +55,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Share counts on today's split basis, before quality and autolab use them (uses data/splits.json from the step above).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -60,21 +64,21 @@ jobs:
         env:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       # Value chains (AI, space, energy, obesity drugs) and every industry: how each link is doing (same prices, no extra calls).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node chains.mjs 2>&1 | tee -a run.log
       # Chain ripple: when a chain member jumps, do its suppliers/peers that have not moved yet follow? (same prices, no extra calls)
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node chain-ripple.mjs 2>&1 | tee -a run.log
       # Insider cluster buying (SEC Form 4 data sets, free, quarterly): do 2-3+ insiders buying with their own money predict gains?
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -83,7 +87,7 @@ jobs:
         env:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       # Learn from the winners, on the same whole-market prices (no extra data calls).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
@@ -92,7 +96,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Test new hunting rules on the same prices (no extra data calls).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
@@ -101,7 +105,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Score every stock and test whether the score works (same prices, no extra data calls).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
@@ -110,7 +114,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Earnings-surprise drift fair test (same prices, no extra data calls).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
@@ -125,7 +129,7 @@ jobs:
           path: ev-cache
           key: events-cache-none
           restore-keys: events-cache-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
@@ -134,7 +138,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # HORIZONS: pullback / leader / turn-around setups held 1, 3 and 6 months (mid and long term), same prices.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -144,7 +148,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # EXIT TEST: the same buys sold 10 ways (hold, trailing stops, profit lock, average lines, target/stop), vs the S&P 500.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -154,7 +158,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # SELL NOW, BUY BACK LOWER? Selling and re-buying vs simply holding, 5 years, costs included.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -164,7 +168,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # REBALANCING: 10-stock portfolios, equal weights / trim over 15% / new cash to the smallest, vs simply holding.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -174,7 +178,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # QUALITY COMPANIES: long investing by the SEC reports (profit, no dilution, lean growth, cash-backed profit), held 6-12 months.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -185,7 +189,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # STOP STUDY: 10 stop rules on your own kind of buys (any / strong stocks), vs no stop, 5 years.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -195,7 +199,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # AUTOLAB: the system invents 60 new rules a week and tests each through discovery, validation and an untouched vault; survivors go to paper.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -205,7 +209,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # OCTOPUS: 26 angles + every pair of them, retrained every week, judged only on unseen weeks (same prices + SEC events).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -216,7 +220,7 @@ jobs:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Economic calendar study: S&P 500 on CPI / PPI / retail sales / jobs / Fed days, by surprise vs forecast (encrypted data).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -225,7 +229,7 @@ jobs:
         env:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       # SEC share counts per quarter since 2019 (dilution flag; float known on each past day for the fast-mover lab).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -240,7 +244,7 @@ jobs:
           path: fm-cache
           key: fm-cache-${{ github.run_id }}
           restore-keys: fm-cache-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         run: |
           set -o pipefail
@@ -251,7 +255,7 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
       # Agent A (Timing), research only, same fm-cache (minute bars cached in it): A-MISS1 missed-runner autopsy and A-ORB1 opening-range
       # breakout on stocks in play (pre-registered from the original paper; incremental until the 2-year minute history is complete).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -261,7 +265,7 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           MR_CALLS: '300'
           MR_MINUTES: '12'
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -284,7 +288,7 @@ jobs:
           path: seq-cache
           key: seq-cache-${{ github.run_id }}
           restore-keys: seq-cache-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -293,14 +297,14 @@ jobs:
         env:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
       # Agent A (Timing) studies, research only: A-EW1 early-wave stack (pre-registered, run once; needs ev-cache from above) and the A-RG1 regime gate.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node ew-stack.mjs 2>&1 | tee -a run.log
       # One step per study, so one crash no longer hides the others.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -308,19 +312,19 @@ jobs:
           node regime-gate.mjs 2>&1 | tee -a run.log
         env:
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node pattern-lab.mjs 2>&1 | tee -a run.log
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node swing-lab.mjs 2>&1 | tee -a run.log
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -329,20 +333,20 @@ jobs:
       # Agent A, research only: E16 earnings gap-and-hold absorption (pre-registered, run once per version; earnings dates from
       # data/earnings-cache.json.gz, same prices). Writes data/e16-absorption.json and library E16.
       - if: success() || failure()   # run even if an earlier study step failed
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         continue-on-error: true
         run: |
           set -o pipefail
           node e16-absorption.mjs 2>&1 | tee -a run.log
       # Agent C (Crowd), research only: tip-source scoreboard (every logged source vs the average stock and the S&P 500; FADE list for
       # C-FADE1) and C-GOV1 federal awards (official USAspending API, pre-registered, run once; awards kept in study-cache/gov).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
           set -o pipefail
           node tip-score.mjs 2>&1 | tee -a run.log
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -353,7 +357,7 @@ jobs:
       # Agent C, pre-registered 22 Oct 2026, run once: C-GOV1b federal awards with the USAspending parent map (awards and parent
       # lookups kept in study-cache/gov2; resumable, 60-minute budget) and C-S8 / C-LOCK share-supply avoid blocks (EDGAR full index,
       # kept in study-cache/edgar-idx).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         timeout-minutes: 75
@@ -362,7 +366,7 @@ jobs:
           node gov-awards2.mjs 2>&1 | tee -a run.log
         env:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         timeout-minutes: 30
@@ -380,7 +384,7 @@ jobs:
           path: cat-cache
           key: cat-cache-${{ github.run_id }}
           restore-keys: cat-cache-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         timeout-minutes: 75
@@ -404,7 +408,7 @@ jobs:
           path: a-cache
           key: a-cache-${{ github.run_id }}
           restore-keys: a-cache-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         timeout-minutes: 60
@@ -428,7 +432,7 @@ jobs:
           path: chain-cache
           key: chain-cache-${{ github.run_id }}
           restore-keys: chain-cache-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         timeout-minutes: 75
@@ -448,7 +452,7 @@ jobs:
       # look-alikes) on 2021-2023 only, freezes the best feature combinations as rules, tests each ONCE on 2024-2026 at the tier-2 standard
       # with a luck bar that rises with every rule tested; each week adds the next 10 untested rules of the frozen pool. Same prices and the
       # caches restored above (ev-cache, cat-cache, study-cache); writes data/discovery2.json and data/discovery2-today.json (ACTIONS).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         timeout-minutes: 60
@@ -458,7 +462,7 @@ jobs:
         env:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
       # AGENT LEAGUE referee: freezes each research agent's champion picks weekly and scores old batches vs the S&P 500 (same prices).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         if: success() || failure()   # run even if an earlier study step failed
         continue-on-error: true
         run: |
@@ -478,7 +482,7 @@ jobs:
       # and data/strategy-library.json gets only the entries/fields this run changed (library-merge.mjs), so library edits pushed
       # during the 2-hour run are kept. The push loop keeps the old behaviour (pull --rebase -X theirs, 5 tries).
       - if: success() || failure()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
@@ -497,7 +501,7 @@ jobs:
           # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
           LF=0; if [ "${{ success() }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
           elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || { LF=1; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry merge NOT stored (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; }
-          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
+          else echo "- research registry: NOT published and NOT durable (not in private mode)" >> "$GITHUB_STEP_SUMMARY"; fi
           for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "leaders fair test $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done

@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 concurrency: premarket
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   check:
     runs-on: ubuntu-latest

@@ -16,6 +16,10 @@ on:
 permissions:
   contents: write
 concurrency: squad15-lab
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   lab:
     runs-on: ubuntu-latest
@@ -45,7 +49,7 @@ jobs:
           path: squad15-cache
           key: squad15-cache-${{ github.run_id }}
           restore-keys: squad15-cache-
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           MODE=run
           if [ "${{ github.event_name }}" = "schedule" ]; then MODE=paper; fi
@@ -61,7 +65,7 @@ jobs:
       # Squad 6's own code, unchanged except that it keeps ALL its trades (its committed file keeps only the last 300), run OFFLINE in a
       # scratch copy; only its trade list is read (squad15-cache/sq6-full.json). Nothing of it is committed.
       - if: env.MODE == 'run' || env.MODE == 'diag'
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         timeout-minutes: 30
         run: |
           mkdir -p squad15-cache
@@ -69,7 +73,7 @@ jobs:
           sed -i 's/r\.trades\.slice(-300)/r.trades/' "$S/squad6-lab.mjs"
           (cd "$S" && OFFLINE=1 node squad6-lab.mjs 2>&1 | tail -15) || echo "squad6 rebuild failed"
           cp "$S/data/squad6-lab.json" squad15-cache/sq6-full.json || true
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         timeout-minutes: 200
         run: |
           set -o pipefail
@@ -83,7 +87,7 @@ jobs:
           path: squad15-cache
           key: squad15-cache-${{ github.run_id }}
       - if: success() || failure()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
@@ -99,14 +103,10 @@ jobs:
           # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
           LF=0; if [ "${{ success() }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
           elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || { LF=1; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry merge NOT stored (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; }
-          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
+          else echo "- research registry: NOT published and NOT durable (not in private mode)" >> "$GITHUB_STEP_SUMMARY"; fi
           for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "squad 15 lab $(date -u +%F) ($MODE)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the squad 15 lab result"; exit 1; }
           [ "$LF" = 0 ] || exit 1   # P0: registry not stored privately (or a failed run): the job fails visibly
-      - if: success() || failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: squad15-lab-log
-          path: run.log
+      # P0: no run-log/data artifact (public-repo artifacts are downloadable; step output is private)

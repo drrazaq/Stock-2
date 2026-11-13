@@ -7,6 +7,10 @@ on:
 permissions:
   contents: write
 concurrency: smart-money
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   smart:
     runs-on: ubuntu-latest
@@ -28,7 +32,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           node smart-money.mjs 2>&1 | tee run.log
@@ -42,11 +46,11 @@ jobs:
       # Agent C (22 Oct 2026): public dated calls for the tip scoreboard (ARK daily buys, official free API, no login) ->
       # data/tips-public.jsonl. Scored by tip-score.mjs; never a buy list.
       - if: always()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         continue-on-error: true
         run: node tip-sources.mjs 2>&1 | tee -a run.log
       # Earnings history for the earnings-surprise study (Alpha Vantage 25 a day, FMP if the plan allows, Finnhub calendar).
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           node earnings-study.mjs 2>&1 | tee -a run.log
@@ -63,7 +67,7 @@ jobs:
           key: events-cache-${{ github.run_id }}
           restore-keys: events-cache-
       - if: always()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         continue-on-error: true
         run: |
           set -o pipefail

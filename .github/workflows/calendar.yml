@@ -7,6 +7,10 @@ on:
 permissions:
   contents: write
 concurrency: calendar
+# P0 (Codex 6854715808): every run step's output is kept PRIVATE (.github/private-shell.sh); the public log shows only exit status
+defaults:
+  run:
+    shell: bash .github/private-shell.sh plain {0}
 jobs:
   calendar:
     runs-on: ubuntu-latest
@@ -28,7 +32,7 @@ jobs:
       # Economic calendar: release dates from the official BLS and Federal Reserve schedules, actual values from Alpha Vantage,
       # TipRanks only as a weekly fallback (its monthly calls are scarce) + Massive holidays and your dividends.
       # Saved ENCRYPTED (data/calendar.enc): TipRanks data may not be republished and this repository is public.
-      - shell: bash
+      - shell: bash .github/private-shell.sh pipefail {0}
         run: |
           set -o pipefail
           node calendar.mjs 2>&1 | tee run.log
@@ -40,14 +44,14 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
       # SEC share counts (first run reads ~30 quarters, then 3 requests a day): dilution flag + float known on past days.
       - if: always()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         continue-on-error: true
         run: node shares.mjs 2>&1 | tee -a run.log
         env:
           SEC_UA: ${{ secrets.SEC_UA }}
       # System health: did every job produce fresh results? Telegram message only when something silently stopped.
       - if: always()
-        shell: bash
+        shell: bash .github/private-shell.sh pipefail {0}
         continue-on-error: true
         run: node health.mjs 2>&1 | tee -a run.log
         env:
