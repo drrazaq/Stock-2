@@ -66,6 +66,24 @@ function atomicInstall(src, dest) {   // same-directory temp + fsync + rename: t
 }
 function codeCopy(dest) { fs.mkdirSync(path.join(dest, 'data'), { recursive: true }); for (const e of fs.readdirSync(ROOT, { withFileTypes: true })) { if (['.git', 'node_modules', 'data'].includes(e.name)) continue; fs.cpSync(path.join(ROOT, e.name), path.join(dest, e.name), { recursive: true }); } }
 
+// FAILED PRIVATE PASS: its side effects may already have happened (a nightly message with a SELL line, an owner-facing receipt), so its
+// changed files are RETAINED as bounded PRIVATE quarantine evidence instead of being deleted with the temp copy. They are never current
+// state (never installed at their own names, never restored as caches, never hydrated, never replayed, nothing is re-sent), they are
+// data/private-* so the public save never publishes them, and the private route stores them when private mode saves; when it does not,
+// the save fails visibly (save-data.sh exit 3). Bounds: 4 MiB per file, 32 MiB per failure, the newest 3 failures.
+export const FAILED_PREFIX = 'private-failed-pass-', NOT_STATE = /^private-(failed-pass|conflict)-/;
+export const FAILED_LIMITS = Object.freeze({ fileBytes: 4 << 20, totalBytes: 32 << 20, keep: 3 });
+export function retainFailedPrivate(box, before, info, { data = DATA, now = Date.now(), limits = FAILED_LIMITS } = {}) {
+  const stamp = new Date(now).toISOString().replace(/[:.]/g, '-'), kept = [], skipped = []; let total = 0;
+  for (const r of changed(before, path.join(box, 'data'))) { const src = path.join(box, 'data', r); let size; try { size = fs.statSync(src).size; } catch { skipped.push({ r, why: 'unreadable' }); continue; }
+    if (size > limits.fileBytes || total + size > limits.totalBytes) { skipped.push({ r, why: 'over bound', size }); continue; }
+    atomicInstall(src, path.join(data, FAILED_PREFIX + stamp + '__' + r.replace(/\//g, '__'))); total += size; kept.push(r); }
+  const idx = path.join(data, FAILED_PREFIX + stamp + '.json'), tmp = idx + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify({ v: 1, kind: 'QUARANTINE: failed private pass evidence; not current state; never replayed or re-sent', at: new Date(now).toISOString(), ...info, retained: kept, skipped }, null, 1), { mode: 0o600 }); fs.renameSync(tmp, idx);
+  const stamps = [...new Set(fs.readdirSync(data).filter(n => n.startsWith(FAILED_PREFIX)).map(n => n.slice(FAILED_PREFIX.length).split(/__|\.json$/)[0]))].sort();
+  for (const old of stamps.slice(0, Math.max(0, stamps.length - limits.keep))) for (const n of fs.readdirSync(data)) if (n.startsWith(FAILED_PREFIX + old)) fs.rmSync(path.join(data, n), { force: true });
+  return { stamp, kept, skipped };
+}
 export function runPasses({ env = process.env, log = (s) => process.stdout.write(s + '\n'), timeoutMs = 6 * 3600e3 } = {}) {
   const work = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-passes-')), pubBox = path.join(work, 'public'), privBox = path.join(work, 'private'), cache = path.join(work, 'fetch-cache');
   try {
@@ -88,8 +106,8 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
     // ---- 2. PRIVATE PASS (isolated copy of the full real state)
     codeCopy(privBox);
     const realAtCopy = snapshot(DATA);   // owner files changed after this point (e.g. by the bot) are never overwritten with older bytes
-    for (const r of listData(DATA)) copy(path.join(DATA, r), path.join(privBox, 'data', r));
-    for (const r of listData(DATA)) { if (!r.startsWith('private-')) continue; const pub2 = r.slice('private-'.length).replace(/__/g, '/');
+    for (const r of listData(DATA)) if (!NOT_STATE.test(r)) copy(path.join(DATA, r), path.join(privBox, 'data', r));   // quarantine/conflict evidence is never scan input
+    for (const r of listData(DATA)) { if (!r.startsWith('private-') || NOT_STATE.test(r)) continue; const pub2 = r.slice('private-'.length).replace(/__/g, '/');
       if (!isPrivate(pub2.split('/')[0])) copy(path.join(DATA, r), path.join(privBox, 'data', pub2)); }   // owner's full-state caches
     let pubAt = null; if (pubOk) { try { pubAt = JSON.parse(fs.readFileSync(path.join(pubBox, 'data', 'signals.json'), 'utf8')).generatedAt; } catch {} }
     const privBefore = snapshot(path.join(privBox, 'data'));
@@ -107,6 +125,9 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
         atomicInstall(src, dest);
       }
     }
+    if (!privOk) { try { const q = retainFailedPrivate(privBox, privBefore, { exit: priv.status, signal: priv.signal || null });
+        log('two-pass scan: the failed private pass changed ' + (q.kept.length + q.skipped.length) + ' files; ' + q.kept.length + ' kept privately as quarantine evidence (' + FAILED_PREFIX + q.stamp + '), not as current state' + (q.skipped.length ? '; ' + q.skipped.length + ' over the size bound NOT kept' : ''));
+      } catch (e) { log('two-pass scan: Error: the failed private pass evidence could NOT be retained (' + (e.code || e.message) + ')'); } }
     // private sink after the private results (a sink failure must not lose them); a failure is reported and fails the run visibly
     let sinkOk = true; try { atomicInstall(sinkTmp, env.PRIVATE_SCAN_LOG || path.join(DATA, 'private-scan-stdout.log')); } catch (e) { sinkOk = false; log('two-pass scan: Error: the private log could not be stored (' + e.code + '); private results were kept'); }
     log('two-pass scan: private pass ' + (privOk ? 'OK' : 'FAILED (exit ' + priv.status + (priv.signal ? ', ' + priv.signal : '') + '); owner files left as they were') + ' (its output is private)');
