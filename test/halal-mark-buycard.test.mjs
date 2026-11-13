@@ -47,6 +47,16 @@ test('a card delayed past the open by a 429 retry is NOT delivered; the ZAD rece
   assert.equal(rate, null, 'the 429 was served'); assert.equal(m.length, 1); assert.match(m[0], /NEW: marked HALAL/); assert.doesNotMatch(m.join('\n'), /PERMITTED BUY|- BUY/);
   assert.equal(S.readJson('data/halal.json').NEW.s, 'ok'); assert.deepEqual(offers(S), [], 'an undelivered card logs no offer');
 });
+test('one batch of updates: "yes" then "no" for the same stock sends no card and logs no offer; the final mark is fail', async () => {
+  const S = await load(files(['NEW'])); const m = await send(S, 'halal NEW yes', 'halal NEW no');
+  assert.doesNotMatch(m.join('\n'), /PERMITTED BUY|- BUY NEW/); assert.equal(S.readJson('data/halal.json').NEW.s, 'fail'); assert.deepEqual(offers(S), []);
+});
+test('one batch of updates: a "bought" that fills the last slot after the mark stops the card', async () => {
+  const two = { X1: { entry: 1, src: 'leader dip' }, X2: { entry: 1, src: 'leader dip' } };
+  const S = await load({ ...files(['NEW', 'ZZB'], LAST, { ZZB: ok }, two) });
+  const m = await send(S, 'halal NEW yes', 'bought ZZB 100 5');
+  assert.ok(S.readJson('data/my-positions.json').ZZB, 'the buy was recorded'); assert.doesNotMatch(m.join('\n'), /PERMITTED BUY/); assert.deepEqual(offers(S).filter(x => x.sym === 'NEW'), []);
+});
 test('no card for a "no" mark, a non-pick, a stale source or full slots', async () => {
   { const S = await load(files(['NEW'])); const m = await send(S, 'halal NEW no'); assert.equal(m.length, 1); assert.doesNotMatch(m[0], /PERMITTED BUY|- BUY/); }
   { const S = await load(files(['AAA'])); const m = await send(S, 'halal ZZZ yes'); assert.equal(m.length, 1); }

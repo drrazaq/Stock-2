@@ -2579,14 +2579,19 @@ function ldipLines(pos, lastPx, exclude, session, logOnly) {
 // F2 (13 Nov 2026): a ZAD 'yes' mark recorded while that stock's LEADER DIP signal is still inside its next-open window returns the
 // same gated BUY card ACTIONS would show now (same slots, brake, danger and window checks; nothing new is decided here). Only the
 // newly marked stocks are logged as offers, and only after their card is delivered. Each card carries the window's expiry: it is sent separately from the ZAD receipt and
-// re-checked before every Telegram attempt, so a card delayed past the open is never delivered (the mark itself is kept).
+// re-checked before every Telegram attempt against the current marks, positions, source and brake as well as the clock, so a card
+// delayed past the open, or overtaken by a later 'no' mark or a filled slot, is never delivered (the marks themselves are kept).
 function ldipMarkedCards(syms, pos, session) { try { const ld = ldipLines(pos, {}, [], session, new Set()), out = [];   // nothing logged here: an offer is logged only once its card is delivered
   const T = readJson0('data/squad11-today.json'), sd = T && T.lastClose, win = sd ? ldipEntryWindow(sd, T.generatedAt, session) : null;
   if (!win || win.state !== 'IN_WINDOW') return [];
   const expiresMs = Date.parse(win.expiresAt);
   for (const s of syms) { const l = ld.find(x => x.startsWith('- BUY ' + s + ' ')); if (!l) continue;
     const src = ((T.methods && T.methods[LDIP_RULE] && T.methods[LDIP_RULE].newSignals) || []).find(p => p && p.sym === s);
-    out.push({ sym: s, px: src && src.close > 0 ? +src.close : null, sd, expiresAt: win.expiresAt, valid: (now) => Number.isFinite(now) && now <= expiresMs,
+    // every send attempt re-runs the same gates on the CURRENT marks, positions, source and brake (nothing logged): the exact same card
+    // must still come out, otherwise it is not sent (a later 'halal SYM no', a buy that filled the slots, a new source or the brake)
+    const still = (now) => { try { if (!(Number.isFinite(now) && now <= expiresMs) || myHalal(s) !== 'ok') return false; const T2 = readJson0('data/squad11-today.json');
+      if (!T2 || T2.lastClose !== sd || T2.generatedAt !== T.generatedAt) return false; return ldipLines(pos, {}, [], session, new Set()).includes(l); } catch (e) { return false; } };
+    out.push({ sym: s, px: src && src.close > 0 ? +src.close : null, sd, expiresAt: win.expiresAt, valid: still,
       text: 'NOW A PERMITTED BUY (LEADER DIP; your ZAD mark is recorded). Entry only at the ' + win.entryDay + ' open (' + kwt(570, win.entryDay) + ' Kuwait); this card expires then, no late entry.\n' + l +
         '\nPrice basis: the ' + sd + ' close. Live quote and spread: UNKNOWN here (not checked); the "up to" limit is conditional on the open.' }); }
   return out; } catch (e) { return []; } }
@@ -3625,7 +3630,7 @@ async function tgCommands(sig) {
   }
   fs.writeFileSync('data/tg-state.json', JSON.stringify(state)); savePos(pos);
   if (out.length) await telegram(out.join('\n\n'));
-  for (const k of ldCards) { const r = await telegram(k.text, null, k.valid); if (r.ok) ldipOfferLog(k.sym, k.px, k.sd, LDIP_REAL()); else if (r.reason === 'PRICE_EVIDENCE_EXPIRED') console.log('LEADER DIP card for ' + k.sym + ' not sent: its next-open window expired ' + k.expiresAt + ' (ZAD mark kept).'); }
+  for (const k of ldCards) { const r = await telegram(k.text, null, k.valid); if (r.ok) ldipOfferLog(k.sym, k.px, k.sd, LDIP_REAL()); else if (r.reason === 'PRICE_EVIDENCE_EXPIRED') console.log('LEADER DIP card for ' + k.sym + ' not sent: no longer the same permitted buy at send time (window to ' + k.expiresAt + ', current ZAD mark, slots, source and brake re-checked); ZAD marks as recorded.'); }
   if (ups.length) console.log('Telegram: ' + ups.length + ' message(s) read');
 }
 
