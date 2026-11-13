@@ -6,7 +6,8 @@ const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const bot=read('.github/workflows/bot.yml'),discovery=read('.github/workflows/discover.yml');
 const saveBot=bot.match(/          save\(\) \{([\s\S]*?)\n          \}/)?.[0].split('\n').map(x=>x.slice(10)).join('\n');
 const saveDiscovery=discovery.slice(discovery.indexOf('          git config user.name'),discovery.indexOf('      # If anything above failed')).split('\n').map(x=>x.startsWith('          ')?x.slice(10):x).join('\n');
-assert.ok(saveBot?.includes('git pull -q --rebase'));assert.ok(saveDiscovery.includes('git pull --rebase -X theirs'));
+assert.ok(saveBot?.includes('bash .github/save-data.sh'));   // P0 Route A: the bot saves through the shared public-save privacy floor
+assert.ok(saveDiscovery.includes('git pull --rebase -X theirs'));
 const source=read('discover.mjs'),start=source.indexOf("{\n const journal=readRadarLedger('data/discovery-journal.jsonl');"),end=source.indexOf("\n}\n",start)+2,producer=source.slice(start,end);
 assert.ok(start>0&&producer.includes('assessmentCycleRows(queue)'));
 for(const order of ['bot-first','discovery-first'])test('actual '+order+' saves preserve discovery and assessment rows',()=>{
@@ -19,7 +20,7 @@ for(const order of ['bot-first','discovery-first'])test('actual '+order+' saves 
  fs.writeFileSync(path.join(seed,'data/signals.json'),JSON.stringify({session:'2026-11-06',stocks:[{sym:'AAA',state:'Buy watch',rule:'retained rule'}]}));
  fs.writeFileSync(path.join(seed,'data/quality.json'),JSON.stringify({to:'2026-11-06',today:[{sym:'CCC',q:.9}]}));
  fs.writeFileSync(path.join(seed,'data/earnings-recent.json'),JSON.stringify({reports:[{sym:'BBB',d:'2026-11-06',a:-1,e:-.5}]}));
- fs.mkdirSync(path.join(seed,'.github'));fs.writeFileSync(path.join(seed,'.github/merge-alert-state.mjs'),read('.github/merge-alert-state.mjs'));
+ fs.mkdirSync(path.join(seed,'.github'));for(const f of ['merge-alert-state.mjs','save-data.sh','save-privacy-guard.mjs','private-files.txt'])fs.writeFileSync(path.join(seed,'.github',f),read('.github/'+f));
  git(seed,'add','.');git(seed,'commit','-m','seed');git(seed,'remote','add','origin',remote);git(seed,'push','-u','origin','main');git(tmp,'--git-dir='+remote,'symbolic-ref','HEAD','refs/heads/main');
  const dirs={};for(const n of ['bot','discovery']){dirs[n]=path.join(tmp,n);git(tmp,'clone',remote,dirs[n]);git(dirs[n],'config','user.name','test');git(dirs[n],'config','user.email','test@example.invalid');}
  // Actual discover.mjs producer block, importing the candidate implementation.

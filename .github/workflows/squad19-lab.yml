@@ -24,6 +24,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 2
+      - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
+        run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
       - id: r
         shell: bash
         run: |
@@ -40,6 +42,8 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=12288
     steps:
       - uses: actions/checkout@v4
+      - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
+        run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -78,6 +82,8 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=12288
     steps:
       - uses: actions/checkout@v4
+      - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
+        run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -110,6 +116,8 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=14336
     steps:
       - uses: actions/checkout@v4
+      - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
+        run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -146,6 +154,8 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=12288
     steps:
       - uses: actions/checkout@v4
+      - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
+        run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -196,6 +206,8 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=14336
     steps:
       - uses: actions/checkout@v4
+      - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
+        run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -247,6 +259,8 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=12288
     steps:
       - uses: actions/checkout@v4
+      - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
+        run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -286,6 +300,8 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=8192
     steps:
       - uses: actions/checkout@v4
+      - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
+        run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
       - uses: actions/setup-node@v4
         with:
           node-version: 20
