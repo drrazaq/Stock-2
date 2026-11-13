@@ -26,7 +26,26 @@ export function readInstrumentType(symbol,{file,pinnedSha256,now=Date.now()}={})
 }
 export async function instrumentAwareSec(symbol,lookup,options={}){
  const instrument=readInstrumentType(symbol,options);
- if(instrument.policyExcluded)return {known:false,tags:[],status:'INSTRUMENT_POLICY_EXCLUDED',sourceFailure:false,policyExcluded:true,admissionBlocked:true,instrument};
+ const reviewed=researchInstrumentScope(symbol,instrument);
+ if(reviewed.policyExcluded)return {known:false,tags:[],status:'INSTRUMENT_POLICY_EXCLUDED',sourceFailure:false,policyExcluded:true,admissionBlocked:true,instrument:reviewed};
  let sec;try{sec=await lookup(symbol);}catch{sec={known:false,tags:[]};}
  return {...sec,instrument,admissionBlocked:instrument.status!=='ELIGIBLE_COMMON_STOCK'||sec?.status==='NO_ISSUER_RECORD',sourceFailure:sec?.sourceFailure??sec?.known!==true,status:sec?.status==='NO_ISSUER_RECORD'?'NO_ISSUER_RECORD':sec?.known===true?(instrument.status==='ELIGIBLE_COMMON_STOCK'?'SEC_KNOWN':'INSTRUMENT_IDENTITY_UNKNOWN'):'SEC_UNAVAILABLE'};
+}
+
+// Reviewed public issuer/exchange facts, not a complete or point-in-time universe.
+// Instrument restrictions do not constitute a ZAD decision. Unknown stays unknown.
+export const REVIEWED_RESEARCH_EXCLUSIONS=Object.freeze({
+ ZXZZT:{kind:'TEST_SECURITY',sourceUrl:'https://www.txse.com/alerts/5059533f-8b82-4a4f-944c-7b126dbb7176',sourceDate:'2026-07-06'},
+ CRWX:{kind:'LEVERAGED_ETF',underlying:'CRWV',sourceUrl:'https://www.cboe.com/us/equities/listings/listed_products/symbols/CRWX/'},
+ CWVX:{kind:'LEVERAGED_ETF',underlying:'CRWV',sourceUrl:'https://www.tradretfs.com/cwvx'},
+ CRWG:{kind:'LEVERAGED_ETF',underlying:'CRWV',sourceUrl:'https://leverageshares.com/us/etfs/leverage-shares-2x-long-crwv-daily-etf'},
+ AXTU:{kind:'LEVERAGED_ETF',underlying:'AXTI',sourceUrl:'https://www.cboe.com/us/equities/listings/listed_products/symbols/AXTU'},
+ BDRY:{kind:'FREIGHT_FUTURES_ETF',sourceUrl:'https://amplifyetfs.com/bdry/'}
+});
+export function researchInstrumentScope(symbol,instrument){
+ const known=REVIEWED_RESEARCH_EXCLUSIONS[symbol];
+ if(known)return {status:'POLICY_EXCLUDED',...known,evidence:'PUBLIC_PRIMARY_REVIEW_6802098006',verifiedAt:'2026-11-11',policyExcluded:true};
+ if(instrument?.status==='POLICY_EXCLUDED'&&instrument.policyExcluded===true)return {...instrument,status:'POLICY_EXCLUDED'};
+ if(instrument?.status==='ELIGIBLE_COMMON_STOCK'&&instrument.securityId&&instrument.referenceSha256)return {...instrument,status:'ELIGIBLE_COMMON_STOCK',policyExcluded:false};
+ return {status:'UNKNOWN',policyExcluded:false,reason:'NO_VERIFIED_SECURITY_CLASS',securityId:null};
 }

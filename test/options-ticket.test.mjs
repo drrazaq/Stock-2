@@ -11,12 +11,12 @@ const call = (sym, ask) => ({ sym, exp: '2026-11-20', strike: 20, ask, bid: ask 
 const halal = { TEVA: { s: 'fail', d: today, by: 'ZAD (you)' }, HQY: { s: 'ok', d: today, by: 'ZAD (you)' } };
 const tickets = (text) => text.split('\n').filter(l => /^TICKET/.test(l));
 
-test('a ticket is shown only for a stock marked halal (ok) in ZAD: not for NOT HALAL, not for never checked', async () => {
+test('private ZAD marks do not authorize options entry tickets', async () => {
   // TEVA: marked NOT halal; HQY: marked halal; ZZZ: never checked. All three cost under 300 USD.
   const S = await loadScan({ files: { 'data/halal.json': halal, 'data/options-shadow.json': { open: [call('TEVA', 1.99), call('HQY', 2.40), call('ZZZ', 1.50)], real: [] } } });
   const t = tickets(S.fn('optionsText')());
-  assert.equal(t.length, 1);
-  assert.match(t[0], /BUY TO OPEN 1 x HQY /);
+  assert.equal(t.length, 0);
+  assert.match(S.fn('optionsText')(), /RESEARCH ONLY/);
 });
 
 test('no ticket at all while 2 real contracts are open', async () => {
@@ -25,10 +25,10 @@ test('no ticket at all while 2 real contracts are open', async () => {
   assert.deepEqual(tickets(S.fn('optionsText')()), []);
 });
 
-test('control: one real contract open still leaves room for one ticket', async () => {
+test('one recorded real contract does not authorize another entry', async () => {
   const real = [{ sym: 'AAA', exp: '2026-11-20', strike: 10, paid: 1.2, d: '2026-10-20' }];
   const S = await loadScan({ files: { 'data/halal.json': halal, 'data/options-shadow.json': { open: [call('HQY', 2.40)], real } } });
-  assert.equal(tickets(S.fn('optionsText')()).length, 1);
+  assert.equal(tickets(S.fn('optionsText')()).length, 0);
 });
 
 test('no network was touched', () => assert.deepEqual(blocked, []));

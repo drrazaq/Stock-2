@@ -25,7 +25,8 @@ const section = (t, name) => { const i = t.indexOf('\n' + name); if (i < 0) retu
 test('28 Oct contradiction fixed: focus on + LONGER HOLDS buys (marked halal) -> buys under TODAY\'S ACTIONS with their status; the policy says engine buys only are paused', async () => {
   const { t } = await render({ 'data/quality.json': quality(PICKS), 'data/halal.json': { WST: ok, HQY: ok, MMSI: ok }, 'data/names.json': { WST: 'WEST PHARMACEUTICAL SERVICES INC' } });
   assert.doesNotMatch(t, /no new trading buys/i); assert.match(t, /- BUY WST \(WEST PHARMACEUTICAL SERVICES INC\) up to/);
-  assert.match(t, /^ACTIONS TEST\nPOLICY TODAY: focus ON: engine buys PAUSED; your own lanes \(LEADER DIP, LONGER HOLDS, EARNINGS DRIFT\) active\./);
+  assert.match(t, /^ACTIONS TEST\nPOLICY TODAY: focus ON: engine buys PAUSED; your own lanes \(LEADER DIP, LONGER HOLDS\) follow their gates; EARNINGS DRIFT status below\./);
+  assert.match(t, /EARNINGS DRIFT: OFF .*UNAVAILABLE; no buys/); assert.doesNotMatch(t, /EARNINGS DRIFT\) active/);
   const acts = section(t, "TODAY'S ACTIONS"); assert.ok(acts, 'actions section');
   for (const sy of ['WST', 'HQY', 'MMSI']) assert.match(acts, new RegExp('- BUY ' + sy + ' (\\([^)]*\\) )?up to'));
   assert.match(acts, /LONGER HOLDS \| horizon: hold up to 6 months \| YOUR LABELLED CHOICE \(20 Oct\), tier 2 TRADABLE SMALL.*NOT PROVEN \| permitted today: yes/);

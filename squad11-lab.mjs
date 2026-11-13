@@ -192,7 +192,8 @@ function universe(t) { if (uniMemo.has(t)) return uniMemo.get(t); const X = rows
   const out = { ranked, liquid: liqList(t).length, companies: X.rows.length, noCik: X.noCik, noFacts: X.noFacts, noShares: X.noShares, foreign: X.foreign }; uniMemo.set(t, out); return out; }
 // industry (SIC 4-digit)
 // ================= 4b. universe = squad 5's (above) =================
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+// Public research exports never read or infer the owner's private ZAD marks. Scanner callers resolve those privately.
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';
 
 // ================= 5. LEADERS at every month end (+ the newest session when it is a month end: paper lane only) =================
 const LIVE_ME = nextSession(D[T - 1]).slice(0, 7) !== D[T - 1].slice(0, 7) && !MENDS.includes(T - 1), FORM = LIVE_ME ? [...MENDS, T - 1] : [...MENDS];
@@ -267,7 +268,7 @@ for (const id of IDS) { const mine = []; if (fromT >= 0) for (const s of SG[id])
   const closed = []; for (const z of TR[id]) { if (fromT < 0 || z.t < fromT || z.open) continue; const sym = SYMS[z.i], lid = id + '|' + sym + '|' + D[z.t], c = yard(z.k, z.x);
     closed.push({ d: D[z.t], sym, g: z.g, c, halal: halal(sym) }); if (!resIds.has(lid)) { resIds.add(lid); newLines.push({ type: 'result', id: lid, m: id, sym, d: D[z.t], buy: D[z.k], sell: D[z.x], kind: z.kind, g: r4(z.g), net: r4(z.g - COST), avgStock: c === null ? null : r4(c - COST) }); } }
   const st = boardStats(closed), fr = firstRun[id];
-  board[id] = { name: RULES[id].name, hold: RULES[id].hold, signals: mine.length, open: TR[id].filter(z => z.open && fromT >= 0 && z.t >= fromT).length, closed: st, halalOk: boardStats(closed.filter(z => z.halal === 'ok')), ready: paperReady(st), fiveYear: fr ? { verdict: fr.verdict, why: fr.why } : null };
+  board[id] = { name: RULES[id].name, hold: RULES[id].hold, signals: mine.length, open: TR[id].filter(z => z.open && fromT >= 0 && z.t >= fromT).length, closed: st, halalOk: { state: 'PRIVATE_OWNER_MARKS_NOT_EXPORTED', n: null, days: null, avg: null }, ready: paperReady(st), fiveYear: fr ? { verdict: fr.verdict, why: fr.why } : null };
   today[id] = { name: RULES[id].name, hold: RULES[id].hold, tier: fr ? fr.verdict : null, newSignals: SG[id].filter(s => s.t === T - 1).map(s => ({ sym: SYMS[s.i], close: r4(CC(s.i, s.t)), halal: halal(SYMS[s.i]), d: D[s.t], plan: s.plan })),
     open: TR[id].filter(z => z.open && fromT >= 0 && z.t >= fromT).map(z => ({ sym: SYMS[z.i], halal: halal(SYMS[z.i]), signal: D[z.t], buy: z.k <= T - 1 ? D[z.k] : null, sinceBuy: z.px0 ? r4(CC(z.i, lastI[z.i]) / z.px0 - 1) : null })) }; }
 if (newLines.length) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x)).join('\n') + '\n');

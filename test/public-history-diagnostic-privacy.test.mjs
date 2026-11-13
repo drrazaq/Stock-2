@@ -1,0 +1,18 @@
+// New public projection only. Synthetic software fixtures; inherited public fields remain an open privacy migration.
+import test from 'node:test';import assert from 'node:assert/strict';import http from 'node:http';import {loadScan,blocked} from './load-scan.mjs';
+const bars=[];for(let d=new Date('2023-01-01T00:00:00Z');d<=new Date('2026-11-10T00:00:00Z');d.setUTCDate(d.getUTCDate()+1))if(![0,6].includes(d.getUTCDay()))bars.push({datetime:d.toISOString().slice(0,10),open:'10',high:'10.1',low:'9.9',close:'10',volume:'1000000'});
+async function world(privateState){
+ const server=http.createServer((req,res)=>{res.setHeader('content-type','application/json');const u=new URL(req.url,'http://local');res.end(JSON.stringify(u.pathname==='/time_series'?{status:'ok',values:bars.slice(u.searchParams.get('symbol')==='SPY'?-850:-500)}:{}));});await new Promise(r=>server.listen(0,'127.0.0.1',r));
+ const lines=[],oldLog=console.log;console.log=(...args)=>lines.push(args.map(String).join(' '));
+ try{const base='http://127.0.0.1:'+server.address().port;const S=await loadScan({env:{TD_BASE:base,FH_BASE:base,SEC_BASE:base,NO_CROWD:'1',RATE:'10000',FORCE:'1',NO_WIDE:'1'},files:{'watchlist.txt':'SPY ZZP\n','data/watch-extra.json':privateState.extra,'data/halal.json':privateState.marks,'data/my-positions.json':privateState.positions}});S.value('LIST').splice(0,S.value('LIST').length,'SPY','ZZP',...privateState.extra);await S.fn('daily')();const sig=S.readJson('data/signals.json');return {projection:{rows:sig.stocks.filter(x=>x.diagnosticOnly),count:sig.diagnosticCount,scanned:sig.scanned,scope:sig.diagnosticScope},countLine:lines.find(l=>l.startsWith('daily scan done:')),privateCheck:S.fn('checkOne')('ZZP',sig),privateExit:sig.posVerdict};}finally{console.log=oldLog;server.closeAllConnections();server.close();}
+}
+const held={entry:12,stop:11,src:'try small',kind:'manual',since:'2026-11-06',tryHold:63};
+test('new public history diagnostics are invariant to private marks, watches and positions; private gates/exits remain',async()=>{
+ const a=await world({extra:['ZZQ'],marks:{ZZP:{s:'ok'}},positions:{}});const b=await world({extra:['ZZS'],marks:{ZZP:{s:'fail'}},positions:{ZZP:held,ZZR:{...held}}});
+ const dip={entry:8,target:9.6,src:'leader dip',kind:'leader dip',since:'2026-11-06',boughtSession:'2026-11-06',ldHold:126};
+ const c=await world({extra:[],marks:{ZZP:{s:'ok'}},positions:{ZZP:dip}});const d=await world({extra:['ZZT'],marks:{ZZP:{s:'ok'}},positions:{ZZP:{...dip,entry:20,target:24,since:'2025-01-02',boughtSession:'2025-01-02'}}});
+ for(const v of [b,c,d]){assert.deepEqual(v.projection,a.projection);assert.equal(v.countLine,a.countLine);}assert.match(a.countLine,/^daily scan done:/);assert.equal(Number.isInteger(a.projection.scanned),true);
+ assert.equal(a.projection.rows.length,1);assert.equal(a.projection.rows[0].sym,'ZZP');assert.equal(a.projection.count,1);assert.equal(a.projection.scope,'PUBLIC_BASE_LOADED_NAMES');
+ for(const row of a.projection.rows){assert.equal('halal' in row,false);assert.equal('held' in row,false);assert.equal('position' in row,false);assert.equal(row.proven,false);assert.equal(row.rule,null);assert.equal(row.trigger,null);}
+ assert.match(b.privateCheck,/NO BUY: existing ZAD exclusion/);assert.match(b.privateExit.ZZP,/stop/i);assert.match(b.privateExit.ZZR,/stop/i);assert.match(c.privateExit.ZZP,/target/i);assert.match(d.privateExit.ZZP,/time exit/i);assert.deepEqual(blocked,[]);
+});

@@ -19,7 +19,7 @@ export function mergeAlertState(remote,local){
  // sent is a legacy suppression flag, NOT a hosted ACK.
  for(const x of [remote,local])if(x.day===day)for(const [k,v]of Object.entries(x.sent))if(v||!(k in sent))sent[k]=sent[k]==='UNKNOWN'||v==='UNKNOWN'?'UNKNOWN':v;
  out.sent=sent;const delivery={};
- for(const x of [remote,local])for(const [k,v]of Object.entries(x.delivery||{})){
+ for(const x of [remote,local])if(x.day===day)for(const [k,v]of Object.entries(x.delivery||{})){
   if(!delivery[k]){delivery[k]=v;continue;}
   const old=delivery[k];if(same(old,v))continue;
   const alternatives=[...(old.alternatives||[old]),...(v.alternatives||[v])];

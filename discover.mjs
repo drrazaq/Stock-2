@@ -1,3 +1,6 @@
+import {publicLeadInputs} from './public-source-research.mjs';
+import {appendRadarRows,readRadarLedger} from './radar-ledger.mjs';
+import {frozenAssessmentQueue,assessmentCycleRows} from './discovery-runtime.mjs';
 // Discovery engine for the US stock signal board. Runs on GitHub Actions.
 // Each night it sweeps the WHOLE US market for strong price trends, then checks the strongest against official SEC filings
 // (revenue growth, profit trend, debt, cash) and writes a short list of small, fast-growing companies to data/discovery.json.
@@ -79,8 +82,15 @@ async function sec(url) {
   let r;
   try { r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } }); } catch (e) { if (!secNote) { secNote = 'SEC request failed: ' + e.message; console.log(secNote); } return null; }
   // If the SEC refuses, it may be because other jobs share this server's address. Wait a random few seconds and try again, up to three times.
-  for (let t = 0; t < 3 && !secNote && (r.status === 403 || r.status === 429); t++) { await sleep(FAST ? 0 : 3000 + Math.random() * 6000); try { r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } }); if (r.ok) console.log('SEC accepted the request on retry ' + (t + 1)); } catch (e) { break; } }
-  if (!r.ok) { if (!secNote) { secNote = 'SEC answered HTTP ' + r.status + ' for ' + url.split('/').slice(-2).join('/') + ' after 3 retries (the SEC is refusing this server; the Finnhub fallback is used instead)'; console.log(secNote); } return null; }
+  let tries = 0;
+  for (let t = 0; t < 3 && !secNote && (r.status === 403 || r.status === 429); t++) { tries++; await sleep(FAST ? 0 : 3000 + Math.random() * 6000); try { r = await fetch(url, { headers: { 'User-Agent': UA, 'Accept': 'application/json' } }); if (r.ok) console.log('SEC accepted the request on retry ' + (t + 1)); } catch (e) { break; } }
+  // (6 Nov) the note states what the SEC actually answered: 404 = no such file (e.g. that quarter is not published), not a refusal; only 403/429
+  // are retried and described as refusal or rate limiting. The fallback behaviour is unchanged.
+  if (!r.ok) { if (!secNote) { const what = url.split('/').slice(-2).join('/'), fb = 'the Finnhub fallback is used instead';
+      secNote = r.status === 404 ? 'SEC answered HTTP 404 (not found) for ' + what + ': the SEC has no such file (for example that quarter is not published yet); not retried; ' + fb
+        : r.status === 403 || r.status === 429 ? 'SEC answered HTTP ' + r.status + ' for ' + what + ' after ' + tries + ' retr' + (tries === 1 ? 'y' : 'ies') + ' (the SEC is ' + (r.status === 429 ? 'rate-limiting' : 'refusing') + ' this server); ' + fb
+        : 'SEC answered HTTP ' + r.status + ' for ' + what + ' (not retried); ' + fb;
+      console.log(secNote); } return null; }
   return r.json().catch(() => null);
 }
 async function frame(taxonomy, tag, unit, period) {
@@ -349,9 +359,9 @@ for (const c of top) {
 }
 
 // ---- 4. Journal and honest follow-up: how did earlier candidates do against the S&P 500?
-const journal = fs.existsSync('data/discovery-journal.jsonl') ? fs.readFileSync('data/discovery-journal.jsonl', 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)) : [];
+const journal = readRadarLedger('data/discovery-journal.jsonl').filter(x=>x.type!=='assessment'&&x.type!=='assessment-cycle');
 const seen = new Set(journal.map(x => x.sym)), fresh = top.filter(c => !seen.has(c.sym));
-for (const c of fresh) fs.appendFileSync('data/discovery-journal.jsonl', JSON.stringify({ sym: c.sym, d: first.date, price: c.price, spy: spyNow, score: c.score }) + '\n');
+appendRadarRows('data/discovery-journal.jsonl',fresh.map(c=>({ sym: c.sym, d: first.date, price: c.price, spy: spyNow, score: c.score })));
 const aged = journal.filter(x => Date.parse(first.date) - Date.parse(x.d) >= 28 * 86400000 && closes[0].get(x.sym) && x.spy && spyNow).map(x => ({ ret: closes[0].get(x.sym).c / x.price - 1, spy: spyNow / x.spy - 1 }));
 const record = aged.length ? { n: aged.length, avgReturn: aged.reduce((a, x) => a + x.ret, 0) / aged.length, avgSpy: aged.reduce((a, x) => a + x.spy, 0) / aged.length, beat: aged.filter(x => x.ret > x.spy).length / aged.length } : null;
 
@@ -379,4 +389,20 @@ if (fresh.length) {
   if (record) msg.push('', 'Earlier candidates after 4+ weeks: ' + pct(record.avgReturn) + ' on average, S&P 500 ' + pct(record.avgSpy) + ' (' + record.n + ' stocks).');
   msg.push('', 'Candidates to research, not buy signals. Most fast movers fall back. Not financial advice, not a halal ruling.' + (env.PAGE_URL ? '\n' + env.PAGE_URL : ''));
   await telegram(msg.join('\n'));
+}
+
+// Sole publishing path for assessment cycles: discovery's existing workflow
+// concurrency serializes producers. Bot/scanner consumers never append here.
+{
+ const journal=readRadarLedger('data/discovery-journal.jsonl');
+ const input={publicLeads:process.env.ASSESSMENT_PUBLIC_LEADS==='1'?publicLeadInputs(journal,now):[],cutoff:new Date(now).toISOString(),
+  signals:readJson('data/signals.json',{}),discovery:readJson('data/discovery.json',{}),
+  earnings:readJson('data/earnings-recent.json',{}),events:readJson('data/events-recent.json',{}),
+  quality:readJson('data/quality.json',{}),horizons:readJson('data/horizons.json',{}),
+  radar:readJson('data/radar-universe.json',{}),leaders:readJson('data/leaders-universe.json',{}),
+  excludedSymbols:readJson('data/zad-list.json',{}).notHalal||[],
+  seenAssessmentIds:journal.filter(r=>r.type==='assessment').map(r=>r.id)};
+ const queue=frozenAssessmentQueue(input,journal);
+ if(!queue.frozen)appendRadarRows('data/discovery-journal.jsonl',assessmentCycleRows(queue));
+ console.log('assessment cycle',queue.cycleKey,queue.frozen?'already frozen':'recorded once');
 }

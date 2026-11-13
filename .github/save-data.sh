@@ -7,6 +7,7 @@
 # Usage: bash .github/save-data.sh "commit message"   (test/save-data.test.mjs drives it on throw-away repositories)
 OWNER_FILES=" data/my-positions.json data/my-trades.jsonl data/tg-state.json "
 T=$(mktemp -d)
+ALERT_MERGER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/merge-alert-state.mjs"
 has() { git cat-file -e ":$1:$2" 2>/dev/null; }
 # one stopped rebase step: during a rebase stage 2 is origin (upstream), stage 3 is this job's commit
 resolve_step() {
@@ -36,6 +37,12 @@ pull() {
 }
 git add data
 git diff --cached --quiet || git commit -q -m "${1:-scan $(date -u +%FT%RZ)}"
-ok=0; for i in 1 2 3 4 5; do if pull && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep "${SAVE_SLEEP:-10}"; done
+merge_alerts() {
+  node "$ALERT_MERGER" || return 1
+  [ -f data/alert-state.json ] || return 0
+  git add -- data/alert-state.json
+  git diff --cached --quiet || git commit -q -m "preserve scanner alert evidence"
+}
+ok=0; for i in 1 2 3 4 5; do if pull && merge_alerts && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep "${SAVE_SLEEP:-10}"; done
 rm -rf "$T"
 [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository"; exit 1; }

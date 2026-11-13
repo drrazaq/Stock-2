@@ -37,7 +37,7 @@ jobs:
             git add data
             git diff --cached --quiet && return 0
             git commit -q -m "bot $(date -u +%FT%RZ)"
-            for i in 1 2 3 4 5; do if git pull -q --rebase -X theirs && git push -q; then return 0; fi; git rebase --abort 2>/dev/null || true; sleep 5; done
+            for i in 1 2 3 4 5; do if git pull -q --rebase -X theirs && node .github/merge-alert-state.mjs && { [ ! -f data/alert-state.json ] || { git add -- data/alert-state.json && { git diff --cached --quiet || git commit -q -m "preserve scanner alert evidence"; }; }; } && git push -q; then return 0; fi; git rebase --abort 2>/dev/null || true; sleep 5; done
             echo "Error: could not save the data folder to the repository" | tee -a run.log
           }
           # privacy migration stage 1 (28 Oct): keep a copy of the owner's private files in the private repository. Does nothing

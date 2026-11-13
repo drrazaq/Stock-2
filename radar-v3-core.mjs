@@ -1,3 +1,4 @@
+import {researchInstrumentScope} from './instrument-type.mjs';
 // DAILY OPPORTUNITY RADAR (V3.0, owner approved 28 Oct 2026: "do 1, 2, 3"). Pure functions, no network, no files; opportunity-radar.mjs
 // reads and writes. Research and routing only: it adds NO buy rule, lowers NO gate and places NO order.
 // WHY: the audit (docs/v3-opportunity-audit-2026-10-28.md) found the system SAW the day's runners (BRAI, AEYE, OWLS on 27 Oct) but the
@@ -5,7 +6,7 @@
 // in four panels, each line labelled:
 //   A. LIVE RESEARCH LEADS   stocks moving +2% to +20% on rising volume pace (the early-wave observation lane), not yet extended
 //   B. SHORT SETUPS (PAPER)  intraday rule hits (IG1-IG9) with each rule's own live paper record and history verdict
-//   C. APPROVED SIGNALS      only alerts from rules that passed every gate (zero is allowed and said plainly)
+//   C. SIGNAL DELIVERY HISTORY      cached delivery counts, never current purchase approval
 //   D. RUNNERS WE MISSED     the day's biggest movers and the first reason in the pipeline that stopped them
 // Every A and B line says NOT AN APPROVED BUY. Hard rules are never bypassed: under 1 USD, NOT HALAL (ZAD), SEC danger filings and the
 // one-day-jump AVOID list are shown as BLOCKED with the reason, never as a lead.
@@ -27,6 +28,8 @@ const usd = (x) => (x >= 10 ? '$' + x.toFixed(2) : '$' + x.toFixed(x >= 1 ? 2 : 
 export const DANGER = /DELIST|DILUTION|OFFERING|RESTATE/;
 // ctx: { halal: {SYM: 'ok'|'fail'}, events: {SYM: [{f, p}]}, lottery: {SYM: oneDayJump} }
 export function blockOf(sym, price, ctx = {}) {
+  const instrument=researchInstrumentScope(sym,ctx.sec?.[sym]?.instrument||ctx.instruments?.[sym]);
+  if(instrument.policyExcluded)return 'excluded instrument: '+instrument.kind+(instrument.underlying?' (underlying '+instrument.underlying+')':'');
   if (!(price >= 1)) return 'under 1 USD';
   if ((ctx.halal || {})[sym] === 'fail') return 'NOT HALAL (ZAD)';
   const ev = ((ctx.events || {})[sym] || []).filter(e => DANGER.test(e.f));
@@ -47,7 +50,7 @@ export function halalMap(zad, marks = {}, now = Date.now()) {
 }
 export const halalWord =(sym, ctx = {}) => ((ctx.halal || {})[sym] === 'ok' ? 'halal (your ZAD mark)' : 'HALAL UNKNOWN: check ZAD first');
 export function catalystOf(sym, ctx = {}) {
-  if (ctx.cat && ctx.cat[sym]) return ctx.cat[sym];   // (28 Oct) the alert system's live catalyst check (SEC acceptance time + headline), when it ran
+  if (ctx.cat && ctx.cat[sym]) {const c=ctx.cat[sym];if(c&&typeof c==='object'&&c.subjectSymbol===sym&&typeof c.text==='string'&&Array.isArray(c.evidence))return c.text;return 'UNVERIFIED catalyst association (legacy or mismatched subject); original evidence retained';}   // (28 Oct) the alert system's live catalyst check (SEC acceptance time + headline), when it ran
   const ev = ((ctx.events || {})[sym] || []).filter(e => !DANGER.test(e.f));
   return ev.length ? 'SEC 8-K ' + ev.map(e => e.f.split(',')[0].toLowerCase() + ' ' + String(e.p).slice(5, 10)).slice(0, 2).join(', ')
     : 'NO VERIFIED CATALYST (no SEC 8-K in 10 days; headlines not checked)';
@@ -58,7 +61,7 @@ export const CODE_WORDS = {
   ALERTED: 'alerted', UNDER_1_USD: 'under 1 USD (hard rule)', SEC_CHECK_UNAVAILABLE: 'SEC check failed (safety block)', SEC_BLOCKED: 'SEC danger filing (safety block)',
   NOT_HALAL: 'NOT HALAL (ZAD)', LOTTERY_AVOID: 'on the one-day-jump AVOID list', ALERT_CAP_REACHED: 'daily alert cap reached', NO_LIVE_PRICE_AT_SIGNAL: 'no fresh price at the signal',
   VOLUME_FIGURE_LATE: 'volume figure late (data)', CAUGHT_PAPER_GATE_NOT_MET: 'a rule caught it; paper record not strong enough (promotion gate)',
-  CAUGHT_RULE_NOT_PASSED: 'a rule caught it; rule failed its 5-year test (promotion gate)', GAPPED_AT_OPEN: 'gapped up before the open (timing)',
+  CAUGHT_RULE_NOT_PASSED: 'a rule caught it; rule failed its minute-bar history verdict (promotion gate)', GAPPED_AT_OPEN: 'gapped up before the open (timing)',
   NOT_VISIBLE_LIVE: 'never had a fresh price (data)', VISIBLE_TOO_LATE: 'first fresh price came after +25% (data)', NO_VOLUME_HISTORY: 'no volume history',
   AFTER_11_00: 'move came after 11:00 New York (rule window)', LOW_VOLUME: 'volume too low for the rules', NO_RULE_FIT: 'no rule fits this shape',
 };
@@ -71,21 +74,25 @@ export function topSilence(tally = {}) {
   return { code: e[0][0], n: e[0][1], kind: SILENCE_KIND[e[0][0]] || 'other', words: (CODE_WORDS[e[0][0]] || e[0][0]).replace(/ \([^)]*\)$/, '') };   // the kind is said separately
 }
 
-// closest rule to approval: the best positive live paper record, with its 5-year history verdict (lab) and what is still missing
+// closest rule to approval: the best positive live paper record, with its minute-bar history verdict (lab) and what is still missing
 export function closestRule(record = {}, lab = {}) {
   const c = Object.entries(record).filter(([k, r]) => /\/close$/.test(k) && r && r.n > 0 && r.avg > 0).sort((a, b) => b[1].n * b[1].avg - a[1].n * a[1].avg)[0];
   if (!c) return null; const [k, r] = c, rule = k.split('/')[0], hv = ((lab[k] || {}).verdict) || 'not tested', miss = [];
-  if (hv !== 'PROMISING') miss.push('its 5-year history test (' + hv + ')'); if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
+  if (hv !== 'PROMISING') miss.push('its minute-bar history test (' + hv + ')'); if (hv === 'REJECTED') return {rule,n:r.n,days:r.days||0,avg:r.avg,stress:r.stress,history:hv,missing:miss}; if (r.n < 30) miss.push((30 - r.n) + ' more paper trades'); if ((r.days || 0) < 10) miss.push((10 - (r.days || 0)) + ' more trading days');
   if (!(r.stress > 0)) miss.push('a profit at the stress cost');
   return { rule, n: r.n, days: r.days || 0, avg: r.avg, stress: r.stress, history: hv, missing: miss };
 }
 
 // D lists 1 USD+ movers only (sub-1 USD warrants and pennies are counted, never listed: no rule may trade them), and a move over +300%
 // is flagged as a likely split or data error, not explained (V3.0: verify corporate actions before telling any story about a move)
-export function runnerLines(movers = [], n = 5, withAfter = false) {
+export function runnerLines(movers = [], n = 5, withAfter = false, ctx = {}) {
+  const raw=movers, excluded=raw.filter(m=>researchInstrumentScope(m.sym,ctx.sec?.[m.sym]?.instrument||ctx.instruments?.[m.sym]).policyExcluded);
+  movers=raw.filter(m=>!researchInstrumentScope(m.sym,ctx.sec?.[m.sym]?.instrument||ctx.instruments?.[m.sym]).policyExcluded);
   const big = movers.filter(m => m.code !== 'UNDER_1_USD').sort((a, b) => b.maxUp - a.maxUp), under = movers.length - movers.filter(m => m.code !== 'UNDER_1_USD').length, out = [];
   for (const m of big.slice(0, n)) out.push('- ' + m.sym + ' up to ' + pct(m.maxUp) + (m.maxUp > 3 ? ' (LIKELY A SPLIT OR DATA ERROR: check before reading anything into it)' : '') + ' (first seen ' + m.firstSeen + ' at ' + pct(m.firstSeenUp)
     + (withAfter ? '; ' + pct(m.afterFirstSeen && m.afterFirstSeen.last) + ' from there to 15:00' : '') + '): ' + (CODE_WORDS[m.code] || m.code) + '.');
+  for(let i=0;i<Math.min(big.length,n);i++){const scope=researchInstrumentScope(big[i].sym,ctx.sec?.[big[i].sym]?.instrument||ctx.instruments?.[big[i].sym]);if(scope.status==='UNKNOWN')out[i]+=' Identity UNKNOWN: unverified instrument movement, not a verified missed company opportunity.';}
+  if(excluded.length)out.push('Excluded from company-opportunity view: '+excluded.map(m=>{const x=researchInstrumentScope(m.sym);return m.sym+' ['+(x.kind||'non-common instrument')+(x.underlying?'; underlying '+x.underlying:'')+']';}).join('; ')+'. Original observations retained.');
   if (under) out.push('  (+' + under + ' under 1 USD, mostly warrants and pennies: not listed, never tradable by these rules)');
   return out;
 }
@@ -95,7 +102,7 @@ export function runnerLines(movers = [], n = 5, withAfter = false) {
 //         early: [{sym, change, rvT, price, score, firstMinute}], now: {SYM: {px, chg}}, tally, mkt }
 export function buildMidday(snap, ctx0 = {}) {
   const ctx = { ...ctx0, ...(snap.sec ? { sec: snap.sec } : {}), ...(snap.cat ? { cat: snap.cat } : {}) };
-  const now = snap.now || {}, rows = [], blocked = [], text = [];
+  const now = snap.now || {}, rows = [], blocked = [], text = [], unverified = [];
   const fm = (m) => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
   text.push('OPPORTUNITY RADAR ' + snap.at + ' New York (' + snap.day + '). Research list: nothing in A or B is an approved buy.');
   if (snap.firstMinute && snap.firstMinute > '09:35') text.push('WATCHER STARTED LATE today (' + snap.firstMinute + '): the open was not watched.');
@@ -104,36 +111,41 @@ export function buildMidday(snap, ctx0 = {}) {
   const seenB = new Set(), B = [];
   for (const h of (snap.hits || []).slice().sort((a, b) => a.m - b.m)) { if (seenB.has(h.sym)) continue; seenB.add(h.sym);
     const blk = blockOf(h.sym, h.price, ctx); if (blk) { blocked.push(h.sym + ' (' + blk + ')'); continue; }
+    if(researchInstrumentScope(h.sym,ctx.sec?.[h.sym]?.instrument||ctx.instruments?.[h.sym]).status==='UNKNOWN'){unverified.push({sym:h.sym,px:h.price,origin:'rule hit '+h.rule});continue;}
     const r = (ctx.record || {})[h.rule + '/close'], hv = (((ctx.lab || {})[h.rule + '/close']) || {}).verdict || 'not tested', n = now[h.sym] || {};
     B.push({ h, r, hv, n, rank: r && r.n >= 20 ? r.avg : -1 }); }
   B.sort((a, b) => b.rank - a.rank);
   text.push('', 'B. SHORT SETUPS (PAPER, ' + NOT_APPROVED + ')' + (B.length ? ':' : ': none before 11:00.'));
   for (const x of B.slice(0, 5)) { const { h, r, hv, n } = x;
     text.push('- ' + h.sym + ': ' + h.rule + ' at ' + fm(h.m) + ' ' + usd(h.price) + (n.px > 0 ? ', now ' + usd(n.px) + ' (' + pct(n.px / h.price - 1) + ' since)' : '') + '. ' + halalWord(h.sym, ctx) + '.',
-      '  Rule record: ' + (r ? r.n + ' paper trades on ' + (r.days || 0) + ' days, ' + pct(r.avg, 1) + ' a trade after costs' : 'no paper record yet') + '; 5-year test ' + hv + '.',
-      '  For +2% net on 1,000 USD it needs ' + pct(netHurdle(h.price), 1) + ' gross. ' + catalystOf(h.sym, ctx) + '.');
+      '  Rule record: ' + (r ? r.n + ' paper trades on ' + (r.days || 0) + ' days, ' + pct(r.avg, 1) + ' a trade after costs' : 'no paper record yet') + '; minute-bar history verdict ' + hv + '.',
+      '  Instrument: '+researchInstrumentScope(h.sym,ctx.sec?.[h.sym]?.instrument||ctx.instruments?.[h.sym]).status+'. For +2% modeled net on 1,000 USD it needs ' + pct(netHurdle(h.price), 1) + ' gross. ' + catalystOf(h.sym, ctx) + '.');
     rows.push({ type: 'list', d: snap.day, at: snap.at, panel: 'B', sym: h.sym, px: n.px > 0 ? n.px : h.price, rule: h.rule }); }
   // A: early-wave observations not already in B, not extended (+2% to +20% now), not blocked
   const A = [];
   for (const e of (snap.early || []).slice().sort((a, b) => (b.score - a.score) || ((b.rvT || 0) - (a.rvT || 0)))) {
     if (seenB.has(e.sym) || A.some(a => a.sym === e.sym)) continue; const n = now[e.sym] || {}, px = n.px > 0 ? n.px : e.price, chg = n.chg !== undefined ? n.chg : e.change;
     if (!(chg >= 0.02 && chg <= 0.20)) continue; const blk = blockOf(e.sym, px, ctx); if (blk) { blocked.push(e.sym + ' (' + blk + ')'); continue; }
+    if(researchInstrumentScope(e.sym,ctx.sec?.[e.sym]?.instrument||ctx.instruments?.[e.sym]).status==='UNKNOWN'){if(!unverified.some(x=>x.sym===e.sym))unverified.push({sym:e.sym,px,origin:'early-wave observation'});continue;}
     A.push({ sym: e.sym, px, chg, rvT: e.rvT, first: e.firstMinute }); if (A.length >= 5) break; }
-  text.push('', 'A. LIVE RESEARCH LEADS (' + NOT_APPROVED + ')' + (A.length ? ':' : ': none right now.'));
+  text.push('', 'A. VERIFIED COMMON-STOCK RESEARCH LEADS (' + NOT_APPROVED + ')' + (A.length ? ':' : ': none right now.'));
   for (const a of A) { text.push('- ' + a.sym + ' ' + pct(a.chg) + ' at ' + usd(a.px) + (a.rvT ? ', volume pace ' + a.rvT.toFixed(1) + 'x normal' : '') + ' (seen ' + a.first + '). ' + halalWord(a.sym, ctx) + '.',
-      '  ' + catalystOf(a.sym, ctx) + '. Needs ' + pct(netHurdle(a.px), 1) + ' gross for +2% net.' + (a.px < 5 ? ' Under 5 USD: wide spreads, halts, gaps.' : ''));
+      '  Instrument: '+researchInstrumentScope(a.sym,ctx.sec?.[a.sym]?.instrument||ctx.instruments?.[a.sym]).status+'. ' + catalystOf(a.sym, ctx) + '. Needs ' + pct(netHurdle(a.px), 1) + ' gross for +2% net.' + (a.px < 5 ? ' Under 5 USD: wide spreads, halts, gaps.' : ''));
     rows.push({ type: 'list', d: snap.day, at: snap.at, panel: 'A', sym: a.sym, px: a.px }); }
+  text.push('', 'U. UNVERIFIED DISCOVERY — security class UNKNOWN; not ordinary-stock opportunities ('+unverified.length+' records):');
+  for(const x of unverified.slice(0,5)){text.push('- '+x.sym+' '+usd(x.px)+'; '+x.origin+'; identity UNKNOWN. '+halalWord(x.sym,ctx)+'. '+catalystOf(x.sym,ctx));rows.push({type:'discovery-unverified',d:snap.day,at:snap.at,panel:'U',sym:x.sym,px:x.px,instrumentStatus:'UNKNOWN'});}
   if (blocked.length) text.push('BLOCKED by hard rules (not leads): ' + blocked.slice(0, 6).join('; ') + (blocked.length > 6 ? '; +' + (blocked.length - 6) + ' more' : '') + '.');
   // C
   const cr = closestRule(ctx.record, ctx.lab);
-  text.push('', 'C. APPROVED SIGNALS: ' + (snap.alerts > 0 ? snap.alerts + ' tested alert' + (snap.alerts > 1 ? 's' : '') + ' sent today (see those messages).' : '0 so far today.'));
+  text.push('', 'C. SIGNAL DELIVERY HISTORY: '+(Number.isInteger(snap.alerts)&&snap.alerts>=0?snap.alerts:'unknown')+' watcher messages. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.',...alertDeliveryLines(snap));
   if (!(snap.alerts > 0) && cr) text.push('  Closest: ' + cr.rule + ' (' + cr.n + ' paper trades on ' + cr.days + ' days, ' + pct(cr.avg, 1) + ' a trade). Missing: ' + cr.missing.join('; ') + '.');
   // D
-  text.push('', 'D. RUNNERS SO FAR (retrospective, not buys)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers));
+  text.push('', 'D. OBSERVED INSTRUMENT MOVEMENTS (retrospective, not company opportunities)' + ((snap.movers || []).length ? ':' : ': none of 15%+ yet.'), ...runnerLines(snap.movers,5,false,ctx));
+  const scopeCounts={verified:0,unknown:0,excluded:0};for(const m of snap.movers||[]){const k=researchInstrumentScope(m.sym,ctx.sec?.[m.sym]?.instrument||ctx.instruments?.[m.sym]);scopeCounts[k.policyExcluded?'excluded':k.status==='ELIGIBLE_COMMON_STOCK'?'verified':'unknown']++;}text.push('Mover identity denominator: '+scopeCounts.verified+' verified common stocks, '+scopeCounts.unknown+' UNKNOWN instruments, '+scopeCounts.excluded+' excluded; raw '+(snap.movers||[]).length+'. Not whole-universe coverage.');
   const ts = topSilence(snap.tally);
-  text.push('', 'Scanned ' + (snap.scanned ?? '?') + ' stocks (' + (snap.live ?? '?') + ' with a fresh price). 15%+ movers: ' + (snap.movers || []).length + '. Rule hits: ' + (snap.hits || []).length + '. Approved: ' + (snap.alerts || 0) + '.'
+  text.push('', 'Received ' + (snap.scanned ?? '?') + ' instruments (' + (Number.isFinite(snap.scanned) && Number.isFinite(snap.live) ? Math.max(0, Math.min(snap.scanned, snap.live)) : '?') + ' with a fresh price). 15%+ movers: ' + (snap.moverCount ?? (snap.movers || []).length) + ' (showing ' + (snap.movers || []).length + '). Rule hits: ' + (snap.hits || []).length + '.'
     + (ts ? ' Top reason for silence: ' + ts.words + ' (' + ts.n + ', ' + ts.kind + ').' : ''));
-  text.push('Chasing: stocks already up 20%+ when first seen fell a median 19% to the close (469 cases, 14-27 Oct). Check ZAD. Research only, not advice.');
+  text.push('Retrospective movements are not a validated chase strategy or current entries. Research only; check current evidence and ZAD.');
   return { text: text.join('\n'), rows };
 }
 
@@ -164,14 +176,38 @@ export function buildClose(day, live, ledger = [], ctx = {}) {
     text.push('', 'TODAY\'S RADAR LINES (listing price to 15:00, after 6 USD fees and spread):' + (mine.length ? '' : ' none were listed.'));
     for (const r of mine) { const c = close.get(r.sym), s = c ? scoreSameDay(r, c) : null;
       text.push('- ' + r.panel + ' ' + r.sym + ': ' + usd(r.px) + (c ? ' to ' + usd(c.px) + ', net ' + pct(s.net, 1) + (s.vsMkt !== null ? ' (' + pct(s.vsMkt, 1) + ' vs the average stock)' : '') : ', no 15:00 price')); }
-    text.push('', 'D. RUNNERS WE MISSED TODAY (retrospective, not buys):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true));
+    text.push('', 'D. OBSERVED INSTRUMENT MOVEMENTS TODAY (not verified missed company opportunities):' + ((live.missed || []).length ? '' : ' none of 15%+.'), ...runnerLines(live.missed, 5, true,ctx));
     const ts = topSilence(live.tally), all = Object.values(live.tally || {}).reduce((a, b) => a + b, 0); if (ts) text.push('Top reason for silence today: ' + ts.words + ' (' + ts.n + ' of ' + all + ' movers of 15%+; ' + ts.kind + ').');
-    text.push('', 'C. APPROVED SIGNALS today: ' + (live.alerts || 0) + '. Tested buys for the next session come in ACTIONS tonight.');
+    text.push('', 'C. SIGNAL DELIVERY HISTORY today: '+(Number.isInteger(live.alerts)&&live.alerts>=0?live.alerts:'unknown')+'. Cached counts are not current purchase or ZAD approval. Review current gated ACTIONS.',...alertDeliveryLines(live));
   }
   const sb = scoreboard(ledger), P = sb.panels;
   text.push('', 'RADAR SCORECARD (' + sb.sessions + ' session' + (sb.sessions === 1 ? '' : 's') + '; verdict after 10):');
   for (const k of ['A', 'B']) { const p = P[k]; text.push('- ' + k + ': ' + (p && p.n ? p.n + ' lines, same day ' + pct(p.avgNet, 1) + ' net on average, ' + Math.round(p.win * 100) + '% positive' + (p.beatMkt !== null ? ', ' + Math.round(p.beatMkt * 100) + '% beat the average stock' : '') : 'no scored lines yet')
     + (p && p.n5 ? '; 5 sessions ' + pct(p.avgNet5, 1) + ', ' + Math.round(p.beatSpy5 * 100) + '% beat SPY' : '')); }
-  text.push('Nothing here is an approved buy unless it says APPROVED. Research only, not advice.');
+  text.push('Nothing in this research summary is a current approved purchase. Cached delivery history is not authorization. Research only, not advice.');
   return text.join('\n');
+}
+
+// HISTORY-03 B01/D15: counters describe retained observations, never current BUY approval.
+// This view does not alter limits, message reservations, frozen scoring, or historical rows.
+export function alertDeliveryCounts(triggers=[], legacyTotal=null) {
+ const out={version:1,scope:'RETAINED_TRIGGER_OBSERVATIONS',ruleQualified:{recorded:0,sent:0,unsent:0,uncertain:0},earlyPaper:{recorded:0,sent:0,unsent:0,uncertain:0},legacyUnclassified:null,conflicts:0,invalidRecords:0};
+ const events=new Map();
+ for(const t of triggers){if(!t||!['RULE_QUALIFIED','EARLY_PAPER'].includes(t.deliveryKind))continue;
+  if(typeof t.d!=='string'||!/^\d{4}-\d\d-\d\d$/.test(t.d)||typeof t.sym!=='string'||!t.sym||typeof t.rule!=='string'||!t.rule||!Number.isInteger(t.m)||t.m<0||t.m>=1440){out.invalidRecords++;continue;}
+  const id=JSON.stringify([t.d,t.sym,t.rule,t.m]);const x={kind:t.deliveryKind,state:t.deliveryState||'UNCERTAIN'},old=events.get(id);
+  if(!old)events.set(id,x);else if(old.kind!==x.kind||old.state!==x.state){events.set(id,{kind:old.kind,state:'CONFLICT'});out.conflicts++;}
+ }
+ for(const x of events.values()){const row=x.kind==='EARLY_PAPER'?out.earlyPaper:out.ruleQualified;row.recorded++;if(x.state==='ACKNOWLEDGED')row.sent++;else if(x.state==='UNSENT')row.unsent++;else row.uncertain++;}
+ const known=out.ruleQualified.sent+out.earlyPaper.sent;
+ if(Number.isSafeInteger(legacyTotal)&&legacyTotal>=0){out.legacyUnclassified=Math.max(0,legacyTotal-known);out.legacyCountMismatch=known>legacyTotal;}
+ return out;
+}
+export function alertDeliveryLines(snapshot={}) {
+ const c=snapshot.alertCounts,n=v=>Number.isSafeInteger(v)&&v>=0;
+ const valid=r=>r&&['recorded','sent','unsent','uncertain'].every(k=>n(r[k]))&&r.sent+r.unsent+r.uncertain===r.recorded;
+ if(c?.version!==1||c.scope!=='RETAINED_TRIGGER_OBSERVATIONS'||!valid(c.ruleQualified)||!valid(c.earlyPaper)||!(c.legacyUnclassified===null||n(c.legacyUnclassified)))return ['Legacy unsplit total: '+(n(snapshot.alerts)?snapshot.alerts:'unknown')+' watcher messages reported; rule-qualified/paper and delivery-state breakdown UNKNOWN.'];
+ const line=(label,r)=>label+': '+r.recorded+' recorded, '+r.sent+' sent (acknowledged), '+r.unsent+' unsent, '+r.uncertain+' uncertain.';
+ return [line('HISTORY/PAPER-GATE QUALIFIED',c.ruleQualified),line('EARLY PAPER ALERTS (NOT PROVEN)',c.earlyPaper),
+  'Scope: retained trigger observations; '+(c.legacyUnclassified===null?'legacy delivery total unknown':c.legacyUnclassified+' legacy deliveries unclassified')+(c.legacyCountMismatch?'; legacy counter mismatch':'')+'. These are delivery records, not current purchase or ZAD approval.'];
 }

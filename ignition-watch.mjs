@@ -1,3 +1,5 @@
+import {startPrivateQuoteRetention} from './private-quote-retention.mjs';
+import {watcherAdmission} from './watcher-schedule.mjs';
 import {publishWatcherReservation} from './watcher-message-publish.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
 import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
@@ -17,12 +19,12 @@ import {sessionFinished,preferSession,runIdentity,sessionEvidence} from './watch
 // Alpaca snapshots (IEX, free) for the whole snapshot universe; thin stocks may have no recent IEX trade (never alerted; the audit
 // says so). Volume stays the late Massive figure (can only undercount). Last fallback: Alpaca's top-50 gainers (PARTIAL coverage).
 // Read-only; never places an order.
-import { snapshots, feedUsed, snapshotFeed } from './alpaca-feed.mjs';
+import { snapshots, feedUsed, snapshotFeed, snapshotReceipt } from './alpaca-feed.mjs';
 import { massiveSnapshot, alpacaSnapshot, mergeLiveSnapshot, validateClocks } from './snapshot-fields.mjs';   // (1 Nov) every field keeps its own provider clock and feed
 import { sendAlert } from './opp-mode.mjs';
 import { scoreEarlyWaveCandidate, updateEarlyWaveCandidate } from './early-wave-discovery.mjs';
 import { stopHits } from './stop-watch.mjs';
-import { createEarlyAlerts, alertLevel, classifyCatalyst } from './early-alerts.mjs';
+import { createEarlyAlerts, alertLevel, classifyCatalyst, publicCatalystSummary } from './early-alerts.mjs';
 import { createShadow, spreadPct } from './shadow-stream.mjs';
 import { parseAtom, nyMinuteOf } from './edgar-feed.mjs';
 import { dEligible, hash, FROZEN as RANK } from './rank-models.mjs';
@@ -47,11 +49,18 @@ const clock = () => env.IG_FAKE_MIN ? +env.IG_FAKE_MIN + (env.IG_FAKE_STEP ? loo
 PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
 const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
 const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+const ADMISSION=watcherAdmission({eventName:env.GITHUB_EVENT_NAME,schedule:env.IG_SCHEDULE,day,minute:clock(),earliestMinute:FAST&&env.IG_FAKE_MIN?0:550});
+console.log('watcher admission: '+ADMISSION.reason+' '+JSON.stringify(ADMISSION));
+if(!ADMISSION.run)process.exit(0);
 const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
 if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExclusive:901})){MESSAGE_STATE.maintain();const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(dir+'/'+INCIDENT_RUN_ID+'-delivery-recovery.json',JSON.stringify({day,runId:INCIDENT_RUN_ID,messageDelivery:MESSAGE_STATE.report()}),{flag:'wx'});console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
 if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late
 if (clock() < 540 || clock() > 900) { console.log('ignition watcher: outside 9:00-15:00 New York (' + fmtM(clock()) + '), nothing to do'); process.exit(0); }
+// Opt-in development binding only; no configuration or private storage is provisioned here.
+const PRIVATE_QUOTE_RETENTION=startPrivateQuoteRetention({root:env.PRIVATE_QUOTE_RETENTION_ROOT,checkout:process.cwd(),policySha256:env.PRIVATE_QUOTE_POLICY_SHA256,sourceSha:INCIDENT_SHA,runId:INCIDENT_RUN_ID});
+if(env.PRIVATE_QUOTE_RETENTION_ROOT){console.log('private quote retention: '+JSON.stringify(PRIVATE_QUOTE_RETENTION.report()));process.once('exit',()=>PRIVATE_QUOTE_RETENTION.close());}
+const RUN_START = Date.now(); // Observation budget excludes the bounded pre-open wait.
 // ---- each stock's normal daily volume (average over the days it traded, 15+ of the last 20 needed), float, time listed
 const avgVol = new Map(), firstSeen = new Map(), avgRange5 = new Map(); let sessions = 0;   // avgRange5: average high-low range of the last 5 sessions (the 'ADR' idea, logged only)
 try { const S = JSON.parse(zlib.gunzipSync(fs.readFileSync(CDIR + '/fm.json.gz')).toString()), D = Object.keys(S.days).sort(); sessions = D.length;
@@ -82,14 +91,14 @@ const AH = () => ({ headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECR
 async function snapTop50() {
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return null;
   try { const r = await fetch(ALPD + '/v1beta1/screener/stocks/movers?top=50', AH()); if (!r.ok) { if (!note.includes('Alpaca movers')) note += (note ? '; ' : '') + 'Alpaca movers HTTP ' + r.status; return null; } const j = await r.json(), syms = (j.gainers || []).map(x => x.symbol).filter(s => /^[A-Z]{1,5}$/.test(s)); if (!syms.length) return [];
-    const sj = (await snapshots(ALPD, syms, AH())) || {}, sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
-    const at = Date.now(); return syms.map(s => alpacaSnapshot(s, sj[s] || {}, sip, at)); } catch (e) { return null; } }
+    const sj = await snapshots(ALPD, syms, AH(), undefined, PRIVATE_QUOTE_RETENTION.capture); if(!sj)return null; const sip = snapshotFeed(sj) === 'sip';   // the feed of THIS response
+    const at = PRIVATE_QUOTE_RETENTION.capture?snapshotReceipt(sj):Date.now(); const rows=syms.map(s => validateClocks(alpacaSnapshot(s, sj[s] || {}, sip, at), at)); return rows.some(r=>r.price>0||r.prevC>0||r.open>0||r.vol>0)?rows:null; } catch (e) { return null; } }
 async function alpacaAll(syms) {   // live IEX prices for many stocks, 200 a request, 6 requests at a time
   if (!env.ALPACA_KEY || !env.ALPACA_SECRET || !syms.length) return null; const out = new Map(), parts = [];
   for (let i = 0; i < syms.length; i += 200) parts.push(syms.slice(i, i + 200)); let fails = 0, k = 0;
   await Promise.all(Array.from({ length: 6 }, async () => { while (k < parts.length) { const part = parts[k++];
-    try { const sj = await snapshots(ALPD, part, AH()); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
-      const at = Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = alpacaSnapshot(s, x || {}, sip, at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
+    try { const sj = await snapshots(ALPD, part, AH(), undefined, PRIVATE_QUOTE_RETENTION.capture); if (!sj) { fails++; continue; } const sip = snapshotFeed(sj) === 'sip';   // SIP = every exchange, so its day volume is the real one; judged per response, never from a shared label
+      const at = PRIVATE_QUOTE_RETENTION.capture?snapshotReceipt(sj):Date.now(); for (const [s, x] of Object.entries(sj || {})) { const row = validateClocks(alpacaSnapshot(s, x || {}, sip, at), at); if (row.priceKind === 'TRADE' && row.price > 0) out.set(s, row); } } catch (e) { fails++; } } }));   // (28 Oct) latestQuote was already in the answer: kept for the spread record
   if (fails === parts.length) { if (!note.includes('Alpaca snapshots')) note += (note ? '; ' : '') + 'Alpaca snapshots failed'; return null; }
   return out; }
 async function snap() {
@@ -97,12 +106,12 @@ async function snap() {
   const late = !m || !m.length ? Infinity : (() => { const d = m.filter(r => r.t > 0).map(r => (now - r.t) / 60000).sort((a, b) => a - b); return d.length ? d[Math.floor(d.length / 2)] : Infinity; })();
   if (m && m.length && late <= 3) { src = 'massive (live)'; mode = 'FULL_SNAPSHOT'; return m; }
   if (m && m.length) { const live = await alpacaAll(m.filter(r => r.prevC >= 1).map(r => r.sym));
-    if (live) { let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, now)) n++; if (x && r.volumeBasis === 'SIP_DAILY_BAR_ASOF_UNSTATED') sv++; }
+    if (live) { const mergeAt=Date.now(); let n = 0, sv = 0; for (const r of m) { const x = live.get(r.sym); if (mergeLiveSnapshot(r, x, mergeAt)) n++; if (x && r.volumeBasis === 'SIP_DAILY_BAR_ASOF_UNSTATED') sv++; }
       const feeds = [...new Set([...live.values()].map(x => x.priceFeed))], feedLabel = feeds.length === 1 ? feeds[0] : feeds.length ? 'mixed' : feedUsed();   // this minute's responses, not the whole day's
       src = 'alpaca live prices (' + feedLabel.toUpperCase() + ' feed) for ' + n + ' of ' + m.length + ' stocks + ' + (sv ? 'SIP daily volume (provider states no as-of time) for ' + sv : 'massive volume (late)'); mode = 'FULL_SNAPSHOT_PLUS_ALPACA_LIVE'; return m; } }
   const a = await snapTop50();
   if (!a || !a.length) { src = m && m.length ? 'massive (late ' + Math.round(late) + ' min)' : 'none'; mode = m && m.length ? 'FULL_SNAPSHOT_LATE' : 'NO_USABLE_MARKET_DATA'; return m || []; }
-  src = 'alpaca top-50 gainers only'; mode = 'PARTIAL_TOP50_FALLBACK';
+  src = m && m.length ? 'alpaca top-50 response merged with retained Massive universe (per-field freshness measured)' : 'alpaca top-50 gainers only (per-field freshness measured)'; mode = 'PARTIAL_TOP50_FALLBACK';
   const byM = new Map((m || []).map(r => [r.sym, r]));
   // Field set unchanged (price/prevC/open/volume, no quote fields). Every field passes the normal per-field clock validation: a future
   // clock never vouches for its value, and between this response and Massive the newer valid clock wins (as in the main merge).
@@ -126,10 +135,10 @@ async function secRiskIssuer(sym) {
   const H = { headers: { 'User-Agent': SEC_UA, 'Accept': 'application/json' } };
   try { if (!TICK) { const r = await request(SEC_WWW + '/files/company_tickers.json', H); if (!r.ok) { if (!secLogged) { secLogged = true; console.log('SEC check failed: HTTP ' + r.status + ' (alerts stay blocked until it works; check the SEC_UA secret)'); } return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } TICK = {}; for (const x of Object.values(await r.json())) TICK[String(x.ticker || '').toUpperCase()] = x.cik_str; }
     const cik = TICK[sym]; if (!cik) return {known:false,tags:[],status:'NO_ISSUER_RECORD',sourceFailure:false};
-    const r = await request(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const R = (await r.json()).filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
+    const r = await request(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json', H); if (!r.ok) return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; const issuer = await r.json(), R = issuer.filings.recent, since = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10), since3 = new Date(Date.now() - 3 * 864e5).toISOString().slice(0, 10), tags = new Set(), filings = [], blockingFilings=[];
     for (let k = 0; k < Math.min(R.form.length, 60); k++) { if (String(R.filingDate[k]) < since) break; const f = String(R.form[k]).toUpperCase(), it = String((R.items || [])[k] || ''); if (String(R.filingDate[k]) >= since3) filings.push({ form: f, items: it, at: (R.acceptanceDateTime || [])[k] || null, accession: (R.accessionNumber || [])[k] || null, url: (R.accessionNumber || [])[k] && (R.primaryDocument || [])[k] ? 'https://www.sec.gov/Archives/edgar/data/' + Number(cik) + '/' + R.accessionNumber[k].replace(/-/g, '') + '/' + encodeURIComponent(R.primaryDocument[k]) : null });   // (28 Oct) recent filings with their SEC acceptance time: the catalyst check
       if (/^424B[1-5]$|^S-1|^S-3|^F-1|^F-3/.test(f)) {const acc=String((R.accessionNumber||[])[k]||''),valid=/^\d{10}-\d{2}-\d{6}$/.test(acc);blockingFilings.push({form:f,filingDate:R.filingDate[k],accession:valid?acc:null,acceptedAt:(R.acceptanceDateTime||[])[k]||null,indexUrl:valid?'https://www.sec.gov/Archives/edgar/data/'+Number(cik)+'/'+acc.replace(/-/g,'')+'/'+acc+'-index.html':null,economicClassification:'UNREVIEWED',blockUnchanged:true});tags.add('registration/prospectus ('+f+'); economic classification UNREVIEWED');} if (f === '8-K' && /3\.01/.test(it)) tags.add('exchange listing-rule notice (delisting risk)'); if (f === '8-K' && /3\.02/.test(it)) tags.add('private share sale (8-K 3.02)'); if (/^NT 10-[KQ]/.test(f)) tags.add('late financial report (' + f + ')'); }
-    return {known:true,tags:[...tags],filings,blockingFilings,status:'SEC_KNOWN',sourceFailure:false}; } catch (e) { return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } }
+    return {known:true,symbol:sym,issuerName:issuer.name||null,tags:[...tags],filings,blockingFilings,status:'SEC_KNOWN',sourceFailure:false}; } catch (e) { return {known:false,tags:[],status:'SEC_UNAVAILABLE',sourceFailure:true}; } }
 async function secRisk(sym) { return instrumentAwareSec(sym,secRiskIssuer,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256}); }
 // headlines (Finnhub company news, the owner's existing key; official API): only for the few stocks an early alert is about to name
 async function newsFor(sym) { if (!env.FINNHUB_KEY) return { ok: false, why: 'no FINNHUB_KEY' };
@@ -205,7 +214,7 @@ async function tgSend(text) {
 }
 const INSTRUMENT_COHORT=env.IG_INSTRUMENT_REFERENCE_FILE?'INSTRUMENT_CLASSIFIED_V2:'+(env.IG_INSTRUMENT_REFERENCE_SHA256||'UNPINNED'):'LEGACY_FROZEN_20261028';
 const EA = createEarlyAlerts({ day, collectionCohort:INSTRUMENT_COHORT, level: alertLevel(readJson('data/settings.json', {})), send: tgSend, secRisk, notHalal, halalOk: (s) => !!(halal[s] && halal[s].s === 'ok') && !zadNot.has(s),
-  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
+  lottery: LOTT, record: PREC, lab: (LAB && LAB.rules) || {}, now: () => clock(), catalyst: async (sym, sec) => classifyCatalyst({ symbol:sym,issuerName:sec?.issuerName, sec: sec || await secRisk(sym), news: await newsFor(sym), nowMs: Date.now() }) });
 const SR = createShadow({ day });
 const shadowRows=SR.rows.bind(SR); SR.rows=()=>shadowRows().map(row=>({...row,instrument:row.instrument||{status:'UNKNOWN',reason:'LEGACY_OBSERVATION_IDENTITY_UNESTABLISHED'},performanceScope:'LEGACY_MIXED_INSTRUMENT_RESEARCH',approvedBuyEligible:false}));
 for(const method of ['early','trigger','filing','control']){const original=SR[method].bind(SR);SR[method]=(...args)=>{original(...args);const row=SR.book.get(args[0].sym);if(row&&!row.instrument){row.instrument=EA.S.sec[row.sym]?.instrument||readInstrumentType(row.sym,{file:env.IG_INSTRUMENT_REFERENCE_FILE,pinnedSha256:env.IG_INSTRUMENT_REFERENCE_SHA256});row.instrumentRecordedAt=new Date().toISOString();row.collectionVersion='WATCHER_CONTEXT_V2';row.rankingCohort=INSTRUMENT_COHORT;}};}
@@ -271,20 +280,21 @@ async function radarSnap(m, scanned, live) {
   RADAR.mkt = medChg();
   // (28 Oct fix) the live SEC check for every stock the radar may name (cached by the alert system when it already ran); a lead needs it
   const sec = {}; for (const s of new Set([...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)])) { if (!EA.S.sec[s]) EA.S.sec[s] = await secRisk(s).catch(() => ({ known: false, tags: [] })); sec[s] = { known: EA.S.sec[s].known, tags: EA.S.sec[s].tags || [],instrument:EA.S.sec[s].instrument||{status:'UNKNOWN'},status:EA.S.sec[s].status,sourceFailure:EA.S.sec[s].sourceFailure===true }; }
-  const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catText) cat[r.sym] = r.catText;
+  const cat = {}; for (const r of Object.values(EA.S.seen)) if (r.catObj) cat[r.sym] = publicCatalystSummary(r.catObj);
   { let nq = 0; for (const s of [...hits.map(h => h.sym), ...early.filter(e => e.price >= 1).map(e => e.sym)]) { if (cat[s] || !sec[s] || !sec[s].known || sec[s].tags.length) continue;   // the radar's own catalyst check for names it may list
-      const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = classifyCatalyst({ sec: EA.S.sec[s], news, nowMs: Date.now() }).text; } }
+      const news = nq < 12 ? (nq++, await newsFor(s)) : { ok: false, why: 'not checked: radar limit of 12 headline look-ups' }; cat[s] = publicCatalystSummary(classifyCatalyst({ symbol:s,issuerName:EA.S.sec[s]?.issuerName, sec: EA.S.sec[s], news, nowMs: Date.now() })); } }
   fs.writeFileSync('data/radar-v3-snap.json', JSON.stringify({ day, at: fmtM(m), mode, firstMinute: beat.length ? fmtM(beat[0].m) : fmtM(m), scanned, live, alerts, mkt: RADAR.mkt, tally: tl, sec, cat,
-    movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
+    moverCount: ms.length, movers: ms.slice(0, 20).map(x => ({ sym: x.sym, code: x.code, maxUp: x.maxUp, firstSeen: x.firstSeen, firstSeenUp: x.firstSeenUp })), hits, early, now }));
   await sendRadarOnce();
 }
-const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
+const saveObservationProgress=()=>{try{const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});const file=dir+'/'+INCIDENT_RUN_ID+'-progress.json',tmp=file+'.tmp';fs.writeFileSync(tmp,JSON.stringify({day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,partial:true,...(env.PRIVATE_QUOTE_RETENTION_ROOT?{privateQuoteRetention:PRIVATE_QUOTE_RETENTION.report()}:{}),heartbeat:beat,messageDelivery:MESSAGE_STATE.report()}));fs.renameSync(tmp,file);}catch(e){console.error('observation progress archive unavailable');}};
 process.once('SIGTERM',()=>{saveObservationProgress();process.exit(143);});
 saveObservationProgress();
-while (Date.now() - START < MAXMS) {
+while (Date.now() - RUN_START < MAXMS) {
+  const passStartedAt = Date.now(); // Include snapshot/stop-watch work in this pass, without inventing catch-up observations.
   MESSAGE_STATE.maintain();
-  const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
-  const rows = await snap(); loops++; const tStart = triggers.length;
+  let m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
+  const rows = await snap(); if(env.PRIVATE_QUOTE_RETENTION_ROOT){try{PRIVATE_QUOTE_RETENTION.publish();}catch{}console.log('private quote retention: '+JSON.stringify(PRIVATE_QUOTE_RETENTION.report()));} m=clock(); if(m>900)break; loops++; const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
     // (4 Nov) every held stock gets its own price evidence (ticker-bound response, provider clock, age); no row or a stale/undated one -> STOP CHECK UNKNOWN, never silently safe
@@ -348,19 +358,23 @@ while (Date.now() - START < MAXMS) {
   if (m >= 675 && !RADAR.done) { RADAR.done = true; try { await radarSnap(m, rows.length, liveN); } catch (e) { console.log('radar: ' + e.message); } }   // 11:15 New York
   else if(m>=675&&RADAR.done&&MESSAGE_STATE.has('midday-radar')&&MESSAGE_STATE.state('midday-radar')==='UNSENT'){await sendRadarOnce();}
   if (loops % 30 === 1) console.log(fmtM(m) + ' New York [' + mode + ']: ' + rows.length + ' stocks received, ' + liveN + ' with a live price (median price age ' + q(sa, 0.5) + ' min), ' + triggers.length + ' ignitions so far, ' + alerts + ' alerts');
-  const wait = 60000 - (Date.now() - nowMs); if (wait > 0) await sleep(wait);
+  const wait = 60000 - (Date.now() - passStartedAt); if (wait > 0) await sleep(wait);
 }
 const movers = Object.values(vis).filter(v => v.maxC >= 0.15), missed = buildMissed();
 const tally = {}; for (const x of missed) tally[x.code] = (tally[x.code] || 0) + 1;
 const modes = {}; for (const b of beat) modes[b.mode] = (modes[b.mode] || 0) + 1;
 const med = (a) => { const s = a.filter(x => x !== null && x !== undefined).sort((x, y) => x - y); return s.length ? s[Math.floor(s.length / 2)] : null; };
-const scheduled = Math.max(1, Math.min(900, clock()) - 570);   // (outside review, 22 Oct) coverage counts from the 09:30 open, so a late start shows as missed minutes
-const coverage = beat.length ? { minutesWatched: beat.length, firstMinute: fmtM(beat[0].m), lastMinute: fmtM(beat[beat.length - 1].m), minutesCompletedRate: +(Math.min(1, beat.length / scheduled)).toFixed(3), modes,
+// Raw heartbeats stay immutable. Coverage is unique usable configured receipt minutes, not loop count.
+const scheduled = Math.max(0, Math.min(900, clock()) - 570 + 1);
+const configuredBeats=beat.filter(b=>Number.isInteger(b.m)&&b.m>=570&&b.m<=900);
+const observedMinutes=new Set(configuredBeats.map(b=>b.m));
+const usableMinutes=new Set(configuredBeats.filter(b=>b.received>0&&b.evaluated>0).map(b=>b.m));
+const coverage = beat.length ? { countingBasis:'UNIQUE_USABLE_CONFIGURED_MINUTES_V1',minutesWatched:usableMinutes.size,observedMinutes:observedMinutes.size,rawObservations:beat.length,duplicateMinuteObservations:configuredBeats.length-observedMinutes.size,configuredExpectedMinutes:scheduled,firstMinute:fmtM(beat[0].m),lastMinute:fmtM(beat[beat.length-1].m),minutesCompletedRate:scheduled?+(Math.min(1,usableMinutes.size/scheduled)).toFixed(3):null,modes,
   receivedMedian: med(beat.map(b => b.received)), evaluatedMedian: med(beat.map(b => b.evaluated)), liveMedian: med(beat.map(b => b.live)), liveRate: med(beat.map(b => b.evaluated ? +(b.live / b.evaluated).toFixed(3) : null)),
   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
 // Incident backport: archive on original observation basis before any canonical end-of-run publication.
-const incidentSnapshot={version:IG_VERSION,configuredWindow:{open:570,endExclusive:901},collectionVersion:"WATCHER_CONTEXT_V2",day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()};
+const incidentSnapshot={version:IG_VERSION,configuredWindow:{open:570,endExclusive:901},collectionVersion:"WATCHER_CONTEXT_V2",...(env.PRIVATE_QUOTE_RETENTION_ROOT?{privateQuoteRetention:PRIVATE_QUOTE_RETENTION.report()}:{}),day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()};
 const incidentArchive='data/ignition-runs/'+day;
 fs.mkdirSync(incidentArchive,{recursive:true});
 fs.writeFileSync(incidentArchive+'/'+INCIDENT_RUN_ID+'.json',JSON.stringify(incidentSnapshot),{flag:'wx'});

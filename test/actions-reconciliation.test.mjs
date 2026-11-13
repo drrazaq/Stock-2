@@ -4,12 +4,13 @@ import assert from 'node:assert/strict';
 import http from 'node:http';
 import {loadScan,blocked} from './load-scan.mjs';
 const root=process.env.ACTIONS_TREE;
+const realClock=Date.now;Date.now=()=>Date.parse('2026-11-10T12:00:00Z');test.after(()=>{Date.now=realClock;});
 async function setup(files={},good=true,command=null){
  const sent=[];
  const server=http.createServer((req,res)=>{
  if(req.url.includes('/getUpdates')){res.setHeader('content-type','application/json');res.end(JSON.stringify({ok:true,result:command?[{update_id:12,message:{message_id:10,chat:{id:42},text:command}}]:[]}));return;}
  if(req.url.includes('/sendMessage')){let body='';req.on('data',c=>body+=c);req.on('end',()=>{sent.push(JSON.parse(body).text);res.setHeader('content-type','application/json');res.end(JSON.stringify({ok:true,result:{message_id:11}}));});return;}
- const values=[];for(let i=0;i<290;i++)values.push({datetime:new Date(Date.UTC(2025,0,1+i)).toISOString().slice(0,10),open:75,high:76,low:74,close:75,volume:1e6});res.setHeader('content-type','application/json');res.end(JSON.stringify(req.url.includes('time_series')&&good?{values}:{}));});
+ const values=[];for(let i=0;i<290;i++)values.push({datetime:new Date(Date.parse('2026-11-09T12:00:00Z')-(289-i)*864e5).toISOString().slice(0,10),open:75,high:76,low:74,close:75,volume:1e6});res.setHeader('content-type','application/json');res.end(JSON.stringify(req.url.includes('time_series')&&good?{values}:{}));});
  await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
  const S=await loadScan({...(root?{root}:{}),files:{'data/settings.json':{focus:false},'data/halal.json':{ZZQ:{s:'ok',d:new Date().toISOString().slice(0,10)}},...files},env:{TD_BASE:base,FH_BASE:base,SEC_BASE:base,...(command?{TG_BASE:base,TG_TOKEN:'synthetic-token',TG_CHAT:'42'}:{})}});
  return {S,sent,close:()=>server.close(),sig:{session:'2025-10-17',market:{up:true,above50:true},stocks:[{sym:'ZZQ',last:75}]}};

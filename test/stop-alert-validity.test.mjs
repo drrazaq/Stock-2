@@ -87,11 +87,11 @@ test('catalyst times have a full date and one time zone (previous-day items no l
   assert.equal(nyStamp(Date.parse('2026-10-30T20:07:00Z')), 'Oct 30 16:07 New York');   // EDT, before the 1 Nov change
   for (const t of ['2026-11-03T21:07:00Z', '2026-10-30T20:07:00Z', '2027-03-15T13:30:00Z']) assert.equal(nyStampAlerts(Date.parse(t)), nyStamp(Date.parse(t)), 'one format in both modules');
   const now = Date.parse('2026-11-04T14:37:00Z');
-  const v = classifyCatalyst({ sec: { known: true, filings: [{ form: '6-K', at: '2026-11-03T21:07:00Z' }] }, news: { ok: true, items: [{ at: Date.parse('2026-11-03T21:05:00Z'), source: 'Yahoo', headline: 'ZZQ Reports Third Quarter' }] }, nowMs: now });
+  const v = classifyCatalyst({ symbol:'ZZQ', sec: { known: true, filings: [{ form: '6-K', at: '2026-11-03T21:07:00Z' }] }, news: { ok: true, items: [{ at: Date.parse('2026-11-03T21:05:00Z'), source: 'Yahoo', headline: 'ZZQ Reports Third Quarter' }] }, nowMs: now });
   assert.match(v.text, /SEC 6-K accepted Nov 3 16:07 New York; headline Nov 3 16:05 New York \(Yahoo\)/);
-  const r = classifyCatalyst({ sec: { known: true, filings: [{ form: '8-K', at: '2026-11-02T12:15:00Z' }] }, news: { ok: true, items: [] }, nowMs: now });
+  const r = classifyCatalyst({ symbol:'ZZQ', sec: { known: true, filings: [{ form: '8-K', at: '2026-11-02T12:15:00Z' }] }, news: { ok: true, items: [] }, nowMs: now });
   assert.equal(r.cls, 'RECYCLED'); assert.match(r.text, /SEC 8-K accepted Nov 2 07:15 New York/); assert.doesNotMatch(r.text, /UTC/);
-  const h = classifyCatalyst({ sec: { known: true, filings: [] }, news: { ok: true, items: [{ at: Date.parse('2026-11-04T08:05:00Z'), source: 'Benzinga', headline: 'ZZQ moves' }] }, nowMs: now });
+  const h = classifyCatalyst({ symbol:'ZZQ', sec: { known: true, filings: [] }, news: { ok: true, items: [{ at: Date.parse('2026-11-04T08:05:00Z'), source: 'Benzinga', headline: 'ZZQ moves' }] }, nowMs: now });
   assert.match(h.text, /earliest headline Nov 4 03:05 New York \(Benzinga\)/);
 });
 
@@ -126,7 +126,8 @@ for (const watcherState of [null, 'UNSENT', 'UNCERTAIN'])
     const { sent, S } = await botRun(t, { watcherState });
     const stop = sent.filter(x => /STOP LEVEL REACHED/.test(x));
     assert.equal(stop.length, 1); assert.match(stop[0], /^YOUR STOPS \(bot check; the live watcher had not confirmed these\)/);
-    assert.match(stop[0], /ZZA traded at or below your stop 80\.00: last price 79\.00 \(FINNHUB, Nov 5 10:30 New York, 20 s old\)/);
+    // (R1 rev14, Codex 6723732821 B4) the bot's stop batch states when the price was checked (the batch can be sent minutes later)
+    assert.match(stop[0], /ZZA traded at or below your stop 80\.00: last price 79\.00 \(FINNHUB, Nov 5 10:30 New York, 20 s old when checked at Nov 5 10:31 New York\) \(bought 100\.00, -21\.0%\)\./);
     assert.match(stop[0], /do not sell again/); assert.doesNotMatch(stop[0], /not instructions|Sell \/ reassess/);
     assert.equal(S.readJson('data/my-positions.json').ZZA.stop, 80, 'stop level unchanged');
   });

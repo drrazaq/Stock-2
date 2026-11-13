@@ -1,0 +1,8 @@
+import fs from 'node:fs';import{execFileSync}from'node:child_process';import{loadScan,blocked}from'../../test/load-scan.mjs';
+const pin='3aa893f52022a03a7fbac783599691e87c86abd8',bytes=p=>execFileSync('git',['show',pin+':'+p],{maxBuffer:16*1024*1024}),lib=JSON.parse(bytes('data/strategy-library.json')),rule=lib.strategies.find(x=>x.id==='SQ12-REVEPS'),signal=bytes('data/squad12-paper.jsonl').toString().trim().split('\n').map(JSON.parse).find(x=>x.id==='SQ12-REVEPS|TWLO|2026-10-30');
+// Explicit demonstration adapter only; no original version/coverage/identity is fabricated.
+const record={id:rule.id,verdict:rule.status,sourceExplanation:rule.explain};
+const scanner=await loadScan({files:{'data/research-assessments.json':{records:{TWLO:record}},'data/halal.json':{}}});const asOf=new Date().toISOString(),r=scanner.fn('researchDecisionTracePrototype')('TWLO',{asOf});
+if(blocked.length)throw Error('Unexpected external request');
+const out={kind:'ADAPTER_DEMONSTRATION_WITH_AUTHENTIC_RETAINED_RESEARCH_NOT_PRODUCTION_RECORD',sourcePin:pin,authenticInputs:{ruleId:rule.id,originalStatus:rule.status,signal:{id:signal.id,symbol:signal.sym,eventSession:signal.d,event:signal.ev,recordedAfter:signal.recordedAfter,archivedClose:signal.close}},missingAuthenticInputs:['No adopted keyed artifact or coverage witness','No verified current identity and private BBO','Private owner ZAD deliberately omitted from public demo, not a claim the owner has no mark','Real production assessment-book producer not implemented'],asOf,card:r.card,externalRequests:blocked.length,currentRecommendation:false};
+console.log(JSON.stringify(out,null,2));

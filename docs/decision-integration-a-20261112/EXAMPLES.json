@@ -1,0 +1,40 @@
+{
+  "kind": "ENTIRELY_SYNTHETIC_COMMAND_AND_SEND_FIXTURES",
+  "examples": [
+    {
+      "case": "actual check, full synthetic evaluated inputs",
+      "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ",
+      "delivery": "CONFIRMED_SENT"
+    },
+    {
+      "case": "ambiguous",
+      "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ",
+      "delivery": "UNCERTAIN"
+    },
+    {
+      "case": "refused",
+      "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ",
+      "delivery": "PROPOSED_NOT_SENT"
+    },
+    {
+      "case": "429",
+      "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ",
+      "delivery": "UNCERTAIN"
+    },
+    {
+      "case": "real review caller, synthetic held stop, absent entry quote",
+      "text": "HOLD OR SELL: ZZQ → STOP LEVEL REACHED\nCLOSE-BASED assessment as of 2026-11-10; current stop observation price 7.00 observed Nov 11 15:29 New York\nPrice 7.00 (live) | you bought at 10.00, -30.0%\nWhy: STOP LEVEL REACHED: ZZQ traded at or below your stop 8.00: last price 7.00 (FINNHUB, Nov 11 15:29 New York, 60 s old) (bought 10.00, -30.0%).\nIf your broker stop order has filled, you are already out: do not sell again; send  sold ZZQ FILLPRICE  with the fill price.\nIf no stop order is working at your broker, decide now whether to sell, then send  sold ZZQ PRICE.\nIts own past: only 16 earlier times in this state, too few to judge; the trend rule decides.\nFrom its 1-year high: -47.0%\nStop to use: 8.00 (the trade’s own tested stop; the bot raises it when its rule says so).\nTested on its own history, not a promise. Not financial advice, not a halal ruling.\n\nSYNTHETIC FIXTURE — NOT A RECOMMENDATION | SELL ZZQ | quantity UNKNOWN; STOP LEVEL REACHED | STOP LEVEL REACHED: ZZQ traded at or below your stop 8.00: last price 7.00 (FINNHUB, Nov 11 15:29 New York, 60 s old) (bought 10.00, -30.0%). If your broker stop order has filled, you are already out: do not sell again;  | holding basis 2026-11-10; observation 2026-11-11T20:29:00.000Z | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+    },
+    {
+      "case": "retained public journal row through actual command; private evidence absent; not current recommendation",
+      "sourcePin": "3aa893f52022a03a7fbac783599691e87c86abd8",
+      "authenticRow": {
+        "symbol": "OABI",
+        "type": "LEGACY_UNKEYED",
+        "horizon": null,
+        "evidenceVersion": null
+      },
+      "text": "BOOK_STALE: current journal/evaluation publication unavailable; prior book retains original expiry\n\nWAIT OABI | VERIFIED_MATCHING_IDENTITY_REQUIRED | evidence DATA_UNAVAILABLE | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check OABI"
+    }
+  ]
+}

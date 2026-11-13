@@ -1,0 +1,792 @@
+diff --git a/docs/decision-trace-20261112/EXAMPLES.json b/docs/decision-trace-20261112/EXAMPLES.json
+index ec42ba1a..356a1daa 100644
+--- a/docs/decision-trace-20261112/EXAMPLES.json
++++ b/docs/decision-trace-20261112/EXAMPLES.json
+@@ -16,6 +16,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -47,7 +49,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -56,7 +58,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "WAIT",
+-        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED",
++        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED: ISSUER_IDENTITY_UNKNOWN_OR_CONFLICTING",
+         "coverage": "PARTIAL_COVERAGE",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -67,6 +69,8 @@
+         "missing": [
+           "FRESH_COMPLETE_QUOTE_REQUIRED"
+         ],
++        "quoteRejectionReason": "ISSUER_IDENTITY_UNKNOWN_OR_CONFLICTING",
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -77,7 +81,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED: ISSUER_IDENTITY_UNKNOWN_OR_CONFLICTING | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -99,6 +103,8 @@
+           "QUOTE_IDENTITY_MISMATCH",
+           "PARTIAL_COVERAGE"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -117,7 +123,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | VERIFIED_MATCHING_IDENTITY_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | VERIFIED_MATCHING_IDENTITY_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -126,7 +132,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "WAIT",
+-        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED",
++        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED: PRIVATE_POINTER_OR_POLICY_UNVERIFIED",
+         "coverage": "PARTIAL_COVERAGE",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -137,6 +143,8 @@
+         "missing": [
+           "FRESH_COMPLETE_QUOTE_REQUIRED"
+         ],
++        "quoteRejectionReason": "PRIVATE_POINTER_OR_POLICY_UNVERIFIED",
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -147,7 +155,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED: PRIVATE_POINTER_OR_POLICY_UNVERIFIED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -156,7 +164,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "WAIT",
+-        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED",
++        "reason": "FRESH_COMPLETE_QUOTE_REQUIRED: PRIVATE_POINTER_EXPIRED_OR_FUTURE",
+         "coverage": "PARTIAL_COVERAGE",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:32:01.000Z",
+@@ -168,6 +176,8 @@
+           "FRESH_COMPLETE_QUOTE_REQUIRED",
+           "PARTIAL_COVERAGE"
+         ],
++        "quoteRejectionReason": "PRIVATE_POINTER_EXPIRED_OR_FUTURE",
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -178,7 +188,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:32:01.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | FRESH_COMPLETE_QUOTE_REQUIRED: PRIVATE_POINTER_EXPIRED_OR_FUTURE | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:32:01.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -198,6 +208,8 @@
+         "missing": [
+           "CURRENT_EXACT_RULE_EVIDENCE_REQUIRED"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -216,7 +228,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | CURRENT_EXACT_RULE_EVIDENCE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | CURRENT_EXACT_RULE_EVIDENCE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -237,6 +249,8 @@
+           "CURRENT_EXACT_RULE_EVIDENCE_REQUIRED",
+           "PARTIAL_COVERAGE"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -255,7 +269,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | CURRENT_EXACT_RULE_EVIDENCE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | CURRENT_EXACT_RULE_EVIDENCE_REQUIRED | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -275,6 +289,8 @@
+         "missing": [
+           "ZAD_UNKNOWN"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "UNKNOWN",
+         "entry": null,
+         "quantity": null,
+@@ -293,7 +309,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | ZAD_UNKNOWN | evidence ADEQUATELY_OBSERVED | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | ZAD_UNKNOWN | evidence ADEQUATELY_OBSERVED | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -311,6 +327,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "FAIL",
+         "entry": null,
+         "quantity": null,
+@@ -329,7 +347,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "NO BUY ZZQ | Existing ZAD mark blocks a new entry | evidence ADEQUATELY_OBSERVED | ZAD FAIL | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | NO BUY ZZQ | Existing ZAD mark blocks a new entry | evidence ADEQUATELY_OBSERVED | ZAD FAIL | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -347,6 +365,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -378,7 +398,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -396,6 +416,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -427,7 +449,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -447,6 +469,8 @@
+         "missing": [
+           "NO_AFFORDABLE_WHOLE_SHARE"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -465,7 +489,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "NO BUY ZZQ | No affordable whole share after reserving the entry fee | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | NO BUY ZZQ | No affordable whole share after reserving the entry fee | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -485,6 +509,8 @@
+         "missing": [
+           "PARTIAL_COVERAGE"
+         ],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -503,7 +529,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | PARTIAL_COVERAGE | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | PARTIAL_COVERAGE | evidence PARTIAL_COVERAGE | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -521,6 +547,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -539,7 +567,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | No qualifying setup observed under the exact retained rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | No qualifying setup observed under the exact retained rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -562,6 +590,8 @@
+           "CURRENT_EXACT_RULE_EVIDENCE_REQUIRED",
+           "COVERAGE_UNAVAILABLE"
+         ],
++        "quoteRejectionReason": "PRIVATE_POINTER_OR_POLICY_UNVERIFIED",
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -590,6 +620,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -621,7 +653,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "NO BUY ZZQ | Exact rule failed; pass on this setup | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | NO BUY ZZQ | Exact rule failed; pass on this setup | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -630,7 +662,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "HOLDING_EXIT_UNVERIFIED",
+-        "reason": "Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision",
++        "reason": "Supplied holding exit is unverified — check holding; Existing rule",
+         "coverage": "ADEQUATELY_OBSERVED",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -639,6 +671,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -670,7 +704,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; Existing rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -679,7 +713,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "HOLDING_EXIT_UNVERIFIED",
+-        "reason": "Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision",
++        "reason": "Supplied holding exit is unverified — check holding; Existing rule",
+         "coverage": "ADEQUATELY_OBSERVED",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -688,6 +722,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -719,7 +755,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; Existing rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -728,7 +764,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "HOLDING_EXIT_UNVERIFIED",
+-        "reason": "Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision",
++        "reason": "Supplied holding exit is unverified — check holding; Existing rule",
+         "coverage": "ADEQUATELY_OBSERVED",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -737,6 +773,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -768,7 +806,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; Existing rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -777,7 +815,7 @@
+       "card": {
+         "symbol": "ZZQ",
+         "status": "HOLDING_EXIT_UNVERIFIED",
+-        "reason": "Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision",
++        "reason": "Supplied holding exit is unverified — check holding; Existing rule",
+         "coverage": "ADEQUATELY_OBSERVED",
+         "setup": "QUALIFYING",
+         "asOf": "2026-11-11T20:30:00.000Z",
+@@ -786,6 +824,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -817,7 +857,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | HOLDING_EXIT_UNVERIFIED ZZQ | Supplied holding exit is unverified — check holding; Existing rule | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -840,6 +880,8 @@
+           "PARTIAL_COVERAGE",
+           "ZAD_UNKNOWN"
+         ],
++        "quoteRejectionReason": "PRIVATE_POINTER_OR_POLICY_UNVERIFIED",
++        "holdingEvidence": null,
+         "zad": "UNKNOWN",
+         "entry": null,
+         "quantity": 2,
+@@ -850,7 +892,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "SELL ZZQ | quantity 2; Previously established close-based time exit | Existing authorized holding condition reached | evidence PARTIAL_COVERAGE | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | SELL ZZQ | quantity 2; Previously established close-based time exit | Existing authorized holding condition reached | evidence PARTIAL_COVERAGE | ZAD UNKNOWN | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:00.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     },
+@@ -868,6 +910,8 @@
+         "ruleVersion": "519686fd490d33dbec517561a63781a1b4352f6628707c85646d1a0ec38c9d29",
+         "evidenceVersion": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+         "missing": [],
++        "quoteRejectionReason": null,
++        "holdingEvidence": null,
+         "zad": "OK",
+         "entry": null,
+         "quantity": null,
+@@ -899,7 +943,7 @@
+         "buyAuthority": false,
+         "delivery": "PROTOTYPE_ONLY_NO_SEND",
+         "details": "check ZZQ",
+-        "text": "WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
++        "text": "SYNTHETIC FIXTURE — NOT A RECOMMENDATION | WAIT ZZQ | Research setup only; no adopted/proven entry authority | evidence ADEQUATELY_OBSERVED | ZAD OK | as of 2026-11-11T20:30:00.000Z; expires 2026-11-11T20:31:50.000Z | $3 per executed side; spread/slippage separate | check ZZQ"
+       },
+       "updateReason": "INITIAL"
+     }
+diff --git a/private-quote-retention.mjs b/private-quote-retention.mjs
+index 17b40002..2b87e5b5 100644
+--- a/private-quote-retention.mjs
++++ b/private-quote-retention.mjs
+@@ -133,3 +133,6 @@ export function restoreQuoteRecovery({bundle,pinnedSha256,root,checkout}){
+  for(const [name,b]of checked)immutable(root,name,b);
+  return {status:'RESTORED_ORIGINAL_BYTES',files:checked.length,currentObservation:false};
+ }
++
++// Reused by the separately opted-in private assessment book; producer behavior unchanged.
++export {privateRoot as validatedPrivateRoot,file as boundedPrivateFile,atomic as atomicPrivateFile};
+diff --git a/research-assessment.mjs b/research-assessment.mjs
+index 816c7569..86df4f7e 100644
+--- a/research-assessment.mjs
++++ b/research-assessment.mjs
+@@ -1,5 +1,10 @@
+ // Development-only research presentation. No rule adoption, trading gate or side effect.
+-import {createHash} from 'node:crypto';
++import {createHash,randomUUID} from 'node:crypto';
++import fs from 'node:fs';
++import path from 'node:path';
++import {marketSymbol} from './market-symbol.mjs';
++import {assessmentRuleIdentity} from './discovery-runtime.mjs';
++import {validatedPrivateRoot,boundedPrivateFile,atomicPrivateFile} from './private-quote-retention.mjs';
+ const text=(x,n=220)=>typeof x==='string'?x.replace(/[\r\n]+/g,' ').slice(0,n):'';
+ const positive=x=>typeof x==='number'&&Number.isFinite(x)&&x>0;
+ const digest=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
+@@ -7,6 +12,8 @@ export function researchRuleAssessment(record){
+  if(!record||typeof record!=='object')return {state:'NO_RESEARCH_RULE',label:'No research rule supplied',actionAuthority:false};
+  // An external ID or a legacy verdict does not authenticate the rule definition.
+  const d=record.definition,identified=typeof record.id==='string'&&record.id.length>0&&d&&typeof d==='object'&&!Array.isArray(d)&&typeof d.entry==='string'&&d.entry.trim()&&typeof d.exit==='string'&&d.exit.trim()&&d.parameters&&typeof d.parameters==='object'&&!Array.isArray(d.parameters);
++ const scanner=d?.schema==='SCANNER_RULE_DEFINITION_V1'?assessmentRuleIdentity({rule:d.ruleText,assessmentRule:{definition:d,ruleId:record.id,ruleVersion:record.version}}):null;
++ if(scanner?.ruleIdentityState==='IDENTIFIED'){const failed=/^(?:tested:\s*)?(?:rejected|failed(?: discovery)?|stop)(?:$|[\s(_;:-])/i.test(record.verdict||'');return {state:failed?'FAILED_RESEARCH_RULE':record.adopted===true?'UNPROVEN_RESEARCH_RULE':'UNADOPTED_RESEARCH_RULE',ruleId:record.id,ruleVersion:record.version,label:(failed?'FAILED_RESEARCH_RULE':record.adopted===true?'UNPROVEN_RESEARCH_RULE':'UNADOPTED_RESEARCH_RULE')+'; rule NOT PROVEN',entry:text(d.ruleText),exit:JSON.stringify(d.exitPolicy),holdSessions:d.variant.maxHold||d.config.TIME_STOP_DAYS,actionAuthority:false};}
+  const version=identified?digest(canonical(d)):null;
+  const matches=identified&&record.version===version;
+  const state=!identified?'UNKEYED_RESEARCH_RULE':!matches?'RULE_VERSION_UNVERIFIED':/^(?:tested:\s*)?(?:rejected|failed(?: discovery)?|stop)(?:$|[\s(_;:-])/i.test(typeof record.verdict==='string'?record.verdict.trim():'')?'FAILED_RESEARCH_RULE':record.adopted!==true?'UNADOPTED_RESEARCH_RULE':'UNPROVEN_RESEARCH_RULE';
+@@ -18,10 +25,12 @@ export function conciseResearchDecision({symbol,record,asOf,now=Date.now(),exist
+  const rule=researchRuleAssessment(record),at=Date.parse(asOf||''),validClock=typeof asOf==='string'&&/T.*(?:Z|[+-]\d\d:\d\d)$/.test(asOf)&&Number.isFinite(at)&&Number.isFinite(now)&&at<=now;
+  // Only preserve an explicitly supplied, still-valid existing holding exit. Never derive a sell from research.
+  const e=existingExit,until=Date.parse(e?.expiresAt||''),observed=Date.parse(e?.evidenceAt||'');
+- const sell=validClock&&e?.authority==='EXISTING_HOLDING_EXIT'&&e?.symbol===symbol&&e?.status==='SELL'&&typeof e.reason==='string'&&e.reason.trim()&&typeof e.condition==='string'&&e.condition.trim()&&Number.isFinite(observed)&&observed<=at&&Number.isFinite(until)&&until>now&&positive(e.quantity)&&Number.isInteger(e.quantity);
++ let checked=false;try{checked=e?.authority==='ACTUAL_HOLDING_REVIEW'&&e.symbol===symbol&&typeof e.currentEvidence==='function'&&e.currentEvidence(now)===true;}catch{}
++ const runtimeExit=checked&&e.status==='SELL'&&typeof e.reason==='string'&&e.reason.trim()&&typeof e.condition==='string'&&e.condition.trim();
++ const sell=runtimeExit||validClock&&e?.authority==='EXISTING_HOLDING_EXIT'&&e?.symbol===symbol&&e?.status==='SELL'&&typeof e.reason==='string'&&e.reason.trim()&&typeof e.condition==='string'&&e.condition.trim()&&Number.isFinite(observed)&&observed<=at&&Number.isFinite(until)&&until>now&&positive(e.quantity)&&Number.isInteger(e.quantity);
+  const unverifiedExit=existingExit!==undefined&&existingExit!==null&&!sell;
+- const status=sell?'SELL':unverifiedExit?'HOLDING_EXIT_UNVERIFIED':rule.state==='FAILED_RESEARCH_RULE'?'NO BUY':'WAIT';
+- return {symbol:text(symbol,16)||'UNKNOWN',status,asOf:validClock?asOf:null,expiresAt:sell?e.expiresAt:null,entry:null,quantity:sell?e.quantity:null,exit:sell?text(e.condition):null,horizon:sell?text(e.horizon):rule.holdSessions?rule.holdSessions+' research sessions; not adopted':null,costs:'$3 each executed side; spread/slippage additional; $1,000 whole-share research reference',reason:sell?text(e.reason):unverifiedExit?'Supplied holding exit is unverified — check holding; do not replace it with a new-entry decision':!validClock?'Assessment clock UNKNOWN; no action supported':rule.state==='FAILED_RESEARCH_RULE'?'Exact research rule failed; no entry authority':rule.state==='NO_RESEARCH_RULE'?'No adopted entry/exit evidence supplied':rule.label,ruleState:rule.state,zad:'UNKNOWN; existing owner ZAD evidence remains authoritative',buyAuthority:false,details:'check '+(text(symbol,16)||'UNKNOWN')};
++ const status=sell?'SELL':checked&&e.status==='HOLD'?'HOLD':unverifiedExit?'HOLDING_EXIT_UNVERIFIED':rule.state==='FAILED_RESEARCH_RULE'?'NO BUY':'WAIT';
++ return {symbol:text(symbol,16)||'UNKNOWN',status,asOf:validClock?asOf:null,expiresAt:sell?e.expiresAt:null,entry:null,quantity:sell&&Number.isInteger(e.quantity)&&e.quantity>0?e.quantity:null,exit:sell?text(e.condition):null,horizon:sell?text(e.horizon):rule.holdSessions?rule.holdSessions+' research sessions; not adopted':null,costs:'$3 each executed side; spread/slippage additional; $1,000 whole-share research reference',reason:sell||checked&&e.status==='HOLD'?text(e.reason):unverifiedExit?'Supplied holding exit is unverified — check holding; '+text(e?.reason||'do not replace it with a new-entry decision'):!validClock?'Assessment clock UNKNOWN; no action supported':rule.state==='FAILED_RESEARCH_RULE'?'Exact research rule failed; no entry authority':rule.state==='NO_RESEARCH_RULE'?'No adopted entry/exit evidence supplied':rule.label,ruleState:rule.state,zad:'UNKNOWN; existing owner ZAD evidence remains authoritative',buyAuthority:false,details:'check '+(text(symbol,16)||'UNKNOWN')};
+ }
+ export function conciseResearchDecisionText(input){const r=conciseResearchDecision(input);return [r.status+' '+r.symbol,r.quantity?'quantity '+r.quantity:null,r.exit?'exit '+r.exit:null,'as of '+(r.asOf||'UNKNOWN')+(r.expiresAt?'; expires '+r.expiresAt:'; action expiry not established'),r.horizon,r.costs,r.reason,'ZAD '+r.zad,'Details: '+r.details].filter(Boolean).join(' | ');}
+ 
+@@ -39,6 +48,7 @@ export function traceResearchDecision({symbol,record,quote,instrument,zad,covera
+  if(!assessed)missing.push('ASSESSMENT_CLOCK_UNAVAILABLE');
+  if(!identity)missing.push('VERIFIED_MATCHING_IDENTITY_REQUIRED');
+  if(!quoteReady)missing.push('FRESH_COMPLETE_QUOTE_REQUIRED');
++ const quoteRejectionReason=!quoteReady?text(q.reason||q.why||'QUOTE_UNAVAILABLE'):null;
+  if(q.currentBbo&&!matchingQuoteIdentity)missing.push('QUOTE_IDENTITY_MISMATCH');
+  if(!artifact)missing.push('CURRENT_EXACT_RULE_EVIDENCE_REQUIRED');
+  const cover=coverage?.status==='COMPLETE'&&coverage.symbol===symbol&&coverage.ruleVersion===rule.ruleVersion&&coverage.evidenceVersion===a?.evidenceVersion&&coverage.quoteArchiveSha256===q.archiveSha256&&coverage.identityReferenceSha256===instrument?.referenceSha256&&coverage.review?.status==='INDEPENDENT_PROVENANCE_REVIEWED'&&/^https:\/\/github\.com\/drrazaq\/Stock-2\/pull\/1#issuecomment-\d+$/.test(coverage.review.comment||'')&&clock(coverage.review.at)<=observedAt&&typeof coverage.version==='string'&&/^[a-f0-9]{64}$/.test(coverage.version)&&fresh(coverage.observedAt,coverage.expiresAt)&&clock(coverage.observedAt)<=observedAt;
+@@ -51,12 +61,12 @@ export function traceResearchDecision({symbol,record,quote,instrument,zad,covera
+  const any=!!record||q.currentBbo===true||instrument?.status==='ELIGIBLE_COMMON_STOCK';
+  const coverageState=!any?'DATA_UNAVAILABLE':missing.some(x=>x!=='ZAD_UNKNOWN')?'PARTIAL_COVERAGE':'ADEQUATELY_OBSERVED';
+  const blocked=instrument?.policyExcluded===true||zadState==='FAIL'||rule.state==='FAILED_RESEARCH_RULE'||affordable===0;
+- let status=['SELL','HOLDING_EXIT_UNVERIFIED'].includes(base.status)?base.status:blocked?'NO BUY':'WAIT';
+- let reason=['SELL','HOLDING_EXIT_UNVERIFIED'].includes(status)?base.reason:rule.state==='FAILED_RESEARCH_RULE'?'Exact rule failed; pass on this setup':instrument?.policyExcluded?'Instrument excluded from ordinary-stock queue':zadState==='FAIL'?'Existing ZAD mark blocks a new entry':affordable===0?'No affordable whole share after reserving the entry fee':missing.length?missing[0]:setup==='NO_SETUP'?'No qualifying setup observed under the exact retained rule':setup==='QUALIFYING'?'Research setup only; no adopted/proven entry authority':'Current setup evidence unavailable';
++ let status=['SELL','HOLD','HOLDING_EXIT_UNVERIFIED'].includes(base.status)?base.status:blocked?'NO BUY':'WAIT';
++ let reason=['SELL','HOLD','HOLDING_EXIT_UNVERIFIED'].includes(status)?base.reason:rule.state==='FAILED_RESEARCH_RULE'?'Exact rule failed; pass on this setup':instrument?.policyExcluded?'Instrument excluded from ordinary-stock queue':zadState==='FAIL'?'Existing ZAD mark blocks a new entry':affordable===0?'No affordable whole share after reserving the entry fee':missing.length?missing[0]+(missing[0]==='FRESH_COMPLETE_QUOTE_REQUIRED'?': '+quoteRejectionReason:''):setup==='NO_SETUP'?'No qualifying setup observed under the exact retained rule':setup==='QUALIFYING'?'Research setup only; no adopted/proven entry authority':'Current setup evidence unavailable';
+  const expiry=quoteReady&&artifact?new Date(Math.min(clock(q.quoteAsOf)+120000,clock(a.expiresAt),cover?clock(coverage.expiresAt):Infinity)).toISOString():null;
+  const projection=assessed&&matchingQuoteIdentity&&quoteReady&&artifact&&cover&&setup==='QUALIFYING'&&zadState==='OK'&&affordable>0?{label:record.synthetic===true?'SYNTHETIC SOFTWARE FIXTURE — NOT A BUY':'RESEARCH SCENARIO — NOT AN ORDER',askReference:q.ask,referenceWholeShares:affordable,entryFee:3,exitFeeIfExecuted:3,spread:'embedded in ask/bid, not added again',slippage:'UNKNOWN, not assumed zero',displayedAskShares:q.askSizeShares,fill:'UNKNOWN; displayed size is not fill capacity',entryCondition:rule.entry,exitCondition:rule.exit,horizon:rule.holdSessions?rule.holdSessions+' sessions':null}:null;
+- const card={symbol,status,reason,coverage:coverageState,setup:coverageState==='ADEQUATELY_OBSERVED'&&setup==='NO_SETUP'?'NO_QUALIFYING_SETUP':setup,asOf:assessed?asOf:null,expiry:['SELL','HOLDING_EXIT_UNVERIFIED'].includes(status)?base.expiresAt:expiry,ruleState:rule.state,ruleVersion:rule.ruleVersion||null,evidenceVersion:artifact?a.evidenceVersion:null,missing,zad:zadState,entry:null,quantity:status==='SELL'?base.quantity:null,exit:status==='SELL'?base.exit:null,researchScenario:projection,quote:q.currentBbo?{provider:q.provider,feed:q.feed,quoteAt:q.quoteAsOf,receivedAt:q.receiptAt,bid:q.bid,ask:q.ask,securityId:q.securityId}:null,fillStatus:record?.fillStatus==='OBSERVED_FILL'?'UNVERIFIED_FILL_CLAIM':'NO_OBSERVED_FILL',buyAuthority:false,delivery:'PROTOTYPE_ONLY_NO_SEND',details:'check '+text(symbol,16)};
+- card.text=[status+' '+text(symbol,16),status==='SELL'?'quantity '+base.quantity+'; '+base.exit:null,reason,'evidence '+coverageState,'ZAD '+zadState,'as of '+(card.asOf||'UNKNOWN')+(card.expiry?'; expires '+card.expiry:''),'$3 per executed side; spread/slippage separate',card.details].filter(Boolean).join(' | ');
++ const card={symbol,status,reason,coverage:coverageState,setup:coverageState==='ADEQUATELY_OBSERVED'&&setup==='NO_SETUP'?'NO_QUALIFYING_SETUP':setup,asOf:assessed?asOf:null,expiry:['SELL','HOLD','HOLDING_EXIT_UNVERIFIED'].includes(status)?base.expiresAt:expiry,ruleState:rule.state,ruleVersion:rule.ruleVersion||null,evidenceVersion:artifact?a.evidenceVersion:null,missing,quoteRejectionReason,holdingEvidence:existingExit?.authority==='ACTUAL_HOLDING_REVIEW'?{sourceSession:existingExit.sourceSession||null,observedAt:existingExit.observedAt||null}:null,zad:zadState,entry:null,quantity:status==='SELL'?base.quantity:null,exit:status==='SELL'?base.exit:null,researchScenario:projection,quote:q.currentBbo?{provider:q.provider,feed:q.feed,quoteAt:q.quoteAsOf,receivedAt:q.receiptAt,bid:q.bid,ask:q.ask,securityId:q.securityId}:null,fillStatus:record?.fillStatus==='OBSERVED_FILL'?'UNVERIFIED_FILL_CLAIM':'NO_OBSERVED_FILL',buyAuthority:false,delivery:'PROTOTYPE_ONLY_NO_SEND',details:'check '+text(symbol,16)};
++ card.text=[record?.synthetic===true?'SYNTHETIC FIXTURE — NOT A RECOMMENDATION':null,status+' '+text(symbol,16),status==='SELL'?(base.quantity?'quantity '+base.quantity+'; ':'quantity UNKNOWN; ')+base.exit:null,reason,card.holdingEvidence?'holding basis '+(card.holdingEvidence.sourceSession||'UNKNOWN session')+'; observation '+(card.holdingEvidence.observedAt||'UNKNOWN'):null,'evidence '+coverageState,'ZAD '+zadState,'as of '+(card.asOf||'UNKNOWN')+(card.expiry?'; expires '+card.expiry:''),'$3 per executed side; spread/slippage separate',card.details].filter(Boolean).join(' | ');
+  return card;
+ }
+ export function researchDecisionUpdate(previous,card,{now=Date.now()}={}){
+@@ -67,3 +77,60 @@ export function researchDecisionUpdate(previous,card,{now=Date.now()}={}){
+  const shouldRender=!previous||unconfirmed||previous.key!==key||expired;
+  return {shouldRender,reason:!previous?'INITIAL':unconfirmed?'NOT_CONFIRMED_SENT':expired?'EXPIRED':previous.key!==key?'MEANINGFUL_CHANGE':'UNCHANGED',nextState:shouldRender?{key,expiry:card.expiry,expiryReported:expired?previous.expiry:previous?.expiryReported||null,delivery:'PROPOSED_NOT_SENT'}:previous,noSend:true};
+ }
++
++// Delta A: exact evaluated-journal binding and private custody, no evaluator/admission changes.
++const hashBytes=b=>createHash('sha256').update(b).digest('hex');
++const hex=x=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x);
++const stamp=x=>typeof x==='string'&&/T.*Z$/.test(x)&&Number.isFinite(Date.parse(x));
++const reviewOK=(x,now)=>x?.status==='INDEPENDENT_PROVENANCE_REVIEWED'&&/^https:\/\/github\.com\/drrazaq\/Stock-2\/pull\/1#issuecomment-\d+$/.test(x.comment||'')&&stamp(x.at)&&Date.parse(x.at)<=now;
++function privateAssessmentScope({root,checkout=process.cwd(),policySha256,now=Date.now()}={}){
++ root=validatedPrivateRoot(root,checkout);
++ for(const n of fs.readdirSync(root))if(!/^(?:assessment-policy\.json|evaluation\.json|resolution\.json|book-current\.json|assessment-delivery\.jsonl|book-[a-f0-9]{64}\.json|journal-[a-f0-9]{64}\.jsonl|\.assessment-writer\.lock)$/.test(n))throw Error('PRIVATE_ASSESSMENT_FILE_ALLOWLIST');
++ const read=(name,max=4*1024*1024)=>{const st=fs.lstatSync(path.join(root,name));if((st.mode&0o077)!==0)throw Error('PRIVATE_FILE_PERMISSIONS');return boundedPrivateFile(root,name,max);};
++ const raw=read('assessment-policy.json',65536);if(!hex(policySha256)||hashBytes(raw)!==policySha256)throw Error('ASSESSMENT_POLICY_PIN');
++ const policy=JSON.parse(raw);if(policy.kind!=='PRIVATE_ASSESSMENT_POLICY_V1'||!reviewOK(policy.review,now)||!hex(policy.evaluationSha256))throw Error('ASSESSMENT_POLICY_SCHEMA');
++ return {root,read,policy};
++}
++function locked(scope,fn){const lock=path.join(scope.root,'.assessment-writer.lock');try{fs.mkdirSync(lock,{mode:0o700});}catch(e){if(e.code==='EEXIST')throw Error('LOCK_HELD_OR_STALE_RECONCILE');throw e;}const meta=path.join(lock,'owner.json');try{const fd=fs.openSync(meta,'wx',0o600);try{fs.writeFileSync(fd,JSON.stringify({owner:randomUUID(),pid:process.pid,createdAt:new Date(Date.now()).toISOString()}));fs.fsyncSync(fd);}finally{fs.closeSync(fd);}return fn();}finally{fs.unlinkSync(meta);fs.rmdirSync(lock);}}
++function checkBook(b){if(b?.kind!=='PRIVATE_ASSESSMENT_BOOK_V1'||!hex(b.journalSha256)||!hex(b.evaluationSha256)||!Array.isArray(b.entries)||b.entries.length>400)throw Error('ASSESSMENT_BOOK_SCHEMA');return b;}
++export function bindEvaluatedAssessments(journalBytes,evaluationBytes,{now=Date.now()}={}){
++ if(!Buffer.isBuffer(journalBytes)||journalBytes.length>16*1024*1024||!Buffer.isBuffer(evaluationBytes)||evaluationBytes.length>4*1024*1024)throw Error('BINDING_INPUT_BOUND');
++ const journal=journalBytes.toString('utf8').split('\n').filter(Boolean).map(x=>JSON.parse(x));
++ const e=JSON.parse(evaluationBytes);if(e.kind!=='EVALUATED_ASSESSMENT_INPUT_V1'||!reviewOK(e.review,now)||e.journalSha256!==hashBytes(journalBytes)||!Array.isArray(e.evaluations)||e.evaluations.length>400)throw Error('EVALUATION_SCHEMA_OR_JOURNAL_PIN');
++ const entries=[];const seen=new Set();
++ for(const v of e.evaluations){
++  const rows=journal.filter(a=>a.type==='assessment'&&a.id===v.assessmentId);if(rows.length!==1)throw Error('NO_UNIQUE_ASSESSMENT');const a=rows[0];
++  const rule=assessmentRuleIdentity({rule:a.ruleDefinition?.ruleText,assessmentRule:{definition:a.ruleDefinition,ruleId:a.ruleId,ruleVersion:a.ruleVersion}});
++  if(a.ruleIdentityState!=='IDENTIFIED'||rule.ruleIdentityState!=='IDENTIFIED'||a.symbol!==v.symbol||a.ruleId!==v.ruleId||a.ruleVersion!==v.ruleVersion||a.evidenceVersion!==v.evidenceVersion||!hex(a.evidenceVersion)||v.definitionSha256!==hashBytes(Buffer.from(JSON.stringify(canonical(a.ruleDefinition))))||!hex(v.sourceSha256))throw Error('EXACT_RULE_EVIDENCE_BINDING');
++  if(!stamp(v.observedAt)||!stamp(v.expiresAt)||Date.parse(v.observedAt)>now||Date.parse(v.expiresAt)<=Date.parse(v.observedAt)||!['QUALIFYING','NO_SETUP','UNKNOWN'].includes(v.setup))throw Error('EVALUATION_CLOCK_OR_SETUP');
++  if(seen.has(a.symbol))throw Error('AMBIGUOUS_SYMBOL_EVALUATION');seen.add(a.symbol);
++  const complete=v.population?.status==='COMPLETE'&&Array.isArray(v.population.symbols)&&v.population.symbols.length>0&&v.population.symbols.length<=400&&v.population.symbols.every(x=>typeof x==='string'&&marketSymbol(x)===x)&&new Set(v.population.symbols).size===v.population.symbols.length&&v.population.symbols.includes(a.symbol)&&v.population.sha256===digest(v.population.symbols)&&hex(v.quoteArchiveSha256)&&hex(v.identityReferenceSha256);
++  const record={id:a.ruleId,version:a.ruleVersion,definition:a.ruleDefinition,verdict:v.verdict||'NOT PROVEN',adopted:false,synthetic:e.synthetic===true,evidence:{symbol:a.symbol,ruleVersion:a.ruleVersion,evidenceVersion:a.evidenceVersion,sourceSha256:v.sourceSha256,observedAt:v.observedAt,expiresAt:v.expiresAt,setup:v.setup},journalBinding:{assessmentId:a.id,horizon:a.horizon,journalSha256:hashBytes(journalBytes)}};
++  const coverage={status:complete?'COMPLETE':'PARTIAL',symbol:a.symbol,ruleVersion:a.ruleVersion,evidenceVersion:a.evidenceVersion,version:digest(v),quoteArchiveSha256:v.quoteArchiveSha256,identityReferenceSha256:v.identityReferenceSha256,review:e.review,observedAt:v.observedAt,expiresAt:v.expiresAt};
++  entries.push({symbol:a.symbol,record,coverage});
++ }
++ return checkBook({kind:'PRIVATE_ASSESSMENT_BOOK_V1',journalSha256:hashBytes(journalBytes),evaluationSha256:hashBytes(evaluationBytes),entries});
++}
++export function publishPrivateAssessmentBook(journalBytes,options){const s=privateAssessmentScope(options);return locked(s,()=>{
++ const evaluation=s.read('evaluation.json');if(hashBytes(evaluation)!==s.policy.evaluationSha256)throw Error('EVALUATION_PIN');
++ const book=bindEvaluatedAssessments(journalBytes,evaluation,options),jname='journal-'+book.journalSha256+'.jsonl';
++ const raw=Buffer.from(JSON.stringify(book)),sha256=hashBytes(raw),name='book-'+sha256+'.json';
++ if(raw.length>4*1024*1024)throw Error('BOOK_BYTE_BOUND');
++ const present=fs.readdirSync(s.root).filter(x=>x!=='.assessment-writer.lock');
++ const added=(present.includes(jname)?0:journalBytes.length)+(present.includes(name)?0:raw.length)+4096;
++ if(present.reduce((n,x)=>n+s.read(x,16*1024*1024).length,0)+added>44*1024*1024)throw Error('ASSESSMENT_ROOT_BOUND'); // reserve4MiB for delivery; hard total48MiB
++ const names=fs.readdirSync(s.root).filter(x=>/^book-[a-f0-9]{64}\.json$/.test(x));if(!names.includes(name)&&(names.length>=8||names.reduce((n,x)=>n+s.read(x).length,0)+raw.length>16*1024*1024))throw Error('BOOK_RETENTION_BOUND');
++ if(!present.includes(jname)){const fd=fs.openSync(path.join(s.root,jname),'wx',0o600);try{fs.writeFileSync(fd,journalBytes);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}}else if(!s.read(jname,16*1024*1024).equals(journalBytes))throw Error('IMMUTABLE_JOURNAL_CONFLICT');
++ const dest=path.join(s.root,name);if(fs.existsSync(dest)){if(!s.read(name).equals(raw))throw Error('IMMUTABLE_BOOK_CONFLICT');}else{const fd=fs.openSync(dest,'wx',0o600);try{fs.writeFileSync(fd,raw);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}}
++ atomicPrivateFile(s.root,'book-current.json',Buffer.from(JSON.stringify({kind:'PRIVATE_ASSESSMENT_POINTER_V1',path:name,sha256})));
++ return {sha256,entries:book.entries.length};
++ });}
++export function readPrivateAssessment(symbol,options){try{const s=privateAssessmentScope(options),ptr=JSON.parse(s.read('book-current.json',65536));if(ptr.kind!=='PRIVATE_ASSESSMENT_POINTER_V1'||!hex(ptr.sha256)||ptr.path!=='book-'+ptr.sha256+'.json')throw Error('BOOK_POINTER');const raw=s.read(ptr.path);if(hashBytes(raw)!==ptr.sha256)throw Error('BOOK_HASH');const b=checkBook(JSON.parse(raw));if(b.evaluationSha256!==s.policy.evaluationSha256)throw Error('BOOK_EVALUATION_PIN');const evaluation=s.read('evaluation.json');if(hashBytes(evaluation)!==s.policy.evaluationSha256)throw Error('EVALUATION_PIN');const original=s.read('journal-'+b.journalSha256+'.jsonl',16*1024*1024);if(hashBytes(original)!==b.journalSha256||JSON.stringify(bindEvaluatedAssessments(original,evaluation,options))!==JSON.stringify(b))throw Error('BOOK_DERIVATION');const xs=b.entries.filter(x=>x.symbol===symbol);if(xs.length!==1)throw Error('NO_UNIQUE_PRIVATE_RECORD');return {...xs[0],bookSha256:ptr.sha256};}catch{return {record:null,coverage:null,reason:'PRIVATE_ASSESSMENT_UNAVAILABLE'};}}
++function deliveryRows(s){let b;try{b=s.read('assessment-delivery.jsonl');}catch(e){if(e.code==='ENOENT')return [];throw e;}const lines=b.toString().split('\n').filter(Boolean);if(lines.length>4096||b.length&&!b.toString().endsWith('\n'))throw Error('DELIVERY_JOURNAL_UNREADABLE');const rows=lines.map(JSON.parse);for(const r of rows)if(r.kind!=='ASSESSMENT_DELIVERY_V1'||!hex(r.key)||!['RESERVED','CONFIRMED_SENT','UNCERTAIN','PROPOSED_NOT_SENT'].includes(r.delivery)||!stamp(r.at)||typeof r.symbol!=='string'||typeof r.token!=='string')throw Error('DELIVERY_SCHEMA');return rows;}
++export function readAssessmentDelivery(symbol,options){const s=privateAssessmentScope(options);return deliveryRows(s).filter(x=>x.symbol===symbol).at(-1)||null;}
++function appendDelivery(s,row){const old=deliveryRows(s);const b=Buffer.from(JSON.stringify(row)+'\n');if(old.length>=4096||old.reduce((n,x)=>n+Buffer.byteLength(JSON.stringify(x))+1,0)+b.length>4*1024*1024)throw Error('DELIVERY_BOUND');const fd=fs.openSync(path.join(s.root,'assessment-delivery.jsonl'),fs.constants.O_APPEND|fs.constants.O_CREAT|fs.constants.O_WRONLY|fs.constants.O_NOFOLLOW,0o600);try{fs.writeFileSync(fd,b);fs.fsyncSync(fd);}finally{fs.closeSync(fd);}const d=fs.openSync(s.root,'r');try{fs.fsyncSync(d);}finally{fs.closeSync(d);}}
++export function reserveAssessmentDelivery(symbol,card,options){const s=privateAssessmentScope(options);return locked(s,()=>{const prior=deliveryRows(s).filter(x=>x.symbol===symbol).at(-1)||null;const u=researchDecisionUpdate(prior,card,{now:options.now??Date.now()});if(!u.shouldRender&&!(options.explicitRequest===true&&prior?.delivery==='CONFIRMED_SENT'))throw Error(u.reason);const r={kind:'ASSESSMENT_DELIVERY_V1',symbol,...u.nextState,delivery:'RESERVED',token:randomUUID(),at:new Date(options.now??Date.now()).toISOString()};appendDelivery(s,r);return r;});}
++export function settleAssessmentDelivery(reservation,delivery,options){if(!['CONFIRMED_SENT','UNCERTAIN','PROPOSED_NOT_SENT'].includes(delivery))throw Error('DELIVERY_STATE');const s=privateAssessmentScope(options);return locked(s,()=>{const prior=deliveryRows(s).filter(x=>x.symbol===reservation.symbol).at(-1);if(prior?.token!==reservation.token||prior.delivery!=='RESERVED')throw Error('RESERVATION_OWNERSHIP');const r={...prior,delivery,at:new Date(options.now??Date.now()).toISOString()};appendDelivery(s,r);return r;});}
++
++// Explicit owner-reviewed recovery only; never resets uncertainty from elapsed time/new evidence.
++export function reconcileAssessmentDelivery(symbol,resolutionBytes,options){const s=privateAssessmentScope(options);if(!Buffer.isBuffer(resolutionBytes)||resolutionBytes.length>65536||!hex(s.policy.resolutionSha256)||hashBytes(resolutionBytes)!==s.policy.resolutionSha256)throw Error('PINNED_OWNER_RESOLUTION_REQUIRED');const w=JSON.parse(resolutionBytes);if(w.kind!=='OWNER_ASSESSMENT_DELIVERY_RESOLUTION_V1'||w.symbol!==symbol||!reviewOK(w.review,options.now??Date.now())||!['DEFINITELY_NOT_SENT','ACKNOWLEDGED_DELIVERED'].includes(w.disposition)||w.disposition==='ACKNOWLEDGED_DELIVERED'&&!Number.isSafeInteger(w.messageId))throw Error('OWNER_RESOLUTION_SCHEMA');return locked(s,()=>{const prior=deliveryRows(s).filter(x=>x.symbol===symbol).at(-1);if(!prior||!['RESERVED','UNCERTAIN'].includes(prior.delivery)||prior.token!==w.token||prior.key!==w.key)throw Error('OWNER_RESOLUTION_BINDING');const row={...prior,delivery:w.disposition==='DEFINITELY_NOT_SENT'?'PROPOSED_NOT_SENT':'CONFIRMED_SENT',at:new Date(options.now??Date.now()).toISOString(),resolution:{sha256:hashBytes(resolutionBytes),previous:prior.delivery,witness:w}};appendDelivery(s,row);return row;});}
+diff --git a/scan.mjs b/scan.mjs
+index b9cd6ea6..467a2368 100644
+--- a/scan.mjs
++++ b/scan.mjs
+@@ -1,4 +1,4 @@
+-import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate} from './research-assessment.mjs';
++import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery,reconcileAssessmentDelivery} from './research-assessment.mjs';
+ import {readInstrumentType,researchInstrumentScope} from './instrument-type.mjs';
+ import {readPrivateAssessmentQuote} from './private-quote-retention.mjs';
+ import {readAssessmentQuote,assessmentQuoteText} from './assessment-quote-context.mjs';
+@@ -235,13 +235,42 @@ function researchDecisionPrototype(sym,{asOf,existingExit}={}) {
+  const record=readJson0('data/research-assessments.json')?.records?.[sym];
+  return conciseResearchDecisionText({symbol:sym,record,asOf,existingExit});
+ }
++function privateAssessmentOptions(now=Date.now()){return {root:env.ASSESSMENT_RESEARCH_ROOT,policySha256:env.ASSESSMENT_RESEARCH_POLICY_SHA256,checkout:process.cwd(),now};}
+ function researchDecisionTracePrototype(sym,{asOf,existingExit,previous}={}) {
+- const now=Date.now(),book=readJson0('data/research-assessments.json'),record=book?.records?.[sym];
++ const now=Date.now();let book,record;
++ if(env.ASSESSMENT_RESEARCH_ROOT){const privateEntry=readPrivateAssessment(sym,privateAssessmentOptions(now));book={coverage:privateEntry.coverage};record=privateEntry.record;}else{book=readJson0('data/research-assessments.json');record=book?.records?.[sym];}
+  const quote=process.env.ASSESSMENT_PRIVATE_QUOTE_ROOT?readPrivateAssessmentQuote(sym,{root:process.env.ASSESSMENT_PRIVATE_QUOTE_ROOT,policySha256:process.env.ASSESSMENT_PRIVATE_QUOTE_POLICY_SHA256,now}):readAssessmentQuote(sym,{manifestFile:process.env.ASSESSMENT_QUOTE_MANIFEST,pinnedSha256:process.env.ASSESSMENT_QUOTE_MANIFEST_SHA256,now});
+  const instrument=researchInstrumentScope(sym,readInstrumentType(sym,{file:process.env.ASSESSMENT_INSTRUMENT_REFERENCE,pinnedSha256:process.env.ASSESSMENT_INSTRUMENT_REFERENCE_SHA256,now}));
+  const card=traceResearchDecision({symbol:sym,record,quote,instrument,zad:myHalal(sym),coverage:book?.coverage,asOf,now,existingExit});
+  return {...researchDecisionUpdate(previous,card,{now}),card};
+ }
++const researchReports=new Map();
++async function integratedResearchReply(sym,sig,pos={}){
++ if(!env.ASSESSMENT_RESEARCH_ROOT)return null;
++ const options=privateAssessmentOptions();let bookStatus='';
++ try{publishPrivateAssessmentBook(fs.readFileSync('data/discovery-journal.jsonl'),options);}catch(e){bookStatus='BOOK_STALE: '+(/LOCK_HELD_OR_STALE/.test(e.message)?'LOCK HELD OR STALE — reconcile; no automatic takeover':'current journal/evaluation publication unavailable; prior book retains original expiry');}
++ let holding=null,legacy=null;
++ if(pos[sym]){const evidence={};legacy=await reviewReply(sym,sig,pos,evidence);holding=evidence.disposition;if(!holding)return legacy;}
++ const current=()=>researchDecisionTracePrototype(sym,{asOf:new Date(Date.now()).toISOString(),existingExit:holding}).card;
++ let card;try{card=current();}catch{return legacy||'ASSESSMENT UNAVAILABLE: private evidence unreadable; no action supported.';}
++ let previous;try{previous=readAssessmentDelivery(sym,options);}catch{return [legacy,'ASSESSMENT DELIVERY UNAVAILABLE: private evidence unreadable; reconcile before any research-card replay.'].filter(Boolean).join('\n\n');}
++ const update=researchDecisionUpdate(previous,card);
++ if(!update.shouldRender&&update.reason!=='UNCHANGED')return [legacy,bookStatus,'ASSESSMENT DELIVERY UNCERTAIN: reconcile the earlier research card; existing holding instructions remain; no research-card replay.'].filter(Boolean).join('\n\n');
++ if(researchReports.size>=64&&!researchReports.has(card.text))return legacy||'ASSESSMENT UNAVAILABLE: evidence report limit; no new action supported.';
++ researchReports.set(card.text,{symbol:sym,card,current,options,holding,legacy});return [legacy,bookStatus,card.text,update.reason==='UNCHANGED'?'Explicit request: unchanged since '+previous.at:null].filter(Boolean).join('\n\n');
++}
++function beginResearchSend(text){
++ const contexts=[...researchReports.entries()].filter(([body])=>text.includes(body)).map(([,x])=>({...x})),reservations=[];
++ for(const c of contexts){try{const r=reserveAssessmentDelivery(c.symbol,c.card,{...c.options,now:Date.now(),explicitRequest:true});reservations.push({context:c,reservation:r});}catch(e){c.blocked=true;c.failure=/LOCK_HELD_OR_STALE/.test(e.message)?'LOCK HELD OR STALE — reconcile; no automatic takeover':'research delivery reservation unavailable; reconcile';}}
++ return {reservations,contexts,acknowledged:false};
++}
++function refreshResearchSend(text,session,now){let out=text;for(const c of session.contexts){
++ if(c.holding&&['SELL','HOLD'].includes(c.holding.status)&&c.holding.currentEvidence(now)!==true)throw Error('HOLDING_EVIDENCE_EXPIRED');
++ if(!c.blocked){try{const fresh=c.current(),a=researchDecisionUpdate(null,c.card,{now}),b=researchDecisionUpdate(null,fresh,{now});if(a.nextState.key!==b.nextState.key||c.card.expiry&&Date.parse(c.card.expiry)<=now)throw Error('ASSESSMENT_EVIDENCE_CHANGED_OR_EXPIRED');out=out.replaceAll(c.card.text,fresh.text);}catch{c.blocked=true;c.failure='research card changed or expired; request a fresh assessment';}}
++ if(c.blocked)out=out.replaceAll(c.card.text,'RESEARCH CARD UNAVAILABLE: '+c.failure+'. Existing holding guidance and unrelated replies remain independently checked.');
++ }return out;}
++function finishResearchSend(session,status){for(const x of session?.reservations||[])settleAssessmentDelivery(x.reservation,x.context.blocked?(session.acknowledged?'UNCERTAIN':'PROPOSED_NOT_SENT'):status,{...x.context.options,now:Date.now()});}
++
+ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current action supplied', compact = false) {
+   const clean = (v, limit = 240) => { const t = String(v !== null && typeof v === 'object' ? 'UNKNOWN' : v ?? '').replace(/[\r\n]+/g, ' '); return t.length <= limit ? t : t.slice(0, limit).replace(/\s+\S*$/, '') + '…'; };
+   const stamp = (v) => { const t = Date.parse(v || ''); return !Number.isFinite(t) ? 'UNKNOWN date' : t > Date.now() ? 'UNKNOWN (future timestamp ' + clean(v) + ')' : clean(v) + ' (' + Math.floor((Date.now() - t) / 36e5) + ' h old; saved context, not a live quote)'; };
+@@ -1166,26 +1195,30 @@ const tgParts = (text) => { const parts = []; let rest = text; while (rest.lengt
+ // nothing), judged at that moment; it owns any once-a-day marking. Only the first part of each rendering is sent, so a retry or a later
+ // part never carries a claim judged before an earlier wait. Delivery semantics are otherwise those of telegram() (3 tries, recorded refusal).
+ async function telegramLive(render, buttons) {
+-  const sent = [];
++  const sent = [];let researchSession=null,researchAttempt=false,researchUnknown=false,researchComplete=false;
++  try{
+   if (!env.TG_TOKEN || !env.TG_CHAT) { const t = await render(Date.now(), sent); if (t) console.log('[no Telegram secrets, message not sent; private body omitted]'); return sent; }
+   for (let n = 0, a = 0; n < 60; n++) {
+-    const out = await render(Date.now(), sent), text = out && typeof out === 'object' ? out.text : out, noButtons = !!(out && typeof out === 'object' && out.noButtons);
++    const out = await render(Date.now(), sent);let text = out && typeof out === 'object' ? out.text : out;const noButtons = !!(out && typeof out === 'object' && out.noButtons);
+     if (!text || !text.trim()) return sent;
+     let current=false;try{current=holdingSendEvidence(String(text),Date.now());}catch{}if(!current){sent.deliveryState=sent.length?'UNKNOWN':'REFUSED';sent.localEvidenceRefusal=true;return sent;}
++    try{if(!researchSession)researchSession=beginResearchSend(String(text));text=refreshResearchSend(String(text),researchSession,Date.now());}catch{sent.deliveryState=sent.length?'UNKNOWN':'REFUSED';sent.localEvidenceRefusal=true;return sent;}
+     const parts = tgParts(text), part = parts[0], last = parts.length === 1;
+-    try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true, ...(buttons && buttons.length && last && !noButtons ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
++    try { researchAttempt=true;const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: env.TG_CHAT, text: part, disable_web_page_preview: true, ...(buttons && buttons.length && last && !noButtons ? { reply_markup: { inline_keyboard: buttons.map(row => row.map(b => ({ text: b.text, callback_data: String(b.data).slice(0, 64) }))) } } : {}) }) });
+       if (r.status === 429 && a < 2) { a++; let w = 5; try { w = Math.min(30, +((await r.json()).parameters || {}).retry_after || 5); } catch (e) {} console.error('Telegram rate limit, waiting ' + w + ' s'); await sleep(FAST ? 10 : w * 1000); continue; }
+-      if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram refusal; part not acknowledged', r.status); tgFailed(r.status, why, part); sent.deliveryState = sent.length || r.status >= 500 ? 'UNKNOWN' : 'REFUSED'; return sent; }
+-      let ack; try { ack = await r.json(); } catch { sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
+-      if (!ack || ack.ok !== true || !Number.isSafeInteger(ack.result?.message_id)) { sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
+-      sent.push(part); a = 0; if (last) return sent; await sleep(FAST ? 0 : 700); }
+-    catch (e) { console.error('Telegram delivery UNKNOWN; connection failure, no replay'); tgFailed('UNKNOWN', 'connection failed after send attempt; no replay', part); sent.deliveryState = 'UNKNOWN'; return sent; }
++      if (!r.ok) { const why = (await r.text()).slice(0, 200); console.error('Telegram refusal; part not acknowledged', r.status); tgFailed(r.status, why, part); sent.deliveryState = sent.length || r.status >= 500 ? 'UNKNOWN' : 'REFUSED';researchUnknown=sent.deliveryState==='UNKNOWN'; return sent; }
++      let ack; try { ack = await r.json(); } catch { researchUnknown=true;sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
++      if (!ack || ack.ok !== true || !Number.isSafeInteger(ack.result?.message_id)) { researchUnknown=true;sent.deliveryState = 'UNKNOWN'; tgFailed('UNKNOWN', 'response was not a complete Telegram ACK', part); return sent; }
++      sent.push(part);if(researchSession)researchSession.acknowledged=true; a = 0; if (last){researchComplete=true;return sent;} await sleep(FAST ? 0 : 700); }
++    catch (e) { researchUnknown=true;console.error('Telegram delivery UNKNOWN; connection failure, no replay'); tgFailed('UNKNOWN', 'connection failed after send attempt; no replay', part); sent.deliveryState = 'UNKNOWN'; return sent; }
+   }
+   return sent;
++  }finally{try{finishResearchSend(researchSession,researchComplete?'CONFIRMED_SENT':researchUnknown||sent.length?'UNCERTAIN':'PROPOSED_NOT_SENT');}catch{sent.deliveryState='UNKNOWN';}}
+ }
+ // the not-yet-sent remainder of a whole message rendered again: skip the lines of the parts already sent (parts end at line breaks)
+ const tgRemainder = (full, sent) => { if (!full) return full; let lines = full.split('\n'); for (const p of sent) { lines = lines.slice(p.split('\n').length); while (lines.length && lines[0] === '') lines.shift(); } return lines.join('\n'); };
+ async function telegram(text, buttons, currentEvidence) {
++ if([...researchReports.keys()].some(body=>String(text).includes(body))){const sent=await telegramLive((now,parts)=>{if(currentEvidence&&currentEvidence(now)!==true)return null;return tgRemainder(text,parts);},buttons);return {ok:sent.deliveryState===undefined&&sent.length>0,deliveryState:sent.deliveryState,deliveredParts:sent.length,localEvidenceRefusal:sent.localEvidenceRefusal};}
+   const given=currentEvidence;
+   const valid=now=>holdingSendEvidence(String(text),now)&&(!given||given(now)===true);
+   if (!env.TG_TOKEN || !env.TG_CHAT) { console.log('[no Telegram secrets, message not sent; private body omitted]'); return {ok:false,reason:'MISSING_CREDENTIALS',deliveredParts:0}; }
+@@ -2405,13 +2438,19 @@ function observedHoldingPrice(sym,quote,now=Date.now()){
+  const regular=n=>marketClock(n).phase==='REGULAR',reference=regular(now)?quoteEvidence(sym,quote,now,5):{state:'UNKNOWN',why:'outside the regular session'},stop=regular(now)?quoteEvidence(sym,quote,now,5):{state:'UNKNOWN',why:'outside the regular session'};
+  return {current:reference.state==='OK',price:reference.state==='OK'?reference.price:null,stop,validCurrent:n=>regular(n)&&quoteEvidence(sym,quote,n,5).state==='OK',validStop:n=>regular(n)&&quoteEvidence(sym,quote,n,5).state==='OK'};
+ }
++function holdingDisposition(sym,verdict,why,evidence,P){
++ const valid=now=>Array.isArray(evidence.checks)&&evidence.checks.length>0&&evidence.checks.every(check=>check(now)===true);
++ const status=['SELL','SELL (its tested exit fired)','STOP LEVEL REACHED'].includes(verdict)?'SELL':/^HOLD(?:$|[ (,])/.test(verdict)?'HOLD':'UNVERIFIED';
++ let quantity=null;try{const n=privRead()?.shares?.[sym];if(Number.isInteger(n)&&n>0)quantity=n;}catch{}
++ return {authority:'ACTUAL_HOLDING_REVIEW',symbol:sym,status,quantity,reason:why,condition:verdict,sourceSession:evidence.closeSession||null,observedAt:Number.isFinite(evidence.observed?.stop?.t)?new Date(evidence.observed.stop.t).toISOString():null,horizon:'Existing holding rule; unchanged',currentEvidence:valid};
++}
+ async function reviewReply(sym, sig, pos, evidence = {}) {
+   const d = await loadDaily(sym);
+   if (!d || d.candles.length < 260) {
+     const candles=d?.candles||[],closeSession=candles.at(-1)?.d,closeCurrent=closeBasisCurrent(closeSession),checks=closeCurrent?[n=>closeBasisCurrent(closeSession,n)]:[];
+     let q=null;if(validStop(pos[sym]?.stop)&&marketClock(Date.now()).phase==='REGULAR'){try{q=await liveQ(sym);}catch{}}
+     const observed=observedHoldingPrice(sym,q);Object.assign(evidence,{candles,closeSession,closeCurrent,observed,checks});
+-    if(validStop(pos[sym]?.stop)&&observed.stop.state==='OK'&&observed.stop.price<=pos[sym].stop){checks.push(observed.validStop);return rememberHoldingEvidence('HOLD OR SELL: '+sym+' → STOP LEVEL REACHED\nPrice '+money(observed.stop.price)+' (dated stop observation '+nyStamp(observed.stop.t)+')\nWhy: '+stopText('hit',sym,pos[sym],observed.stop)+'\nDaily strategy assessment UNKNOWN: insufficient history.',checks);}
++    if(validStop(pos[sym]?.stop)&&observed.stop.state==='OK'&&observed.stop.price<=pos[sym].stop){checks.push(observed.validStop);evidence.disposition=holdingDisposition(sym,'STOP LEVEL REACHED',stopText('hit',sym,pos[sym],observed.stop),evidence,pos[sym]);return rememberHoldingEvidence('HOLD OR SELL: '+sym+' → STOP LEVEL REACHED\nPrice '+money(observed.stop.price)+' (dated stop observation '+nyStamp(observed.stop.t)+')\nWhy: '+stopText('hit',sym,pos[sym],observed.stop)+'\nDaily strategy assessment UNKNOWN: insufficient history.',checks);}
+     return sym + ': not enough price history to study (one year needed). Check the ticker.';
+   }
+   const spy = await loadDaily('SPY'), sMap = new Map((spy ? spy.candles : []).map(x => [x.d, x.c]));
+@@ -2466,6 +2505,7 @@ async function reviewReply(sym, sig, pos, evidence = {}) {
+   if (!P) out.push('', 'I am not tracking it. Send:  bought ' + sym + ' YOUR-PRICE SHARES   and I will watch the stop every day and tell you when to sell.');
+   else if (!sysTrade && (verdict === 'HOLD' || verdict.startsWith('HOLD,') || verdict === 'HOLD WITH STOP')) out.push('', 'To set this stop: stop ' + sym + ' ' + Math.max(trail, P.stop || 0).toFixed(2));
+   out.push('Tested on its own history, not a promise. Not financial advice, not a halal ruling.');
++  if(P)evidence.disposition=holdingDisposition(sym,verdict,why,evidence,P);
+   return rememberHoldingEvidence(out.join('\n'),evidence.checks);
+ }
+ // Is this stock on today's tested BUY list? (a tested rule fired on it at the last close) -> its buy range and stop
+@@ -3250,6 +3290,7 @@ function sourceReply(src, sig) {
+     'A source naming a stock is a lead. Only a line starting ENTRY CONFIRMED, QUICK TRADE or BUY WATCH carries prices from your tested rules.'].join('\n');
+ }
+ async function natural(text, sig, pos) {
++ if(env.ASSESSMENT_RESEARCH_ROOT){const reconcile=text.match(/^\s*reconcile\s+([a-z.\-]{1,6})\s*$/i);if(reconcile){try{const root=env.ASSESSMENT_RESEARCH_ROOT,file=path.join(root,'resolution.json');const st=fs.lstatSync(file);if(!st.isFile()||st.isSymbolicLink()||(st.mode&0o077)||st.size>65536)throw Error('unsafe witness');reconcileAssessmentDelivery(reconcile[1].toUpperCase(),fs.readFileSync(file),privateAssessmentOptions());return 'Research delivery reconciled from the exact pinned owner witness; no message replay or trade performed.';}catch{return 'RECONCILIATION UNAVAILABLE: exact pinned owner witness/token/key required; uncertainty retained.';}}const command=text.match(/^\s*(?:check|review)\s+([a-z.\-]{1,6})\s*$/i);if(command)return integratedResearchReply(command[1].toUpperCase(),sig,pos);}
+   // a pasted tip list (2+ tickers with buy words, Arabic or English) is logged as tips, even when it names a known source
+   { const tk = (western(text).match(/\b[A-Z]{2,5}\b/g) || []).filter(x => !NOT_TICKERS.has(x)); if (new Set(tk).size >= 2 && /\u0634\u0631\u0627\u0621|\u0627\u0642\u0644 \u0645\u0646|\u0623\u0642\u0644 \u0645\u0646|\u062A\u0648\u0635\u064A|\bbuy\b|\bbelow\b|\btarget\b/i.test(text)) return null; }
+   if (/^\s*(health|system health|status check|sell|sells|sell check|why sell|what (to|should i) sell|which stocks to sell)\s*\??\s*$/i.test(text)) return null;   // menu words (audit 22 Oct)
+diff --git a/test/assessment-save-paths.test.mjs b/test/assessment-save-paths.test.mjs
+index 26eff19a..ff8f6a29 100644
+--- a/test/assessment-save-paths.test.mjs
++++ b/test/assessment-save-paths.test.mjs
+@@ -13,6 +13,7 @@ for(const order of ['bot-first','discovery-first'])test('actual '+order+' saves
+  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'assessment-git-save-'));
+  try{
+  const remote=path.join(tmp,'origin.git'),seed=path.join(tmp,'seed');
++ const privateRoot=path.join(tmp,'private-assessment');fs.mkdirSync(privateRoot,{mode:0o700});const privateFile=path.join(privateRoot,'assessment-delivery.jsonl'),privateBytes='{\"kind\":\"SYNTHETIC_PRIVATE_ONLY\",\"delivery\":\"UNCERTAIN\"}\n';fs.writeFileSync(privateFile,privateBytes,{mode:0o600});
+  fs.mkdirSync(seed);git(tmp,'init','--bare',remote);git(seed,'init','-b','main');git(seed,'config','user.name','test');git(seed,'config','user.email','test@example.invalid');
+  fs.mkdirSync(path.join(seed,'data'));fs.writeFileSync(path.join(seed,'data/discovery-journal.jsonl'),'{"sym":"OLD","d":"2020-01-01","price":1,"spy":1}\n');
+  fs.writeFileSync(path.join(seed,'data/signals.json'),JSON.stringify({session:'2026-11-06',stocks:[{sym:'AAA',state:'Buy watch',rule:'retained rule'}]}));
+@@ -33,6 +34,7 @@ for(const order of ['bot-first','discovery-first'])test('actual '+order+' saves
+  const commands={bot:saveBot+'\nsave\n',discovery:saveDiscovery};
+  for(const n of (order==='bot-first'?['bot','discovery']:['discovery','bot']))execFileSync('bash',['-e','-c',commands[n]],{cwd:dirs[n],encoding:'utf8',timeout:30000});
+  const result=git(seed,'--git-dir='+remote,'show','main:data/discovery-journal.jsonl'),rows=result.trim().split('\n').map(JSON.parse);
++ assert.equal(fs.readFileSync(privateFile,'utf8'),privateBytes,'private delivery witness unchanged by both real save/rebase boundaries');assert.doesNotMatch(git(seed,'--git-dir='+remote,'ls-tree','-r','--name-only','main'),/assessment-delivery|research-assessments|private-assessment/);
+  assert.equal(rows.filter(r=>r.type==='assessment-cycle').length,1);
+  assert.equal(rows.filter(r=>r.type==='assessment').length,3);
+  assert.equal(rows.filter(r=>r.sym==='OLD').length,1);assert.equal(rows.filter(r=>r.sym==='NEW').length,1);
+diff --git a/test/decision-integration.test.mjs b/test/decision-integration.test.mjs
+new file mode 100644
+index 00000000..7cff25cb
+--- /dev/null
++++ b/test/decision-integration.test.mjs
+@@ -0,0 +1,31 @@
++import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import os from'node:os';import path from'node:path';import http from'node:http';import{createHash}from'node:crypto';import{execFileSync}from'node:child_process';
++import{createPrivateQuoteRetention,readPrivateAssessmentQuote,quoteHash}from'../private-quote-retention.mjs';import{makeScannerAssessmentRule}from'../discovery-runtime.mjs';import{bindEvaluatedAssessments,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery,reconcileAssessmentDelivery}from'../research-assessment.mjs';import{loadScan,blocked}from'./load-scan.mjs';
++const ROOT=path.resolve('.'),NOW=Date.parse('2026-11-11T20:30:00Z'),at=n=>new Date(NOW+n*1000).toISOString(),canon=x=>Array.isArray(x)?x.map(canon):x&&typeof x==='object'?Object.fromEntries(Object.keys(x).sort().map(k=>[k,canon(x[k])])):x,hash=x=>createHash('sha256').update(JSON.stringify(canon(x))).digest('hex');const examples=[];
++async function fixture(t,{mode='ack',advance=0,holding=false,setup='QUALIFYING',privateRoot=true,quote=true}={}){
++ const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'integration-a-')),ar=path.join(tmp,'assessment'),qr=path.join(tmp,'quote');for(const d of[ar,qr])fs.mkdirSync(d,{mode:0o700});const oldNow=Date.now;const clock={now:NOW};Date.now=()=>clock.now;let writer;const sent=[],requests=[];
++ const review={status:'INDEPENDENT_PROVENANCE_REVIEWED',at:at(-600),comment:'https://github.com/drrazaq/Stock-2/pull/1#issuecomment-1'};
++ const identity={symbol:'ZZQ',securityId:'BBG000000001',issuerCik:'123',securityType:'CS',status:'INDEPENDENT_ISSUER_REVIEWED',knownAt:at(-600),validFrom:at(-600),validTo:null,review,source:'https://www.sec.gov/Archives/synthetic'};
++ const ib=Buffer.from(JSON.stringify({records:[identity]}));fs.writeFileSync(path.join(qr,'identities.json'),ib,{mode:0o600});const qp=Buffer.from(JSON.stringify({kind:'PRIVATE_QUOTE_RETENTION_POLICY_V1',review,reviewedProducerShas:['a'.repeat(40)],identity:{path:'identities.json',sha256:quoteHash(ib)}}));fs.writeFileSync(path.join(qr,'policy.json'),qp,{mode:0o600});const qo={root:qr,checkout:ROOT,policySha256:quoteHash(qp),sourceSha:'a'.repeat(40),runId:'SYNTHETIC',now:()=>clock.now};writer=createPrivateQuoteRetention(qo);if(quote){writer.capture({provider:'ALPACA',feed:'sip',requestStartedAt:at(-6),receivedAt:at(-5),outcome:'SUCCESS',httpStatus:200,payload:{ZZQ:{latestQuote:{t:at(-10),bp:19.9,ap:20.1,bs:200,as:300,c:['R']}}}});writer.publish();}const q=readPrivateAssessmentQuote('ZZQ',{...qo,now:clock.now});
++ const reference=Buffer.from(JSON.stringify({kind:'REVIEWED_OFFICIAL_INSTRUMENT_CAPTURE_V1',records:[{observedAt:at(-600),url:'https://api.massive.com/v3/reference/tickers/ZZQ',transport:'HTTPS_OFFICIAL_CAPTURE',raw:{status:'OK',results:{ticker:'ZZQ',market:'stocks',locale:'us',type:'CS',share_class_figi:'BBG000000001'}}}]}));const ref=path.join(tmp,'reference.json');fs.writeFileSync(ref,reference);
++ const rule=makeScannerAssessmentRule({logicVersion:1,sourceHash:'a'.repeat(64),variant:{fam:'cross',mult:2,tp:null,mf:false,fast:20,slow:50,maxHold:10},config:{ATR:14,TREND:200,TIME_STOP_DAYS:10,FLAT_R:1},targetOverlay:{mode:'none',x:null},ruleText:'SYNTHETIC existing crossover',variantKey:'CROSS20'});
++ const row={type:'assessment',id:'b'.repeat(64),symbol:'ZZQ',horizon:'short',recordedAt:at(-7),evidenceVersion:'c'.repeat(64),ruleIdentityState:'IDENTIFIED',ruleId:rule.ruleId,ruleVersion:rule.ruleVersion,ruleDefinition:rule.definition};const journal=Buffer.from(JSON.stringify(row)+'\n');
++ const evaluation={kind:'EVALUATED_ASSESSMENT_INPUT_V1',synthetic:true,review,journalSha256:quoteHash(journal),evaluations:[{assessmentId:row.id,symbol:row.symbol,ruleId:row.ruleId,ruleVersion:row.ruleVersion,evidenceVersion:row.evidenceVersion,definitionSha256:hash(rule.definition),sourceSha256:'d'.repeat(64),observedAt:at(-5),expiresAt:at(300),setup,verdict:'NOT PROVEN',population:{status:'COMPLETE',symbols:['ZZQ'],sha256:hash(['ZZQ'])},quoteArchiveSha256:q.archiveSha256||'f'.repeat(64),identityReferenceSha256:quoteHash(reference)}]};let eb=Buffer.from(JSON.stringify(evaluation));fs.writeFileSync(path.join(ar,'evaluation.json'),eb,{mode:0o600});const policy=Buffer.from(JSON.stringify({kind:'PRIVATE_ASSESSMENT_POLICY_V1',review,evaluationSha256:quoteHash(eb)}));fs.writeFileSync(path.join(ar,'assessment-policy.json'),policy,{mode:0o600});const options={root:ar,checkout:ROOT,policySha256:quoteHash(policy),now:clock.now};publishPrivateAssessmentBook(journal,options);
++ const server=http.createServer((req,res)=>{requests.push(req.url);let b='';req.on('data',x=>b+=x);req.on('end',()=>{res.setHeader('Content-Type','application/json');if(req.url.includes('/sendMessage')){sent.push(JSON.parse(b).text);clock.now+=advance;if(mode==='ambiguous'){res.destroy();return;}if(mode==='refused'){res.statusCode=400;return res.end('{"ok":false}');}if(mode==='429'&&sent.length===1){res.statusCode=429;return res.end('{"ok":false,"parameters":{"retry_after":0}}');}return res.end(JSON.stringify({ok:true,result:{message_id:sent.length}}));}if(req.url.includes('/getUpdates'))return res.end(JSON.stringify({ok:true,result:[{update_id:10,message:{chat:{id:'synthetic'},text:'check ZZQ'}}]}));if(req.url.includes('/time_series')){const a=[];let n=Date.parse('2026-11-10T12:00:00Z');while(a.length<300){const d=new Date(n);if(![0,6].includes(d.getUTCDay()))a.push(d.toISOString().slice(0,10));n-=864e5;}return res.end(JSON.stringify({values:a.map((d,i)=>({datetime:d,open:String(13-i*.01),high:String(13.2-i*.01),low:String(12.8-i*.01),close:String(13-i*.01),volume:'1000000'}))}));}if(req.url.includes('/quote?'))return res.end(JSON.stringify({c:7,t:(clock.now-60000)/1000}));if(req.url.includes('/stock/split'))return res.end('[]');return res.end('{}');});});await new Promise(r=>server.listen(0,'127.0.0.1',r));const base='http://127.0.0.1:'+server.address().port;
++ const pos=holding?{ZZQ:{entry:10,stop:8,kind:'quick',since:'2026-11-06'}}:{},sig={session:'2026-11-10',generatedAt:'2026-11-11T00:00:00Z',stocks:[],quick:[],leaders:[]};
++ const S=await loadScan({env:{ASSESSMENT_RESEARCH_ROOT:privateRoot?ar:'',ASSESSMENT_RESEARCH_POLICY_SHA256:options.policySha256,ASSESSMENT_PRIVATE_QUOTE_ROOT:qr,ASSESSMENT_PRIVATE_QUOTE_POLICY_SHA256:qo.policySha256,ASSESSMENT_INSTRUMENT_REFERENCE:ref,ASSESSMENT_INSTRUMENT_REFERENCE_SHA256:quoteHash(reference),TG_BASE:base,TG_TOKEN:'synthetic',TG_CHAT:'synthetic',FINNHUB_KEY:'synthetic',FH_BASE:base,TD_BASE:base,SEC_BASE:base},files:{'data/halal.json':{ZZQ:{s:'ok'}},'data/my-positions.json':pos,'data/signals.json':sig,'data/discovery-journal.jsonl':journal.toString(),'data/tg-state.json':{offset:0}}});
++ S.write('data/tg-state.json',{offset:0,menuV:S.value('MENU_V')});
++ t.after(()=>{writer?.close();Date.now=oldNow;process.chdir(ROOT);server.close();fs.rmSync(tmp,{recursive:true,force:true});});return{S,ar,qr,tmp,clock,sent,requests,rule,row,journal,evaluation,options,eb,sig,pos};
++}
++test('actual check command: evaluated journal→private book→real readers→existing sender ACK and duplicate suppression',async t=>{const f=await fixture(t),before=f.S.read('data/discovery-journal.jsonl');await f.S.fn('tgCommands')(f.sig);assert.equal(f.sent.length,1,JSON.stringify(f.sent));assert.match(f.sent[0],/SYNTHETIC FIXTURE/);assert.match(f.sent[0],/WAIT ZZQ/);assert.match(f.sent[0],/ADEQUATELY_OBSERVED/);assert.equal(readAssessmentDelivery('ZZQ',f.options).delivery,'CONFIRMED_SENT');assert.equal(f.S.read('data/discovery-journal.jsonl'),before);const card=f.S.fn('researchDecisionTracePrototype')('ZZQ',{asOf:new Date(f.clock.now).toISOString()}).card;assert.equal(card.ruleVersion,f.row.ruleVersion);assert.equal(card.ruleState,'UNADOPTED_RESEARCH_RULE');assert.equal(card.researchScenario.referenceWholeShares,49);assert.equal(card.buyAuthority,false);const requestedAgain=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);assert.match(requestedAgain,/Explicit request: unchanged since/);assert.match(requestedAgain,/WAIT ZZQ/);await f.S.fn('telegram')(requestedAgain);assert.equal(f.sent.length,2,'explicit request receives a fresh response; proactive repeat suppression remains separate');assert.equal(fs.existsSync(path.join(f.S.dir,'data/research-assessments.json')),false);examples.push({case:'actual check, full synthetic evaluated inputs',text:f.sent[0],delivery:'CONFIRMED_SENT'});});
++test('exact journal/evaluation bindings reject mismatched rule, source hash, evidence, population and legacy identities',async t=>{const f=await fixture(t);for(const field of['ruleId','ruleVersion','evidenceVersion','definitionSha256','assessmentId']){const e=structuredClone(f.evaluation);e.evaluations[0][field]='mismatch';assert.throws(()=>bindEvaluatedAssessments(f.journal,Buffer.from(JSON.stringify(e)),{now:NOW}));}const old={...f.row,ruleIdentityState:'RULE_UNKEYED'};assert.throws(()=>bindEvaluatedAssessments(Buffer.from(JSON.stringify(old)+'\n'),f.eb,{now:NOW}));const malformed=structuredClone(f.evaluation);malformed.evaluations[0].population.symbols=['ZZQ',7];malformed.evaluations[0].population.sha256=hash(['ZZQ',7]);assert.equal(bindEvaluatedAssessments(f.journal,Buffer.from(JSON.stringify(malformed)),{now:NOW}).entries[0].coverage.status,'PARTIAL','malformed population cannot claim COMPLETE');const e=structuredClone(f.evaluation);e.evaluations[0].population.sha256='wrong';const b=bindEvaluatedAssessments(f.journal,Buffer.from(JSON.stringify(e)),{now:NOW});assert.equal(b.entries[0].coverage.status,'PARTIAL');});
++test('private root hash, symlink, permissions, derived-book tampering and stale writer lock fail closed',async t=>{const f=await fixture(t);assert.equal(readPrivateAssessment('ZZQ',{...f.options,policySha256:'0'.repeat(64)}).record,null);const book=fs.readdirSync(f.ar).find(x=>/^book-[a-f0-9]+\.json$/.test(x)),p=path.join(f.ar,book);fs.chmodSync(p,0o644);assert.equal(readPrivateAssessment('ZZQ',f.options).record,null);fs.chmodSync(p,0o600);fs.mkdirSync(path.join(f.ar,'.assessment-writer.lock'),{mode:0o700});assert.throws(()=>publishPrivateAssessmentBook(f.journal,f.options));fs.rmdirSync(path.join(f.ar,'.assessment-writer.lock'));const tampered=JSON.parse(fs.readFileSync(p));tampered.entries[0].record.adopted=true;const bad=Buffer.from(JSON.stringify(tampered)),badHash=quoteHash(bad),badName='book-'+badHash+'.json';fs.writeFileSync(path.join(f.ar,badName),bad,{mode:0o600});fs.writeFileSync(path.join(f.ar,'book-current.json'),JSON.stringify({kind:'PRIVATE_ASSESSMENT_POINTER_V1',path:badName,sha256:badHash}),{mode:0o600});assert.equal(readPrivateAssessment('ZZQ',f.options).record,null,'rehashed pointer cannot forge book derivation');const target=path.join(f.tmp,'symlink');fs.symlinkSync(f.ar,target);assert.equal(readPrivateAssessment('ZZQ',{...f.options,root:target}).record,null);assert.throws(()=>publishPrivateAssessmentBook(f.journal,{...f.options,root:f.S.dir,checkout:f.S.dir}));});
++for(const mode of['ambiguous','refused','429'])test('actual sender '+mode+' preserves durable uncertainty or safe unsent eligibility without replay',async t=>{const f=await fixture(t,{mode,advance:mode==='429'?121000:0});const text=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);const r=await f.S.fn('telegram')(text);assert.equal(r.ok,mode==='429');assert.equal(f.sent.length,mode==='429'?2:1);const d=readAssessmentDelivery('ZZQ',{...f.options,now:f.clock.now});assert.equal(d.delivery,mode==='ambiguous'||mode==='429'?'UNCERTAIN':'PROPOSED_NOT_SENT');if(mode==='ambiguous'){const again=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);assert.match(again,/DELIVERY UNCERTAIN/);assert.equal(f.sent.length,1);}examples.push({case:mode,text,delivery:d.delivery});});
++test('actual multipart caller expires after the first ACK, leaves all reserved cards UNCERTAIN and never replays',async t=>{const f=await fixture(t,{advance:121000});const text=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);const r=await f.S.fn('telegram')(text+'\n\n'+'SYNTHETIC long footer\n'.repeat(500));assert.equal(r.ok,true);assert.ok(f.sent.length>1);assert.equal(f.sent.filter(x=>x.includes('WAIT ZZQ')).length,1,'expired card is not repeated; plain remaining text can complete');assert.equal(readAssessmentDelivery('ZZQ',{...f.options,now:f.clock.now}).delivery,'UNCERTAIN');});
++test('actual reviewReply structured stop SELL survives absent entry quote and preserves legacy no-opt-in output',async t=>{const f=await fixture(t,{holding:true,quote:false});const evidence={},legacy=await f.S.fn('reviewReply')('ZZQ',f.sig,f.pos,evidence);assert.equal(evidence.disposition.status,'SELL');assert.equal(f.S.fn('holdingDisposition')('ZZQ','SELL OR TIGHTEN','Existing owner choice',{checks:[()=>true]},{}).status,'UNVERIFIED','do not turn an existing choice into a definite SELL');assert.equal(evidence.disposition.authority,'ACTUAL_HOLDING_REVIEW');assert.match(legacy,/STOP LEVEL REACHED/);const card=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(card,/SELL ZZQ/);assert.match(card,/quantity UNKNOWN/);assert.match(card,/STOP LEVEL REACHED/);assert.doesNotMatch(card,/WAIT ZZQ|NO BUY ZZQ/);examples.push({case:'real review caller, synthetic held stop, absent entry quote',text:card});process.env.ASSESSMENT_RESEARCH_ROOT='';const legacyAgain=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.equal(legacyAgain,legacy);});
++test('reservation race and unknown delivery survive an actual second Node process',async t=>{const f=await fixture(t),card=f.S.fn('researchDecisionTracePrototype')('ZZQ',{asOf:new Date(NOW).toISOString()}).card,r=reserveAssessmentDelivery('ZZQ',card,f.options);assert.throws(()=>reserveAssessmentDelivery('ZZQ',card,f.options));assert.match(await f.S.fn('natural')('check ZZQ',f.sig,f.pos),/DELIVERY UNCERTAIN/);settleAssessmentDelivery(r,'UNCERTAIN',f.options);assert.throws(()=>settleAssessmentDelivery(r,'CONFIRMED_SENT',f.options));assert.equal(readAssessmentDelivery('ZZQ',f.options).delivery,'UNCERTAIN');const restart=execFileSync(process.execPath,['--input-type=module','-e',"import{readAssessmentDelivery}from"+JSON.stringify('file://'+path.join(ROOT,'research-assessment.mjs'))+";console.log(readAssessmentDelivery('ZZQ',"+JSON.stringify(f.options)+").delivery)"],{encoding:'utf8'});assert.equal(restart.trim(),'UNCERTAIN');});
++test('actual command with retained public journal evidence remains a missing-evidence assessment, never a fabricated current setup',async t=>{const f=await fixture(t);const archived=JSON.parse(fs.readFileSync(path.join(ROOT,'test/fixtures/retained-discovery-3aa.json'),'utf8'));assert.equal(archived.sourcePin,'3aa893f52022a03a7fbac783599691e87c86abd8');const row=JSON.parse(archived.originalLine);assert.ok(row,'retained public journal record required');const retainedSymbol=row.symbol||row.sym;const retained=Buffer.from(JSON.stringify(row)+'\n');f.S.write('data/discovery-journal.jsonl',retained.toString());const before=f.S.read('data/discovery-journal.jsonl'),text=await f.S.fn('natural')('check '+retainedSymbol,f.sig,{});assert.match(text,/WAIT/);assert.match(text,/DATA_UNAVAILABLE|PARTIAL_COVERAGE/);assert.doesNotMatch(text,/ADEQUATELY_OBSERVED|SELL|BUY NOW/);assert.equal(f.S.read('data/discovery-journal.jsonl'),before);assert.equal(f.requests.length,0);examples.push({case:'retained public journal row through actual command; private evidence absent; not current recommendation',sourcePin:'3aa893f52022a03a7fbac783599691e87c86abd8',authenticRow:{id:row.id,symbol:retainedSymbol,type:row.type||'LEGACY_UNKEYED',horizon:row.horizon||null,evidenceVersion:row.evidenceVersion||null},text});});
++test('actual held review never escapes an uncertain private reservation through the legacy text fallback',async t=>{const f=await fixture(t,{holding:true,quote:false,mode:'ambiguous'}),text=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(text,/SELL ZZQ/);await f.S.fn('telegram')(text);assert.equal(readAssessmentDelivery('ZZQ',f.options).delivery,'UNCERTAIN');const again=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(again,/DELIVERY UNCERTAIN/);assert.match(again,/HOLD OR SELL.*STOP LEVEL REACHED/);assert.doesNotMatch(again,/SYNTHETIC FIXTURE — NOT A RECOMMENDATION \| SELL/,'explicit fresh holding review is preserved but the uncertain research card is not replayed');assert.match(again,/existing holding instructions remain/i);assert.equal(f.sent.length,1);});
++test('research lock failure cannot block an explicit holding SELL or an unrelated reply; stale metadata is visible',async t=>{const f=await fixture(t,{holding:true,quote:false});const text=await f.S.fn('natural')('review ZZQ',f.sig,f.pos),lock=path.join(f.ar,'.assessment-writer.lock');fs.mkdirSync(lock,{mode:0o700});fs.writeFileSync(path.join(lock,'owner.json'),JSON.stringify({owner:'synthetic killed process',pid:999999,createdAt:at(-600)}),{mode:0o600});const r=await f.S.fn('telegram')(text+'\n\nUNRELATED SYNTHETIC REPLY');assert.equal(r.ok,true);assert.match(f.sent.join('\n'),/HOLD OR SELL.*STOP LEVEL REACHED/);assert.match(f.sent.join('\n'),/LOCK HELD OR STALE/);assert.match(f.sent.join('\n'),/UNRELATED SYNTHETIC REPLY/);assert.doesNotMatch(f.sent.join('\n'),/SYNTHETIC FIXTURE — NOT A RECOMMENDATION \| SELL/);assert.ok(fs.existsSync(lock),'no lock stealing');const again=await f.S.fn('natural')('review ZZQ',f.sig,f.pos);assert.match(again,/BOOK_STALE/);});
++test('explicit reconcile needs pinned exact owner witness; bare commands/new keys never clear uncertainty',async t=>{const f=await fixture(t),card=f.S.fn('researchDecisionTracePrototype')('ZZQ',{asOf:new Date(NOW).toISOString()}).card,r=reserveAssessmentDelivery('ZZQ',card,f.options);settleAssessmentDelivery(r,'UNCERTAIN',f.options);assert.match(await f.S.fn('natural')('reconcile ZZQ',f.sig,f.pos),/RECONCILIATION UNAVAILABLE/);const w={kind:'OWNER_ASSESSMENT_DELIVERY_RESOLUTION_V1',symbol:'ZZQ',key:r.key,token:r.token,disposition:'DEFINITELY_NOT_SENT',review:{status:'INDEPENDENT_PROVENANCE_REVIEWED',at:at(-1),comment:'https://github.com/drrazaq/Stock-2/pull/1#issuecomment-1'}},b=Buffer.from(JSON.stringify(w));assert.throws(()=>reconcileAssessmentDelivery('ZZQ',b,f.options));const pol=JSON.parse(fs.readFileSync(path.join(f.ar,'assessment-policy.json')));pol.resolutionSha256=quoteHash(b);const pb=Buffer.from(JSON.stringify(pol));fs.writeFileSync(path.join(f.ar,'assessment-policy.json'),pb,{mode:0o600});fs.writeFileSync(path.join(f.ar,'resolution.json'),b,{mode:0o600});const o={...f.options,policySha256:quoteHash(pb)};process.env.ASSESSMENT_RESEARCH_POLICY_SHA256=o.policySha256;assert.match(await f.S.fn('natural')('reconcile ZZQ',f.sig,f.pos),/reconciled from the exact pinned owner witness/);const row=readAssessmentDelivery('ZZQ',o);assert.equal(row.delivery,'PROPOSED_NOT_SENT');assert.equal(row.resolution.previous,'UNCERTAIN');assert.equal(row.resolution.sha256,quoteHash(b));assert.match(await f.S.fn('natural')('reconcile ZZQ',f.sig,f.pos),/UNAVAILABLE/,'same witness cannot reset a later/new reservation');assert.equal(f.sent.length,0);});
++test('all repeated copies of a blocked card are stripped from the actual outgoing bundle',async t=>{const f=await fixture(t),text=await f.S.fn('natural')('check ZZQ',f.sig,f.pos);fs.mkdirSync(path.join(f.ar,'.assessment-writer.lock'),{mode:0o700});const r=await f.S.fn('telegram')(text+'\n\n'+text+'\n\nUNRELATED REPLY');assert.equal(r.ok,true);assert.match(f.sent.join('\n'),/UNRELATED REPLY/);assert.doesNotMatch(f.sent.join('\n'),/WAIT ZZQ/);});
++test.after(()=>{if(process.env.INTEGRATION_FIXTURE_EXPORT)fs.writeFileSync(process.env.INTEGRATION_FIXTURE_EXPORT,JSON.stringify({kind:'ENTIRELY_SYNTHETIC_COMMAND_AND_SEND_FIXTURES',examples},null,2)+'\n');assert.equal(blocked.length,0);});
+diff --git a/test/fixtures/retained-discovery-3aa.json b/test/fixtures/retained-discovery-3aa.json
+new file mode 100644
+index 00000000..a77fef89
+--- /dev/null
++++ b/test/fixtures/retained-discovery-3aa.json
+@@ -0,0 +1,7 @@
++{
++  "kind": "AUTHENTIC_RETAINED_PUBLIC_JOURNAL_ROW_NOT_A_CURRENT_ASSESSMENT",
++  "sourcePin": "3aa893f52022a03a7fbac783599691e87c86abd8",
++  "sourcePath": "data/discovery-journal.jsonl",
++  "sourceFileSha256": "467a6e49161d6bc02f5e36c27f9a750bb7aca09c94a3d2463a6da58525ca592e",
++  "originalLine": "{\"sym\":\"OABI\",\"d\":\"2026-10-02\",\"price\":4.87,\"spy\":769.64,\"score\":431}"
++}
