@@ -73,6 +73,6 @@ case "$MODE" in
     k=0; for f in $FILES; do [ -f "$DIR/data/$f" ] && cp "$DIR/data/$f" "$ROOT/data/$f" && k=$((k+1)); done; say "pulled $k files" ;;
   push)
     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }
-    copy_in; ( cd "$DIR" && SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "bot $(date -u +%FT%RZ)" ) | sed 's/^/private data: /' ;;
+    copy_in; ( cd "$DIR" && SAVE_PRIVATE_REPO=1 SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "bot $(date -u +%FT%RZ)" ) | sed 's/^/private data: /' ;;
   *) echo "usage: private-data.sh check|mirror|pull|push"; exit 2 ;;
 esac

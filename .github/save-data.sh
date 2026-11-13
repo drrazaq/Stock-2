@@ -26,7 +26,7 @@ resolve_step() {
 }
 in_rebase() { [ -d "$(git rev-parse --git-path rebase-merge)" ] || [ -d "$(git rev-parse --git-path rebase-apply)" ]; }
 pull() {
-  git pull -q --rebase && return 0
+  git pull -q --rebase ${PRIVATE_GUARD:+--autostash} && return 0   # private mode: the unstaged private working copies are set aside and restored
   local n=0
   while in_rebase && [ $n -lt 20 ]; do
     n=$((n + 1)); resolve_step
@@ -36,6 +36,18 @@ pull() {
   ! in_rebase
 }
 git add data
+# P0 Route A (development): once the private-data cutover has happened (.github/private-data-mode) OR ever happened
+# (.github/private-data-sealed, never removed by a rollback), the PUBLIC save never stages the owner's private files listed in
+# .github/private-files.txt, even though `private-data.sh pull` put current copies into data/. A rollback therefore stops using the
+# private repository but can never republish plaintext. The private repository's own save (private-data.sh push) sets
+# SAVE_PRIVATE_REPO=1 and keeps every file. A staged private path after the reset aborts the save instead of publishing it.
+if [ "${SAVE_PRIVATE_REPO:-}" != 1 ] && { [ -e .github/private-data-mode ] || [ -e .github/private-data-sealed ]; }; then
+  [ -f .github/private-files.txt ] || { echo "Error: private mode without .github/private-files.txt; refusing to save"; exit 1; }
+  PRIVATE_GUARD=1
+  PRIV=$(grep -vE '^\s*(#|$)' .github/private-files.txt | sed 's#^#data/#')
+  for p in $PRIV; do git reset -q -- "$p" 2>/dev/null || true; done
+  for p in $PRIV; do if git diff --cached --name-only -- "$p" | grep -q .; then echo "Error: private file $p still staged; refusing to publish it"; exit 1; fi; done
+fi
 git diff --cached --quiet || git commit -q -m "${1:-scan $(date -u +%FT%RZ)}"
 merge_alerts() {
   node "$ALERT_MERGER" || return 1
