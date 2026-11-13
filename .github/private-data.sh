@@ -105,13 +105,19 @@ case "$MODE" in
     for f in $FILES; do [ -f "$STG/$f" ] || continue; if mv -f "$STG/$f" "$ROOT/data/$f"; then done_list="$done_list $f"; else failed=1; break; fi; done
     if [ "$failed" = 1 ]; then rb=0
       for f in $done_list; do if [ -f "$BAK/$f" ]; then cp -p "$BAK/$f" "$ROOT/data/$f" || rb=1; else rm -f "$ROOT/data/$f" || rb=1; fi; done
-      rm -rf "$STG" "$BAK"
-      if [ "$rb" = 0 ]; then rm -f "$INCOMPLETE"; say "Error: an owner file could not be installed; every installed file was rolled back (nothing new is current)"; else say "Error: install failed AND rollback failed; owner files are marked incomplete and every pull refuses until a complete install"; fi
+      if [ "$rb" = 0 ]; then rm -rf "$STG" "$BAK"; rm -f "$INCOMPLETE"; say "Error: an owner file could not be installed; every installed file was rolled back (nothing new is current)"
+      else printf 'backup=%s\nstaging=%s\n' "$BAK" "$STG" >> "$INCOMPLETE"   # recovery material is KEPT while unresolved (never deleted here)
+        say "Error: install failed AND rollback failed; owner files are marked incomplete, the pre-install backup is kept, and every pull reports it until a complete install"; fi
       exit 1; fi
     rm -rf "$BAK"
+    aside_failed=0
     for f in $FILES; do if [ -f "$DIR/data/$f" ]; then :   # installed above
-      elif [ -f "$ROOT/data/$f" ]; then case "$f" in private-*) ;; *) mv -f "$ROOT/data/$f" "$ROOT/data/private-stale-$f" && say "optional $f is absent privately; the local copy was set aside (not used as current)";; esac; fi; done
-    rm -rf "$STG"; rm -f "$INCOMPLETE"; say "pulled $k files" ;;
+      elif [ -f "$ROOT/data/$f" ]; then case "$f" in private-*) ;; *) if mv -f "$ROOT/data/$f" "$ROOT/data/private-stale-$f"; then say "optional $f is absent privately; the local copy was set aside (not used as current)"
+        else aside_failed=1; say "Error: optional $f is absent privately but its stale local copy could not be set aside"; fi;; esac; fi; done
+    rm -rf "$STG"
+    # a stale optional copy that stays at its current name must never be consumed: the install stays INCOMPLETE and the pull fails
+    [ "$aside_failed" = 0 ] || { say "Error: pull incomplete (a stale optional owner file is still in place); stopping"; exit 1; }
+    rm -f "$INCOMPLETE"; say "pulled $k files" ;;
   push)
     date -u +%FT%TZ > "$PENDING" || { say "Error: cannot record the pending owner update"; exit 1; }   # first: any later failure keeps it
     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }

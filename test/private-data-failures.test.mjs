@@ -94,6 +94,8 @@ test('pull: install AND rollback failure leaves an incomplete marker; the failur
   const other = tmp('pdf-other-'); sh('git clone -q ' + w.bare + ' o && cd o && for f in my-positions settings halal; do printf \'{"NEW":2}\\n\' > data/$f.json; done && git add -A && git -c commit.gpgsign=false commit -qm bot && git push -q', other);
   const r = run(w, 'pull', { FAIL_MV: 'halal.json', FAIL_CP_SRC: '.bak/' }); assert.equal(r.status, 1); assert.match(r.stdout, /rollback failed; owner files are marked incomplete/);
   assert.ok(fs.existsSync(w.dir + '.install-incomplete'));
+  const bak = fs.readdirSync(path.dirname(w.dir)).filter(n => /\.stage\.\d+\.bak$/.test(n)); assert.equal(bak.length, 1, 'the pre-install backup is KEPT while unresolved (Codex 6852322719)');
+  assert.ok(fs.readdirSync(path.join(path.dirname(w.dir), bak[0])).some(n => n === 'my-positions.json'), 'backup holds the pre-install owner files');
   const r2 = run(w, 'pull'); assert.equal(r2.status, 0); assert.match(r2.stdout, /an earlier install was incomplete/); assert.ok(!fs.existsSync(w.dir + '.install-incomplete'));
   for (const f of ['my-positions.json', 'settings.json', 'halal.json']) assert.match(R(w.pub, 'data/' + f), /NEW/);
 });
@@ -111,4 +113,11 @@ test('push: with the clone correctly bound, a failure INSIDE the shared save (th
   W(w.bare, 'hooks/pre-receive', '#!/bin/sh\necho "synthetic rejection" >&2\nexit 1\n'); fs.chmodSync(path.join(w.bare, 'hooks/pre-receive'), 0o755);
   const r = run(w, 'push'); assert.equal(r.status, 1, r.stdout); assert.match(r.stdout, /private save NOT confirmed \(the shared save refused or failed\)/);
   assert.doesNotMatch(r.stdout, /private save verified/); assert.ok(fs.existsSync(w.dir + '.pending')); assert.doesNotMatch(remote(w, 'halal.json'), /EEE/);
+});
+
+test('pull: an optional stale copy that cannot be set aside fails the pull (nonzero, incomplete kept) and is never presented as complete (Codex 6852322719)', () => {
+  const w = world(); init(w); assert.equal(run(w, 'pull').status, 0); W(w.pub, 'data/tips.jsonl', '{"stale":1}\n');
+  const r = run(w, 'pull', { FAIL_MV: 'tips.jsonl' }); assert.notEqual(r.status, 0); assert.match(r.stdout, /could not be set aside/);
+  assert.ok(fs.existsSync(w.dir + '.install-incomplete'), 'incomplete kept'); assert.doesNotMatch(r.stdout, /pulled \d+ files/);
+  const r2 = run(w, 'pull'); assert.equal(r2.status, 0); assert.equal(R(w.pub, 'data/tips.jsonl'), null); assert.ok(!fs.existsSync(w.dir + '.install-incomplete'));
 });
