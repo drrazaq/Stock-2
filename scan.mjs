@@ -24,6 +24,28 @@ import zlib from 'node:zlib';
 import { createRequire } from 'node:module';
 import { execSync } from 'node:child_process';
 import { priceEvidence, stopText, stopMessageKey, validStop, nyStamp } from './stop-watch.mjs';
+// P0 Route A OWNER STATE (Codex 6851609156): after the two-pass nightly is live (data/public-pass-manifest.json exists), the public scan
+// outputs are a PUBLIC PROJECTION computed without the owner's state. Owner-context callers (bot replies, intraday checks: no SCAN_PASS)
+// must read and write the complete PRIVATE state instead: data/private-<name>, installed by every completed private pass. Missing private
+// context (no data/private-signals.json, or no private copy of a file) is UNKNOWN: reads return nothing, so owner gates fail closed
+// (e.g. workingKinds finds no proven kind; auto-off counts are never rebuilt from the smaller public subset). Inside a pass, or before
+// the two-pass is live, paths are unchanged. signals.json keeps its own paired hydration (signals-read.mjs).
+const OWNER_MAPPED = new Set(['alert-state.json', 'dow-study.json', 'engine-history.jsonl', 'experiments.jsonl', 'fm-state.json', 'journal.jsonl', 'leaders.json', 'lessons.json',
+  'mday-study.json', 'models.json', 'names.json', 'options-probe.json', 'outcomes.json', 'sectors.json', 'sic-extra.json', 'skipped.jsonl', 'spy-closes.json',
+  'switch-paper.json', 'timing-study.json', 'tier2-ledger.jsonl', 'options-shadow.json']);
+const OWNER_UNKNOWN_LOGGED = new Set();
+function ownerTwoPass() { return !process.env.SCAN_PASS && fs.existsSync('data/public-pass-manifest.json'); }
+let OWNER_CTX = null;   // per process (each bot/intraday cycle is a fresh process): the private record must PAIR with the published signals
+function ownerContextPaired() { if (OWNER_CTX !== null) return OWNER_CTX;
+  try { const a = JSON.parse(fs.readFileSync('data/private-signals.json', 'utf8')), b = JSON.parse(fs.readFileSync('data/signals.json', 'utf8'));
+    OWNER_CTX = !!(a && b && a.generatedAt && a.generatedAt === b.generatedAt && a.session === b.session); } catch { OWNER_CTX = false; }
+  return OWNER_CTX; }
+function dataPath(f) { const m = /^data\/([^/]+)$/.exec(f); if (!m || !OWNER_MAPPED.has(m[1]) || !ownerTwoPass()) return f;
+  return ownerContextPaired() ? 'data/private-' + m[1] : 'data/private-unknown-' + m[1]; }   // unknown context: writes go to a scratch copy that is never state
+function ownerStateKnown(f) { if (!/^data\/private-/.test(f) || !ownerTwoPass()) return true;
+  const ok = !/^data\/private-unknown-/.test(f) && ownerContextPaired() && fs.existsSync(f);
+  if (!ok && !OWNER_UNKNOWN_LOGGED.has(f)) { OWNER_UNKNOWN_LOGGED.add(f); console.log('owner state UNKNOWN (' + f.slice(5) + ': private copy or paired private record missing): owner gates fail closed'); }
+  return ok; }
 
 const env = process.env, MODE = env.MODE === 'intraday' ? 'intraday' : env.MODE === 'chat' ? 'chat' : 'daily', RATE = Math.max(1, parseInt(env.RATE || '8', 10) || 8);
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;   // test hooks: localhost only
@@ -162,7 +184,7 @@ function macroLines(pos, cands) {
 // YOUR SKIPS vs THE SYSTEM: every buy you skipped (Skipped button), why, and what the price did since. Over time this shows whether
 // your tips and your judgment beat the system's list, or the other way round.
 async function skipsText() {
-  let L = []; try { L = fs.readFileSync('data/skipped.jsonl', 'utf8').trim().split('\n').map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { }
+  let L = []; try { L = fs.readFileSync(dataPath('data/skipped.jsonl'), 'utf8').trim().split('\n').map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean); } catch { }
   const since = Date.now() - 45 * 864e5, why = {}; for (const r of L) if (r.why) why[r.sym] = r.why;
   const sk = L.filter(r => !r.why && r.ts >= since && r.px > 0), seen = new Set(), rows = [];
   for (const r of sk.reverse()) { if (seen.has(r.sym)) continue; seen.add(r.sym); if (rows.length >= 15) break; let now = null; try { const j = await liveQ(r.sym); now = +j.price || null; } catch (e) { } rows.push({ ...r, why: why[r.sym] || 'no reason given', now, ch: now ? now / r.px - 1 : null }); }
@@ -284,7 +306,7 @@ function assessmentContext(sym, sig, pos = {}, decision = 'UNKNOWN: no current a
   const array = v => Array.isArray(v) ? v : []; pos = pos && typeof pos === 'object' ? pos : {};
   const H = readJson0('data/horizons.json'), Q = readJson0('data/quality.json'), D = readJson0('data/discovery.json');
   const P = pos[sym], st = array(sig && sig.stocks).find(x => x && x.sym === sym), q = array(sig && sig.quick).find(x => x && x.sym === sym);
-  const lead = array(D && D.candidates).find(x => x && x.sym === sym), names = readJson0('data/names.json') || {};
+  const lead = array(D && D.candidates).find(x => x && x.sym === sym), names = readJson0(dataPath('data/names.json')) || {};
   const issuer = typeof names[sym] === 'string' ? names[sym] : lead && lead.name || 'issuer name UNKNOWN';
   const er = readJson0('data/events-recent.json'), events = array(er && er.events).filter(x => x && x.sym === sym).slice(-2);
   const reports=array(readJson0('data/earnings-recent.json')?.reports).filter(x=>x&&x.sym===sym).sort((a,b)=>String(b.d||'').localeCompare(String(a.d||''))).slice(0,2);
@@ -390,11 +412,11 @@ function experimentRows() {
   const IG = J('ignition-lab.json'); if (IG && IG.rules) { const v = Object.values(IG.rules); v.forEach((r, i) => add('ignition (minute bars)', r.name + ' / ' + r.exitName, r.verdict, i === 0 ? Math.max(v.length, IG.variants || 0) - v.length + 1 : 1, r.why)); }
   return rows; }
 // append-only research ledger: one line each time an idea gets a new verdict (never rewritten), so the count of things tried can never be forgotten
-function ledgerAppend() { try { const rows = experimentRows(), f = 'data/experiments.jsonl', last = new Map();
+function ledgerAppend() { try { const rows = experimentRows(), f = dataPath('data/experiments.jsonl'), last = new Map();
   if (fs.existsSync(f)) for (const ln of fs.readFileSync(f, 'utf8').split('\n')) { if (!ln.trim()) continue; try { const x = JSON.parse(ln); last.set(x.where + '|' + x.name, x.verdict + '|' + x.tried); } catch (e) {} }
   const d = new Date().toISOString().slice(0, 10), add = rows.filter(r => last.get(r.where + '|' + r.name) !== r.verdict + '|' + r.tried).map(r => JSON.stringify({ d, where: r.where, name: r.name, verdict: r.verdict, tried: r.tried, why: String(r.why || '').slice(0, 160), first: !last.has(r.where + '|' + r.name) }) + '\n');
   if (add.length) fs.appendFileSync(f, add.join('')); return add.length; } catch (e) { console.log('ledger: ' + e.message); return 0; } }
-function ledgerInfo() { try { const L = fs.readFileSync('data/experiments.jsonl', 'utf8').split('\n').filter(x => x.trim()).map(x => JSON.parse(x)); if (!L.length) return null;
+function ledgerInfo() { try { const L = fs.readFileSync(dataPath('data/experiments.jsonl'), 'utf8').split('\n').filter(x => x.trim()).map(x => JSON.parse(x)); if (!L.length) return null;
   const ideas = new Set(L.map(x => x.where + '|' + x.name)).size, ev = L.length; return { ideas, ev, since: L[0].d }; } catch (e) { return null; } }
 function exitsText() { const EX = readJson0('data/exits.json'); if (!EX || EX.status !== 'OK') return 'EXIT TEST: runs on Sunday with the other studies (the same buys sold 10 ways). Ask again after Sunday.';
   const out = ['EXIT TEST: WHEN TO SELL (' + EX.from + ' to ' + EX.to + ', the same buys sold ' + Object.keys(Object.values(EX.results)[0].exits).length + ' ways, judged above the S&P 500 over the same days)', ''];
@@ -413,7 +435,7 @@ function rebuyText() { const RB = readJson0('data/rebuy.json'); if (!RB || RB.st
 function rebalanceText(sig) { const pos = loadPos(), pv = privRead(), sh = pv.shares || {}, syms = Object.keys(pos); if (!syms.length) return 'REBALANCE: no stocks recorded. Send  bought SYM PRICE SHARES  for each one you own.';
   if(!scanCloseCurrent(sig))return 'REBALANCE ASSESSMENT UNKNOWN: saved session '+(sig?.session||'UNKNOWN')+' lacks current completed-close evidence. Recorded holdings/trades are unchanged; no current stop, trim or new-cash instruction is inferred.';
   const last = {}; for (const x of (sig && sig.stocks) || []) if (x.last) last[x.sym] = x.last;
-  const SEC = readJson0('data/sectors.json') || {}, CK = readJson0('data/sec-ciks.json') || {}, sicG = (c) => { c = +c; if (!c) return null; return c === 3674 || c === 3825 ? 'Semiconductors' : (c >= 2830 && c <= 2836) || c === 8731 ? 'Health care and biotech' : (c >= 7370 && c <= 7379) || (c >= 3570 && c <= 3579) ? 'Technology' : (c >= 3660 && c <= 3679) || c === 3827 ? 'Electrical Equipment' : c === 1311 || c === 2911 || c === 1381 || c === 1389 ? 'Energy' : c >= 1000 && c <= 1099 ? 'Mining' : c >= 3720 && c <= 3769 ? 'Aerospace' : c >= 6000 && c <= 6799 ? 'Financials' : c >= 4900 && c <= 4999 ? 'Utilities' : c >= 1500 && c <= 1799 ? 'Construction' : c >= 5000 && c <= 5199 ? 'Distribution' : c >= 3500 && c <= 3569 ? 'Machinery' : null; }, Z = readJson0('data/zad-list.json'), m0 = (x) => money(x).replace(/\.00$/, '');
+  const SEC = readJson0(dataPath('data/sectors.json')) || {}, CK = readJson0('data/sec-ciks.json') || {}, sicG = (c) => { c = +c; if (!c) return null; return c === 3674 || c === 3825 ? 'Semiconductors' : (c >= 2830 && c <= 2836) || c === 8731 ? 'Health care and biotech' : (c >= 7370 && c <= 7379) || (c >= 3570 && c <= 3579) ? 'Technology' : (c >= 3660 && c <= 3679) || c === 3827 ? 'Electrical Equipment' : c === 1311 || c === 2911 || c === 1381 || c === 1389 ? 'Energy' : c >= 1000 && c <= 1099 ? 'Mining' : c >= 3720 && c <= 3769 ? 'Aerospace' : c >= 6000 && c <= 6799 ? 'Financials' : c >= 4900 && c <= 4999 ? 'Utilities' : c >= 1500 && c <= 1799 ? 'Construction' : c >= 5000 && c <= 5199 ? 'Distribution' : c >= 3500 && c <= 3569 ? 'Machinery' : null; }, Z = readJson0('data/zad-list.json'), m0 = (x) => money(x).replace(/\.00$/, '');
   const noSh = syms.filter(k => !(sh[k] > 0)); if (noSh.length === syms.length) return 'REBALANCE: I know your buy prices but not how many shares you hold, so I cannot see the weights. Send for each:  bought SYM PRICE SHARES  (shares stay encrypted).';
   const rows = syms.filter(k => sh[k] > 0).map(k => { const P = pos[k], px = last[k] || P.entry; return { k, P, px, usd: sh[k] * px, g: px / P.entry - 1, ind: secGroup(SEC[k]) || sicG(CK[k] && CK[k][1]) || 'Other', up: ((sig && sig.stocks) || []).find(x => x.sym === k) }; }), tot = rows.reduce((a, r) => a + r.usd, 0), n = rows.length;
   const tgt = 1 / n, cap = Math.max(0.15, 1.5 / n), RB = readJson0('data/rebalance.json'), band = RB && RB.status === 'OK' ? RB.results.STRONG_BAND || RB.results.ANY_BAND : null, cashR = RB && RB.status === 'OK' ? RB.results.STRONG_NEWCASH || RB.results.ANY_NEWCASH : null;
@@ -445,7 +467,7 @@ function rebalanceText(sig) { const pos = loadPos(), pv = privRead(), sh = pv.sh
 // nightly scan that newly closes 30%+ above its 50-day average (STRETCH) or 25%+ above its close 10 sessions earlier (SPIKE) is logged;
 // paper-sold at the next open, paper-bought back at 10% under that price (or at the close 60 sessions later if it never comes back),
 // and compared with simply holding over the same days. Costs 0.4% a side. Nothing is traded. File: data/switch-paper.json.
-function switchPaper(loaded) { const f = 'data/switch-paper.json', S = readJson(f, { open: [], done: [] }), SIDE = 0.004, H = 60;
+function switchPaper(loaded) { const f = dataPath('data/switch-paper.json'), S = readJson(f, { open: [], done: [] }), SIDE = 0.004, H = 60;
   // 1. finish or update the open cases
   const still = []; for (const x of S.open) { const d = loaded[x.sym]; const c = d && d.candles; if (!c) { still.push(x); continue; } const k = c.findIndex(b => b.d === x.d); if (k < 0) { still.push(x); continue; }
     if (k + 1 >= c.length) { still.push(x); continue; } const sell = c[k + 1].o; if (!(sell > 0)) { still.push(x); continue; } x.sell = sell;
@@ -474,10 +496,10 @@ const TIER2_T = 2.5;
 const TIER2_ON = () => (readJson0('data/settings.json') || {}).tier2 !== false;
 // its own ledger: every tier-2 instruction shown is logged once with its price; after 30 calendar days its move is filled in, after costs.
 // (review S-11, 22 Oct) a switch case (sell, buy back lower) is a round trip too, so it now pays the same 0.8% as a buy.
-function tier2Log(sym, kind, px, extra) { try { if (!(px > 0)) return; const f = 'data/tier2-ledger.jsonl', d = new Date().toISOString().slice(0, 10); let L = []; try { L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {}
+function tier2Log(sym, kind, px, extra) { try { if (!(px > 0)) return; const f = dataPath('data/tier2-ledger.jsonl'), d = new Date().toISOString().slice(0, 10); let L = []; try { L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {}
   if (L.some(r => r.sym === r.sym && r.sym === sym && r.kind === kind && Date.now() - Date.parse(r.d) < 30 * 864e5)) return; fs.appendFileSync(f, JSON.stringify({ d, sym, kind, px: +(+px).toFixed(4), ...(extra || {}) }) + '\n'); } catch (e) {} }
 // option tickets (kind option:<rule>) are never priced here with the stock's price: optionsShadow resolves them at their own bid
-function tier2Resolve(lastPx) { try { const f = 'data/tier2-ledger.jsonl'; let L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)), ch = false;
+function tier2Resolve(lastPx) { try { const f = dataPath('data/tier2-ledger.jsonl'); let L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)), ch = false;
   for (const r of L) if (!r.out && !/^(option|try):/.test(r.kind || '') && Date.now() - Date.parse(r.d) >= 30 * 864e5 && lastPx[r.sym] > 0) { r.out = new Date().toISOString().slice(0, 10); r.px1 = lastPx[r.sym]; r.pct = +(r.kind === 'switch sell' ? r.px / r.px1 - 1 - 0.008 : r.px1 / r.px - 1 - 0.008).toFixed(4); ch = true; }
   if (ch) fs.writeFileSync(f, L.map(x => JSON.stringify(x)).join('\n') + '\n'); return L; } catch (e) { return []; } }
 // (audit 24 Oct, coordinator) TRY SMALL ledger rows (kind try:<rule>) are resolved like the trade itself: bought at the open of the first
@@ -499,7 +521,7 @@ async function tryBars(sym, from) {
   if (env.MASSIVE_KEY) { const j = await mv('/v2/aggs/ticker/' + encodeURIComponent(sym) + '/range/1/day/' + from + '/' + ny(Date.now()).d + '?adjusted=true&sort=asc&limit=50000');
     if (j && Array.isArray(j.results) && j.results.length) return j.results.map(b => ({ d: new Date(b.t).toISOString().slice(0, 10), o: b.o, h: b.h, l: b.l, c: b.c })).filter(b => barClosed(b.d, Date.now())); }
   const d = await loadDaily(sym); return d && d.candles ? d.candles.filter(b => b.d >= from) : null; }
-async function tryLedgerResolve() { const f = 'data/tier2-ledger.jsonl'; let L; try { L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; }
+async function tryLedgerResolve() { const f = dataPath('data/tier2-ledger.jsonl'); let L; try { L = fs.readFileSync(f, 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; }
   let ch = false; const today = ny(Date.now()).d;
   for (const r of L) { if (r.out || !/^try:/.test(r.kind || '')) continue; const hold = +r.hold > 0 ? +r.hold : tryHoldOf(String(r.kind).slice(4));
     if (r.checked === today) continue; let bars = null; try { bars = await tryBars(r.sym, r.d); } catch (e) {} if (!bars || !bars.length) continue;
@@ -507,7 +529,7 @@ async function tryLedgerResolve() { const f = 'data/tier2-ledger.jsonl'; let L; 
   if (ch) fs.writeFileSync(f, L.map(x => JSON.stringify(x)).join('\n') + '\n'); return L; }
 // TIER 2 SWITCHES ITSELF OFF ON ITS OWN LEDGER (review S-12, 22 Oct): 20+ resolved cases of that kind in data/tier2-ledger.jsonl with a
 // negative average after costs. (Before, V15 read only the league's 3-month score, which cannot exist before about Feb 2027.)
-function tier2LedgerNegative(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
+function tier2LedgerNegative(kind) { try { const a = fs.readFileSync(dataPath('data/tier2-ledger.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
   return a.length >= 20 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
 // FOLLOWING (owner's request 23 Oct 2026; follow-lane.mjs): new buy calls of public traders whose OWN full dated call history passed the
 // tier-2 bar (FOLLOW in data/follow-board.json). Gates here, at display time: not halal in ZAD -> removed; unknown halal -> shown with
@@ -544,7 +566,7 @@ function swTier(r) { if (!r) return null;
   // (review S-13) the stress cost: rebuy.json gives it for the newer half only (results.stress); no older-half stress figure exists in its output
   if (!(r.results.stress && r.results.stress.adv > 0)) return null;
   if (tier2LedgerNegative('switch sell')) return null;   // its own ledger negative: off (review S-12)
-  const S = readJson0('data/switch-paper.json'), D = ((S && S.done) || []).filter(x => !r.trigger || x.trig === r.trigger);
+  const S = readJson0(dataPath('data/switch-paper.json')), D = ((S && S.done) || []).filter(x => !r.trigger || x.trig === r.trigger);
   if (D.length >= 20 && D.reduce((a, x) => a + (x.adv || 0), 0) / D.length < 0) return null;   // live record negative: off
   return 'small'; }
 const swWins = (r) => !!swTier(r);
@@ -643,7 +665,7 @@ function discoveryLines(sig, pos) { if (!TIER2_ON()) return []; const C = readJs
   return rows.length ? ['DISCOVERED (tier 2, TRADABLE SMALL: a rule the system found on 2021-2023 and passed its one test on 2024-2026 after the higher cost, below the 4.0 proof bar; 1,000 USD each, switched off if its live record turns negative):', ...rows] : []; }
 // SUPPLY-CHAIN result (Agent C, 22 Oct): it has no luck test and no costs, so a PROMISING there is information only, never a pass.
 const linkVerdict = (k) => k && /PROMISING|BETTER/.test(k.verdict || '') && typeof k.t !== 'number' ? 'INFORMATION ONLY (no luck test, no costs; not a buy rule)' : (k && k.verdict) || 'not run';
-function switchPaperLine() { const S = readJson0('data/switch-paper.json'); if (!S) return 'Live paper check: starts with the next nightly scan.'; const D = S.done || [];
+function switchPaperLine() { const S = readJson0(dataPath('data/switch-paper.json')); if (!S) return 'Live paper check: starts with the next nightly scan.'; const D = S.done || [];
   if (!D.length) return 'Live paper check: ' + (S.open || []).length + ' cases running, first results after 60 sessions (about 3 months).';
   const a = D.reduce((t, x) => t + x.adv, 0) / D.length, b = D.filter(x => x.adv > 0).length / D.length;
   return 'Live paper check: ' + D.length + ' finished cases, selling and buying back ' + pcs(a) + ' vs holding on average, better ' + Math.round(b * 100) + '% of the time (' + (S.open || []).length + ' still running).'; }
@@ -666,7 +688,7 @@ function researchAssessmentCycle(sig,{cutoff=new Date(Date.now()).toISOString(),
   let queue;try{queue=frozenAssessmentQueue({signals:sig||{},discovery:readJson0('data/discovery.json')||{},earnings:readJson0('data/earnings-recent.json')||{},events:readJson0('data/events-recent.json')||{},quality:readJson0('data/quality.json')||{},horizons:readJson0('data/horizons.json')||{},radar:readJson0('data/radar-universe.json')||{},leaders:readJson0('data/leaders-universe.json')||{},
     publicLeads:env.ASSESSMENT_PUBLIC_LEADS==='1'?publicLeadInputs(journal,Date.parse(cutoff)):[],cutoff,reviewedSymbols,seenAssessmentIds:journal.filter(x=>x.type==='assessment').map(x=>x.id),excludedSymbols:Object.keys(HALALM()).filter(sym=>myHalal(sym)==='fail')},journal);}catch{return {error:'ASSESSMENT CYCLE UNVERIFIED; original journal preserved; no new selection'};}
   const records=queue.frozen?assessmentJournalRows(queue):[],persistence=queue.frozen?'READ_ONLY_FROZEN_PRODUCER_BATCH':'READ_ONLY_NOT_FROZEN: awaiting existing discovery producer';
-  const outcomes=readJson0('data/outcomes.json');
+  const outcomes=readJson0(dataPath('data/outcomes.json'));
   return {queue,records,persistence,feedback:linkAssessmentOutcomes(journal.filter(x=>x.type==='assessment'),Array.isArray(outcomes?.assessmentOutcomes)?outcomes.assessmentOutcomes:[])};
 }
 function opportunitiesText(sig, short) { const N = short ? 3 : 8, out = [], m0 = (x) => money(x).replace(/\.00$/, ''), Z = readJson0('data/zad-list.json'), bad = new Set((Z && Z.notHalal) || []), mine = loadPos(), skip = (s0) => bad.has(s0) || mine[s0];
@@ -715,13 +737,13 @@ function scorecardText() { const A = [], av = (a) => a.length ? a.reduce((x, y) 
     if (avg < 0 && ex < 0) return n >= 20 ? 'LOSING: do not act on these' : 'losing so far'; if (avg > 0 && ex > 0 && typeof days === 'number' && days < 10) return 'positive, but all from ' + days + ' trading day' + (days === 1 ? '' : 's') + ': not evidence yet (10+ days needed)'; if (avg > 0 && ex > 0 && typeof stocks === 'number' && stocks < 20) return 'positive, but on only ' + stocks + ' stock' + (stocks === 1 ? '' : 's') + ': not evidence yet (20+ needed; 22 Oct)'; if (avg > 0 && ex > 0) return n >= 30 ? 'POSITIVE so far (one market period only; not proof yet)' : 'positive so far, too few'; return 'mixed: no edge shown'; };
   const row = (name, n, win, avg, bench, extra, days, stocks) => { SC_ROWS.push({ engine: name, n: n || 0, win: typeof win === 'number' && isFinite(win) ? +win.toFixed(3) : null, avg: typeof avg === 'number' && isFinite(avg) ? +avg.toFixed(4) : null, days: typeof days === 'number' ? days : null, stocks: typeof stocks === 'number' ? stocks : null, verdict: verdict(n, avg, bench, days, stocks) }); return A.push('- ' + name + ': ' + (n ? n + ' finished, ' + (win === null || win === undefined || !isFinite(win) ? '' : Math.round(win * 100) + '% won, ') + 'average ' + pcs(avg) + (bench !== null && bench !== undefined ? ' vs S&P ' + pcs(bench) : '') + (extra ? ' ' + extra : '') + ' => ' : '') + verdict(n, avg, bench, days, stocks)); };
   const sg = readJson0('data/signals.json') || {}, q = sg.quickRecord; if (q) row('Quick trades (ACTIONS)', q.n, q.winRate, q.avgPct, q.avgSpy, sg.quickPaused ? '(paused by the system)' : '', q.days, q.stocks);
-  const oc = readJson0('data/outcomes.json'); if (oc && oc.horizons) { const h = oc.horizons['3'] || oc.horizons['1']; row('Swing buys (ACTIONS), 3 days after the signal', h ? h.n : 0, oc.winRate, h ? h.avgReturn : null, h ? h.avgBenchmark : null, typeof oc.avgR === 'number' ? '(finished trades: ' + oc.finished + ', average ' + oc.avgR.toFixed(2) + 'R)' : ''); }
+  const oc = readJson0(dataPath('data/outcomes.json')); if (oc && oc.horizons) { const h = oc.horizons['3'] || oc.horizons['1']; row('Swing buys (ACTIONS), 3 days after the signal', h ? h.n : 0, oc.winRate, h ? h.avgReturn : null, h ? h.avgBenchmark : null, typeof oc.avgR === 'number' ? '(finished trades: ' + oc.finished + ', average ' + oc.avgR.toFixed(2) + 'R)' : ''); }
   const rr = readJson0('data/radar-record.json'); if (rr && rr.groups) for (const g of Object.values(rr.groups)) if (g.n) row('Early-wave radar, ' + g.name, g.n, g.win, g.avg, null);
   const ir = readJson0('data/ignition-results.json'); if (ir && ir.done) { const by = {}; for (const v of Object.values(ir.done)) if (typeof v.close === 'number') (by[v.rule] = by[v.rule] || []).push(v); for (const [k, a] of Object.entries(by)) row('Fast alerts rule ' + k + ' (paper, at the alert price, sold at the close)', a.length, a.filter(x => x.close > 0).length / a.length, av(a.map(x => x.close)), null, '(' + pcs(av(a.map(x => x.close_s))) + ' at 1.5x costs, ' + new Set(a.map(x => x.d)).size + ' day(s), ' + new Set(a.map(x => x.sym)).size + ' stocks)', new Set(a.map(x => x.d)).size, new Set(a.map(x => x.sym)).size); }
   { const AP = readJson0(ALP_FILE); if (AP && Array.isArray(AP.closed)) { const by = {}; for (const t of AP.closed) if (typeof t.net === 'number') (by[t.engine || t.kind] = by[t.engine || t.kind] || []).push(t);
     for (const [k, a] of Object.entries(by)) row('Alpaca paper, ' + k + ' (filled at the open, after fees)', a.length, a.filter(x => x.net > 0).length / a.length, av(a.map(x => x.net)), null, '(' + new Set(a.map(x => x.out)).size + ' exit day(s), ' + new Set(a.map(x => x.sym)).size + ' stocks)', new Set(a.map(x => x.out)).size, new Set(a.map(x => x.sym)).size); } }
   // tier2 off = exactly as before tier 2: its ledger rows are not shown and not counted (review S-14, 22 Oct)
-  if (TIER2_ON()) { let T2 = []; try { T2 = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} const by = {}; for (const r of T2) if (typeof r.pct === 'number') (by[r.kind] = by[r.kind] || []).push(r);
+  if (TIER2_ON()) { let T2 = []; try { T2 = fs.readFileSync(dataPath('data/tier2-ledger.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} const by = {}; for (const r of T2) if (typeof r.pct === 'number') (by[r.kind] = by[r.kind] || []).push(r);
     for (const [k, a] of Object.entries(by)) row('TRADABLE SMALL ledger, ' + k + ' (30 days after each instruction, after costs)', a.length, a.filter(x => x.pct > 0).length / a.length, av(a.map(x => x.pct)), null, '(' + new Set(a.map(x => x.d)).size + ' day(s), ' + new Set(a.map(x => x.sym)).size + ' stocks; ' + T2.filter(r => r.kind === k && typeof r.pct !== 'number').length + ' still open)', new Set(a.map(x => x.d)).size, new Set(a.map(x => x.sym)).size); }
   const AL = readJson0('data/autolab.json'); if (AL && AL.candidates) for (const c of Object.values(AL.candidates)) if (c.paper) row('Autolab: ' + c.name, c.paper.n, c.paper.win, c.paper.avg, null, typeof c.paper.vsAvg === 'number' ? '(' + pcs(c.paper.vsAvg) + ' vs an average stock)' : '');
   const oct = readJson0('data/octopus-paper.json'); if (oct && oct.record) row('Octopus score top picks (rejected idea, kept on paper)', oct.record.n, oct.record.win, oct.record.avg, null);
@@ -731,8 +753,8 @@ function scorecardText() { const A = [], av = (a) => a.length ? a.reduce((x, y) 
   if (sys.length) row('YOUR REAL trades on system picks', sys.length, sys.filter(t => t.pct > 0).length / sys.length, av(sys.map(t => t.pct)), null, disc(sys)); if (own.length) row('YOUR REAL trades on your own picks', own.length, own.filter(t => t.pct > 0).length / own.length, av(own.map(t => t.pct)), null, disc(own));
   // OPEN, MARKED TO MARKET (22 Oct): not verdicts, but the unfinished results are shown, not hidden behind "open"
   try { const SG = readJson0('data/signals.json'), lastPx = {}; for (const x of (SG && SG.stocks) || []) if (x.last) lastPx[x.sym] = x.last;
-    const LD = readJson0('data/leaders.json'), lp = ((LD && LD.paper) || []).filter(x => x.entry > 0 && lastPx[x.sym] > 0); if (lp.length) { const r = lp.map(x => lastPx[x.sym] / x.entry - 1); A.push('- Leaders list (T1), ' + lp.length + ' open paper positions marked to market: average ' + pcs(av(r)) + ' before costs, ' + r.filter(x => x > 0).length + ' up (scored by the league at 1 and 3 months; not a verdict)'); }
-    const SW = readJson0('data/switch-paper.json'), so = ((SW && SW.open) || []).filter(x => x.ref > 0 && lastPx[x.sym] > 0); if (so.length) { const r = so.map(x => lastPx[x.sym] / x.ref - 1), back = r.filter(x => x <= -0.10).length, away = r.filter(x => x > 0.05).length; A.push('- Switch, ' + so.length + ' open: since the sell signal the stocks moved ' + pcs(av(r)) + ' on average; ' + back + ' reached the buy-back level (10% lower), ' + away + ' ran away 5%+ (a missed rise counts against the switch; not a verdict until round trips finish)'); } } catch (e) {}
+    const LD = readJson0(dataPath('data/leaders.json')), lp = ((LD && LD.paper) || []).filter(x => x.entry > 0 && lastPx[x.sym] > 0); if (lp.length) { const r = lp.map(x => lastPx[x.sym] / x.entry - 1); A.push('- Leaders list (T1), ' + lp.length + ' open paper positions marked to market: average ' + pcs(av(r)) + ' before costs, ' + r.filter(x => x > 0).length + ' up (scored by the league at 1 and 3 months; not a verdict)'); }
+    const SW = readJson0(dataPath('data/switch-paper.json')), so = ((SW && SW.open) || []).filter(x => x.ref > 0 && lastPx[x.sym] > 0); if (so.length) { const r = so.map(x => lastPx[x.sym] / x.ref - 1), back = r.filter(x => x <= -0.10).length, away = r.filter(x => x > 0.05).length; A.push('- Switch, ' + so.length + ' open: since the sell signal the stocks moved ' + pcs(av(r)) + ' on average; ' + back + ' reached the buy-back level (10% lower), ' + away + ' ran away 5%+ (a missed rise counts against the switch; not a verdict until round trips finish)'); } } catch (e) {}
   // B. finding
   let L = []; try { L = fs.readFileSync('data/ignition-days.jsonl', 'utf8').trim().split('\n').map(x => JSON.parse(x)).slice(-20); } catch (e) {}
   const B = []; if (L.length) { let n = 0, caught = 0, data = 0, gap = 0, alerts = 0; for (const d of L) { alerts += d.alerts || 0; for (const [k, v] of Object.entries(d.tally || {})) { n += v; if (/^CAUGHT/.test(k) && !/NOT/.test(k)) caught += v; if (/NOT_VISIBLE|NO_LIVE|TOO_LATE|VOLUME_FIGURE_LATE/.test(k)) data += v; if (k === 'GAPPED_AT_OPEN') gap += v; } }
@@ -743,7 +765,7 @@ function scorecardText() { const A = [], av = (a) => a.length ? a.reduce((x, y) 
     'B. FINDING OPPORTUNITIES', ...B, '',
     'Rules: a "POSITIVE" record from one market period is not proof. A rule that is changed starts a new record; it never keeps the old one. LOSING engines stay visible, they are not hidden. Research only.'].join('\n'); }
 // ENGINE HISTORY (22 Oct): one line a day per engine in data/engine-history.jsonl, so the trajectory is kept, not only tonight's snapshot.
-function engineHistorySnapshot() { try { scorecardText(); const d = new Date().toISOString().slice(0, 10), f = 'data/engine-history.jsonl'; let have = false; try { const L = fs.readFileSync(f, 'utf8').trim().split('\n'); have = L.length > 0 && JSON.parse(L[L.length - 1]).d === d; } catch (e) {}
+function engineHistorySnapshot() { try { scorecardText(); const d = new Date().toISOString().slice(0, 10), f = dataPath('data/engine-history.jsonl'); let have = false; try { const L = fs.readFileSync(f, 'utf8').trim().split('\n'); have = L.length > 0 && JSON.parse(L[L.length - 1]).d === d; } catch (e) {}
   if (!have && SC_ROWS.length) fs.appendFileSync(f, SC_ROWS.map(r => JSON.stringify({ d, ...r })).join('\n') + '\n'); } catch (e) {} }
 // AVOID LEDGER (22 Oct): every stock the ACTIONS page told you to avoid is logged with its price; 10 sessions later its move is filled in, so
 // the avoid rules are judged on future days too (were they right, or too strict?). Shown in  progress .
@@ -767,11 +789,11 @@ function sellDiscipline(trades) {
 function scoreboardText() { const now = Date.now(), d7 = new Date(now - 7 * 864e5).toISOString().slice(0, 10), d90 = new Date(now - 90 * 864e5).toISOString().slice(0, 10), av = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
   let mt = []; try { mt = fs.readFileSync(MY_TRADES, 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(t => typeof t.pct === 'number' && t.out); } catch (e) {}
   const you = (since) => mt.filter(t => String(t.out).slice(0, 10) >= since).map(t => t.pct);   // stored after costs already
-  let H = []; try { H = fs.readFileSync('data/engine-history.jsonl', 'utf8').trim().split('\n').map(x => JSON.parse(x)); } catch (e) {}
+  let H = []; try { H = fs.readFileSync(dataPath('data/engine-history.jsonl'), 'utf8').trim().split('\n').map(x => JSON.parse(x)); } catch (e) {}
   const lastRow = (eng) => H.filter(r => r.engine === eng).slice(-1)[0], firstRow = (eng, since) => H.filter(r => r.engine === eng && r.d >= since)[0];
   const engines = [...new Set(H.map(r => r.engine))].filter(e => !/YOUR REAL/.test(e)), sysLines = [];
   for (const e of engines) { const a = lastRow(e), b = firstRow(e, d7); if (a && b && a.n > b.n && a.avg !== null) sysLines.push(e.replace(/ \(.*?\)/g, '') + ': +' + (a.n - b.n) + ' trades this week, running average ' + pcs(a.avg) + ' (' + a.verdict + ')'); }
-  let spy7 = null, spy90 = null; try { let sp = spyDaily && spyDaily.candles ? spyDaily.candles.map(c => c.c) : null; if (sp && sp.length > 70) fs.writeFileSync('data/spy-closes.json', JSON.stringify(sp.slice(-300))); else sp = readJson0('data/spy-closes.json'); if (sp && sp.length > 70) { spy7 = sp[sp.length - 1] / sp[sp.length - 6] - 1; spy90 = sp[sp.length - 1] / sp[sp.length - 64] - 1; } } catch (e) {}
+  let spy7 = null, spy90 = null; try { let sp = spyDaily && spyDaily.candles ? spyDaily.candles.map(c => c.c) : null; if (sp && sp.length > 70) fs.writeFileSync(dataPath('data/spy-closes.json'), JSON.stringify(sp.slice(-300))); else sp = readJson0(dataPath('data/spy-closes.json')); if (sp && sp.length > 70) { spy7 = sp[sp.length - 1] / sp[sp.length - 6] - 1; spy90 = sp[sp.length - 1] / sp[sp.length - 64] - 1; } } catch (e) {}
   const y7 = you(d7), y90 = you(d90), line = (lab, a) => lab + ': ' + (a.length ? a.length + ' sales, ' + a.filter(x => x > 0).length + ' won, average ' + pcs(av(a)) + ' after costs' : 'no sales');
   const L = ['SCOREBOARD (week to ' + new Date(now).toISOString().slice(0, 10) + ')', line('Your real trades this week', y7), 'S&P 500 this week: ' + (spy7 === null ? 'n/a' : pcs(spy7)), 'System paper engines this week: ' + (sysLines.length ? '' : 'no engine added finished trades'), ...sysLines.map(x => '- ' + x), '',
     'Last 90 days: ' + line('you', y90) + (spy90 === null ? '' : '; S&P 500 ' + pcs(spy90) + ' over the same period') + '.',
@@ -784,7 +806,7 @@ function scoreboardText() { const now = Date.now(), d7 = new Date(now - 7 * 864e
       const need = a.days !== null && a.days < 10 ? 10 - a.days : 0, eta = need && dd > 0 ? ' about ' + Math.ceil(need / dd) + ' week(s) to a verdict at this pace' : need ? ' no new days this week' : '';
       if (dn || need) W.push('- ' + e.replace(/ \(.*?\)/g, '') + ': ' + (dn !== null ? (dn >= 0 ? '+' : '') + dn + ' trades this week, ' : '') + 'average ' + pcs(a.avg) + (b && b.avg !== null && a.avg !== null ? ' (was ' + pcs(b.avg) + ')' : '') + (need ? '; ' + a.days + ' of 10 distinct days,' + eta : '') + '.'); }
     const LB = readJson0('data/strategy-library.json'), lt = ((LB && LB.strategies) || []).filter(x => x.tested && x.tested >= d7); if (lt.length) { const c = {}; for (const x of lt) { const k = /tradable small/i.test(x.status) ? 'TRADABLE SMALL' : /passed|proven/i.test(x.status) && !/not proven/i.test(x.status) ? 'passed' : /reject|FAILED/i.test(x.status) ? 'rejected' : /not proven|too few|needs data/i.test(x.status) ? 'not proven / needs data' : 'other'; (c[k] = c[k] || []).push(x.id); } W.push('- Tested this week: ' + lt.length + ' rules: ' + Object.entries(c).map(([k, a]) => a.length + ' ' + k + (/(TRADABLE|passed)/.test(k) ? ' (' + a.join(', ') + ')' : '')).join(', ') + '.'); }
-    let T2 = []; try { T2 = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} const t2w = T2.filter(r => r.d >= d7); if (t2w.length) W.push('- TRADABLE SMALL instructions this week: ' + t2w.map(r => r.sym + ' (' + r.kind + ')').join(', ') + '.');
+    let T2 = []; try { T2 = fs.readFileSync(dataPath('data/tier2-ledger.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} const t2w = T2.filter(r => r.d >= d7); if (t2w.length) W.push('- TRADABLE SMALL instructions this week: ' + t2w.map(r => r.sym + ' (' + r.kind + ')').join(', ') + '.');
     if (W.length > 2) L.push(...W); } catch (e) {}
   try { const sd = sellDiscipline(mt); if (sd.line) L.push('', sd.line); } catch (e) {}
   try { L.push('', ldipRecordLine()); } catch (e) {}   // (27 Oct) the LEADER DIP live record: real trades bought and sold
@@ -818,7 +840,7 @@ async function sundayScoreboard(now = Date.now()) { try {
 } catch (e) { console.log('Sunday scoreboard failed: ' + e.message); } }
 // SPY CLOSES (review S-3, 22 Oct): written by every nightly scan from the SPY candles it already loaded, so the scoreboard has the S&P 500
 // figures (this week and 90 days) in every process, not only in one that happened to load SPY.
-function saveSpyCloses(candles) { try { const sp = (candles || []).map(c => c && c.c).filter(x => x > 0); if (sp.length > 70) fs.writeFileSync('data/spy-closes.json', JSON.stringify(sp.slice(-300))); } catch (e) {} }
+function saveSpyCloses(candles) { try { const sp = (candles || []).map(c => c && c.c).filter(x => x > 0); if (sp.length > 70) fs.writeFileSync(dataPath('data/spy-closes.json'), JSON.stringify(sp.slice(-300))); } catch (e) {} }
 // LIVE RECORD CONCLUSIONS: the scorecard turned into plain decisions, shown automatically in every ACTIONS message (no command needed).
 function liveConclusions() { let t = ''; try { t = scorecardText(); } catch (e) { return []; }
   const A = (t.split('\nB. ')[0] || '').split('\n').filter(l => /^- /.test(l) && / => /.test(l)), nm = (l) => l.slice(2, l.indexOf(':')).replace(/ \(.*?\)/g, '').replace(/, 3 days after the signal/, '').replace(/^Early-wave radar, /, 'early-wave '), stop = [], care = [], work = [];
@@ -878,7 +900,7 @@ const ASSESSMENT_LOGIC_SOURCE_HASH=crypto.createHash('sha256').update(m[1]).dige
 function scannerAssessmentRule(learned){
  return makeScannerAssessmentRule({logicVersion:L.LOGIC_VERSION,sourceHash:ASSESSMENT_LOGIC_SOURCE_HASH,variant:learned.v,config:L.CFG,targetOverlay:learned.tgt||null,ruleText:L.ruleText(learned.v),variantKey:L.vkey(learned.v)});
 }
-const readJson0 = (f) => { try { const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? hydrateSignals(v) : v; } catch { return null; } };
+const readJson0 = (f) => { try { if (!ownerStateKnown(f)) return null; const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? hydrateSignals(v) : v; } catch { return null; } };
 // P0 Route A (13 Nov 2026, development): the per-holding exit verdicts (posVerdict) and the tip board (built from the owner's private
 // tips) are owner-derived, so the nightly scan writes them to the PRIVATE file data/signals-private.json (listed in .github/private-files.txt), never into the public signals.json. Every reader of
 // signals.json gets them back here, but only when the private file belongs to the SAME scan (session + generatedAt). Missing, unreadable
@@ -984,7 +1006,7 @@ const MAIN = ['SPY', ...new Set([...(fromFile.length ? fromFile : DEFAULT), ...r
 const PUBLIC_DIAGNOSTIC_NAMES = new Set(['SPY', ...new Set((fromFile.length ? fromFile : DEFAULT).filter(s => s !== 'SPY'))].slice(0, 1000));
 // Extra large, heavily traded companies scanned for QUICK TRADES only. Short bounces behave best in liquid names.
 const QEXTRA = env.NO_QUICK_EXTRA ? [] : 'ABBV ABT ACN ADBE AMAT AMGN BKNG BMY CAT COP CSCO CVS DE DHR GE GILD HON IBM INTC INTU ISRG LIN LOW MCD MDT MMM MRK NEE NKE NOW PFE QCOM SBUX SO T TGT TMO TMUS TXN UNP UPS VZ PLTR UBER SHOP PANW MU ADP SPGI TJX VRTX REGN ZTS CI ELV'.split(' ').filter(x => !MAIN.includes(x));
-const FMOVERS = (() => { try { const f = JSON.parse(fs.readFileSync('data/fm-state.json', 'utf8')); return Object.keys(f.sent || {}).filter(x => /^[A-Z]{1,5}$/.test(x) && !MAIN.includes(x) && !QEXTRA.includes(x)).slice(0, 12); } catch { return []; } })();
+const FMOVERS = (() => { try { const f = JSON.parse(fs.readFileSync(dataPath('data/fm-state.json'), 'utf8')); return Object.keys(f.sent || {}).filter(x => /^[A-Z]{1,5}$/.test(x) && !MAIN.includes(x) && !QEXTRA.includes(x)).slice(0, 12); } catch { return []; } })();
 // Whole-market leaders: the strongest liquid stocks found by the morning sweep of every US stock. Loaded so the LEADERS list can rank them.
 const LEADU = (() => { const u = readJson0('data/leaders-universe.json'); return ((u && u.syms) || []).map(x => x.sym).filter(x => /^[A-Z]{1,5}$/.test(x) && !MAIN.includes(x) && !QEXTRA.includes(x) && !FMOVERS.includes(x)).slice(0, 25); })();
 // WIDER HUNT: the most traded strong-trend COMPANIES from the morning whole-market sweep (funds removed), scanned for
@@ -993,12 +1015,12 @@ const LEADU = (() => { const u = readJson0('data/leaders-universe.json'); return
 const QWIDE = (() => { const n = env.WIDE_N !== undefined ? +env.WIDE_N || 0 : 120; if (!n) return []; const u = readJson0('data/radar-universe.json'), co = readJson0('data/companies.json'), cs = co && co.syms && co.syms.length > 3000 ? new Set(co.syms) : null;
   return ((u && u.syms) || []).map(x => x.sym).filter(x => /^[A-Z]{1,5}$/.test(x) && (!cs || cs.has(x)) && !MAIN.includes(x) && !QEXTRA.includes(x) && !FMOVERS.includes(x) && !LEADU.includes(x)).slice(0, n); })();
 const BTSET = new Set([...(fromFile.length ? fromFile : DEFAULT), ...QEXTRA]);   // the past test uses only the fixed list, never stocks picked BECAUSE they already rose
-const QONLY = new Set([...QEXTRA, ...FMOVERS, ...LEADU, ...QWIDE]), LEADHELD = (() => { const u = readJson0('data/leaders.json'); return ((u && u.paper) || []).map(x => x.sym).filter(x => /^[A-Z]{1,5}$/.test(x)); })(),   // leaders still being ridden on paper: always loaded, so their exits are never missed
+const QONLY = new Set([...QEXTRA, ...FMOVERS, ...LEADU, ...QWIDE]), LEADHELD = (() => { const u = readJson0(dataPath('data/leaders.json')); return ((u && u.paper) || []).map(x => x.sym).filter(x => /^[A-Z]{1,5}$/.test(x)); })(),   // leaders still being ridden on paper: always loaded, so their exits are never missed
   LIST = [...new Set([...MAIN, ...QEXTRA, ...FMOVERS, ...LEADU, ...LEADHELD, ...QWIDE])];
 for (const x of LEADHELD) if (!MAIN.includes(x)) QONLY.add(x);
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const readJson = (f, d) => { try { const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? hydrateSignals(v) : v; } catch { return d; } };
+const readJson = (f, d) => { try { if (!ownerStateKnown(f)) return d; const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? hydrateSignals(v) : v; } catch { return d; } };
 const money = (x) => x.toFixed(2);
 fs.mkdirSync('data', { recursive: true });
 
@@ -1015,18 +1037,18 @@ function kwt(nyMin, d) { const noon = Date.parse((d || ny(Date.now()).d) + 'T12:
 function sessDay(ms = Date.now()) { const n = ny(ms); return !n.weekend && !isHoliday(n.d) && n.mins < 960 ? n.d : sessionPlus(n.d, 1); }
 // DAY-OF-WEEK: which weekday the next buy would happen on (today before the close, else the next weekday), and what the study says
 function buyDayNote() {
-  const D = readJson0('data/dow-study.json'); if (!D || !D.rows) return null;
+  const D = readJson0(dataPath('data/dow-study.json')); if (!D || !D.rows) return null;
   let ms = Date.now(), n = ny(ms); if (n.weekend || n.mins >= 960) { do { ms += 86400000; n = ny(ms); } while (n.weekend); }
   const wd = new Date(n.d + 'T12:00:00Z').getUTCDay() - 1, r = D.rows[wd]; if (!r) return null;
   if (/WORSE/.test(r.verdict)) return 'DAY CHECK: buys made on a ' + r.day + ' did WORSE in both halves of the tests (' + pcs(r.older.avg) + ' / ' + pcs(r.newer.avg) + ' a trade vs ' + pcs(D.all.older) + ' / ' + pcs(D.all.newer) + ' on average). Consider waiting a day.';
   if (/BETTER/.test(r.verdict)) return 'DAY CHECK: buys made on a ' + r.day + ' did better than average in both halves of the tests.';
   return null; }
 // WHEN IN THE DAY: tested choice between the last minutes of the signal day and the next open; the rest are fixed safety rules
-function timingNote() { const T = readJson0('data/timing-study.json'); if (!T || !T.buy) return null;
+function timingNote() { const T = readJson0(dataPath('data/timing-study.json')); if (!T || !T.buy) return null;
   const w = (x) => x === 'CLOSE' ? 'in the last 15 minutes before the close (' + kwt(945, sessDay()) + ' Kuwait)' : x === 'OPEN' ? 'at the open, after the first 15 minutes (' + kwt(585, sessDay()) + ' Kuwait)' : 'at the open, after the first 15 minutes (' + kwt(585, sessDay()) + ' Kuwait; tested: no difference from the close)';
   const pre = T.buy === 'CLOSE' || T.sell === 'CLOSE';   // acting near the close needs an alert before the close, which the scheduled jobs cannot send yet
   return 'WHEN: buy ' + (T.buy === 'CLOSE' ? 'at the open after the first 15 minutes (tested: buying in the last minutes of the signal day did better, but that needs a pre-close alert, planned with the always-on server)' : w(T.buy)) + '; sell on a rule exit ' + (T.sell === 'CLOSE' ? 'at the next regular-session open (daily comparison preferred the close, but the required pre-close alert is unavailable)' : T.sell === 'OPEN' ? 'at the next regular-session open (daily open-price comparison preferred the open; no 15-minute sell delay was tested)' : 'at the next regular-session open (daily open-versus-close comparison did not meet the preference threshold; this does not establish equivalence or test a 15-minute sell delay)') + '. Stops: any time. Never in pre-market or after-hours.'; }
-function timingText() { const T = readJson0('data/timing-study.json'); if (!T || !T.older) return 'The timing study runs with the nightly scan. Ask again tomorrow.';
+function timingText() { const T = readJson0(dataPath('data/timing-study.json')); if (!T || !T.older) return 'The timing study runs with the nightly scan. Ask again tomorrow.';
   const l = (h, k) => T[h][k].n ? pcs(T[h][k].avg) + ' (' + T[h][k].n + ')' : 'n/a';
   return ['WHEN TO BUY AND SELL (tested on the unseen trades of the rules the system offers, after costs; older | newer half)',
     'BUY at the next open: ' + l('older', 'openIn') + ' | ' + l('newer', 'openIn'), 'BUY in the last minutes of the signal day: ' + l('older', 'closeIn') + ' | ' + l('newer', 'closeIn'),
@@ -1039,7 +1061,7 @@ function timingText() { const T = readJson0('data/timing-study.json'); if (!T ||
     '- STOPS: sell as soon as one is hit, any time in the session. Do not wait for a better price.',
     'A choice changes only when one way is better by 0.2% a trade or more in BOTH halves.'].filter(x => x !== null).join('\n'); }
 function shadowText() {
-  const LS = readJson0('data/lessons.json') || {}, rs = Object.values(LS.rules || {}), sg = readJson0('data/signals.json') || {}, RR = readJson0('data/radar-record.json') || {}, LD = readJson0('data/leaders.json') || {};
+  const LS = readJson0(dataPath('data/lessons.json')) || {}, rs = Object.values(LS.rules || {}), sg = readJson0('data/signals.json') || {}, RR = readJson0('data/radar-record.json') || {}, LD = readJson0(dataPath('data/leaders.json')) || {};
   const n = rs.reduce((a, r) => a + r.n, 0), avg = n ? rs.reduce((a, r) => a + r.avg * r.n, 0) / n : null, win = n ? rs.reduce((a, r) => a + r.win * r.n, 0) / n : null;
   const ld = (LD.done || []).filter(x => typeof x.pct === 'number'), la = ld.length ? ld.reduce((a, x) => a + x.pct, 0) / ld.length : null;
   const rg = Object.values(RR.groups || {}).filter(g => g.n), rn = rg.reduce((a, g) => a + g.n, 0), ra = rn ? rg.reduce((a, g) => a + g.avg * g.n, 0) / rn : null;
@@ -1055,7 +1077,7 @@ function themesText() { const F = readJson0('data/leaders-study.json'), th = F &
       return ['', 'SUPPLY CHAIN NOW (hot industry -> suppliers that have not moved yet). History test: ' + K.verdict + (K.linked && K.linked.newer.n ? ' (' + K.linked.newer.n + ' newer cases, ' + pcs(K.linked.newer.avg) + ' vs the market next month; other lagging industries ' + pcs(K.base.newer.avg) + ')' : ''), ...(K.now.length ? K.now.slice(0, 6).map(x => '- ' + x.up + ' hot (' + pcs(x.upMom) + ' in 3 months) -> ' + x.down + ' (' + pcs(x.downMom) + '): ' + (x.stocks.join(', ') || 'no liquid stocks')) : ['- no hot industry with lagging suppliers right now'])]; })(),
     'Information to explore with  check SYM . A stock becomes a buy only through a tested rule (ACTIONS).'].join('\n'); }
 function dowText() {
-  const D = readJson0('data/dow-study.json'); if (!D || !D.rows) return 'The day-of-week study runs with the nightly scan. Ask again tomorrow.';
+  const D = readJson0(dataPath('data/dow-study.json')); if (!D || !D.rows) return 'The day-of-week study runs with the nightly scan. Ask again tomorrow.';
   return ['DAY OF THE WEEK: does the buy day matter? (unseen trades of the rules the system offers, after costs, by the day the BUY happened)', 'Average: older half ' + pcs(D.all.older) + ', newer half ' + pcs(D.all.newer), ...D.rows.map(r => r.day + ': older ' + (r.older.n ? pcs(r.older.avg) + ' (' + r.older.n + ')' : 'n/a') + ', newer ' + (r.newer.n ? pcs(r.newer.avg) + ' (' + r.newer.n + ')' : 'n/a') + ' -> ' + r.verdict), '', 'A day counts as worse or better only if it differs by 0.5% a trade or more in BOTH halves, with 150+ trades each.'].join('\n'); }
 // ---- ALPACA PAPER TRADING (fake money only). Every fully proven BUY becomes a PAPER limit order at the top of its buy range with
 // its stop attached; each night the trade's own tested exit closes it. Real fills, real timing, real gaps: the honest track record.
@@ -1470,7 +1492,7 @@ function goalsText() {
   return lines.join('\n');
 }
 function lessonsText() {
-  const LS = readJson('data/lessons.json', null), rs = LS ? Object.entries(LS.rules || {}).map(([k, r]) => r).sort((a, b) => b.n - a.n) : [];
+  const LS = readJson(dataPath('data/lessons.json'), null), rs = LS ? Object.entries(LS.rules || {}).map(([k, r]) => r).sort((a, b) => b.n - a.n) : [];
   if (!rs.length) return 'LESSONS: no live paper trade has finished yet. Each finished trade is reviewed after the nightly scan.';
   const endName = { stop: 'stop', target: 'target', rule_exit: 'rule exit', time_exit: 'time limit' };
   return ['LESSONS FROM FINISHED TRADES (live paper, after costs), ' + LS.session, ...rs.slice(0, 10).map(r => (r.demoted ? 'DEMOTED ' : '') + r.name + ': ' + r.n + ' trades, ' + Math.round(r.win * 100) + '% won, average ' + pcs(r.avg)
@@ -1848,7 +1870,7 @@ function planText(sig, pos, px, title, only, full, opts) {
   if (skipped.length) out.push('', 'Also passed, left out: ' + skipped.join(', ') + '.');
   if (notProven.length) out.push('', 'Not proven, paper only: ' + [...new Set(notProven)].join(', ') + '.');
   if (holds.length) out.push('', 'HOLD (keep these stops at your broker)', ...holds);
-  { const LS = readJson('data/lessons.json', null), rs = LS ? Object.values(LS.rules || {}) : [], n = rs.reduce((a, r) => a + r.n, 0);
+  { const LS = readJson(dataPath('data/lessons.json'), null), rs = LS ? Object.values(LS.rules || {}) : [], n = rs.reduce((a, r) => a + r.n, 0);
     if (n) { const dem = rs.filter(r => r.demoted), sum = rs.reduce((a, r) => a + r.avg * r.n, 0);
       out.push('', 'LEARNING: ' + n + ' live paper trades reviewed, average ' + pcs(sum / n) + '.' + (dem.length ? ' Demoted for losing live: ' + dem.map(r => r.name).join('; ') + '.' : ' No rule demoted.') + ' Send  lessons  for what each rule taught.'); } }
   { const RR = readJson('data/radar-record.json', null), gs = RR ? Object.values(RR.groups || {}) : [], pv = gs.filter(g => g.proven), best = [...gs].sort((a, b) => (b.n || 0) - (a.n || 0))[0];
@@ -1895,7 +1917,7 @@ function conclusionLive(sig, pos, px) {
 // WHAT KIND OF DAY IS TODAY? The market's state, each part checked against the market-day study (the system's own unseen trades
 // grouped by what the S&P 500 did), plus YOUR tested sells and the proven buys. Verdicts come only from tests, never from opinion.
 async function dayText(sig, pos) {
-  const MD = readJson0('data/mday-study.json'), row = (k) => MD && MD.rows ? MD.rows.find(r => r.k === k) : null, NAME = { bigDown: 'a big drop (1.5%+)', down: 'a drop', flat: 'a flat day', up: 'a rise', bigUp: 'a big rise (1.5%+)', gapDown: 'opened down 0.75%+', gapFlat: 'opened flat', gapUp: 'opened up 0.75%+', strong: 'above its long trend line', weak: 'under its long trend line', calm: 'calm last 20 days', wild: 'wild last 20 days (big daily swings)' };
+  const MD = readJson0(dataPath('data/mday-study.json')), row = (k) => MD && MD.rows ? MD.rows.find(r => r.k === k) : null, NAME = { bigDown: 'a big drop (1.5%+)', down: 'a drop', flat: 'a flat day', up: 'a rise', bigUp: 'a big rise (1.5%+)', gapDown: 'opened down 0.75%+', gapFlat: 'opened flat', gapUp: 'opened up 0.75%+', strong: 'above its long trend line', weak: 'under its long trend line', calm: 'calm last 20 days', wild: 'wild last 20 days (big daily swings)' };
   const sp = await loadDaily('SPY'), c = sp && sp.candles, n = c ? c.length : 0, out = [], tags = [];
   if (n > 25) { const b = c[n - 1], r = b.c / c[n - 2].c - 1; tags.push(r <= -0.015 ? 'bigDown' : r <= -0.005 ? 'down' : r < 0.005 ? 'flat' : r < 0.015 ? 'up' : 'bigUp');
     let s1 = 0, s2 = 0; for (let j = n - 20; j < n; j++) { const x = c[j].c / c[j - 1].c - 1; s1 += x; s2 += x * x; } const sd = Math.sqrt(Math.max(0, s2 / 20 - (s1 / 20) ** 2)); tags.push(sd > 0.015 ? 'wild' : 'calm');
@@ -2236,11 +2258,11 @@ const moverSituation = (x) => { const out = [], M = readJson0('data/movers-state
 // INDUSTRY (SEC industry code, official, one look-up per company, cached in data/sic-extra.json): is the runner moving alone, or with
 // other stocks of the same industry (a theme)? Only gainers whose industry is already known are compared, and the count says so.
 let TICKS = null;
-async function secIndustry(sym, fetchIt) { const X = readJson('data/sic-extra.json', {}), CK = readJson0('data/sec-ciks.json') || {};
+async function secIndustry(sym, fetchIt) { const X = readJson(dataPath('data/sic-extra.json'), {}), CK = readJson0('data/sec-ciks.json') || {};
   if (X[sym]) return { sic: X[sym][0], desc: X[sym][1] }; if (CK[sym] && CK[sym][1] && !fetchIt) return { sic: CK[sym][1], desc: null };
   if (!fetchIt) return null; try { let cik = CK[sym] && CK[sym][0]; if (!cik) { if (!TICKS) TICKS = await secJson(SEC_WWW + '/files/company_tickers.json'); const hit = TICKS && Object.values(TICKS).find(t => String(t.ticker || '').toUpperCase().replace(/-/g, '.') === sym); if (hit) cik = hit.cik_str; }
     const fb = CK[sym] && CK[sym][1] ? { sic: CK[sym][1], desc: null } : null; if (!cik) return fb; const j = await secJson(SEC_DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json'); if (!j || !j.sic) return fb;
-    X[sym] = [String(j.sic), String(j.sicDescription || ''), ny(Date.now()).d]; fs.writeFileSync('data/sic-extra.json', JSON.stringify(X)); return { sic: String(j.sic), desc: j.sicDescription || null }; } catch (e) { return null; } }
+    X[sym] = [String(j.sic), String(j.sicDescription || ''), ny(Date.now()).d]; fs.writeFileSync(dataPath('data/sic-extra.json'), JSON.stringify(X)); return { sic: String(j.sic), desc: j.sicDescription || null }; } catch (e) { return null; } }
 async function industryLine(x, list) { const me = await secIndustry(x.sym, true); if (!me) return '\n  industry: unknown (no SEC industry code found)';
   let known = 0; const same = []; for (const o of list) { if (o.sym === x.sym) continue; const k = await secIndustry(o.sym, false); if (!k) continue; known++; if (String(k.sic).slice(0, 3) === String(me.sic).slice(0, 3)) same.push(o.sym); }
   return '\n  industry: ' + (me.desc || 'SEC code ' + me.sic) + (same.length ? ' | moving WITH its industry: ' + same.slice(0, 4).join(', ') + ' also up 20%+ now (a theme)' : ' | moving ALONE: none of the ' + known + ' other gainers with a known industry are from it'); }
@@ -2254,13 +2276,13 @@ function runnerVerdict(x, full) { const why = [];
 const moverLine = async (x) => x.sym + ' ' + (x.pct >= 0 ? '+' : '') + Math.round(x.pct * 100) + '% at ' + money(x.price) + (x.name ? ' (' + x.name + ')' : '') + (x.price < 5 ? '\n  under 5 USD: can be halted, wide spread, gaps past stops' : '') + (await whyMoved(x.sym, x.name)) + moverSituation(x);
 async function fastMovers() {     // automatic alert, at most a few a day, each stock once
   const now = Date.now(); if (!marketOpen(now)) return;
-  const st = readJson('data/fm-state.json', { day: '', sent: {}, off: '' }), day = ny(now).d; if (st.day !== day) { st.day = day; st.sent = {}; st.off = ''; }
+  const st = readJson(dataPath('data/fm-state.json'), { day: '', sent: {}, off: '' }), day = ny(now).d; if (st.day !== day) { st.day = day; st.sent = {}; st.off = ''; }
   if (st.off || Object.keys(st.sent).length >= 12) return;
   const g = await gainersNow();
-  if (g.off) { st.off = g.off; console.log('fast movers off today: ' + g.off); fs.writeFileSync('data/fm-state.json', JSON.stringify(st)); return; }
+  if (g.off) { st.off = g.off; console.log('fast movers off today: ' + g.off); fs.writeFileSync(dataPath('data/fm-state.json'), JSON.stringify(st)); return; }
   const RUN = (readJson0('data/settings.json') || {}).runners !== false && QUIET(), fresh = g.list.filter(x => x.price >= (RUN ? 0.1 : 1) && !st.sent[x.sym]).slice(0, 4); if (!fresh.length) return;      // the runners heads-up includes 0.10-1 USD stocks (flagged); the old alert stays at 1 USD+
   const lines = []; for (const x of fresh) { st.sent[x.sym] = 1; lines.push((await moverLine(x)) + (await industryLine(x, g.list))); }
-  fs.writeFileSync('data/fm-state.json', JSON.stringify(st));
+  fs.writeFileSync(dataPath('data/fm-state.json'), JSON.stringify(st));
   const ST = readJson0('data/settings.json') || {}, runners = ST.runners !== false && ST.opportunitiesOnly === false;   // opportunities only (23 Oct): heads-ups with no tested buy are not sent unless opportunitiesOnly is false   // runners heads-up: ON unless you send  runners off  (also in quiet mode)
   if (runners && QUIET()) { const ER = readJson0('data/events-recent.json'), secOf = (sym) => { const ev = ((ER && ER.events) || []).filter(e => e.sym === sym && /DELIST|DILUTION|OFFERING|RESTATE/.test(e.f)); return ev.length ? '\n  SEC RISK: ' + ev.map(e => e.f.split(',').filter(k => /DELIST|DILUTION|OFFERING|RESTATE/.test(k)).map(k => ({ DELIST: 'delisting notice', DILUTION: 'new shares sold', OFFERING: 'share offering', RESTATE: 'restated results' })[k]).join(', ') + ' ' + e.p.slice(5, 10)).join('; ') : ''; };
     await telegram('RUNNERS NOW (heads-up only: already up 20%+, no tested way to buy these yet)\n\n' + lines.map((l, i) => runnerVerdict(fresh[i], l + secOf(fresh[i].sym) + (dilutionLine(fresh[i].sym) ? '\n  ' + dilutionLine(fresh[i].sym) : '') + (fresh[i].price < 1 ? '\n  UNDER 1 USD: pump-style risk (halts, reverse splits, share sales; many fall back 50%+ within days)' : fresh[i].price < 5 && fresh[i].pct >= 0.5 ? '\n  PUMP-STYLE MOVE: small price, 50%+ in a day; these often fade fast' : ''))).join('\n\n') + '\n\nDECISION: NO BUY. Already up 20%+ is too late: the evidence above says most fall back. The early chance is BEFORE the jump: watch for an EARLY WAVE ALERT instead. Send  runners off  to stop these.'); }
@@ -2356,8 +2378,8 @@ async function opinionReply(text, sig, src) {
   const repeat = tnames.map(t => { const prev = past.filter(o => (o.themes || []).includes(t) && now - o.ts < 30 * 86400000), first = past.filter(o => (o.themes || []).includes(t) && o.proxy && o.proxy[t]).sort((a, b) => a.ts - b.ts)[0];
     return prev.length ? t + ': pushed ' + (prev.length + 1) + ' times in 30 days by ' + new Set([...prev.map(o => o.src), src || 'unnamed']).size + ' source(s)' + (first && proxyNow[t] ? '. Since the first push (' + first.d + '), ' + THEME_PROXY[t] + ' moved ' + pcs(proxyNow[t] / first.proxy[t] - 1) : '') + '. Many people repeating a theme is crowd mood, not new information.' : null; }).filter(Boolean);
   // 2. RELEVANT TO WHAT I AM WORKING ON: your positions, tonight's buys, today's radar
-  const SC = readJson('data/sectors.json', {}), pos = loadPos(), touch = [];
-  if (env.FINNHUB_KEY) { let got = 0; for (const sym of Object.keys(pos)) if (SC[sym] === undefined && got < 8) { got++; try { const j = await (await fetch(FH + '/stock/profile2?symbol=' + sym + '&token=' + encodeURIComponent(env.FINNHUB_KEY))).json(); SC[sym] = (j && j.finnhubIndustry) || null; } catch (e) { } } if (got) fs.writeFileSync('data/sectors.json', JSON.stringify(SC)); }
+  const SC = readJson(dataPath('data/sectors.json'), {}), pos = loadPos(), touch = [];
+  if (env.FINNHUB_KEY) { let got = 0; for (const sym of Object.keys(pos)) if (SC[sym] === undefined && got < 8) { got++; try { const j = await (await fetch(FH + '/stock/profile2?symbol=' + sym + '&token=' + encodeURIComponent(env.FINNHUB_KEY))).json(); SC[sym] = (j && j.finnhubIndustry) || null; } catch (e) { } } if (got) fs.writeFileSync(dataPath('data/sectors.json'), JSON.stringify(SC)); }
   for (const sym of Object.keys(pos)) { const th = themeOfSector(SC[sym]); if (th && tnames.includes(th)) { const P = pos[sym]; touch.push(sym + ' (yours): in this theme. Plan unchanged: stop ' + (P.stop ? money(P.stop) : 'NOT SET') + '. A message is not a reason to add or to remove the stop.'); } }
   for (const c of sig ? planCands(sig, pos).filter(x => x.ok) : []) { const th = themeOfSector(c.sector || SC[c.sym]); if (th && tnames.includes(th)) touch.push(c.sym + ': on tonight\u2019s BUY list and in this theme (' + c.kind + '). The plan\u2019s prices and stop still decide.'); }
   { const rd = readJson('data/intraday-radar.json', null); if (rd && rd.session === day) for (const c of (rd.candidates || []).filter(x => x.levels)) { const th = themeOfSector(SC[c.sym]); if (th && tnames.includes(th)) touch.push(c.sym + ': on today\u2019s radar (' + c.stage.toLowerCase().replace(/_/g, ' ') + ')' + (c.proven ? ', proven setup' : ', paper only') + '.'); } }
@@ -2716,7 +2738,7 @@ function tryQualifies(firstRun) {
   const ok = (h) => h && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0 && !(typeof h.n === 'number' && h.n < 20) && !(typeof h.blocks === 'number' && h.blocks < 3);
   return Object.entries(firstRun || {}).filter(([id, r]) => r && r.results && !TRY_PAUSED.has(id) && !/REJECTED|TOO FEW/i.test(r.verdict || '') && ok(r.results.older) && ok(r.results.newer) && !TRY_DUPLICATE.has(id) && !TRY_BASKET.has(id) && beatsIndex(r.perYear) && portfolioBeatsSpy(r.portfolio)).map(([id]) => id);
 }
-function tryLedgerOff(kind) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
+function tryLedgerOff(kind) { try { const a = fs.readFileSync(dataPath('data/tier2-ledger.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.kind === kind && typeof r.pct === 'number');
   return a.length >= 10 && a.reduce((x, r) => x + r.pct, 0) / a.length < 0; } catch (e) { return false; } }
 // (audit 24 Oct) the HOLD line of a TRY SMALL holding said 'exit: target or 5 sessions' (the fallback for a manual kind): its real exits
 // are the lane stop and the time exit after its rule's hold.
@@ -2730,7 +2752,7 @@ function trySmallCloseFlags(P, c) { const i = c.length - 1, held = c.filter(k =>
 // (audit 24 Oct) the TRY SMALL buy shown for this stock in the last 30 days (tier2-ledger kind try:<rule>, with its hold and stop).
 // 'bought SYM' used to look only at TODAY's lab files: a signal list renewed between the message and the reply left the buy untagged
 // (no 15%/35% stop, no time exit, not counted in the max 2 open).
-function tryLedgerHit(sym) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.sym === sym && /^try:/.test(r.kind || '') && Date.now() - Date.parse(r.d) <= 30 * 864e5);
+function tryLedgerHit(sym) { try { const a = fs.readFileSync(dataPath('data/tier2-ledger.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.sym === sym && /^try:/.test(r.kind || '') && Date.now() - Date.parse(r.d) <= 30 * 864e5);
   return a.length ? a[a.length - 1] : null; } catch (e) { return null; } }
 function trySmallLines(pos, lastPx, exclude, session) {
   if ((readJson0('data/settings.json') || {}).trySmall === false) return [];
@@ -2893,8 +2915,8 @@ const longTermLines = () => { const L = [];
   return L; };
 function longTermText() { return ['LONGER-TERM (separate from trading; information, not trade instructions):', ...longTermLines().map(l => '- ' + l)].join('\n'); }
 // company names for the cards: SEC's ticker file, cached in data/names.json (a failed lookup just shows the ticker)
-async function companyNames(syms) { const C = readJson('data/names.json', {}), miss = syms.filter(x => !C[x]);
-  if (miss.length) { try { const tl = await secJson(SEC_WWW + '/files/company_tickers.json'); if (tl) { for (const x of Object.values(tl)) { const t = String(x.ticker || '').toUpperCase().replace(/-/g, '.'); if (miss.includes(t)) C[t] = String(x.title || '').slice(0, 40); } fs.writeFileSync('data/names.json', JSON.stringify(C)); } } catch (e) {} }
+async function companyNames(syms) { const C = readJson(dataPath('data/names.json'), {}), miss = syms.filter(x => !C[x]);
+  if (miss.length) { try { const tl = await secJson(SEC_WWW + '/files/company_tickers.json'); if (tl) { for (const x of Object.values(tl)) { const t = String(x.ticker || '').toUpperCase().replace(/-/g, '.'); if (miss.includes(t)) C[t] = String(x.title || '').slice(0, 40); } fs.writeFileSync(dataPath('data/names.json'), JSON.stringify(C)); } } catch (e) {} }
   return C; }
 const hurdleText = (px) => { if (!(px > 0)) return '+2% net needs about +2.9% gross (price unknown here)'; const sp = px < 5 ? 0.01 : 0.003; return 'spread not recorded overnight; +2% net on 1,000 USD needs about +' + ((0.02 + 0.006 + sp) * 100).toFixed(1) + '% gross at an assumed ' + (sp * 100).toFixed(1) + '% spread (check the live bid/ask in ZAD)'; };
 function healthLine(nowMs = Date.now()) { const out = [];
@@ -3110,7 +3132,7 @@ async function actionsText(sig, pos, px, title) {
 // sold at the BID (the real cost of the spread), next to the stock's own result over the same days. Alpaca's free options data
 // (indicative feed). Nothing is bought; the result appears in the weekly report card. Options can lose 100%: this measures it.
 async function optionsShadow() { if (!env.ALPACA_KEY || !env.ALPACA_SECRET) return 'Options paper test: off (no Alpaca key).';
-  const AD = 'https://data.alpaca.markets', H = { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } }, S = readJson('data/options-shadow.json', { open: [], done: [] }), today = ny(Date.now()).d, sg = readJson('data/signals.json', null) || {};
+  const AD = 'https://data.alpaca.markets', H = { headers: { 'APCA-API-KEY-ID': env.ALPACA_KEY, 'APCA-API-SECRET-KEY': env.ALPACA_SECRET } }, S = readJson(dataPath('data/options-shadow.json'), { open: [], done: [] }), today = ny(Date.now()).d, sg = readJson('data/signals.json', null) || {};
   const last = {}; for (const x of sg.stocks || []) if (x.last) last[x.sym] = x.last; let st = null;
   const get = async (path) => { try { const r = await fetch(AD + path, H); st = r.status; return r.ok ? await r.json() : null; } catch (e) { st = e.message; return null; } };
   // 1. close the paper calls that are 14+ days old, at the bid
@@ -3121,7 +3143,7 @@ async function optionsShadow() { if (!env.ALPACA_KEY || !env.ALPACA_SECRET) retu
   // 2. open new paper calls on today's tested BUY signals
   // candidates: tested BUY signals first; then (20 Oct 2026, so the lab is not empty while no buy engine is proven) the LONGER HOLDS
   // picks (F-score in an uptrend) and the 6-month leaders list, ZAD not-halal removed
-  const Zl = readJson('data/zad-list.json', {}), badZ = new Set(Zl.notHalal || []), Q = readJson('data/quality.json', {}), LD = readJson('data/leaders.json', {});
+  const Zl = readJson('data/zad-list.json', {}), badZ = new Set(Zl.notHalal || []), Q = readJson('data/quality.json', {}), LD = readJson(dataPath('data/leaders.json'), {});
   const extra = [...((Q.fscoreUpToday || []).map(x => x.sym)), ...((LD.paper || []).map(x => x.sym))].filter(sym => sym && !badZ.has(sym) && myHalal(sym) !== 'fail').map(sym => ({ sym, ok: true }));
   const seenC = new Set(), cands = [...planCands(sg, {}).filter(x => x.ok), ...extra].filter(x => !S.open.some(o => o.sym === x.sym) && !seenC.has(x.sym) && seenC.add(x.sym)).slice(0, 5), lo = new Date(Date.now() + 30 * 864e5).toISOString().slice(0, 10), hi = new Date(Date.now() + 60 * 864e5).toISOString().slice(0, 10);
   for (const c of cands) { const px = last[c.sym]; if (!(px > 0)) continue; const j = await get('/v1beta1/options/snapshots/' + c.sym + '?feed=indicative&type=call&limit=500&expiration_date_gte=' + lo + '&expiration_date_lte=' + hi); if (!j || !j.snapshots) continue;
@@ -3147,17 +3169,17 @@ async function optionsShadow() { if (!env.ALPACA_KEY || !env.ALPACA_SECRET) retu
   // New options entry advice is disabled by the current paper-only authority. Recorded real exits above remain active.
   // Resolve existing option ledger rows without creating new entry advice.
   try { S.labT = S.labT || [];
-    let LG = []; try { LG = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} let lch = false;
+    let LG = []; try { LG = fs.readFileSync(dataPath('data/tier2-ledger.jsonl'), 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) {} let lch = false;
     for (const r of LG) if (/^option:/.test(r.kind || '') && !r.out && r.occ && today >= (r.sellBy || new Date(Date.parse(r.d) + 30 * 864e5).toISOString().slice(0, 10))) { const j = await get('/v1beta1/options/snapshots?feed=indicative&symbols=' + r.occ), q = j && j.snapshots && j.snapshots[r.occ] && j.snapshots[r.occ].latestQuote;
       const bid = q && q.bp > 0 ? q.bp : (today > r.exp ? 0 : null); if (bid === null) continue; r.out = today; r.px1 = bid; r.pct = +Math.max(-1, (bid * 100 - 5) / (r.px * 100 + 5) - 1).toFixed(4); lch = true; }
-    if (lch) fs.writeFileSync('data/tier2-ledger.jsonl', LG.map(x => JSON.stringify(x)).join('\n') + '\n');
+    if (lch) fs.writeFileSync(dataPath('data/tier2-ledger.jsonl'), LG.map(x => JSON.stringify(x)).join('\n') + '\n');
     // Resolve existing option ledger rows above; do not turn research verdicts into new tickets or ledger entries.
   } catch (e) { console.log('options lane ticket: ' + e.message); }
-  fs.writeFileSync('data/options-shadow.json', JSON.stringify(S));
+  fs.writeFileSync(dataPath('data/options-shadow.json'), JSON.stringify(S));
   return 'Options lab (separate from stock trading, Alpaca data): ' + (st === null ? 'no BUY signal to test today' : 'data ' + (st === 200 ? 'OK' : 'HTTP ' + st)) + '; ' + S.open.length + ' open paper calls, ' + S.done.length + ' finished.'; }
 // OPTIONS LAB: kept fully SEPARATE from stock trading (owner's instruction). Its own file, its own message, never in ACTIONS,
 // the LIVE RECORD or the stock report card, never a buy instruction.
-function optionsText() { const OS = readJson0('data/options-shadow.json'); if (!OS) return 'OPTIONS LAB (separate from stock trading): no paper calls yet. It starts with the next nightly scan.';
+function optionsText() { const OS = readJson0(dataPath('data/options-shadow.json')); if (!OS) return 'OPTIONS LAB (separate from stock trading): no paper calls yet. It starts with the next nightly scan.';
   const d = (OS.done || []).filter(o => typeof o.ret === 'number'), av = (a) => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null, days = new Set(d.map(o => o.d)).size, st = d.filter(o => o.stock !== null);
   return ['OPTIONS LAB (paper only, SEPARATE from your stock trading)', '',
     'Test: a call 30-60 days out on each tested stock BUY signal, bought at the ask, sold at the bid 14 days later, ZAD fee 5 USD a contract each way, next to the same stock over the same days.',
@@ -3229,7 +3251,7 @@ async function secondOpinion(sym, entry, sig, pos) { const con = [], pro = [], s
   try { const d = await loadDaily(sym); if (d && d.candles.length > 6) { const c = d.candles, n = c.length - 1, r5 = c[n].c / c[n - 5].c - 1; if (r5 >= 0.2) con.push('Up ' + pcs(r5) + ' in 5 sessions: buying after a big jump tested badly (typically -4.9% three days later, 719 cases).'); else if (r5 <= -0.15) con.push('Down ' + pcs(r5) + ' in 5 sessions: a falling knife until it stops falling.'); } } catch (e) { }
   { const dl = dilutionLine(sym); if (dl && /^DILUTION/.test(dl)) con.push(dl); }
   { let mt = []; try { mt = fs.readFileSync(MY_TRADES, 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)).filter(t => (t.kind || 'manual') === 'manual'); } catch (e) { } if (mt.length >= 3) { const a = mt.reduce((x, t) => x + t.pct, 0) / mt.length; (a < 0 ? con : pro).push('Your own picks so far: ' + mt.length + ' sold, average ' + pcs(a) + '.'); } }
-  { const SC = readJson0('data/sectors.json') || {}, CK = readJson0('data/sec-ciks.json') || {}, X = readJson0('data/sic-extra.json') || {}, ind = (s) => SC[s] || (X[s] && X[s][0] && 'SIC ' + String(X[s][0]).slice(0, 2)) || (CK[s] && CK[s][1] && 'SIC ' + String(CK[s][1]).slice(0, 2)) || null, me = ind(sym), same = me ? Object.keys(pos).filter(k => k !== sym && ind(k) === me) : [];
+  { const SC = readJson0(dataPath('data/sectors.json')) || {}, CK = readJson0('data/sec-ciks.json') || {}, X = readJson0(dataPath('data/sic-extra.json')) || {}, ind = (s) => SC[s] || (X[s] && X[s][0] && 'SIC ' + String(X[s][0]).slice(0, 2)) || (CK[s] && CK[s][1] && 'SIC ' + String(CK[s][1]).slice(0, 2)) || null, me = ind(sym), same = me ? Object.keys(pos).filter(k => k !== sym && ind(k) === me) : [];
     if (same.length >= 2) con.push('You already hold ' + same.length + ' stocks from the same industry (' + same.join(', ') + '): they tend to fall together.'); if (Object.keys(pos).length >= 12) con.push('This makes ' + Object.keys(pos).length + ' open positions: hard to watch, and losses add up together.'); }
   { const QY = readJson0('data/quality.json'), f = QY && QY.fair && QY.fair[sym], vr = QY && QY.results ? Object.values(QY.results).filter(r => /cash flow/i.test(r.name)) : [], vOk = vr.some(r => r.verdict === 'PROMISING');
     if (f) { const where = entry > f.opt ? 'ABOVE its optimistic value' : entry > f.base ? 'between its base and optimistic value' : entry > f.cons ? 'between its conservative and base value' : 'BELOW its conservative value';
@@ -3569,10 +3591,10 @@ async function tgCommands(sig) {
         else if (kind === 'cx' && +sh > 0) { txt = 'sold ' + sym + ' ' + sh; note = 'Sale submitted for validation; wait for the recording result'; }
         else if (kind === 'cn') note = 'Cancelled: nothing recorded for ' + sym;
         else if (kind === 's') { let px = null; try { const j = await liveQ(sym); px = +j.price || null; } catch (e) { }
-          fs.appendFileSync('data/skipped.jsonl', JSON.stringify({ sym, d: ny(Date.now()).d, ts: Date.now(), px }) + '\n'); note = 'Skipped ' + sym + ': noted';
+          fs.appendFileSync(dataPath('data/skipped.jsonl'), JSON.stringify({ sym, d: ny(Date.now()).d, ts: Date.now(), px }) + '\n'); note = 'Skipped ' + sym + ': noted';
           // ask why, with one tap: the system later shows whether your skips were right (send  skips )
           try { await fetch(TG + '/bot' + env.TG_TOKEN + '/sendMessage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ chat_id: chatId, text: 'Why did you skip ' + sym + '? (one tap; used to check later whether skipping was right)', reply_markup: { inline_keyboard: [[{ text: 'My tip says wait', callback_data: 'r|' + sym + '|tip' }, { text: 'Not halal / unsure', callback_data: 'r|' + sym + '|halal' }], [{ text: 'No money now', callback_data: 'r|' + sym + '|money' }, { text: 'Do not trust it', callback_data: 'r|' + sym + '|trust' }, { text: 'Other', callback_data: 'r|' + sym + '|other' }]] } }) }); } catch (e) { } }
-        else if (kind === 'r') { fs.appendFileSync('data/skipped.jsonl', JSON.stringify({ sym, why: sh, ts: Date.now() }) + '\n'); note = 'Reason saved for ' + sym; }
+        else if (kind === 'r') { fs.appendFileSync(dataPath('data/skipped.jsonl'), JSON.stringify({ sym, why: sh, ts: Date.now() }) + '\n'); note = 'Reason saved for ' + sym; }
       }
       try { await fetch(TG + '/bot' + env.TG_TOKEN + '/answerCallbackQuery', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ callback_query_id: cq.id, text: note }) }); } catch (e) {}
       if (txt) queue.push({ update_id: u.update_id, message: { chat: { id: chatId }, text: txt } }); else state.offset = Math.max(state.offset, u.update_id + 1);
@@ -3810,19 +3832,19 @@ async function tgCommands(sig) {
     } else if (/^(skips?|my skips|skipped)\s*\??\s*$/i.test(text)) { out.push(await skipsText());
     } else if (/^(ladder|size level|level)\s*\??\s*$/i.test(text)) { out.push(ladder().text + '\n\nThe ladder: 1,000 USD a trade, then 2,500 (30+ sales on 10+ days, positive, profit factor 1.2+), then 5,000 (80+ sales over 3+ months, profit factor 1.3+), then 10,000 (200+ sales over 6+ months). It steps down one level at once if your last 20 sales lost money. Report every sale ( sold SYM PRICE ) so the ladder can see it.');
     } else if ((k = text.match(/^(?:bought|sold)\s+option\s+([A-Za-z.]{1,6})\s+(\d+(?:\.\d+)?)\s+(\d{4}-\d{2}-\d{2})\s+(\d+(?:\.\d+)?)\s*$/i))) {   // OPTIONS TRIAL: 1 contract, kept apart from stocks
-      const sold = /^sold/i.test(text), sym = k[1].toUpperCase(), strike = +k[2], exp = k[3], px = +k[4], OS = readJson('data/options-shadow.json', { open: [], done: [] }); OS.real = OS.real || [];
+      const sold = /^sold/i.test(text), sym = k[1].toUpperCase(), strike = +k[2], exp = k[3], px = +k[4], OS = readJson(dataPath('data/options-shadow.json'), { open: [], done: [] }); OS.real = OS.real || [];
       if (!sold) { if (OS.real.filter(o => !o.closed).length >= 2) out.push('OPTIONS TRIAL: 2 contracts are already open; that is the limit of the trial. Close one first.');
-        else { const lt = (OS.labT || []).find(t => t.sym === sym && t.strike === strike && t.exp === exp); if (lt) { OS.real.push({ d: ny(Date.now()).d, sym, strike, exp, paid: px, cost: +(px * 100 + 5).toFixed(2), rule: lt.rule, sellBy: lt.sellBy }); fs.writeFileSync('data/options-shadow.json', JSON.stringify(OS)); out.push('OPTIONS (rule ' + lt.rule + '): recorded 1 x ' + sym + ' ' + exp + ' ' + strike + ' CALL bought at ' + px.toFixed(2) + ' (' + (px * 100 + 5).toFixed(0) + ' USD with the ZAD fee, the most you can lose). Plan: SELL TO CLOSE on ' + lt.sellBy + ' (the rule\u2019s exit); I remind you that day. Then send  sold option ' + sym + ' ' + strike + ' ' + exp + ' PRICE .'); } else {
-        OS.real.push({ d: ny(Date.now()).d, sym, strike, exp, paid: px, cost: +(px * 100 + 5).toFixed(2) }); fs.writeFileSync('data/options-shadow.json', JSON.stringify(OS)); out.push('OPTIONS TRIAL: recorded 1 x ' + sym + ' ' + exp + ' ' + strike + ' CALL bought at ' + px.toFixed(2) + ' (' + (px * 100 + 5).toFixed(0) + ' USD with the ZAD fee, the most you can lose). Plan: SELL TO CLOSE when ' + sym + ' passes ' + (strike * 1.05).toFixed(2) + ' or on ' + new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10) + ', whichever first; never hold it to expiry. Then send  sold option ' + sym + ' ' + strike + ' ' + exp + ' PRICE .'); } } }
+        else { const lt = (OS.labT || []).find(t => t.sym === sym && t.strike === strike && t.exp === exp); if (lt) { OS.real.push({ d: ny(Date.now()).d, sym, strike, exp, paid: px, cost: +(px * 100 + 5).toFixed(2), rule: lt.rule, sellBy: lt.sellBy }); fs.writeFileSync(dataPath('data/options-shadow.json'), JSON.stringify(OS)); out.push('OPTIONS (rule ' + lt.rule + '): recorded 1 x ' + sym + ' ' + exp + ' ' + strike + ' CALL bought at ' + px.toFixed(2) + ' (' + (px * 100 + 5).toFixed(0) + ' USD with the ZAD fee, the most you can lose). Plan: SELL TO CLOSE on ' + lt.sellBy + ' (the rule\u2019s exit); I remind you that day. Then send  sold option ' + sym + ' ' + strike + ' ' + exp + ' PRICE .'); } else {
+        OS.real.push({ d: ny(Date.now()).d, sym, strike, exp, paid: px, cost: +(px * 100 + 5).toFixed(2) }); fs.writeFileSync(dataPath('data/options-shadow.json'), JSON.stringify(OS)); out.push('OPTIONS TRIAL: recorded 1 x ' + sym + ' ' + exp + ' ' + strike + ' CALL bought at ' + px.toFixed(2) + ' (' + (px * 100 + 5).toFixed(0) + ' USD with the ZAD fee, the most you can lose). Plan: SELL TO CLOSE when ' + sym + ' passes ' + (strike * 1.05).toFixed(2) + ' or on ' + new Date(Date.now() + 14 * 864e5).toISOString().slice(0, 10) + ', whichever first; never hold it to expiry. Then send  sold option ' + sym + ' ' + strike + ' ' + exp + ' PRICE .'); } } }
       else { const o = OS.real.find(z => !z.closed && z.sym === sym && z.strike === strike && z.exp === exp); if (!o) out.push('OPTIONS TRIAL: no open ' + sym + ' ' + exp + ' ' + strike + ' call recorded.');
-        else { o.closed = true; o.out = ny(Date.now()).d; o.got = px; o.pnl = +((px - o.paid) * 100 - 10).toFixed(2); fs.writeFileSync('data/options-shadow.json', JSON.stringify(OS)); const all = OS.real.filter(z => z.closed), tot = all.reduce((a, z) => a + z.pnl, 0);
+        else { o.closed = true; o.out = ny(Date.now()).d; o.got = px; o.pnl = +((px - o.paid) * 100 - 10).toFixed(2); fs.writeFileSync(dataPath('data/options-shadow.json'), JSON.stringify(OS)); const all = OS.real.filter(z => z.closed), tot = all.reduce((a, z) => a + z.pnl, 0);
           out.push('OPTIONS TRIAL: closed ' + sym + ' ' + strike + ' call: ' + (o.pnl >= 0 ? '+' : '') + o.pnl.toFixed(0) + ' USD after fees. Trial record: ' + all.length + ' trade' + (all.length === 1 ? '' : 's') + ', ' + all.filter(z => z.pnl > 0).length + ' won, ' + (tot >= 0 ? '+' : '') + tot.toFixed(0) + ' USD in total. Kept separate from your stock record.'); } }
     } else if (/^(scoreboard|score board)\s*\??\s*$/i.test(text)) { out.push(scoreboardText());
     } else if (/^(comeback|comebacks|come back|comeback board)\s*\??\s*$/i.test(text)) { out.push(comebackText());
     } else if (/^(progress|is it learning|learning|what did you learn|improve(ment)?s?)\s*\??\s*$/i.test(text)) {   // PROOF OF WORK: what the system tested, rejected, built and scored lately
       const LB = readJson0('data/strategy-library.json'), L = LB && LB.strategies || [], d7 = new Date(Date.now() - 7 * 864e5).toISOString().slice(0, 10), d30 = new Date(Date.now() - 30 * 864e5).toISOString().slice(0, 10);
       const tested = (since) => L.filter(e => e.tested && e.tested >= since), t7 = tested(d7), t30 = tested(d30), cnt = (a) => { const o = {}; for (const e of a) { const k = /passed|in use/.test(e.status) ? 'passed' : /rejected|FAILED/.test(e.status) ? 'rejected' : /not proven/.test(e.status) ? 'not proven' : 'other'; o[k] = (o[k] || 0) + 1; } return o; };
-      const AL = readJson0('data/autolab.json') || {}, LG = readJson0('data/agent-league.json') || {}, IR = readJson0('data/ignition-results.json') || {}, r8 = IR.record && IR.record['IG8/close'], OS = readJson0('data/options-shadow.json') || {}, TS = readJson0('data/tip-score.json') || {};
+      const AL = readJson0('data/autolab.json') || {}, LG = readJson0('data/agent-league.json') || {}, IR = readJson0('data/ignition-results.json') || {}, r8 = IR.record && IR.record['IG8/close'], OS = readJson0(dataPath('data/options-shadow.json')) || {}, TS = readJson0('data/tip-score.json') || {};
       const closest = L.filter(e => e.result && typeof e.result.t === 'number' && !/rejected|FAILED/.test(e.status)).sort((a, b) => b.result.t - a.result.t).slice(0, 3);
       const c7 = cnt(t7), c30 = cnt(t30), queued = L.filter(e => /^queued/.test(e.status)).length;
       let avl = ''; try { const lastPx = {}; for (const x of (readJson0('data/signals.json') || {}).stocks || []) if (x.last) lastPx[x.sym] = x.last; avl = avoidLedger([], lastPx); } catch (e) {}
@@ -3969,7 +3991,7 @@ async function crowdList() {
 // 50 and 200 day averages while the S&P 500 is above its own 200 day average, buy at the next open, and trail a stop three normal
 // daily moves (ATR) under the close. It is tested on ALL stocks of the fixed list together, with at most five held at a time.
 const LEAD_COST = 0.008;   // round trip, same as the fair test and the ledger rule: 3 USD + 3 USD on a 1,000 USD buy plus the spread (was 0.4% until 18 Oct 2026)
-const LEAD_FILE = 'data/leaders.json', LEADCFG = { N: 5, LOOK: 126, ATR: 3 }, LEAD_PIN = '126-3';   // the version the fair test was set up to judge
+const LEAD_FILE = dataPath('data/leaders.json'), LEADCFG = { N: 5, LOOK: 126, ATR: 3 }, LEAD_PIN = '126-3';   // the version the fair test was set up to judge
 // SELF-TUNING. Nine versions of the one rule (strength measured over 3, 6 or 12 months; stop 2, 3 or 4 daily moves wide) are
 // re-tested every night. A version is usable only if it made money overall AND in the last two years. The one in use changes only
 // when another is clearly better on the OLDER years, so the choice is never made on the same data it is then judged by.
@@ -4107,15 +4129,15 @@ async function daily() {
   saveSpyCloses(spy);   // review S-3: the scoreboard's S&P 500 figures
   if (prev && prev.session === session && !env.FORCE) { console.log('No new session since ' + session + ' (weekend or holiday). Nothing sent.'); return; }
   const mkt = L.marketMap(spy), mktUp = mkt[session].up, mom6 = spy[spy.length - 1].c / spy[spy.length - 127].c - 1;
-  const models = readJson('data/models.json', {});
-  const journal = fs.existsSync('data/journal.jsonl') ? fs.readFileSync('data/journal.jsonl', 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)) : [];
+  const models = readJson(dataPath('data/models.json'), {});
+  const journal = fs.existsSync(dataPath('data/journal.jsonl')) ? fs.readFileSync(dataPath('data/journal.jsonl'), 'utf8').split('\n').filter(Boolean).map(l => JSON.parse(l)) : [];
   const uni = [];
   const VR = L.volRegime ? L.volRegime(spy) : { known: false, mult: 1 }, VOLM = VR.mult;
   const stocks = [], fresh = [], exits = [], openTrades = [], results = [], horizons = {}, picks = [], quick = [], DOWS = { older: [0, 1, 2, 3, 4].map(() => [0, 0]), newer: [0, 1, 2, 3, 4].map(() => [0, 0]) }, MDAY = { older: {}, newer: {} }, addMday = (md) => { if (md) for (const h of ['older', 'newer']) for (const [k, x] of Object.entries(md[h] || {})) { const y = MDAY[h][k] || (MDAY[h][k] = [0, 0]); y[0] += x[0]; y[1] += x[1]; } }, TIM = { older: { openIn: [0, 0], closeIn: [0, 0], openOut: [0, 0], closeOut: [0, 0] }, newer: { openIn: [0, 0], closeIn: [0, 0], openOut: [0, 0], closeOut: [0, 0] } }, qFin = [], blocked = [], wk = [], famRes = {}, live = {};
   // LESSONS: every finished live paper trade is reviewed: how it ended, how far it ran up before it ended, and whether it
   // reached its first target. Grouped by the exact rule that produced it. A rule whose live record turns negative
   // (10+ trades) is DEMOTED: its signals stay on paper and are no longer offered as BUY until the live record recovers.
-  const PREV_LESSONS = readJson('data/lessons.json', { rules: {} });
+  const PREV_LESSONS = readJson(dataPath('data/lessons.json'), { rules: {} });
   const weak = [];
   const refLine = (sym, d) => {
     if (myPos[sym]) return;   // already held: it is tracked under YOUR POSITIONS, not offered again
@@ -4216,7 +4238,7 @@ async function daily() {
         else if (Lr.proven && trig.price && trig.price / d.last < 1.15) picks.push({ tier: 1, text: sym + ' closed ' + money(d.last) + ' (BUY WATCH, tested rule)\n  buy only after a close above ~' + money(trig.price) + ', then up to ' + money(trig.price + 0.5 * ind.atr[i]) + '\n  stop ~' + money(trig.price - dist) + (Lr.v.tp ? ', target ~' + money(trig.price + Lr.v.tp * dist) : ', no fixed target') });
         else refLine(sym, d);
       }
-      if (v.signal && !BIOBLOCK.has(sym) && !mine.some(x => x.d === c[i].d && x.kind !== 'quick')) { const e = { sym, d: c[i].d, key: Lr.key, v: Lr.v, dist: +dist.toFixed(6), ref: d.last, state: v.word, loggedAt: new Date(now).toISOString() }; fresh.push(e); fs.appendFileSync('data/journal.jsonl', JSON.stringify(e) + '\n'); }
+      if (v.signal && !BIOBLOCK.has(sym) && !mine.some(x => x.d === c[i].d && x.kind !== 'quick')) { const e = { sym, d: c[i].d, key: Lr.key, v: Lr.v, dist: +dist.toFixed(6), ref: d.last, state: v.word, loggedAt: new Date(now).toISOString() }; fresh.push(e); fs.appendFileSync(dataPath('data/journal.jsonl'), JSON.stringify(e) + '\n'); }
     }
     // Quick trades: three kinds of dip, each shown only where it passed its own tests on this stock
     if (L.quickStudy && !myPos[sym] && !BIOBLOCK.has(sym) && d.last >= (WIDE.has(sym) ? 2 : 5) && !(T.dollarVol !== null && T.dollarVol < L.CFG.MIN_DOLLAR_VOL) && halal !== 'fail') {
@@ -4234,15 +4256,15 @@ async function daily() {
   { const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], avgOf = (h) => { const n = h.reduce((a, x) => a + x[0], 0); return n ? h.reduce((a, x) => a + x[1], 0) / n : null; };
     const allO = avgOf(DOWS.older), allN = avgOf(DOWS.newer), rows = days.map((d, k) => { const o = DOWS.older[k], w = DOWS.newer[k], ao = o[0] ? o[1] / o[0] : null, an = w[0] ? w[1] / w[0] : null, enough = o[0] >= 150 && w[0] >= 150;
       return { day: d, older: { n: o[0], avg: ao }, newer: { n: w[0], avg: an }, verdict: !enough ? 'too few trades' : ao < allO - 0.005 && an < allN - 0.005 ? 'WORSE in both halves' : ao > allO + 0.005 && an > allN + 0.005 ? 'BETTER in both halves' : 'no steady difference' }; });
-    fs.writeFileSync('data/dow-study.json', JSON.stringify({ session, all: { older: allO, newer: allN }, rows }, null, 1));
+    fs.writeFileSync(dataPath('data/dow-study.json'), JSON.stringify({ session, all: { older: allO, newer: allN }, rows }, null, 1));
     { const tags = ['bigDown', 'down', 'flat', 'up', 'bigUp', 'gapDown', 'gapFlat', 'gapUp', 'strong', 'weak', 'calm', 'wild'], av = (x) => x && x[0] ? x[1] / x[0] : null, all = { older: av(MDAY.older.all), newer: av(MDAY.newer.all) };
       const rows = tags.map(k => { const o = MDAY.older[k] || [0, 0], w = MDAY.newer[k] || [0, 0], ao = av(o), an = av(w), enough = o[0] >= 150 && w[0] >= 150;
         return { k, older: { n: o[0], avg: ao }, newer: { n: w[0], avg: an }, verdict: !enough ? 'too few trades' : ao < 0 && an < 0 ? 'LOSING in both halves' : ao < all.older - 0.005 && an < all.newer - 0.005 ? 'WORSE in both halves' : ao > all.older + 0.005 && an > all.newer + 0.005 ? 'BETTER in both halves' : 'no steady difference' }; });
-      fs.writeFileSync('data/mday-study.json', JSON.stringify({ session, all, n: { older: (MDAY.older.all || [0])[0], newer: (MDAY.newer.all || [0])[0] }, rows }, null, 1)); }
+      fs.writeFileSync(dataPath('data/mday-study.json'), JSON.stringify({ session, all, n: { older: (MDAY.older.all || [0])[0], newer: (MDAY.newer.all || [0])[0] }, rows }, null, 1)); }
     const av = (x) => x[0] ? x[1] / x[0] : null, T2 = {}; for (const h of ['older', 'newer']) { T2[h] = {}; for (const k in TIM[h]) T2[h][k] = { n: TIM[h][k][0], avg: av(TIM[h][k]) }; }
     const better = (a, b) => ['older', 'newer'].every(h => T2[h][a].n >= 150 && T2[h][a].avg > T2[h][b].avg + 0.002);
     T2.buy = better('closeIn', 'openIn') ? 'CLOSE' : better('openIn', 'closeIn') ? 'OPEN' : 'EITHER'; T2.sell = better('closeOut', 'openOut') ? 'CLOSE' : better('openOut', 'closeOut') ? 'OPEN' : 'EITHER';
-    fs.writeFileSync('data/timing-study.json', JSON.stringify({ session, ...T2 }, null, 1)); }
+    fs.writeFileSync(dataPath('data/timing-study.json'), JSON.stringify({ session, ...T2 }, null, 1)); }
   // EARNINGS DRIFT: a stock that beat its EPS estimate by 10%+ and whose reaction day (this session) closed up 3%+ in the top half.
   // Offered only while the Sunday fair test (earnings-study.mjs) says PROMISING; otherwise logged for the record only.
   const pead = [], peadFunnel = { reports: 0, noPrice: 0, held: 0, notHalal: 0, smallEst: 0, beat: 0, passed: 0 }; { const ES = readJson0('data/earnings-study.json'), ER = readJson0('data/earnings-recent.json'), R = (ES && ES.rule) || { minSurprise: 0.10, minUp: 0.03, minLoc: 0.5, maxGap: 0.03, maxStop: 0.15, hold: 40 };
@@ -4300,7 +4322,7 @@ async function daily() {
     const nr = await newsRisk(q.row.sym);
     if (nr.hard) { blocked.push(q.row.sym + ' (quick trade): ' + nr.hard.tag + ' in the news this week. "' + nr.hard.h + '"'); continue; }
     q.text += '\n  ' + earnText(e) + (nr.soft ? '\n  WARNING, ' + nr.soft.tag.toLowerCase() + ': "' + nr.soft.h + '"' : nr.known ? '\n  no negative news found this week' : ''); q.row.earn = earnText(e); q.row.earnDays = e.known && e.date ? e.days : null;
-    if (q.entry) { fresh.push(q.entry); fs.appendFileSync('data/journal.jsonl', JSON.stringify(q.entry) + '\n'); }
+    if (q.entry) { fresh.push(q.entry); fs.appendFileSync(dataPath('data/journal.jsonl'), JSON.stringify(q.entry) + '\n'); }
     keep.push(q);
   }
   quick.length = 0; quick.push(...keep);
@@ -4412,9 +4434,9 @@ async function daily() {
     LESSONS.rules[k] = { name: r.name, n: r.n, win: r.wins / r.n, avg, ends: r.ends, fill: r.fill || null, t1Rate: r.t1n ? r.t1 / r.t1n : null, medianRunUp: med, demoted: r.n >= 10 && avg < 0, last: r.last.slice(-5),
       wasDemoted: Boolean(PREV_LESSONS.rules && PREV_LESSONS.rules[k] && PREV_LESSONS.rules[k].demoted) };
   }
-  fs.writeFileSync('data/lessons.json', JSON.stringify(LESSONS, null, 1));
+  fs.writeFileSync(dataPath('data/lessons.json'), JSON.stringify(LESSONS, null, 1));
   for (const r of [...quick.map(x => x.row), ...stocks.filter(s => s.state === 'Buy watch')]) { const ls = r.key && LESSONS.rules[r.key]; if (ls) { r.live = { n: ls.n, avg: ls.avg, win: ls.win }; if (ls.demoted) r.demoted = true; } }
-  { const SECF = 'data/sectors.json', SC = readJson(SECF, {}); let asked = 0;
+  { const SECF = dataPath('data/sectors.json'), SC = readJson(SECF, {}); let asked = 0;
     for (const r of [...quick.slice(0, 10).map(x => x.row), ...stocks.filter(s => s.state === 'Buy watch'), ...leadRows]) {
       if (SC[r.sym] === undefined && env.FINNHUB_KEY && asked < 15) { asked++; try { const j = await (await fetch(FH + '/stock/profile2?symbol=' + encodeURIComponent(r.sym) + '&token=' + encodeURIComponent(env.FINNHUB_KEY))).json(); SC[r.sym] = (j && j.finnhubIndustry) || null; } catch (e) {} await sleep(FAST ? 0 : 1100); }
       r.sector = SC[r.sym] || null;
@@ -4426,8 +4448,8 @@ async function daily() {
   const fin = results.length, wins = results.filter(r => r > 0).length;
   const outcomes = { updated: new Date(now).toISOString(), finished: fin, winRate: fin ? wins / fin : null, avgR: fin ? results.reduce((a, b) => a + b, 0) / fin : null,
     horizons: Object.fromEntries(Object.entries(horizons).map(([h, g]) => [h, { n: g.n, avgReturn: g.ret / g.n, avgBenchmark: g.bench / g.n }])) };
-  fs.writeFileSync('data/outcomes.json', JSON.stringify(outcomes, null, 1));
-  fs.writeFileSync('data/models.json', JSON.stringify(models, null, 1));
+  fs.writeFileSync(dataPath('data/outcomes.json'), JSON.stringify(outcomes, null, 1));
+  fs.writeFileSync(dataPath('data/models.json'), JSON.stringify(models, null, 1));
   { const n = await zoyaCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym), ...Object.keys(myPos)]); if (env.ZOYA_KEY) console.log('Zoya halal checks:', n, zoyaLive() ? '(live)' : '(sandbox)'); }
   { const n = await halalExtCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym)]); if (n) console.log('other halal checks:', n); }
   // P0 Route A: owner-derived verdicts go to the PRIVATE file first (same session + generatedAt as signals.json, so readers can pair
@@ -4441,7 +4463,7 @@ async function daily() {
   const PUBLIC_BASE = new Set(['SPY', ...(fromFile.length ? fromFile : DEFAULT), ...DISC, ...RADAR, ...SMART, ...QEXTRA, ...FMOVERS, ...LEADU, ...LEADHELD, ...QWIDE, ...WIDE, ...((crowd || []).map(x => x.sym))]);
   const pubName = (s) => PUBLIC_BASE.has(s), PUB_STOCKS = stocks.filter(x => pubName(x.sym));
   fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: SIG_AT, session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: PUB_STOCKS.filter(x=>!x.diagnosticOnly).length, diagnosticCount:PUB_STOCKS.filter(x=>x.diagnosticOnly).length, diagnosticScope:'PUBLIC_BASE_LOADED_NAMES', tested: Object.keys(loaded).filter(pubName).length, errors: errors.filter(pubName), openTrades: openTrades.filter(x => pubName(x.sym)), quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row).filter(x => pubName(x.sym)), quickHeld: quickHeld.filter(x => pubName(x.sym)), quickPaused, quickRecord, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded).filter(([s]) => pubName(s))) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, uni: uni.filter(x => pubName(x.sym)).map(publicSignalRow), stocks: PUB_STOCKS.map(publicSignalRow) }, null, 1));
-  fs.writeFileSync('data/alert-state.json', JSON.stringify({ day: '', sent: {} }));
+  fs.writeFileSync(dataPath('data/alert-state.json'), JSON.stringify({ day: '', sent: {} }));
   { const n = ledgerAppend(); if (n) console.log('research ledger: ' + n + ' new result' + (n > 1 ? 's' : '') + ' logged'); }
   try { switchPaper(loaded); } catch (e) { console.log('switch paper: ' + e.message); }
   try { await alpacaPaper(readJson('data/signals.json', null), loaded, session); } catch (e) { console.log('Alpaca paper error: ' + e.message); }
@@ -4495,7 +4517,7 @@ async function daily() {
   if (FMOVERS.length) msg.push('', 'TODAY\'S FAST MOVERS, VERDICT', ...FMOVERS.map(x => x + ': ' + (quick.some(q => q.row.sym === x) ? 'a tested rule fired. See QUICK TRADES for its prices.' : !loaded[x] ? 'no price history available. No trade.' : loaded[x].candles.length < 600 ? 'too new to test (under three years of prices). No trade.' : 'no tested rule fired on it. No trade.')));
   msg.splice(1, 0, ...conclusion(readJson('data/signals.json', null), myPos), '', 'DETAILS');
   // Scan health: what was asked for, what came back, and which feeds were off. If a feed failed, say so rather than show an empty list.
-  const fm = readJson('data/fm-state.json', {}), health = ['SCAN HEALTH', 'Prices: ' + LIST.length + ' requested, ' + (LIST.length - errors.length) + ' returned' + (errors.length ? ', ' + errors.length + ' failed (' + errors.slice(0, 8).join(', ') + (errors.length > 8 ? '\u2026' : '') + ')' : '') + '.',
+  const fm = readJson(dataPath('data/fm-state.json'), {}), health = ['SCAN HEALTH', 'Prices: ' + LIST.length + ' requested, ' + (LIST.length - errors.length) + ' returned' + (errors.length ? ', ' + errors.length + ' failed (' + errors.slice(0, 8).join(', ') + (errors.length > 8 ? '\u2026' : '') + ')' : '') + '.',
     'Earnings check (Finnhub): ' + (env.FINNHUB_KEY ? 'on' : 'OFF, no key') + '. Live fast movers (FMP, run by the bot): ' + (fm.off ? 'OFF today: ' + fm.off : Object.keys(fm.sent || {}).length ? 'on, ' + Object.keys(fm.sent).length + ' alerted today' : fm.day ? 'on, none alerted today' : 'no report from the bot yet') + '.',
     'Crowd radar (ApeWisdom): ' + (env.NO_CROWD ? 'off' : crowd ? 'on, ' + crowd.length + ' names checked' : 'UNREACHABLE today') + '.',
     'Followed channels: ' + (chan.channels ? chan.ok + ' of ' + chan.channels + ' reachable, ' + chan.mentions.length + ' stocks named in the last 3 days' : 'none followed yet. Send the bot: follow NAME CHANNEL-ID') + '.',
@@ -4503,7 +4525,7 @@ async function daily() {
   // OPTIONS DATA PROBE (read-only, one request): does the Massive key include options data? Needed before any options-flow study.
   if (env.MASSIVE_KEY) { let st = 'no answer', fields = []; try { const r = await fetch(MV_HOSTS[mvHost] + '/v3/snapshot/options/AAPL?limit=1&apiKey=' + encodeURIComponent(env.MASSIVE_KEY)); st = 'HTTP ' + r.status;
       if (r.ok) { const j = await r.json(), o = j && j.results && j.results[0]; if (o) fields = ['day', 'greeks', 'implied_volatility', 'open_interest', 'last_trade', 'last_quote'].filter(k => o[k] !== undefined && o[k] !== null); } } catch (e) { st = e.message; }
-    fs.writeFileSync('data/options-probe.json', JSON.stringify({ at: new Date().toISOString(), status: st, fields }, null, 1));
+    fs.writeFileSync(dataPath('data/options-probe.json'), JSON.stringify({ at: new Date().toISOString(), status: st, fields }, null, 1));
     health.push('Options data (Massive): ' + (fields.length ? 'AVAILABLE with ' + fields.join(', ') + '. An options-flow study can be built.' : st === 'HTTP 403' || st === 'HTTP 401' ? 'NOT included in your plan (' + st + '). Nothing to do; stocks are unaffected.' : 'not available (' + st + ').')); }
   try { const oc = await optionsShadow(); if (oc) health.push(oc); } catch (e) { health.push('Options paper test: error (' + e.message + ')'); }
   if (errors.length > LIST.length * 0.2) health.push('WARNING: more than a fifth of the prices failed to load. Treat this scan as incomplete.');
@@ -4535,7 +4557,7 @@ async function daily() {
   if (QUIET()) { const sg = readJson('data/signals.json', null);
     { const at = await actionsText(sg, loadPos(), null, 'ACTIONS FOR THE NEXT SESSION (' + session + ' close). Market opens ' + kwt(570, sessionPlus(session, 1)) + ' Kuwait on ' + sessionPlus(session, 1) + '.');   // (28 Oct) buttons only for this message's own TODAY'S ACTIONS buys
     await telegram(at + (healthBad ? '\n\nWARNING: over a fifth of the prices failed to load tonight. Treat this as incomplete.' : '') + ([2, 4, 5].includes(new Date(session + 'T12:00:00Z').getUTCDay()) ? '\n\n' + (new Date(session + 'T12:00:00Z').getUTCDay() === 5 ? 'WEEKLY ' : 'MID-WEEK ') + scorecardText() : '') + '\n\nAfter you act, tap a button: I ask you to confirm the shares and price before anything is recorded.', tradeButtons(sg, loadPos(), 5, at)); }
-    if (new Date(session + 'T12:00:00Z').getUTCDay() === 5 && fs.existsSync('data/options-shadow.json')) await (async (txt) => deliver({ cls: 'QUIET', sender: 'scan:options-weekly', text: txt, ownerOptIn: ownerQuietOff(), send: () => telegram(txt) }))(optionsText());   // options: its own separate weekly message, never inside ACTIONS
+    if (new Date(session + 'T12:00:00Z').getUTCDay() === 5 && fs.existsSync(dataPath('data/options-shadow.json'))) await (async (txt) => deliver({ cls: 'QUIET', sender: 'scan:options-weekly', text: txt, ownerOptIn: ownerQuietOff(), send: () => telegram(txt) }))(optionsText());   // options: its own separate weekly message, never inside ACTIONS
   }
   else {
   // ---- The last message of the night: one short plan. Everything above it is background.
@@ -4651,7 +4673,7 @@ async function intraday(onlyMine) {
   if (!marketOpen(now) && !env.FORCE) { console.log('Market closed. Nothing to do.'); return; }
   if (!sig) { console.log('No daily scan yet.'); return; }
   const myPos = loadPos();
-  const st = readJson('data/alert-state.json', { day: '', sent: {} }), day = ny(now).d;
+  const st = readJson(dataPath('data/alert-state.json'), { day: '', sent: {} }), day = ny(now).d;
   if(st.delivery!==undefined&&(!st.delivery||typeof st.delivery!=='object'||Array.isArray(st.delivery)))throw Error('STOP_DELIVERY_STATE_UNREADABLE: original state retained');
   if(st.day!==day){st.day=day;st.sent={};st.delivery={};} // A new NY day is a fresh evaluation, not a retry of yesterday's intent.
   st.delivery=st.delivery||{};
@@ -4737,7 +4759,7 @@ async function intraday(onlyMine) {
   // an expired price through. A queued alert or BUY NOW card is marked in the once-a-day memory (and the memory saved) only while it is
   // still eligible at that attempt; one that expires before a retry is unmarked and left out (re-checked on the next run). A held-back
   // holding alert is reported once a day as NOT CONFIRMED (never as a price). Routes keep their existing rules (ALERT_GATE).
-  const saveState = () => fs.writeFileSync('data/alert-state.json', JSON.stringify(st));
+  const saveState = () => fs.writeFileSync(dataPath('data/alert-state.json'), JSON.stringify(st));
   saveState();
   if (openMsg) await telegramLive(async (now, sent) => tgRemainder((await firstCheckText(myPos, planBuys, quotesSeen, sig, now)) + '\n' + FOOT, sent));
   for (const bc of buyNowCards) {

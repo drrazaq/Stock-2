@@ -37,6 +37,13 @@ export const SCAN_OUTPUTS = Object.freeze(['alert-state.json', 'dow-study.json',
   'mday-study.json', 'models.json', 'names.json', 'options-probe.json', 'outcomes.json', 'sectors.json', 'sic-extra.json', 'signals.json',
   'skipped.jsonl', 'spy-closes.json', 'switch-paper.json', 'timing-study.json']);
 export const MANIFEST = 'public-pass-manifest.json';
+// Owner-state outputs (Codex 6851609156): after a COMPLETED private pass, each of these has its complete private state at
+// data/private-<name> (installed even when unchanged tonight), so owner-context readers in scan.mjs (dataPath/OWNER_MAPPED, kept equal
+// by a test) never fall back to the smaller public projection. A private copy written concurrently (the bot, intraday) keeps the newer
+// bytes; the scan copy is set aside as data/private-conflict-<name>.
+export const OWNER_STATE_OUTPUTS = Object.freeze(['alert-state.json', 'dow-study.json', 'engine-history.jsonl', 'experiments.jsonl', 'fm-state.json', 'journal.jsonl',
+  'leaders.json', 'lessons.json', 'mday-study.json', 'models.json', 'names.json', 'options-probe.json', 'outcomes.json', 'sectors.json', 'sic-extra.json',
+  'skipped.jsonl', 'spy-closes.json', 'switch-paper.json', 'timing-study.json', 'tier2-ledger.jsonl', 'options-shadow.json']);
 export function seedClass(rel, manifest, hashOf) {
   const top = rel.split('/')[0];
   if (isPrivate(top) || isPrivate(rel)) return 'PRIVATE';
@@ -85,7 +92,7 @@ function codeCopy(dest) { fs.mkdirSync(path.join(dest, 'data'), { recursive: tru
 //    (data/private-failed-pass-<stamp>.disposition.json with resolved:true) exists; even then its files are kept (no deletion here).
 //  - ADMISSION: when 3 unresolved sets exist, or their bytes plus room for tonight's critical records would pass 256 MiB, the private
 //    pass is NOT run (no new private computation, no owner-facing side effect) and the run fails with an explicit coverage status.
-export const FAILED_PREFIX = 'private-failed-pass-', NOT_STATE = /^private-(failed-pass|conflict|stale)-/;
+export const FAILED_PREFIX = 'private-failed-pass-', NOT_STATE = /^private-(failed-pass|conflict|stale|unknown)-/;
 export const FAILED_LIMITS = Object.freeze({ fileBytes: 4 << 20, optionalBytes: 32 << 20, unresolvedSets: 3, unresolvedBytes: 256 << 20 });
 export const SEND_STATE = Object.freeze(['alert-state.json', 'tg-state.json', 'tg-failures.jsonl']);
 const STAMP = /^private-failed-pass-(\d{4}-\d\d-\d\dT\d\d-\d\d-\d\d-\d{3}Z)(?:__|\.json$|\.disposition\.json$)/;
@@ -158,12 +165,17 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
     // ---- 3a. FIRST: private results to PRIVATE paths only (completed private pass only)
     if (privOk) {
       for (const r of changed(privBefore, path.join(privBox, 'data'))) {
+        if (OWNER_STATE_OUTPUTS.includes(r)) continue;   // installed below, with its own concurrent-update check
         const top = r.split('/')[0], src = path.join(privBox, 'data', r);
         const dest = path.join(DATA, isPrivate(top) ? r : privateName(r));   // owner files in place; everything else as data/private-<name>
         if (isPrivate(top) && !top.startsWith('private-') && digest(dest) !== (realAtCopy.get(r) ?? null)) {   // changed concurrently: keep the newer owner bytes
           atomicInstall(src, path.join(DATA, 'private-conflict-' + r.replace(/\//g, '__'))); log('two-pass scan: ' + 'an owner file changed during the scan; the newer copy was kept and the scan copy set aside privately'); continue; }
         atomicInstall(src, dest);
       }
+      for (const r of OWNER_STATE_OUTPUTS) {   // complete private owner state for every owner gate, even when unchanged tonight
+        const src = path.join(privBox, 'data', r), dest = path.join(DATA, privateName(r)); if (!fs.existsSync(src) || digest(src) === digest(dest)) continue;
+        if (digest(dest) !== (realAtCopy.get(privateName(r)) ?? null)) { atomicInstall(src, path.join(DATA, 'private-conflict-' + r)); log('two-pass scan: a private owner-state file changed during the scan; the newer copy was kept and the scan copy set aside privately'); continue; }
+        atomicInstall(src, dest); }
     }
     if (!privOk) { try { const q = retainFailedPrivate(privBox, privBefore, { exit: priv.status, signal: priv.signal || null });
         log('two-pass scan: the failed private pass changed ' + (q.kept.length + q.skipped.length) + ' files; ' + q.kept.length + ' kept privately as UNRESOLVED quarantine evidence (' + FAILED_PREFIX + q.stamp + ', ' + q.critical.length + ' critical), not as current state' + (q.skipped.length ? '; ' + q.skipped.length + ' optional files over the size bound NOT kept: ' + q.skipped.map(x => x.r).join(' ') : ''));

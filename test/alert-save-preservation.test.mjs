@@ -48,10 +48,10 @@ for(const order of ['bot-first','nightly-first'])test('B1 actual nightly reset/s
  const bot=()=>execFileSync('bash',['actual-bot-save.sh'],{cwd:f.bot,env:saveEnv(f.bot),stdio:['ignore','pipe','pipe']});
  if(order==='bot-first'){bot();scan();}else{scan();bot();}
  const saved=JSON.parse(f.read('data/alert-state.json'));assert.equal(saved.delivery.AAAmyst.status,'UNKNOWN','same-day ambiguous evidence remains quarantined');
- const src=fs.readFileSync(path.join(root,'scan.mjs'),'utf8'),start=src.indexOf("const st = readJson('data/alert-state.json'"),end=src.indexOf('  const OKI =',start);assert.ok(start>=0&&end>start);
- const reader=new Function('readJson','ny','now',src.slice(start,end)+';return {st,stopAvailable};');
- const same=reader(()=>structuredClone(saved),()=>({d:'2026-11-10'}),0);assert.equal(same.stopAvailable('AAAmyst'),false);
- const next=reader(()=>structuredClone(saved),()=>({d:'2026-11-11'}),0);assert.equal(next.stopAvailable('AAAmyst'),true);
+ const src=fs.readFileSync(path.join(root,'scan.mjs'),'utf8'),start=src.indexOf("const st = readJson(dataPath('data/alert-state.json')"),end=src.indexOf('  const OKI =',start);assert.ok(start>=0&&end>start);
+ const reader=new Function('readJson','ny','now','dataPath',src.slice(start,end)+';return {st,stopAvailable};');   // dataPath: identity here (owner-state mapping is tested in owner-state-two-context)
+ const same=reader(()=>structuredClone(saved),()=>({d:'2026-11-10'}),0,(f)=>f);assert.equal(same.stopAvailable('AAAmyst'),false);
+ const next=reader(()=>structuredClone(saved),()=>({d:'2026-11-11'}),0,(f)=>f);assert.equal(next.stopAvailable('AAAmyst'),true);
  write(f.scanner,'data/alert-state.json',next.st);scan();
  const persisted=JSON.parse(f.read('data/alert-state.json'));assert.equal(persisted.day,'2026-11-11');assert.equal(persisted.delivery?.AAAmyst,undefined,'older remote side must not re-import yesterday quarantine');
 });
