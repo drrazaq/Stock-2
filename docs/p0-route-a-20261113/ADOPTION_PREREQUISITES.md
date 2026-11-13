@@ -35,3 +35,14 @@ exists. Codex 6852935516 / 6852885259 / 6852749074.
 ## 5. Adoption review
 - The 24-workflow / 31-job owner-file pull, the 56-workflow registry routing and the class C routing are new source with their own
   reviewed adoption; they are not covered by the frozen Friday Stage 2 binding (only ignition.yml overlaps it).
+
+## 6. Added 13 Nov (steps 38–43)
+- Custody (section 1) includes every file under the three private directories; `private-data.sh check` expands them.
+- Watcher reservations: `node watcher-custody.mjs prepare OUTDIR` (offline) builds the custody import of every public reservation plus
+  CUSTODY.json; it must be stored privately and read back, the old public writer must be quiescent (no public reservation after the
+  custody snapshot), and Codex's guard follow-up denying `data/watcher-message-state` publicly must be in place BEFORE the marker
+  exists. Until `admit` returns ADMITTED in a job, private reservations stay closed (the watcher withholds sends; no public fallback).
+- The private step shell, the artifact removals and the PARTIAL run-log tails are part of the same adoption (75 workflows).
+- The watcher path changes (ignition-watch.mjs, ignition, bot, main, premarket) need their own exact Stage 1 review; never Friday
+  authority.
+- OPEN dispositions in CONSUMER_MATRIX.md (hold-lab owner field, squad29 holdings) must be closed before adoption.

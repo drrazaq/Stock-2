@@ -21,14 +21,126 @@ Generated from the development tree by grep of `data/<file>` references in root 
 | `leaderdip-ledger.jsonl` | scan.mjs  | account-replay.yml bot.yml comeback.yml main.yml research-lab.yml squad17-lab.yml squad23-lab.yml tests.yml  |
 | `signals-private.json` | premarket-check.mjs scan.mjs signals-read.mjs  | account-replay.yml bot.yml comeback.yml main.yml premarket.yml research-lab.yml squad17-lab.yml squad23-lab.yml tests.yml  |
 
-## Findings and status (13 Nov 2026, development tree `claude/notify-route-20261113`)
+## Findings and status (13 Nov 2026, development tree `claude/notify-route-20261113`, pin after step 43)
 
-1. **No workflow invokes `.github/private-data.sh pull` or `push`** on this tree (0 of 83 workflow files). The cutover wiring described in CLAUDE.md §3 is not present, so a `private-data-mode` marker today would make no job hydrate private files. Wiring pull-after-checkout (fail-closed) and push-for-writers into the workflows is a separate, reviewable change; it is not done here, and no workflow was edited.
-2. **Public save guard (done, `.github/save-data.sh`):** with `.github/private-data-mode` or `.github/private-data-sealed`, the public save unstages every path in `.github/private-files.txt`, refuses to continue if one is still staged, and rebases with `--autostash`. The private repository's own save sets `SAVE_PRIVATE_REPO=1` (`private-data.sh push`). Rollback = remove the mode marker and keep the sealed marker, so plaintext is never republished. Tests: `test/save-private-guard.test.mjs` (throw-away repositories; mutation-checked).
-3. **Scan output split (done):** owner-derived scan fields live only in `data/signals-private.json`, paired by session + generatedAt (`signals-read.mjs`); public `signals.json` is whole-file invariant to private state (`test/p0-public-signals.test.mjs`).
-4. **Open: consumers whose PUBLIC outputs may embed private-derived content** (each needs its own projection review, as squad11 had): the lab modules that read `halal.json` and publish halal-derived labels or statistics; `events-study.mjs` (merges `watch-extra.json` into its universe); modules reading `my-positions.json` (`calendar`, `hold-lab`, `smart-money`, `squad29-*`, `news-watch`, `ignition-watch`); modules reading `tips.jsonl` / `opinions.jsonl` / `market-calls.jsonl` (`smart-money`, `tip-score`, `tip-sources`).
-5. **Open: history.** Files committed publicly before the cutover remain in public git history; removing them from history is an owner decision outside this development scope.
-6. **Before cutover**, `data/signals-private.json` is saved publicly like the other private-list files (no regression versus the previous public `signals.json`); it becomes private only with the cutover.
+Superseded: the earlier finding that no workflow pulls is obsolete. Current state, all development source, nothing activated:
+
+1. **Hydration:** 75 workflows pull the private store after checkout (marker-gated), record producer admission, and fail closed.
+2. **Saves:** owner-derived outputs are saved only through the private route (`private-outputs.sh save` / `private-data.sh push`,
+   delta save against the immutable hydration receipt); registry edits only through `merge-library`; failures go to quarantine only
+   (`retain-failed` / `retain-copy` / `push-quarantine`), never a canonical write. Per-workflow table below.
+3. **Public save guard:** scalar entries, `private-*`, and the three private directories (Codex guard 9a17c39c) are never staged
+   publicly; pre-push hook in every publishing job.
+4. **stdout:** every run step of the 75 hydrated workflows runs through `.github/private-shell.sh` (public log: `private step N: exit X`
+   only). `main.yml`'s private scan pass additionally writes its stdout to `data/private-scan-stdout.log`.
+5. **Artifacts:** no hydrated workflow uploads a log or a `data/` path. Declared exceptions: squad19 `sq19-work/plan.json.gz`,
+   `sq19-work/shard-*.json.gz`, `sq19-work/daily-out.json`; squad2 `squad2-work/plan.json.gz`, `squad2-work/shard-*.json.gz` (market-only
+   inter-job work files; their writers take no owner input; squad19's halal use is in `report()` only). The watcher-evidence artifact
+   (ignition) is removed. The event-orb 15-day bars file is no longer retained as an artifact (derived from the private event set;
+   recomputable; its coverage record is private).
+6. **Watcher reservations:** private reservation route + custody admission (steps 43); public namespace denied by Codex's guard follow-up
+   (pending). Separate exact review/adoption: Stage 1 watcher path.
+7. **History:** public bytes and history of every newly private file stay untouched pending a separate exact cleanup approval.
+8. **OPEN (found while generating this matrix; disposition needed):**
+   - `data/hold-lab.json` (public, tracked) carries an `owner` field built from the owner's trades and holdings (symbol + since date).
+     Readers: hold-lab, tipster-lab (both hydrated). Options: (a) route the whole file private under its canonical name (public
+     research verdict then private too), or (b) split `owner` into a private `hold-lab-owner.json` and keep the public research file.
+   - `data/squad29-lab.json` and `data/squad29-flags-today.json` (public, tracked) carry `holdings` (held symbols). Readers: scan.mjs
+     (danger-filing SELL reasons), squad29-core. Options as above; (b) `squad29-holdings.json` private. Either changes a public
+     input of the two-pass scan (PUBLIC_SEEDS / differential test), so it needs your disposition.
+   - Candidates still to classify by field (they read owner files; no field-level proof yet): `tip-score.json` / `tips-public.jsonl`
+     (from the owner's tips), `smart-money.json` (already a tainted, non-seed input of the scan).
+
+## Hydrated workflows: private save, registry merge, failure retention, required history (generated from source)
+
+|Workflow|private save|registry merge|failure retention (outputs)|required history|
+|---|---|---|---|---|
+|`Smart-money.yml`|private-outputs save||events-recent.json events-study.json sec-ciks.json|-|
+|`Tiprank.yml`|read only||-|-|
+|`account-replay.yml`|private-outputs save||account-replay-pb12t20-trades.jsonl account-replay-pb12t20.json account-replay-trades.jsonl account-replay.json|-|
+|`agent-a-lab.yml`|private-outputs save|yes|agent-a-lab.json rot-today.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a agent-a-lab.json cp data/strategy-library.json fresh is missing never one private registry strategy-library.json|
+|`agent-a-ldx-lab.yml`|read only|yes|-|strategy-library.json|
+|`agent-a-tgt-lab.yml`|read only|yes|-|strategy-library.json|
+|`agent-a-tp-lab.yml`|read only|yes|-|strategy-library.json|
+|`agent-c-lab.yml`|read only|yes|-|strategy-library.json|
+|`agent-c2-lab.yml`|read only|yes|-|strategy-library.json|
+|`agent-c3-lab.yml`|read only|yes|-|strategy-library.json|
+|`angles-lab.yml`|read only|yes|-|strategy-library.json|
+|`anomaly-lab.yml`|read only|yes|-|strategy-library.json|
+|`bot.yml`|private-data push||-|-|
+|`calendar.yml`|read only||-|-|
+|`catalyst-lab.yml`|read only|yes|-|strategy-library.json|
+|`chain-decoder.yml`|read only|yes|-|strategy-library.json|
+|`comeback.yml`|read only|yes|-|strategy-library.json|
+|`confluence-lab.yml`|read only|yes|-|strategy-library.json|
+|`deals.yml`|read only||-|-|
+|`decoded-lab.yml`|read only|yes|-|strategy-library.json|
+|`discover.yml`|read only||-|-|
+|`discovery2.yml`|private-outputs save|yes|discovery2-today.json discovery2.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a cp data/strategy-library.json discovery2.json fresh is missing never one private registry strategy-library.json|
+|`event-orb-retest-research.yml`|private-outputs save|yes|catalyst-events.jsonl event-orb-retest-15d-bars-coverage.json event-orb-retest-15d-control-requests.json event-orb-retest-15d-control-study.json event-orb-retest-15d-controls.jsonl event-orb-retest-15d-events.json event-orb-retest-15d-gates.json event-orb-retest-15d-paper.json event-orb-retest-15d-requests.json event-orb-retest-15d-study.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a catalyst-events.jsonl cp data/strategy-library.json event-orb-retest-15d-paper.json fresh is missing never one private registry strategy-library.json|
+|`expert-lab.yml`|read only|yes|-|strategy-library.json|
+|`fastmover-intraday.yml`|private-outputs save||fastmover-lab.json fastmover-paper.json ignition-lab.json ignition-results.json|fastmover-paper.json|
+|`follow-lane.yml`|private-outputs save||follow-board.json follow-calls.jsonl follow-channels.json follow-fade.json follow-today.json|follow-board.json follow-calls.jsonl|
+|`hold-lab.yml`|read only|yes|-|strategy-library.json|
+|`ignition.yml`|private-outputs save||early-wave-obs.jsonl ignition-days.jsonl ignition-live.json ignition-missed-history.jsonl ignition-paper.jsonl ignition-runs/ opp-days.jsonl opp-ledger.jsonl premarket.jsonl radar-v3-ledger.jsonl radar-v3-snap.json shadow/ vol-curve.json|ignition-days.jsonl ignition-paper.jsonl opp-ledger.jsonl radar-v3-ledger.jsonl|
+|`intraday-radar.yml`|private-outputs save||intraday-missed.jsonl intraday-radar.json radar-day.json radar-paper.json radar-record.json radar-sectors.json|-|
+|`leaders-study.yml`|private-outputs save|yes|agent-a-lab.json agent-league.json agent-shelf.jsonl discovery2-today.json discovery2.json events-study.json fastmover-lab.json ignition-missed-history.jsonl quality.json rot-today.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a agent-a-lab.json agent-league.json agent-shelf.jsonl cp data/strategy-library.json fresh is missing never one private registry strategy-library.json|
+|`macro-lab.yml`|read only|yes|-|strategy-library.json|
+|`main.yml`|private-data push||-|-|
+|`ml-lab.yml`|read only|yes|-|strategy-library.json|
+|`movers.yml`|private-outputs save||fastmover-lab.json fastmover-paper.json ignition-lab.json ignition-results.json|fastmover-paper.json|
+|`news.yml`|private-outputs save||news-log.jsonl news-meta.json news-seen.json|-|
+|`opportunity-radar.yml`|private-outputs save||radar-v3-ledger.jsonl shadow-outcomes/ shadow-report.json|radar-v3-ledger.jsonl|
+|`options-lab.yml`|private-outputs save|yes|options-lab-run.log options-lab.json quality.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a cp data/strategy-library.json fresh is missing never one options-lab.json private registry strategy-library.json|
+|`options-survey.yml`|private-outputs save||options-spread-survey.json options-spread-survey.md|-|
+|`premarket.yml`|read only||-|-|
+|`research-lab.yml`|read only|yes|-|strategy-library.json|
+|`scorecard-1023.yml`|private-outputs save||scorecard-1023.json|-|
+|`squad1-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad10-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad11-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad12-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad13-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad14-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad15-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad15b-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad16-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad17-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad18-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad19-lab.yml`|private-outputs save|yes|squad19-board.json squad19-diag.json squad19-lab.json squad19-paper.jsonl squad19-rh1-fm.json squad19-rh1-fm.md squad19-rh1-raw.json squad19-rh1-raw.md squad19-rh1-run.log squad19-run.log squad19-today.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a cp data/strategy-library.json fresh is missing never one private registry squad19-lab.json squad19-paper.jsonl strategy-library.json|
+|`squad2-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad20-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad21-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad22-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad23-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad24-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad25-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad26-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad27-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad28-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad29-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad3-lab.yml`|private-outputs save|yes|squad3-lab.json squad3-run.log squad3-today.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a cp data/strategy-library.json fresh is missing never one private registry squad3-lab.json strategy-library.json|
+|`squad4-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad5-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad6-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad7-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad8-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad9-lab.yml`|read only|yes|-|strategy-library.json|
+|`tipster-lab.yml`|read only|yes|-|strategy-library.json|
+|`value-lab.yml`|read only|yes|-|strategy-library.json|
+|`verify-lab.yml`|private-outputs save||verify-lab.json|-|
+|`winners-autopsy.yml`|read only|yes|-|strategy-library.json|
+
+"read only" = no owner-derived output of its own (registry labs merge only their registry changes; the others write public research
+outputs or nothing). All 75 use the private step shell.
+
+## Private directories (Codex 6853502834, guard 9a17c39c)
+
+| Directory | Producer | Readers (all hydrated) | Failure retention | Bounds |
+|---|---|---|---|---|
+| `shadow/` | ignition (ignition-watch, shadow-stream) | opportunity-radar (shadow-outcomes) | ignition `retain-failed shadow/` | 20,000 files / 512 MiB per side |
+| `ignition-runs/` | ignition | calendar (health), ignition | ignition `retain-failed ignition-runs/` | same |
+| `shadow-outcomes/` | opportunity-radar (shadow-outcomes) | opportunity-radar | opportunity-radar `retain-failed shadow-outcomes/` | same |
 
 ## Private outputs: destination and failed-pass retention class (13 Nov 2026, Codex 6852016986)
 
@@ -46,9 +158,10 @@ Diagnostics go to the private log only (data/private-scan-stdout.log); the publi
 | signals.json (private pass) | scan.mjs daily | data/private-signals.json (full private record; paired by session + zoned generatedAt) | OPTIONAL |
 | anything else the pass writes | scan.mjs | data/private-<name> | OPTIONAL |
 
-Still on the producer queue (not yet split): lab outputs carrying a per-symbol halal field, discovery2 / follow-lane reads of the tier2
-ledger, news logs, events-study watch-extra, other stdout and artifacts. When an owner portion of those moves to a private file it is
-added to OWNER_EVENT_LEDGERS (critical) if it records owner executions, SELLs, closures or commands.
+Producer queue status: class B/C outputs, the registry, events-study, news logs, directory outputs, stdout and artifacts are routed (see
+above); discovery2 / follow-lane do not read the tier2 ledger (only scan.mjs does, via dataPath). Remaining: the OPEN items in the
+findings. When an owner portion moves to a private file it is added to OWNER_EVENT_LEDGERS (critical) if it records owner executions,
+SELLs, closures or commands.
 
 ## Owner `report` reply (scan.mjs tgCommands, data/scan-report.txt)
 
