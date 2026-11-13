@@ -48,12 +48,20 @@ Superseded: the earlier finding that no workflow pulls is obsolete. Current stat
    missing danger-filing record is UNKNOWN: holdings get ASSESSMENT UNKNOWN (no clean HOLD, no invented SELL; independent SELL reasons
    still fire) and BUY paths say DANGER FILINGS NOT CHECKED. Before cutover the legacy behaviour is unchanged. `tips-public.jsonl`
    stays public (ARK / public-API provenance).
-9. **STILL OPEN: field-level classification of every remaining owner-reading emitter.** Modules that read owner files (holdings,
-   trades, marks, settings, watch list, tips, opinions, market calls, signals-private) and write data files not yet classified field by
-   field: autolab, deals, discover, earnings-study, events-study (sec-status), exits, fastmover-lab (fastmover-live), follow-lane
-   (follow-* feeds), horizons, hunting-lab, leaders-study, league (agents), movers (movers-state/journal, flags), news-watch
-   (macro-state/log), octopus, quality, rebalance, rebuy, score-study, stops, winners-study, calendar (calendar-status). "Reads a
-   setting" (e.g. quiet mode) is not by itself owner-derived content; each needs a field-level proof either way. Unclassified = OPEN.
+9. **Field-level classification of the remaining owner-reading emitters (step 48, Codex 6855218411 rule).**
+
+| Module(s) | Owner input read | Where it flows | Disposition |
+|---|---|---|---|
+| autolab, deals, discover, earnings-study, events-study, exits, fastmover-lab, horizons, hunting-lab, leaders-study, movers, rebalance, rebuy, score-study, stops, winners-study; octopus (`ownerQuietOff`) | `settings.quiet` only | only the Telegram send condition (every use inspected; no file write depends on it) | outputs PROVEN PUBLIC with respect to owner data |
+| follow-lane | owner marks (`halal.json`) | `follow-today.json`, `follow-fade.json`, `follow-board.json`, `follow-channels.json`, `follow-calls.jsonl` | all already PRIVATE |
+| league | owner fail marks | `agent-league.json`, `agent-shelf.jsonl` | already PRIVATE |
+| quality | owner fail marks | `quality.json`, the registry, a runner-temp pick file | already PRIVATE |
+| news-watch | holdings, private signals | `news-log.jsonl`, `news-meta.json`, `news-seen.json` | already PRIVATE |
+| news-watch | (none) | `macro-state.json`, `macro-log.jsonl`: index move + headlines only | PROVEN PUBLIC |
+| calendar | holdings (dividends of held stocks) | `calendar.enc` (AES-GCM ciphertext of owner content), `calendar-status.json` ("dividends for X of Y held stocks": a held-stock COUNT) | now PRIVATE (canonical names; calendar.yml and leaders-study save privately) |
+| health | none (file ages) | `health.json` | public (operational status only) |
+
+No owner-reading emitter is left unclassified in this tree. New emitters must be classified the same way before adoption.
 
 ## Hydrated workflows: private save, registry merge, failure retention, required history (generated from source)
 
