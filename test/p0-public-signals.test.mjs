@@ -69,9 +69,9 @@ test('the public row gate uses only ZAD\'s public list; the private mark gates t
 
 test('shared reader: news-watch and events-study read private buy lists only through pairing (no guessing from an older record)', async () => {
   const { hydrateSignals } = await import('../signals-read.mjs');
-  const pub = { session: 's', generatedAt: 'g', stocks: [] };
-  assert.deepEqual(hydrateSignals(pub, () => ({ v: 1, session: 's', generatedAt: 'g', posVerdict: {}, pead: [{ sym: 'ZZP', live: true }] })).pead, [{ sym: 'ZZP', live: true }]);
-  const stale = hydrateSignals(pub, () => ({ v: 1, session: 's', generatedAt: 'older', posVerdict: {}, pead: [{ sym: 'ZZP' }] }));
+  const pub = { session: '2026-11-12', generatedAt: '2026-11-12T21:40:00.000Z', stocks: [] };
+  assert.deepEqual(hydrateSignals(pub, () => ({ v: 1, session: '2026-11-12', generatedAt: '2026-11-12T21:40:00.000Z', posVerdict: {}, pead: [{ sym: 'ZZP', live: true }] })).pead, [{ sym: 'ZZP', live: true }]);
+  const stale = hydrateSignals(pub, () => ({ v: 1, session: '2026-11-12', generatedAt: '2026-11-11T21:40:00.000Z', posVerdict: {}, pead: [{ sym: 'ZZP' }] }));
   assert.equal(stale.posVerdictUnavailable, true); assert.equal(stale.pead, undefined);
   for (const f of ['news-watch.mjs', 'events-study.mjs']) assert.match(fs.readFileSync(new URL('../' + f, import.meta.url), 'utf8'), /readSignals\(\) \|\| \{\}/, f + ' uses the paired reader');
 });
@@ -82,3 +82,21 @@ test('missing private read cannot treat legacy public exit fields as current hyd
 test('unavailable private record removes every private-only legacy public list', async () => { const { hydrateSignals } = await import('../signals-read.mjs'); const out = hydrateSignals({ ...stamp, leaders: [{ sym: 'ZZQ' }], pead: [{ sym: 'ZZQ', live: true }], evt: [{ sym: 'ZZQ', live: true }] }, unavailable); assert.equal(out.posVerdictUnavailable, true); for (const k of ['leaders', 'pead', 'evt']) assert.equal(out[k], undefined, k); });
 test('absent pair clocks never form an authenticated matching scan', async () => { const { hydrateSignals } = await import('../signals-read.mjs'); const out = hydrateSignals({ stocks: [] }, () => ({ v: 1, posVerdict: { ZZQ: 'time exit' } })); assert.equal(out.posVerdictUnavailable, true); assert.equal(out.posVerdict, undefined); });
 test('malformed private list cannot be hydrated as a current assessment', async () => { const { hydrateSignals } = await import('../signals-read.mjs'); const out = hydrateSignals({ ...stamp }, () => ({ v: 1, ...stamp, posVerdict: {}, pead: 'malformed' })); assert.equal(out.posVerdictUnavailable, true); assert.equal(out.pead, undefined); });
+
+test('malformed verdict values, bad clocks and oversized lists fail closed; valid records still pair', async () => {
+  const { hydrateSignals } = await import('../signals-read.mjs'); const st = { session: '2026-11-12', generatedAt: '2026-11-12T21:40:00.000Z' };
+  for (const bad of [{ posVerdict: { ZZQ: {} } }, { posVerdict: { ZZQ: '' } }, { posVerdict: { 'not a symbol': 'x' } }, { posVerdict: {}, pead: [{}] }, { posVerdict: {}, leaders: Array.from({ length: 5001 }, () => ({ sym: 'ZZQ' })) }])
+    assert.equal(hydrateSignals({ ...st }, () => ({ v: 1, ...st, ...bad })).posVerdictUnavailable, true, JSON.stringify(bad).slice(0, 60));
+  for (const clocks of [{ session: 'garbage', generatedAt: 'garbage' }, { session: '2026-11-12', generatedAt: 'not-a-time' }]) assert.equal(hydrateSignals({ ...clocks }, () => ({ v: 1, ...clocks, posVerdict: {} })).posVerdictUnavailable, true);
+  const ok = hydrateSignals({ ...st }, () => ({ v: 1, ...st, posVerdict: { ZZQ: 'time exit' }, pead: [{ sym: 'ZZQ', live: true }] }));
+  assert.equal(ok.posVerdictUnavailable, undefined); assert.equal(ok.posVerdict.ZZQ, 'time exit');
+});
+test('legacy-only saved exit (no private record, no lastAct) is kept as HISTORICAL reconciliation, never current, never a new SELL', async () => {
+  const S = await loadScan({ files: { 'data/signals.json': { session: '2026-11-12', generatedAt: '2026-11-12T21:40:00.000Z', stocks: [], posVerdict: { ZZP: 'time exit after 126 sessions' } } } });
+  const sig = S.fn('hydrateSignals')(JSON.parse(fs.readFileSync('data/signals.json', 'utf8')));
+  assert.equal(sig.posVerdict, undefined); assert.equal(sig.posVerdictUnavailable, true); assert.equal(sig.legacyExitHistory.exits.ZZP, 'time exit after 126 sessions');
+  const a = S.fn('holdingAction')('ZZP', { entry: 12 }, { price: 12.5, t: Date.parse('2026-11-13T15:00:00Z') }, sig, Date.parse('2026-11-13T15:01:00Z'));
+  assert.equal(a.act, 'UNKNOWN'); assert.match(a.line, /HISTORICAL RECORDED EXIT \(legacy scan, session 2026-11-12\): time exit after 126 sessions\. .*reconcile it with your broker.*no new sale is instructed/);
+  assert.doesNotMatch(a.line, /^ZZP: SELL/);
+  assert.match(S.fn('retainedHoldingContext')('ZZP', { entry: 12 }, sig), /HISTORICAL RECORDED EXIT/);
+});

@@ -10,17 +10,34 @@ import fs from 'node:fs';
 export const SIGNALS_PRIVATE_FILE = 'data/signals-private.json';
 export const SIGNALS_PRIVATE_FIELDS = Object.freeze(['posVerdict', 'tipBoard', 'leaders', 'pead', 'evt', 'peadFunnel']);
 const object = (x) => !!x && typeof x === 'object' && !Array.isArray(x);
-const FIELD_OK = { posVerdict: object, tipBoard: object, peadFunnel: object, leaders: Array.isArray, pead: Array.isArray, evt: Array.isArray };
-const clock = (x) => typeof x === 'string' && x.length > 0;
-export function hydrateSignals(sig, readPrivate = () => JSON.parse(fs.readFileSync(SIGNALS_PRIVATE_FILE, 'utf8'))) {
+export const SIGNALS_PRIVATE_LIMITS = Object.freeze({ fileBytes: 8 * 1024 * 1024, listRows: 5000, reasonChars: 400, verdicts: 2000 });
+const SYM = /^[A-Z][A-Z0-9.\-]{0,9}$/, SESSION = /^\d{4}-\d{2}-\d{2}$/, STAMP = /^\d{4}-\d{2}-\d{2}(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2}))?$/;
+const validSession = (x) => typeof x === 'string' && SESSION.test(x) && Number.isFinite(Date.parse(x + 'T00:00:00Z'));
+const validStamp = (x) => typeof x === 'string' && STAMP.test(x) && Number.isFinite(Date.parse(x));
+const reason = (x, L) => typeof x === 'string' && x.trim().length > 0 && x.length <= L.reasonChars;
+// posVerdict: { SYMBOL: non-empty bounded reason string }; a non-string value would otherwise become a fabricated '[object Object]' SELL.
+const verdictMap = (m, L) => object(m) && Object.keys(m).length <= L.verdicts && Object.entries(m).every(([k, v]) => SYM.test(k) && reason(v, L));
+const rows = (a, L) => Array.isArray(a) && a.length <= L.listRows && a.every(r => object(r) && typeof r.sym === 'string' && SYM.test(r.sym));
+const FIELD_OK = { posVerdict: verdictMap, tipBoard: (x) => object(x), peadFunnel: (x) => object(x), leaders: rows, pead: rows, evt: rows };
+const defaultReadPrivate = () => { const st = fs.statSync(SIGNALS_PRIVATE_FILE); if (!st.isFile() || st.size > SIGNALS_PRIVATE_LIMITS.fileBytes) throw Error('PRIVATE_RECORD_UNSAFE_SIZE'); return JSON.parse(fs.readFileSync(SIGNALS_PRIVATE_FILE, 'utf8')); };
+export function hydrateSignals(sig, readPrivate = defaultReadPrivate, L = SIGNALS_PRIVATE_LIMITS) {
   if (!object(sig)) return sig;
   // Every private-only field is stripped from the public input first: a public copy (legacy or not) is never current private evidence.
-  // An already-retained SELL survives through its original private record / recorded holding plan, never through public fields.
   const base = { ...sig }; for (const k of SIGNALS_PRIVATE_FIELDS) delete base[k];
   let pv = null; try { pv = readPrivate(); } catch {}
-  const paired = object(pv) && pv.v === 1 && clock(sig.session) && clock(sig.generatedAt) && pv.session === sig.session && pv.generatedAt === sig.generatedAt;
-  const valid = paired && object(pv.posVerdict) && SIGNALS_PRIVATE_FIELDS.every(k => pv[k] === undefined || FIELD_OK[k](pv[k]));
-  if (!valid) return { ...base, posVerdictUnavailable: true, ...(object(sig.posVerdict) ? { posVerdictSource: 'LEGACY_PUBLIC_NOT_CURRENT' } : {}) };
+  const paired = object(pv) && pv.v === 1 && validSession(sig.session) && validStamp(sig.generatedAt) && pv.session === sig.session && pv.generatedAt === sig.generatedAt;
+  const valid = paired && verdictMap(pv.posVerdict, L) && SIGNALS_PRIVATE_FIELDS.every(k => pv[k] === undefined || FIELD_OK[k](pv[k], L));
+  if (!valid) {
+    const out = { ...base, posVerdictUnavailable: true };
+    // A previously saved LEGACY public exit (written before the split) is kept only as HISTORICAL reconciliation evidence, separate from
+    // posVerdict: it is never current, never a new instruction, and readers present it as "reconcile with your broker" text.
+    if (object(sig.posVerdict)) {
+      out.posVerdictSource = 'LEGACY_PUBLIC_NOT_CURRENT';
+      const exits = {}; for (const [k, v] of Object.entries(sig.posVerdict).slice(0, L.verdicts)) if (SYM.test(k) && reason(v, L)) exits[k] = v;
+      out.legacyExitHistory = { source: 'LEGACY_PUBLIC_SCAN', session: validSession(sig.session) ? sig.session : null, generatedAt: validStamp(sig.generatedAt) ? sig.generatedAt : null, exits };
+    }
+    return out;
+  }
   for (const k of SIGNALS_PRIVATE_FIELDS) if (pv[k] !== undefined) base[k] = pv[k];
   if (!base.tipBoard) base.tipBoard = { sources: [], tips: [] };
   return base;
