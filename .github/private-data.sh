@@ -41,8 +41,11 @@ open() {
 }
 sum() { (cd "$1" && for f in $FILES; do [ -f "data/$f" ] && sha256sum "data/$f"; done) | sha256sum | cut -c1-16; }
 # P0 Route A (Codex 6851680092): every copy is checked. A failed copy means the private save is NOT confirmed (no PRIVATE_SAVE_OK).
+# the research registry is written ONLY by merge-library (this run's changes onto the newest private registry); a generic push never
+# copies it, so a lab's unmerged run copy can never overwrite the newest registry (check still copies it: that is the custody seeding)
+REGISTRY_ONLY_MERGED=" strategy-library.json "
 copy_in() { mkdir -p "$DIR/data" || return 1; local f bad=0
-  for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; cp "$ROOT/data/$f" "$DIR/data/$f" || { say "Error: could not copy $f into the private clone"; bad=1; }; done
+  for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; [ "$MODE" = push ] && case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac; cp "$ROOT/data/$f" "$DIR/data/$f" || { say "Error: could not copy $f into the private clone"; bad=1; }; done
   return $bad; }
 # PENDING: an owner update made on this runner whose private save is not yet verified. It is created BEFORE anything else in push (so a
 # failure before the copy, the commit or the push keeps it) and removed only by a verified save. While it exists, pull never overwrites
@@ -134,7 +137,7 @@ case "$MODE" in
     BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null); bad=0; n=0
     [ -z "$(gitp status --porcelain -- data 2>/dev/null)" ] || { say "Error: private save left uncommitted owner files"; bad=1; }
     [ "$(gitp rev-parse HEAD 2>/dev/null)" = "$(gitp rev-parse "origin/$BR" 2>/dev/null)" ] || { say "Error: private save not on the private repository"; bad=1; }
-    m=0; for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; n=$((n+1))
+    m=0; for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac; n=$((n+1))
       gitp cat-file -e "origin/$BR:data/$f" 2>/dev/null || { say "Error: private file $f not confirmed on the private repository"; bad=1; continue; }
       # content, not only existence: the stored bytes must be this job's bytes, except the hunk-merged owner files (save-data.sh rule)
       [ "$(gitp rev-parse "origin/$BR:data/$f" 2>/dev/null)" = "$(git hash-object "$ROOT/data/$f")" ] && continue

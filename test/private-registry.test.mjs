@@ -59,3 +59,10 @@ test('every registry workflow: pull before require and the base copy, private me
     assert.match(y, /\[ "\$LF" = 0 \] \|\| exit 1/, f); assert.doesNotMatch(y, /node library-merge\.mjs/, f); assert.doesNotMatch(y, /(git add|for f in)[^#\n]*data\/strategy-library\.json/, f); }
   assert.ok(n >= 56, 'registry workflows: ' + n);
 });
+test('a generic private push (producer saves) never writes the registry: only merge-library does (no last-writer-wins via push)', () => {
+  const w = world(), a = runner(w), b = runner(w); startLab(a); startLab(b);
+  assert.equal(finishLab(b, (L) => L.strategies.push({ id: 'R-B', verdict: 'REJECTED', trials: 1 })).status, 0);
+  W(a.pub, 'data/strategy-library.json', { strategies: [{ id: 'R-A-ONLY' }] });   // a's unmerged run copy, sitting at the canonical path
+  const r = a.pd('push'); assert.equal(r.status, 0, r.stdout + r.stderr);
+  const ids = remoteLib(w).strategies.map(e => e.id).sort(); assert.deepEqual(ids, ['R-B', 'R-KEEP', 'R-OLD'], 'the registry was not overwritten by a generic push');
+});
