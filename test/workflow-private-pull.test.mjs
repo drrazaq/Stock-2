@@ -33,7 +33,8 @@ test('no workflow names a private-listed file in a public git add or FILES list 
   const bad = [];
   for (const w of fs.readdirSync(WF).filter(f => f.endsWith('.yml'))) { const y = fs.readFileSync(path.join(WF, w), 'utf8');
     for (const line of y.split('\n')) { if (!/git add|FILES=|for f in /.test(line) || /^\s*#/.test(line)) continue;
-      for (const f of priv) if (new RegExp('data/' + f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=[\\s"\';]|$)').test(line)) bad.push(w + ': ' + f); } }
+      for (const f of priv) { const e = (f.endsWith('/') ? f.slice(0, -1) : f).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');   // a directory entry: its root or any path under it
+        if (new RegExp('data/' + e + (f.endsWith('/') ? '(?:/|(?=[\\s"\';]|$))' : '(?=[\\s"\';]|$)')).test(line)) bad.push(w + ': ' + f); } } }
   assert.deepEqual(bad, []);
 });
 test('class C producers: owner-derived outputs saved privately BEFORE any reset/clean, failure visible, nothing published outside private mode', () => {

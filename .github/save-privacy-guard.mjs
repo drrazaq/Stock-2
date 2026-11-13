@@ -6,10 +6,16 @@ import {pathToFileURL} from 'node:url';
 const refuse=code=>{throw Error(code);};
 function git(cwd,...args){try{return execFileSync('git',args,{cwd,encoding:'utf8',stdio:['ignore','pipe','pipe']});}catch{refuse('PUBLIC_SAVE_GIT_METADATA_UNAVAILABLE');}}
 const nul=s=>s.split('\0').filter(Boolean);
+const PRIVATE_DIRECTORIES=new Set(['shadow','ignition-runs','shadow-outcomes']);
 function privatePaths(file){let raw;try{raw=fs.readFileSync(file,'utf8');}catch{refuse('PUBLIC_SAVE_PRIVATE_MANIFEST_UNAVAILABLE');}
  const names=raw.split('\n').map(x=>x.trim()).filter(x=>x&&!x.startsWith('#'));
- if(!names.length||names.some(x=>!/^[-a-zA-Z0-9._/]+$/.test(x)||x.startsWith('/')||x.split('/').some(p=>p==='.'||p==='..'||!p)))refuse('PUBLIC_SAVE_PRIVATE_MANIFEST_INVALID');
- const paths=names.map(x=>'data/'+x),listed=new Set(paths);return {paths,isPrivate:p=>listed.has(p)||p.startsWith('data/private-')};}
+ const entries=names.map(x=>({name:x.endsWith('/')?x.slice(0,-1):x,dir:x.endsWith('/')}));
+ if(!entries.length||entries.some(({name,dir})=>!/^[-a-zA-Z0-9._/]+$/.test(name)||name.startsWith('/')||name.split('/').some(p=>p==='.'||p==='..'||!p)||
+   (dir?!PRIVATE_DIRECTORIES.has(name):PRIVATE_DIRECTORIES.has(name))))refuse('PUBLIC_SAVE_PRIVATE_MANIFEST_INVALID');
+ // Git exclusions use the directory root without a slash, protecting a root symlink/file too. Metadata checks cover every descendant,
+ // including reverted/merged outgoing history; the helper that copies directory bytes separately rejects physical symlinks.
+ const paths=entries.map(x=>'data/'+x.name),listed=new Set(paths),prefixes=entries.filter(x=>x.dir).map(x=>'data/'+x.name+'/');
+ return {paths,isPrivate:p=>listed.has(p)||prefixes.some(prefix=>p.startsWith(prefix))||p.startsWith('data/private-')};}
 function isKnownPublicOrigin(raw){
  let host='',repo='';try{if(/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)){const u=new URL(raw);host=u.hostname;repo=u.pathname;}else{const m=raw.match(/^(?:[^@]+@)?([^:/]+):(.+)$/);if(m){host=m[1];repo=m[2];}}}catch{return false;}
  return host.toLowerCase()==='github.com'&&repo.replace(/^\/+|\/+$/g,'').replace(/\.git$/i,'').toLowerCase()==='drrazaq/stock-2';

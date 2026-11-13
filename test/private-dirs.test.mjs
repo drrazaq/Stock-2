@@ -2,7 +2,6 @@
 // directory entries (shadow/, ignition-runs/, shadow-outcomes/) to their regular files on both sides, refuses symlinks, special files,
 // unsafe path parts and unlisted directories, stops on the admission bound without pruning, and re-lists after the private clone is
 // opened so a fresh runner installs every private-* and directory file. Local throw-away repositories only; all data synthetic.
-// (The private PUSH of directory files goes through save-privacy-guard.mjs, which Codex is extending; its round trip is added with that patch.)
 import test from 'node:test'; import assert from 'node:assert/strict'; import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
 import { execSync, spawnSync } from 'node:child_process';
 const REPO = path.resolve(import.meta.dirname, '..');
@@ -14,7 +13,7 @@ const R = (dir, f) => { try { return fs.readFileSync(path.join(dir, f), 'utf8');
 const DIRS = 'shadow/\nignition-runs/\nshadow-outcomes/\n';
 function world({ priv = {}, manifestExtra = DIRS } = {}) {
   const pub = tmp('pd-pub-'), bare = tmp('pd-priv-'), seed = tmp('pd-seed-'), run = tmp('pd-run-'), dir = path.join(run, 'private-data');
-  for (const f of ['.github/private-data.sh', '.github/private-outputs.sh']) W(pub, f, fs.readFileSync(path.join(REPO, f)));
+  for (const f of ['.github/private-data.sh', '.github/private-outputs.sh', '.github/save-data.sh', '.github/save-privacy-guard.mjs', '.github/merge-alert-state.mjs']) W(pub, f, fs.readFileSync(path.join(REPO, f)));
   W(pub, '.github/private-files.txt', fs.readFileSync(path.join(REPO, '.github/private-files.txt'), 'utf8') + '# directory entries (fixture)\n' + manifestExtra);
   W(pub, '.github/private-data-mode', ''); W(pub, 'data/.keep', '');
   const base = { 'data/my-positions.json': '{}\n', 'data/halal.json': '{}\n', 'data/settings.json': '{}\n', ...priv };
@@ -66,4 +65,21 @@ test('two-pass runner: a listed directory makes its root and every descendant pr
   const listed = fs.readFileSync(path.join(REPO, '.github/private-files.txt'), 'utf8').split('\n').map(l => l.trim());
   for (const d of ['shadow', 'ignition-runs', 'shadow-outcomes']) if (listed.includes(d + '/')) { assert.ok(isPrivate(d)); assert.ok(isPrivate(d + '/2026-11-12/x.json')); }
   assert.ok(!isPrivate('shadowx.json') && !isPrivate('shadow-report-public.json'), 'no accidental prefix match without the slash');
+});
+
+test('push round trip through the real save guard: nested directory files are stored and content-verified privately', () => {
+  const w = world({ manifestExtra: '' });   // the real manifest already declares the three directories
+  assert.equal(w.pd('pull').status, 0); W(w.pub, 'data/ignition-runs/2026-11-13/r2-delivery.json', '{"d":1}\n'); W(w.pub, 'data/shadow/2026-11-13.jsonl.gz', 'gz2');
+  const r = w.pd('push'); assert.equal(r.status, 0, r.stdout + r.stderr); assert.match(r.stdout, /private save verified/);
+  assert.equal(sh('git --git-dir=' + w.bare + ' show main:data/ignition-runs/2026-11-13/r2-delivery.json', os.tmpdir()), '{"d":1}\n');
+  assert.equal(sh('git --git-dir=' + w.bare + ' show main:data/shadow/2026-11-13.jsonl.gz', os.tmpdir()), 'gz2');
+});
+test('retain-failed with a directory argument quarantines every changed file under it (flat names), never a symlinked directory', () => {
+  const w = world({ manifestExtra: '', priv: { 'data/shadow/a.jsonl.gz': 'A' } });
+  assert.equal(w.pd('pull').status, 0); fs.writeFileSync(path.join(w.run, 'private-pulled-ok'), '');
+  const po = (...a) => spawnSync('bash', ['.github/private-outputs.sh', ...a], { cwd: w.pub, encoding: 'utf8', env: w.env });
+  assert.equal(po('admit').status, 0); W(w.pub, 'data/shadow/b.jsonl.gz', 'B-partial');
+  const r = po('retain-failed', 'watcher', 'shadow/'); assert.match(r.stdout, /1 changed outputs stored privately/);
+  assert.equal(R(w.pub, 'data/shadow/a.jsonl.gz'), 'A', 'unchanged file stays');
+  assert.ok(fs.readdirSync(path.join(w.pub, 'data')).some(n => /^private-failed-pass-.*__shadow__b\.jsonl\.gz$/.test(n)));
 });

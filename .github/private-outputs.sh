@@ -40,8 +40,10 @@ case "$MODE" in
     if bash "$ROOT/.github/private-data.sh" push; then note "stored privately (verified)"; exit 0; fi
     note "NOT DURABLE: the private save failed; outputs stay on this runner only"; exit 1 ;;
   retain-failed)
-    gate; n=0
-    for f in "$@"; do [ -f "$ROOT/data/$f" ] || continue
+    gate; n=0; L=""
+    # a declared private directory argument (shadow/, ignition-runs/, shadow-outcomes/) means every regular file under it (never a symlink)
+    for a in "$@"; do case "$a" in */) L="$L $( [ -d "$ROOT/data/${a%/}" ] && [ ! -L "$ROOT/data/${a%/}" ] && cd "$ROOT/data" && find -P "${a%/}" -type f | LC_ALL=C sort | tr '\n' ' ')";; *) L="$L $a";; esac; done
+    for f in $L; do [ -f "$ROOT/data/$f" ] || continue
       if [ -f "$BL/data/$f" ] && cmp -s "$ROOT/data/$f" "$BL/data/$f"; then continue; fi   # unchanged since hydration
       mv -f "$ROOT/data/$f" "$ROOT/data/private-failed-pass-$stamp""__""${f//\//__}" && n=$((n+1)) || { note "Error: could not quarantine $f"; exit 1; }; done
     [ "$n" -gt 0 ] || { note "producer failed; it changed no owner-derived output since hydration"; exit 1; }
