@@ -63,85 +63,85 @@ Superseded: the earlier finding that no workflow pulls is obsolete. Current stat
 
 No owner-reading emitter is left unclassified in this tree. New emitters must be classified the same way before adoption.
 
-## Hydrated workflows: private save, registry merge, failure retention, required history (generated from source)
+## Hydrated workflows: private save, registry merge, failure retention, required history (parsed from the YAML run commands; arguments end at a shell operator or comment)
 
-|Workflow|private save|registry merge|failure retention (outputs)|required history|
+|Workflow|private save|registry merge|failure retention (outputs)|required history (parsed `require` arguments)|
 |---|---|---|---|---|
-|`Smart-money.yml`|private-outputs save||events-recent.json events-study.json sec-ciks.json|-|
-|`Tiprank.yml`|read only||-|-|
+|`Smart-money.yml`|private-outputs save||events-recent.json events-study.json sec-ciks.json smart-money.json|-|
+|`Tiprank.yml`|none (no owner-derived output)||-|-|
 |`account-replay.yml`|private-outputs save||account-replay-pb12t20-trades.jsonl account-replay-pb12t20.json account-replay-trades.jsonl account-replay.json|-|
-|`agent-a-lab.yml`|private-outputs save|yes|agent-a-lab.json rot-today.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a agent-a-lab.json cp data/strategy-library.json fresh is missing never one private registry strategy-library.json|
-|`agent-a-ldx-lab.yml`|read only|yes|-|strategy-library.json|
-|`agent-a-tgt-lab.yml`|read only|yes|-|strategy-library.json|
-|`agent-a-tp-lab.yml`|read only|yes|-|strategy-library.json|
-|`agent-c-lab.yml`|read only|yes|-|strategy-library.json|
-|`agent-c2-lab.yml`|read only|yes|-|strategy-library.json|
-|`agent-c3-lab.yml`|read only|yes|-|strategy-library.json|
-|`angles-lab.yml`|read only|yes|-|strategy-library.json|
-|`anomaly-lab.yml`|read only|yes|-|strategy-library.json|
+|`agent-a-lab.yml`|private-outputs save|yes|agent-a-lab.json rot-today.json|agent-a-lab.json strategy-library.json|
+|`agent-a-ldx-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`agent-a-tgt-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`agent-a-tp-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`agent-c-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`agent-c2-lab.yml`|private-outputs save|yes|agent-c-tip-score.json agent-c2-run.log|strategy-library.json|
+|`agent-c3-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`angles-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`anomaly-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
 |`bot.yml`|private-data push||-|-|
-|`calendar.yml`|read only||-|-|
-|`catalyst-lab.yml`|read only|yes|-|strategy-library.json|
-|`chain-decoder.yml`|read only|yes|-|strategy-library.json|
-|`comeback.yml`|read only|yes|-|strategy-library.json|
-|`confluence-lab.yml`|read only|yes|-|strategy-library.json|
-|`deals.yml`|read only||-|-|
-|`decoded-lab.yml`|read only|yes|-|strategy-library.json|
-|`discover.yml`|read only||-|-|
-|`discovery2.yml`|private-outputs save|yes|discovery2-today.json discovery2.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a cp data/strategy-library.json discovery2.json fresh is missing never one private registry strategy-library.json|
-|`event-orb-retest-research.yml`|private-outputs save|yes|catalyst-events.jsonl event-orb-retest-15d-bars-coverage.json event-orb-retest-15d-control-requests.json event-orb-retest-15d-control-study.json event-orb-retest-15d-controls.jsonl event-orb-retest-15d-events.json event-orb-retest-15d-gates.json event-orb-retest-15d-paper.json event-orb-retest-15d-requests.json event-orb-retest-15d-study.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a catalyst-events.jsonl cp data/strategy-library.json event-orb-retest-15d-paper.json fresh is missing never one private registry strategy-library.json|
-|`expert-lab.yml`|read only|yes|-|strategy-library.json|
+|`calendar.yml`|private-outputs save||calendar-status.json calendar.enc|-|
+|`catalyst-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`chain-decoder.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`comeback.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`confluence-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`deals.yml`|none (no owner-derived output)||-|-|
+|`decoded-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`discover.yml`|none (no owner-derived output)||-|-|
+|`discovery2.yml`|private-outputs save|yes|discovery2-today.json discovery2.json|discovery2.json strategy-library.json|
+|`event-orb-retest-research.yml`|private-outputs save|yes|catalyst-events.jsonl event-orb-retest-15d-bars-coverage.json event-orb-retest-15d-control-requests.json event-orb-retest-15d-control-study.json event-orb-retest-15d-controls.jsonl event-orb-retest-15d-events.json event-orb-retest-15d-gates.json event-orb-retest-15d-paper.json event-orb-retest-15d-requests.json event-orb-retest-15d-study.json|catalyst-events.jsonl event-orb-retest-15d-paper.json strategy-library.json|
+|`expert-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
 |`fastmover-intraday.yml`|private-outputs save||fastmover-lab.json fastmover-paper.json ignition-lab.json ignition-results.json|fastmover-paper.json|
 |`follow-lane.yml`|private-outputs save||follow-board.json follow-calls.jsonl follow-channels.json follow-fade.json follow-today.json|follow-board.json follow-calls.jsonl|
-|`hold-lab.yml`|read only|yes|-|strategy-library.json|
+|`hold-lab.yml`|private-outputs save|yes|hold-lab-run.log hold-lab.json|strategy-library.json|
 |`ignition.yml`|private-outputs save||early-wave-obs.jsonl ignition-days.jsonl ignition-live.json ignition-missed-history.jsonl ignition-paper.jsonl ignition-runs/ opp-days.jsonl opp-ledger.jsonl premarket.jsonl radar-v3-ledger.jsonl radar-v3-snap.json shadow/ vol-curve.json|ignition-days.jsonl ignition-paper.jsonl opp-ledger.jsonl radar-v3-ledger.jsonl|
 |`intraday-radar.yml`|private-outputs save||intraday-missed.jsonl intraday-radar.json radar-day.json radar-paper.json radar-record.json radar-sectors.json|-|
-|`leaders-study.yml`|private-outputs save|yes|agent-a-lab.json agent-league.json agent-shelf.jsonl discovery2-today.json discovery2.json events-study.json fastmover-lab.json ignition-missed-history.jsonl quality.json rot-today.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a agent-a-lab.json agent-league.json agent-shelf.jsonl cp data/strategy-library.json fresh is missing never one private registry strategy-library.json|
-|`macro-lab.yml`|read only|yes|-|strategy-library.json|
+|`leaders-study.yml`|private-outputs save|yes|agent-a-lab.json agent-league.json agent-shelf.jsonl calendar-status.json calendar.enc discovery2-today.json discovery2.json events-study.json fastmover-lab.json ignition-missed-history.jsonl quality.json rot-today.json tip-score.json|agent-a-lab.json agent-league.json agent-shelf.jsonl strategy-library.json|
+|`macro-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
 |`main.yml`|private-data push||-|-|
-|`ml-lab.yml`|read only|yes|-|strategy-library.json|
+|`ml-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
 |`movers.yml`|private-outputs save||fastmover-lab.json fastmover-paper.json ignition-lab.json ignition-results.json|fastmover-paper.json|
 |`news.yml`|private-outputs save||news-log.jsonl news-meta.json news-seen.json|-|
 |`opportunity-radar.yml`|private-outputs save||radar-v3-ledger.jsonl shadow-outcomes/ shadow-report.json|radar-v3-ledger.jsonl|
-|`options-lab.yml`|private-outputs save|yes|options-lab-run.log options-lab.json quality.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a cp data/strategy-library.json fresh is missing never one options-lab.json private registry strategy-library.json|
+|`options-lab.yml`|private-outputs save|yes|options-lab-run.log options-lab.json quality.json|options-lab.json strategy-library.json|
 |`options-survey.yml`|private-outputs save||options-spread-survey.json options-spread-survey.md|-|
-|`premarket.yml`|read only||-|-|
-|`research-lab.yml`|read only|yes|-|strategy-library.json|
+|`premarket.yml`|none (no owner-derived output)||-|-|
+|`research-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
 |`scorecard-1023.yml`|private-outputs save||scorecard-1023.json|-|
-|`squad1-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad10-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad11-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad12-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad13-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad14-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad15-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad15b-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad16-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad17-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad18-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad19-lab.yml`|private-outputs save|yes|squad19-board.json squad19-diag.json squad19-lab.json squad19-paper.jsonl squad19-rh1-fm.json squad19-rh1-fm.md squad19-rh1-raw.json squad19-rh1-raw.md squad19-rh1-run.log squad19-run.log squad19-today.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a cp data/strategy-library.json fresh is missing never one private registry squad19-lab.json squad19-paper.jsonl strategy-library.json|
-|`squad2-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad20-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad21-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad22-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad23-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad24-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad25-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad26-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad27-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad28-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad29-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad3-lab.yml`|private-outputs save|yes|squad3-lab.json squad3-run.log squad3-today.json|"$RUNNER_TEMP/library-base.json" # && P0: UNKNOWN, a cp data/strategy-library.json fresh is missing never one private registry squad3-lab.json strategy-library.json|
-|`squad4-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad5-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad6-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad7-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad8-lab.yml`|read only|yes|-|strategy-library.json|
-|`squad9-lab.yml`|read only|yes|-|strategy-library.json|
-|`tipster-lab.yml`|read only|yes|-|strategy-library.json|
-|`value-lab.yml`|read only|yes|-|strategy-library.json|
+|`squad1-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad10-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad11-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad12-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad13-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad14-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad15-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad15b-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad16-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad17-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad18-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad19-lab.yml`|private-outputs save|yes|squad19-board.json squad19-diag.json squad19-lab.json squad19-paper.jsonl squad19-rh1-fm.json squad19-rh1-fm.md squad19-rh1-raw.json squad19-rh1-raw.md squad19-rh1-run.log squad19-run.log squad19-today.json|squad19-lab.json squad19-paper.jsonl strategy-library.json|
+|`squad2-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad20-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad21-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad22-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad23-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad24-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad25-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad26-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad27-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad28-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad29-lab.yml`|private-outputs save|yes|squad29-diag.json squad29-flags-today.json squad29-lab.json squad29-run.log|strategy-library.json|
+|`squad3-lab.yml`|private-outputs save|yes|squad3-lab.json squad3-run.log squad3-today.json|squad3-lab.json strategy-library.json|
+|`squad4-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad5-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad6-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad7-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad8-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`squad9-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`tipster-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
+|`value-lab.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
 |`verify-lab.yml`|private-outputs save||verify-lab.json|-|
-|`winners-autopsy.yml`|read only|yes|-|strategy-library.json|
+|`winners-autopsy.yml`|none (no owner-derived output)|yes|-|strategy-library.json|
 
 "read only" = no owner-derived output of its own (registry labs merge only their registry changes; the others write public research
 outputs or nothing). All 75 use the private step shell.

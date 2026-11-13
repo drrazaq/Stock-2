@@ -22,6 +22,7 @@ export function reservationPersist({ env = process.env, root = process.cwd(), pu
   const authedGit = (cmd, args, o = {}) => git(cmd, args, { ...o, env: { ...(o.env || process.env), ...auth } });
   return (file, opts = {}) => {
     try {
+      if (fs.existsSync(custodyReceipt(env) + '.revoked')) return { ok: false, reason: 'PRIVATE_RESERVATION_UNAVAILABLE' };
       const r = JSON.parse(fs.readFileSync(custodyReceipt(env), 'utf8'));
       if (!r || r.status !== 'ADMITTED' || r.url !== url) return { ok: false, reason: 'PRIVATE_RESERVATION_UNAVAILABLE' };
       if (String(git('git', ['remote', 'get-url', 'origin'], { cwd: dir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })).trim() !== url) return { ok: false, reason: 'PRIVATE_RESERVATION_UNAVAILABLE' };
@@ -32,6 +33,7 @@ export function reservationPersist({ env = process.env, root = process.cwd(), pu
 // Explicit live-send coverage for the watcher's run record: PRIVATE (custody-admitted, bound clone) or UNAVAILABLE with a fixed reason.
 export function reservationRouteStatus({ env = process.env, root = process.cwd(), git = execFileSync } = {}) {
   if (!fs.existsSync(path.join(root, '.github/private-data-mode'))) return { liveSends: 'UNAVAILABLE', reason: 'PRIVATE_ROUTE_NOT_ADOPTED' };
+  if (fs.existsSync(custodyReceipt(env) + '.revoked')) return { liveSends: 'UNAVAILABLE', reason: 'CUSTODY_NOT_ADMITTED' };
   try { const r = JSON.parse(fs.readFileSync(custodyReceipt(env), 'utf8')); if (!r || r.status !== 'ADMITTED' || r.url !== PRIVATE_REPO_URL(env)) return { liveSends: 'UNAVAILABLE', reason: 'CUSTODY_NOT_ADMITTED' }; } catch { return { liveSends: 'UNAVAILABLE', reason: 'CUSTODY_NOT_ADMITTED' }; }
   try { if (String(git('git', ['remote', 'get-url', 'origin'], { cwd: privateCloneDir(env), encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] })).trim() !== PRIVATE_REPO_URL(env)) return { liveSends: 'UNAVAILABLE', reason: 'CLONE_NOT_BOUND' }; } catch { return { liveSends: 'UNAVAILABLE', reason: 'CLONE_MISSING' }; }
   return { liveSends: 'PRIVATE', reason: null };

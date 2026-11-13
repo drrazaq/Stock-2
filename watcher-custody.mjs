@@ -26,6 +26,11 @@ function tree(cwd, rev) {   // { relpath: blob } of the namespace at rev (record
 }
 const valid = (r, rel) => r && r.version === 2 && r.keySha256 === rel.slice(11, 75) && r.day === rel.slice(0, 10) && r.state in RANK;
 export function admit({ root = process.cwd(), env = process.env } = {}) {
+  // REVOKE first (Codex 6855604445): any earlier receipt is invalidated before any readmission work, so a failed or partial readmission
+  // never leaves send authority behind. If the receipt cannot be removed, a revocation marker closes the route and admission fails.
+  const rc = custodyReceipt(env), revoked = rc + '.revoked';
+  try { fs.rmSync(rc, { force: true }); } catch {}
+  if (fs.existsSync(rc)) { try { fs.writeFileSync(revoked, new Date().toISOString()); } catch {} return { status: 'NOT_ADMITTED', reason: 'RECEIPT_REVOCATION_FAILED' }; }
   const no = (reason) => ({ status: 'NOT_ADMITTED', reason });
   if (!fs.existsSync(path.join(root, '.github/private-data-mode'))) return no('NOT_PRIVATE_MODE');
   const dir = privateCloneDir(env), url = PRIVATE_REPO_URL(env), auth = privateGitEnv(env);
@@ -49,7 +54,8 @@ export function admit({ root = process.cwd(), env = process.env } = {}) {
   for (const rel of Object.keys(priv)) { const dest = path.join(root, NS, rel); fs.mkdirSync(path.dirname(dest), { recursive: true });
     const tmp = dest + '.custody.tmp'; fs.writeFileSync(tmp, g(dir, ['show', tip + ':' + NS + '/' + rel])); fs.renameSync(tmp, dest); }
   const receipt = { status: 'ADMITTED', url, privateCommit: tip, publicCommit: custody.publicCommit, at: new Date().toISOString() };
-  fs.writeFileSync(custodyReceipt(env), JSON.stringify(receipt), { mode: 0o600 });
+  fs.writeFileSync(rc, JSON.stringify(receipt), { mode: 0o600 }); try { fs.rmSync(revoked, { force: true }); } catch {}
+  if (fs.existsSync(revoked)) { try { fs.rmSync(rc, { force: true }); } catch {} return no('RECEIPT_REVOCATION_FAILED'); }
   return receipt;
 }
 export function prepare(out, { root = process.cwd() } = {}) {

@@ -83,3 +83,6 @@ test('a clone bound to another remote is refused even with a receipt; pre-cutove
   assert.deepEqual([v.files(v.pubBare), v.files(v.privBare)], before, 'no public publication path; nothing written anywhere');
   assert.deepEqual(reservationRouteStatus({ env: v.env, root: v.pub }), { liveSends: 'UNAVAILABLE', reason: 'PRIVATE_ROUTE_NOT_ADOPTED' });
 });
+
+// Codex 6855604445 (verbatim): a rejected readmission revokes the earlier receipt.
+test('rejected readmission revokes prior receipt',()=>{const w=world();w.importCustody();assert.equal(admit({root:w.pub,env:w.env}).status,'ADMITTED');W(w.pub,NS+key('stop:ZZL:stop')+'.json',rec('stop:ZZL:stop','RESERVED'));sh('git add -A && git commit -qm late',w.pub);assert.equal(admit({root:w.pub,env:w.env}).status,'NOT_ADMITTED');let called=false;const r=reservationPersist({root:w.pub,env:w.env,publish:()=>{called=true;return {ok:true};}})('data/unused.json',{});assert.equal(called,false);assert.equal(r.ok,false);});

@@ -22,7 +22,13 @@ test('nothing the step prints reaches the public log: no :: commands, masks, ann
   const log = fs.readFileSync(path.join(t, 'private-step-logs/job.log'), 'utf8'); assert.equal((log.match(/ZZPRIVATE/g) || []).length, 4);
   assert.equal(fs.statSync(path.join(t, 'private-step-logs')).mode & 0o077, 0, 'owner-only private log directory');
 });
-test('GITHUB_OUTPUT / GITHUB_STEP_SUMMARY files keep working; steps are numbered; a bad mode never runs the step', () => {
+test('the PUBLIC step summary never receives step text (redirected privately); GITHUB_OUTPUT keeps working', () => {
+  const t = rt(), sum = path.join(t, 'public-summary.md'), out = path.join(t, 'out'); fs.writeFileSync(sum, ''); fs.writeFileSync(out, '');
+  const r = step(t, 'pipefail', 'echo "- private outputs (x): ZZPRIVATE NOT DURABLE" >> "$GITHUB_STEP_SUMMARY"\necho k=v >> "$GITHUB_OUTPUT"\n', { GITHUB_STEP_SUMMARY: sum, GITHUB_OUTPUT: out });
+  assert.equal(r.status, 0); assert.equal(fs.readFileSync(sum, 'utf8'), '', 'public summary untouched'); assert.equal(fs.readFileSync(out, 'utf8'), 'k=v\n');
+  assert.match(fs.readFileSync(path.join(t, 'private-step-logs/job.log'), 'utf8'), /summary \(private\) ===\n- private outputs \(x\): ZZPRIVATE/);
+});
+test('GITHUB_OUTPUT files keep working; steps are numbered; a bad mode never runs the step', () => {
   const t = rt(), out = path.join(t, 'out'); fs.writeFileSync(out, '');
   step(t, 'plain', 'echo stage=judge >> "$GITHUB_OUTPUT"\n', { GITHUB_OUTPUT: out }); assert.equal(fs.readFileSync(out, 'utf8'), 'stage=judge\n');
   assert.match(step(t, 'plain', 'true\n').stdout, /^private step 2: exit 0/);

@@ -208,6 +208,10 @@ at=%s
     rm -f "$IDX"; say "Error: quarantine NOT stored privately after 5 tries; it stays on this runner only"; exit 1 ;;
   push)
     date -u +%FT%TZ > "$PENDING" || { say "Error: cannot record the pending owner update"; exit 1; }   # first: any later failure keeps it
+    # Codex 6855462716: a save never runs without intent provenance once this runner was hydrated. A broken or lost intent record keeps
+    # the update PENDING (owner commands pause at the next pull) until the explicit, evidence-preserving `recover-intent`.
+    if [ -e "$INT.broken" ] || { [ -f "$BL/RECEIPT" ] && [ ! -f "$INT/RECEIPT" ]; }; then
+      say "Error: private save refused: the intent record of this runner is unavailable (no save without provenance); your update is kept; run recover-intent"; exit 1; fi
     runlog_tail "$ROOT/data/$RUNLOG_NAME" && FILES="$FILES $RUNLOG_NAME"   # the PARTIAL run-log tail travels with this save
     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }
     bound || { say "Error: private save NOT confirmed (the private clone is not bound to the declared private repository); your update is kept"; exit 1; }
@@ -228,12 +232,29 @@ at=%s
       # content, not only existence: the stored bytes must be this job's bytes, except the hunk-merged owner files (save-data.sh rule)
       [ "$(gitp rev-parse "origin/$BR:data/$f" 2>/dev/null)" = "$(git hash-object "$ROOT/data/$f")" ] && continue
       case "$CONFLICT_MERGED" in *" $f "*) m=$((m+1)); say "$f was merged with a newer private copy (save-data.sh rule)";; *) say "Error: private file $f differs from this job's copy"; bad=1;; esac; done
-    [ "$bad" = 0 ] || exit 1; rm -f "$PENDING"
+    [ "$bad" = 0 ] || exit 1
     # the INTENT baseline records the bytes this save SUBMITTED (not the merged remote bytes): unchanged local copies are no new intent.
-    # The hydration receipt is never modified. If the intent record cannot be written it is dropped (the next save then copies every
-    # present file, as without a receipt; content verification still checks it).
-    if [ -f "$INT/RECEIPT" ]; then for f in $COPIED; do mkdir -p "$(dirname "$INT/data/$f")" && cp "$ROOT/data/$f" "$INT/data/$f" || { rm -f "$INT/RECEIPT"; break; }; done; fi
+    # The hydration receipt is never modified. If the intent record cannot be written, the save is stored but provenance is not: the
+    # intent baseline is marked BROKEN and the update stays PENDING, so no later save can treat stale local bytes as intent.
+    if [ -f "$INT/RECEIPT" ]; then for f in $COPIED; do mkdir -p "$(dirname "$INT/data/$f")" && cp "$ROOT/data/$f" "$INT/data/$f" || {
+      date -u +%FT%TZ > "$INT.broken" 2>/dev/null; say "Error: private save stored and verified, but its intent record could not be written: further saves are refused until recover-intent (your update stays pending)"; exit 1; }; done; fi
+    rm -f "$PENDING"
     say "private save verified: $n changed files ($m merged with a newer private copy)" ;;
+  recover-intent)   # explicit recovery (Codex 6855462716) after an unavailable intent record: NOTHING local becomes canonical. Every local
+    # private file that differs from the private repository's newest copy (or is absent there) is kept as UNRESOLVED quarantine
+    # data/private-failed-pass-<stamp>__intent-unknown__<name> and stored by push-quarantine; then the pending state and the broken
+    # marker are cleared and a fresh pull installs the private repository's copies with new receipts. Review the quarantine by hand.
+    [ -d "$DIR/.git" ] || { say "Error: no private clone to recover against"; exit 1; }
+    bound || { say "Error: the private clone is not bound to the declared private repository; nothing recovered"; exit 1; }
+    gitp fetch -q origin 2>/dev/null || { say "Error: cannot read the private repository; nothing recovered"; exit 1; }
+    BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1; stamp=$(date -u +%Y-%m-%dT%H-%M-%S-000Z); q=0
+    for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; case "$f" in private-failed-pass-*) continue;; esac
+      [ "$(gitp rev-parse "origin/$BR:data/$f" 2>/dev/null)" = "$(git hash-object "$ROOT/data/$f")" ] && continue
+      cp "$ROOT/data/$f" "$ROOT/data/private-failed-pass-$stamp""__intent-unknown__${f//\//__}" || { say "Error: cannot keep $f as quarantine; nothing cleared"; exit 1; }; q=$((q+1)); done
+    if [ "$q" -gt 0 ]; then bash "$0" push-quarantine || { say "Error: the quarantine could not be stored privately; nothing cleared"; exit 1; }; fi
+    rm -f "$PENDING" "$INT.broken"; chmod -R u+w "$INT" 2>/dev/null; rm -rf "$INT"
+    say "intent recovery: $q differing local files kept as UNRESOLVED quarantine (none written as current); pulling the private copies"
+    exec bash "$0" pull ;;
   require)   # require FILE...: research writers' REQUIRED HISTORY admission (Codex 6852935516). In private mode, after a successful pull, a
     # missing private frozen record or registry is UNKNOWN, never a fresh empty first run: exit 1 so the producer does not run (and
     # cannot reset trial accounting or erase a failed verdict). Protective bot/holding paths never call this.
@@ -266,5 +287,5 @@ at=%s
     gitp fetch -q origin 2>/dev/null || exit 1; BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1
     gitp cat-file -e "origin/$BR:data/$F" 2>/dev/null || exit 2
     ( umask 077; gitp show "origin/$BR:data/$F" > "$OUT.tmp" 2>/dev/null ) && mv -f "$OUT.tmp" "$OUT" || { rm -f "$OUT.tmp"; exit 1; } ;;
-  *) echo "usage: private-data.sh check|mirror|pull|push|push-quarantine|latest|require|merge-library"; exit 2 ;;
+  *) echo "usage: private-data.sh check|mirror|pull|push|push-quarantine|recover-intent|latest|require|merge-library"; exit 2 ;;
 esac

@@ -141,3 +141,23 @@ test('subsequent save after a merged save keeps the newer remote value; the hydr
   assert.match(remote(w, 'my-positions.json'), /"stop": 19/, 'the genuine intent stays');
   assert.equal(fs.readFileSync(w.dir + '.baseline/data/my-positions.json', 'utf8'), receipt, 'hydration receipt immutable');
 });
+
+// Codex 6855462716 / 6855493684: losing the intent record must fail closed, never become copy-everything admission.
+test('intent record write fails after a verified save: later saves are refused (update pending, commands paused); recover-intent keeps local differences as quarantine and installs the private copies', () => {
+  const w = world(); W(w.pub, '.github/private-data-mode', 'on');
+  W(w.pub, 'data/my-positions.json', JSON.stringify({ AAA: { entry: 10, stop: 9 }, MMM: { entry: 1 }, NNN: { entry: 2 }, OOO: { entry: 3 }, PPP: { entry: 4 }, ZZZ: { entry: 20, stop: 18 } }, null, 1) + '\n');
+  init(w); assert.equal(run(w, 'pull').status, 0);
+  W(w.pub, 'data/my-positions.json', R(w.pub, 'data/my-positions.json').replace('"stop": 18', '"stop": 19'));
+  const other = tmp('intent-fail-bot-'); sh('git clone -q ' + w.bare + ' o && cd o && sed -i \'s/"stop": 9/"stop": 11/\' data/my-positions.json && git -c commit.gpgsign=false commit -qam newer && git push -q', other);
+  const first = run(w, 'push', { FAIL_CP: 'baseline-intent/data/my-positions.json' });
+  assert.equal(first.status, 1, first.stdout); assert.match(first.stdout, /intent record could not be written/);
+  assert.match(remote(w, 'my-positions.json'), /"stop": 11/); assert.match(remote(w, 'my-positions.json'), /"stop": 19/); assert.ok(fs.existsSync(w.dir + '.pending'), 'update stays pending');
+  const second = run(w, 'push'); assert.equal(second.status, 1); assert.match(second.stdout, /no save without provenance/);
+  assert.match(remote(w, 'my-positions.json'), /"stop": 11/, 'never rolled back (actual before the fix: 11 -> 9)');
+  assert.equal(run(w, 'pull').status, 3, 'the next pull keeps local owner files and pauses owner commands');
+  const rec = run(w, 'recover-intent'); assert.equal(rec.status, 0, rec.stdout + rec.stderr);
+  assert.match(remote(w, 'my-positions.json'), /"stop": 11/); assert.match(R(w.pub, 'data/my-positions.json'), /"stop": 11/, 'private copy installed');
+  const q = sh('git --git-dir=' + w.bare + ' ls-tree -r --name-only main', os.tmpdir()).split('\n').filter(n => /private-failed-pass-.*__intent-unknown__my-positions\.json$/.test(n));
+  assert.equal(q.length, 1, 'the differing local copy is kept as UNRESOLVED quarantine'); assert.ok(!fs.existsSync(w.dir + '.pending'));
+  assert.equal(run(w, 'push').status, 0, 'saves resume with fresh provenance');
+});

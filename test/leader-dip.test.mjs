@@ -204,12 +204,17 @@ test('private mode (Codex 6855218411): with the private danger-filing record una
   const since = sessAgo(5), days = []; { let x = since; for (let k = 0; k < 6; x = new Date(Date.parse(x) + 864e5).toISOString().slice(0, 10)) if (S0.fn('isSession')(x)) { days.push(x); k++; } }
   const bars = days.map((d) => ({ d, o: 50, h: 52, l: 49, c: 51 }));
   const P = { entry: 50, since, boughtSession: since, kind: 'leader dip', src: 'leader dip', target: 60, ldHold: 126, own: true, stopWhy: 'no stop by design (tested without one)' };
-  for (const withRecord of [false, true]) {
+  const nowIso = new Date(Date.now()).toISOString(), old = new Date(Date.now() - 9 * 864e5).toISOString();
+  const today = (o = {}) => ({ generatedAt: nowIso, dataOk: true, flags: [], holdings: { checkedAt: nowIso, positions: [{ sym: 'AAA', cik: 1, filingsRead: true }], flags: [] }, ...o });
+  const cases = [[false, null, 'absent'], [true, today(), 'complete'], [false, { flags: [], dataOk: false }, 'dataOk false (Codex 6855638939)'], [false, today({ dataOk: false }), 'producer coverage incomplete'],
+    [false, today({ generatedAt: old }), 'stale'], [false, today({ holdings: { checkedAt: nowIso, positions: [], flags: [] } }), 'held stock not in the record (unpaired)'],
+    [false, today({ holdings: { checkedAt: nowIso, positions: [{ sym: 'AAA', filingsRead: false }], flags: [] } }), 'filings not read']];
+  for (const [withRecord, T, label] of cases) {
     const M = mkServer(null, bars); const B = await M.start();
-    const files = { 'data/halal.json': HAL, '.github/private-data-mode': '', ...(withRecord ? { 'data/squad29-lab.json': { holdings: { flags: [] } }, 'data/squad29-flags-today.json': { flags: [] } } : {}) };
+    const files = { 'data/halal.json': HAL, '.github/private-data-mode': '', ...(T ? { 'data/squad29-lab.json': { holdings: { flags: [] } }, 'data/squad29-flags-today.json': T } : {}) };
     const S = await loadScan({ files, env: { TD_BASE: B, FH_BASE: B, SEC_BASE: B } });
     const r = await S.fn('holdingsText')(null, { AAA: { ...P } }, null, true); M.server.close();
-    if (!withRecord) { assert.equal(r.acts.hold.length, 0, 'no clean HOLD'); assert.match(r.acts.unknown.join('\n'), /^AAA: ASSESSMENT UNKNOWN: the private danger-filing record is unavailable/m); assert.equal(r.acts.sell.length, 0, 'no invented SELL'); }
+    if (!withRecord) { assert.equal(r.acts.hold.length, 0, 'no clean HOLD: ' + label); assert.match(r.acts.unknown.join('\n'), /^AAA: ASSESSMENT UNKNOWN: the private danger-filing record is unavailable/m); assert.equal(r.acts.sell.length, 0, 'no invented SELL'); }
     else { assert.match(r.acts.hold.join('\n'), /^AAA[^:]*: HOLD, target 60\.00/); assert.doesNotMatch(r.acts.unknown.join('\n'), /danger-filing record/); }
   }
 });
