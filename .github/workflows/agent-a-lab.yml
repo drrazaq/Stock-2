@@ -57,10 +57,14 @@ jobs:
           key: a-cache-${{ github.run_id }}
       - if: success() || failure()
         shell: bash
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
+          # P0: agent-a fund labels and rotation come from the owner's marks: owner-derived outputs go ONLY to the private route; a failure fails the job visibly
+          PF=0; if [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh push || { PF=1; echo "Error: owner-derived outputs NOT stored privately; they stay on this runner only"; }; else echo "not in private mode: owner-derived outputs are NOT published (privacy)"; fi
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          FILES="data/agent-a-lab.json data/rot-today.json"
+          FILES=""   # P0: the agent-a lab output and rotation file are private files (saved above)
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
@@ -71,6 +75,7 @@ jobs:
           git diff --cached --quiet || git commit -m "agent A lab $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the agent A lab result"; exit 1; }
+          [ "$PF" = 0 ] || exit 1
       - if: success() || failure()
         uses: actions/upload-artifact@v4
         with:

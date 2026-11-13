@@ -207,7 +207,7 @@ const judge = (trades, bar) => { const R = { all: stat(trades), older: stat(trad
   const tierOf = (id) => { const r = FR[id]; return r && (r.verdict === 'PROVEN' || r.verdict === 'TRADABLE SMALL') ? r.verdict : null; };
   for (const u of newsToday) { u.buy = future[0]; u.sell = future[HOLD_NEWS - 1]; u.halal = zbad.has(u.sym) ? 'fail' : 'unknown'; /* P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal) */ }
   W(TODAY_OUT, { generatedAt: new Date().toISOString(), lastClose: last, sessions: future.slice(0, 260), rules: { 'CAT-RUN1': tierOf('CAT-RUN1'), 'CAT-NEWS1': tierOf('CAT-NEWS1') }, stopPct: 0.15, buyUpToPct: 0.03,
-    note: 'Upcoming dated catalysts from 8-Ks (PDUFA, advisory committee, expected topline). Gates (price, dollar volume, lottery, dilution) on the last cached close; halal from data/halal.json + ZAD list. The scan shows a buy only for a rule whose frozen verdict is TRADABLE SMALL or PROVEN; otherwise this is a calendar for information.',
+    note: 'Upcoming dated catalysts from 8-Ks (PDUFA, advisory committee, expected topline). Gates (price, dollar volume, lottery, dilution) on the last cached close; halal = the public ZAD not-halal list only (unknown otherwise); your own ZAD marks are checked privately by the bot. The scan shows a buy only for a rule whose frozen verdict is TRADABLE SMALL or PROVEN; otherwise this is a calendar for information.',
     upcoming: upcoming.filter(u => u.sell >= last).slice(0, 300), news: newsToday });
 
   const out = { generatedAt: new Date().toISOString(), preRegistered: '2026-10-23', window: [D[START], last], sessions: T - START, bar: BAR, complete,

@@ -91,6 +91,8 @@ test('the website workflow publishes index.html only (nothing from data/)', () =
 });
 test('every private file in the list exists today or is a ledger created later; the list holds no public research files', () => {
   // signals-private.json (P0 Route A, 13 Nov): written by the nightly scan itself, paired to signals.json; it appears after the first run.
-  for (const f of FILES) assert.ok(fs.existsSync(path.join(REPO, 'data', f)) || /ledger/.test(f) || f === 'signals-private.json', f);
+  // P0 Route A producer split: an owner-derived output listed by its canonical name may appear only after its producer's first run
+  const produced = (f) => fs.readdirSync(REPO).some(m => m.endsWith('.mjs') && fs.readFileSync(path.join(REPO, m), 'utf8').includes(f));
+  for (const f of FILES) assert.ok(fs.existsSync(path.join(REPO, 'data', f)) || /ledger/.test(f) || f === 'signals-private.json' || produced(f), f);
   assert.ok(!FILES.includes('signals.json') && !FILES.includes('strategy-library.json'));
 });

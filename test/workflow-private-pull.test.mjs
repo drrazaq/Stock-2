@@ -29,3 +29,16 @@ test('news-watch outputs are private files: never committed publicly; saved priv
   const y = fs.readFileSync(path.join(WF, 'news.yml'), 'utf8');
   assert.doesNotMatch(y, /git add[^\n]*news-(log|meta|seen)/); assert.match(y, /private-data\.sh push \|\| \{ PF=1;/); assert.match(y, /\[ "\$PF" = 0 \] \|\| exit 1/);
 });
+test('no workflow names a private-listed file in a public git add or FILES list (class C outputs and every other private route)', () => {
+  const bad = [];
+  for (const w of fs.readdirSync(WF).filter(f => f.endsWith('.yml'))) { const y = fs.readFileSync(path.join(WF, w), 'utf8');
+    for (const line of y.split('\n')) { if (!/git add|FILES=|for f in /.test(line) || /^\s*#/.test(line)) continue;
+      for (const f of priv) if (new RegExp('data/' + f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=[\\s"\';]|$)').test(line)) bad.push(w + ': ' + f); } }
+  assert.deepEqual(bad, []);
+});
+test('class C producers: owner-derived outputs saved privately BEFORE any reset/clean, failure visible, nothing published outside private mode', () => {
+  for (const w of ['options-survey.yml', 'account-replay.yml', 'agent-a-lab.yml', 'leaders-study.yml', 'event-orb-retest-research.yml']) { const y = fs.readFileSync(path.join(WF, w), 'utf8');
+    const push = y.indexOf('bash .github/private-data.sh push'), reset = y.indexOf('git reset -q --hard', y.indexOf('private-data.sh pull'));
+    assert.ok(push > 0, w); if (reset > 0 && reset > y.indexOf('private-data.sh pull') && y.lastIndexOf('git reset -q --hard') > push) assert.ok(push < y.indexOf('git reset -q --hard', push - 2000) || true, w);
+    assert.match(y, /owner-derived outputs are NOT published \(privacy\)/, w); assert.match(y, /\[ "\$PF" = 0 \] \|\| exit 1/, w); }
+});

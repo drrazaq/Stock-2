@@ -103,10 +103,16 @@ jobs:
           retention-days: 30
       - name: Commit the data outputs
         if: always()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
+          # P0: the event universe is the owner's ok marks plus the watch universe minus the owner's fail marks, so every event, control,
+          # request, coverage, paper and study file below is owner-derived: private route only; a failure fails the job visibly
+          PF=0; if [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh push || { PF=1; echo "Error: owner-derived outputs NOT stored privately; they stay on this runner only"; }; else echo "not in private mode: owner-derived outputs are NOT published (privacy)"; fi
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/catalyst-events.jsonl data/event-orb-retest-15d-events.json data/event-orb-retest-15d-controls.jsonl data/event-orb-retest-15d-requests.json data/event-orb-retest-15d-control-requests.json data/event-orb-retest-15d-bars-coverage.json data/event-orb-retest-15d-paper.json data/event-orb-retest-15d-study.json data/event-orb-retest-15d-control-study.json data/event-orb-retest-15d-gates.json data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          for f in data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "event ORB retest research $(date -u +%FT%RZ)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ]
+          [ "$PF" = 0 ] || exit 1

@@ -36,14 +36,9 @@ jobs:
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
       - shell: bash
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
-          git config user.name "scanner"
-          git config user.email "scanner@users.noreply.github.com"
-          OUTD="$RUNNER_TEMP/out"; mkdir -p "$OUTD"
-          cp data/options-spread-survey.json data/options-spread-survey.md "$OUTD/"
-          git reset -q --hard && git pull -q --rebase
-          cp "$OUTD/options-spread-survey.json" "$OUTD/options-spread-survey.md" data/
-          git add data/options-spread-survey.json data/options-spread-survey.md
-          git diff --cached --quiet || git commit -m "options spread survey $(date -u +%F)"
-          ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
-          [ "$ok" = 1 ] || { echo "Error: could not save the survey"; exit 1; }
+          # P0: the survey universe is the owner's ok marks: owner-derived outputs go ONLY to the private route; a failure fails the job visibly
+          PF=0; if [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh push || { PF=1; echo "Error: owner-derived outputs NOT stored privately; they stay on this runner only"; }; else echo "not in private mode: owner-derived outputs are NOT published (privacy)"; fi
+          [ "$PF" = 0 ] || exit 1
