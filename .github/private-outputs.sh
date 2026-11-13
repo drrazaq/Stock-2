@@ -16,7 +16,7 @@
 #   retain-copy LABEL SRC NAME  same admission; SRC (e.g. an unstored registry merge) is kept as quarantine __NAME; always exit 1.
 set -u
 ROOT=$(cd "$(dirname "$0")/.." && pwd); MODE=${1:-}; LABEL=${2:-producer}; shift 2 2>/dev/null || true
-T=${RUNNER_TEMP:-/tmp}; PULLED="$T/private-pulled-ok"; BL=${PRIVATE_BASELINE_DIR:-$T/private-baseline}; ADMITTED="$T/private-producer-admitted"
+T=${RUNNER_TEMP:-/tmp}; PULLED="$T/private-pulled-ok"; BL=${PRIVATE_BASELINE_DIR:-${RUNNER_TEMP:+$RUNNER_TEMP/private-baseline}}; BL=${BL:-${PRIVATE_DATA_DIR:-/tmp/private-data}.baseline}; ADMITTED="$T/private-producer-admitted"
 note() { echo "private outputs ($LABEL): $*"; [ -n "${GITHUB_STEP_SUMMARY:-}" ] && echo "- private outputs ($LABEL): $*" >> "$GITHUB_STEP_SUMMARY"; return 0; }
 priv() { [ -e "$ROOT/.github/private-data-mode" ]; }
 hydrated() { [ -e "$PULLED" ] && [ -f "$BL/RECEIPT" ]; }

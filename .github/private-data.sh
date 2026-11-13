@@ -18,6 +18,8 @@ REPO=${PRIVATE_DATA_REPO:-drrazaq/stock-2-private-data}
 URL=${PRIVATE_DATA_URL:-https://github.com/$REPO.git}
 DIR=${PRIVATE_DATA_DIR:-${RUNNER_TEMP:-/tmp}/private-data}
 TOKEN=${PRIVATE_DATA_TOKEN:-}
+# the IMMUTABLE hydration receipt (written by every successful pull): $RUNNER_TEMP/private-baseline on a runner, else next to the clone
+BL=${PRIVATE_BASELINE_DIR:-${RUNNER_TEMP:+$RUNNER_TEMP/private-baseline}}; BL=${BL:-$DIR.baseline}
 say() { echo "private data: $*"; }
 # The declared private set (.github/private-files.txt): file names, plus EXACTLY three allowlisted directory entries written with one
 # trailing slash (Codex 6853502834), plus the two-pass private caches data/private-*. A directory entry expands to the REGULAR files under
@@ -69,8 +71,15 @@ sum() { (cd "$1" && for f in $FILES; do [ -f "data/$f" ] && sha256sum "data/$f";
 # the research registry is written ONLY by merge-library (this run's changes onto the newest private registry); a generic push never
 # copies it, so a lab's unmerged run copy can never overwrite the newest registry (check still copies it: that is the custody seeding)
 REGISTRY_ONLY_MERGED=" strategy-library.json "
-copy_in() { mkdir -p "$DIR/data" || return 1; local f bad=0
-  for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; [ "$MODE" = push ] && case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac; { mkdir -p "$(dirname "$DIR/data/$f")" && cp "$ROOT/data/$f" "$DIR/data/$f"; } || { say "Error: could not copy $f into the private clone"; bad=1; }; done
+# DELTA SAVE (Codex 6854188071 / 6854282762): on push, only a file that CHANGED on this runner since its hydration (differs from the
+# receipt, or is new) is write intent. An unchanged local copy is never written back, so it can never revert a newer private value written
+# meanwhile by another writer (a PENDING retry included); a genuine unsaved owner change is still saved. Without a receipt (no pull in this
+# runner) every present file is copied, as before. COPIED lists the files this save claims; only those are verified.
+COPIED=""
+copy_in() { mkdir -p "$DIR/data" || return 1; local f bad=0; COPIED=""
+  for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; [ "$MODE" = push ] && case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac
+    [ "$MODE" = push ] && [ -f "$BL/RECEIPT" ] && [ -f "$BL/data/$f" ] && cmp -s "$ROOT/data/$f" "$BL/data/$f" && continue
+    COPIED="$COPIED $f"; { mkdir -p "$(dirname "$DIR/data/$f")" && cp "$ROOT/data/$f" "$DIR/data/$f"; } || { say "Error: could not copy $f into the private clone"; bad=1; }; done
   return $bad; }
 # PENDING: an owner update made on this runner whose private save is not yet verified. It is created BEFORE anything else in push (so a
 # failure before the copy, the commit or the push keeps it) and removed only by a verified save. While it exists, pull never overwrites
@@ -152,7 +161,7 @@ case "$MODE" in
     # IMMUTABLE hydration receipt (Codex 6853280425): a read-only snapshot of every private file exactly as this pull installed it, plus the
     # bound origin's commit. Failure-path retention compares against THIS, never the mutable clone (which a later push's copy changes).
     # Without a complete receipt the pull fails, so no later step can treat this job as hydrated.
-    if [ -n "${PRIVATE_BASELINE_DIR:-${RUNNER_TEMP:-}}" ]; then BL=${PRIVATE_BASELINE_DIR:-$RUNNER_TEMP/private-baseline}
+    if :; then
       { chmod -R u+w "$BL" 2>/dev/null; rm -rf "$BL"; } && mkdir -p "$BL/data" || { say "Error: cannot record the hydration receipt; stopping"; exit 1; }
       for f in $FILES $(cd "$ROOT/data" 2>/dev/null && ls -1 private-* 2>/dev/null); do [ -f "$ROOT/data/$f" ] || continue
         mkdir -p "$(dirname "$BL/data/$f")" && cp -p "$ROOT/data/$f" "$BL/data/$f" || { say "Error: cannot record the hydration receipt; stopping"; exit 1; }; done
@@ -196,12 +205,15 @@ at=%s
     BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null); bad=0; n=0
     [ -z "$(gitp status --porcelain -- data 2>/dev/null)" ] || { say "Error: private save left uncommitted owner files"; bad=1; }
     [ "$(gitp rev-parse HEAD 2>/dev/null)" = "$(gitp rev-parse "origin/$BR" 2>/dev/null)" ] || { say "Error: private save not on the private repository"; bad=1; }
-    m=0; for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac; n=$((n+1))
+    m=0; for f in $COPIED; do [ -f "$ROOT/data/$f" ] || continue; case "$REGISTRY_ONLY_MERGED" in *" $f "*) continue;; esac; n=$((n+1))
       gitp cat-file -e "origin/$BR:data/$f" 2>/dev/null || { say "Error: private file $f not confirmed on the private repository"; bad=1; continue; }
       # content, not only existence: the stored bytes must be this job's bytes, except the hunk-merged owner files (save-data.sh rule)
       [ "$(gitp rev-parse "origin/$BR:data/$f" 2>/dev/null)" = "$(git hash-object "$ROOT/data/$f")" ] && continue
       case "$CONFLICT_MERGED" in *" $f "*) m=$((m+1)); say "$f was merged with a newer private copy (save-data.sh rule)";; *) say "Error: private file $f differs from this job's copy"; bad=1;; esac; done
-    [ "$bad" = 0 ] || exit 1; rm -f "$PENDING"; say "private save verified: $n files ($m merged with a newer private copy)" ;;
+    [ "$bad" = 0 ] || exit 1; rm -f "$PENDING"
+    # the receipt advances to what is now stored, so a later save in this job does not treat these bytes as new intent again
+    if [ -f "$BL/RECEIPT" ]; then chmod -R u+w "$BL" 2>/dev/null; for f in $COPIED; do mkdir -p "$(dirname "$BL/data/$f")" && gitp show "origin/$BR:data/$f" > "$BL/data/$f" 2>/dev/null || { rm -f "$BL/RECEIPT"; break; }; done; chmod -R a-w "$BL" 2>/dev/null; fi
+    say "private save verified: $n changed files ($m merged with a newer private copy)" ;;
   require)   # require FILE...: research writers' REQUIRED HISTORY admission (Codex 6852935516). In private mode, after a successful pull, a
     # missing private frozen record or registry is UNKNOWN, never a fresh empty first run: exit 1 so the producer does not run (and
     # cannot reset trial accounting or erase a failed verdict). Protective bot/holding paths never call this.
