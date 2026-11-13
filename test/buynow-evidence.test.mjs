@@ -6,6 +6,7 @@
 //   plan (BUY NOW cards and the planned-entry review lines: QUICK, LEADER, signal range, breakout trigger, paper trades): the 20-minute
 //   BUY NOW gate. Undated or future-dated prices never qualify. A held-back holding alert is reported once as NOT CONFIRMED.
 // Synthetic only: the ACTUAL intraday() caller, invented tickers and prices, loopback services, no owner records or real messages.
+import { splitSignals } from './split-signals-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
@@ -28,7 +29,7 @@ async function run(t, { pos = {}, sig = {}, quotes, advance = {}, state, sendDel
     res.statusCode = 404; res.end('{}'); }); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
   const base = 'http://127.0.0.1:' + server.address().port;
-  const files = { 'data/my-positions.json': pos, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [], ...sig }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC };
+  const files = { 'data/my-positions.json': pos, ...splitSignals({ session: '2026-11-04', stocks: [], quick: [], leaders: [], ...sig }), 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC };
   if (state) files['data/alert-state.json'] = state;
   files['data/settings.json'] = { quiet: false };   // paper-trade lines are only sent outside quiet mode
   Object.assign(files,extraFiles);

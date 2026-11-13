@@ -54,7 +54,7 @@ test('unpaired or missing private record: readers get posVerdictUnavailable, the
   assert.equal(kept.act, 'SELL', 'a retained earlier SELL is never erased by an unavailable private record');
   fs.rmSync('data/signals-private.json'); const sig2 = S.fn('hydrateSignals')(JSON.parse(fs.readFileSync('data/signals.json', 'utf8')));
   assert.equal(sig2.posVerdictUnavailable, true);
-  const legacy = S.fn('hydrateSignals')({ session: 'x', posVerdict: { ZZP: 'time exit' } }); assert.deepEqual(legacy.posVerdict, { ZZP: 'time exit' }); assert.equal(legacy.posVerdictUnavailable, undefined);
+  const legacy = S.fn('hydrateSignals')({ session: 'x', posVerdict: { ZZP: 'time exit' } }); assert.equal(legacy.posVerdict, undefined, 'a public posVerdict is never current'); assert.equal(legacy.posVerdictUnavailable, true); assert.equal(legacy.posVerdictSource, 'LEGACY_PUBLIC_NOT_CURRENT');
 });
 
 test('the public row gate uses only ZAD\'s public list; the private mark gates the owner copy (gate function on an actionable verdict)', async () => {
@@ -75,3 +75,10 @@ test('shared reader: news-watch and events-study read private buy lists only thr
   assert.equal(stale.posVerdictUnavailable, true); assert.equal(stale.pead, undefined);
   for (const f of ['news-watch.mjs', 'events-study.mjs']) assert.match(fs.readFileSync(new URL('../' + f, import.meta.url), 'utf8'), /readSignals\(\) \|\| \{\}/, f + ' uses the paired reader');
 });
+
+// Codex independent reader controls (PR #1 comment 6850181969), all FAILED on 9a204065.
+const stamp = { session: '2026-11-12', generatedAt: '2026-11-12T21:40:00.000Z' }, unavailable = () => { throw Error('synthetic unavailable'); };
+test('missing private read cannot treat legacy public exit fields as current hydration', async () => { const { hydrateSignals } = await import('../signals-read.mjs'); const out = hydrateSignals({ ...stamp, posVerdict: { ZZQ: 'time exit' } }, unavailable); assert.equal(out.posVerdictUnavailable, true); assert.equal(out.posVerdict, undefined); });
+test('unavailable private record removes every private-only legacy public list', async () => { const { hydrateSignals } = await import('../signals-read.mjs'); const out = hydrateSignals({ ...stamp, leaders: [{ sym: 'ZZQ' }], pead: [{ sym: 'ZZQ', live: true }], evt: [{ sym: 'ZZQ', live: true }] }, unavailable); assert.equal(out.posVerdictUnavailable, true); for (const k of ['leaders', 'pead', 'evt']) assert.equal(out[k], undefined, k); });
+test('absent pair clocks never form an authenticated matching scan', async () => { const { hydrateSignals } = await import('../signals-read.mjs'); const out = hydrateSignals({ stocks: [] }, () => ({ v: 1, posVerdict: { ZZQ: 'time exit' } })); assert.equal(out.posVerdictUnavailable, true); assert.equal(out.posVerdict, undefined); });
+test('malformed private list cannot be hydrated as a current assessment', async () => { const { hydrateSignals } = await import('../signals-read.mjs'); const out = hydrateSignals({ ...stamp }, () => ({ v: 1, ...stamp, posVerdict: {}, pead: 'malformed' })); assert.equal(out.posVerdictUnavailable, true); assert.equal(out.pead, undefined); });

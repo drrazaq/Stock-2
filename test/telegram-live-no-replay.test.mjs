@@ -1,4 +1,5 @@
 // Synthetic loopback only: exercise approved-scanner caller, not a replacement transport.
+import { splitSignals } from './split-signals-fixture.mjs';
 import fs from 'node:fs';
 import test from 'node:test';import assert from 'node:assert/strict';import http from 'node:http';
 import {loadScan,blocked} from './load-scan.mjs';
@@ -42,7 +43,7 @@ async function runIntraday(t, { ageSec, mode }) {
     res.statusCode = 404; res.end('{}'); }); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
   const base = 'http://127.0.0.1:' + server.address().port;
-  const files = { 'data/my-positions.json': {}, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [], ...SIG }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC, 'data/settings.json': { quiet: false }, ...EXTRA };
+  const files = { 'data/my-positions.json': {}, ...splitSignals({ session: '2026-11-04', stocks: [], quick: [], leaders: [], ...SIG }), 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC, 'data/settings.json': { quiet: false }, ...EXTRA };
   const S = await loadScan({ files, env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
   const real = Date.now; Date.now = () => clock;
   try { await S.fn('intraday')(false); } finally { Date.now = real; }

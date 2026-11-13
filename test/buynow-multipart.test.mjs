@@ -3,6 +3,7 @@
 // NOT sent; one WITHDRAWN note (no price claim, no buttons) says so, and the card is unmarked so the next run checks it again.
 // Synthetic only: the ACTUAL intraday() caller and telegramLive(), invented records (four synthetic earnings-drift candidates for one
 // symbol make the card span two parts), loopback services, no owner records or real messages.
+import { splitSignals } from './split-signals-fixture.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import http from 'node:http';
@@ -29,7 +30,7 @@ async function run(t, { ageSec, afterFirstBuyPart = 0, limitSecond = 0 }) {
     res.statusCode = 404; res.end('{}'); }); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
   const base = 'http://127.0.0.1:' + server.address().port;
-  const files = { 'data/my-positions.json': {}, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [], ...SIG }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC, 'data/settings.json': { quiet: false }, ...EXTRA };
+  const files = { 'data/my-positions.json': {}, ...splitSignals({ session: '2026-11-04', stocks: [], quick: [], leaders: [], ...SIG }), 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC, 'data/settings.json': { quiet: false }, ...EXTRA };
   const S = await loadScan({ files, env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
   const real = Date.now; Date.now = () => clock;
   try { await S.fn('intraday')(false); } finally { Date.now = real; }

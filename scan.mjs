@@ -4197,6 +4197,7 @@ async function daily() {
       // the owner's private marks; the owner's own gating (planCands, myHalal) is applied when anything is offered to him.
       { const { halal: _h, ...pub } = row; for (const k of Object.keys(buyF())) delete pub[k]; pub.state = vPub.word; pub.why = vPub.why; if (vPub.act) Object.assign(pub, buyF()); Object.defineProperty(row, PUBLIC_ROW, { value: pub, enumerable: false }); }
       stocks.push(row);
+      if (BIOBLOCK.has(sym) && vPub.act && row[PUBLIC_ROW]) row[PUBLIC_ROW].state = 'Blocked';   // P0 Route A: the public copy keeps the same public discovery block
       if (BIOBLOCK.has(sym)) { if (v.act) { blocked.push(sym + ': a tested rule fired, but ' + BIOBLOCK.get(sym)); row.state = 'Blocked'; } else if (DISC.has(sym)) blocked.push(sym + ' (discovery pick): ' + BIOBLOCK.get(sym)); }
       else if (DISC.has(sym) && halal !== 'fail') {
         if (v.act) picks.push({ tier: 0, text: sym + ' closed ' + money(d.last) + ' (ENTRY CONFIRMED, tested rule)\n  buy range ' + money(row.buyLo) + ' to ' + money(row.buyHi) + '\n  stop ' + money(row.stop) + (row.target ? ', target ' + money(row.target) : ', no fixed target') + ', exit on a close below ~' + money(row.exitBelow) });
