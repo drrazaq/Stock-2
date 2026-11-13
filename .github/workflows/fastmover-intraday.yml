@@ -57,7 +57,14 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
-      - if: always()
+      # P0 (Codex 6856207421, 6856859159): the lane-private evr-* files must never reach the public fm-cache. They are never deleted here
+      # (unknown history stays as it is): if any is present, this run does not export fm-cache at all and says so.
+      - name: Public fm-cache export check
+        id: fmx
+        if: always()
+        run: |
+          if [ -n "$(find fm-cache -maxdepth 1 -name 'evr-*' -print -quit 2>/dev/null)" ]; then echo export=0 >> "$GITHUB_OUTPUT"; echo "fm-cache UNRETAINED: lane-private evr-* files are present, so this run does not export the public fm-cache (nothing deleted)" | tee -a "$GITHUB_STEP_SUMMARY"; else echo export=1 >> "$GITHUB_OUTPUT"; fi
+      - if: (always()) && steps.fmx.outputs.export == '1'
         uses: actions/cache/save@v4
         with:
           path: fm-cache

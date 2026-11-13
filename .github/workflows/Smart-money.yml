@@ -61,29 +61,28 @@ jobs:
       # Company events from the SEC (8-K items, Schedule 13D, offerings) and FDA approvals for the event study. Official free APIs,
       # no keys. The 5-year event history is kept in the Actions cache (not in the public repository).
       - if: always()
-        uses: actions/cache/restore@v4
-        with:
-          path: ev-cache
-          key: events-cache-${{ github.run_id }}
-          restore-keys: events-cache-
-      - if: always()
+        id: evc
+        run: |
+          # P0 (Codex 6856174038): the SEC event cache carries the owner's private universe (watch list, private signals), so it lives ONLY in
+          # the private store as data/events-cache.json.gz (pulled above), never in the public Actions cache.
+          # Missing = UNKNOWN: the event study does not run (no empty restart, no refetch); the custody import of the existing cache is an
+          # adoption prerequisite.
+          rc=0; bash .github/private-cache.sh install-file events-cache.json.gz ev-cache/events-cache.json.gz || rc=$?
+          if [ "$rc" = 0 ]; then echo ok=1 >> "$GITHUB_OUTPUT"; elif [ "$rc" = 3 ]; then echo ok=0 >> "$GITHUB_OUTPUT"; echo "- events study: UNKNOWN, the private event cache is unavailable (not run; custody import required)" >> "$GITHUB_STEP_SUMMARY"; else exit 1; fi
+      - if: always() && steps.evc.outputs.ok == '1'
         shell: bash .github/private-shell.sh pipefail {0}
         continue-on-error: true
         run: |
           set -o pipefail
           node events-study.mjs 2>&1 | tee -a run.log
+          bash .github/private-cache.sh stage-file ev-cache/events-cache.json.gz events-cache.json.gz   # P0: the updated cache is saved ONLY through the private route below
         env:
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
-      - if: always()
-        uses: actions/cache/save@v4
-        with:
-          path: ev-cache
-          key: events-cache-${{ github.run_id }}
       - if: always()
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
-          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "events study (owner watch list universe)" || PF=1; else PF=2; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-failed "events study (owner watch list universe)" smart-money.json events-recent.json events-study.json sec-ciks.json || true; fi   # P0: a failed run is retained privately BEFORE any reset/clean   # P0 class B
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "events study (owner watch list universe)" || PF=1; else PF=2; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-failed "events study (owner watch list universe)" events-cache.json.gz smart-money.json events-recent.json events-study.json sec-ciks.json || true; fi   # P0: a failed run is retained privately BEFORE any reset/clean   # P0 class B
           [ "$PF" != 1 ] || { echo "P0: owner-derived outputs NOT confirmed privately: stopping BEFORE any reset/clean (the failure step keeps them as quarantine)"; exit 1; }
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
@@ -95,7 +94,7 @@ jobs:
       - if: failure()
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
-        run: bash .github/private-outputs.sh retain-failed "events study (owner watch list universe)" smart-money.json events-recent.json events-study.json sec-ciks.json
+        run: bash .github/private-outputs.sh retain-failed "events study (owner watch list universe)" events-cache.json.gz smart-money.json events-recent.json events-study.json sec-ciks.json
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

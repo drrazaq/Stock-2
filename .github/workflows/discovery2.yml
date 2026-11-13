@@ -47,11 +47,11 @@ jobs:
           path: study-cache
           key: leaders-study-none
           restore-keys: leaders-study-
-      - uses: actions/cache/restore@v4
-        with:
-          path: ev-cache
-          key: events-cache-none
-          restore-keys: events-cache-
+      - run: |
+          # P0 (Codex 6856174038): the SEC event cache carries the owner's private universe (watch list, private signals), so it lives ONLY in
+          # the private store as data/events-cache.json.gz (pulled above), never in the public Actions cache.
+          # Read-only install; when absent this reader keeps its own "no SEC events" handling.
+          bash .github/private-cache.sh install-file events-cache.json.gz ev-cache/events-cache.json.gz || [ $? = 3 ]
       - uses: actions/cache/restore@v4
         with:
           path: cat-cache

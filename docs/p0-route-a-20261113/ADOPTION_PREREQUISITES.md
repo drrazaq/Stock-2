@@ -55,3 +55,16 @@ exists. Codex 6852935516 / 6852885259 / 6852749074.
   publisher then returns PUBLICATION_UNCONFIRMED: privacy-safe (fail closed, nothing published), but the watcher withholds stop messages.
   So the backstop must be adopted together with (not before) the private reservation route, custody admission and the marker, or the
   owner must accept withheld watcher stop messages for the interval.
+- SEC event cache (Codex 6856174038): the existing Actions cache (events-cache-*) must be imported ONCE into the private store as
+  data/events-cache.json.gz and read back BEFORE adoption; until then the event study is UNKNOWN (not run; no empty restart, no refetch).
+- The same custody import applies to `evr-sec.json.gz`, `evr-min.json.gz` (event-orb lanes, STOP when absent) and
+  `squad29-cache.tar.gz` (STOP when absent). Each must fit the archive format's own bounds (95 MiB compressed; 200,000 entries and
+  2 GiB uncompressed for the archive), which are separate from the private-directory bounds (20,000 files / 512 MiB) and the Saturday
+  budget; no claim is made here that today's caches fit. A cache over a bound stops at import, never truncated or pruned.
+- Cache admission (Codex 6856898125, `.github/private-cache.sh`): each job installs a private cache only after revoking its own
+  receipt; bytes already at the module path (for example restored from a legacy public cache) are set aside unchanged outside it,
+  never installed over, exported, staged or deleted; staging back to the private store requires this job's receipt for that exact
+  path, so a missing, failed, partial or over-bound install can never promote a legacy tree as canonical private history.
+- Legacy public fm-cache entries that already contain evr-* files are not deleted or re-exported by any workflow: runs that restore one
+  skip the fm-cache export (UNRETAINED). Their cleanup is part of the separately approved public cleanup, not this change.
+  Existing Actions caches are neither read nor deleted by this source; their removal is part of the separate cleanup approval.

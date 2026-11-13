@@ -50,11 +50,11 @@ jobs:
           key: leaders-study-none
           restore-keys: leaders-study-
       # batch 2 (DEC2-CONTRACT, DEC2-INSQ): the SEC 8-K event cache and value-lab's SEC companyfacts cache, RESTORED READ ONLY (never saved here)
-      - uses: actions/cache/restore@v4
-        with:
-          path: ev-cache
-          key: events-cache-none
-          restore-keys: events-cache-
+      - run: |
+          # P0 (Codex 6856174038): the SEC event cache carries the owner's private universe (watch list, private signals), so it lives ONLY in
+          # the private store as data/events-cache.json.gz (pulled above), never in the public Actions cache.
+          # Read-only install; when absent this reader keeps its own "no SEC events" handling.
+          bash .github/private-cache.sh install-file events-cache.json.gz ev-cache/events-cache.json.gz || [ $? = 3 ]
       - uses: actions/cache/restore@v4
         with:
           path: value-cache
