@@ -49,3 +49,13 @@ Diagnostics go to the private log only (data/private-scan-stdout.log); the publi
 Still on the producer queue (not yet split): lab outputs carrying a per-symbol halal field, discovery2 / follow-lane reads of the tier2
 ledger, news logs, events-study watch-extra, other stdout and artifacts. When an owner portion of those moves to a private file it is
 added to OWNER_EVENT_LEDGERS (critical) if it records owner executions, SELLs, closures or commands.
+
+## Owner `report` reply (scan.mjs tgCommands, data/scan-report.txt)
+
+| Paired private record (data/signals-private.json) | Reply |
+|---|---|
+| valid, paired with the published signals (shared strict hydration), not ownerStale | the report as written |
+| ownerStale (the run's owner state changed or could not be confirmed) | prefixed NOT CURRENT; guidance HISTORICAL only, no new sale or entry |
+| missing, unreadable, malformed, invalid or unpaired (another run) | prefixed NOT CONFIRMED; guidance HISTORICAL only, no new sale or entry |
+
+The stored report bytes are never rewritten by the reply; the label is applied at reply time (and at write/send time for stale runs).

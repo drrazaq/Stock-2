@@ -3698,7 +3698,7 @@ async function tgCommands(sig) {
       continue; }
     if (/^(lab|hunting|hunting lab|hunt)\s*$/i.test(text)) { const w = readJson('data/hunting-lab.json', null); out.push(w && w.text ? w.text : 'The hunting lab runs every Sunday with the fair test. No result yet.'); continue; }
     if (/^(winners?|winner study|patterns?)\s*$/i.test(text)) { const w = readJson('data/winners-study.json', null); out.push(w && w.text ? w.text : 'The winners study runs every Sunday with the fair test. No result yet.'); continue; }
-    if (/^(report|scan|full report)\s*$/i.test(text)) { let r = fs.existsSync('data/scan-report.txt') ? fs.readFileSync('data/scan-report.txt', 'utf8') : ''; try { if (r && JSON.parse(fs.readFileSync(POS_VERDICT_FILE, 'utf8')).ownerStale === true) r = staleReportText(r); } catch {} /* the paired private record says the run was stale: historical only */ out.push(r || 'No nightly report saved yet. It arrives after tonight\u2019s scan.'); continue; }
+    if (/^(report|scan|full report)\s*$/i.test(text)) { let r = fs.existsSync('data/scan-report.txt') ? fs.readFileSync('data/scan-report.txt', 'utf8') : ''; if (r) r = reportWithStatus(r); /* stale, or private record missing/unreadable/unpaired: labelled, never presented as current */ out.push(r || 'No nightly report saved yet. It arrives after tonight\u2019s scan.'); continue; }
     if (/^(radar|early|wave)\b/i.test(text)) { const r = readJson('data/intraday-radar.json', null); out.push(r && r.text ? r.text : 'The early-wave radar has not produced a board yet. It runs about every 15 minutes while the US market is open (from ' + kwt(570, sessDay()) + ' Kuwait).'); continue; }
     // WHAT TO SELL AND WHY (before the general "today / sell" list, which only shows stop hits)
     if (/^\s*(sell|sells|sell check|why sell|what\s+(to|should\s+i|do\s+i|can\s+i)\s+sell\b.*|which\s+(stocks?\s+)?(to|should\s+i)\s+sell\b.*|\u0634\u0646\u0648\s+\u0623?\u0627?\u0628\u064A\u0639.*|\u0645\u0627\u0630\u0627\s+\u0623?\u0627?\u0628\u064A\u0639.*)\s*\??\s*$/i.test(text)) { out.push(await sellCheckText(sig)); continue; }
@@ -4130,6 +4130,13 @@ function ownerStartCheck() {
 // A stale run's private exit verdicts are labelled so they are never hydrated later as current (signals-read.mjs honours ownerStale).
 const REPORT_STALE = 'NOT CURRENT: your holdings, halal marks or settings changed while this report\'s scan ran (or could not be confirmed). The holding guidance below is HISTORICAL only: nothing in it is a new sale or entry. Send  review  for a fresh view.';
 function staleReportText(t) { return String(t || '').startsWith('NOT CURRENT:') ? t : REPORT_STALE + '\n\n' + t; }
+const REPORT_UNKNOWN = 'NOT CONFIRMED: the private record that belongs to this report is missing, unreadable or from another run, so it cannot be confirmed as current. The holding guidance below is HISTORICAL only: nothing in it is a new sale or entry. Send  review  for a fresh view.';
+// the report's disposition comes from its paired private record (the shared strict hydration): stale -> NOT CURRENT; missing, unreadable,
+// malformed or unpaired -> NOT CONFIRMED; only a valid, paired, non-stale record leaves the report as it is.
+function reportWithStatus(t) { let pv = null; try { pv = JSON.parse(fs.readFileSync(POS_VERDICT_FILE, 'utf8')); } catch {}
+  if (pv && pv.ownerStale === true) return staleReportText(t);
+  const h = readJson0('data/signals.json'); if (!h || h.posVerdictUnavailable) return String(t).startsWith('NOT ') ? t : REPORT_UNKNOWN + '\n\n' + t;
+  return t; }
 function markReportStale() { try { const f = 'data/scan-report.txt'; if (fs.existsSync(f)) fs.writeFileSync(f, staleReportText(fs.readFileSync(f, 'utf8'))); } catch {} }
 function markVerdictStale() { markReportStale(); try { const v = JSON.parse(fs.readFileSync(POS_VERDICT_FILE, 'utf8')); if (v && typeof v === 'object' && v.ownerStale !== true) fs.writeFileSync(POS_VERDICT_FILE, JSON.stringify({ ...v, ownerStale: true })); } catch {} }
 function ownerFreshAtSend() {
