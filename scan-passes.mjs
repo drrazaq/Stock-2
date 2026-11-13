@@ -158,7 +158,7 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
       if (!isPrivate(pub2.split('/')[0])) copy(path.join(DATA, r), path.join(privBox, 'data', pub2)); }   // owner's full-state caches
     let pubAt = null; if (pubOk) { try { pubAt = JSON.parse(fs.readFileSync(path.join(pubBox, 'data', 'signals.json'), 'utf8')).generatedAt; } catch {} }
     const privBefore = snapshot(path.join(privBox, 'data'));
-    const priv = spawnSync(process.execPath, ['scan.mjs'], { cwd: privBox, env: { ...env, MODE: 'daily', SCAN_PASS: 'private', SCAN_FETCH_CACHE: cache, SCAN_FETCH_CACHE_MODE: 'replay', ...(pubAt ? { SCAN_GENERATED_AT: pubAt } : {}) }, encoding: 'utf8', maxBuffer: 256 << 20, timeout: timeoutMs, killSignal: 'SIGKILL' });
+    const priv = spawnSync(process.execPath, ['scan.mjs'], { cwd: privBox, env: { ...env, MODE: 'daily', SCAN_PASS: 'private', SCAN_OWNER_REFRESH: path.join(ROOT, '.github/owner-latest.sh'), SCAN_FETCH_CACHE: cache, SCAN_FETCH_CACHE_MODE: 'replay', ...(pubAt ? { SCAN_GENERATED_AT: pubAt } : {}) }, encoding: 'utf8', maxBuffer: 256 << 20, timeout: timeoutMs, killSignal: 'SIGKILL' });
     const privOk = priv.status === 0 && !priv.signal;
     const sinkTmp = path.join(work, 'private-scan-stdout.log'); fs.writeFileSync(sinkTmp, (priv.stdout || '') + (priv.stderr || ''), { mode: 0o600 });
 

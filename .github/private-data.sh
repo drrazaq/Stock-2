@@ -112,5 +112,12 @@ case "$MODE" in
       [ "$(gitp rev-parse "origin/$BR:data/$f" 2>/dev/null)" = "$(git hash-object "$ROOT/data/$f")" ] && continue
       case "$CONFLICT_MERGED" in *" $f "*) m=$((m+1)); say "$f was merged with a newer private copy (save-data.sh rule)";; *) say "Error: private file $f differs from this job's copy"; bad=1;; esac; done
     [ "$bad" = 0 ] || exit 1; rm -f "$PENDING"; say "private save verified: $n files ($m merged with a newer private copy)" ;;
-  *) echo "usage: private-data.sh check|mirror|pull|push"; exit 2 ;;
+  latest)   # latest FILE OUT: the private repository's newest copy of one declared owner file, written to OUT (never printed).
+    # exit 0 written, 2 absent in the private repository, 1 unreadable (the nightly treats it as UNKNOWN). Reads only; no local fallback.
+    F=${2:-}; OUT=${3:-}; case " $(echo $FILES) " in *" $F "*) ;; *) say "Error: $F is not a declared private file"; exit 1 ;; esac; [ -n "$OUT" ] || exit 1
+    [ -d "$DIR/.git" ] || { git clone -q "$URL" "$DIR" 2>/dev/null || exit 1; }
+    gitp fetch -q origin 2>/dev/null || exit 1; BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1
+    gitp cat-file -e "origin/$BR:data/$F" 2>/dev/null || exit 2
+    ( umask 077; gitp show "origin/$BR:data/$F" > "$OUT.tmp" 2>/dev/null ) && mv -f "$OUT.tmp" "$OUT" || { rm -f "$OUT.tmp"; exit 1; } ;;
+  *) echo "usage: private-data.sh check|mirror|pull|push|latest"; exit 2 ;;
 esac

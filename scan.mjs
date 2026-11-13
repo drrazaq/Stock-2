@@ -22,7 +22,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import zlib from 'node:zlib';
 import { createRequire } from 'node:module';
-import { execSync } from 'node:child_process';
+import { execSync, spawnSync } from 'node:child_process';
 import { priceEvidence, stopText, stopMessageKey, validStop, nyStamp } from './stop-watch.mjs';
 // P0 Route A OWNER STATE (Codex 6851609156): after the two-pass nightly is live (data/public-pass-manifest.json exists), the public scan
 // outputs are a PUBLIC PROJECTION computed without the owner's state. Owner-context callers (bot replies, intraday checks: no SCAN_PASS)
@@ -4093,7 +4093,42 @@ function nightlyStopRaise(P, c, ind, i) {
 // apply only the fields this job changed; a position sold meanwhile stays sold, a new one stays, a stop the owner changed stays his.
 // FIX (review S-1, 22 Oct): the bot runs on another runner, so its trades reach this job only through git; the local file is this job's
 // own hours-old checkout. The base is now the NEWEST copy on origin/main (git fetch + git show), the local file only when git fails.
+// P0 Route A REFRESHED OWNER STATE (Codex 6851558974). The isolated private pass has no .git and, after the cutover, public main holds no
+// owner files, so the old origin/main fetch would silently fall back to the pass's initial snapshot. Inside the private pass the ONLY
+// source of the latest owner files is the authoritative store, through SCAN_OWNER_REFRESH (.github/owner-latest.sh: the private
+// repository in private mode, otherwise this checkout's origin/main); there is no local fallback presented as fresh. Unknown or changed
+// owner state stops the actionable nightly messages (one plain notice instead); the stale snapshot is never saved over newer records.
+const OWNER_SEEN = {}; let OWNER_STALE = null;
+function ownerLatest(name) {
+  const cmd = env.SCAN_OWNER_REFRESH; if (!cmd) return { ok: false };
+  const out = path.join(os.tmpdir(), 'owner-latest-' + process.pid + '-' + crypto.randomBytes(4).toString('hex'));
+  try { const r = spawnSync('bash', [cmd, name, out], { stdio: 'ignore', timeout: 90000 });
+    if (r.status === 2) return { ok: true, v: null };
+    if (r.status !== 0) return { ok: false };
+    return { ok: true, v: JSON.parse(fs.readFileSync(out, 'utf8')) }; } catch { return { ok: false }; } finally { try { fs.rmSync(out, { force: true }); } catch {} }
+}
+// At the start of the private pass: record the STORE's halal marks and settings (the send-time check compares the store with itself, so the
+// scan's own writes, such as migration flags, never look like a change), and require that the copies the pass renders from agree with the
+// store: every key the store holds must be equal in the copy (keys the scan itself adds are allowed).
+function ownerStartCheck() {
+  for (const [f, what] of [['halal.json', 'halal marks'], ['settings.json', 'settings']]) {
+    const r = ownerLatest(f); if (!r.ok) { OWNER_STALE = 'your ' + what + ' could not be confirmed from your private records'; return; }
+    OWNER_SEEN[f] = r.v; const mine = readJson0('data/' + f) || {}, store = r.v || {};
+    if (Object.keys(store).some(k => !isDeepStrictEqual(store[k], mine[k]))) { OWNER_STALE = 'your ' + what + ' changed before tonight\'s scan could use them'; return; } }
+}
+function ownerFreshAtSend() {
+  if (env.SCAN_PASS !== 'private') return { ok: true };
+  if (OWNER_STALE) return { ok: false, why: OWNER_STALE };
+  for (const [f, what] of [['my-positions.json', 'holdings'], ['halal.json', 'halal marks'], ['settings.json', 'settings']]) {
+    if (!(f in OWNER_SEEN)) return { ok: false, why: 'your ' + what + ' could not be confirmed from your private records' };
+    const r = ownerLatest(f); if (!r.ok) return { ok: false, why: 'your ' + what + ' could not be confirmed from your private records' };
+    if (!isDeepStrictEqual(r.v ?? null, OWNER_SEEN[f] ?? null)) return { ok: false, why: 'your ' + what + ' changed while tonight\'s scan ran' }; }
+  return { ok: true };
+}
 function latestPositions() {
+  if (env.SCAN_PASS === 'private') { const r = ownerLatest('my-positions.json');   // authoritative private store only; never the pass's own snapshot
+    if (r.ok && r.v && typeof r.v === 'object' && !Array.isArray(r.v)) return r.v;
+    OWNER_STALE = 'your holdings could not be refreshed from your private records'; console.log('positions merge: latest holdings UNKNOWN (no fresh private copy)'); return null; }
   try { const o = { stdio: ['ignore', 'pipe', 'pipe'], timeout: 60000 };
     execSync('git fetch -q origin main', o); const j = JSON.parse(execSync('git show origin/main:' + POS_FILE, { ...o, maxBuffer: 64 << 20 }).toString());
     if (j && typeof j === 'object' && !Array.isArray(j)) return j; } catch (e) { console.log('positions merge: origin copy not readable (' + String(e.message).split('\n')[0].slice(0, 120) + '), using the local file'); }
@@ -4101,6 +4136,8 @@ function latestPositions() {
 }
 function mergeNightlyPositions(POS_AT_LOAD, myPos) {
   const fresh = latestPositions(), F = ['stop', 'raised', 'exitBelow', 'exitFlag', 't1', 't2', 'tmode', 'tnote', 'tChecked', 'dist0'];
+  if (!fresh) return;   // UNKNOWN: tonight's copy is NOT saved over newer records (no re-entry or add from a stale snapshot); actionable messages are withheld
+  OWNER_SEEN['my-positions.json'] = structuredClone(fresh);
   for (const sym of Object.keys(fresh)) { const a = POS_AT_LOAD[sym], b = myPos[sym], f = fresh[sym]; if (!a || !b || a.entry !== f.entry || a.since !== f.since) continue;
     for (const k of F) { if (JSON.stringify(f[k]) !== JSON.stringify(a[k])) continue; if (b[k] === undefined) delete f[k]; else f[k] = b[k]; } }
   savePos(fresh); for (const k of Object.keys(myPos)) if (!fresh[k]) delete myPos[k]; Object.assign(myPos, fresh);
@@ -4108,6 +4145,7 @@ function mergeNightlyPositions(POS_AT_LOAD, myPos) {
 async function daily() {
   const now = Date.now(), loaded = {}, errors = [];
   await tgCommands(readJson('data/signals.json', null));
+  if (env.SCAN_PASS === 'private') ownerStartCheck();   // the store as of tonight's start, and the copies tonight's rendering uses must match it
   const myPos = loadPos(), POS_AT_LOAD = JSON.parse(JSON.stringify(myPos)), myLines = [], posVerdict = {};
   for (const x of Object.keys(myPos)) if (!LIST.includes(x)) LIST.push(x);
   const crowd = env.NO_CROWD ? null : await crowdList();
@@ -4554,7 +4592,10 @@ async function daily() {
     await telegram(w.filter(x => x !== '').join('\n').replace(/\n(SECTORS|BIGGEST|TREND|SIGNALS|WHAT|DISCOVERY|TIP SOURCES|FOR NEXT)/g, '\n\n$1') + '\n' + FOOT);
   }
   // ---- The last message of the night. Quiet mode (the default): ONE action message. Otherwise the PLAN, YOUR STOCKS and the Friday study.
-  if (QUIET()) { const sg = readJson('data/signals.json', null);
+  const FRESH = ownerFreshAtSend();   // actionable messages only from owner state that is current at send time
+  if (!FRESH.ok) { console.log('owner state at send: ' + FRESH.why + '; actionable messages withheld');
+    await telegram('ACTIONS NOT SENT TONIGHT: ' + FRESH.why + '. Your recorded buys, sells and stops stand, and your stop and target checks keep running. Send  review  for a fresh view.\n' + FOOT); }
+  else if (QUIET()) { const sg = readJson('data/signals.json', null);
     { const at = await actionsText(sg, loadPos(), null, 'ACTIONS FOR THE NEXT SESSION (' + session + ' close). Market opens ' + kwt(570, sessionPlus(session, 1)) + ' Kuwait on ' + sessionPlus(session, 1) + '.');   // (28 Oct) buttons only for this message's own TODAY'S ACTIONS buys
     await telegram(at + (healthBad ? '\n\nWARNING: over a fifth of the prices failed to load tonight. Treat this as incomplete.' : '') + ([2, 4, 5].includes(new Date(session + 'T12:00:00Z').getUTCDay()) ? '\n\n' + (new Date(session + 'T12:00:00Z').getUTCDay() === 5 ? 'WEEKLY ' : 'MID-WEEK ') + scorecardText() : '') + '\n\nAfter you act, tap a button: I ask you to confirm the shares and price before anything is recorded.', tradeButtons(sg, loadPos(), 5, at)); }
     if (new Date(session + 'T12:00:00Z').getUTCDay() === 5 && fs.existsSync(dataPath('data/options-shadow.json'))) await (async (txt) => deliver({ cls: 'QUIET', sender: 'scan:options-weekly', text: txt, ownerOptIn: ownerQuietOff(), send: () => telegram(txt) }))(optionsText());   // options: its own separate weekly message, never inside ACTIONS

@@ -53,6 +53,9 @@ jobs:
           YT_KEY: ${{ secrets.YT_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
+          # P0 Route A: the private pass refreshes the owner's latest files from the private repository (owner-latest.sh); the public pass's
+          # environment allowlist never receives it
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
           RATE: ${{ vars.RATE || '8' }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
       # P0 Route A (Codex 6851335617): a FAILED nightly may already have sent an owner-facing line (for example a SELL). The scan keeps the
