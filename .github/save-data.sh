@@ -7,6 +7,10 @@
 # Usage: bash .github/save-data.sh "commit message"   (test/save-data.test.mjs drives it on throw-away repositories)
 OWNER_FILES=" data/my-positions.json data/my-trades.jsonl data/tg-state.json "
 T=$(mktemp -d)
+trap 'rm -rf "$T"' EXIT
+GUARD_STOP=
+PRIVACY_GUARD="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/save-privacy-guard.mjs"
+privacy_guard() { SAVE_GUARD_PHASE="$1" node "$PRIVACY_GUARD" || { GUARD_STOP=1; return 1; }; }
 ALERT_MERGER="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/merge-alert-state.mjs"
 has() { git cat-file -e ":$1:$2" 2>/dev/null; }
 # one stopped rebase step: during a rebase stage 2 is origin (upstream), stage 3 is this job's commit
@@ -31,11 +35,12 @@ pull() {
   while in_rebase && [ $n -lt 20 ]; do
     n=$((n + 1)); resolve_step
     [ -z "$(git diff --name-only --diff-filter=U)" ] || return 1
+    privacy_guard assert || return 1
     GIT_EDITOR=true git rebase --continue >/dev/null 2>&1 || { git diff --cached --quiet && GIT_EDITOR=true git rebase --skip >/dev/null 2>&1; } || true
   done
   ! in_rebase
 }
-git add data
+privacy_guard stage || exit 1
 # P0 Route A (development) PRIVACY FLOOR: the PUBLIC save never stages the owner's private files (.github/private-files.txt) nor any
 # data/private-* copy, whatever markers exist; a marker controls hydration/adoption, never permission to publish owner payloads.
 # The private repository's own save (private-data.sh push) sets SAVE_PRIVATE_REPO=1 and keeps every file. A staged private path after
@@ -45,24 +50,25 @@ PRIVATE_PENDING=
 if [ "${SAVE_PRIVATE_REPO:-}" != 1 ]; then
   [ -f .github/private-files.txt ] || { echo "Error: .github/private-files.txt missing; refusing to save"; exit 1; }
   PRIVATE_GUARD=1
-  PRIV=$(grep -vE '^\s*(#|$)' .github/private-files.txt | sed 's#^#data/#')
-  for p in $PRIV; do git reset -q -- "$p" 2>/dev/null || true; done
-  git reset -q -- 'data/private-*' 2>/dev/null || true   # two-pass scan private caches (scan-passes.mjs)
-  for p in $PRIV; do if git diff --cached --name-only -- "$p" | grep -q .; then echo "Error: private file $p still staged; refusing to publish it"; exit 1; fi; done
-  if git diff --cached --name-only -- 'data/private-*' | grep -q .; then echo "Error: a data/private-* file is still staged; refusing to publish it"; exit 1; fi
+  PRIV=$(grep -vE '^\s*(#|$)' "$(dirname "$PRIVACY_GUARD")/private-files.txt" | sed 's#^#data/#')
   if [ "${PRIVATE_SAVE_OK:-}" != 1 ]; then
-    for p in $PRIV; do if [ -n "$(git status --porcelain -- "$p" 2>/dev/null)" ]; then PRIVATE_PENDING=1; fi; done
-    [ -n "$(git status --porcelain -- 'data/private-*' 2>/dev/null)" ] && PRIVATE_PENDING=1
+    for p in $PRIV; do
+      if [ -n "$(git status --porcelain --untracked-files=all --ignored -- "$p")" ]; then PRIVATE_PENDING=1; fi
+    done
+    [ -n "$(git status --porcelain --untracked-files=all --ignored -- 'data/private-*')" ] && PRIVATE_PENDING=1
   fi
 fi
-git diff --cached --quiet || git commit -q -m "${1:-scan $(date -u +%FT%RZ)}"
+privacy_guard assert || exit 1
+git diff --cached --quiet || git commit -q -m "${1:-scan $(date -u +%FT%RZ)}" || exit 1
 merge_alerts() {
+  if [ "${SAVE_PRIVATE_REPO:-}" != 1 ] && grep -qx 'alert-state.json' "$(dirname "$PRIVACY_GUARD")/private-files.txt"; then return 0; fi
   node "$ALERT_MERGER" || return 1
   [ -f data/alert-state.json ] || return 0
   git add -- data/alert-state.json
+  privacy_guard assert || return 1
   git diff --cached --quiet || git commit -q -m "preserve scanner alert evidence"
 }
-ok=0; for i in 1 2 3 4 5; do if pull && merge_alerts && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep "${SAVE_SLEEP:-10}"; done
+ok=0; for i in 1 2 3 4 5; do if pull && merge_alerts && privacy_guard assert && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; [ -z "$GUARD_STOP" ] || break; sleep "${SAVE_SLEEP:-10}"; done
 rm -rf "$T"
 [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository"; exit 1; }
 [ -z "$PRIVATE_PENDING" ] || { echo "Error: owner private files changed but their private persistence was not confirmed; they were NOT published and are NOT durably saved"; exit 3; }
