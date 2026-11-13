@@ -237,14 +237,14 @@ const QS = MS.filter(t => t >= startT && isQuarterMonth(D[t]));
     if (r && r.ok) { const j = await r.json().catch(() => null); SICC[c] = j && j.sic ? String(j.sic).padStart(4, '0') : ''; sicFetched++; } else if (r && r.status === 404) SICC[c] = ''; }
   if (sicFetched) W(SC + '/sic.json', Object.fromEntries(Object.entries(SICC))); let n = 0, have = 0; for (const t of [...QS, T - 1]) for (const r of universe(t).ranked.slice(0, 300)) { n++; if (sicAt(r.i, r.cik)) have++; }
   STATUS.sic = { ok: n > 0 && have >= n * 0.95, top300Rows: n, withSic: have, askedNow: sicFetched, wanted: want.size }; log('SIC: ' + JSON.stringify(STATUS.sic)); }
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 // coverage / survivorship diagnostics
 const DIAGS = { window: [D[0], D[T - 1]], sessions: T, stocks: NS, data: STATUS };
 { let g = 0, gc = 0, a = 0, ac = 0; for (const t of MS) for (const i of liqList(t)) { const c = cikAt(i, D[t]); if (vanishedI(i)) { g++; if (c) gc++; } else { a++; if (c) ac++; } }
   STATUS.cikCover = { ok: g === 0 || gc / g >= 0.75, vanished: g, vanishedWithCik: gc, alive: a, aliveWithCik: ac, vanishedShare: r4(g ? gc / g : null), aliveShare: r4(a ? ac / a : null) };
   }
-const ZADM = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && (HAL[s].s === 'ok' || HAL[s].s === 'fail') ? HAL[s].s : 'unknown');
+const ZADM = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: public ZAD list only (owner marks applied privately)
 const HEXT = J('data/halal-ext.json', {}), screener = (s) => { const x = HEXT[s] && HEXT[s].ht; return x && typeof x.v === 'boolean' ? (x.v ? 'ok' : 'fail') : 'unknown'; };
 
 // ================= 4b. SHARIAH SCREEN DATA (own cache shfacts: the extra SEC items of the ~200 largest at every quarter) =================
@@ -412,7 +412,7 @@ for (const id of IDS) { const B = BUILT[id]; if (!B || B.start === null) continu
     nextReview: RULES[id].every === 'y' ? 'first session of January' : 'first session of the next quarter (Jan / Apr / Jul / Oct)' };
   board[id] = { name: RULES[id].name, paperEntries: paper.length, open: paper.filter(z => z.kind === 'open').length, closed: st, ready: paperReady(st), fiveYear: fr.verdict ? { verdict: fr.verdict, beatsSpusBothHalves: fr.portfolio ? fr.portfolio.beatsSpusBothHalves : null, beatsSpyBothHalves: fr.portfolio ? fr.portfolio.beatsSpyBothHalves : null } : null }; }
 if (newLines.length) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x)).join('\n') + '\n');
-const NOTE = 'PAPER ONLY. Squad 10 halal core baskets (SQ10-*). members = what each basket holds now with its weight today (weights set at the last review, then drifted with prices); a basket is meant to be owned WHOLE. The Shariah screen is a point-in-time PROXY of the S&P / Dow Jones / AAOIFI method, NOT ZAD: zad = the owner\'s ZAD mark (data/halal.json + zad-list), screener = HalalScreener (data/halal-ext.json); "unknown" must be checked before any real buy, and a member ZAD marks not halal is replaced by the first halal reserve. Entries and exits from ' + START + ' are recorded in data/squad10-paper.jsonl.';
+const NOTE = 'PAPER ONLY. Squad 10 halal core baskets (SQ10-*). members = what each basket holds now with its weight today (weights set at the last review, then drifted with prices); a basket is meant to be owned WHOLE. The Shariah screen is a point-in-time PROXY of the S&P / Dow Jones / AAOIFI method, NOT ZAD: zad = the PUBLIC ZAD not-halal list only (your own ZAD marks are applied privately by the bot), screener = HalalScreener (data/halal-ext.json); "unknown" must be checked before any real buy, and a member ZAD marks not halal is replaced by the first halal reserve. Entries and exits from ' + START + ' are recorded in data/squad10-paper.jsonl.';
 fs.writeFileSync(TODAY, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], paperStart: START, note: NOTE, methods: today }, null, 1));
 fs.writeFileSync(BOARD, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], paperStart: START, cost: COST, readiness: '30+ resolved paper trades on 10+ distinct days, average > 0 after 0.8% cost', methods: board }, null, 1));
 log('paper lane: ' + newLines.length + ' new line(s)');

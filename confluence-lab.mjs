@@ -77,7 +77,7 @@ const cMemo = new Map(); const ctrlSpan = (k, x) => { const key = k * 8192 + x; 
 const serMemo = new Map(); const series = (sym) => { const i = SY.get(sym); if (i === undefined) return null; if (serMemo.has(i)) return serMemo.get(i); const b = i * T, o = new Float64Array(T), c = new Float64Array(T);
   for (let t = 0; t < T; t++) { o[t] = O[b + t] > 0 ? O[b + t] : OX[b + t] > 0 ? OX[b + t] : NaN; c[t] = C[b + t] > 0 ? C[b + t] : CX[b + t] > 0 ? CX[b + t] : NaN; }
   const s = { O: o, C: c }; if (serMemo.size > 3000) serMemo.clear(); serMemo.set(i, s); return s; };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const sessionOf = (d) => { if (tOf.has(d)) return tOf.get(d); let lo = 0, hi = T; while (lo < hi) { const m = (lo + hi) >> 1; if (D[m] <= d) lo = m + 1; else hi = m; } return lo - 1; };   // the last session on or before d
 
 // ================= 2. INPUT SIGNALS (5 years) =================

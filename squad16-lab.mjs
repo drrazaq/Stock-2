@@ -257,7 +257,7 @@ const shMemo = new Map(); const shOf = (cik) => { if (!cik) return null; if (shM
   if (a && Object.keys(a).length) { o = {}; for (const [g, tags] of Object.entries(SH_TAGS)) { o[g] = {}; for (const t of tags) if (a[t]) o[g][t] = a[t].map(([s0, e, v, f]) => ({ s: s0, e, v, f })); } } shMemo.set(cik, o); return o; };
 const exMemo = new Map(); const exOf = (cik) => { if (!cik) return null; if (exMemo.has(cik)) return exMemo.get(cik); const a = EXTRA[cik]; let o = null;
   if (a) { o = {}; for (const [g, tags] of Object.entries(EXTAGS)) { o[g] = {}; for (const t of tags) if (a[t]) o[g][t] = a[t].map(([s0, e, v, f]) => ({ s: s0, e, v, f })); } } exMemo.set(cik, o); return o; };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const sicAt = (i, cik) => { const a = cik && SUBS[cik] && SUBS[cik].sic; if (a) return String(a).padStart(4, '0'); const x = SIC0[SYMS[i]]; if (x && x.c) return String(x.c).padStart(4, '0'); const y = SECCIK[SYMS[i]]; return y && y[1] ? String(y[1]).padStart(4, '0') : null; };
 
 // ================= 5. POINT-IN-TIME FUNDAMENTALS (one company, one review date) =================

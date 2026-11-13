@@ -343,7 +343,7 @@ const soun = (() => { const raw = RAW.filter(e => /SOUNDHOUND/i.test(e.name || '
 log('SOUN: ' + JSON.stringify(soun).slice(0, 900));
 
 // ================= 12. PAPER LANE (from PAPER_START; RECORD ONLY) =================
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
 const sigIds = new Set(lines.filter(x => x.type === 'signal').map(x => x.id)), resolved = new Set(lines.filter(x => x.type === 'result').map(x => x.id)), newLines = [], lastT = T - 1;
 // LABEL AUDIT (27 Oct 2026): the forward lane only records COUNTED classes (NEW_POSITION_CONFIRMED, 13D/13G_FIRST; squad25-audit-core.mjs)

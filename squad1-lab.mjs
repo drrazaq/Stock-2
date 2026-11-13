@@ -87,7 +87,7 @@ const cikSyms = new Map(); for (const s of SYMS) { const c = symCik(s); if (c) (
 const sharesKnown = (cik, d) => { const a = SH.c[cik]; if (!a) return null; const lim = iso(Date.parse(d + 'T00:00:00Z') - 30 * 864e5); let v = null; for (const [e, n] of a) if (e <= lim) v = n; return v; };
 // share count known on d: the filing's own CIK, else the point-in-time CIK of the ticker (EVID), else today's ticker list (survivorship fix)
 const sharesOf = (s, d, filingCik) => sharesAt({ sym: s, d, filingCik, evidence: EVID, todayCik: symCik, series: sharesKnown });
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const FORM_M = monthStarts(D), STATUS = {};
 const hasPx = (i, t) => { for (let q = Math.max(0, t - 5); q <= Math.min(T - 1, t + 5); q++) if (C[i * T + q] > 0 || CX[i * T + q] > 0) return true; return false; };
 // the stock behind a filing: a display-name ticker with prices, else a ticker of the CIK with prices near the date

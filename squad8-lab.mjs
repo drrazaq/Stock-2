@@ -95,7 +95,7 @@ const symCik = (s) => { const a = SH.t[s] || SH.t[s.replace(/\./g, '-')]; if (a)
 const cikSyms = new Map(); for (const s of SYMS) { const c = symCik(s); if (c) (cikSyms.get(c) || cikSyms.set(c, []).get(c)).push(s); }
 const SHROWS = new Map(); const shRows = (cik) => { if (!SHROWS.has(cik)) SHROWS.set(cik, SH.c[cik] ? splitFix(SH.c[cik]) : null); return SHROWS.get(cik); };
 STATUS.shares = { ok: Object.keys(SH.c || {}).length > 3000, companies: Object.keys(SH.c || {}).length, at: SH.at || null, lagDays: 30 };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 // ---- 2b. splits (Massive, 2017 on; reverse = split_to < split_from) ----
 const SPL = new Map(); { const f = SC + '/splits.json.gz'; let x = JZ(f, null);
   if (!x || Date.now() - Date.parse(x.at) > 6 * 864e5) { const rows = []; let done = false;

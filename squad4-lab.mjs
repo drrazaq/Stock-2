@@ -201,7 +201,7 @@ const sicOfSym = (s) => { const x = SIC0[s]; if (x && x.c) return String(x.c).pa
     if (r && r.ok) { const j = await r.json().catch(() => null); SICC[c] = j && j.sic ? String(j.sic).padStart(4, '0') : ''; sicFetched++; } else if (r && r.status === 404) SICC[c] = ''; }
   if (sicFetched) W(SC + '/sic.json', SICC); STATUS.sic = { askedNow: sicFetched, wanted: want.size }; }
 const sicAt = (i, cik) => sicOfSym(SYMS[i]) || (cik && SICC[cik]) || null;
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 // ================= 4. UNIVERSES =================
 const MS = monthStarts(D), MSET = new Set(MS);

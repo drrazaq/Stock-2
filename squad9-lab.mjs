@@ -79,7 +79,7 @@ const ret = (i, k, x) => { if (x >= T || k < 1) return null; const e = OA[i * T 
 const cMemo = new Map(); const ctrlSpan = (k, x) => { const key = k * 8192 + x; if (cMemo.has(key)) return cMemo.get(key); const v = [];
   for (const i of liqList(k - 1)) { if (i % 2) continue; const g = ret(i, k, x); if (g !== null && isFinite(g)) v.push(capG(g)); } const m = v.length >= 50 ? mean(v) : null; cMemo.set(key, m); return m; };
 const sub = (A, i) => A.subarray(i * T, i * T + T), series = (i) => ({ o: sub(OA, i), h: sub(HA, i), l: sub(LA, i), c: sub(CA, i), v: sub(VA, i) });
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 // ================= 2. SIGNALS AND TRADES (every liquid stock, every rule; one open trade per stock per rule) =================
 // TR[id] = [{ t, i, k, x, g, why }] closed trades; OPEN[id] = [{ t, i, plan, k }] still open at the newest close; SIGS[id] = signals of the

@@ -88,7 +88,7 @@ const liqSample = new Map(), sampleAt = (t) => { if (!liqSample.has(t)) { const 
 const cMemo = new Map(), ctrlSpan = (k, x) => { const key = k * 8192 + x; if (cMemo.has(key)) return cMemo.get(key); const v = [];
   for (const i of sampleAt(k - 1)) { const e = O[i * T + k]; let y = NaN; for (let q = x; q >= k && !(y > 0); q--) y = C[i * T + q]; if (e > 0 && y > 0 && Math.abs(y / e - 1) < 3) v.push(y / e - 1); }
   const m = v.length >= 50 ? mean(v) : null; cMemo.set(key, m); return m; };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 // ================= 2. EXPERT DATA =================
 // ---- A. insiders: SEC Form 4 open-market purchases kept by insider-study.mjs ([symbol, filing date, owner CIK, USD]); read only

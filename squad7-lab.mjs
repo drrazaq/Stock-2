@@ -123,7 +123,7 @@ log('sector features done');
 function featAt(i, t) { const F = FT.get(i), f = {}; for (const k of PRICE_FEATURES) f[k] = F[k][t]; f.rsSec = RS.get(i)[t]; f.breadthSec = BR.get(i)[t];
   const rows = shRows(i), d = D[t]; f.dShares = rows ? sharesChange(rows, d) : NaN; const sh = rows ? sharesAt(rows, d) : null; f.logMcap = sh > 0 && CA[i * T + t] > 0 ? Math.log10(sh * CA[i * T + t]) : NaN;
   const e = earnFeatures(REP.get(SYMS[i]), d); f.earnDays = e.earnDays; f.surprise = e.surprise; return f; }
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 if (DIAG) { W('data/squad7-diag.json', { generatedAt: new Date().toISOString(), mode: MODE, data: STATUS, sample: featAt(everLiq[0], T - 1) }); console.log('SQUAD 7 DIAG ' + JSON.stringify(STATUS)); process.exit(0); }
 

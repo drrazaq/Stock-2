@@ -301,7 +301,7 @@ for (const id of IDS) { const E = evaluate(SIG[id]), J0 = judgeSet(E.tr), E100 =
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k, r]) => need.includes(k) && r.sourcesOk && r.results).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], to: D[T - 1], bar: BAR, ...r }])), (r) => r.verdict !== 'TOO FEW CASES' || (r.results && r.results.all && r.results.all.n > 0));
 
 // ================= 10. TODAY + PAPER LANE =================
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
 const seen = new Set(lines.map(x => x.type + '|' + x.id)), newLines = [], today = {}, board = {};
 for (const id of IDS) { const fr = firstRun[id] || {}, paper = SIG[id].filter(s => s.t + 1 <= T && (s.t + 1 < T ? D[s.t + 1] : iso(Date.now() + 864e5)) >= START);

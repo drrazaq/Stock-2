@@ -250,7 +250,7 @@ const isJudged = (r) => r && r.verdict && r.verdict !== 'NOT RUN';
 const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filter(([k]) => need.includes(k)).map(([k, r]) => [k, { at: new Date().toISOString(), window: [D[0], D[T - 1]], bar: BAR, ...strip(r) }])), isJudged);
 
 // ================= 5. PAPER LANES (from 26 Oct 2026) =================
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
 const sigLines = lines.filter(x => x.type === 'signal'), resolved = new Set(lines.filter(x => x.type === 'result').map(x => x.id)), sigIds = new Set(sigLines.map(x => x.id)), newLines = [], lastT = T - 1;
 const exitLine = (x, i, k) => x.m === 'SQ22-NEGLECTED' ? exitNegl(series(i), k, x.stop, T) : exitHold(series(i), k, x.m === 'SQ22-CASHCONV' ? TH.cash.stop : TH.spin.stop, x.hold, T);

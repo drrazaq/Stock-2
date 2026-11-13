@@ -83,7 +83,7 @@ const sx = (s, d) => { const x = STK[s]; if (!x) return -1; if (!x._i) Object.de
 const sv = (s, d, f) => { const i = sx(s, d); return i < 0 ? null : STK[s][f][i]; };
 // 63-session average traded value (raw close x volume) up to and including day d
 const tv63 = (s, d) => { const x = STK[s], i = sx(s, d); if (i < 62) return null; let a = 0; for (let k = i - 62; k <= i; k++) { const v = x.c[k] * x.v[k]; if (!isFinite(v)) return null; a += v; } return a / 63; };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 // newest complete session: SPY's last bar (today's only after 21:00 UTC)
 const nowH = new Date().getUTCHours();
 await stockBars(['SPY'], TODAY);

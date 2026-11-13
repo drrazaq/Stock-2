@@ -118,7 +118,7 @@ function capsAt(t) { if (capMemo.has(t)) return capMemo.get(t); const rows = [];
   for (const i of liqList(t)) { const s = SYMS[i], cik = symCik(s), ind = sicOf(s); if (!cik || !ind) continue; const sh = sharesAt(shRows(cik), D[t]); if (!(sh > 0)) continue; const cap = C[i * T + t] * sh; if (!(cap > 0)) continue;
     rows.push({ key: i, cik, ind, cap, dv: DV20[i * T + t] }); }
   const u = dedupeByCompany(rows), L = industryLeaders(u), B = largest(u, TOP_BIG), out = { rows: u, ...L, big: B.set, bigRank: B.rank }; capMemo.set(t, out); return out; }
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 // ---- the years before the window, fallback: Nasdaq per-ticker daily history (Massive serves only ~5 years). Needed for: every universe
 // member at the month starts of the first 260 sessions (12-month returns, 52-week highs) and every industry leader at any month start

@@ -247,14 +247,14 @@ const QS = MS.filter(t => t >= startT && isQuarterMonth(D[t]));
     if (r && r.ok) { const j = await r.json().catch(() => null); SICC[c] = j && j.sic ? String(j.sic).padStart(4, '0') : ''; sicFetched++; } else if (r && r.status === 404) SICC[c] = ''; }
   if (sicFetched) W(SC + '/sic.json', Object.fromEntries(Object.entries(SICC))); let n = 0, have = 0; for (const t of [...QS, T - 1]) for (const r of universe(t).ranked.slice(0, 300)) { n++; if (sicAt(r.i, r.cik)) have++; }
   STATUS.sic = { ok: n > 0 && have >= n * 0.95, top300Rows: n, withSic: have, askedNow: sicFetched, wanted: want.size }; log('SIC: ' + JSON.stringify(STATUS.sic)); }
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 // coverage / survivorship diagnostics
 const DIAGS = { window: [D[0], D[T - 1]], sessions: T, stocks: NS, data: STATUS };
 { let g = 0, gc = 0, a = 0, ac = 0; for (const t of MS) for (const i of liqList(t)) { const c = cikAt(i, D[t]); if (vanishedI(i)) { g++; if (c) gc++; } else { a++; if (c) ac++; } }
   STATUS.cikCover = { ok: g === 0 || gc / g >= 0.75, vanished: g, vanishedWithCik: gc, alive: a, aliveWithCik: ac, vanishedShare: r4(g ? gc / g : null), aliveShare: r4(a ? ac / a : null) };
   }
-const ZADM = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && (HAL[s].s === 'ok' || HAL[s].s === 'fail') ? HAL[s].s : 'unknown');
+const ZADM = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: public ZAD list only (owner marks applied privately)
 const HEXT = J('data/halal-ext.json', {}), screener = (s) => { const x = HEXT[s] && HEXT[s].ht; return x && typeof x.v === 'boolean' ? (x.v ? 'ok' : 'fail') : 'unknown'; };
 
 // ================= 4b. SHARIAH SCREEN + GROSS PROFIT DATA (own cache shfacts-sq23: the Shariah items + gross profit / cost of revenue /
@@ -392,7 +392,7 @@ for (const id of IDS) { const B = BUILT[id], Z = SIMS[id]; if (!B || B.start ===
     account: 'If adopted: 70% of the money in Basket 1 (SQ10-SH20-C15) and 30% in this basket, both reset to 70/30 at every quarterly review (first session of Jan / Apr / Jul / Oct).' };
   board[id] = { name: RULES[id].name, verdict: fr.verdict || null, paperMarks: [...lines, ...newLines].filter(x => x.type === 'mark' && x.m === id).length }; }
 if (newLines.length) fs.appendFileSync(PAPER, newLines.map(x => JSON.stringify(x)).join('\n') + '\n');
-const NOTE = 'PAPER ONLY. Squad 23 second-basket candidates (SQ23-*). Basket study, NOT a TRY SMALL lab: newSignals stay empty. holdingsNow = the basket formed at its last quarterly review, drifted to the last close, in WHOLE percentages summing to 100 (ZAD accepts whole numbers only). The Shariah screen is a point-in-time PROXY of the S&P / Dow Jones / AAOIFI method, NOT ZAD: zad = the owner\'s ZAD mark (data/halal.json + zad-list); "unknown" must be checked in ZAD before any real buy; the halal status of any gold product (GLD or another) is the owner\'s ZAD decision.';
+const NOTE = 'PAPER ONLY. Squad 23 second-basket candidates (SQ23-*). Basket study, NOT a TRY SMALL lab: newSignals stay empty. holdingsNow = the basket formed at its last quarterly review, drifted to the last close, in WHOLE percentages summing to 100 (ZAD accepts whole numbers only). The Shariah screen is a point-in-time PROXY of the S&P / Dow Jones / AAOIFI method, NOT ZAD: zad = the PUBLIC ZAD not-halal list only (your own ZAD marks are applied privately by the bot); "unknown" must be checked in ZAD before any real buy; the halal status of any gold product (GLD or another) is the owner\'s ZAD decision.';
 fs.writeFileSync(TODAY, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], paperStart: START, note: NOTE, basket1Now: b1Now ? [...b1Now.keys()].map(i => SYMS[i]) : null, methods: today }, null, 1));
 fs.writeFileSync(BOARD, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], paperStart: START, note: 'daily marks of each candidate alone, the 70/30 account and Basket 1 alone in data/squad23-paper.jsonl', methods: board }, null, 1));
 log('paper lane: ' + newLines.length + ' new line(s)');

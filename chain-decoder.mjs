@@ -311,7 +311,7 @@ const judge = (trades, bar, split = midT) => { const R = { all: stat(trades), ol
 
   // 9. LIVE list: today's hot layers, and the buys of any rule that reached tier 2 or proven (gates on the last cached close)
   const future = tradingSessions(new Date(Date.parse(last) + 864e5).toISOString().slice(0, 10), new Date(Date.parse(last) + 120 * 864e5).toISOString().slice(0, 10));
-  const HAL = J('data/halal.json', {}), ZAD = J('data/zad-list.json', {}), zbad = new Set(ZAD.notHalal || []), halOf = (s) => zbad.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+  const ZAD = J('data/zad-list.json', {}), zbad = new Set(ZAD.notHalal || []), halOf = (s) => zbad.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
   const tL = T - 1, spyNow = spyI === undefined ? 0 : ret(spyI, tL - 63, tL), selNow = momSelect(layerInputs(tL, true), spyNow || 0);
   const buys = [];
   if (tierOf('CHAIN-MOM1')) for (const b of selNow.buys) { const i = SY.get(b.s); buys.push({ rule: 'CHAIN-MOM1', sym: b.s, buy: future[0], sell: future[MOM_HOLD - 1], stopPct: null, lastClose: r4(CC(i, tL)), chainLayer: b.layers.join(' + '), event: 'layer in the top 3 of ' + selNow.ranked.length + ' by 3-month return vs the S&P 500 (' + b.layers.map(k => pc((selNow.top.find(x => x.key === k) || {}).excess)).join(', ') + ')', halal: halOf(b.s) }); }

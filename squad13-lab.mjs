@@ -102,7 +102,7 @@ const sicOf = (s) => { const x = SIC[s]; if (x && x.c) return String(x.c); const
 const GRP = SYMS.map(s => sic3(sicOf(s)));
 const SHROWS = new Map(); const shRows = (cik) => { if (!SHROWS.has(cik)) SHROWS.set(cik, SH.c[cik] ? splitFix(SH.c[cik]) : null); return SHROWS.get(cik); };
 STATUS.shares = { ok: Object.keys(SH.c || {}).length > 3000, companies: Object.keys(SH.c || {}).length, at: SH.at || null, lagDays: 30 };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const SPL = new Map(); { const f = SC + '/splits.json.gz'; let x = JZ(f, null);
   if (!x || Date.now() - Date.parse(x.at) > 6 * 864e5) { const rows = []; let done = false;
     for (const base of ['/stocks/v1/splits?execution_date.gte=2017-01-01&limit=1000', '/v3/reference/splits?execution_date.gte=2017-01-01&limit=1000']) { let path = base, pages = 0; rows.length = 0;

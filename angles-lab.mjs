@@ -102,7 +102,7 @@ const sicOf = (s) => { const x = SIC[s]; if (x && x.c) return String(x.c).padSta
 const finCo = (s) => { const c = sicOf(s); return !!c && c[0] === '6'; };
 const sharesKnown = (cik, d) => { const a = SH.c[cik]; if (!a) return null; const lim = iso(Date.parse(d + 'T00:00:00Z') - 30 * 864e5); let v = null; for (const [e, n] of a) if (e <= lim) v = n; return v; };
 const sharesAtYearEnd = (cik, y) => { const a = SH.c[cik]; if (!a) return null; let v = null; for (const [e, n] of a) { if (e <= y + '-12-31' && e >= y + '-07-01') v = n; } return v; };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const isCS = (s) => !REF.ok || REF.cs.has(s);
 // TOP 500 by market value among liquid common stocks (one ticker per company: the most traded)
 const topMemo = new Map(); function top500(t) { if (t < 0) return new Set(); if (topMemo.has(t)) return topMemo.get(t); const best = new Map();

@@ -280,7 +280,7 @@ const hsh = (q) => { let h = 2166136261; for (let k = 0; k < q.length; k++) { h 
 
   // ---- 5. LIVE list: signals at the last close of every rule that reached tier 2 ----
   const future = tradingSessions(new Date(Date.parse(last) + 864e5).toISOString().slice(0, 10), new Date(Date.parse(last) + 140 * 864e5).toISOString().slice(0, 10));
-  const HAL = J('data/halal.json', {}) || {}, ZAD = J('data/zad-list.json', {}) || {}, zbad = new Set(ZAD.notHalal || []), halOf = (s) => zbad.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+  const ZAD = J('data/zad-list.json', {}) || {}, zbad = new Set(ZAD.notHalal || []), halOf = (s) => zbad.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
   const buys = []; for (const r of rules) if (tierOf(r.id)) for (const x of live[r.id]) buys.push({ rule: r.id, sym: x.sym, buy: future[0], sell: future[r.hold - 1], hold: r.hold, stopPct: K.STOP, lastClose: x.lastClose, combo: r.conds.map(K.condText).join(' AND '), features: x.features, halal: halOf(x.sym) });
   W(TODAY_OUT, { generatedAt: new Date().toISOString(), lastClose: last, sessions: future.slice(0, 90), rules: Object.fromEntries(rules.map(r => [r.id, tierOf(r.id)])), verdicts: Object.fromEntries(Object.entries(results).map(([k, v]) => [k, v.verdict])), buys, buyUpToPct: 0.03,
     note: 'Signals of the discovered rules at the last cached close. buys holds lines only for a rule whose frozen newer-half verdict is TRADABLE SMALL; gates in the test and here: 3 USD+, 2M USD+ a day, no 15%+ one-day jump in 21 sessions, no 424B4/424B5 in 20 sessions; halal from data/halal.json + ZAD (unknown = check ZAD first).' });

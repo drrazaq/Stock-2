@@ -156,7 +156,7 @@ const detect = (id, S, I, i, t, ctx) => { const k = i * T + t; if (!MAIN[k]) ret
     case 'DEC-FROG': return FROG.has(t) && FROG.get(t).has(i) ? { entry: 'open', info: { formation: D[t] } } : null; } return null; };
 const sim = (m, S, I, t, sig, last) => M2(m) ? simulate2(M2(m), S, I, t, sig, last) : simulate(METHODS[m].engine, S, I, t, sig, last);
 // halal marks (owner's ZAD list)
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 // ================= 2. PAPER LANE =================
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();

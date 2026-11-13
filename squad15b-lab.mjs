@@ -33,7 +33,7 @@ const calJ = await alp(AT + '/v2/calendar?start=' + addDays(START, -10) + '&end=
 if (!CAL.length) { log('Error: no trading calendar'); process.exit(1); }
 const nextSession = (d) => CAL.find(x => x > d) || null, sessionsAfter = (a, b) => CAL.filter(x => x > a && x <= b).length;
 log('New York ' + TODAY + ', market ' + (OPEN ? 'OPEN' : 'closed'));
-const HAL = J('data/halal.json', {}), BAD = new Set(J('data/zad-list.json', {}).notHalal || []), zad = (s) => BAD.has(s) ? { s: 'fail', by: 'ZAD list notHalal (data/zad-list.json)' } : HAL[s] ? { s: HAL[s].s, by: HAL[s].by, d: HAL[s].d } : { s: 'unknown' };
+const BAD = new Set(J('data/zad-list.json', {}).notHalal || []), zad = (s) => BAD.has(s) ? { s: 'fail', by: 'ZAD list notHalal (data/zad-list.json)' } : { s: 'unknown' };   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })(), add = [];
 const all = () => [...lines, ...add], first = (type, id) => all().find(l => l.type === type && l.id === id), at = new Date(NOW).toISOString();
 const ruleOfLine = (l) => l.rule || String(l.id).split('|')[0]; // every ledger id starts with its rule

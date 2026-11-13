@@ -91,7 +91,7 @@ test('CCC: the upcoming list carries the buy and sell dates on the NYSE calendar
   const c = TODAY.upcoming.find(x => x.sym === 'CCC');
   assert.ok(c, JSON.stringify(TODAY.upcoming));
   assert.equal(c.buy, '2025-01-30'); assert.equal(c.sell, '2025-03-12'); assert.equal(c.entryPassed, false);
-  assert.equal(c.halal, 'ok'); assert.equal(c.blocked, false);
+  assert.equal(c.halal, 'unknown', 'P0: the public output carries the PUBLIC ZAD gate only; the owner\'s own ok mark (in the fixture) is never copied'); assert.equal(c.blocked, false);
   assert.equal(TODAY.rules['CAT-RUN1'], null);   // no rule qualified: the scan shows nothing in ACTIONS
 });
 

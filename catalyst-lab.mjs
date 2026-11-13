@@ -196,16 +196,16 @@ const judge = (trades, bar) => { const R = { all: stat(trades), older: stat(trad
 
   // 8. LIVE: upcoming catalysts (entry window) with buy/sell dates on the NYSE calendar, gates checked on the last cached close
   const last = D[T - 1], future = tradingSessions(new Date(Date.parse(last) + 864e5).toISOString().slice(0, 10), new Date(Date.parse(last) + 400 * 864e5).toISOString().slice(0, 10)), S2 = D.concat(future);
-  const HAL = J('data/halal.json', {}), ZAD = J('data/zad-list.json', {}), zbad = new Set(ZAD.notHalal || []), upcoming = [];
+  const ZAD = J('data/zad-list.json', {}), zbad = new Set(ZAD.notHalal || []), upcoming = [];
   for (const g of groups.values()) { if (g.date <= last) continue; const p = runUpPlan(S2, g.date); if (!p || p.iSell < T) continue;   // its window is over
     const t = T - 1, i = symAt(g.cik, t, false), sym = i !== undefined ? SYMS[i] : (cikTick.get(g.cik) || [])[0] || null;
     const why = []; if (i === undefined) why.push('no tradable price (3 USD+, 1M USD+) on ' + last); else { if (!gateOk(i, t)) why.push('under 2 USD or 2M USD a day'); const lj = lottery(i, t); if (lj) why.push('lottery: +' + Math.round(lj * 100) + '% in one day in the last month'); }
     const dil = dilutedBefore(DIL.by.get(g.cik), S2, p.iBuy); if (dil) why.push('dilution filing ' + dil);
-    const hal = sym ? (zbad.has(sym) ? 'fail' : (HAL[sym] && HAL[sym].s) || 'unknown') : 'unknown';
+    const hal = sym ? (zbad.has(sym) ? 'fail' : 'unknown') : 'unknown';
     upcoming.push({ sym, cik: g.cik, event: g.date, eventSession: p.eventSession, kinds: [...g.kinds], precision: g.precision, buy: p.buy, sell: p.sell, entryPassed: p.iBuy < T, firstStated: g.filed, source: SEC + '/Archives/edgar/data/' + g.cik + '/' + String(g.adsh).replace(/-/g, '') + '/', text: g.text, lastClose: i !== undefined ? +CC(i, t).toFixed(2) : null, halal: hal, blocked: why.length > 0, why }); }
   upcoming.sort((a, b) => a.buy < b.buy ? -1 : a.buy > b.buy ? 1 : a.event < b.event ? -1 : 1);
   const tierOf = (id) => { const r = FR[id]; return r && (r.verdict === 'PROVEN' || r.verdict === 'TRADABLE SMALL') ? r.verdict : null; };
-  for (const u of newsToday) { u.buy = future[0]; u.sell = future[HOLD_NEWS - 1]; u.halal = zbad.has(u.sym) ? 'fail' : (HAL[u.sym] && HAL[u.sym].s) || 'unknown'; }
+  for (const u of newsToday) { u.buy = future[0]; u.sell = future[HOLD_NEWS - 1]; u.halal = zbad.has(u.sym) ? 'fail' : 'unknown'; /* P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal) */ }
   W(TODAY_OUT, { generatedAt: new Date().toISOString(), lastClose: last, sessions: future.slice(0, 260), rules: { 'CAT-RUN1': tierOf('CAT-RUN1'), 'CAT-NEWS1': tierOf('CAT-NEWS1') }, stopPct: 0.15, buyUpToPct: 0.03,
     note: 'Upcoming dated catalysts from 8-Ks (PDUFA, advisory committee, expected topline). Gates (price, dollar volume, lottery, dilution) on the last cached close; halal from data/halal.json + ZAD list. The scan shows a buy only for a rule whose frozen verdict is TRADABLE SMALL or PROVEN; otherwise this is a calendar for information.',
     upcoming: upcoming.filter(u => u.sell >= last).slice(0, 300), news: newsToday });

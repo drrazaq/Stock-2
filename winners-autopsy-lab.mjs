@@ -255,7 +255,7 @@ function fiveYear(M, B, reg, cutDate) {
 // ================= paper =================
 function paper(M, B, reg) {
   const { T, D, SYMS, SY } = M, today = iso(Date.now()), lines = fs.existsSync(PAPER) ? fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => { try { return JSON.parse(x); } catch (e) { return null; } }).filter(Boolean) : [];
-  const HAL = J('data/halal.json', {}), zbad = new Set((J('data/zad-list.json', {}).notHalal) || []), halal = (s) => zbad.has(s) || (HAL[s] && HAL[s].s === 'fail') ? 'not halal (ZAD)' : HAL[s] && HAL[s].s === 'ok' ? 'ok' : 'unknown';
+  const zbad = new Set((J('data/zad-list.json', {}).notHalal) || []), halal = (s) => zbad.has(s) ? 'not halal (ZAD)' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
   const BPREV = J(BOARD, {}) || {}; let lastScanned = BPREV.lastScanned || null; const added = [];
   const keyOf = (z) => z.id + '|' + z.sym + '|' + z.signal, have = new Set(lines.map(keyOf));
   // scan every session after the last one scanned (the first run scans only the latest close: the record starts from the next session)

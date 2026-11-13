@@ -191,7 +191,7 @@ function universe(t) { if (uniMemo.has(t)) return uniMemo.get(t); const X = rows
   const out = { ranked, liquid: liqList(t).length, companies: X.rows.length, noCik: X.noCik, noFacts: X.noFacts, noShares: X.noShares, foreign: X.foreign }; uniMemo.set(t, out); return out; }
 // industry (SIC 4-digit)
 // ================= 4b. universe = squad 5's (above) =================
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 // ================= 5. LEADERS at every month end (+ the newest session when it is a month end: paper lane only) =================
 const LIVE_ME = nextSession(D[T - 1]).slice(0, 7) !== D[T - 1].slice(0, 7) && !MENDS.includes(T - 1), FORM = LIVE_ME ? [...MENDS, T - 1] : [...MENDS];

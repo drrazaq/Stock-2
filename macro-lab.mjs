@@ -82,7 +82,7 @@ const cMemo = new Map(); const ctrlSpan = (k, x, mode = 'asFrozen') => { const k
   for (const i of liqList(k - 1)) { if (i % 2) continue; yardPush(v, retS(i, k, x), mode); } const m = yardMean(v, 50); cMemo.set(key, m); return m; };
 const SECCIK = J('data/sec-ciks.json', {});
 const sicOf = (s) => { const x = SIC[s]; if (x && x.c) return String(x.c).padStart(4, '0'); const y = SECCIK[s]; return y && y[1] ? String(y[1]).padStart(4, '0') : null; };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 // a session index for any date: the last session on or before d inside the data, or counted forward on the NYSE calendar past the newest close
 const idxOf = (d) => { if (d <= D[T - 1]) { const k = onOrAfter(D, d); return D[k] === d ? k : k - 1; } let x = T - 1, s = D[T - 1]; while (s < d) { s = nextSession(s); x++; } return x; };
 // the entry session of an event, also past the newest close (a new event added to EVENTS for the paper lane)

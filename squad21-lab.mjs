@@ -241,7 +241,7 @@ if (!firstRun['V15-NO35']) firstRun['V15-NO35'] = { verdict: 'FORWARD ONLY (not 
   why: 'the SIC 35/36/38 exclusion was chosen from V15\'s own older-half results, so a historical test cannot validate it; judged only on its forward paper record (from ' + V15_START + ') by the comeback board' };
 
 // ================= 5. PAPER LANES =================
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
 const sigLines = lines.filter(x => x.type === 'signal'), resolved = new Set(lines.filter(x => x.type === 'result').map(x => x.id)), sigIds = new Set(sigLines.map(x => x.id)), newLines = [], lastT = T - 1;
 // ---- 5a. SQ21-CONTRACT10D: signals from the paper start ----

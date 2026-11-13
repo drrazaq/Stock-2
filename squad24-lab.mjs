@@ -384,7 +384,7 @@ const caseRow = (z) => { const t = tradeBy.get(z.adsh); return { sym: z.sym, cik
 const caseList = EVENTS.map(caseRow), belowSize = ALLCASES.filter(z => z.size < TH.sizeMin).sort((a, b) => b.size - a.size).slice(0, 150).map(z => ({ sym: z.sym, filingSession: D[z.f], counterparty: z.cp, usd: z.usd, size: r4(z.size), reactionDay: r4(CA[z.i * T + z.f] / CA[z.i * T + z.f - 1] - 1) }));
 
 // ================= 10. PAPER LANE (from PAPER_START) =================
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
 const sigIds = new Set(lines.filter(x => x.type === 'signal').map(x => x.id)), resolved = new Set(lines.filter(x => x.type === 'result').map(x => x.id)), newLines = [], lastT = T - 1;
 // LABEL AUDIT (27 Oct 2026): the forward lane uses the FIXED extractor (squad24-audit-core.mjs): the giant must be a party in the agreement

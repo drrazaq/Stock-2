@@ -94,7 +94,7 @@ for (const o of listed) { const am = []; let exp = o.expiry; for (const a of (AM
   Object.assign(o, timeline(o, am, TODAY), { amendments: am.map(a => ({ date: a.date, url: a.url, extendTo: a.fields.extendTo, terminated: a.fields.terminated, finalPrice: a.fields.finalPrice })) }); }
 
 // ================= 4. PRICES =================
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []);
+const HAL = {}   /* P0: the owner's own marks are never read here; halalMark gives the PUBLIC ZAD list or 'unknown' */, ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []);
 async function barsFor(sym, from, to) { const f = SC + '/px/' + sym.replace(/[^A-Z0-9.]/g, '_') + '_' + from + '_' + to + '.json'; const c = J(f, null); if (c && (c.D.length || to < addDays(TODAY, -10))) return c;
   let D = [], C = [], src = 'alpaca', tok = null;
   do { const j = await alp('/v2/stocks/bars?symbols=' + encodeURIComponent(sym) + '&timeframe=1Day&start=' + from + '&end=' + to + '&adjustment=raw&feed=sip&sort=asc&limit=10000' + (tok ? '&page_token=' + encodeURIComponent(tok) : ''));

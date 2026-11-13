@@ -317,7 +317,7 @@ const firstRun = freezeEach(FROZEN, Object.fromEntries(Object.entries(RES).filte
 const tradeRows = (id) => (TRS[id] || []).map(z => ({ sym: z.s, supplier: z.ev.sname, customer: z.ev.csym, signal: D[z.t], buy: D[z.k], sell: D[z.x], exit: z.kind, sue: r4(z.ev.sue), react: r4(z.ev.react), pct: z.ev.pct, net: r4(z.g - COST), avgStock: r4(z.c - COST), sameStock: r4(ok(z.own) ? z.own - COST : null), spy: r4(z.spy), placebo: z.pl ? { d: z.pl.d, net: r4(z.pl.g - COST) } : null }));
 
 // ================= 10. PAPER LANE (from PAPER_START; record only) =================
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const lines = (() => { try { return fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => JSON.parse(x)); } catch (e) { return []; } })();
 const sigIds = new Set(lines.filter(x => x.type === 'signal').map(x => x.id)), resolved = new Set(lines.filter(x => x.type === 'result').map(x => x.id)), newLines = [], lastT = T - 1;
 if (STATUS.dataOk) for (const id of IDS) for (const z of EV[id]) { if (D[z.r] < PAPER_START) continue; const sid = id + '|' + z.sym + '|' + D[z.r]; if (sigIds.has(sid)) continue; const late = z.r + 1 <= lastT, entry = late ? D[z.r + 1] : nextSession(D[lastT]);

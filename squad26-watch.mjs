@@ -39,7 +39,7 @@ let fhCalls = []; async function finnhub(sym, from, to) { if (!env.FINNHUB_KEY &
 const MCRAW = (() => { try { return fs.readFileSync(MCF); } catch (e) { return null; } })();
 if (!MCRAW || crypto.createHash('sha256').update(MCRAW).digest('hex') !== MEGACAP_SHA) { console.log('squad26-watch: the frozen mega-cap list is missing or changed; nothing done'); process.exit(0); }
 const MC = JSON.parse(MCRAW.toString()), MCALL = allCiks(MC), COS = (cik) => ({ cik, aliases: (MC.companies[cik] || {}).aliases || [] });
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const today = nyNow().d, prev = J(TODAY, {}), same = prev.date === today;
 const ST = { date: today, seen: new Set(same ? prev.seen || [] : []), lags: same ? prev.lagsSec || [] : [], candLags: same ? prev.candLagsSec || [] : [], events: same ? prev.events || [] : [], polls: same ? prev.polls || 0 : 0, newFilings: same ? prev.newFilings || 0 : 0,
   candidates: same ? prev.candidates || 0 : 0, gaps: same ? prev.gaps || 0 : 0, feedErrors: same ? prev.feedErrors || 0 : 0, runs: [...(same ? prev.runs || [] : []), { startedAt: new Date(t0).toISOString(), until: new Date(STOP).toISOString() }] };

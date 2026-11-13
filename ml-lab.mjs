@@ -86,7 +86,7 @@ const VTAGS = { cfo: ['NetCashProvidedByUsedInOperatingActivities', 'NetCashProv
 const coMemo = new Map(), coOf = (cik) => { if (coMemo.has(cik)) return coMemo.get(cik); const c = FX.c[cik]; let o = null;
   if (c && Object.keys(c).length) { const m = (tags) => { const z = {}; for (const t of tags) if (c[t]) z[t] = c[t].map(([s, e, v, f]) => ({ s, e, v, f })); return z; }; o = Object.fromEntries(Object.entries(VTAGS).map(([k, v]) => [k, m(v)])); }
   coMemo.set(cik, o); return o; };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 
 // ================= 2. DECISION DATES, UNIVERSE, FEATURES, TARGETS =================
 const DEC = weekEnds(D, (d) => nextSession(d)), FIRST = 252, decF = DEC.filter(t => t >= FIRST);

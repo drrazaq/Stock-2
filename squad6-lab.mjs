@@ -87,7 +87,7 @@ const JUMPS = new Map(); const jumpsOf = (i) => { if (!JUMPS.has(i)) JUMPS.set(i
 const yMemo = new Map(); const yard = (k, x, at) => { const key = k + '|' + x + '|' + at; if (yMemo.has(key)) return yMemo.get(key);
   const stocks = liqList(k - 1).filter(i => i % 2 === 0 && !hasArtifact(jumpsOf(i), k, x)); const m = yardOf(stocks, k, x, at, priceAt, 'capBoth', 50); yMemo.set(key, m); return m; };
 const SECCIK = J('data/sec-ciks.json', {}), sicOf = (s) => { const x = SIC[s]; if (x && x.c) return String(x.c).padStart(4, '0'); const y = SECCIK[s]; return y && y[1] ? String(y[1]).padStart(4, '0') : null; };
-const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
 const W = weeksOf(D), WK = new Int32Array(T); W.forEach((w, n) => { for (let t = w.s; t <= w.e; t++) WK[t] = n; });
 const LASTWEEK_DONE = isoWeek(nextSession(D[T - 1])) !== isoWeek(D[T - 1]), weekDone = (n) => n < W.length - 1 || LASTWEEK_DONE;   // the newest week counts once its last session is in
 // month ends, plus the newest session when the next NYSE session is in a new month (the paper lane signals that same evening; the 5-year

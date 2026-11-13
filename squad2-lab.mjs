@@ -217,7 +217,7 @@ if (MODE === 'judge') {
 if (MODE === 'paper') {
   const DL = await loadDaily(true), lab = J(LAB, {}), firstRun = lab.firstRun || {};
   const lines = fs.existsSync(PAPER) ? fs.readFileSync(PAPER, 'utf8').split('\n').filter(Boolean).map(x => { try { return JSON.parse(x); } catch (e) { return null; } }).filter(Boolean) : [];
-  const HAL = J('data/halal.json', {}), ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
+  const ZBAD = new Set(J('data/zad-list.json', {}).notHalal || []), halal = (s) => ZBAD.has(s) ? 'fail' : 'unknown';   // P0: the PUBLIC ZAD list only; the owner's own marks are applied privately (scan.mjs myHalal)
   const today = { generatedAt: new Date().toISOString(), paperStart: PAPER_START, note: 'PAPER ONLY. Every SQ2 rule ENTERS INTRADAY (buy-stop / VWAP reclaim during the session), so newSignals is always empty: scan.mjs TRY SMALL places next-open orders, which these rules are not. A rule that passes needs a live intraday alert path (coordinator). Halal = the owner\'s ZAD mark.', methods: {} };
   const append = []; let lastD = null, watch = {};
   if (DL) { const done = new Set(lines.filter(x => x.type === 'day').map(x => x.d)), Q = await qqqRegime(DL), toDo = DL.D.map((d, t) => ({ d, t })).filter(z => z.d >= PAPER_START && !done.has(z.d)); lastD = DL.D[DL.T - 1];
