@@ -48,7 +48,7 @@ export function guardPublicSave({cwd=process.cwd(),manifest=path.join(cwd,'.gith
 }
 const ZERO='0'.repeat(40),OID=/^[a-f0-9]{40}$/;
 export function guardPushUpdates({cwd=process.cwd(),manifest=path.join(cwd,'.github/private-files.txt'),target,updates,env=process.env}={}){
- if(typeof target!=='string'||!target||!Array.isArray(updates)||!updates.length||updates.length>128)refuse('PUBLIC_PUSH_CONTEXT_UNAVAILABLE');
+ if(typeof target!=='string'||!target||!Array.isArray(updates)||updates.length>128)refuse('PUBLIC_PUSH_CONTEXT_UNAVAILABLE');
  const isPrivateRepo=privateRole(cwd,env,target),policy=isPrivateRepo?null:privatePaths(manifest);let commits=0;
  for(const u of updates){
   if(!OID.test(u.localSha||'')||!OID.test(u.remoteSha||'')||u.remoteRef!=='refs/heads/main')refuse('PUBLIC_PUSH_UNSUPPORTED_REF');
@@ -64,9 +64,6 @@ function pushInput(){let text='',bytes=0;const chunk=Buffer.alloc(4096);for(;;){
  return text.trim().split('\n').filter(Boolean).map(l=>{const a=l.trim().split(/\s+/);if(a.length!==4)refuse('PUBLIC_PUSH_CONTEXT_INVALID');return{localRef:a[0],localSha:a[1],remoteRef:a[2],remoteSha:a[3]};});}
 if(process.argv[1]&&pathToFileURL(path.resolve(process.argv[1])).href===import.meta.url){try{
  const manifest=path.join(import.meta.dirname,'private-files.txt');
- // Git runs pre-push even for an up-to-date push, with EMPTY stdin: no ref is updated and nothing is transmitted, so that alone passes.
- // Any non-empty input keeps the full strict check (guardPushUpdates still refuses an empty list from any other caller).
- const ups=process.argv[2]==='pre-push'?pushInput():null;
- const r=ups?(ups.length?guardPushUpdates({manifest,target:process.env.SAVE_PUSH_REMOTE_URL,updates:ups}):{role:'no ref update'}):guardPublicSave({manifest,phase:process.env.SAVE_GUARD_PHASE||'prepare'});
+ const r=process.argv[2]==='pre-push'?guardPushUpdates({manifest,target:process.env.SAVE_PUSH_REMOTE_URL,updates:pushInput()}):guardPublicSave({manifest,phase:process.env.SAVE_GUARD_PHASE||'prepare'});
  console.log('save privacy guard: '+r.role+' metadata verified');
 }catch(e){console.error(String(e.message));process.exitCode=1;}}
