@@ -46,7 +46,9 @@ if [ "${SAVE_PRIVATE_REPO:-}" != 1 ] && { [ -e .github/private-data-mode ] || [ 
   PRIVATE_GUARD=1
   PRIV=$(grep -vE '^\s*(#|$)' .github/private-files.txt | sed 's#^#data/#')
   for p in $PRIV; do git reset -q -- "$p" 2>/dev/null || true; done
+  git reset -q -- 'data/private-*' 2>/dev/null || true   # two-pass scan private caches (scan-passes.mjs)
   for p in $PRIV; do if git diff --cached --name-only -- "$p" | grep -q .; then echo "Error: private file $p still staged; refusing to publish it"; exit 1; fi; done
+  if git diff --cached --name-only -- 'data/private-*' | grep -q .; then echo "Error: a data/private-* file is still staged; refusing to publish it"; exit 1; fi
 fi
 git diff --cached --quiet || git commit -q -m "${1:-scan $(date -u +%FT%RZ)}"
 merge_alerts() {

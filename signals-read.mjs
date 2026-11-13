@@ -24,8 +24,14 @@ const verdictMap = (m, L) => object(m) && Object.keys(m).length <= L.verdicts &&
 const rows = (a, L) => Array.isArray(a) && a.length <= L.listRows && a.every(r => object(r) && typeof r.sym === 'string' && SYM.test(r.sym));
 const FIELD_OK = { posVerdict: verdictMap, tipBoard: (x) => object(x), peadFunnel: (x) => object(x), leaders: rows, pead: rows, evt: rows };
 const defaultReadPrivate = () => { const st = fs.statSync(SIGNALS_PRIVATE_FILE); if (!st.isFile() || st.size > SIGNALS_PRIVATE_LIMITS.fileBytes) throw Error('PRIVATE_RECORD_UNSAFE_SIZE'); return JSON.parse(fs.readFileSync(SIGNALS_PRIVATE_FILE, 'utf8')); };
-export function hydrateSignals(sig, readPrivate = defaultReadPrivate, L = SIGNALS_PRIVATE_LIMITS) {
+// Two-pass scan: the private pass's full scan output is kept privately as data/private-signals.json. When it belongs to the same scan as
+// the public file (same session + zoned generatedAt), owner readers use it as the base (it includes privately scanned names), never public.
+export const SIGNALS_PRIVATE_FULL_FILE = 'data/private-signals.json';
+const defaultReadFull = () => { const st = fs.statSync(SIGNALS_PRIVATE_FULL_FILE); if (!st.isFile() || st.size > 64 * 1024 * 1024) throw Error('PRIVATE_FULL_UNSAFE_SIZE'); return JSON.parse(fs.readFileSync(SIGNALS_PRIVATE_FULL_FILE, 'utf8')); };
+export function hydrateSignals(sig, readPrivate = defaultReadPrivate, L = SIGNALS_PRIVATE_LIMITS, readFull = defaultReadFull) {
   if (!object(sig)) return sig;
+  { let full = null; try { full = readFull(); } catch {}
+    if (object(full) && validSession(sig.session) && validZoned(sig.generatedAt) && full.session === sig.session && full.generatedAt === sig.generatedAt) sig = full; }
   // Every private-only field is stripped from the public input first: a public copy (legacy or not) is never current private evidence.
   const base = { ...sig }; for (const k of SIGNALS_PRIVATE_FIELDS) delete base[k];
   let pv = null; try { pv = readPrivate(); } catch {}

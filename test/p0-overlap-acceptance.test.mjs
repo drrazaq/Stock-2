@@ -22,10 +22,12 @@ async function world(p) {
   } finally { console.log = oldLog; server.closeAllConnections(); server.close(); }
 }
 
-// Known open defect, reproduced by Codex on de8362e0: a private extra name that is also a fixed public quick-extra source changes public
-// membership/counts. Marked TODO (reported, not hidden) until the public pass is computed from public sources only; then remove `todo`.
-test('public source membership survives overlap with private extra names', { todo: 'P0 two-pass scan pending (6850152361)' }, async () => {
+// Codex overlap reproduction (6850096925). The single-pass daily() is NOT invariant by construction (its public lists are pruned against
+// the private watch list before their caps); production must run the two-pass scan (scan-passes.mjs), whose whole-output differential
+// with an overlapping private extra is test/scan-passes.test.mjs. This file keeps the single-pass behaviour as an explicit, asserted
+// limitation so nobody mistakes daily() alone for a privacy-safe public writer.
+test('single-pass daily() still changes public output on an overlapping private extra (documented; use scan-passes.mjs)', async () => {
   const a = await world({ extra: [], marks: {}, positions: {} }), b = await world({ extra: ['ABBV'], marks: {}, positions: {} });
   assert.ok(a.S.value('QEXTRA').includes('ABBV'), 'baseline includes the fixed public quick-extra source');
-  assert.deepEqual(b.rest, a.rest, 'whole public file invariant to a private extra that overlaps a public source');
+  assert.notDeepEqual(b.rest, a.rest, 'single pass is not invariant; the two-pass orchestrator is the privacy boundary');
 });

@@ -19,6 +19,8 @@ URL=${PRIVATE_DATA_URL:-https://github.com/$REPO.git}
 DIR=${PRIVATE_DATA_DIR:-${RUNNER_TEMP:-/tmp}/private-data}
 TOKEN=${PRIVATE_DATA_TOKEN:-}
 FILES=$(grep -vE '^\s*(#|$)' "$ROOT/.github/private-files.txt")
+# two-pass scan private caches (data/private-*): present locally after a scan, or in the private repository after a pull
+FILES="$FILES $(cd "$ROOT/data" 2>/dev/null && ls -1 private-* 2>/dev/null | tr '\n' ' ') $(cd "$DIR/data" 2>/dev/null && ls -1 private-* 2>/dev/null | tr '\n' ' ')"
 say() { echo "private data: $*"; }
 if [ -z "$TOKEN" ] && [ -z "${PRIVATE_DATA_URL:-}" ]; then
   say "not connected (no PRIVATE_DATA_TOKEN secret), nothing done"; [ "$MODE" = check ] || [ "$MODE" = pull ] && exit 1; exit 0

@@ -1,5 +1,8 @@
 import {publicLeadInputs,publicLeadResearchCard} from './public-source-research.mjs';
 import { deliver, ownerQuietOff } from './notify-route.mjs';
+import { installFetchCache } from './fetch-cache.mjs';
+// Two-pass nightly scan (scan-passes.mjs): the public pass records market responses, the private pass replays them. Off unless both are set.
+if (process.env.SCAN_FETCH_CACHE && process.env.SCAN_FETCH_CACHE_MODE) installFetchCache(process.env.SCAN_FETCH_CACHE, process.env.SCAN_FETCH_CACHE_MODE);
 import { hydrateSignals as hydrateSignalsShared, privateSignalsRecord, SIGNALS_PRIVATE_FILE } from './signals-read.mjs';
 import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery,reconcileAssessmentDelivery} from './research-assessment.mjs';
 import {readInstrumentType,researchInstrumentScope} from './instrument-type.mjs';
@@ -4420,7 +4423,8 @@ async function daily() {
   { const n = await halalExtCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym)]); if (n) console.log('other halal checks:', n); }
   // P0 Route A: owner-derived verdicts go to the PRIVATE file first (same session + generatedAt as signals.json, so readers can pair
   // them); the public signals.json carries no posVerdict and no per-row ZAD-mark label (readers resolve marks privately via myHalal).
-  const SIG_AT = new Date(now).toISOString();
+  // Two-pass scan: the private pass reuses the public pass's clock so the private record pairs with the published signals.json.
+  const SIG_AT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(env.SCAN_GENERATED_AT || '') ? env.SCAN_GENERATED_AT : new Date(now).toISOString();
   fs.writeFileSync(POS_VERDICT_FILE, JSON.stringify(privateSignalsRecord({ session, generatedAt: SIG_AT, fields: { posVerdict, tipBoard: tipBoardData, leaders: leadRows, pead, evt, peadFunnel } })));
   // P0 Route A: public per-symbol content comes only from PUBLIC sources (default/watchlist file, discovery, radar, smart money,
   // quick extras, fast movers, leaders, the wide universe, the crowd list). Names that entered the scan only through the owner's holdings,
