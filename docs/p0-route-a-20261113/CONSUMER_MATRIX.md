@@ -52,7 +52,9 @@ Superseded: the earlier finding that no workflow pulls is obsolete. Current stat
 
 | Module(s) | Owner input read | Where it flows | Disposition |
 |---|---|---|---|
-| autolab, deals, discover, earnings-study, events-study, exits, fastmover-lab, horizons, hunting-lab, leaders-study, movers, rebalance, rebuy, score-study, stops, winners-study; octopus (`ownerQuietOff`) | `settings.quiet` only | only the Telegram send condition (every use inspected; no file write depends on it) | outputs PROVEN PUBLIC with respect to owner data |
+| autolab, deals, discover, earnings-study, exits, horizons, hunting-lab, leaders-study, movers, rebalance, rebuy, score-study, stops, winners-study; octopus (`ownerQuietOff`) | `settings.quiet` only (a full grep for every owner file confirms no other owner read) | only the Telegram send condition (every use inspected; no file write depends on it) | outputs PROVEN PUBLIC with respect to owner data |
+| fastmover-lab (CORRECTED, Codex 6855791440) | `settings.quiet` AND owner fail marks (`halal.json`, lines 283–285) | `fastmover-live.json` (live paper list filtered by owner fail marks; was publicly staged by movers.yml's guard stage) | now PRIVATE (canonical name; retention in movers and fastmover-intraday); its other outputs were already private |
+| events-study (CORRECTED: not quiet-only) | `settings.quiet`, `watch-extra.json`, private signals | universe of `events-study.json`, `events-recent.json`, `sec-ciks.json` (all PRIVATE) and its Actions cache (not a repository or artifact file); `sec-status.json` is SEC request status only | owner-derived outputs PRIVATE; `sec-status.json` public |
 | follow-lane | owner marks (`halal.json`) | `follow-today.json`, `follow-fade.json`, `follow-board.json`, `follow-channels.json`, `follow-calls.jsonl` | all already PRIVATE |
 | league | owner fail marks | `agent-league.json`, `agent-shelf.jsonl` | already PRIVATE |
 | quality | owner fail marks | `quality.json`, the registry, a runner-temp pick file | already PRIVATE |
@@ -61,7 +63,7 @@ Superseded: the earlier finding that no workflow pulls is obsolete. Current stat
 | calendar | holdings (dividends of held stocks) | `calendar.enc` (AES-GCM ciphertext of owner content), `calendar-status.json` ("dividends for X of Y held stocks": a held-stock COUNT) | now PRIVATE (canonical names; calendar.yml and leaders-study save privately) |
 | health | none (file ages) | `health.json` | public (operational status only) |
 
-No owner-reading emitter is left unclassified in this tree. New emitters must be classified the same way before adoption.
+No owner-reading emitter is left unclassified in this tree. Classification is per OUTPUT and mode, from the actual field flow; `test/private-routed-stage` checks every routed output against the real guard's stage phase with the real manifest. New emitters must be classified the same way before adoption.
 
 ## Hydrated workflows: private save, registry merge, failure retention, required history (parsed from the YAML run commands; arguments end at a shell operator or comment)
 
