@@ -19,6 +19,7 @@
 // MODE=study (Sunday, leaders-study workflow, after the price cache is loaded): the fair test -> data/events-study.json.
 import fs from 'node:fs';
 import { deliver, ownerQuietOff } from './notify-route.mjs';
+import { readSignals } from './signals-read.mjs';
 import zlib from 'node:zlib';
 import { secNY, nyStamp } from './sec-time.mjs';
 import { freezeEach, latestBlock } from './first-run.mjs';   // run once: first judged verdict frozen (22 Oct 2026)   // SEC acceptance times are UTC: converted to the New York clock (fixed 22 Oct 2026)
@@ -101,7 +102,7 @@ if (MODE === 'fetch') {
   }
   const secStatus = (ok, why) => fs.writeFileSync('data/sec-status.json', JSON.stringify({ at: new Date().toISOString(), ok, why, contact: /noreply/.test(UA) ? 'no-reply address (add the secret SEC_UA with a real email)' : 'own contact set' }));
   if (!cache.ciks) { const why = note || 'request failed'; console.log('events: no SEC ticker list (' + why + ')'); secStatus(false, why); save(); process.exit(0); }
-  const sig = readJson('data/signals.json', {}), extra = readJson('data/watch-extra.json', {});
+  const sig = readSignals() || {}, extra = readJson('data/watch-extra.json', {});
   const uni = [...new Set([...(sig.stocks || []).map(x => x.sym), ...(sig.uni || []).map(x => x.sym), ...(sig.leaders || []).map(x => x.sym), ...(Array.isArray(extra) ? extra : Object.keys(extra || {}))])].filter(s => /^[A-Z]{1,5}(\.[A-Z])?$/.test(s) && cache.ciks[s]);
   const cut = iso(Date.now() - 6 * 365 * 864e5);
   const addRows = (S, R) => {   // R = SEC columnar filings object

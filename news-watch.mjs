@@ -7,6 +7,7 @@
 // Sources: Finnhub company news, general market news, peers, company profile and quotes (official API). No scraping.
 import fs from 'node:fs';
 import { deliver, ownerQuietOff } from './notify-route.mjs';
+import { readSignals } from './signals-read.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const FH = local(env.FH_BASE) || 'https://finnhub.io/api/v1', TG = local(env.TG_BASE) || 'https://api.telegram.org', FAST = Boolean(local(env.FH_BASE));
 const sleep = (ms) => new Promise(r => setTimeout(r, FAST ? 0 : ms)), readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
@@ -15,7 +16,7 @@ const iso = (ms) => new Date(ms).toISOString().slice(0, 10), now = Date.now();
 let calls = 0;
 async function fh(p) { if (calls) await sleep(1100); calls++; try { const r = await fetch(FH + p + (p.includes('?') ? '&' : '?') + 'token=' + encodeURIComponent(env.FINNHUB_KEY)); return r.ok ? await r.json() : null; } catch (e) { return null; } }
 // ---- whom to watch: what you hold (with your stop) and today's buy list
-const pos = readJson('data/my-positions.json', {}), sig = readJson('data/signals.json', {});
+const pos = readJson('data/my-positions.json', {}), sig = readSignals() || {};   // P0 Route A: buy-list fields (pead, evt) are private, paired to the scan
 const held = Object.keys(pos).filter(s => /^[A-Z.]{1,6}$/.test(s));
 const buyList = [...new Set([...(sig.quick || []).map(x => x.sym), ...(sig.stocks || []).filter(x => x.state === 'Buy watch' && x.buyLo).map(x => x.sym), ...(sig.pead || []).filter(x => x.live).map(x => x.sym), ...(sig.evt || []).filter(x => x.live).map(x => x.sym)])].filter(s => !held.includes(s)).slice(0, 15);
 const watch = [...held, ...buyList];

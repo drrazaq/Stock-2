@@ -1,6 +1,7 @@
 // Existing holdings/exit rules are unchanged. This report admits only an actual
 // pre-market invocation and separates live evidence from dated recorded exits.
 import {snapshots,snapshotFeed} from './alpaca-feed.mjs';
+import {hydrateSignals} from './signals-read.mjs';
 import {marketClock,completedMarketSession} from './market-session.mjs';
 import {priceEvidence,STOP_MAX_AGE_MIN} from './stop-watch.mjs';
 import fs from 'node:fs';
@@ -17,10 +18,10 @@ const nyDate=ms=>marketClock(ms).day;
 const stamp=ms=>{const n=marketClock(ms);return n.day+' '+String(Math.floor(n.minutes/60)).padStart(2,'0')+':'+String(n.minutes%60).padStart(2,'0')+':'+String(n.seconds).padStart(2,'0')+' New York ('+n.phase+')';};
 const age=ms=>Math.round(ms/1000)+' s';
 const clean=x=>String(x??'').replace(/[\r\n]+/g,' ').slice(0,200);
-// P0 Route A: exit verdicts live in the PRIVATE data/signals-private.json, paired to the saved scan by session + generatedAt. A legacy
-// signals.json with posVerdict is used as it is; a missing/unpaired private record is UNKNOWN, never an absent exit.
-const SG0=J('data/signals.json',{}),PVF=J('data/signals-private.json',null),PV_OK=!!(SG0.posVerdict&&typeof SG0.posVerdict==='object')||!!(PVF&&PVF.v===1&&PVF.session===SG0.session&&PVF.generatedAt===SG0.generatedAt&&PVF.posVerdict&&typeof PVF.posVerdict==='object'&&!Array.isArray(PVF.posVerdict));
-const P=J('data/my-positions.json',{}),SG=SG0.posVerdict&&typeof SG0.posVerdict==='object'?SG0:{...SG0,posVerdict:PV_OK?PVF.posVerdict:null},AS=J('data/actions-sells.json',{sells:[]});
+// P0 Route A: owner-derived scan fields live in the PRIVATE data/signals-private.json, paired by session + generatedAt (signals-read.mjs).
+// A legacy signals.json with posVerdict is used as it is; a missing/unpaired private record is UNKNOWN, never an absent exit.
+const SG=hydrateSignals(J('data/signals.json',{})),PV_OK=!SG.posVerdictUnavailable;
+const P=J('data/my-positions.json',{}),AS=J('data/actions-sells.json',{sells:[]});
 const syms=Object.keys(P).filter(s=>P[s]&&positive(P[s].entry));
 if(!syms.length){console.log('premarket: no positions');process.exit(0);}
 let snaps={},note='',feed=null;

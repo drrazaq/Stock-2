@@ -1,5 +1,6 @@
 import {publicLeadInputs,publicLeadResearchCard} from './public-source-research.mjs';
 import { deliver, ownerQuietOff } from './notify-route.mjs';
+import { hydrateSignals as hydrateSignalsShared, privateSignalsRecord, SIGNALS_PRIVATE_FILE } from './signals-read.mjs';
 import {researchRuleAssessment,conciseResearchDecisionText,traceResearchDecision,researchDecisionUpdate,publishPrivateAssessmentBook,readPrivateAssessment,readAssessmentDelivery,reserveAssessmentDelivery,settleAssessmentDelivery,reconcileAssessmentDelivery} from './research-assessment.mjs';
 import {readInstrumentType,researchInstrumentScope} from './instrument-type.mjs';
 import {readPrivateAssessmentQuote} from './private-quote-retention.mjs';
@@ -880,16 +881,11 @@ const readJson0 = (f) => { try { const v = JSON.parse(fs.readFileSync(f, 'utf8')
 // signals.json gets them back here, but only when the private file belongs to the SAME scan (session + generatedAt). Missing, unreadable
 // or unpaired: the scan is marked posVerdictUnavailable and treated as not current, so no HOLD is ever inferred from a missing record.
 // A legacy signals.json that still carries posVerdict (written before this change) is used as it is.
-const POS_VERDICT_FILE = 'data/signals-private.json';   // owner-derived scan fields: posVerdict (exit verdicts) and tipBoard (the owner's private tips)
+const POS_VERDICT_FILE = SIGNALS_PRIVATE_FILE;   // owner-derived scan fields: posVerdict (exit verdicts) and tipBoard (the owner's private tips)
 const PUBLIC_ROW = Symbol('publicRow');
 const publicSignalRow = (r) => { if (!r || typeof r !== 'object') return r; if (r[PUBLIC_ROW]) return r[PUBLIC_ROW]; const { halal, ...rest } = r; return rest; };
 const ZAD_PUBLIC_NOT = (() => { try { return new Set(JSON.parse(fs.readFileSync('data/zad-list.json', 'utf8')).notHalal || []); } catch { return new Set(); } })();
-function hydrateSignals(sig) {
-  if (!sig || typeof sig !== 'object' || Array.isArray(sig) || (sig.posVerdict && typeof sig.posVerdict === 'object')) return sig;
-  let pv = null; try { pv = JSON.parse(fs.readFileSync(POS_VERDICT_FILE, 'utf8')); } catch {}
-  if (pv && pv.v === 1 && pv.session === sig.session && pv.generatedAt === sig.generatedAt && pv.posVerdict && typeof pv.posVerdict === 'object' && !Array.isArray(pv.posVerdict)) return { ...sig, posVerdict: pv.posVerdict, tipBoard: pv.tipBoard || { sources: [], tips: [] } };
-  return { ...sig, posVerdictUnavailable: true };
-}
+function hydrateSignals(sig) { return hydrateSignalsShared(sig); }
 // SETTINGS WRITES (review S-4, 22 Oct): every write was readJson(settings, {}) -> one key -> write, so a file that failed to parse was
 // replaced by {} and the decision, focus, quiet, tier2 and fee were lost silently. readSettings() gives {} only when the file is missing
 // and null when it exists but does not parse; updateSettings() then ABORTS (returns null) and writes nothing. Written one key a line, so
@@ -4424,13 +4420,13 @@ async function daily() {
   // P0 Route A: owner-derived verdicts go to the PRIVATE file first (same session + generatedAt as signals.json, so readers can pair
   // them); the public signals.json carries no posVerdict and no per-row ZAD-mark label (readers resolve marks privately via myHalal).
   const SIG_AT = new Date(now).toISOString();
-  fs.writeFileSync(POS_VERDICT_FILE, JSON.stringify({ v: 1, session, generatedAt: SIG_AT, posVerdict, tipBoard: tipBoardData }));
+  fs.writeFileSync(POS_VERDICT_FILE, JSON.stringify(privateSignalsRecord({ session, generatedAt: SIG_AT, fields: { posVerdict, tipBoard: tipBoardData, leaders: leadRows, pead, evt, peadFunnel } })));
   // P0 Route A: public per-symbol content comes only from PUBLIC sources (default/watchlist file, discovery, radar, smart money,
   // quick extras, fast movers, leaders, the wide universe, the crowd list). Names that entered the scan only through the owner's holdings,
   // private watch list or channel mentions are scanned for him but never published, so the public file cannot reveal them.
   const PUBLIC_BASE = new Set(['SPY', ...(fromFile.length ? fromFile : DEFAULT), ...DISC, ...RADAR, ...SMART, ...QEXTRA, ...FMOVERS, ...LEADU, ...LEADHELD, ...QWIDE, ...WIDE, ...((crowd || []).map(x => x.sym))]);
   const pubName = (s) => PUBLIC_BASE.has(s), PUB_STOCKS = stocks.filter(x => pubName(x.sym));
-  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: SIG_AT, session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: PUB_STOCKS.filter(x=>!x.diagnosticOnly).length, diagnosticCount:PUB_STOCKS.filter(x=>x.diagnosticOnly).length, diagnosticScope:'PUBLIC_BASE_LOADED_NAMES', tested: Object.keys(loaded).filter(pubName).length, errors: errors.filter(pubName), openTrades: openTrades.filter(x => pubName(x.sym)), quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row).filter(x => pubName(x.sym)), quickHeld: quickHeld.filter(x => pubName(x.sym)), pead: pead.filter(x => pubName(x.sym)), evt: evt.filter(x => pubName(x.sym)), quickPaused, quickRecord, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded).filter(([s]) => pubName(s))) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, uni: uni.filter(x => pubName(x.sym)).map(publicSignalRow), stocks: PUB_STOCKS.map(publicSignalRow) }, null, 1));
+  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: SIG_AT, session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: PUB_STOCKS.filter(x=>!x.diagnosticOnly).length, diagnosticCount:PUB_STOCKS.filter(x=>x.diagnosticOnly).length, diagnosticScope:'PUBLIC_BASE_LOADED_NAMES', tested: Object.keys(loaded).filter(pubName).length, errors: errors.filter(pubName), openTrades: openTrades.filter(x => pubName(x.sym)), quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row).filter(x => pubName(x.sym)), quickHeld: quickHeld.filter(x => pubName(x.sym)), quickPaused, quickRecord, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded).filter(([s]) => pubName(s))) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, uni: uni.filter(x => pubName(x.sym)).map(publicSignalRow), stocks: PUB_STOCKS.map(publicSignalRow) }, null, 1));
   fs.writeFileSync('data/alert-state.json', JSON.stringify({ day: '', sent: {} }));
   { const n = ledgerAppend(); if (n) console.log('research ledger: ' + n + ' new result' + (n > 1 ? 's' : '') + ' logged'); }
   try { switchPaper(loaded); } catch (e) { console.log('switch paper: ' + e.message); }

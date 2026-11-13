@@ -1,6 +1,6 @@
 // P0 Route A (development): the WHOLE public data/signals.json is invariant to the owner's private state (ZAD marks, private watch list,
 // holdings), using full price histories so regular scored rows, gates and per-symbol lists are exercised; the owner-derived fields
-// (posVerdict, tipBoard) exist only in the private data/signals-private.json, paired to the same scan. Synthetic fixtures only.
+// (posVerdict, tipBoard, leaders, pead, evt, peadFunnel) exist only in the private data/signals-private.json, paired to the same scan. Synthetic fixtures only.
 import test from 'node:test'; import assert from 'node:assert/strict'; import http from 'node:http'; import fs from 'node:fs';
 import { loadScan, blocked } from './load-scan.mjs';
 const bars = []; let i = 0;
@@ -30,7 +30,7 @@ test('whole public signals.json is invariant to private marks, watch list and ho
   const d = await world({ extra: [], marks: { ZZP: { s: 'fail' } }, positions: {} });
   for (const v of [b, c, d]) assert.deepEqual(v.rest, a.rest);
   for (const v of [a, b, c, d]) {
-    assert.equal('posVerdict' in v.pub, false); assert.equal('tipBoard' in v.pub, false);
+    for (const k of ['posVerdict', 'tipBoard', 'leaders', 'pead', 'evt', 'peadFunnel']) { assert.equal(k in v.pub, false, k + ' is never public'); assert.ok(k in v.hydrated, k + ' comes back through private hydration'); }
     assert.doesNotMatch(v.raw, /ZZQ|ZZR|ZZS|ZZT/, 'no private-only name appears anywhere in the public file');
     assert.equal(v.pub.stocks.some(x => 'halal' in x), false);
     assert.ok(v.pub.stocks.some(x => x.sym === 'ZZP' && !x.diagnosticOnly), 'the public name is scored publicly');
@@ -65,4 +65,13 @@ test('the public row gate uses only ZAD\'s public list; the private mark gates t
   const src = fs.readFileSync(new URL('../scan.mjs', import.meta.url), 'utf8');
   assert.match(src, /vPub = L\.applyGates\(v0, \{ dollarVol: T\.dollarVol, halal: ZAD_PUBLIC_NOT\.has\(sym\) \? 'fail' : 'unknown', limit: null \}\)/);
   assert.match(src, /pub\.state = vPub\.word; pub\.why = vPub\.why; if \(vPub\.act\) Object\.assign\(pub, buyF\(\)\)/);
+});
+
+test('shared reader: news-watch and events-study read private buy lists only through pairing (no guessing from an older record)', async () => {
+  const { hydrateSignals } = await import('../signals-read.mjs');
+  const pub = { session: 's', generatedAt: 'g', stocks: [] };
+  assert.deepEqual(hydrateSignals(pub, () => ({ v: 1, session: 's', generatedAt: 'g', posVerdict: {}, pead: [{ sym: 'ZZP', live: true }] })).pead, [{ sym: 'ZZP', live: true }]);
+  const stale = hydrateSignals(pub, () => ({ v: 1, session: 's', generatedAt: 'older', posVerdict: {}, pead: [{ sym: 'ZZP' }] }));
+  assert.equal(stale.posVerdictUnavailable, true); assert.equal(stale.pead, undefined);
+  for (const f of ['news-watch.mjs', 'events-study.mjs']) assert.match(fs.readFileSync(new URL('../' + f, import.meta.url), 'utf8'), /readSignals\(\) \|\| \{\}/, f + ' uses the paired reader');
 });

@@ -7,7 +7,7 @@ import {spawn} from 'node:child_process';import {fileURLToPath} from 'node:url';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..'),T=Date.parse('2026-11-09T13:40:00Z'),iso=x=>new Date(x).toISOString();
 async function pre(t,{now=T,positions={AAA:{entry:10,stop:8}},signals={session:'2026-11-06',generatedAt:'2026-11-07T01:00:00Z'},actions={sells:[]},rows,fetchAdvance=0,sendAdvance=0,afterReplyAdvance=0,mode='ack',feedStatus=200}={}){
  const dir=fs.mkdtempSync(path.join(os.tmpdir(),'premarket-evidence-'));t.after(()=>fs.rmSync(dir,{recursive:true,force:true}));
- for(const f of ['premarket-check.mjs','market-session.mjs','stop-watch.mjs','alpaca-feed.mjs','market-symbol.mjs'])fs.copyFileSync(path.join(root,f),path.join(dir,f));fs.mkdirSync(path.join(dir,'data'),{recursive:true});
+ for(const f of ['premarket-check.mjs','market-session.mjs','stop-watch.mjs','alpaca-feed.mjs','market-symbol.mjs','signals-read.mjs'])fs.copyFileSync(path.join(root,f),path.join(dir,f));fs.mkdirSync(path.join(dir,'data'),{recursive:true});
  const original={'data/my-positions.json':JSON.stringify(positions),'data/signals.json':JSON.stringify(signals),'data/actions-sells.json':JSON.stringify(actions),'data/tg-state.json':'{"offset":7}','data/my-trades.jsonl':'{"synthetic":"original trade"}\n','data/private-original-message.txt':'SYNTHETIC ORIGINAL MESSAGE — preserve bytes'};
  for(const [file,body]of Object.entries(original))fs.writeFileSync(path.join(dir,file),body);
  const messages=[],feeds=[];let calls=0;
