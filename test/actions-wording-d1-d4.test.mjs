@@ -16,6 +16,7 @@ async function setup(files = {}, { calendar = true } = {}) {
     res.setHeader('content-type', 'application/json'); res.end(JSON.stringify(req.url.includes('time_series') ? { status: 'ok', values: values.reverse() } : {})); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); const base = 'http://127.0.0.1:' + server.address().port;
   const S = await loadScan({ files: { 'data/settings.json': { focus: false }, 'data/names.json': { ZZP: 'Synthetic' }, ...(calendar ? { 'market-session.mjs': CAL } : {}), ...files }, env: { TD_BASE: base, FH_BASE: base, SEC_BASE: base } });
+  if(!calendar)(await import('node:fs')).unlinkSync(S.dir+'/market-session.mjs');
   return { S, close: () => server.close() };
 }
 const ld = (marked) => ({ 'data/halal.json': marked ? { ZZP: { s: 'ok', d: CLOSE, by: 'you' } } : {},
@@ -99,7 +100,7 @@ test('D3 the strict gate itself is unchanged in the producer (30+ trades and a p
 // ---------- D4: actionable sections name their source close
 test('D4 SELL header names the source close; an invalid session is UNKNOWN, not invented', () => at('2026-11-05T09:03:00Z', async () => {
   const { S, close } = await setup({ 'data/halal.json': { ZZS: { s: 'ok', d: CLOSE, by: 'you' } } }); try {
-    const pos = { ZZS: { entry: 100, stop: 80, since: '2025-06-02' } };
+    const pos = { ZZS: { entry: 100, stop: 80, since: '2025-06-02',kind:'quick',exitFlag:{d:'2026-11-04',why:'existing close-based rule exit'} } };
     const t = await actions(S, sig({ stocks: [{ sym: 'ZZS', last: 75 }] }), JSON.parse(JSON.stringify(pos)));
     assert.match(t, /SELL \(close-based exits[^\n]*; from the 2026-11-04 close\):/);
     const u = await actions(S, sig({ session: '2026-13-45', stocks: [{ sym: 'ZZS', last: 75 }] }), JSON.parse(JSON.stringify(pos)));
@@ -122,7 +123,7 @@ test('R1 the cutoff stays inclusive: crossing exactly to 09:30:00.000 during asy
     assert.match(await actions(S), /- BUY ZZP\b/);
   } finally { close(); } }));
 test('R1 an unmarked pick whose window closes during the calendar read (last async step) loses its MARK HALAL request too', () => ticking('2026-11-05T14:29:59.900Z', async (set) => {
-  const { S, close } = await setup({ ...ld(false), ...shock('2026-11-05T14:00:00Z'), 'market-session.mjs': CAL + '\nglobalThis.__onCalendar && globalThis.__onCalendar();\n' }); try {
+  const { S, close } = await setup({ ...ld(false), ...shock('2026-11-05T14:00:00Z'), 'market-session.mjs': CAL.replace('export function marketSession(day) {','export function marketSession(day) { globalThis.__onCalendar && globalThis.__onCalendar();') }); try {
     globalThis.__onCalendar = () => set('2026-11-05T14:30:00.001Z');
     const t = await actions(S);
     assert.doesNotMatch(t, /MARK HALAL FIRST \(leader dip/); assert.doesNotMatch(t, /halal ZZP yes/); assert.match(t, /entry expired on 2026-11-05/);
@@ -153,7 +154,7 @@ test('R3 "during the session" uses the actual close: early close 27 Nov, holiday
 // ---------- Codex review of 06253f62: the scanner's source session must be an actually completed NYSE close at evaluation time
 const srcCase = async (nowIso, session) => at(nowIso, async () => {
   const { S, close } = await setup({ 'data/halal.json': { ZZS: { s: 'ok', d: CLOSE, by: 'you' } } }); try {
-    return await actions(S, sig({ session, stocks: [{ sym: 'ZZS', last: 75 }], quickHeld: [{ sym: 'ZQA', why: 'strict gate: fewer than 30 unseen trades (has 19)' }] }), { ZZS: { entry: 100, stop: 80, since: '2025-06-02' } });
+    return await actions(S, sig({ session, stocks: [{ sym: 'ZZS', last: 75 }], quickHeld: [{ sym: 'ZQA', why: 'strict gate: fewer than 30 unseen trades (has 19)' }] }), { ZZS: { entry: 100, stop: 80, since: '2025-06-02',kind:'quick',exitFlag:{d:'2026-11-04',why:'existing close-based rule exit'} } });
   } finally { close(); } });
 const named = (t, d) => { assert.match(t, new RegExp('SELL \\(close-based exits[^\\n]*; from the ' + d + ' close\\):')); assert.match(t, new RegExp('QUICK TRADES held back \\(not strong enough; logged on paper; from the ' + d + ' close\\)')); };
 const unknown = (t, why) => { assert.match(t, /SELL \(close-based exits[^\n]*; source close UNKNOWN\):/, why); assert.match(t, /QUICK TRADES held back \(not strong enough; logged on paper; source close UNKNOWN\)/, why); assert.doesNotMatch(t, /from the 2026-11-0[56] close/, why); };
@@ -172,7 +173,7 @@ test('S4 holidays and early closes come from the actual NYSE calendar', async ()
   unknown(await srcCase('2026-11-27T12:00:00Z', '2026-11-26'), 'Thanksgiving is not a session');
   unknown(await srcCase('2026-11-27T17:59:00Z', '2026-11-27'), '12:59 pm on the 1 pm early-close day');
   named(await srcCase('2026-11-27T18:00:00Z', '2026-11-27'), '2026-11-27');
-  unknown(await at('2026-11-05T09:03:00Z', async () => { const { S, close } = await setup({ 'data/halal.json': { ZZS: { s: 'ok', d: CLOSE, by: 'you' } } }, { calendar: false }); try { return await actions(S, sig({ stocks: [{ sym: 'ZZS', last: 75 }], quickHeld: [{ sym: 'ZQA', why: 'x' }] }), { ZZS: { entry: 100, stop: 80, since: '2025-06-02' } }); } finally { close(); } }), 'calendar unreadable');
+  unknown(await at('2026-11-05T09:03:00Z', async () => { const { S, close } = await setup({ 'data/halal.json': { ZZS: { s: 'ok', d: CLOSE, by: 'you' } } }, { calendar: false }); try { return await actions(S, sig({ stocks: [{ sym: 'ZZS', last: 75 }], quickHeld: [{ sym: 'ZQA', why: 'x' }] }), { ZZS: { entry: 100, stop: 80, since: '2025-06-02',kind:'quick',exitFlag:{d:'2026-11-04',why:'existing close-based rule exit'} } }); } finally { close(); } }), 'calendar unreadable');
 });
 
 test('all requests stayed on loopback', () => assert.deepEqual(blocked, []));

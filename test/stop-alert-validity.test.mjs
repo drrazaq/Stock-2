@@ -126,7 +126,8 @@ for (const watcherState of [null, 'UNSENT', 'UNCERTAIN'])
     const { sent, S } = await botRun(t, { watcherState });
     const stop = sent.filter(x => /STOP LEVEL REACHED/.test(x));
     assert.equal(stop.length, 1); assert.match(stop[0], /^YOUR STOPS \(bot check; the live watcher had not confirmed these\)/);
-    assert.match(stop[0], /ZZA traded at or below your stop 80\.00: last price 79\.00 \(FINNHUB, Nov 5 10:30 New York, 20 s old\)/);
+    // (R1 rev14, Codex 6723732821 B4) the bot's stop batch states when the price was checked (the batch can be sent minutes later)
+    assert.match(stop[0], /ZZA traded at or below your stop 80\.00: last price 79\.00 \(FINNHUB, Nov 5 10:30 New York, 20 s old when checked at Nov 5 10:31 New York\) \(bought 100\.00, -21\.0%\)\./);
     assert.match(stop[0], /do not sell again/); assert.doesNotMatch(stop[0], /not instructions|Sell \/ reassess/);
     assert.equal(S.readJson('data/my-positions.json').ZZA.stop, 80, 'stop level unchanged');
   });
