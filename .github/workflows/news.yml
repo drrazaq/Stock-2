@@ -17,6 +17,11 @@ jobs:
           ref: main
       - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
         run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
+      - name: Private owner files (P0; private mode only; fail-closed if they cannot be read)
+        if: hashFiles('.github/private-data-mode') != ''
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-data.sh pull
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -28,12 +33,17 @@ jobs:
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
-      - run: |
+      - env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/news-seen.json data/news-meta.json data/news-log.jsonl data/macro-state.json data/macro-log.jsonl; do [ -f "$f" ] && git add "$f"; done; true
+          # P0: news-log / news-meta / news-seen are owner-derived (holdings and private buy list): private route only, never committed here
+          PF=0; if [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh push || { PF=1; echo "Error: news decisions NOT stored privately; they stay on this runner only"; }; fi
+          for f in data/macro-state.json data/macro-log.jsonl; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "news $(date -u +%FT%RZ)"
           for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+          [ "$PF" = 0 ] || exit 1   # a failed private save fails the job visibly
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

@@ -25,6 +25,11 @@ jobs:
           ref: main
       - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
         run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
+      - name: Private owner files (P0; private mode only; fail-closed if they cannot be read)
+        if: hashFiles('.github/private-data-mode') != ''
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-data.sh pull
       - uses: actions/setup-node@v4
         with:
           node-version: 20

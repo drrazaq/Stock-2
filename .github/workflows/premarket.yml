@@ -17,6 +17,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+      - name: Private owner files (P0; private mode only; fail-closed if they cannot be read)
+        if: hashFiles('.github/private-data-mode') != ''
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-data.sh pull
       - uses: actions/setup-node@v4
         with:
           node-version: 20
