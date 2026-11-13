@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-11-12T07:44:42.678Z",
+ "generatedAt": "2026-11-13T07:19:48.295Z",
  "squad": 20,
  "philosophy": "use the jump differently: as an AVOID filter and an EXIT on the rules that work, as a second setup after the spike is digested, and one-month momentum among high-turnover large caps (Medhat & Schmeling 2022)",
  "preRegistered": "squad20-core.mjs header + RULES (25 Oct 2026, before any run) + data/strategy-library.json SQ20-*",
  "window": [
   "2021-11-01",
-  "2026-11-11"
+  "2026-11-12"
  ],
  "bar": 4.1,
  "split": "2024-01-01",
@@ -13,9 +13,9 @@
  "data": {
   "price": {
    "ok": true,
-   "sessions": 1263,
+   "sessions": 1264,
    "from": "2021-11-01",
-   "to": "2026-11-11",
+   "to": "2026-11-12",
    "stocks": 8597,
    "rowsWithHighLow": 1
   },
@@ -39,8 +39,8 @@
   },
   "splits": {
    "ok": true,
-   "rows": 7455,
-   "tickers": 4808,
+   "rows": 7462,
+   "tickers": 4810,
    "pagesNow": 8
   },
   "altShares": {
@@ -151,8 +151,8 @@
     "ok": true,
     "rule": "MACRO-USD-E60",
     "frozenTrades": 249,
-    "rebuilt": 254,
-    "signals": 254,
+    "rebuilt": 255,
+    "signals": 255,
     "noPrice": 0,
     "open": 0,
     "artifacts": 0,
@@ -161,11 +161,11 @@
   },
   "spike": {
    "ok": true,
-   "stocksWithSpikes": 2397,
-   "spikes": 7216,
+   "stocksWithSpikes": 2398,
+   "spikes": 7220,
    "signals": 90,
-   "controls": 2629,
-   "controlsHeld": 830
+   "controls": 2632,
+   "controlsHeld": 831
   },
   "stmom": {
    "ok": true,
@@ -25250,7 +25250,7 @@
    "name": "Dollar falling -> XLK (MACRO-USD-E60) (rebuilt base, reference only)",
    "rule": "MACRO-USD-E60",
    "verdict": "NOT PROVEN",
-   "why": "not better than the same stocks held as long on their other days in the older half; block t 1.36 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.8 under 2.5 in the newer half",
+   "why": "not better than the same stocks held as long on their other days in the older half; block t 1.36 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.92 under 2.5 in the newer half",
    "hold": 60,
    "block": 60,
    "cost": 0.008,
@@ -25277,42 +25277,42 @@
      "win": 0.736
     },
     "newer": {
-     "n": 129,
-     "days": 129,
+     "n": 130,
+     "days": 130,
      "stocks": 1,
-     "avg": 0.0464,
-     "median": 0.0562,
-     "avgStress": 0.0424,
-     "ctrl": 0.018,
-     "edge": 0.0204,
-     "tDay": 3.72,
+     "avg": 0.0456,
+     "median": 0.0561,
+     "avgStress": 0.0416,
+     "ctrl": 0.0174,
+     "edge": 0.0202,
+     "tDay": 3.71,
      "blocks": 11,
-     "tBlock": 0.8,
+     "tBlock": 0.92,
      "vsOwn": null,
      "ownCovered": 0,
-     "noTop2": 0.0415,
+     "noTop2": 0.0407,
      "best": 0.3633,
      "worst": -0.2335,
-     "win": 0.6589
+     "win": 0.6538
     },
     "all": {
-     "n": 254,
-     "days": 254,
+     "n": 255,
+     "days": 255,
      "stocks": 1,
-     "avg": 0.0453,
+     "avg": 0.0449,
      "median": 0.0597,
-     "avgStress": 0.0413,
-     "ctrl": 0.0076,
-     "edge": 0.0296,
+     "avgStress": 0.0409,
+     "ctrl": 0.0074,
+     "edge": 0.0295,
      "tDay": 6.74,
      "blocks": 20,
-     "tBlock": 1.39,
+     "tBlock": 1.45,
      "vsOwn": null,
      "ownCovered": 0,
-     "noTop2": 0.0428,
+     "noTop2": 0.0424,
      "best": 0.3633,
      "worst": -0.2335,
-     "win": 0.6969
+     "win": 0.6941
     }
    },
    "perYear": {
@@ -25322,9 +25322,9 @@
      "avgStock": 0.0207
     },
     "newer": {
-     "rule": 0.195,
-     "spy": 0.155,
-     "avgStock": 0.1094
+     "rule": 0.1916,
+     "spy": 0.1534,
+     "avgStock": 0.1067
     }
    },
    "byYear": {
@@ -25374,12 +25374,12 @@
      "beatsSpy": true
     },
     "2026": {
-     "n": 16,
-     "avg": -0.0293,
-     "avgStock": -0.0264,
-     "spy": -0.0138,
-     "perYear": -0.1232,
-     "spyPerYear": -0.0578,
+     "n": 17,
+     "avg": -0.0312,
+     "avgStock": -0.0286,
+     "spy": -0.0136,
+     "perYear": -0.131,
+     "spyPerYear": -0.0572,
      "beatsSpy": false
     }
    }
@@ -25921,7 +25921,7 @@
  ],
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-12T07:44:42.678Z",
+  "at": "2026-11-13T07:19:48.295Z",
   "results": {}
  },
  "trades": {}
