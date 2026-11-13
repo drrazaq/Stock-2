@@ -90,6 +90,7 @@ test('the website workflow publishes index.html only (nothing from data/)', () =
   assert.match(y, /cp index\.html _site\//); assert.doesNotMatch(y, /cp[^\n]*data\//); assert.match(y, /grep -vE '\^_site\/index\\\.html\$'/);
 });
 test('every private file in the list exists today or is a ledger created later; the list holds no public research files', () => {
-  for (const f of FILES) assert.ok(fs.existsSync(path.join(REPO, 'data', f)) || /ledger/.test(f), f);
+  // signals-private.json (P0 Route A, 13 Nov): written by the nightly scan itself, paired to signals.json; it appears after the first run.
+  for (const f of FILES) assert.ok(fs.existsSync(path.join(REPO, 'data', f)) || /ledger/.test(f) || f === 'signals-private.json', f);
   assert.ok(!FILES.includes('signals.json') && !FILES.includes('strategy-library.json'));
 });

@@ -144,7 +144,7 @@ test('rev10: a quote future-dated when fetched stays UNKNOWN after the clock mov
     res.statusCode = 404; res.end('{}'); }); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
   const base = 'http://127.0.0.1:' + server.address().port;
-  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
+  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', posVerdict: {}, stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
     env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
   const real = Date.now; Date.now = () => clock;
   try { await S.fn('intraday')(false); } finally { Date.now = real; }
@@ -172,7 +172,7 @@ test('Nov10: first-check historical stop stays dated; dedicated stop transport r
     res.statusCode = 404; res.end('{}'); }); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
   const base = 'http://127.0.0.1:' + server.address().port;
-  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
+  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', posVerdict: {}, stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
     env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
   const real = Date.now; Date.now = () => clock;
   try { await S.fn('intraday')(false); } finally { Date.now = real; }
@@ -197,7 +197,7 @@ async function twoHoldingRun(t, zzs) {
     res.statusCode = 404; res.end('{}'); }); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
   const base = 'http://127.0.0.1:' + server.address().port;
-  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80, t1: 85 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
+  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80, t1: 85 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', posVerdict: {}, stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
     env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
   const real = Date.now; Date.now = () => clock;
   try { await S.fn('intraday')(false); } finally { Date.now = real; }
@@ -232,7 +232,7 @@ test('rev14: the dedicated stop batch states when the price was checked; after a
     res.statusCode = 404; res.end('{}'); }); });
   await new Promise(r => server.listen(0, '127.0.0.1', r)); t.after(() => new Promise(r => server.close(r)));
   const base = 'http://127.0.0.1:' + server.address().port;
-  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
+  const S = await loadScan({ files: { 'data/my-positions.json': { ZZS: { entry: 100, stop: 80 }, ZZF: { entry: 10, stop: 8 } }, 'data/signals.json': { session: '2026-11-04', posVerdict: {}, stocks: [], quick: [], leaders: [] }, 'data/tg-state.json': { offset: 42 }, 'market-session.mjs': SESSION_SRC },
     env: { BOT_ONLY: '', MODE: 'intraday', TG_TOKEN: 'x', TG_CHAT: '1', TG_BASE: base, FH_BASE: base, FINNHUB_KEY: 'x', TD_BASE: base } });
   const real = Date.now; Date.now = () => clock;
   try { await S.fn('intraday')(false); } finally { Date.now = real; }

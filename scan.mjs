@@ -874,7 +874,22 @@ const ASSESSMENT_LOGIC_SOURCE_HASH=crypto.createHash('sha256').update(m[1]).dige
 function scannerAssessmentRule(learned){
  return makeScannerAssessmentRule({logicVersion:L.LOGIC_VERSION,sourceHash:ASSESSMENT_LOGIC_SOURCE_HASH,variant:learned.v,config:L.CFG,targetOverlay:learned.tgt||null,ruleText:L.ruleText(learned.v),variantKey:L.vkey(learned.v)});
 }
-const readJson0 = (f) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return null; } };
+const readJson0 = (f) => { try { const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? hydrateSignals(v) : v; } catch { return null; } };
+// P0 Route A (13 Nov 2026, development): the per-holding exit verdicts (posVerdict) and the tip board (built from the owner's private
+// tips) are owner-derived, so the nightly scan writes them to the PRIVATE file data/signals-private.json (listed in .github/private-files.txt), never into the public signals.json. Every reader of
+// signals.json gets them back here, but only when the private file belongs to the SAME scan (session + generatedAt). Missing, unreadable
+// or unpaired: the scan is marked posVerdictUnavailable and treated as not current, so no HOLD is ever inferred from a missing record.
+// A legacy signals.json that still carries posVerdict (written before this change) is used as it is.
+const POS_VERDICT_FILE = 'data/signals-private.json';   // owner-derived scan fields: posVerdict (exit verdicts) and tipBoard (the owner's private tips)
+const PUBLIC_ROW = Symbol('publicRow');
+const publicSignalRow = (r) => { if (!r || typeof r !== 'object') return r; if (r[PUBLIC_ROW]) return r[PUBLIC_ROW]; const { halal, ...rest } = r; return rest; };
+const ZAD_PUBLIC_NOT = (() => { try { return new Set(JSON.parse(fs.readFileSync('data/zad-list.json', 'utf8')).notHalal || []); } catch { return new Set(); } })();
+function hydrateSignals(sig) {
+  if (!sig || typeof sig !== 'object' || Array.isArray(sig) || (sig.posVerdict && typeof sig.posVerdict === 'object')) return sig;
+  let pv = null; try { pv = JSON.parse(fs.readFileSync(POS_VERDICT_FILE, 'utf8')); } catch {}
+  if (pv && pv.v === 1 && pv.session === sig.session && pv.generatedAt === sig.generatedAt && pv.posVerdict && typeof pv.posVerdict === 'object' && !Array.isArray(pv.posVerdict)) return { ...sig, posVerdict: pv.posVerdict, tipBoard: pv.tipBoard || { sources: [], tips: [] } };
+  return { ...sig, posVerdictUnavailable: true };
+}
 // SETTINGS WRITES (review S-4, 22 Oct): every write was readJson(settings, {}) -> one key -> write, so a file that failed to parse was
 // replaced by {} and the decision, focus, quiet, tier2 and fee were lost silently. readSettings() gives {} only when the file is missing
 // and null when it exists but does not parse; updateSettings() then ABORTS (returns null) and writes nothing. Written one key a line, so
@@ -984,7 +999,7 @@ const QONLY = new Set([...QEXTRA, ...FMOVERS, ...LEADU, ...QWIDE]), LEADHELD = (
 for (const x of LEADHELD) if (!MAIN.includes(x)) QONLY.add(x);
 
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
-const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch { return d; } };
+const readJson = (f, d) => { try { const v = JSON.parse(fs.readFileSync(f, 'utf8')); return f === 'data/signals.json' ? hydrateSignals(v) : v; } catch { return d; } };
 const money = (x) => x.toFixed(2);
 fs.mkdirSync('data', { recursive: true });
 
@@ -2120,7 +2135,7 @@ function checkOne(sym, sig) {
   const word = qOk || stOk ? 'BUY: a tested setup is open. Send  today  for the prices.' : st && st.state === 'Buy watch' ? 'WATCH ONLY: entry signal, but under 30 tested trades (early evidence). Paper only.' : q ? 'WATCH: quick setup with too little proof. Paper only.' : st && st.state === 'Blocked' ? 'NO BUY: blocked by earnings or news.' : st && st.proven && st.trigger ? 'WATCH: needs a daily close above ~' + money(st.trigger) + '.' : 'NO BUY: no tested setup.';
   const gv1 = gateVerdict(sym, sig), lines = [sym + ': ' + (myHalal(sym) === 'fail' ? 'NO BUY: you marked it NOT halal in ZAD.' : gv1 && /^BUY/.test(word) ? 'NO BUY (paper only): ' + gv1 + '.' : word), sym + ', from the ' + sig.session + ' close'];
   if (q) lines.push('Quick trade setup: entry ' + money(q.buyLo) + ' to ' + money(q.buyHi) + ', invalidation ' + money(q.stop) + (q.t1 ? ', target 1 ' + money(q.t1) : '') + '. Past result ' + Math.round(q.win * 100) + '% wins over ' + q.n + ' trades.');
-  if (st) lines.push('Closed ' + money(st.last) + '. ' + (st.uptrend ? 'In an uptrend' : 'Not in an uptrend') + ', ' + (st.mom6 >= 0 ? '+' : '') + Math.round(st.mom6 * 100) + '% over 6 months.', 'Rule: ' + st.rule + '. ' + (st.proven ? 'It passed its tests.' : 'It did not pass its tests, so no signals are given.'), 'State: ' + (st.state === 'Buy watch' ? 'ENTRY CONFIRMED' : st.trigger ? 'BUY WATCH, needs a close above ~' + money(st.trigger) : st.state) + '. ' + st.why, L.HALAL_TEXT[st.halal] || '');
+  if (st) lines.push('Closed ' + money(st.last) + '. ' + (st.uptrend ? 'In an uptrend' : 'Not in an uptrend') + ', ' + (st.mom6 >= 0 ? '+' : '') + Math.round(st.mom6 * 100) + '% over 6 months.', 'Rule: ' + st.rule + '. ' + (st.proven ? 'It passed its tests.' : 'It did not pass its tests, so no signals are given.'), 'State: ' + (st.state === 'Buy watch' ? 'ENTRY CONFIRMED' : st.trigger ? 'BUY WATCH, needs a close above ~' + money(st.trigger) : st.state) + '. ' + st.why, L.HALAL_TEXT[myHalal(st.sym)] || '');
   if (!q && !st) lines.push('Not on the scanned list, or it has under three years of price history. To have me scan it, add it to watchlist.txt in the repository. To check it right away, add it to the watchlist in Setup on the page.');
   lines.push(assessmentContext(sym, sig, loadPos(), lines[0]));
   return lines.filter(Boolean).join('\n');
@@ -2437,7 +2452,7 @@ const holdingEvidenceReports=new Map();
 function rememberHoldingEvidence(text,checks=[]){if(checks.length){if(!holdingEvidenceReports.has(text)&&holdingEvidenceReports.size>=64)return 'HOLDING ASSESSMENT UNAVAILABLE: this session reached its evidence-report limit. No new current claim is made; existing broker instructions remain. Previously rendered evidence remains guarded.';holdingEvidenceReports.set(text,checks);}return text;}
 function holdingSendEvidence(text,now){for(const [body,checks] of holdingEvidenceReports)if(text.includes(body)&&!checks.every(check=>check(now)))return false;return true;}
 function closeBasisCurrent(day,now=Date.now()){return typeof day==='string'&&day===completedMarketSession(now);}
-function scanCloseCurrent(sig,now=Date.now()){const at=typeof sig?.generatedAt==='string'&&/T.*(?:Z|[+-]\d\d:\d\d)$/.test(sig.generatedAt)?Date.parse(sig.generatedAt):NaN;return closeBasisCurrent(sig?.session,now)&&Number.isFinite(at)&&at<=now&&completedMarketSession(at)===sig.session;}
+function scanCloseCurrent(sig,now=Date.now()){if(sig?.posVerdictUnavailable)return false;const at=typeof sig?.generatedAt==='string'&&/T.*(?:Z|[+-]\d\d:\d\d)$/.test(sig.generatedAt)?Date.parse(sig.generatedAt):NaN;return closeBasisCurrent(sig?.session,now)&&Number.isFinite(at)&&at<=now&&completedMarketSession(at)===sig.session;}
 function retainedHoldingContext(sym,P,sig){const prior=sig?.posVerdict?.[sym],dated=scanCloseCurrent(sig);const text=sym+': '+(prior?'RECORDED CLOSE-BASED EXIT, source session '+(sig.session||'UNKNOWN')+': '+String(prior)+'. Fulfilment/withdrawal not established; existing instruction remains for reconciliation.':dated?'ASSESSMENT UNKNOWN: saved scan session '+sig.session+' is current, but this interface has no dated stock-specific assessment; no current HOLD inferred.':'ASSESSMENT UNKNOWN: saved session '+(sig?.session||'UNKNOWN')+'; no current HOLD inferred.')+' Recorded stop '+(validStop(P.stop)?money(P.stop):'NOT SET')+'; current stop/target observation UNKNOWN: numeric display alone is not timestamped quote evidence. No new execution claim.';return rememberHoldingEvidence(text,dated?[n=>scanCloseCurrent(sig,n)]:[]);}
 function observedHoldingPrice(sym,quote,now=Date.now()){
  const regular=n=>marketClock(n).phase==='REGULAR',reference=regular(now)?quoteEvidence(sym,quote,now,5):{state:'UNKNOWN',why:'outside the regular session'},stop=regular(now)?quoteEvidence(sym,quote,now,5):{state:'UNKNOWN',why:'outside the regular session'};
@@ -4178,9 +4193,13 @@ async function daily() {
           if (P.orig && (P.t1 || null) !== (P.orig.t1 || null)) P.tnote = 'NEW TEST RESULT after your buy (target at the buy: ' + (P.orig.t1 ? money(P.orig.t1) : 'none') + '); ' + (P.tnote || '');
           P.tChecked = c[i].d; } }
       const paused = L.isPaused(resolved.filter(y => !y.t.open && y.x.kind !== 'quick').map(y => y.t.r));
-      const v = L.applyGates(L.verdict(c, ind, Lr, null, d.last, paused), { dollarVol: T.dollarVol, halal, limit: null }), trig = L.buyTrigger(c, ind, Lr), dist = Lr.v.mult * ind.atr[i];
+      const v0 = L.verdict(c, ind, Lr, null, d.last, paused), v = L.applyGates(v0, { dollarVol: T.dollarVol, halal, limit: null }), vPub = L.applyGates(v0, { dollarVol: T.dollarVol, halal: ZAD_PUBLIC_NOT.has(sym) ? 'fail' : 'unknown', limit: null }), trig = L.buyTrigger(c, ind, Lr), dist = Lr.v.mult * ind.atr[i];
       const row = { sym, last: d.last, state: v.word, why: v.why, halal, rule: L.ruleText(Lr.v), assessmentRule:scannerAssessmentRule(Lr), proven: Lr.proven, uptrend: T.up, mom6: +T.mom6.toFixed(4), trigger: trig.price ? +trig.price.toFixed(4) : null };
-      if (v.act) Object.assign(row, { buyLo: d.last, buyHi: +(d.last + 0.5 * ind.atr[i]).toFixed(4), stop: +(d.last - dist).toFixed(4), target: Lr.v.tp ? +(d.last + Lr.v.tp * dist).toFixed(4) : Lr.tgt && Lr.tgt.mode !== 'none' && Lr.tgt.x ? +(d.last * (1 + Lr.tgt.x)).toFixed(4) : null, half: !Lr.v.tp && Lr.tgt && Lr.tgt.mode === 'half', tgtNote: Lr.v.tp ? 'target ' + Lr.v.tp + 'x the stop distance, chosen by the walk-forward test' : Lr.tgt ? Lr.tgt.verdict + (Lr.tgt.mode !== 'none' && Lr.tgt.oosAvg !== null ? ' (' + pcs(Lr.tgt.oosAvg) + ' a trade with it vs ' + pcs(Lr.tgt.baseAvg) + ' without)' : '') : null, exitBelow: +L.sellLevel({ v: Lr.v }, c, ind).toFixed(4), hit: Lr.hitRate, days: Lr.medDays, n: Lr.test ? Lr.test.n : null, win: Lr.test ? Lr.test.winRate : null, avgPct: Lr.avgPct, pcts: Lr.oosPct || null, r10: Lr.reach10 ?? null, r20: Lr.reach20 ?? null, key: Lr.key, maxHold: Lr.v.maxHold || null, reg: Lr.regime || null });
+      const buyF = () => ({ buyLo: d.last, buyHi: +(d.last + 0.5 * ind.atr[i]).toFixed(4), stop: +(d.last - dist).toFixed(4), target: Lr.v.tp ? +(d.last + Lr.v.tp * dist).toFixed(4) : Lr.tgt && Lr.tgt.mode !== 'none' && Lr.tgt.x ? +(d.last * (1 + Lr.tgt.x)).toFixed(4) : null, half: !Lr.v.tp && Lr.tgt && Lr.tgt.mode === 'half', tgtNote: Lr.v.tp ? 'target ' + Lr.v.tp + 'x the stop distance, chosen by the walk-forward test' : Lr.tgt ? Lr.tgt.verdict + (Lr.tgt.mode !== 'none' && Lr.tgt.oosAvg !== null ? ' (' + pcs(Lr.tgt.oosAvg) + ' a trade with it vs ' + pcs(Lr.tgt.baseAvg) + ' without)' : '') : null, exitBelow: +L.sellLevel({ v: Lr.v }, c, ind).toFixed(4), hit: Lr.hitRate, days: Lr.medDays, n: Lr.test ? Lr.test.n : null, win: Lr.test ? Lr.test.winRate : null, avgPct: Lr.avgPct, pcts: Lr.oosPct || null, r10: Lr.reach10 ?? null, r20: Lr.reach20 ?? null, key: Lr.key, maxHold: Lr.v.maxHold || null, reg: Lr.regime || null });
+      if (v.act) Object.assign(row, buyF());
+      // P0 Route A: the PUBLIC copy of this row is gated by ZAD's public list only, so its state, reason and buy fields never reveal
+      // the owner's private marks; the owner's own gating (planCands, myHalal) is applied when anything is offered to him.
+      { const { halal: _h, ...pub } = row; for (const k of Object.keys(buyF())) delete pub[k]; pub.state = vPub.word; pub.why = vPub.why; if (vPub.act) Object.assign(pub, buyF()); Object.defineProperty(row, PUBLIC_ROW, { value: pub, enumerable: false }); }
       stocks.push(row);
       if (BIOBLOCK.has(sym)) { if (v.act) { blocked.push(sym + ': a tested rule fired, but ' + BIOBLOCK.get(sym)); row.state = 'Blocked'; } else if (DISC.has(sym)) blocked.push(sym + ' (discovery pick): ' + BIOBLOCK.get(sym)); }
       else if (DISC.has(sym) && halal !== 'fail') {
@@ -4402,7 +4421,16 @@ async function daily() {
   fs.writeFileSync('data/models.json', JSON.stringify(models, null, 1));
   { const n = await zoyaCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym), ...Object.keys(myPos)]); if (env.ZOYA_KEY) console.log('Zoya halal checks:', n, zoyaLive() ? '(live)' : '(sandbox)'); }
   { const n = await halalExtCheck([...quick.slice(0, 30).map(x => x.row.sym), ...stocks.filter(x => x.state === 'Buy watch').map(x => x.sym)]); if (n) console.log('other halal checks:', n); }
-  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: new Date(now).toISOString(), session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: stocks.filter(x=>!x.diagnosticOnly).length, diagnosticCount:stocks.filter(x=>x.diagnosticOnly).length, diagnosticScope:'PUBLIC_BASE_LOADED_NAMES', tested: Object.keys(loaded).length, errors, openTrades, quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row), quickHeld, pead, evt, quickPaused, quickRecord, posVerdict, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded)) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, tipBoard: tipBoardData, uni, stocks }, null, 1));
+  // P0 Route A: owner-derived verdicts go to the PRIVATE file first (same session + generatedAt as signals.json, so readers can pair
+  // them); the public signals.json carries no posVerdict and no per-row ZAD-mark label (readers resolve marks privately via myHalal).
+  const SIG_AT = new Date(now).toISOString();
+  fs.writeFileSync(POS_VERDICT_FILE, JSON.stringify({ v: 1, session, generatedAt: SIG_AT, posVerdict, tipBoard: tipBoardData }));
+  // P0 Route A: public per-symbol content comes only from PUBLIC sources (default/watchlist file, discovery, radar, smart money,
+  // quick extras, fast movers, leaders, the wide universe, the crowd list). Names that entered the scan only through the owner's holdings,
+  // private watch list or channel mentions are scanned for him but never published, so the public file cannot reveal them.
+  const PUBLIC_BASE = new Set(['SPY', ...(fromFile.length ? fromFile : DEFAULT), ...DISC, ...RADAR, ...SMART, ...QEXTRA, ...FMOVERS, ...LEADU, ...LEADHELD, ...QWIDE, ...WIDE, ...((crowd || []).map(x => x.sym))]);
+  const pubName = (s) => PUBLIC_BASE.has(s), PUB_STOCKS = stocks.filter(x => pubName(x.sym));
+  fs.writeFileSync('data/signals.json', JSON.stringify({ generatedAt: SIG_AT, session, logicVersion: L.LOGIC_VERSION, market: { up: mktUp, ...(() => { let e = spy[0].c; const k = 2 / 51; for (const x of spy) e = x.c * k + e * (1 - k); const last = spy[spy.length - 1].c; return { above50: last > e, spyVs50: +(last / e - 1).toFixed(4) }; })() }, scanned: PUB_STOCKS.filter(x=>!x.diagnosticOnly).length, diagnosticCount:PUB_STOCKS.filter(x=>x.diagnosticOnly).length, diagnosticScope:'PUBLIC_BASE_LOADED_NAMES', tested: Object.keys(loaded).filter(pubName).length, errors: errors.filter(pubName), openTrades: openTrades.filter(x => pubName(x.sym)), quick: quickPaused ? [] : quick.slice(0, 30).map(x => x.row).filter(x => pubName(x.sym)), quickHeld: quickHeld.filter(x => pubName(x.sym)), pead: pead.filter(x => pubName(x.sym)), evt: evt.filter(x => pubName(x.sym)), quickPaused, quickRecord, peadFunnel, lottery: (() => { const o = {}; for (const [sym, L] of Object.entries(loaded).filter(([s]) => pubName(s))) { const cs = (L && L.candles) || []; let m = -1; for (let k = Math.max(1, cs.length - 21); k < cs.length; k++) { const a = cs[k - 1].c, b = cs[k].c; if (a > 0 && b > 0 && b / a - 1 > m) m = b / a - 1; } if (m >= 0.15) o[sym] = +m.toFixed(3); } return o; })(), leaders: leadRows, leadFair: { state: fairState, to: FAIR ? FAIR.to : null }, uni: uni.filter(x => pubName(x.sym)).map(publicSignalRow), stocks: PUB_STOCKS.map(publicSignalRow) }, null, 1));
   fs.writeFileSync('data/alert-state.json', JSON.stringify({ day: '', sent: {} }));
   { const n = ledgerAppend(); if (n) console.log('research ledger: ' + n + ' new result' + (n > 1 ? 's' : '') + ' logged'); }
   try { switchPaper(loaded); } catch (e) { console.log('switch paper: ' + e.message); }
@@ -4566,6 +4594,9 @@ function holdingAction(sym, P, q, sig, nowMs = Date.now()) {
   else if (pv) { act = 'SELL'; text = "SELL: last night's exit rule, " + String(pv).replace(/\.?$/, '.') + ' Timing as in ACTIONS (close-based exits: next regular-session open).'; }
   else if (P.lastAct && /^SELL/.test(P.lastAct.act) && !/trend is broken/.test(P.lastAct.why || '')) { act = 'SELL'; text = P.lastAct.act + ' (from the review of ' + P.lastAct.d + ': ' + P.lastAct.why + ').'; }
   else if (ok && num(P.t1) && px >= P.t1 && !P.trail) { act = 'TARGET 1'; text = t1Text(sym, P); }
+  // P0 Route A: independent protective conditions above (stop seen, filing, target 2, a retained review SELL, target 1) still fire; only
+  // then does a missing/unpaired private exit record become UNKNOWN, never a HOLD and never an erased earlier SELL.
+  else if (sig && sig.posVerdictUnavailable) { act = 'UNKNOWN'; text = "EXIT RECORD UNKNOWN: last night's private exit record is missing or not from the saved scan, so whether an exit rule fired is not known; this is not a HOLD. Check ACTIONS and your broker."; }
   else if (hasStop && (!stopOk || !ok)) { act = 'UNKNOWN'; text = 'STOP STATUS UNKNOWN: no exit rule is active, but whether your stop ' + (stopOk ? money(P.stop) : '(not a valid number)') + ' was reached cannot be confirmed right now; this is not a sign the position is safe. Check the price and your stop order at your broker.'; }
   // (8 Nov review fix) no stop AND no valid price: the position's state cannot be confirmed (a leader-dip sell limit may have filled,
   // targets may have been reached); never a fresh-looking HOLD without price evidence

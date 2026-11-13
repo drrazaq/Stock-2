@@ -17,7 +17,10 @@ const nyDate=ms=>marketClock(ms).day;
 const stamp=ms=>{const n=marketClock(ms);return n.day+' '+String(Math.floor(n.minutes/60)).padStart(2,'0')+':'+String(n.minutes%60).padStart(2,'0')+':'+String(n.seconds).padStart(2,'0')+' New York ('+n.phase+')';};
 const age=ms=>Math.round(ms/1000)+' s';
 const clean=x=>String(x??'').replace(/[\r\n]+/g,' ').slice(0,200);
-const P=J('data/my-positions.json',{}),SG=J('data/signals.json',{}),AS=J('data/actions-sells.json',{sells:[]});
+// P0 Route A: exit verdicts live in the PRIVATE data/signals-private.json, paired to the saved scan by session + generatedAt. A legacy
+// signals.json with posVerdict is used as it is; a missing/unpaired private record is UNKNOWN, never an absent exit.
+const SG0=J('data/signals.json',{}),PVF=J('data/signals-private.json',null),PV_OK=!!(SG0.posVerdict&&typeof SG0.posVerdict==='object')||!!(PVF&&PVF.v===1&&PVF.session===SG0.session&&PVF.generatedAt===SG0.generatedAt&&PVF.posVerdict&&typeof PVF.posVerdict==='object'&&!Array.isArray(PVF.posVerdict));
+const P=J('data/my-positions.json',{}),SG=SG0.posVerdict&&typeof SG0.posVerdict==='object'?SG0:{...SG0,posVerdict:PV_OK?PVF.posVerdict:null},AS=J('data/actions-sells.json',{sells:[]});
 const syms=Object.keys(P).filter(s=>P[s]&&positive(P[s].entry));
 if(!syms.length){console.log('premarket: no positions');process.exit(0);}
 let snaps={},note='',feed=null;
@@ -44,6 +47,7 @@ for(const sym of syms){const p=P[sym],sn=snaps[sym]||{},lt=sn.latestTrade,t=at(l
  const prior=SG.posVerdict&&typeof SG.posVerdict[sym]==='string'?SG.posVerdict[sym]:null;
  if(prior){const line='- '+sym+': RECORDED CLOSE-BASED EXIT, session '+clean(SG.session||'UNKNOWN')+', generated '+clean(SG.generatedAt||'UNKNOWN')+': '+clean(prior)+'. This is an existing instruction, not a live stop observation or proof of a fill; it is not withdrawn by a later quote. Follow the existing exit plan; this notice does not change the adopted rule\'s execution timing. No 15-minute stop delay is introduced. Check the broker to avoid selling twice.';
   (scanCurrent?rows.exit:rows.history).push(line);}
+ if(!PV_OK)rows.unknown.push('- '+sym+': EXIT RECORD UNKNOWN: the private exit record for the saved scan is missing or unpaired; whether a close-based exit fired is not known. This is not a HOLD; check ACTIONS and your broker.');
  if(asell[sym])rows.history.push('- '+sym+': RECORDED ACTIONS EXIT at '+clean(AS.at||'UNKNOWN')+(asValid?'':' (clock stale, future or unavailable)')+': '+clean(asell[sym])+'. Source-session/fulfilment not established here; reconcile the existing instruction and broker state. This report neither cancels it nor creates a new exit rule.');
  if(ev.state!=='OK'){rows.unknown.push('- '+tag+': PRICE/STOP CHECK UNKNOWN: '+clean(ev.why)+'. No current HOLD or stop-crossing assessment; existing broker/close-based instructions are not cancelled.');continue;}
  asserted.push(sym);
