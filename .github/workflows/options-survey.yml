@@ -24,7 +24,7 @@ jobs:
         if: hashFiles('.github/private-data-mode') != ''
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
-        run: bash .github/private-data.sh pull
+        run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -40,5 +40,10 @@ jobs:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
           # P0: the survey universe is the owner's ok marks: owner-derived outputs go ONLY to the private route; a failure fails the job visibly
-          PF=0; if [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh push || { PF=1; echo "Error: owner-derived outputs NOT stored privately; they stay on this runner only"; }; else echo "not in private mode: owner-derived outputs are NOT published (privacy)"; fi
+          PF=0; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "options-survey" || PF=1   # explicit outcome: verified private save, or NOT DURABLE (never a silent green)
           [ "$PF" = 0 ] || exit 1
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "options-survey" options-spread-survey.json options-spread-survey.md

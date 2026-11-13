@@ -27,7 +27,7 @@ jobs:
         if: hashFiles('.github/private-data-mode') != ''
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
-        run: bash .github/private-data.sh pull
+        run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -61,7 +61,7 @@ jobs:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
           # P0: agent-a fund labels and rotation come from the owner's marks: owner-derived outputs go ONLY to the private route; a failure fails the job visibly
-          PF=0; if [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh push || { PF=1; echo "Error: owner-derived outputs NOT stored privately; they stay on this runner only"; }; else echo "not in private mode: owner-derived outputs are NOT published (privacy)"; fi
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "agent-a-lab" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           FILES=""   # P0: the agent-a lab output and rotation file are private files (saved above)
@@ -81,3 +81,8 @@ jobs:
         with:
           name: agent-a-lab-log
           path: run.log
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "agent-a-lab" agent-a-lab.json rot-today.json

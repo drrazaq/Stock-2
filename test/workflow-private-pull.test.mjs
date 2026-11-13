@@ -27,7 +27,7 @@ test('a pulling workflow never stages data/ with a bare git add (owner files wou
 test('news-watch outputs are private files: never committed publicly; saved privately; a failed private save fails the job', () => {
   for (const f of ['news-log.jsonl', 'news-meta.json', 'news-seen.json']) assert.ok(priv.includes(f), f);
   const y = fs.readFileSync(path.join(WF, 'news.yml'), 'utf8');
-  assert.doesNotMatch(y, /git add[^\n]*news-(log|meta|seen)/); assert.match(y, /private-data\.sh push \|\| \{ PF=1;/); assert.match(y, /\[ "\$PF" = 0 \] \|\| exit 1/);
+  assert.doesNotMatch(y, /git add[^\n]*news-(log|meta|seen)/); assert.match(y, /private-outputs\.sh save "news" \|\| PF=1/); assert.match(y, /\[ "\$PF" = 0 \] \|\| exit 1/);
 });
 test('no workflow names a private-listed file in a public git add or FILES list (class C outputs and every other private route)', () => {
   const bad = [];
@@ -38,7 +38,7 @@ test('no workflow names a private-listed file in a public git add or FILES list 
 });
 test('class C producers: owner-derived outputs saved privately BEFORE any reset/clean, failure visible, nothing published outside private mode', () => {
   for (const w of ['options-survey.yml', 'account-replay.yml', 'agent-a-lab.yml', 'leaders-study.yml', 'event-orb-retest-research.yml']) { const y = fs.readFileSync(path.join(WF, w), 'utf8');
-    const push = y.indexOf('bash .github/private-data.sh push'), reset = y.indexOf('git reset -q --hard', y.indexOf('private-data.sh pull'));
-    assert.ok(push > 0, w); if (reset > 0 && reset > y.indexOf('private-data.sh pull') && y.lastIndexOf('git reset -q --hard') > push) assert.ok(push < y.indexOf('git reset -q --hard', push - 2000) || true, w);
-    assert.match(y, /owner-derived outputs are NOT published \(privacy\)/, w); assert.match(y, /\[ "\$PF" = 0 \] \|\| exit 1/, w); }
+    const save = y.indexOf('private-outputs.sh save'), reset = y.indexOf('git reset -q --hard', save - 3000 > 0 ? save - 3000 : 0);
+    assert.ok(save > 0, w); if (reset > 0 && reset < save + 3000) assert.ok(save < reset, w + ': private save runs before the reset/clean of its step');
+    assert.match(y, /private-outputs\.sh save/, w); assert.match(y, /\[ "\$PF" = 0 \] \|\| exit 1/, w); }   // NOT DURABLE outcome is the helper's (private-outputs.test)
 });

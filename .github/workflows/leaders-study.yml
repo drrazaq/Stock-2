@@ -27,7 +27,7 @@ jobs:
         if: hashFiles('.github/private-data-mode') != ''
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
-        run: bash .github/private-data.sh pull
+        run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -480,7 +480,7 @@ jobs:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
           # P0: agent-a fund labels and rotation come from the owner's marks: owner-derived outputs go ONLY to the private route; a failure fails the job visibly
-          PF=0; if [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh push || { PF=1; echo "Error: owner-derived outputs NOT stored privately; they stay on this runner only"; }; else echo "not in private mode: owner-derived outputs are NOT published (privacy)"; fi
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "leaders-study agent-a" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           FILES="data/leaders-study.json data/winners-study.json data/winners-paper.json data/hunting-lab.json data/hunting-paper.json data/score-study.json data/score-paper.json data/earnings-study.json data/events-study.json data/octopus.json data/horizons.json data/octopus-paper.json data/octopus-model.json data/fastmover-lab.json data/calendar.enc data/calendar-status.json data/shares.json.gz data/exits.json data/rebuy.json data/rebalance.json data/quality.json data/stops.json data/autolab.json data/splits.json data/chain-ripple.json data/insider-study.json data/sequence-study.json data/chains-status.json data/agent-league.json data/agent-shelf.jsonl data/ew-stack.json data/regime-gate.json data/pattern-lab.json data/swing-lab.json data/fulfilling.json data/tip-score.json data/gov-awards.json data/gov-awards2.json data/share-supply.json data/missed-runners.json data/orb-study.json data/ignition-missed-history.jsonl data/e16-absorption.json data/catalyst-lab.json data/catalyst-today.json data/chain-decoder.json data/chain-graph.json data/chain-today.json data/chain-decoder-error.json data/discovery2.json data/discovery2-today.json"
@@ -497,6 +497,11 @@ jobs:
           [ "$ok" = 1 ] || { echo "Error: could not save the study result" | tee -a run.log; exit 1; }
           [ "$PF" = 0 ] || exit 1
       # If anything above failed, tell the owner on Telegram straight away.
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "leaders-study agent-a" agent-a-lab.json rot-today.json
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

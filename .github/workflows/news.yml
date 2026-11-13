@@ -21,7 +21,7 @@ jobs:
         if: hashFiles('.github/private-data-mode') != ''
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
-        run: bash .github/private-data.sh pull
+        run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -39,11 +39,16 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           # P0: news-log / news-meta / news-seen are owner-derived (holdings and private buy list): private route only, never committed here
-          PF=0; if [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh push || { PF=1; echo "Error: news decisions NOT stored privately; they stay on this runner only"; }; fi
+          PF=0; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "news" || PF=1   # explicit outcome: verified private save, or NOT DURABLE (never a silent green)
           for f in data/macro-state.json data/macro-log.jsonl; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "news $(date -u +%FT%RZ)"
           for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$PF" = 0 ] || exit 1   # a failed private save fails the job visibly
+      # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
+      - if: failure()
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-outputs.sh retain-failed "news" news-log.jsonl news-meta.json news-seen.json
       - if: failure()
         env:
           TG_TOKEN: ${{ secrets.TG_TOKEN }}

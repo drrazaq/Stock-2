@@ -111,11 +111,14 @@ test('main.yml: after a failed scan the evidence goes only through the private r
   assert.doesNotMatch(block, /save-data\.sh|git push|git add/, 'nothing public is saved after a failure');
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'failed-step-')); try {
     fs.mkdirSync(path.join(d, 'data')); fs.mkdirSync(path.join(d, '.github'));
-    const sh = () => spawnSync('bash', ['-e', '-c', script], { cwd: d, encoding: 'utf8', env: { PATH: process.env.PATH } });
+    const sh = () => spawnSync('bash', ['-e', '-c', script], { cwd: d, encoding: 'utf8', env: { PATH: process.env.PATH, RUNNER_TEMP: d } });
     let r = sh(); assert.equal(r.status, 0); assert.match(r.stdout, /no failed private pass evidence/);
     fs.writeFileSync(path.join(d, 'data/private-failed-pass-2026-11-12T21-50-00-000Z.json'), '{}');
     r = sh(); assert.equal(r.status, 1, 'private mode off: not stored, fails visibly'); assert.match(r.stdout, /NOT stored privately/);
-    fs.writeFileSync(path.join(d, '.github/private-data-mode'), ''); fs.writeFileSync(path.join(d, '.github/private-data.sh'), 'echo "$PRIVATE_DATA_TOKEN-stub $1" > pushed.txt\n');
+    fs.writeFileSync(path.join(d, '.github/private-data-mode'), '');
+    r = sh(); assert.equal(r.status, 1, 'private mode but this job\'s pull did not succeed: nothing pushed'); assert.match(r.stdout, /private pull did not succeed in this job: nothing pushed/);
+    fs.writeFileSync(path.join(d, 'private-pulled-ok'), '');   // the pull step's marker
+    fs.writeFileSync(path.join(d, '.github/private-data.sh'), 'echo "$PRIVATE_DATA_TOKEN-stub $1" > pushed.txt\n');
     r = sh(); assert.equal(r.status, 0); assert.match(r.stdout, /stored in the private repository/); assert.match(fs.readFileSync(path.join(d, 'pushed.txt'), 'utf8'), /push/);
     fs.writeFileSync(path.join(d, '.github/private-data.sh'), 'exit 1\n'); r = sh(); assert.equal(r.status, 1, 'private save failed: fails visibly'); assert.match(r.stdout, /NOT stored privately/);
   } finally { fs.rmSync(d, { recursive: true, force: true }); }
