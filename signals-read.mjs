@@ -35,7 +35,8 @@ export function hydrateSignals(sig, readPrivate = defaultReadPrivate, L = SIGNAL
   // Every private-only field is stripped from the public input first: a public copy (legacy or not) is never current private evidence.
   const base = { ...sig }; for (const k of SIGNALS_PRIVATE_FIELDS) delete base[k];
   let pv = null; try { pv = readPrivate(); } catch {}
-  const paired = object(pv) && pv.v === 1 && validSession(sig.session) && validZoned(sig.generatedAt) && pv.session === sig.session && pv.generatedAt === sig.generatedAt;
+  // a record labelled ownerStale was computed from holdings that changed during its run: never current (the reader shows UNKNOWN)
+  const paired = object(pv) && pv.v === 1 && pv.ownerStale !== true && validSession(sig.session) && validZoned(sig.generatedAt) && pv.session === sig.session && pv.generatedAt === sig.generatedAt;
   const valid = paired && verdictMap(pv.posVerdict, L) && SIGNALS_PRIVATE_FIELDS.every(k => pv[k] === undefined || FIELD_OK[k](pv[k], L));
   if (!valid) {
     const out = { ...base, posVerdictUnavailable: true };

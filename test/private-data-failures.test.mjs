@@ -77,7 +77,7 @@ test('push: a refusal by the shared save (EXACT_ORIGIN: another declared address
   const w = world(); init(w); assert.equal(run(w, 'pull').status, 0);
   const other = tmp('pdf-other-bare-'); sh('git init -q --bare -b main ' + other, os.tmpdir());
   const r = run(w, 'push', { PRIVATE_DATA_URL: other });
-  assert.notEqual(r.status, 0, r.stdout); assert.match(r.stdout, /private save NOT confirmed \(the shared save refused or failed\)/); assert.doesNotMatch(r.stdout, /private save verified/);
+  assert.notEqual(r.status, 0, r.stdout); assert.match(r.stdout, /private save NOT confirmed/);   // refused by the clone binding (read and write) or, behind it, by the shared save assert.doesNotMatch(r.stdout, /private save verified/);
   assert.ok(fs.existsSync(w.dir + '.pending'), 'pending kept');
 });
 test('pull: an install failure part-way rolls every installed file back; nothing new is current', () => {
@@ -96,4 +96,19 @@ test('pull: install AND rollback failure leaves an incomplete marker; the failur
   assert.ok(fs.existsSync(w.dir + '.install-incomplete'));
   const r2 = run(w, 'pull'); assert.equal(r2.status, 0); assert.match(r2.stdout, /an earlier install was incomplete/); assert.ok(!fs.existsSync(w.dir + '.install-incomplete'));
   for (const f of ['my-positions.json', 'settings.json', 'halal.json']) assert.match(R(w.pub, 'data/' + f), /NEW/);
+});
+
+test('read paths are bound to the declared private origin: pull with another declared address reads nothing and changes nothing (Codex 6852260667)', () => {
+  const w = world(); init(w); assert.equal(run(w, 'pull').status, 0);
+  const other = tmp('pdf-other-bare-'); sh('git init -q --bare -b main ' + other, os.tmpdir());
+  const before = R(w.pub, 'data/my-positions.json'); const r = run(w, 'pull', { PRIVATE_DATA_URL: other });
+  assert.equal(r.status, 1); assert.match(r.stdout, /not bound to the declared private repository/); assert.doesNotMatch(r.stdout + r.stderr, new RegExp(other.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
+  assert.equal(R(w.pub, 'data/my-positions.json'), before); assert.ok(fs.existsSync(path.join(w.dir, '.git')), 'clone kept');
+  const p = run(w, 'push', { PRIVATE_DATA_URL: other }); assert.equal(p.status, 1); assert.match(p.stdout, /not bound to the declared private repository/); assert.ok(fs.existsSync(w.dir + '.pending'));
+});
+test('push: with the clone correctly bound, a failure INSIDE the shared save (the private repository rejects the push) is never verified', () => {
+  const w = world(); init(w); assert.equal(run(w, 'pull').status, 0); W(w.pub, 'data/halal.json', '{"AAA":{"s":"ok"},"EEE":{"s":"ok"}}\n');
+  W(w.bare, 'hooks/pre-receive', '#!/bin/sh\necho "synthetic rejection" >&2\nexit 1\n'); fs.chmodSync(path.join(w.bare, 'hooks/pre-receive'), 0o755);
+  const r = run(w, 'push'); assert.equal(r.status, 1, r.stdout); assert.match(r.stdout, /private save NOT confirmed \(the shared save refused or failed\)/);
+  assert.doesNotMatch(r.stdout, /private save verified/); assert.ok(fs.existsSync(w.dir + '.pending')); assert.doesNotMatch(remote(w, 'halal.json'), /EEE/);
 });

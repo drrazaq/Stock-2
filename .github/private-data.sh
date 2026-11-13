@@ -31,7 +31,11 @@ fi
 export GIT_TERMINAL_PROMPT=0 GIT_AUTHOR_NAME=scanner GIT_AUTHOR_EMAIL=scanner@users.noreply.github.com GIT_COMMITTER_NAME=scanner GIT_COMMITTER_EMAIL=scanner@users.noreply.github.com
 set -o pipefail
 gitp() { git -C "$DIR" -c user.name=scanner -c user.email=scanner@users.noreply.github.com -c commit.gpgsign=false "$@"; }
+# exact private-origin binding on every READ path too (Codex 6852260667): an existing clone whose origin is not the declared private
+# repository is never read, pulled or written; it is kept as it is (local and pending evidence retained); the origin is never printed.
+bound() { [ "$(gitp remote get-url origin 2>/dev/null)" = "$URL" ]; }
 open() {
+  if [ -d "$DIR/.git" ] && ! bound; then say "Error: the private clone is not bound to the declared private repository; nothing read"; return 1; fi
   if [ -d "$DIR/.git" ]; then gitp pull -q --rebase -X theirs 2>/dev/null || { gitp rebase --abort 2>/dev/null; return 1; }
   else rm -rf "$DIR"; git clone -q "$URL" "$DIR" 2>/dev/null || return 1; fi
 }
@@ -111,6 +115,7 @@ case "$MODE" in
   push)
     date -u +%FT%TZ > "$PENDING" || { say "Error: cannot record the pending owner update"; exit 1; }   # first: any later failure keeps it
     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }
+    bound || { say "Error: private save NOT confirmed (the private clone is not bound to the declared private repository); your update is kept"; exit 1; }
     copy_in || { say "Error: private save NOT confirmed (copy failed); your update is kept on this runner and will be retried"; exit 1; }
     # the shared save's own status decides first (a guard refusal, e.g. PRIVATE_SAVE_EXACT_ORIGIN_REQUIRED, or a failed push): no read-back
     # can relabel a refused save as verified (Codex 6851930599). Its output goes to the job's own log through this pipe; pipefail is set.
@@ -133,6 +138,7 @@ case "$MODE" in
     # exit 0 written, 2 absent in the private repository, 1 unreadable (the nightly treats it as UNKNOWN). Reads only; no local fallback.
     F=${2:-}; OUT=${3:-}; case " $(echo $FILES) " in *" $F "*) ;; *) say "Error: $F is not a declared private file"; exit 1 ;; esac; [ -n "$OUT" ] || exit 1
     [ -d "$DIR/.git" ] || { git clone -q "$URL" "$DIR" 2>/dev/null || exit 1; }
+    bound || { say "Error: the private clone is not bound to the declared private repository; nothing read"; exit 1; }
     gitp fetch -q origin 2>/dev/null || exit 1; BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1
     gitp cat-file -e "origin/$BR:data/$F" 2>/dev/null || exit 2
     ( umask 077; gitp show "origin/$BR:data/$F" > "$OUT.tmp" 2>/dev/null ) && mv -f "$OUT.tmp" "$OUT" || { rm -f "$OUT.tmp"; exit 1; } ;;

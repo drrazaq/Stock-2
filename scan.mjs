@@ -4116,14 +4116,24 @@ function ownerLatest(name) {
 // At the start of the private pass: record the STORE's halal marks and settings (the send-time check compares the store with itself, so the
 // scan's own writes, such as migration flags, never look like a change), and require that the copies the pass renders from agree with the
 // store: every key the store holds must be equal in the copy (keys the scan itself adds are allowed).
+const SETTINGS_MIGRATION_KEYS = new Set(['stopPlan1018', 'stopRestore1022', 'tradesMig1022']);   // written by the scanner itself at load
+const withoutMigrations = (o) => Object.fromEntries(Object.entries(o || {}).filter(([k]) => !SETTINGS_MIGRATION_KEYS.has(k)));
+let OWNER_LOAD_RAW = null;   // the raw holdings the pass started from (its holding reviews are computed from these)
 function ownerStartCheck() {
-  for (const [f, what] of [['halal.json', 'halal marks'], ['settings.json', 'settings']]) {
-    const r = ownerLatest(f); if (!r.ok) { OWNER_STALE = 'your ' + what + ' could not be confirmed from your private records'; return; }
-    OWNER_SEEN[f] = r.v; const mine = readJson0('data/' + f) || {}, store = r.v || {};
-    if (Object.keys(store).some(k => !isDeepStrictEqual(store[k], mine[k]))) { OWNER_STALE = 'your ' + what + ' changed before tonight\'s scan could use them'; return; } }
+  for (const [f, what, same] of [['my-positions.json', 'holdings', isDeepStrictEqual], ['halal.json', 'halal marks', isDeepStrictEqual],
+    ['settings.json', 'settings', (a, b) => isDeepStrictEqual(withoutMigrations(a), withoutMigrations(b))]]) {
+    const r = ownerLatest(f); if (!r.ok || !r.v || typeof r.v !== 'object') { OWNER_STALE = 'your ' + what + ' could not be confirmed from your private records'; return; }
+    const mine = readJson0('data/' + f); if (f === 'my-positions.json') OWNER_LOAD_RAW = structuredClone(mine);
+    OWNER_SEEN[f] = r.v;
+    if (!mine || !same(r.v, mine)) { OWNER_STALE = 'your ' + what + ' changed before tonight\'s scan could use them'; return; } }   // exact: deletions count too
 }
+// A stale run's private exit verdicts are labelled so they are never hydrated later as current (signals-read.mjs honours ownerStale).
+function markVerdictStale() { try { const v = JSON.parse(fs.readFileSync(POS_VERDICT_FILE, 'utf8')); if (v && typeof v === 'object' && v.ownerStale !== true) fs.writeFileSync(POS_VERDICT_FILE, JSON.stringify({ ...v, ownerStale: true })); } catch {} }
 function ownerFreshAtSend() {
   if (env.SCAN_PASS !== 'private') return { ok: true };
+  const r0 = ownerFreshCheck(); if (!r0.ok) markVerdictStale(); return r0;
+}
+function ownerFreshCheck() {
   if (OWNER_STALE) return { ok: false, why: OWNER_STALE };
   for (const [f, what] of [['my-positions.json', 'holdings'], ['halal.json', 'halal marks'], ['settings.json', 'settings']]) {
     if (!(f in OWNER_SEEN)) return { ok: false, why: 'your ' + what + ' could not be confirmed from your private records' };
@@ -4143,6 +4153,9 @@ function latestPositions() {
 function mergeNightlyPositions(POS_AT_LOAD, myPos) {
   const fresh = latestPositions(), F = ['stop', 'raised', 'exitBelow', 'exitFlag', 't1', 't2', 'tmode', 'tnote', 'tChecked', 'dist0'];
   if (!fresh) return;   // UNKNOWN: tonight's copy is NOT saved over newer records (no re-entry or add from a stale snapshot); actionable messages are withheld
+  // the holding reviews, exit verdicts and report above were computed from the holdings the pass STARTED with: if the store's holdings
+  // differ now (a sale, a new buy, a changed entry or stop), the fresh holdings are kept and saved, but tonight's assessment is withheld
+  if (env.SCAN_PASS === 'private' && !isDeepStrictEqual(fresh, OWNER_LOAD_RAW)) OWNER_STALE = OWNER_STALE || 'your holdings changed while tonight\'s scan ran';
   OWNER_SEEN['my-positions.json'] = structuredClone(fresh);
   for (const sym of Object.keys(fresh)) { const a = POS_AT_LOAD[sym], b = myPos[sym], f = fresh[sym]; if (!a || !b || a.entry !== f.entry || a.since !== f.since) continue;
     for (const k of F) { if (JSON.stringify(f[k]) !== JSON.stringify(a[k])) continue; if (b[k] === undefined) delete f[k]; else f[k] = b[k]; } }
@@ -4500,7 +4513,7 @@ async function daily() {
   // them); the public signals.json carries no posVerdict and no per-row ZAD-mark label (readers resolve marks privately via myHalal).
   // Two-pass scan: the private pass reuses the public pass's clock so the private record pairs with the published signals.json.
   const SIG_AT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(env.SCAN_GENERATED_AT || '') ? env.SCAN_GENERATED_AT : new Date(now).toISOString();
-  fs.writeFileSync(POS_VERDICT_FILE, JSON.stringify(privateSignalsRecord({ session, generatedAt: SIG_AT, fields: { posVerdict, tipBoard: tipBoardData, leaders: leadRows, pead, evt, peadFunnel } })));
+  fs.writeFileSync(POS_VERDICT_FILE, JSON.stringify({ ...privateSignalsRecord({ session, generatedAt: SIG_AT, fields: { posVerdict, tipBoard: tipBoardData, leaders: leadRows, pead, evt, peadFunnel } }), ...(env.SCAN_PASS === 'private' && OWNER_STALE ? { ownerStale: true } : {}) }));
   // P0 Route A: public per-symbol content comes only from PUBLIC sources (default/watchlist file, discovery, radar, smart money,
   // quick extras, fast movers, leaders, the wide universe, the crowd list). Names that entered the scan only through the owner's holdings,
   // private watch list or channel mentions are scanned for him but never published, so the public file cannot reveal them.

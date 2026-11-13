@@ -21,10 +21,33 @@ const merge = (S) => { const my = structuredClone(P0); S.fn('mergeNightlyPositio
 test('unchanged store: holdings merged from the store, actionable send allowed', async () => {
   const S = await pass(); merge(S); assert.deepEqual(S.fn('ownerFreshAtSend')(), { ok: true });
 });
-test('the bot SOLD a holding before the merge: the pass takes the store copy and never re-adds the sold position', async () => {
-  const S = await pass(); put('my-positions.json', { BBB: { entry: 5, since: '2026-11-12' } }); const my = merge(S);
+test('the bot SOLD a holding before the merge: the store copy is kept and saved, the sold position is never re-added, and tonight\'s assessment (computed from the old holdings) is withheld and its private verdicts labelled stale', async () => {
+  const S = await pass(); S.write('data/signals-private.json', { v: 1, session: '2026-11-12', generatedAt: '2026-11-12T21:40:00.000-05:00', posVerdict: { AAA: 'SELL: synthetic' } });
+  put('my-positions.json', { BBB: { entry: 5, since: '2026-11-12' } }); const my = merge(S);
   assert.deepEqual(Object.keys(my), ['BBB']); assert.deepEqual(Object.keys(JSON.parse(S.read('data/my-positions.json'))), ['BBB']);
-  assert.deepEqual(S.fn('ownerFreshAtSend')(), { ok: true });
+  assert.deepEqual(S.fn('ownerFreshAtSend')(), { ok: false, why: "your holdings changed while tonight's scan ran" });
+  assert.equal(JSON.parse(S.read('data/signals-private.json')).ownerStale, true, 'paired private verdicts labelled stale');
+});
+test('Codex 6852179013 (2): the SAME holding changed (entry/stop) before the merge: fresh bytes kept, assessment withheld', async () => {
+  const S = await pass(); put('my-positions.json', { AAA: { entry: 20, since: '2026-11-01', stop: 19 } }); const my = merge(S);
+  assert.equal(my.AAA.entry, 20); assert.deepEqual(S.fn('ownerFreshAtSend')(), { ok: false, why: "your holdings changed while tonight's scan ran" });
+});
+test('Codex 6852179013 (1): DELETED marks or settings in the store are a change (exact, not subset); only scanner migration keys may differ', async () => {
+  for (const [f, v, what] of [['halal.json', {}, 'halal marks'], ['settings.json', {}, 'settings']]) {
+    put('my-positions.json', P0); const X = await (async () => { for (const g of fs.readdirSync(STORE)) fs.rmSync(path.join(STORE, g)); put('my-positions.json', P0); put('halal.json', H0); put('settings.json', ST0); put(f, v);
+      const S = await loadScan({ files: { 'data/my-positions.json': P0, 'data/halal.json': H0, 'data/settings.json': ST0, 'data/signals.json': { session: '2026-11-12' } }, env: { SCAN_PASS: 'private', SCAN_OWNER_REFRESH: HELPER } }); S.fn('ownerStartCheck')(); merge(S); return S; })();
+    assert.deepEqual(X.fn('ownerFreshAtSend')(), { ok: false, why: 'your ' + what + " changed before tonight's scan could use them" }); }
+  const S = await pass(); merge(S); assert.deepEqual(S.fn('ownerFreshAtSend')(), { ok: true }, 'the copy differs from the store only by scanner migration keys');
+});
+test('a missing required store record (marks) is UNKNOWN, never assumed unchanged', async () => {
+  const S = await pass(); fs.rmSync(path.join(STORE, 'halal.json')); S.value('OWNER_SEEN'); S.fn('ownerStartCheck')();
+  assert.deepEqual(S.fn('ownerFreshAtSend')(), { ok: false, why: 'your halal marks could not be confirmed from your private records' });
+});
+test('a private verdict record labelled ownerStale is never hydrated as current', async () => {
+  const { hydrateSignals } = await import(path.join(ROOT, 'signals-read.mjs'));
+  const sig = { session: '2026-11-12', generatedAt: '2026-11-12T21:40:00.000-05:00' }, pv = { v: 1, session: sig.session, generatedAt: sig.generatedAt, posVerdict: { AAA: 'SELL: synthetic' } };
+  assert.equal(hydrateSignals(sig, () => pv, undefined, () => { throw 0; }).posVerdict.AAA, 'SELL: synthetic');
+  const h = hydrateSignals(sig, () => ({ ...pv, ownerStale: true }), undefined, () => { throw 0; }); assert.equal(h.posVerdict, undefined); assert.equal(h.posVerdictUnavailable, true);
 });
 test('the bot changed holdings AFTER the merge (during rendering): the actionable send stops', async () => {
   const S = await pass(); merge(S); put('my-positions.json', {});
@@ -67,6 +90,10 @@ test('owner-latest.sh in private mode reads the private repository fresh (two wr
     r = run('my-positions.json'); assert.equal(r.status, 0); assert.equal(fs.readFileSync(path.join(t, 'out.json'), 'utf8').trim(), '{"BBB":2}', 'fresh, not the earlier clone');
     assert.equal(run('halal.json').status, 2, 'absent in the store'); assert.equal(run('../x').status, 1);
     assert.equal(run('my-positions.json', { PRIVATE_DATA_URL: path.join(t, 'missing.git'), PRIVATE_DATA_DIR: path.join(t, 'clone2') }).status, 1, 'unreadable store is UNKNOWN');
+    // Codex 6852260667: the existing clone with ANOTHER declared address is never read (fail closed), and is kept as it is
+    sh('git init -q --bare -b main other.git', t); fs.rmSync(path.join(t, 'out.json'), { force: true });
+    const rr = run('my-positions.json', { PRIVATE_DATA_URL: path.join(t, 'other.git') }); assert.equal(rr.status, 1); assert.match(rr.stdout, /not bound to the declared private repository/);
+    assert.ok(!fs.existsSync(path.join(t, 'out.json')), 'nothing read'); assert.doesNotMatch(rr.stdout + rr.stderr, /other\.git|priv\.git/, 'no origin printed'); assert.ok(fs.existsSync(path.join(t, 'clone/.git')), 'clone kept');
   } finally { fs.rmSync(t, { recursive: true, force: true }); }
 });
 test('scan-passes gives the refresh route to the private pass only; the public environment never carries the private-data token', async () => {
