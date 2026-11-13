@@ -5,7 +5,14 @@
 import test from 'node:test'; import assert from 'node:assert/strict'; import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path'; import { execFileSync } from 'node:child_process';
 const ROOT = path.resolve(import.meta.dirname, '..'), WF = path.join(ROOT, '.github/workflows');
 const STEP_RUN = 'test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks';
-const PUSH = /git push|save-data\.sh/;
+// A job publishes when it runs git push or the shared save directly, OR runs a script that pushes (git 'push' argument), directly or
+// through a local import (for example ignition-watch.mjs -> watcher-message-publish.mjs).
+const GIT_PUSH_IN_JS = /git push|\(\s*['"]push['"]|\[\s*['"]push['"]/;
+const PUSHING_SCRIPTS = (() => { const mods = fs.readdirSync(ROOT).filter(f => /\.(mjs|js)$/.test(f)), src = Object.fromEntries(mods.map(f => [f, fs.readFileSync(path.join(ROOT, f), 'utf8')]));
+  const set = new Set(mods.filter(f => GIT_PUSH_IN_JS.test(src[f]))); let grew = true;
+  while (grew) { grew = false; for (const f of mods) if (!set.has(f) && [...src[f].matchAll(/from\s+['"]\.\/([^'"]+)['"]/g)].some(m => set.has(m[1]))) { set.add(f); grew = true; } }
+  return set; })();
+const PUSH = new RegExp('git push|save-data\\.sh|node\\s+(?:\\./)?(?:' + [...PUSHING_SCRIPTS].map(f => f.replace(/[.]/g, '\\.')).join('|') + ')\\b');
 function jobs(src) { const out = []; let cur = null, inJobs = false;
   for (const l of src.split('\n')) { if (/^jobs:/.test(l)) { inJobs = true; continue; } if (inJobs && /^\S/.test(l)) inJobs = false;
     if (inJobs && /^  [A-Za-z0-9_-]+:\s*$/.test(l)) { cur = { name: l.trim(), lines: [] }; out.push(cur); continue; } if (cur && inJobs) cur.lines.push(l); }
@@ -21,6 +28,11 @@ test('every publishing job installs the pre-push hook after each checkout and be
         assert.ok(hook > c && hook === nextStep + 1, f + ' ' + j.name + ': hook step immediately follows the checkout at job line ' + c); }
       assert.ok(L.findIndex(l => l.includes(STEP_RUN)) < firstPush, f + ' ' + j.name + ': hook installed before the first push'); } }
   assert.ok(n >= 75, 'all publishing jobs counted (' + n + ')');
+});
+test('script publishers are detected (drift check) and every workflow that may write contents installs the hook after each checkout', () => {
+  for (const f of ['squad26-watch.mjs', 'watcher-message-publish.mjs', 'ignition-watch.mjs']) assert.ok(PUSHING_SCRIPTS.has(f), 'pushing script detected: ' + f);
+  for (const f of files) { const src = fs.readFileSync(path.join(WF, f), 'utf8'); if (!/contents:\s*write/.test(src)) { assert.doesNotMatch(src, PUSH, f + ' publishes without contents: write'); continue; }
+    const L = src.split('\n'); L.forEach((l, i) => { if (/^\s*- uses: actions\/checkout@/.test(l)) { const next = L.findIndex((x, k) => k > i && /^\s*- /.test(x)); assert.ok(next > 0 && L[next + 1] && L[next + 1].includes(STEP_RUN), f + ': checkout at line ' + (i + 1) + ' is followed by the hook step'); } }); }
 });
 test('no workflow or save script bypasses or redirects the hook', () => {
   for (const f of [...files.map(f => path.join(WF, f)), path.join(ROOT, '.github/save-data.sh'), path.join(ROOT, '.github/private-data.sh')]) {
