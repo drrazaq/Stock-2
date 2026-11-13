@@ -1,6 +1,6 @@
 // Row-5 notification routing (development only). Invariants:
 // - default OFF: with NOTIFY_ROUTE unset every caller sends exactly as before;
-// - only class QUIET is ever withheld, and only after a durable private store outside the checkout; otherwise it is SENT (never dropped);
+// - only class QUIET is ever withheld; with routing enabled it is either durably stored privately or reported UNRETAINED (never pushed);
 // - protective, BUY, plan, critical and owner-reply paths are never routed;
 // - every routed caller is labelled explicitly and the labelled set is exactly the reviewed inventory.
 // Synthetic fixtures only; no network beyond 127.0.0.1.
@@ -33,18 +33,32 @@ test('only QUIET is withheld; ACTION/PROTECT/PLAN/CRITICAL/REPLY always go to th
   await assert.rejects(deliver({ cls: 'BUY', sender: 'unit:x', text: '', send: () => {}, env: ON(r) }), /unknown class/);
 });
 
-test('never dropped: missing, relative, public-checkout, group-readable or full report roots fall back to sending', async () => {
+test('enabled routing never pushes QUIET on a bad store: missing, relative, checkout, group-readable or full roots are UNRETAINED, not sent', async () => {
   const cases = [{ NOTIFY_ROUTE: '1' }, { NOTIFY_ROUTE: '1', NOTIFY_REPORT_ROOT: 'relative/dir' }, ON(path.join(os.tmpdir(), 'notify-missing-' + process.pid)), ON(root)];
   const open = fs.mkdtempSync(path.join(os.tmpdir(), 'notify-open-')); fs.chmodSync(open, 0o755); cases.push(ON(open));
-  for (const env of cases) { let n = 0; await deliver({ cls: 'QUIET', sender: 'unit:fallback', text: 't', send: () => { n++; }, env, cwd: root, log: () => {} }); assert.equal(n, 1, JSON.stringify(env)); }
+  for (const env of cases) { let n = 0; const out = await deliver({ cls: 'QUIET', sender: 'unit:fallback', text: 't', send: () => { n++; }, env, cwd: root, log: () => {} }); assert.equal(n, 0, JSON.stringify(env)); assert.equal(out.ok, false); assert.equal(out.routed, 'unretained'); assert.ok(out.reason); }
   assert.equal(quietRoot(ON(root), root).reason, 'ROOT_INSIDE_CHECKOUT');
-  const inside = path.join(root, 'test'); assert.equal(quietRoot(ON(inside), root).reason, 'ROOT_INSIDE_CHECKOUT');
+  assert.equal(quietRoot(ON(path.join(root, 'test')), root).reason, 'ROOT_INSIDE_CHECKOUT');
   const r = privateRoot(), limits = { ...QUIET_LIMITS, rowsPerDay: 2 };
   assert.equal(recordQuiet({ root: r, sender: 'unit:cap', text: 'a', limits }).stored, true);
   assert.equal(recordQuiet({ root: r, sender: 'unit:cap', text: 'b', limits }).stored, true);
   assert.deepEqual(recordQuiet({ root: r, sender: 'unit:cap', text: 'c', limits }), { stored: false, reason: 'STORE_FULL' });
   assert.equal(recordQuiet({ root: r, sender: 'Bad Sender!', text: 'x' }).reason, 'BAD_SENDER_ID');
-  const big = recordQuiet({ root: privateRoot(), sender: 'unit:big', text: 'x'.repeat(QUIET_LIMITS.textBytes + 10) }); assert.equal(big.stored, true);
+  assert.deepEqual(recordQuiet({ root: privateRoot(), sender: 'unit:big', text: 'x'.repeat(QUIET_LIMITS.textBytes + 10) }), { stored: false, reason: 'TEXT_TOO_LARGE' }, 'oversized context is refused, never truncated and called retained');
+  const tot = privateRoot(); assert.equal(recordQuiet({ root: tot, sender: 'unit:t', text: 'a', limits: { ...QUIET_LIMITS, totalBytes: 10 } }).reason, 'STORE_FULL', 'total retention bound');
+  const lk = privateRoot(); fs.mkdirSync(path.join(lk, '.quiet.lock')); assert.equal(recordQuiet({ root: lk, sender: 'unit:l', text: 'a' }).reason, 'STORE_LOCKED', 'a held lock refuses instead of racing past the caps');
+  const un = privateRoot(), uf = path.join(un, 'quiet-2026-11-13.jsonl'); fs.writeFileSync(uf, '{"partial"', { mode: 0o600 }); assert.equal(recordQuiet({ root: un, sender: 'unit:u', text: 'a', now: Date.parse('2026-11-13T12:00:00Z') }).reason, 'STORE_UNTERMINATED');
+});
+
+// Codex independent regressions (PR #1 comment 6849689610), verbatim intent: both FAILED on 40a4a2f1.
+test('private report rejects checkout child whose name starts with two dots', () => {
+  const top = fs.mkdtempSync(path.join(os.tmpdir(), 'notify-review-')); try { const repo = path.join(top, 'repo'), p = path.join(repo, '..private'); fs.mkdirSync(p, { recursive: true, mode: 0o700 }); const r = quietRoot({ NOTIFY_REPORT_ROOT: p }, repo); assert.equal(r.root, null, 'report root remains inside checkout despite its name'); } finally { fs.rmSync(top, { recursive: true, force: true }); }
+});
+test('private report refuses a public hardlink and leaves that file untouched', () => {
+  const top = fs.mkdtempSync(path.join(os.tmpdir(), 'notify-review-')); try { const r = path.join(top, 'private'); fs.mkdirSync(r, { mode: 0o700 }); const pub = path.join(top, 'public.jsonl'); fs.writeFileSync(pub, ''); fs.chmodSync(pub, 0o644); fs.linkSync(pub, path.join(r, 'quiet-2026-11-13.jsonl')); const result = recordQuiet({ root: r, sender: 'review:x', text: 'synthetic-only', now: Date.parse('2026-11-13T12:00:00Z') }); assert.equal(result.stored, false, 'shared public inode cannot be a private report'); assert.equal(fs.readFileSync(pub, 'utf8'), ''); } finally { fs.rmSync(top, { recursive: true, force: true }); }
+});
+test('a 0600 single-owner hardlink is refused too (nlink check), and no lock directory is left behind', () => {
+  const top = fs.mkdtempSync(path.join(os.tmpdir(), 'notify-review-')); try { const r = path.join(top, 'private'); fs.mkdirSync(r, { mode: 0o700 }); const other = path.join(top, 'other.jsonl'); fs.writeFileSync(other, '', { mode: 0o600 }); fs.linkSync(other, path.join(r, 'quiet-2026-11-13.jsonl')); assert.equal(recordQuiet({ root: r, sender: 'review:y', text: 'z', now: Date.parse('2026-11-13T12:00:00Z') }).reason, 'STORE_UNSAFE_FILE'); assert.equal(fs.existsSync(path.join(r, '.quiet.lock')), false); } finally { fs.rmSync(top, { recursive: true, force: true }); }
 });
 
 test("the owner's explicit opt-in sends QUIET messages even when routing is on", async () => {

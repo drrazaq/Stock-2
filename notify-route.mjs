@@ -10,14 +10,16 @@
 //   sender, unchanged (its freshness/evidence checks and UNKNOWN handling stay with that sender; this module never retries).
 // - The owner's explicit opt-in wins: a caller passes ownerOptIn=true when the owner himself asked for these messages (for example
 //   'quiet off' or an explicit 'alerts all'); a default or missing setting is not an opt-in.
-// - A QUIET message is withheld only after it is durably stored in the private report root. If the root is missing, inside the
-//   public checkout, not owner-only, or full, the message is SENT instead (today's behaviour): nothing is silently dropped.
-// - The report store is bounded (per-day row and byte caps) and never written under the repository working directory.
+// - When routing is enabled, a QUIET message is withheld from Telegram and appended to the private report. If the report root is
+//   missing, inside the public checkout, not owner-only, locked, full, unsafe or the write is incomplete, the message is NOT sent:
+//   deliver() returns an explicit { ok:false, routed:'unretained', reason } with no retry (routine research never falls back to a push).
+// - The report store is bounded (per-day rows/bytes, total bytes, file count), single-writer (exclusive lock directory, no waiting),
+//   never written under the repository working directory, and only into a regular, current-owner, mode-0600, single-link file.
 import fs from 'node:fs';
 import path from 'node:path';
 
 export const NOTIFY_CLASSES = Object.freeze(['ACTION', 'PROTECT', 'PLAN', 'CRITICAL', 'REPLY', 'QUIET']);
-export const QUIET_LIMITS = Object.freeze({ rowsPerDay: 500, bytesPerDay: 2 * 1024 * 1024, textBytes: 16 * 1024 });
+export const QUIET_LIMITS = Object.freeze({ rowsPerDay: 500, bytesPerDay: 2 * 1024 * 1024, textBytes: 16 * 1024, totalBytes: 64 * 1024 * 1024, maxFiles: 400 });
 const SENDER_ID = /^[a-z0-9][a-z0-9._:-]{0,63}$/;
 
 export function routeEnabled(env = process.env) { return env.NOTIFY_ROUTE === '1'; }
@@ -29,7 +31,8 @@ export function quietRoot(env = process.env, cwd = process.cwd()) {
   let real, repo;
   try { real = fs.realpathSync(raw); repo = fs.realpathSync(cwd); } catch { return { root: null, reason: 'ROOT_MISSING' }; }
   const rel = path.relative(repo, real);
-  if (rel === '' || (!rel.startsWith('..') && !path.isAbsolute(rel))) return { root: null, reason: 'ROOT_INSIDE_CHECKOUT' };
+  const outside = rel === '..' || rel.startsWith('..' + path.sep) || path.isAbsolute(rel);
+  if (!outside) return { root: null, reason: 'ROOT_INSIDE_CHECKOUT' };
   let st; try { st = fs.statSync(real); } catch { return { root: null, reason: 'ROOT_MISSING' }; }
   if (!st.isDirectory()) return { root: null, reason: 'ROOT_NOT_DIRECTORY' };
   if ((st.mode & 0o077) !== 0) return { root: null, reason: 'ROOT_NOT_OWNER_ONLY' };
@@ -38,23 +41,36 @@ export function quietRoot(env = process.env, cwd = process.cwd()) {
 
 function dayOf(now) { return new Date(now).toISOString().slice(0, 10); }
 
-// Append one QUIET message to <root>/quiet-<UTC day>.jsonl (O_APPEND, 0600, fsync). Returns {stored, reason}.
+// Append one QUIET message to <root>/quiet-<UTC day>.jsonl. Returns {stored, reason}; stored is true only for a complete, durable line.
 export function recordQuiet({ root, sender, text, now = Date.now(), limits = QUIET_LIMITS }) {
   if (!SENDER_ID.test(String(sender || ''))) return { stored: false, reason: 'BAD_SENDER_ID' };
-  const file = path.join(root, 'quiet-' + dayOf(now) + '.jsonl');
-  let rows = 0, bytes = 0;
-  try { const b = fs.readFileSync(file); bytes = b.length; for (const c of b) if (c === 10) rows++; } catch (e) { if (e.code !== 'ENOENT') return { stored: false, reason: 'STORE_UNREADABLE' }; }
   const t = String(text ?? ''), tb = Buffer.from(t);
-  const kept = tb.length > limits.textBytes ? tb.subarray(0, limits.textBytes).toString('utf8') : t;
-  const line = Buffer.from(JSON.stringify({ v: 1, at: new Date(now).toISOString(), sender, cls: 'QUIET', truncated: tb.length > limits.textBytes, text: kept }) + '\n');
-  if (rows + 1 > limits.rowsPerDay || bytes + line.length > limits.bytesPerDay) return { stored: false, reason: 'STORE_FULL' };
-  let fd;
+  if (tb.length > limits.textBytes) return { stored: false, reason: 'TEXT_TOO_LARGE' };   // never truncated and called retained
+  const lock = path.join(root, '.quiet.lock');
+  try { fs.mkdirSync(lock, { mode: 0o700 }); } catch { return { stored: false, reason: 'STORE_LOCKED' }; }   // single writer; no waiting
+  let fd, created = false;
   try {
-    fd = fs.openSync(file, fs.constants.O_APPEND | fs.constants.O_CREAT | fs.constants.O_WRONLY | fs.constants.O_NOFOLLOW, 0o600);
-    fs.writeSync(fd, line); fs.fsyncSync(fd);
+    let total = 0, files = 0;
+    for (const n of fs.readdirSync(root)) if (/^quiet-\d{4}-\d{2}-\d{2}\.jsonl$/.test(n)) { files++; try { total += fs.lstatSync(path.join(root, n)).size; } catch {} }
+    const file = path.join(root, 'quiet-' + dayOf(now) + '.jsonl');
+    const line = Buffer.from(JSON.stringify({ v: 1, at: new Date(now).toISOString(), sender, cls: 'QUIET', text: t }) + '\n');
+    try { fs.lstatSync(file); } catch (e) { if (e.code !== 'ENOENT') return { stored: false, reason: 'STORE_UNREADABLE' }; created = true; }
+    if (created && files + 1 > limits.maxFiles) return { stored: false, reason: 'STORE_FULL' };
+    fd = fs.openSync(file, fs.constants.O_RDWR | fs.constants.O_APPEND | fs.constants.O_CREAT | fs.constants.O_NOFOLLOW, 0o600);
+    const st = fs.fstatSync(fd);
+    if (!st.isFile() || (typeof process.getuid === 'function' && st.uid !== process.getuid()) || (st.mode & 0o777) !== 0o600 || st.nlink !== 1) return { stored: false, reason: 'STORE_UNSAFE_FILE' };
+    if (st.size > limits.bytesPerDay) return { stored: false, reason: 'STORE_FULL' };
+    const cur = Buffer.alloc(st.size); let off = 0; while (off < st.size) { const n = fs.readSync(fd, cur, off, st.size - off, off); if (!n) break; off += n; }
+    if (off !== st.size) return { stored: false, reason: 'STORE_UNREADABLE' };
+    if (st.size && cur[st.size - 1] !== 10) return { stored: false, reason: 'STORE_UNTERMINATED' };
+    let rows = 0; for (const c of cur) if (c === 10) rows++;
+    if (rows + 1 > limits.rowsPerDay || st.size + line.length > limits.bytesPerDay || total + line.length > limits.totalBytes) return { stored: false, reason: 'STORE_FULL' };
+    let w = 0; while (w < line.length) { const n = fs.writeSync(fd, line, w, line.length - w); if (!(n > 0)) return { stored: false, reason: 'STORE_WRITE_PARTIAL' }; w += n; }
+    fs.fsyncSync(fd);
+    if (created) { const d = fs.openSync(root, 'r'); try { fs.fsyncSync(d); } finally { fs.closeSync(d); } }   // the new directory entry is durable too
+    return { stored: true, reason: null };
   } catch { return { stored: false, reason: 'STORE_WRITE_FAILED' }; }
-  finally { if (fd !== undefined) try { fs.closeSync(fd); } catch {} }
-  return { stored: true, reason: null };
+  finally { if (fd !== undefined) try { fs.closeSync(fd); } catch {} try { fs.rmdirSync(lock); } catch {} }
 }
 
 // deliver(): the single decision point used by every labelled caller.
@@ -65,9 +81,9 @@ export async function deliver({ cls, sender, text, send, ownerOptIn = false, env
   if (typeof send !== 'function') throw Error('notify-route: send must be a function');
   if (cls !== 'QUIET' || ownerOptIn === true || !routeEnabled(env)) return send();
   const { root, reason } = quietRoot(env, cwd);
-  if (!root) { log('notify-route: ' + sender + ' QUIET sent to Telegram (' + reason + ')'); return send(); }
+  if (!root) { log('notify-route: ' + sender + ' QUIET UNRETAINED, not sent (' + reason + ')'); return { ok: false, routed: 'unretained', sender, reason }; }
   const r = recordQuiet({ root, sender, text, now });
-  if (!r.stored) { log('notify-route: ' + sender + ' QUIET sent to Telegram (' + r.reason + ')'); return send(); }
+  if (!r.stored) { log('notify-route: ' + sender + ' QUIET UNRETAINED, not sent (' + r.reason + ')'); return { ok: false, routed: 'unretained', sender, reason: r.reason }; }
   log('notify-route: ' + sender + ' QUIET stored in the private report');
   return { ok: true, routed: 'report', sender };
 }
