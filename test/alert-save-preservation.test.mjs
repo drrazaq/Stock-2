@@ -3,7 +3,9 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import fs from 'node:fs';import os from 'node:os';import path from 'node:path';import {fileURLToPath} from 'node:url';import {execFileSync} from 'node:child_process';
 import {mergeAlertState} from '../.github/merge-alert-state.mjs';
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const env={PATH:process.env.PATH,GIT_AUTHOR_NAME:'synthetic',GIT_AUTHOR_EMAIL:'synthetic@example.invalid',GIT_COMMITTER_NAME:'synthetic',GIT_COMMITTER_EMAIL:'synthetic@example.invalid',SAVE_SLEEP:'0'};
+// P0 Route A privacy floor: owner-file merge semantics now apply on the private repository's save route (SAVE_PRIVATE_REPO=1);
+// the public save never publishes owner files (test/save-private-guard.test.mjs).
+const env={PATH:process.env.PATH,GIT_AUTHOR_NAME:'synthetic',GIT_AUTHOR_EMAIL:'synthetic@example.invalid',GIT_COMMITTER_NAME:'synthetic',GIT_COMMITTER_EMAIL:'synthetic@example.invalid',SAVE_SLEEP:'0',SAVE_PRIVATE_REPO:'1'};
 const cmd=(cwd,args)=>execFileSync('git',args,{cwd,env,stdio:['ignore','pipe','pipe']}).toString();
 const write=(d,p,v)=>{fs.mkdirSync(path.dirname(path.join(d,p)),{recursive:true});fs.writeFileSync(path.join(d,p),typeof v==='string'?v:JSON.stringify(v));};
 const A={day:'2026-11-10',sent:{},delivery:{AAA:{status:'UNKNOWN',at:'2026-11-10T15:00:00Z'}}},B={day:'2026-11-10',sent:{BBB:1},delivery:{}};

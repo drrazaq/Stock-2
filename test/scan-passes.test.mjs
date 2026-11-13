@@ -16,7 +16,8 @@ async function world(p, script = 'scan-passes.mjs') {
   const w = (f, v) => { fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true }); fs.writeFileSync(path.join(dir, f), typeof v === 'string' ? v : JSON.stringify(v)); };
   w('watchlist.txt', 'SPY ZZP\n');
   w('data/discovery.json', { candidates: [{ sym: 'ZZD' }] });          // a PUBLIC source name that the owner may also watch privately
-  w('data/models.json', { ZZP: 'public-seed' });                       // public cache seed (identical in every world)
+  w('data/models.json', p.legacyModels || { ZZP: 'public-seed' });   // legacy public cache written by the OLD single-pass scan (no manifest): quarantined
+  w('data/smart-money.json', { picks: ['ZZX'] });                      // tainted producer output (reads holdings/tips): never a public seed
   w('data/settings.json', p.settings || {}); w('data/halal.json', p.marks || {}); w('data/my-positions.json', p.positions || {});
   w('data/watch-extra.json', p.extra || []); w('data/tips.jsonl', (p.tips || []).map(x => JSON.stringify(x)).join('\n'));
   for (const [f, v] of Object.entries(p.privateCache || {})) w('data/' + f, v);   // pre-existing PRIVATE-only cache entries
@@ -31,7 +32,7 @@ async function world(p, script = 'scan-passes.mjs') {
     return { dir, stdout: out.stdout, files };
   } finally { server.closeAllConnections(); server.close(); }
 }
-const PUBLIC_INPUTS = new Set(['discovery.json', 'models.json']);
+const PUBLIC_INPUTS = new Set(['discovery.json', 'smart-money.json']);
 function publicView(wd) {   // every public data file the run produced or kept, with the run clock normalised
   const priv = new Set(fs.readFileSync(path.join(ROOT, '.github/private-files.txt'), 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')));
   const v = {};
@@ -45,13 +46,15 @@ test('two-pass scan: public files and public stdout are invariant to every kind 
   const a = await world({});
   const b = await world({ marks: { ZZP: { s: 'fail' }, ZZD: { s: 'ok' }, ZZQ: { s: 'ok' } }, positions: { ZZP: held, ZZR: { ...held }, ZZD: { ...held } }, extra: ['ZZQ', 'ZZD'],
     tips: [{ sym: 'ZZX', d: '2026-11-03', src: 'synthetic source', px: 10 }], settings: { quiet: false, focus: true },
-    privateCache: { 'private-models.json': { ZZT: 'private-only seed', ZZP: 'private-model' }, 'private-outcomes.json': { ZZT: [{ r: 1 }] }, 'private-lessons.json': { rules: { ZZT: {} } } } });
+    legacyModels: { ZZT: 'legacy private-derived entry', ZZP: 'legacy' }, privateCache: { 'private-models.json': { ZZT: 'private-only seed', ZZP: 'private-model' }, 'private-outcomes.json': { ZZT: [{ r: 1 }] }, 'private-lessons.json': { rules: { ZZT: {} } } } });
   try {
     const A = publicView(a), B = publicView(b);
     assert.deepEqual(Object.keys(B).sort(), Object.keys(A).sort(), 'same public file set');
-    for (const f of Object.keys(A)) assert.equal(B[f], A[f], 'public file differs: ' + f);
+    for (const f of Object.keys(A)) { if (f === 'public-pass-manifest.json') { assert.deepEqual(Object.keys(JSON.parse(B[f]).files).sort(), Object.keys(JSON.parse(A[f]).files).sort(), 'manifest covers the same files (its hashes include the run clock)'); continue; } assert.equal(B[f], A[f], 'public file differs: ' + f); }
     for (const [f, body] of Object.entries(B)) if (!PUBLIC_INPUTS.has(f)) assert.doesNotMatch(body, PRIVATE_ONLY, 'private-only name in public file ' + f);
     assert.equal(normOut(b.stdout), normOut(a.stdout), 'public stdout invariant');
+    assert.doesNotMatch(B['signals.json'], /ZZX/, 'a tainted producer output (smart-money) is not used as a public seed');
+    assert.ok(B['public-pass-manifest.json'] && JSON.parse(B['public-pass-manifest.json']).files['signals.json'], 'public pass writes its provenance manifest');
     assert.doesNotMatch(b.stdout, PRIVATE_ONLY);
     const priv = JSON.parse(b.files['signals-private.json']), pub = JSON.parse(b.files['signals.json']);
     assert.equal(priv.session, pub.session); assert.equal(priv.generatedAt, pub.generatedAt, 'private record pairs with the PUBLISHED signals.json');
@@ -67,4 +70,17 @@ test('negative control: the old single-pass scan on the same private worlds DOES
   const a = await world({}, 'scan.mjs'), b = await world({ marks: { ZZP: { s: 'fail' } }, positions: { ZZR: held }, extra: ['ZZQ', 'ZZD'] }, 'scan.mjs');
   try { const A = publicView(a), B = publicView(b); assert.ok(Object.keys(A).some(f => A[f] !== B[f]) || Object.keys(B).length !== Object.keys(A).length, 'single pass must differ'); }
   finally { for (const w of [a, b]) fs.rmSync(w.dir, { recursive: true, force: true }); }
+});
+
+test('declared tainted seeds cover every scan input whose producer reads private owner files (drift check)', async () => {
+  const { TAINTED_SEEDS, SCAN_OUTPUTS } = await import('../scan-passes.mjs');
+  const PRIV = /data\/(halal|my-positions|watch-extra|my-trades|alpaca-paper|basket-state|actions-sells|signals-private)\.json|data\/(tips|opinions|market-calls|my-trades|sell-notices|leaderdip-ledger)\.jsonl|private\.enc/;
+  const privList = new Set(fs.readFileSync(path.join(ROOT, '.github/private-files.txt'), 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')));
+  const scan = fs.readFileSync(path.join(ROOT, 'scan.mjs'), 'utf8'), mods = fs.readdirSync(ROOT).filter(f => f.endsWith('.mjs') && !['scan.mjs', 'scan-passes.mjs', 'fetch-cache.mjs', 'notify-route.mjs', 'signals-read.mjs'].includes(f));
+  const reads = new Set([...scan.matchAll(/(?:readJson0?|readFileSync|J)\(['"]data\/([a-zA-Z0-9_./-]+)/g)].map(m => m[1]));
+  const missing = [];
+  for (const r of reads) { if (privList.has(r) || SCAN_OUTPUTS.includes(r) || TAINTED_SEEDS.includes(r)) continue;
+    const esc = r.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), writes = new RegExp("(writeFileSync|appendFileSync|appendRadarRows|renameSync)\\([^;]{0,60}['\"]data/" + esc + "|(OUT|FILE|LEDGER|PAPER|STATE|_F)[A-Z_]* *= *['\"]data/" + esc + "['\"]");
+    for (const m of mods) { const src = fs.readFileSync(path.join(ROOT, m), 'utf8'); if (writes.test(src) && PRIV.test(src)) missing.push(r + ' <- ' + m); } }
+  assert.deepEqual(missing, [], 'a producer of a public seed now reads private owner state: add it to TAINTED_SEEDS');
 });

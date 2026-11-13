@@ -20,19 +20,26 @@ function world(marker) {
   fs.writeFileSync(path.join(job, 'data/signals.json'), '{"v":1}\n');
   return { top, origin, job };
 }
-const run = (job, env = {}) => execFileSync('bash', ['.github/save-data.sh', 'scan test'], { cwd: job, encoding: 'utf8', env: { ...process.env, SAVE_SLEEP: '0', GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', ...env } });
+const run = (job, env = {}) => /* PRIVATE_SAVE_OK defaults on for the marker tests below; the floor test overrides */ execFileSync('bash', ['.github/save-data.sh', 'scan test'], { cwd: job, encoding: 'utf8', env: { ...process.env, SAVE_SLEEP: '0', GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', ...env } });
 const atOrigin = (w, p) => { try { return g(w.top, '--git-dir', w.origin, 'show', 'main:' + p); } catch { return null; } };
 for (const marker of ['private-data-mode', 'private-data-sealed']) test('public save with ' + marker + ': private files never published, public files and rebase still work', () => {
   const w = world(marker); try {
-    run(w.job);
+    run(w.job, { PRIVATE_SAVE_OK: '1' });   // private persistence confirmed by the private route
     assert.equal(atOrigin(w, 'data/my-positions.json'), '{"OLD":1}\n', 'the stale public copy is not replaced by the private one');
     assert.equal(atOrigin(w, 'data/signals-private.json'), null, 'the private scan record is never published');
     assert.equal(atOrigin(w, 'data/signals.json'), '{"v":1}\n'); assert.equal(atOrigin(w, 'data/other.json'), '{}\n', 'concurrent origin change kept (rebase ran)');
     assert.equal(fs.readFileSync(path.join(w.job, 'data/my-positions.json'), 'utf8'), '{"PRIVATE_NOW":1}\n', 'the job keeps its private working copy');
   } finally { fs.rmSync(w.top, { recursive: true, force: true }); }
 });
-test('before any cutover (no marker) the save is unchanged: everything in data/ is committed as today', () => {
-  const w = world(null); try { run(w.job); assert.equal(atOrigin(w, 'data/my-positions.json'), '{"PRIVATE_NOW":1}\n'); } finally { fs.rmSync(w.top, { recursive: true, force: true }); }
+test('privacy floor without any marker: private files are never published, and unconfirmed private persistence fails visibly (exit 3)', () => {
+  const w = world(null); try {
+    let code = 0; try { run(w.job); } catch (e) { code = e.status; }
+    assert.equal(code, 3, 'owner update not acked as durable');
+    assert.equal(atOrigin(w, 'data/my-positions.json'), '{"OLD":1}\n'); assert.equal(atOrigin(w, 'data/signals-private.json'), null);
+    assert.equal(atOrigin(w, 'data/signals.json'), '{"v":1}\n', 'public part still saved');
+    run(w.job, { PRIVATE_SAVE_OK: '1' });   // after a verified private push the same save succeeds without publishing private files
+    assert.equal(atOrigin(w, 'data/my-positions.json'), '{"OLD":1}\n');
+  } finally { fs.rmSync(w.top, { recursive: true, force: true }); }
 });
 test('the private repository save (SAVE_PRIVATE_REPO=1) keeps the private files even with the marker present', () => {
   const w = world('private-data-mode'); try { run(w.job, { SAVE_PRIVATE_REPO: '1' }); assert.equal(atOrigin(w, 'data/my-positions.json'), '{"PRIVATE_NOW":1}\n'); } finally { fs.rmSync(w.top, { recursive: true, force: true }); }

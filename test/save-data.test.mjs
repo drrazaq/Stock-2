@@ -13,7 +13,8 @@ import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
 const SCRIPT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '.github', 'save-data.sh');
-const ENV = { ...process.env, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', SAVE_SLEEP: '0' };
+// P0 Route A privacy floor: these owner-file conflict rules now run on the private repository's save route (SAVE_PRIVATE_REPO=1).
+const ENV = { ...process.env, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', SAVE_SLEEP: '0', SAVE_PRIVATE_REPO: '1' };
 const sh = (cmd, cwd) => execSync(cmd, { cwd, env: ENV, stdio: ['ignore', 'pipe', 'pipe'] }).toString();
 const W = (dir, f, s) => { fs.mkdirSync(path.dirname(path.join(dir, f)), { recursive: true }); fs.writeFileSync(path.join(dir, f), s); };
 const R = (dir, f) => fs.readFileSync(path.join(dir, f), 'utf8');

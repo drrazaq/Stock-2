@@ -36,19 +36,24 @@ pull() {
   ! in_rebase
 }
 git add data
-# P0 Route A (development): once the private-data cutover has happened (.github/private-data-mode) OR ever happened
-# (.github/private-data-sealed, never removed by a rollback), the PUBLIC save never stages the owner's private files listed in
-# .github/private-files.txt, even though `private-data.sh pull` put current copies into data/. A rollback therefore stops using the
-# private repository but can never republish plaintext. The private repository's own save (private-data.sh push) sets
-# SAVE_PRIVATE_REPO=1 and keeps every file. A staged private path after the reset aborts the save instead of publishing it.
-if [ "${SAVE_PRIVATE_REPO:-}" != 1 ] && { [ -e .github/private-data-mode ] || [ -e .github/private-data-sealed ]; }; then
-  [ -f .github/private-files.txt ] || { echo "Error: private mode without .github/private-files.txt; refusing to save"; exit 1; }
+# P0 Route A (development) PRIVACY FLOOR: the PUBLIC save never stages the owner's private files (.github/private-files.txt) nor any
+# data/private-* copy, whatever markers exist; a marker controls hydration/adoption, never permission to publish owner payloads.
+# The private repository's own save (private-data.sh push) sets SAVE_PRIVATE_REPO=1 and keeps every file. A staged private path after
+# the reset aborts the save. If private files changed and their private persistence was not confirmed (PRIVATE_SAVE_OK=1, set only after
+# a verified private push), the public part is still saved but the step FAILS VISIBLY (exit 3): an owner update is never acked as durable.
+PRIVATE_PENDING=
+if [ "${SAVE_PRIVATE_REPO:-}" != 1 ]; then
+  [ -f .github/private-files.txt ] || { echo "Error: .github/private-files.txt missing; refusing to save"; exit 1; }
   PRIVATE_GUARD=1
   PRIV=$(grep -vE '^\s*(#|$)' .github/private-files.txt | sed 's#^#data/#')
   for p in $PRIV; do git reset -q -- "$p" 2>/dev/null || true; done
   git reset -q -- 'data/private-*' 2>/dev/null || true   # two-pass scan private caches (scan-passes.mjs)
   for p in $PRIV; do if git diff --cached --name-only -- "$p" | grep -q .; then echo "Error: private file $p still staged; refusing to publish it"; exit 1; fi; done
   if git diff --cached --name-only -- 'data/private-*' | grep -q .; then echo "Error: a data/private-* file is still staged; refusing to publish it"; exit 1; fi
+  if [ "${PRIVATE_SAVE_OK:-}" != 1 ]; then
+    for p in $PRIV; do if [ -n "$(git status --porcelain -- "$p" 2>/dev/null)" ]; then PRIVATE_PENDING=1; fi; done
+    [ -n "$(git status --porcelain -- 'data/private-*' 2>/dev/null)" ] && PRIVATE_PENDING=1
+  fi
 fi
 git diff --cached --quiet || git commit -q -m "${1:-scan $(date -u +%FT%RZ)}"
 merge_alerts() {
@@ -60,3 +65,4 @@ merge_alerts() {
 ok=0; for i in 1 2 3 4 5; do if pull && merge_alerts && git push -q; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep "${SAVE_SLEEP:-10}"; done
 rm -rf "$T"
 [ "$ok" = 1 ] || { echo "Error: could not save the data folder to the repository"; exit 1; }
+[ -z "$PRIVATE_PENDING" ] || { echo "Error: owner private files changed but their private persistence was not confirmed; they were NOT published and are NOT durably saved"; exit 3; }

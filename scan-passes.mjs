@@ -18,6 +18,29 @@ const PRIVATE_NAMES = new Set(fs.readFileSync(path.join(ROOT, '.github/private-f
 const isPrivate = (name) => PRIVATE_NAMES.has(name) || name.startsWith('private-');
 const privateName = (name) => 'private-' + name.replace(/\//g, '__');
 
+// ---- Public-pass seed policy (declared; reviewed 13 Nov 2026). A data file is copied into the public sandbox only if:
+//  (a) it is not a private file and not a data/private-* copy;
+//  (b) it is not produced by a module that reads the owner's private state (TAINTED_SEEDS, from the producer audit; a drift test
+//      recomputes it from source and fails when a producer starts reading private files);
+//  (c) if the nightly scan itself writes it (SCAN_OUTPUTS), its bytes match the last public-pass manifest; a legacy copy written by
+//      the old single-pass scan is quarantined (never used as a public seed), because it may carry private-derived entries.
+// Everything else (files from producers that never read private state, external reference files) is a trusted public input.
+export const TAINTED_SEEDS = Object.freeze(['calendar.enc', 'decoded-check.json', 'earnings-cache.json.gz', 'events-study.json', 'fastmover-lab.json',
+  'fastmover-paper.json', 'follow-fade.json', 'ignition-days.jsonl', 'ignition-lab.json', 'ignition-live.json', 'ignition-results.json', 'macro-log.jsonl',
+  'news-log.jsonl', 'quality.json', 'smart-money-study.json', 'smart-money.json', 'squad29-lab.json', 'strategy-library.json',
+  'options-shadow.json', 'tier2-ledger.jsonl', 'tg-state.json', 'tg-failures.jsonl', 'halal-ext.json', 'zoya.json']);
+export const SCAN_OUTPUTS = Object.freeze(['alert-state.json', 'dow-study.json', 'fm-state.json', 'journal.jsonl', 'leaders.json', 'lessons.json',
+  'mday-study.json', 'models.json', 'names.json', 'options-probe.json', 'outcomes.json', 'sectors.json', 'sic-extra.json', 'signals.json', 'skipped.jsonl',
+  'spy-closes.json', 'timing-study.json']);
+export const MANIFEST = 'public-pass-manifest.json';
+export function seedAllowed(rel, manifest, hashOf) {
+  const top = rel.split('/')[0];
+  if (isPrivate(top) || isPrivate(rel) || rel === MANIFEST) return false;
+  if (TAINTED_SEEDS.includes(rel)) return false;
+  if (SCAN_OUTPUTS.includes(rel)) return !!(manifest && manifest.files && manifest.files[rel] && manifest.files[rel] === hashOf(rel));
+  return true;
+}
+
 function listData(dir) {   // relative file paths under data/, recursive
   const out = []; const walk = (d, rel) => { let es = []; try { es = fs.readdirSync(d, { withFileTypes: true }); } catch { return; }
     for (const e of es) { const r = rel ? rel + '/' + e.name : e.name; if (e.isDirectory()) walk(path.join(d, e.name), r); else if (e.isFile()) out.push(r); } };
@@ -37,13 +60,19 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
       if (e.name === '.git' || e.name === 'node_modules' || e.name === 'data') continue;
       fs.cpSync(path.join(ROOT, e.name), path.join(sandbox, e.name), { recursive: true });
     }
-    for (const r of listData(DATA)) { const top = r.split('/')[0]; if (isPrivate(top) || isPrivate(r)) continue; copy(path.join(DATA, r), path.join(sandbox, 'data', r)); }
+    let manifest = null; try { manifest = JSON.parse(fs.readFileSync(path.join(DATA, MANIFEST), 'utf8')); } catch {}
+    const quarantined = [];
+    for (const r of listData(DATA)) { if (seedAllowed(r, manifest, (x) => digest(path.join(DATA, x)))) copy(path.join(DATA, r), path.join(sandbox, 'data', r)); else if (!isPrivate(r.split('/')[0])) quarantined.push(r); }
+    log('two-pass scan: public seed inputs exclude ' + quarantined.length + ' tainted or unverified files');
     const pubEnv = { ...env, SCAN_PASS: 'public', SCAN_FETCH_CACHE: cache, SCAN_FETCH_CACHE_MODE: 'record' };
     for (const k of ['TG_TOKEN', 'TG_CHAT', 'PRIVATE_DATA_TOKEN', 'PRIVATE_DATA_READ', 'ALPACA_KEY', 'ALPACA_SECRET']) delete pubEnv[k];
     const sandboxBefore = snapshot(path.join(sandbox, 'data'));
     const pub = spawnSync(process.execPath, ['scan.mjs'], { cwd: sandbox, env: pubEnv, encoding: 'utf8', maxBuffer: 256 << 20 });
     if (pub.stdout) log(pub.stdout.trimEnd()); if (pub.stderr) log(pub.stderr.trimEnd());
     const publicOut = pub.status === 0 ? changed(sandboxBefore, path.join(sandbox, 'data')).filter(r => !isPrivate(r.split('/')[0])) : [];
+    if (pub.status === 0) { const files = {}; for (const r of publicOut) if (SCAN_OUTPUTS.includes(r)) files[r] = digest(path.join(sandbox, 'data', r));
+      const prev = manifest && manifest.files ? manifest.files : {}; for (const r of SCAN_OUTPUTS) if (!files[r] && prev[r] && fs.existsSync(path.join(sandbox, 'data', r)) && digest(path.join(sandbox, 'data', r)) === prev[r]) files[r] = prev[r];
+      fs.writeFileSync(path.join(sandbox, 'data', MANIFEST), JSON.stringify({ v: 1, files }, null, 1)); publicOut.push(MANIFEST); }
     log('two-pass scan: public pass ' + (pub.status === 0 ? 'OK, ' + publicOut.length + ' public files' : 'FAILED (exit ' + pub.status + '); public files left unchanged'));
 
     // ---- 2. private pass in the real checkout with the full state
