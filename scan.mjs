@@ -84,6 +84,7 @@ function dangerKnown(sym, held = sym ? pos0Held(sym) : false) { if (!fs.existsSy
     if (!A || typeof A !== 'object' || !T || typeof T !== 'object') return false;                     // missing / unreadable / unpaired owner context
     if (T.dataOk !== true || !fresh(T.generatedAt) || !Array.isArray(T.flags)) return false;          // producer coverage not complete, or stale
     const H = T.holdings; if (!H || !fresh(H.checkedAt) || !Array.isArray(H.positions) || !Array.isArray(H.flags)) return false;
+    const AH = A.holdings; if (!AH || !Array.isArray(AH.flags) || !fresh(AH.checkedAt)) return false;   // retained older warnings (Codex 6856037551): usable schema, refreshed with the holdings
     if (sym) { const p = H.positions.find(x => x && x.sym === sym); if (p && p.filingsRead !== true) return false;   // a held stock whose filings were not read
       if (!p && held) return false; }                                                                 // held now, but not in the record: unpaired
     return true; } catch { return false; } }

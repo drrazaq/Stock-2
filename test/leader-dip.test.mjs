@@ -208,10 +208,11 @@ test('private mode (Codex 6855218411): with the private danger-filing record una
   const today = (o = {}) => ({ generatedAt: nowIso, dataOk: true, flags: [], holdings: { checkedAt: nowIso, positions: [{ sym: 'AAA', cik: 1, filingsRead: true }], flags: [] }, ...o });
   const cases = [[false, null, 'absent'], [true, today(), 'complete'], [false, { flags: [], dataOk: false }, 'dataOk false (Codex 6855638939)'], [false, today({ dataOk: false }), 'producer coverage incomplete'],
     [false, today({ generatedAt: old }), 'stale'], [false, today({ holdings: { checkedAt: nowIso, positions: [], flags: [] } }), 'held stock not in the record (unpaired)'],
-    [false, today({ holdings: { checkedAt: nowIso, positions: [{ sym: 'AAA', filingsRead: false }], flags: [] } }), 'filings not read']];
-  for (const [withRecord, T, label] of cases) {
+    [false, today({ holdings: { checkedAt: nowIso, positions: [{ sym: 'AAA', filingsRead: false }], flags: [] } }), 'filings not read'],
+    [false, today(), 'malformed historical record (Codex 6856037551)', {}], [false, today(), 'stale historical holdings', { holdings: { checkedAt: old, flags: [] } }]];
+  for (const [withRecord, T, label, A0] of cases) {
     const M = mkServer(null, bars); const B = await M.start();
-    const files = { 'data/halal.json': HAL, '.github/private-data-mode': '', ...(T ? { 'data/squad29-lab.json': { holdings: { flags: [] } }, 'data/squad29-flags-today.json': T } : {}) };
+    const files = { 'data/halal.json': HAL, '.github/private-data-mode': '', ...(T ? { 'data/squad29-lab.json': A0 || { holdings: { checkedAt: nowIso, flags: [] } }, 'data/squad29-flags-today.json': T } : {}) };
     const S = await loadScan({ files, env: { TD_BASE: B, FH_BASE: B, SEC_BASE: B } });
     const r = await S.fn('holdingsText')(null, { AAA: { ...P } }, null, true); M.server.close();
     if (!withRecord) { assert.equal(r.acts.hold.length, 0, 'no clean HOLD: ' + label); assert.match(r.acts.unknown.join('\n'), /^AAA: ASSESSMENT UNKNOWN: the private danger-filing record is unavailable/m); assert.equal(r.acts.sell.length, 0, 'no invented SELL'); }
