@@ -2578,10 +2578,18 @@ function ldipLines(pos, lastPx, exclude, session, logOnly) {
 }
 // F2 (13 Nov 2026): a ZAD 'yes' mark recorded while that stock's LEADER DIP signal is still inside its next-open window returns the
 // same gated BUY card ACTIONS would show now (same slots, brake, danger and window checks; nothing new is decided here). Only the
-// newly marked stocks are logged as offers. Outside the window, or with no slot, nothing is added: no late entries.
-function ldipMarkedCards(syms, pos, session) { try { const want = new Set(syms), ld = ldipLines(pos, {}, [], session, want), out = [];
-  for (const s of syms) { const l = ld.find(x => x.startsWith('- BUY ' + s + ' ')); if (l) out.push('NOW A PERMITTED BUY (LEADER DIP; your ZAD mark is recorded; entry at the next open only):\n' + l); }
-  return out.join('\n'); } catch (e) { return ''; } }
+// newly marked stocks are logged as offers, and only after their card is delivered. Each card carries the window's expiry: it is sent separately from the ZAD receipt and
+// re-checked before every Telegram attempt, so a card delayed past the open is never delivered (the mark itself is kept).
+function ldipMarkedCards(syms, pos, session) { try { const ld = ldipLines(pos, {}, [], session, new Set()), out = [];   // nothing logged here: an offer is logged only once its card is delivered
+  const T = readJson0('data/squad11-today.json'), sd = T && T.lastClose, win = sd ? ldipEntryWindow(sd, T.generatedAt, session) : null;
+  if (!win || win.state !== 'IN_WINDOW') return [];
+  const expiresMs = Date.parse(win.expiresAt);
+  for (const s of syms) { const l = ld.find(x => x.startsWith('- BUY ' + s + ' ')); if (!l) continue;
+    const src = ((T.methods && T.methods[LDIP_RULE] && T.methods[LDIP_RULE].newSignals) || []).find(p => p && p.sym === s);
+    out.push({ sym: s, px: src && src.close > 0 ? +src.close : null, sd, expiresAt: win.expiresAt, valid: (now) => Number.isFinite(now) && now <= expiresMs,
+      text: 'NOW A PERMITTED BUY (LEADER DIP; your ZAD mark is recorded). Entry only at the ' + win.entryDay + ' open (' + kwt(570, win.entryDay) + ' Kuwait); this card expires then, no late entry.\n' + l +
+        '\nPrice basis: the ' + sd + ' close. Live quote and spread: UNKNOWN here (not checked); the "up to" limit is conditional on the open.' }); }
+  return out; } catch (e) { return []; } }
 // the two LEADER DIP exits at a daily close: a day's HIGH at or above the +20% target since the buy, and the time exit
 function ldipCloseFlags(P, c) { const since = P.boughtSession || P.since, held = c.filter(k => k.d > since).length, fl = [], i = c.length - 1, h = P.ldHold || LDIP_HOLD; if (i < 0) return { held, fl };
   if (P.target > 0 && c.some(k => k.d >= since && k.h >= P.target)) fl.push('TARGET +20% REACHED: if your sell limit did not fill, SELL at the next open (target ' + money(P.target) + ').');
@@ -3271,7 +3279,7 @@ function waysText() { return ['YOUR WAYS TO TRADE (each one separate; you place 
 async function tgCommands(sig) {
   if (env.GITHUB_WORKFLOW && env.GITHUB_WORKFLOW !== 'Telegram bot replies') return;   // one reader of Telegram messages (audit 22 Oct): the bot workflow
   if (!env.TG_TOKEN || !env.TG_CHAT) return;
-  const state = readJson('data/tg-state.json', { offset: 0 }), pos = loadPos(), out = [];
+  const state = readJson('data/tg-state.json', { offset: 0 }), pos = loadPos(), out = [], ldCards = [];
   let ups = [];
   try { const r = await fetch(TG + '/bot' + env.TG_TOKEN + '/getUpdates?timeout=' + Math.min(50, Math.max(0, parseInt(env.TG_WAIT || '0', 10) || 0)) + '&offset=' + state.offset); ups = ((await r.json()).result) || []; } catch (e) { console.log('could not read Telegram messages'); return; }
   // One message may carry several commands, one per line (for example four "follow" lines pasted together). Split those up.
@@ -3334,11 +3342,11 @@ async function tgCommands(sig) {
     { const h1 = text.match(/^(?:halal|zad)\s+([a-z.\-]{1,6})\s+(yes|ok|halal|pass|no|not(?:\s+halal)?|fail|haram)\s*$/i), h2 = text.match(/^([a-z.\-]{1,6})\s+(?:is\s+)?(not\s+halal|haram|halal)(?:\s+(?:in|on)\s+zad)?\s*$/i), h3 = text.match(/^(?:not\s+halal|haram)\s+([a-z.\-]{1,6})\s*$/i);
       if (!h1 && !h2 && !h3) { const hb = halalBatch(text); if (hb.length >= 2) { const mk = HALALM(), d = ny(Date.now()).d; for (const [sym, bad] of hb) mk[sym] = { s: bad ? 'fail' : 'ok', d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
         out.push('Recorded ' + hb.length + ' ZAD marks.\nHALAL: ' + (hb.filter(x => !x[1]).map(x => x[0]).join(', ') || 'none') + '\nNOT HALAL: ' + (hb.filter(x => x[1]).map(x => x[0]).join(', ') || 'none') + '\nTo change one, send it again with the other answer, for example:  halal ' + hb[0][0] + (hb[0][1] ? ' yes' : ' no'));
-        { const card = ldipMarkedCards(hb.filter(x => !x[1]).map(x => x[0]), pos, sig && sig.session); if (card) out.push(card); } continue; } }
+        ldCards.push(...ldipMarkedCards(hb.filter(x => !x[1]).map(x => x[0]), pos, sig && sig.session)); continue; } }
       const hm = h1 ? [h1[1], !/^(yes|ok|halal|pass)$/i.test(h1[2])] : h2 ? [h2[1], !/^halal$/i.test(h2[2])] : h3 ? [h3[1], true] : null;
       if (hm) { const sym = hm[0].toUpperCase(), mk = HALALM(); mk[sym] = { s: hm[1] ? 'fail' : 'ok', d: ny(Date.now()).d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
         out.push(sym + (hm[1] ? ': marked NOT HALAL (ZAD). I will not offer it as a buy anywhere: plan, BUY NOW, radar or checks.' + (pos[sym] ? ' You hold it: decide yourself whether to sell.' : '') : ': marked HALAL (checked in ZAD). Thank you.') + ' To change it: halal ' + sym + (hm[1] ? ' yes' : ' no'));
-        if (!hm[1]) { const card = ldipMarkedCards([sym], pos, sig && sig.session); if (card) out.push(card); } continue; } }
+        if (!hm[1]) ldCards.push(...ldipMarkedCards([sym], pos, sig && sig.session)); continue; } }
     if (/^traders?\s*$/i.test(text)) { out.push(tradersText()); continue; }
     if (!(m.forward_origin || m.forward_from_chat)) { const nl = await natural(text, sig, pos); if (nl) { out.push(nl); continue; } }   // a forwarded message is someone else's words: treat it as a tip, not as your question
     if (/^(sources?|tips?)\s*$/i.test(text)) { out.push(tipBoard(sig)); continue; }
@@ -3617,6 +3625,7 @@ async function tgCommands(sig) {
   }
   fs.writeFileSync('data/tg-state.json', JSON.stringify(state)); savePos(pos);
   if (out.length) await telegram(out.join('\n\n'));
+  for (const k of ldCards) { const r = await telegram(k.text, null, k.valid); if (r.ok) ldipOfferLog(k.sym, k.px, k.sd, LDIP_REAL()); else if (r.reason === 'PRICE_EVIDENCE_EXPIRED') console.log('LEADER DIP card for ' + k.sym + ' not sent: its next-open window expired ' + k.expiresAt + ' (ZAD mark kept).'); }
   if (ups.length) console.log('Telegram: ' + ups.length + ' message(s) read');
 }
 
