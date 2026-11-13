@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-12T03:49:28.660Z",
+ "generatedAt": "2026-11-13T03:26:12.000Z",
  "paperStart": "2026-10-26",
  "note": "PAPER ONLY. Every SQ2 rule ENTERS INTRADAY (buy-stop / VWAP reclaim during the session), so newSignals is always empty: scan.mjs TRY SMALL places next-open orders, which these rules are not. A rule that passes needs a live intraday alert path (coordinator). Halal = the owner's ZAD mark.",
  "methods": {
@@ -11,28 +11,20 @@
    "newSignals": [],
    "todayTriggers": [
     {
-     "sym": "RSKD",
-     "d": "2026-11-11",
-     "entryMin": 610,
-     "fill": 11.02,
-     "stop": 10.26,
+     "sym": "FIGR",
+     "d": "2026-11-12",
+     "entryMin": 588,
+     "fill": 25.86,
+     "stop": 23.94,
      "halal": "unknown"
     },
     {
-     "sym": "CRWV",
-     "d": "2026-11-11",
-     "entryMin": 595,
-     "fill": 57.4,
-     "stop": 53.81,
+     "sym": "AVEX",
+     "d": "2026-11-12",
+     "entryMin": 646,
+     "fill": 15.1,
+     "stop": 13.12,
      "halal": "unknown"
-    },
-    {
-     "sym": "HOS",
-     "d": "2026-11-11",
-     "entryMin": 753,
-     "fill": 5.5,
-     "stop": 5.31,
-     "halal": "ok"
     }
    ],
    "watch": [],
@@ -46,27 +38,11 @@
    "newSignals": [],
    "todayTriggers": [
     {
-     "sym": "REZI",
-     "d": "2026-11-11",
-     "entryMin": 642,
-     "fill": 21.44,
-     "stop": 19.51,
-     "halal": "unknown"
-    },
-    {
-     "sym": "RSKD",
-     "d": "2026-11-11",
-     "entryMin": 610,
-     "fill": 11.02,
-     "stop": 10.26,
-     "halal": "unknown"
-    },
-    {
-     "sym": "CRWV",
-     "d": "2026-11-11",
-     "entryMin": 602,
-     "fill": 57.98,
-     "stop": 53.81,
+     "sym": "FIGR",
+     "d": "2026-11-12",
+     "entryMin": 618,
+     "fill": 26.4,
+     "stop": 23.94,
      "halal": "unknown"
     }
    ],
@@ -81,11 +57,11 @@
    "newSignals": [],
    "todayTriggers": [
     {
-     "sym": "CRWV",
-     "d": "2026-11-11",
-     "entryMin": 595,
-     "fill": 57.4,
-     "stop": 53.81,
+     "sym": "AVEX",
+     "d": "2026-11-12",
+     "entryMin": 646,
+     "fill": 15.1,
+     "stop": 13.12,
      "halal": "unknown"
     }
    ],
@@ -138,13 +114,6 @@
      "signal": "2026-11-04",
      "fill": 15.3886,
      "stop": 14.62,
-     "halal": "unknown"
-    },
-    {
-     "sym": "U",
-     "signal": "2026-11-05",
-     "fill": 48.565,
-     "stop": 44.82,
      "halal": "unknown"
     },
     {
@@ -232,17 +201,10 @@
      "halal": "unknown"
     },
     {
-     "sym": "SECZ",
-     "signal": "2026-11-10",
-     "fill": 9.4531,
-     "stop": 8.25,
-     "halal": "unknown"
-    },
-    {
-     "sym": "CRWV",
-     "signal": "2026-11-11",
-     "fill": 57.4,
-     "stop": 53.81,
+     "sym": "AVEX",
+     "signal": "2026-11-12",
+     "fill": 15.1,
+     "stop": 13.12,
      "halal": "unknown"
     }
    ]
@@ -266,74 +228,138 @@
    "todayTriggers": [
     {
      "sym": "CERT",
-     "d": "2026-11-11",
-     "entryMin": 680,
-     "fill": 12.04,
-     "stop": 11.9101,
+     "d": "2026-11-12",
+     "entryMin": 580,
+     "fill": 11.585,
+     "stop": 11.38,
      "halal": "unknown"
     },
     {
-     "sym": "REPL",
-     "d": "2026-11-11",
-     "entryMin": 680,
-     "fill": 22.86,
-     "stop": 22.22,
+     "sym": "VIR",
+     "d": "2026-11-12",
+     "entryMin": 655,
+     "fill": 12.45,
+     "stop": 12.02,
      "halal": "unknown"
     },
     {
-     "sym": "WING",
-     "d": "2026-11-11",
-     "entryMin": 670,
-     "fill": 167.89,
-     "stop": 164.65,
+     "sym": "EPAM",
+     "d": "2026-11-12",
+     "entryMin": 583,
+     "fill": 162.6,
+     "stop": 160.1403,
+     "halal": "unknown"
+    },
+    {
+     "sym": "ETON",
+     "d": "2026-11-12",
+     "entryMin": 645,
+     "fill": 67.7614,
+     "stop": 66.51,
      "halal": "unknown"
     },
     {
      "sym": "MRNA",
-     "d": "2026-11-11",
+     "d": "2026-11-12",
+     "entryMin": 580,
+     "fill": 239.25,
+     "stop": 233,
+     "halal": "unknown"
+    },
+    {
+     "sym": "MYGN",
+     "d": "2026-11-12",
+     "entryMin": 590,
+     "fill": 5.629,
+     "stop": 5.47,
+     "halal": "unknown"
+    },
+    {
+     "sym": "SDGR",
+     "d": "2026-11-12",
+     "entryMin": 580,
+     "fill": 29.45,
+     "stop": 28.7,
+     "halal": "unknown"
+    },
+    {
+     "sym": "RSKD",
+     "d": "2026-11-12",
+     "entryMin": 595,
+     "fill": 10.12,
+     "stop": 9.85,
+     "halal": "unknown"
+    },
+    {
+     "sym": "XNCR",
+     "d": "2026-11-12",
+     "entryMin": 636,
+     "fill": 38.24,
+     "stop": 37.09,
+     "halal": "unknown"
+    },
+    {
+     "sym": "GDYN",
+     "d": "2026-11-12",
      "entryMin": 610,
-     "fill": 250,
-     "stop": 244.5928,
+     "fill": 13.64,
+     "stop": 13.5,
+     "halal": "ok"
+    },
+    {
+     "sym": "APPN",
+     "d": "2026-11-12",
+     "entryMin": 591,
+     "fill": 53.3571,
+     "stop": 52.28,
      "halal": "unknown"
     },
     {
      "sym": "VIA",
-     "d": "2026-11-11",
-     "entryMin": 585,
-     "fill": 43.48,
-     "stop": 41.56,
+     "d": "2026-11-12",
+     "entryMin": 616,
+     "fill": 41.44,
+     "stop": 40.82,
      "halal": "unknown"
     },
     {
      "sym": "ARHS",
-     "d": "2026-11-11",
-     "entryMin": 575,
-     "fill": 14.71,
-     "stop": 14.43,
+     "d": "2026-11-12",
+     "entryMin": 670,
+     "fill": 13.94,
+     "stop": 13.615,
      "halal": "unknown"
     },
     {
      "sym": "CAPR",
-     "d": "2026-11-11",
-     "entryMin": 580,
-     "fill": 9.58,
-     "stop": 8.98,
+     "d": "2026-11-12",
+     "entryMin": 615,
+     "fill": 10.29,
+     "stop": 9.8675,
      "halal": "unknown"
     },
     {
-     "sym": "ODD",
-     "d": "2026-11-11",
-     "entryMin": 585,
-     "fill": 20.69,
-     "stop": 19.7301,
+     "sym": "AZTA",
+     "d": "2026-11-12",
+     "entryMin": 596,
+     "fill": 45.575,
+     "stop": 43.82,
+     "halal": "unknown"
+    },
+    {
+     "sym": "XERS",
+     "d": "2026-11-12",
+     "entryMin": 575,
+     "fill": 16.6093,
+     "stop": 16.35,
      "halal": "unknown"
     },
     {
      "sym": "TEM",
-     "d": "2026-11-11",
-     "entryMin": 660,
-     "fill": 82.59,
-     "stop": 80.53,
+     "d": "2026-11-12",
+     "entryMin": 580,
+     "fill": 75.15,
+     "stop": 71.6068,
      "halal": "unknown"
     }
    ],
@@ -346,7 +372,16 @@
    "tier": "REJECTED",
    "intradayOnly": true,
    "newSignals": [],
-   "todayTriggers": [],
+   "todayTriggers": [
+    {
+     "sym": "FIGR",
+     "d": "2026-11-12",
+     "entryMin": 607,
+     "fill": 25.895,
+     "stop": 25.1101,
+     "halal": "unknown"
+    }
+   ],
    "watch": [],
    "open": []
   },
@@ -359,18 +394,23 @@
    "todayTriggers": [],
    "watch": [
     {
-     "sym": "BMBL",
-     "level": 6,
-     "halal": "unknown"
-    },
-    {
-     "sym": "ARRY",
-     "level": 5.98,
+     "sym": "MRNA",
+     "level": 280.8,
      "halal": "unknown"
     },
     {
      "sym": "MYGN",
      "level": 6.77,
+     "halal": "unknown"
+    },
+    {
+     "sym": "SGRY",
+     "level": 27.225,
+     "halal": "unknown"
+    },
+    {
+     "sym": "ARHS",
+     "level": 15.17,
      "halal": "unknown"
     },
     {
@@ -412,28 +452,20 @@
    "newSignals": [],
    "todayTriggers": [
     {
-     "sym": "RSKD",
-     "d": "2026-11-11",
-     "entryMin": 610,
-     "fill": 11.02,
-     "stop": 10.26,
+     "sym": "FIGR",
+     "d": "2026-11-12",
+     "entryMin": 588,
+     "fill": 25.86,
+     "stop": 23.94,
      "halal": "unknown"
     },
     {
-     "sym": "CRWV",
-     "d": "2026-11-11",
-     "entryMin": 595,
-     "fill": 57.4,
-     "stop": 53.81,
+     "sym": "AVEX",
+     "d": "2026-11-12",
+     "entryMin": 646,
+     "fill": 15.1,
+     "stop": 13.12,
      "halal": "unknown"
-    },
-    {
-     "sym": "HOS",
-     "d": "2026-11-11",
-     "entryMin": 753,
-     "fill": 5.5,
-     "stop": 5.31,
-     "halal": "ok"
     }
    ],
    "watch": [],
@@ -754,28 +786,28 @@
      "halal": "unknown"
     },
     {
-     "sym": "SECZ",
-     "signal": "2026-11-10",
-     "fill": 9.4531,
-     "stop": 8.25,
-     "halal": "unknown"
-    },
-    {
-     "sym": "CRWV",
-     "signal": "2026-11-11",
-     "fill": 57.4,
-     "stop": 53.81,
-     "halal": "unknown"
-    },
-    {
      "sym": "HOS",
      "signal": "2026-11-11",
      "fill": 5.5,
      "stop": 5.31,
      "halal": "ok"
+    },
+    {
+     "sym": "FIGR",
+     "signal": "2026-11-12",
+     "fill": 25.86,
+     "stop": 23.94,
+     "halal": "unknown"
+    },
+    {
+     "sym": "AVEX",
+     "signal": "2026-11-12",
+     "fill": 15.1,
+     "stop": 13.12,
+     "halal": "unknown"
     }
    ]
   }
  },
- "lastClose": "2026-11-11"
+ "lastClose": "2026-11-12"
 }
