@@ -14,13 +14,24 @@ function isKnownPublicOrigin(raw){
  let host='',repo='';try{if(/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)){const u=new URL(raw);host=u.hostname;repo=u.pathname;}else{const m=raw.match(/^(?:[^@]+@)?([^:/]+):(.+)$/);if(m){host=m[1];repo=m[2];}}}catch{return false;}
  return host.toLowerCase()==='github.com'&&repo.replace(/^\/+|\/+$/g,'').replace(/\.git$/i,'').toLowerCase()==='drrazaq/stock-2';
 }
+function privateRole(cwd,env,target){
+ const origin=git(cwd,'remote','get-url','origin').trim();
+ if(env.SAVE_PRIVATE_REPO!=='1')return false;
+ const expected=env.SAVE_PRIVATE_EXPECTED_ORIGIN;
+ if([origin,expected,target].some(x=>typeof x==='string'&&isKnownPublicOrigin(x)))refuse('PRIVATE_SAVE_PUBLIC_ORIGIN_FORBIDDEN');
+ if(!expected||origin.trim()!==expected.trim()||(target!==undefined&&target.trim()!==expected.trim()))refuse('PRIVATE_SAVE_EXACT_ORIGIN_REQUIRED');
+ return true;
+}
+function auditOutgoing(cwd,base,head,isPrivate){
+ const commits=git(cwd,'rev-list','--topo-order',base+'..'+head).trim().split('\n').filter(Boolean);
+ for(const c of commits){if(!/^[a-f0-9]{40}$/.test(c))refuse('PUBLIC_SAVE_COMMIT_ID_INVALID');
+  const paths=nul(git(cwd,'diff-tree','--root','-m','--no-commit-id','-r','--name-only','--no-renames','--diff-filter=ACDMRTUXB','-z',c,'--','data'));
+  if(paths.some(isPrivate))refuse('PUBLIC_SAVE_PRIVATE_HISTORY_OUTGOING');}
+ return commits.length;
+}
 export function guardPublicSave({cwd=process.cwd(),manifest=path.join(cwd,'.github/private-files.txt'),phase='prepare',remoteRef='origin/main',env=process.env}={}){
  if(!['stage','prepare','assert'].includes(phase))refuse('PUBLIC_SAVE_PHASE_INVALID');
- const origin=git(cwd,'remote','get-url','origin').trim();
- if(env.SAVE_PRIVATE_REPO==='1'){
-  const expected=env.SAVE_PRIVATE_EXPECTED_ORIGIN;
-  if(!expected||origin.trim()!==expected.trim())refuse('PRIVATE_SAVE_EXACT_ORIGIN_REQUIRED');
-  if(isKnownPublicOrigin(origin))refuse('PRIVATE_SAVE_PUBLIC_ORIGIN_FORBIDDEN');
+ if(privateRole(cwd,env)){
   if(phase==='stage')git(cwd,'add','data');
   return {role:'private',stagedPrivateUnstaged:0,outgoingCommits:0};
  }
@@ -32,11 +43,27 @@ export function guardPublicSave({cwd=process.cwd(),manifest=path.join(cwd,'.gith
  if(bad.length&&phase!=='assert'){git(cwd,'reset','-q','HEAD','--',...bad);bad=staged();}
  if(bad.length)refuse('PUBLIC_SAVE_PRIVATE_PATH_STAGED');
  if(phase==='stage'){git(cwd,'add','--all','--','data',':(exclude,top)data/private-*',...listed.map(p=>':(exclude,top,literal)'+p));if(staged().length)refuse('PUBLIC_SAVE_PRIVATE_PATH_STAGED');}
- // All outgoing ancestry matters: even an add later reverted or hidden in a merged side branch exposes the original payload.
- const commits=git(cwd,'rev-list','--topo-order',remoteRef+'..HEAD').trim().split('\n').filter(Boolean);
- for(const c of commits){if(!/^[a-f0-9]{40}$/.test(c))refuse('PUBLIC_SAVE_COMMIT_ID_INVALID');
-  const paths=nul(git(cwd,'diff-tree','--root','-m','--no-commit-id','-r','--name-only','--no-renames','--diff-filter=ACDMRTUXB','-z',c,'--','data'));
-  if(paths.some(isPrivate))refuse('PUBLIC_SAVE_PRIVATE_HISTORY_OUTGOING');}
- return {role:'public',stagedPrivateUnstaged:count,outgoingCommits:commits.length};
+ // All ancestry matters, including reverted payloads and private commits in a merged side branch.
+ return {role:'public',stagedPrivateUnstaged:count,outgoingCommits:auditOutgoing(cwd,remoteRef,'HEAD',isPrivate)};
 }
-if(process.argv[1]&&pathToFileURL(path.resolve(process.argv[1])).href===import.meta.url){try{const r=guardPublicSave({manifest:path.join(import.meta.dirname,'private-files.txt'),phase:process.env.SAVE_GUARD_PHASE||'prepare'});console.log('save privacy guard: '+r.role+' metadata verified');}catch(e){console.error(String(e.message));process.exitCode=1;}}
+const ZERO='0'.repeat(40),OID=/^[a-f0-9]{40}$/;
+export function guardPushUpdates({cwd=process.cwd(),manifest=path.join(cwd,'.github/private-files.txt'),target,updates,env=process.env}={}){
+ if(typeof target!=='string'||!target||!Array.isArray(updates)||!updates.length||updates.length>128)refuse('PUBLIC_PUSH_CONTEXT_UNAVAILABLE');
+ const isPrivateRepo=privateRole(cwd,env,target),policy=isPrivateRepo?null:privatePaths(manifest);let commits=0;
+ for(const u of updates){
+  if(!OID.test(u.localSha||'')||!OID.test(u.remoteSha||'')||u.remoteRef!=='refs/heads/main')refuse('PUBLIC_PUSH_UNSUPPORTED_REF');
+  if(u.localSha===ZERO)refuse('PUBLIC_PUSH_REF_DELETION_REFUSED');
+  git(cwd,'rev-parse','--verify',u.localSha+'^{commit}');
+  if(u.remoteSha===ZERO){if(!isPrivateRepo)refuse('PUBLIC_PUSH_NEW_REF_REQUIRES_REVIEW');}
+  else{git(cwd,'rev-parse','--verify',u.remoteSha+'^{commit}');git(cwd,'merge-base','--is-ancestor',u.remoteSha,u.localSha);}
+  if(!isPrivateRepo)commits+=auditOutgoing(cwd,u.remoteSha,u.localSha,policy.isPrivate);
+ }
+ return {role:isPrivateRepo?'private':'public',outgoingCommits:commits};
+}
+function pushInput(){let text='',bytes=0;const chunk=Buffer.alloc(4096);for(;;){const n=fs.readSync(0,chunk,0,chunk.length,null);if(!n)break;bytes+=n;if(bytes>65536)refuse('PUBLIC_PUSH_CONTEXT_TOO_LARGE');text+=chunk.toString('utf8',0,n);}
+ return text.trim().split('\n').filter(Boolean).map(l=>{const a=l.trim().split(/\s+/);if(a.length!==4)refuse('PUBLIC_PUSH_CONTEXT_INVALID');return{localRef:a[0],localSha:a[1],remoteRef:a[2],remoteSha:a[3]};});}
+if(process.argv[1]&&pathToFileURL(path.resolve(process.argv[1])).href===import.meta.url){try{
+ const manifest=path.join(import.meta.dirname,'private-files.txt');
+ const r=process.argv[2]==='pre-push'?guardPushUpdates({manifest,target:process.env.SAVE_PUSH_REMOTE_URL,updates:pushInput()}):guardPublicSave({manifest,phase:process.env.SAVE_GUARD_PHASE||'prepare'});
+ console.log('save privacy guard: '+r.role+' metadata verified');
+}catch(e){console.error(String(e.message));process.exitCode=1;}}

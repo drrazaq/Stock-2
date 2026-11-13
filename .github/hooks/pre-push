@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Runtime data publishers only. No network inside this hook; Git supplies the actual target and old/new ref identities.
+set -eu
+STOCK2_GUARD_DIR=$(cd "$(dirname "$0")/.." && pwd)
+SAVE_PUSH_REMOTE_URL="${2:?push target missing}" node "$STOCK2_GUARD_DIR/save-privacy-guard.mjs" pre-push
