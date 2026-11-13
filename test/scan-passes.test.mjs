@@ -53,6 +53,10 @@ test('two-pass scan: public files and public stdout are invariant to every kind 
     for (const f of Object.keys(A)) { if (f === 'public-pass-manifest.json') { assert.deepEqual(Object.keys(JSON.parse(B[f]).files).sort(), Object.keys(JSON.parse(A[f]).files).sort(), 'manifest covers the same files (its hashes include the run clock)'); continue; } assert.equal(B[f], A[f], 'public file differs: ' + f); }
     for (const [f, body] of Object.entries(B)) if (!PUBLIC_INPUTS.has(f)) assert.doesNotMatch(body, PRIVATE_ONLY, 'private-only name in public file ' + f);
     assert.equal(normOut(b.stdout), normOut(a.stdout), 'public stdout invariant');
+    const und = (b.stdout.match(/undeclared public-pass outputs were NOT installed: (.*)/) || [, ''])[1].split(' ').filter(Boolean);
+    const priv0 = new Set(fs.readFileSync(path.join(ROOT, '.github/private-files.txt'), 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')));
+    assert.deepEqual(und.filter(f => !priv0.has(f)), [], 'every public-pass output is either declared public or private-listed (none silently dropped)');
+    assert.doesNotMatch(b.stdout, /PRIVATE \d/, 'no private-file count in the public log');
     assert.doesNotMatch(B['signals.json'], /ZZX/, 'a tainted producer output (smart-money) is not used as a public seed');
     assert.ok(B['public-pass-manifest.json'] && JSON.parse(B['public-pass-manifest.json']).files['signals.json'], 'public pass writes its provenance manifest');
     assert.doesNotMatch(b.stdout, PRIVATE_ONLY);
@@ -72,15 +76,15 @@ test('negative control: the old single-pass scan on the same private worlds DOES
   finally { for (const w of [a, b]) fs.rmSync(w.dir, { recursive: true, force: true }); }
 });
 
-test('declared tainted seeds cover every scan input whose producer reads private owner files (drift check)', async () => {
-  const { TAINTED_SEEDS, SCAN_OUTPUTS } = await import('../scan-passes.mjs');
-  const PRIV = /data\/(halal|my-positions|watch-extra|my-trades|alpaca-paper|basket-state|actions-sells|signals-private)\.json|data\/(tips|opinions|market-calls|my-trades|sell-notices|leaderdip-ledger)\.jsonl|private\.enc/;
+test('positive public input map: every declared public seed is a scan input, not private, and has no runtime writer (drift check)', async () => {
+  const { PUBLIC_SEEDS, SCAN_OUTPUTS } = await import('../scan-passes.mjs');
   const privList = new Set(fs.readFileSync(path.join(ROOT, '.github/private-files.txt'), 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')));
-  const scan = fs.readFileSync(path.join(ROOT, 'scan.mjs'), 'utf8'), mods = fs.readdirSync(ROOT).filter(f => f.endsWith('.mjs') && !['scan.mjs', 'scan-passes.mjs', 'fetch-cache.mjs', 'notify-route.mjs', 'signals-read.mjs'].includes(f));
-  const reads = new Set([...scan.matchAll(/(?:readJson0?|readFileSync|J)\(['"]data\/([a-zA-Z0-9_./-]+)/g)].map(m => m[1]));
-  const missing = [];
-  for (const r of reads) { if (privList.has(r) || SCAN_OUTPUTS.includes(r) || TAINTED_SEEDS.includes(r)) continue;
-    const esc = r.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), writes = new RegExp("(writeFileSync|appendFileSync|appendRadarRows|renameSync)\\([^;]{0,60}['\"]data/" + esc + "|(OUT|FILE|LEDGER|PAPER|STATE|_F)[A-Z_]* *= *['\"]data/" + esc + "['\"]");
-    for (const m of mods) { const src = fs.readFileSync(path.join(ROOT, m), 'utf8'); if (writes.test(src) && PRIV.test(src)) missing.push(r + ' <- ' + m); } }
-  assert.deepEqual(missing, [], 'a producer of a public seed now reads private owner state: add it to TAINTED_SEEDS');
+  const mods = fs.readdirSync(ROOT).filter(f => /\.(mjs|js|cjs)$/.test(f)), scan = fs.readFileSync(path.join(ROOT, 'scan.mjs'), 'utf8');
+  for (const [f, d] of Object.entries(PUBLIC_SEEDS)) {
+    assert.ok(!privList.has(f) && !f.startsWith('private-') && !SCAN_OUTPUTS.includes(f), f + ' is neither private nor a scan output');
+    assert.ok(scan.includes("'data/" + f + "'") || scan.includes("J('" + f + "')") || mods.some(m => fs.readFileSync(path.join(ROOT, m), 'utf8').includes("'data/" + f + "'")), f + ' is actually read');
+    assert.ok(d.producer && d.basis && d.kind, f + ' declares producer and basis');
+    if (d.kind === 'REFERENCE') { const esc = f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), w = new RegExp('(writeFileSync|appendFileSync|renameSync|copyFileSync|cpSync)\\([^;]{0,200}' + esc);
+      assert.deepEqual(mods.filter(m => w.test(fs.readFileSync(path.join(ROOT, m), 'utf8'))), [], f + ': a REFERENCE seed must have no runtime writer (a new writer must be audited and declared as a producer)'); }
+  }
 });

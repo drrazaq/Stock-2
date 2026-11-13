@@ -5,9 +5,9 @@ import test from 'node:test'; import assert from 'node:assert/strict'; import fs
 import { spawnSync } from 'node:child_process';
 const ROOT = path.resolve(import.meta.dirname, '..');
 const STUB = `import fs from 'node:fs';
-const pass = process.env.SCAN_PASS, mode = process.env.STUB_MODE || (() => { try { return fs.readFileSync('data/stub-mode.txt', 'utf8'); } catch { return ''; } })();   // the public env allowlist strips STUB_MODE
+const pass = process.env.SCAN_PASS, mode = process.env.STUB_MODE || (() => { try { return fs.readFileSync(process.env.HOME + '/stub-mode.txt', 'utf8'); } catch { return ''; } })();   // the public env allowlist strips STUB_MODE and the public sandbox admits no unmapped data file; HOME is allowed
 if (pass === 'public') {
-  fs.writeFileSync('data/public-env.json', JSON.stringify(Object.keys(process.env).sort()));
+  fs.writeFileSync('data/names.json', JSON.stringify(Object.keys(process.env).sort()));   // a DECLARED public output (only those are installed)
   if (mode.includes('public-crash')) { fs.writeFileSync('data/signals.json', '{"half":'); process.exit(7); }
   fs.writeFileSync('data/signals.json', JSON.stringify({ session: '2026-11-12', generatedAt: '2026-11-12T21:40:00.000Z', who: 'public' }));
   fs.writeFileSync('data/models.json', JSON.stringify({ PUB: 1 }));
@@ -26,7 +26,7 @@ function world(mode, extraEnv = {}) {
   fs.mkdirSync(path.join(dir, 'data'));
   fs.writeFileSync(path.join(dir, 'data/signals.json'), '{"orig":true}'); fs.writeFileSync(path.join(dir, 'data/models.json'), '{"orig":true}');
   fs.writeFileSync(path.join(dir, 'data/my-positions.json'), '{"ZZP":{"entry":1,"note":"original"}}'); fs.writeFileSync(path.join(dir, 'data/stub-mode.txt'), mode);
-  const r = spawnSync(process.execPath, ['scan-passes.mjs'], { cwd: dir, encoding: 'utf8', env: { PATH: process.env.PATH, STUB_MODE: mode, STUB_REAL: dir, TG_TOKEN: 'secret-tg', TG_CHAT: '1', HALALTERMINAL_KEY: 'h', HALALSCREENER_KEY: 'h', ZOYA_KEY: 'z', ALPACA_KEY: 'a', PRIVATE_DATA_TOKEN: 'p', GITHUB_TOKEN: 'g', TWELVE_KEY: 'market', ...extraEnv } });
+  const r = spawnSync(process.execPath, ['scan-passes.mjs'], { cwd: dir, encoding: 'utf8', env: { PATH: process.env.PATH, HOME: (fs.mkdirSync(path.join(dir, 'home'), { recursive: true }), fs.writeFileSync(path.join(dir, 'home/stub-mode.txt'), mode), path.join(dir, 'home')), STUB_MODE: mode, STUB_REAL: dir, TG_TOKEN: 'secret-tg', TG_CHAT: '1', HALALTERMINAL_KEY: 'h', HALALSCREENER_KEY: 'h', ZOYA_KEY: 'z', ALPACA_KEY: 'a', PRIVATE_DATA_TOKEN: 'p', GITHUB_TOKEN: 'g', TWELVE_KEY: 'market', ...extraEnv } });
   const read = (f) => { try { return fs.readFileSync(path.join(dir, 'data', f), 'utf8'); } catch { return null; } };
   const publicFiles = () => fs.readdirSync(path.join(dir, 'data')).filter(f => !f.startsWith('private-') && !fs.readFileSync(path.join(ROOT, '.github/private-files.txt'), 'utf8').split('\n').map(l => l.trim()).includes(f));
   return { dir, r, read, publicFiles };
@@ -54,7 +54,7 @@ test('owner file changed concurrently during the scan: the newer owner bytes are
 });
 test('public pass environment is an allowlist: no messaging, account, private-data, GitHub, screening or Zoya credentials', () => {
   const w = world(''); try {
-    const keys = JSON.parse(w.read('public-env.json'));
+    const keys = JSON.parse(w.read('names.json'));
     for (const k of ['TG_TOKEN', 'TG_CHAT', 'HALALTERMINAL_KEY', 'HALALSCREENER_KEY', 'ZOYA_KEY', 'ALPACA_KEY', 'PRIVATE_DATA_TOKEN', 'GITHUB_TOKEN', 'STUB_REAL']) assert.ok(!keys.includes(k), k);
     assert.ok(keys.includes('TWELVE_KEY')); noSecretInPublic(w);
     assert.equal(JSON.parse(w.read('signals.json')).generatedAt, JSON.parse(w.read('private-signals.json')).generatedAt, 'private pass reuses the public clock');

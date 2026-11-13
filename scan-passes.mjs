@@ -6,7 +6,7 @@
 //   (b) LAST, from a COMPLETED public pass: the validated public outputs, each written atomically to its public name.
 // A crash, kill or timeout at any point therefore leaves every public path as it was and never puts private bytes at a public name, even
 // transiently; owner files are only ever replaced by a completed private pass's versions (never deleted).
-// 1. PUBLIC PASS: sandbox without any private file, without data/private-* and without tainted/unverified seeds (policy below); its
+// 1. PUBLIC PASS: sandbox holding only the declared code copy and the positively declared public inputs (map below); its
 //    environment is an ALLOWLIST (market-data GET credentials, run flags), so it performs no communication/account/order/screening effect.
 // 2. PRIVATE PASS: sandbox with the full real data, the private full-state caches restored over their public names, the public pass's
 //    clock (SCAN_GENERATED_AT) and the public pass's market-data cache (replay of declared historical routes only).
@@ -19,29 +19,37 @@ const PRIVATE_NAMES = new Set(fs.readFileSync(path.join(ROOT, '.github/private-f
 const isPrivate = (name) => PRIVATE_NAMES.has(name) || name.startsWith('private-');
 const privateName = (name) => 'private-' + name.replace(/\//g, '__');
 
-// ---- Public-pass seed policy (declared; reviewed 13 Nov 2026). A data file is copied into the public sandbox only if:
-//  (a) it is not a private file and not a data/private-* copy;
-//  (b) it is not produced by a module that reads the owner's private state (TAINTED_SEEDS, from the producer audit; a drift test
-//      recomputes it from source and fails when a producer starts reading private files);
-//  (c) if the nightly scan itself writes it (SCAN_OUTPUTS), its bytes match the last public-pass manifest; a legacy copy written by
-//      the old single-pass scan is quarantined (never used as a public seed), because it may carry private-derived entries.
-// Everything else (files from producers that never read private state, external reference files) is a trusted public input.
-export const TAINTED_SEEDS = Object.freeze(['calendar.enc', 'decoded-check.json', 'earnings-cache.json.gz', 'events-study.json', 'fastmover-lab.json',
-  'fastmover-paper.json', 'follow-fade.json', 'ignition-days.jsonl', 'ignition-lab.json', 'ignition-live.json', 'ignition-results.json', 'macro-log.jsonl',
-  'news-log.jsonl', 'quality.json', 'smart-money-study.json', 'smart-money.json', 'squad29-lab.json', 'strategy-library.json',
-  'options-shadow.json', 'tier2-ledger.jsonl', 'tg-state.json', 'tg-failures.jsonl', 'halal-ext.json', 'zoya.json']);
-export const SCAN_OUTPUTS = Object.freeze(['alert-state.json', 'dow-study.json', 'fm-state.json', 'journal.jsonl', 'leaders.json', 'lessons.json',
-  'mday-study.json', 'models.json', 'names.json', 'options-probe.json', 'outcomes.json', 'sectors.json', 'sic-extra.json', 'signals.json', 'skipped.jsonl',
-  'spy-closes.json', 'timing-study.json']);
+// ---- Public-pass INPUT/SOURCE MAP (positive; reviewed 13 Nov 2026, Codex 6851464418). Nothing is trusted by default.
+// A data file enters the public sandbox ONLY if it is declared here:
+//  (a) PUBLIC_SEEDS: a declared public source with its producer and basis. Today only hand-maintained reference files qualify (no module
+//      or workflow writes them; a drift test proves it). A runtime producer can be added only when its whole module closure AND every
+//      data file it reads are themselves declared public (transitive); the producer audit found none yet: every lab/study/discovery
+//      producer reads owner state directly (halal marks, settings, holdings, the hydrating signals reader) or reads such a file.
+//  (b) SCAN_OUTPUTS: files the public pass itself writes, admitted as next-night seeds only when their bytes match the last public-pass
+//      manifest (a legacy copy written by the old single-pass scan is never trusted).
+// Everything else (owner files, data/private-*, owner-derived and UNKNOWN/unmapped inputs) is quarantined: never copied into the public
+// sandbox. The private pass keeps the full real state, evidence and gates. Unknown is never presumed owner-independent.
+export const PUBLIC_SEEDS = Object.freeze({
+  'chains.json': Object.freeze({ kind: 'REFERENCE', producer: 'hand-maintained in git; no module or workflow writes it', basis: 'value-chain membership research list (company groups only; no owner data)' }),
+  'zad-list.json': Object.freeze({ kind: 'REFERENCE', producer: 'hand-maintained in git; no module or workflow writes it', basis: "ZAD's published quarterly not-halal list: the PUBLIC gate (ZAD_PUBLIC_NOT); carries none of the owner's own marks" }),
+});
+export const SCAN_OUTPUTS = Object.freeze(['alert-state.json', 'dow-study.json', 'engine-history.jsonl', 'experiments.jsonl', 'fm-state.json', 'journal.jsonl', 'leaders.json', 'lessons.json',
+  'mday-study.json', 'models.json', 'names.json', 'options-probe.json', 'outcomes.json', 'sectors.json', 'sic-extra.json', 'signals.json',
+  'skipped.jsonl', 'spy-closes.json', 'switch-paper.json', 'timing-study.json']);
 export const MANIFEST = 'public-pass-manifest.json';
-export function seedAllowed(rel, manifest, hashOf) {
+export function seedClass(rel, manifest, hashOf) {
   const top = rel.split('/')[0];
-  if (isPrivate(top) || isPrivate(rel) || rel === MANIFEST) return false;
-  if (TAINTED_SEEDS.includes(rel)) return false;
-  if (SCAN_OUTPUTS.includes(rel)) return !!(manifest && manifest.files && manifest.files[rel] && manifest.files[rel] === hashOf(rel));
-  return true;
+  if (isPrivate(top) || isPrivate(rel)) return 'PRIVATE';
+  if (rel === MANIFEST) return 'MANIFEST';
+  if (SCAN_OUTPUTS.includes(rel)) return manifest && manifest.files && manifest.files[rel] && manifest.files[rel] === hashOf(rel) ? 'SCAN_OUTPUT_VERIFIED' : 'SCAN_OUTPUT_UNVERIFIED';
+  if (Object.hasOwn(PUBLIC_SEEDS, rel)) return 'DECLARED_PUBLIC';
+  return 'UNKNOWN';
 }
-
+export const seedAllowed = (rel, manifest, hashOf) => ['SCAN_OUTPUT_VERIFIED', 'DECLARED_PUBLIC'].includes(seedClass(rel, manifest, hashOf));
+// Source tree copied into each sandbox: code modules, the page whose logic block the scanner executes (index.html, read only) and the
+// public default watch list. No docs, logs, run triggers, tools, tests, .github or any other root file is admitted.
+export const CODE_COPY = Object.freeze({ pattern: /^[A-Za-z0-9_.-]+\.(mjs|js|cjs)$/, files: Object.freeze(['index.html', 'watchlist.txt']) });
+export const codeAllowed = (name) => CODE_COPY.pattern.test(name) || CODE_COPY.files.includes(name);
 
 // Public pass environment ALLOWLIST: no Telegram, Alpaca, private-data, GitHub token, halal screening, Zoya, eToro or TipRanks credentials.
 export const PUBLIC_ENV_ALLOW = Object.freeze(['PATH', 'HOME', 'LANG', 'LC_ALL', 'TZ', 'NODE_OPTIONS', 'TMPDIR', 'TWELVE_KEY', 'MASSIVE_KEY', 'FINNHUB_KEY', 'FMP_KEY',
@@ -64,7 +72,7 @@ function atomicInstall(src, dest) {   // same-directory temp + fsync + rename: t
   fs.copyFileSync(src, tmp); const fd = fs.openSync(tmp, 'r'); try { fs.fsyncSync(fd); } finally { fs.closeSync(fd); }
   fs.renameSync(tmp, dest);
 }
-function codeCopy(dest) { fs.mkdirSync(path.join(dest, 'data'), { recursive: true }); for (const e of fs.readdirSync(ROOT, { withFileTypes: true })) { if (['.git', 'node_modules', 'data'].includes(e.name)) continue; fs.cpSync(path.join(ROOT, e.name), path.join(dest, e.name), { recursive: true }); } }
+function codeCopy(dest) { fs.mkdirSync(path.join(dest, 'data'), { recursive: true }); for (const e of fs.readdirSync(ROOT, { withFileTypes: true })) { if (e.isFile() && codeAllowed(e.name)) fs.copyFileSync(path.join(ROOT, e.name), path.join(dest, e.name)); } }
 
 // FAILED PRIVATE PASS: its side effects may already have happened (a nightly message with a SELL line, an owner-facing receipt), so its
 // changed files are RETAINED as bounded PRIVATE quarantine evidence instead of being deleted with the temp copy. They are never current
@@ -90,14 +98,15 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
     // ---- 1. PUBLIC PASS (isolated)
     codeCopy(pubBox);
     let manifest = null; try { manifest = JSON.parse(fs.readFileSync(path.join(DATA, MANIFEST), 'utf8')); } catch {}
-    let quarantined = 0;
-    for (const r of listData(DATA)) { if (seedAllowed(r, manifest, (x) => digest(path.join(DATA, x)))) copy(path.join(DATA, r), path.join(pubBox, 'data', r)); else if (!isPrivate(r.split('/')[0])) quarantined++; }
-    log('two-pass scan: public seed inputs exclude ' + quarantined + ' tainted or unverified files');
+    const seeds = {};
+    for (const r of listData(DATA)) { const c = seedClass(r, manifest, (x) => digest(path.join(DATA, x))); seeds[c] = (seeds[c] || 0) + 1; if (c === 'SCAN_OUTPUT_VERIFIED' || c === 'DECLARED_PUBLIC') copy(path.join(DATA, r), path.join(pubBox, 'data', r)); }
+    log('two-pass scan: public seed inputs by class (only DECLARED_PUBLIC and SCAN_OUTPUT_VERIFIED enter): ' + Object.entries(seeds).filter(([k]) => k !== 'PRIVATE').sort().map(([k, v]) => k + ' ' + v).join(', '));   // the private-file count is owner metadata: never in the public log
     const pubBefore = snapshot(path.join(pubBox, 'data'));
     const pub = spawnSync(process.execPath, ['scan.mjs'], { cwd: pubBox, env: { ...publicEnv(env), MODE: 'daily', SCAN_PASS: 'public', SCAN_FETCH_CACHE: cache, SCAN_FETCH_CACHE_MODE: 'record' }, encoding: 'utf8', maxBuffer: 256 << 20, timeout: timeoutMs, killSignal: 'SIGKILL' });
     if (pub.stdout) log(pub.stdout.trimEnd()); if (pub.stderr) log(pub.stderr.trimEnd());
     const pubOk = pub.status === 0 && !pub.signal;
-    const publicOut = pubOk ? changed(pubBefore, path.join(pubBox, 'data')).filter(r => !isPrivate(r.split('/')[0]) && !TAINTED_SEEDS.includes(r)) : [];
+    const pubChanged = pubOk ? changed(pubBefore, path.join(pubBox, 'data')) : [], publicOut = pubChanged.filter(r => SCAN_OUTPUTS.includes(r) && !isPrivate(r.split('/')[0]));   // declared public outputs only
+    const undeclared = pubChanged.filter(r => !publicOut.includes(r)); if (undeclared.length) log('two-pass scan: ' + undeclared.length + ' undeclared public-pass outputs were NOT installed: ' + undeclared.sort().join(' '));
     if (pubOk) { const files = {}, prev = manifest && manifest.files ? manifest.files : {};
       for (const r of SCAN_OUTPUTS) { const f = path.join(pubBox, 'data', r); if (!fs.existsSync(f)) continue; if (publicOut.includes(r) || prev[r] === digest(f)) files[r] = digest(f); }
       fs.writeFileSync(path.join(pubBox, 'data', MANIFEST), JSON.stringify({ v: 1, files }, null, 1)); publicOut.push(MANIFEST); }
