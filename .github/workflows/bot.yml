@@ -54,7 +54,12 @@ jobs:
           while [ "$(date +%s)" -lt "$end" ]; do
             git pull -q --rebase --autostash -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
             # after the cutover the owner's files come only from the private repository; unreadable = skip this cycle, never run without them
-            if [ -e .github/private-data-mode ] && ! bash .github/private-data.sh pull >> run.log 2>&1; then echo "Error: private owner files unavailable; cycle skipped" | tee -a run.log; sleep 30; continue; fi
+            # exit 3 = an earlier owner update is not yet stored privately: the local owner files are the NEWEST (kept, never overwritten);
+            # protective checks still run on them, but owner commands are paused (not read, so they wait in Telegram) until the save lands.
+            export OWNER_MUTATIONS_PAUSED=
+            if [ -e .github/private-data-mode ]; then pr=0; bash .github/private-data.sh pull >> run.log 2>&1 || pr=$?
+              if [ "$pr" = 3 ]; then export OWNER_MUTATIONS_PAUSED=1; echo "owner commands paused: an earlier owner update is not yet stored privately" | tee -a run.log
+              elif [ "$pr" != 0 ]; then echo "Error: private owner files unavailable; cycle skipped" | tee -a run.log; sleep 30; continue; fi; fi
             now=$(date +%s)
             if [ $((now - last_full)) -ge 300 ]; then
               # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages

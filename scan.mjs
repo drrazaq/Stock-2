@@ -3545,6 +3545,7 @@ const OWNER_SAVE_NOTE = 'Recorded on this run. Private storage is confirmed sepa
 async function tgCommands(sig) {
   const ownerBefore = fs.existsSync('.github/private-data-mode') ? ownerFilesDigest() : null;
   if (env.GITHUB_WORKFLOW && env.GITHUB_WORKFLOW !== 'Telegram bot replies') return;   // one reader of Telegram messages (audit 22 Oct): the bot workflow
+  if (env.OWNER_MUTATIONS_PAUSED) { console.log('owner commands paused: an earlier owner update is not yet stored privately (they wait in Telegram)'); return; }   // P0 Route A (Codex 6851680092): no new owner mutation while a save's disposition is unknown
   if (env.SCAN_PASS) return;   // P0 Route A: the isolated nightly passes never consume owner commands (a failed temp pass must not swallow one); the bot does
   if (!env.TG_TOKEN || !env.TG_CHAT) return;
   const state = readJson('data/tg-state.json', { offset: 0 }), pos = loadPos(), out = [], ldCards = [];

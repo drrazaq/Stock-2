@@ -85,7 +85,7 @@ function codeCopy(dest) { fs.mkdirSync(path.join(dest, 'data'), { recursive: tru
 //    (data/private-failed-pass-<stamp>.disposition.json with resolved:true) exists; even then its files are kept (no deletion here).
 //  - ADMISSION: when 3 unresolved sets exist, or their bytes plus room for tonight's critical records would pass 256 MiB, the private
 //    pass is NOT run (no new private computation, no owner-facing side effect) and the run fails with an explicit coverage status.
-export const FAILED_PREFIX = 'private-failed-pass-', NOT_STATE = /^private-(failed-pass|conflict)-/;
+export const FAILED_PREFIX = 'private-failed-pass-', NOT_STATE = /^private-(failed-pass|conflict|stale)-/;
 export const FAILED_LIMITS = Object.freeze({ fileBytes: 4 << 20, optionalBytes: 32 << 20, unresolvedSets: 3, unresolvedBytes: 256 << 20 });
 export const SEND_STATE = Object.freeze(['alert-state.json', 'tg-state.json', 'tg-failures.jsonl']);
 const STAMP = /^private-failed-pass-(\d{4}-\d\d-\d\dT\d\d-\d\d-\d\d-\d{3}Z)(?:__|\.json$|\.disposition\.json$)/;

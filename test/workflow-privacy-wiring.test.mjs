@@ -14,6 +14,7 @@ test('bot.yml: no private bytes through its own git add; it saves via save-data.
   const b = W('bot.yml');
   assert.doesNotMatch(b.split('accounting-preflight:')[0], /git add data/);
   assert.match(b, /PRIVATE_SAVE_OK=\$PRIVATE_SAVE_OK SAVE_SLEEP=5 bash \.github\/save-data\.sh "bot/);
-  assert.match(b, /bash \.github\/private-data\.sh pull >> run\.log 2>&1; then echo "Error: private owner files unavailable; cycle skipped"/);
+  assert.match(b, /bash \.github\/private-data\.sh pull >> run\.log 2>&1 \|\| pr=\$\?/);   // every cycle pulls; exit 3 pauses owner commands, any other failure skips the cycle
+  assert.match(b, /elif \[ "\$pr" != 0 \]; then echo "Error: private owner files unavailable; cycle skipped"/);
   assert.match(b, /git pull -q --rebase --autostash/);
 });

@@ -36,7 +36,18 @@ open() {
   else rm -rf "$DIR"; git clone -q "$URL" "$DIR" 2>/dev/null || return 1; fi
 }
 sum() { (cd "$1" && for f in $FILES; do [ -f "data/$f" ] && sha256sum "data/$f"; done) | sha256sum | cut -c1-16; }
-copy_in() { mkdir -p "$DIR/data"; for f in $FILES; do [ -f "$ROOT/data/$f" ] && cp "$ROOT/data/$f" "$DIR/data/$f"; done; true; }
+# P0 Route A (Codex 6851680092): every copy is checked. A failed copy means the private save is NOT confirmed (no PRIVATE_SAVE_OK).
+copy_in() { mkdir -p "$DIR/data" || return 1; local f bad=0
+  for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; cp "$ROOT/data/$f" "$DIR/data/$f" || { say "Error: could not copy $f into the private clone"; bad=1; }; done
+  return $bad; }
+# PENDING: an owner update made on this runner whose private save is not yet verified. It is created BEFORE anything else in push (so a
+# failure before the copy, the commit or the push keeps it) and removed only by a verified save. While it exists, pull never overwrites
+# the newer local owner files: it first retries the save, and if that fails it exits 3 (local state kept; owner commands stay paused).
+PENDING="$DIR.pending"
+# required private files: their absence stops a pull; every other declared file is optional, and a missing one is never left as a stale
+# local copy presented as current (it is set aside as data/private-stale-<name>).
+REQUIRED=" my-positions.json halal.json settings.json "
+CONFLICT_MERGED=" my-positions.json my-trades.jsonl tg-state.json "   # save-data.sh OWNER_FILES: merged hunk by hunk, may differ locally
 commit_push() {
   gitp add -A data CONNECTION-CHECK.md 2>/dev/null; gitp diff --cached --quiet && { say "no change"; return 0; }
   gitp commit -qm "$1" || return 1
@@ -55,7 +66,7 @@ case "$MODE" in
       grep -q '"private": *true' "$DIR.api" 2>/dev/null && say "repository is PRIVATE: OK" || { say "Error: the repository is not private (or not readable with this token)"; rm -f "$DIR.api"; exit 1; }
       rm -f "$DIR.api"
     fi
-    copy_in; printf '# Connection check\n\nLast successful check from the public Stock-2 repository: %s\n' "$(date -u +%FT%RZ)" > "$DIR/CONNECTION-CHECK.md"
+    copy_in || { say "Error: could not copy the private files"; exit 1; }; printf '# Connection check\n\nLast successful check from the public Stock-2 repository: %s\n' "$(date -u +%FT%RZ)" > "$DIR/CONNECTION-CHECK.md"
     commit_push "connection check + copy of the private files $(date -u +%FT%RZ)" || { say "Error: cannot WRITE to the private repository"; exit 1; }
     say "write OK"
     V="$DIR-verify"; rm -rf "$V"; git clone -q "$URL" "$V" 2>/dev/null || { say "Error: read-back failed"; exit 1; }
@@ -68,14 +79,26 @@ case "$MODE" in
     open || { say "mirror skipped: private repository not reachable"; touch "$DIR.wait"; exit 0; }
     [ -f "$DIR/CONNECTION-CHECK.md" ] || { say "mirror waits for the connection check (private-data-check.yml)"; touch "$DIR.wait"; exit 0; }
     rm -f "$DIR.wait"
-    copy_in; commit_push "mirror $(date -u +%FT%RZ)" && sum "$ROOT" > "$DIR/.mirrored"; exit 0 ;;
+    copy_in || { say "mirror skipped: a copy failed"; exit 0; }; commit_push "mirror $(date -u +%FT%RZ)" && sum "$ROOT" > "$DIR/.mirrored"; exit 0 ;;
   pull)
+    if [ -e "$PENDING" ]; then   # an earlier owner update is not yet stored privately: never overwrite it with an older private copy
+      say "an earlier owner update is not yet stored privately; retrying its save before any pull"
+      bash "$0" push || { say "Error: earlier owner update still NOT stored privately; local owner files kept (newest), pull refused, owner commands paused"; exit 3; }
+    fi
     open || { say "Error: cannot read the private repository; stopping so nothing runs without your holdings"; exit 1; }
-    [ -f "$DIR/data/my-positions.json" ] || { say "Error: the private repository has no data/my-positions.json; stopping"; exit 1; }
-    k=0; for f in $FILES; do [ -f "$DIR/data/$f" ] && cp "$DIR/data/$f" "$ROOT/data/$f" && k=$((k+1)); done; say "pulled $k files" ;;
+    for f in $REQUIRED; do [ -f "$DIR/data/$f" ] || { say "Error: the private repository has no data/$f; stopping"; exit 1; }; done
+    # stage every file first (each copy checked), then install by rename: a failed copy installs NOTHING (no mixed old/new state)
+    # staging is never under data/ (a leftover is never published); .git is the same filesystem, so mv is a rename
+    if [ -d "$ROOT/.git" ]; then STG="$ROOT/.git/private-pull.$$"; else STG="$DIR.stage.$$"; fi; rm -rf "$STG"; mkdir -p "$STG" || { say "Error: cannot stage the pull"; exit 1; }
+    k=0; for f in $FILES; do [ -f "$DIR/data/$f" ] || continue; mkdir -p "$(dirname "$STG/$f")" && cp "$DIR/data/$f" "$STG/$f" || { say "Error: could not copy $f from the private clone; nothing installed"; rm -rf "$STG"; exit 1; }; k=$((k+1)); done
+    for f in $FILES; do if [ -f "$STG/$f" ]; then mv -f "$STG/$f" "$ROOT/data/$f" || { say "Error: could not install $f"; rm -rf "$STG"; exit 1; }
+      elif [ -f "$ROOT/data/$f" ]; then case "$f" in private-*) ;; *) mv -f "$ROOT/data/$f" "$ROOT/data/private-stale-$f" && say "optional $f is absent privately; the local copy was set aside (not used as current)";; esac; fi; done
+    rm -rf "$STG"; say "pulled $k files" ;;
   push)
+    date -u +%FT%TZ > "$PENDING" || { say "Error: cannot record the pending owner update"; exit 1; }   # first: any later failure keeps it
     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }
-    copy_in; ( cd "$DIR" && SAVE_PRIVATE_REPO=1 SAVE_PRIVATE_EXPECTED_ORIGIN="$URL" SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "bot $(date -u +%FT%RZ)" ) | sed 's/^/private data: /'
+    copy_in || { say "Error: private save NOT confirmed (copy failed); your update is kept on this runner and will be retried"; exit 1; }
+    ( cd "$DIR" && SAVE_PRIVATE_REPO=1 SAVE_PRIVATE_EXPECTED_ORIGIN="$URL" SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "bot $(date -u +%FT%RZ)" ) | sed 's/^/private data: /'
     # P0 Route A: success only when the save landed: the private repository's branch, read back from the remote, equals the commit this
     # save made, and EVERY declared private file present in this job is committed there (after the save-data.sh conflict rules, e.g. a
     # newer bot copy of the positions wins). The caller sets PRIVATE_SAVE_OK=1 only on this exit 0.
@@ -83,8 +106,11 @@ case "$MODE" in
     BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null); bad=0; n=0
     [ -z "$(gitp status --porcelain -- data 2>/dev/null)" ] || { say "Error: private save left uncommitted owner files"; bad=1; }
     [ "$(gitp rev-parse HEAD 2>/dev/null)" = "$(gitp rev-parse "origin/$BR" 2>/dev/null)" ] || { say "Error: private save not on the private repository"; bad=1; }
-    for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; n=$((n+1))
-      gitp cat-file -e "origin/$BR:data/$f" 2>/dev/null || { say "Error: private file $f not confirmed on the private repository"; bad=1; }; done
-    [ "$bad" = 0 ] || exit 1; say "private save verified: $n files" ;;
+    m=0; for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; n=$((n+1))
+      gitp cat-file -e "origin/$BR:data/$f" 2>/dev/null || { say "Error: private file $f not confirmed on the private repository"; bad=1; continue; }
+      # content, not only existence: the stored bytes must be this job's bytes, except the hunk-merged owner files (save-data.sh rule)
+      [ "$(gitp rev-parse "origin/$BR:data/$f" 2>/dev/null)" = "$(git hash-object "$ROOT/data/$f")" ] && continue
+      case "$CONFLICT_MERGED" in *" $f "*) m=$((m+1)); say "$f was merged with a newer private copy (save-data.sh rule)";; *) say "Error: private file $f differs from this job's copy"; bad=1;; esac; done
+    [ "$bad" = 0 ] || exit 1; rm -f "$PENDING"; say "private save verified: $n files ($m merged with a newer private copy)" ;;
   *) echo "usage: private-data.sh check|mirror|pull|push"; exit 2 ;;
 esac
