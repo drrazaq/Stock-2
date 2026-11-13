@@ -5,7 +5,7 @@
 // never consume owner commands (the bot is the one consumer). Stub scan.mjs, synthetic data only, no network, no Telegram.
 import test from 'node:test'; import assert from 'node:assert/strict'; import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { retainFailedPrivate, FAILED_PREFIX, NOT_STATE } from '../scan-passes.mjs';
+import { retainFailedPrivate, FAILED_PREFIX, NOT_STATE, privateAdmission, isCritical } from '../scan-passes.mjs';
 const ROOT = path.resolve(import.meta.dirname, '..');
 const STUB = `import fs from 'node:fs';
 const mode = (() => { try { return fs.readFileSync('data/stub-mode.txt', 'utf8'); } catch { return ''; } })();
@@ -15,6 +15,7 @@ fs.writeFileSync('data/sell-notices.jsonl', '{"sym":"ZZP","sent":"SELL PRIVATE_S
 fs.writeFileSync('data/my-positions.json', JSON.stringify({ ZZP: { entry: 1, note: 'PRIVATE_SECRET event' } }));
 fs.writeFileSync('data/nightly-sent.json', JSON.stringify({ text: 'ACTIONS PRIVATE_SECRET' }));
 if (mode.includes('big')) fs.writeFileSync('data/big.bin', Buffer.alloc(5 << 20, 1));
+if (mode.includes('bigcritical')) fs.writeFileSync('data/my-trades.jsonl', Buffer.alloc(5 << 20, 2));
 if (mode.includes('kill')) process.kill(process.pid, 'SIGKILL');
 if (mode.includes('fail')) process.exit(9);`;
 const OWNER0 = '{"ZZP":{"entry":1,"note":"original"}}';
@@ -42,7 +43,7 @@ for (const mode of ['fail', 'kill']) test('private pass ' + (mode === 'kill' ? '
     assert.match(rd(dir, stamp + '__my-positions.json'), /PRIVATE_SECRET event/, 'owner event retained in quarantine only');
     for (const f of publicNames(dir)) assert.doesNotMatch(rd(dir, f), /PRIVATE_SECRET|failed-pass/, 'public path ' + f);
     assert.doesNotMatch(r.stdout, /PRIVATE_SECRET/, 'orchestrator stdout carries no private payload');
-    assert.match(r.stdout, /kept privately as quarantine evidence/);
+    assert.match(r.stdout, /kept privately as UNRESOLVED quarantine evidence/); assert.ok(meta.critical.includes("sell-notices.jsonl"), "the sent SELL record is critical");
   } finally { fs.rmSync(dir, { recursive: true, force: true }); } });
 test('quarantine is never restored as state: a later pass sees no failed-pass or conflict file, and owner state comes only from a completed pass', () => {
   const dir = world(); try {
@@ -53,21 +54,50 @@ test('quarantine is never restored as state: a later pass sees no failed-pass or
     assert.match(rd(dir, 'my-positions.json'), /PRIVATE_SECRET event/, 'only the completed pass installs owner state');
     assert.ok(ls(dir).some(f => f.startsWith(FAILED_PREFIX)), 'earlier quarantine is kept, not consumed');
   } finally { fs.rmSync(dir, { recursive: true, force: true }); } });
-test('bounds: oversized file not kept (recorded as skipped), and only the newest 3 failures are kept', () => {
+test('size bounds apply to OPTIONAL files only: a large critical owner/SELL record is kept, a large model/cache file is skipped by name', () => {
   const dir = world(); try {
-    const r = run(dir, 'fail big'); assert.match(r.stdout, /over the size bound NOT kept/);
-    const idx0 = ls(dir).find(f => f.startsWith(FAILED_PREFIX) && !f.includes('__')); assert.deepEqual(JSON.parse(rd(dir, idx0)).skipped.map(s => s.r), ['big.bin']);
-    for (let i = 0; i < 4; i++) run(dir, 'fail');
-    assert.equal(ls(dir).filter(f => f.startsWith(FAILED_PREFIX) && !f.includes('__')).length, 3);
-    assert.ok(!ls(dir).some(f => f.startsWith(idx0.slice(0, -5))), 'the oldest failure set is pruned whole');
+    const r = run(dir, 'fail big bigcritical'); assert.match(r.stdout, /optional files over the size bound NOT kept: big\.bin/);
+    const idx = ls(dir).find(f => f.startsWith(FAILED_PREFIX) && f.endsWith('.json') && !f.includes('__')), meta = JSON.parse(rd(dir, idx));
+    assert.deepEqual(meta.skipped.map(s => s.r), ['big.bin']); assert.ok(meta.critical.includes('sell-notices.jsonl') && meta.critical.includes('my-trades.jsonl'));
+    assert.equal(fs.statSync(path.join(dir, 'data', idx.slice(0, -5) + '__my-trades.jsonl')).size, 5 << 20, 'a 5 MiB critical owner record is retained whole');
   } finally { fs.rmSync(dir, { recursive: true, force: true }); } });
-test('unit: retention caps per file and per failure; names are private and never state', () => {
+test('capacity full: nothing unresolved is pruned; the next night does NOT run the private pass and says what coverage is lost', () => {
+  const dir = world(); try {
+    for (let i = 0; i < 3; i++) assert.notEqual(run(dir, 'fail').status, 0);
+    const sets0 = ls(dir).filter(f => f.startsWith(FAILED_PREFIX)), before = rd(dir, 'my-positions.json');
+    const r = run(dir, '');   // a night that WOULD succeed and change owner state
+    assert.equal(r.status, 6, 'explicit admission refusal status'); assert.match(r.stdout, /PRIVATE PASS NOT RUN: 3 unresolved failed-pass evidence sets/);
+    assert.match(r.stdout, /Not produced tonight: the owner nightly/); assert.match(r.stdout, /Separate protective paths .* are not affected/);
+    assert.equal(rd(dir, 'my-positions.json'), before, 'no private computation ran'); assert.ok(!ls(dir).includes('private-box-list.json'));
+    assert.deepEqual(ls(dir).filter(f => f.startsWith(FAILED_PREFIX)), sets0, 'every earlier set is kept byte for byte (no pruning)');
+    assert.match(rd(dir, 'signals.json'), /"who":"public"/, 'the public pass still installs its public output');
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); } });
+test('only a reviewed disposition record releases capacity, and it deletes nothing', () => {
+  const dir = world(); try {
+    for (let i = 0; i < 3; i++) run(dir, 'fail');
+    const first = ls(dir).find(f => f.startsWith(FAILED_PREFIX) && f.endsWith('.json') && !f.includes('__')), sets0 = ls(dir).filter(f => f.startsWith(FAILED_PREFIX));
+    fs.writeFileSync(path.join(dir, 'data', first.replace(/\.json$/, '.disposition.json')), JSON.stringify({ resolved: false }));
+    assert.equal(run(dir, '').status, 6, 'an unresolved disposition does not release');
+    fs.writeFileSync(path.join(dir, 'data', first.replace(/\.json$/, '.disposition.json')), JSON.stringify({ resolved: true, reviewedBy: 'synthetic', note: 'synthetic' }));
+    assert.equal(run(dir, '').status, 0, 'resolved set releases one slot');
+    for (const f of sets0) assert.ok(ls(dir).includes(f), 'still kept: ' + f);
+  } finally { fs.rmSync(dir, { recursive: true, force: true }); } });
+test('admission also refuses when the unresolved bytes leave no room for tonight\'s critical records', () => {
+  const d = fs.mkdtempSync(path.join(os.tmpdir(), 'adm-')); try {
+    fs.writeFileSync(path.join(d, FAILED_PREFIX + '2026-11-10T21-50-00-000Z.json'), '{}'); fs.writeFileSync(path.join(d, FAILED_PREFIX + '2026-11-10T21-50-00-000Z__x.json'), Buffer.alloc(3000));
+    fs.writeFileSync(path.join(d, 'my-positions.json'), Buffer.alloc(1000));
+    assert.equal(privateAdmission(d, { unresolvedSets: 3, unresolvedBytes: 1 << 30 }).ok, true);
+    const a = privateAdmission(d, { unresolvedSets: 3, unresolvedBytes: (1 << 20) + 4000 }); assert.equal(a.ok, false); assert.match(a.reason, /room for tonight's critical records/);
+  } finally { fs.rmSync(d, { recursive: true, force: true }); } });
+test('unit: critical classification and optional caps', () => {
   const d = fs.mkdtempSync(path.join(os.tmpdir(), 'retain-unit-')); try {
     const box = path.join(d, 'box'), data = path.join(d, 'data'); fs.mkdirSync(path.join(box, 'data/sub'), { recursive: true }); fs.mkdirSync(data);
-    fs.writeFileSync(path.join(box, 'data/a.json'), '12345678'); fs.writeFileSync(path.join(box, 'data/sub/b.json'), '12345678'); fs.writeFileSync(path.join(box, 'data/c.json'), '1'.repeat(20));
-    const q = retainFailedPrivate(box, new Map(), { exit: 1 }, { data, now: Date.parse('2026-11-12T21:50:00Z'), limits: { fileBytes: 10, totalBytes: 12, keep: 3 } });
-    assert.equal(q.kept.length, 1); assert.equal(q.skipped.length, 2);
-    for (const n of fs.readdirSync(data)) { assert.ok(n.startsWith('private-') && NOT_STATE.test(n), n); }
+    fs.writeFileSync(path.join(box, 'data/a.json'), '12345678'); fs.writeFileSync(path.join(box, 'data/sub/b.json'), '12345678'); fs.writeFileSync(path.join(box, 'data/sell-notices.jsonl'), '1'.repeat(50));
+    const q = retainFailedPrivate(box, new Map(), { exit: 1 }, { data, now: Date.parse('2026-11-12T21:50:00Z'), limits: { fileBytes: 10, optionalBytes: 12 } });
+    assert.deepEqual(q.critical, ['sell-notices.jsonl'], 'critical kept although over every bound'); assert.equal(q.kept.length, 2); assert.equal(q.skipped.length, 1);
+    for (const n of fs.readdirSync(data)) assert.ok(n.startsWith('private-') && NOT_STATE.test(n), n);
+    for (const r of ['my-positions.json', 'tg-state.json', 'alert-state.json', 'watcher-message-state/2026-11-12/x.json', 'sell-notices.jsonl']) assert.ok(isCritical(r), r);
+    for (const r of ['models.json', 'big.bin', 'private-models.json']) assert.ok(!isCritical(r), r);
   } finally { fs.rmSync(d, { recursive: true, force: true }); } });
 test('the isolated nightly passes never consume owner Telegram commands (the bot is the one consumer)', () => {
   const src = fs.readFileSync(path.join(ROOT, 'scan.mjs'), 'utf8'), at = src.indexOf('async function tgCommands(');

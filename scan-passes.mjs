@@ -75,22 +75,47 @@ function atomicInstall(src, dest) {   // same-directory temp + fsync + rename: t
 function codeCopy(dest) { fs.mkdirSync(path.join(dest, 'data'), { recursive: true }); for (const e of fs.readdirSync(ROOT, { withFileTypes: true })) { if (e.isFile() && codeAllowed(e.name)) fs.copyFileSync(path.join(ROOT, e.name), path.join(dest, e.name)); } }
 
 // FAILED PRIVATE PASS: its side effects may already have happened (a nightly message with a SELL line, an owner-facing receipt), so its
-// changed files are RETAINED as bounded PRIVATE quarantine evidence instead of being deleted with the temp copy. They are never current
-// state (never installed at their own names, never restored as caches, never hydrated, never replayed, nothing is re-sent), they are
+// changed files are RETAINED as PRIVATE quarantine evidence instead of being deleted with the temp copy. They are never current state
+// (never installed at their own names, never restored as caches, never hydrated, never replayed, nothing is re-sent), they are
 // data/private-* so the public save never publishes them, and the private route stores them when private mode saves; when it does not,
-// the save fails visibly (save-data.sh exit 3). Bounds: 4 MiB per file, 32 MiB per failure, the newest 3 failures.
+// the save fails visibly. Retention rules (Codex 6851524938):
+//  - CRITICAL records (owner files, send state and send ledgers) are ALWAYS retained, whatever their size; only OPTIONAL files (model and
+//    cache outputs) over 4 MiB each / 32 MiB per failure are skipped, and each skip is listed explicitly.
+//  - Nothing unresolved is ever pruned or deleted. A failure set stays UNRESOLVED until an explicitly reviewed disposition record
+//    (data/private-failed-pass-<stamp>.disposition.json with resolved:true) exists; even then its files are kept (no deletion here).
+//  - ADMISSION: when 3 unresolved sets exist, or their bytes plus room for tonight's critical records would pass 256 MiB, the private
+//    pass is NOT run (no new private computation, no owner-facing side effect) and the run fails with an explicit coverage status.
 export const FAILED_PREFIX = 'private-failed-pass-', NOT_STATE = /^private-(failed-pass|conflict)-/;
-export const FAILED_LIMITS = Object.freeze({ fileBytes: 4 << 20, totalBytes: 32 << 20, keep: 3 });
+export const FAILED_LIMITS = Object.freeze({ fileBytes: 4 << 20, optionalBytes: 32 << 20, unresolvedSets: 3, unresolvedBytes: 256 << 20 });
+export const SEND_STATE = Object.freeze(['alert-state.json', 'tg-state.json', 'tg-failures.jsonl']);
+const STAMP = /^private-failed-pass-(\d{4}-\d\d-\d\dT\d\d-\d\d-\d\d-\d{3}Z)(?:__|\.json$|\.disposition\.json$)/;
+export const isCritical = (r) => { const top = r.split('/')[0]; return (isPrivate(top) && !top.startsWith('private-')) || SEND_STATE.includes(r) || top === 'watcher-message-state'; };
+export function failedSets(data = DATA) {
+  const sets = new Map();
+  for (const n of fs.readdirSync(data)) { const m = n.match(STAMP); if (!m) continue; const e = sets.get(m[1]) || { stamp: m[1], bytes: 0, resolved: false };
+    if (n.endsWith('.disposition.json')) { try { e.resolved = JSON.parse(fs.readFileSync(path.join(data, n), 'utf8')).resolved === true; } catch {} }
+    else { try { e.bytes += fs.statSync(path.join(data, n)).size; } catch {} }
+    sets.set(m[1], e); }
+  return [...sets.values()].sort((x, y) => x.stamp.localeCompare(y.stamp));
+}
+export function privateAdmission(data = DATA, limits = FAILED_LIMITS) {
+  const open = failedSets(data).filter(e => !e.resolved), openBytes = open.reduce((t, e) => t + e.bytes, 0);
+  let critical = 0; for (const r of listData(data)) if (isCritical(r)) { try { critical += fs.statSync(path.join(data, r)).size; } catch {} }
+  const need = critical * 2 + (1 << 20);   // tonight's critical records could change; margin for the index
+  if (open.length >= limits.unresolvedSets) return { ok: false, reason: open.length + ' unresolved failed-pass evidence sets (limit ' + limits.unresolvedSets + ')', open };
+  if (openBytes + need > limits.unresolvedBytes) return { ok: false, reason: 'unresolved failed-pass evidence would exceed ' + (limits.unresolvedBytes >> 20) + ' MiB with room for tonight\'s critical records', open };
+  return { ok: true, open };
+}
 export function retainFailedPrivate(box, before, info, { data = DATA, now = Date.now(), limits = FAILED_LIMITS } = {}) {
-  const stamp = new Date(now).toISOString().replace(/[:.]/g, '-'), kept = [], skipped = []; let total = 0;
-  for (const r of changed(before, path.join(box, 'data'))) { const src = path.join(box, 'data', r); let size; try { size = fs.statSync(src).size; } catch { skipped.push({ r, why: 'unreadable' }); continue; }
-    if (size > limits.fileBytes || total + size > limits.totalBytes) { skipped.push({ r, why: 'over bound', size }); continue; }
-    atomicInstall(src, path.join(data, FAILED_PREFIX + stamp + '__' + r.replace(/\//g, '__'))); total += size; kept.push(r); }
+  const stamp = new Date(now).toISOString().replace(/[:.]/g, '-'), kept = [], critical = [], skipped = []; let optional = 0;
+  for (const r of changed(before, path.join(box, 'data'))) { const src = path.join(box, 'data', r), crit = isCritical(r); let size;
+    try { size = fs.statSync(src).size; } catch { skipped.push({ r, why: 'unreadable', critical: crit }); continue; }
+    if (!crit && (size > limits.fileBytes || optional + size > limits.optionalBytes)) { skipped.push({ r, why: 'optional file over the size bound', size }); continue; }
+    atomicInstall(src, path.join(data, FAILED_PREFIX + stamp + '__' + r.replace(/\//g, '__'))); kept.push(r); if (crit) critical.push(r); else optional += size; }
   const idx = path.join(data, FAILED_PREFIX + stamp + '.json'), tmp = idx + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify({ v: 1, kind: 'QUARANTINE: failed private pass evidence; not current state; never replayed or re-sent', at: new Date(now).toISOString(), ...info, retained: kept, skipped }, null, 1), { mode: 0o600 }); fs.renameSync(tmp, idx);
-  const stamps = [...new Set(fs.readdirSync(data).filter(n => n.startsWith(FAILED_PREFIX)).map(n => n.slice(FAILED_PREFIX.length).split(/__|\.json$/)[0]))].sort();
-  for (const old of stamps.slice(0, Math.max(0, stamps.length - limits.keep))) for (const n of fs.readdirSync(data)) if (n.startsWith(FAILED_PREFIX + old)) fs.rmSync(path.join(data, n), { force: true });
-  return { stamp, kept, skipped };
+  fs.writeFileSync(tmp, JSON.stringify({ v: 2, kind: 'QUARANTINE: failed private pass evidence; not current state; never replayed or re-sent; UNRESOLVED until a reviewed disposition record exists', at: new Date(now).toISOString(), ...info, retained: kept, critical, skipped }, null, 1), { mode: 0o600 });
+  fs.renameSync(tmp, idx);
+  return { stamp, kept, critical, skipped };
 }
 export function runPasses({ env = process.env, log = (s) => process.stdout.write(s + '\n'), timeoutMs = 6 * 3600e3 } = {}) {
   const work = fs.mkdtempSync(path.join(os.tmpdir(), 'scan-passes-')), pubBox = path.join(work, 'public'), privBox = path.join(work, 'private'), cache = path.join(work, 'fetch-cache');
@@ -112,7 +137,13 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
       fs.writeFileSync(path.join(pubBox, 'data', MANIFEST), JSON.stringify({ v: 1, files }, null, 1)); publicOut.push(MANIFEST); }
     log('two-pass scan: public pass ' + (pubOk ? 'OK, ' + publicOut.length + ' public files' : 'FAILED (exit ' + pub.status + (pub.signal ? ', ' + pub.signal : '') + '); public files left unchanged'));
 
-    // ---- 2. PRIVATE PASS (isolated copy of the full real state)
+    // ---- 2. PRIVATE PASS (isolated copy of the full real state), only when unresolved failure evidence leaves room (see above)
+    const adm = privateAdmission();
+    if (!adm.ok) {
+      log('two-pass scan: Error: PRIVATE PASS NOT RUN: ' + adm.reason + '. Not produced tonight: the owner nightly (ACTIONS, holding review, SELL checks, owner records). Separate protective paths (bot, stop and intraday checks) are not affected. Earlier evidence is kept; capacity is released only by a reviewed disposition record.');
+      for (const r of publicOut) { if (isPrivate(r.split('/')[0])) continue; atomicInstall(path.join(pubBox, 'data', r), path.join(DATA, r)); }
+      return { publicStatus: pubOk ? 0 : (pub.status ?? 1), privateStatus: 6, publicOut };
+    }
     codeCopy(privBox);
     const realAtCopy = snapshot(DATA);   // owner files changed after this point (e.g. by the bot) are never overwritten with older bytes
     for (const r of listData(DATA)) if (!NOT_STATE.test(r)) copy(path.join(DATA, r), path.join(privBox, 'data', r));   // quarantine/conflict evidence is never scan input
@@ -135,7 +166,7 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
       }
     }
     if (!privOk) { try { const q = retainFailedPrivate(privBox, privBefore, { exit: priv.status, signal: priv.signal || null });
-        log('two-pass scan: the failed private pass changed ' + (q.kept.length + q.skipped.length) + ' files; ' + q.kept.length + ' kept privately as quarantine evidence (' + FAILED_PREFIX + q.stamp + '), not as current state' + (q.skipped.length ? '; ' + q.skipped.length + ' over the size bound NOT kept' : ''));
+        log('two-pass scan: the failed private pass changed ' + (q.kept.length + q.skipped.length) + ' files; ' + q.kept.length + ' kept privately as UNRESOLVED quarantine evidence (' + FAILED_PREFIX + q.stamp + ', ' + q.critical.length + ' critical), not as current state' + (q.skipped.length ? '; ' + q.skipped.length + ' optional files over the size bound NOT kept: ' + q.skipped.map(x => x.r).join(' ') : ''));
       } catch (e) { log('two-pass scan: Error: the failed private pass evidence could NOT be retained (' + (e.code || e.message) + ')'); } }
     // private sink after the private results (a sink failure must not lose them); a failure is reported and fails the run visibly
     let sinkOk = true; try { atomicInstall(sinkTmp, env.PRIVATE_SCAN_LOG || path.join(DATA, 'private-scan-stdout.log')); } catch (e) { sinkOk = false; log('two-pass scan: Error: the private log could not be stored (' + e.code + '); private results were kept'); }
