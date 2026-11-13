@@ -3,7 +3,7 @@
 // (private mode: custody-admitted private clone only, never a public fallback; pre-cutover: the existing public publisher, unchanged).
 import test from 'node:test'; import assert from 'node:assert/strict'; import fs from 'node:fs'; import os from 'node:os'; import path from 'node:path';
 import { execSync } from 'node:child_process'; import { createHash } from 'node:crypto';
-import { admit, prepare } from '../watcher-custody.mjs'; import { reservationPersist } from '../watcher-reservation-route.mjs';
+import { admit, prepare } from '../watcher-custody.mjs'; import { reservationPersist, reservationRouteStatus } from '../watcher-reservation-route.mjs';
 const ENV0 = { ...process.env, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1' };
 Object.assign(process.env, { GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t', GIT_CONFIG_GLOBAL: '/dev/null', GIT_CONFIG_NOSYSTEM: '1' });
 const sh = (c, cwd) => execSync(c, { cwd, env: ENV0, stdio: ['ignore', 'pipe', 'pipe'] }).toString();
@@ -22,7 +22,8 @@ function world({ mode = true } = {}) {
   const seed = path.join(top, 'seed'); sh('git clone -q ' + privBare + ' seed', top); W(seed, 'data/my-positions.json', '{}'); sh('git add -A && git commit -qm s && git push -q -u origin main', seed);
   sh('git clone -q ' + privBare + ' ' + dir, top);
   const env = { ...ENV0, PRIVATE_DATA_URL: privBare, PRIVATE_DATA_DIR: dir, RUNNER_TEMP: run };
-  const importCustody = (mutate) => { const out = path.join(top, 'import-' + Math.random().toString(36).slice(2)); prepare(out, { root: pub });
+  const importCustody = (mutate, { drain = true } = {}) => { const out = path.join(top, 'import-' + Math.random().toString(36).slice(2)); prepare(out, { root: pub });
+    if (drain) { const cf = path.join(out, 'data/watcher-message-state/CUSTODY.json'), c = JSON.parse(fs.readFileSync(cf, 'utf8')); c.oldWriterDrain = { method: 'synthetic fixture', evidence: 'synthetic: legacy writer excluded', at: '2026-11-13T00:00:00Z' }; fs.writeFileSync(cf, JSON.stringify(c)); }
     if (mutate) mutate(out); sh('cp -r ' + out + '/data/. data/ && git add -A && git commit -qm custody && git push -q', seed); };
   const files = (bare) => sh('git --git-dir=' + bare + ' ls-tree -r --name-only main', top).split('\n').filter(Boolean);
   return { top, pub, pubBare, privBare, dir, run, env, seed, importCustody, files };
@@ -41,9 +42,9 @@ test('custody imported exactly: ADMITTED, the private namespace is installed for
   const w = world(); w.importCustody(); const r = admit({ root: w.pub, env: w.env }); assert.equal(r.status, 'ADMITTED', JSON.stringify(r));
   assert.ok(JSON.parse(fs.readFileSync(path.join(w.run, 'watcher-custody-admitted.json'), 'utf8')).privateCommit);
 });
-test('old-writer quiescence: a public reservation written after custody blocks admission', () => {
+test('snapshot equality (NOT a quiescence proof): a public reservation written after the snapshot blocks admission', () => {
   const w = world(); w.importCustody(); W(w.pub, NS + key('stop:ZZC:stop') + '.json', rec('stop:ZZC:stop', 'RESERVED')); sh('git add -A && git commit -qm late', w.pub);
-  assert.deepEqual(admit({ root: w.pub, env: w.env }), { status: 'NOT_ADMITTED', reason: 'PUBLIC_WRITER_NOT_QUIESCENT' });
+  assert.deepEqual(admit({ root: w.pub, env: w.env }), { status: 'NOT_ADMITTED', reason: 'PUBLIC_NAMESPACE_CHANGED_SINCE_SNAPSHOT' });
 });
 test('state regression or a missing reservation blocks admission; a valid later private state is accepted', () => {
   let w = world(); w.importCustody((out) => fs.writeFileSync(path.join(out, NS + key('stop:ZZA:stop') + '.json'), rec('stop:ZZA:stop', 'UNSENT')));
@@ -69,10 +70,16 @@ test('private mode, custody admitted: the reservation is published by the unchan
   const again = reservationPersist({ env: w.env, root: w.pub })(r0.file, { record: { ...r0.record, owner: 'o3' }, phase: 'reserve', cwd: w.pub });
   assert.equal(again.reason, 'EXISTING_RESERVATION', 'existing CAS/no-replay semantics hold on the private namespace');
 });
-test('a clone bound to another remote is refused even with a receipt; pre-cutover the existing public publisher is used unchanged', () => {
-  const w = world(); w.importCustody(); admit({ root: w.pub, env: w.env }); sh('git remote set-url origin ' + w.pubBare, w.dir);
+test('without independent old-writer drain/exclusion evidence in CUSTODY.json the exact snapshot is still NOT admitted', () => {
+  const w = world(); w.importCustody(null, { drain: false }); assert.deepEqual(admit({ root: w.pub, env: w.env }), { status: 'NOT_ADMITTED', reason: 'NO_OLD_WRITER_DRAIN_EVIDENCE' });
+  assert.ok(!fs.existsSync(path.join(w.run, 'watcher-custody-admitted.json')));
+});
+test('a clone bound to another remote is refused even with a receipt; pre-cutover there is NO public path (unavailable, nothing written) and the status says so', () => {
+  const w = world(); w.importCustody(); admit({ root: w.pub, env: w.env }); assert.deepEqual(reservationRouteStatus({ env: w.env, root: w.pub }), { liveSends: 'PRIVATE', reason: null });
+  sh('git remote set-url origin ' + w.pubBare, w.dir); assert.deepEqual(reservationRouteStatus({ env: w.env, root: w.pub }), { liveSends: 'UNAVAILABLE', reason: 'CLONE_NOT_BOUND' });
   const r0 = reservation('stop:ZZE:stop'); assert.deepEqual(reservationPersist({ env: w.env, root: w.pub })(r0.file, { record: r0.record, phase: 'reserve' }), { ok: false, reason: 'PRIVATE_RESERVATION_UNAVAILABLE' });
-  const v = world({ mode: false }), r1 = reservation('stop:ZZF:stop');
-  const r = reservationPersist({ env: v.env, root: v.pub })(r1.file, { record: r1.record, phase: 'reserve', cwd: v.pub }); assert.equal(r.ok, true, JSON.stringify(r));
-  assert.ok(v.files(v.pubBare).includes(r1.file), 'pre-cutover behaviour unchanged (public)');
+  const v = world({ mode: false }), r1 = reservation('stop:ZZF:stop'), before = [v.files(v.pubBare), v.files(v.privBare)];
+  assert.deepEqual(reservationPersist({ env: v.env, root: v.pub })(r1.file, { record: r1.record, phase: 'reserve', cwd: v.pub }), { ok: false, reason: 'PRIVATE_RESERVATION_UNAVAILABLE' });
+  assert.deepEqual([v.files(v.pubBare), v.files(v.privBare)], before, 'no public publication path; nothing written anywhere');
+  assert.deepEqual(reservationRouteStatus({ env: v.env, root: v.pub }), { liveSends: 'UNAVAILABLE', reason: 'PRIVATE_ROUTE_NOT_ADOPTED' });
 });

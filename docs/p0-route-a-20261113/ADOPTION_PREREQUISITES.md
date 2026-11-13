@@ -39,9 +39,13 @@ exists. Codex 6852935516 / 6852885259 / 6852749074.
 ## 6. Added 13 Nov (steps 38–43)
 - Custody (section 1) includes every file under the three private directories; `private-data.sh check` expands them.
 - Watcher reservations: `node watcher-custody.mjs prepare OUTDIR` (offline) builds the custody import of every public reservation plus
-  CUSTODY.json; it must be stored privately and read back, the old public writer must be quiescent (no public reservation after the
-  custody snapshot), and Codex's guard follow-up denying `data/watcher-message-state` publicly must be in place BEFORE the marker
-  exists. Until `admit` returns ADMITTED in a job, private reservations stay closed (the watcher withholds sends; no public fallback).
+  CUSTODY.json; it must be stored privately and read back, and Codex's guard follow-up denying `data/watcher-message-state` publicly must
+  be in place BEFORE the marker exists. OLD-WRITER DRAIN (Codex 6855446097): `admit`'s snapshot-equality check proves only that nothing
+  changed before the check, NOT quiescence. INDEPENDENT drain/exclusion evidence that the legacy public writer can no longer reserve
+  (e.g. its workflows disabled and drained, the backstop adopted) must be recorded in CUSTODY.json oldWriterDrain {method, evidence,
+  at}; `admit` refuses without it. If drain cannot be established, adoption stays stopped.
+- There is NO public reservation path in source any more: before cutover reservation-gated watcher sends are withheld and the run
+  record states LIVE SENDS UNAVAILABLE (PRIVATE_ROUTE_NOT_ADOPTED). Guard backstop, route and custody are adopted together. Until `admit` returns ADMITTED in a job, private reservations stay closed (the watcher withholds sends; no public fallback).
 - The private step shell, the artifact removals and the PARTIAL run-log tails are part of the same adoption (75 workflows).
 - The watcher path changes (ignition-watch.mjs, ignition, bot, main, premarket) need their own exact Stage 1 review; never Friday
   authority.

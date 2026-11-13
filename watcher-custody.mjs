@@ -4,8 +4,11 @@
 //                                              publicCommit, files: {path: git blob id}}. Writes only OUTDIR; no network, no push.
 //   node watcher-custody.mjs admit            private mode only, read-only on both repositories. ADMITTED only when ALL hold:
 //     1. the private clone is bound to the declared private repository and its newest commit carries CUSTODY.json;
-//     2. old-writer QUIESCENCE: this public checkout's namespace is byte-identical to the custody snapshot (same files, same blob ids), so
-//        no public writer changed or added a reservation after custody (a content check, valid on a shallow checkout);
+//     2. SNAPSHOT EQUALITY: this public checkout's namespace is byte-identical to the custody snapshot (same files, same blob ids). This
+//        proves only that nothing changed BEFORE this check; it does NOT prove old-writer quiescence (a legacy writer could reserve right
+//        after it). Quiescence needs INDEPENDENT drain/exclusion evidence (Codex 6855446097): CUSTODY.json must carry
+//        oldWriterDrain {method, evidence, at}, filled at operational admission from evidence outside this check (e.g. the old writer's
+//        workflows disabled and drained, and the guard backstop adopted); without it admission is refused;
 //     3. every custody reservation exists privately, either byte-identical or a valid later state of the same key: never a regression
 //        (UNSENT < RESERVED < ACKNOWLEDGED/UNCERTAIN, and a terminal public state must stay exactly that state).
 //   Then, and only then, it installs the private namespace into this checkout (readers see the private state) and writes the job receipt
@@ -31,9 +34,10 @@ export function admit({ root = process.cwd(), env = process.env } = {}) {
   try { g(dir, ['fetch', '-q', 'origin'], auth); const br = g(dir, ['rev-parse', '--abbrev-ref', 'HEAD']).trim(); tip = g(dir, ['rev-parse', 'origin/' + br]).trim(); } catch { return no('PRIVATE_UNREADABLE'); }
   try { custody = JSON.parse(g(dir, ['show', tip + ':' + NS + '/CUSTODY.json'])); } catch { return no('NO_CUSTODY_RECORD'); }
   if (!custody || custody.version !== 1 || !/^[0-9a-f]{40}$/.test(custody.publicCommit || '') || typeof custody.files !== 'object') return no('CUSTODY_INVALID');
+  const dr = custody.oldWriterDrain; if (!dr || typeof dr !== 'object' || !['method', 'evidence', 'at'].every(k => typeof dr[k] === 'string' && dr[k].trim())) return no('NO_OLD_WRITER_DRAIN_EVIDENCE');
   const pub = tree(root, 'HEAD'); if (!pub) return no('PUBLIC_UNREADABLE');
   const ck = Object.keys(custody.files).sort(), pk = Object.keys(pub).sort();
-  if (ck.length !== pk.length || ck.some((k, i) => k !== pk[i] || custody.files[k] !== pub[k])) return no('PUBLIC_WRITER_NOT_QUIESCENT');
+  if (ck.length !== pk.length || ck.some((k, i) => k !== pk[i] || custody.files[k] !== pub[k])) return no('PUBLIC_NAMESPACE_CHANGED_SINCE_SNAPSHOT');
   const priv = tree(dir, tip); if (!priv) return no('PRIVATE_UNREADABLE');
   for (const rel of ck) {
     if (!priv[rel]) return no('CUSTODY_INCOMPLETE');
@@ -52,7 +56,7 @@ export function prepare(out, { root = process.cwd() } = {}) {
   const head = g(root, ['rev-parse', 'HEAD']).trim(), files = tree(root, 'HEAD') || {};
   for (const rel of Object.keys(files)) { const dest = path.join(out, NS, rel); fs.mkdirSync(path.dirname(dest), { recursive: true }); fs.writeFileSync(dest, g(root, ['show', 'HEAD:' + NS + '/' + rel])); }
   fs.mkdirSync(path.join(out, NS), { recursive: true });
-  const custody = { version: 1, publicRepo: 'drrazaq/stock-2', publicCommit: head, files };
+  const custody = { version: 1, publicRepo: 'drrazaq/stock-2', publicCommit: head, files, oldWriterDrain: null, oldWriterDrainNote: 'REQUIRED before admission: independent evidence that the legacy public writer is drained/excluded ({method, evidence, at}); the snapshot check alone does not prove it' };
   fs.writeFileSync(path.join(out, NS, 'CUSTODY.json'), JSON.stringify(custody, null, 1) + '\n');
   return { files: Object.keys(files).length, publicCommit: head };
 }

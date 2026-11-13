@@ -1,7 +1,7 @@
 import {startPrivateQuoteRetention} from './private-quote-retention.mjs';
 import { deliver, ownerQuietOff } from './notify-route.mjs';
 import {watcherAdmission} from './watcher-schedule.mjs';
-import {reservationPersist} from './watcher-reservation-route.mjs';
+import {reservationPersist,reservationRouteStatus} from './watcher-reservation-route.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
 import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
 import {execFileSync} from 'node:child_process';
@@ -53,6 +53,7 @@ const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-pa
 const ADMISSION=watcherAdmission({eventName:env.GITHUB_EVENT_NAME,schedule:env.IG_SCHEDULE,day,minute:clock(),earliestMinute:FAST&&env.IG_FAKE_MIN?0:550});
 console.log('watcher admission: '+ADMISSION.reason+' '+JSON.stringify(ADMISSION));
 if(!ADMISSION.run)process.exit(0);
+const LIVE_SEND_ROUTE=env.GITHUB_ACTIONS==='true'?reservationRouteStatus():{liveSends:'LOCAL',reason:null};if(LIVE_SEND_ROUTE.liveSends==='UNAVAILABLE')console.log('watcher: LIVE SENDS UNAVAILABLE ('+LIVE_SEND_ROUTE.reason+'): reservation-gated messages are withheld; retained protective guidance is unchanged');
 const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?reservationPersist():undefined});   // P0: private reservations once private mode is live (custody-admitted only; no public fallback)
 if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExclusive:901})){MESSAGE_STATE.maintain();const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(dir+'/'+INCIDENT_RUN_ID+'-delivery-recovery.json',JSON.stringify({day,runId:INCIDENT_RUN_ID,messageDelivery:MESSAGE_STATE.report()}),{flag:'wx'});console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
 if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
@@ -375,7 +376,7 @@ const coverage = beat.length ? { countingBasis:'UNIQUE_USABLE_CONFIGURED_MINUTES
   priceAgeP50Min: med(beat.map(b => b.ageP50)), priceAgeP95Min: med(beat.map(b => b.ageP95)), volumeAgeP50Min: med(beat.map(b => b.volAgeP50)),
   moversLiveBeforePlus5: movers.filter(v => v.lm !== undefined && v.lc < 0.05).length, moversFirstLiveAfterPlus10: movers.filter(v => v.lm !== undefined && v.lc >= 0.10).length, moversNeverLive: movers.filter(v => v.lm === undefined).length } : null;
 // Incident backport: archive on original observation basis before any canonical end-of-run publication.
-const incidentSnapshot={version:IG_VERSION,configuredWindow:{open:570,endExclusive:901},collectionVersion:"WATCHER_CONTEXT_V2",...(env.PRIVATE_QUOTE_RETENTION_ROOT?{privateQuoteRetention:PRIVATE_QUOTE_RETENTION.report()}:{}),day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()};
+const incidentSnapshot={version:IG_VERSION,configuredWindow:{open:570,endExclusive:901},collectionVersion:"WATCHER_CONTEXT_V2",liveSendRoute:LIVE_SEND_ROUTE,...(env.PRIVATE_QUOTE_RETENTION_ROOT?{privateQuoteRetention:PRIVATE_QUOTE_RETENTION.report()}:{}),day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA,processStart:PROC_START,mode,src,note,loops,coverage,alerts,triggers,missed,tally,heartbeat:beat,messageDelivery:MESSAGE_STATE.report()};
 const incidentArchive='data/ignition-runs/'+day;
 fs.mkdirSync(incidentArchive,{recursive:true});
 fs.writeFileSync(incidentArchive+'/'+INCIDENT_RUN_ID+'.json',JSON.stringify(incidentSnapshot),{flag:'wx'});
