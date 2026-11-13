@@ -41,15 +41,19 @@ Superseded: the earlier finding that no workflow pulls is obsolete. Current stat
 6. **Watcher reservations:** private reservation route + custody admission (steps 43); public namespace denied by Codex's guard follow-up
    (pending). Separate exact review/adoption: Stage 1 watcher path.
 7. **History:** public bytes and history of every newly private file stay untouched pending a separate exact cleanup approval.
-8. **OPEN (found while generating this matrix; disposition needed):**
-   - `data/hold-lab.json` (public, tracked) carries an `owner` field built from the owner's trades and holdings (symbol + since date).
-     Readers: hold-lab, tipster-lab (both hydrated). Options: (a) route the whole file private under its canonical name (public
-     research verdict then private too), or (b) split `owner` into a private `hold-lab-owner.json` and keep the public research file.
-   - `data/squad29-lab.json` and `data/squad29-flags-today.json` (public, tracked) carry `holdings` (held symbols). Readers: scan.mjs
-     (danger-filing SELL reasons), squad29-core. Options as above; (b) `squad29-holdings.json` private. Either changes a public
-     input of the two-pass scan (PUBLIC_SEEDS / differential test), so it needs your disposition.
-   - Candidates still to classify by field (they read owner files; no field-level proof yet): `tip-score.json` / `tips-public.jsonl`
-     (from the owner's tips), `smart-money.json` (already a tainted, non-seed input of the scan).
+8. **Closed by Codex 6855218411 (a), step 46:** `hold-lab.json`, `squad29-lab.json`, `squad29-flags-today.json`, `tip-score.json`,
+   `smart-money.json` are PRIVATE under their canonical names (computation unchanged), plus the same-class `agent-c-tip-score.json`,
+   `squad29-diag.json`, and the 47 `data/*-run.log` stdout tails of hydrated jobs. None was a public seed. Producers save privately
+   (hold-lab, squad29-lab, agent-c2-lab now with a private save; leaders-study and Smart-money retention extended). In private mode a
+   missing danger-filing record is UNKNOWN: holdings get ASSESSMENT UNKNOWN (no clean HOLD, no invented SELL; independent SELL reasons
+   still fire) and BUY paths say DANGER FILINGS NOT CHECKED. Before cutover the legacy behaviour is unchanged. `tips-public.jsonl`
+   stays public (ARK / public-API provenance).
+9. **STILL OPEN: field-level classification of every remaining owner-reading emitter.** Modules that read owner files (holdings,
+   trades, marks, settings, watch list, tips, opinions, market calls, signals-private) and write data files not yet classified field by
+   field: autolab, deals, discover, earnings-study, events-study (sec-status), exits, fastmover-lab (fastmover-live), follow-lane
+   (follow-* feeds), horizons, hunting-lab, leaders-study, league (agents), movers (movers-state/journal, flags), news-watch
+   (macro-state/log), octopus, quality, rebalance, rebuy, score-study, stops, winners-study, calendar (calendar-status). "Reads a
+   setting" (e.g. quiet mode) is not by itself owner-derived content; each needs a field-level proof either way. Unclassified = OPEN.
 
 ## Hydrated workflows: private save, registry merge, failure retention, required history (generated from source)
 

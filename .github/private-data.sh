@@ -250,6 +250,7 @@ at=%s
       gitp fetch -q origin 2>/dev/null && gitp reset -q --hard "origin/$BR" 2>/dev/null || { sleep "${SAVE_SLEEP:-5}"; continue; }
       [ -f "$DIR/data/strategy-library.json" ] || { say "Error: the private registry is missing: UNKNOWN; nothing merged (never a fresh registry)"; exit 1; }
       node "$ROOT/library-merge.mjs" "$BASE" "$RUNF" "$DIR/data/strategy-library.json" | sed 's/^/private data: /' || exit 1
+      { runlog_tail "$DIR/data/$RUNLOG_NAME" && gitp add -- "data/$RUNLOG_NAME"; } 2>/dev/null   # the PARTIAL run-log tail travels with the registry merge
       gitp add -- data/strategy-library.json && { gitp diff --cached --quiet || gitp commit -qm "registry merge $(date -u +%FT%RZ)"; } || exit 1
       if gitp push -q origin "HEAD:$BR" 2>/dev/null; then
         gitp fetch -q origin 2>/dev/null && [ "$(gitp rev-parse HEAD)" = "$(gitp rev-parse "origin/$BR")" ] || { say "Error: registry merge not verified on the private repository"; exit 1; }

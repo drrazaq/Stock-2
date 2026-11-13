@@ -93,7 +93,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 300 run.log | cut -c1-2000 > data/squad22-run.log 2>/dev/null || true
-          FILES="data/squad22-lab.json data/squad22-paper.jsonl data/squad22-today.json data/squad22-board.json data/squad22-diag.json data/squad22-run.log"
+          FILES="data/squad22-lab.json data/squad22-paper.jsonl data/squad22-today.json data/squad22-board.json data/squad22-diag.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"

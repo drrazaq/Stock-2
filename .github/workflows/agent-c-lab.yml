@@ -97,7 +97,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 300 run.log | cut -c1-2000 > data/agent-c-run.log 2>/dev/null || true
-          FILES="data/agent-c-lab.json data/agent-c-diag.json data/agent-c-run.log data/house-ptr.json.gz"
+          FILES="data/agent-c-lab.json data/agent-c-diag.json data/house-ptr.json.gz"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"

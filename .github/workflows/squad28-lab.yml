@@ -105,7 +105,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 300 run.log | cut -c1-2000 > data/squad28-run.log 2>/dev/null || true
-          FILES="data/squad28-lab.json data/squad28-paper.jsonl data/squad28-today.json data/squad28-board.json data/squad28-links-forward.json data/squad28-run.log"
+          FILES="data/squad28-lab.json data/squad28-paper.jsonl data/squad28-today.json data/squad28-board.json data/squad28-links-forward.json"
           # the frozen links and the hand-check file are written by the LINKS mode only (never overwritten by a later run)
           if [ "$MODE" = "LINKS" ]; then FILES="$FILES data/squad28-links.json data/squad28-linkcheck.json data/squad28-links-progress.json"; fi
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"

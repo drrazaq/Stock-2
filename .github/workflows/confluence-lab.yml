@@ -111,7 +111,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           { [ -f signals.log ] && grep -E "^(running|wrote|ANOM-|DEC2-|Error|ANOMALY|DECODED)" signals.log | cut -c1-1500; tail -n 300 run.log 2>/dev/null | cut -c1-2000; } > data/confluence-run.log 2>/dev/null || true
-          FILES="data/confluence-lab.json data/confluence-paper.jsonl data/confluence-today.json data/confluence-board.json data/confluence-portfolio.json data/confluence-signals.json.gz data/confluence-run.log"
+          FILES="data/confluence-lab.json data/confluence-paper.jsonl data/confluence-today.json data/confluence-board.json data/confluence-portfolio.json data/confluence-signals.json.gz"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"

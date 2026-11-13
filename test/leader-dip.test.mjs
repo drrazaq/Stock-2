@@ -199,3 +199,17 @@ test('practice line shows the Alpaca paper total, wins and losses, labelled not 
   assert.match(t, /Closed 2: 1 won, 1 lost/);
   assert.match(t, /WGO \+10\.2%/);
 });
+
+test('private mode (Codex 6855218411): with the private danger-filing record unavailable the holding is ASSESSMENT UNKNOWN, never a clean HOLD; with it, the HOLD is unchanged', async () => {
+  const since = sessAgo(5), days = []; { let x = since; for (let k = 0; k < 6; x = new Date(Date.parse(x) + 864e5).toISOString().slice(0, 10)) if (S0.fn('isSession')(x)) { days.push(x); k++; } }
+  const bars = days.map((d) => ({ d, o: 50, h: 52, l: 49, c: 51 }));
+  const P = { entry: 50, since, boughtSession: since, kind: 'leader dip', src: 'leader dip', target: 60, ldHold: 126, own: true, stopWhy: 'no stop by design (tested without one)' };
+  for (const withRecord of [false, true]) {
+    const M = mkServer(null, bars); const B = await M.start();
+    const files = { 'data/halal.json': HAL, '.github/private-data-mode': '', ...(withRecord ? { 'data/squad29-lab.json': { holdings: { flags: [] } }, 'data/squad29-flags-today.json': { flags: [] } } : {}) };
+    const S = await loadScan({ files, env: { TD_BASE: B, FH_BASE: B, SEC_BASE: B } });
+    const r = await S.fn('holdingsText')(null, { AAA: { ...P } }, null, true); M.server.close();
+    if (!withRecord) { assert.equal(r.acts.hold.length, 0, 'no clean HOLD'); assert.match(r.acts.unknown.join('\n'), /^AAA: ASSESSMENT UNKNOWN: the private danger-filing record is unavailable/m); assert.equal(r.acts.sell.length, 0, 'no invented SELL'); }
+    else { assert.match(r.acts.hold.join('\n'), /^AAA[^:]*: HOLD, target 60\.00/); assert.doesNotMatch(r.acts.unknown.join('\n'), /danger-filing record/); }
+  }
+});

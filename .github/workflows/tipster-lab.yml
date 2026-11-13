@@ -86,7 +86,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 300 run.log | cut -c1-2000 > data/tipster-run.log 2>/dev/null || true
-          FILES="data/tipster-lab.json data/tipster-paper.jsonl data/tipster-today.json data/tipster-board.json data/tipster-run.log"
+          FILES="data/tipster-lab.json data/tipster-paper.jsonl data/tipster-today.json data/tipster-board.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"

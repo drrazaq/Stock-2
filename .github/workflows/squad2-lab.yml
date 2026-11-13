@@ -171,7 +171,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 300 run.log | cut -c1-2000 > data/squad2-run.log 2>/dev/null || true
-          FILES="data/squad2-lab.json data/squad2-trades.json.gz data/squad2-paper.jsonl data/squad2-today.json data/squad2-board.json data/squad2-run.log"
+          FILES="data/squad2-lab.json data/squad2-trades.json.gz data/squad2-paper.jsonl data/squad2-today.json data/squad2-board.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
@@ -228,7 +228,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 100 run.log | cut -c1-2000 > data/squad2-run.log 2>/dev/null || true
-          FILES="data/squad2-paper.jsonl data/squad2-today.json data/squad2-board.json data/squad2-run.log"
+          FILES="data/squad2-paper.jsonl data/squad2-today.json data/squad2-board.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           git reset -q --hard && git clean -fdq data && git pull -q --rebase
