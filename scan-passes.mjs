@@ -96,7 +96,6 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
     const priv = spawnSync(process.execPath, ['scan.mjs'], { cwd: privBox, env: { ...env, MODE: 'daily', SCAN_PASS: 'private', SCAN_FETCH_CACHE: cache, SCAN_FETCH_CACHE_MODE: 'replay', ...(pubAt ? { SCAN_GENERATED_AT: pubAt } : {}) }, encoding: 'utf8', maxBuffer: 256 << 20, timeout: timeoutMs, killSignal: 'SIGKILL' });
     const privOk = priv.status === 0 && !priv.signal;
     const sinkTmp = path.join(work, 'private-scan-stdout.log'); fs.writeFileSync(sinkTmp, (priv.stdout || '') + (priv.stderr || ''), { mode: 0o600 });
-    atomicInstall(sinkTmp, env.PRIVATE_SCAN_LOG || path.join(DATA, 'private-scan-stdout.log'));   // private sink, always (diagnostics even on failure)
 
     // ---- 3a. FIRST: private results to PRIVATE paths only (completed private pass only)
     if (privOk) {
@@ -108,10 +107,12 @@ export function runPasses({ env = process.env, log = (s) => process.stdout.write
         atomicInstall(src, dest);
       }
     }
+    // private sink after the private results (a sink failure must not lose them); a failure is reported and fails the run visibly
+    let sinkOk = true; try { atomicInstall(sinkTmp, env.PRIVATE_SCAN_LOG || path.join(DATA, 'private-scan-stdout.log')); } catch (e) { sinkOk = false; log('two-pass scan: Error: the private log could not be stored (' + e.code + '); private results were kept'); }
     log('two-pass scan: private pass ' + (privOk ? 'OK' : 'FAILED (exit ' + priv.status + (priv.signal ? ', ' + priv.signal : '') + '); owner files left as they were') + ' (its output is private)');
     // ---- 3b. LAST: validated public outputs to public names
     for (const r of publicOut) { if (isPrivate(r.split('/')[0])) continue; atomicInstall(path.join(pubBox, 'data', r), path.join(DATA, r)); }
-    return { publicStatus: pubOk ? 0 : (pub.status ?? 1), privateStatus: privOk ? 0 : (priv.status ?? 1), publicOut };
+    return { publicStatus: pubOk ? 0 : (pub.status ?? 1), privateStatus: privOk ? (sinkOk ? 0 : 4) : (priv.status ?? 1), publicOut };
   } finally { fs.rmSync(work, { recursive: true, force: true }); }
 }
 
