@@ -64,6 +64,7 @@ jobs:
             fm-cache/evr-min.json.gz
           key: evr-cache-${{ github.run_id }}
           restore-keys: evr-cache-
+      - run: bash .github/private-data.sh require strategy-library.json event-orb-retest-15d-paper.json catalyst-events.jsonl && cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"   # P0: a missing private registry is UNKNOWN, never a fresh one
       - name: Events from EDGAR (strict envelope) and matched controls
         run: node event-orb-retest-events.mjs 2>&1 | tee -a run.log
       - name: Bar requests (events, then controls)
@@ -109,12 +110,17 @@ jobs:
           # P0: the event universe is the owner's ok marks plus the watch universe minus the owner's fail marks, so every event, control,
           # request, coverage, paper and study file below is owner-derived: private route only; a failure fails the job visibly
           PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "event-orb-retest" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi
+          cp data/strategy-library.json "$RUNNER_TEMP/library-run.json" 2>/dev/null || true
+          # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
+          LF=0; if [ "${{ success() }}" != true ]; then cp "$RUNNER_TEMP/library-run.json" "data/private-failed-pass-$(date -u +%Y-%m-%dT%H-%M-%S-000Z)__strategy-library.json" 2>/dev/null && { PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "registry of a FAILED run (quarantine, not current)" || true; }; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
+          elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || LF=1
+          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
-          for f in data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "event ORB retest research $(date -u +%FT%RZ)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ]
+          [ "$LF" = 0 ] || exit 1   # P0: registry not stored privately (or a failed run): the job fails visibly
           [ "$PF" = 0 ] || exit 1
       # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
       - if: failure()

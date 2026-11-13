@@ -102,7 +102,7 @@ case "$MODE" in
     BAK="$STG.bak"; rm -rf "$BAK"; mkdir -p "$BAK" || { say "Error: cannot back up the owner files"; rm -rf "$STG"; exit 1; }
     for f in $FILES; do [ -f "$STG/$f" ] && [ -f "$ROOT/data/$f" ] && { mkdir -p "$(dirname "$BAK/$f")" && cp -p "$ROOT/data/$f" "$BAK/$f" || { say "Error: cannot back up the owner files; nothing installed"; rm -rf "$STG" "$BAK"; rm -f "$INCOMPLETE"; exit 1; }; }; done
     done_list=""; failed=0
-    for f in $FILES; do [ -f "$STG/$f" ] || continue; if mv -f "$STG/$f" "$ROOT/data/$f"; then done_list="$done_list $f"; else failed=1; break; fi; done
+    for f in $FILES; do [ -f "$STG/$f" ] || continue; if mkdir -p "$(dirname "$ROOT/data/$f")" && mv -f "$STG/$f" "$ROOT/data/$f"; then done_list="$done_list $f"; else failed=1; break; fi; done
     if [ "$failed" = 1 ]; then rb=0
       for f in $done_list; do if [ -f "$BAK/$f" ]; then cp -p "$BAK/$f" "$ROOT/data/$f" || rb=1; else rm -f "$ROOT/data/$f" || rb=1; fi; done
       if [ "$rb" = 0 ]; then rm -rf "$STG" "$BAK"; rm -f "$INCOMPLETE"; say "Error: an owner file could not be installed; every installed file was rolled back (nothing new is current)"
@@ -140,6 +140,29 @@ case "$MODE" in
       [ "$(gitp rev-parse "origin/$BR:data/$f" 2>/dev/null)" = "$(git hash-object "$ROOT/data/$f")" ] && continue
       case "$CONFLICT_MERGED" in *" $f "*) m=$((m+1)); say "$f was merged with a newer private copy (save-data.sh rule)";; *) say "Error: private file $f differs from this job's copy"; bad=1;; esac; done
     [ "$bad" = 0 ] || exit 1; rm -f "$PENDING"; say "private save verified: $n files ($m merged with a newer private copy)" ;;
+  require)   # require FILE...: research writers' REQUIRED HISTORY admission (Codex 6852935516). In private mode, after a successful pull, a
+    # missing private frozen record or registry is UNKNOWN, never a fresh empty first run: exit 1 so the producer does not run (and
+    # cannot reset trial accounting or erase a failed verdict). Protective bot/holding paths never call this.
+    [ -e "$ROOT/.github/private-data-mode" ] || { say "not in private mode: required history is the checkout's own"; exit 0; }
+    shift; miss=0; for f in "$@"; do [ -f "$ROOT/data/$f" ] || { say "Error: required history data/$f is missing privately: UNKNOWN, this producer does not run (never a fresh first run)"; miss=1; }; done
+    exit $miss ;;
+  merge-library)   # merge-library BASE RUN: apply ONLY this run's registry changes (library-merge.mjs) onto the NEWEST private registry and
+    # push; a rejected push re-fetches and re-merges (no last-writer-wins). Success = the private branch holds exactly the merged bytes.
+    BASE=${2:-}; RUNF=${3:-}; [ -f "$BASE" ] && [ -f "$RUNF" ] || { say "Error: merge-library needs the base and run copies; nothing merged"; exit 1; }
+    [ -d "$DIR/.git" ] || { say "Error: merge-library without a pulled private clone"; exit 1; }
+    bound || { say "Error: the private clone is not bound to the declared private repository; nothing merged"; exit 1; }
+    BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1
+    for i in 1 2 3 4 5; do
+      gitp fetch -q origin 2>/dev/null && gitp reset -q --hard "origin/$BR" 2>/dev/null || { sleep "${SAVE_SLEEP:-5}"; continue; }
+      [ -f "$DIR/data/strategy-library.json" ] || { say "Error: the private registry is missing: UNKNOWN; nothing merged (never a fresh registry)"; exit 1; }
+      node "$ROOT/library-merge.mjs" "$BASE" "$RUNF" "$DIR/data/strategy-library.json" | sed 's/^/private data: /' || exit 1
+      gitp add -- data/strategy-library.json && { gitp diff --cached --quiet || gitp commit -qm "registry merge $(date -u +%FT%RZ)"; } || exit 1
+      if gitp push -q origin "HEAD:$BR" 2>/dev/null; then
+        gitp fetch -q origin 2>/dev/null && [ "$(gitp rev-parse HEAD)" = "$(gitp rev-parse "origin/$BR")" ] || { say "Error: registry merge not verified on the private repository"; exit 1; }
+        cp "$DIR/data/strategy-library.json" "$ROOT/data/strategy-library.json" || { say "Error: merged registry stored privately but the local copy could not be refreshed"; exit 1; }
+        say "registry merged and stored privately (verified)"; exit 0; fi
+      sleep "${SAVE_SLEEP:-5}"; done
+    say "Error: registry merge NOT stored privately after 5 tries; this run's registry edits stay on this runner only"; exit 1 ;;
   latest)   # latest FILE OUT: the private repository's newest copy of one declared owner file, written to OUT (never printed).
     # exit 0 written, 2 absent in the private repository, 1 unreadable (the nightly treats it as UNKNOWN). Reads only; no local fallback.
     F=${2:-}; OUT=${3:-}; case " $(echo $FILES) " in *" $F "*) ;; *) say "Error: $F is not a declared private file"; exit 1 ;; esac; [ -n "$OUT" ] || exit 1
@@ -148,5 +171,5 @@ case "$MODE" in
     gitp fetch -q origin 2>/dev/null || exit 1; BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1
     gitp cat-file -e "origin/$BR:data/$F" 2>/dev/null || exit 2
     ( umask 077; gitp show "origin/$BR:data/$F" > "$OUT.tmp" 2>/dev/null ) && mv -f "$OUT.tmp" "$OUT" || { rm -f "$OUT.tmp"; exit 1; } ;;
-  *) echo "usage: private-data.sh check|mirror|pull|push|latest"; exit 2 ;;
+  *) echo "usage: private-data.sh check|mirror|pull|push|latest|require|merge-library"; exit 2 ;;
 esac

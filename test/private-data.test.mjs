@@ -94,5 +94,5 @@ test('every private file in the list exists today or is a ledger created later; 
   // P0 Route A producer split: an owner-derived output listed by its canonical name may appear only after its producer's first run
   const produced = (f) => fs.readdirSync(REPO).some(m => m.endsWith('.mjs') && fs.readFileSync(path.join(REPO, m), 'utf8').includes(f));
   for (const f of FILES) assert.ok(fs.existsSync(path.join(REPO, 'data', f)) || /ledger/.test(f) || f === 'signals-private.json' || produced(f), f);
-  assert.ok(!FILES.includes('signals.json') && !FILES.includes('strategy-library.json'));
+  assert.ok(!FILES.includes('signals.json'));   // the research registry IS private since 13 Nov (Codex 6852885259): complete, under its canonical name
 });

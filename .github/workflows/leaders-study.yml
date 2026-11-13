@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: 20
       # The library as it was when this run started: at the end only the entries THIS run changed are re-applied on top of the newest library.
-      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - run: bash .github/private-data.sh require strategy-library.json agent-a-lab.json && cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"   # P0: a missing private registry is UNKNOWN, never a fresh one
       # Two years of whole-market prices are kept in the Actions cache, not in the repository.
       - uses: actions/cache/restore@v4
         with:
@@ -490,11 +490,15 @@ jobs:
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
           git reset -q --hard && git clean -fdq data && git pull -q --rebase
           (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
-          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json 2>&1 | tee -a run.log || echo "Error: library merge failed; this run's library edits were not saved" | tee -a run.log
-          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
+          LF=0; if [ "${{ success() }}" != true ]; then cp "$RUNNER_TEMP/library-run.json" "data/private-failed-pass-$(date -u +%Y-%m-%dT%H-%M-%S-000Z)__strategy-library.json" 2>/dev/null && { PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "registry of a FAILED run (quarantine, not current)" || true; }; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
+          elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || LF=1
+          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
+          for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "leaders fair test $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the study result" | tee -a run.log; exit 1; }
+          [ "$LF" = 0 ] || exit 1   # P0: registry not stored privately (or a failed run): the job fails visibly
           [ "$PF" = 0 ] || exit 1
       # If anything above failed, tell the owner on Telegram straight away.
       # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine

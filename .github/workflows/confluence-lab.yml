@@ -32,10 +32,15 @@ jobs:
           ref: main
       - name: Privacy pre-push hook (P0, fail-closed if the hook is missing)
         run: test -x .github/hooks/pre-push && git config core.hooksPath .github/hooks
+      - name: Private owner files (P0; private mode only; fail-closed if they cannot be read)
+        if: hashFiles('.github/private-data-mode') != ''
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-      - run: cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"
+      - run: bash .github/private-data.sh require strategy-library.json && cp data/strategy-library.json "$RUNNER_TEMP/library-base.json"   # P0: a missing private registry is UNKNOWN, never a fresh one
       - uses: actions/cache/restore@v4
         with:
           path: study-cache
@@ -93,6 +98,8 @@ jobs:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
       - if: success() || failure()
         shell: bash
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
@@ -103,11 +110,15 @@ jobs:
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
           git reset -q --hard && git clean -fdq data && git pull -q --rebase
           (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
-          node library-merge.mjs "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" data/strategy-library.json || echo "Error: library merge failed"
-          for f in $FILES data/strategy-library.json; do [ -f "$f" ] && git add "$f"; done; true
+          # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
+          LF=0; if [ "${{ success() }}" != true ]; then cp "$RUNNER_TEMP/library-run.json" "data/private-failed-pass-$(date -u +%Y-%m-%dT%H-%M-%S-000Z)__strategy-library.json" 2>/dev/null && { PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "registry of a FAILED run (quarantine, not current)" || true; }; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
+          elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || LF=1
+          else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
+          for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "confluence lab $(date -u +%F)"
           ok=0; for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then ok=1; break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
           [ "$ok" = 1 ] || { echo "Error: could not save the confluence lab result"; exit 1; }
+          [ "$LF" = 0 ] || exit 1   # P0: registry not stored privately (or a failed run): the job fails visibly
       - if: success() || failure()
         uses: actions/upload-artifact@v4
         with:
