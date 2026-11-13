@@ -44,7 +44,7 @@ const normOut = (s) => s.replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z/g
 test('two-pass scan: public files and public stdout are invariant to every kind of private owner state', { timeout: 600000 }, async () => {
   const held = { entry: 30, stop: 25, src: 'try small', kind: 'manual', since: '2026-11-06', tryHold: 63 };
   const a = await world({});
-  const b = await world({ marks: { ZZP: { s: 'fail' }, ZZD: { s: 'ok' }, ZZQ: { s: 'ok' } }, positions: { ZZP: held, ZZR: { ...held }, ZZD: { ...held } }, extra: ['ZZQ', 'ZZD'],
+  const b = await world({ marks: { ZZP: { s: 'fail' }, ZZD: { s: 'ok' }, ZZQ: { s: 'ok' }, ZZR: { s: 'ok' } }, positions: { ZZP: held, ZZR: { entry: 30, stop: 25, src: 'manual', kind: 'manual', since: '2026-11-01', own: true }, ZZD: { ...held } }, extra: ['ZZQ', 'ZZD'],
     tips: [{ sym: 'ZZX', d: '2026-11-03', src: 'synthetic source', px: 10 }], settings: { quiet: false, focus: true },
     legacyModels: { ZZT: 'legacy private-derived entry', ZZP: 'legacy' }, privateCache: { 'private-models.json': { ZZT: 'private-only seed', ZZP: 'private-model' }, 'private-outcomes.json': { ZZT: [{ r: 1 }] }, 'private-lessons.json': { rules: { ZZT: {} } } } });
   try {
@@ -64,6 +64,13 @@ test('two-pass scan: public files and public stdout are invariant to every kind 
     assert.equal(priv.session, pub.session); assert.equal(priv.generatedAt, pub.generatedAt, 'private record pairs with the PUBLISHED signals.json');
     assert.ok(Object.keys(priv.posVerdict).length > 0, 'held positions get private exit verdicts');
     assert.equal(JSON.parse(b.files['private-signals.json']).generatedAt, pub.generatedAt, 'full private scan copy pairs too');
+    // private-view COMPLETENESS (Codex 6853042440): the full private copy holds every privately scanned row, not the public projection
+    const full = JSON.parse(b.files['private-signals.json']), fsyms = new Set(full.stocks.map(x => x.sym));
+    assert.ok(priv.posVerdict.ZZR, 'the private-only holding was evaluated');
+    for (const s of ['ZZR', 'ZZQ']) assert.ok(fsyms.has(s), 'private-signals.stocks has the privately scanned ' + s);
+    for (const x of pub.stocks) assert.ok(fsyms.has(x.sym), 'every public row is in the private view too: ' + x.sym);
+    assert.ok(full.scanned >= pub.scanned && full.tested >= pub.tested, 'private counts cover the full scan');
+    assert.equal(full.diagnosticScope, 'ALL_LOADED_NAMES'); assert.equal(pub.diagnosticScope, 'PUBLIC_BASE_LOADED_NAMES');
     assert.ok(b.files['private-scan-stdout.log'] !== undefined, 'private pass stdout goes to the private sink');
     assert.match(b.files['private-models.json'], /ZZT/, 'the private cache keeps its private-only entries (full state preserved privately)');
   } finally { for (const w of [a, b]) fs.rmSync(w.dir, { recursive: true, force: true }); }
