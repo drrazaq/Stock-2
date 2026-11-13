@@ -2546,7 +2546,7 @@ function ldipEntryWindow(d, gen, session, nowMs = Date.now()) {
   return { state: nowMs <= expiresMs ? 'IN_WINDOW' : 'EXPIRED', reason: nowMs <= expiresMs ? null : 'NEXT_OPEN_ENTRY_EXPIRED', entryDay, expiresAt: new Date(expiresMs).toISOString() };
 }
 function ldipFresh(d, gen, session) { return ldipEntryWindow(d, gen, session).state === 'IN_WINDOW'; }
-function ldipLines(pos, lastPx, exclude, session) {
+function ldipLines(pos, lastPx, exclude, session, logOnly) {
   const T = readJson0('data/squad11-today.json'), M = T && T.methods && T.methods[LDIP_RULE];
   if (!M || !Array.isArray(M.newSignals) || !(Date.now() - Date.parse(T.generatedAt || 0) <= 10 * 864e5)) return [];
   const sd = T.lastClose || null, raw = M.newSignals.filter(p => p && p.sym), sigDay = (p) => sd && p.d && p.d !== sd ? 'INCONSISTENT' : (sd || p.d), picks = raw.filter(p => ldipFresh(sigDay(p), T.generatedAt, session));
@@ -2566,7 +2566,7 @@ function ldipLines(pos, lastPx, exclude, session) {
     const px = (lastPx && lastPx[p.sym] > 0) ? lastPx[p.sym] : (p.close > 0 ? p.close : null); buys.push({ sym: p.sym, px }); }
   if (!buys.length && !mark.length && !full.length) return [];
   const exitDay = ldipExitDay(sessionPlus(sd || session || ny(Date.now()).d, 1)), real = LDIP_REAL();
-  for (const b of buys) ldipOfferLog(b.sym, b.px, sd || session, real);
+  for (const b of buys) if (!logOnly || logOnly.has(b.sym)) ldipOfferLog(b.sym, b.px, sd || session, real);
   const out = [];
   if (!real) { out.push('LEADER DIP: PAPER ONLY (switched off with settings.leaderDip = false; not a buy. These picks are recorded to build the live paper record):');
     for (const b of buys) out.push('- PAPER ' + b.sym + (b.px ? ' at about ' + money(b.px) + ', sell limit ' + money(b.px * (1 + LDIP_TGT)) : ', sell limit +20%') + ', or sell after ' + LDIP_HOLD + ' sessions (about ' + exitDay + '). Rule leader dip (' + LDIP_RULE + ').'); }
@@ -2576,6 +2576,12 @@ function ldipLines(pos, lastPx, exclude, session) {
   if (mark.length) out.push('MARK HALAL FIRST (leader dip picks, no ZAD mark of yours yet: not a buy until you mark them): ' + mark.slice(0, 6).join(', ') + srcNote + '. Check ZAD, then send one of:\n' + halalAsk(mark.slice(0, 6)));
   return out;
 }
+// F2 (13 Nov 2026): a ZAD 'yes' mark recorded while that stock's LEADER DIP signal is still inside its next-open window returns the
+// same gated BUY card ACTIONS would show now (same slots, brake, danger and window checks; nothing new is decided here). Only the
+// newly marked stocks are logged as offers. Outside the window, or with no slot, nothing is added: no late entries.
+function ldipMarkedCards(syms, pos, session) { try { const want = new Set(syms), ld = ldipLines(pos, {}, [], session, want), out = [];
+  for (const s of syms) { const l = ld.find(x => x.startsWith('- BUY ' + s + ' ')); if (l) out.push('NOW A PERMITTED BUY (LEADER DIP; your ZAD mark is recorded; entry at the next open only):\n' + l); }
+  return out.join('\n'); } catch (e) { return ''; } }
 // the two LEADER DIP exits at a daily close: a day's HIGH at or above the +20% target since the buy, and the time exit
 function ldipCloseFlags(P, c) { const since = P.boughtSession || P.since, held = c.filter(k => k.d > since).length, fl = [], i = c.length - 1, h = P.ldHold || LDIP_HOLD; if (i < 0) return { held, fl };
   if (P.target > 0 && c.some(k => k.d >= since && k.h >= P.target)) fl.push('TARGET +20% REACHED: if your sell limit did not fill, SELL at the next open (target ' + money(P.target) + ').');
@@ -3327,10 +3333,12 @@ async function tgCommands(sig) {
         out.push(await opinionReply(text, sig, src || known || null)); continue; } }
     { const h1 = text.match(/^(?:halal|zad)\s+([a-z.\-]{1,6})\s+(yes|ok|halal|pass|no|not(?:\s+halal)?|fail|haram)\s*$/i), h2 = text.match(/^([a-z.\-]{1,6})\s+(?:is\s+)?(not\s+halal|haram|halal)(?:\s+(?:in|on)\s+zad)?\s*$/i), h3 = text.match(/^(?:not\s+halal|haram)\s+([a-z.\-]{1,6})\s*$/i);
       if (!h1 && !h2 && !h3) { const hb = halalBatch(text); if (hb.length >= 2) { const mk = HALALM(), d = ny(Date.now()).d; for (const [sym, bad] of hb) mk[sym] = { s: bad ? 'fail' : 'ok', d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
-        out.push('Recorded ' + hb.length + ' ZAD marks.\nHALAL: ' + (hb.filter(x => !x[1]).map(x => x[0]).join(', ') || 'none') + '\nNOT HALAL: ' + (hb.filter(x => x[1]).map(x => x[0]).join(', ') || 'none') + '\nTo change one, send it again with the other answer, for example:  halal ' + hb[0][0] + (hb[0][1] ? ' yes' : ' no')); continue; } }
+        out.push('Recorded ' + hb.length + ' ZAD marks.\nHALAL: ' + (hb.filter(x => !x[1]).map(x => x[0]).join(', ') || 'none') + '\nNOT HALAL: ' + (hb.filter(x => x[1]).map(x => x[0]).join(', ') || 'none') + '\nTo change one, send it again with the other answer, for example:  halal ' + hb[0][0] + (hb[0][1] ? ' yes' : ' no'));
+        { const card = ldipMarkedCards(hb.filter(x => !x[1]).map(x => x[0]), pos, sig && sig.session); if (card) out.push(card); } continue; } }
       const hm = h1 ? [h1[1], !/^(yes|ok|halal|pass)$/i.test(h1[2])] : h2 ? [h2[1], !/^halal$/i.test(h2[2])] : h3 ? [h3[1], true] : null;
       if (hm) { const sym = hm[0].toUpperCase(), mk = HALALM(); mk[sym] = { s: hm[1] ? 'fail' : 'ok', d: ny(Date.now()).d, by: 'ZAD (you)' }; fs.writeFileSync(HALAL_FILE, JSON.stringify(mk, null, 1));
-        out.push(sym + (hm[1] ? ': marked NOT HALAL (ZAD). I will not offer it as a buy anywhere: plan, BUY NOW, radar or checks.' + (pos[sym] ? ' You hold it: decide yourself whether to sell.' : '') : ': marked HALAL (checked in ZAD). Thank you.') + ' To change it: halal ' + sym + (hm[1] ? ' yes' : ' no')); continue; } }
+        out.push(sym + (hm[1] ? ': marked NOT HALAL (ZAD). I will not offer it as a buy anywhere: plan, BUY NOW, radar or checks.' + (pos[sym] ? ' You hold it: decide yourself whether to sell.' : '') : ': marked HALAL (checked in ZAD). Thank you.') + ' To change it: halal ' + sym + (hm[1] ? ' yes' : ' no'));
+        if (!hm[1]) { const card = ldipMarkedCards([sym], pos, sig && sig.session); if (card) out.push(card); } continue; } }
     if (/^traders?\s*$/i.test(text)) { out.push(tradersText()); continue; }
     if (!(m.forward_origin || m.forward_from_chat)) { const nl = await natural(text, sig, pos); if (nl) { out.push(nl); continue; } }   // a forwarded message is someone else's words: treat it as a tip, not as your question
     if (/^(sources?|tips?)\s*$/i.test(text)) { out.push(tipBoard(sig)); continue; }
