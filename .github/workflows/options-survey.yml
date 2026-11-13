@@ -25,6 +25,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Producer admission (P0; private mode only; needs this job's hydration receipt)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-outputs.sh admit
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -41,6 +44,7 @@ jobs:
         run: |
           # P0: the survey universe is the owner's ok marks: owner-derived outputs go ONLY to the private route; a failure fails the job visibly
           PF=0; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "options-survey" || PF=1   # explicit outcome: verified private save, or NOT DURABLE (never a silent green)
+          [ "$PF" != 1 ] || { echo "P0: owner-derived outputs NOT confirmed privately: stopping BEFORE any reset/clean (the failure step keeps them as quarantine)"; exit 1; }
           [ "$PF" = 0 ] || exit 1
       # P0: the producer FAILED after a successful private pull: its changed owner-derived outputs are kept as private quarantine
       - if: failure()

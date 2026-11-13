@@ -35,6 +35,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Producer admission (P0; private mode only; needs this job's hydration receipt)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-outputs.sh admit
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -100,8 +103,8 @@ jobs:
           git reset -q --hard && git clean -fdq data && git pull -q --rebase
           (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
           # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
-          LF=0; if [ "${{ success() }}" != true ]; then cp "$RUNNER_TEMP/library-run.json" "data/private-failed-pass-$(date -u +%Y-%m-%dT%H-%M-%S-000Z)__strategy-library.json" 2>/dev/null && { PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "registry of a FAILED run (quarantine, not current)" || true; }; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
-          elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || LF=1
+          LF=0; if [ "${{ success() }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
+          elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || { LF=1; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry merge NOT stored (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; }
           else echo "::warning::research registry: NOT published and NOT durable (not in private mode)"; fi
           for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "squad 14 lab $(date -u +%F)"

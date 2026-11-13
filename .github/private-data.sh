@@ -120,7 +120,38 @@ case "$MODE" in
     rm -rf "$STG"
     # a stale optional copy that stays at its current name must never be consumed: the install stays INCOMPLETE and the pull fails
     [ "$aside_failed" = 0 ] || { say "Error: pull incomplete (a stale optional owner file is still in place); stopping"; exit 1; }
-    rm -f "$INCOMPLETE"; say "pulled $k files" ;;
+    rm -f "$INCOMPLETE"
+    # IMMUTABLE hydration receipt (Codex 6853280425): a read-only snapshot of every private file exactly as this pull installed it, plus the
+    # bound origin's commit. Failure-path retention compares against THIS, never the mutable clone (which a later push's copy changes).
+    # Without a complete receipt the pull fails, so no later step can treat this job as hydrated.
+    if [ -n "${PRIVATE_BASELINE_DIR:-${RUNNER_TEMP:-}}" ]; then BL=${PRIVATE_BASELINE_DIR:-$RUNNER_TEMP/private-baseline}
+      { chmod -R u+w "$BL" 2>/dev/null; rm -rf "$BL"; } && mkdir -p "$BL/data" || { say "Error: cannot record the hydration receipt; stopping"; exit 1; }
+      for f in $FILES $(cd "$ROOT/data" 2>/dev/null && ls -1 private-* 2>/dev/null); do [ -f "$ROOT/data/$f" ] || continue
+        mkdir -p "$(dirname "$BL/data/$f")" && cp -p "$ROOT/data/$f" "$BL/data/$f" || { say "Error: cannot record the hydration receipt; stopping"; exit 1; }; done
+      printf 'commit=%s
+files=%s
+at=%s
+' "$(gitp rev-parse HEAD 2>/dev/null)" "$k" "$(date -u +%FT%TZ)" > "$BL/RECEIPT" && chmod -R a-w "$BL" || { say "Error: cannot record the hydration receipt; stopping"; exit 1; }; fi
+    say "pulled $k files" ;;
+  push-quarantine)   # push-quarantine: store ONLY new data/private-failed-pass-* files from this runner. Plumbing on a private temporary index
+    # over the fetched private branch: no canonical file (owner files, outputs, registry) is ever copied, staged or changed, and the clone's
+    # work tree is not touched. A rejected push re-fetches and retries. Verified by reading each quarantine blob back from the remote.
+    [ -d "$DIR/.git" ] || { say "Error: quarantine without a pulled private clone; nothing stored"; exit 1; }
+    bound || { say "Error: the private clone is not bound to the declared private repository; nothing stored"; exit 1; }
+    Q=$(cd "$ROOT/data" 2>/dev/null && ls -1 | grep -E '^private-failed-pass-' ); [ -n "$Q" ] || { say "no quarantine to store"; exit 1; }
+    BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1; IDX="$DIR.qindex.$$"
+    for i in 1 2 3 4 5; do rm -f "$IDX"
+      gitp fetch -q origin 2>/dev/null || { sleep "${SAVE_SLEEP:-5}"; continue; }
+      TIP=$(gitp rev-parse "origin/$BR" 2>/dev/null) || exit 1; GIT_INDEX_FILE="$IDX" gitp read-tree "$TIP" || exit 1; add=0
+      for f in $Q; do gitp cat-file -e "$TIP:data/$f" 2>/dev/null && continue   # already stored: a quarantine name is never overwritten
+        h=$(git -C "$DIR" hash-object -w "$ROOT/data/$f") && GIT_INDEX_FILE="$IDX" gitp update-index --add --cacheinfo "100644,$h,data/$f" || { rm -f "$IDX"; exit 1; }; add=$((add+1)); done
+      [ "$add" -gt 0 ] || { rm -f "$IDX"; say "quarantine already stored"; exit 0; }
+      T=$(GIT_INDEX_FILE="$IDX" gitp write-tree) && C=$(gitp commit-tree "$T" -p "$TIP" -m "quarantine $(date -u +%FT%RZ)") || { rm -f "$IDX"; exit 1; }
+      if gitp push -q origin "$C:refs/heads/$BR" 2>/dev/null; then rm -f "$IDX"; gitp fetch -q origin 2>/dev/null || exit 1; bad=0
+        for f in $Q; do [ "$(gitp rev-parse "origin/$BR:data/$f" 2>/dev/null)" = "$(git hash-object "$ROOT/data/$f")" ] || { say "Error: quarantine $f not confirmed"; bad=1; }; done
+        [ "$bad" = 0 ] && say "quarantine stored privately (verified; no canonical file changed)"; exit $bad; fi
+      sleep "${SAVE_SLEEP:-5}"; done
+    rm -f "$IDX"; say "Error: quarantine NOT stored privately after 5 tries; it stays on this runner only"; exit 1 ;;
   push)
     date -u +%FT%TZ > "$PENDING" || { say "Error: cannot record the pending owner update"; exit 1; }   # first: any later failure keeps it
     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }
@@ -174,5 +205,5 @@ case "$MODE" in
     gitp fetch -q origin 2>/dev/null || exit 1; BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null) || exit 1
     gitp cat-file -e "origin/$BR:data/$F" 2>/dev/null || exit 2
     ( umask 077; gitp show "origin/$BR:data/$F" > "$OUT.tmp" 2>/dev/null ) && mv -f "$OUT.tmp" "$OUT" || { rm -f "$OUT.tmp"; exit 1; } ;;
-  *) echo "usage: private-data.sh check|mirror|pull|push|latest|require|merge-library"; exit 2 ;;
+  *) echo "usage: private-data.sh check|mirror|pull|push|push-quarantine|latest|require|merge-library"; exit 2 ;;
 esac

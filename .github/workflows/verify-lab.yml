@@ -28,6 +28,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Producer admission (P0; private mode only; needs this job's hydration receipt)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-outputs.sh admit
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -61,7 +64,8 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
-          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "verify lab (computed from private ledgers)" || PF=1; else echo "producer failed: owner-derived outputs are NOT saved as current (the failure step keeps them as private quarantine)"; fi   # P0 class B
+          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "verify lab (computed from private ledgers)" || PF=1; else PF=2; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-failed "verify lab (computed from private ledgers)" verify-lab.json || true; fi   # P0: a failed run is retained privately BEFORE any reset/clean   # P0 class B
+          [ "$PF" != 1 ] || { echo "P0: owner-derived outputs NOT confirmed privately: stopping BEFORE any reset/clean (the failure step keeps them as quarantine)"; exit 1; }
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           [ -f data/verify-lab.json ] || { echo "Error: no verify result"; exit 1; }

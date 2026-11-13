@@ -22,6 +22,9 @@ jobs:
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"   # the marker gates every later private push
+      - name: Producer admission (P0; private mode only; needs this job's hydration receipt)
+        if: hashFiles('.github/private-data-mode') != ''
+        run: bash .github/private-outputs.sh admit
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -40,6 +43,7 @@ jobs:
           git config user.email "scanner@users.noreply.github.com"
           # P0: news-log / news-meta / news-seen are owner-derived (holdings and private buy list): private route only, never committed here
           PF=0; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "news" || PF=1   # explicit outcome: verified private save, or NOT DURABLE (never a silent green)
+          [ "$PF" != 1 ] || { echo "P0: owner-derived outputs NOT confirmed privately: stopping BEFORE any reset/clean (the failure step keeps them as quarantine)"; exit 1; }
           for f in data/macro-state.json data/macro-log.jsonl; do [ -f "$f" ] && git add "$f"; done; true
           git diff --cached --quiet || git commit -m "news $(date -u +%FT%RZ)"
           for i in 1 2 3 4 5; do if git pull --rebase -X theirs && git push; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
