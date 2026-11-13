@@ -1,7 +1,7 @@
 import {startPrivateQuoteRetention} from './private-quote-retention.mjs';
 import { deliver, ownerQuietOff } from './notify-route.mjs';
 import {watcherAdmission} from './watcher-schedule.mjs';
-import {publishWatcherReservation} from './watcher-message-publish.mjs';
+import {reservationPersist} from './watcher-reservation-route.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
 import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
 import {execFileSync} from 'node:child_process';
@@ -53,7 +53,7 @@ const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-pa
 const ADMISSION=watcherAdmission({eventName:env.GITHUB_EVENT_NAME,schedule:env.IG_SCHEDULE,day,minute:clock(),earliestMinute:FAST&&env.IG_FAKE_MIN?0:550});
 console.log('watcher admission: '+ADMISSION.reason+' '+JSON.stringify(ADMISSION));
 if(!ADMISSION.run)process.exit(0);
-const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
+const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?reservationPersist():undefined});   // P0: private reservations once private mode is live (custody-admitted only; no public fallback)
 if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExclusive:901})){MESSAGE_STATE.maintain();const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(dir+'/'+INCIDENT_RUN_ID+'-delivery-recovery.json',JSON.stringify({day,runId:INCIDENT_RUN_ID,messageDelivery:MESSAGE_STATE.report()}),{flag:'wx'});console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
 if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
 if (!env.IG_FAKE_MIN && clock() >= 520 && clock() < 565) { console.log('ignition watcher: early start at ' + fmtM(clock()) + ' New York, waiting for 9:25'); while (clock() < 565) await new Promise(r => setTimeout(r, 20000)); }   // started early on purpose: GitHub often starts scheduled jobs 15-30 minutes late

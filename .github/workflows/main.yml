@@ -34,6 +34,11 @@ jobs:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
         run: |
           if [ -e .github/private-data-mode ]; then bash .github/private-data.sh pull && touch "$RUNNER_TEMP/private-pulled-ok"; else echo "private data: not in private mode"; fi
+      - name: Watcher reservation custody (P0; private mode only; NOT ADMITTED keeps private reservations closed, never a public fallback)
+        if: hashFiles('.github/private-data-mode') != ''
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+        run: node watcher-custody.mjs admit || [ $? = 3 ]
       # The nightly scan runs as two isolated passes (scan-passes.mjs): only the public pass's output and stdout are public; the private
       # pass's output stays private (data/private-*, owner files, data/private-scan-stdout.log). The intraday checks keep the single pass.
       - shell: bash .github/private-shell.sh pipefail {0}

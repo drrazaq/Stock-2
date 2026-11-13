@@ -38,6 +38,11 @@ jobs:
       - name: Producer admission (P0; private mode only; needs this job's hydration receipt)
         if: hashFiles('.github/private-data-mode') != ''
         run: bash .github/private-outputs.sh admit
+      - name: Watcher reservation custody (P0; private mode only; NOT ADMITTED keeps private reservations closed, never a public fallback)
+        if: hashFiles('.github/private-data-mode') != ''
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: node watcher-custody.mjs admit || [ $? = 3 ]
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -66,6 +71,7 @@ jobs:
           ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
           ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}   # (28 Oct) catalyst headlines for early-alert candidates only
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}   # P0: private reservation publication (private mode, custody-admitted only)
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}

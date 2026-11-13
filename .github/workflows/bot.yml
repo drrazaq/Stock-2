@@ -64,6 +64,8 @@ jobs:
             if [ -e .github/private-data-mode ]; then pr=0; bash .github/private-data.sh pull >> run.log 2>&1 || pr=$?
               if [ "$pr" = 3 ]; then export OWNER_MUTATIONS_PAUSED=1; echo "owner commands paused: an earlier owner update is not yet stored privately" | tee -a run.log
               elif [ "$pr" != 0 ]; then echo "Error: private owner files unavailable; cycle skipped" | tee -a run.log; sleep 30; continue; fi; fi
+            # P0: watcher reservation custody after every pull (private mode): readers see the private namespace only when ADMITTED
+            if [ -e .github/private-data-mode ]; then node watcher-custody.mjs admit >> run.log 2>&1 || true; fi
             now=$(date +%s)
             if [ $((now - last_full)) -ge 300 ]; then
               # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages
