@@ -33,19 +33,22 @@ jobs:
         run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
+          # P0 Route A (development, not installed): the bot's save goes through the shared public-save privacy floor
+          # (.github/save-data.sh: owner files never published; alert-state merge; owner-file conflict rules). In private mode the
+          # owner files are first saved to the PRIVATE repository; only that verified save sets PRIVATE_SAVE_OK, otherwise the public
+          # save fails visibly (exit 3) instead of acking an owner update as durable.
           save() {
-            git add data
-            git diff --cached --quiet && return 0
-            git commit -q -m "bot $(date -u +%FT%RZ)"
-            for i in 1 2 3 4 5; do if git pull -q --rebase -X theirs && node .github/merge-alert-state.mjs && { [ ! -f data/alert-state.json ] || { git add -- data/alert-state.json && { git diff --cached --quiet || git commit -q -m "preserve scanner alert evidence"; }; }; } && git push -q; then return 0; fi; git rebase --abort 2>/dev/null || true; sleep 5; done
-            echo "Error: could not save the data folder to the repository" | tee -a run.log
+            PRIVATE_SAVE_OK=
+            if [ -e .github/private-data-mode ] && bash .github/private-data.sh push >> run.log 2>&1; then PRIVATE_SAVE_OK=1; fi
+            PRIVATE_SAVE_OK=$PRIVATE_SAVE_OK SAVE_SLEEP=5 bash .github/save-data.sh "bot $(date -u +%FT%RZ)" >> run.log 2>&1 || echo "Error: save step failed (exit $?)" | tee -a run.log
           }
-          # privacy migration stage 1 (28 Oct): keep a copy of the owner's private files in the private repository. Does nothing
-          # without the PRIVATE_DATA_TOKEN secret or before the connection check passed; never stops the bot.
-          mirror() { bash .github/private-data.sh mirror >> run.log 2>&1 || true; }
+          # privacy migration stage 1 (28 Oct): mirror the owner's files to the private repository; only before the cutover.
+          mirror() { [ -e .github/private-data-mode ] || bash .github/private-data.sh mirror >> run.log 2>&1 || true; }
           end=$(( $(date +%s) + 330*60 )); last_full=0; : > run.log
           while [ "$(date +%s)" -lt "$end" ]; do
-            git pull -q --rebase -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
+            git pull -q --rebase --autostash -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
+            # after the cutover the owner's files come only from the private repository; unreadable = skip this cycle, never run without them
+            if [ -e .github/private-data-mode ] && ! bash .github/private-data.sh pull >> run.log 2>&1; then echo "Error: private owner files unavailable; cycle skipped" | tee -a run.log; sleep 30; continue; fi
             now=$(date +%s)
             if [ $((now - last_full)) -ge 300 ]; then
               # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages

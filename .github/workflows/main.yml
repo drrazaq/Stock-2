@@ -20,10 +20,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      # P0 Route A (development, not installed): after the private-data cutover the owner's files come ONLY from the private repository.
+      # private-data.sh pull fails closed (exit 1) when it cannot read them, so no job runs on missing holdings or marks.
+      - name: Private owner files
+        shell: bash
+        env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_READ || secrets.PRIVATE_DATA_TOKEN }}
+        run: |
+          if [ -e .github/private-data-mode ]; then bash .github/private-data.sh pull; else echo "private data: not in private mode"; fi
+      # The nightly scan runs as two isolated passes (scan-passes.mjs): only the public pass's output and stdout are public; the private
+      # pass's output stays private (data/private-*, owner files, data/private-scan-stdout.log). The intraday checks keep the single pass.
       - shell: bash
         run: |
           set -o pipefail
-          node scan.mjs 2>&1 | tee run.log
+          if [ "$MODE" = daily ]; then node scan-passes.mjs 2>&1 | tee run.log; else node scan.mjs 2>&1 | tee run.log; fi
         env:
           NODE_OPTIONS: --max-old-space-size=12288
           MODE: ${{ github.event.schedule == '10,40 13-20 * * 1-5' && 'intraday' || 'daily' }}
@@ -43,16 +53,23 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
           RATE: ${{ vars.RATE || '8' }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
-      - run: |
+      - env:
+          PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
+        run: |
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           # review S-1 (22 Oct): on a conflict the owner's positions, trades and bot state keep origin's copy (the bot's), every other
           # file keeps this run's copy as before; see .github/save-data.sh and test/save-data.test.mjs
           set -o pipefail
-          bash .github/save-data.sh "scan $(date -u +%FT%RZ)" 2>&1 | tee -a run.log
+          # P0 Route A: owner files are saved to the PRIVATE repository first; only a verified private save lets the public save report
+          # success (PRIVATE_SAVE_OK=1). The public save never publishes owner files and fails visibly (exit 3) if they were not persisted.
+          PRIVATE_SAVE_OK=
+          if [ -e .github/private-data-mode ] && PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh push; then PRIVATE_SAVE_OK=1; fi
+          PRIVATE_SAVE_OK=$PRIVATE_SAVE_OK bash .github/save-data.sh "scan $(date -u +%FT%RZ)" 2>&1 | tee -a run.log
       # privacy migration stage 1 (28 Oct): copy the owner's private files to the private repository (mirror only; production still
       # reads this repository). Does nothing without PRIVATE_DATA_TOKEN or before the connection check; never fails the scan.
       - continue-on-error: true
+        if: ${{ hashFiles('.github/private-data-mode') == '' }}
         env:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: bash .github/private-data.sh mirror || true
