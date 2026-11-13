@@ -75,6 +75,16 @@ case "$MODE" in
     k=0; for f in $FILES; do [ -f "$DIR/data/$f" ] && cp "$DIR/data/$f" "$ROOT/data/$f" && k=$((k+1)); done; say "pulled $k files" ;;
   push)
     [ -d "$DIR/.git" ] || { say "Error: push without pull"; exit 1; }
-    copy_in; ( cd "$DIR" && SAVE_PRIVATE_REPO=1 SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "bot $(date -u +%FT%RZ)" ) | sed 's/^/private data: /' ;;
+    copy_in; ( cd "$DIR" && SAVE_PRIVATE_REPO=1 SAVE_PRIVATE_EXPECTED_ORIGIN="$URL" SAVE_SLEEP=${SAVE_SLEEP:-5} bash "$ROOT/.github/save-data.sh" "bot $(date -u +%FT%RZ)" ) | sed 's/^/private data: /'
+    # P0 Route A: success only when the save landed: the private repository's branch, read back from the remote, equals the commit this
+    # save made, and EVERY declared private file present in this job is committed there (after the save-data.sh conflict rules, e.g. a
+    # newer bot copy of the positions wins). The caller sets PRIVATE_SAVE_OK=1 only on this exit 0.
+    gitp fetch -q origin 2>/dev/null || { say "Error: private save not verified (cannot read the private repository back)"; exit 1; }
+    BR=$(gitp rev-parse --abbrev-ref HEAD 2>/dev/null); bad=0; n=0
+    [ -z "$(gitp status --porcelain -- data 2>/dev/null)" ] || { say "Error: private save left uncommitted owner files"; bad=1; }
+    [ "$(gitp rev-parse HEAD 2>/dev/null)" = "$(gitp rev-parse "origin/$BR" 2>/dev/null)" ] || { say "Error: private save not on the private repository"; bad=1; }
+    for f in $FILES; do [ -f "$ROOT/data/$f" ] || continue; n=$((n+1))
+      gitp cat-file -e "origin/$BR:data/$f" 2>/dev/null || { say "Error: private file $f not confirmed on the private repository"; bad=1; }; done
+    [ "$bad" = 0 ] || exit 1; say "private save verified: $n files" ;;
   *) echo "usage: private-data.sh check|mirror|pull|push"; exit 2 ;;
 esac

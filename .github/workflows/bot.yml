@@ -40,7 +40,11 @@ jobs:
           save() {
             PRIVATE_SAVE_OK=
             if [ -e .github/private-data-mode ] && bash .github/private-data.sh push >> run.log 2>&1; then PRIVATE_SAVE_OK=1; fi
-            PRIVATE_SAVE_OK=$PRIVATE_SAVE_OK SAVE_SLEEP=5 bash .github/save-data.sh "bot $(date -u +%FT%RZ)" >> run.log 2>&1 || echo "Error: save step failed (exit $?)" | tee -a run.log
+            if PRIVATE_SAVE_OK=$PRIVATE_SAVE_OK SAVE_SLEEP=5 bash .github/save-data.sh "bot $(date -u +%FT%RZ)" >> run.log 2>&1; then SAVE_WARNED=; return 0; fi
+            echo "Error: save step failed" | tee -a run.log
+            # one owner warning per failure streak (no repeats every cycle); the update stays on this runner and is retried next cycle
+            if [ -z "${SAVE_WARNED:-}" ] && [ -e .github/private-data-mode ]; then SAVE_WARNED=1
+              curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=SAVE FAILED: your last recorded update is kept on the running bot but is NOT yet stored privately. It will be retried automatically; do not repeat the command. Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true; fi
           }
           # privacy migration stage 1 (28 Oct): mirror the owner's files to the private repository; only before the cutover.
           mirror() { [ -e .github/private-data-mode ] || bash .github/private-data.sh mirror >> run.log 2>&1 || true; }

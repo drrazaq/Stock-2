@@ -3537,7 +3537,13 @@ function waysText() { return ['YOUR WAYS TO TRADE (each one separate; you place 
   'a) THE BASKET (core): every month 65% of ~1,000 USD in ZAD Basket 2 = SPUS 54% / gold fund IAUM 46%, and 35% kept as cash; Basket 1 = the halal top 10 (whole-number %) is bought with that cash 3 times a year (first trading day of Jan, May, Sep) to keep ZAD fees low. Send  basket  (buy day:  basket buy AMOUNT )',
   'b) TRY SMALL: ' + usd0(TRY_USD) + ' USD buys from rules that made money in both test halves but did not pass the luck test; max ' + TRY_MAX + ' open, own stop and time exit. They appear in  actions',
   'c) OPTIONS PAPER LANE: long calls paper research only; no new options entry advice. Send  options lab'].join('\n'); }
+// P0 Route A (development): after the private-data cutover an owner update is durable only once the private repository save is verified
+// (the bot's save step, after this process). A reply to a command that changed an owner file therefore says it is recorded HERE and that
+// private storage is confirmed separately; a failure sends one SAVE FAILED warning (bot.yml). Nothing is replayed; the owner never repeats it.
+function ownerFilesDigest() { try { return fs.readFileSync('.github/private-files.txt', 'utf8').split('\n').map(l => l.trim()).filter(l => l && !l.startsWith('#')).map(f => { try { return f + ':' + crypto.createHash('sha256').update(fs.readFileSync('data/' + f)).digest('hex'); } catch { return f + ':none'; } }).join('|'); } catch { return ''; } }
+const OWNER_SAVE_NOTE = 'Recorded on this run. Private storage is confirmed separately: if it fails you get one SAVE FAILED message. Do not repeat the command.';
 async function tgCommands(sig) {
+  const ownerBefore = fs.existsSync('.github/private-data-mode') ? ownerFilesDigest() : null;
   if (env.GITHUB_WORKFLOW && env.GITHUB_WORKFLOW !== 'Telegram bot replies') return;   // one reader of Telegram messages (audit 22 Oct): the bot workflow
   if (!env.TG_TOKEN || !env.TG_CHAT) return;
   const state = readJson('data/tg-state.json', { offset: 0 }), pos = loadPos(), out = [], ldCards = [];
@@ -3885,6 +3891,7 @@ async function tgCommands(sig) {
     else out.push(await hotList(sig) + '\n\nYou do not need commands. Write anything, a ticker, or forward a post, and I will study it. Send  help  for the full list.');
   }
   fs.writeFileSync('data/tg-state.json', JSON.stringify(state)); savePos(pos);
+  if (out.length && ownerBefore !== null && ownerFilesDigest() !== ownerBefore) out.push(OWNER_SAVE_NOTE);
   if (out.length) await telegram(out.join('\n\n'));
   for (const k of ldCards) { const r = await telegram(k.text, null, k.valid); if (r.ok) ldipOfferLog(k.sym, k.px, k.sd, LDIP_REAL()); else if (r.reason === 'PRICE_EVIDENCE_EXPIRED') console.log('LEADER DIP card for ' + k.sym + ' not sent: no longer the same permitted buy at send time (window to ' + k.expiresAt + ', current ZAD mark, slots, source and brake re-checked); ZAD marks as recorded.'); }
   if (ups.length) console.log('Telegram: ' + ups.length + ' message(s) read');
