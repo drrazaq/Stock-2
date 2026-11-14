@@ -35119,7 +35119,7 @@
    "name": "Lowest stock-based compensation per sales (bottom 20%), hold 6 months",
    "agent": "daily researcher",
    "kind": "buy",
-   "status": "pre-registered 2026-11-14 (daily researcher); 5-year one-shot pending",
+   "status": "tested: not proven; forward paper lane from 26 Oct 2026",
    "explain": "Buy the next open after a 10-K whose annual stock-based compensation (us-gaap ShareBasedCompensation, else AllocatedShareBasedCompensationExpense) divided by annual sales (Revenues / RevenueFromContractWithCustomer... / SalesRevenueNet, same fiscal year, 10M USD+) is in the bottom 20% (percentile <= 0.20 vs all such 10-Ks of the prior 365 days; filed within 120 days of the year end); stock liquid; sell the close 126 sessions later. Measure, tag order, same-period sales match, ranking and data rule fixed in research-core.mjs (IDEA 17) before any run.",
    "sources": [
     "https://doi.org/10.1007/s11142-020-09546-2",
@@ -35127,7 +35127,45 @@
     "https://clsbluesky.law.columbia.edu/2019/09/05/stock-based-compensation-financial-analysts-and-equity-overvaluation/"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-14: Mohanram, White and Zhao (2020, Review of Accounting Studies) \"Stock-based compensation, financial analysts, and equity overvaluation\": the highest SBC / sales quintile earned about 5% less over the next year than the lowest. New line (SBC expense from official SEC XBRL company facts); nothing in the library tests it. 6-month hold (horizon check) and no industry sort (stated). Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-14: Mohanram, White and Zhao (2020, Review of Accounting Studies) \"Stock-based compensation, financial analysts, and equity overvaluation\": the highest SBC / sales quintile earned about 5% less over the next year than the lowest. New line (SBC expense from official SEC XBRL company facts); nothing in the library tests it. 6-month hold (horizon check) and no industry sort (stated). Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-13",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     799,
+     1132
+    ],
+    "avg": [
+     0.0042,
+     0.0538
+    ],
+    "stress": [
+     0.0002,
+     0.0498
+    ],
+    "edge": [
+     0.0073,
+     0.0024
+    ],
+    "vsOwn": [
+     -0.0353,
+     0.0493
+    ],
+    "noTop2": [
+     0.0006,
+     0.05
+    ],
+    "tBlock": [
+     0.76,
+     0.37
+    ],
+    "win": [
+     0.4806,
+     0.5671
+    ],
+    "why": "not better than the same stocks on their other days in the older half; block t 0.76 under 2.5 in the older half; block t 0.37 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-SBC-HIGH126",
@@ -35135,7 +35173,7 @@
    "name": "AVOID check: highest stock-based compensation per sales (top 20%), 126 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-14 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid not supported (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Information only: stocks whose SBC / sales is among the 20% highest (percentile >= 0.80), bought next open, 126 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, tag order, same-period sales match, ranking and data rule fixed in research-core.mjs (IDEA 17) before any run.",
    "sources": [
     "https://doi.org/10.1007/s11142-020-09546-2",
@@ -35143,7 +35181,45 @@
     "https://clsbluesky.law.columbia.edu/2019/09/05/stock-based-compensation-financial-analysts-and-equity-overvaluation/"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-14: Mohanram, White and Zhao (2020, Review of Accounting Studies) \"Stock-based compensation, financial analysts, and equity overvaluation\": the highest SBC / sales quintile earned about 5% less over the next year than the lowest. New line (SBC expense from official SEC XBRL company facts); nothing in the library tests it. 6-month hold (horizon check) and no industry sort (stated). Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-14: Mohanram, White and Zhao (2020, Review of Accounting Studies) \"Stock-based compensation, financial analysts, and equity overvaluation\": the highest SBC / sales quintile earned about 5% less over the next year than the lowest. New line (SBC expense from official SEC XBRL company facts); nothing in the library tests it. 6-month hold (horizon check) and no industry sort (stated). Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-13",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "n": [
+     750,
+     973
+    ],
+    "avg": [
+     -0.086,
+     0.1003
+    ],
+    "stress": [
+     -0.09,
+     0.0963
+    ],
+    "edge": [
+     -0.0033,
+     0.0398
+    ],
+    "vsOwn": [
+     -0.0377,
+     -0.0561
+    ],
+    "noTop2": [
+     -0.0914,
+     0.0944
+    ],
+    "tBlock": [
+     0.32,
+     1.53
+    ],
+    "win": [
+     0.3547,
+     0.5509
+    ],
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
   }
  ]
 }

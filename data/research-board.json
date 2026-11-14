@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-14T03:11:14.231Z",
+ "generatedAt": "2026-11-14T09:34:01.490Z",
  "lastClose": "2026-11-13",
  "paperStart": "2026-10-26",
  "cost": 0.008,
@@ -1220,8 +1220,8 @@
    "hold": 10,
    "family": "wiki",
    "dataOk": true,
-   "signals": 1,
-   "waiting": 0,
+   "signals": 2,
+   "waiting": 1,
    "open": 1,
    "closed": {
     "n": 0,
@@ -1405,6 +1405,68 @@
    "kind": "avoid",
    "hold": 5,
    "family": "pre",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
+    "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
+  },
+  "RQ-SBC-LOW126": {
+   "name": "Lowest stock-based compensation per sales (bottom 20%), hold 6 months",
+   "kind": "buy",
+   "hold": 126,
+   "family": "sbc",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "NOT PROVEN",
+    "why": "not better than the same stocks on their other days in the older half; block t 0.76 under 2.5 in the older half; block t 0.37 under 2.5 in the newer half"
+   }
+  },
+  "RQ-SBC-HIGH126": {
+   "name": "AVOID check: highest stock-based compensation per sales (top 20%), 126 sessions",
+   "kind": "avoid",
+   "hold": 126,
+   "family": "sbc",
    "dataOk": true,
    "signals": 0,
    "waiting": 0,
