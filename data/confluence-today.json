@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-11-13T09:52:40.908Z",
- "lastClose": "2026-11-12",
+ "generatedAt": "2026-11-14T03:37:28.645Z",
+ "lastClose": "2026-11-13",
  "paperStart": "2026-10-23",
- "inputsSeen": 854,
+ "inputsSeen": 882,
  "note": "PAPER ONLY. A stock picked by 2+ (CONF-3: 3+) different rule families within 5 sessions. Nothing here is a buy by itself: a version needs a TRADABLE SMALL / PROVEN frozen 5-year verdict (data/confluence-lab.json firstRun), or the TRY SMALL gates, or 30+ resolved paper trades on 10+ days with a positive average after 0.8% cost. Halal = the owner's ZAD mark; \"unknown\" must be checked before any real buy.",
  "methods": {
   "CONF-2": {
@@ -10,53 +10,32 @@
    "hold": 63,
    "tier": "REJECTED",
    "holdNote": "each signal carries its own hold (sessions) and stopPct",
-   "newSignals": [],
+   "newSignals": [
+    {
+     "sym": "WDAY",
+     "close": 196.45,
+     "halal": "unknown",
+     "d": "2026-11-13",
+     "hold": 10,
+     "stopPct": 0.15,
+     "families": [
+      "MOMENTUM",
+      "PULLBACK"
+     ],
+     "rules": [
+      "DEC2-MINTT",
+      "DEC2-TPS"
+     ],
+     "plan": "buy at the open of 2026-11-16 (the next session after 2026-11-13), hold 10 sessions, stop: sell at the next open after a close 15% under the buy"
+    }
+   ],
    "open": [
-    {
-     "sym": "ADP",
-     "halal": "unknown",
-     "signal": "2026-10-30",
-     "buy": "2026-11-02",
-     "sinceBuy": 0.048,
-     "exitAfter": "10 sessions",
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK"
-     ]
-    },
-    {
-     "sym": "MRK",
-     "halal": "unknown",
-     "signal": "2026-10-30",
-     "buy": "2026-11-02",
-     "sinceBuy": -0.0126,
-     "exitAfter": "10 sessions",
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK"
-     ]
-    },
-    {
-     "sym": "VLO",
-     "halal": "unknown",
-     "signal": "2026-10-30",
-     "buy": "2026-11-02",
-     "sinceBuy": -0.0452,
-     "exitAfter": "10 sessions",
-     "stopPct": 0.15,
-     "families": [
-      "MOMENTUM",
-      "PULLBACK"
-     ]
-    },
     {
      "sym": "ABNB",
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0596,
+     "sinceBuy": 0.0927,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -69,7 +48,7 @@
      "halal": "ok",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0005,
+     "sinceBuy": -0.062,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -82,7 +61,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": -0.0198,
+     "sinceBuy": -0.046,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -95,7 +74,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0105,
+     "sinceBuy": -0.0076,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -108,7 +87,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0391,
+     "sinceBuy": 0.0429,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -121,7 +100,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0127,
+     "sinceBuy": 0.0276,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -134,7 +113,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.042,
+     "sinceBuy": 0.0061,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -147,7 +126,7 @@
      "halal": "ok",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0275,
+     "sinceBuy": 0.0292,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -160,7 +139,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": -0.0066,
+     "sinceBuy": -0.0048,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -173,7 +152,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0488,
+     "sinceBuy": 0.0218,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -186,7 +165,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0171,
+     "sinceBuy": 0.0206,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -199,7 +178,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0227,
+     "sinceBuy": 0.0179,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -212,7 +191,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": -0.0049,
+     "sinceBuy": 0.008,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -225,7 +204,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0286,
+     "sinceBuy": 0.0266,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -238,7 +217,7 @@
      "halal": "ok",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": -0.0462,
+     "sinceBuy": -0.0416,
      "exitAfter": "63 sessions",
      "stopPct": 0.15,
      "families": [
@@ -251,7 +230,7 @@
      "halal": "unknown",
      "signal": "2026-11-03",
      "buy": "2026-11-04",
-     "sinceBuy": -0.0122,
+     "sinceBuy": -0.0047,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -264,7 +243,7 @@
      "halal": "unknown",
      "signal": "2026-11-03",
      "buy": "2026-11-04",
-     "sinceBuy": -0.016,
+     "sinceBuy": -0.0101,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -277,7 +256,7 @@
      "halal": "unknown",
      "signal": "2026-11-03",
      "buy": "2026-11-04",
-     "sinceBuy": -0.0246,
+     "sinceBuy": -0.0101,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -290,7 +269,7 @@
      "halal": "unknown",
      "signal": "2026-11-03",
      "buy": "2026-11-04",
-     "sinceBuy": 0.0215,
+     "sinceBuy": 0.0274,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -303,7 +282,7 @@
      "halal": "ok",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": 0.0028,
+     "sinceBuy": 0.0067,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -316,7 +295,7 @@
      "halal": "unknown",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": 0.0519,
+     "sinceBuy": 0.0691,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -329,7 +308,7 @@
      "halal": "unknown",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": 0.0705,
+     "sinceBuy": 0.0487,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -342,7 +321,7 @@
      "halal": "unknown",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": -0.0239,
+     "sinceBuy": -0.0111,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -355,7 +334,7 @@
      "halal": "unknown",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": 0.0024,
+     "sinceBuy": 0.0183,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -368,7 +347,7 @@
      "halal": "unknown",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": -0.0166,
+     "sinceBuy": -0.0005,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -381,7 +360,7 @@
      "halal": "unknown",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": 0.0493,
+     "sinceBuy": 0.0675,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -394,7 +373,7 @@
      "halal": "fail",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": 0.0501,
+     "sinceBuy": 0.0547,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -407,7 +386,7 @@
      "halal": "unknown",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": -0.0408,
+     "sinceBuy": -0.0321,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -420,7 +399,7 @@
      "halal": "unknown",
      "signal": "2026-11-05",
      "buy": "2026-11-06",
-     "sinceBuy": 0.0628,
+     "sinceBuy": 0.0817,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -433,7 +412,7 @@
      "halal": "ok",
      "signal": "2026-11-05",
      "buy": "2026-11-06",
-     "sinceBuy": 0.0049,
+     "sinceBuy": -0.0072,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -446,7 +425,7 @@
      "halal": "unknown",
      "signal": "2026-11-05",
      "buy": "2026-11-06",
-     "sinceBuy": 0.0634,
+     "sinceBuy": 0.0365,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -459,7 +438,7 @@
      "halal": "unknown",
      "signal": "2026-11-05",
      "buy": "2026-11-06",
-     "sinceBuy": 0.0485,
+     "sinceBuy": 0.0122,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -472,7 +451,7 @@
      "halal": "unknown",
      "signal": "2026-11-05",
      "buy": "2026-11-06",
-     "sinceBuy": 0.0572,
+     "sinceBuy": 0.0652,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -485,7 +464,7 @@
      "halal": "unknown",
      "signal": "2026-11-05",
      "buy": "2026-11-06",
-     "sinceBuy": 0.0851,
+     "sinceBuy": 0.0712,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -498,7 +477,7 @@
      "halal": "ok",
      "signal": "2026-11-06",
      "buy": "2026-11-09",
-     "sinceBuy": 0.0453,
+     "sinceBuy": 0.0572,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -511,7 +490,7 @@
      "halal": "unknown",
      "signal": "2026-11-06",
      "buy": "2026-11-09",
-     "sinceBuy": 0.0381,
+     "sinceBuy": 0.0257,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -524,7 +503,7 @@
      "halal": "unknown",
      "signal": "2026-11-06",
      "buy": "2026-11-09",
-     "sinceBuy": -0.0078,
+     "sinceBuy": 0.0038,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -537,7 +516,7 @@
      "halal": "unknown",
      "signal": "2026-11-06",
      "buy": "2026-11-09",
-     "sinceBuy": 0.0901,
+     "sinceBuy": 0.089,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -550,7 +529,7 @@
      "halal": "unknown",
      "signal": "2026-11-06",
      "buy": "2026-11-09",
-     "sinceBuy": 0.119,
+     "sinceBuy": 0.1229,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -563,7 +542,7 @@
      "halal": "unknown",
      "signal": "2026-11-06",
      "buy": "2026-11-09",
-     "sinceBuy": 0.0396,
+     "sinceBuy": 0.0336,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -576,7 +555,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0086,
+     "sinceBuy": 0.0029,
      "exitAfter": "63 sessions",
      "stopPct": 0.15,
      "families": [
@@ -589,7 +568,7 @@
      "halal": "unknown",
      "signal": "2026-11-02",
      "buy": "2026-11-03",
-     "sinceBuy": 0.0262,
+     "sinceBuy": 0.0298,
      "exitAfter": "63 sessions",
      "stopPct": 0.15,
      "families": [
@@ -602,7 +581,7 @@
      "halal": "unknown",
      "signal": "2026-11-09",
      "buy": "2026-11-10",
-     "sinceBuy": 0.0201,
+     "sinceBuy": 0.031,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -615,7 +594,7 @@
      "halal": "unknown",
      "signal": "2026-11-09",
      "buy": "2026-11-10",
-     "sinceBuy": 0.0996,
+     "sinceBuy": 0.097,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -628,7 +607,7 @@
      "halal": "unknown",
      "signal": "2026-11-09",
      "buy": "2026-11-10",
-     "sinceBuy": -0.011,
+     "sinceBuy": -0.0089,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -641,7 +620,7 @@
      "halal": "unknown",
      "signal": "2026-11-09",
      "buy": "2026-11-10",
-     "sinceBuy": 0.0318,
+     "sinceBuy": 0.033,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -654,7 +633,7 @@
      "halal": "unknown",
      "signal": "2026-11-09",
      "buy": "2026-11-10",
-     "sinceBuy": 0.0042,
+     "sinceBuy": -0.0121,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -667,7 +646,7 @@
      "halal": "unknown",
      "signal": "2026-11-09",
      "buy": "2026-11-10",
-     "sinceBuy": 0.0152,
+     "sinceBuy": 0.0153,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -680,7 +659,7 @@
      "halal": "unknown",
      "signal": "2026-11-10",
      "buy": "2026-11-11",
-     "sinceBuy": 0.0225,
+     "sinceBuy": 0.0262,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -702,7 +681,7 @@
      "halal": "ok",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": -0.0575,
+     "sinceBuy": -0.056,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -716,7 +695,7 @@
      "halal": "ok",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": -0.0075,
+     "sinceBuy": -0.0027,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -730,7 +709,7 @@
      "halal": "ok",
      "signal": "2026-11-04",
      "buy": "2026-11-05",
-     "sinceBuy": 0.0028,
+     "sinceBuy": 0.0067,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
@@ -744,7 +723,7 @@
      "halal": "unknown",
      "signal": "2026-11-05",
      "buy": "2026-11-06",
-     "sinceBuy": 0.0634,
+     "sinceBuy": 0.0365,
      "exitAfter": "10 sessions",
      "stopPct": 0.15,
      "families": [
