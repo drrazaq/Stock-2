@@ -1,3 +1,4 @@
+import {createContractObserver} from './watcher-contract-observer.mjs';
 import {publishWatcherReservation} from './watcher-message-publish.mjs';
 import {createWatcherMessages} from './watcher-messages.mjs';
 import {instrumentAwareSec,readInstrumentType} from './instrument-type.mjs';
@@ -47,6 +48,7 @@ const clock = () => env.IG_FAKE_MIN ? +env.IG_FAKE_MIN + (env.IG_FAKE_STEP ? loo
 PROC_START = fmtM(clock());   // (28 Oct) the real start time, New York, kept in data/ignition-days.jsonl (GitHub's cron can start it 35 min to 2 h late)
 const kuwait = (m) => fmtM(((m - nyOffset(day) + 180) % 1440 + 1440) % 1440);
 const INCIDENT_RUN_ID=runIdentity(env), INCIDENT_SHA=execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim();
+const CONTRACT_OBSERVER=createContractObserver({enabled:env.CONTRACT_OBSERVER==='research',day,runId:INCIDENT_RUN_ID,sourceSha:INCIDENT_SHA});
 const MESSAGE_STATE=createWatcherMessages({day,persist:env.GITHUB_ACTIONS==='true'?publishWatcherReservation:undefined});
 if(sessionFinished(readJson('data/ignition-live.json',null),day,{open:570,endExclusive:901})){MESSAGE_STATE.maintain();const dir='data/ignition-runs/'+day;fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(dir+'/'+INCIDENT_RUN_ID+'-delivery-recovery.json',JSON.stringify({day,runId:INCIDENT_RUN_ID,messageDelivery:MESSAGE_STATE.report()}),{flag:'wx'});console.log('watcher: session already recorded; skipping duplicate');process.exit(0);}
 if (wd === 0 || wd === 6) { console.log('ignition watcher: weekend'); process.exit(0); }
@@ -107,7 +109,7 @@ async function snap() {
   // Field set unchanged (price/prevC/open/volume, no quote fields). Every field passes the normal per-field clock validation: a future
   // clock never vouches for its value, and between this response and Massive the newer valid clock wins (as in the main merge).
   const at = Date.now();
-  for (const r of a) { const x = byM.get(r.sym); validateClocks(r, at); delete r.bid; delete r.ask; delete r.qt; delete r.quoteProvider; delete r.quoteFeed;
+  for (const r of a) { const x = byM.get(r.sym); validateClocks(r, at); delete r.bid; delete r.ask; delete r.qt; delete r.quoteProvider; delete r.quoteFeed; delete r.quoteBidSizeRaw; delete r.quoteAskSizeRaw; delete r.quoteSizeUnit;
     if (x) { const m0 = validateClocks({ sym: r.sym, price: x.price, t: x.t, open: 0, vol: x.vol, vt: x.vt, priceProvider: x.priceProvider, priceKind: x.priceKind, volumeProvider: x.volumeProvider, volumeFeed: x.volumeFeed || null }, at), own = { ...r };
       mergeLiveSnapshot(m0, own, at);
       if (!(m0.t > 0) && own.price > 0) { m0.price = own.price; m0.t = own.t; m0.priceProvider = own.priceProvider; m0.priceFeed = own.priceFeed; m0.priceKind = own.priceKind; }   // neither clock valid: this response's own price, still unclocked
@@ -284,7 +286,7 @@ saveObservationProgress();
 while (Date.now() - START < MAXMS) {
   MESSAGE_STATE.maintain();
   const m = clock(); if (m > 900) break; if (m < 568) { await sleep(30000); continue; }
-  const rows = await snap(); loops++; const tStart = triggers.length;
+  const rows = await snap(); CONTRACT_OBSERVER.record({minute:m,rows,nowMs:Date.now()}); loops++; const tStart = triggers.length;
   // LIVE STOP WATCH (23 Oct): every held stock, every minute, on fresh live prices; positions re-read from GitHub every 10 minutes
   try { if (!HELD.at || Date.now() - HELD.at > 600000) { HELD.at = Date.now(); try { execSync('git fetch -q origin main', { stdio: 'ignore', timeout: 60000 }); HELD.pos = JSON.parse(execSync('git show origin/main:data/my-positions.json', { maxBuffer: 64 << 20, timeout: 60000 }).toString()); try { EA.setLevel(alertLevel(JSON.parse(execSync('git show origin/main:data/settings.json', { timeout: 60000 }).toString()))); } catch (e) {} } catch (e) { HELD.pos = readJson('data/my-positions.json', {}); } }
     // (4 Nov) every held stock gets its own price evidence (ticker-bound response, provider clock, age); no row or a stale/undated one -> STOP CHECK UNKNOWN, never silently safe
@@ -389,3 +391,5 @@ try { if (RADAR.done) { const L = fs.existsSync('data/radar-v3-ledger.jsonl') ? 
   const rows = [...new Set(L.filter(r => r.type === 'list' && r.d === day).map(r => r.sym))].filter(s => !have.has(s) && vis[s] && vis[s].last > 0).map(s => JSON.stringify({ type: 'close', d: day, sym: s, px: vis[s].last, mkt }));
   if (rows.length) fs.appendFileSync('data/radar-v3-ledger.jsonl', rows.join('\n') + '\n'); } } catch (e) { console.log('radar close rows: ' + e.message); }
 console.log('ignition watcher: ' + loops + ' minutes, modes ' + JSON.stringify(modes) + (note ? ' [' + note + ']' : '') + ', ' + triggers.length + ' ignitions, ' + alerts + ' alerts, ' + missed.length + ' movers of 15%+ audited ' + JSON.stringify(tally));
+
+if(env.CONTRACT_OBSERVER==='research')console.log('contract observer: '+JSON.stringify(CONTRACT_OBSERVER.health()));

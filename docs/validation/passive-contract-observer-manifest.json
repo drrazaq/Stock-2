@@ -1,0 +1,64 @@
+{
+  "kind": "PASSIVE_CONTRACT_OBSERVER_INACTIVE_REVIEW_V1",
+  "acceptanceRows": [
+    "MARKET-03",
+    "MARKET-04",
+    "EXEC-03",
+    "HISTORY-04"
+  ],
+  "productionBase": "31399de73752c7915857dab7865ddbdd1bcae070",
+  "verifiedSource": "719ceb2afb70ae3ab062d907892cbc835ec7f8bd",
+  "sourceCi": "https://github.com/drrazaq/Stock-2/actions/runs/41300365996/job/124829846103",
+  "ciCheckId": 124829846103,
+  "deployed": false,
+  "activationApproved": false,
+  "providerCallsAdded": 0,
+  "legacyDecisionsChanged": false,
+  "frozenInputsChanged": false,
+  "contractsSource": "f61bcf748c569bd86ec6997267bc23fa5984e113",
+  "contractsSha256": "269626fa8da5c2a12234a0baf028b560bb7838f468a9e52a428208574a091cbe",
+  "runtimeFiles": {
+    "ignition-watch.mjs": "88372daf79730c3febaf13ac9199cfee04847afd9bfd2f30027a62e2f0e4cd3a",
+    "market-data-contracts.mjs": "269626fa8da5c2a12234a0baf028b560bb7838f468a9e52a428208574a091cbe",
+    "snapshot-fields.mjs": "e9fe3a50e72b4f12c058715d4535f18b8c4b6b59ac218c29c23c63c9b336859b",
+    "watcher-contract-observer.mjs": "f1ecc40b7a49df3561c28ceb701b5b655a01c8700bd5958e8d6c32ec19b77812"
+  },
+  "runtimePatchSha256": "ab5272a203b502aca0d3d04fc33f40d8903a66ca9f2f6e1b514f03597857e699",
+  "testsPatchSha256": "6f9dd6798592720e86fe6093155d8a460453934dbe0f9f061e8f5113bf3d97fd",
+  "activationPatchSha256": "c4154429d33b00ac3dccc19047a3115eda767e23d49c5a941a446ed446e321b3",
+  "validation": {
+    "unitCasesLocal": 10,
+    "contractsCasesLocal": 26,
+    "effectiveUidLocal": 1000,
+    "nonRootPermissionsEnforced": true,
+    "actualWatcherParity": "PENDING_EXACT_REVISION_HOSTED",
+    "productionBaseFullSuite": "PENDING_EXACT_REVISION_HOSTED",
+    "runtimeFilesUnchangedExceptObserver": true,
+    "activationApproved": false
+  },
+  "limits": {
+    "configuredMinutes": 331,
+    "recordBytes": 6144,
+    "payloadBytes": 2033664,
+    "physicalFilesystemQuotaGuaranteed": false
+  },
+  "noAcceptanceClosure": true,
+  "historicalValidationOriginal": {
+    "productionBaseFullTestFiles": 128,
+    "unitCases": 7,
+    "actualWatcherParityCases": 4,
+    "archivalByteParity": true,
+    "providerRequestParity": true,
+    "observerFailureIsolated": true,
+    "realProviderCalls": 0,
+    "localNodeUnavailable": true
+  },
+  "revision": "O1_NO_USER_PATH_SYMLINK_WRITES",
+  "independentReviewSource": "6465c071d7206e3f089063fa448eb2d1076610dc",
+  "testFiles": {
+    "test/watcher-contract-observer.test.mjs": "0aa9823cf9e65c8ad459bb543121f57a5c2c42d64f21bfd754c5755759e2dd6e",
+    "test/watcher-contract-parity.test.mjs": "0bebad9ac9ca43445324c75cbde8f55c784dd02a43c7fd60586feac9c7e91fa3",
+    "test/passive-observer-package.test.mjs": "00646816a4fa9f73b031787ac69ee2c1acf5b1d2cb1d7230826d0b3247c9ce01",
+    "test/market-data-contracts.test.mjs": "9e36dc42878a360489677b15eec2d0684a72ba59fff7aaa81ffbd4ad34ee5208"
+  }
+}
