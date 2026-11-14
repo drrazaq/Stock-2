@@ -1,0 +1,376 @@
+{
+  "deployedSha": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+  "parent": "c010216a5c099ada34e4ae5692a453d2b4a40ade",
+  "remoteMainObserved": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+  "exactPatchSha256": "f126e497181b670cc062acd690dbad2529a876cf82151cdc04c8a29aa1058010",
+  "3ResultsAnd206Dependencies": "PASS",
+  "dataAndAccountingUnchanged": true,
+  "files": [
+    "ignition-watch.mjs",
+    "test/leader-dip.test.mjs",
+    "test/sec-request-runtime.test.mjs"
+  ],
+  "manualDispatches": 0,
+  "cancellations": 0,
+  "pauses": 0,
+  "shadowActivation": false,
+  "status": "DEPLOYED_EXACT_APPROVED_PATCH",
+  "approvedReviewHead": "627e81e3ce0066086f502166d4b1637683ef332d",
+  "ordinaryCIContract": "test/*.test.mjs",
+  "preDeploymentTests": {
+    "files": 123,
+    "cases": 1205,
+    "failures": [],
+    "groups": {
+      "test": {
+        "files": 122,
+        "cases": 1196,
+        "failures": []
+      },
+      "tests": {
+        "files": 1,
+        "cases": 9,
+        "failures": []
+      }
+    }
+  },
+  "syntax": {
+    "files": 204,
+    "failures": []
+  },
+  "gatedTests": {
+    "baselineAndCandidate": [
+      {
+        "source": "baseline",
+        "file": "test/watcher-incident-revision.test.mjs",
+        "exit": 1,
+        "cases": 11,
+        "failedNames": [
+          "actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop"
+        ]
+      },
+      {
+        "source": "baseline",
+        "file": "test/watcher-resilience.test.mjs",
+        "exit": 1,
+        "cases": 9,
+        "failedNames": [
+          "actual Actions watcher survives clear-rejection",
+          "actual Actions watcher survives competing",
+          "actual Actions watcher survives finish-refusal",
+          "actual Actions watcher survives missing-snapshot",
+          "actual Actions watcher survives moved",
+          "actual Actions watcher survives refusal-retry",
+          "actual Actions watcher survives uncertain"
+        ]
+      },
+      {
+        "source": "candidate",
+        "file": "test/watcher-incident-revision.test.mjs",
+        "exit": 1,
+        "cases": 11,
+        "failedNames": [
+          "actual production watcher: configured complete skips requests; incomplete recovery collects without repeating radar/stop"
+        ]
+      },
+      {
+        "source": "candidate",
+        "file": "test/watcher-resilience.test.mjs",
+        "exit": 1,
+        "cases": 9,
+        "failedNames": [
+          "actual Actions watcher survives clear-rejection",
+          "actual Actions watcher survives competing",
+          "actual Actions watcher survives finish-refusal",
+          "actual Actions watcher survives missing-snapshot",
+          "actual Actions watcher survives moved",
+          "actual Actions watcher survives refusal-retry",
+          "actual Actions watcher survives uncertain"
+        ]
+      }
+    ],
+    "eachTotal": 20,
+    "eachPassed": 12,
+    "eachFailed": 8,
+    "sameFailedNamesAndAssertions": true,
+    "newRegressions": 0,
+    "diagnostic": {
+      "exit": 0,
+      "fixtureIGday": "2026-10-30",
+      "DateNowPinned": "2026-10-30T19:00:00Z",
+      "output": "radar midday: no snapshot for 2026-10-31",
+      "source": "Unchanged opportunity-radar.mjs uses new Date for NY today, not IG_DAY or Date.now-only override",
+      "realMessages": 0
+    }
+  },
+  "basketDueFixtureWrapper": {
+    "comparisons": 6,
+    "identicalOutputs": true,
+    "scope": "Only actual production fixture scenarios. Injected SPUS/IAUM ok defaults are test inputs, caller marks override; production monthly branch does not use them. No production function replacement and no gated-ZAD certification."
+  },
+  "boundary": {
+    "runs": [
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "bdc984e9d2d995a8523281e3983060df73fcb2be",
+        "id": 41072889693,
+        "status": "completed"
+      },
+      {
+        "conclusion": "cancelled",
+        "event": "schedule",
+        "head_sha": "e6020f46a140b483089ae1fccd757643b0202152",
+        "id": 41065599662,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "workflow_dispatch",
+        "head_sha": "8fa8022bf96f7bf2c7b3e25dbefb30e45d7a5f56",
+        "id": 41061535419,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "d7157b5ede6496c8d5861452817f3a5bbc5a9abe",
+        "id": 40892628229,
+        "status": "completed"
+      },
+      {
+        "conclusion": "cancelled",
+        "event": "schedule",
+        "head_sha": "d4fb4de5db58a6d4b1fd2b6442351f7ba9173897",
+        "id": 40884458041,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "workflow_dispatch",
+        "head_sha": "4783ac9e4270c0eba0302a3000e3d5bc13d076ef",
+        "id": 40880138153,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "93165b02a2f407eb1181a65bc965cced04df6b0d",
+        "id": 40706824310,
+        "status": "completed"
+      },
+      {
+        "conclusion": "cancelled",
+        "event": "schedule",
+        "head_sha": "af4792e8dccfc201f83a55a3df53f6a4a052b4de",
+        "id": 40698643394,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "workflow_dispatch",
+        "head_sha": "f5237b35c2d289fe271ce1389bb22cdf6a541c9d",
+        "id": 40694406777,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "a8ace72ba62e6075af4a8d47c4be4d7bf14882bc",
+        "id": 40523556367,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "a8ad371f33e019c4f451ec8fd24a804ec467ecc4",
+        "id": 40515405410,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "8a6e4fea3f2a6faa5e1d1dd2fee5328aa5469bf3",
+        "id": 40350203084,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "26d325bad92d23f526be67a7cadfd971e8ecf7aa",
+        "id": 40346658624,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "c73bef5e1fd76f6fe9adb973646fdb90d07218fa",
+        "id": 39970302392,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "8e83a6b3490b14602fae40367172cfc4b6737483",
+        "id": 39962902458,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "3d54b5fb2151f425df1a093f13969022817dc19f",
+        "id": 39796079052,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "c7933a2ab8e07e85a58d4d98e213c8a70cafd542",
+        "id": 39789319052,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "6902a95f8c7c42100e3527c6b8f8b6a277f792a4",
+        "id": 39617098865,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "efd5a58ee1a713f30cbf5b86c091e5143b847ead",
+        "id": 39609871293,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "5a865698ebd862dd564e7e4bead005465f617894",
+        "id": 39439326464,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "f5dd2374a80dfc673aeb3b3215fae4c12a0fa736",
+        "id": 39432385624,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "0a3471b9f6bd80b2df28c46bc9c2aba5ce498ee6",
+        "id": 39269744289,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "e355a504f3ce69adf3174af5923f161f07a2a7e1",
+        "id": 39262941731,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "88588a6611b17582953cf905a959f6d4970b6f7f",
+        "id": 38915834677,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "13ef4c3dfb80ff5531f4ba1509c50dcca8c68a03",
+        "id": 38909469375,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "1b3ee6830c81c72fd90dd36781f7c4d103ec1e94",
+        "id": 38751606532,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "workflow_dispatch",
+        "head_sha": "74b4c8237712c193a66e44ce2bbdeb87320c54a6",
+        "id": 38745761265,
+        "status": "completed"
+      },
+      {
+        "conclusion": "failure",
+        "event": "schedule",
+        "head_sha": "9587ed6f9e6b532b73db96b1ec013016edf37048",
+        "id": 38744789106,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "bdccbdf661e0834c7bf57ba29aa766c83faf9825",
+        "id": 38584595703,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "schedule",
+        "head_sha": "9729c54fb420191034a0e51537e224d06195f081",
+        "id": 38575097095,
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "event": "workflow_dispatch",
+        "head_sha": "357973bb54117b6048ff444d47556c0379191cfc",
+        "id": 38429857331,
+        "status": "completed"
+      }
+    ],
+    "total_count": 31,
+    "checkedAt": "2026-10-31T09:48:53.404453+00:00",
+    "naturalBoundary": "SATURDAY_OUTSIDE_CONFIGURED_MARKET_WINDOW",
+    "activePendingWatchers": [],
+    "expectedParent": "c010216a5c099ada34e4ae5692a453d2b4a40ade",
+    "deploymentCommit": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc"
+  },
+  "pushTriggeredCI": {
+    "status": "COMPLETED_SUCCESS",
+    "runId": 41190211380,
+    "jobId": 124505274444,
+    "headSha": "bd70f5a76172f369e9dff1096eba0e526c0e3fdc",
+    "conclusion": "success",
+    "applicableChecks": 1,
+    "passedChecks": 1,
+    "url": "https://github.com/drrazaq/Stock-2/actions/runs/41190211380"
+  },
+  "naturalRunVerification": {
+    "status": "PENDING_NATURALLY_SCHEDULED_RUN",
+    "expectedNextWeekday": "2026-11-02",
+    "dispatchAuthorized": false,
+    "required": [
+      "Actual checkout/archive sourceSha and deployed watcher bytes",
+      "Ticker-map initialization and real EDGAR polling from edgar.polls/fails/firstOk",
+      "Submissions source outcomes where actually invoked; zero eligible filings does not prove source failure or success",
+      "Original/progress/final JSON and shadow archives, snapshot persistence and publication",
+      "Natural message reservation/ACK/UNKNOWN/retry/duplicate health; no test message",
+      "November DST start/clock evidence only if naturally observed"
+    ],
+    "postDeploymentNaturalWatcherObserved": false,
+    "latestRunId": 41072889693
+  },
+  "rollback": {
+    "executed": false,
+    "procedure": "Separately approved normal revert of only bd70f5a76172f369e9dff1096eba0e526c0e3fdc, preserving all later data and unrelated source changes. Reverify hashes/tests/CI; reverting restores known undefined-helper SEC outage, so source coverage remains UNKNOWN."
+  },
+  "limitations": [
+    "Operational correction, not trading profitability or genuine prospective evidence",
+    "Existing Atom updated is not independently authenticated acceptance; shadow/capture/lineage excluded",
+    "Unknown trusted instrument identity still blocks approved ignition BUY; research retained",
+    "Configured09:30\u201315:00 is not a full16:00session; run limit may end earlier",
+    "Massive Starter15minute delayed; broad SIP rights/coverage unverified",
+    "Known date-dependent gated failures remain; not falsely labelled all-suite PASS"
+  ],
+  "acceptanceAdded": 0
+}

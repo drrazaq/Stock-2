@@ -1,0 +1,115 @@
+{
+  "kind": "ISOLATED_SEC_REQUEST_HOTFIX_VERIFICATION_V1",
+  "sourceCommit": "9a5f2375bc6aa016b99211f1091dfe0e58aab935",
+  "productionBase": "72690b308b9b62887b96d7dbe3435cf62bc59835",
+  "patchSha256": "f126e497181b670cc062acd690dbad2529a876cf82151cdc04c8a29aa1058010",
+  "candidateFull": {
+    "files": 123,
+    "cases": 1205,
+    "failures": []
+  },
+  "syntax": {
+    "files": 204,
+    "failures": []
+  },
+  "pythonTests": "NONE_IN_PRODUCTION_BASE; no Python files changed",
+  "actualWatcherCases": {
+    "total": 10,
+    "passed": 10,
+    "scenarios": [
+      "success",
+      "map-error",
+      "map-network",
+      "sub-error",
+      "sub-malformed",
+      "map-timeout",
+      "sub-timeout",
+      "sub-body-timeout",
+      "atom-error",
+      "atom-timeout"
+    ],
+    "deadline": "Actual unscaled10second deadlines; longest two-Atom-timeout scenario under30seconds; every attempt finalizes heartbeat/archive,0messages"
+  },
+  "suppliedHarness": {
+    "READMEsha256": "fb3094efc5734969e320dbbb40cae491b64f296ff7099c832a8140fa4f9ff3de",
+    "scriptSha256": "344ca7fdf89370f1743ac6ac3b5e3e8199e2930d6a40ba6f373860e6dbb11100",
+    "scriptEdited": false,
+    "containment": "env -i PATH plus NODE_OPTIONS localhost-only fetch guard; no provider/Telegram credentials inherited. Harness Git remote is local bare repository.",
+    "before": {
+      "flag": "off",
+      "exit": 0,
+      "edgarRequests": 0,
+      "messages": 0,
+      "opsLedger": "absent",
+      "paperLedger": "e3b0c44298fc",
+      "shadowRows": "absent",
+      "liveTriggers": 0,
+      "heartbeats": 301,
+      "nativeFiles": [],
+      "nativeStatus": null,
+      "secHits": {},
+      "secLog": null
+    },
+    "after": {
+      "flag": "off",
+      "exit": 0,
+      "edgarRequests": 2,
+      "messages": 0,
+      "opsLedger": "absent",
+      "paperLedger": "e3b0c44298fc",
+      "shadowRows": "absent",
+      "liveTriggers": 0,
+      "heartbeats": 301,
+      "nativeFiles": [],
+      "nativeStatus": null,
+      "secHits": {
+        "/files/company_tickers.json": 1,
+        "/cgi-bin/browse-edgar": 2
+      },
+      "secLog": null
+    },
+    "limits": "Supplied script has no submissions response and uses a synthetic future session with current-wall-clock Atom entries. It proves restored ticker-map/Atom request reachability, not genuine filing admission. Hardened production watcher test covers submissions and valid matching synthetic clocks."
+  },
+  "baselineDefectRegression": {
+    "originalSourceSha256": "315a0ec797a17cf27e14e135bc9c0eb2e7b76973bb2480a03b6393a29ffe52d4",
+    "successfulStubMapHitsBefore": 0,
+    "failure": "Expected1ticker-map request, got0; caught undefined request returns SEC_UNAVAILABLE and prevents Atom polling."
+  },
+  "dateFixture": {
+    "originalSourceIndependentlyFails": true,
+    "originalPassed": 13,
+    "originalFailed": 1,
+    "reason": "Saturday sessAgo(11) supplies only10sessionsAfter; boundary fixture error, not a strategy change. Corrected fixture explicitly asserts11expired and10eligible.",
+    "correctedCases": 14,
+    "assertionsWeakened": false
+  },
+  "exactPatchCheckout": {
+    "path": "/workspace/sec-request-original",
+    "applyCheck": "PASS",
+    "all3ResultAnd206UnchangedDependencyHashes": "PASS",
+    "fullSuite": {
+      "files": 123,
+      "cases": 1205,
+      "failures": []
+    },
+    "postSuiteAll3ResultAnd206DependencyHashes": "PASS",
+    "dataUnchanged": true
+  },
+  "productionDataAndAccountingChanged": false,
+  "realExternalFetches": 0,
+  "realCredentialsMessagesOrders": 0,
+  "productionDeployment": false,
+  "shadowIncludedOrActivated": false,
+  "localEvidenceDirectory": "/workspace/milestones/sec-request-hotfix",
+  "exactCommitCI": {
+    "source": "9a5f2375bc6aa016b99211f1091dfe0e58aab935",
+    "allApplicableChecksPassed": 1,
+    "applicableChecks": 1,
+    "check": "test",
+    "conclusion": "success",
+    "runId": 41187972255,
+    "jobId": 124498658490,
+    "url": "https://github.com/drrazaq/Stock-2/actions/runs/41187972255",
+    "note": "Normal push trigger on isolated production-base branch. No dev-branch safety checks are claimed here. Later docs-only HEAD gets independent checks."
+  }
+}
