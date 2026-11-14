@@ -163,6 +163,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'wiki') { ch += preRegisterWiki(LB); continue; }
     if (R.family === 'svol') { ch += preRegisterSvol(LB); continue; }
     if (R.family === 'pre') { ch += preRegisterPre(LB); continue; }
+    if (R.family === 'sbc') { ch += preRegisterSbc(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -1162,4 +1163,72 @@ export function preRegisterPre(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of PRE_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-12 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Announcement grouping, reaction timing, 12-month ranking, cut-offs, windows and data rule fixed in research-core.mjs (IDEA 16) before any run.', sources: PRE_SOURCES, hold: R.hold, note: PRE_NOTE }); ch++; }
+  return ch; }
+// ---------------- IDEA 17 (pre-registered 14 Nov 2026, before any run): STOCK-BASED COMPENSATION INTENSITY (SBC / sales) ----------------
+// Source: Mohanram, White and Zhao, "Stock-based compensation, financial analysts, and equity overvaluation", Review of Accounting Studies
+// 25(3), 2020, 1040-1077 (doi 10.1007/s11142-020-09546-2; SSRN 3439089): SBC intensity (SBC / sales) rises with valuation multiples
+// (forward P/E 19 -> 28 from the bottom to the top quintile within industry); the TOP quintile has the lowest returns over the next year,
+// about 5% below the BOTTOM quintile; analysts and non-GAAP earnings add SBC back, so the market treats it as free.
+// NEW information line in this library (nothing tests SBC: checked 14 Nov; net share issuance ANOM-NSI and dilution warnings use the
+// share count, not the expense). Long only: BUY the lowest SBC intensity; the highest = AVOID / SELL-warning check (never a short).
+// HORIZON CHECK (12 Nov): the paper measures 12 months; the test holds 126 sessions (6 months) so both halves of the 5-year window can be
+// judged (stated). COST CHECK (11 Nov): a 5%-a-year quintile spread gives the low side roughly 1%+ over 6 months vs the average stock,
+// only just above the 0.8% cost: expected to be marginal (stated before the run).
+// MEASURE (fixed now, no tuning): SBC = us-gaap:ShareBasedCompensation (the cash-flow add-back), else us-gaap:AllocatedShareBasedCompensationExpense,
+// unit USD, ANNUAL durations (start..end 350-380 days), forms 10-K (no amendments), value >= 0. SALES = the first of us-gaap:Revenues,
+// RevenueFromContractWithCustomerExcludingAssessedTax, RevenueFromContractWithCustomerIncludingAssessedTax, SalesRevenueNet that has an
+// annual 10-K value for the SAME period (same end within 5 days); SALES >= 10M USD. SCORE = SBC / SALES. Point in time: values filed on or
+// before F. Companies that never tag SBC are not in the test (no tag cannot be told from zero; stated).
+// SIMPLIFICATION (stated now): no within-industry sort (the paper sorts within industry; SIC history for dead companies is not in the
+// system, as IDEA 13). So the low side leans to old-economy sectors and the high side to software / biotech: sector mood can drive it.
+// EVENT: a filing date F whose latest fiscal-year end E (annual SBC) is later than every year end reported before F and 0 <= F - E <= 120,
+// period end from 2019-06-01.
+// RANK (point in time, the lazy-prices ranker): percentile among ALL SBC events filed in the 365 days before F (300+ needed).
+//   RQ-SBC-LOW126   BUY the next open after a 10-K whose SBC / sales is in the bottom 20% (percentile <= 0.20); sell the close 126 sessions later.
+//   RQ-SBC-HIGH126  AVOID check: top 20% (percentile >= 0.80), 126 sessions; judged GROSS vs GROSS (31 Oct method). Never a buy.
+// Public on the 'filed' date: bought at the OPEN of the first session strictly AFTER it. Liquid (system rule) on the session before entry.
+// One open trade per stock per rule. Gates, costs, halves and verdicts: the shared judge of this file (same as IDEAS 6-16).
+// DATA RULE (fixed now): no verdict until (a) 95%+ of universe companies looked up in the SEC bulk company facts file, (b) 85%+ of liquid
+// stock-months map to an SEC number, (c) 5,000+ SBC events from 2021-10-01 (fewer = the reader is broken: fix it, no verdict).
+// PAPER LANE: none at first (10-K season is Feb-Mar); one is added (companyconcept reads, as IDEA 13) only if RQ-SBC-LOW126 passes a bar.
+export const SBC = { tags: ['ShareBasedCompensation', 'AllocatedShareBasedCompensationExpense'],
+  sales: ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'RevenueFromContractWithCustomerIncludingAssessedTax', 'SalesRevenueNet'],
+  endFrom: '2019-06-01', from: '2018-01-01', yLo: 350, yHi: 380, maxLag: 120, eTol: 5, minSales: 10e6, eventsFrom: '2021-10-01' };
+export const SBC_DATA = { looked: 0.95, map: 0.85, events: 5000 };
+RULES['RQ-SBC-LOW126'] = { kind: 'buy', hold: 126, side: 'bottom', family: 'sbc', name: 'Lowest stock-based compensation per sales (bottom 20%), hold 6 months',
+  rule: 'Buy the next open after a 10-K whose annual stock-based compensation (us-gaap ShareBasedCompensation, else AllocatedShareBasedCompensationExpense) divided by annual sales (Revenues / RevenueFromContractWithCustomer... / SalesRevenueNet, same fiscal year, 10M USD+) is in the bottom 20% (percentile <= 0.20 vs all such 10-Ks of the prior 365 days; filed within 120 days of the year end); stock liquid; sell the close 126 sessions later.' };
+RULES['RQ-SBC-HIGH126'] = { kind: 'avoid', hold: 126, side: 'top', family: 'sbc', name: 'AVOID check: highest stock-based compensation per sales (top 20%), 126 sessions',
+  rule: 'Information only: stocks whose SBC / sales is among the 20% highest (percentile >= 0.80), bought next open, 126 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+export const SBC_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'sbc');
+for (const id of SBC_IDS) { if (!IDS.includes(id)) IDS.push(id); if (RULES[id].kind === 'buy' && !BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+// companyfacts JSON -> { s: [[end, val, filed, tagRank]] annual SBC, r: [[end, val, filed, tagRank]] annual sales }, sorted by filed then end
+export function sbcRows(j) { const g = j && j.facts && j.facts['us-gaap'], s = [], r = [];
+  const read = (tags, out, minV) => { const seen = new Set(); tags.forEach((tag, k) => { const u = g && g[tag] && g[tag].units;
+    for (const x of (u && Array.isArray(u.USD) ? u.USD : [])) { if (!x || !x.start || !x.end || !x.filed || !ok(x.val) || x.val < minV || x.form !== '10-K' || x.end < SBC.from) continue;
+      const len = daysBetween(x.start, x.end); if (len < SBC.yLo || len > SBC.yHi) continue; const key = k + '|' + x.end + '|' + x.val + '|' + x.filed; if (seen.has(key)) continue; seen.add(key); out.push([x.end, x.val, x.filed, k]); } }); };
+  read(SBC.tags, s, 0); read(SBC.sales, r, 0);
+  const by = (p, q) => p[2] < q[2] ? -1 : p[2] > q[2] ? 1 : p[0] < q[0] ? -1 : p[0] > q[0] ? 1 : p[3] - q[3];
+  return { s: s.sort(by), r: r.sort(by) }; }
+// best value for period end E known on F: lowest tag rank first, then the end closest to E (within tol), then the latest filed
+export function sbcPick(rows, E, F, tol = 0) { let b = null; for (const x of rows) { if (x[2] > F) break; const gap = Math.abs(daysBetween(x[0], E)); if (gap > tol) continue;
+  if (!b || x[3] < b[3] || (x[3] === b[3] && (gap < Math.abs(daysBetween(b[0], E)) || (gap === Math.abs(daysBetween(b[0], E)) && x[2] >= b[2])))) b = x; } return b; }
+// rows -> events [{ d (filed), end, sbc, sales, g (= SBC / sales), form }]
+export function sbcEvents(rows) { const out = [], S = (rows && rows.s) || [], R = (rows && rows.r) || []; let maxEnd = '';
+  const byF = new Map(); for (const x of S) (byF.get(x[2]) || byF.set(x[2], []).get(x[2])).push(x);
+  for (const F of [...byF.keys()].sort()) { const E = byF.get(F).reduce((m, x) => x[0] > m ? x[0] : m, '');
+    if (E > maxEnd && E >= SBC.endFrom && daysBetween(E, F) >= 0 && daysBetween(E, F) <= SBC.maxLag) { const sb = sbcPick(S, E, F, 0), sl = sbcPick(R, E, F, SBC.eTol);
+      if (sb && sl && sl[1] >= SBC.minSales) out.push({ d: F, end: E, sbc: sb[1], sales: sl[1], g: +(sb[1] / sl[1]).toFixed(6), form: '10-K' }); }
+    if (E > maxEnd) maxEnd = E; }
+  return out; }
+export function sbcDataRule({ ciks, looked, liqMonths, liqMapped, events }) { const r = { looked: ciks ? looked / ciks : 0, map: liqMonths ? liqMapped / liqMonths : 0 }, why = [];
+  if (!(r.looked >= SBC_DATA.looked)) why.push('company facts looked up ' + (r.looked * 100).toFixed(1) + '% of companies (95% needed)');
+  if (!(r.map >= SBC_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
+  if (!(events >= SBC_DATA.events)) why.push('SBC intensity events ' + events + ' (5,000 needed: reader check)');
+  return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+const SBC_SOURCES = ['https://doi.org/10.1007/s11142-020-09546-2', 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3439089', 'https://clsbluesky.law.columbia.edu/2019/09/05/stock-based-compensation-financial-analysts-and-equity-overvaluation/'];
+const SBC_NOTE = 'Daily researcher 2026-11-14: Mohanram, White and Zhao (2020, Review of Accounting Studies) "Stock-based compensation, financial analysts, and equity overvaluation": the highest SBC / sales quintile earned about 5% less over the next year than the lowest. New line (SBC expense from official SEC XBRL company facts); nothing in the library tests it. 6-month hold (horizon check) and no industry sort (stated). Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun.';
+export function preRegisterSbc(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of SBC_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-14 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Measure, tag order, same-period sales match, ranking and data rule fixed in research-core.mjs (IDEA 17) before any run.', sources: SBC_SOURCES, hold: R.hold, note: SBC_NOTE }); ch++; }
   return ch; }

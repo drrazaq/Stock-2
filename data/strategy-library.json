@@ -35112,6 +35112,38 @@
    "data": "needs: a dated news-text archive for the whole market (5 years) and a text model; the system has none (no paid data, no scraping)",
    "queue": "none until a free official news archive exists",
    "note": "WEB SCOUT 12 Nov 2026 (Agent C). Registered so it is not scouted again."
+  },
+  {
+   "id": "RQ-SBC-LOW126",
+   "family": "Daily researcher (RQ)",
+   "name": "Lowest stock-based compensation per sales (bottom 20%), hold 6 months",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-14 (daily researcher); 5-year one-shot pending",
+   "explain": "Buy the next open after a 10-K whose annual stock-based compensation (us-gaap ShareBasedCompensation, else AllocatedShareBasedCompensationExpense) divided by annual sales (Revenues / RevenueFromContractWithCustomer... / SalesRevenueNet, same fiscal year, 10M USD+) is in the bottom 20% (percentile <= 0.20 vs all such 10-Ks of the prior 365 days; filed within 120 days of the year end); stock liquid; sell the close 126 sessions later. Measure, tag order, same-period sales match, ranking and data rule fixed in research-core.mjs (IDEA 17) before any run.",
+   "sources": [
+    "https://doi.org/10.1007/s11142-020-09546-2",
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3439089",
+    "https://clsbluesky.law.columbia.edu/2019/09/05/stock-based-compensation-financial-analysts-and-equity-overvaluation/"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-14: Mohanram, White and Zhao (2020, Review of Accounting Studies) \"Stock-based compensation, financial analysts, and equity overvaluation\": the highest SBC / sales quintile earned about 5% less over the next year than the lowest. New line (SBC expense from official SEC XBRL company facts); nothing in the library tests it. 6-month hold (horizon check) and no industry sort (stated). Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-SBC-HIGH126",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: highest stock-based compensation per sales (top 20%), 126 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-14 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: stocks whose SBC / sales is among the 20% highest (percentile >= 0.80), bought next open, 126 sessions; a valid AVOID filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Measure, tag order, same-period sales match, ranking and data rule fixed in research-core.mjs (IDEA 17) before any run.",
+   "sources": [
+    "https://doi.org/10.1007/s11142-020-09546-2",
+    "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3439089",
+    "https://clsbluesky.law.columbia.edu/2019/09/05/stock-based-compensation-financial-analysts-and-equity-overvaluation/"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-14: Mohanram, White and Zhao (2020, Review of Accounting Studies) \"Stock-based compensation, financial analysts, and equity overvaluation\": the highest SBC / sales quintile earned about 5% less over the next year than the lowest. New line (SBC expense from official SEC XBRL company facts); nothing in the library tests it. 6-month hold (horizon check) and no industry sort (stated). Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun."
   }
  ]
 }
