@@ -1,6 +1,6 @@
 {
- "generatedAt": "2026-11-13T03:04:39.827Z",
- "lastClose": "2026-11-12",
+ "generatedAt": "2026-11-14T02:51:29.577Z",
+ "lastClose": "2026-11-13",
  "paperStart": "2026-10-23",
  "cost": 0.008,
  "readiness": "30+ resolved paper trades on 10+ distinct signal days, average > 0 after 0.8% cost",
@@ -12,14 +12,14 @@
    "data": {
     "source": "FMP /stable/grades (firm level; the only analyst history on the current plans: Finnhub upgrade-downgrade and Massive Benzinga ratings answer 403, FMP price-target-news 402)",
     "universe": 1500,
-    "tried": 359,
-    "withHistory": 61,
-    "deniedByPlan": 298,
+    "tried": 379,
+    "withHistory": 62,
+    "deniedByPlan": 317,
     "callsNow": 20,
     "budgetPerRun": 20,
     "stop": null,
     "complete": false,
-    "note": "collecting: 359 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
+    "note": "collecting: 379 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
    },
    "signals": 0,
    "waiting": 0,
@@ -46,7 +46,7 @@
    },
    "trySmallReady": false,
    "fiveYear": null,
-   "paper": "off until the analyst history is complete (collecting: 359 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run.)"
+   "paper": "off until the analyst history is complete (collecting: 379 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run.)"
   },
   "EXP-AN2": {
    "name": "2+ top-10% analyst firms turn buy within 10 sessions",
@@ -55,14 +55,14 @@
    "data": {
     "source": "FMP /stable/grades (firm level; the only analyst history on the current plans: Finnhub upgrade-downgrade and Massive Benzinga ratings answer 403, FMP price-target-news 402)",
     "universe": 1500,
-    "tried": 359,
-    "withHistory": 61,
-    "deniedByPlan": 298,
+    "tried": 379,
+    "withHistory": 62,
+    "deniedByPlan": 317,
     "callsNow": 20,
     "budgetPerRun": 20,
     "stop": null,
     "complete": false,
-    "note": "collecting: 359 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
+    "note": "collecting: 379 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
    },
    "signals": 0,
    "waiting": 0,
@@ -112,14 +112,14 @@
      "top20WeightMapped": 0.9309
     },
     "managers": 7896,
-    "followCalls": 91608,
-    "moves": 212351,
+    "followCalls": 91646,
+    "moves": 212397,
     "topManagersNow": 580,
     "eligibleNow": 5798
    },
-   "signals": 162,
-   "waiting": 32,
-   "open": 130,
+   "signals": 168,
+   "waiting": 36,
+   "open": 132,
    "closed": {
     "n": 0,
     "days": 0,
@@ -145,7 +145,7 @@
     "verdict": "NOT PROVEN",
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; not better than the same stocks on their other days in the newer half; block t -0.08 under 2.5 in the newer half; SKILL gate: not better than the same rule using every expert (no ranking) in the newer half (+8.9% vs +7.8% after cost; edge +0.1% vs +0.2%)"
    },
-   "paper": "580 top managers checked, 19 new 13F filings since 2026-10-23"
+   "paper": "580 top managers checked, 30 new 13F filings since 2026-10-23"
   },
   "EXP-13F2": {
    "name": "2+ top-10% 13F managers buy the same stock within 45 days",
@@ -168,14 +168,14 @@
      "top20WeightMapped": 0.9309
     },
     "managers": 7896,
-    "followCalls": 91608,
-    "moves": 212351,
+    "followCalls": 91646,
+    "moves": 212397,
     "topManagersNow": 580,
     "eligibleNow": 5798,
     "clusters": 352
    },
-   "signals": 16,
-   "waiting": 1,
+   "signals": 17,
+   "waiting": 2,
    "open": 15,
    "closed": {
     "n": 0,
@@ -202,7 +202,7 @@
     "verdict": "NOT PROVEN",
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; not better than the same stocks on their other days in the newer half"
    },
-   "paper": "15 clusters of 2+ top managers since 2026-10-23"
+   "paper": "16 clusters of 2+ top managers since 2026-10-23"
   },
   "EXP-INS1": {
    "name": "Purchase by a top-10% insider (by earlier purchases)",
@@ -216,12 +216,12 @@
     "complete": true,
     "purchaseDays": 32052,
     "insiders": 15683,
-    "topInsidersNow": 526,
-    "eligibleNow": 5254
+    "topInsidersNow": 527,
+    "eligibleNow": 5262
    },
-   "signals": 11,
-   "waiting": 2,
-   "open": 9,
+   "signals": 18,
+   "waiting": 7,
+   "open": 11,
    "closed": {
     "n": 0,
     "days": 0,
@@ -247,7 +247,7 @@
     "verdict": "REJECTED",
     "why": "block t 2.46 under 2.5 in the older half; not better than the average stock in the newer half; not better than the same stocks on their other days in the newer half; block t -0.71 under 2.5 in the newer half; SKILL gate: not better than the same rule using every expert (no ranking) in the newer half (+6.2% vs +8.5% after cost; edge -2.5% vs +0.8%)"
    },
-   "paper": "526 top insiders checked, 5 new Form 4 since 2026-10-23"
+   "paper": "527 top insiders checked, 12 new Form 4 since 2026-10-23"
   },
   "EXP-CONG1": {
    "name": "Purchase by a top-10% Congress member (by earlier disclosed purchases)",
