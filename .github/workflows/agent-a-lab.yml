@@ -68,7 +68,7 @@ jobs:
           PRIVATE_DATA_TOKEN: ${{ secrets.PRIVATE_DATA_TOKEN }}
         run: |
           # P0: agent-a fund labels and rotation come from the owner's marks: owner-derived outputs go ONLY to the private route; a failure fails the job visibly
-          PF=0; if [ "${{ success() }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "agent-a-lab" || PF=1; else PF=2; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-failed "agent-a-lab" agent-a-lab.json rot-today.json || true; fi   # P0: a failed run is retained privately BEFORE any reset/clean
+          PF=0; if [ "${{ job.status == 'success' }}" = true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh save "agent-a-lab" || PF=1; else PF=2; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-failed "agent-a-lab" agent-a-lab.json rot-today.json || true; fi   # P0: a failed run is retained privately BEFORE any reset/clean
           [ "$PF" != 1 ] || { echo "P0: owner-derived outputs NOT confirmed privately: stopping BEFORE any reset/clean (the failure step keeps them as quarantine)"; exit 1; }
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
@@ -79,7 +79,7 @@ jobs:
           git reset -q --hard && git clean -fdq data && git pull -q --rebase
           (cd "$OUTD" && find data -type f) | while read -r f; do cp "$OUTD/$f" "$f"; done
           # P0: the research registry is PRIVATE (canonical name): only this run's changes are merged onto the newest private registry
-          LF=0; if [ "${{ success() }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
+          LF=0; if [ "${{ job.status == 'success' }}" != true ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry of a FAILED run (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; LF=1; echo "producer failed: its registry edits are kept as private quarantine, not merged"
           elif [ -e .github/private-data-mode ]; then PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-data.sh merge-library "$RUNNER_TEMP/library-base.json" "$RUNNER_TEMP/library-run.json" || { LF=1; PRIVATE_DATA_TOKEN="$PRIVATE_DATA_TOKEN" bash .github/private-outputs.sh retain-copy "registry merge NOT stored (quarantine, not current)" "$RUNNER_TEMP/library-run.json" strategy-library.json || true; }
           else echo "- research registry: NOT published and NOT durable (not in private mode)" >> "$GITHUB_STEP_SUMMARY"; fi
           for f in $FILES; do [ -f "$f" ] && git add "$f"; done; true

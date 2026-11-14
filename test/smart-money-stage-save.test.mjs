@@ -22,7 +22,7 @@ for(const [name,rc,skipped] of [['successful',0,false],['UNKNOWN',3,false],['fai
  // GitHub continue-on-error changes conclusion, but never outcome; success() alone is true here.
  let script=body(saver).split('git config user.name')[0];
  script=script.replace(/\$\{\{\s*(.*?)\s*\}\}/g,(_,expr)=>{
- const e=expr.replace(/success\(\)/g,'true').replace(/steps\.evstudy\.outcome/g,JSON.stringify(outcome)).replace(/steps\.evstudy\.outputs\.staged/g,JSON.stringify(outputs.includes('staged=1')?'1':''));
+ const e=expr.replace(/success\(\)/g,'true').replace(/job\.status/g,'"success"').replace(/steps\.evstudy\.outcome/g,JSON.stringify(outcome)).replace(/steps\.evstudy\.outputs\.staged/g,JSON.stringify(outputs.includes('staged=1')?'1':''));
  assert.match(e,/^[\w\s"'=.&|!()-]+$/);return String(Function('return ('+e+')')());
  });
  script+='\n[ "$PF" = 0 ] || exit 1\n';

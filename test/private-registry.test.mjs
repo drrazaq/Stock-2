@@ -55,7 +55,7 @@ test('every registry workflow: pull before require and the base copy, private me
   for (const f of fs.readdirSync(WF)) { const y = fs.readFileSync(path.join(WF, f), 'utf8'); if (!y.includes('strategy-library.json')) continue; n++;
     const pull = y.indexOf('private-data.sh pull'), req = y.indexOf('private-data.sh require strategy-library.json'), merge = y.indexOf('private-data.sh merge-library');
     assert.ok(pull > 0 && req > pull && merge > req, f + ': pull -> require/base -> merge');
-    assert.match(y, /if \[ "\$\{\{ success\(\) \}\}" != true \]; then PRIVATE_DATA_TOKEN="\$PRIVATE_DATA_TOKEN" bash \.github\/private-outputs\.sh retain-copy "registry of a FAILED run[^"]*" "\$RUNNER_TEMP\/library-run\.json" strategy-library\.json/, f + ': a failed run keeps its registry as quarantine only (admitted job; never a canonical push)');
+    assert.match(y, /if \[ \"\$\{\{ job\.status == 'success' \}\}\" != true \]; then PRIVATE_DATA_TOKEN="\$PRIVATE_DATA_TOKEN" bash \.github\/private-outputs\.sh retain-copy "registry of a FAILED run[^"]*" "\$RUNNER_TEMP\/library-run\.json" strategy-library\.json/, f + ': a failed run keeps its registry as quarantine only (admitted job; never a canonical push)');
     assert.match(y, /merge-library "\$RUNNER_TEMP\/library-base\.json" "\$RUNNER_TEMP\/library-run\.json" \|\| \{ LF=1; [^\n]*retain-copy "registry merge NOT stored/, f + ': an unstored merge keeps the run copy as quarantine');
     assert.doesNotMatch(y, /private-outputs\.sh save "registry of a FAILED/, f);
     assert.match(y, /\[ "\$LF" = 0 \] \|\| exit 1/, f); assert.doesNotMatch(y, /node library-merge\.mjs/, f); assert.doesNotMatch(y, /(git add|for f in)[^#\n]*data\/strategy-library\.json/, f); }

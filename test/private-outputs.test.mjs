@@ -53,7 +53,7 @@ test('workflows: producers save through the contract, steps that also run on fai
   for (const w of ['news', 'options-survey', 'account-replay', 'agent-a-lab', 'leaders-study', 'event-orb-retest-research']) { const y = fs.readFileSync(path.join(REPO, '.github/workflows', w + '.yml'), 'utf8');
     assert.match(y, /private-outputs\.sh save/, w); assert.match(y, /- if: failure\(\)\n\s+env:\n\s+PRIVATE_DATA_TOKEN[^\n]*\n\s+run: bash \.github\/private-outputs\.sh retain-failed/, w);
     const k = y.indexOf('private-outputs.sh save'), stepStart = y.lastIndexOf('\n      - ', k), cond = y.slice(stepStart, y.indexOf('\n', stepStart + 1) + 200);
-    if (/always\(\)|failure\(\)/.test(cond)) assert.match(y.slice(k - 200, k), /\$\{\{ success\(\) \}\}/, w + ': save only on success'); }
+    if (/always\(\)|failure\(\)/.test(cond)) assert.match(y.slice(k - 200, k), /\$\{\{ job\.status == 'success'( && [^}]+)? \}\}/, w + ': save only on success'); }
   for (const p of fs.readdirSync(path.join(REPO, '.github/workflows'))) { const y = fs.readFileSync(path.join(REPO, '.github/workflows', p), 'utf8');
     if (y.includes('run: bash .github/private-data.sh pull')) assert.match(y, /private-data\.sh pull && touch "\$RUNNER_TEMP\/private-pulled-ok"/, p + ': pull writes the marker'); }
 });
@@ -114,7 +114,7 @@ function labWorld({ privateSettings }) {
 function saveBlock(file, label, success) {
   const y = fs.readFileSync(path.join(REPO, '.github/workflows', file), 'utf8'), k = y.indexOf('private-outputs.sh save "' + label + '"');
   const start = y.lastIndexOf('        run: |\n', k) + '        run: |\n'.length, end = y.indexOf('\n      - ', k);
-  return y.slice(start, end).split('\n').map(l => l.slice(10)).join('\n').replaceAll('${{ success() }}', success ? 'true' : 'false');
+  return y.slice(start, end).split('\n').map(l => l.slice(10)).join('\n').replaceAll("${{ job.status == 'success' }}", success ? 'true' : 'false');
 }
 const runBlock = (w, script) => spawnSync('bash', ['--noprofile', '--norc', '-eo', 'pipefail', '-c', script], { cwd: w.pub, encoding: 'utf8', env: w.env });
 const remoteAt = (bare, f) => { try { return sh('git --git-dir=' + bare + ' show main:data/' + f, os.tmpdir()); } catch { return null; } };
