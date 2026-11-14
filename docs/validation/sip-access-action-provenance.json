@@ -1,0 +1,69 @@
+{
+  "kind": "PUBLIC_OFFICIAL_ACTION_PIN_PROVENANCE",
+  "verifiedOn": "2026-11-01",
+  "method": "Read-only GitHub refs and commit metadata; not execution or a comprehensive action security audit",
+  "actions": [
+    {
+      "repo": "actions/checkout",
+      "tag": "v4.2.2",
+      "type": "commit",
+      "sha": "11bd71901bbe5b1630ceea73d27597364c9af683",
+      "tagUrl": "https://github.com/actions/checkout/tree/v4.2.2",
+      "commitUrl": "https://github.com/actions/checkout/commit/11bd71901bbe5b1630ceea73d27597364c9af683"
+    },
+    {
+      "repo": "actions/setup-node",
+      "tag": "v4.4.0",
+      "type": "commit",
+      "sha": "49933ea5288caeca8642d1e84afbd3f7d6820020",
+      "tagUrl": "https://github.com/actions/setup-node/tree/v4.4.0",
+      "commitUrl": "https://github.com/actions/setup-node/commit/49933ea5288caeca8642d1e84afbd3f7d6820020"
+    },
+    {
+      "repo": "actions/upload-artifact",
+      "tag": "v4.6.2",
+      "type": "commit",
+      "sha": "ea165f8d65b6e75b540449e92b4886f43607fa02",
+      "tagUrl": "https://github.com/actions/upload-artifact/tree/v4.6.2",
+      "commitUrl": "https://github.com/actions/upload-artifact/commit/ea165f8d65b6e75b540449e92b4886f43607fa02"
+    }
+  ],
+  "ordinaryCiAtOriginalCheckpoint": {
+    "sha": "107935f64d6dd4a9fe7f6c789f1ec94e23fa5d30",
+    "checkRuns": 5,
+    "workflowRuns": 3,
+    "checks": [
+      {
+        "name": "test",
+        "job": 124824874025,
+        "run": 41298672379,
+        "result": "success"
+      },
+      {
+        "name": "safety",
+        "job": 124824874354,
+        "run": 41298672422,
+        "result": "success"
+      },
+      {
+        "name": "fixture-open",
+        "job": 124824874114,
+        "run": 41298672422,
+        "result": "success"
+      },
+      {
+        "name": "fixture-close",
+        "job": 124824949337,
+        "run": 41298672422,
+        "result": "success"
+      },
+      {
+        "name": "source-preservation",
+        "job": 124824873909,
+        "run": 41298672364,
+        "result": "success"
+      }
+    ],
+    "clarification": "Five check-runs across three workflow runs. Claude's supplied files are inaccessible through the failed workspace; their UI/report has not been independently inspected."
+  }
+}

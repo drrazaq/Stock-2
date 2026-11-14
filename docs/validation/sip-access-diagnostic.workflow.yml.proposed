@@ -1,0 +1,208 @@
+# INACTIVE REVIEW COPY. No installation, bindings or dispatch approval.
+name: Bounded SIP-access sample
+on:
+  workflow_dispatch:
+    inputs:
+      approval_json:
+        description: Dated non-secret approval; never credentials
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: stock2-sip-access-sample
+  cancel-in-progress: false
+jobs:
+  diagnostic:
+    if: github.ref_name == 'main' && github.run_attempt == 1
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Read installed workflow
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: ${{ github.sha }}
+          path: review
+          sparse-checkout: .github/workflows/sip-access-diagnostic.yml
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - name: Read reviewed immutable diagnostic
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          ref: b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c
+          path: code
+          sparse-checkout: |
+            sip-access-diagnostic.mjs
+            sip-access-result.mjs
+            sip-access-https.mjs
+            tools/run-sip-access-diagnostic.mjs
+            tools/validate-sip-access-result.mjs
+            docs/validation/sip-access-plan.proposed.json
+          sparse-checkout-cone-mode: false
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: 22.22.0
+      - name: Prepare bounded non-secret approval
+        env:
+          APPROVAL_JSON: ${{ inputs.approval_json }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          base = pathlib.Path(os.environ['RUNNER_TEMP'])
+          try:
+              value = os.environ['APPROVAL_JSON']
+              if len(value.encode()) > 16384 or not isinstance(json.loads(value), dict):
+                  raise ValueError()
+              with (base / 'sip-access-approval.json').open('x') as f:
+                  f.write(value)
+          except Exception:
+              try:
+                  for name, value in [('sip-access.code', 'BLOCKED_INPUT\n'), ('sip-access.exit', '2\n')]:
+                      with (base / name).open('x') as f:
+                          f.write(value)
+              except Exception:
+                  print('ERROR')
+                  raise SystemExit(1)
+              print('BLOCKED_INPUT')
+              raise SystemExit(2)
+          PY
+      - name: Verify immutable files before binding provider credentials
+        env:
+          EXPECTED_SOURCE: b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c
+        run: |
+          python3 - <<'PY'
+          import datetime, hashlib, json, os, pathlib, subprocess
+          root = pathlib.Path('code')
+          base = pathlib.Path(os.environ['RUNNER_TEMP'])
+          code = 'BLOCKED_SOURCE'
+          try:
+              if subprocess.check_output(['git', '-C', 'code', 'rev-parse', 'HEAD'], text=True, timeout=3).strip() != os.environ['EXPECTED_SOURCE']:
+                  raise ValueError()
+              expected = {"sip-access-diagnostic.mjs":"8810a1220102786119b3fdf0caf296b8a38412c87bd9f3c1bc5ee9cb58d35d8a","sip-access-result.mjs":"01a3c1859003e49a5caf5001bfd6219faf3fcf88b68549b81127528ea09a337b","sip-access-https.mjs":"cd82157e48daf7c53822c2a0fb2e1ea6f01433058ee0ac61bb20c8bc47dccfd9","tools/run-sip-access-diagnostic.mjs":"2728669651e1fcdb9f1ff01af457bf7dd13cbf89da92fcb3b551cbf4e2499866","tools/validate-sip-access-result.mjs":"7a6b93e17edb4a1dd3250d0028cc1d3f06aa355a158b7eefeed9839e6b260744","docs/validation/sip-access-plan.proposed.json":"c83fd81e8a8f71f9791683abc24901b901248209b9529d8b89f9c126e4dcfb05"}
+              for name, digest in expected.items():
+                  p = root / name
+                  if p.is_symlink() or not p.is_file() or p.stat().st_size > 16384 or hashlib.sha256(p.read_bytes()).hexdigest() != digest:
+                      raise ValueError()
+              plan = json.loads((root / 'docs/validation/sip-access-plan.proposed.json').read_bytes())
+              t0 = datetime.datetime.fromisoformat(plan['t0'].replace('Z', '+00:00')).timestamp()
+              delta = datetime.datetime.now(datetime.timezone.utc).timestamp() - t0
+              if delta < -600:
+                  code = 'BLOCKED_START_TOO_EARLY'
+                  raise ValueError()
+              if delta > 30:
+                  code = 'BLOCKED_START_TOO_LATE'
+                  raise ValueError()
+          except Exception:
+              try:
+                  for name, value in [('sip-access.code', code + '\n'), ('sip-access.exit', '2\n')]:
+                      with (base / name).open('x') as f:
+                          f.write(value)
+              except Exception:
+                  print('ERROR')
+                  raise SystemExit(1)
+              print(code)
+              raise SystemExit(2)
+          PY
+      - name: Protected diagnostic only
+        id: diagnostic
+        working-directory: code
+        env:
+          SIP_APPROVED_SOURCE: b8e0fe8ccaabe35642af16e9317a6fcf67d45d9c
+          ALPACA_KEY: ${{ secrets.ALPACA_KEY }}
+          ALPACA_SECRET: ${{ secrets.ALPACA_SECRET }}
+        run: |
+          set +e
+          timeout --signal=TERM --kill-after=5s 800s node tools/run-sip-access-diagnostic.mjs --approval "$RUNNER_TEMP/sip-access-approval.json" "$GITHUB_WORKSPACE/review/.github/workflows/sip-access-diagnostic.yml" > "$RUNNER_TEMP/sip-access.raw" 2>/dev/null
+          rc=$?
+          SIP_RAW_EXIT="$rc" python3 - <<'PY'
+          import json, os, pathlib, re, sys
+          EXITS = {"PASS":0,"BLOCKED_CONTEXT":2,"BLOCKED_SOURCE":2,"BLOCKED_APPROVAL":2,"BLOCKED_INPUT":2,"BLOCKED_START_TOO_EARLY":2,"BLOCKED_START_TOO_LATE":2,"BLOCKED_BINDING":2,"BLOCKED_EXISTING_REPORT":2,"ERROR_CLOCK":1,"ERROR_INTERRUPTED":1,"ERROR_DEADLINE":1,"ERROR_TIMEOUT":1,"ERROR_HTTP_401":1,"ERROR_HTTP_403":1,"ERROR_HTTP_429":1,"ERROR_HTTP_OTHER":1,"ERROR_RESPONSE":1,"ERROR_STORAGE":1,"ERROR":1}
+          base = pathlib.Path(os.environ['RUNNER_TEMP'])
+          def bounded(name, limit):
+              p = base / name
+              if p.is_symlink() or not p.is_file() or p.stat().st_size > limit:
+                  raise ValueError()
+              return p.read_bytes()
+          def normalize(raw, rc):
+              try:
+                  text = raw.decode('ascii')
+                  if not re.fullmatch(r'(?:0|1|2|124|137|143)', rc):
+                      raise ValueError()
+                  if not re.fullmatch(r'[A-Z][A-Z0-9_]*(?:\n)?', text):
+                      raise ValueError()
+                  code = text.removesuffix('\n')
+                  if EXITS.get(code) != int(rc):
+                      raise ValueError()
+                  return code, int(rc)
+              except Exception:
+                  return 'ERROR', 1
+          
+          try:
+              code, rc = normalize(bounded('sip-access.raw', 128), os.environ['SIP_RAW_EXIT'])
+          except Exception:
+              code, rc = 'ERROR', 1
+          try:
+              for name, value in [('sip-access.code', code + '\n'), ('sip-access.exit', str(rc) + '\n')]:
+                  p = base / name
+                  if p.is_symlink():
+                      raise ValueError()
+                  p.write_text(value, encoding='ascii')
+          except Exception:
+              print('ERROR')
+              raise SystemExit(1)
+          print(code)
+          raise SystemExit(rc)
+          PY
+      - name: Validate final result independently
+        if: always()
+        env:
+          SIP_WRAPPER_OUTCOME: ${{ steps.diagnostic.outcome }}
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib, re, sys
+          EXITS = {"PASS":0,"BLOCKED_CONTEXT":2,"BLOCKED_SOURCE":2,"BLOCKED_APPROVAL":2,"BLOCKED_INPUT":2,"BLOCKED_START_TOO_EARLY":2,"BLOCKED_START_TOO_LATE":2,"BLOCKED_BINDING":2,"BLOCKED_EXISTING_REPORT":2,"ERROR_CLOCK":1,"ERROR_INTERRUPTED":1,"ERROR_DEADLINE":1,"ERROR_TIMEOUT":1,"ERROR_HTTP_401":1,"ERROR_HTTP_403":1,"ERROR_HTTP_429":1,"ERROR_HTTP_OTHER":1,"ERROR_RESPONSE":1,"ERROR_STORAGE":1,"ERROR":1}
+          base = pathlib.Path(os.environ['RUNNER_TEMP'])
+          def bounded(name, limit):
+              p = base / name
+              if p.is_symlink() or not p.is_file() or p.stat().st_size > limit:
+                  raise ValueError()
+              return p.read_bytes()
+          def normalize(raw, rc):
+              try:
+                  text = raw.decode('ascii')
+                  if not re.fullmatch(r'(?:0|1|2|124|137|143)', rc):
+                      raise ValueError()
+                  if not re.fullmatch(r'[A-Z][A-Z0-9_]*(?:\n)?', text):
+                      raise ValueError()
+                  code = text.removesuffix('\n')
+                  if EXITS.get(code) != int(rc):
+                      raise ValueError()
+                  return code, int(rc)
+              except Exception:
+                  return 'ERROR', 1
+          
+          try:
+              rc_text = bounded('sip-access.exit', 4).decode('ascii')
+              if not re.fullmatch(r'[012]\n', rc_text):
+                  raise ValueError()
+              code, rc = normalize(bounded('sip-access.code', 128), rc_text[:-1])
+              outcome = os.environ.get('SIP_WRAPPER_OUTCOME', '')
+              if outcome not in ('success', 'failure', 'skipped', 'cancelled') or (rc == 0 and outcome != 'success') or (rc != 0 and outcome == 'success'):
+                  raise ValueError()
+          except Exception:
+              code, rc = 'ERROR', 1
+          print(code)
+          raise SystemExit(rc)
+          PY
+      - name: Retain aggregate-only report
+        if: always() && steps.diagnostic.outcome != 'skipped'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: sip-access-sample-${{ github.run_id }}
+          path: ${{ runner.temp }}/sip-access-report.json
+          if-no-files-found: warn
+          retention-days: 3
+      - name: Remove temporary diagnostic files
+        if: always()
+        run: rm -f -- "$RUNNER_TEMP/sip-access-approval.json" "$RUNNER_TEMP/sip-access-report.json" "$RUNNER_TEMP/sip-access.raw" "$RUNNER_TEMP/sip-access.code" "$RUNNER_TEMP/sip-access.exit"
