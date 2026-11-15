@@ -1,30 +1,30 @@
 {
- "generatedAt": "2026-11-14T03:28:22.839Z",
+ "generatedAt": "2026-11-15T19:31:28.386Z",
  "preRegistered": "anomaly-core.mjs header + ANOMALIES (23 Oct 2026, before any run) + data/strategy-library.json ANOM-*",
  "window": [
-  "2021-11-01",
+  "2021-11-08",
   "2026-11-13"
  ],
- "bar": 4.1,
+ "bar": 4.12,
  "split": "2024-01-01",
  "cost": 0.008,
  "data": {
   "facts": {
    "ok": true,
-   "companies": 3641,
-   "withFacts": 3261,
-   "at": "2026-11-14T03:26:03.119Z"
+   "companies": 3629,
+   "withFacts": 3250,
+   "at": "2026-11-15T19:29:04.658Z"
   },
   "earn": {
    "ok": true,
-   "days": 1315,
+   "days": 1310,
    "missing": 0,
    "fetchedNow": 15,
-   "fromAgentA": 1294,
-   "reports": 68187,
+   "fromAgentA": 1289,
+   "reports": 67267,
    "surge": {
-    "reports": 40865,
-    "withSurge": 27016
+    "reports": 40814,
+    "withSurge": 26983
    }
   },
   "insider": {
@@ -53,10 +53,12 @@
    "note": "FINRA API: not a list for 2026-11"
   },
   "13f": {
-   "ok": true,
+   "ok": false,
    "cusipSanity": "ok",
    "periods": 20,
-   "missing": [],
+   "missing": [
+    "2026-09-30"
+   ],
    "bestIdeas": 25317,
    "cusipLooked": 23908,
    "withTicker": 23908,
@@ -64,14 +66,14 @@
   },
   "price": {
    "ok": true,
-   "sessions": 1265
+   "sessions": 1260
   },
   "calendar": {
    "ok": true,
-   "sessions": 1265
+   "sessions": 1260
   }
  },
- "standard": "both halves (formation before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions (calendar rules: SPY over all same-length windows), better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.1 -> PROVEN",
+ "standard": "both halves (formation before / from 2024-01-01): > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same entry-to-exit sessions (calendar rules: SPY over all same-length windows), better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.12 -> PROVEN",
  "needsData": {
   "ANOM-IDXADD": {
    "name": "Index additions",
@@ -5746,7 +5748,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-14T03:28:22.840Z",
+  "at": "2026-11-15T19:31:28.386Z",
   "results": {}
  },
  "trades": {}
