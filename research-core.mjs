@@ -1225,6 +1225,13 @@ export function sbcDataRule({ ciks, looked, liqMonths, liqMapped, events }) { co
   if (!(r.map >= SBC_DATA.map)) why.push('liquid stock-months with an SEC number ' + (r.map * 100).toFixed(1) + '% (85% needed)');
   if (!(events >= SBC_DATA.events)) why.push('SBC intensity events ' + events + ' (5,000 needed: reader check)');
   return { ok: !why.length, ratios: Object.fromEntries(Object.entries(r).map(([k, v]) => [k, r4(v)])), events, why: why.join('; ') || null }; }
+// PAPER LANE (added 15 Nov 2026, build only, no re-test): RQ-SBC-LOW126 met the TRY SMALL bar (NOT PROVEN, frozen 14 Nov), so the paper lane
+// promised above is built. Each day's 10-K filers (SEC daily index) from Monday 16 Nov 2026: every SBC and sales tag read from data.sec.gov
+// companyconcept, merged into the company-facts shape and run through the SAME sbcRows / sbcEvents; ranked against the 5-year reference set
+// plus the paper events (365 days); bottom 20% recorded as PAPER signals (126 sessions). Nothing in the rule changes.
+export const SBC_PAPER_FROM = '2026-11-16';
+export const SBC_CONCEPTS = [...SBC.tags, ...SBC.sales];
+export function sbcFromConcepts(m) { const g = {}; for (const t of SBC_CONCEPTS) { const j = m && m[t]; if (j && j.units && typeof j.units === 'object') g[t] = { units: j.units }; } return { facts: { 'us-gaap': g } }; }
 const SBC_SOURCES = ['https://doi.org/10.1007/s11142-020-09546-2', 'https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3439089', 'https://clsbluesky.law.columbia.edu/2019/09/05/stock-based-compensation-financial-analysts-and-equity-overvaluation/'];
 const SBC_NOTE = 'Daily researcher 2026-11-14: Mohanram, White and Zhao (2020, Review of Accounting Studies) "Stock-based compensation, financial analysts, and equity overvaluation": the highest SBC / sales quintile earned about 5% less over the next year than the lowest. New line (SBC expense from official SEC XBRL company facts); nothing in the library tests it. 6-month hold (horizon check) and no industry sort (stated). Buy bottom 20%; top 20% as an avoid check (gross vs gross). Run once on 5 years incl. dead stocks with the system gates; first complete verdict frozen in data/research-lab.json firstRun.';
 export function preRegisterSbc(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;

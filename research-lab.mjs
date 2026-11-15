@@ -24,7 +24,7 @@ import { RULES, IDS, LAZY_IDS, TENDER_IDS, TO, parseSubmission, offerPrice, spre
   ISC, ISC_IDS, sdOf, isShock, eightKs, reactionDate, isEarnings, newsOk, iscDataRule, RPO, RPO_IDS, rpoRows, rpoEvents, rpoDataRule,
   EAT, EAT_IDS, eatAnnouncements, eatEvents, eatDataRule, TAX, TAX_IDS, taxRows, taxEvents, taxDataRule,
   RDI, RDI_IDS, rdiRows, rdiEvents, rdiDataRule, INV, INV_IDS, invRows, invEvents, invDataRule,
-  GWI, GWI_IDS, gwiRows, gwiEvents, gwiDataRule, GPC, GPC_IDS, gpcRows, gpcEvents, gpcDataRule, DVC, DVC_IDS, dvcRows, dvcEvents, dvcDataRule, DST, DST_IDS, dstRows, dstEvents, dstMarket, dstScore, dstShares, dstDataRule, OC, OC_IDS, ocRows, ocEvents, ocDataRule, WIKI, WIKI_IDS, WIKI_SPARQL, wikiMap, wikiSeries, wikiAppend, wikiEnd, wikiScore, wikiRank, wikiSpikes, wikiDataRule, PRE, PRE_IDS, preMom, preRank, preWindow, preDataRule, SVOL, SVOL_IDS, svolUrl, svolParse, weekStarts, svolScore, svolRank, svolSide, svolDataRule, SBC, SBC_IDS, sbcRows, sbcEvents, sbcDataRule } from './research-core.mjs';
+  GWI, GWI_IDS, gwiRows, gwiEvents, gwiDataRule, GPC, GPC_IDS, gpcRows, gpcEvents, gpcDataRule, DVC, DVC_IDS, dvcRows, dvcEvents, dvcDataRule, DST, DST_IDS, dstRows, dstEvents, dstMarket, dstScore, dstShares, dstDataRule, OC, OC_IDS, ocRows, ocEvents, ocDataRule, WIKI, WIKI_IDS, WIKI_SPARQL, wikiMap, wikiSeries, wikiAppend, wikiEnd, wikiScore, wikiRank, wikiSpikes, wikiDataRule, PRE, PRE_IDS, preMom, preRank, preWindow, preDataRule, SVOL, SVOL_IDS, svolUrl, svolParse, weekStarts, svolScore, svolRank, svolSide, svolDataRule, SBC, SBC_IDS, sbcRows, sbcEvents, sbcDataRule, SBC_CONCEPTS, SBC_PAPER_FROM, sbcFromConcepts } from './research-core.mjs';
 import { execFileSync } from 'node:child_process';
 import { secNY } from './sec-time.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -872,6 +872,28 @@ if (ODATA.ok && OC_IDS.some(id => firstRun[id])) { const P = J(RC + '/oc-paper.j
         plan: (late ? 'LATE (found after the rule\'s entry): buy at the next open after ' + D[lastT] : 'buy at the open of ' + entryDate) + ', hold ' + H(id) + ' sessions (organization capital ' + (z.g * 100).toFixed(0) + '% of assets)', entryDate, late, recordedAfter: D[lastT] };
       if (sigIds.has(line.id)) continue; sigIds.add(line.id); newLines.push(line); sigLines.push(line); openBy.set(key, true); } }
   log('organization capital paper: ' + reads + ' companyconcept reads, ' + P.refs.length + ' paper events'); }
+// SBC intensity paper (idea 17, 10-Ks filed from Monday 16 Nov 2026; added 15 Nov after RQ-SBC-LOW126 met the TRY SMALL bar): 10-K filers of
+// each day (SEC daily index), SBC tags read first from data.sec.gov companyconcept (no SBC tag = not in the rule, as in the test), then the
+// sales tags; the SAME sbcRows / sbcEvents; ranked against the 5-year reference set plus paper events; bottom 20% recorded (buy rule only).
+if (BDATA.ok && SBC_IDS.some(id => firstRun[id])) { const P = J(RC + '/sbc-paper.json', { days: [], refs: [] }), done = new Set(P.days), uniSet = new Set(CIKS); let reads = 0;
+  for (let d = SBC_PAPER_FROM; d <= iso(Date.now()) && left() > 5 * 60e3; d = addDays(d, 1)) { const wd = new Date(d + 'T00:00:00Z').getUTCDay(); if (wd === 0 || wd === 6 || done.has(d)) continue;
+    const q = Math.floor((+d.slice(5, 7) - 1) / 3) + 1, idx = await sec(SEC + '/Archives/edgar/daily-index/' + d.slice(0, 4) + '/QTR' + q + '/master.' + d.replace(/-/g, '') + '.idx', 'text');
+    if (idx === undefined) break; if (idx === null) { if (d < iso(Date.now() - 2 * 864e5)) done.add(d); continue; }
+    let bad = false; const ciks = [...new Set(parseDailyIdx(idx, new Set(['10-K']), (r) => uniSet.has(r.cik) || !!symFor(r.cik, d)).map(r => r.cik))];
+    for (const c of ciks) { if (left() < 5 * 60e3) { bad = true; break; } const m = {};
+      for (const tag of SBC_CONCEPTS) { if (SBC.sales.includes(tag) && !SBC.tags.some(t => m[t])) break; const j = await sec(SECD + '/api/xbrl/companyconcept/CIK' + pad(c) + '/us-gaap/' + tag + '.json'); reads++; if (j === undefined) { bad = true; break; } m[tag] = j; }
+      if (bad) break;
+      for (const e of sbcEvents(sbcRows(sbcFromConcepts(m)))) if (e.d === d && !P.refs.some(z => z.cik === c && z.d === d)) P.refs.push({ cik: c, ...e, s: e.g }); }
+    if (!bad) done.add(d); else break; }
+  P.days = [...done].sort(); W(RC + '/sbc-paper.json', P);
+  const seenRef = new Set(BEVS.map(z => z.cik + '|' + z.d)), prank = makeRanker([...BEVS, ...P.refs.filter(z => !seenRef.has(z.cik + '|' + z.d))]);
+  for (const z of P.refs) { const p = prank(z.d, z.g), sym = symFor(z.cik, z.d); if (p === null || !sym) continue; const side = sideOf(p); const i = SY.get(sym), k = firstAfter(z.d), t = Math.min(k - 1, lastT); if (!liqOn(i, t)) continue;
+    for (const id of SBC_IDS.filter(x => RULES[x].side === side && RULES[x].kind === 'buy')) { const key = id + '|' + sym; if (openBy.get(key)) continue;
+      const late = k <= lastT, entryDate = late ? null : (z.d >= D[lastT] ? nextSession(z.d) : nextSession(D[lastT]));
+      const line = { type: 'signal', id: id + '|' + sym + '|' + z.d, m: id, sym, d: z.d, event: '10-K stock-based pay ' + z.end, sbcPerSales: z.g, pct: r4(p), close: r4(C[i * T + t] > 0 ? C[i * T + t] : closeAt(i, t, t - 5)), halal: halal(sym), hold: H(id),
+        plan: (late ? 'LATE (found after the rule\'s entry): buy at the next open after ' + D[lastT] : 'buy at the open of ' + entryDate) + ', hold ' + H(id) + ' sessions (stock-based pay ' + (z.g * 100).toFixed(2) + '% of sales, bottom 20%)', entryDate, late, recordedAfter: D[lastT] };
+      if (sigIds.has(line.id)) continue; sigIds.add(line.id); newLines.push(line); sigLines.push(line); openBy.set(key, true); } }
+  log('SBC intensity paper: ' + reads + ' companyconcept reads, ' + P.refs.length + ' paper events'); }
 // gross-profit-change paper (idea 10, filings from 5 Nov 2026): 10-Q/10-K filers of each day (SEC daily index), their gross profit and assets facts read
 // fresh from data.sec.gov companyconcept (two reads, once per company and day), ranked against the 5-year reference set plus paper events.
 const GPC_PAPER_FROM = '2026-11-05';
