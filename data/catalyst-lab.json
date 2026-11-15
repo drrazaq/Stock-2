@@ -1,17 +1,20 @@
 {
- "generatedAt": "2026-11-15T12:52:55.600Z",
+ "generatedAt": "2026-11-15T13:34:23.999Z",
  "preRegistered": "2026-10-23",
  "window": [
   "2022-02-03",
   "2026-11-13"
  ],
  "sessions": 1200,
- "bar": 4.1,
- "complete": true,
+ "bar": 4.11,
+ "complete": false,
  "data": {
   "fullTextPhrases": 44,
-  "fullTextComplete": true,
-  "missing": [],
+  "fullTextComplete": false,
+  "missing": [
+   "going concern 2026-11",
+   "Non-Reliance on Previously Issued 2026-11"
+  ],
   "catalystHits": 23877,
   "bioDocuments": 12973,
   "documentsNotRead": 0,
@@ -20,15 +23,9 @@
   "massiveRefCiks": 10233,
   "positive8K": 38937,
   "negative8K": 60802,
-  "requests": 16525,
-  "failedRequests": 11,
+  "requests": 54,
+  "failedRequests": 4,
   "failures": [
-   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
-   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
-   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
-   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
-   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
-   "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
    "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
    "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
    "no hits: {\"errorType\":\"ConnectionError\",\"errorMessage\":\"getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3vueaz42fo3e3vgi.us-east-1.es.amazonaws.com\",\"trace\":[\"ConnectionError: getaddrinfo EBUSY vpc-efts-prod-opensearchservice-shh4yeuznn3",
@@ -594,7 +591,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-15T12:52:55.601Z",
+  "at": "2026-11-15T13:34:24.001Z",
   "to": "2026-11-13",
   "results": {
    "CAT-RUN1": {
@@ -3934,6 +3931,20 @@
     "sameStock": 0.0681
    },
    {
+    "s": "ALLK",
+    "buy": "2023-05-18",
+    "sell": "2023-06-29",
+    "event": "2023-07-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "half",
+    "filed": "2022-06-21",
+    "net": -0.1614,
+    "avgStock": 0.0513,
+    "sameStock": -0.0601
+   },
+   {
     "s": "VRDN",
     "buy": "2023-05-18",
     "sell": "2023-06-29",
@@ -3960,20 +3971,6 @@
     "net": -0.0982,
     "avgStock": 0.0513,
     "sameStock": -0.1072
-   },
-   {
-    "s": "ALLK",
-    "buy": "2023-05-18",
-    "sell": "2023-06-29",
-    "event": "2023-07-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "half",
-    "filed": "2022-06-21",
-    "net": -0.1614,
-    "avgStock": 0.0513,
-    "sameStock": -0.0601
    },
    {
     "s": "CRNX",
@@ -12415,6 +12412,20 @@
     "sameStock": 0.0885
    },
    {
+    "s": "PCVX",
+    "buy": "2026-08-19",
+    "sell": "2026-09-29",
+    "event": "2026-10-01",
+    "kinds": [
+     "TOPLINE"
+    ],
+    "precision": "month",
+    "filed": "2026-02-24",
+    "net": -0.0871,
+    "avgStock": -0.0711,
+    "sameStock": 0.0308
+   },
+   {
     "s": "CADL",
     "buy": "2026-08-19",
     "sell": "2026-09-29",
@@ -12525,20 +12536,6 @@
     "net": -0.1258,
     "avgStock": -0.0711,
     "sameStock": 0.0005
-   },
-   {
-    "s": "PCVX",
-    "buy": "2026-08-19",
-    "sell": "2026-09-29",
-    "event": "2026-10-01",
-    "kinds": [
-     "TOPLINE"
-    ],
-    "precision": "month",
-    "filed": "2026-02-24",
-    "net": -0.0871,
-    "avgStock": -0.0711,
-    "sameStock": 0.0308
    },
    {
     "s": "INCY",
@@ -17236,6 +17233,42 @@
     "sameStock": 0.0123
    },
    {
+    "s": "ARWR",
+    "buy": "2025-02-19",
+    "sell": "2025-03-11",
+    "positives": 4,
+    "net": -0.2643,
+    "avgStock": -0.1062,
+    "sameStock": 0.0434
+   },
+   {
+    "s": "ARWR",
+    "buy": "2025-10-02",
+    "sell": "2025-10-22",
+    "positives": 4,
+    "net": 0.0535,
+    "avgStock": -0.0076,
+    "sameStock": 0.0434
+   },
+   {
+    "s": "ARWR",
+    "buy": "2025-10-24",
+    "sell": "2025-11-13",
+    "positives": 4,
+    "net": 0.0758,
+    "avgStock": -0.0456,
+    "sameStock": 0.0434
+   },
+   {
+    "s": "ARWR",
+    "buy": "2025-11-17",
+    "sell": "2025-12-08",
+    "positives": 3,
+    "net": 0.6538,
+    "avgStock": 0.0452,
+    "sameStock": 0.0434
+   },
+   {
     "s": "DAVE",
     "buy": "2025-01-02",
     "sell": "2025-01-24",
@@ -17540,42 +17573,6 @@
     "net": 0.07,
     "avgStock": -0.056,
     "sameStock": 0.0484
-   },
-   {
-    "s": "ARWR",
-    "buy": "2025-02-19",
-    "sell": "2025-03-11",
-    "positives": 4,
-    "net": -0.2643,
-    "avgStock": -0.1062,
-    "sameStock": 0.0434
-   },
-   {
-    "s": "ARWR",
-    "buy": "2025-10-02",
-    "sell": "2025-10-22",
-    "positives": 4,
-    "net": 0.0535,
-    "avgStock": -0.0076,
-    "sameStock": 0.0434
-   },
-   {
-    "s": "ARWR",
-    "buy": "2025-10-24",
-    "sell": "2025-11-13",
-    "positives": 4,
-    "net": 0.0758,
-    "avgStock": -0.0456,
-    "sameStock": 0.0434
-   },
-   {
-    "s": "ARWR",
-    "buy": "2025-11-17",
-    "sell": "2025-12-08",
-    "positives": 3,
-    "net": 0.6538,
-    "avgStock": 0.0452,
-    "sameStock": 0.0434
    },
    {
     "s": "IDYA",

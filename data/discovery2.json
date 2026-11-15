@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-15T13:21:04.041Z",
+ "generatedAt": "2026-11-15T13:36:30.236Z",
  "status": "OK",
  "preRegistered": "2026-10-23T06:57:29.712Z",
  "window": [
@@ -8647,7 +8647,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-15T13:21:04.041Z",
+  "at": "2026-11-15T13:36:30.236Z",
   "to": "2026-11-13",
   "results": {
    "D2-001": {
@@ -533205,13 +533205,13 @@
     "edgeFlips": 0
    },
    "autolab": {
-    "rules": 1167,
-    "trades": 3996695,
-    "positiveAt08": 690,
-    "positiveAt04": 786,
-    "positiveAt02": 844,
-    "flips": 154,
-    "edgeFlips": 116
+    "rules": 1214,
+    "trades": 4076126,
+    "positiveAt08": 718,
+    "positiveAt04": 816,
+    "positiveAt02": 874,
+    "flips": 156,
+    "edgeFlips": 121
    }
   },
   "flips": [
@@ -537339,6 +537339,102 @@
     "edge04": -0.0245,
     "edge02": -0.0225,
     "edgeFlip": null
+   },
+   {
+    "source": "autolab",
+    "rule": "lotHi+mktDn+momHi+pb12/h60",
+    "name": "up 30%+ in 6 months + S&P 500 under its 50-day average + 12-25% under its 20-day high + lottery-like: a 15%+ one-day jump in the last month, held 60 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 110,
+    "method": "stored average",
+    "at08": 0.0091,
+    "at04": 0.0131,
+    "at02": 0.0151,
+    "flip": null,
+    "edge08": -0.0054,
+    "edge04": -0.0014,
+    "edge02": 0.0006,
+    "edgeFlip": "loses at 0.8% and 0.4%, wins at 0.2%"
+   },
+   {
+    "source": "autolab",
+    "rule": "dispLo+indTop+mktDn/h60",
+    "name": "S&P 500 under its 50-day average + stocks moving together (low dispersion) + its industry is in the top 20% over 6 months, held 60 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 286,
+    "method": "stored average",
+    "at08": 0.0814,
+    "at04": 0.0854,
+    "at02": 0.0874,
+    "flip": null,
+    "edge08": -0.0021,
+    "edge04": 0.0019,
+    "edge02": 0.0039,
+    "edgeFlip": "loses at 0.8%, wins at 0.4%"
+   },
+   {
+    "source": "autolab",
+    "rule": "drop5+offLow+pb5/h5",
+    "name": "5-12% under its 20-day high + fell 7%+ in 5 days + 50%+ above its 1-year low, held 5 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 1576,
+    "method": "stored average",
+    "at08": -0.0022,
+    "at04": 0.0018,
+    "at02": 0.0038,
+    "flip": "loses at 0.8%, wins at 0.4%",
+    "edge08": -0.0037,
+    "edge04": 0.0003,
+    "edge02": 0.0023,
+    "edgeFlip": "loses at 0.8%, wins at 0.4%"
+   },
+   {
+    "source": "autolab",
+    "rule": "indTop+pb12+up200/h10",
+    "name": "above its 200-day average + its industry is in the top 20% over 6 months + 12-25% under its 20-day high, held 10 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 932,
+    "method": "stored average",
+    "at08": -0.0027,
+    "at04": 0.0013,
+    "at02": 0.0033,
+    "flip": "loses at 0.8%, wins at 0.4%",
+    "edge08": -0.0102,
+    "edge04": -0.0062,
+    "edge02": -0.0042,
+    "edgeFlip": null
+   },
+   {
+    "source": "autolab",
+    "rule": "dispHi+dn200+pb5/h5",
+    "name": "stocks moving very differently (high dispersion) + 5-12% under its 20-day high + under its 200-day average, held 5 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 1952,
+    "method": "stored average",
+    "at08": 0.0234,
+    "at04": 0.0274,
+    "at02": 0.0294,
+    "flip": null,
+    "edge08": -0.0049,
+    "edge04": -0.0009,
+    "edge02": 0.0011,
+    "edgeFlip": "loses at 0.8% and 0.4%, wins at 0.2%"
+   },
+   {
+    "source": "autolab",
+    "rule": "momHi+wild/h60",
+    "name": "up 30%+ in 6 months + wild (daily swing 5%+), held 60 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 2057,
+    "method": "stored average",
+    "at08": 0.0202,
+    "at04": 0.0242,
+    "at02": 0.0262,
+    "flip": null,
+    "edge08": -0.0023,
+    "edge04": 0.0017,
+    "edge02": 0.0037,
+    "edgeFlip": "loses at 0.8%, wins at 0.4%"
    }
   ],
   "rows": [
@@ -541824,6 +541920,102 @@
     "edge04": -0.0245,
     "edge02": -0.0225,
     "edgeFlip": null
+   },
+   {
+    "source": "autolab",
+    "rule": "lotHi+mktDn+momHi+pb12/h60",
+    "name": "up 30%+ in 6 months + S&P 500 under its 50-day average + 12-25% under its 20-day high + lottery-like: a 15%+ one-day jump in the last month, held 60 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 110,
+    "method": "stored average",
+    "at08": 0.0091,
+    "at04": 0.0131,
+    "at02": 0.0151,
+    "flip": null,
+    "edge08": -0.0054,
+    "edge04": -0.0014,
+    "edge02": 0.0006,
+    "edgeFlip": "loses at 0.8% and 0.4%, wins at 0.2%"
+   },
+   {
+    "source": "autolab",
+    "rule": "dispLo+indTop+mktDn/h60",
+    "name": "S&P 500 under its 50-day average + stocks moving together (low dispersion) + its industry is in the top 20% over 6 months, held 60 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 286,
+    "method": "stored average",
+    "at08": 0.0814,
+    "at04": 0.0854,
+    "at02": 0.0874,
+    "flip": null,
+    "edge08": -0.0021,
+    "edge04": 0.0019,
+    "edge02": 0.0039,
+    "edgeFlip": "loses at 0.8%, wins at 0.4%"
+   },
+   {
+    "source": "autolab",
+    "rule": "drop5+offLow+pb5/h5",
+    "name": "5-12% under its 20-day high + fell 7%+ in 5 days + 50%+ above its 1-year low, held 5 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 1576,
+    "method": "stored average",
+    "at08": -0.0022,
+    "at04": 0.0018,
+    "at02": 0.0038,
+    "flip": "loses at 0.8%, wins at 0.4%",
+    "edge08": -0.0037,
+    "edge04": 0.0003,
+    "edge02": 0.0023,
+    "edgeFlip": "loses at 0.8%, wins at 0.4%"
+   },
+   {
+    "source": "autolab",
+    "rule": "indTop+pb12+up200/h10",
+    "name": "above its 200-day average + its industry is in the top 20% over 6 months + 12-25% under its 20-day high, held 10 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 932,
+    "method": "stored average",
+    "at08": -0.0027,
+    "at04": 0.0013,
+    "at02": 0.0033,
+    "flip": "loses at 0.8%, wins at 0.4%",
+    "edge08": -0.0102,
+    "edge04": -0.0062,
+    "edge02": -0.0042,
+    "edgeFlip": null
+   },
+   {
+    "source": "autolab",
+    "rule": "dispHi+dn200+pb5/h5",
+    "name": "stocks moving very differently (high dispersion) + 5-12% under its 20-day high + under its 200-day average, held 5 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 1952,
+    "method": "stored average",
+    "at08": 0.0234,
+    "at04": 0.0274,
+    "at02": 0.0294,
+    "flip": null,
+    "edge08": -0.0049,
+    "edge04": -0.0009,
+    "edge02": 0.0011,
+    "edgeFlip": "loses at 0.8% and 0.4%, wins at 0.2%"
+   },
+   {
+    "source": "autolab",
+    "rule": "momHi+wild/h60",
+    "name": "up 30%+ in 6 months + wild (daily swing 5%+), held 60 sessions",
+    "verdict": "FAILED DISCOVERY",
+    "n": 2057,
+    "method": "stored average",
+    "at08": 0.0202,
+    "at04": 0.0242,
+    "at02": 0.0262,
+    "flip": null,
+    "edge08": -0.0023,
+    "edge04": 0.0017,
+    "edge02": 0.0037,
+    "edgeFlip": "loses at 0.8%, wins at 0.4%"
    }
   ]
  },
@@ -541880,5 +542072,5 @@
    }
   }
  },
- "seconds": 35
+ "seconds": 34
 }
