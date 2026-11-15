@@ -1,8 +1,8 @@
 {
- "generatedAt": "2026-11-08T06:44:08.133Z",
+ "generatedAt": "2026-11-15T11:53:24.123Z",
  "status": "OK",
- "from": "2022-05-09",
- "to": "2026-08-11",
+ "from": "2022-05-16",
+ "to": "2026-08-18",
  "hold": 60,
  "versions": 18,
  "tCrit": 2.99,
@@ -12,17 +12,17 @@
     "NONE": {
      "name": "no stop",
      "older": {
-      "n": 4280,
-      "avg": 0.0109,
-      "worst5": -0.4443,
-      "worst": -0.85,
+      "n": 4279,
+      "avg": 0.013,
+      "worst5": -0.4259,
+      "worst": -1,
       "hit": 0,
       "vsNone": null
      },
      "newer": {
       "n": 4278,
-      "avg": 0.028,
-      "worst5": -0.4448,
+      "avg": 0.033,
+      "worst5": -0.4465,
       "worst": -1,
       "hit": 0,
       "vsNone": null
@@ -33,315 +33,27 @@
     "PCT10": {
      "name": "10% under the buy",
      "older": {
-      "n": 4280,
-      "avg": 0.0027,
-      "worst5": -0.2259,
-      "worst": -0.558,
-      "hit": 0.476,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0081,
-       "t": -2.27
-      }
-     },
-     "newer": {
-      "n": 4278,
-      "avg": 0.0167,
-      "worst5": -0.2586,
-      "worst": -0.878,
-      "hit": 0.467,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0113,
-       "t": -2.9
-      }
-     },
-     "harmful": true,
-     "better": false
-    },
-    "PCT15": {
-     "name": "15% under the buy",
-     "older": {
-      "n": 4280,
-      "avg": 0.0036,
-      "worst5": -0.2661,
-      "worst": -0.59,
-      "hit": 0.323,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0073,
-       "t": -2.77
-      }
-     },
-     "newer": {
-      "n": 4278,
-      "avg": 0.0199,
-      "worst5": -0.2909,
-      "worst": -0.878,
-      "hit": 0.319,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0081,
-       "t": -2.75
-      }
-     },
-     "harmful": true,
-     "better": false
-    },
-    "PCT20": {
-     "name": "20% under the buy",
-     "older": {
-      "n": 4280,
-      "avg": 0.0067,
-      "worst5": -0.2967,
-      "worst": -0.643,
-      "hit": 0.211,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0041,
-       "t": -2.1
-      }
-     },
-     "newer": {
-      "n": 4278,
-      "avg": 0.0222,
-      "worst5": -0.3173,
-      "worst": -0.878,
-      "hit": 0.218,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0057,
-       "t": -2.68
-      }
-     },
-     "harmful": true,
-     "better": false
-    },
-    "PCT25": {
-     "name": "25% under the buy",
-     "older": {
-      "n": 4280,
-      "avg": 0.0079,
-      "worst5": -0.3255,
-      "worst": -0.685,
-      "hit": 0.142,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0029,
-       "t": -1.88
-      }
-     },
-     "newer": {
-      "n": 4278,
-      "avg": 0.025,
-      "worst5": -0.3392,
-      "worst": -0.878,
-      "hit": 0.146,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.003,
-       "t": -2.05
-      }
-     },
-     "harmful": true,
-     "better": false
-    },
-    "PCT35": {
-     "name": "35% under the buy",
-     "older": {
-      "n": 4280,
-      "avg": 0.0107,
-      "worst5": -0.3967,
-      "worst": -0.685,
-      "hit": 0.057,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0002,
-       "t": -0.3
-      }
-     },
-     "newer": {
-      "n": 4278,
-      "avg": 0.0272,
-      "worst5": -0.3994,
-      "worst": -0.878,
-      "hit": 0.063,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0008,
-       "t": -0.96
-      }
-     },
-     "harmful": false,
-     "better": false
-    },
-    "ATR2": {
-     "name": "2 daily ranges under the buy",
-     "older": {
-      "n": 4280,
-      "avg": -0.0021,
-      "worst5": -0.2625,
-      "worst": -0.599,
-      "hit": 0.625,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.013,
-       "t": -3.17
-      }
-     },
-     "newer": {
-      "n": 4278,
-      "avg": 0.0156,
-      "worst5": -0.2977,
-      "worst": -0.994,
-      "hit": 0.598,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0124,
-       "t": -3.12
-      }
-     },
-     "harmful": true,
-     "better": false
-    },
-    "ATR3": {
-     "name": "3 daily ranges under the buy",
-     "older": {
-      "n": 4280,
-      "avg": 0.001,
-      "worst5": -0.3065,
-      "worst": -0.822,
-      "hit": 0.481,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0098,
-       "t": -3.01
-      }
-     },
-     "newer": {
-      "n": 4278,
-      "avg": 0.0191,
-      "worst5": -0.3411,
-      "worst": -0.994,
-      "hit": 0.463,
+      "n": 4279,
+      "avg": 0.0041,
+      "worst5": -0.2359,
+      "worst": -0.614,
+      "hit": 0.459,
       "vsNone": {
        "n": 107,
        "diff": -0.0089,
-       "t": -2.91
-      }
-     },
-     "harmful": true,
-     "better": false
-    },
-    "ATR4": {
-     "name": "4 daily ranges under the buy",
-     "older": {
-      "n": 4280,
-      "avg": 0.0029,
-      "worst5": -0.3559,
-      "worst": -0.85,
-      "hit": 0.361,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.008,
-       "t": -3.15
+       "t": -2.63
       }
      },
      "newer": {
       "n": 4278,
-      "avg": 0.022,
-      "worst5": -0.365,
-      "worst": -0.994,
-      "hit": 0.346,
+      "avg": 0.0192,
+      "worst5": -0.242,
+      "worst": -0.825,
+      "hit": 0.461,
       "vsNone": {
        "n": 107,
-       "diff": -0.006,
-       "t": -2.38
-      }
-     },
-     "harmful": true,
-     "better": false
-    },
-    "OLD": {
-     "name": "the old default (2 daily ranges or the 50-day average)",
-     "older": {
-      "n": 4280,
-      "avg": -0.0006,
-      "worst5": -0.2557,
-      "worst": -0.599,
-      "hit": 0.661,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0115,
-       "t": -2.72
-      }
-     },
-     "newer": {
-      "n": 4278,
-      "avg": 0.0142,
-      "worst5": -0.2866,
-      "worst": -0.994,
-      "hit": 0.639,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0137,
-       "t": -3.22
-      }
-     },
-     "harmful": true,
-     "better": false
-    }
-   },
-   "recommended": "PCT35",
-   "buys": 8558
-  },
-  "STRONG": {
-   "rules": {
-    "NONE": {
-     "name": "no stop",
-     "older": {
-      "n": 4278,
-      "avg": 0.0118,
-      "worst5": -0.4274,
-      "worst": -0.974,
-      "hit": 0,
-      "vsNone": null
-     },
-     "newer": {
-      "n": 4279,
-      "avg": 0.0305,
-      "worst5": -0.4583,
-      "worst": -1,
-      "hit": 0,
-      "vsNone": null
-     },
-     "harmful": false,
-     "better": false
-    },
-    "PCT10": {
-     "name": "10% under the buy",
-     "older": {
-      "n": 4278,
-      "avg": -0.0016,
-      "worst5": -0.2695,
-      "worst": -0.943,
-      "hit": 0.47,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0134,
-       "t": -4.12
-      }
-     },
-     "newer": {
-      "n": 4279,
-      "avg": 0.0171,
-      "worst5": -0.2601,
-      "worst": -0.742,
-      "hit": 0.502,
-      "vsNone": {
-       "n": 107,
-       "diff": -0.0134,
-       "t": -2.99
+       "diff": -0.0138,
+       "t": -3.62
       }
      },
      "harmful": true,
@@ -350,27 +62,27 @@
     "PCT15": {
      "name": "15% under the buy",
      "older": {
-      "n": 4278,
-      "avg": 0.0021,
-      "worst5": -0.2984,
-      "worst": -0.943,
-      "hit": 0.306,
+      "n": 4279,
+      "avg": 0.0066,
+      "worst5": -0.2746,
+      "worst": -0.856,
+      "hit": 0.309,
       "vsNone": {
        "n": 107,
-       "diff": -0.0097,
-       "t": -3.75
+       "diff": -0.0065,
+       "t": -2.65
       }
      },
      "newer": {
-      "n": 4279,
-      "avg": 0.0217,
-      "worst5": -0.2956,
-      "worst": -0.742,
-      "hit": 0.351,
+      "n": 4278,
+      "avg": 0.0268,
+      "worst5": -0.2814,
+      "worst": -0.86,
+      "hit": 0.314,
       "vsNone": {
        "n": 107,
-       "diff": -0.0088,
-       "t": -2.64
+       "diff": -0.0062,
+       "t": -2.39
       }
      },
      "harmful": true,
@@ -379,26 +91,26 @@
     "PCT20": {
      "name": "20% under the buy",
      "older": {
-      "n": 4278,
-      "avg": 0.0063,
-      "worst5": -0.3209,
-      "worst": -0.943,
-      "hit": 0.192,
+      "n": 4279,
+      "avg": 0.0081,
+      "worst5": -0.3015,
+      "worst": -0.856,
+      "hit": 0.206,
       "vsNone": {
        "n": 107,
-       "diff": -0.0055,
-       "t": -3.2
+       "diff": -0.0049,
+       "t": -2.63
       }
      },
      "newer": {
-      "n": 4279,
-      "avg": 0.0258,
-      "worst5": -0.3167,
-      "worst": -0.742,
-      "hit": 0.237,
+      "n": 4278,
+      "avg": 0.0293,
+      "worst5": -0.3151,
+      "worst": -0.895,
+      "hit": 0.205,
       "vsNone": {
        "n": 107,
-       "diff": -0.0048,
+       "diff": -0.0037,
        "t": -1.87
       }
      },
@@ -408,56 +120,56 @@
     "PCT25": {
      "name": "25% under the buy",
      "older": {
-      "n": 4278,
-      "avg": 0.0102,
-      "worst5": -0.3377,
-      "worst": -0.943,
-      "hit": 0.112,
+      "n": 4279,
+      "avg": 0.0093,
+      "worst5": -0.3312,
+      "worst": -0.856,
+      "hit": 0.137,
       "vsNone": {
        "n": 107,
-       "diff": -0.0016,
-       "t": -1.32
+       "diff": -0.0037,
+       "t": -2.85
       }
      },
      "newer": {
-      "n": 4279,
-      "avg": 0.0289,
-      "worst5": -0.3449,
-      "worst": -0.742,
-      "hit": 0.162,
+      "n": 4278,
+      "avg": 0.029,
+      "worst5": -0.3514,
+      "worst": -0.895,
+      "hit": 0.146,
       "vsNone": {
        "n": 107,
-       "diff": -0.0016,
-       "t": -0.93
+       "diff": -0.004,
+       "t": -2.34
       }
      },
-     "harmful": false,
+     "harmful": true,
      "better": false
     },
     "PCT35": {
      "name": "35% under the buy",
      "older": {
-      "n": 4278,
-      "avg": 0.0118,
-      "worst5": -0.3995,
-      "worst": -0.943,
-      "hit": 0.042,
+      "n": 4279,
+      "avg": 0.0121,
+      "worst5": -0.3949,
+      "worst": -0.856,
+      "hit": 0.054,
       "vsNone": {
        "n": 107,
-       "diff": 0.0001,
-       "t": 0.09
+       "diff": -0.0009,
+       "t": -1.37
       }
      },
      "newer": {
-      "n": 4279,
-      "avg": 0.0294,
-      "worst5": -0.4114,
-      "worst": -0.868,
-      "hit": 0.076,
+      "n": 4278,
+      "avg": 0.0318,
+      "worst5": -0.4116,
+      "worst": -0.895,
+      "hit": 0.062,
       "vsNone": {
        "n": 107,
-       "diff": -0.0011,
-       "t": -1.23
+       "diff": -0.0012,
+       "t": -1.38
       }
      },
      "harmful": false,
@@ -466,27 +178,27 @@
     "ATR2": {
      "name": "2 daily ranges under the buy",
      "older": {
-      "n": 4278,
-      "avg": -0.0039,
-      "worst5": -0.2802,
-      "worst": -0.943,
-      "hit": 0.621,
+      "n": 4279,
+      "avg": -0.0003,
+      "worst5": -0.2532,
+      "worst": -0.614,
+      "hit": 0.624,
       "vsNone": {
        "n": 107,
-       "diff": -0.0157,
-       "t": -4.22
+       "diff": -0.0133,
+       "t": -3.35
       }
      },
      "newer": {
-      "n": 4279,
-      "avg": 0.0188,
-      "worst5": -0.2984,
-      "worst": -0.742,
-      "hit": 0.596,
+      "n": 4278,
+      "avg": 0.019,
+      "worst5": -0.2945,
+      "worst": -0.937,
+      "hit": 0.588,
       "vsNone": {
        "n": 107,
-       "diff": -0.0117,
-       "t": -2.6
+       "diff": -0.014,
+       "t": -3.44
       }
      },
      "harmful": true,
@@ -495,27 +207,27 @@
     "ATR3": {
      "name": "3 daily ranges under the buy",
      "older": {
-      "n": 4278,
-      "avg": -0.0016,
-      "worst5": -0.3185,
-      "worst": -0.943,
-      "hit": 0.479,
+      "n": 4279,
+      "avg": 0.0033,
+      "worst5": -0.3116,
+      "worst": -0.856,
+      "hit": 0.485,
       "vsNone": {
        "n": 107,
-       "diff": -0.0133,
-       "t": -4.65
+       "diff": -0.0097,
+       "t": -3.32
       }
      },
      "newer": {
-      "n": 4279,
-      "avg": 0.0243,
-      "worst5": -0.3442,
-      "worst": -0.868,
-      "hit": 0.452,
+      "n": 4278,
+      "avg": 0.0251,
+      "worst5": -0.346,
+      "worst": -1,
+      "hit": 0.445,
       "vsNone": {
        "n": 107,
-       "diff": -0.0063,
-       "t": -1.94
+       "diff": -0.0079,
+       "t": -2.64
       }
      },
      "harmful": true,
@@ -524,27 +236,27 @@
     "ATR4": {
      "name": "4 daily ranges under the buy",
      "older": {
-      "n": 4278,
-      "avg": 0.0028,
-      "worst5": -0.3472,
-      "worst": -0.943,
-      "hit": 0.359,
+      "n": 4279,
+      "avg": 0.0047,
+      "worst5": -0.3494,
+      "worst": -0.887,
+      "hit": 0.365,
       "vsNone": {
        "n": 107,
-       "diff": -0.009,
-       "t": -4.19
+       "diff": -0.0084,
+       "t": -3.51
       }
      },
      "newer": {
-      "n": 4279,
-      "avg": 0.0257,
-      "worst5": -0.3794,
-      "worst": -0.887,
+      "n": 4278,
+      "avg": 0.0264,
+      "worst5": -0.3819,
+      "worst": -1,
       "hit": 0.345,
       "vsNone": {
        "n": 107,
-       "diff": -0.0049,
-       "t": -2.09
+       "diff": -0.0066,
+       "t": -2.75
       }
      },
      "harmful": true,
@@ -553,35 +265,323 @@
     "OLD": {
      "name": "the old default (2 daily ranges or the 50-day average)",
      "older": {
-      "n": 4278,
-      "avg": -0.0048,
-      "worst5": -0.2686,
-      "worst": -0.943,
-      "hit": 0.664,
+      "n": 4279,
+      "avg": 0.0006,
+      "worst5": -0.2483,
+      "worst": -0.614,
+      "hit": 0.656,
       "vsNone": {
        "n": 107,
-       "diff": -0.0166,
-       "t": -4.24
+       "diff": -0.0124,
+       "t": -3.09
       }
      },
      "newer": {
-      "n": 4279,
-      "avg": 0.016,
-      "worst5": -0.2793,
-      "worst": -0.742,
-      "hit": 0.646,
+      "n": 4278,
+      "avg": 0.0164,
+      "worst5": -0.2869,
+      "worst": -0.937,
+      "hit": 0.635,
       "vsNone": {
        "n": 107,
-       "diff": -0.0146,
-       "t": -3
+       "diff": -0.0166,
+       "t": -3.94
       }
      },
      "harmful": true,
      "better": false
     }
    },
-   "recommended": "PCT25",
+   "recommended": "PCT35",
    "buys": 8557
+  },
+  "STRONG": {
+   "rules": {
+    "NONE": {
+     "name": "no stop",
+     "older": {
+      "n": 4280,
+      "avg": 0.0173,
+      "worst5": -0.4066,
+      "worst": -0.994,
+      "hit": 0,
+      "vsNone": null
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.0389,
+      "worst5": -0.447,
+      "worst": -0.95,
+      "hit": 0,
+      "vsNone": null
+     },
+     "harmful": false,
+     "better": false
+    },
+    "PCT10": {
+     "name": "10% under the buy",
+     "older": {
+      "n": 4280,
+      "avg": 0.0056,
+      "worst5": -0.2512,
+      "worst": -0.943,
+      "hit": 0.462,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0118,
+       "t": -3.62
+      }
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.0209,
+      "worst5": -0.2626,
+      "worst": -0.806,
+      "hit": 0.485,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.018,
+       "t": -4.13
+      }
+     },
+     "harmful": true,
+     "better": false
+    },
+    "PCT15": {
+     "name": "15% under the buy",
+     "older": {
+      "n": 4280,
+      "avg": 0.0105,
+      "worst5": -0.2768,
+      "worst": -0.943,
+      "hit": 0.303,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0068,
+       "t": -3.2
+      }
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.0285,
+      "worst5": -0.2932,
+      "worst": -0.806,
+      "hit": 0.329,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0104,
+       "t": -3.07
+      }
+     },
+     "harmful": true,
+     "better": false
+    },
+    "PCT20": {
+     "name": "20% under the buy",
+     "older": {
+      "n": 4280,
+      "avg": 0.0137,
+      "worst5": -0.2985,
+      "worst": -0.943,
+      "hit": 0.192,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0037,
+       "t": -2.2
+      }
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.0322,
+      "worst5": -0.3192,
+      "worst": -0.824,
+      "hit": 0.229,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0067,
+       "t": -2.86
+      }
+     },
+     "harmful": true,
+     "better": false
+    },
+    "PCT25": {
+     "name": "25% under the buy",
+     "older": {
+      "n": 4280,
+      "avg": 0.0155,
+      "worst5": -0.32,
+      "worst": -0.943,
+      "hit": 0.122,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0019,
+       "t": -1.58
+      }
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.0344,
+      "worst5": -0.3444,
+      "worst": -0.854,
+      "hit": 0.157,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0045,
+       "t": -2.2
+      }
+     },
+     "harmful": true,
+     "better": false
+    },
+    "PCT35": {
+     "name": "35% under the buy",
+     "older": {
+      "n": 4280,
+      "avg": 0.0172,
+      "worst5": -0.3778,
+      "worst": -0.943,
+      "hit": 0.047,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0002,
+       "t": -0.27
+      }
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.0368,
+      "worst5": -0.4093,
+      "worst": -0.854,
+      "hit": 0.074,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0021,
+       "t": -2.07
+      }
+     },
+     "harmful": true,
+     "better": false
+    },
+    "ATR2": {
+     "name": "2 daily ranges under the buy",
+     "older": {
+      "n": 4280,
+      "avg": 0.0029,
+      "worst5": -0.2606,
+      "worst": -0.943,
+      "hit": 0.612,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0145,
+       "t": -3.7
+      }
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.0221,
+      "worst5": -0.2969,
+      "worst": -0.892,
+      "hit": 0.58,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0168,
+       "t": -3.99
+      }
+     },
+     "harmful": true,
+     "better": false
+    },
+    "ATR3": {
+     "name": "3 daily ranges under the buy",
+     "older": {
+      "n": 4280,
+      "avg": 0.0072,
+      "worst5": -0.2976,
+      "worst": -0.943,
+      "hit": 0.472,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0101,
+       "t": -3.39
+      }
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.0281,
+      "worst5": -0.347,
+      "worst": -0.95,
+      "hit": 0.441,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0108,
+       "t": -3.49
+      }
+     },
+     "harmful": true,
+     "better": false
+    },
+    "ATR4": {
+     "name": "4 daily ranges under the buy",
+     "older": {
+      "n": 4280,
+      "avg": 0.009,
+      "worst5": -0.3299,
+      "worst": -0.943,
+      "hit": 0.353,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0083,
+       "t": -3.66
+      }
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.031,
+      "worst5": -0.3752,
+      "worst": -0.95,
+      "hit": 0.34,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0079,
+       "t": -3.34
+      }
+     },
+     "harmful": true,
+     "better": false
+    },
+    "OLD": {
+     "name": "the old default (2 daily ranges or the 50-day average)",
+     "older": {
+      "n": 4280,
+      "avg": 0.002,
+      "worst5": -0.2533,
+      "worst": -0.943,
+      "hit": 0.657,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0153,
+       "t": -3.73
+      }
+     },
+     "newer": {
+      "n": 4278,
+      "avg": 0.021,
+      "worst5": -0.272,
+      "worst": -0.806,
+      "hit": 0.625,
+      "vsNone": {
+       "n": 107,
+       "diff": -0.0179,
+       "t": -4.02
+      }
+     },
+     "harmful": true,
+     "better": false
+    }
+   },
+   "recommended": "NONE",
+   "buys": 8558
   }
  }
 }
