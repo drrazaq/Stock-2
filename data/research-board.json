@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-11-15T09:26:58.715Z",
+ "generatedAt": "2026-11-16T09:38:09.525Z",
  "lastClose": "2026-11-13",
  "paperStart": "2026-10-26",
  "cost": 0.008,
@@ -290,8 +290,8 @@
    "hold": 63,
    "family": "rpo",
    "dataOk": true,
-   "signals": 61,
-   "waiting": 0,
+   "signals": 62,
+   "waiting": 1,
    "open": 61,
    "closed": {
     "n": 0,
@@ -321,8 +321,8 @@
    "hold": 126,
    "family": "rpo",
    "dataOk": true,
-   "signals": 61,
-   "waiting": 0,
+   "signals": 62,
+   "waiting": 1,
    "open": 61,
    "closed": {
     "n": 0,
@@ -631,8 +631,8 @@
    "hold": 126,
    "family": "inv",
    "dataOk": true,
-   "signals": 62,
-   "waiting": 0,
+   "signals": 63,
+   "waiting": 1,
    "open": 62,
    "closed": {
     "n": 0,
@@ -662,8 +662,8 @@
    "hold": 252,
    "family": "inv",
    "dataOk": true,
-   "signals": 62,
-   "waiting": 0,
+   "signals": 63,
+   "waiting": 1,
    "open": 62,
    "closed": {
     "n": 0,
@@ -1491,6 +1491,99 @@
    "fiveYear": {
     "verdict": "AVOID NOT SUPPORTED (REJECTED AS A BUY)",
     "why": "these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy"
+   }
+  },
+  "RQ-FTD-AV21": {
+   "name": "AVOID check: top-1% fails-to-deliver per shares outstanding (SEC FTD data), 21 sessions",
+   "kind": "avoid",
+   "hold": 21,
+   "family": "ftd",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID CONFIRMED (REJECTED AS A BUY)",
+    "why": "these stocks lagged the average stock in both halves with block t <= -2.5: a valid AVOID filter, never a buy"
+   }
+  },
+  "RQ-FTD-AV63": {
+   "name": "AVOID check: top-1% fails-to-deliver per shares outstanding, 63 sessions",
+   "kind": "avoid",
+   "hold": 63,
+   "family": "ftd",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID CONFIRMED (REJECTED AS A BUY)",
+    "why": "these stocks lagged the average stock in both halves with block t <= -2.5: a valid AVOID filter, never a buy"
+   }
+  },
+  "RQ-FTD-R25": {
+   "name": "AVOID check: fails-to-deliver of 2.5%+ of shares outstanding, 21 sessions",
+   "kind": "avoid",
+   "hold": 21,
+   "family": "ftd",
+   "dataOk": true,
+   "signals": 0,
+   "waiting": 0,
+   "open": 0,
+   "closed": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "halalOk": {
+    "n": 0,
+    "days": 0,
+    "stocks": 0,
+    "win": null,
+    "avg": null,
+    "edge": null
+   },
+   "ready": false,
+   "fiveYear": {
+    "verdict": "AVOID CONFIRMED (REJECTED AS A BUY)",
+    "why": "these stocks lagged the average stock in both halves with block t <= -2.5: a valid AVOID filter, never a buy"
    }
   }
  }

@@ -35467,7 +35467,7 @@
    "name": "AVOID check: top-1% fails-to-deliver per shares outstanding (SEC FTD data), 21 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-16 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid confirmed (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Information only: when an SEC half-month fails-to-deliver file becomes usable (a: 3rd of next month, b: 18th of next month), score each liquid stock by its max daily FTD shares / shares outstanding (no FTD row = 0); the top 1% (percentile >= 0.99, 500+ stocks) bought the next open and held 21 sessions; a valid AVOID / SELL filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. File source, availability days, share counts, score, ranking, cut-offs and data rule fixed in research-core.mjs (IDEA 18) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.jempfin.2016.05.006",
@@ -35475,7 +35475,45 @@
     "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) \"Informed short selling, fails-to-deliver, and abnormal returns\": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) \"Informed short selling, fails-to-deliver, and abnormal returns\": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-13",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID CONFIRMED (REJECTED AS A BUY)",
+    "n": [
+     729,
+     1050
+    ],
+    "avg": [
+     -0.045,
+     -0.0429
+    ],
+    "stress": [
+     -0.049,
+     -0.0469
+    ],
+    "edge": [
+     -0.0429,
+     -0.059
+    ],
+    "vsOwn": [
+     0.0427,
+     0.0125
+    ],
+    "noTop2": [
+     -0.0519,
+     -0.0487
+    ],
+    "tBlock": [
+     -3.74,
+     -4.33
+    ],
+    "win": [
+     0.3951,
+     0.4019
+    ],
+    "why": "these stocks lagged the average stock in both halves with block t <= -2.5: a valid AVOID filter, never a buy"
+   }
   },
   {
    "id": "RQ-FTD-AV63",
@@ -35483,7 +35521,7 @@
    "name": "AVOID check: top-1% fails-to-deliver per shares outstanding, 63 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-16 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid confirmed (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "As RQ-FTD-AV21, held 63 sessions. Never a buy. File source, availability days, share counts, score, ranking, cut-offs and data rule fixed in research-core.mjs (IDEA 18) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.jempfin.2016.05.006",
@@ -35491,7 +35529,45 @@
     "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) \"Informed short selling, fails-to-deliver, and abnormal returns\": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) \"Informed short selling, fails-to-deliver, and abnormal returns\": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-13",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID CONFIRMED (REJECTED AS A BUY)",
+    "n": [
+     556,
+     748
+    ],
+    "avg": [
+     -0.1003,
+     -0.0761
+    ],
+    "stress": [
+     -0.1043,
+     -0.0801
+    ],
+    "edge": [
+     -0.0904,
+     -0.1055
+    ],
+    "vsOwn": [
+     0.0298,
+     0.0202
+    ],
+    "noTop2": [
+     -0.1106,
+     -0.0832
+    ],
+    "tBlock": [
+     -5.02,
+     -4.12
+    ],
+    "win": [
+     0.3489,
+     0.3864
+    ],
+    "why": "these stocks lagged the average stock in both halves with block t <= -2.5: a valid AVOID filter, never a buy"
+   }
   },
   {
    "id": "RQ-FTD-R25",
@@ -35499,7 +35575,7 @@
    "name": "AVOID check: fails-to-deliver of 2.5%+ of shares outstanding, 21 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-16 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid confirmed (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "As RQ-FTD-AV21 with a fixed cut-off: max daily FTD >= 2.5% of shares outstanding (the paper's lowest fixed level), 21 sessions. Never a buy. File source, availability days, share counts, score, ranking, cut-offs and data rule fixed in research-core.mjs (IDEA 18) before any run.",
    "sources": [
     "https://doi.org/10.1016/j.jempfin.2016.05.006",
@@ -35507,7 +35583,45 @@
     "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) \"Informed short selling, fails-to-deliver, and abnormal returns\": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) \"Informed short selling, fails-to-deliver, and abnormal returns\": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-13",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID CONFIRMED (REJECTED AS A BUY)",
+    "n": [
+     261,
+     491
+    ],
+    "avg": [
+     -0.0625,
+     -0.0735
+    ],
+    "stress": [
+     -0.0665,
+     -0.0775
+    ],
+    "edge": [
+     -0.0641,
+     -0.1107
+    ],
+    "vsOwn": [
+     0.0071,
+     0.0289
+    ],
+    "noTop2": [
+     -0.0819,
+     -0.0842
+    ],
+    "tBlock": [
+     -3.25,
+     -5.18
+    ],
+    "win": [
+     0.3602,
+     0.389
+    ],
+    "why": "these stocks lagged the average stock in both halves with block t <= -2.5: a valid AVOID filter, never a buy"
+   }
   }
  ]
 }
