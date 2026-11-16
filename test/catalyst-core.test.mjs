@@ -24,6 +24,16 @@ test('other stated forms: Q3 2025, 1H 2026, a month, an advisory committee day',
   assert.deepEqual(r, [['TOPLINE', '2025-07-01', 'quarter'], ['TOPLINE', '2026-01-01', 'half'], ['ADCOM', '2025-06-05', 'day'], ['TOPLINE', '2025-09-01', 'month']]);
 });
 
+test('negated ADCOM statement cannot borrow an unrelated future EU date (BBIO regression)', () => {
+  const disclosure = 'The FDA assigned a PDUFA target action date of May 8, 2027. ' +
+    'No advisory committee meeting is currently planned. • The company has potential EU approval in the second half of 2027.';
+  const got = extractCatalysts(disclosure, '2026-10-29');
+  assert.deepEqual(got.map(x => [x.kind, x.date, x.precision]), [['PDUFA', '2027-05-08', 'day']]);
+  assert.deepEqual(extractCatalysts('Advisory committee meeting is not planned; EU approval is possible in H2 2027.', '2026-10-29'), []);
+  assert.deepEqual(extractCatalysts('An advisory committee meeting is scheduled for July 15, 2027.', '2026-10-29')
+    .map(x => [x.kind, x.date, x.precision]), [['ADCOM', '2027-07-15', 'day']]);
+});
+
 test('past dates, vague timing and topline sentences without an expectation are not catalysts', () => {
   const t = 'In January 2024 we reported topline data showing benefit. Topline data are expected in mid-2025. ' +
     'The PDUFA date of December 1, 2024 passed. We announced topline results in the third quarter of 2025.';

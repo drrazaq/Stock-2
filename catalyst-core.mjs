@@ -22,6 +22,9 @@ const KINDS = [
   { kind: 'TOPLINE', rx: /\btop-?line\b/i, needsExpect: true },
 ];
 const EXPECT = /\b(expect\w*|anticipat\w*|plan(s|ned|ning)?|on track|guid\w*|remain\w*|scheduled|intend\w*|will)\b/i;
+// A statement that no advisory committee is planned is not an ADCOM catalyst.
+// Treat it as negative even if a different program's date appears in the same extracted sentence.
+const NEGATED_ADCOM = /\b(?:no|without)\s+(?:(?:an?|any)\s+)?(?:FDA\s+)?advisory committee(?:\s+meeting)?\b|\badvisory committee(?:\s+meeting)?\s+(?:(?:is|was|has been|will be)\s+)?(?:currently\s+)?(?:not|never)\b/i;
 export function html2text(h) {
   return String(h || '').replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;|&#160;|&#xa0;/gi, ' ').replace(/&#8203;|&#x200b;|​/gi, '').replace(/&#8217;|&rsquo;/gi, '’').replace(/&#8220;|&#8221;|&ldquo;|&rdquo;/gi, '"')
@@ -39,6 +42,7 @@ export function extractCatalysts(text, filingDate) {
     for (const K of KINDS) {
       const km = s.match(K.rx); if (!km) continue;
       if (K.needsExpect && !EXPECT.test(s)) continue;
+      if (K.kind === 'ADCOM' && NEGATED_ADCOM.test(s)) continue;
       const at = km.index, found = [];
       for (const P of DATE_RX) { P.rx.lastIndex = 0; let m; while ((m = P.rx.exec(s))) { const v = P.f(m); if (!found.some(x => m.index < x.end && x.start < m.index + m[0].length)) found.push({ ...v, start: m.index, end: m.index + m[0].length }); } }
       const ok = found.filter(x => /^\d{4}-\d\d-\d\d$/.test(x.date) && !isNaN(Date.parse(x.date)) && x.date > filingDate);
