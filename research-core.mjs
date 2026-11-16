@@ -164,6 +164,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'svol') { ch += preRegisterSvol(LB); continue; }
     if (R.family === 'pre') { ch += preRegisterPre(LB); continue; }
     if (R.family === 'sbc') { ch += preRegisterSbc(LB); continue; }
+    if (R.family === 'ftd') { ch += preRegisterFtd(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -1238,4 +1239,73 @@ export function preRegisterSbc(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of SBC_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-14 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Measure, tag order, same-period sales match, ranking and data rule fixed in research-core.mjs (IDEA 17) before any run.', sources: SBC_SOURCES, hold: R.hold, note: SBC_NOTE }); ch++; }
+  return ch; }
+
+// ---------------- IDEA 18 (pre-registered 16 Nov 2026, before any run): FAILS-TO-DELIVER (SEC CNS fails data) as an AVOID / SELL-warning check ----------------
+// Source: Stratmann and Welborn, "Informed short selling, fails-to-deliver, and abnormal returns", Journal of Empirical Finance 38 (2016)
+// 81-102 (doi 10.1016/j.jempfin.2016.05.006): stocks with fails-to-deliver (FTDs) have negative abnormal returns proportional to their FTD
+// level (FTD shares / shares outstanding); monthly Fama-French alpha of the top-1% (99th percentile) FTD portfolio about -1.9% (EW) /
+// -2.0% (VW); FTD >= 10% of shares about -7% a month. Sample April 2004 - June 2008, i.e. BEFORE Reg SHO Rule 204 (2008-09) cut fails
+// sharply: the effect may be much smaller now (stated before the run).
+// NEW information line in this library (checked 16 Nov: nothing tests fails-to-deliver; short interest ANOM-SI*/SQ1-SIAVOID and FINRA short
+// volume RQ-SVOL-* are different data). Long only: AVOID / SELL-warning check only (gross vs gross, 31 Oct method). Never a buy, never a short.
+// DATA (official, free): SEC "Fails-to-Deliver Data" half-month files cnsfailsYYYYMM{a,b}.zip (pipe-delimited: SETTLEMENT DATE | CUSIP |
+// SYMBOL | QUANTITY (FAILS) | DESCRIPTION | PRICE; QUANTITY = aggregate net balance of failed shares outstanding on that settlement date).
+// PUBLICATION (SEC page): first half (a) "available at the end of the month", second half (b) "about the 15th of the next month". Fixed
+// conservative availability: a-file usable from the 3rd calendar day of the next month, b-file from the 18th of the next month. Entry k =
+// the first session on or after that day (open); signal session t = k-1.
+// SHARES OUTSTANDING: data/shares.json.gz RAW cover-page counts per CIK (as reported, not split-adjusted, like the FTD quantity): the latest
+// count dated 30+ days before the file's last day; dropped if a split-shaped change (ratio near 2,3,4,5,8,10,15,20,25,30,40,50 or the
+// inverse) separates that count from the next one (the split may fall inside the window). Symbol -> CIK = the lab's point-in-time map.
+// SCORE: per file, per stock, the MAX daily FTD quantity in the half month / shares outstanding. Stocks liquid at t (system rule: $5+, 20-day
+// average $5M+ traded) with a share count and NO FTD row score 0. Percentile among all such liquid stocks (500+ needed, else skipped).
+//   RQ-FTD-AV21   AVOID check: top 1% (percentile >= 0.99), bought the open of k, 21 sessions (the paper's monthly horizon).
+//   RQ-FTD-AV63   AVOID check: the same top 1%, 63 sessions.
+//   RQ-FTD-R25    AVOID check: FTD >= 2.5% of shares outstanding (the paper's lowest fixed cut-off), 21 sessions.
+// Judged BEFORE cost on both sides vs the average liquid stock (avoidVerdict; CONFIRMED needs both halves negative and block t <= -2.5).
+// One open trade per stock per rule. Halves: signal before / from 2024-01-01. Signals from 2021-11-01.
+// DATA RULE (fixed now): no verdict until (a) 95%+ of the expected half-month files from 2021-08 (available by the last close) are read,
+// (b) 100+ half-month cross-sections with 500+ ranked liquid stocks, (c) 5,000+ FTD rows matched to liquid stocks (reader check).
+// USE IF CONFIRMED: proposed to the owner as a holdings SELL WARNING (like Squad 29's filing notices); nothing changes in scan.mjs without that.
+// PAPER LANE: none (avoid check).
+export const FTD = { from: '2021-08', signalFrom: '2021-11-01', aDay: 3, bDay: 18, top: 0.99, fixed: 0.025, minCross: 500, shLag: 30, splitTol: 0.02,
+  splitR: [2, 3, 4, 5, 8, 10, 15, 20, 25, 30, 40, 50] };
+export const FTD_DATA = { files: 0.95, crosses: 100, matched: 5000 };
+RULES['RQ-FTD-AV21'] = { kind: 'avoid', hold: 21, side: 'top', family: 'ftd', name: 'AVOID check: top-1% fails-to-deliver per shares outstanding (SEC FTD data), 21 sessions',
+  rule: 'Information only: when an SEC half-month fails-to-deliver file becomes usable (a: 3rd of next month, b: 18th of next month), score each liquid stock by its max daily FTD shares / shares outstanding (no FTD row = 0); the top 1% (percentile >= 0.99, 500+ stocks) bought the next open and held 21 sessions; a valid AVOID / SELL filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+RULES['RQ-FTD-AV63'] = { kind: 'avoid', hold: 63, side: 'top', family: 'ftd', name: 'AVOID check: top-1% fails-to-deliver per shares outstanding, 63 sessions',
+  rule: 'As RQ-FTD-AV21, held 63 sessions. Never a buy.' };
+RULES['RQ-FTD-R25'] = { kind: 'avoid', hold: 21, side: 'fixed', family: 'ftd', name: 'AVOID check: fails-to-deliver of 2.5%+ of shares outstanding, 21 sessions',
+  rule: 'As RQ-FTD-AV21 with a fixed cut-off: max daily FTD >= 2.5% of shares outstanding (the paper\'s lowest fixed level), 21 sessions. Never a buy.' };
+export const FTD_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'ftd');
+for (const id of FTD_IDS) { if (!IDS.includes(id)) IDS.push(id); ONE_OPEN.add(id); }
+const ymNext = (ym) => { const y = +ym.slice(0, 4), m = +ym.slice(5, 7); return m === 12 ? (y + 1) + '-01' : y + '-' + String(m + 1).padStart(2, '0'); };
+// expected half-month files from FTD.from whose availability day is on or before `upto`: [{ ym, h, avail, last }] (last = last calendar day covered)
+export function ftdFiles(upto, from = FTD.from) { const out = []; for (let ym = from; ym <= upto.slice(0, 7); ym = ymNext(ym)) { const nx = ymNext(ym);
+    const lastDay = addDays(nx + '-01', -1); for (const h of ['a', 'b']) { const avail = nx + '-' + String(h === 'a' ? FTD.aDay : FTD.bDay).padStart(2, '0');
+      if (avail <= upto) out.push({ ym, h, avail, last: h === 'a' ? ym + '-15' : lastDay }); } } return out; }
+// candidate SEC URLs for one file (the SEC page uses more than one folder; tried in order, 404 -> next)
+export function ftdUrls(ym, h, base = 'https://www.sec.gov') { const f = 'cnsfails' + ym.replace('-', '') + h; return [base + '/files/data/fails-deliver-data/' + f + '.zip', base + '/files/data/other/fails-deliver-data/' + f + '.zip', base + '/files/data/other/fails-deliver-data/' + f + '_0.zip', base + '/files/data/fails-deliver-data/' + f + '_0.zip']; }
+// file text -> Map symbol -> max daily quantity (header / trailer / bad rows skipped)
+export function ftdParse(text) { const out = new Map(); if (typeof text !== 'string') return out;
+  for (const line of text.split(/\r?\n/)) { const f = line.split('|'); if (f.length < 4 || !/^\d{8}$/.test(f[0].trim())) continue; const s = f[2].trim().toUpperCase(), q = +f[3];
+    if (!/^[A-Z][A-Z.\-]{0,9}$/.test(s) || !(q >= 0) || !isFinite(q)) continue; if (!(out.get(s) >= q)) out.set(s, q); } return out; }
+// raw cover counts [[date, shares]] -> { sh, at } usable for a file whose last day is d; { split: true } if a split-shaped change follows; null if none
+export function ftdShares(rows, d) { if (!Array.isArray(rows) || !rows.length) return null; const lim = addDays(d, -FTD.shLag); let ix = -1;
+  for (let k = 0; k < rows.length; k++) if (rows[k][0] <= lim && rows[k][1] > 0) ix = k; if (ix < 0) return null;
+  const nx = rows.slice(ix + 1).find(r => r[1] > 0); if (nx) { const r = nx[1] / rows[ix][1]; if (FTD.splitR.some(x => Math.abs(r - x) <= FTD.splitTol * x || Math.abs(r - 1 / x) <= FTD.splitTol / x)) return { split: true }; }
+  return { sh: rows[ix][1], at: rows[ix][0] }; }
+export const ftdRank = (list) => wikiRank(list, FTD.minCross);
+export const ftdSide = (id, p, ratio) => RULES[id].side === 'fixed' ? ratio >= FTD.fixed : p >= FTD.top;
+export function ftdDataRule({ expected, files, crosses, matched }) { const r = { files: expected ? files / expected : 0 }, why = [];
+  if (!(r.files >= FTD_DATA.files)) why.push('half-month FTD files read ' + (r.files * 100).toFixed(1) + '% (95% needed)');
+  if (!(crosses >= FTD_DATA.crosses)) why.push('cross-sections with 500+ ranked stocks ' + crosses + ' (100 needed)');
+  if (!(matched >= FTD_DATA.matched)) why.push('FTD rows matched to liquid stocks ' + matched + ' (5,000 needed: reader check)');
+  return { ok: !why.length, ratios: { files: r4(r.files) }, crosses, matched, why: why.join('; ') || null }; }
+const FTD_SOURCES = ['https://doi.org/10.1016/j.jempfin.2016.05.006', 'https://ideas.repec.org/a/eee/empfin/v38y2016ipap81-102.html', 'https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data'];
+const FTD_NOTE = 'Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) "Informed short selling, fails-to-deliver, and abnormal returns": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.';
+export function preRegisterFtd(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of FTD_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-16 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' File source, availability days, share counts, score, ranking, cut-offs and data rule fixed in research-core.mjs (IDEA 18) before any run.', sources: FTD_SOURCES, hold: R.hold, note: FTD_NOTE }); ch++; }
   return ch; }

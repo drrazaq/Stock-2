@@ -35460,6 +35460,54 @@
     "bar": 3.02,
     "why": "lost money after 0.8% costs; lost money after 1.2% costs; not better than the average stock bought the same day; loses without its 2 best trades; day t -2.6 under the luck bar 3.02; block t -2.89 under the luck bar 3.02"
    }
+  },
+  {
+   "id": "RQ-FTD-AV21",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: top-1% fails-to-deliver per shares outstanding (SEC FTD data), 21 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-16 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: when an SEC half-month fails-to-deliver file becomes usable (a: 3rd of next month, b: 18th of next month), score each liquid stock by its max daily FTD shares / shares outstanding (no FTD row = 0); the top 1% (percentile >= 0.99, 500+ stocks) bought the next open and held 21 sessions; a valid AVOID / SELL filter if they lag the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. File source, availability days, share counts, score, ranking, cut-offs and data rule fixed in research-core.mjs (IDEA 18) before any run.",
+   "sources": [
+    "https://doi.org/10.1016/j.jempfin.2016.05.006",
+    "https://ideas.repec.org/a/eee/empfin/v38y2016ipap81-102.html",
+    "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
+   ],
+   "hold": 21,
+   "note": "Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) \"Informed short selling, fails-to-deliver, and abnormal returns\": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-FTD-AV63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: top-1% fails-to-deliver per shares outstanding, 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-16 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-FTD-AV21, held 63 sessions. Never a buy. File source, availability days, share counts, score, ranking, cut-offs and data rule fixed in research-core.mjs (IDEA 18) before any run.",
+   "sources": [
+    "https://doi.org/10.1016/j.jempfin.2016.05.006",
+    "https://ideas.repec.org/a/eee/empfin/v38y2016ipap81-102.html",
+    "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) \"Informed short selling, fails-to-deliver, and abnormal returns\": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-FTD-R25",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: fails-to-deliver of 2.5%+ of shares outstanding, 21 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-16 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-FTD-AV21 with a fixed cut-off: max daily FTD >= 2.5% of shares outstanding (the paper's lowest fixed level), 21 sessions. Never a buy. File source, availability days, share counts, score, ranking, cut-offs and data rule fixed in research-core.mjs (IDEA 18) before any run.",
+   "sources": [
+    "https://doi.org/10.1016/j.jempfin.2016.05.006",
+    "https://ideas.repec.org/a/eee/empfin/v38y2016ipap81-102.html",
+    "https://www.sec.gov/data-research/sec-markets-data/fails-deliver-data"
+   ],
+   "hold": 21,
+   "note": "Daily researcher 2026-11-16: Stratmann and Welborn (2016, Journal of Empirical Finance) \"Informed short selling, fails-to-deliver, and abnormal returns\": stocks with high fails-to-deliver per shares outstanding earn negative abnormal returns (top-1% FTD monthly alpha about -2%, 2004-2008). New information line (official SEC half-month fails-to-deliver files); nothing in the library tests it. AVOID / SELL-warning check only (gross vs gross), never a buy. Pre-2008 sample: the effect may have shrunk after Reg SHO Rule 204 (stated before the run). Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
   }
  ]
 }
