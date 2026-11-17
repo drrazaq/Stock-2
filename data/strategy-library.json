@@ -34711,7 +34711,8 @@
     "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4794183",
     "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2587199"
    ],
-   "note": "Web scout 10 Nov 2026 (Vyas 2024: owner earnings subsumes cash-based operating profitability; FF6 / q5 alpha, Sharpe 1.19, in sample). Close sibling of ANOM-CFOA (rejected) and B-FCF1 (not proven); cash-based profitability is reported about 26% weaker out of sample and 58% weaker after publication, so the prior is low. Data: SEC companyfacts (SG&A, R&D and working-capital tags would need adding to value-cache): the system can get it. Queue position 3."
+   "note": "Web scout 10 Nov 2026 (Vyas 2024: owner earnings subsumes cash-based operating profitability; FF6 / q5 alpha, Sharpe 1.19, in sample). Close sibling of ANOM-CFOA (rejected) and B-FCF1 (not proven); cash-based profitability is reported about 26% weaker out of sample and 58% weaker after publication, so the prior is low. Data: SEC companyfacts (SG&A, R&D and working-capital tags would need adding to value-cache): the system can get it. Queue position 3. Built 17 Nov 2026 (pre-registered before the run; see built).",
+   "built": "Pre-registered 17 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs oeAt): each 21-session formation, liquid non-financial stocks with SEC facts and a share count; OE = TTM (revenue - cost of sales - SG&A) - change in receivables, inventory, prepaid + change in payables, accrued liabilities, deferred revenue - TTM capex, over shares known x close. R&D neither subtracted nor added back (XBRL SG&A excludes R&D; the library text followed the Compustat convention, which is the same measure). Missing working-capital item = 0; |yield| >= 40% = data error. Top 10% (rounded up), yield > 0; equal weight; buy the next open, sell the close 126 sessions later. value-core judge (blocks of 126) plus, both halves (same dates, 126 sessions): better than B-FCF1 picks and better than ANOM-CFOA picks (TTM operating cash flow / latest assets, top 10% of the same ranked stocks). SPY reported, not a gate."
   },
   {
    "id": "B-DREV1",
@@ -34725,7 +34726,8 @@
     "https://portal.northernfinanceassociation.org/viewp.php?n=2240211204",
     "https://www.federalreserve.gov/econres/feds/files/2021-037pap.pdf"
    ],
-   "note": "Web scout 10 Nov 2026: deferred revenue change (Prakash and Sinha 2013) is in the replication lists (Chen and Zimmermann, Open Source Cross-Sectional Asset Pricing; the NFA Staleness Trap paper). Data: SEC companyfacts (tags to add). Queue position 4."
+   "note": "Web scout 10 Nov 2026: deferred revenue change (Prakash and Sinha 2013) is in the replication lists (Chen and Zimmermann, Open Source Cross-Sectional Asset Pricing; the NFA Staleness Trap paper). Data: SEC companyfacts (tags to add). Queue position 4. Built 17 Nov 2026 (pre-registered before the run; see built).",
+   "built": "Pre-registered 17 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs drPair / drevAt / revGrowthAt): events = the B-FCFN1 events (original 10-Q / 10-K; formation = last session on or before the filing day; buy the next open; sell the close 63 sessions later; most traded liquid non-financial symbol; share count known). Signal = (deferred revenue at the period end - a year earlier) / total assets at the period end; deferred revenue = first family known at both dates: ContractWithCustomerLiability; ContractWithCustomerLiabilityCurrent (+Noncurrent); DeferredRevenueCurrent (+Noncurrent); DeferredRevenue. Eligible only if deferred revenue >= 2% of assets; |signal| >= 1 = data error. Pick: signal > 0 and above the causal 90th percentile of the previous 63 sessions (200+ values). value-core judge (hold 63) plus, both halves: better than the revenue-growth top 10% of the same filings (same causal cut). SPY reported, not a gate."
   },
   {
    "id": "RQ-SVOL-LOW21",
@@ -35787,6 +35789,60 @@
     ],
     "why": "lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.74 under 2.5 in the older half; block t 0.72 under 2.5 in the newer half"
    }
+  },
+  {
+   "id": "B-CCC1",
+   "family": "Quality and value",
+   "name": "Short cash conversion cycle (inventory days + receivable days - payable days)",
+   "agent": "B",
+   "status": "queued (Agent B)",
+   "registered": "2026-11-17",
+   "explain": "Each 21-session formation: liquid non-financial stocks with inventory, receivables, payables, revenue and cost of sales from SEC facts (latest quarter known before the day; averages of the quarter-end and the prior quarter-end balances). CCC = 90 x avg inventory / quarterly cost of sales + 90 x avg receivables / quarterly revenue - 90 x avg payables / quarterly cost of sales. Buy the lowest 10% (rounded up), equal weight, hold 63 sessions; value-core judge plus: better than the B-OE1 top 10% on the same dates, both halves.",
+   "sources": [
+    "https://alphaarchitect.com/2019/04/a-remarkable-new-factor-the-cash-conversion-cycle/",
+    "https://doi.org/10.1016/j.jfineco.2019.03.002"
+   ],
+   "note": "Web scout 17 Nov 2026: Wang (2019, Journal of Financial Economics), \"The cash conversion cycle spread\": lowest-minus-highest CCC decile earns 5-7% a year in alpha, in all size quintiles including large caps. Data: SEC companyfacts (AccountsReceivableNetCurrent, InventoryNet, AccountsPayableCurrent added to the value cache 17 Nov): the system has it after the 17 Nov run. Queue position 1."
+  },
+  {
+   "id": "B-OPEFF1",
+   "family": "Quality and value",
+   "name": "Operational effectiveness improving (industry-adjusted CCC falling) x earnings reaction drift",
+   "agent": "B",
+   "status": "queued (Agent B)",
+   "registered": "2026-11-17",
+   "explain": "At each 10-Q / 10-K: OpEff = -(CCC - the industry (SIC 2-digit) median CCC of the previous quarter); dOpEff = change from the same quarter a year earlier. Event: dOpEff in the top 10% (causal 63-session cut) AND the 3-session reaction around the filing (close before to close after) above the average stock. Buy the open after, hold 60 sessions; value-core judge plus: better than the reaction-only version on the same filings, both halves.",
+   "sources": [
+    "https://iris.luiss.it/retrieve/acf267c0-71f7-400a-9bc5-0182d5dd21a9/BarthBerkovitchIsraeli-2026JBFA_The%20Information%20Content%20of%20Operational%20Effectiveness.pdf",
+    "https://doi.org/10.1111/jbfa.70032"
+   ],
+   "note": "Web scout 17 Nov 2026: Barth, Berkovitch and Israeli (2026, Journal of Business Finance & Accounting): investors under-react to changes in operational effectiveness; the post-announcement drift CAR[2,61] rises with dOpEff x reaction (t 3.03), 1987-2022. Uses the filing date as the event (the system has no whole-market earnings dates). Data: SEC companyfacts + price cache: the system has it. Queue position 3 (after B-CCC1)."
+  },
+  {
+   "id": "B-VP1",
+   "family": "Quality and value",
+   "name": "Residual-income value to price (V/P)",
+   "agent": "B",
+   "status": "needs data",
+   "registered": "2026-11-17",
+   "explain": "Monthly: V = book value + discounted residual income from analyst EPS forecasts (FY1, FY2, long-term growth); buy the top 10% by V/P, hold 12 months.",
+   "sources": [
+    "https://arxiv.org/abs/2506.00206"
+   ],
+   "note": "Web scout 17 Nov 2026: Haboub, Kartsaklas and Sarafidis (2025, arXiv 2506.00206): high V/P portfolios beat low V/P over 1-3 years in the US. Needs dated whole-market analyst EPS forecasts (I/B/E/S-style consensus history): not in the system; paid data needed. The 12-month hold also gives under 3 blocks per half on the 5-year cache."
+  },
+  {
+   "id": "B-CASHP1",
+   "family": "Quality and value",
+   "name": "Cash productivity (cash return on short-term assets)",
+   "agent": "B",
+   "status": "queued (Agent B)",
+   "registered": "2026-11-17",
+   "explain": "Monthly: cash return = (TTM operating cash flow) / (cash + short-term investments + receivables + inventory) at the latest quarter end; top 10% of liquid non-financial stocks; hold 63; value-core judge plus better than ANOM-CFOA picks on the same dates.",
+   "sources": [
+    "https://arxiv.org/abs/2412.13311"
+   ],
+   "note": "Web scout 17 Nov 2026: Vohra, Vij, Mehta and Ozcan (2024, arXiv 2412.13311), after Faulkender and Wang (2006): limited predictive power across all Nasdaq stocks, alpha only in a hand-picked portfolio, so the prior is low. Data: SEC companyfacts: the system has it. Queue position 5 (low)."
   }
  ]
 }

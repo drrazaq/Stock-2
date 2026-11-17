@@ -287,3 +287,52 @@ export function recentFilings(j) {
   const r = j && j.filings && j.filings.recent; if (!r || !Array.isArray(r.form)) return [];
   return r.form.map((form, k) => ({ form, d: (r.filingDate || [])[k], items: (r.items || [])[k] || '' }));
 }
+
+// ---- B-DREV1 and B-OE1 (pre-registered 17 Nov 2026, value-lab.mjs header, BEFORE any run) ----
+// A BALANCE item at a period end `end` (within tol days), from figures known before asOf (an instant fact: no start). null if none.
+function instNear(facts, asOf, end, tol = 5) { const P = known(facts, asOf).filter(p => !p.s); let b = null; for (const p of P) if (near(p.e, end, tol) && (!b || Math.abs(days(p.e, end)) < Math.abs(days(b.e, end)))) b = p; return b ? b.v : null; }
+// DEFERRED REVENUE at `end` (customers paying ahead). Families in this order; the FIRST family whose main tag is known at BOTH `end` and
+// the date a year earlier (within 7 days) is used for both dates: (1) ContractWithCustomerLiability; (2) ContractWithCustomerLiability-
+// Current (+ ContractWithCustomerLiabilityNoncurrent where reported for that date, else 0); (3) DeferredRevenueCurrent (+ Deferred-
+// RevenueNoncurrent likewise); (4) DeferredRevenue. co.dr = { tag: facts }. Returns { now, prior } or null.
+export const DR_FAMILIES = [['ContractWithCustomerLiability'], ['ContractWithCustomerLiabilityCurrent', 'ContractWithCustomerLiabilityNoncurrent'], ['DeferredRevenueCurrent', 'DeferredRevenueNoncurrent'], ['DeferredRevenue']];
+export function drPair(dr, asOf, end) {
+  const pe = shiftYear(end);
+  for (const [main, extra] of DR_FAMILIES) { const f = dr && dr[main]; if (!f) continue; const a = instNear(f, asOf, end, 5), b = instNear(f, asOf, pe, 7); if (a === null || b === null) continue;
+    const x = extra && dr[extra] ? dr[extra] : null, xa = x ? instNear(x, asOf, end, 5) : null, xb = x ? instNear(x, asOf, pe, 7) : null;
+    return { now: a + (xa || 0), prior: b + (xb || 0) }; }
+  return null;
+}
+// B-DREV1 signal at one filing: (deferred revenue at `end` - a year earlier) / total assets at `end` (Assets, within 5 days); eligible
+// only when deferred revenue at `end` >= 2% of assets. |signal| >= 1 = a data error. Returns { drev, dr, assets } or null.
+export function drevAt(co, asOf, end) {
+  const p = drPair(co.dr, asOf, end); if (!p) return null; const A = firstOf(co.assets, f => instNear(f, asOf, end, 5)); if (!(A > 0)) return null;
+  if (!(p.now >= 0.02 * A)) return null; const drev = (p.now - p.prior) / A; return isFinite(drev) && Math.abs(drev) < 1 ? { drev, dr: p.now, assets: A } : null;
+}
+// The B-DREV1 control: this quarter's revenue over the same quarter a year earlier - 1 (first revenue tag that gives both, prior > 0).
+export function revGrowthAt(co, asOf, end) { return firstOf(co.rev, f => { const r = yoyPair(f, asOf, end); return r && r.prior > 0 ? r.now / r.prior - 1 : null; }); }
+// B-OE1 OWNER'S EARNINGS (Vyas 2024; cash-based operating profit of Ball, Gerakos, Linnainmaa and Nikolaev 2016, minus capex) on one
+// day. Anchor = the TTM revenue period end E (the first revenue tag whose ttmAt is under 200 days old). TTM cost of sales, SG&A and capex must end within 5 days of E
+// (else null). SG&A = SellingGeneralAndAdministrativeExpense, else SellingAndMarketingExpense + GeneralAndAdministrativeExpense (both).
+// R&D: the paper's Compustat SG&A INCLUDES R&D and adds it back; US-GAAP XBRL SG&A EXCLUDES R&D, so R&D is neither subtracted nor added.
+// Working capital: change = balance at E minus a year earlier (within 7 days), the first tag of each item known at both dates, else 0:
+// receivables AccountsReceivableNetCurrent; inventory InventoryNet; prepaid PrepaidExpenseCurrent, else PrepaidExpenseAndOtherAssets-
+// Current; payables AccountsPayableCurrent (+ accrued AccruedLiabilitiesCurrent), else AccountsPayableAndAccruedLiabilitiesCurrent alone;
+// deferred revenue = drPair. OE = rev - cogs - sga - dAR - dInv - dPrepaid + dAP + dAccrued + dDR - capex; yield = OE / mv;
+// |yield| >= 0.4 = a data error -> null.
+export function oeAt(co, asOf, mv) {
+  if (!(mv > 0)) return null;
+  const rev = firstOf(co.rev, f => { const r = ttmAt(f, asOf); return r && days(r.end, asOf) <= STALE_DAYS ? r : null; }); if (!rev) return null; const E = rev.end, pe = shiftYear(E);
+  const same = (m) => firstOf(m, f => { const r = ttmAt(f, asOf); return r && near(r.end, E, 5) ? r.val : null; });
+  const cogs = same(co.cogs), capex = same(co.capex); if (cogs === null || capex === null) return null;
+  let sga = same({ a: (co.sga || {}).SellingGeneralAndAdministrativeExpense }); if (sga === null) { const s = same({ a: (co.sga || {}).SellingAndMarketingExpense }), g = same({ a: (co.sga || {}).GeneralAndAdministrativeExpense }); sga = s !== null && g !== null ? s + g : null; }
+  if (sga === null) return null;
+  const chgN = (f) => { if (!f) return null; const a = instNear(f, asOf, E, 5), b = instNear(f, asOf, pe, 7); return a !== null && b !== null ? a - b : null; };
+  const chg = (...fs) => { for (const f of fs) { const v = chgN(f); if (v !== null) return v; } return 0; };
+  const wc = co.wc || {}, dAR = chg(wc.AccountsReceivableNetCurrent), dInv = chg(wc.InventoryNet), dPre = chg(wc.PrepaidExpenseCurrent, wc.PrepaidExpenseAndOtherAssetsCurrent);
+  const ap = chgN(wc.AccountsPayableCurrent), apAcc = chgN(wc.AccountsPayableAndAccruedLiabilitiesCurrent), acc = chg(wc.AccruedLiabilitiesCurrent);
+  const dAP = ap !== null ? ap : apAcc !== null ? apAcc : 0, dAcc = ap === null && apAcc !== null ? 0 : acc;
+  const p = drPair(co.dr, asOf, E), dDR = p ? p.now - p.prior : 0;
+  const oe = rev.val - cogs - sga - dAR - dInv - dPre + dAP + dAcc + dDR - capex, y = oe / mv;
+  return isFinite(y) && Math.abs(y) < 0.4 ? { end: E, oe, y } : null;
+}

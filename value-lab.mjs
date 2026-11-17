@@ -83,6 +83,30 @@
 //           open or close); same-stock-other-days = the same stock with the same exits on its other formation days of the half (not
 //           picked, liquid, 3+). value-core judge (blocks of 126) plus, BOTH halves (average after cost): (a) better than the same buys
 //           with the V15 live exits; (b) better than SPY over the same windows. The live V15 rule is NOT changed by any result.
+// ---- PRE-REGISTERED 17 Nov 2026 (Agent B, Tuesday session), written here, in value-core.mjs and in the library BEFORE any run; each run
+// ONCE as written, first complete verdict frozen; yardstick mode capBoth (AUD-1). Research only (value-today.json `research`), never buys. ----
+//   B-DREV1  DEFERRED REVENUE GROWTH (Prakash and Sinha 2013; in Chen and Zimmermann's replication list). Events = exactly the B-FCFN1
+//           events (each original 10-Q / 10-K: the filing day f whose newest operating-cash-flow period end e was first filed that day,
+//           1-120 days after e; formation t = the last session on or before f; buy the open of the next session, sell the close 63
+//           sessions later; the CIK's most traded liquid non-financial symbol; a share count known). Signal (value-core drevAt, facts
+//           known before the day after f): (deferred revenue at e - at e minus one year) / total assets (Assets) at e; deferred revenue =
+//           the first family known at both dates: ContractWithCustomerLiability; ContractWithCustomerLiabilityCurrent (+ ...Noncurrent);
+//           DeferredRevenueCurrent (+ ...Noncurrent); DeferredRevenue. Eligible only when deferred revenue at e >= 2% of assets; |signal|
+//           >= 1 = data error. PICK: signal > 0 and above the causal 90th percentile of the signals of every eligible filing formed in the
+//           63 sessions BEFORE t (trailingCut, 200+ values; the B-FCFN1 cut). value-core judge (hold 63) plus, BOTH halves (average after
+//           cost): better than the REVENUE-GROWTH top 10% of the same eligible filings (revGrowthAt: this quarter's revenue / the same
+//           quarter a year earlier - 1; same causal cut, same events). same-stock-other-days = the stock's other eligible filings in
+//           the same half not picked (3+). Reported, not a gate: SPY bought the same dates; all eligible filings.
+//   B-OE1    OWNER'S EARNINGS YIELD (Vyas 2024, SSRN 4794183; Ball, Gerakos, Linnainmaa and Nikolaev 2016). Each 21-session formation
+//           (t >= 21); liquid (5 USD+, 5M USD+ a day), non-financial (SIC 6xxx out), SEC facts and a share count known. OE yield
+//           (value-core oeAt) = TTM (revenue - cost of sales - SG&A) - the change over the TTM year in receivables, inventory and prepaid
+//           + the change in payables, accrued liabilities and deferred revenue - TTM capex, over shares known x close. R&D is neither
+//           subtracted nor added back (US-GAAP XBRL SG&A excludes R&D; the paper's Compustat SG&A includes it and adds it back, so the
+//           two are the same measure). A missing working-capital item counts 0. |yield| >= 40% = data error. Picks = the top 10% of
+//           ranked stocks by yield (rounded up), yield > 0. Equal weight; buy the next open, sell the close 126 sessions later.
+//           value-core judge (blocks of 126) plus, BOTH halves (average after cost, same formation dates, same 126-session hold):
+//           (a) better than B-FCF1's picks; (b) better than the ANOM-CFOA picks (top 10% by TTM operating cash flow / latest total
+//           assets of the same ranked stocks, rounded up, > 0). Reported, not a gate: SPY bought the same dates.
 // DATA: prices = the 5-year whole-market cache (study-cache/grouped.json.gz, READ ONLY; x rows value exits of stocks that fell under
 // the cache filter). SEC: yearly F-score inputs from quality.mjs's cache (study-cache/fund.json.gz, READ ONLY, same fscore code);
 // quarterly / TTM numbers point in time from SEC companyfacts (the bulk companyfacts.zip, else one request per company), kept compact
@@ -94,7 +118,7 @@ import fs from 'node:fs';
 import zlib from 'node:zlib';
 import { execFileSync } from 'node:child_process';
 import { freezeEach, latestBlock } from './first-run.mjs';
-import { growthRun, beatStreak, fcfCheck, halfStat, judge, r4, COST, TIER2_T, STALE_DAYS, runwayAt, avoidStat, avoidJudge, sectorCap, latestReport, npyAt, fcfNewsAt, niNewsAt, trailingCut, v15Exit } from './value-core.mjs';
+import { growthRun, beatStreak, fcfCheck, halfStat, judge, r4, COST, TIER2_T, STALE_DAYS, runwayAt, avoidStat, avoidJudge, sectorCap, latestReport, npyAt, fcfNewsAt, niNewsAt, trailingCut, v15Exit, drevAt, revGrowthAt, oeAt, ttmAt, instantAt } from './value-core.mjs';
 import { tradeG, yardPush, yardMean, correctedEntry } from './yardstick.mjs';
 const env = process.env, OUT = env.OUT || 'data/value-lab.json', TODAY_OUT = env.TODAY_OUT || 'data/value-today.json', VC = env.VALUE_CACHE || 'value-cache', DIAG = !!env.DIAG;
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -150,8 +174,11 @@ const TAGS = { cfo: ['NetCashProvidedByUsedInOperatingActivities', 'NetCashProvi
   rev: ['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'SalesRevenueNet', 'RevenueFromContractWithCustomerIncludingAssessedTax'], cogs: ['CostOfGoodsAndServicesSold', 'CostOfRevenue', 'CostOfGoodsSold'],
   inv: ['InventoryNet'], eq: ['StockholdersEquity'], debt: ['LongTermDebt', 'LongTermDebtNoncurrent', 'LongTermDebtCurrent', 'DebtCurrent', 'ShortTermBorrowings'],
   cash: ['CashAndCashEquivalentsAtCarryingValue', 'CashCashEquivalentsRestrictedCashAndRestrictedCashEquivalents'], sti: ['ShortTermInvestments', 'MarketableSecuritiesCurrent', 'AvailableForSaleSecuritiesDebtSecuritiesCurrent'],
-  div: ['PaymentsOfDividends', 'PaymentsOfDividendsCommonStock'], rep: ['PaymentsForRepurchaseOfCommonStock'], iss: ['ProceedsFromIssuanceOfCommonStock'], ni: ['NetIncomeLoss'] };
-const TAGV = 4;   // 10 Nov 2026: net income (B-FCFN1 control)   // 3 Nov 2026: payout tags added (V17)   // 27 Oct 2026: cash and short-term investment tags added (B-CR1); a cache of an older tag set is read again in full
+  div: ['PaymentsOfDividends', 'PaymentsOfDividendsCommonStock'], rep: ['PaymentsForRepurchaseOfCommonStock'], iss: ['ProceedsFromIssuanceOfCommonStock'], ni: ['NetIncomeLoss'],
+  assets: ['Assets'], sga: ['SellingGeneralAndAdministrativeExpense', 'SellingAndMarketingExpense', 'GeneralAndAdministrativeExpense'],
+  wc: ['AccountsReceivableNetCurrent', 'InventoryNet', 'PrepaidExpenseCurrent', 'PrepaidExpenseAndOtherAssetsCurrent', 'AccountsPayableCurrent', 'AccountsPayableAndAccruedLiabilitiesCurrent', 'AccruedLiabilitiesCurrent'],
+  dr: ['ContractWithCustomerLiability', 'ContractWithCustomerLiabilityCurrent', 'ContractWithCustomerLiabilityNoncurrent', 'DeferredRevenueCurrent', 'DeferredRevenueNoncurrent', 'DeferredRevenue'] };
+const TAGV = 5;   // 17 Nov 2026: assets, SG&A, working-capital and deferred-revenue tags (B-OE1, B-DREV1)   //   // 10 Nov 2026: net income (B-FCFN1 control)   // 3 Nov 2026: payout tags added (V17)   // 27 Oct 2026: cash and short-term investment tags added (B-CR1); a cache of an older tag set is read again in full
 const ALLTAGS = [...new Set(Object.values(TAGS).flat())];
 // compact: periods ending 2017 or later; the same figure filed again later (the prior-year column of a newer report) is kept once, at its
 // FIRST filing date (a later filing of the same figure changes nothing point in time); a restated figure is a new row.
@@ -178,7 +205,7 @@ if (todo.length) {
   console.log('value-lab: SEC companyfacts for ' + got + ' of ' + todo.length + ' companies (' + (zipOk ? 'bulk file' : secReq + ' requests, ' + secFail + ' failed') + ')' + (secNote ? '; ' + secNote : ''));
 }
 const factsOf = (cik) => { const c = FX.c[String(cik)]; if (!c) return null; const m = (tags) => { const o = {}; for (const t of tags) if (c[t]) o[t] = c[t].map(([s, e, v, f]) => ({ s, e, v, f })); return o; };
-  return { cfo: m(TAGS.cfo), capex: m(TAGS.capex), rev: m(TAGS.rev), cogs: m(TAGS.cogs), inv: m(TAGS.inv), eq: m(TAGS.eq), debt: m(TAGS.debt), cash: m(TAGS.cash), sti: m(TAGS.sti), div: m(TAGS.div), rep: m(TAGS.rep), iss: m(TAGS.iss), ni: m(TAGS.ni) }; };
+  return { cfo: m(TAGS.cfo), capex: m(TAGS.capex), rev: m(TAGS.rev), cogs: m(TAGS.cogs), inv: m(TAGS.inv), eq: m(TAGS.eq), debt: m(TAGS.debt), cash: m(TAGS.cash), sti: m(TAGS.sti), div: m(TAGS.div), rep: m(TAGS.rep), iss: m(TAGS.iss), ni: m(TAGS.ni), assets: m(TAGS.assets), sga: m(TAGS.sga), wc: m(TAGS.wc), dr: m(TAGS.dr) }; };
 const coMemo = new Map(), coOf = (s) => { const cik = symCik(s); if (!cik) return null; if (!coMemo.has(cik)) coMemo.set(cik, factsOf(cik)); return coMemo.get(cik); };
 const covered = [...needCiks].filter(c => FX.c[c] && Object.keys(FX.c[c]).length).length;
 
@@ -449,6 +476,57 @@ const dayAfter = (d) => new Date(Date.parse(d + 'T00:00:00Z') + 864e5).toISOStri
     RES['B-V15BE'] = { ...judge(R, { bar: BAR, extra }), results: R, vsSameBuys: vs, v15LiveExits: RB, exitReasons: { breakEven: exits(tr), v15Exits: exits(base) }, hold: 126, split: D[mid], mode: NEWMODE, worstDay: worstDay(tr), worstDayV15Exits: worstDay(base),
       trades: tr.map(z => ({ s: z.s, d: D[z.t], sold: D[z.x], why: z.why, net: r4(z.g - COST), avgStock: r4(z.c - COST), sameStock: r4(z.own === null ? null : z.own - COST), spy: r4(z.spy) })) }; } }
 
+// ================= 17 Nov 2026 pre-registered rules (header): B-DREV1, B-OE1. Yardstick mode capBoth =================
+// ---- B-DREV1 ----
+{ const symsOf = new Map(); for (let i = 0; i < NS; i++) { if (i === spyI) continue; const c = symCik(SYMS[i]); if (c) (symsOf.get(String(c)) || symsOf.set(String(c), []).get(String(c))).push(i); }
+  const ev = [], diag = { companies: 0, filings: 0, eligibleStock: 0, withSignal: 0, withRevGrowth: 0 };
+  for (const [cik, is] of symsOf) { if (!FX.c[cik]) continue; const co = factsOf(cik); const rows = Object.values(co.cfo).find(r => r && r.length); if (!rows) continue; diag.companies++;
+    const byF = new Map(); for (const x of rows) if (!byF.has(x.f) || x.e > byF.get(x.f)) byF.set(x.f, x.e);
+    for (const [f, e] of byF) { const lag = (Date.parse(f) - Date.parse(e)) / 864e5; if (!(lag >= 1 && lag <= 120)) continue; const t = sessOnOrBefore(f); if (t < 21 || t >= T - 1) continue; diag.filings++;
+      let best = null; for (const i of is) { if (finCo(SYMS[i]) || !liquid(i, t)) continue; const dv = dollarVol(i, t); if (!best || dv > best.dv) best = { i, dv }; } if (!best) continue;
+      const sh = sharesKnown(cik, D[t]); if (!(sh > 0)) continue; diag.eligibleStock++; const asOf = dayAfter(f), d = drevAt(co, asOf, e); if (!d) continue; diag.withSignal++;
+      const rg = revGrowthAt(co, asOf, e), rgv = rg !== null && isFinite(rg) && Math.abs(rg) < 10 ? rg : null; if (rgv !== null) diag.withRevGrowth++;
+      ev.push({ t, i: best.i, s: SYMS[best.i], f, e, dr: d.drev, rg: rgv }); } }
+  ev.sort((a, b) => a.t - b.t);
+  const pickBy = (key) => { const out = new Set(); let lo = 0, hi = 0; const pool = [];
+    const pos = (x) => { let a = 0, b = pool.length; while (a < b) { const m = (a + b) >> 1; if (pool[m] < x) a = m + 1; else b = m; } return a; };
+    for (let k = 0; k < ev.length; k++) { const z = ev[k];
+      while (hi < ev.length && ev[hi].t < z.t) { if (ev[hi][key] !== null) pool.splice(pos(ev[hi][key]), 0, ev[hi][key]); hi++; }
+      while (lo < hi && ev[lo].t < z.t - 63) { if (ev[lo][key] !== null) { const a = pos(ev[lo][key]); if (pool[a] === ev[lo][key]) pool.splice(a, 1); } lo++; }
+      const cut = trailingCut(pool); if (z[key] !== null && cut !== null && z[key] > 0 && z[key] > cut) out.add(k); }
+    return out; };
+  const PD = pickBy('dr'), PR = pickBy('rg'); diag.events = ev.length; diag.pickedDr = PD.size; diag.pickedRevGrowth = PR.size; DIAGS['B-DREV1'] = diag;
+  const mkTrades = (set, mid) => { const out = []; for (const k of set) { const z = ev[k], g = fwdM(z.i, z.t, 63); if (g === null || !isFinite(g)) continue; const c = ctrl(z.t, 63, NEWMODE); if (c === null) continue; out.push({ k, t: z.t, s: z.s, i: z.i, g: tradeG(g, NEWMODE), c, h: 63, half: z.t < mid ? 'older' : 'newer', sig: z.dr, filed: z.f }); } return out; };
+  if (!DIAG && PD.size) { const mid = midOf([...PD].map(k => ev[k].t)), trades = mkTrades(PD, mid);
+    const byI = new Map(); ev.forEach((z, k) => (byI.get(z.i) || byI.set(z.i, []).get(z.i)).push(k));
+    for (const z of trades) { const v = []; for (const k of byI.get(z.i) || []) { if (PD.has(k) || (ev[k].t < mid) !== (z.t < mid)) continue; yardPush(v, fwdM(ev[k].i, ev[k].t, 63), NEWMODE); } z.own = v.length >= 3 ? mean(v) : null; }
+    const R = halves(trades, 63), extra = [], rgT = mkTrades(PR, mid), all = mkTrades(new Set(ev.map((z, k) => k)), mid), vs = {};
+    for (const h of ['older', 'newer']) { const a = avgNet(trades.filter(z => z.half === h)), b = avgNet(rgT.filter(z => z.half === h)), c = avgNet(all.filter(z => z.half === h)); vs[h] = { rule: r4(a), revenueGrowthTop10: r4(b), allFilings: r4(c), nRevenueGrowth: rgT.filter(z => z.half === h).length, nAll: all.filter(z => z.half === h).length };
+      if (!(a !== null && b !== null && a > b)) extra.push('not better than the revenue-growth top 10% of the same filings in the ' + h + ' half (' + pc(a) + ' vs ' + pc(b) + ' after cost)'); }
+    const sp = spyGate(trades, 63, []);   // reported, not a gate (header)
+    RES['B-DREV1'] = { ...judge(R, { bar: BAR, extra }), results: R, vsSameFilings: vs, spyInfo: sp, hold: 63, split: D[mid], mode: NEWMODE, worstDay: worstDay(trades), revenueGrowthTop10: halves(rgT, 63),
+      trades: trades.map(z => ({ s: z.s, filed: z.filed, d: D[z.t], signal: r4(z.sig), net: r4(z.g - COST), avgStock: r4(z.c - COST), sameStock: r4(z.own === null ? null : z.own - COST) })) }; }
+  const recent = ev.map((z, k) => ({ z, k })).filter(({ z, k }) => PD.has(k) && z.t >= T - 5); NEW_TODAY['B-DREV1'] = { formed: D[T - 1], syms: [...new Set(recent.map(({ z }) => z.s))] }; }
+// ---- B-OE1 ----
+{ const picks = new Map(), cfoaP = new Map(), diag = { formations: 0, checked: 0, ranked: 0, cfoaRanked: 0, picks: [] };
+  for (const t of FORM) { const rows = [], cr = []; diag.formations++;
+    for (const i of LIQ.get(t)) { const s = SYMS[i]; if (finCo(s)) continue; const co = coOf(s); if (!co) continue; const cik = symCik(s), sh = sharesKnown(cik, D[t]); if (!(sh > 0)) continue; diag.checked++;
+      const r = oeAt(co, D[t], sh * C[i * T + t]); if (r) { diag.ranked++; rows.push({ i, y: r.y }); }
+      const cf = Object.values(co.cfo).map(f => ttmAt(f, D[t])).find(x => x && (Date.parse(D[t]) - Date.parse(x.end)) / 864e5 <= STALE_DAYS), A = Object.values(co.assets).map(f => instantAt(f, D[t])).find(x => x && x.val > 0);
+      if (r && cf && A) { diag.cfoaRanked++; cr.push({ i, y: cf.val / A.val }); } }
+    rows.sort((a, b) => b.y - a.y); const p = rows.slice(0, Math.ceil(rows.length * 0.1)).filter(x => x.y > 0).map(x => x.i); picks.set(t, p); diag.picks.push(p.length);
+    cr.sort((a, b) => b.y - a.y); cfoaP.set(t, cr.slice(0, Math.ceil(cr.length * 0.1)).filter(x => x.y > 0).map(x => x.i)); }
+  DIAGS['B-OE1'] = { formations: diag.formations, checked: diag.checked, ranked: diag.ranked, cfoaRanked: diag.cfoaRanked, picksPerMonth: diag.picks };
+  if (!DIAG) { const days = [...picks.keys()], { trades, mid } = basketTrades(picks, 126, days, NEWMODE), R = halves(trades, 126), extra = [], vs = {};
+    const fcf = FCF_PICKS ? basketTrades(new Map([...FCF_PICKS].filter(([t]) => picks.has(t))), 126, days, NEWMODE).trades : [], cfoa = basketTrades(cfoaP, 126, days, NEWMODE).trades;
+    const hm = (tr, h) => tr.filter(z => (z.t < mid ? 'older' : 'newer') === h);   // the rule's own split date for every comparison
+    for (const h of ['older', 'newer']) { const a = avgNet(hm(trades, h)), b = avgNet(hm(fcf, h)), c = avgNet(hm(cfoa, h)); vs[h] = { rule: r4(a), bFcf1: r4(b), anomCfoa: r4(c), nBFcf1: hm(fcf, h).length, nAnomCfoa: hm(cfoa, h).length };
+      if (!(a !== null && b !== null && a > b)) extra.push('not better than B-FCF1 picks (same dates, 126 sessions) in the ' + h + ' half (' + pc(a) + ' vs ' + pc(b) + ' after cost)');
+      if (!(a !== null && c !== null && a > c)) extra.push('not better than ANOM-CFOA picks (same dates, 126 sessions) in the ' + h + ' half (' + pc(a) + ' vs ' + pc(c) + ' after cost)'); }
+    const sp = spyGate(trades, 126, []);   // reported, not a gate (header)
+    RES['B-OE1'] = { ...judge(R, { bar: BAR, extra }), results: R, vsSameDates: vs, spyInfo: sp, hold: 126, split: D[mid], mode: NEWMODE, worstDay: worstDay(trades), trades: tradeRows(trades) }; }
+  const tL = FORM[FORM.length - 1]; NEW_TODAY['B-OE1'] = { formed: D[tL], syms: (picks.get(tL) || []).map(i => SYMS[i]) }; }
+
 // ---- output ----
 const cover = { companiesNeeded: needCiks.size, withSecFacts: covered, factsAt: FX.at, secNote };
 if (DIAG) { console.log('VALUE LAB DIAGNOSTICS (coverage only, no returns computed) ' + D[0] + ' to ' + D[T - 1]); console.log(JSON.stringify({ cover, ...DIAGS }, null, 1).slice(0, 12000)); process.exit(0); }
@@ -480,10 +558,10 @@ const dilution = (s) => { const cik = symCik(s), a = cik && SH.c[cik]; if (!a ||
 const todayRules = {}, research = {}; for (const [id, p] of [...Object.entries(PICKS_TODAY), ...Object.entries(NEW_TODAY)]) (NEW_TODAY[id] ? research : todayRules)[id] = { tier: tierOf(id), formed: p.formed, picks: p.syms.map(s => { const i = SY.get(s), why = [], hal = zbad.has(s) ? 'fail' : (HAL[s] && HAL[s].s) || 'unknown';
   const lt = i !== undefined ? lottery(i) : null, dl = dilution(s); if (hal === 'fail') why.push('not halal (ZAD)'); if (lt !== null) why.push('lottery-like jump ' + pc(lt)); if (dl !== null) why.push('share count up ' + pc(dl) + ' in a year');
   return { sym: s, lastClose: i !== undefined ? r4(CC(i, T - 1)) : null, halal: hal, blocked: why.length > 0, why, ...(p.detail ? { detail: p.detail.find(x => x.sym === s) } : {}) }; }) };
-fs.writeFileSync(TODAY_OUT, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], holdSessions: { 'B-FCF1': 63, 'B-BASK1': 63, 'B-EM1': 60, 'B-SIF1': 63, 'V15-SN': 126, 'B-CR1': 60, 'B-FCF-EM1': 63, V17: 126, 'B-FCFN1': 63, 'B-V15BE': 126 }, stopPct: 0.15, buyUpToPct: 0.03,
+fs.writeFileSync(TODAY_OUT, JSON.stringify({ generatedAt: new Date().toISOString(), lastClose: D[T - 1], holdSessions: { 'B-FCF1': 63, 'B-BASK1': 63, 'B-EM1': 60, 'B-SIF1': 63, 'V15-SN': 126, 'B-CR1': 60, 'B-FCF-EM1': 63, V17: 126, 'B-FCFN1': 63, 'B-V15BE': 126, 'B-DREV1': 63, 'B-OE1': 126 }, stopPct: 0.15, buyUpToPct: 0.03,
   avoid: { 'B-CR1-AVOID': { verdict: firstRun['B-CR1-AVOID'] ? firstRun['B-CR1-AVOID'].verdict : null, confirmed: !!(firstRun['B-CR1-AVOID'] && firstRun['B-CR1-AVOID'].verdict === 'AVOID CONFIRMED'), rule: 'cash burner (TTM operating cash flow < 0) with cash + short-term investments under 4 quarters of burn', note: 'information only unless confirmed is true; an AVOID block is never a short', ...(AVOID_TODAY || {}) } },
   note: 'Agent B value rules. A rule shows buys in ACTIONS only when its frozen first verdict is TRADABLE SMALL or PROVEN; otherwise this file is information only. research = rules first run on 27 Oct 2026 (V15-SN, B-CR1), 3 Nov 2026 (B-FCF-EM1, V17) and 10 Nov 2026 (B-FCFN1; B-V15BE is an exit variant with no list of its own): never offered as buys from this file (a new study never goes straight into buys); the main session decides.', rules: todayRules, research }, null, 1));
-const out = { generatedAt: new Date().toISOString(), versions: Object.keys(RES).length, preRegistered: 'data/strategy-library.json (B-FCF1 23 Oct; B-BASK1 21 Oct; B-EM1 and B-SIF1 22 Oct; V15-SN, B-CR1 and B-CR1-AVOID 27 Oct; B-FCF-EM1 and V17 3 Nov; B-FCFN1 and B-V15BE 10 Nov, value-lab.mjs header)', window: [D[0], D[T - 1]], bar: BAR, leagueBar: LEAGUE.bar || null, complete, cover, diagnostics: DIAGS,
+const out = { generatedAt: new Date().toISOString(), versions: Object.keys(RES).length, preRegistered: 'data/strategy-library.json (B-FCF1 23 Oct; B-BASK1 21 Oct; B-EM1 and B-SIF1 22 Oct; V15-SN, B-CR1 and B-CR1-AVOID 27 Oct; B-FCF-EM1 and V17 3 Nov; B-FCFN1 and B-V15BE 10 Nov; B-DREV1 and B-OE1 17 Nov, value-lab.mjs header)', window: [D[0], D[T - 1]], bar: BAR, leagueBar: LEAGUE.bar || null, complete, cover, diagnostics: DIAGS,
   notBuilt: { 'V15 ex-tech (SIC 35/36/38)': 'V15-NO35, squad 21 forward paper only (never backtested, by design)', 'V15 12 months, full gates': '252-session blocks: at most 2 per half on the 5-year cache (3 needed); and V15 12 m already lost to the S&P 500 in 2021-23 (quality.json v15)' },
   standard: 'both halves: > 0 after 0.8% and 1.2% cost, edge over the average stock > 0, better than the same stocks on their other formation days, > 0 without the 2 best, block t >= ' + TIER2_T + ' (blocks = the hold length) -> TRADABLE SMALL; block t >= ' + BAR + ' -> PROVEN; plus each rule\'s own gates',
   firstRun, correctedRun, latest: latestBlock({ at: new Date().toISOString(), to: D[T - 1], results: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, strip(r)])) }), trades: Object.fromEntries(Object.entries(RES).map(([k, r]) => [k, r.trades || r.months || []])) };
@@ -494,7 +572,7 @@ for (const [k, r] of Object.entries(RES)) { if (r.kind === 'avoid') { const g = 
   console.log('- ' + k + ': ' + r.verdict + ' | older ' + f(o) + ' | newer ' + f(n) + ' | ' + r.why); }
 // library: from firstRun only
 try { const LB = J('data/strategy-library.json', null); let ch = false;
-  for (const id of ['B-FCF1', 'B-BASK1', 'B-EM1', 'B-SIF1', 'V15-SN', 'B-CR1', 'B-FCF-EM1', 'V17', 'B-FCFN1', 'B-V15BE']) { const e = LB && LB.strategies.find(x => x.id === id), ks = Object.keys(firstRun).filter(k => k === id || k.startsWith(id + '_')); if (!e || !ks.length || /^tested/.test(e.status || '')) continue;
+  for (const id of ['B-FCF1', 'B-BASK1', 'B-EM1', 'B-SIF1', 'V15-SN', 'B-CR1', 'B-FCF-EM1', 'V17', 'B-FCFN1', 'B-V15BE', 'B-DREV1', 'B-OE1']) { const e = LB && LB.strategies.find(x => x.id === id), ks = Object.keys(firstRun).filter(k => k === id || k.startsWith(id + '_')); if (!e || !ks.length || /^tested/.test(e.status || '')) continue;
     const res = Object.fromEntries(ks.map(k => { const r = firstRun[k], R = r.results; return [k, { verdict: r.verdict, n: [R.older.n || 0, R.newer.n || 0], avg: [R.older.avg, R.newer.avg], median: [R.older.median, R.newer.median], edge: [R.older.edge, R.newer.edge], vsOwn: [R.older.vsOwn, R.newer.vsOwn], noTop2: [R.older.noTop2, R.newer.noTop2], stress: [R.older.avgStress, R.newer.avgStress], tBlock: [R.older.tBlock, R.newer.tBlock], why: r.why }]; }));
     const best = tierOf(id), v = ks.map(k => firstRun[k].verdict);
     e.status = 'tested: ' + (best ? best.toLowerCase() : v.includes('NOT PROVEN') ? 'not proven' : v.every(x => x === 'TOO FEW CASES') ? 'too few cases' : 'rejected') + (best === 'TRADABLE SMALL' ? ' (tier 2)' : '');
