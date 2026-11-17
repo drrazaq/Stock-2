@@ -34474,7 +34474,7 @@
    "family": "Momentum exits (Agent A web scout 10 Nov 2026)",
    "name": "Stop-loss momentum: monthly 12-1 winners among the 1000 largest, each sold if it closes 10% under its formation price, cash to month end",
    "explain": "RULE (written 10 Nov 2026 before any test): at each month end, buy at the next open the top 10% by 12-1 month return of the 1000 most-traded liquid stocks, equal money; any holding whose close falls 10% or more under its buy price is sold at the next open and that money waits in cash until the next month end; everything is re-formed monthly. Yardsticks: the same book without the stop, the average stock, SPY; full gates (CLAUDE.md section 4) at 0.8% / 1.2%.",
-   "status": "queued (Agent A)",
+   "status": "pre-registered 2026-11-17 (Agent A); 5-year one-shot pending (agent-a-slm-lab.mjs)",
    "agent": "A",
    "registered": "2026-11-10",
    "kind": "exit",
@@ -34483,14 +34483,15 @@
     "https://cepr.org/publications/dp19030"
    ],
    "data": "has it: the 5-year daily price cache (study cache).",
-   "note": "Han, Zhou & Zhu (2016, SSRN 2407199; CEPR DP19030, 2024): a 10% stop on each momentum stock cut the worst monthly loss of an equal-weight long-short book from about -49% to about -11% and raised the Sharpe. The long-only winner leg is what this system can trade. Caution: SQ3-CUTRUN (-8% cut, 50-day trail) was rejected and the A-LDX1 exits (1 Nov) did not help the leader-dip lane; prior is low. Queue: after A-TP1 / A-RMOM1."
+   "note": "Han, Zhou & Zhu (2016, SSRN 2407199; CEPR DP19030, 2024): a 10% stop on each momentum stock cut the worst monthly loss of an equal-weight long-short book from about -49% to about -11% and raised the Sharpe. The long-only winner leg is what this system can trade. Caution: SQ3-CUTRUN (-8% cut, 50-day trail) was rejected and the A-LDX1 exits (1 Nov) did not help the leader-dip lane; prior is low. Queue: after A-TP1 / A-RMOM1.",
+   "judging": "JUDGING (agent-a-slm-core.mjs header, written 2026-11-17 before any run): monthly 12-1 top 10% of the 1,000 most-traded liquid stocks, next open, re-formed monthly; 10% stop on the entry open (close <= 0.9 x entry -> next open, cash to month end); 0.8% / 1.2% per trade; +300% cap both sides; gates G1-G7 of CLAUDE.md section 4 per half (before / from 2024); PROVEN = all + block t >= league bar; tier 2 / TRY SMALL bar as written; STOP HELPS = stop book beats the no-stop book on average trade and drawdown in both halves at both costs."
   },
   {
    "id": "A-VSTOP1",
    "family": "Core-timing exits (Agent A web scout 10 Nov 2026)",
    "name": "Volatility-scaled stop on the core fund: leave SPUS when it closes 0.3 x its annual volatility under its last high, back at the next month end",
    "explain": "RULE (written 10 Nov 2026 before any test): hold SPY (SPUS for the owner); stop level = the highest close since entry x (1 - 0.3 x the annualised 63-session volatility at entry); a close under it -> sell at the next open, cash (T-bill) until the next month-end close, then buy back at the next open. Yardstick: buy-and-hold on the same months; judged like A-TP1 (return per year AND drawdown, both halves, 0.8% / 1.2% per round trip).",
-   "status": "queued (Agent A)",
+   "status": "closed, not built (Agent A, 17 Nov 2026)",
    "agent": "A",
    "registered": "2026-11-10",
    "kind": "timing",
@@ -34499,7 +34500,11 @@
     "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=968338"
    ],
    "data": "has it: SPY in the study cache; T-bill from FRED DTB3 (public).",
-   "note": "QuantSeeker (Oct 2025) on a tactical allocation: stops at 0.2-0.3 x annual volatility cut the drawdown from about 20% to about 15% with a similar Sharpe and a slightly lower return; no out-of-sample period stated. Kaminski & Lo (2014): stops add value only when returns trend. Queue: only if A-TP1 shows core timing can help at all."
+   "note": "QuantSeeker (Oct 2025) on a tactical allocation: stops at 0.2-0.3 x annual volatility cut the drawdown from about 20% to about 15% with a similar Sharpe and a slightly lower return; no out-of-sample period stated. Kaminski & Lo (2014): stops add value only when returns trend. Queue: only if A-TP1 shows core timing can help at all.",
+   "result": {
+    "verdict": "NOT BUILT",
+    "why": "its own pre-registered condition (10 Nov: build only if A-TP1 shows core timing can help) was not met: A-TP1 was rejected on 10 Nov (6.3% a year vs 15.3% holding, older half). Building it now would be testing core timing again after a failed first test."
+   }
   },
   {
    "id": "A-SPYIM1",
@@ -35919,6 +35924,51 @@
     "https://arxiv.org/abs/2412.13311"
    ],
    "note": "Web scout 17 Nov 2026: Vohra, Vij, Mehta and Ozcan (2024, arXiv 2412.13311), after Faulkender and Wang (2006): limited predictive power across all Nasdaq stocks, alpha only in a hand-picked portfolio, so the prior is low. Data: SEC companyfacts: the system has it. Queue position 5 (low)."
+  },
+  {
+   "id": "A-SKIP1",
+   "family": "Momentum formation (Agent A web scout 17 Nov 2026)",
+   "name": "Conditional skip-month: 12-1 momentum after a strong, calm prior month; 12-0 (no skip) after a weak or volatile one",
+   "explain": "RULE (written 17 Nov 2026 before any test): monthly; universe and picks as A-SLM1 (top 10% of the 1,000 most-traded liquid stocks); if the market (SPY) return of the last month is positive AND its daily volatility is under its 12-month median, rank by 12-1 momentum, else by 12-0; next open, hold to the next month-end open; yardsticks: plain 12-1 and plain 12-0 books, the average stock, SPY; full gates (CLAUDE.md section 4).",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "registered": "2026-11-17",
+   "kind": "momentum",
+   "sources": [
+    "https://alphaarchitect.com/skip-month-mystery/"
+   ],
+   "data": "has it: the 5-year study cache.",
+   "note": "Dikhit (Jan 2026), \"The Informational Role of the Most Recent Month in Industry-Level Momentum Strategies\" (summarised by Swedroe, Alpha Architect): on 48 industries 1975-2024, 12-1 averaged 2.03% a month after a strong prior month vs 1.28% after a weak one; 12-0 was steadier. No t-statistics and no cost in the summary; industry level, not stocks. Low prior: ANOM-INDMOM, A-ROT1/2 and SQ16-IND12 were rejected here. Queue position: after A-ANCH1."
+  },
+  {
+   "id": "A-BTD1",
+   "family": "Core timing evidence (Agent A web scout 17 Nov 2026)",
+   "name": "Buy the dip on the S&P 500 (move bonds into stocks after a down month): evidence note, not a rule for this system",
+   "explain": "EVIDENCE (not built): Estrada (IESE, May 2026) tested moving 25% of a bond sleeve into the S&P 500 after every negative month, and after drops of 3-15%, on monthly data 1871-2025. Base case: 9.2% vs 9.4% a year, Sharpe 0.113 vs 0.115, max drawdown -79.7% vs -81.8%. Dip-buying did not improve risk-adjusted return at any dip size.",
+   "status": "evidence only (not built)",
+   "agent": "A",
+   "registered": "2026-11-17",
+   "kind": "timing",
+   "sources": [
+    "https://blog.iese.edu/jestrada/files/2026/06/BTD-USA.pdf"
+   ],
+   "data": "n/a",
+   "note": "Owner meaning: agrees with A-TP1 (rejected 10 Nov): keep the monthly core (SPUS 54% + IAUM 46%) as plain monthly buying; do not hold money back to wait for dips."
+  },
+  {
+   "id": "A-BOOL1",
+   "family": "Momentum combinations (Agent A web scout 17 Nov 2026)",
+   "name": "Momentum AND low volatility (intersection screen), monthly, among the 1,000 most-traded stocks",
+   "explain": "RULE (written 17 Nov 2026 before any test): monthly; among the 1,000 most-traded liquid stocks, hold the stocks that are BOTH in the top 30% by 12-1 momentum AND in the lowest 50% by 63-session daily volatility; equal money, next open, hold to the next month-end open; yardsticks: the momentum-only top 30% book, the average stock, SPY; full gates.",
+   "status": "queued (Agent A)",
+   "agent": "A",
+   "registered": "2026-11-17",
+   "kind": "momentum",
+   "sources": [
+    "https://arxiv.org/abs/2611.09834"
+   ],
+   "data": "has it: the 5-year study cache.",
+   "note": "Wang, Rachev & Fabozzi (Nov 2026, arXiv 2611.09834): a Boolean rule is a sum of single-signal exposures plus an interaction term; an intersection of two screens and their union have opposite interaction exposures, and turnover follows from the same coefficients. They give no new anomaly with t-statistics; the test here is whether the intersection beats momentum alone after cost. Low prior: ANOM-LOWVOL and ANOM-LOWIVOL were rejected here. Queue position: low."
   }
  ]
 }
