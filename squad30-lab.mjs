@@ -1,6 +1,6 @@
 // SQUAD 30: HUNTER LAB (owner, 17 Nov 2026). Rules and verdict test: hunter-core.mjs (pre-registered there before any number).
 // MODES (env MODE):
-//   lab    build/refresh the cache (Massive grouped daily bars of every US stock from 2021-06-01, split-adjusted, dead stocks included;
+//   lab    build/refresh the cache (Massive grouped daily bars of every US stock for the last 5 years, split-adjusted, dead stocks included;
 //          Massive reference list of common stocks and ADRs, active and delisted), run every rule on the whole history, the news split,
 //          and the information studies (market leaders -> next day; S&P 500 down 2%+ -> where money went); freeze the first verdicts.
 //   today  after the close: refresh the cache with the newest session and list the signals for the next open (data/hunt-close.json).
@@ -17,7 +17,8 @@ import { nyParts, HOLIDAYS } from './watcher-guard-core.mjs';
 const env = process.env, MODE = env.MODE || 'lab', CACHE = env.HUNT_CACHE || 'squad30-cache', OUT = 'data/squad30-lab.json';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const PX = local(env.MASSIVE_BASE) || 'https://api.massive.com', TG = local(env.TG_BASE) || 'https://api.telegram.org';
-const FROM = env.HUNT_FROM || '2021-06-01', SPLIT = '2024-03-01', NEWS_FROM_DAYS = 730, NEWS_CALLS = +(env.NEWS_CALLS || 12000);
+const FROM = env.HUNT_FROM || new Date(Date.now() - (5 * 365 - 10) * 864e5).toISOString().slice(0, 10), // the plan serves 5 years back; older days are refused (HTTP 403)
+  SPLIT = '2024-03-01', NEWS_FROM_DAYS = 730, NEWS_CALLS = +(env.NEWS_CALLS || 12000);
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 const readJson = (f, d) => { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } };
 const rgz = (f) => { try { return JSON.parse(zlib.gunzipSync(fs.readFileSync(f)).toString()); } catch (e) { return null; } };
