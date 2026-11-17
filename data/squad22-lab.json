@@ -1,24 +1,24 @@
 {
- "generatedAt": "2026-11-14T03:38:17.773Z",
+ "generatedAt": "2026-11-17T05:21:06.570Z",
  "squad": 22,
  "philosophy": "new mechanisms only (owner anti-fixation rules, 25 Oct 2026): cash-conversion inflection (SEC filing-date event), spin-offs after index selling (count first), neglected-then-noticed (outside reviewer, as written)",
  "preRegistered": "squad22-core.mjs header (25 Oct 2026, before any run) + data/strategy-library.json SQ22-*",
  "window": [
-  "2021-11-01",
-  "2026-11-13"
+  "2021-11-08",
+  "2026-11-16"
  ],
- "bar": 4.1,
+ "bar": 4.12,
  "split": "2024-01-01",
  "cost": 0.008,
  "data": {
   "price": {
    "ok": true,
-   "sessions": 1265,
-   "from": "2021-11-01",
-   "to": "2026-11-13",
-   "stocks": 8597,
+   "sessions": 1261,
+   "from": "2021-11-08",
+   "to": "2026-11-16",
+   "stocks": 8575,
    "rowsWithHighLow": 1,
-   "p33Days": 1246
+   "p33Days": 1242
   },
   "tickerMap": {
    "ok": true,
@@ -33,57 +33,51 @@
    "quarters": 28,
    "downloadedNow": 1,
    "missing": [],
-   "rows": 48284,
+   "rows": 48309,
    "form10": 761
   },
   "facts": {
    "ok": true,
-   "at": "2026-11-10T04:49:23.452Z",
-   "ciks": 7596,
-   "withFacts": 6898
+   "at": "2026-11-17T05:16:12.564Z",
+   "ciks": 7588,
+   "withFacts": 6911
   },
   "fund": {
    "ok": true,
-   "companies": 11047
+   "companies": 11070
   },
   "cashconv": {
-   "filingsChecked": 98670,
-   "passed": 1867,
-   "noStock": 20,
-   "notLiquid": 313,
-   "signals": 1534,
+   "filingsChecked": 98385,
+   "passed": 1869,
+   "noStock": 19,
+   "notLiquid": 315,
+   "signals": 1535,
    "failedBy": {
-    "cash conversion not rising": 31863,
-    "no gross margin": 4567,
-    "net income not positive": 42624,
-    "gross margin not up": 2512,
-    "no operating cash flow": 4966,
-    "quarters not 3 months apart": 3370,
-    "not a new quarter": 403,
-    "stale": 1186,
-    "cash conversion under 1": 1727,
-    "no earlier quarter": 2220,
-    "no net income": 998,
-    "diluted shares up": 271,
-    "no diluted shares": 80
+    "cash conversion not rising": 31324,
+    "no gross margin": 4527,
+    "net income not positive": 42751,
+    "gross margin not up": 2504,
+    "no operating cash flow": 5129,
+    "quarters not 3 months apart": 3385,
+    "not a new quarter": 404,
+    "stale": 1185,
+    "cash conversion under 1": 1739,
+    "no earlier quarter": 2240,
+    "no net income": 970,
+    "diluted shares up": 269,
+    "no diluted shares": 79
    }
   },
   "spinoff": {
    "form10Ciks": 652,
-   "newListings": 66,
-   "notLiquid": 15,
+   "newListings": 64,
+   "notLiquid": 14,
    "missingSessions": 1,
    "cases": {
-    "older": 24,
+    "older": 23,
     "newer": 25
    },
    "sample": [
-    [
-     "LYLT",
-     "10-12B",
-     "2021-09-01",
-     "2021-11-08"
-    ],
     [
      "ONL",
      "10-12B",
@@ -381,11 +375,11 @@
    ]
   },
   "neglected": {
-   "baseStockDays": 26700,
+   "baseStockDays": 26479,
    "priceStockDays": 1,
    "signals": 0,
    "noShareSeries": 0,
-   "quietDays": 1013,
+   "quietDays": 1009,
    "older": 0,
    "newer": 0
   },
@@ -394,10 +388,10 @@
  "signalCounts": {
   "SQ22-CASHCONV": {
    "older": 503,
-   "newer": 1031
+   "newer": 1032
   },
   "SQ22-SPINOFF": {
-   "older": 24,
+   "older": 23,
    "newer": 25
   },
   "SQ22-NEGLECTED": {
@@ -405,7 +399,7 @@
    "newer": 0
   }
  },
- "standard": "both halves (before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock over the same sessions, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks, block t >= 2.5, return per year of capital above SPY -> TRADABLE SMALL; block t >= 4.1 -> PROVEN; plus each rule's own extra yardstick (CASHCONV: V15 same sessions; NEGLECTED: same-day quiet crashed stocks). Every gross return capped at +300% (AUD-1).",
+ "standard": "both halves (before / from 2024-01-01): > 0 after 0.8% and 1.2%, better than the average liquid stock over the same sessions, better than the same stock on its other days, > 0 without its 2 best, 20+ trades and 3+ blocks, block t >= 2.5, return per year of capital above SPY -> TRADABLE SMALL; block t >= 4.12 -> PROVEN; plus each rule's own extra yardstick (CASHCONV: V15 same sessions; NEGLECTED: same-day quiet crashed stocks). Every gross return capped at +300% (AUD-1).",
  "notRun": [
   {
    "id": "SQ22-13D",
@@ -1052,7 +1046,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-14T03:38:17.773Z",
+  "at": "2026-11-17T05:21:06.570Z",
   "results": {}
  },
  "trades": {}
