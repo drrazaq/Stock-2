@@ -58,6 +58,9 @@ for (const [f, name, how, lim, check] of CHECKS) {
 // 11:10 on 26 Oct; the watcher guard (watcher-guard.mjs, in the bot job) now starts it when GitHub has not. This reads the last watched day.
 const watcherEvidence=readWatcherReport();
 if(watcherEvidence.actionable)problems.push(watcherEvidence.text);else ok.push(watcherEvidence.text);
+// SCHEDULE GUARD (17 Nov): the bot job starts the owner-facing jobs GitHub's cron has not started; its heartbeat must be under 90 minutes old
+{ const G = readJson('data/schedule-guard.json'); if (G && G.beat) { const m = Math.round((now - G.beat) / 60000);
+  if (m > 90) problems.push('schedule guard: last heartbeat ' + m + ' minutes ago. The bot job is probably down, so GitHub\'s late cron is running the jobs again. In GitHub open Actions, then Telegram bot replies, and tap Run workflow.'); else ok.push('schedule guard'); } }
 // MISSING SCRIPTS: every 'node X.mjs' named in a workflow must exist. A file deleted during an upload (shares.mjs, 16 Oct 2026) made
 // a 'continue on error' step fail silently every day; this catches it the same evening.
 try { const W = '.github/workflows', seen = new Set();

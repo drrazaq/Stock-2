@@ -1,13 +1,46 @@
 name: Whole-market intraday radar
 on:
   workflow_dispatch:
+    inputs:
+      scheduled:
+        description: 'true = started by the schedule guard (keeps the market-hours check on)'
+        required: false
+        default: ''
+        type: string
   schedule:
     - cron: '5,20,35,50 13-21 * * 1-5'
 permissions:
   contents: write
 concurrency: radar
 jobs:
+  # schedule guard (17 Nov 2026): GitHub's cron here runs hours late. While the bot job's schedule guard is alive it starts this job
+  # on time itself, so a cron-started copy is skipped (no late duplicate messages or after-close scans). Fails open.
+  slot:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            schedule-skip.mjs
+            data/schedule-guard.json
+          sparse-checkout-cone-mode: false
+      - id: g
+        run: node schedule-skip.mjs | tee -a "$GITHUB_OUTPUT"
+        env:
+          EVENT: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
   radar:
+    needs: slot
+    if: ${{ !cancelled() && needs.slot.outputs.skip != '1' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -24,7 +57,7 @@ jobs:
           set -o pipefail
           node intraday-radar.mjs 2>&1 | tee run.log
         env:
-          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && inputs.scheduled != 'true' && '1' || '' }}
           FINNHUB_KEY: ${{ secrets.FINNHUB_KEY }}
           TG_TOKEN: ${{ secrets.TG_TOKEN }}
           TG_CHAT: ${{ secrets.TG_CHAT }}

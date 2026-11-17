@@ -3091,7 +3091,7 @@ async function watchdog(sig) {
   const F = sourceFreshness(Date.now(), { ...freshHaves(sig), disc: DISCMETA && DISCMETA.session }), expected = F.expected;
   if (!expected) return;
   const st = readJson('data/tg-state.json', { offset: 0 }), warned = st.warned || {}, out = [];
-  for (const r of F.rows) if (r.due && r.state !== 'CURRENT' && warned[r.key] !== expected) { warned[r.key] = expected; out.push('The ' + r.what + ' for the ' + expected + ' close has not completed' + (r.have ? ' (its last result is from ' + r.have + ')' : '') + '. In GitHub open Actions, then ' + r.name + '. If the newest run is red, cancelled or missing, tap Run workflow, and send Claude the red lines if it fails again.'); }
+  for (const r of F.rows) if (r.due && r.state !== 'CURRENT' && warned[r.key] !== expected) { warned[r.key] = expected; out.push('The ' + r.what + ' for the ' + expected + ' close has not completed' + (r.have ? ' (its last result is from ' + r.have + ')' : '') + '. ' + (r.key === 'scan' || /scanner/i.test(r.name || '') ? 'Stock-2\'s schedule guard starts it again by itself (up to 6 tries, 45 minutes apart) and says so; act only if a SCHEDULER message says it gave up: then in GitHub open Actions, then ' + r.name + ', and send Claude the red lines.' : 'In GitHub open Actions, then ' + r.name + '. If the newest run is red, cancelled or missing, tap Run workflow, and send Claude the red lines if it fails again.')); }
   if (!out.length) return;
   st.warned = warned; fs.writeFileSync('data/tg-state.json', JSON.stringify(st));
   await telegram('WATCHDOG\n' + out.join('\n\n') + '');

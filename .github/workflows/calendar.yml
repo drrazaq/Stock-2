@@ -8,7 +8,34 @@ permissions:
   contents: write
 concurrency: calendar
 jobs:
+  # schedule guard (17 Nov 2026): GitHub's cron here runs hours late. While the bot job's schedule guard is alive it starts this job
+  # on time itself, so a cron-started copy is skipped (no late duplicate messages or after-close scans). Fails open.
+  slot:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            schedule-skip.mjs
+            data/schedule-guard.json
+          sparse-checkout-cone-mode: false
+      - id: g
+        run: node schedule-skip.mjs | tee -a "$GITHUB_OUTPUT"
+        env:
+          EVENT: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
   calendar:
+    needs: slot
+    if: ${{ !cancelled() && needs.slot.outputs.skip != '1' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
