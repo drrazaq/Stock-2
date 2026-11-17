@@ -1,0 +1,251 @@
+{
+ "generatedAt": "2026-11-17T14:47:36.285Z",
+ "agent": "A",
+ "preRegistered": "agent-a-slm-core.mjs header (2026-11-17, before any run)",
+ "status": {
+  "price": {
+   "ok": true,
+   "sessions": 1262,
+   "from": "2021-11-08",
+   "to": "2026-11-17",
+   "stocks": 8576,
+   "rowsWithHighLow": 1
+  },
+  "books": {
+   "formations": 47,
+   "from": "2022-11-30",
+   "to": "2026-09-30",
+   "universeMin": 1000,
+   "picksPerMonth": 100,
+   "trades": 4695,
+   "dropped": 5,
+   "ok": true
+  }
+ },
+ "firstRun": {
+  "A-SLM1": {
+   "judged": {
+    "verdict": "REJECTED; STOP DOES NOT HELP",
+    "level": "none",
+    "stopHelps": false,
+    "gates": {
+     "older": {
+      "G1": false,
+      "G2": false,
+      "G3": false,
+      "G4": false,
+      "G5": false,
+      "G6": false,
+      "G7": true
+     },
+     "newer": {
+      "G1": true,
+      "G2": true,
+      "G3": false,
+      "G4": false,
+      "G5": true,
+      "G6": false,
+      "G7": true
+     }
+    },
+    "why": [
+     "fails \"profit after 0.8% and 1.2%\" in the older half",
+     "fails \"beats the average stock\" in the older half",
+     "fails \"beats the same stock on its other days\" in the older half",
+     "fails \"beats SPY per year\" in the older half",
+     "fails \"positive without its 2 best trades\" in the older half",
+     "fails \"block t >= 2.5\" in the older half",
+     "fails \"beats the same stock on its other days\" in the newer half",
+     "fails \"beats SPY per year\" in the newer half",
+     "fails \"block t >= 2.5\" in the newer half",
+     "the 10% stop does not beat the same book without it (average trade and drawdown, both halves, both costs)"
+    ]
+   },
+   "luckBar": 4.12,
+   "halves": {
+    "older": {
+     "stop": {
+      "base": {
+       "n": 1399,
+       "days": 14,
+       "stocks": 395,
+       "avg": -0.0002,
+       "median": -0.016,
+       "worst": -0.4091,
+       "best": 1.1756,
+       "win": 0.4453,
+       "noTop2": -0.0018,
+       "edge": -0.0048,
+       "blockT": -0.5645,
+       "vsOwn": -0.0192,
+       "worstMonth": -0.0859,
+       "maxDD": -0.2226,
+       "perYear": -0.0259,
+       "spyPerYear": 0.1571,
+       "stopped": 440,
+       "stopDays": 160
+      },
+      "stress": {
+       "n": 1399,
+       "days": 14,
+       "stocks": 395,
+       "avg": -0.0042,
+       "median": -0.02,
+       "worst": -0.4131,
+       "best": 1.1716,
+       "win": 0.426,
+       "noTop2": -0.0058,
+       "edge": -0.0088,
+       "blockT": -1.0386,
+       "vsOwn": -0.0192,
+       "worstMonth": -0.0899,
+       "maxDD": -0.2569,
+       "perYear": -0.0718,
+       "spyPerYear": 0.1571,
+       "stopped": 440,
+       "stopDays": 160
+      }
+     },
+     "noStop": {
+      "base": {
+       "n": 1399,
+       "days": 14,
+       "stocks": 395,
+       "avg": 0.0012,
+       "median": -0.0093,
+       "worst": -0.7262,
+       "best": 1.1756,
+       "win": 0.4625,
+       "noTop2": -0.0005,
+       "edge": -0.0034,
+       "blockT": -0.4292,
+       "vsOwn": -0.0178,
+       "worstMonth": -0.0891,
+       "maxDD": -0.1958,
+       "perYear": -0.0098,
+       "spyPerYear": 0.1571
+      },
+      "stress": {
+       "n": 1399,
+       "days": 14,
+       "stocks": 395,
+       "avg": -0.0028,
+       "median": -0.0133,
+       "worst": -0.7302,
+       "best": 1.1716,
+       "win": 0.4403,
+       "noTop2": -0.0045,
+       "edge": -0.0074,
+       "blockT": -0.934,
+       "vsOwn": -0.0178,
+       "worstMonth": -0.0931,
+       "maxDD": -0.2312,
+       "perYear": -0.0564,
+       "spyPerYear": 0.1571
+      }
+     }
+    },
+    "newer": {
+     "stop": {
+      "base": {
+       "n": 3296,
+       "days": 33,
+       "stocks": 618,
+       "avg": 0.0119,
+       "median": -0.0273,
+       "worst": -0.6541,
+       "best": 1.5585,
+       "win": 0.4366,
+       "noTop2": 0.0109,
+       "edge": 0.0022,
+       "blockT": 0.2047,
+       "vsOwn": -0.0301,
+       "worstMonth": -0.1278,
+       "maxDD": -0.2907,
+       "perYear": 0.1097,
+       "spyPerYear": 0.1774,
+       "stopped": 1264,
+       "stopDays": 386
+      },
+      "stress": {
+       "n": 3296,
+       "days": 33,
+       "stocks": 618,
+       "avg": 0.0079,
+       "median": -0.0313,
+       "worst": -0.6581,
+       "best": 1.5545,
+       "win": 0.4278,
+       "noTop2": 0.0069,
+       "edge": -0.0018,
+       "blockT": -0.1561,
+       "vsOwn": -0.0301,
+       "worstMonth": -0.1318,
+       "maxDD": -0.3136,
+       "perYear": 0.0578,
+       "spyPerYear": 0.1774,
+       "stopped": 1264,
+       "stopDays": 386
+      }
+     },
+     "noStop": {
+      "base": {
+       "n": 3296,
+       "days": 33,
+       "stocks": 618,
+       "avg": 0.0159,
+       "median": -0.0044,
+       "worst": -0.6541,
+       "best": 1.5585,
+       "win": 0.4851,
+       "noTop2": 0.015,
+       "edge": 0.0062,
+       "blockT": 0.489,
+       "vsOwn": -0.0261,
+       "worstMonth": -0.225,
+       "maxDD": -0.2658,
+       "perYear": 0.1524,
+       "spyPerYear": 0.1774
+      },
+      "stress": {
+       "n": 3296,
+       "days": 33,
+       "stocks": 618,
+       "avg": 0.0119,
+       "median": -0.0084,
+       "worst": -0.6581,
+       "best": 1.5545,
+       "win": 0.4742,
+       "noTop2": 0.011,
+       "edge": 0.0022,
+       "blockT": 0.179,
+       "vsOwn": -0.0261,
+       "worstMonth": -0.229,
+       "maxDD": -0.2814,
+       "perYear": 0.0987,
+       "spyPerYear": 0.1774
+      }
+     }
+    }
+   },
+   "summary": [
+    "older: 1399 trades, 395 stocks, 14 entry days, stopped 440 (160 days) | stop book avg -0.0% (1.2%: -0.4%), median -1.6%, worst -40.9%, worst month -8.6%, max DD -22.3%, edge -0.5% (block t -0.5645), vs own -1.9%, no top 2 -0.2%, per year -2.6% vs SPY +15.7% | no-stop avg +0.1% (1.2%: -0.3%), max DD -19.6%, per year -1.0%",
+    "newer: 3296 trades, 618 stocks, 33 entry days, stopped 1264 (386 days) | stop book avg +1.2% (1.2%: +0.8%), median -2.7%, worst -65.4%, worst month -12.8%, max DD -29.1%, edge +0.2% (block t 0.2047), vs own -3.0%, no top 2 +1.1%, per year +11.0% vs SPY +17.7% | no-stop avg +1.6% (1.2%: +1.2%), max DD -26.6%, per year +15.2%"
+   ],
+   "window": {
+    "from": "2021-11-08",
+    "to": "2026-11-17"
+   },
+   "frozenAt": "2026-11-17T14:47:36.285Z"
+  }
+ },
+ "latest": {
+  "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
+  "at": "2026-11-17T14:47:36.285Z",
+  "verdict": "REJECTED; STOP DOES NOT HELP",
+  "summary": [
+   "older: 1399 trades, 395 stocks, 14 entry days, stopped 440 (160 days) | stop book avg -0.0% (1.2%: -0.4%), median -1.6%, worst -40.9%, worst month -8.6%, max DD -22.3%, edge -0.5% (block t -0.5645), vs own -1.9%, no top 2 -0.2%, per year -2.6% vs SPY +15.7% | no-stop avg +0.1% (1.2%: -0.3%), max DD -19.6%, per year -1.0%",
+   "newer: 3296 trades, 618 stocks, 33 entry days, stopped 1264 (386 days) | stop book avg +1.2% (1.2%: +0.8%), median -2.7%, worst -65.4%, worst month -12.8%, max DD -29.1%, edge +0.2% (block t 0.2047), vs own -3.0%, no top 2 +1.1%, per year +11.0% vs SPY +17.7% | no-stop avg +1.6% (1.2%: +1.2%), max DD -26.6%, per year +15.2%"
+  ]
+ }
+}

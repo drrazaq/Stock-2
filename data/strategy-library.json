@@ -34474,7 +34474,7 @@
    "family": "Momentum exits (Agent A web scout 10 Nov 2026)",
    "name": "Stop-loss momentum: monthly 12-1 winners among the 1000 largest, each sold if it closes 10% under its formation price, cash to month end",
    "explain": "RULE (written 10 Nov 2026 before any test): at each month end, buy at the next open the top 10% by 12-1 month return of the 1000 most-traded liquid stocks, equal money; any holding whose close falls 10% or more under its buy price is sold at the next open and that money waits in cash until the next month end; everything is re-formed monthly. Yardsticks: the same book without the stop, the average stock, SPY; full gates (CLAUDE.md section 4) at 0.8% / 1.2%.",
-   "status": "pre-registered 2026-11-17 (Agent A); 5-year one-shot pending (agent-a-slm-lab.mjs)",
+   "status": "tested: rejected; stop does not help",
    "agent": "A",
    "registered": "2026-11-10",
    "kind": "exit",
@@ -34484,7 +34484,28 @@
    ],
    "data": "has it: the 5-year daily price cache (study cache).",
    "note": "Han, Zhou & Zhu (2016, SSRN 2407199; CEPR DP19030, 2024): a 10% stop on each momentum stock cut the worst monthly loss of an equal-weight long-short book from about -49% to about -11% and raised the Sharpe. The long-only winner leg is what this system can trade. Caution: SQ3-CUTRUN (-8% cut, 50-day trail) was rejected and the A-LDX1 exits (1 Nov) did not help the leader-dip lane; prior is low. Queue: after A-TP1 / A-RMOM1.",
-   "judging": "JUDGING (agent-a-slm-core.mjs header, written 2026-11-17 before any run): monthly 12-1 top 10% of the 1,000 most-traded liquid stocks, next open, re-formed monthly; 10% stop on the entry open (close <= 0.9 x entry -> next open, cash to month end); 0.8% / 1.2% per trade; +300% cap both sides; gates G1-G7 of CLAUDE.md section 4 per half (before / from 2024); PROVEN = all + block t >= league bar; tier 2 / TRY SMALL bar as written; STOP HELPS = stop book beats the no-stop book on average trade and drawdown in both halves at both costs."
+   "judging": "JUDGING (agent-a-slm-core.mjs header, written 2026-11-17 before any run): monthly 12-1 top 10% of the 1,000 most-traded liquid stocks, next open, re-formed monthly; 10% stop on the entry open (close <= 0.9 x entry -> next open, cash to month end); 0.8% / 1.2% per trade; +300% cap both sides; gates G1-G7 of CLAUDE.md section 4 per half (before / from 2024); PROVEN = all + block t >= league bar; tier 2 / TRY SMALL bar as written; STOP HELPS = stop book beats the no-stop book on average trade and drawdown in both halves at both costs.",
+   "result": {
+    "verdict": "REJECTED; STOP DOES NOT HELP",
+    "level": "none",
+    "why": [
+     "fails \"profit after 0.8% and 1.2%\" in the older half",
+     "fails \"beats the average stock\" in the older half",
+     "fails \"beats the same stock on its other days\" in the older half",
+     "fails \"beats SPY per year\" in the older half",
+     "fails \"positive without its 2 best trades\" in the older half",
+     "fails \"block t >= 2.5\" in the older half",
+     "fails \"beats the same stock on its other days\" in the newer half",
+     "fails \"beats SPY per year\" in the newer half",
+     "fails \"block t >= 2.5\" in the newer half",
+     "the 10% stop does not beat the same book without it (average trade and drawdown, both halves, both costs)"
+    ],
+    "frozenAt": "2026-11-17T14:47:36.285Z",
+    "summary": [
+     "older: 1399 trades, 395 stocks, 14 entry days, stopped 440 (160 days) | stop book avg -0.0% (1.2%: -0.4%), median -1.6%, worst -40.9%, worst month -8.6%, max DD -22.3%, edge -0.5% (block t -0.5645), vs own -1.9%, no top 2 -0.2%, per year -2.6% vs SPY +15.7% | no-stop avg +0.1% (1.2%: -0.3%), max DD -19.6%, per year -1.0%",
+     "newer: 3296 trades, 618 stocks, 33 entry days, stopped 1264 (386 days) | stop book avg +1.2% (1.2%: +0.8%), median -2.7%, worst -65.4%, worst month -12.8%, max DD -29.1%, edge +0.2% (block t 0.2047), vs own -3.0%, no top 2 +1.1%, per year +11.0% vs SPY +17.7% | no-stop avg +1.6% (1.2%: +1.2%), max DD -26.6%, per year +15.2%"
+    ]
+   }
   },
   {
    "id": "A-VSTOP1",

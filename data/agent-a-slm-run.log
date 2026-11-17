@@ -1,5 +1,10 @@
+[0s] library: 0 entries given their judging text now
 [5s] cache to 2026-11-13; fresh sessions: 2026-11-16, 2026-11-17
-[7s] splits since 2026-11-13: 120 listed, 6 repaired
-[7s] window 2021-11-08..2026-11-17 (1262 sessions, 8575 stocks)
-[7s] books: {"formations":47,"from":"2022-11-30","to":"2026-09-30","universeMin":1000,"picksPerMonth":100,"trades":4695,"dropped":5,"ok":true}
-DIAG: data check only; nothing judged or written.
+[6s] splits since 2026-11-13: 120 listed, 6 repaired
+[6s] window 2021-11-08..2026-11-17 (1262 sessions, 8576 stocks)
+[6s] books: {"formations":47,"from":"2022-11-30","to":"2026-09-30","universeMin":1000,"picksPerMonth":100,"trades":4695,"dropped":5,"ok":true}
+[6s] library: 1 result recorded
+A-SLM1 STOP-LOSS MOMENTUM: REJECTED; STOP DOES NOT HELP | level none (frozen first run)
+- older: 1399 trades, 395 stocks, 14 entry days, stopped 440 (160 days) | stop book avg -0.0% (1.2%: -0.4%), median -1.6%, worst -40.9%, worst month -8.6%, max DD -22.3%, edge -0.5% (block t -0.5645), vs own -1.9%, no top 2 -0.2%, per year -2.6% vs SPY +15.7% | no-stop avg +0.1% (1.2%: -0.3%), max DD -19.6%, per year -1.0%
+- newer: 3296 trades, 618 stocks, 33 entry days, stopped 1264 (386 days) | stop book avg +1.2% (1.2%: +0.8%), median -2.7%, worst -65.4%, worst month -12.8%, max DD -29.1%, edge +0.2% (block t 0.2047), vs own -3.0%, no top 2 +1.1%, per year +11.0% vs SPY +17.7% | no-stop avg +1.6% (1.2%: +1.2%), max DD -26.6%, per year +15.2%
+why: fails "profit after 0.8% and 1.2%" in the older half; fails "beats the average stock" in the older half; fails "beats the same stock on its other days" in the older half; fails "beats SPY per year" in the older half; fails "positive without its 2 best trades" in the older half; fails "block t >= 2.5" in the older half; fails "beats the same stock on its other days" in the newer half; fails "beats SPY per year" in the newer half; fails "block t >= 2.5" in the newer half; the 10% stop does not beat the same book without it (average trade and drawdown, both halves, both costs)
