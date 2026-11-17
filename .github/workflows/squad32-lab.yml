@@ -1,0 +1,46 @@
+name: Squad 32 pathways lab
+# SQUAD 32 PATHWAYS (squad32-lab.mjs; owner, 17 Nov 2026: "find me pathways strategy that can win trades"). Event rules with months-long
+# holds (spin-offs, S&P 500 deletions and additions), pre-registered in squad32-core.mjs. Prices: the squad30 cache, RESTORED READ ONLY.
+# Commits only data/squad32-lab.json. Never places an order. Start: change run-squad32-now.txt (or run the workflow).
+on:
+  workflow_dispatch:
+  push:
+    branches: ['main', 'squad32-*']
+    paths: ['run-squad32-now.txt']
+permissions:
+  contents: write
+concurrency:
+  group: squad32-lab
+  cancel-in-progress: false
+jobs:
+  lab:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad30-cache
+          key: squad30-cache-none
+          restore-keys: squad30-cache-
+      - shell: bash
+        run: |
+          set -o pipefail
+          node squad32-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+      - if: success()
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          [ -f data/squad32-lab.json ] && git add data/squad32-lab.json
+          git diff --cached --quiet || git commit -m "squad 32 pathways $(date -u +%FT%RZ)"
+          B="${{ github.ref_name }}"
+          for i in 1 2 3 4 5; do if git pull --rebase -X theirs origin "$B" && git push origin "HEAD:$B"; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
