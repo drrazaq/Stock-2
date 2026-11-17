@@ -1,0 +1,1571 @@
+{
+ "generatedAt": "2026-11-17T06:21:46.624Z",
+ "preRegistered": "2026-11-17 (insider-core.mjs)",
+ "window": [
+  "2021-11-29",
+  "2026-11-16"
+ ],
+ "split": "2024-03-01",
+ "score": "stock return minus the S&P 500 (SPY) over the same open-to-close window, minus penny-size costs (hunter-core costOf); entry = the open of the first market day after the filing / report date",
+ "caveat": "Daily bars. Insider data = SEC quarterly data sets (Form 4, code P, open market) + live EDGAR events; Congress = House electronic PTRs only (the Senate site needs a browser session; scanned paper PTRs cannot be read). Amounts in Congress reports are ranges; the lower bound is used.",
+ "data": {
+  "secQuarters": [
+   "2026q3",
+   "2026q2",
+   "2026q1",
+   "2025q4",
+   "2025q3",
+   "2025q2",
+   "2025q1",
+   "2024q4",
+   "2024q3",
+   "2024q2",
+   "2024q1",
+   "2023q4",
+   "2023q3",
+   "2023q2",
+   "2023q1",
+   "2022q4",
+   "2022q3",
+   "2022q2",
+   "2022q1",
+   "2021q4"
+  ],
+  "insiderEvents": 42804,
+  "house": {
+   "reports": 2592,
+   "paper": 389,
+   "unread": 0,
+   "stockLines": 18149,
+   "purchases": 8057
+  }
+ },
+ "firstRun": {
+  "INS-ANY": {
+   "verdict": "REJECTED",
+   "n": 15534,
+   "avgNet": -1.61,
+   "at": "2026-11-17"
+  },
+  "INS-CEO": {
+   "verdict": "REJECTED",
+   "n": 5038,
+   "avgNet": -0.58,
+   "at": "2026-11-17"
+  },
+  "INS-CLUSTER": {
+   "verdict": "REJECTED",
+   "n": 5824,
+   "avgNet": -1.19,
+   "at": "2026-11-17"
+  },
+  "INS-BIG": {
+   "verdict": "REJECTED",
+   "n": 3680,
+   "avgNet": -1.86,
+   "at": "2026-11-17"
+  },
+  "INS-PENNY": {
+   "verdict": "NOT PROVEN",
+   "n": 1503,
+   "avgNet": 1.04,
+   "at": "2026-11-17"
+  },
+  "INS-MOM": {
+   "verdict": "REJECTED",
+   "n": 1565,
+   "avgNet": -1.11,
+   "at": "2026-11-17"
+  },
+  "INS-5D": {
+   "verdict": "REJECTED",
+   "n": 20072,
+   "avgNet": -0.93,
+   "at": "2026-11-17"
+  },
+  "INS-60D": {
+   "verdict": "REJECTED",
+   "n": 12448,
+   "avgNet": -3.19,
+   "at": "2026-11-17"
+  },
+  "CONG-BUY": {
+   "verdict": "REJECTED",
+   "n": 4101,
+   "avgNet": -1.07,
+   "at": "2026-11-17"
+  },
+  "CONG-60D": {
+   "verdict": "REJECTED",
+   "n": 3244,
+   "avgNet": -1.96,
+   "at": "2026-11-17"
+  },
+  "CONG-BIG": {
+   "verdict": "NOT PROVEN",
+   "n": 178,
+   "avgNet": 1.21,
+   "at": "2026-11-17"
+  },
+  "CONG-FAST": {
+   "verdict": "REJECTED",
+   "n": 1089,
+   "avgNet": -0.77,
+   "at": "2026-11-17"
+  }
+ },
+ "results": {
+  "INS-ANY": {
+   "id": "INS-ANY",
+   "text": "Any insider open-market buy of 25k USD+ (entry price 1 USD+); hold 20 market days",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-1.61% a trade); lost money in the older half; lost money in the newer half; t -6.08 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 27466,
+   "noPrice": 1390,
+   "all": {
+    "n": 15534,
+    "days": 1200,
+    "avgNet": -1.61,
+    "median": -2.37,
+    "win": 40.22,
+    "t": -6.08,
+    "withoutBest2": -1.68
+   },
+   "older": {
+    "n": 8163,
+    "days": 561,
+    "avgNet": -1.87,
+    "median": -2.37,
+    "win": 40.38,
+    "t": -4.66,
+    "withoutBest2": -1.92
+   },
+   "newer": {
+    "n": 7371,
+    "days": 639,
+    "avgNet": -1.33,
+    "median": -2.38,
+    "win": 40.05,
+    "t": -4.12,
+    "withoutBest2": -1.48
+   },
+   "at15": {
+    "n": 15534,
+    "days": 1200,
+    "avgNet": -2.15,
+    "median": -2.88,
+    "win": 38.37,
+    "t": -8.12,
+    "withoutBest2": -2.22
+   },
+   "tiers": {
+    "S5": {
+     "n": 12953,
+     "days": 1196,
+     "avgNet": -1.81,
+     "median": -2.19,
+     "win": 40.31,
+     "t": -8.72,
+     "withoutBest2": -1.84
+    },
+    "P3_5": {
+     "n": 1153,
+     "days": 649,
+     "avgNet": -1.68,
+     "median": -4.03,
+     "win": 39.12,
+     "t": -1.69,
+     "withoutBest2": -1.97
+    },
+    "P1_3": {
+     "n": 1428,
+     "days": 738,
+     "avgNet": 0.28,
+     "median": -4.37,
+     "win": 40.34,
+     "t": -0.4,
+     "withoutBest2": -0.52
+    }
+   },
+   "best": [
+    {
+     "sym": "UMAC",
+     "d": "2024-11-01",
+     "net": 873.06,
+     "stock": 880.63,
+     "spy": 5.47
+    },
+    {
+     "sym": "PHAT",
+     "d": "2025-05-09",
+     "net": 274.97,
+     "stock": 282.83,
+     "spy": 5.77
+    },
+    {
+     "sym": "CABA",
+     "d": "2022-10-19",
+     "net": 226.7,
+     "stock": 236.79,
+     "spy": 7.99
+    }
+   ],
+   "worst": [
+    {
+     "sym": "MULN",
+     "d": "2025-04-09",
+     "net": -108.71,
+     "stock": -94.09,
+     "spy": 13.72
+    },
+    {
+     "sym": "TCDA",
+     "d": "2022-10-04",
+     "net": -101.69,
+     "stock": -97.09,
+     "spy": 3.71
+    },
+    {
+     "sym": "ZSPC",
+     "d": "2026-04-20",
+     "net": -92.6,
+     "stock": -86.22,
+     "spy": 4.29
+    }
+   ],
+   "avgStock": 0.23,
+   "avgSpy": 0.76
+  },
+  "INS-CEO": {
+   "id": "INS-CEO",
+   "text": "The CEO, CFO, president or chair bought 50k USD+ (1 USD+); hold 20 days",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-0.58% a trade); lost money in the older half; lost money in the newer half; t 0.06 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 6923,
+   "noPrice": 1390,
+   "all": {
+    "n": 5038,
+    "days": 1088,
+    "avgNet": -0.58,
+    "median": -2.06,
+    "win": 42.28,
+    "t": 0.06,
+    "withoutBest2": -0.8
+   },
+   "older": {
+    "n": 2542,
+    "days": 504,
+    "avgNet": -1.08,
+    "median": -1.88,
+    "win": 42.88,
+    "t": -1.35,
+    "withoutBest2": -1.26
+   },
+   "newer": {
+    "n": 2496,
+    "days": 584,
+    "avgNet": -0.07,
+    "median": -2.26,
+    "win": 41.67,
+    "t": 0.51,
+    "withoutBest2": -0.51
+   },
+   "at15": {
+    "n": 5038,
+    "days": 1088,
+    "avgNet": -1.13,
+    "median": -2.59,
+    "win": 40.71,
+    "t": -0.54,
+    "withoutBest2": -1.35
+   },
+   "tiers": {
+    "S5": {
+     "n": 4099,
+     "days": 1029,
+     "avgNet": -1.08,
+     "median": -1.84,
+     "win": 42.45,
+     "t": -3.12,
+     "withoutBest2": -1.18
+    },
+    "P3_5": {
+     "n": 403,
+     "days": 305,
+     "avgNet": -1.86,
+     "median": -4.09,
+     "win": 38.46,
+     "t": -1.04,
+     "withoutBest2": -2.32
+    },
+    "P1_3": {
+     "n": 536,
+     "days": 391,
+     "avgNet": 4.21,
+     "median": -3.58,
+     "win": 43.84,
+     "t": 1.44,
+     "withoutBest2": 2.17
+    }
+   },
+   "best": [
+    {
+     "sym": "UMAC",
+     "d": "2024-11-01",
+     "net": 873.06,
+     "stock": 880.63,
+     "spy": 5.47
+    },
+    {
+     "sym": "CABA",
+     "d": "2022-10-19",
+     "net": 226.7,
+     "stock": 236.79,
+     "spy": 7.99
+    },
+    {
+     "sym": "PNBK",
+     "d": "2025-04-02",
+     "net": 222.01,
+     "stock": 224.02,
+     "spy": -0.09
+    }
+   ],
+   "worst": [
+    {
+     "sym": "SBET",
+     "d": "2025-06-03",
+     "net": -88.97,
+     "stock": -83.8,
+     "spy": 4.27
+    },
+    {
+     "sym": "PNBK",
+     "d": "2025-05-16",
+     "net": -82.64,
+     "stock": -80.46,
+     "spy": 0.97
+    },
+    {
+     "sym": "SING",
+     "d": "2023-12-22",
+     "net": -76.45,
+     "stock": -73.22,
+     "spy": 2.32
+    }
+   ],
+   "avgStock": 1.35,
+   "avgSpy": 0.83
+  },
+  "INS-CLUSTER": {
+   "id": "INS-CLUSTER",
+   "text": "2+ different insiders of the same company bought within 10 days (25k USD+, 1 USD+); hold 20 days",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-1.19% a trade); lost money in the older half; lost money in the newer half; t -0.43 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 10828,
+   "noPrice": 1390,
+   "all": {
+    "n": 5824,
+    "days": 1122,
+    "avgNet": -1.19,
+    "median": -2.28,
+    "win": 41.48,
+    "t": -0.43,
+    "withoutBest2": -1.38
+   },
+   "older": {
+    "n": 3197,
+    "days": 528,
+    "avgNet": -2.05,
+    "median": -2.58,
+    "win": 40.38,
+    "t": -3.11,
+    "withoutBest2": -2.19
+   },
+   "newer": {
+    "n": 2627,
+    "days": 594,
+    "avgNet": -0.13,
+    "median": -1.99,
+    "win": 42.82,
+    "t": 0.47,
+    "withoutBest2": -0.54
+   },
+   "at15": {
+    "n": 5824,
+    "days": 1122,
+    "avgNet": -1.74,
+    "median": -2.83,
+    "win": 39.61,
+    "t": -1.07,
+    "withoutBest2": -1.93
+   },
+   "tiers": {
+    "S5": {
+     "n": 4721,
+     "days": 1084,
+     "avgNet": -1.71,
+     "median": -2.15,
+     "win": 41.45,
+     "t": -4.54,
+     "withoutBest2": -1.79
+    },
+    "P3_5": {
+     "n": 494,
+     "days": 348,
+     "avgNet": -1.43,
+     "median": -3.56,
+     "win": 40.28,
+     "t": -0.81,
+     "withoutBest2": -2.03
+    },
+    "P1_3": {
+     "n": 609,
+     "days": 429,
+     "avgNet": 3.06,
+     "median": -3.58,
+     "win": 42.69,
+     "t": 1.03,
+     "withoutBest2": 1.26
+    }
+   },
+   "best": [
+    {
+     "sym": "UMAC",
+     "d": "2024-11-01",
+     "net": 873.06,
+     "stock": 880.63,
+     "spy": 5.47
+    },
+    {
+     "sym": "CABA",
+     "d": "2022-10-19",
+     "net": 226.7,
+     "stock": 236.79,
+     "spy": 7.99
+    },
+    {
+     "sym": "VAPO",
+     "d": "2022-11-30",
+     "net": 204.77,
+     "stock": 201.2,
+     "spy": -4.76
+    }
+   ],
+   "worst": [
+    {
+     "sym": "TCDA",
+     "d": "2022-10-07",
+     "net": -99.22,
+     "stock": -97.77,
+     "spy": 0.55
+    },
+    {
+     "sym": "AVTX",
+     "d": "2023-06-15",
+     "net": -93.09,
+     "stock": -89.22,
+     "spy": 2.97
+    },
+    {
+     "sym": "SBET",
+     "d": "2025-06-03",
+     "net": -88.97,
+     "stock": -83.8,
+     "spy": 4.27
+    }
+   ],
+   "avgStock": 0.69,
+   "avgSpy": 0.77
+  },
+  "INS-BIG": {
+   "id": "INS-BIG",
+   "text": "Insiders bought 500k USD+ in one filing day (not only 10% owner funds; 1 USD+); hold 20 days",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-1.86% a trade); lost money in the older half; lost money in the newer half; t -3.75 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 4981,
+   "noPrice": 1390,
+   "all": {
+    "n": 3680,
+    "days": 1043,
+    "avgNet": -1.86,
+    "median": -2.47,
+    "win": 40.46,
+    "t": -3.75,
+    "withoutBest2": -1.98
+   },
+   "older": {
+    "n": 1825,
+    "days": 485,
+    "avgNet": -2.24,
+    "median": -2.24,
+    "win": 41.04,
+    "t": -3.09,
+    "withoutBest2": -2.44
+   },
+   "newer": {
+    "n": 1855,
+    "days": 558,
+    "avgNet": -1.49,
+    "median": -2.61,
+    "win": 39.89,
+    "t": -2.3,
+    "withoutBest2": -1.71
+   },
+   "at15": {
+    "n": 3680,
+    "days": 1043,
+    "avgNet": -2.38,
+    "median": -2.96,
+    "win": 38.59,
+    "t": -4.97,
+    "withoutBest2": -2.5
+   },
+   "tiers": {
+    "S5": {
+     "n": 3220,
+     "days": 996,
+     "avgNet": -1.96,
+     "median": -2.2,
+     "win": 40.87,
+     "t": -5.1,
+     "withoutBest2": -2.07
+    },
+    "P3_5": {
+     "n": 210,
+     "days": 172,
+     "avgNet": -3.53,
+     "median": -5.03,
+     "win": 34.76,
+     "t": -1.99,
+     "withoutBest2": -4.44
+    },
+    "P1_3": {
+     "n": 250,
+     "days": 208,
+     "avgNet": 0.77,
+     "median": -5.03,
+     "win": 40,
+     "t": 0.34,
+     "withoutBest2": -0.82
+    }
+   },
+   "best": [
+    {
+     "sym": "PNBK",
+     "d": "2025-04-02",
+     "net": 222.01,
+     "stock": 224.02,
+     "spy": -0.09
+    },
+    {
+     "sym": "VAPO",
+     "d": "2022-11-30",
+     "net": 204.77,
+     "stock": 201.2,
+     "spy": -4.76
+    },
+    {
+     "sym": "TKNO",
+     "d": "2024-07-17",
+     "net": 174.69,
+     "stock": 173.79,
+     "spy": -3
+    }
+   ],
+   "worst": [
+    {
+     "sym": "NIVF",
+     "d": "2026-09-03",
+     "net": -92.04,
+     "stock": -91.65,
+     "spy": -0.51
+    },
+    {
+     "sym": "PNBK",
+     "d": "2025-05-16",
+     "net": -82.64,
+     "stock": -80.46,
+     "spy": 0.97
+    },
+    {
+     "sym": "FLYX",
+     "d": "2024-03-07",
+     "net": -81.99,
+     "stock": -81.1,
+     "spy": -0.01
+    }
+   ],
+   "avgStock": -0.11,
+   "avgSpy": 0.72
+  },
+  "INS-PENNY": {
+   "id": "INS-PENNY",
+   "text": "Penny insider buy: entry price 0.20-3 USD, 10k USD+, 100k USD+ traded a day; hold 20 days",
+   "verdict": "NOT PROVEN",
+   "why": "t 0.78 under 2.5; loses at 1.5x costs",
+   "matched": 2755,
+   "noPrice": 1390,
+   "all": {
+    "n": 1503,
+    "days": 742,
+    "avgNet": 1.04,
+    "median": -3.78,
+    "win": 42.85,
+    "t": 0.78,
+    "withoutBest2": 0.7
+   },
+   "older": {
+    "n": 674,
+    "days": 341,
+    "avgNet": 1.06,
+    "median": -4.16,
+    "win": 42.43,
+    "t": 0.25,
+    "withoutBest2": 0.42
+   },
+   "newer": {
+    "n": 829,
+    "days": 401,
+    "avgNet": 1.02,
+    "median": -3.31,
+    "win": 43.18,
+    "t": 0.89,
+    "withoutBest2": 0.52
+   },
+   "at15": {
+    "n": 1503,
+    "days": 742,
+    "avgNet": -0.11,
+    "median": -4.87,
+    "win": 40.32,
+    "t": -0.38,
+    "withoutBest2": -0.45
+   },
+   "tiers": {
+    "P1_3": {
+     "n": 1318,
+     "days": 704,
+     "avgNet": 0.46,
+     "median": -3.78,
+     "win": 42.64,
+     "t": 0.19,
+     "withoutBest2": 0.08
+    },
+    "U1": {
+     "n": 185,
+     "days": 165,
+     "avgNet": 5.13,
+     "median": -3.56,
+     "win": 44.32,
+     "t": 1.3,
+     "withoutBest2": 3.27
+    }
+   },
+   "best": [
+    {
+     "sym": "PHAT",
+     "d": "2025-05-09",
+     "net": 274.97,
+     "stock": 282.83,
+     "spy": 5.77
+    },
+    {
+     "sym": "CABA",
+     "d": "2022-10-19",
+     "net": 226.7,
+     "stock": 236.79,
+     "spy": 7.99
+    },
+    {
+     "sym": "TMC",
+     "d": "2023-06-12",
+     "net": 200.17,
+     "stock": 206.45,
+     "spy": 2.68
+    }
+   ],
+   "worst": [
+    {
+     "sym": "ZSPC",
+     "d": "2026-04-20",
+     "net": -92.6,
+     "stock": -86.22,
+     "spy": 4.29
+    },
+    {
+     "sym": "NYMX",
+     "d": "2022-05-09",
+     "net": -77.36,
+     "stock": -73.61,
+     "spy": 1.65
+    },
+    {
+     "sym": "PRST",
+     "d": "2023-10-27",
+     "net": -72.85,
+     "stock": -60.83,
+     "spy": 9.93
+    }
+   ],
+   "avgStock": 4.31,
+   "avgSpy": 0.97
+  },
+  "INS-MOM": {
+   "id": "INS-MOM",
+   "text": "Small company (100k-5M USD traded a day), insider bought 25k USD+ AFTER the stock rose 10%+ in 20 days (arXiv 2602.06198); hold 20 days",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-1.11% a trade); lost money in the older half; lost money in the newer half; t -1.60 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 2626,
+   "noPrice": 1390,
+   "all": {
+    "n": 1565,
+    "days": 756,
+    "avgNet": -1.11,
+    "median": -3.97,
+    "win": 39.04,
+    "t": -1.6,
+    "withoutBest2": -1.42
+   },
+   "older": {
+    "n": 778,
+    "days": 354,
+    "avgNet": -1.17,
+    "median": -3.33,
+    "win": 40.75,
+    "t": -1.27,
+    "withoutBest2": -1.72
+   },
+   "newer": {
+    "n": 787,
+    "days": 402,
+    "avgNet": -1.06,
+    "median": -4.46,
+    "win": 37.36,
+    "t": -1.03,
+    "withoutBest2": -1.67
+   },
+   "at15": {
+    "n": 1565,
+    "days": 756,
+    "avgNet": -1.75,
+    "median": -4.63,
+    "win": 37.44,
+    "t": -2.33,
+    "withoutBest2": -2.06
+   },
+   "tiers": {
+    "S5": {
+     "n": 1055,
+     "days": 608,
+     "avgNet": -3.4,
+     "median": -4.24,
+     "win": 37.06,
+     "t": -5.34,
+     "withoutBest2": -3.7
+    },
+    "P3_5": {
+     "n": 211,
+     "days": 185,
+     "avgNet": -1.06,
+     "median": -4.09,
+     "win": 40.28,
+     "t": -0.4,
+     "withoutBest2": -2.57
+    },
+    "P1_3": {
+     "n": 268,
+     "days": 232,
+     "avgNet": 5.66,
+     "median": -2.51,
+     "win": 45.52,
+     "t": 2.27,
+     "withoutBest2": 4
+    },
+    "U1": {
+     "n": 31,
+     "days": 30,
+     "avgNet": 17.67,
+     "median": -2.86,
+     "win": 41.94,
+     "t": 1.45,
+     "withoutBest2": 3.4
+    }
+   },
+   "best": [
+    {
+     "sym": "IPSC",
+     "d": "2025-12-17",
+     "net": 248.97,
+     "stock": 254.39,
+     "spy": 1.82
+    },
+    {
+     "sym": "CABA",
+     "d": "2022-10-19",
+     "net": 226.7,
+     "stock": 236.79,
+     "spy": 7.99
+    },
+    {
+     "sym": "PRME",
+     "d": "2025-06-13",
+     "net": 224.88,
+     "stock": 231.38,
+     "spy": 4.4
+    }
+   ],
+   "worst": [
+    {
+     "sym": "AVTX",
+     "d": "2023-06-21",
+     "net": -97.53,
+     "stock": -92.27,
+     "spy": 4.37
+    },
+    {
+     "sym": "SBET",
+     "d": "2025-06-03",
+     "net": -88.97,
+     "stock": -83.8,
+     "spy": 4.27
+    },
+    {
+     "sym": "PNBK",
+     "d": "2025-05-16",
+     "net": -82.64,
+     "stock": -80.46,
+     "spy": 0.97
+    }
+   ],
+   "avgStock": 0.63,
+   "avgSpy": 0.47
+  },
+  "INS-5D": {
+   "id": "INS-5D",
+   "text": "INS-ANY held only 5 market days",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-0.93% a trade); lost money in the older half; lost money in the newer half; t -7.56 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 27466,
+   "noPrice": 1390,
+   "all": {
+    "n": 20072,
+    "days": 1200,
+    "avgNet": -0.93,
+    "median": -1.35,
+    "win": 39.17,
+    "t": -7.56,
+    "withoutBest2": -0.95
+   },
+   "older": {
+    "n": 10720,
+    "days": 561,
+    "avgNet": -1,
+    "median": -1.36,
+    "win": 39.19,
+    "t": -4.76,
+    "withoutBest2": -1.03
+   },
+   "newer": {
+    "n": 9352,
+    "days": 639,
+    "avgNet": -0.84,
+    "median": -1.32,
+    "win": 39.15,
+    "t": -5.89,
+    "withoutBest2": -0.9
+   },
+   "at15": {
+    "n": 20072,
+    "days": 1200,
+    "avgNet": -1.47,
+    "median": -1.85,
+    "win": 35.49,
+    "t": -12.34,
+    "withoutBest2": -1.49
+   },
+   "tiers": {
+    "S5": {
+     "n": 16687,
+     "days": 1196,
+     "avgNet": -1.06,
+     "median": -1.28,
+     "win": 38.93,
+     "t": -10.51,
+     "withoutBest2": -1.08
+    },
+    "P3_5": {
+     "n": 1529,
+     "days": 768,
+     "avgNet": -0.6,
+     "median": -1.73,
+     "win": 40.29,
+     "t": -1.36,
+     "withoutBest2": -0.83
+    },
+    "P1_3": {
+     "n": 1856,
+     "days": 843,
+     "avgNet": -0.03,
+     "median": -2.42,
+     "win": 40.36,
+     "t": -1.52,
+     "withoutBest2": -0.21
+    }
+   },
+   "best": [
+    {
+     "sym": "VCIG",
+     "d": "2026-05-26",
+     "net": 352.95,
+     "stock": 354.98,
+     "spy": 1.14
+    },
+    {
+     "sym": "SERV",
+     "d": "2024-07-19",
+     "net": 185.41,
+     "stock": 184.07,
+     "spy": -2.54
+    },
+    {
+     "sym": "EDSA",
+     "d": "2026-03-03",
+     "net": 183.02,
+     "stock": 185.6,
+     "spy": 0.48
+    }
+   ],
+   "worst": [
+    {
+     "sym": "TCDA",
+     "d": "2022-10-18",
+     "net": -97.02,
+     "stock": -95.12,
+     "spy": 1
+    },
+    {
+     "sym": "AVTX",
+     "d": "2023-06-21",
+     "net": -90.18,
+     "stock": -89.28,
+     "spy": 0
+    },
+    {
+     "sym": "KOD",
+     "d": "2022-02-18",
+     "net": -84.85,
+     "stock": -83.86,
+     "spy": 0.1
+    }
+   ],
+   "avgStock": 0.31,
+   "avgSpy": 0.15
+  },
+  "INS-60D": {
+   "id": "INS-60D",
+   "text": "INS-ANY held 60 market days (about 3 months)",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-3.19% a trade); lost money in the older half; lost money in the newer half; t -6.38 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 27466,
+   "noPrice": 1390,
+   "all": {
+    "n": 12448,
+    "days": 1169,
+    "avgNet": -3.19,
+    "median": -4.78,
+    "win": 39.74,
+    "t": -6.38,
+    "withoutBest2": -3.31
+   },
+   "older": {
+    "n": 6642,
+    "days": 558,
+    "avgNet": -3.65,
+    "median": -4.36,
+    "win": 40.29,
+    "t": -4.26,
+    "withoutBest2": -3.85
+   },
+   "newer": {
+    "n": 5806,
+    "days": 611,
+    "avgNet": -2.66,
+    "median": -5.24,
+    "win": 39.11,
+    "t": -4.79,
+    "withoutBest2": -2.86
+   },
+   "at15": {
+    "n": 12448,
+    "days": 1169,
+    "avgNet": -3.73,
+    "median": -5.29,
+    "win": 38.76,
+    "t": -7.47,
+    "withoutBest2": -3.85
+   },
+   "tiers": {
+    "S5": {
+     "n": 10408,
+     "days": 1159,
+     "avgNet": -3.91,
+     "median": -4.36,
+     "win": 39.97,
+     "t": -10.13,
+     "withoutBest2": -3.99
+    },
+    "P3_5": {
+     "n": 894,
+     "days": 537,
+     "avgNet": -3.72,
+     "median": -8.09,
+     "win": 37.47,
+     "t": -2.77,
+     "withoutBest2": -4.15
+    },
+    "P1_3": {
+     "n": 1146,
+     "days": 632,
+     "avgNet": 3.72,
+     "median": -7.9,
+     "win": 39.44,
+     "t": 1.07,
+     "withoutBest2": 2.44
+    }
+   },
+   "best": [
+    {
+     "sym": "CABA",
+     "d": "2022-10-19",
+     "net": 835.19,
+     "stock": 845.28,
+     "spy": 8
+    },
+    {
+     "sym": "XCUR",
+     "d": "2024-09-17",
+     "net": 628.67,
+     "stock": 637.44,
+     "spy": 6.67
+    },
+    {
+     "sym": "UMAC",
+     "d": "2024-11-01",
+     "net": 519.22,
+     "stock": 527.23,
+     "spy": 5.9
+    }
+   ],
+   "worst": [
+    {
+     "sym": "MULN",
+     "d": "2025-04-09",
+     "net": -126.63,
+     "stock": -99.94,
+     "spy": 25.79
+    },
+    {
+     "sym": "DCX",
+     "d": "2026-08-04",
+     "net": -101.32,
+     "stock": -99.23,
+     "spy": 1.19
+    },
+    {
+     "sym": "PRST",
+     "d": "2023-10-27",
+     "net": -100.74,
+     "stock": -81.45,
+     "spy": 17.19
+    }
+   ],
+   "avgStock": 0.29,
+   "avgSpy": 2.41
+  },
+  "CONG-BUY": {
+   "id": "CONG-BUY",
+   "text": "A House member reported buying a stock (any amount); buy the next open after the report; hold 20 days",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-1.07% a trade); lost money in the older half; lost money in the newer half; t -3.83 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 8024,
+   "noPrice": 32,
+   "all": {
+    "n": 4101,
+    "days": 542,
+    "avgNet": -1.07,
+    "median": -1.62,
+    "win": 41.36,
+    "t": -3.83,
+    "withoutBest2": -1.14
+   },
+   "older": {
+    "n": 1490,
+    "days": 244,
+    "avgNet": -1.04,
+    "median": -1.19,
+    "win": 43.69,
+    "t": -3.55,
+    "withoutBest2": -1.13
+   },
+   "newer": {
+    "n": 2611,
+    "days": 298,
+    "avgNet": -1.08,
+    "median": -1.83,
+    "win": 40.02,
+    "t": -2.05,
+    "withoutBest2": -1.19
+   },
+   "at15": {
+    "n": 4101,
+    "days": 542,
+    "avgNet": -1.52,
+    "median": -2.08,
+    "win": 39.19,
+    "t": -5.38,
+    "withoutBest2": -1.59
+   },
+   "tiers": {
+    "S5": {
+     "n": 4054,
+     "days": 536,
+     "avgNet": -1.11,
+     "median": -1.62,
+     "win": 41.32,
+     "t": -3.88,
+     "withoutBest2": -1.15
+    },
+    "P3_5": {
+     "n": 29,
+     "days": 23,
+     "avgNet": -3.4,
+     "median": -3.88,
+     "win": 37.93,
+     "t": -1.75,
+     "withoutBest2": -4.76
+    },
+    "P1_3": {
+     "n": 18,
+     "days": 13,
+     "avgNet": 11.81,
+     "median": 4.27,
+     "win": 55.56,
+     "t": 0.96,
+     "withoutBest2": -1.15
+    }
+   },
+   "best": [
+    {
+     "sym": "OPEN",
+     "d": "2025-08-07",
+     "net": 205.48,
+     "stock": 209.61,
+     "spy": 2.02
+    },
+    {
+     "sym": "AXSM",
+     "d": "2022-07-29",
+     "net": 77.41,
+     "stock": 81.24,
+     "spy": 2.93
+    },
+    {
+     "sym": "SNDK",
+     "d": "2026-04-08",
+     "net": 71.47,
+     "stock": 79.38,
+     "spy": 7
+    }
+   ],
+   "worst": [
+    {
+     "sym": "FMC",
+     "d": "2025-10-23",
+     "net": -58.07,
+     "stock": -57.99,
+     "spy": -0.82
+    },
+    {
+     "sym": "CRWV",
+     "d": "2025-10-31",
+     "net": -46.04,
+     "stock": -45.38,
+     "spy": -0.24
+    },
+    {
+     "sym": "AVXL",
+     "d": "2022-11-17",
+     "net": -39.25,
+     "stock": -38.56,
+     "spy": -0.21
+    }
+   ],
+   "avgStock": 0.79,
+   "avgSpy": 0.94
+  },
+  "CONG-60D": {
+   "id": "CONG-60D",
+   "text": "CONG-BUY held 60 days",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-1.96% a trade); lost money in the older half; lost money in the newer half; t -3.49 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 8024,
+   "noPrice": 32,
+   "all": {
+    "n": 3244,
+    "days": 495,
+    "avgNet": -1.96,
+    "median": -3.26,
+    "win": 40.6,
+    "t": -3.49,
+    "withoutBest2": -2.11
+   },
+   "older": {
+    "n": 1247,
+    "days": 234,
+    "avgNet": -2.04,
+    "median": -2.54,
+    "win": 42.74,
+    "t": -3.16,
+    "withoutBest2": -2.26
+   },
+   "newer": {
+    "n": 1997,
+    "days": 261,
+    "avgNet": -1.91,
+    "median": -3.74,
+    "win": 39.26,
+    "t": -1.78,
+    "withoutBest2": -2.16
+   },
+   "at15": {
+    "n": 3244,
+    "days": 495,
+    "avgNet": -2.42,
+    "median": -3.71,
+    "win": 39.24,
+    "t": -4.25,
+    "withoutBest2": -2.57
+   },
+   "tiers": {
+    "S5": {
+     "n": 3200,
+     "days": 489,
+     "avgNet": -2.06,
+     "median": -3.23,
+     "win": 40.66,
+     "t": -3.99,
+     "withoutBest2": -2.19
+    },
+    "P3_5": {
+     "n": 27,
+     "days": 21,
+     "avgNet": 5.89,
+     "median": -0.72,
+     "win": 44.44,
+     "t": 0.98,
+     "withoutBest2": -0.62
+    },
+    "P1_3": {
+     "n": 17,
+     "days": 12,
+     "avgNet": 2.9,
+     "median": -18.68,
+     "win": 23.53,
+     "t": 0.35,
+     "withoutBest2": -17.5
+    }
+   },
+   "best": [
+    {
+     "sym": "OPEN",
+     "d": "2025-08-07",
+     "net": 272.35,
+     "stock": 281.3,
+     "spy": 6.85
+    },
+    {
+     "sym": "SNDK",
+     "d": "2025-11-24",
+     "net": 210.51,
+     "stock": 215.44,
+     "spy": 4.04
+    },
+    {
+     "sym": "IREN",
+     "d": "2025-08-07",
+     "net": 203.59,
+     "stock": 211.34,
+     "spy": 6.85
+    }
+   ],
+   "worst": [
+    {
+     "sym": "FRC",
+     "d": "2023-01-11",
+     "net": -94.18,
+     "stock": -88.95,
+     "spy": 4.32
+    },
+    {
+     "sym": "NOTV",
+     "d": "2022-09-12",
+     "net": -73.61,
+     "stock": -74.96,
+     "spy": -2.25
+    },
+    {
+     "sym": "SI",
+     "d": "2022-09-12",
+     "net": -73.55,
+     "stock": -74.89,
+     "spy": -2.25
+    }
+   ],
+   "avgStock": 2.29,
+   "avgSpy": 3.34
+  },
+  "CONG-BIG": {
+   "id": "CONG-BIG",
+   "text": "A House member reported buying 50k USD+ of one stock; hold 60 days",
+   "verdict": "NOT PROVEN",
+   "why": "lost money in the older half; t 0.39 under 2.5",
+   "matched": 321,
+   "noPrice": 32,
+   "all": {
+    "n": 178,
+    "days": 91,
+    "avgNet": 1.21,
+    "median": -0.8,
+    "win": 46.63,
+    "t": 0.39,
+    "withoutBest2": 0.3
+   },
+   "older": {
+    "n": 74,
+    "days": 45,
+    "avgNet": -0.56,
+    "median": -1.99,
+    "win": 41.89,
+    "t": -0.19,
+    "withoutBest2": -1.76
+   },
+   "newer": {
+    "n": 104,
+    "days": 46,
+    "avgNet": 2.47,
+    "median": 0.4,
+    "win": 50,
+    "t": 0.65,
+    "withoutBest2": 0.91
+   },
+   "at15": {
+    "n": 178,
+    "days": 91,
+    "avgNet": 0.74,
+    "median": -1.33,
+    "win": 46.07,
+    "t": 0.1,
+    "withoutBest2": -0.17
+   },
+   "tiers": {
+    "S5": {
+     "n": 174,
+     "days": 87,
+     "avgNet": 1.25,
+     "median": -0.9,
+     "win": 47.13,
+     "t": 0.41,
+     "withoutBest2": 0.32
+    },
+    "P1_3": {
+     "n": 2,
+     "days": 2,
+     "avgNet": -9.52,
+     "median": -0.28,
+     "win": 0,
+     "t": -1.03,
+     "withoutBest2": null
+    },
+    "P3_5": {
+     "n": 2,
+     "days": 2,
+     "avgNet": 8.38,
+     "median": 17.47,
+     "win": 50,
+     "t": 0.92,
+     "withoutBest2": null
+    }
+   },
+   "best": [
+    {
+     "sym": "AMD",
+     "d": "2026-02-25",
+     "net": 100.05,
+     "stock": 108.35,
+     "spy": 7.4
+    },
+    {
+     "sym": "MU",
+     "d": "2026-02-25",
+     "net": 63.33,
+     "stock": 71.63,
+     "spy": 7.4
+    },
+    {
+     "sym": "VSAT",
+     "d": "2026-02-24",
+     "net": 48.36,
+     "stock": 56.86,
+     "spy": 7.6
+    }
+   ],
+   "worst": [
+    {
+     "sym": "TSLA",
+     "d": "2022-10-26",
+     "net": -40.36,
+     "stock": -34.48,
+     "spy": 4.98
+    },
+    {
+     "sym": "INTC",
+     "d": "2026-08-24",
+     "net": -35.23,
+     "stock": -37.58,
+     "spy": -3.25
+    },
+    {
+     "sym": "ASTH",
+     "d": "2025-09-02",
+     "net": -34.55,
+     "stock": -28.75,
+     "spy": 4.9
+    }
+   ],
+   "avgStock": 5.59,
+   "avgSpy": 3.45
+  },
+  "CONG-FAST": {
+   "id": "CONG-FAST",
+   "text": "A House member reported a buy within 15 days of making it (FinzData lead); hold 20 days",
+   "verdict": "REJECTED",
+   "why": "lost money after costs (-0.77% a trade); lost money in the older half; lost money in the newer half; t -2.23 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "matched": 1668,
+   "noPrice": 32,
+   "all": {
+    "n": 1089,
+    "days": 286,
+    "avgNet": -0.77,
+    "median": -1.12,
+    "win": 43.53,
+    "t": -2.23,
+    "withoutBest2": -0.87
+   },
+   "older": {
+    "n": 337,
+    "days": 133,
+    "avgNet": -0.85,
+    "median": -0.51,
+    "win": 47.18,
+    "t": -1.85,
+    "withoutBest2": -1.02
+   },
+   "newer": {
+    "n": 752,
+    "days": 153,
+    "avgNet": -0.74,
+    "median": -1.32,
+    "win": 41.89,
+    "t": -1.26,
+    "withoutBest2": -0.88
+   },
+   "at15": {
+    "n": 1089,
+    "days": 286,
+    "avgNet": -1.23,
+    "median": -1.57,
+    "win": 41.23,
+    "t": -3.39,
+    "withoutBest2": -1.33
+   },
+   "tiers": {
+    "S5": {
+     "n": 1080,
+     "days": 282,
+     "avgNet": -0.78,
+     "median": -1.1,
+     "win": 43.61,
+     "t": -2.19,
+     "withoutBest2": -0.88
+    },
+    "P3_5": {
+     "n": 5,
+     "days": 5,
+     "avgNet": -12.36,
+     "median": -12.35,
+     "win": 0,
+     "t": -7.54,
+     "withoutBest2": -14.65
+    },
+    "P1_3": {
+     "n": 4,
+     "days": 4,
+     "avgNet": 14.71,
+     "median": 22.75,
+     "win": 75,
+     "t": 1.77,
+     "withoutBest2": 5.3
+    }
+   },
+   "best": [
+    {
+     "sym": "IREN",
+     "d": "2025-12-18",
+     "net": 59.17,
+     "stock": 62.14,
+     "spy": 2.07
+    },
+    {
+     "sym": "TTD",
+     "d": "2025-04-14",
+     "net": 46.42,
+     "stock": 54.47,
+     "spy": 7.16
+    },
+    {
+     "sym": "MU",
+     "d": "2026-04-08",
+     "net": 46.31,
+     "stock": 54.22,
+     "spy": 7
+    }
+   ],
+   "worst": [
+    {
+     "sym": "UNH",
+     "d": "2025-04-08",
+     "net": -40.21,
+     "stock": -32.23,
+     "spy": 7.08
+    },
+    {
+     "sym": "TSCO",
+     "d": "2026-04-07",
+     "net": -37.69,
+     "stock": -27.44,
+     "spy": 9.34
+    },
+    {
+     "sym": "SPCX",
+     "d": "2026-07-06",
+     "net": -35.37,
+     "stock": -34.7,
+     "spy": -0.23
+    }
+   ],
+   "avgStock": 0.9,
+   "avgSpy": 0.76
+  }
+ }
+}
