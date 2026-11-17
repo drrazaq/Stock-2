@@ -88,4 +88,8 @@ t('hunter lab: pre at 09:15 and the next-open list at 18:00 New York', () => {
   assert.ok(scheduleDecide(at('2026-11-17', '09:16'), [], '2026-11-16', {}).dispatch.some(x => x.wf === 'squad30-lab.yml' && x.inputs.mode === 'pre'));
   assert.ok(scheduleDecide(at('2026-11-17', '18:05'), [], '2026-11-17', {}).dispatch.some(x => x.wf === 'squad30-lab.yml' && x.inputs.mode === 'today'));
 });
+t('who is buying: 08:00 New York on market days only', () => {
+  assert.ok(scheduleDecide(at('2026-11-17', '08:05'), [], '2026-11-16', {}).dispatch.some(x => x.wf === 'squad31-buyers.yml' && x.inputs.mode === 'daily'));
+  assert.ok(!scheduleDecide(at('2026-11-21', '08:05'), [], '2026-11-20', {}).dispatch.some(x => x.wf === 'squad31-buyers.yml'), 'Saturday');
+});
 console.log(n + ' schedule guard tests passed');
