@@ -1,17 +1,22 @@
 {
- "generatedAt": "2026-11-17T19:05:27.294Z",
+ "generatedAt": "2026-11-17T19:24:31.407Z",
  "date": "2026-11-17",
  "note": "SQUAD 26 forward PAPER watcher: RECORD ONLY. No alerts, no buy messages, no orders. newSignals stays empty until the lead turns alerts on after SQ26-FIRSTMIN passes.",
  "lagSec": {
-  "n": 13,
+  "n": 15,
   "medianSec": 68,
   "p10Sec": 41,
-  "p90Sec": 84,
+  "p90Sec": 85,
   "minSec": 32,
-  "maxSec": 85
+  "maxSec": 87
  },
  "candidateLagSec": {
-  "n": 0
+  "n": 1,
+  "medianSec": 87,
+  "p10Sec": 87,
+  "p90Sec": 87,
+  "minSec": 87,
+  "maxSec": 87
  },
  "lagsSec": [
   84,
@@ -26,20 +31,33 @@
   85,
   68,
   52,
-  73
+  73,
+  68,
+  87
  ],
- "candLagsSec": [],
- "polls": 120,
- "newFilings": 13,
+ "candLagsSec": [
+  87
+ ],
+ "polls": 139,
+ "newFilings": 15,
  "candidates": 15,
  "gaps": 0,
  "feedErrors": 0,
- "secRequests": 136,
+ "secRequests": 155,
  "events": [],
  "runs": [
   {
    "startedAt": "2026-11-17T17:06:23.639Z",
-   "until": "2026-11-17T19:25:00.000Z"
+   "until": "2026-11-17T19:25:00.000Z",
+   "endedAt": "2026-11-17T19:24:31.407Z",
+   "lag": {
+    "n": 15,
+    "medianSec": 68,
+    "p10Sec": 41,
+    "p90Sec": 85,
+    "minSec": 32,
+    "maxSec": 87
+   }
   }
  ],
  "seen": [
@@ -152,7 +170,9 @@
   "0001331451-26-000219",
   "0001654954-26-009929",
   "0001493152-26-052781",
-  "0001193125-26-465257"
+  "0001193125-26-465257",
+  "0001331465-26-000210",
+  "0000092122-26-000082"
  ],
  "methods": {
   "SQ26-FIRSTMIN": {
