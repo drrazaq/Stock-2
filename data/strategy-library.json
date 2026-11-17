@@ -34704,7 +34704,7 @@
    "family": "Quality and value",
    "name": "Owner's earnings yield (cash-based operating profit minus capex, over market value)",
    "agent": "B",
-   "status": "queued (Agent B)",
+   "status": "tested: not proven",
    "registered": "2026-11-10",
    "explain": "Each 21-session formation: liquid non-financial stocks; owner earnings = TTM (revenue - cost of sales - SG&A + R&D - the change in receivables, inventory and prepaid + the change in payables, deferred revenue and accrued expenses) - TTM capex, over market value; top 10%, equal weight, hold 126 sessions; value-core judge plus: better than B-FCF1 and ANOM-CFOA picks on the same dates, both halves.",
    "sources": [
@@ -34712,14 +34712,52 @@
     "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2587199"
    ],
    "note": "Web scout 10 Nov 2026 (Vyas 2024: owner earnings subsumes cash-based operating profitability; FF6 / q5 alpha, Sharpe 1.19, in sample). Close sibling of ANOM-CFOA (rejected) and B-FCF1 (not proven); cash-based profitability is reported about 26% weaker out of sample and 58% weaker after publication, so the prior is low. Data: SEC companyfacts (SG&A, R&D and working-capital tags would need adding to value-cache): the system can get it. Queue position 3. Built 17 Nov 2026 (pre-registered before the run; see built).",
-   "built": "Pre-registered 17 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs oeAt): each 21-session formation, liquid non-financial stocks with SEC facts and a share count; OE = TTM (revenue - cost of sales - SG&A) - change in receivables, inventory, prepaid + change in payables, accrued liabilities, deferred revenue - TTM capex, over shares known x close. R&D neither subtracted nor added back (XBRL SG&A excludes R&D; the library text followed the Compustat convention, which is the same measure). Missing working-capital item = 0; |yield| >= 40% = data error. Top 10% (rounded up), yield > 0; equal weight; buy the next open, sell the close 126 sessions later. value-core judge (blocks of 126) plus, both halves (same dates, 126 sessions): better than B-FCF1 picks and better than ANOM-CFOA picks (TTM operating cash flow / latest assets, top 10% of the same ranked stocks). SPY reported, not a gate."
+   "built": "Pre-registered 17 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs oeAt): each 21-session formation, liquid non-financial stocks with SEC facts and a share count; OE = TTM (revenue - cost of sales - SG&A) - change in receivables, inventory, prepaid + change in payables, accrued liabilities, deferred revenue - TTM capex, over shares known x close. R&D neither subtracted nor added back (XBRL SG&A excludes R&D; the library text followed the Compustat convention, which is the same measure). Missing working-capital item = 0; |yield| >= 40% = data error. Top 10% (rounded up), yield > 0; equal weight; buy the next open, sell the close 126 sessions later. value-core judge (blocks of 126) plus, both halves (same dates, 126 sessions): better than B-FCF1 picks and better than ANOM-CFOA picks (TTM operating cash flow / latest assets, top 10% of the same ranked stocks). SPY reported, not a gate.",
+   "tested": "2026-11-13",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     1866,
+     1766
+    ],
+    "avg": [
+     0.0134,
+     0.0783
+    ],
+    "median": [
+     -0.0031,
+     0.0089
+    ],
+    "edge": [
+     0.0091,
+     0.0079
+    ],
+    "vsOwn": [
+     0.0243,
+     0.0792
+    ],
+    "noTop2": [
+     0.011,
+     0.075
+    ],
+    "stress": [
+     0.0094,
+     0.0743
+    ],
+    "tBlock": [
+     0.77,
+     0.83
+    ],
+    "why": "block t 0.77 under 2.5 in the older half; block t 0.83 under 2.5 in the newer half; not better than B-FCF1 picks (same dates, 126 sessions) in the older half (+1.3% vs +9.1% after cost); not better than ANOM-CFOA picks (same dates, 126 sessions) in the older half (+1.3% vs +2.1% after cost); not better than B-FCF1 picks (same dates, 126 sessions) in the newer half (+7.8% vs +14.1% after cost)"
+   }
   },
   {
    "id": "B-DREV1",
    "family": "Quality and value",
    "name": "Deferred revenue growth (customers paying ahead)",
    "agent": "B",
-   "status": "queued (Agent B)",
+   "status": "tested: not proven",
    "registered": "2026-11-10",
    "explain": "At each 10-Q / 10-K (entry the session after the filing day): the change in deferred revenue (ContractWithCustomerLiability, else DeferredRevenueCurrent + DeferredRevenueNoncurrent) over the last 4 quarters, over total assets; liquid non-financial companies with deferred revenue >= 2% of assets; top 10% by the causal 63-session cut used in B-FCFN1; hold 63; value-core judge plus: better than the same filings' revenue-growth top 10%, both halves.",
    "sources": [
@@ -34727,7 +34765,45 @@
     "https://www.federalreserve.gov/econres/feds/files/2021-037pap.pdf"
    ],
    "note": "Web scout 10 Nov 2026: deferred revenue change (Prakash and Sinha 2013) is in the replication lists (Chen and Zimmermann, Open Source Cross-Sectional Asset Pricing; the NFA Staleness Trap paper). Data: SEC companyfacts (tags to add). Queue position 4. Built 17 Nov 2026 (pre-registered before the run; see built).",
-   "built": "Pre-registered 17 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs drPair / drevAt / revGrowthAt): events = the B-FCFN1 events (original 10-Q / 10-K; formation = last session on or before the filing day; buy the next open; sell the close 63 sessions later; most traded liquid non-financial symbol; share count known). Signal = (deferred revenue at the period end - a year earlier) / total assets at the period end; deferred revenue = first family known at both dates: ContractWithCustomerLiability; ContractWithCustomerLiabilityCurrent (+Noncurrent); DeferredRevenueCurrent (+Noncurrent); DeferredRevenue. Eligible only if deferred revenue >= 2% of assets; |signal| >= 1 = data error. Pick: signal > 0 and above the causal 90th percentile of the previous 63 sessions (200+ values). value-core judge (hold 63) plus, both halves: better than the revenue-growth top 10% of the same filings (same causal cut). SPY reported, not a gate."
+   "built": "Pre-registered 17 Nov 2026 BEFORE any run (value-lab.mjs header + value-core.mjs drPair / drevAt / revGrowthAt): events = the B-FCFN1 events (original 10-Q / 10-K; formation = last session on or before the filing day; buy the next open; sell the close 63 sessions later; most traded liquid non-financial symbol; share count known). Signal = (deferred revenue at the period end - a year earlier) / total assets at the period end; deferred revenue = first family known at both dates: ContractWithCustomerLiability; ContractWithCustomerLiabilityCurrent (+Noncurrent); DeferredRevenueCurrent (+Noncurrent); DeferredRevenue. Eligible only if deferred revenue >= 2% of assets; |signal| >= 1 = data error. Pick: signal > 0 and above the causal 90th percentile of the previous 63 sessions (200+ values). value-core judge (hold 63) plus, both halves: better than the revenue-growth top 10% of the same filings (same causal cut). SPY reported, not a gate.",
+   "tested": "2026-11-13",
+   "study": "value-lab.mjs -> data/value-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     389,
+     363
+    ],
+    "avg": [
+     0.0205,
+     0.0676
+    ],
+    "median": [
+     0.0002,
+     0.0094
+    ],
+    "edge": [
+     0.0163,
+     0.036
+    ],
+    "vsOwn": [
+     0.0219,
+     -0.0379
+    ],
+    "noTop2": [
+     0.0162,
+     0.0573
+    ],
+    "stress": [
+     0.0165,
+     0.0636
+    ],
+    "tBlock": [
+     1.93,
+     0.88
+    ],
+    "why": "block t 1.93 under 2.5 in the older half; not better than the same stocks on their other days in the newer half; block t 0.88 under 2.5 in the newer half"
+   }
   },
   {
    "id": "RQ-SVOL-LOW21",
