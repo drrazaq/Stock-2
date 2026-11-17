@@ -265,3 +265,25 @@ export function v15Exit(closes, opens, ma50, te, be, hold = 126) {
   for (let k = last; k >= te; k--) { const c = closes[k]; if (c > 0) return { x: last, k: 'c', g: c / e - 1, why: 'time' }; }
   return null;
 }
+
+// ---- SPIN-OFF CHECK for the dips watch list (Agent B, 17 Nov 2026; quality.mjs uses it; information list only, no test changed) ----
+// The price cache is not adjusted for spin-offs, so a parent's price falls on the distribution day and the dips list read it as a crash
+// (CTVA 1 Oct 2026, the Vylor spin-off: "down 85%"). A spin-off parent files an 8-K with item 2.01 (completion of disposition) within
+// 4 business days of the distribution. FLAG: an 8-K (or 8-K/A) listing item 2.01, filed inside the window (on or after `from`), AND a
+// session whose close is 15%+ under the previous close within the 10 calendar days up to and including the filing date. An acquisition
+// closing (also item 2.01) rarely comes with a 15% one-day fall; when it does, the stock is flagged too (shown separately, not hidden).
+// dates / closes: arrays by session (oldest first); filings: [{ form, d: 'YYYY-MM-DD' filing date, items: '1.01,2.01,9.01' }].
+// Returns null or { filed, items, day, drop }.
+export function spinOffFlag(dates, closes, filings, from, { maxDrop = -0.15, lookback = 10 } = {}) {
+  let best = null;
+  for (const f of filings || []) { if (!f || !/^8-K/.test(f.form || '') || !/(^|[^0-9.])2\.01($|[^0-9])/.test(String(f.items || '')) || !(f.d >= from)) continue;
+    const lo = new Date(ms(f.d) - lookback * DAY).toISOString().slice(0, 10);
+    for (let t = 1; t < dates.length; t++) { if (dates[t] < lo || dates[t] > f.d) continue; const a = closes[t - 1], b = closes[t]; if (!(a > 0 && b > 0)) continue; const r = b / a - 1;
+      if (r <= maxDrop && (!best || r < best.drop)) best = { filed: f.d, items: String(f.items), day: dates[t], drop: +r.toFixed(4) }; } }
+  return best;
+}
+// SEC submissions JSON (data.sec.gov/submissions/CIK##########.json) -> [{ form, d, items }] from filings.recent
+export function recentFilings(j) {
+  const r = j && j.filings && j.filings.recent; if (!r || !Array.isArray(r.form)) return [];
+  return r.form.map((form, k) => ({ form, d: (r.filingDate || [])[k], items: (r.items || [])[k] || '' }));
+}

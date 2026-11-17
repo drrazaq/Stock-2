@@ -40,6 +40,7 @@
 //     only show the latest numbers for information, never a second chance to pass.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
+import { spinOffFlag, recentFilings } from './value-core.mjs';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
 const DATA = local(env.SEC_BASE) || 'https://data.sec.gov', TG = local(env.TG_BASE) || 'https://api.telegram.org';
 const UA = env.SEC_UA || 'stock-signal-board admin@users.noreply.github.com', OUT = 'data/quality.json', FC = env.FUND_CACHE || 'study-cache/fund.json.gz';
@@ -204,15 +205,25 @@ const fair = {}; { const dayAt = (d) => { let lo = 0, hi = T - 1; while (lo < hi
 // today's fair-price dips: down 40%+, positive cash flow, little dilution, AND under the LOW end of its own fair-value range
 const dipV = Object.entries(RES).filter(([k]) => k.startsWith('FAIR-PRICE DIP')).map(([, r]) => r.verdict), dipOk = dipV.includes('PROMISING');
 const notHalal = new Set(); try { for (const t of JSON.parse(fs.readFileSync('data/zad-list.json', 'utf8')).notHalal || []) notHalal.add(t); } catch (e) {} try { for (const [t, v] of Object.entries(JSON.parse(fs.readFileSync('data/halal.json', 'utf8')))) if (v && v.s === 'fail') notHalal.add(t); } catch (e) {}
-const dips = lastRows.filter(x => x.d !== null && !notHalal.has(SYMS[x.i]) && fair[SYMS[x.i]] && fair[SYMS[x.i]].cons > fair[SYMS[x.i]].px).sort((a, b) => b.m.cfy - a.m.cfy).slice(0, 20)
-  .map(x => { const f = fair[SYMS[x.i]]; return { sym: SYMS[x.i], px: f.px, fairLow: f.cons, fairMid: f.base, fairHigh: f.opt, down: +x.m.dd.toFixed(3), cfy: +x.m.cfy.toFixed(3) }; });
+// SPIN-OFF CHECK (Agent B, 17 Nov 2026): the price cache is not adjusted for spin-offs, so a parent's distribution day looked like a crash
+// (CTVA, APTV). Each candidate's SEC submissions list is read (official API, one request each, up to 40 candidates); an 8-K item 2.01
+// filed in the last 252 sessions with a 15%+ one-day fall in the 10 days up to it (value-core.mjs spinOffFlag) moves the stock to
+// dipsSpinOff (shown with the reason, not in the dips list). If SEC cannot be read, the stock stays in the list with spinCheck 'unknown'.
+const dipCand = lastRows.filter(x => x.d !== null && !notHalal.has(SYMS[x.i]) && fair[SYMS[x.i]] && fair[SYMS[x.i]].cons > fair[SYMS[x.i]].px).sort((a, b) => b.m.cfy - a.m.cfy);
+const dips = [], dipsSpinOff = []; { const from = D[Math.max(0, T - 252)], dts = D.slice(Math.max(0, T - 252));
+  for (const x of dipCand.slice(0, 40)) { if (dips.length >= 20) break; const s = SYMS[x.i], f = fair[s], cik = symCik(s);
+    const row = { sym: s, px: f.px, fairLow: f.cons, fairMid: f.base, fairHigh: f.opt, down: +x.m.dd.toFixed(3), cfy: +x.m.cfy.toFixed(3) };
+    const j = cik ? await sec(DATA + '/submissions/CIK' + String(cik).padStart(10, '0') + '.json') : null;
+    if (!j) { dips.push({ ...row, spinCheck: 'unknown' }); continue; }
+    const cl = dts.map((_, k) => C[x.i * T + Math.max(0, T - 252) + k]), flag = spinOffFlag(dts, cl, recentFilings(j), from);
+    if (flag) dipsSpinOff.push({ ...row, spinOff: flag, why: 'likely spin-off, not a fall: 8-K item 2.01 filed ' + flag.filed + ', one-day move ' + Math.round(flag.drop * 100) + '% on ' + flag.day }); else dips.push({ ...row, spinCheck: 'ok' }); } }
 const per = {};   // every liquid stock's own measures and percentile ranks (1 = best), for the stock map
 for (const x of lastRows) per[SYMS[x.i]] = { q: r3(x.q), qr: r3(rank[SYMS[x.i]]), profit: r3(x.m.profit), pr: r3(x.r.profit), dilute: r3(x.m.dilute), growth: r3(x.m.growth), accr: r3(x.m.accr), cfy: r3(x.m.cfy), vr: r3(x.r.cfy) };
 // today's picks of the two added strategies (research only; whether they count depends on their own verdicts above)
 const magicToday = lastRows.filter(x => x.mf !== null).sort((a, b) => b.mf - a.mf).slice(0, 25).map(x => ({ sym: SYMS[x.i], mf: r3(x.mf), ey: r3(x.m.ey), roc: r3(x.m.roc) }));
 const fscoreToday = lastRows.filter(x => x.fs !== null && x.fs >= 8).sort((a, b) => b.fs - a.fs).slice(0, 25).map(x => ({ sym: SYMS[x.i], fs: x.fs, cheap: x.fsc !== null }));
 const fscoreUpToday = lastRows.filter(x => x.fs !== null && x.fs >= 8 && above200(x.i, T - 1) === true).sort((a, b) => b.fs - a.fs).slice(0, 25).map(x => ({ sym: SYMS[x.i], fs: x.fs }));   // F-SCORE UPTREND picks (agent league forward test)
-const out = { generatedAt: new Date().toISOString(), status: 'OK', fair, per, magicToday, fscoreToday, fscoreUpToday, from: D[21], to: D[T - 1], months, versions: NV, secCalls: calls, note, results: RES, v15, fs2, today, dips, dipVerdict: dipOk ? 'PROMISING' : (dipV.includes('NOT PROVEN') ? 'NOT PROVEN' : 'REJECTED'), rank, rules: { lagDays: 100, top: '10% of liquid stocks', cost: COST } };
+const out = { generatedAt: new Date().toISOString(), status: 'OK', fair, per, magicToday, fscoreToday, fscoreUpToday, from: D[21], to: D[T - 1], months, versions: NV, secCalls: calls, note, results: RES, v15, fs2, today, dips, dipsSpinOff, dipVerdict: dipOk ? 'PROMISING' : (dipV.includes('NOT PROVEN') ? 'NOT PROVEN' : 'REJECTED'), rank, rules: { lagDays: 100, top: '10% of liquid stocks', cost: COST } };
 fs.writeFileSync(OUT, JSON.stringify(out, null, 1));
 const msg = ['QUALITY COMPANIES (long investing: chosen by their SEC reports, held 6 and 12 months; ' + out.from + ' to ' + out.to + ', ' + months + ' monthly portfolios)', ''];
 for (const r of Object.values(RES)) { const n = r.results.newer; msg.push(r.name + ', ' + r.months + ' months: ' + r.verdict + (n.n ? ' | newer half ' + pc(n.avg) + ' vs average stock ' + pc(n.ctrl) + ', S&P 500 ' + pc(n.spy) + ', ' + Math.round(n.win * 100) + '% won' : '') + (r.verdict !== 'PROMISING' ? ' (' + r.why.split(';')[0] + ')' : '')); }
