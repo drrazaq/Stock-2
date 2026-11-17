@@ -251,6 +251,37 @@ if (env.CHECK === 'TPS') { const m = 'DEC2-TPS', blk = M2(m).block, out = { budg
     avgInvested: r4(mean(out.budget.map(z => z.inv))), invested: sum(out.invested), budget: sum(out.budget), nextOpen: sum(out.nextOpen) };
   fs.writeFileSync('data/decoded-check.json', JSON.stringify(res, null, 1)); for (const k of ['invested', 'budget', 'nextOpen']) console.log('CHECK TPS ' + k + ': older ' + JSON.stringify(res[k].older) + ' | newer ' + JSON.stringify(res[k].newer) + ' | 12m ' + JSON.stringify(res[k].last12m));
   process.exit(0); }
+// CHECK=TPS1 (Squad 32, pre-registered 17 Nov 2026 BEFORE any run; owner: "I want a buying rule that passes"). DEC2-TPS is PROVEN per
+// dollar invested but loses per dollar planned: 4 buys + 1 sell = about 15 USD at ZAD's ~3 USD per order. These are SINGLE-ORDER versions
+// (one 1,000 USD buy, one sell = the standard 0.8% cost incl. spread), same TPS setup (detectTPS: close > 200-day, RSI(2) < 25 two days):
+//   TPS1-A   buy the whole position at the next open after the setup close
+//   TPS1-D3  follow TPS's lower closes; buy the whole position at the next open after the 2nd later lower close (TPS's 30% add day)
+//   TPS1-D4  same after the 3rd later lower close (TPS's 40% add day); setups that reach RSI(2) > 70 first make no trade
+// Exit, two executions, both must pass: 'close' = the close of the first day (from the buy day) with RSI(2) > 70 (Connors; sold in the last
+// minutes); 'open' = the next open after that close. Max 60 sessions (then the close of day 60). One position per stock per version.
+// Gates (frozen, same as the decoded lab): both halves > 0 after 0.8% and 1.2% cost, better than the average liquid stock over the same
+// sessions, > 0 without the 2 best, block t >= the lab's BAR -> PROVEN. Written to data/decoded-check-tps1.json. Not a library verdict.
+if (env.CHECK === 'TPS1') { let BARX = 4.0; try { BARX = Math.max(TIER2_T, +JSON.parse(fs.readFileSync('data/agent-league.json', 'utf8')).bar || 0, 4.0); } catch (e) {} const m = 'DEC2-TPS', blk = M2(m).block, V = ['TPS1-A', 'TPS1-D3', 'TPS1-D4'], EX = ['close', 'open'], out = {};
+  for (const v of V) for (const e of EX) out[v + '/' + e] = [];
+  const need = { 'TPS1-A': 0, 'TPS1-D3': 2, 'TPS1-D4': 3 };
+  for (let i = 0; i < NS; i++) { if (i === spyI) continue; const S = series(i), I = indOf(S), b = i * T; const free = {}; for (const v of V) free[v] = -1;
+    for (let t = 130; t < T - 2; t++) { if (!MAIN[b + t]) continue; if (!V.some(v => free[v] < t)) continue; const sig = detect(m, S, I, i, t, ctxOf(i, t, S)); if (!sig) continue;
+      // walk TPS's lower closes from the setup (the setup close is TPS's first buy)
+      let last = S.c[t], adds = 0; const addDay = { 0: t };
+      for (let j = t + 1; j < T && j <= t + 60 && adds < 3; j++) { if (I.rsi2[j] > 70) break; if (S.c[j] > 0 && S.c[j] < last) { adds++; last = S.c[j]; addDay[adds] = j; } }
+      for (const v of V) { if (free[v] >= t || addDay[need[v]] === undefined) continue; const k = addDay[need[v]] + 1; if (k >= T || !(S.o[k] > 0)) continue;
+        let j = k, xr = -1; for (; j < T && j < k + 60; j++) { if (I.rsi2[j] > 70) { xr = j; break; } }
+        if (xr < 0) { if (k + 59 >= T) { free[v] = Infinity; continue; } xr = k + 59; }
+        free[v] = xr; const half = D[t] < SPLIT ? 'older' : 'newer', c = ctrlSpan(k, xr, false); if (c === null) continue;
+        if (S.c[xr] > 0) out[v + '/close'].push({ t, s: SYMS[i], k, x: xr, half, g: Math.min(S.c[xr] / S.o[k] - 1, 3), c });
+        const xo = xr + 1; if (xo < T && S.o[xo] > 0) out[v + '/open'].push({ t, s: SYMS[i], k, x: xo, half, g: Math.min(S.o[xo] / S.o[k] - 1, 3), c }); } } }
+  const sum = (a) => ({ older: halfStat(a.filter(z => z.half === 'older'), blk), newer: halfStat(a.filter(z => z.half === 'newer'), blk), last12m: halfStat(a.filter(z => D[z.t] >= iso(Date.parse(D[T - 1]) - 365 * 864e5)), blk) });
+  const pass = (h, bar) => h && h.n >= 30 && h.avg > 0 && h.avgStress > 0 && h.edge > 0 && h.noTop2 > 0 && h.tBlock >= bar;
+  const res = { generatedAt: new Date().toISOString(), label: 'SQUAD 32 TPS1 (pre-registered 17 Nov 2026): single-order TPS versions; not a library verdict', bar: BARX, tier2: TIER2_T, split: SPLIT, cost: COST, window: [D[0], D[T - 1]], rules: {} };
+  for (const k of Object.keys(out)) { const r = sum(out[k]); r.verdict = pass(r.older, BARX) && pass(r.newer, BARX) ? 'PROVEN' : pass(r.older, TIER2_T) && pass(r.newer, TIER2_T) ? 'TRADABLE SMALL' : 'NOT PROVEN'; res.rules[k] = r;
+    console.log('CHECK TPS1 ' + k + ' ' + r.verdict + ': older ' + JSON.stringify(r.older) + ' | newer ' + JSON.stringify(r.newer)); }
+  const recent = out['TPS1-D3/close'].concat(out['TPS1-A/close']).filter(z => D[z.t] >= iso(Date.parse(D[T - 1]) - 60 * 864e5)).map(z => ({ s: z.s, setup: D[z.t], buy: D[z.k], sell: D[z.x], net: r4(z.g - COST) }));
+  res.recentTrades = recent.slice(-200); fs.writeFileSync('data/decoded-check-tps1.json', JSON.stringify(res, null, 1)); process.exit(0); }
 // ================= ENGINE AUDIT (24 Oct 2026; yardstick.mjs) =================
 // DEC-FROG (the decoded rule in TRY SMALL) re-run ONCE on its frozen window, exactly as the one-shot below walks it, with the yardstick
 // fixed (AUD-1: trades and the average stock capped at +300% alike; the same-stock-other-days yardstick, uncapped in the frozen run,

@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.ref }}
       - uses: actions/setup-node@v4
         with:
           node-version: 20
@@ -52,6 +52,7 @@ jobs:
           set -o pipefail
           if tail -n 1 run-decoded-now.txt | grep -q HISTORY; then export HISTORY=1; fi
           if tail -n 1 run-decoded-now.txt | grep -q 'CHECK TPS'; then export CHECK=TPS; fi
+          if tail -n 1 run-decoded-now.txt | grep -q 'CHECK TPS1'; then export CHECK=TPS1; fi
           node decoded-lab.mjs 2>&1 | tee run.log
         env:
           MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
@@ -61,7 +62,7 @@ jobs:
           git config user.name "scanner"
           git config user.email "scanner@users.noreply.github.com"
           tail -n 300 run.log | cut -c1-2000 > data/decoded-run.log 2>/dev/null || true
-          FILES="data/decoded-paper.jsonl data/decoded-today.json data/decoded-board.json data/decoded-history.json data/decoded-run.log data/decoded-check.json"
+          FILES="data/decoded-paper.jsonl data/decoded-today.json data/decoded-board.json data/decoded-history.json data/decoded-run.log data/decoded-check.json data/decoded-check-tps1.json"
           OUTD="$RUNNER_TEMP/run-out"; mkdir -p "$OUTD/data"
           for f in $FILES; do [ -f "$f" ] && cp "$f" "$OUTD/$f"; done; true
           cp data/strategy-library.json "$RUNNER_TEMP/library-run.json"
