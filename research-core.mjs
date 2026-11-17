@@ -165,6 +165,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'pre') { ch += preRegisterPre(LB); continue; }
     if (R.family === 'sbc') { ch += preRegisterSbc(LB); continue; }
     if (R.family === 'ftd') { ch += preRegisterFtd(LB); continue; }
+    if (R.family === 'debt') { ch += preRegisterDebt(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -1308,4 +1309,49 @@ export function preRegisterFtd(LB) { if (!LB || !Array.isArray(LB.strategies)) r
   for (const id of FTD_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-16 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' File source, availability days, share counts, score, ranking, cut-offs and data rule fixed in research-core.mjs (IDEA 18) before any run.', sources: FTD_SOURCES, hold: R.hold, note: FTD_NOTE }); ch++; }
+  return ch; }
+// ---------------- IDEA 19 (pre-registered 17 Nov 2026, before any run): 8-K ITEM 2.04 DEBT TRIGGERING EVENTS ----------------
+// Sources: SEC Form 8-K Item 2.04 "Triggering Events That Accelerate or Increase a Direct or an Off-Balance Sheet Arrangement" (a default
+// or other event that accelerates or increases a material debt obligation; filed within 4 business days). Beneish and Press (1993, The
+// Accounting Review; 1995) on the costs and announcement losses of technical default; Nini, Smith and Sufi (2012, Review of Financial
+// Studies 25(6) 1713-1761, "Creditor Control Rights, Corporate Governance, and Firm Value"): after covenant violations creditors cut
+// investment and replace managers, and firms' operating AND stock price performance IMPROVE afterwards. The published direction after the
+// filing is therefore AMBIGUOUS (stated before the run): a warning (default, distress) or a creditor-discipline rebound. Both sides are
+// tested once, nothing else.
+// NEW information line in this library (checked 17 Nov: no rule uses item 2.04; Squad 29 = 4.02 / 4.01 / 5.02 / NT / going concern / 3.01;
+// covenant appears only in C-CT1a contract sizes). Data: the 8-K lists already cached for idea 3 (data.sec.gov submissions: acceptance time
+// + items, from 2021-09-01); no new SEC reads.
+// EVENT: an original 8-K whose items include 2.04, EXCEPT when the same filing also lists 2.01 (completion of an acquisition) or 5.01
+// (change in control): merger closings accelerate debt by design (Squad 29 skipped merger closings the same way). Timing: reaction session
+// t = research-core reactionDate (New York acceptance before 16:00 -> that session, else the next); entry k = t + 1 (the next open). The
+// stock must be liquid on t (system rule: $5+, 20-day average $5M+ traded). Point-in-time CIK -> ticker map; dead stocks kept (-100% if a
+// stock stops trading). One open trade per stock per rule. Halves: signal before / from 2024-01-01.
+//   RQ-DEBT-AV21  AVOID check: 21 sessions, judged BEFORE cost on both sides vs the average liquid stock (avoidVerdict).
+//   RQ-DEBT-AV63  AVOID check: the same events, 63 sessions.
+//   RQ-DEBT-B126  BUY test (the Nini-Smith-Sufi rebound side): the same events, 126 sessions, the system gates (judge, 0.8% / 1.2% cost).
+// DATA RULE (fixed now): the idea-3 8-K data rule (95%+ of companies' 8-K lists read, 85%+ liquid stock-months mapped) AND 100+ item-2.04
+// filings found in the lists (reader check).
+// USE: AVOID CONFIRMED -> proposed to the owner as a holdings SELL WARNING (main session, his OK); a buy pass -> paper lane built later.
+export const DEBT = { item: '2.04', skip: ['2.01', '5.01'], minFilings: 100 };
+const hasItem = (items, it) => new RegExp('(^|[^0-9.])' + it.replace('.', '\\.') + '([^0-9]|$)').test(String(items || ''));
+export const debtEvent = (items) => hasItem(items, DEBT.item) && !DEBT.skip.some(s => hasItem(items, s));
+export const isDebt204 = (items) => hasItem(items, DEBT.item);
+RULES['RQ-DEBT-AV21'] = { kind: 'avoid', hold: 21, family: 'debt', name: 'AVOID check: 8-K item 2.04 debt triggering event (no merger closing), 21 sessions',
+  rule: 'Information only: an original 8-K listing item 2.04 (a default or event that accelerates or increases a debt obligation), not together with 2.01 or 5.01; the stock (liquid on the reaction session) bought the next open and held 21 sessions; a valid AVOID / SELL filter if it lags the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+RULES['RQ-DEBT-AV63'] = { kind: 'avoid', hold: 63, family: 'debt', name: 'AVOID check: 8-K item 2.04 debt triggering event (no merger closing), 63 sessions',
+  rule: 'As RQ-DEBT-AV21, held 63 sessions. Never a buy.' };
+RULES['RQ-DEBT-B126'] = { kind: 'buy', hold: 126, family: 'debt', name: 'BUY test: creditor-discipline rebound after an 8-K item 2.04 debt triggering event, 126 sessions',
+  rule: 'The same events as RQ-DEBT-AV21, bought the next open and held 126 sessions (Nini, Smith and Sufi 2012: performance improves after creditors take control); judged with the system gates (0.8% / 1.2% cost, vs the average stock, vs the same stock\'s other days, without the 2 best, block t, both halves).' };
+export const DEBT_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'debt');
+for (const id of DEBT_IDS) { if (!IDS.includes(id)) IDS.push(id); if (RULES[id].kind === 'buy' && !BUY_IDS.includes(id)) BUY_IDS.push(id); ONE_OPEN.add(id); }
+export function debtDataRule({ iscOk, iscWhy, filings }) { const why = [];
+  if (!iscOk) why.push('8-K lists: ' + (iscWhy || 'not complete'));
+  if (!(filings >= DEBT.minFilings)) why.push('item-2.04 filings found ' + filings + ' (' + DEBT.minFilings + ' needed: reader check)');
+  return { ok: !why.length, why: why.join('; ') || null }; }
+const DEBT_SOURCES = ['https://www.sec.gov/files/form8-k.pdf', 'https://doi.org/10.1093/rfs/hhs007', 'https://ideas.repec.org/a/oup/rfinst/v25y2012i6p1713-1761.html', 'https://corpgov.law.harvard.edu/2011/03/11/creditor-control-rights-corporate-governance-and-firm-value'];
+const DEBT_NOTE = 'Daily researcher 2026-11-17: SEC 8-K item 2.04 debt triggering events (defaults / accelerations). New filing line; nothing in the library uses item 2.04. Published direction ambiguous (Beneish and Press: default is costly; Nini, Smith and Sufi 2012 RFS: performance improves after creditor intervention), so one avoid pair (21 / 63 sessions, gross vs gross) and one buy (126 sessions, system gates) were fixed before the run. Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.';
+export function preRegisterDebt(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of DEBT_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-17 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 19) before any run.', sources: DEBT_SOURCES, hold: R.hold, note: DEBT_NOTE }); ch++; }
   return ch; }

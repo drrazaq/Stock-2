@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-11-13",
+ "updated": "2026-11-17",
  "strategies": [
   {
    "id": "T1",
@@ -35622,6 +35622,57 @@
     ],
     "why": "these stocks lagged the average stock in both halves with block t <= -2.5: a valid AVOID filter, never a buy"
    }
+  },
+  {
+   "id": "RQ-DEBT-AV21",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: 8-K item 2.04 debt triggering event (no merger closing), 21 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-17 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: an original 8-K listing item 2.04 (a default or event that accelerates or increases a debt obligation), not together with 2.01 or 5.01; the stock (liquid on the reaction session) bought the next open and held 21 sessions; a valid AVOID / SELL filter if it lags the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 19) before any run.",
+   "sources": [
+    "https://www.sec.gov/files/form8-k.pdf",
+    "https://doi.org/10.1093/rfs/hhs007",
+    "https://ideas.repec.org/a/oup/rfinst/v25y2012i6p1713-1761.html",
+    "https://corpgov.law.harvard.edu/2011/03/11/creditor-control-rights-corporate-governance-and-firm-value"
+   ],
+   "hold": 21,
+   "note": "Daily researcher 2026-11-17: SEC 8-K item 2.04 debt triggering events (defaults / accelerations). New filing line; nothing in the library uses item 2.04. Published direction ambiguous (Beneish and Press: default is costly; Nini, Smith and Sufi 2012 RFS: performance improves after creditor intervention), so one avoid pair (21 / 63 sessions, gross vs gross) and one buy (126 sessions, system gates) were fixed before the run. Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-DEBT-AV63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: 8-K item 2.04 debt triggering event (no merger closing), 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-17 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-DEBT-AV21, held 63 sessions. Never a buy. Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 19) before any run.",
+   "sources": [
+    "https://www.sec.gov/files/form8-k.pdf",
+    "https://doi.org/10.1093/rfs/hhs007",
+    "https://ideas.repec.org/a/oup/rfinst/v25y2012i6p1713-1761.html",
+    "https://corpgov.law.harvard.edu/2011/03/11/creditor-control-rights-corporate-governance-and-firm-value"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-17: SEC 8-K item 2.04 debt triggering events (defaults / accelerations). New filing line; nothing in the library uses item 2.04. Published direction ambiguous (Beneish and Press: default is costly; Nini, Smith and Sufi 2012 RFS: performance improves after creditor intervention), so one avoid pair (21 / 63 sessions, gross vs gross) and one buy (126 sessions, system gates) were fixed before the run. Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-DEBT-B126",
+   "family": "Daily researcher (RQ)",
+   "name": "BUY test: creditor-discipline rebound after an 8-K item 2.04 debt triggering event, 126 sessions",
+   "agent": "daily researcher",
+   "kind": "buy",
+   "status": "pre-registered 2026-11-17 (daily researcher); 5-year one-shot pending",
+   "explain": "The same events as RQ-DEBT-AV21, bought the next open and held 126 sessions (Nini, Smith and Sufi 2012: performance improves after creditors take control); judged with the system gates (0.8% / 1.2% cost, vs the average stock, vs the same stock's other days, without the 2 best, block t, both halves). Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 19) before any run.",
+   "sources": [
+    "https://www.sec.gov/files/form8-k.pdf",
+    "https://doi.org/10.1093/rfs/hhs007",
+    "https://ideas.repec.org/a/oup/rfinst/v25y2012i6p1713-1761.html",
+    "https://corpgov.law.harvard.edu/2011/03/11/creditor-control-rights-corporate-governance-and-firm-value"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-17: SEC 8-K item 2.04 debt triggering events (defaults / accelerations). New filing line; nothing in the library uses item 2.04. Published direction ambiguous (Beneish and Press: default is costly; Nini, Smith and Sufi 2012 RFS: performance improves after creditor intervention), so one avoid pair (21 / 63 sessions, gross vs gross) and one buy (126 sessions, system gates) were fixed before the run. Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
   }
  ]
 }
