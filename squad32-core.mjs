@@ -17,6 +17,11 @@
 //   SPADD-RUN    S&P 500 addition: buy the open of the first session after the announcement date, sell the close of the last session
 //                before the effective date (the classic pre-inclusion run-up; Lynch and Mendenhall 1997)
 //   SPADD-63     S&P 500 addition: buy the open of the first session on or after the effective date, hold 63 (expected weak: control)
+// BATCH 2, PRE-REGISTERED 17 Nov 2026 AFTER batch 1 was seen (disclosed: chosen because SPADD-RUN beat SPY in both halves but lost in
+// absolute terms in the older half). The SAME SPADD-RUN rule, unchanged, on a new and independent sample: S&P MidCap 400 and SmallCap
+// 600 additions (Wikipedia change tables; announcement = the date in the S&P press-release URL, else its cite date; kept if 0-30 days
+// before the effective date). This is a replication test, nothing was tuned:
+//   MID-ADD-RUN  S&P MidCap 400 additions     SML-ADD-RUN  S&P SmallCap 600 additions     ALL-ADD-RUN  both pooled (the primary test)
 // COSTS: hunter-core costOf (0.6% fees + spread by price). Delisting inside the hold: last close -20% (hunter-core exitTrade).
 // VERDICT, two bars, both reported:
 //   MAKES MONEY  = hunter-core verdict (60+ trades, > 0 after costs in both halves, day-clustered t >= 2.5, > 0 at 1.5x costs and
@@ -34,8 +39,14 @@ export const RULES32 = {
   'SPDEL-63': { kind: 'del', hold: 63, text: 'S&P 500 deletion (market cap): buy the open on/after the effective date, hold 63' },
   'SPDEL-126': { kind: 'del', hold: 126, text: 'S&P 500 deletion (market cap): buy the open on/after the effective date, hold 126' },
   'SPADD-RUN': { kind: 'addrun', text: 'S&P 500 addition: buy the open after the announcement, sell the close before the effective date' },
-  'SPADD-63': { kind: 'add', hold: 63, text: 'S&P 500 addition: buy the open on/after the effective date, hold 63 (control)' }
+  'SPADD-63': { kind: 'add', hold: 63, text: 'S&P 500 addition: buy the open on/after the effective date, hold 63 (control)' },
+  'MID-ADD-RUN': { kind: 'addrun2', idx: ['400'], text: 'S&P MidCap 400 addition: buy the open after the announcement, sell the close before the effective date' },
+  'SML-ADD-RUN': { kind: 'addrun2', idx: ['600'], text: 'S&P SmallCap 600 addition: buy the open after the announcement, sell the close before the effective date' },
+  'ALL-ADD-RUN': { kind: 'addrun2', idx: ['400', '600'], text: 'S&P 400 + 600 additions pooled: buy the open after the announcement, sell the close before the effective date' }
 };
+// the run window of one addition: first position after the announcement day .. last position before the effective day
+export function runWindow(s, days, ann, eff) { let e = -1, x = -1; for (let k = 0; k < s.d.length; k++) { const d = days[s.d[k]]; if (e < 0 && d > ann) e = k; if (d < eff) x = k; }
+  return e >= 0 && x >= e ? [e, x] : null; }
 
 // first position in s whose day (days[s.d[k]]) is >= iso, or -1
 export function posOnOrAfter(s, days, iso) { for (let k = 0; k < s.d.length; k++) if (days[s.d[k]] >= iso) return k; return -1; }

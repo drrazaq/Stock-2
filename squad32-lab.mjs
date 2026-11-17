@@ -6,7 +6,7 @@
 // Writes data/squad32-lab.json. Never places an order. Halal: owner's ZAD marks only (data/halal.json); research only, not advice.
 import fs from 'node:fs';
 import zlib from 'node:zlib';
-import { RULES32, SPLIT, posOnOrAfter, spinStart, tradeOf, spyOver, judge } from './squad32-core.mjs';
+import { RULES32, SPLIT, posOnOrAfter, spinStart, tradeOf, spyOver, judge, runWindow } from './squad32-core.mjs';
 
 const env = process.env, CACHE = env.HUNT_CACHE || 'squad30-cache', OUT = 'data/squad32-lab.json';
 const local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null;
@@ -22,13 +22,13 @@ async function api(path) {
   return null;
 }
 
-const SPIN = readJson('data/squad32-spinoffs.json', []), SPC = readJson('data/squad32-sp500-changes.json', []);
+const SPIN = readJson('data/squad32-spinoffs.json', []), SPC = readJson('data/squad32-sp500-changes.json', []), SPC2 = readJson('data/squad32-sp400-600-changes.json', []);
 // tickers per spin-off CIK (SEC + Massive by CIK, active and delisted)
 for (const s of SPIN) { const set = new Set(s.tickers || []);
   for (const act of ['true', 'false']) { const j = await api('/v3/reference/tickers?cik=' + s.cik.padStart(10, '0') + '&active=' + act + '&limit=50');
     if (j && Array.isArray(j.results)) for (const t of j.results) if (t.ticker) set.add(t.ticker); }
   s.all = [...set]; }
-const want = new Set(['SPY']); for (const s of SPIN) for (const t of s.all) want.add(t); for (const c of SPC) { if (c.add) want.add(c.add); if (c.rem) want.add(c.rem); }
+const want = new Set(['SPY']); for (const s of SPIN) for (const t of s.all) want.add(t); for (const c of SPC.concat(SPC2)) { if (c.add) want.add(c.add); if (c.rem) want.add(c.rem); }
 
 const files = fs.existsSync(CACHE + '/days') ? fs.readdirSync(CACHE + '/days').filter(f => f.endsWith('.json.gz')).sort() : [];
 if (!files.length) { console.log('squad32: no price cache; nothing done'); process.exit(0); }
@@ -58,8 +58,11 @@ for (const c of SPC) {
     for (const id of ['SPDEL-63', 'SPDEL-126']) { events[id]++; if (e >= 0 && Date.parse(days[s.d[e]]) - Date.parse(c.eff) <= 7 * 864e5) push(id, s, c.rem, tradeOf(s, e, RULES32[id].hold), { eff: c.eff }); } } }
   if (c.add) { const s = S.get(c.add); if (!s) continue;
     { events['SPADD-63']++; const e = posOnOrAfter(s, days, c.eff); if (e >= 0 && Date.parse(days[s.d[e]]) - Date.parse(c.eff) <= 7 * 864e5) push('SPADD-63', s, c.add, tradeOf(s, e, 63), { eff: c.eff }); }
-    if (c.ann) { events['SPADD-RUN']++; let e = -1, x = -1; for (let k = 0; k < s.d.length; k++) { const d = days[s.d[k]]; if (e < 0 && d > c.ann) e = k; if (d < c.eff) x = k; }
-      if (e >= 0 && x >= e) push('SPADD-RUN', s, c.add, tradeOf(s, e, null, x), { ann: c.ann, eff: c.eff }); } } }
+    if (c.ann) { events['SPADD-RUN']++; const w = runWindow(s, days, c.ann, c.eff); if (w) push('SPADD-RUN', s, c.add, tradeOf(s, w[0], null, w[1]), { ann: c.ann, eff: c.eff }); } } }
+// batch 2: S&P 400 / 600 additions, the same run rule
+for (const c of SPC2) { if (!c.add || !c.ann) continue; const s = S.get(c.add);
+  for (const [id, r] of Object.entries(RULES32)) { if (r.kind !== 'addrun2' || !r.idx.includes(c.index)) continue; events[id]++; if (!s) continue;
+    const w = runWindow(s, days, c.ann, c.eff); if (w) push(id, s, c.add, tradeOf(s, w[0], null, w[1]), { ann: c.ann, eff: c.eff, index: c.index }); } }
 
 const res = { generatedAt: new Date().toISOString(), label: 'SQUAD 32 PATHWAYS: first 5-year verdicts (pre-registered 17 Nov 2026; frozen)', split: SPLIT,
   window: [days[0], days[days.length - 1]], spinFilers: SPIN.length, spinsListed: lists.spinsFound.length, sp500Changes: SPC.length, rules: {} };
