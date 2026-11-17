@@ -160,21 +160,29 @@ export const RULES = {
   'SQ10-SH20-C15-Y': { n: 20, w: 'c15', every: 'y', name: 'Halal top 20, capped 15%, yearly', short: 'the 20 largest passing the Shariah screen, capped 15%, re-formed once a year (January)' },
   'SQ10-SH30-C15': { n: 30, w: 'c15', every: 'q', name: 'Halal top 30, capped 15%, quarterly', short: 'the 30 largest passing the Shariah screen, capped 15%, quarterly' },
   'SQ10-SH30-MOM': { n: 30, w: 'mom', every: 'q', mom: true, name: 'Halal top 30 tilted to 12-1 momentum (MSCI/MTUM tilt), capped 15%', short: 'the 30 largest passing the Shariah screen, weight = market value x MSCI momentum score (1+z or 1/(1-z) of the 12-1 return), capped 15%, quarterly' },
+  // SQUAD 32 (pre-registered 17 Nov 2026 BEFORE any run; owner: "each basket buy costs 3 USD per stock" and "max 1,000 USD per trade"):
+  // FEW-ORDER equal-weight versions, one ~1,000 USD position per stock (so a cap-weighted 20%+ position is not possible). Same data,
+  // Shariah proxy screen, engine and costs as the SQ10 rules; judged by the same frozen first run.
+  'SQ32-EW5-Q': { reg: '2026-11-17', n: 5, w: 'ew', every: 'q', name: 'Halal top 5, equal weight, quarterly', short: 'the 5 largest passing the Shariah screen, equal weight (about 1,000 USD each), re-formed every quarter' },
+  'SQ32-EW5-Y': { reg: '2026-11-17', n: 5, w: 'ew', every: 'y', name: 'Halal top 5, equal weight, yearly', short: 'the 5 largest passing the Shariah screen, equal weight, re-formed once a year (January)' },
+  'SQ32-EW10-Q': { reg: '2026-11-17', n: 10, w: 'ew', every: 'q', name: 'Halal top 10, equal weight, quarterly', short: 'the 10 largest passing the Shariah screen, equal weight (about 1,000 USD each), re-formed every quarter' },
+  'SQ32-EW10-Y': { reg: '2026-11-17', n: 10, w: 'ew', every: 'y', name: 'Halal top 10, equal weight, yearly', short: 'the 10 largest passing the Shariah screen, equal weight, re-formed once a year (January)' },
   'SQ10-SH50-XMOM': { n: 50, w: 'xmom', every: 'q', mom: true, name: 'Halal top 50 minus the weakest third by 12-1 momentum, capped 15%', short: 'the 50 largest passing the Shariah screen, minus the bottom third by 12-1 return, cap-weighted capped 15%, quarterly' },
 };
 export const IDS = Object.keys(RULES);
 // rows [{ key, cap, mom }] (the Shariah top n, largest first) -> Map key -> weight, by the rule's weighting. maxW undefined = the rule's
 // own cap (CW rules: none; the others 15%); a number or null (= no cap) overrides it (sensitivity only)
-export function weightsFor(id, rows, maxW) { const R = RULES[id], m = maxW === undefined ? (R.w === 'cw' ? null : CAP15) : maxW, cap = (w) => m ? capAtMax(w, m) : w;
+export function weightsFor(id, rows, maxW) { const R = RULES[id], m = maxW === undefined ? (R.w === 'cw' || R.w === 'ew' ? null : CAP15) : maxW, cap = (w) => m ? capAtMax(w, m) : w;
+  if (R.w === 'ew') return new Map(rows.map(r => [r.key, 1 / rows.length]));
   if (R.w === 'cw' || R.w === 'c15') return cap(capWeights(rows));
   if (R.w === 'mom') return cap(momTilt(rows));
   if (R.w === 'xmom') return cap(capWeights(dropBottomThird(rows)));
   throw new Error('unknown weighting ' + R.w); }
 export const reviewMonth = (id, d) => { const m = String(d).slice(5, 7); return RULES[id].every === 'y' ? m === '01' : ['01', '04', '07', '10'].includes(m); };
 export const periodHold = (id) => RULES[id].every === 'y' ? 252 : 63;
-export function preRegister(LB, today = '2026-10-24') { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
-  for (const [id, r] of Object.entries(RULES)) { if (LB.strategies.some(e => e.id === id)) continue;
+export function preRegister(LB, today0 = '2026-10-24') { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const [id, r] of Object.entries(RULES)) { if (LB.strategies.some(e => e.id === id)) continue; const today = r.reg || today0;
     LB.strategies.push({ id, family: 'Halal core baskets (Squad 10)', name: r.name, explain: r.short + '. ' + COMMON, status: 'pre-registered ' + today + ' (squad 10); 5-year one-shot pending', agent: 'squad10', registered: today,
       libraryCheck: 'Builds on SQ5-SHARIAH30 (equal weight, judged; cap-weighted twin info only) and SQ5-TOP20; overlaps P1 / HOLD-DIPFUND (owning SPUS itself = the yardstick), SQ6-MTUM (momentum weighting, whole market, not Shariah). New here: Shariah screen with receivables, short-term investments, interest income and the 36-month average market value; cap / capped weights; 10 / 20 / 30 / 50 sizes; quarterly vs yearly; judged against SPUS first.',
       note: 'Pre-registered ' + today + ' BEFORE any squad 10 run (squad10-core.mjs = the exact rule). 5-year one-shot by squad10-lab.mjs, first complete verdict frozen in data/squad10-lab.json; forward paper lane (data/squad10-paper.jsonl) from 26 Oct 2026.' }); ch++; }
-  if (ch) LB.updated = today; return ch; }
+  if (ch) LB.updated = today0; return ch; }

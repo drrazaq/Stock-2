@@ -72,7 +72,7 @@ test('review months and holds; library pre-registration is idempotent', () => {
   assert.equal(reviewMonth('SQ10-SH20', '2024-04-01'), true); assert.equal(reviewMonth('SQ10-SH20', '2024-05-01'), false);
   assert.equal(reviewMonth('SQ10-SH20-C15-Y', '2024-04-01'), false); assert.equal(reviewMonth('SQ10-SH20-C15-Y', '2025-01-02'), true);
   assert.equal(periodHold('SQ10-SH20-C15-Y'), 252); assert.equal(periodHold('SQ10-SH10'), 63);
-  const LB = { strategies: [{ id: 'X' }] }; assert.equal(preRegister(LB), IDS.length); assert.equal(preRegister(LB), 0); assert.equal(IDS.length, 8);
+  const LB = { strategies: [{ id: 'X' }] }; assert.equal(preRegister(LB), IDS.length); assert.equal(preRegister(LB), 0); assert.equal(IDS.length, 12);
   const e = LB.strategies.find(x => x.id === 'SQ10-SH30-MOM'); assert.match(e.explain, /momentum/); assert.match(e.status, /pre-registered/); assert.ok(RULES['SQ10-SH50-XMOM'].mom);
 });
 
@@ -83,4 +83,12 @@ test('implied splits: a near-whole jump in the statement share count with no lis
   assert.deepEqual(impliedSplits([['2022-01-01', '', 100], ['2022-04-01', '', 130]], []), [], 'a 30% rise is not a split');
   assert.deepEqual(impliedSplits([['2022-01-01', '', 1000], ['2022-04-01', '', 100]], []), [['2022-04-01', 0.1]]);
   assert.deepEqual(impliedSplits([['2021-01-01', '', 100], ['2022-04-01', '', 200]], []), [], 'filings too far apart');
+});
+
+test('squad 32 equal-weight rules: 1/n each, no cap, registered on 17 Nov 2026', () => {
+  const rows = [{ key: 'A', cap: 900 }, { key: 'B', cap: 90 }, { key: 'C', cap: 10 }, { key: 'D', cap: 1 }, { key: 'E', cap: 1 }];
+  const w = weightsFor('SQ32-EW5-Q', rows); for (const k of 'ABCDE') assert.equal(w.get(k), 0.2);
+  assert.equal(reviewMonth('SQ32-EW10-Y', '2025-04-01'), false); assert.equal(periodHold('SQ32-EW5-Y'), 252);
+  const LB = { strategies: [] }; preRegister(LB); assert.match(LB.strategies.find(x => x.id === 'SQ32-EW10-Q').status, /2026-11-17/);
+  assert.match(LB.strategies.find(x => x.id === 'SQ10-SH10').status, /2026-10-24/);
 });
