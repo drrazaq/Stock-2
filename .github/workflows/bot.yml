@@ -44,13 +44,18 @@ jobs:
           # without the PRIVATE_DATA_TOKEN secret or before the connection check passed; never stops the bot.
           mirror() { bash .github/private-data.sh mirror >> run.log 2>&1 || true; }
           end=$(( $(date +%s) + 330*60 )); last_full=0; : > run.log
+          handed=0
           while [ "$(date +%s)" -lt "$end" ]; do
             git pull -q --rebase -X theirs 2>/dev/null || git rebase --abort 2>/dev/null || true
             now=$(date +%s)
+            # (17 Nov) hand over to the next bot run 15 minutes before this one ends. GitHub's */30 cron left 2-5 hour gaps (16 Nov
+            # 13:28-18:02 UTC: no replies, no watcher guard, watcher started 13:02 New York). A dispatched run waits in the "bot" queue.
+            if [ "$handed" = 0 ] && [ $((end - now)) -lt 900 ]; then GH_TOKEN="$GITHUB_TOKEN" gh workflow run bot.yml --ref main >> run.log 2>&1 && handed=1 || echo "handover dispatch failed" >> run.log; fi
             if [ $((now - last_full)) -ge 300 ]; then
               # every 5 minutes: the full check (your stops and targets, fast movers, watchdog) plus messages
               node scan.mjs >> run.log 2>&1 || echo "full check failed" >> run.log
               node watcher-guard.mjs >> run.log 2>&1 || echo "watcher guard failed" >> run.log   # (28 Oct) is the live watcher running? start it if not
+              node schedule-guard.mjs >> run.log 2>&1 || echo "schedule guard failed" >> run.log   # (17 Nov) start owner-facing jobs GitHub's cron has not started
               last_full=$now
             else
               # in between: wait up to 25 seconds for a message and answer it at once
@@ -76,6 +81,12 @@ jobs:
           TG_CHAT: ${{ secrets.TG_CHAT }}
           RATE: ${{ vars.RATE || '8' }}
           PAGE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
+      # (17 Nov) if the loop died early, still queue the next bot run so replies and the guards come back without waiting for cron
+      - if: failure()
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run bot.yml --ref main -R "${{ github.repository }}" || true
       # If anything above failed, tell the owner on Telegram straight away.
       - if: failure()
         env:

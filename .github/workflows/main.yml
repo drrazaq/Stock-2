@@ -4,11 +4,44 @@ on:
     - cron: '30 21 * * 1-5'
     - cron: '10,40 13-20 * * 1-5'
   workflow_dispatch:
+    inputs:
+      mode:
+        description: 'empty = full closing scan now (the manual button); intraday or daily = started by the schedule guard'
+        required: false
+        default: ''
+        type: string
 permissions:
   contents: write
 concurrency: scanner
 jobs:
+  # schedule guard (17 Nov 2026): GitHub's cron here runs hours late. While the bot job's schedule guard is alive it starts this job
+  # on time itself, so a cron-started copy is skipped (no late duplicate messages or after-close scans). Fails open.
+  slot:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            schedule-skip.mjs
+            data/schedule-guard.json
+          sparse-checkout-cone-mode: false
+      - id: g
+        run: node schedule-skip.mjs | tee -a "$GITHUB_OUTPUT"
+        env:
+          EVENT: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
   scan:
+    needs: slot
+    if: ${{ !cancelled() && needs.slot.outputs.skip != '1' }}
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
@@ -23,11 +56,14 @@ jobs:
       - shell: bash
         run: |
           set -o pipefail
+          if [ "$MODE" = intraday ] && [ "${{ github.event_name }}" = schedule ] && [ "$(TZ=America/New_York date +%H%M)" -ge 1600 ]; then export MODE=daily; echo "late intraday slot after the close: running the closing scan"; fi
           node scan.mjs 2>&1 | tee run.log
         env:
           NODE_OPTIONS: --max-old-space-size=12288
-          MODE: ${{ github.event.schedule == '10,40 13-20 * * 1-5' && 'intraday' || 'daily' }}
-          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+          # schedule guard (17 Nov 2026): the guard passes mode; a cron intraday slot that GitHub starts after 16:00 New York becomes the
+          # closing scan (16 Nov: the 21:30 UTC slot never started and a late intraday slot printed "Market closed. Nothing to do.")
+          MODE: ${{ inputs.mode || (github.event.schedule == '10,40 13-20 * * 1-5' && 'intraday' || 'daily') }}
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && !inputs.mode && '1' || '' }}
           TWELVE_KEY: ${{ secrets.TWELVE_KEY }}
           SEC_UA: ${{ secrets.SEC_UA || format('{0} {0}@users.noreply.github.com', github.repository_owner) }}
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
