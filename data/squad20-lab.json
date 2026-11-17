@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-11-15T21:14:39.996Z",
+ "generatedAt": "2026-11-17T08:30:54.976Z",
  "squad": 20,
  "philosophy": "use the jump differently: as an AVOID filter and an EXIT on the rules that work, as a second setup after the spike is digested, and one-month momentum among high-turnover large caps (Medhat & Schmeling 2022)",
  "preRegistered": "squad20-core.mjs header + RULES (25 Oct 2026, before any run) + data/strategy-library.json SQ20-*",
  "window": [
   "2021-11-08",
-  "2026-11-13"
+  "2026-11-16"
  ],
  "bar": 4.12,
  "split": "2024-01-01",
@@ -13,10 +13,10 @@
  "data": {
   "price": {
    "ok": true,
-   "sessions": 1260,
+   "sessions": 1261,
    "from": "2021-11-08",
-   "to": "2026-11-13",
-   "stocks": 8459,
+   "to": "2026-11-16",
+   "stocks": 8575,
    "rowsWithHighLow": 1
   },
   "tickerMap": {
@@ -31,31 +31,31 @@
    "ok": true,
    "companies": 4404,
    "answered": 4404,
-   "withRevenue": 3681,
-   "fromSquad4Cache": 6183,
+   "withRevenue": 3692,
+   "fromSquad4Cache": 6184,
    "fetchedNow": 0,
    "failed": 0,
    "mode": "cache"
   },
   "splits": {
    "ok": true,
-   "rows": 7479,
-   "tickers": 4827,
+   "rows": 7500,
+   "tickers": 4842,
    "pagesNow": 8
   },
   "altShares": {
    "ok": true,
-   "wanted": 0,
-   "fetchedNow": 0,
-   "known": 2091
+   "wanted": 5,
+   "fetchedNow": 5,
+   "known": 2096
   },
   "domicile": {
    "ok": true,
-   "wantedNow": 0,
-   "fetchedNow": 0,
+   "wantedNow": 1,
+   "fetchedNow": 1,
    "failed": 0,
    "missing": 0,
-   "known": 1759,
+   "known": 1760,
    "foreign": 176
   },
   "bases": {
@@ -151,8 +151,8 @@
     "ok": true,
     "rule": "MACRO-USD-E60",
     "frozenTrades": 249,
-    "rebuilt": 256,
-    "signals": 256,
+    "rebuilt": 257,
+    "signals": 257,
     "noPrice": 0,
     "open": 0,
     "artifacts": 0,
@@ -162,9 +162,9 @@
   "spike": {
    "ok": true,
    "stocksWithSpikes": 2396,
-   "spikes": 7312,
+   "spikes": 7318,
    "signals": 88,
-   "controls": 2622,
+   "controls": 2623,
    "controlsHeld": 831
   },
   "stmom": {
@@ -173,7 +173,7 @@
    "first": "2022-01-31",
    "minUniverse": 1000,
    "minUsable1000": 999,
-   "avgPicks1000": 26.1897,
+   "avgPicks1000": 26.1724,
    "avgPicks500": 13.5517
   }
  },
@@ -25250,7 +25250,7 @@
    "name": "Dollar falling -> XLK (MACRO-USD-E60) (rebuilt base, reference only)",
    "rule": "MACRO-USD-E60",
    "verdict": "NOT PROVEN",
-   "why": "not better than the same stocks held as long on their other days in the older half; block t 0.83 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.72 under 2.5 in the newer half",
+   "why": "not better than the same stocks held as long on their other days in the older half; block t 0.83 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.52 under 2.5 in the newer half",
    "hold": 60,
    "block": 60,
    "cost": 0.008,
@@ -25277,42 +25277,42 @@
      "win": 0.736
     },
     "newer": {
-     "n": 131,
-     "days": 131,
+     "n": 132,
+     "days": 132,
      "stocks": 1,
-     "avg": 0.0446,
-     "median": 0.056,
-     "avgStress": 0.0406,
-     "ctrl": 0.0131,
-     "edge": 0.0235,
-     "tDay": 4.39,
-     "blocks": 10,
-     "tBlock": 1.72,
+     "avg": 0.0435,
+     "median": 0.0559,
+     "avgStress": 0.0395,
+     "ctrl": 0.0123,
+     "edge": 0.0232,
+     "tDay": 4.36,
+     "blocks": 11,
+     "tBlock": 1.52,
      "vsOwn": null,
      "ownCovered": 0,
-     "noTop2": 0.0397,
+     "noTop2": 0.0387,
      "best": 0.3633,
      "worst": -0.2335,
-     "win": 0.6489
+     "win": 0.6439
     },
     "all": {
-     "n": 256,
-     "days": 256,
+     "n": 257,
+     "days": 257,
      "stocks": 1,
-     "avg": 0.0444,
-     "median": 0.0594,
-     "avgStress": 0.0404,
-     "ctrl": 0.0061,
-     "edge": 0.0302,
-     "tDay": 6.96,
-     "blocks": 18,
-     "tBlock": 1.48,
+     "avg": 0.0438,
+     "median": 0.0591,
+     "avgStress": 0.0398,
+     "ctrl": 0.0057,
+     "edge": 0.03,
+     "tDay": 6.94,
+     "blocks": 19,
+     "tBlock": 1.38,
      "vsOwn": null,
      "ownCovered": 0,
-     "noTop2": 0.0419,
+     "noTop2": 0.0413,
      "best": 0.3633,
      "worst": -0.2335,
-     "win": 0.6914
+     "win": 0.6887
     }
    },
    "perYear": {
@@ -25322,9 +25322,9 @@
      "avgStock": 0.0285
     },
     "newer": {
-     "rule": 0.1874,
-     "spy": 0.1517,
-     "avgStock": 0.0888
+     "rule": 0.1827,
+     "spy": 0.1496,
+     "avgStock": 0.0855
     }
    },
    "byYear": {
@@ -25374,12 +25374,12 @@
      "beatsSpy": true
     },
     "2026": {
-     "n": 18,
-     "avg": -0.0342,
-     "avgStock": -0.0338,
-     "spy": -0.0137,
-     "perYear": -0.1435,
-     "spyPerYear": -0.0576,
+     "n": 19,
+     "avg": -0.0377,
+     "avgStock": -0.0368,
+     "spy": -0.0147,
+     "perYear": -0.1583,
+     "spyPerYear": -0.0617,
      "beatsSpy": false
     }
    }
@@ -25536,7 +25536,7 @@
  "stmomFormations": [
   {
    "d": "2024-11-29",
-   "companies": 2018,
+   "companies": 2020,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25552,7 +25552,7 @@
   },
   {
    "d": "2024-12-31",
-   "companies": 2026,
+   "companies": 2027,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25568,7 +25568,7 @@
   },
   {
    "d": "2025-01-31",
-   "companies": 1982,
+   "companies": 1983,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25584,7 +25584,7 @@
   },
   {
    "d": "2025-02-28",
-   "companies": 1987,
+   "companies": 1988,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25600,7 +25600,7 @@
   },
   {
    "d": "2025-03-31",
-   "companies": 1983,
+   "companies": 1984,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25616,7 +25616,7 @@
   },
   {
    "d": "2025-04-30",
-   "companies": 1937,
+   "companies": 1938,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25632,7 +25632,7 @@
   },
   {
    "d": "2025-05-30",
-   "companies": 1969,
+   "companies": 1970,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25648,7 +25648,7 @@
   },
   {
    "d": "2025-06-30",
-   "companies": 2050,
+   "companies": 2052,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25664,7 +25664,7 @@
   },
   {
    "d": "2025-07-31",
-   "companies": 2018,
+   "companies": 2020,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 999,
@@ -25680,7 +25680,7 @@
   },
   {
    "d": "2025-08-29",
-   "companies": 2054,
+   "companies": 2056,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25696,7 +25696,7 @@
   },
   {
    "d": "2025-09-30",
-   "companies": 2095,
+   "companies": 2097,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25712,7 +25712,7 @@
   },
   {
    "d": "2025-10-31",
-   "companies": 2075,
+   "companies": 2077,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25728,7 +25728,7 @@
   },
   {
    "d": "2025-11-28",
-   "companies": 2092,
+   "companies": 2094,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25744,7 +25744,7 @@
   },
   {
    "d": "2025-12-31",
-   "companies": 2092,
+   "companies": 2095,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25760,7 +25760,7 @@
   },
   {
    "d": "2026-01-30",
-   "companies": 2099,
+   "companies": 2102,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25776,7 +25776,7 @@
   },
   {
    "d": "2026-02-27",
-   "companies": 2116,
+   "companies": 2119,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25792,7 +25792,7 @@
   },
   {
    "d": "2026-03-31",
-   "companies": 2096,
+   "companies": 2099,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 999,
@@ -25808,7 +25808,7 @@
   },
   {
    "d": "2026-04-30",
-   "companies": 2072,
+   "companies": 2076,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25824,7 +25824,7 @@
   },
   {
    "d": "2026-05-29",
-   "companies": 2140,
+   "companies": 2143,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25840,7 +25840,7 @@
   },
   {
    "d": "2026-06-30",
-   "companies": 2194,
+   "companies": 2197,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 999,
@@ -25856,7 +25856,7 @@
   },
   {
    "d": "2026-07-31",
-   "companies": 2098,
+   "companies": 2102,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 999,
@@ -25872,7 +25872,7 @@
   },
   {
    "d": "2026-08-31",
-   "companies": 2138,
+   "companies": 2144,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25888,7 +25888,7 @@
   },
   {
    "d": "2026-09-30",
-   "companies": 2140,
+   "companies": 2146,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25904,7 +25904,7 @@
   },
   {
    "d": "2026-10-30",
-   "companies": 2088,
+   "companies": 2093,
    "SQ20-STMOM-1000": {
     "universe": 1000,
     "usable": 1000,
@@ -25921,7 +25921,7 @@
  ],
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-15T21:14:39.996Z",
+  "at": "2026-11-17T08:30:54.976Z",
   "results": {}
  },
  "trades": {}
