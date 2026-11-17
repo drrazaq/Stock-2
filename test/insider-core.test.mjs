@@ -48,4 +48,8 @@ t('rules: pre-registered tests and labels', () => {
   assert.equal(labelOf(['INS-ANY'], { 'INS-ANY': { verdict: 'REJECTED' } }), 'INFO (rule failed the test)'); assert.equal(labelOf(['INS-ANY'], {}), 'WATCH');
   const ctx = entryCtx(ser(Array.from({ length: 30 }, (_, i) => 10 + i)), 25); assert.ok(ctx.pre20 > 0 && ctx.dollar20 > 0);
 });
+t('the 1-3 USD lead is labelled as a forward test, never as proven', () => {
+  assert.equal(RULES['INS-LEAD13'].forwardFrom, '2026-11-18'); assert.ok(testOf('INS-LEAD13')({ usd: 2e4 }, { px: 1.5, dollar20: 2e5 })); assert.ok(!testOf('INS-LEAD13')({ usd: 2e4 }, { px: 3.5, dollar20: 2e5 }));
+  assert.equal(labelOf(['INS-LEAD13'], { 'INS-LEAD13': { verdict: 'TOO FEW' } }), 'LEAD 1-3 USD (forward test)');
+});
 console.log(n + ' insider core tests passed');

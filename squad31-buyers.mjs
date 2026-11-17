@@ -132,8 +132,11 @@ function runRules(days, S, ins, cong) {
       const x = scoreTrade(s, k, spy, R.hold, lastDi), x15 = scoreTrade(s, k, spy, R.hold, lastDi, 1.5); if (!x) continue; last.set(e.sym, di);
       const t = { di, net: x.net, px: x.px, sym: e.sym }; trades.push(t); t15.push({ ...t, net: x15.net }); (tiers[tierOf(x.px)] = tiers[tierOf(x.px)] || []).push(t);
       best.push({ sym: e.sym, d: days[di], net: pct(x.net), stock: pct(x.gross), spy: pct(x.mkt) }); }
+    let insample = null;
+    if (R.forwardFrom) { const fi = firstAfter(days, R.forwardFrom) - 1, isT = trades.filter(t => t.di < fi); insample = { note: 'found after looking: not evidence', ...fmt(stats(isT)) };
+      for (const a of [trades, t15]) { const keep = a.filter(t => t.di >= fi); a.length = 0; a.push(...keep); } for (const k of Object.keys(tiers)) tiers[k] = tiers[k].filter(t => t.di >= fi); }
     const all = stats(trades), older = stats(trades.filter(t => days[t.di] < SPLIT)), newer = stats(trades.filter(t => days[t.di] >= SPLIT)), at15 = stats(t15), v = verdict(all, older, newer, at15, R);
-    res[id] = { id, text: R.text, verdict: v.verdict, why: v.why, matched, noPrice, all: fmt(all), older: fmt(older), newer: fmt(newer), at15: fmt(at15),
+    res[id] = { id, text: R.text, verdict: v.verdict, why: v.why, insample, forwardFrom: R.forwardFrom || null, matched, noPrice, all: fmt(all), older: fmt(older), newer: fmt(newer), at15: fmt(at15),
       tiers: Object.fromEntries(Object.entries(tiers).map(([k, a]) => [k, fmt(stats(a))])), best: best.sort((a, b) => b.net - a.net).slice(0, 3), worst: best.slice(-3).reverse(), avgStock: pct(trades.length ? best.reduce((a, b) => a + b.stock, 0) / best.length / 100 : null), avgSpy: pct(trades.length ? best.reduce((a, b) => a + b.spy, 0) / best.length / 100 : null) };
     console.log(id + ': ' + v.verdict + ' - ' + all.n + ' trades, ' + (pct(all.avg) ?? '-') + '% a trade vs the S&P 500 after costs (median ' + (pct(all.median) ?? '-') + '%, t ' + (all.t || 0).toFixed(2) + ')');
   }
@@ -202,7 +205,7 @@ async function daily() {
   for (const yy of years) for (const r of await houseIndex(yy)) { if (seen.has(r.doc)) continue; if (!(live.seenDocs || []).length && r.filed < iso(Date.now() - 7 * 864e5)) { seen.add(r.doc); continue; }  // first run: only the last 7 days
     const p = await housePtr(r); if (!p) continue; seen.add(r.doc); if (p.paper) { paper++; continue; }
     for (const t of p.tx) if (t.type === 'P') newHouse.push({ sym: t.sym, filed: r.filed, tdate: t.tdate, lag: Math.round((Date.parse(r.filed) - Date.parse(t.tdate)) / 864e5), lo: t.lo, hi: t.hi, owner: t.owner, member: r.member, dst: r.dst, doc: r.doc }); }
-  const keepFrom = iso(Date.now() - 150 * 864e5);
+  const keepFrom = '2026-10-01';   // kept for good: the forward test of INS-LEAD13 and the months the SEC quarterly sets do not cover yet
   live.ins = (live.ins || []).concat(newRows).filter(r => r.filed >= keepFrom); live.house = (live.house || []).concat(newHouse).filter(r => r.filed >= keepFrom); live.seenDocs = [...seen];
   fs.writeFileSync('data/buyers-live.json', JSON.stringify(live));
 
@@ -235,7 +238,7 @@ async function daily() {
   msg.push('', 'CONGRESS (House reports filed since the last run): ' + cong.length + ' stock purchases' + (paper ? ' (+' + paper + ' scanned paper reports not readable)' : ''));
   for (const e of cong.slice(0, 8)) { const cm = (C.byDst[e.dst] || []).join(', ');
     msg.push('- ' + e.sym + ': ' + e.member + ' (' + e.dst + (cm ? '; ' + cm : '') + ')' + (e.owner !== 'self' ? ' [' + e.owner + ']' : '') + ' bought ' + usd(e.lo) + (e.hi ? '-' + usd(e.hi) : '+') + ' USD' + (e.buys > 1 ? ' in ' + e.buys + ' buys, last' : '') + ' on ' + e.tdate.slice(5) + ', reported ' + e.lag + ' days later | ' + e.label + ' | ' + e.zad + (e.news ? '\n    news: ' + e.news : '')); }
-  msg.push('', '5-year test: INS-ANY ' + vv('INS-ANY') + ', INS-CEO ' + vv('INS-CEO') + ', INS-MOM ' + vv('INS-MOM') + ', INS-PENNY ' + vv('INS-PENNY') + ', CONG-BUY ' + vv('CONG-BUY') + '.',
+  msg.push('', '5-year test: INS-ANY ' + vv('INS-ANY') + ', INS-CEO ' + vv('INS-CEO') + ', INS-MOM ' + vv('INS-MOM') + ', INS-PENNY ' + vv('INS-PENNY') + ', CONG-BUY ' + vv('CONG-BUY') + '; 1-3 USD lead: forward test since 18 Nov.',
     'TRY SMALL = its rule passed the 5-year test; WATCH = not proven yet; INFO = the rule failed. Buy only in ZAD, only names ZAD shows as halal, 1,000 USD at most. Research only, not advice.');
   await telegram(msg.join('\n'));
   console.log('daily: ' + ins.length + ' insider events, ' + cong.length + ' Congress purchases; SEC calls ' + secCalls);

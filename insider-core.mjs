@@ -103,6 +103,11 @@ export const RULES = {
   'CONG-60D': { kind: 'cong', hold: 60, text: 'CONG-BUY held 60 days', same: 'CONG-BUY' },
   'CONG-BIG': { kind: 'cong', hold: 60, text: 'A House member reported buying 50k USD+ of one stock; hold 60 days', test: (e, c) => e.lo >= 50001 && c.px >= 1 },
   'CONG-FAST': { kind: 'cong', hold: 20, text: 'A House member reported a buy within 15 days of making it (FinzData lead); hold 20 days', test: (e, c) => e.lag <= 15 && c.px >= 1 },
+  // ADDED 17 Nov 2026 AFTER the first run (so NOT pre-registered): in that run every insider rule's 1-3 USD slice was positive vs the
+  // S&P 500 (INS-ANY +0.3%, INS-CEO +4.2%, INS-CLUSTER +3.1%, INS-MOM +5.7%, INS-60D +3.7% a trade; overlapping trades, medians negative).
+  // A pattern found by looking is not evidence, so this rule is judged ONLY on trades entered from 18 Nov 2026 on (forwardFrom).
+  'INS-LEAD13': { kind: 'ins', hold: 20, forwardFrom: '2026-11-18', text: 'LEAD (found after looking, judged only forward from 18 Nov 2026): an insider bought 10k USD+ of a 1-3 USD stock with 100k USD+ traded a day; hold 20 days',
+    test: (e, c) => e.usd >= 1e4 && c.px >= 1 && c.px < 3 && c.dollar20 !== null && c.dollar20 >= 1e5 },
 };
 export const testOf = (id) => RULES[id].test || RULES[RULES[id].same].test;
 
@@ -130,6 +135,7 @@ export function entryCtx(s, k) {
 }
 // label shown to the owner for a name matched by these rules (verdicts from data/squad31-buyers.json)
 export function labelOf(ids, verdicts) {
+  if (ids.length === 1 && ids[0] === 'INS-LEAD13' && (verdicts['INS-LEAD13'] || {}).verdict !== 'REJECTED' && (verdicts['INS-LEAD13'] || {}).verdict !== 'TRY SMALL') return 'LEAD 1-3 USD (forward test)';
   const v = ids.map(id => (verdicts[id] || {}).verdict || 'NOT TESTED');
   if (v.includes('TRY SMALL')) return 'TRY SMALL';
   if (v.length && v.every(x => x === 'REJECTED')) return 'INFO (rule failed the test)';
