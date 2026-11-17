@@ -1,17 +1,17 @@
 {
- "generatedAt": "2026-11-17T06:17:54.538Z",
+ "generatedAt": "2026-11-17T23:02:58.857Z",
  "preRegistered": "2026-11-17 (hunter-core.mjs)",
  "window": [
   "2021-11-29",
-  "2026-11-16"
+  "2026-11-17"
  ],
- "sessions": 1247,
+ "sessions": 1248,
  "split": "2024-03-01",
  "costs": "round trip on 1,000 USD: 0.6% fees + spread by entry price (under 0.50: 4%; 0.50-1: 3%; 1-3: 1.5%; 3-10: 0.6%; 10+: 0.3%); 1.5x costs also tested",
  "caveat": "Daily bars: the open and close are the only fill prices (no minute fills); the stop assumes the low came first. News = a Massive news story in the window (not judged good or bad); news history 730 days. Dead stocks included; reverse splits and data errors (a day over +400% or under -90%) never signal.",
  "data": {
-  "calls": 12780,
-  "newsCalls": 11463,
+  "calls": 5,
+  "newsCalls": 4,
   "newsRefused": false,
   "refused": 0
  },
@@ -190,14 +190,14 @@
    "id": "PNY-GAP1",
    "text": "Penny gap-and-go: previous close 0.20-3 USD, opens 20%+ above it; buy the open, sell the same close",
    "verdict": "REJECTED",
-   "why": "lost money after costs (-3.05% a trade); lost money in the older half; lost money in the newer half; t -3.31 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "why": "lost money after costs (-3.05% a trade); lost money in the older half; lost money in the newer half; t -3.32 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 1911,
-    "days": 905,
+    "n": 1915,
+    "days": 906,
     "avgNet": -3.05,
     "median": -8.09,
-    "win": 31.61,
-    "t": -3.31,
+    "win": 31.59,
+    "t": -3.32,
     "withoutBest2": -3.41
    },
    "older": {
@@ -210,50 +210,50 @@
     "withoutBest2": -4.86
    },
    "newer": {
-    "n": 1416,
-    "days": 583,
-    "avgNet": -2.82,
+    "n": 1420,
+    "days": 584,
+    "avgNet": -2.83,
     "median": -8.14,
-    "win": 31.78,
-    "t": -2.01,
+    "win": 31.76,
+    "t": -2.02,
     "withoutBest2": -3.31
    },
    "at15": {
-    "n": 1911,
-    "days": 905,
+    "n": 1915,
+    "days": 906,
     "avgNet": -4.14,
     "median": -9.16,
-    "win": 30.14,
+    "win": 30.13,
     "t": -4.68,
     "withoutBest2": -4.5
    },
    "tiers": {
     "P3_5": {
-     "n": 465,
-     "days": 379,
-     "avgNet": -2.42,
+     "n": 466,
+     "days": 380,
+     "avgNet": -2.43,
      "median": -7.91,
-     "win": 32.47,
-     "t": -1.22,
-     "withoutBest2": -3.7
+     "win": 32.4,
+     "t": -1.23,
+     "withoutBest2": -3.71
     },
     "P1_3": {
-     "n": 1019,
-     "days": 652,
-     "avgNet": -2.75,
+     "n": 1021,
+     "days": 653,
+     "avgNet": -2.74,
      "median": -6.86,
-     "win": 32.48,
+     "win": 32.52,
      "t": -2.05,
-     "withoutBest2": -3.3
+     "withoutBest2": -3.29
     },
     "U1": {
-     "n": 346,
-     "days": 288,
-     "avgNet": -3.27,
+     "n": 347,
+     "days": 289,
+     "avgNet": -3.28,
      "median": -11.38,
-     "win": 29.77,
-     "t": -1.91,
-     "withoutBest2": -4.96
+     "win": 29.68,
+     "t": -1.92,
+     "withoutBest2": -4.97
     },
     "S5": {
      "n": 81,
@@ -288,15 +288,15 @@
    "id": "PNY-GAP2",
    "text": "PNY-GAP1 with a 10% stop under the open",
    "verdict": "REJECTED",
-   "why": "lost money after costs (-4.17% a trade); lost money in the older half; lost money in the newer half; t -6.56 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "why": "lost money after costs (-4.19% a trade); lost money in the older half; lost money in the newer half; t -6.58 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 1911,
-    "days": 905,
-    "avgNet": -4.17,
+    "n": 1915,
+    "days": 906,
+    "avgNet": -4.19,
     "median": -12.1,
-    "win": 20.77,
-    "t": -6.56,
-    "withoutBest2": -4.49
+    "win": 20.73,
+    "t": -6.58,
+    "withoutBest2": -4.5
    },
    "older": {
     "n": 495,
@@ -308,49 +308,49 @@
     "withoutBest2": -4.95
    },
    "newer": {
-    "n": 1416,
-    "days": 583,
-    "avgNet": -4.31,
+    "n": 1420,
+    "days": 584,
+    "avgNet": -4.33,
     "median": -12.1,
-    "win": 20.48,
-    "t": -6.56,
-    "withoutBest2": -4.73
+    "win": 20.42,
+    "t": -6.58,
+    "withoutBest2": -4.74
    },
    "at15": {
-    "n": 1911,
-    "days": 905,
-    "avgNet": -5.26,
+    "n": 1915,
+    "days": 906,
+    "avgNet": -5.28,
     "median": -12.7,
-    "win": 20.04,
-    "t": -8.28,
-    "withoutBest2": -5.58
+    "win": 20,
+    "t": -8.3,
+    "withoutBest2": -5.59
    },
    "tiers": {
     "P3_5": {
-     "n": 465,
-     "days": 379,
-     "avgNet": -1.88,
+     "n": 466,
+     "days": 380,
+     "avgNet": -1.9,
      "median": -12.1,
-     "win": 20.86,
-     "t": -0.99,
-     "withoutBest2": -3.15
+     "win": 20.82,
+     "t": -1.01,
+     "withoutBest2": -3.17
     },
     "P1_3": {
-     "n": 1019,
-     "days": 652,
-     "avgNet": -4.13,
+     "n": 1021,
+     "days": 653,
+     "avgNet": -4.14,
      "median": -13,
-     "win": 22.37,
-     "t": -4.55,
-     "withoutBest2": -4.68
+     "win": 22.33,
+     "t": -4.57,
+     "withoutBest2": -4.7
     },
     "U1": {
-     "n": 346,
-     "days": 288,
+     "n": 347,
+     "days": 289,
      "avgNet": -6.95,
      "median": -14.5,
-     "win": 18.21,
-     "t": -6.03,
+     "win": 18.16,
+     "t": -6.05,
      "withoutBest2": -7.91
     },
     "S5": {
@@ -388,11 +388,11 @@
    "verdict": "REJECTED",
    "why": "lost money after costs (-2.41% a trade); lost money in the older half; lost money in the newer half; t -4.13 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 1403,
-    "days": 787,
+    "n": 1407,
+    "days": 788,
     "avgNet": -2.41,
     "median": -6.99,
-    "win": 33,
+    "win": 32.98,
     "t": -4.13,
     "withoutBest2": -2.88
    },
@@ -406,49 +406,49 @@
     "withoutBest2": -4.91
    },
    "newer": {
-    "n": 1008,
-    "days": 505,
-    "avgNet": -1.83,
+    "n": 1012,
+    "days": 506,
+    "avgNet": -1.84,
     "median": -6.89,
-    "win": 33.23,
-    "t": -2.28,
+    "win": 33.2,
+    "t": -2.29,
     "withoutBest2": -2.48
    },
    "at15": {
-    "n": 1403,
-    "days": 787,
+    "n": 1407,
+    "days": 788,
     "avgNet": -3.54,
-    "median": -8,
-    "win": 31.29,
-    "t": -5.73,
+    "median": -8.03,
+    "win": 31.27,
+    "t": -5.74,
     "withoutBest2": -4.01
    },
    "tiers": {
     "P3_5": {
-     "n": 300,
-     "days": 267,
-     "avgNet": -1.77,
-     "median": -6.85,
-     "win": 34.67,
-     "t": -0.82,
-     "withoutBest2": -3.11
+     "n": 301,
+     "days": 268,
+     "avgNet": -1.8,
+     "median": -6.87,
+     "win": 34.55,
+     "t": -0.84,
+     "withoutBest2": -3.14
     },
     "P1_3": {
-     "n": 837,
-     "days": 585,
-     "avgNet": -2.32,
+     "n": 839,
+     "days": 586,
+     "avgNet": -2.31,
      "median": -6.01,
-     "win": 33.69,
+     "win": 33.73,
      "t": -2.71,
-     "withoutBest2": -2.85
+     "withoutBest2": -2.84
     },
     "U1": {
-     "n": 266,
-     "days": 227,
-     "avgNet": -3.4,
+     "n": 267,
+     "days": 228,
+     "avgNet": -3.41,
      "median": -9.86,
-     "win": 28.95,
-     "t": -2.65,
+     "win": 28.84,
+     "t": -2.67,
      "withoutBest2": -5.35
     }
    },
@@ -475,15 +475,15 @@
    "id": "PNY-RUN2",
    "text": "Penny day-2: closed 40%+ up, in the top 20% of its range, 1M USD+ traded, 0.20-3 USD; buy next open, sell next close",
    "verdict": "NOT PROVEN",
-   "why": "t 0.61 under 2.5; loses without its 2 best trades",
+   "why": "t 0.60 under 2.5; loses without its 2 best trades",
    "all": {
-    "n": 417,
-    "days": 341,
-    "avgNet": 1.66,
+    "n": 418,
+    "days": 342,
+    "avgNet": 1.61,
     "median": -2.85,
-    "win": 40.29,
-    "t": 0.61,
-    "withoutBest2": -1.93
+    "win": 40.19,
+    "t": 0.6,
+    "withoutBest2": -1.97
    },
    "older": {
     "n": 117,
@@ -495,22 +495,22 @@
     "withoutBest2": -1.3
    },
    "newer": {
-    "n": 300,
-    "days": 237,
-    "avgNet": 2.03,
+    "n": 301,
+    "days": 238,
+    "avgNet": 1.96,
     "median": -3.46,
-    "win": 37.67,
-    "t": 0.56,
-    "withoutBest2": -2.78
+    "win": 37.54,
+    "t": 0.54,
+    "withoutBest2": -2.84
    },
    "at15": {
-    "n": 417,
-    "days": 341,
-    "avgNet": 0.38,
+    "n": 418,
+    "days": 342,
+    "avgNet": 0.32,
     "median": -4.34,
-    "win": 37.89,
-    "t": 0.3,
-    "withoutBest2": -3.21
+    "win": 37.8,
+    "t": 0.28,
+    "withoutBest2": -3.25
    },
    "tiers": {
     "P3_5": {
@@ -532,13 +532,13 @@
      "withoutBest2": -0.79
     },
     "U1": {
-     "n": 119,
-     "days": 110,
-     "avgNet": -4.65,
+     "n": 120,
+     "days": 111,
+     "avgNet": -4.77,
      "median": -3.6,
-     "win": 34.45,
-     "t": -2.43,
-     "withoutBest2": -6.08
+     "win": 34.17,
+     "t": -2.52,
+     "withoutBest2": -6.2
     }
    },
    "best": [
@@ -564,15 +564,15 @@
    "id": "PNY-RUN3",
    "text": "PNY-RUN2 entry, hold 3 days, 15% stop",
    "verdict": "REJECTED",
-   "why": "lost money after costs (-0.74% a trade); lost money in the older half; lost money in the newer half; t -0.10 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "why": "lost money after costs (-0.79% a trade); lost money in the older half; lost money in the newer half; t -0.12 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 409,
-    "days": 336,
-    "avgNet": -0.74,
+    "n": 410,
+    "days": 337,
+    "avgNet": -0.79,
     "median": -17.95,
-    "win": 28.12,
-    "t": -0.1,
-    "withoutBest2": -3.06
+    "win": 28.05,
+    "t": -0.12,
+    "withoutBest2": -3.1
    },
    "older": {
     "n": 116,
@@ -584,22 +584,22 @@
     "withoutBest2": -4.38
    },
    "newer": {
-    "n": 293,
-    "days": 233,
-    "avgNet": -0.24,
+    "n": 294,
+    "days": 234,
+    "avgNet": -0.3,
     "median": -17.95,
-    "win": 27.99,
-    "t": 0.1,
-    "withoutBest2": -3.48
+    "win": 27.89,
+    "t": 0.08,
+    "withoutBest2": -3.53
    },
    "at15": {
-    "n": 409,
-    "days": 336,
-    "avgNet": -2.02,
+    "n": 410,
+    "days": 337,
+    "avgNet": -2.07,
     "median": -19,
-    "win": 26.65,
-    "t": -0.58,
-    "withoutBest2": -4.34
+    "win": 26.59,
+    "t": -0.6,
+    "withoutBest2": -4.38
    },
    "tiers": {
     "P3_5": {
@@ -612,13 +612,13 @@
      "withoutBest2": -15.9
     },
     "P1_3": {
-     "n": 275,
-     "days": 243,
-     "avgNet": 1.05,
+     "n": 276,
+     "days": 244,
+     "avgNet": 0.98,
      "median": -17.95,
-     "win": 29.09,
-     "t": 0.35,
-     "withoutBest2": -2.18
+     "win": 28.99,
+     "t": 0.33,
+     "withoutBest2": -2.24
     },
     "U1": {
      "n": 117,
@@ -653,15 +653,15 @@
    "id": "PNY-VOL5",
    "text": "Penny volume burst: volume 10x its 20-day median, closed 20%+ up, 0.30-5 USD; buy next open, hold 5 days, 20% stop",
    "verdict": "REJECTED",
-   "why": "lost money after costs (-2.37% a trade); lost money in the older half; lost money in the newer half; t -3.39 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "why": "lost money after costs (-2.38% a trade); lost money in the older half; lost money in the newer half; t -3.40 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 5096,
-    "days": 1165,
-    "avgNet": -2.37,
+    "n": 5108,
+    "days": 1166,
+    "avgNet": -2.38,
     "median": -10.82,
     "win": 30.32,
-    "t": -3.39,
-    "withoutBest2": -2.87
+    "t": -3.4,
+    "withoutBest2": -2.88
    },
    "older": {
     "n": 1556,
@@ -673,22 +673,22 @@
     "withoutBest2": -4
    },
    "newer": {
-    "n": 3540,
-    "days": 668,
-    "avgNet": -1.89,
-    "median": -11.28,
-    "win": 29.18,
-    "t": -1.58,
-    "withoutBest2": -2.61
+    "n": 3552,
+    "days": 669,
+    "avgNet": -1.91,
+    "median": -11.27,
+    "win": 29.19,
+    "t": -1.59,
+    "withoutBest2": -2.63
    },
    "at15": {
-    "n": 5096,
-    "days": 1165,
-    "avgNet": -3.45,
+    "n": 5108,
+    "days": 1166,
+    "avgNet": -3.46,
     "median": -11.83,
-    "win": 28.83,
-    "t": -4.97,
-    "withoutBest2": -3.95
+    "win": 28.84,
+    "t": -4.98,
+    "withoutBest2": -3.96
    },
    "tiers": {
     "P3_5": {
@@ -701,31 +701,31 @@
      "withoutBest2": -4.4
     },
     "P1_3": {
-     "n": 2631,
-     "days": 1025,
+     "n": 2636,
+     "days": 1026,
      "avgNet": -1.24,
-     "median": -10.05,
-     "win": 31.66,
+     "median": -9.97,
+     "win": 31.68,
      "t": -0.55,
      "withoutBest2": -2.21
     },
     "U1": {
-     "n": 940,
-     "days": 603,
-     "avgNet": -2.63,
+     "n": 946,
+     "days": 604,
+     "avgNet": -2.67,
      "median": -14.11,
-     "win": 29.04,
-     "t": -1.54,
-     "withoutBest2": -3.66
+     "win": 29.07,
+     "t": -1.55,
+     "withoutBest2": -3.7
     },
     "S5": {
-     "n": 95,
-     "days": 92,
-     "avgNet": -9.08,
+     "n": 96,
+     "days": 93,
+     "avgNet": -9.23,
      "median": -22,
-     "win": 17.89,
-     "t": -3.35,
-     "withoutBest2": -11.7
+     "win": 17.71,
+     "t": -3.43,
+     "withoutBest2": -11.82
     }
    },
    "best": [
@@ -753,11 +753,11 @@
    "verdict": "REJECTED",
    "why": "lost money after costs (-0.54% a trade); lost money in the older half; lost money in the newer half; t -0.45 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 3157,
-    "days": 1011,
+    "n": 3158,
+    "days": 1012,
     "avgNet": -0.54,
     "median": -17.05,
-    "win": 29.68,
+    "win": 29.67,
     "t": -0.45,
     "withoutBest2": -1.26
    },
@@ -771,20 +771,20 @@
     "withoutBest2": -2.17
    },
    "newer": {
-    "n": 2215,
-    "days": 615,
-    "avgNet": -0.22,
+    "n": 2216,
+    "days": 616,
+    "avgNet": -0.23,
     "median": -17.05,
-    "win": 28.98,
+    "win": 28.97,
     "t": 0.22,
     "withoutBest2": -1.25
    },
    "at15": {
-    "n": 3157,
-    "days": 1011,
+    "n": 3158,
+    "days": 1012,
     "avgNet": -1.42,
     "median": -17.65,
-    "win": 28.35,
+    "win": 28.34,
     "t": -1.48,
     "withoutBest2": -2.14
    },
@@ -799,11 +799,11 @@
      "withoutBest2": -2.69
     },
     "P1_3": {
-     "n": 1871,
-     "days": 849,
+     "n": 1872,
+     "days": 850,
      "avgNet": 0.4,
      "median": -17.95,
-     "win": 30.68,
+     "win": 30.66,
      "t": 0.35,
      "withoutBest2": -0.81
     },
@@ -849,15 +849,15 @@
    "id": "PNY-DIP",
    "text": "Penny crash bounce: closed 30%+ down (not a split), 0.30-5 USD, 500k USD+ traded the day before; buy next open, hold 3 days",
    "verdict": "REJECTED",
-   "why": "lost money after costs (-3.71% a trade); lost money in the older half; lost money in the newer half; t -2.18 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "why": "lost money after costs (-3.75% a trade); lost money in the older half; lost money in the newer half; t -2.19 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 1130,
-    "days": 641,
-    "avgNet": -3.71,
-    "median": -8.17,
-    "win": 33.01,
-    "t": -2.18,
-    "withoutBest2": -4.82
+    "n": 1135,
+    "days": 642,
+    "avgNet": -3.75,
+    "median": -8.26,
+    "win": 32.95,
+    "t": -2.19,
+    "withoutBest2": -4.86
    },
    "older": {
     "n": 347,
@@ -869,41 +869,41 @@
     "withoutBest2": -5.5
    },
    "newer": {
-    "n": 783,
-    "days": 413,
-    "avgNet": -3.76,
-    "median": -8.6,
-    "win": 32.31,
-    "t": -1.56,
-    "withoutBest2": -5.08
+    "n": 788,
+    "days": 414,
+    "avgNet": -3.82,
+    "median": -8.7,
+    "win": 32.23,
+    "t": -1.58,
+    "withoutBest2": -5.12
    },
    "at15": {
-    "n": 1130,
-    "days": 641,
-    "avgNet": -5.11,
-    "median": -9.68,
-    "win": 31.77,
-    "t": -2.99,
-    "withoutBest2": -6.22
+    "n": 1135,
+    "days": 642,
+    "avgNet": -5.15,
+    "median": -9.76,
+    "win": 31.72,
+    "t": -3,
+    "withoutBest2": -6.25
    },
    "tiers": {
     "U1": {
-     "n": 433,
-     "days": 321,
-     "avgNet": -4.51,
-     "median": -11.4,
-     "win": 28.87,
-     "t": -0.85,
-     "withoutBest2": -7.42
+     "n": 437,
+     "days": 322,
+     "avgNet": -4.68,
+     "median": -11.7,
+     "win": 28.6,
+     "t": -0.87,
+     "withoutBest2": -7.57
     },
     "P1_3": {
-     "n": 632,
-     "days": 446,
-     "avgNet": -3.44,
+     "n": 633,
+     "days": 447,
+     "avgNet": -3.39,
      "median": -6.51,
-     "win": 35.28,
-     "t": -4.73,
-     "withoutBest2": -3.95
+     "win": 35.39,
+     "t": -4.65,
+     "withoutBest2": -3.9
     },
     "P3_5": {
      "n": 63,
@@ -1045,64 +1045,64 @@
    "id": "NEWS-GAP1",
    "text": "Gap 10%+ at the open WITH a news story between the previous close and 09:25 New York (0.30 USD+, 300k USD+ traded); buy the open, sell the close",
    "verdict": "REJECTED",
-   "why": "lost money after costs (-3.60% a trade); lost money in the older half; lost money in the newer half; t -6.53 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "why": "lost money after costs (-3.59% a trade); lost money in the older half; lost money in the newer half; t -6.54 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 1352,
-    "days": 421,
-    "avgNet": -3.6,
-    "median": -3.49,
-    "win": 33.58,
-    "t": -6.53,
+    "n": 1356,
+    "days": 422,
+    "avgNet": -3.59,
+    "median": -3.43,
+    "win": 33.55,
+    "t": -6.54,
     "withoutBest2": -4.01
    },
    "older": {
     "n": 0
    },
    "newer": {
-    "n": 1352,
-    "days": 421,
-    "avgNet": -3.6,
-    "median": -3.49,
-    "win": 33.58,
-    "t": -6.53,
+    "n": 1356,
+    "days": 422,
+    "avgNet": -3.59,
+    "median": -3.43,
+    "win": 33.55,
+    "t": -6.54,
     "withoutBest2": -4.01
    },
    "at15": {
-    "n": 1352,
-    "days": 421,
-    "avgNet": -4.19,
-    "median": -4.01,
-    "win": 31.66,
-    "t": -7.46,
+    "n": 1356,
+    "days": 422,
+    "avgNet": -4.18,
+    "median": -4,
+    "win": 31.64,
+    "t": -7.47,
     "withoutBest2": -4.6
    },
    "tiers": {
     "S5": {
-     "n": 1046,
-     "days": 382,
+     "n": 1048,
+     "days": 383,
      "avgNet": -3.28,
      "median": -2.65,
-     "win": 34.7,
-     "t": -6.32,
+     "win": 34.73,
+     "t": -6.33,
      "withoutBest2": -3.73
     },
     "P1_3": {
-     "n": 157,
-     "days": 127,
-     "avgNet": -5.34,
-     "median": -5.71,
-     "win": 31.85,
-     "t": -4.42,
-     "withoutBest2": -5.97
+     "n": 158,
+     "days": 128,
+     "avgNet": -5.32,
+     "median": -5.61,
+     "win": 31.65,
+     "t": -4.43,
+     "withoutBest2": -5.95
     },
     "P3_5": {
-     "n": 115,
-     "days": 96,
-     "avgNet": -1.87,
-     "median": -6.2,
-     "win": 28.7,
-     "t": -0.16,
-     "withoutBest2": -5.47
+     "n": 116,
+     "days": 97,
+     "avgNet": -1.85,
+     "median": -6.15,
+     "win": 28.45,
+     "t": -0.17,
+     "withoutBest2": -5.42
     },
     "U1": {
      "n": 34,
@@ -1139,73 +1139,73 @@
    "id": "NEWS-GAP0",
    "text": "Control: the same gaps WITHOUT news before the open",
    "verdict": "REJECTED",
-   "why": "lost money after costs (-2.82% a trade); lost money in the older half; lost money in the newer half; t -10.32 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "why": "lost money after costs (-2.82% a trade); lost money in the older half; lost money in the newer half; t -10.33 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 10111,
-    "days": 500,
+    "n": 10121,
+    "days": 501,
     "avgNet": -2.82,
     "median": -4.71,
     "win": 33.64,
-    "t": -10.32,
+    "t": -10.33,
     "withoutBest2": -3.01
    },
    "older": {
     "n": 0
    },
    "newer": {
-    "n": 10111,
-    "days": 500,
+    "n": 10121,
+    "days": 501,
     "avgNet": -2.82,
     "median": -4.71,
     "win": 33.64,
-    "t": -10.32,
+    "t": -10.33,
     "withoutBest2": -3.01
    },
    "at15": {
-    "n": 10111,
-    "days": 500,
+    "n": 10121,
+    "days": 501,
     "avgNet": -3.47,
-    "median": -5.31,
+    "median": -5.3,
     "win": 31.64,
-    "t": -12.58,
+    "t": -12.6,
     "withoutBest2": -3.67
    },
    "tiers": {
     "P3_5": {
-     "n": 1150,
-     "days": 446,
-     "avgNet": -2.6,
-     "median": -4.89,
-     "win": 33.91,
-     "t": -3.68,
-     "withoutBest2": -2.96
+     "n": 1153,
+     "days": 447,
+     "avgNet": -2.58,
+     "median": -4.88,
+     "win": 34,
+     "t": -3.67,
+     "withoutBest2": -2.94
     },
     "P1_3": {
-     "n": 1726,
-     "days": 474,
+     "n": 1730,
+     "days": 475,
      "avgNet": -2.73,
-     "median": -5.61,
-     "win": 33.78,
-     "t": -2.94,
-     "withoutBest2": -3.16
+     "median": -5.6,
+     "win": 33.76,
+     "t": -2.95,
+     "withoutBest2": -3.15
     },
     "S5": {
-     "n": 6800,
-     "days": 500,
+     "n": 6802,
+     "days": 501,
      "avgNet": -2.97,
      "median": -4.23,
-     "win": 33.6,
-     "t": -8.55,
+     "win": 33.61,
+     "t": -8.56,
      "withoutBest2": -3.26
     },
     "U1": {
-     "n": 435,
-     "days": 290,
-     "avgNet": -1.34,
+     "n": 436,
+     "days": 291,
+     "avgNet": -1.37,
      "median": -7.72,
-     "win": 32.87,
-     "t": -0.76,
-     "withoutBest2": -2.39
+     "win": 32.8,
+     "t": -0.8,
+     "withoutBest2": -2.42
     }
    },
    "best": [
@@ -1233,73 +1233,73 @@
    "id": "NEWS-GAP2",
    "text": "NEWS-GAP1 held 3 days with a 12% stop",
    "verdict": "REJECTED",
-   "why": "lost money after costs (-3.43% a trade); lost money in the older half; lost money in the newer half; t -6.16 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
+   "why": "lost money after costs (-3.41% a trade); lost money in the older half; lost money in the newer half; t -6.16 under 2.5; loses at 1.5x costs; loses without its 2 best trades",
    "all": {
-    "n": 1341,
-    "days": 419,
-    "avgNet": -3.43,
-    "median": -8.91,
-    "win": 28.41,
+    "n": 1351,
+    "days": 420,
+    "avgNet": -3.41,
+    "median": -8.56,
+    "win": 28.42,
     "t": -6.16,
-    "withoutBest2": -3.88
+    "withoutBest2": -3.85
    },
    "older": {
     "n": 0
    },
    "newer": {
-    "n": 1341,
-    "days": 419,
-    "avgNet": -3.43,
-    "median": -8.91,
-    "win": 28.41,
+    "n": 1351,
+    "days": 420,
+    "avgNet": -3.41,
+    "median": -8.56,
+    "win": 28.42,
     "t": -6.16,
-    "withoutBest2": -3.88
+    "withoutBest2": -3.85
    },
    "at15": {
-    "n": 1341,
-    "days": 419,
-    "avgNet": -4.02,
-    "median": -9.52,
-    "win": 26.99,
-    "t": -7.05,
-    "withoutBest2": -4.46
+    "n": 1351,
+    "days": 420,
+    "avgNet": -4,
+    "median": -9.18,
+    "win": 27.02,
+    "t": -7.06,
+    "withoutBest2": -4.44
    },
    "tiers": {
     "S5": {
-     "n": 1042,
-     "days": 381,
-     "avgNet": -3.51,
-     "median": -6.62,
-     "win": 29.85,
+     "n": 1046,
+     "days": 382,
+     "avgNet": -3.5,
+     "median": -6.47,
+     "win": 29.83,
      "t": -7.43,
-     "withoutBest2": -3.78
+     "withoutBest2": -3.76
     },
     "P1_3": {
-     "n": 154,
-     "days": 126,
-     "avgNet": -4.69,
+     "n": 157,
+     "days": 127,
+     "avgNet": -4.78,
      "median": -14.98,
-     "win": 26.62,
-     "t": -3.49,
-     "withoutBest2": -5.76
+     "win": 26.11,
+     "t": -3.54,
+     "withoutBest2": -5.83
     },
     "P3_5": {
-     "n": 112,
-     "days": 94,
-     "avgNet": -1.43,
+     "n": 114,
+     "days": 95,
+     "avgNet": -1.24,
      "median": -14.08,
-     "win": 21.43,
-     "t": -0.4,
-     "withoutBest2": -5.17
+     "win": 21.93,
+     "t": -0.37,
+     "withoutBest2": -4.91
     },
     "U1": {
-     "n": 33,
-     "days": 31,
-     "avgNet": -1.78,
+     "n": 34,
+     "days": 32,
+     "avgNet": -1.63,
      "median": -16.48,
-     "win": 15.15,
-     "t": -0.09,
-     "withoutBest2": -14.22
+     "win": 17.65,
+     "t": -0.08,
+     "withoutBest2": -13.67
     }
    },
    "best": [
@@ -1431,130 +1431,220 @@
   "PNY-GAP3": [],
   "PNY-RUN2": [
    {
-    "sym": "VIVK",
-    "d": "2026-11-16",
-    "px": 0.3784,
+    "sym": "MPU",
+    "d": "2026-11-17",
+    "px": 2.12,
     "signal": "next open"
    }
   ],
   "PNY-RUN3": [
    {
-    "sym": "VIVK",
-    "d": "2026-11-16",
-    "px": 0.3784,
+    "sym": "MPU",
+    "d": "2026-11-17",
+    "px": 2.12,
     "signal": "next open"
    }
   ],
   "PNY-VOL5": [
    {
+    "sym": "GANX",
+    "d": "2026-11-17",
+    "px": 1.18,
+    "signal": "next open"
+   },
+   {
     "sym": "GP",
-    "d": "2026-11-16",
-    "px": 1.41,
+    "d": "2026-11-17",
+    "px": 2.62,
     "signal": "next open"
    },
    {
-    "sym": "POLA",
-    "d": "2026-11-16",
-    "px": 0.348,
-    "signal": "next open"
-   },
-   {
-    "sym": "CVM",
-    "d": "2026-11-16",
-    "px": 1.66,
-    "signal": "next open"
-   },
-   {
-    "sym": "RCON",
-    "d": "2026-11-16",
+    "sym": "RAIN",
+    "d": "2026-11-17",
     "px": 1.06,
     "signal": "next open"
    },
    {
-    "sym": "CLRO",
-    "d": "2026-11-16",
-    "px": 4.78,
+    "sym": "CRIS",
+    "d": "2026-11-17",
+    "px": 0.5418,
     "signal": "next open"
    },
    {
-    "sym": "MNTK",
-    "d": "2026-11-16",
-    "px": 1.17,
+    "sym": "AYTU",
+    "d": "2026-11-17",
+    "px": 2.66,
     "signal": "next open"
    },
    {
-    "sym": "HIHO",
-    "d": "2026-11-16",
-    "px": 1.2,
+    "sym": "CING",
+    "d": "2026-11-17",
+    "px": 4.72,
     "signal": "next open"
    },
    {
-    "sym": "VIVK",
-    "d": "2026-11-16",
-    "px": 0.3784,
+    "sym": "BRFH",
+    "d": "2026-11-17",
+    "px": 0.6496,
     "signal": "next open"
    },
    {
-    "sym": "AKAN",
-    "d": "2026-11-16",
-    "px": 2.21,
+    "sym": "LVWR",
+    "d": "2026-11-17",
+    "px": 0.369,
     "signal": "next open"
    },
    {
-    "sym": "GDHG",
-    "d": "2026-11-16",
-    "px": 1.58,
+    "sym": "MPU",
+    "d": "2026-11-17",
+    "px": 2.12,
     "signal": "next open"
    },
    {
-    "sym": "GMM",
-    "d": "2026-11-16",
-    "px": 2.01,
+    "sym": "PMEC",
+    "d": "2026-11-17",
+    "px": 0.42,
     "signal": "next open"
    },
    {
-    "sym": "TDTH",
-    "d": "2026-11-16",
-    "px": 0.978,
+    "sym": "AZI",
+    "d": "2026-11-17",
+    "px": 0.7301,
     "signal": "next open"
    },
    {
-    "sym": "NOMA",
-    "d": "2026-11-16",
-    "px": 1.03,
+    "sym": "SPAI",
+    "d": "2026-11-17",
+    "px": 3.04,
+    "signal": "next open"
+   },
+   {
+    "sym": "LUCK",
+    "d": "2026-11-17",
+    "px": 4.17,
+    "signal": "next open"
+   },
+   {
+    "sym": "MCRP",
+    "d": "2026-11-17",
+    "px": 0.3694,
+    "signal": "next open"
+   },
+   {
+    "sym": "VWAV",
+    "d": "2026-11-17",
+    "px": 0.4971,
+    "signal": "next open"
+   },
+   {
+    "sym": "IMA",
+    "d": "2026-11-17",
+    "px": 3.9,
+    "signal": "next open"
+   },
+   {
+    "sym": "FRTT",
+    "d": "2026-11-17",
+    "px": 0.6754,
+    "signal": "next open"
+   },
+   {
+    "sym": "VAI",
+    "d": "2026-11-17",
+    "px": 3.09,
     "signal": "next open"
    }
   ],
   "PNY-BRK": [
    {
-    "sym": "HIHO",
-    "d": "2026-11-16",
-    "px": 1.2,
+    "sym": "VTSI",
+    "d": "2026-11-17",
+    "px": 4.69,
     "signal": "next open"
    },
    {
-    "sym": "GDHG",
-    "d": "2026-11-16",
-    "px": 1.58,
+    "sym": "PVL",
+    "d": "2026-11-17",
+    "px": 1.96,
+    "signal": "next open"
+   },
+   {
+    "sym": "AYTU",
+    "d": "2026-11-17",
+    "px": 2.66,
+    "signal": "next open"
+   },
+   {
+    "sym": "CVKD",
+    "d": "2026-11-17",
+    "px": 1.88,
+    "signal": "next open"
+   },
+   {
+    "sym": "VAI",
+    "d": "2026-11-17",
+    "px": 3.09,
     "signal": "next open"
    }
   ],
   "PNY-DIP": [
    {
-    "sym": "MBOT",
-    "d": "2026-11-16",
-    "px": 0.6444,
+    "sym": "RCAT",
+    "d": "2026-11-17",
+    "px": 2.41,
     "signal": "next open"
    },
    {
-    "sym": "XXII",
-    "d": "2026-11-16",
-    "px": 0.4932,
+    "sym": "STEM",
+    "d": "2026-11-17",
+    "px": 1.2,
+    "signal": "next open"
+   },
+   {
+    "sym": "LGHL",
+    "d": "2026-11-17",
+    "px": 1.08,
+    "signal": "next open"
+   },
+   {
+    "sym": "VIVK",
+    "d": "2026-11-17",
+    "px": 0.2392,
+    "signal": "next open"
+   },
+   {
+    "sym": "GDHG",
+    "d": "2026-11-17",
+    "px": 0.2912,
+    "signal": "next open"
+   },
+   {
+    "sym": "GMM",
+    "d": "2026-11-17",
+    "px": 1.39,
+    "signal": "next open"
+   },
+   {
+    "sym": "TRUG",
+    "d": "2026-11-17",
+    "px": 0.3056,
+    "signal": "next open"
+   },
+   {
+    "sym": "PSIG",
+    "d": "2026-11-17",
+    "px": 3.39,
+    "signal": "next open"
+   },
+   {
+    "sym": "MDRN",
+    "d": "2026-11-17",
+    "px": 1.93,
     "signal": "next open"
    }
   ],
   "PNY-FADE": [],
   "NEWS-GAP2": []
  },
- "lastDay": "2026-11-16"
+ "lastDay": "2026-11-17"
 }
