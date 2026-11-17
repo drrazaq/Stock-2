@@ -1,6 +1,6 @@
 {
  "note": "Stock-2 strategy library. Every idea is a hypothesis until it passes the same tests (5 years, whole market incl. dead stocks, costs, both halves, luck bar, vault, then live paper). autolab.mjs tests every entry with a rule; the weekly researcher builds the others. Status is updated automatically. CLOSED 20 Oct 2026: 2-5 day entries on daily data (every school, incl. quiet-before versions and the FULFILLING-1 stack: 7 cases in 5 years). New builds go to 1-week-to-12-month holds, exits, avoid rules and new data sources. SPCX (21 Oct): missed because it was never on the scan list (listed June 2026), not because a rule blocked it; added to the watch list 21 Oct. | 22 Oct 2026, owner's decision: two levels. PROVEN = every gate + league luck bar (~4.0). TRADABLE SMALL (tier 2) = own pre-registered test passed in both halves after stress cost, beats its yardstick, survives without 2 best, t >= 2.5 everywhere; traded at most 1,000 USD with a stop; switched off automatically when its live record turns negative. The proof bar is unchanged.",
- "updated": "2026-11-17",
+ "updated": "2026-10-24",
  "strategies": [
   {
    "id": "T1",
@@ -35673,6 +35673,146 @@
    ],
    "hold": 126,
    "note": "Daily researcher 2026-11-17: SEC 8-K item 2.04 debt triggering events (defaults / accelerations). New filing line; nothing in the library uses item 2.04. Published direction ambiguous (Beneish and Press: default is costly; Nini, Smith and Sufi 2012 RFS: performance improves after creditor intervention), so one avoid pair (21 / 63 sessions, gross vs gross) and one buy (126 sessions, system gates) were fixed before the run. Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "SQ32-EW5-Q",
+   "family": "Halal core baskets (Squad 10)",
+   "name": "Halal top 5, equal weight, quarterly",
+   "explain": "the 5 largest passing the Shariah screen, equal weight (about 1,000 USD each), re-formed every quarter. Universe and market value exactly as Squad 5 (squad5-core.mjs COMMON: liquid US operating companies, dead and delisted included, one ticker per SEC company, US domicile, as-traded market value from SEC share counts known 30+ days before). SHARIAH SCREEN point in time (a proxy of the S&P / Dow Jones Islamic / AAOIFI method, NOT the ZAD status): business screen by SEC SIC (out 6000-6499, 6700-6799, 2082-2085, 2100-2199, 2011, 7011, 7990, 7993, 4832-4841, 7310-7319, 7812-7829; no code = out); on the latest balance sheet filed before the formation day, divided by the average market value of the last 36 month starts (as many as exist): debt < 33%, cash + short-term investments < 33%, receivables < 33%; TTM interest income / revenue < 5% where reported. Ranked by current market value among those that pass. Formation at the first session of Jan / Apr / Jul / Oct (yearly rule: January), trades at the next open, weights then drift until the next review; cash at 0%. JUDGED AS A PORTFOLIO vs SPUS (primary) and SPY: CAGR in both halves (start - end 2023 / 2024 - last close) after 0.4% per side on all turnover (stress 0.6%), max drawdown; plus the per-trade standard of Squad 5 (each holding period one trade, 0.8% / 1.2% cost, halves, average-stock and same-stock yardsticks, no-top-2, 20+ trades, 3+ blocks, block t, return per year above SPY; +300% cap both sides). Run once, first complete verdict frozen. Sensitivity (ex-NVDA / AAPL / MSFT, weight caps 10 / 20 / none) = information only.",
+   "status": "tested: not proven; portfolio beat SPUS in both halves; forward paper lane from 26 Oct 2026",
+   "agent": "squad10",
+   "registered": "2026-11-17",
+   "libraryCheck": "Builds on SQ5-SHARIAH30 (equal weight, judged; cap-weighted twin info only) and SQ5-TOP20; overlaps P1 / HOLD-DIPFUND (owning SPUS itself = the yardstick), SQ6-MTUM (momentum weighting, whole market, not Shariah). New here: Shariah screen with receivables, short-term investments, interest income and the 36-month average market value; cap / capped weights; 10 / 20 / 30 / 50 sizes; quarterly vs yearly; judged against SPUS first.",
+   "note": "Pre-registered 2026-11-17 BEFORE any squad 10 run (squad10-core.mjs = the exact rule). 5-year one-shot by squad10-lab.mjs, first complete verdict frozen in data/squad10-lab.json; forward paper lane (data/squad10-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-11-16",
+   "study": "squad10-lab.mjs -> data/squad10-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     40,
+     60
+    ],
+    "avg": [
+     0.0137,
+     0.0676
+    ],
+    "stress": [
+     0.0097,
+     0.0636
+    ],
+    "edge": [
+     0.0319,
+     0.039
+    ],
+    "vsOwn": [
+     -0.0314,
+     0.0182
+    ],
+    "noTop2": [
+     -0.0198,
+     0.048
+    ],
+    "tBlock": [
+     0.53,
+     1.1
+    ],
+    "portfolioCagr": [
+     0.0195,
+     0.2975
+    ],
+    "spusCagr": [
+     0.0052,
+     0.1862
+    ],
+    "spyCagr": [
+     -0.0025,
+     0.1671
+    ],
+    "beatsSpusBothHalves": true,
+    "beatsSpyBothHalves": true,
+    "why": "not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 0.53 under 2.5 in the older half; block t 1.1 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ32-EW5-Y",
+   "family": "Halal core baskets (Squad 10)",
+   "name": "Halal top 5, equal weight, yearly",
+   "explain": "the 5 largest passing the Shariah screen, equal weight, re-formed once a year (January). Universe and market value exactly as Squad 5 (squad5-core.mjs COMMON: liquid US operating companies, dead and delisted included, one ticker per SEC company, US domicile, as-traded market value from SEC share counts known 30+ days before). SHARIAH SCREEN point in time (a proxy of the S&P / Dow Jones Islamic / AAOIFI method, NOT the ZAD status): business screen by SEC SIC (out 6000-6499, 6700-6799, 2082-2085, 2100-2199, 2011, 7011, 7990, 7993, 4832-4841, 7310-7319, 7812-7829; no code = out); on the latest balance sheet filed before the formation day, divided by the average market value of the last 36 month starts (as many as exist): debt < 33%, cash + short-term investments < 33%, receivables < 33%; TTM interest income / revenue < 5% where reported. Ranked by current market value among those that pass. Formation at the first session of Jan / Apr / Jul / Oct (yearly rule: January), trades at the next open, weights then drift until the next review; cash at 0%. JUDGED AS A PORTFOLIO vs SPUS (primary) and SPY: CAGR in both halves (start - end 2023 / 2024 - last close) after 0.4% per side on all turnover (stress 0.6%), max drawdown; plus the per-trade standard of Squad 5 (each holding period one trade, 0.8% / 1.2% cost, halves, average-stock and same-stock yardsticks, no-top-2, 20+ trades, 3+ blocks, block t, return per year above SPY; +300% cap both sides). Run once, first complete verdict frozen. Sensitivity (ex-NVDA / AAPL / MSFT, weight caps 10 / 20 / none) = information only.",
+   "status": "pre-registered 2026-11-17 (squad 10); 5-year one-shot pending",
+   "agent": "squad10",
+   "registered": "2026-11-17",
+   "libraryCheck": "Builds on SQ5-SHARIAH30 (equal weight, judged; cap-weighted twin info only) and SQ5-TOP20; overlaps P1 / HOLD-DIPFUND (owning SPUS itself = the yardstick), SQ6-MTUM (momentum weighting, whole market, not Shariah). New here: Shariah screen with receivables, short-term investments, interest income and the 36-month average market value; cap / capped weights; 10 / 20 / 30 / 50 sizes; quarterly vs yearly; judged against SPUS first.",
+   "note": "Pre-registered 2026-11-17 BEFORE any squad 10 run (squad10-core.mjs = the exact rule). 5-year one-shot by squad10-lab.mjs, first complete verdict frozen in data/squad10-lab.json; forward paper lane (data/squad10-paper.jsonl) from 26 Oct 2026."
+  },
+  {
+   "id": "SQ32-EW10-Q",
+   "family": "Halal core baskets (Squad 10)",
+   "name": "Halal top 10, equal weight, quarterly",
+   "explain": "the 10 largest passing the Shariah screen, equal weight (about 1,000 USD each), re-formed every quarter. Universe and market value exactly as Squad 5 (squad5-core.mjs COMMON: liquid US operating companies, dead and delisted included, one ticker per SEC company, US domicile, as-traded market value from SEC share counts known 30+ days before). SHARIAH SCREEN point in time (a proxy of the S&P / Dow Jones Islamic / AAOIFI method, NOT the ZAD status): business screen by SEC SIC (out 6000-6499, 6700-6799, 2082-2085, 2100-2199, 2011, 7011, 7990, 7993, 4832-4841, 7310-7319, 7812-7829; no code = out); on the latest balance sheet filed before the formation day, divided by the average market value of the last 36 month starts (as many as exist): debt < 33%, cash + short-term investments < 33%, receivables < 33%; TTM interest income / revenue < 5% where reported. Ranked by current market value among those that pass. Formation at the first session of Jan / Apr / Jul / Oct (yearly rule: January), trades at the next open, weights then drift until the next review; cash at 0%. JUDGED AS A PORTFOLIO vs SPUS (primary) and SPY: CAGR in both halves (start - end 2023 / 2024 - last close) after 0.4% per side on all turnover (stress 0.6%), max drawdown; plus the per-trade standard of Squad 5 (each holding period one trade, 0.8% / 1.2% cost, halves, average-stock and same-stock yardsticks, no-top-2, 20+ trades, 3+ blocks, block t, return per year above SPY; +300% cap both sides). Run once, first complete verdict frozen. Sensitivity (ex-NVDA / AAPL / MSFT, weight caps 10 / 20 / none) = information only.",
+   "status": "tested: not proven; portfolio beat SPUS in both halves; forward paper lane from 26 Oct 2026",
+   "agent": "squad10",
+   "registered": "2026-11-17",
+   "libraryCheck": "Builds on SQ5-SHARIAH30 (equal weight, judged; cap-weighted twin info only) and SQ5-TOP20; overlaps P1 / HOLD-DIPFUND (owning SPUS itself = the yardstick), SQ6-MTUM (momentum weighting, whole market, not Shariah). New here: Shariah screen with receivables, short-term investments, interest income and the 36-month average market value; cap / capped weights; 10 / 20 / 30 / 50 sizes; quarterly vs yearly; judged against SPUS first.",
+   "note": "Pre-registered 2026-11-17 BEFORE any squad 10 run (squad10-core.mjs = the exact rule). 5-year one-shot by squad10-lab.mjs, first complete verdict frozen in data/squad10-lab.json; forward paper lane (data/squad10-paper.jsonl) from 26 Oct 2026.",
+   "tested": "2026-11-16",
+   "study": "squad10-lab.mjs -> data/squad10-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "NOT PROVEN",
+    "n": [
+     80,
+     120
+    ],
+    "avg": [
+     0.0079,
+     0.0562
+    ],
+    "stress": [
+     0.0039,
+     0.0522
+    ],
+    "edge": [
+     0.0261,
+     0.0275
+    ],
+    "vsOwn": [
+     -0.0428,
+     -0.0162
+    ],
+    "noTop2": [
+     -0.0138,
+     0.045
+    ],
+    "tBlock": [
+     0.63,
+     0.84
+    ],
+    "portfolioCagr": [
+     0.0189,
+     0.246
+    ],
+    "spusCagr": [
+     0.0052,
+     0.1862
+    ],
+    "spyCagr": [
+     -0.0025,
+     0.1671
+    ],
+    "beatsSpusBothHalves": true,
+    "beatsSpyBothHalves": true,
+    "why": "not better than the same stocks held as long on their other days in the older half; loses without its 2 best in the older half; block t 0.63 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.84 under 2.5 in the newer half"
+   }
+  },
+  {
+   "id": "SQ32-EW10-Y",
+   "family": "Halal core baskets (Squad 10)",
+   "name": "Halal top 10, equal weight, yearly",
+   "explain": "the 10 largest passing the Shariah screen, equal weight, re-formed once a year (January). Universe and market value exactly as Squad 5 (squad5-core.mjs COMMON: liquid US operating companies, dead and delisted included, one ticker per SEC company, US domicile, as-traded market value from SEC share counts known 30+ days before). SHARIAH SCREEN point in time (a proxy of the S&P / Dow Jones Islamic / AAOIFI method, NOT the ZAD status): business screen by SEC SIC (out 6000-6499, 6700-6799, 2082-2085, 2100-2199, 2011, 7011, 7990, 7993, 4832-4841, 7310-7319, 7812-7829; no code = out); on the latest balance sheet filed before the formation day, divided by the average market value of the last 36 month starts (as many as exist): debt < 33%, cash + short-term investments < 33%, receivables < 33%; TTM interest income / revenue < 5% where reported. Ranked by current market value among those that pass. Formation at the first session of Jan / Apr / Jul / Oct (yearly rule: January), trades at the next open, weights then drift until the next review; cash at 0%. JUDGED AS A PORTFOLIO vs SPUS (primary) and SPY: CAGR in both halves (start - end 2023 / 2024 - last close) after 0.4% per side on all turnover (stress 0.6%), max drawdown; plus the per-trade standard of Squad 5 (each holding period one trade, 0.8% / 1.2% cost, halves, average-stock and same-stock yardsticks, no-top-2, 20+ trades, 3+ blocks, block t, return per year above SPY; +300% cap both sides). Run once, first complete verdict frozen. Sensitivity (ex-NVDA / AAPL / MSFT, weight caps 10 / 20 / none) = information only.",
+   "status": "pre-registered 2026-11-17 (squad 10); 5-year one-shot pending",
+   "agent": "squad10",
+   "registered": "2026-11-17",
+   "libraryCheck": "Builds on SQ5-SHARIAH30 (equal weight, judged; cap-weighted twin info only) and SQ5-TOP20; overlaps P1 / HOLD-DIPFUND (owning SPUS itself = the yardstick), SQ6-MTUM (momentum weighting, whole market, not Shariah). New here: Shariah screen with receivables, short-term investments, interest income and the 36-month average market value; cap / capped weights; 10 / 20 / 30 / 50 sizes; quarterly vs yearly; judged against SPUS first.",
+   "note": "Pre-registered 2026-11-17 BEFORE any squad 10 run (squad10-core.mjs = the exact rule). 5-year one-shot by squad10-lab.mjs, first complete verdict frozen in data/squad10-lab.json; forward paper lane (data/squad10-paper.jsonl) from 26 Oct 2026."
   }
  ]
 }
