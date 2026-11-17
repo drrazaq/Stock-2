@@ -1,14 +1,14 @@
 {
- "generatedAt": "2026-11-14T02:51:29.577Z",
+ "generatedAt": "2026-11-17T04:57:15.277Z",
  "preRegistered": "expert-core.mjs header + data/strategy-library.json EXP-* (23 Oct 2026, before any run)",
  "window": [
-  "2021-11-01",
-  "2026-11-13"
+  "2021-11-08",
+  "2026-11-16"
  ],
- "preHistoryFrom": "2021-11-01",
- "bar": 4.1,
- "leagueBar": 4.1,
- "standard": "both halves (split at the median signal session): > 0 after 0.8% and 1.2% cost, better than the average liquid stock bought and sold on the same sessions, better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.1 -> PROVEN; plus the SKILL gate (better than the same rule with every expert, no ranking, in both halves)",
+ "preHistoryFrom": "2021-11-08",
+ "bar": 4.12,
+ "leagueBar": 4.12,
+ "standard": "both halves (split at the median signal session): > 0 after 0.8% and 1.2% cost, better than the average liquid stock bought and sold on the same sessions, better than the same stock on its other days, > 0 without the 2 best, block t >= 2.5 -> TRADABLE SMALL; block t >= 4.12 -> PROVEN; plus the SKILL gate (better than the same rule with every expert, no ranking, in both halves)",
  "survivorship": "Platform rankings list past winners. Here every expert is ranked only on calls whose window ENDED before the signal day; nothing about later success is used.",
  "data": {
   "EXP-INS1": {
@@ -17,10 +17,10 @@
    "purchases": 139160,
    "missingQuarters": [],
    "complete": true,
-   "purchaseDays": 32052,
-   "insiders": 15683,
-   "topInsidersNow": 527,
-   "eligibleNow": 5262
+   "purchaseDays": 31965,
+   "insiders": 15661,
+   "topInsidersNow": 521,
+   "eligibleNow": 5208
   },
   "EXP-13F1": {
    "source": "SEC Form 13F data sets",
@@ -39,34 +39,34 @@
     "top20WeightMapped": 0.9309
    },
    "managers": 7896,
-   "followCalls": 91646,
-   "moves": 212397,
-   "topManagersNow": 580,
-   "eligibleNow": 5798
+   "followCalls": 92005,
+   "moves": 211847,
+   "topManagersNow": 581,
+   "eligibleNow": 5804
   },
   "EXP-AN2": {
    "source": "FMP /stable/grades (firm level; the only analyst history on the current plans: Finnhub upgrade-downgrade and Massive Benzinga ratings answer 403, FMP price-target-news 402)",
    "universe": 1500,
-   "tried": 379,
-   "withHistory": 62,
-   "deniedByPlan": 317,
+   "tried": 399,
+   "withHistory": 64,
+   "deniedByPlan": 335,
    "callsNow": 20,
    "budgetPerRun": 20,
    "stop": null,
    "complete": false,
-   "note": "collecting: 379 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
+   "note": "collecting: 399 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
   },
   "EXP-AN1": {
    "source": "FMP /stable/grades (firm level; the only analyst history on the current plans: Finnhub upgrade-downgrade and Massive Benzinga ratings answer 403, FMP price-target-news 402)",
    "universe": 1500,
-   "tried": 379,
-   "withHistory": 62,
-   "deniedByPlan": 317,
+   "tried": 399,
+   "withHistory": 64,
+   "deniedByPlan": 335,
    "callsNow": 20,
    "budgetPerRun": 20,
    "stop": null,
    "complete": false,
-   "note": "collecting: 379 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
+   "note": "collecting: 399 of 1500 stocks tried at 20 calls per run (the FMP free plan allows 250 calls a day, shared with earnings-study and discover). An FMP Starter plan (EXPERT_FMP_CALLS=2000) finishes it in one run."
   },
   "EXP-CONG1": {
    "source": "none on the current plans",
@@ -96,11 +96,11 @@
     "top20WeightMapped": 0.9309
    },
    "managers": 7896,
-   "followCalls": 91646,
-   "moves": 212397,
-   "topManagersNow": 580,
-   "eligibleNow": 5798,
-   "clusters": 352
+   "followCalls": 92005,
+   "moves": 211847,
+   "topManagersNow": 581,
+   "eligibleNow": 5804,
+   "clusters": 258
   }
  },
  "firstRun": {
@@ -659,7 +659,7 @@
  },
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-14T02:51:29.577Z",
+  "at": "2026-11-17T04:57:15.277Z",
   "results": {}
  },
  "trades": {
