@@ -12,6 +12,7 @@
 // Output: data/autolab.json (every rule tried, its verdicts, live candidates, their paper record, this week's picks).
 import fs from 'node:fs';
 import { belowLeague, BELOW } from './league-bar.mjs';   // a passing verdict must also clear the league luck bar (22 Oct 2026)
+import { batchDue } from './autolab-week-guard.mjs';   // one new-rule batch per price week (repair 17 Nov 2026)
 import zlib from 'node:zlib';
 const env = process.env, local = (u) => u && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/.test(u) ? u : null, TG = local(env.TG_BASE) || 'https://api.telegram.org', OUT = 'data/autolab.json';
 const pc = (x) => x === null || x === undefined || !isFinite(x) ? 'n/a' : (x >= 0 ? '+' : '') + (x * 100).toFixed(1) + '%';
@@ -155,7 +156,10 @@ function stability(tr) { const grp = (key) => { const g = {}; for (const z of tr
   const ci = bs.length ? [+bs[25].toFixed(4), +bs[974].toFixed(4)] : null, bad = [...Object.entries(byYear), ...Object.entries(byMkt)].filter(([k, v]) => k !== 'unknown' && v.n >= 20 && v.edge < 0 && v.t <= -2).map(([k]) => k);
   return { byYear, byMkt, ci, label: !ci || ci[0] <= 0 || bad.length ? 'REGIME-DEPENDENT' : 'STABLE', loses: bad }; }
 // ---- 1. this week's new rules through the three gates
-const fresh = newRules(PER_WEEK), totalTried = Object.keys(LAB.tried).length + fresh.length, BAR = Math.max(2.5, zInv(0.05 / totalTried)), VBAR = 2;
+// one batch per price week (repair 17 Nov 2026, Agent A; see autolab-week-guard.mjs): a late duplicate study run only scores paper
+const DUE = batchDue(LAB.last, LAB.last && LAB.last.at || LAB.generatedAt, D[T - 1], Date.now(), env.AUTO_FORCE === '1');
+if (!DUE) console.log('autolab: this week\'s batch (' + D[T - 1] + ') was already tested at ' + (LAB.last.at || LAB.generatedAt) + '; no new rules this run (AUTO_FORCE=1 forces one)');
+const fresh = DUE ? newRules(PER_WEEK) : [], totalTried = Object.keys(LAB.tried).length + fresh.length, BAR = Math.max(2.5, zInv(0.05 / totalTried)), VBAR = 2;
 let passedAll = 0;
 for (const r of fresh) { const id = ruleId(r), d1 = judge(run(r, 0, P1), BAR); let d2 = null, d3 = null, verdict = 'FAILED DISCOVERY';
   if (d1.pass) { d2 = judge(run(r, P1, P2), VBAR); verdict = 'FAILED VALIDATION'; if (d2.pass) { d3 = judge(run(r, P2, T), VBAR); verdict = d3.pass ? 'LIVE CANDIDATE' : 'FAILED VAULT'; LAB.vaultLooks = (LAB.vaultLooks || 0) + 1; } }
@@ -177,7 +181,8 @@ for (const [id, c] of Object.entries(LAB.candidates)) { const r = rec[id]; c.pap
   c.status = c.paper.n >= 30 && c.paper.avg > 0 && c.paper.vsAvg > 0 ? 'PROVEN LIVE' : c.paper.n >= 30 ? 'FAILED LIVE' : 'ON PAPER'; c.today = today[id] || []; }
 for (const [id, c] of Object.entries(LAB.candidates)) if (c.status === 'FAILED LIVE') { LAB.tried[id].verdict = 'FAILED LIVE'; delete LAB.candidates[id]; }
 if (LAB.paper.length > 20000) LAB.paper = LAB.paper.slice(-20000);
-LAB.weeks++; LAB.generatedAt = new Date().toISOString(); LAB.status = 'OK'; LAB.last = { week: D[T - 1], tested: fresh.length, passed: passedAll, bar: +BAR.toFixed(2), totalTried };
+LAB.generatedAt = new Date().toISOString(); LAB.status = 'OK';
+if (DUE) { LAB.weeks++; LAB.last = { week: D[T - 1], at: LAB.generatedAt, tested: fresh.length, passed: passedAll, bar: +BAR.toFixed(2), totalTried }; }
 fs.writeFileSync(OUT, JSON.stringify(LAB));
 // Only autolab-form rules ({ b: [...blocks], h }) are matched here; other labs store their rule as plain text (repair 8 Nov 2026, Agent A:
 // C-INSQ1 / C-CONG1 / C-CT1 / C-INS3 text rules crashed this loop with "r.b is not iterable", so the library statuses were not written).
