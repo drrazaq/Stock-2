@@ -21,14 +21,15 @@ t('16 Nov replay: closing scan missing at 17:50 New York -> started once with mo
   const d = o.dispatch.filter(x => x.wf === 'main.yml');
   assert.equal(d.length, 1); assert.deepEqual(d[0].inputs, { mode: 'daily' }); assert.equal(o.alerts.length, 1); assert.match(o.alerts[0], /2026-11-16/);
   const o2 = scheduleDecide(now + 10 * 60000, [], '2026-11-13', o.state);
-  assert.equal(o2.dispatch.length, 0, 'not again within 45 minutes');
+  assert.equal(o2.dispatch.filter(x => x.wf === 'main.yml').length, 0, 'not again within 45 minutes');
   const o3 = scheduleDecide(now + 50 * 60000, [], '2026-11-13', o2.state);
-  assert.equal(o3.dispatch.length, 1); assert.equal(o3.alerts.length, 0, 'one line per close, not per try');
+  assert.equal(o3.dispatch.filter(x => x.wf === 'main.yml').length, 1); assert.equal(o3.alerts.length, 0, 'one line per close, not per try');
 });
 t('closing scan already done or a scanner run busy -> nothing started', () => {
   const now = at('2026-11-16', '18:00');
-  assert.equal(scheduleDecide(now, [], '2026-11-16', {}).dispatch.length, 0);
-  assert.equal(scheduleDecide(now, [{ path: '.github/workflows/main.yml', status: 'in_progress', created_at: new Date(now - 6e5).toISOString() }], '2026-11-13', {}).dispatch.length, 0);
+  const mainOnly = (o) => o.dispatch.filter(x => x.wf === 'main.yml').length;
+  assert.equal(mainOnly(scheduleDecide(now, [], '2026-11-16', {})), 0);
+  assert.equal(mainOnly(scheduleDecide(now, [{ path: '.github/workflows/main.yml', status: 'in_progress', created_at: new Date(now - 6e5).toISOString() }], '2026-11-13', {})), 0);
 });
 t('gives up after 6 tries with one message', () => {
   let s = {}, now = at('2026-11-16', '16:30'), msgs = [], starts = 0;
@@ -82,5 +83,9 @@ t('overnight movers and discovery: Tuesday 00:15 New York starts movers for Mond
   const sat = scheduleDecide(at('2026-11-14', '01:00'), [], '2026-11-13', {}).dispatch.map(x => x.wf);
   assert.ok(sat.includes('movers.yml') && sat.includes('discover.yml'));
   assert.equal(scheduleDecide(at('2026-11-15', '01:00'), [], '2026-11-13', {}).dispatch.length, 0);
+});
+t('hunter lab: pre at 09:15 and the next-open list at 18:00 New York', () => {
+  assert.ok(scheduleDecide(at('2026-11-17', '09:16'), [], '2026-11-16', {}).dispatch.some(x => x.wf === 'squad30-lab.yml' && x.inputs.mode === 'pre'));
+  assert.ok(scheduleDecide(at('2026-11-17', '18:05'), [], '2026-11-17', {}).dispatch.some(x => x.wf === 'squad30-lab.yml' && x.inputs.mode === 'today'));
 });
 console.log(n + ' schedule guard tests passed');

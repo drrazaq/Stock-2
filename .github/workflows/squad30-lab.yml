@@ -1,0 +1,102 @@
+name: Squad 30 hunter lab
+# HUNTER LAB (squad30-lab.mjs, rules pre-registered in hunter-core.mjs on 17 Nov 2026): penny stocks (under 1 and 1-3 USD, never tested
+# before: every earlier whole-market cache started at 3 USD or 1 USD), news before the open, market leaders and risk-off rotation.
+#   lab   = the 5-year test (Sunday, a manual run, or a push of run-squad30-now.txt)
+#   today = after the close: signals for the next open (Telegram HUNT LIST)
+#   pre   = 09:15 New York: gappers before the open with news, each labelled with its rule's verdict (Telegram HUNT BEFORE THE OPEN)
+# The schedule guard (bot job) starts 'today' and 'pre' on time; cron is the fallback. Never places an order; halal = owner's ZAD marks.
+on:
+  schedule:
+    - cron: '15 14 * * 1-5'   # pre: 09:15 New York in winter
+    - cron: '0 23 * * 1-5'    # today: 18:00 New York in winter
+    - cron: '0 8 * * 0'       # lab: Sunday
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'lab | today | pre'
+        required: false
+        default: 'lab'
+        type: string
+  push:
+    branches: ['main', 'hunter-lab-*']
+    paths: ['run-squad30-now.txt']
+permissions:
+  contents: write
+concurrency:
+  group: squad30-lab
+  cancel-in-progress: false
+jobs:
+  slot:
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      skip: ${{ steps.g.outputs.skip }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            schedule-skip.mjs
+            data/schedule-guard.json
+          sparse-checkout-cone-mode: false
+      - id: g
+        run: |
+          # Sunday's full test is not started by the guard, so its cron copy always runs
+          if [ "${{ github.event.schedule }}" = '0 8 * * 0' ]; then echo "skip=" | tee -a "$GITHUB_OUTPUT"; else node schedule-skip.mjs | tee -a "$GITHUB_OUTPUT"; fi
+        env:
+          EVENT: ${{ github.event_name }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+  lab:
+    needs: slot
+    if: ${{ !cancelled() && needs.slot.outputs.skip != '1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      NODE_OPTIONS: --max-old-space-size=12288
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'push' && github.ref_name || 'main' }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - uses: actions/cache/restore@v4
+        with:
+          path: squad30-cache
+          key: squad30-cache-${{ github.run_id }}
+          restore-keys: squad30-cache-
+      - shell: bash
+        run: |
+          set -o pipefail
+          M="${{ inputs.mode }}"
+          if [ -z "$M" ]; then case "${{ github.event.schedule }}" in '15 14 * * 1-5') M=pre;; '0 23 * * 1-5') M=today;; *) M=lab;; esac; fi
+          echo "mode $M"; MODE=$M node squad30-lab.mjs 2>&1 | tee run.log
+        env:
+          MASSIVE_KEY: ${{ secrets.MASSIVE_KEY }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+      - if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: squad30-cache
+          key: squad30-cache-${{ github.run_id }}
+      - if: success()
+        run: |
+          git config user.name "scanner"
+          git config user.email "scanner@users.noreply.github.com"
+          for f in data/squad30-lab.json data/hunt-close.json data/hunt-pre.json; do [ -f "$f" ] && git add "$f"; done; true
+          git diff --cached --quiet || git commit -m "squad 30 hunter $(date -u +%FT%RZ)"
+          B="${{ github.event_name == 'push' && github.ref_name || 'main' }}"
+          for i in 1 2 3 4 5; do if git pull --rebase -X theirs origin "$B" && git push origin "HEAD:$B"; then break; fi; git rebase --abort 2>/dev/null || true; sleep 10; done
+      - if: failure()
+        env:
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT: ${{ secrets.TG_CHAT }}
+        run: |
+          WHY=$(grep -iE "error|refused|cannot" run.log 2>/dev/null | tail -n 3 | cut -c1-240 || true)
+          curl -s -o /dev/null --data-urlencode "chat_id=$TG_CHAT" --data-urlencode "text=RUN FAILED: ${{ github.workflow }}.${WHY:+ Last error lines: $WHY} Send this message to Claude." "https://api.telegram.org/bot$TG_TOKEN/sendMessage" || true

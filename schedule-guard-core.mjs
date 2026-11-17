@@ -17,6 +17,9 @@ export const SLOTS = [
   { wf: 'intraday-radar.yml', name: 'Whole-market intraday radar', at: every(575, 950, 15), win: 12, inputs: { scheduled: 'true' } },   // 09:35-15:50
   { wf: 'opportunity-radar.yml', name: 'Opportunity radar (after the close)', at: [940], win: 120 },        // 15:40
   { wf: 'calendar.yml', name: 'Economic calendar', at: [945], win: 120 },                                   // 15:45
+  // hunter lab (17 Nov): the gappers before the open and the next-open list after the close
+  { wf: 'squad30-lab.yml', name: 'Hunt before the open', at: [555], win: 30, inputs: { mode: 'pre' } },   // 09:15
+  { wf: 'squad30-lab.yml', name: 'Hunt list after the close', at: [1080], win: 240, inputs: { mode: 'today' } },   // 18:00
   // overnight jobs for the session that closed the evening before (prev: true = the previous New York day was a market day);
   // both skip by themselves when that session is already done ("No new session since")
   { wf: 'movers.yml', name: 'Movers radar', at: [10], win: 420, prev: true, inputs: { scheduled: 'true' } },        // 00:10 (cron 04:00 UTC)
