@@ -1,19 +1,19 @@
 [0s] squad 1 lab; frozen already: 9/10
 [0s] library: 0 SQ1 entries pre-registered now
-[4s] cache to 2026-11-13; fresh sessions: 2026-11-16
-[4s] splits since 2026-11-13: 100 listed, 1 repaired
-[4s] sessions 1261 (2021-11-08 to 2026-11-16), stocks 8459
-[1731s] insider: 140557 purchase rows, data sets to 2026-09-30, missing none; forward days 15 (not yet: 2026-11-11)
-[1744s] short interest: 60/61 months (FINRA API: not a list for 2026-11)
-[1756s] full-text search: 6853 buyback hits, 5879 guidance hits, 39 phrase-months fetched now
-[1757s] buyback documents: 5289 (6 read now, 0 not read, 4760 with a size)
-[1757s] customer links: 420 usable, 312 suppliers
-[1757s] analyst consensus: {"ok":false,"note":"Finnhub history too short for a 5-year test (median earliest month of 5 large stocks: 2026-07-01; needs 2021-06 or earlier)","depth":{"probes":{"AAPL":"2026-07-01","MSFT":"2026-07-01","JPM":"2026-07-01","XOM":"2026-07-01","PFE":"2026-07-01"},"earliest":"2026-07-01"}}
-[1758s] dividends: 486459 rows
-[1758s] SEC requests: 1350, failed 2: gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261111.idx | gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261117.idx
-[1761s] signals with a complete hold (before one-open / yardstick filters): SQ1-INSCLU 290/358, SQ1-CEODIP 342/357, SQ1-INSLOWSI 163/161, SQ1-BBAUTH 340/500, SQ1-BBDIP 101/114, SQ1-CUSTMOM NO DATA, SQ1-GUIDEUP 1030/1749, SQ1-RECUP NO DATA, SQ1-DIVHIKE 352/377, SQ1-SIAVOID 2954/5351
-[1761s] 5-year one-shot for 1 rules not yet frozen
-[1761s] - SQ1-RECUP: NOT RUN (analyst data)
-[1761s] reproduction check (unaffected rule SQ1-INSCLU): trades older/newer 270/325 vs frozen 290/325
-[1761s] paper lane: scanned 1 new session(s); 10 new signals; 350 in all; avoid list 196
-SQUAD 1 LAB 2021-11-08 to 2026-11-16 | bar 4.12 | frozen 9/10 | insider ok, si ok, efts ok, buyback ok, guidance ok, customer MISSING, analyst MISSING, divs ok, price ok
+[3s] cache to 2026-11-13; fresh sessions: 2026-11-16, 2026-11-17
+[4s] splits since 2026-11-13: 129 listed, 1 repaired
+[4s] sessions 1262 (2021-11-08 to 2026-11-17), stocks 8461
+[97s] insider: 140557 purchase rows, data sets to 2026-09-30, missing none; forward days 15 (not yet: 2026-11-11, 2026-11-17)
+[110s] short interest: 60/61 months (FINRA API: not a list for 2026-11)
+[128s] full-text search: 6841 buyback hits, 5881 guidance hits, 39 phrase-months fetched now
+[128s] buyback documents: 5280 (1 read now, 0 not read, 4752 with a size)
+[128s] customer links: 420 usable, 312 suppliers
+[128s] analyst consensus: {"ok":false,"note":"Finnhub history too short for a 5-year test (median earliest month of 5 large stocks: 2026-07-01; needs 2021-06 or earlier)","depth":{"probes":{"AAPL":"2026-07-01","MSFT":"2026-07-01","JPM":"2026-07-01","XOM":"2026-07-01","PFE":"2026-07-01"},"earliest":"2026-07-01"}}
+[729s] dividends: 486721 rows
+[729s] SEC requests: 53, failed 3: gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261111.idx | gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261117.idx | gave up https://www.sec.gov/Archives/edgar/daily-index/2026/QTR4/master.20261118.idx
+[732s] signals with a complete hold (before one-open / yardstick filters): SQ1-INSCLU 290/358, SQ1-CEODIP 342/357, SQ1-INSLOWSI 163/161, SQ1-BBAUTH 340/501, SQ1-BBDIP 101/114, SQ1-CUSTMOM NO DATA, SQ1-GUIDEUP 1030/1752, SQ1-RECUP NO DATA, SQ1-DIVHIKE 352/378, SQ1-SIAVOID 2954/5351
+[732s] 5-year one-shot for 1 rules not yet frozen
+[732s] - SQ1-RECUP: NOT RUN (analyst data)
+[732s] reproduction check (unaffected rule SQ1-INSCLU): trades older/newer 270/325 vs frozen 290/325
+[732s] paper lane: scanned 1 new session(s); 4 new signals; 354 in all; avoid list 193
+SQUAD 1 LAB 2021-11-08 to 2026-11-17 | bar 4.12 | frozen 9/10 | insider ok, si ok, efts ok, buyback ok, guidance ok, customer MISSING, analyst MISSING, divs ok, price ok
