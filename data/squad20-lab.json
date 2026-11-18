@@ -1,11 +1,11 @@
 {
- "generatedAt": "2026-11-17T08:30:54.976Z",
+ "generatedAt": "2026-11-18T07:57:26.117Z",
  "squad": 20,
  "philosophy": "use the jump differently: as an AVOID filter and an EXIT on the rules that work, as a second setup after the spike is digested, and one-month momentum among high-turnover large caps (Medhat & Schmeling 2022)",
  "preRegistered": "squad20-core.mjs header + RULES (25 Oct 2026, before any run) + data/strategy-library.json SQ20-*",
  "window": [
   "2021-11-08",
-  "2026-11-16"
+  "2026-11-17"
  ],
  "bar": 4.12,
  "split": "2024-01-01",
@@ -13,10 +13,10 @@
  "data": {
   "price": {
    "ok": true,
-   "sessions": 1261,
+   "sessions": 1262,
    "from": "2021-11-08",
-   "to": "2026-11-16",
-   "stocks": 8575,
+   "to": "2026-11-17",
+   "stocks": 8579,
    "rowsWithHighLow": 1
   },
   "tickerMap": {
@@ -39,23 +39,23 @@
   },
   "splits": {
    "ok": true,
-   "rows": 7500,
-   "tickers": 4842,
+   "rows": 7529,
+   "tickers": 4853,
    "pagesNow": 8
   },
   "altShares": {
    "ok": true,
-   "wanted": 5,
-   "fetchedNow": 5,
-   "known": 2096
+   "wanted": 1,
+   "fetchedNow": 1,
+   "known": 2097
   },
   "domicile": {
    "ok": true,
-   "wantedNow": 1,
-   "fetchedNow": 1,
+   "wantedNow": 2,
+   "fetchedNow": 2,
    "failed": 0,
    "missing": 0,
-   "known": 1760,
+   "known": 1762,
    "foreign": 176
   },
   "bases": {
@@ -63,8 +63,8 @@
     "ok": true,
     "rule": "SQ11-PB12",
     "frozenTrades": 355,
-    "rebuilt": 356,
-    "signals": 356,
+    "rebuilt": 357,
+    "signals": 357,
     "noPrice": 0,
     "open": 0,
     "artifacts": 0,
@@ -151,8 +151,8 @@
     "ok": true,
     "rule": "MACRO-USD-E60",
     "frozenTrades": 249,
-    "rebuilt": 257,
-    "signals": 257,
+    "rebuilt": 258,
+    "signals": 258,
     "noPrice": 0,
     "open": 0,
     "artifacts": 0,
@@ -161,11 +161,11 @@
   },
   "spike": {
    "ok": true,
-   "stocksWithSpikes": 2396,
-   "spikes": 7318,
+   "stocksWithSpikes": 2398,
+   "spikes": 7323,
    "signals": 88,
-   "controls": 2623,
-   "controlsHeld": 831
+   "controls": 2624,
+   "controlsHeld": 832
   },
   "stmom": {
    "ok": true,
@@ -24200,7 +24200,7 @@
    "name": "Leader 12% pullback (SQ11-PB12) (rebuilt base, reference only)",
    "rule": "SQ11-PB12",
    "verdict": "NOT PROVEN",
-   "why": "not better than the same stocks held as long on their other days in the older half; block t 0.85 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 0.88 under 2.5 in the newer half",
+   "why": "not better than the same stocks held as long on their other days in the older half; block t 0.85 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t -0.05 under 2.5 in the newer half",
    "hold": 126,
    "block": 63,
    "cost": 0.008,
@@ -24227,42 +24227,42 @@
      "win": 0.6701
     },
     "newer": {
-     "n": 259,
-     "days": 162,
-     "stocks": 182,
-     "avg": 0.1608,
-     "median": 0.0732,
-     "avgStress": 0.1568,
-     "ctrl": 0.069,
-     "edge": 0.0526,
-     "tDay": 1.76,
-     "blocks": 10,
-     "tBlock": 0.88,
-     "vsOwn": -0.1018,
-     "ownCovered": 159,
-     "noTop2": 0.1388,
+     "n": 260,
+     "days": 163,
+     "stocks": 183,
+     "avg": 0.1585,
+     "median": 0.0723,
+     "avgStress": 0.1545,
+     "ctrl": 0.0687,
+     "edge": 0.0496,
+     "tDay": 1.66,
+     "blocks": 11,
+     "tBlock": -0.05,
+     "vsOwn": -0.1057,
+     "ownCovered": 160,
+     "noTop2": 0.1365,
      "best": 2.992,
      "worst": -0.5606,
-     "win": 0.6371
+     "win": 0.6346
     },
     "all": {
-     "n": 356,
-     "days": 229,
-     "stocks": 221,
-     "avg": 0.1575,
-     "median": 0.0865,
-     "avgStress": 0.1535,
-     "ctrl": 0.0642,
-     "edge": 0.0639,
-     "tDay": 2.82,
-     "blocks": 14,
-     "tBlock": 1.25,
-     "vsOwn": -0.0996,
-     "ownCovered": 218,
-     "noTop2": 0.1415,
+     "n": 357,
+     "days": 230,
+     "stocks": 222,
+     "avg": 0.1559,
+     "median": 0.0855,
+     "avgStress": 0.1519,
+     "ctrl": 0.064,
+     "edge": 0.0617,
+     "tDay": 2.73,
+     "blocks": 15,
+     "tBlock": 0.31,
+     "vsOwn": -0.1025,
+     "ownCovered": 219,
+     "noTop2": 0.1399,
      "best": 2.992,
      "worst": -0.5606,
-     "win": 0.6461
+     "win": 0.6443
     }
    },
    "perYear": {
@@ -24272,9 +24272,9 @@
      "avgStock": 0.1198
     },
     "newer": {
-     "rule": 0.3234,
-     "spy": 0.1999,
-     "avgStock": 0.1548
+     "rule": 0.3188,
+     "spy": 0.1991,
+     "avgStock": 0.1542
     }
    },
    "byYear": {
@@ -24315,12 +24315,12 @@
      "beatsSpy": true
     },
     "2026": {
-     "n": 47,
-     "avg": 0.1894,
-     "avgStock": 0.0708,
-     "spy": 0.1164,
-     "perYear": 0.3843,
-     "spyPerYear": 0.2362,
+     "n": 48,
+     "avg": 0.1764,
+     "avgStock": 0.0691,
+     "spy": 0.1138,
+     "perYear": 0.3578,
+     "spyPerYear": 0.231,
      "beatsSpy": true
     }
    }
@@ -25250,7 +25250,7 @@
    "name": "Dollar falling -> XLK (MACRO-USD-E60) (rebuilt base, reference only)",
    "rule": "MACRO-USD-E60",
    "verdict": "NOT PROVEN",
-   "why": "not better than the same stocks held as long on their other days in the older half; block t 0.83 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.52 under 2.5 in the newer half",
+   "why": "not better than the same stocks held as long on their other days in the older half; block t 0.83 under 2.5 in the older half; not better than the same stocks held as long on their other days in the newer half; block t 1.54 under 2.5 in the newer half",
    "hold": 60,
    "block": 60,
    "cost": 0.008,
@@ -25277,42 +25277,42 @@
      "win": 0.736
     },
     "newer": {
-     "n": 132,
-     "days": 132,
+     "n": 133,
+     "days": 133,
      "stocks": 1,
-     "avg": 0.0435,
-     "median": 0.0559,
-     "avgStress": 0.0395,
-     "ctrl": 0.0123,
-     "edge": 0.0232,
-     "tDay": 4.36,
+     "avg": 0.0423,
+     "median": 0.0558,
+     "avgStress": 0.0383,
+     "ctrl": 0.0115,
+     "edge": 0.0229,
+     "tDay": 4.33,
      "blocks": 11,
-     "tBlock": 1.52,
+     "tBlock": 1.54,
      "vsOwn": null,
      "ownCovered": 0,
-     "noTop2": 0.0387,
+     "noTop2": 0.0375,
      "best": 0.3633,
      "worst": -0.2335,
-     "win": 0.6439
+     "win": 0.6391
     },
     "all": {
-     "n": 257,
-     "days": 257,
+     "n": 258,
+     "days": 258,
      "stocks": 1,
-     "avg": 0.0438,
-     "median": 0.0591,
-     "avgStress": 0.0398,
-     "ctrl": 0.0057,
-     "edge": 0.03,
-     "tDay": 6.94,
+     "avg": 0.0432,
+     "median": 0.0589,
+     "avgStress": 0.0392,
+     "ctrl": 0.0053,
+     "edge": 0.0299,
+     "tDay": 6.92,
      "blocks": 19,
-     "tBlock": 1.38,
+     "tBlock": 1.39,
      "vsOwn": null,
      "ownCovered": 0,
-     "noTop2": 0.0413,
+     "noTop2": 0.0407,
      "best": 0.3633,
      "worst": -0.2335,
-     "win": 0.6887
+     "win": 0.686
     }
    },
    "perYear": {
@@ -25322,9 +25322,9 @@
      "avgStock": 0.0285
     },
     "newer": {
-     "rule": 0.1827,
-     "spy": 0.1496,
-     "avgStock": 0.0855
+     "rule": 0.1778,
+     "spy": 0.147,
+     "avgStock": 0.0818
     }
    },
    "byYear": {
@@ -25374,12 +25374,12 @@
      "beatsSpy": true
     },
     "2026": {
-     "n": 19,
-     "avg": -0.0377,
-     "avgStock": -0.0368,
-     "spy": -0.0147,
-     "perYear": -0.1583,
-     "spyPerYear": -0.0617,
+     "n": 20,
+     "avg": -0.0414,
+     "avgStock": -0.0403,
+     "spy": -0.0162,
+     "perYear": -0.1738,
+     "spyPerYear": -0.0679,
      "beatsSpy": false
     }
    }
@@ -25392,7 +25392,7 @@
   },
   "AV25-PB12": {
    "older": 1,
-   "newer": 2
+   "newer": 3
   },
   "AV40-MTUM": {
    "older": 0,
@@ -25921,7 +25921,7 @@
  ],
  "latest": {
   "label": "MONITORING ONLY: a later run on newer data. It is NOT a new verdict and changes nothing; the verdict is firstRun (frozen at the first complete run, never overwritten).",
-  "at": "2026-11-17T08:30:54.976Z",
+  "at": "2026-11-18T07:57:26.117Z",
   "results": {}
  },
  "trades": {}
