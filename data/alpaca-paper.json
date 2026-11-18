@@ -1,15 +1,5 @@
 {
  "plans": {
-  "WGO": {
-   "kind": "entry",
-   "exitMA": 20,
-   "maxHold": 40,
-   "stop": 23.56,
-   "kindName": "earnings drift",
-   "entry": 25.5,
-   "qty": 37,
-   "since": "2026-10-22"
-  },
   "CBRL": {
    "kind": "leader",
    "stop": 61.14,
@@ -36,17 +26,7 @@
   }
  },
  "pendingBuy": {},
- "pendingExit": {
-  "WGO": {
-   "id": "5406c91a-ad57-4aa5-8406-d3868aa7a9f3",
-   "entry": 25.5,
-   "qty": 37,
-   "kind": "entry",
-   "kindName": "earnings drift",
-   "why": "closed under its 20 day average",
-   "since": "2026-10-22"
-  }
- },
+ "pendingExit": {},
  "closed": [
   {
    "sym": "ALNT",
@@ -189,6 +169,18 @@
    "why": "closed under its 50 day average",
    "in": "2026-11-02",
    "out": "2026-11-03"
+  },
+  {
+   "sym": "WGO",
+   "kind": "entry",
+   "engine": "earnings drift",
+   "entry": 25.5,
+   "exit": 29.76,
+   "pct": 0.16706,
+   "net": 0.1607,
+   "why": "closed under its 20 day average",
+   "in": "2026-10-22",
+   "out": "2026-11-18"
   }
  ],
  "start": {
@@ -196,7 +188,7 @@
   "equity": 100000
  },
  "equity": {
-  "d": "2026-11-17",
-  "equity": 99063.44
+  "d": "2026-11-18",
+  "equity": 99115.53
  }
 }
