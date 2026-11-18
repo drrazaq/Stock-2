@@ -1,9 +1,9 @@
-[0s] research lab; frozen already: 51/54
+[0s] research lab; frozen already: 54/54
 [0s] library: 0 RQ entries pre-registered now
-[4s] cache to 2026-11-13; fresh sessions: 2026-11-16
-[5s] splits since 2026-11-13: 101 listed, 1 repaired
-[5s] sessions 1261 (2021-11-08 to 2026-11-16), stocks 8459
-[6s] point-in-time ticker <-> CIK evidence: 23 quarter files, 10424 tickers
+[4s] cache to 2026-11-13; fresh sessions: 2026-11-16, 2026-11-17
+[4s] splits since 2026-11-13: 129 listed, 1 repaired
+[4s] sessions 1262 (2021-11-08 to 2026-11-17), stocks 8461
+[5s] point-in-time ticker <-> CIK evidence: 23 quarter files, 10424 tickers
 [6s] universe: 4430 companies (liquid at a month start in the window); liquid stock-months mapped 149548/151121
 [6s] 10-K collection: 250/4430 companies, 0 SEC requests, 0.00 GB, 0 failures
 [6s] 10-K collection: 500/4430 companies, 0 SEC requests, 0.00 GB, 0 failures
@@ -22,43 +22,43 @@
 [6s] 10-K collection: 3750/4430 companies, 0 SEC requests, 0.00 GB, 0 failures
 [6s] 10-K collection: 4000/4430 companies, 0 SEC requests, 0.00 GB, 0 failures
 [6s] 10-K collection: 4250/4430 companies, 0 SEC requests, 0.00 GB, 0 failures
-[7s] data: {"companies":4430,"subsOk":4430,"docsNeeded":22316,"docsDone":22316,"similarities":18356,"liqMonths":151121,"liqMapped":149548,"evidenceFiles":23,"secRequests":0,"secFailures":0,"gb":0,"failSample":[],"complete":true,"ratios":{"subs":1,"docs":1,"map":0.9896},"why":null}
+[6s] data: {"companies":4430,"subsOk":4430,"docsNeeded":22316,"docsDone":22316,"similarities":18356,"liqMonths":151121,"liqMapped":149548,"evidenceFiles":23,"secRequests":0,"secFailures":0,"gb":0,"failSample":[],"complete":true,"ratios":{"subs":1,"docs":1,"map":0.9896},"why":null}
 [7s] events (liquid, mapped): non-changers 2816, big changers 1515; extreme filings without a priced ticker 258
-[7s] signals with a complete hold: RQ-LAZY-63 1267/1542, RQ-LAZY-126 1267/1520, RQ-LAZY-CHG63 569/936
-[1993s] tender data: {"idxNeed":1337,"idxRead":1276,"idxFail":62,"filNeed":273,"filRead":273,"filMiss":0,"subjNoCik":0,"subjUnmapped":19,"subjIlliquid":125,"subjPriced":125,"subjOffer":116,"insane":1,"cvr":44,"events":115,"spreadCounts":{"RQ-TENDER-3-15":12,"RQ-TENDER-ALL":78},"complete":true,"ratios":{"idx":0.9544,"read":1,"priced":0.928},"why":null}
-[1993s] 8-K lists cached 4430/4430; to read now 0
-[1995s] info-shock data: {"companies":4430,"subsOk":4430,"eightKs":204396,"liqMonths":151121,"liqMapped":149548,"newsSessions":181753,"noSym":3834,"notLiquid":57515,"noSigma":277,"shocks":6777,"shocksE":5822,"shocksNE":955,"lottery":2646,"complete":true,"ratios":{"subs":1,"map":0.9896},"why":null}
-[1995s] backlog (RPO) data: {"companies":4430,"looked":4430,"withRpo":1005,"rows":18815,"events":9889,"liqMonths":151121,"liqMapped":149548,"noSym":47,"notLiquid":854,"ranked":9889,"top":1568,"bottom":1355,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[1996s] earnings timing data: {"companies":4430,"subsOk":4430,"liqMonths":151121,"liqMapped":149548,"announcements":63420,"events":47418,"adv":1966,"del":4819,"noSym":101,"notLiquid":3216,"multi":{"adv":726,"del":152},"complete":true,"ratios":{"subs":1,"map":0.9896},"why":null}
-[2002s] tax surprise data: {"companies":4430,"looked":4430,"withTax":3533,"quarters":119559,"events":41282,"liqMonths":151121,"liqMapped":149548,"noSym":213,"notLiquid":3679,"ranked":41282,"top":5779,"bottom":5892,"q4":299,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[2003s] R&D increase data: {"companies":4430,"looked":4430,"withRd":1618,"fallbackTag":49,"quarters":49760,"events":17389,"qualifying":4632,"liqMonths":151121,"liqMapped":149548,"noSym":48,"notLiquid":1828,"signals":2594,"q4":51,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[2007s] inventory change data: {"companies":4430,"looked":4430,"withInv":1978,"balances":99325,"events":29845,"liqMonths":151121,"liqMapped":149548,"noSym":282,"notLiquid":3776,"ranked":29845,"top":3999,"bottom":3493,"q4":7637,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[2007s] goodwill impairment data: {"companies":4430,"looked":4430,"withImp":2141,"facts":40787,"events":1063,"liqMonths":151121,"liqMapped":149548,"noSym":28,"notLiquid":502,"small":531,"big":223,"q4":449,"eventsAny":1641,"eventsBig":553,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[2009s] gross profit change data: {"companies":4430,"looked":4430,"withGp":1800,"quarters":64482,"events":19667,"liqMonths":151121,"liqMapped":149548,"noSym":159,"notLiquid":2731,"ranked":19667,"top":2517,"bottom":2089,"q4":531,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[2010s] dividend cut data: {"companies":4430,"looked":4430,"payers":1626,"quarters":74225,"withTotals":1237,"events":558,"eventsAll":15601,"cutsRaw":618,"guardTotal":16,"guardShape":44,"omissions":88,"liqMonths":151121,"liqMapped":149548,"noSym":11,"notLiquid":156,"cut":381,"big":221,"q4":26,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[2029s] distress data: {"companies":4430,"looked":4430,"withNI":3815,"events":60743,"liqMonths":151121,"liqMapped":149548,"noSym":1110,"notLiquid":18013,"shortHist":3697,"noShares":4228,"splitDrop":371,"noMarket":323,"scored":31222,"ranked":30920,"top5":1500,"top10":2994,"q4":7090,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[2031s] organization capital data: {"companies":4430,"looked":4430,"withSga":1675,"years":50001,"events":5695,"liqMonths":151121,"liqMapped":149548,"noSym":15,"notLiquid":410,"ranked":5695,"top":716,"medianYears":14,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[2047s] wikipedia attention data: {"companies":4430,"wikidataItems":3212,"dupCiks":25,"articles":1570,"answered":1570,"withViews":1570,"fetchedNow":0,"failed":0,"months":59,"monthSignals":11610,"spikes":1069,"spikeSignals":880,"noSym":65,"notLiquid":117,"mapAt":"2026-11-10T09:28:00.293Z","complete":true,"ratios":{"answered":1},"why":null}
-[2048s] finra short volume files: 0 to read, 0 read now, 0 missing
-[2050s] finra short volume data: {"sessions":1261,"files":1261,"fetchedNow":0,"missingNow":0,"liqRows":3183892,"liqWithRow":3183890,"weeks":258,"low":130920,"high":130922,"lowP":117874,"crossMin":2255,"crossMax":2882,"complete":true,"ratios":{"files":1,"rows":1},"why":null}
-[2053s] pre-earnings winners data: {"companies":4430,"subsOk":4430,"liqMonths":151121,"liqMapped":149548,"announcements":63420,"inWindow":60409,"ranked":32142,"noSym":697,"notLiquid":17935,"noMom":1010,"rankDays":951,"crossMin":2223,"crossMax":2706,"w1":305,"w10":2999,"complete":true,"ratios":{"subs":1,"map":0.9896},"why":null}
-[2054s] SBC intensity data: {"companies":4430,"looked":4430,"withSbc":3575,"years":92011,"events":12652,"liqMonths":151121,"liqMapped":149548,"noSym":81,"notLiquid":1223,"ranked":12652,"top":1766,"bottom":1967,"zeroSbc":24,"medianScore":0.014422,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
-[2054s] fails-to-deliver files: 0 to read, 0 read now, 0 missing
-[2056s] fails-to-deliver data: {"expected":125,"files":125,"fetchedNow":0,"missingNow":0,"crosses":118,"matched":239276,"liqRows":302665,"withShares":255940,"splitDrop":937,"noCik":3213,"top":2619,"fixed":1197,"crossMin":1944,"crossMax":2435,"over100pct":409,"complete":true,"ratios":{"files":1},"why":null}
-[2056s] debt triggering events (8-K 2.04) data: {"companies":4430,"subsOk":4430,"filings204":320,"mergerSkipped":47,"events":267,"noSym":31,"notLiquid":150,"liquid":86,"older":38,"newer":48,"complete":true,"why":null}
-[2056s] - RQ-DEBT-AV21: AVOID WEAK (REJECTED AS A BUY) | older 35 (33d, 19bl) avg -2.9% stress -3.3% edge -2.8% own +2.9% no2 -4.3% tBlock -1.31 win +42.9% | newer 44 (43d, 24bl) avg -2.2% stress -2.6% edge -2.7% own -0.8% no2 -4.8% tBlock -0.56 win +47.7% | {"withBankruptcy103":{"n":1,"avgGross":-0.0173,"edge":-0.0167},"without103":{"n":78,"avgGross":-0.0169,"edge":-0.0167},"under15usd":{"n":15,"avgGross":-0.0111,"edge":-0.034},"from15usd":{"n":64,"avgGross":-0.0183,"edge":-0.0126}} | gross edge {"older":-0.0203,"newer":-0.019} t {"older":-1,"newer":-0.15} | these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy
-[2056s] - RQ-DEBT-AV63: AVOID NOT SUPPORTED (REJECTED AS A BUY) | older 32 (30d, 9bl) avg -6.5% stress -6.9% edge -6.2% own +3.3% no2 -9.3% tBlock -1.53 win +43.8% | newer 40 (39d, 10bl) avg +8.0% stress +7.6% edge +6.8% own +3.9% no2 -0.3% tBlock 0.73 win +52.5% | {"withBankruptcy103":{"n":1,"avgGross":0.1072,"edge":0.148},"without103":{"n":71,"avgGross":0.0224,"edge":0.0177},"under15usd":{"n":15,"avgGross":0.0541,"edge":0.0301},"from15usd":{"n":57,"avgGross":0.0156,"edge":0.0167}} | gross edge {"older":-0.0544,"newer":0.0758} t {"older":-1.35,"newer":0.83} | these stocks did not lag the average stock in both halves: no evidence for this AVOID filter; never a buy
-[2056s] - RQ-DEBT-B126: REJECTED | older 31 (29d, 5bl) avg -9.6% stress -10.0% edge -7.0% own +8.2% no2 -12.8% tBlock -1.74 win +38.7% | newer 34 (34d, 5bl) avg +16.6% stress +16.2% edge +12.3% own +19.8% no2 +1.6% tBlock 0.72 win +55.9% | {"withBankruptcy103":{"n":0,"avgGross":null,"edge":null},"without103":{"n":65,"avgGross":0.0494,"edge":0.0445},"under15usd":{"n":13,"avgGross":0.0785,"edge":0.0228},"from15usd":{"n":52,"avgGross":0.0421,"edge":0.0499}} | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; loses without its 2 best in the older half; block t -1.74 under 2.5 in the older half; block t 0.72 under 2.5 in the newer half
-[2088s] info-shock paper: 0 fresh 8-K list reads
-[2120s] backlog paper: 0 companyconcept reads, 354 paper events
-[2153s] earnings timing paper: 0 fresh 8-K list reads, 2374 companies
-[2185s] tax surprise paper: 0 companyconcept reads, 1773 paper events
-[2217s] organization capital paper: 0 companyconcept reads, 7 paper events
-[2249s] SBC intensity paper: 0 companyconcept reads, 4 paper events
-[2281s] gross profit change paper: 0 companyconcept reads, 432 paper events
-[2313s] R&D increase paper: 0 companyconcept reads, 174 paper events
-[2345s] inventory change paper: 0 companyconcept reads, 776 paper events
-[2345s] wikipedia attention paper: 0 new signals
-[2345s] finra short volume paper: 0 new signals
-[2345s] paper lane: 0 new signals; 3017 in all; paper 10-K similarities 27
-RESEARCH LAB 2021-11-08 to 2026-11-16 | bar 4.12 | data complete | tender data complete | backlog data complete | earnings timing data complete | tax surprise data complete | R&D increase data complete | inventory data complete | goodwill data complete | gross profit data complete | dividend cut data complete | wikipedia data complete | short volume data complete | frozen 54/54
+[7s] signals with a complete hold: RQ-LAZY-63 1267/1542, RQ-LAZY-126 1267/1521, RQ-LAZY-CHG63 569/937
+[2166s] tender data: {"idxNeed":1338,"idxRead":1277,"idxFail":62,"filNeed":273,"filRead":273,"filMiss":0,"subjNoCik":0,"subjUnmapped":19,"subjIlliquid":125,"subjPriced":125,"subjOffer":116,"insane":1,"cvr":44,"events":115,"spreadCounts":{"RQ-TENDER-3-15":12,"RQ-TENDER-ALL":78},"complete":true,"ratios":{"idx":0.9544,"read":1,"priced":0.928},"why":null}
+[2167s] 8-K lists cached 4430/4430; to read now 0
+[2168s] info-shock data: {"companies":4430,"subsOk":4430,"eightKs":204396,"liqMonths":151121,"liqMapped":149548,"newsSessions":181753,"noSym":3834,"notLiquid":57515,"noSigma":277,"shocks":6777,"shocksE":5822,"shocksNE":955,"lottery":2646,"complete":true,"ratios":{"subs":1,"map":0.9896},"why":null}
+[2168s] backlog (RPO) data: {"companies":4430,"looked":4430,"withRpo":1005,"rows":18815,"events":9889,"liqMonths":151121,"liqMapped":149548,"noSym":47,"notLiquid":854,"ranked":9889,"top":1568,"bottom":1355,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2169s] earnings timing data: {"companies":4430,"subsOk":4430,"liqMonths":151121,"liqMapped":149548,"announcements":63420,"events":47418,"adv":1966,"del":4819,"noSym":101,"notLiquid":3216,"multi":{"adv":726,"del":152},"complete":true,"ratios":{"subs":1,"map":0.9896},"why":null}
+[2173s] tax surprise data: {"companies":4430,"looked":4430,"withTax":3533,"quarters":119559,"events":41282,"liqMonths":151121,"liqMapped":149548,"noSym":213,"notLiquid":3679,"ranked":41282,"top":5779,"bottom":5892,"q4":299,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2174s] R&D increase data: {"companies":4430,"looked":4430,"withRd":1618,"fallbackTag":49,"quarters":49760,"events":17389,"qualifying":4632,"liqMonths":151121,"liqMapped":149548,"noSym":48,"notLiquid":1828,"signals":2594,"q4":51,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2176s] inventory change data: {"companies":4430,"looked":4430,"withInv":1978,"balances":99325,"events":29845,"liqMonths":151121,"liqMapped":149548,"noSym":282,"notLiquid":3776,"ranked":29845,"top":3999,"bottom":3493,"q4":7637,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2177s] goodwill impairment data: {"companies":4430,"looked":4430,"withImp":2141,"facts":40787,"events":1063,"liqMonths":151121,"liqMapped":149548,"noSym":28,"notLiquid":502,"small":531,"big":223,"q4":449,"eventsAny":1641,"eventsBig":553,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2178s] gross profit change data: {"companies":4430,"looked":4430,"withGp":1800,"quarters":64482,"events":19667,"liqMonths":151121,"liqMapped":149548,"noSym":159,"notLiquid":2731,"ranked":19667,"top":2517,"bottom":2089,"q4":531,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2179s] dividend cut data: {"companies":4430,"looked":4430,"payers":1626,"quarters":74225,"withTotals":1237,"events":558,"eventsAll":15601,"cutsRaw":618,"guardTotal":16,"guardShape":44,"omissions":88,"liqMonths":151121,"liqMapped":149548,"noSym":11,"notLiquid":156,"cut":381,"big":221,"q4":26,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2193s] distress data: {"companies":4430,"looked":4430,"withNI":3815,"events":60743,"liqMonths":151121,"liqMapped":149548,"noSym":1110,"notLiquid":18013,"shortHist":3697,"noShares":4228,"splitDrop":371,"noMarket":323,"scored":31222,"ranked":30920,"top5":1500,"top10":2994,"q4":7090,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2195s] organization capital data: {"companies":4430,"looked":4430,"withSga":1675,"years":50001,"events":5695,"liqMonths":151121,"liqMapped":149548,"noSym":15,"notLiquid":410,"ranked":5695,"top":716,"medianYears":14,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2336s] page views: 500 articles fetched
+[2457s] page views: 1000 articles fetched
+[2629s] page views: 1500 articles fetched
+[2650s] wikipedia attention data: {"companies":4430,"wikidataItems":3212,"dupCiks":25,"articles":1570,"answered":1570,"withViews":1570,"fetchedNow":1570,"failed":2,"months":59,"monthSignals":11610,"spikes":1070,"spikeSignals":880,"noSym":66,"notLiquid":117,"mapAt":"2026-11-10T09:28:00.293Z","complete":true,"ratios":{"answered":1},"why":null}
+[2654s] finra short volume files: 1 to read, 1 read now, 0 missing
+[2656s] finra short volume data: {"sessions":1262,"files":1262,"fetchedNow":1,"missingNow":0,"liqRows":3186578,"liqWithRow":3186576,"weeks":258,"low":130920,"high":130922,"lowP":117874,"crossMin":2255,"crossMax":2882,"complete":true,"ratios":{"files":1,"rows":1},"why":null}
+[2658s] pre-earnings winners data: {"companies":4430,"subsOk":4430,"liqMonths":151121,"liqMapped":149548,"announcements":63420,"inWindow":60409,"ranked":32142,"noSym":697,"notLiquid":17935,"noMom":1010,"rankDays":951,"crossMin":2223,"crossMax":2706,"w1":305,"w10":2999,"complete":true,"ratios":{"subs":1,"map":0.9896},"why":null}
+[2659s] SBC intensity data: {"companies":4430,"looked":4430,"withSbc":3575,"years":92011,"events":12652,"liqMonths":151121,"liqMapped":149548,"noSym":81,"notLiquid":1223,"ranked":12652,"top":1766,"bottom":1967,"zeroSbc":24,"medianScore":0.014422,"complete":true,"ratios":{"looked":1,"map":0.9896},"why":null}
+[2659s] fails-to-deliver files: 0 to read, 0 read now, 0 missing
+[2661s] fails-to-deliver data: {"expected":125,"files":125,"fetchedNow":0,"missingNow":0,"crosses":118,"matched":239276,"liqRows":302665,"withShares":255940,"splitDrop":937,"noCik":3213,"top":2619,"fixed":1197,"crossMin":1944,"crossMax":2435,"over100pct":409,"complete":true,"ratios":{"files":1},"why":null}
+[2661s] debt triggering events (8-K 2.04) data: {"companies":4430,"subsOk":4430,"filings204":320,"mergerSkipped":47,"events":267,"noSym":31,"notLiquid":150,"liquid":86,"older":38,"newer":48,"complete":true,"why":null}
+[2697s] info-shock paper: 7 fresh 8-K list reads
+[2730s] backlog paper: 0 companyconcept reads, 354 paper events
+[2766s] earnings timing paper: 0 fresh 8-K list reads, 2374 companies
+[2800s] tax surprise paper: 0 companyconcept reads, 1773 paper events
+[2834s] organization capital paper: 0 companyconcept reads, 7 paper events
+[2890s] SBC intensity paper: 66 companyconcept reads, 13 paper events
+[2923s] gross profit change paper: 0 companyconcept reads, 432 paper events
+[2955s] R&D increase paper: 0 companyconcept reads, 174 paper events
+[2987s] inventory change paper: 0 companyconcept reads, 776 paper events
+[2987s] wikipedia attention paper: 0 new signals
+[2987s] finra short volume paper: 0 new signals
+[2987s] paper lane: 16 new signals; 3033 in all; paper 10-K similarities 27
+RESEARCH LAB 2021-11-08 to 2026-11-17 | bar 4.12 | data complete | tender data complete | backlog data complete | earnings timing data complete | tax surprise data complete | R&D increase data complete | inventory data complete | goodwill data complete | gross profit data complete | dividend cut data complete | wikipedia data complete | short volume data complete | frozen 54/54
