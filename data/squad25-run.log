@@ -4,13 +4,13 @@
 [4s] splits after the cache: 7 repaired
 [4s] window 2021-11-08..2026-11-18 (1263 sessions, 8579 stocks)
 [5s] ticker map: {"ok":true,"quarters":23,"ciks":9139}
-[8s] fails-to-deliver: 150 files, 69648 CUSIP keys, missing 2 202605a 202605b
-[10s] master index: 1181273 13F/13D/13G rows
-[31s] submissions JSON: 0 recent giant filings added
-[31s] giant filings: 7371 (13F since 2019 + all 13D/13G since 2013), headers read now 0, not read 0
-[31s] raw events: 2301 {"f13Filings":508,"f13New":1706,"dgFilings":6863,"dgAsSubject":5325,"dgEvents":595}
-[31s] funnel {"raw":2301,"before":1637,"noSym":25,"noPx":62,"giantIssuer":29,"alreadyPublic":107,"filters":{"traded value":79,"market value 10B+":68,"price under 1":5},"events":289} | CASE COUNTS base older 83 newer 36 | wide older 161 newer 76
-[31s] - SQ25-GIANTSTAKE-A: REJECTED | older 61 (10bl) avg -9.9% stress -10.3% edge -2.9% own -2.6% no2 -11.5% tBlock -0.47 | newer 29 (16bl) avg +9.3% stress +8.9% edge +16.3% own +15.1% no2 -4.2% tBlock 0.96 | slippage -13.5% / +5.1% | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.47 under 2.5 in the older h
+[7s] fails-to-deliver: 150 files, 69648 CUSIP keys, missing 2 202605a 202605b
+[12s] master index: 1181493 13F/13D/13G rows
+[32s] submissions JSON: 0 recent giant filings added
+[32s] giant filings: 7371 (13F since 2019 + all 13D/13G since 2013), headers read now 0, not read 0
+[32s] raw events: 2301 {"f13Filings":508,"f13New":1706,"dgFilings":6863,"dgAsSubject":5325,"dgEvents":595}
+[32s] funnel {"raw":2301,"before":1637,"noSym":25,"noPx":62,"giantIssuer":29,"alreadyPublic":107,"filters":{"traded value":79,"market value 10B+":68,"price under 1":5},"events":289} | CASE COUNTS base older 83 newer 36 | wide older 161 newer 76
+[32s] - SQ25-GIANTSTAKE-A: REJECTED | older 61 (10bl) avg -9.9% stress -10.3% edge -2.9% own -2.6% no2 -11.5% tBlock -0.47 | newer 29 (16bl) avg +9.3% stress +8.9% edge +16.3% own +15.1% no2 -4.2% tBlock 0.96 | slippage -13.5% / +5.1% | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -0.47 under 2.5 in the older h
 [32s] - SQ25-GIANTSTAKE-B: REJECTED | older 61 (10bl) avg -11.6% stress -12.0% edge -6.2% own -5.6% no2 -13.0% tBlock -1.56 | newer 29 (16bl) avg +15.7% stress +15.3% edge +18.2% own +17.0% no2 -2.0% tBlock 0.98 | slippage -15.1% / +11.7% | lost money after 0.8% costs in the older half; lost money after 1.2% costs in the older half; not better than the average stock in the older half; not better than the same stocks on their other days in the older half; loses without its 2 best in the older half; block t -1.56 under 2.5 in the older h
 [32s] - SQ25-GIANTWIDE-A (information): REJECTED | older 135 (25bl) avg -4.8% stress -5.2% edge -1.1% own +0.5% no2 -5.6% tBlock -1.17 | newer 68 (30bl) avg -0.1% stress -0.5% edge +5.6% own +5.8% no2 -5.9% tBlock 0.81
 [32s] - SQ25-GIANTWIDE-B (information): REJECTED | older 133 (25bl) avg -7.0% stress -7.4% edge -4.6% own -2.7% no2 -7.8% tBlock -3.17 | newer 68 (30bl) avg +2.9% stress +2.5% edge +6.0% own +6.2% no2 -4.8% tBlock 0.76
