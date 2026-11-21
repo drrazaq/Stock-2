@@ -35997,7 +35997,7 @@
    "name": "AVOID check: 8-K item 3.02 unregistered share sale (no merger closing), 21 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-21 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "Information only: an original 8-K listing item 3.02 (unregistered sale of shares, warrants or convertibles), not together with 2.01 or 5.01; the stock (liquid on the reaction session) bought the next open and held 21 sessions; a valid AVOID / SELL filter if it lags the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 20) before any run.",
    "sources": [
     "https://www.sec.gov/files/form8-k.pdf",
@@ -36006,7 +36006,45 @@
     "https://corpgov.law.harvard.edu/2017/11/16/the-economics-of-pipes"
    ],
    "hold": 21,
-   "note": "Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-20",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "n": [
+     550,
+     1016
+    ],
+    "avg": [
+     -0.045,
+     -0.0196
+    ],
+    "stress": [
+     -0.049,
+     -0.0236
+    ],
+    "edge": [
+     -0.0342,
+     -0.0316
+    ],
+    "vsOwn": [
+     0.002,
+     -0.0097
+    ],
+    "noTop2": [
+     -0.048,
+     -0.0235
+    ],
+    "tBlock": [
+     -3.46,
+     -2.95
+    ],
+    "win": [
+     0.3836,
+     0.4193
+    ],
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
   },
   {
    "id": "RQ-PIPE-AV63",
@@ -36014,7 +36052,7 @@
    "name": "AVOID check: 8-K item 3.02 unregistered share sale (no merger closing), 63 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-21 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "As RQ-PIPE-AV21, held 63 sessions. Never a buy. Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 20) before any run.",
    "sources": [
     "https://www.sec.gov/files/form8-k.pdf",
@@ -36023,7 +36061,45 @@
     "https://corpgov.law.harvard.edu/2017/11/16/the-economics-of-pipes"
    ],
    "hold": 63,
-   "note": "Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-20",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "n": [
+     488,
+     854
+    ],
+    "avg": [
+     -0.0626,
+     -0.0179
+    ],
+    "stress": [
+     -0.0666,
+     -0.0219
+    ],
+    "edge": [
+     -0.039,
+     -0.048
+    ],
+    "vsOwn": [
+     0.0257,
+     -0.0243
+    ],
+    "noTop2": [
+     -0.0701,
+     -0.0226
+    ],
+    "tBlock": [
+     -1.03,
+     -2.84
+    ],
+    "win": [
+     0.3566,
+     0.4426
+    ],
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
   },
   {
    "id": "RQ-PIPE-AV126",
@@ -36031,7 +36107,7 @@
    "name": "AVOID check: 8-K item 3.02 unregistered share sale (no merger closing), 126 sessions",
    "agent": "daily researcher",
    "kind": "avoid",
-   "status": "pre-registered 2026-11-21 (daily researcher); 5-year one-shot pending",
+   "status": "tested: avoid weak (rejected as a buy); forward paper lane from 26 Oct 2026",
    "explain": "As RQ-PIPE-AV21, held 126 sessions. Never a buy. Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 20) before any run.",
    "sources": [
     "https://www.sec.gov/files/form8-k.pdf",
@@ -36040,7 +36116,45 @@
     "https://corpgov.law.harvard.edu/2017/11/16/the-economics-of-pipes"
    ],
    "hold": 126,
-   "note": "Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+   "note": "Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.",
+   "tested": "2026-11-20",
+   "study": "research-lab.mjs -> data/research-lab.json (run once as written, first complete run frozen)",
+   "result": {
+    "verdict": "AVOID WEAK (REJECTED AS A BUY)",
+    "n": [
+     451,
+     674
+    ],
+    "avg": [
+     -0.1241,
+     0.0269
+    ],
+    "stress": [
+     -0.1281,
+     0.0229
+    ],
+    "edge": [
+     -0.1047,
+     -0.0354
+    ],
+    "vsOwn": [
+     -0.0263,
+     -0.0252
+    ],
+    "noTop2": [
+     -0.1345,
+     0.0181
+    ],
+    "tBlock": [
+     -1.77,
+     -1.35
+    ],
+    "win": [
+     0.3503,
+     0.4688
+    ],
+    "why": "these stocks lagged the average stock in both halves, but block t did not reach -2.5 in both: a weak AVOID filter, never a buy"
+   }
   }
  ]
 }
