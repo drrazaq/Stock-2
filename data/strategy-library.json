@@ -35990,6 +35990,57 @@
    ],
    "data": "has it: the 5-year study cache.",
    "note": "Wang, Rachev & Fabozzi (Nov 2026, arXiv 2611.09834): a Boolean rule is a sum of single-signal exposures plus an interaction term; an intersection of two screens and their union have opposite interaction exposures, and turnover follows from the same coefficients. They give no new anomaly with t-statistics; the test here is whether the intersection beats momentum alone after cost. Low prior: ANOM-LOWVOL and ANOM-LOWIVOL were rejected here. Queue position: low."
+  },
+  {
+   "id": "RQ-PIPE-AV21",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: 8-K item 3.02 unregistered share sale (no merger closing), 21 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-21 (daily researcher); 5-year one-shot pending",
+   "explain": "Information only: an original 8-K listing item 3.02 (unregistered sale of shares, warrants or convertibles), not together with 2.01 or 5.01; the stock (liquid on the reaction session) bought the next open and held 21 sessions; a valid AVOID / SELL filter if it lags the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy. Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 20) before any run.",
+   "sources": [
+    "https://www.sec.gov/files/form8-k.pdf",
+    "https://ideas.repec.org/a/bla/jfinan/v57y2002i6p2595-2617.html",
+    "https://ideas.repec.org/a/oup/rfinst/v23y2010i7p2789-2820.html",
+    "https://corpgov.law.harvard.edu/2017/11/16/the-economics-of-pipes"
+   ],
+   "hold": 21,
+   "note": "Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-PIPE-AV63",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: 8-K item 3.02 unregistered share sale (no merger closing), 63 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-21 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-PIPE-AV21, held 63 sessions. Never a buy. Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 20) before any run.",
+   "sources": [
+    "https://www.sec.gov/files/form8-k.pdf",
+    "https://ideas.repec.org/a/bla/jfinan/v57y2002i6p2595-2617.html",
+    "https://ideas.repec.org/a/oup/rfinst/v23y2010i7p2789-2820.html",
+    "https://corpgov.law.harvard.edu/2017/11/16/the-economics-of-pipes"
+   ],
+   "hold": 63,
+   "note": "Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
+  },
+  {
+   "id": "RQ-PIPE-AV126",
+   "family": "Daily researcher (RQ)",
+   "name": "AVOID check: 8-K item 3.02 unregistered share sale (no merger closing), 126 sessions",
+   "agent": "daily researcher",
+   "kind": "avoid",
+   "status": "pre-registered 2026-11-21 (daily researcher); 5-year one-shot pending",
+   "explain": "As RQ-PIPE-AV21, held 126 sessions. Never a buy. Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 20) before any run.",
+   "sources": [
+    "https://www.sec.gov/files/form8-k.pdf",
+    "https://ideas.repec.org/a/bla/jfinan/v57y2002i6p2595-2617.html",
+    "https://ideas.repec.org/a/oup/rfinst/v23y2010i7p2789-2820.html",
+    "https://corpgov.law.harvard.edu/2017/11/16/the-economics-of-pipes"
+   ],
+   "hold": 126,
+   "note": "Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun."
   }
  ]
 }

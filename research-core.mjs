@@ -166,6 +166,7 @@ export function preRegister(LB, date = '2026-10-25') { if (!LB || !Array.isArray
     if (R.family === 'sbc') { ch += preRegisterSbc(LB); continue; }
     if (R.family === 'ftd') { ch += preRegisterFtd(LB); continue; }
     if (R.family === 'debt') { ch += preRegisterDebt(LB); continue; }
+    if (R.family === 'pipe') { ch += preRegisterPipe(LB); continue; }
     if (R.family === 'tender') { LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-10-26 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Offer price reader, spread, exits and data rule fixed in research-core.mjs (IDEA 2) before any run.', sources: SOURCES.tender, hold: R.hold, note: TENDER_NOTE }); ch++; continue; }
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered ' + date + ' (daily researcher); 5-year one-shot pending',
@@ -1354,4 +1355,49 @@ export function preRegisterDebt(LB) { if (!LB || !Array.isArray(LB.strategies)) 
   for (const id of DEBT_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
     LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-17 (daily researcher); 5-year one-shot pending',
       explain: R.rule + ' Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 19) before any run.', sources: DEBT_SOURCES, hold: R.hold, note: DEBT_NOTE }); ch++; }
+  return ch; }
+// ---------------- IDEA 20 (pre-registered 21 Nov 2026, before any run): 8-K ITEM 3.02 UNREGISTERED SALES OF EQUITY (PIPEs) as an AVOID check ----------------
+// Sources: SEC Form 8-K Item 3.02 "Unregistered Sales of Equity Securities" (filed within 4 business days when a company sells unregistered
+// shares, warrants or convertibles above 1% of its shares outstanding; 5% for smaller reporting companies). Hertzel, Lemmon, Linck and Rees
+// (2002, Journal of Finance 57(6) 2595-2617, "Long-run performance following private placements of equity"): positive announcement returns,
+// then clear UNDERPERFORMANCE afterwards; Chaplinsky and Haushalter (2010, Review of Financial Studies 23(7) 2789-2820, "Financing under
+// extreme risk: contract terms and returns to private investments in public equity"): PIPE issuers are weak, and returns after the deal are
+// negative; Brophy, Ouimet and Sialm (2009, RFS) on hedge-fund PIPEs. Published direction: a WARNING (stated before the run). The live
+// system already treats 3.02 as a dilution flag (early-alerts DIL_ITEMS, squad19 supply rule, events-study DILUTION: warn false, small n)
+// but no full-market test of 3.02 as a holdings warning exists (checked 21 Nov: no RQ / SQ29 rule; events-study covered only move-matched
+// events, 62 / 108 cases). Data: the 8-K lists already cached for idea 3 (acceptance time + items, from 2021-09-01); no new SEC reads.
+// EVENT: an original 8-K whose items include 3.02, EXCEPT when the same filing also lists 2.01 or 5.01 (shares issued as payment at a
+// merger closing, not a financing). Timing: reaction session t = reactionDate (New York acceptance before 16:00 -> that session, else the
+// next); entry k = t + 1 (the next open). The stock must be liquid on t (system rule: $5+, 20-day average $5M+ traded). Point-in-time CIK ->
+// ticker map; dead stocks kept. One open trade per stock per rule. Halves: signal before / from 2024-01-01.
+//   RQ-PIPE-AV21   AVOID check: 21 sessions, judged BEFORE cost on both sides vs the average liquid stock (avoidVerdict).
+//   RQ-PIPE-AV63   AVOID check: the same events, 63 sessions.
+//   RQ-PIPE-AV126  AVOID check: the same events, 126 sessions (the papers' longer drift; still inside the horizon check).
+// Information splits (not gates): with item 1.01 in the same filing (a signed purchase agreement: the classic PIPE) vs without; under /
+// from $15 on t.
+// DATA RULE (fixed now): the idea-3 8-K data rule AND 300+ item-3.02 filings found in the lists (reader check).
+// USE: AVOID CONFIRMED -> proposed to the owner as a holdings SELL WARNING (main session, his OK). Never a buy. Small stocks under $5 are
+// outside this test (they fail the liquidity rule), stated before the run.
+export const PIPE = { item: '3.02', skip: ['2.01', '5.01'], minFilings: 300 };
+export const pipeEvent = (items) => hasItem(items, PIPE.item) && !PIPE.skip.some(s => hasItem(items, s));
+export const isPipe302 = (items) => hasItem(items, PIPE.item);
+export const pipeWithAgreement = (items) => hasItem(items, '1.01');
+RULES['RQ-PIPE-AV21'] = { kind: 'avoid', hold: 21, family: 'pipe', name: 'AVOID check: 8-K item 3.02 unregistered share sale (no merger closing), 21 sessions',
+  rule: 'Information only: an original 8-K listing item 3.02 (unregistered sale of shares, warrants or convertibles), not together with 2.01 or 5.01; the stock (liquid on the reaction session) bought the next open and held 21 sessions; a valid AVOID / SELL filter if it lags the average stock in both halves BEFORE cost (gross vs gross; block t <= -2.5 for CONFIRMED). Never a buy.' };
+RULES['RQ-PIPE-AV63'] = { kind: 'avoid', hold: 63, family: 'pipe', name: 'AVOID check: 8-K item 3.02 unregistered share sale (no merger closing), 63 sessions',
+  rule: 'As RQ-PIPE-AV21, held 63 sessions. Never a buy.' };
+RULES['RQ-PIPE-AV126'] = { kind: 'avoid', hold: 126, family: 'pipe', name: 'AVOID check: 8-K item 3.02 unregistered share sale (no merger closing), 126 sessions',
+  rule: 'As RQ-PIPE-AV21, held 126 sessions. Never a buy.' };
+export const PIPE_IDS = Object.keys(RULES).filter(id => RULES[id].family === 'pipe');
+for (const id of PIPE_IDS) { if (!IDS.includes(id)) IDS.push(id); ONE_OPEN.add(id); }
+export function pipeDataRule({ iscOk, iscWhy, filings }) { const why = [];
+  if (!iscOk) why.push('8-K lists: ' + (iscWhy || 'not complete'));
+  if (!(filings >= PIPE.minFilings)) why.push('item-3.02 filings found ' + filings + ' (' + PIPE.minFilings + ' needed: reader check)');
+  return { ok: !why.length, why: why.join('; ') || null }; }
+const PIPE_SOURCES = ['https://www.sec.gov/files/form8-k.pdf', 'https://ideas.repec.org/a/bla/jfinan/v57y2002i6p2595-2617.html', 'https://ideas.repec.org/a/oup/rfinst/v23y2010i7p2789-2820.html', 'https://corpgov.law.harvard.edu/2017/11/16/the-economics-of-pipes'];
+const PIPE_NOTE = 'Daily researcher 2026-11-21: SEC 8-K item 3.02 unregistered sales of equity (PIPEs, private placements). Hertzel, Lemmon, Linck and Rees (2002, JF) and Chaplinsky and Haushalter (2010, RFS): issuers underperform after private placements. The live system already uses 3.02 as a dilution flag without a full-market test; this checks it once as an AVOID / SELL warning (21 / 63 / 126 sessions, gross vs gross, liquid stocks only). Merger closings (2.01 / 5.01 in the same filing) skipped. Run once on 5 years incl. dead stocks; first complete verdict frozen in data/research-lab.json firstRun.';
+export function preRegisterPipe(LB) { if (!LB || !Array.isArray(LB.strategies)) return 0; let ch = 0;
+  for (const id of PIPE_IDS) { if (LB.strategies.some(x => x.id === id)) continue; const R = RULES[id];
+    LB.strategies.push({ id, family: 'Daily researcher (RQ)', name: R.name, agent: 'daily researcher', kind: R.kind, status: 'pre-registered 2026-11-21 (daily researcher); 5-year one-shot pending',
+      explain: R.rule + ' Event filter, timing, liquidity, holds and data rule fixed in research-core.mjs (IDEA 20) before any run.', sources: PIPE_SOURCES, hold: R.hold, note: PIPE_NOTE }); ch++; }
   return ch; }
