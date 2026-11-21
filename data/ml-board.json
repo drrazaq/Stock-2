@@ -1,24 +1,24 @@
 {
- "generatedAt": "2026-11-20T04:16:29.484Z",
- "lastClose": "2026-11-19",
+ "generatedAt": "2026-11-21T04:16:08.679Z",
+ "lastClose": "2026-11-20",
  "paperStart": "2026-10-23",
  "cost": 0.008,
  "readiness": "30+ resolved paper trades on 10+ decision dates, average > 0 after 0.8% cost",
  "methods": {
   "ML-RANK1": {
    "name": "ML ranker top 10",
-   "lists": 4,
+   "lists": 5,
    "open": 40,
    "closed": {
-    "n": 0,
-    "days": 0,
-    "stocks": 0,
-    "win": null,
-    "avg": null,
-    "edge": null,
+    "n": 10,
+    "days": 1,
+    "stocks": 10,
+    "win": 0,
+    "avg": -0.3035,
+    "edge": -0.2199,
     "avgWin": null,
-    "avgLoss": null,
-    "pf": null
+    "avgLoss": -0.3035,
+    "pf": 0
    },
    "halalOk": {
     "n": 0,
@@ -35,18 +35,18 @@
   },
   "ML-MOM-BASE": {
    "name": "12-1 momentum top 10 (the simple baseline)",
-   "lists": 4,
+   "lists": 5,
    "open": 40,
    "closed": {
-    "n": 0,
-    "days": 0,
-    "stocks": 0,
-    "win": null,
-    "avg": null,
-    "edge": null,
-    "avgWin": null,
-    "avgLoss": null,
-    "pf": null
+    "n": 10,
+    "days": 1,
+    "stocks": 10,
+    "win": 0.1,
+    "avg": -0.2129,
+    "edge": -0.1294,
+    "avgWin": 0.0353,
+    "avgLoss": -0.2405,
+    "pf": 0.0163
    },
    "halalOk": {
     "n": 0,
@@ -61,6 +61,6 @@
    },
    "ready": false
   },
-  "mlMinusBaseline": null
+  "mlMinusBaseline": -0.0906
  }
 }
