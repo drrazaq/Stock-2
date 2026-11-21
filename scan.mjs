@@ -2502,7 +2502,8 @@ const labRuns = (j) => { if (!j) return {}; const out = { ...(j.firstRun || {}) 
 const TRY_DUPLICATE = new Set(['SQ14-PB12M', 'SQ14-PB15', 'SQ14-PB12H', 'SQ18-PB12-MON', 'SQ18-PB12-DRY', 'SQ18-QMOM-CALM']);   // + Squad 18 filters of PB12 / QMOM (same stocks)
 // (27 Oct 2026, account replay) a pause is now HARD: a correctedRun no longer lifts it. ANOM-SUESURGE's AUD-1 correction had silently
 // re-enabled it; in the 2-slot account replay it lost 7% / 37% (drawdowns -51% / -64%). Un-pausing needs an explicit owner decision.
-const TRY_PAUSED = new Set(['ANOM-SUESURGE', 'SQ1-BBAUTH']);
+// DEC2-TPS fails the planned-capital budget check; remain OFF even if its budget file is missing, rewritten, or correctedRun is positive.
+const TRY_PAUSED = new Set(['ANOM-SUESURGE', 'SQ1-BBAUTH', 'DEC2-TPS']);
 // (audit 24 Oct, coordinator) B-BASK1 (value lab) was judged as ONE basket a month: each tested 'trade' is the average return of its 10
 // names (value-lab.mjs BASK_MONTHS, n = number of months). Like squad5 / squad10, 2 of its names at 1,000 USD with a stop is not the
 // rule that was tested, so it never feeds TRY SMALL. B-FCF1 stays: it was judged per stock (each pick its own trade, n = 534 / 486).
@@ -2531,7 +2532,7 @@ function trySmallCloseFlags(P, c) { const i = c.length - 1, held = c.filter(k =>
 // (audit 24 Oct) the TRY SMALL buy shown for this stock in the last 30 days (tier2-ledger kind try:<rule>, with its hold and stop).
 // 'bought SYM' used to look only at TODAY's lab files: a signal list renewed between the message and the reply left the buy untagged
 // (no 15%/35% stop, no time exit, not counted in the max 2 open).
-function tryLedgerHit(sym) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.sym === sym && /^try:/.test(r.kind || '') && Date.now() - Date.parse(r.d) <= 30 * 864e5);
+function tryLedgerHit(sym) { try { const a = fs.readFileSync('data/tier2-ledger.jsonl', 'utf8').trim().split('\n').filter(Boolean).map(x => JSON.parse(x)).filter(r => r.sym === sym && /^try:/.test(r.kind || '') && !TRY_PAUSED.has(r.kind.slice(4)) && Date.now() - Date.parse(r.d) <= 30 * 864e5);
   return a.length ? a[a.length - 1] : null; } catch (e) { return null; } }
 function trySmallLines(pos, lastPx, exclude, session) {
   if ((readJson0('data/settings.json') || {}).trySmall === false) return [];

@@ -86,6 +86,27 @@ test('a rule failing its per-budget check is excluded even if its frozen first r
   assert.deepEqual(S5.fn('trySmallLines')({}, { QLYS: 190 }), []);
 });
 
+
+test('DEC2-TPS is hard-paused even when budget evidence is absent or correctedRun looks profitable; old offers never reclassify BOUGHT', async () => {
+  const r = { verdict: 'PROVEN', results: { older: half(0.04, 0.02, 0.03), newer: half(0.05, 0.03, 0.04) } };
+  assert.deepEqual(q({ 'DEC2-TPS': r }), []);
+  assert.deepEqual(q({ 'DEC2-TPS': { ...r, corrected: true } }), []);
+  const d = new Date().toISOString().slice(0, 10);
+  const S = await loadScan({ files: {
+    ...files, 'data/value-lab.json': { firstRun: {} },
+    'data/decoded-history.json': { firstRun: { 'DEC2-TPS': r }, correctedRun: { 'DEC2-TPS': r } },
+    'data/decoded-today.json': { generatedAt: now, methods: { 'DEC2-TPS': { newSignals: [{ sym: 'QLYS', close: 190 }] } } },
+    // No decoded-check.json: missing budget evidence must never restore a rejected strategy.
+    'data/tier2-ledger.jsonl': [
+      { d, sym: 'QLYS', kind: 'try:DEC2-TPS', px: 190, hold: 126, stopPct: 0.35 },
+      { d, sym: 'TPC', kind: 'try:DEC-FROG', px: 78, hold: 126, stopPct: 0.35 }
+    ]
+  } });
+  assert.deepEqual(S.fn('trySmallLines')({}, { QLYS: 190 }), []);
+  assert.equal(S.fn('tryLedgerHit')('QLYS'), null, 'a paused historical offer is not a qualifying BOUGHT lane');
+  assert.equal(S.fn('tryLedgerHit')('TPC').kind, 'try:DEC-FROG', 'unpaused historical offers still work');
+});
+
 // 23 Oct, night: the anomaly lab (data/anomaly-lab.json, same frozen-first-run format) feeds TRY SMALL too. Qualifying on that night:
 // ANOM-52WH (hold 126), ANOM-RESMOM (63), ANOM-SUESURGE (60). Each pick uses its rule's own hold; stop 15% for holds up to ~3 months,
 // 35% (the tested disaster stop) for 6-month holds.
